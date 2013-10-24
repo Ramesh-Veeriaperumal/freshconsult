@@ -39,6 +39,8 @@ class Social::Gnip::Message
             :handle_id => tag_obj.handle_id
           }
           convert(args)
+          #Send the gnip data to Splunk for debugging
+          Monitoring::RecordMetrics.register(@tweet_obj)
         end
       end
     else
@@ -64,7 +66,7 @@ class Social::Gnip::Message
 
     def convert(args)
       select_shard_and_account(args[:account_id]) do |account|
-        return unless realtime_enabled?(account)
+        #return unless realtime_enabled?(account)
         @twitter_handle = account.twitter_handles.find_by_id(args[:handle_id])
         if @twitter_handle && @twitter_handle.capture_mention_as_ticket
           if post?

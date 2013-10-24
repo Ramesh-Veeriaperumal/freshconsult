@@ -236,19 +236,21 @@ module SupportHelper
 	end
 
 	def link_to_folder_with_count folder, *args
+		link_opts = link_args_to_options(args)
 		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>".html_safe
-		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(options)
+		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(link_opts)
 	end
 
 	def link_to_forum_with_count forum, *args
+		link_opts = link_args_to_options(args)
 		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>".html_safe
-		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(options)
+		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(link_opts)
 	end
 
 	def link_to_start_topic portal, *args
-		options = link_args_to_options(args)
-    	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
-    	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(options)
+		link_opts = link_args_to_options(args)
+    	label = link_opts.delete(:label) || I18n.t('portal.topic.start_new_topic')
+    	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(link_opts)
 	end
 
 	def article_list folder, limit = 5, reject_article = nil
@@ -765,9 +767,9 @@ HTML
 	    end
 
 		def link_args_to_options(args)
-	      options = {}
-	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| options[key] = h(value) unless value.blank?}
-	      options
+	      link_opts = {}
+	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| link_opts[key] = h(value) unless value.blank?}
+	      link_opts
 	    end
 end
 

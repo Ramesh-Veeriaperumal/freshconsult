@@ -1,6 +1,7 @@
 <p>
   There is a mismatch of rules in our db and Gnip at <%= Time.zone.now.utc%>. Please look into immediately.
   
+  <p> Environment : <%= Rails.env %>
   <p> PowerTrack(prod or replay) : <%= @params[:env] %> </p>
   <p> Rules in db not in gnip : <%= @params[:rules_in_db_and_not_in_gnip] %> </p>
   <p> Rules in gnip and not in db: <%= @params[:rules_in_gnip_and_not_in_db]%> </p>

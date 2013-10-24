@@ -1,5 +1,5 @@
 class Helpdesk::KbaseArticles
-
+  include Helpdesk::Utils::Attachment
   def self.create_article_from_email(article_params)  
     account = Account.find(article_params[:account])
     user = account.users.find(article_params[:user])
@@ -19,13 +19,10 @@ class Helpdesk::KbaseArticles
       content_id = content_ids[key]
       description = "content_id" unless content_id.nil?
       created_attachment = article.attachments.build(:content => value, :account_id => account.id, :description => description)
-      if article_params[:attachment_info] && article_params[:attachment_info][key] && article_params[:attachment_info][key]["filename"]
-        attachment_name = article_params[:attachment_info][key]["filename"]
-        created_attachment.content.instance_write(:file_name, attachment_name)
-        created_attachment.content_file_name = attachment_name
-      end
-      temp_body_html = temp_body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+      created_attachment = create_attachment_from_params(created_attachment,
+                                          article_params[:attachment_info][key],key) if article_params[:attachment_info]
       created_attachment.save
+      temp_body_html = temp_body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
     end
 
     unless content_ids.blank?

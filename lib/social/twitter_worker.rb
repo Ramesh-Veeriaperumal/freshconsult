@@ -24,7 +24,8 @@ class Social::TwitterWorker
       @twt_handle = twt_handle 
       fetch_direct_msgs twt_handle  if twt_handle.capture_dm_as_ticket
       if twt_handle.capture_mention_as_ticket && !realtime_enabled?(account)
-        fetch_twt_mentions twt_handle
+        # To avoid the loss of tweets run the cron for another day (sat - 26th Oct 2013)
+        fetch_twt_mentions twt_handle if Time.now.utc < Time.parse("2013-10-27 00:00:00 UTC") 
       end
     end
   end
