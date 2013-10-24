@@ -2312,7 +2312,7 @@ es:
     cancel: 
       cancel_account: "Cancelar la cuenta de Freshdesk"
       info_text: "Por favor tomese un momento para decirnos por qué desea cancelar su cuenta. Tal vez aún podríamos ayudarlo ..."
-      goback: "&#x2190; Regresar a la configuración de la cuenta"
+      goback: "Regresar a la configuración de la cuenta"
       delete_my_account: "Eliminar mi cuenta"
       deleting_account: Cancelando
       confirm_and_cancel_my_account: "Confirmo que quiero cancelar mi cuenta y eliminar todos mis datos..."

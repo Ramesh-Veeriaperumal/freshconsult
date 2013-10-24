@@ -2495,7 +2495,7 @@ cs:
     cancel: 
       cancel_account: "Zrušit Freshdesk účet"
       info_text: "Prosím, věnujte ještě nám nějaký čas a vysvětlete nám, proč chcete zrušit váš účet. Třeba vám ještě můžeme pomoci..."
-      goback: "&#x2190; Zpět do nastavení účtu"
+      goback: "Zpět do nastavení účtu"
       delete_my_account: "Smazat můj účet"
       deleting_account: "Rušení účtu"
       confirm_and_cancel_my_account: "Potvrzuji, že chci zrušit můj účet a smazaz všechna moje data..."
