@@ -63,10 +63,10 @@ class User < ActiveRecord::Base
     end
     #Search display ends here
 
-    def filter(letter, page, state = "verified", per_page = 50)
+    def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
-             :order => 'name'
+             :order => order_by 
     end
 
     def filter_condition(state, letter)
