@@ -185,13 +185,23 @@
             background-color: #f8f8f8;
         }
     }
-
+    .agent-search-wrap{
+        padding-bottom: 1px;
+        #agent_search{
+            width: 177px;
+            padding: 5px;
+            border-radius: 4px !important;
+        }
+    }
 }
+
 #agent-list{
     .contact-list{
         width: 214px;
     }
-
+    .user_list_wrap{
+        padding: 0px;
+    }
 }
 
 #visitor-list{
@@ -424,11 +434,12 @@ li.ui-state-active {
                           animation-delay: 1s;
     }
     .notifier img {
-        position: absolute;
-        top: -22px;
+        float: left;
+        top: 0px;
+        position: relative;
         border-radius: 50%;
-        border: 2px rgb(51, 51, 51) solid;
-        left: 110px;
+        border: 1px #7f7e78 solid;
+        left: 8px;
         width: 42px;
         height: 42px;
         z-index: 1;
@@ -462,6 +473,10 @@ li.ui-state-active {
         }
 
     }
+    .action{
+        position: relative;
+        clear: both;
+    }
 
     .accept{
         background: #77924e;
@@ -479,9 +494,9 @@ li.ui-state-active {
     }
     .visitor{
             display: inline-block;
-            padding: 20px 10px 10px 16px;
-            width: 240px;
-            float: left;
+            padding: 0px 10px 10px 16px;
+            width: 225px;
+            float: right;
         b{
             width: 100%;
             text-align: left;
@@ -719,6 +734,7 @@ li.ui-state-active {
     width: 98%;
     border-radius: 5px;
     position: relative;
+    margin-bottom: 12px;
     .rslthdr_inner{
         background-color: #f8f8f8;
     }
@@ -2200,7 +2216,7 @@ div.color{
     border: 1px #f1f1f1 solid;
     border-top: 1px transparent solid;
 }
-
+ 
 .conversation_user{
     background-color: transparent !important;
 }
@@ -2280,12 +2296,12 @@ div.color{
 .chat-icon-alarm{
     width: 42px;
     height: 42px;
-    top: -27px;
+    top: -3px;
     position: absolute;
     background-color: rgb(91, 91, 91);
     border-radius: 50%;
-    border: 2px rgb(51, 51, 51) solid;
-    left: 145px;
+    border: 1px rgb(51, 51, 51) solid;
+    left: 130px;
     text-align: center;
     i{
         display: inline-block;
