@@ -171,6 +171,9 @@
 	 	if (container == null) {
 			container = document.createElement('div');
 			container.className = "freshwidget-container";
+			if(options.responsive == ""){
+				container.className += " responsive";
+			}
 			container.id = "FreshWidget";
 			container.style.display = 'none';
 			document.body.insertBefore(container, document.body.childNodes[0]);

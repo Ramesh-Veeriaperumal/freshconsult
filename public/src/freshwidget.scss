@@ -144,34 +144,36 @@ $button-radius: 6px;
 /* Mobile Widget Style */ 
 
 @media (max-width: 480px){
-	.mobile-widget-close{
-		display: block;
-		position:fixed;
-		top:0;
-		font-size: 32px;
-		color: #000;
-		font-weight: bold;
-		margin:0;
-		padding:0;
-		left: 15px;
-		z-index:10;
-		cursor:pointer;
-		&:before{
-			content: "×";
-		}
-	}
-	.freshwidget-dialog{
-		left: 0;
-		margin-left: 0;
-		top: 0;
-		iframe{
+	.responsive{
+		.mobile-widget-close{
+			display: block;
 			position:fixed;
 			top:0;
-			height:100% !important;
-			width:100%;
+			font-size: 32px;
+			color: #000;
+			font-weight: bold;
+			margin:0;
+			padding:0;
+			left: 15px;
+			z-index:10;
+			cursor:pointer;
+			&:before{
+				content: "×";
+			}
 		}
-		.widget-close{
-			display: none;
+		.freshwidget-dialog{
+			left: 0;
+			margin-left: 0;
+			top: 0;
+			iframe{
+				position:fixed;
+				top:0;
+				height:100% !important;
+				width:100%;
+			}
+			.widget-close{
+				display: none;
+			}
 		}
 	}
 }

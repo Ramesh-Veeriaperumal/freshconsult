@@ -55,6 +55,9 @@
 			var $activeForm = $("#fw-tab-content form:visible");
 
 			if(!$activeForm.valid()) return;
+
+			WidgetFormHash = $H(); 
+
 			WidgetFormArray = $activeForm.serializeArray();
 			WidgetFormHash.set("queryString", "");
 			var widgetUrl = "";
