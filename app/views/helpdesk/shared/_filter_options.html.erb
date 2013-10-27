@@ -7,9 +7,9 @@
   function getFilterData(){
     query_hash = $A(); 
     jQuery("div.ff_item").map(function () {
-      condition = this.getAttribute("condition");
-      container = this.getAttribute("container");
-      operator  = this.getAttribute("operator");
+      var condition = this.getAttribute("condition"),
+          container = this.getAttribute("container"),
+          operator  = this.getAttribute("operator");
       _selector = 'input:checkbox:checked'; 
       var value;
           

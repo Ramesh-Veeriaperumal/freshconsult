@@ -2304,36 +2304,7 @@ a.page_title{
 	}
 }
 
-.pagination{
-   background:#f1f1f1;
-   padding:5px 8px 8px 0;
-	border-bottom:1px solid #dfdfdf;
-	border-top:1px solid #ffffff;
-   text-align: center;
-   padding: 1em;
-   cursor: default;
-   a, span { padding: 0.2em 0.3em; }
-   .disabled { color: #aaaaaa; }
-   .current {
-       font-style: normal;
-       font-weight: bold;
-       background-color: #bebebe;
-       display: inline-block;
-       width: 1.4em;
-       height: 1.4em;
-       line-height: 1.5;
-       -moz-border-radius: 1em;
-       -webkit-border-radius: 1em;
-       border-radius: 1em;
-       text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; 
-   }
-	a{
-		@include link-colors(#336699, $default_txt_color, #336699, #336699);
-		font-weight:bold;
-		text-decoration:none;
-	}	
-	a:hover, a:focus { text-decoration: underline; }
-}
+
 
 .meta_info{
 	font-size:10px;
@@ -5595,6 +5566,7 @@ a.close{
 		    padding: 10px;
 		    border-bottom:1px solid rgba(#ccc, 0.3);
 		    margin:0;
+		    width: 96%;
 		}
 	}
 	.int-select{
@@ -7500,7 +7472,7 @@ div.watchers_tooltip{
     padding:10px;
     font-size:13px;
     background-color: white;
-    @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
+    @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4), 0px -2px 0px rgba(0, 0, 0, 0.4));
     @include border-radius(5px);
     z-index: 10000;
     .watcher-close{
@@ -7509,12 +7481,13 @@ div.watchers_tooltip{
 		border-radius: 20px;
 		background: #666;
 		width: 17px;
-		height: 15px;
+		height: 16px;
 		color: #fff;
 		font-weight: bold;
+		font-size:16px;
 		line-height: 11px;
 		text-align: center;
-		padding-top: 2px;
+		padding-top: 1px;
 		cursor: pointer;
     }
     .watcher_label{
@@ -7655,7 +7628,7 @@ div.watchers_tooltip{
 		border-width: 10px;
 		&:before{
 			border-left: 9px solid transparent;
-			border-bottom: 9px solid white;
+			border-bottom: 9px solid #999;
 			border-right: 9px solid transparent;
 			height: 0;
 			width: 0;
@@ -7671,7 +7644,7 @@ div.watchers_tooltip{
 	}
 
     .watcher_input{
-    	margin:10px 0;
+    	margin: 10px 0px 0px 0px;
 		width: 100%;
     	.select2-choices{
     		padding-left:20px;
@@ -10273,8 +10246,9 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text{ color: #D00; }
 
 #footer {
-	margin: 20px auto 30px;
+	margin: 30px auto 60px;
 	clear: both;
+	text-align: center;
 }
 
 .group-management .toggle-button{

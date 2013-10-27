@@ -12,7 +12,7 @@ module Mobile::Actions::User
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, 
       							:is_customer, :recent_tickets, :is_client_manager, :company_name,
-                    :can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket ],
+                    :can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :user_time_zone,:user_tag ],
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
     to_json options

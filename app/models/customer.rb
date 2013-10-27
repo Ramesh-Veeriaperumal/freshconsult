@@ -51,8 +51,8 @@ class Customer < ActiveRecord::Base
       :limit => 1000  }
   }
   
-  def self.filter(letter, page)
-  paginate :per_page => 10, :page => page,
+  def self.filter(letter, page, per_page = 50)
+  paginate :per_page => per_page, :page => page,
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
   end

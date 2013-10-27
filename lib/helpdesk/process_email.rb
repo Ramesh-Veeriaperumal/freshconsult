@@ -8,6 +8,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
+  include Helpdesk::Utils::Attachment
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
@@ -69,6 +70,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
+    article_params[:attachment_info] = JSON.parse(params["attachment-info"]) if params["attachment-info"]
     attachments = {}
     
     Integer(params[:attachments]).times do |i|
@@ -341,6 +343,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
       content_id_hash = {}
      
+      attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
         if content_ids["attachment#{i+1}"]
           description = "content_id"
@@ -348,6 +351,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         begin
           created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description)
+            created_attachment = create_attachment_from_params(created_attachment,
+                                    attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break

@@ -23,6 +23,7 @@ module TicketConstants
   SOURCE_NAMES_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[1]] }.flatten]
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
+  SOURCE_TOKEN_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[0]] }.flatten]
 
   PRIORITIES = [
     [ :low,       'low',         1,    '#7ebf00' ], 
@@ -157,6 +158,10 @@ module TicketConstants
 
   def self.source_names
     SOURCES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.source_token(key)
+    SOURCE_TOKEN_BY_KEY[key]
   end
 
   def self.due_by_list
