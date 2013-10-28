@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
 
-  # has_one :user_email , :class_name =>'UserEmail', :dependent => :destroy #for user email delta
+  has_one :user_email , :class_name =>'UserEmail', :dependent => :destroy #for user email delta
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    

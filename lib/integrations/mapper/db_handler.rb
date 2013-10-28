@@ -17,7 +17,13 @@ class Integrations::Mapper::DBHandler
   end
 
   def save(data, config)
-    data.save!
+    if data.is_a?(Helpdesk::Ticket) 
+      data.save_ticket! 
+    elsif data.is_a?(Helpdesk::Note)
+      data.save_note!
+    else
+      data.save!   
+    end
   end
 
   def create(data, config)

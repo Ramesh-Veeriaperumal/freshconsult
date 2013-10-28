@@ -7,10 +7,10 @@ class User < ActiveRecord::Base
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
-  #after_create :update_user_email, :if => [:has_email?, :user_emails_migrated?] #for user email delta
+  after_create :update_user_email, :if => [:has_email?, :user_emails_migrated?] #for user email delta
   after_update :drop_authorization , :if => :email_changed?
-  #after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?] #for user email delta
-  #after_update :update_verified, :if => [:active_changed?, :has_email?, :user_emails_migrated?] #for user email delta
+  after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?] #for user email delta
+  after_update :update_verified, :if => [:active_changed?, :has_email?, :user_emails_migrated?] #for user email delta
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -80,32 +80,32 @@ class User < ActiveRecord::Base
    end 
   end
 
-  # def update_user_email
-  #   # for user email delta
-  #   create_user_email({:email => email, :primary_role => true, :verified => active}) unless user_email
-  # end
+  def update_user_email
+    # for user email delta
+    create_user_email({:email => email, :primary_role => true, :verified => active}) unless user_email
+  end
 
-  # def change_user_email
-  #   # for user email delta
-  #   if user_email
-  #     if has_email?
-  #       user_email.update_attributes({:email => email})
-  #     else
-  #       user_email.destroy
-  #     end
-  #   else
-  #     create_user_email({:email => email, :primary_role => true, :verified => active}) if has_email?
-  #   end
-  # end
+  def change_user_email
+    # for user email delta
+    if user_email
+      if has_email?
+        user_email.update_attributes({:email => email})
+      else
+        user_email.destroy
+      end
+    else
+      create_user_email({:email => email, :primary_role => true, :verified => active}) if has_email?
+    end
+  end
 
-  # def update_verified
-  #   #for user email delta
-  #   if active?
-  #     user_email.update_attributes({:verified => true})
-  #   else
-  #     user_email.update_attributes({:verified => false})
-  #   end
-  # end
+  def update_verified
+    #for user email delta
+    if active?
+      user_email.update_attributes({:verified => true})
+    else
+      user_email.update_attributes({:verified => false})
+    end
+  end
 
 
 end

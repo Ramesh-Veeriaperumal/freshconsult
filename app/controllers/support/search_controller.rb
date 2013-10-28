@@ -71,16 +71,8 @@ class Support::SearchController < SupportController
     end
    
     def search_portal(f_classes)
-      @items, @def_search_val = [], SearchUtil::DEFAULT_SEARCH_VALUE
-      begin
-        return es_search_portal(f_classes)
-      rescue Exception => e
-        @search_results = []
-        NewRelic::Agent.notice_error(e)
-      end
-
-      process_results
-        
+      @items, @search_results, @def_search_val = [], [], SearchUtil::DEFAULT_SEARCH_VALUE
+      es_search_portal(f_classes) unless f_classes.blank?
     end
 
     def es_search_portal(search_in)

@@ -324,5 +324,31 @@ if RUBY_VERSION > "1.9"
     end
   end
 
+  class String
+    def map
+      [self]
+    end
+  end
+
+  # Make sure the logger supports encodings properly.
+  # https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
+  module ActiveSupport
+    class BufferedLogger
+      def add(severity, message = nil, progname = nil, &block)
+        return if @level > severity
+        message = (message || (block && block.call) || progname).to_s
+   
+        # If a newline is necessary then create a new message ending with a newline.
+        # Ensures that the original message is not mutated.
+        message = "#{message}\n" unless message[-1] == ?\n
+        message = message.force_encoding(Encoding.default_external) if message.respond_to?(:force_encoding)
+        buffer << message
+        auto_flush
+        message
+      end
+    end
+  end
+
+
 end
 
