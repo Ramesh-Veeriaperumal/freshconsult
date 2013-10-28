@@ -8,6 +8,7 @@ class Portal < ActiveRecord::Base
   :allow_nil => true, :allow_blank => true
 
   delegate :friendly_email, :to => :product, :allow_nil => true
+  before_save :downcase_portal_url
   
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -140,6 +141,10 @@ class Portal < ActiveRecord::Base
       else
         send(icon_field).update_attributes(icon_attr)
       end
+    end
+
+    def downcase_portal_url
+      self.portal_url = portal_url.downcase if portal_url 
     end
     
     def filter_fields(f_list)
