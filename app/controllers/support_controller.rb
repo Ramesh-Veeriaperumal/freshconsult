@@ -1,6 +1,6 @@
 class SupportController < ApplicationController
 
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context, :page_message
   include Redis::RedisKeys
