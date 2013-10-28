@@ -1,7 +1,7 @@
 module Mobile::Actions::Article
 
 	JSON_OPTIONS = { 
-		:only=> [ :id, :title, :desc_un_html ]
+		:only=> [ :id, :title, :desc_un_html,:description ]
   }
 
 
