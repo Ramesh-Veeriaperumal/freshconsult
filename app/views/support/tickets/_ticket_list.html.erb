@@ -3,7 +3,7 @@
 		<div class="c-list">
 			<% @tickets.each do |ticket| %>
 				<div class="c-row c-ticket-row">
-					<span class="status-source sources-detailed-<%= ticket.source_name.to_s.downcase %>" 
+					<span class="status-source sources-detailed-<%= TicketConstants.source_token(ticket.source).to_s %>" 
 							 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
 					<span class="<%= ticket.active? ? "label-status-pending" : "label-status-closed" %> label label-small">
 						<%= ticket.status_name %>

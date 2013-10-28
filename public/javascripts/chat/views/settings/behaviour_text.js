@@ -1,10 +1,10 @@
 var behaviour = function(){
 	var $ = jQuery;
 	var ischanged = 0;
-	var weburl,nodeurl,fc_id,fc_se,debug;
+	var weburl,nodeurl,fc_id,fc_se,debug,text_place,name_place,mail_place,phone_place;
 	constructData = function(){
 		var preForm=CHAT_CONSTANTS.HIDE,prePhone=CHAT_CONSTANTS.HIDE, preMail=CHAT_CONSTANTS.HIDE, proChat=CHAT_CONSTANTS.HIDE;
-		var data={weburl:weburl, nodeurl:nodeurl, fc_id:fc_id, fc_se:fc_se, debug:debug};
+		var data={weburl:weburl, nodeurl:nodeurl, fc_id:fc_id, fc_se:fc_se, debug:debug, text_place:text_place, name_place:name_place, mail_place:mail_place, phone_place:phone_place};
 		var formData = $("#chat_settings_form").serializeArray();
 		$.each(formData, function(index, item){
 			switch (item['name']){
@@ -250,6 +250,10 @@ var behaviour = function(){
 			fc_id = chat.fc_id;
 			fc_se = chat.fc_se;
 			debug = chat.debug;
+			text_place = chat.text_place;
+			name_place = chat.name_place;
+			mail_place = chat.mail_place;
+			phone_place = chat.phone_place;
 
 			if(prechat==1){
 				$("#prechat_form").prop('checked', true);

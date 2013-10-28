@@ -524,7 +524,7 @@
   end
 
   map.namespace :mobile do |mobile|
-    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :search,  :collection =>{:search_result => :get}
     mobile.resources :automations, :only =>:index
   end

@@ -19,8 +19,19 @@
 			responsive: 	"", 
 			widgetType: 	"popup"
 		},
-		iframeLoaded, widgetHeadHTML, widgetBodyHTML, iframe, button, closeButton, overlay, dialog
-		container = null;
+		widgetHeadHTML, widgetBodyHTML = null;
+		$widget_attr = {
+			"button"		: null,
+			"dialog"		: null,
+			"container" 	: null,
+			"overlay" 		: null,
+			"iframe" 		: null,
+			"iframeLoaded"	: false,
+			"closeButton"   : null
+		}
+
+	console.log($widget_attr)
+
 	 // Utility methods for FreshWidget	
 	 function catchException(fn) {
 		try {
@@ -101,15 +112,15 @@
 	 }
 	 	 
 	 function createButton(){
-	 	if (button == null && options.widgetType == "popup") {
+	 	if ($widget_attr.button == null && options.widgetType == "popup") {
 			class_name = locationClass[options.alignment] || "left";
-			button = document.createElement('div');
-			button.setAttribute('id', 'freshwidget-button');
-			button.style.display = 'none';
-			button.className = "freshwidget-button fd-btn-" + class_name;
+			$widget_attr.button = document.createElement('div');
+			$widget_attr.button.setAttribute('id', 'freshwidget-button');
+			$widget_attr.button.style.display = 'none';
+			$widget_attr.button.className = "freshwidget-button fd-btn-" + class_name;
 
 			if(Browser.Version() <= 10)
-				button.className += " ie"+Browser.Version();
+				$widget_attr.button.className += " ie"+Browser.Version();
 					
 			link = document.createElement('a');
 			link.setAttribute('href', 'javascript:void(0)');
@@ -134,18 +145,18 @@
 			}
 			
 			if (class_name == 'top' || class_name == 'bottom'){
-				button.style.left = options.offset; 
+				$widget_attr.button.style.left = options.offset; 
 			}
 			else{ 
-				button.style.top = options.offset;
+				$widget_attr.button.style.top = options.offset;
 			}
 			
-			document.body.insertBefore(button, document.body.childNodes[0]);
-			button.appendChild(link);			
+			document.body.insertBefore($widget_attr.button, document.body.childNodes[0]);
+			$widget_attr.button.appendChild(link);			
 			link.appendChild(text);
 
 			if((options.backgroundImage == null || options.backgroundImage == "") && (Browser.Version() <= 10)) {
-				button.appendChild(proxyLink);
+				$widget_attr.button.appendChild(proxyLink);
 				bind(proxyLink, 'click', function(){ window.FreshWidget.show(); });				
 				proxyLink.style.height = link.offsetHeight+"px";
 				proxyLink.style.width = link.offsetWidth+"px";
@@ -155,29 +166,34 @@
 	 }	 
 	 
 	 function destroyButton(){
- 	   if (button != null) {
-	   	document.body.removeChild(button);
-	   	button = null;
+ 	   if ($widget_attr.button != null) {
+	   	document.body.removeChild($widget_attr.button);
+	   	$widget_attr.button = null;
 	   }
 	 }
 
 	 function destroyContainer(){
-	 	if (container != null) {
-	 		document.body.removeChild(container);
-	 		container = null;
+	 	if ($widget_attr.container != null) {
+	 		document.body.removeChild($widget_attr.container);
+	 		$widget_attr.container = null;
 	 	}
 	 }
 	 function createContainer(){
-	 	if (container == null) {
-			container = document.createElement('div');
-			container.className = "freshwidget-container";
+	 	if ($widget_attr.container == null) {
+			$widget_attr.container = document.createElement('div');
+
+			$widget_attr.container.className = "freshwidget-$widget_attr.container";
+			$widget_attr.container.id = "FreshWidget";
+
 			if(options.responsive == ""){
-				container.className += " responsive";
+				$widget_attr.container.className += " responsive";
 			}
-			container.id = "FreshWidget";
-			container.style.display = 'none';
-			document.body.insertBefore(container, document.body.childNodes[0]);
-			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
+
+			$widget_attr.container.style.display = 'none';
+
+			document.body.insertBefore($widget_attr.container, document.body.childNodes[0]);
+			
+			$widget_attr.container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
 						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
 						'<div class="mobile-widget-close" id="mobile-widget-close"></div>'+
@@ -186,40 +202,41 @@
 						' </div>'
 						'</div>';
 			
-			container 	= document.getElementById('FreshWidget');
-			closeButton = document.getElementById('freshwidget-close');
-			closeButton	= useFilterforIE(closeButton);
+			$widget_attr.container 	= document.getElementById('FreshWidget');
+			$widget_attr.closeButton = document.getElementById('freshwidget-close');
+			$widget_attr.closeButton	= useFilterforIE($widget_attr.closeButton);
 			mobileCloseButton = document.getElementById('mobile-widget-close');
-			dialog      = document.getElementById('freshwidget-dialog');
-			iframe	    = document.getElementById("freshwidget-frame");
-			overlay     = document.getElementById('freshwidget-overlay'); 
+			$widget_attr.dialog      	= document.getElementById('freshwidget-dialog');
+			$widget_attr.iframe	    = document.getElementById("freshwidget-frame");
+			$widget_attr.overlay     = document.getElementById('freshwidget-overlay'); 
 			
-			dialog.appendChild(iframe);
-			loadingIframe();
-			
-			bind(closeButton, 'click', function(){ window.FreshWidget.close(); });
-			bind(mobileCloseButton, 'click', function(){ window.FreshWidget.close(); });
-			bind(overlay, 	  'click', function(){ window.FreshWidget.close(); });
+			$widget_attr.dialog.appendChild($widget_attr.iframe);
 
-			bind(iframe, 'load', function() {
-				if(!iframeLoaded && iframe.src.indexOf("/widgets/feedback_widget/new?") != -1){
-					iframeLoaded = true;
+			loadingIframe();
+
+			bind($widget_attr.closeButton, 'click', function(){ window.FreshWidget.close(); });
+			bind(mobileCloseButton, 'click', function(){ window.FreshWidget.close(); });
+			bind($widget_attr.overlay, 	  'click', function(){ window.FreshWidget.close(); });
+
+			bind($widget_attr.iframe, 'load', function() {
+				if(!$widget_attr.iframeLoaded && $widget_attr.iframe.src.indexOf("/widgets/feedback_widget/new?") != -1){
+					$widget_attr.iframeLoaded = true;
 				}	
 			});
 		}
 	 }; 
 	 
 	 function loadingIframe(){
-	 	iframe.src = options.url + "/loading.html?ver=" + version;
+	 	$widget_attr.iframe.src = options.url + "/loading.html?ver=" + version;
 	 }  
 	 
 	 function widgetFormUrl(){
-	 	iframe.src = options.url + "/widgets/feedback_widget/new?"+options.queryString;	
+	 	$widget_attr.iframe.src = options.url + "/widgets/feedback_widget/new?"+options.queryString;	
 	 }
 	 
 	 function showContainer(){ 
 	 	scroll(0,0);
-	 	container.style.display = 'block';	 	
+	 	$widget_attr.container.style.display = 'block';	 	
 
 		if(!options.responsive){
 			document.body.style.overflow='hidden'
@@ -233,7 +250,7 @@
 				      	var message = img;
 						 
 						 sendMessage = setInterval(function() {
-						 	if (iframeLoaded) {
+						 	if ($widget_attr.iframeLoaded) {
 							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
 							 	clearInterval(sendMessage);
 						 	}else {
@@ -243,14 +260,14 @@
 				    }
 			});
     	}
-	 	if(!iframeLoaded) {
+	 	if(!$widget_attr.iframeLoaded) {
 	 		widgetFormUrl();
 	 	}
 	 }
 	 
 	 function close(){
-	 	container.style.display = 'none';
-		if(!options.responsive){
+	 	$widget_attr.container.style.display = 'none';
+	 	if(!options.responsive){
 			document.body.style.overflow='auto'
 		}
 	 	widgetFormUrl();
@@ -301,7 +318,7 @@
 						catchException(function(){ return close(); });
 					  },
 		iframe 		: function(){
-						return iframe;
+						return $widget_attr.iframe;
 					  }, 
 	    update 		: function(params){
 						catchException(function(){ return updateWidget(params); });

@@ -46,9 +46,11 @@ module Portal::TemplateActions
   def set_preview_and_redirect(preview_url)
     set_portal_redis_key(is_preview_key, true)
     set_portal_redis_key(preview_url_key, preview_url)
-    redirect_url = support_preview_url
-    redirect_url = support_preview_url(:host => @portal.portal_url) unless @portal.portal_url.blank?
-    Rails.logger.debug "::::#{redirect_url}"
+    if current_portal == @portal
+      redirect_url = support_preview_path 
+    else
+      redirect_url = support_preview_url(:host => @portal.host)
+    end
     redirect_to redirect_url and return
   end
 

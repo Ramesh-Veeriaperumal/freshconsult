@@ -136,7 +136,7 @@ class Support::TicketsController < SupportController
     def ticket_scope
       if privilege?(:client_manager)
         if @requested_by.to_i == 0
-          current_user.customer
+          current_user.customer || current_user
         else
           @requested_item = current_account.users.find_by_id(@requested_by)
         end

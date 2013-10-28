@@ -8,6 +8,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
+  include Helpdesk::Utils::Attachment
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
@@ -350,11 +351,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         begin
           created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description)
-          if attachment_info && attachment_info["attachment#{i+1}"] && attachment_info["attachment#{i+1}"]["filename"]
-            attachment_name = attachment_info["attachment#{i+1}"]["filename"] 
-            created_attachment.content.instance_write(:file_name, attachment_name)
-            created_attachment.content_file_name = attachment_name
-          end
+            created_attachment = create_attachment_from_params(created_attachment,
+                                    attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
@@ -434,7 +432,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
-        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email].downcase) }
       else
         false
       end

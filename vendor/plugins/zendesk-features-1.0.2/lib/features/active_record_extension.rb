@@ -55,7 +55,7 @@ module Features
     module InstanceMethods
       # Allows you to check for multiple features like account.features?(:suggestions, :suggestions_on_web)
       def features?(*feature_names)
-        feature_names.all? { |feature_name| features.send("#{feature_name}?") }
+        feature_names.all? { |feature_name| feature_from_cache.any? { |feature| feature.matches?(feature_name) } }
       end
 
       def update_attributes_with_features(attributes)

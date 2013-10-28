@@ -1968,6 +1968,8 @@ en:
   footer: 
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
+    submit_feedback: Submit Feedback
+    browse_community: Browse Community
   tkt_unattended_in_grp: Ticket unattended in Group
   agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
@@ -2297,7 +2299,6 @@ en:
     add_new_solution: Add a new solution
     title: Solutions
     title_singular: Solution
-    info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
     no_solutions_info: No solutions in this folder
@@ -4368,7 +4369,7 @@ en:
     proactive_title: "Proactive chat"
     minimized_title: "Let's talk!"
     maximized_title: "This chat is so on!"
-    welcome_message: "Hi! How may I assist you?"
+    welcome_message: "Hi! How can we help you today?"
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
     typing_message: "is typing..."
@@ -4377,7 +4378,7 @@ en:
     enable_proactive: "Enable proactive chat"
     proactive_note: "Note: Pre-chat form will be skipped for Proactive chats."
     proactive_time: "Greet visitor when they spend more than %{seconds} seconds on a page"
-    procative_info: "Automatically greet visitors on your website."
+    procative_info: "Automatically initiate chat conversations."
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -4391,12 +4392,11 @@ en:
     align_to: "Align to"
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
-    integrate_msg: "Copy & paste the code above the last </body> tag on your website or applications."
+    integrate_msg: "Copy & paste the code above the last </body> tag on your website or app"
     integrate_freshchat_title: "Integrate Freshchat into your website and applications"
     custom_chat_window: "Customize your chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
-    proactive_time: "Automatically greet visitor when they spend more than %{seconds} seconds on same page"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
     visitors_online: "Visitors Online"
@@ -4492,7 +4492,7 @@ en:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear when agents are online."
+    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
