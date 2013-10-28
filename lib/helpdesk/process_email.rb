@@ -231,6 +231,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save_ticket!
+      rescue AWS::S3::Errors::InvalidURI => e
+        FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        raise e
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
