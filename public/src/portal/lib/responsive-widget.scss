@@ -89,6 +89,7 @@ $animation-type: ease-in;
 					@include transition(transform $animation-speed $animation-type);
 					position: absolute;
 					left:0;
+					overflow-y: auto;
 					&.modal-body-hide{
 						//left: -98%;
 						@include transform(translate3d(-98%, 0, 0));

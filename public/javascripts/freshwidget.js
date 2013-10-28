@@ -27,7 +27,8 @@
 			"overlay" 		: null,
 			"iframe" 		: null,
 			"iframeLoaded"	: false,
-			"closeButton"   : null
+			"closeButton"   : null,
+			"mobileCloseButton" : null,
 		}
 
 	console.log($widget_attr)
@@ -205,7 +206,7 @@
 			$widget_attr.container 	= document.getElementById('FreshWidget');
 			$widget_attr.closeButton = document.getElementById('freshwidget-close');
 			$widget_attr.closeButton	= useFilterforIE($widget_attr.closeButton);
-			mobileCloseButton = document.getElementById('mobile-widget-close');
+			$widget_attr.mobileCloseButton = document.getElementById('mobile-widget-close');
 			$widget_attr.dialog      	= document.getElementById('freshwidget-dialog');
 			$widget_attr.iframe	    = document.getElementById("freshwidget-frame");
 			$widget_attr.overlay     = document.getElementById('freshwidget-overlay'); 
@@ -215,7 +216,7 @@
 			loadingIframe();
 
 			bind($widget_attr.closeButton, 'click', function(){ window.FreshWidget.close(); });
-			bind(mobileCloseButton, 'click', function(){ window.FreshWidget.close(); });
+			bind($widget_attr.mobileCloseButton, 'click', function(){ window.FreshWidget.close(); });
 			bind($widget_attr.overlay, 	  'click', function(){ window.FreshWidget.close(); });
 
 			bind($widget_attr.iframe, 'load', function() {
