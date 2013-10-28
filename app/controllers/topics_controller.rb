@@ -152,6 +152,7 @@ class TopicsController < ApplicationController
       @vote = Vote.new(:vote => params[:vote] == "for")  
       @vote.user_id = current_user.id  
       @topic.votes << @vote
+      @topic.reload
       render :partial => "forum_shared/topic_vote", :object => @topic
     end  
   end 
@@ -159,6 +160,7 @@ class TopicsController < ApplicationController
   def destroy_vote   
     @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
     @votes.first.destroy
+    @topic.reload
     render :partial => "forum_shared/topic_vote", :object => @topic
   end  
 
