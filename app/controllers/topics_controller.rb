@@ -110,6 +110,7 @@ class TopicsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
         format.xml  { head 200 }
+        format.json { head 200 }
       end
     else
       respond_to do |format|  

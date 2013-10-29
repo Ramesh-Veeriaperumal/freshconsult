@@ -59,6 +59,12 @@ class ForumCategory < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
+  def as_json (options = {})
+    options[:except]=[:account_id,:import_id]
+    json_str=super options
+    return json_str
+  end
+
   def to_liquid
     @forum_categoru_drop ||= Forum::CategoryDrop.new self
   end

@@ -30,6 +30,7 @@ class ForumCategoriesController < ApplicationController
       respond_to do |format|
         format.html { redirect_back_or_default redirect_url }
         format.xml { render :xml => @obj, :status => :created, :location => category_url(@obj) }
+        format.json { render :json => @obj, :status => :created, :location => category_url(@obj) }
       end
     else
       create_error

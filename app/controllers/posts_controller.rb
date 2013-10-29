@@ -73,6 +73,7 @@ class PostsController < ApplicationController
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
       end
       format.xml { render :xml => @post }
+      format.json { render :json => @post,:status=>:created}
     end
   rescue ActiveRecord::RecordInvalid
     flash[:bad_reply] = 'Please post a valid message...'[:post_something_message]
@@ -107,6 +108,7 @@ class PostsController < ApplicationController
         end
         format.js
         format.xml { head 200 }
+        format.json { head 200 }
       end
   end
 
@@ -120,6 +122,7 @@ class PostsController < ApplicationController
           category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id]))
       end
       format.xml { head 200 }
+      format.json { head 200 }
     end
   end
   
