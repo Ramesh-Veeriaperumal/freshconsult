@@ -10,7 +10,6 @@ module Mobile::Actions::Article
   end
 
   def to_mob_json_search
-    JSON_OPTIONS[:only] << :description
   	to_json JSON_OPTIONS
   end
 
