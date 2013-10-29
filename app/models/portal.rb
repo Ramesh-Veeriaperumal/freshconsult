@@ -6,7 +6,8 @@ class Portal < ActiveRecord::Base
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$", 
   :allow_nil => true, :allow_blank => true
-
+  before_update :backup_portal_changes , :if => :main_portal
+  after_commit_on_update :update_users_language, :if => :main_portal_language_changes? 
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   
@@ -38,7 +39,7 @@ class Portal < ActiveRecord::Base
   belongs_to :forum_category
 
   APP_CACHE_VERSION = "FD40"
-    
+
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
   end
@@ -132,6 +133,20 @@ class Portal < ActiveRecord::Base
   end
 
   private
+
+    def update_users_language
+      account.all_users.update_all(:language => account.language) unless account.features.multi_language? 
+    end
+
+    def main_portal_language_changes?
+      main_portal and @portal_changes.has_key?(:language)
+    end
+
+    def backup_portal_changes
+      @portal_changes = self.changes.clone
+      @portal_changes.symbolize_keys!
+    end
+
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)
         icon = send("build_#{icon_field}")
