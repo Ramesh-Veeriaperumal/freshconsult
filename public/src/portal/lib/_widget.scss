@@ -110,6 +110,12 @@ body, .feedback-wrapper{
 .mobile-search-icon{
 	display: none;
 }
+
+//Fix for Select2 scroll
+.custom_dropdown{					
+	overflow-y: hidden;
+}
+
 /* Embedded Widget styles */
 .embedded-wrapper{
 	#feedback-suggest input.special {
@@ -120,7 +126,6 @@ body, .feedback-wrapper{
 	}
 	.embedded-body {
 		max-height: 90%;
-		overflow-y: hidden;
 	}
 	.embedded-footer { 
 		padding-top:0;
