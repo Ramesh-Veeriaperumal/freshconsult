@@ -71,9 +71,6 @@ var WidgetConfig = function () {};
 		},
 		getPopupCode: function () {
 			return '<' + 'script type="text/javascript" src="' + this.asset_url + '/freshwidget.js"></' + 'script>\n' +
-				'<' + 'style type="text/css" media="screen, projection">\n' +
-				'\t@import url(' + this.asset_url + '/freshwidget.css); \n' +
-				'</' + 'style> \n' +
 				'<' + 'script type="text/javascript">\n' +
 				'\tFreshWidget.init("", ' + this.formHash.toJSON() + ' );\n' +
 				'<' + '/script>';

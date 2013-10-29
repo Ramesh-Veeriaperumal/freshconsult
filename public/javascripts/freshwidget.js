@@ -15,6 +15,7 @@
 			url:			"http://support.freshdesk.com",
 			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
 			queryString:    "",
+			screenshot: 	"",
 			formHeight: 	"500px",
 			responsive: 	"", 
 			widgetType: 	"popup"
@@ -30,8 +31,6 @@
 			"closeButton"   : null,
 			"mobileCloseButton" : null,
 		}
-
-	console.log($widget_attr)
 
 	 // Utility methods for FreshWidget	
 	 function catchException(fn) {
@@ -242,7 +241,7 @@
 		if(!options.responsive){
 			document.body.style.overflow='hidden'
 		}
-	 	if(Browser.Version() > 8){
+	 	if(Browser.Version() > 8 && options.screenshot == ""){
 	        html2canvas( [ document.body ], {
 					ignoreIds: "FreshWidget|freshwidget-button",
 					proxy:false,
@@ -276,13 +275,8 @@
 	 
 	 function initialize(params){ 
 		extend(params);
-
-		if(window.location.protocol)
-			options.assetUrl = (window.location.protocol == "https:") ? 
-								"https://s3.amazonaws.com/assets.freshdesk.com/widget" : 
-								"http://assets.freshdesk.com/widget";
 		
-		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined'))
+		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined') && options.screenshot == "")
 			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
 
 		bind(window, 'load', function(){
