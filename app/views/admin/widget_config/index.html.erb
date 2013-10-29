@@ -1,3 +1,4 @@
+<%= include_cloudfront_js :widget_config %>
 <%= render :partial => "shared/colorpicker" %>
 <% unless current_account.main_portal.preferences.nil? 
 	$tab_color = current_account.main_portal.preferences[:tab_color]
@@ -31,153 +32,23 @@
     <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
   </div>
 </div>
-<script src="/javascripts/freshwidget.js?v=2.1" type="text/javascript"></script>
-<script type="text/javascript">
- wgu = <%= widget_asset_url.to_json.html_safe %>;
-</script>
+
 <% javascript_tag do %>
-	FreshWidget.init("", {
-		"buttonText": "Support", 
-		"buttonBg": "#000000", 
-		"backgroundImage": "", 
-		"alignment": "4", 
-		"offset": "30%",
-		"assetUrl": wgu.http
-	});
 	(function($){
-		var WidgetFormHash = $H(); 
 
-		$("#fw-tabs a").on("change", function(ev){			
-			$("#fw-tab-content form:visible").trigger("change");
-		})
-
-		function changeCode(){
-			var $activeForm = $("#fw-tab-content form:visible");
-
-			if(!$activeForm.valid()) return;
-
-			WidgetFormHash = $H(); 
-
-			WidgetFormArray = $activeForm.serializeArray();
-			WidgetFormHash.set("queryString", "");
-			var widgetUrl = "";
-			var websiteUrl = "";
-
-			$("#assetUrl").val(wgu.http);
-			$("#widget_url").val(wgu.http);
-
-			$.each(WidgetFormArray, function(index, item){
-				$item = $activeForm.find('[name=' + item['name'] + ']');
-				if(item['value'] != ''){
-					switch (item['name']){
-					 	case "authenticity_token":
-					 	break;
-						case "submitThanks":
-						case "formTitle":
-						case "attachFile":
-						case "screenshot":
-						case "searchArea":
-							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
-								$item.serialize());
-						break;
-						case "widgetType":
-						case "responsive":
-							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
-								$item.serialize());
-							WidgetFormHash.set(item['name'], item['value']);
-						break;
-						case "httpsHttp":
-							$("#assetUrl").val(wgu.https);
-							$("#widget_url").val(wgu.https);
-							break;
-						case "assetUrl":
-						case "widget_url":
-						break;
-						case "offset":
-						case "formHeight":
-							WidgetFormHash.set(item['name'], item['value'] + 'px');
-						break;
-						case "buttonBg":
-							WidgetFormHash.set("buttonColor", 
-								$.fn.mColorPicker.textColor($item.css("border-right-color")));
-					 	default:
-							WidgetFormHash.set(item['name'], item['value']);
-						break;
-					}
-				}else{
-					switch(item['name']){
-						case "buttonText":
-							WidgetFormHash.set(item['name'], $item.attr('placeholder'));
-						break;
-						case "formHeight":
-						case "offset":
-							WidgetFormHash.set(item['name'], $item.attr('placeholder') + 'px');
-						break;
-						case "backgroundImage":
-							WidgetFormHash.set(item['name'], "");
-						break;
-					}
-				}
-
-			});
-			
-			constructCode(WidgetFormHash);
-			FreshWidget.update(WidgetFormHash.toObject());
-
-			//Update widget with the latest config changes
-			jQuery('#freshwidget-frame').attr('src', '/widgets/feedback_widget/new?' + WidgetFormHash.get("queryString").sub('embedded','popup'));
-		}
-		
-		function constructCode(data){
-			var widget_url = $("#widget_url").val();
-			var url = $("#url").val();
-			widget_code_text = '<'+'script type="text/javascript" src="'+widget_url+'/freshwidget.js"></'+'script>\n'+
-						'<'+'style type="text/css" media="screen, projection">\n' +
-  						'\t@import url('+widget_url+'/freshwidget.css); \n'+
-						'</'+'style> \n' +
-						'<'+'script type="text/javascript">\n'+
-						'\tFreshWidget.init("", ' + data.toJSON() + ' );\n' +
-						'<'+'/script>';
-						
-			$("#popupCode").val(widget_code_text);
-
-			var jsonData = data.toJSON();
-			var objJsonData = jQuery.parseJSON(jsonData);
-
-			var heightForm = $('');
-			embed_code_text = '<'+'script type="text/javascript" src="'+widget_url+'/freshwidget.js"></'+'script>\n'+
-						'<'+'style type="text/css" media="screen, projection">\n' +
-  						'\t@import url('+widget_url+'/freshwidget.css); \n'+
-						'</'+'style> \n' +
-						'<'+'iframe class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="'+url+'/widgets/feedback_widget/new?' + objJsonData.queryString + '" scrolling="no" height="' + objJsonData.formHeight +'" width="100%" frameborder="0" >\n'+
-						'<'+'/iframe>';
-
-			
-			$("#embeddedCode").val(embed_code_text);
-
-			var buttonTextFocus = $('[name="buttonText"]').is( ":focus" );
-			var buttonColorFocus = $("#TabColor").is( ":focus" );
-			if( !buttonTextFocus && !buttonColorFocus){
-				$("#popupCode").effect( "highlight", { color:"#F8F8C3" }, 600);
-			}
-
-		}	
-		
 		$(document).ready(function () {
-			$("#assetUrl").val(wgu.http);
-			$("#widget_url").val(wgu.http);
-			$("#fw-tab-content form").change(changeCode);
-			$("#fw-tab-content form:visible").find('[name="buttonText"]').keyup(changeCode);
-	    	$('#TabColor').bind('colorpicked', changeCode);
-				changeCode();
 
-		     $('#select_id').select2({
-		        minimumResultsForSearch : 1000 //Keep high search value to shut off search box. Couldnt find a better way.
-		    });
+			var widget_urls = <%= widget_asset_url.to_json.html_safe %>,
+				account_url = "<%= "#{current_account.full_url}" %>";
+			var widget_config = new WidgetConfig(widget_urls, account_url );
 
 		    $('.pseudoCheckbox').bind('change', function(ev) {
 		    	$(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
 			});
+
+			$('.codetextarea').on('click', function (ev) {
+				this.select();
+			})
 
 	  	});
 

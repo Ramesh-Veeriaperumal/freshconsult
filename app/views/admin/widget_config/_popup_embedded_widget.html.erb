@@ -3,7 +3,7 @@
 		:name => "widget_config_#{widget_type}", :id => "WidgetConfig#{widget_type}" } do |f| %>
 
 <div class="row-fluid">
-<input type="hidden" name="widgetType" id="widgetType" value="<%= widget_type %>" />
+<input type="hidden" name="widgetType" id="widgetType" value="<%= widget_type %>"  data-set-query-string="true" />
 <% if widget_type == "popup" %>
 
 <%= content_tag(:h3, t('.feedbackwidget_button_customization').html_safe, :class => "rebrand-head-text top-space-none" ) %> 
@@ -34,7 +34,7 @@
   	 <%= content_tag(:label, t('feedbackwidget_position').html_safe, :class => "control-label" ) %> 
 	 <div class="controls">
 			<div class="span3">
-				<select name="alignment" class="select2 span12" id="select_id">
+				<select name="alignment" class="select2 span12" id="select_id" data-minimum-results-for-search='25'>
 					<option value="4" selected="selected"><%=t('left')%></option>
 					<option value="2"><%=t('right')%></option>
 					<option value="1"><%=t('top')%></option>
@@ -57,13 +57,15 @@
   <div class="control-group">
 		<%= content_tag(:label, t('feedbackwidget_form_heading'), :class => "control-label" ) %>
 		<div class="controls">
-		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle" value="" placeholder= "<%= t('feedbackwidget_defaulttitle').html_safe %>"/>
+		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle" 
+	 				value="" placeholder= "<%= t('feedbackwidget_defaulttitle').html_safe %>" 
+	 				data-set-query-string="true" data-skip-options='true' />
 		</div>
   </div>	
   <div class="control-group">
 		<%= content_tag(:label, t(".feedbackwidget_form_submit_message"), :class => "control-label" ) %>
 		<div class="controls">
-		 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks" value="" placeholder= "<%= t('.thankyou_default') %>"></textarea>
+		 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks" data-set-query-string="true" value="" placeholder= "<%= t('.thankyou_default') %>"></textarea>
 			<div class="info-data"> <%= t(".thankyou_info") %> </div>
 		</div>
   </div>
@@ -84,16 +86,16 @@
   			<span class="span9">
   				<input type="hidden" name="screenshot" id="screenshot" value="" rel='pseudo' value='' />
   				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
-  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" data-set-query-string="true" data-skip-options='true' >
   			</span>  			
 	  	</div>
 	  	<% else %>
-	  		<input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' />
+	  		<input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' data-set-query-string="true" data-skip-options='true' />
 	  	<% end %>
 	  	<div class="row-fluid">
   			<span class="span3"><%= t(".feedbackwidget_attach_a_file") %></span>
   			<span class="span9">
-  				<input type="hidden" name="attachFile" id="attachFile" value="" rel='pseudo' value='' />
+  				<input type="hidden" name="attachFile" id="attachFile" value="" rel='pseudo' value='' data-set-query-string="true" data-skip-options='true' />
   				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
   					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
   			</span>
@@ -101,7 +103,7 @@
 	  	<div class="row-fluid">
   			<span class="span3"><%= t(".feedbackwidget_search_area") %></span>
   			<span class="span9">
-	  			<input type="hidden" name="searchArea" id="searchArea" rel='pseudo' value='' />
+	  			<input type="hidden" name="searchArea" id="searchArea" rel='pseudo' value='' data-set-query-string="true" data-skip-options='true' />
 	  			<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
 	  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
 	  		</span>
@@ -123,7 +125,7 @@
 	 	<% if widget_type == "popup" %>
 	 		<div class="span6 align-right">
 		 		<span><%= t(".feedbackwidget_mobile_view") %></span>
-		 		<input type="hidden" name="responsive" rel="pseudo" value="" />
+		 		<input type="hidden" name="responsive" rel="pseudo" value="" data-set-query-string="true" />
 			 	<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" checked="checked"/>
 			</div>
 			<div class="span6 align-right">
@@ -131,7 +133,7 @@
 			<div class="span12 align-right">
 		<% end %>
 			 	<span><%= t(".feedbackwidget_use_https") %></span>
-			 	<input type="checkbox" rel="toggle" type="checkbox" name="httpsHttp" id="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
+			 	<input type="checkbox" rel="toggle" type="checkbox" id="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
 			 </div>
 		 </div>
 
@@ -149,9 +151,6 @@
   </li>
   
  </ul>
- <input type="hidden" name="url" id="url" value='<%= current_account.full_url %>' />
- <input type="hidden" name="assetUrl" id="assetUrl" value='' />
- <input type="hidden" id="widget_url" value='' />
 </div>
 
 <% end %>
