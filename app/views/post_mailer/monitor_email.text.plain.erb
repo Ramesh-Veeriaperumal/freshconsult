@@ -4,7 +4,7 @@ New Reply has been added to "<%= @post.topic.title %>" by <%= @user.name %>
  
  
 visit this link to view all discussions on this topic
-<%= support_discussions_topic_url(@post.topic.id, :host => @user.account.full_domain) %>
+<%= support_discussions_topic_url(@post.topic.id, :host => @user.account.host) %>
  
 You received this email because you are following this Forum topic. To stop following it, click on the Forum topic and click "Unfollow"
 
