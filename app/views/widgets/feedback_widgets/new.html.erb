@@ -58,7 +58,8 @@
 			</div>
 		</div>
 		<div class="span2 omega">
-			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega" %>
+			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega", 
+				"data-loading-text" => t('ticket.submit_loading') %>
 			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 			<%= hidden_field_tag "meta[referrer]", request.referrer %>
@@ -241,6 +242,7 @@
 	src="about:blank" frameborder="0" scrolling="auto" 
 	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
 </iframe>
+
 
 <script type="text/javascript">
 	jQuery('.modal-body').scroll(function() {

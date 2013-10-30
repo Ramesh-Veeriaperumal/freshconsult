@@ -182,7 +182,7 @@
 	 	if ($widget_attr.container == null) {
 			$widget_attr.container = document.createElement('div');
 
-			$widget_attr.container.className = "freshwidget-$widget_attr.container";
+			$widget_attr.container.className = "freshwidget-container";
 			$widget_attr.container.id = "FreshWidget";
 
 			if(options.responsive == ""){

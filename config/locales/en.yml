@@ -2789,6 +2789,7 @@ en:
     updating: "Updating"
     update_done: "Done"
     submit_ticket: Submit 
+    submit_loading: Submitting..
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
     merge_title: Merge Tickets

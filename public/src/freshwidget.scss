@@ -145,6 +145,9 @@ $button-radius: 6px;
 
 @media (max-width: 480px){
 	.responsive{
+		.freshwidget-container, .widget-ovelay {
+			background: #FFF;
+		}
 		.mobile-widget-close{
 			display: block;
 			position:fixed;
