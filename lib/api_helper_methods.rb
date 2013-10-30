@@ -3,8 +3,8 @@
 module APIHelperMethods
 
     def convert_query_to_conditions(query_str)
-      matches = query_str.split(/((\S+)\s*(is|like)\s*("([^\\"]|\\"|\\\\)*"|(\S+))\s*(or|and)?\s*)/)
-      if matches.size > 1
+      matches = query_str.split(/((\w+)\s*(is|like)\s*("([^\\"]|\\"|\\\\)*"|(\S+))\s*(or|and)?\s*)/)
+      if !query_str.match(/(join|inner|select)[\s]/) && matches.size > 1
         conditions = []; c_i=0
         matches.size.times{|i| 
           pos = i%7
