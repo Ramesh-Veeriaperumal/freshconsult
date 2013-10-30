@@ -73,6 +73,11 @@ $animation-type: ease-in;
 			display: none;
 		}
 	}
+	.fw-thankyou-page{
+		.modal-header,.modal-footer{
+			display: block;
+		}
+	}
 	.feedback-wrapper{
 		margin:0;
 		.modal-widget{

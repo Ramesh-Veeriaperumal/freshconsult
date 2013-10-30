@@ -13,6 +13,11 @@ body, .feedback-wrapper{
 		margin:0;
 	}
 }
+.fw-thankyou-page{
+	.modal-header,.modal-footer{
+		display: none;
+	}
+}
 /* Widget styles with/without Search Form */
 .subject-mobile-counter{
 	display: none;

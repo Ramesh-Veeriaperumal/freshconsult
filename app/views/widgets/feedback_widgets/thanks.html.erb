@@ -2,35 +2,37 @@
 <% if(responsive != "no") %>
 	<link href="/stylesheets/portal/lib/responsive-widget.css" media="screen" rel="stylesheet" type="text/css">
 <% end %>
-<div class="modal-header">
-	<div class="modal-header-bg">
-	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
-	</div>
-</div>
-<div class="modal-body">
-<br />
-	<h3 class="title">
-		<center><%= (params[:submit_message] || t("ticket.thanks")).html_safe %></center>
-	</h3>
-	<br /><br />
-	<center><%= link_to t('go_back'), :back %></center>
-	<input type="hidden" name="widgetType" id="widgetTypeThanks" value= "<%= params[:widgetType]%>" />
-</div>
-<div class="modal-footer">
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="copyright">
-				<% unless(current_account.subscription.paid_account?) %>
-					<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
-					<%= t('footer.by_freshdesk') %>
-					<div class="fw-privacy-policy">
-						<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
-					</div>
-				<% end %>
-			</div>
+<div class="fw-thankyou-page">
+	<div class="modal-header">
+		<div class="modal-header-bg">
+		<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
 		</div>
 	</div>
-</div>		
+	<div class="modal-body">
+	<br />
+		<h3 class="title">
+			<center><%= (params[:submit_message] || t("ticket.thanks")).html_safe %></center>
+		</h3>
+		<br /><br />
+		<center><%= link_to t('go_back'), :back %></center>
+		<input type="hidden" name="widgetType" id="widgetTypeThanks" value= "<%= params[:widgetType]%>" />
+	</div>
+	<div class="modal-footer">
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="copyright">
+					<% unless(current_account.subscription.paid_account?) %>
+						<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
+						<%= t('footer.by_freshdesk') %>
+						<div class="fw-privacy-policy">
+							<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
+						</div>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</div>		
+</div>
 <script type="text/javascript">
 	
 	jQuery(document).ready(function () {
