@@ -1,10 +1,10 @@
 # encoding: utf-8
 module Import::Zen::FileUtil
   
-def extract_zendesk_zip    
-    puts "extract_zen_zip :: curr time:: #{Time.now}"  
+def extract_zendesk_zip(file_url,username,password) 
+    puts "extract_zen_zip :: curr time:: #{Time.now}" 
     begin
-      file=  @current_account.zendesk_import.attachments.first.content.to_file    
+      file =  RemoteFile.new(file_url, username, password)   
       @upload_file_name = file.original_filename
       zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
       File.open(zip_file_name , "wb") do |f|

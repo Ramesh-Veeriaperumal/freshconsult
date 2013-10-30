@@ -111,7 +111,9 @@ def ticket_post_process ticket_prop , ticket
     Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => ticket.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :ticket,
-                                                              :account_id => @current_account.id})
+                                                              :account_id => @current_account.id,
+                                                              :username => username,
+                                                              :password => password})
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
@@ -138,7 +140,9 @@ def ticket_post_process ticket_prop , ticket
       Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => @note.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :note,
-                                                              :account_id => @current_account.id})
+                                                              :account_id => @current_account.id,
+                                                              :username => username,
+                                                              :password => password})
     end
   end
 end
