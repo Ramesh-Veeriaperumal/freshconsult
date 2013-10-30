@@ -4,6 +4,8 @@ class Support::Solutions::ArticlesController < SupportController
   
   before_filter :load_and_check_permission
 
+  before_filter { |c| c.check_portal_scope :open_solutions }
+
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]

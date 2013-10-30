@@ -1,5 +1,6 @@
 class Support::Solutions::FoldersController < SupportController
 	before_filter :scoper, :check_folder_permission
+	before_filter { |c| c.check_portal_scope :open_solutions }
 	
 	def show
 		@page_title = @folder.name
