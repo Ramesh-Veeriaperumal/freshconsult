@@ -73,18 +73,20 @@ class Integrations::JiraWebhook
 
   def update_local(installed_application)
     notify_values = []
-    if self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited")
+    comment_sync = installed_application.configs_jira_comment_sync
+    status_sync = installed_application.configs_jira_status_sync
+    if self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited") && comment_sync != "none"
       self.params["installed_application_id"] = installed_application.id
-      notify_values.push installed_application.configs_jira_comment_sync
+      notify_values.push comment_sync
       notify_values.push "add_helpdesk_external_note_in_fd"
       if self.params["comment"]["author"]
         email = self.params["comment"]["author"]["emailAddress"]
         name =  self.params["comment"]["author"]["displayName"]
       end
     elsif self.updated_entity_type == "issue" and self.notification_cause != "updated" # Any notification other than update notification will be propagated to Freshdesk.  Even if we encouter any non-status related notification the same status will be updated one more time in Freshdesk, which is ok.
-      notify_values.push installed_application.configs_jira_status_sync
-      unless params["comment"].blank?
-        notify_values.push installed_application.configs_jira_comment_sync 
+      notify_values.push status_sync if status_sync != "none"
+      if comment_sync != "none" && !params["comment"].blank?
+        notify_values.push comment_sync 
         notify_values.push "add_helpdesk_external_note_in_fd"
       end 
       if self.params["user"]
