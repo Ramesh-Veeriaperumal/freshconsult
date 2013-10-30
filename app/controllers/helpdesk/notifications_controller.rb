@@ -2,8 +2,6 @@ class Helpdesk::NotificationsController < ApplicationController
   skip_before_filter :check_privilege
 	include Notifications::MessageBroker
 
-  prepend_before_filter :silence_logging, :only => :index
-  after_filter   :revoke_logging, :only => :index
 	
 	def index
 		begin
