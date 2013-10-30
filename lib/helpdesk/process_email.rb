@@ -14,7 +14,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   MESSAGE_LIMIT = 10.megabytes
 
   def perform
-    from_email = parse_from_email
+    # from_email = parse_from_email
     to_email = parse_to_email
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
@@ -22,6 +22,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       encode_stuffs
+      from_email = parse_from_email
       kbase_email = account.kbase_email
       
       #need to format this code --Suman
@@ -85,10 +86,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   private
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
-      [ :html, :text ].each do |t_format|
+      [ :html, :text, :subject, :headers, :from ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s].strip()
-          if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
+          # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
@@ -107,7 +108,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
               end
             end
-          end
+          # end
         end
       end
     end
