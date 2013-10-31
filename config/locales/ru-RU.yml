@@ -2194,7 +2194,7 @@ ru-RU:
       form_title: "Ответить на обсуждение"
       reply_email_id: "Отправить ответ со следующего E-mail"
       send_and_resolve: "Отправить и решить"
-      send_and_set_as: "Отправить и изменить статус на &lt;strong&gt;%{status}&lt;/strong&gt;"
+      send_and_set_as: "Отправить и изменить статус на <strong>%{status}</strong>"
       send: Отправить
       send_satisfaction_survey: "Включить отчет об удовлетворенности"
     facebook_form: 
@@ -2210,7 +2210,7 @@ ru-RU:
       add_tag: "Добавить тег:"
     type: Тип
     execute_scenario: "Выполнить сценарий"
-    conv_form_status_set_as: "и отметить как &lt;strong&gt;%{status}&lt;/strong&gt;"
+    conv_form_status_set_as: "и отметить как <strong>%{status}</strong>"
     note_form: 
       private_note: "Добавить как личное примечание, не уведомлять заявителя"
       description_note: "Тема и Описание объединенных заявок будут добавлены в качестве примечаний к главной заявке"
