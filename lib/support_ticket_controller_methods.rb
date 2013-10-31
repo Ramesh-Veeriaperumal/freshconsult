@@ -18,11 +18,18 @@ module SupportTicketControllerMethods
   end
   
   def create
-    puts "Create method in support controller methods"
     if create_the_ticket(feature?(:captcha))
-      flash.keep(:notice)
-      flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
-      redirect_to redirect_url
+      success_message = I18n.t(:'flash.portal.tickets.create.success')
+      respond_to do |format|
+        format.html {
+          flash.keep(:notice)
+          flash[:notice] = success_message
+          redirect_to redirect_url
+        } 
+        format.json {
+          render :json => {:success => true, :success_message => success_message}
+        }
+      end
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
       set_portal_page :submit_ticket
