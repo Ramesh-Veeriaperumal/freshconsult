@@ -10722,3 +10722,19 @@ label.last-label{ margin-bottom: 0px; }
     }
   }
 }
+//Contacts import
+.map_fields{
+	.sample_values{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		cursor: default;
+		max-width: 300px;
+		padding-left: 10px;
+		display: inline-block;
+		margin-top: 5px;
+	}
+}
