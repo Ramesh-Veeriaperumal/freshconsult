@@ -7,7 +7,7 @@
   $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
   $.validator.addClassRules("tweet", { tweet: 140 });
-  $.validator.addClassRules("facebook", { tweet: 8000 });
+  $.validator.addClassRules("facebook", { facebook: 8000 });
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
   }, "This element should not be equal to");
@@ -205,5 +205,12 @@ $.validator.addMethod("trim_spaces", function(value, element){
   return true;
 }, "Auto trim of leading & trailing whitespace");
 $.validator.addClassRules("trim_spaces", { trim_spaces: true });
+
+// Redactor validator
+$.validator.addMethod("required_redactor", function(value, element, param) {
+  return $(element).data('redactor').isEmpty();
+}, "This field is required.")
+$.validator.addClassRules("required_redactor", { required_redactor : true });
+
 
 })(jQuery);

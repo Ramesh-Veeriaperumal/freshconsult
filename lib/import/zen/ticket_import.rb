@@ -3,11 +3,15 @@ class Import::Zen::TicketImport
   include Import::Zen::Ticket
   include Import::Zen::FlexiField
 
-  def initialize(ticket_xml)
+  attr_accessor :username, :password
+
+  def initialize(params={})
+    self.username = params[:username]
+    self.password = params[:password]
   	@current_account = Account.current
     return if @current_account.blank?
     disable_notification
-    save_ticket ticket_xml
+    save_ticket params[:ticket_xml]
     enable_notification
   end
 

@@ -30,7 +30,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        email_cmds_regex = get_email_cmd_regex(account) 
        params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
       end
-
+      
+      params[:text] = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html])
+      
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
@@ -232,6 +234,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save_ticket!
+      rescue AWS::S3::Errors::InvalidURI => e
+        FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        raise e
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -332,9 +337,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
+        language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false}, :email_config => email_config},portal)
+          :helpdesk_agent => false, :language => language }, :email_config => email_config},portal)
+        Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params[:text][0..500]) if language.nil?
       end
       user.make_current
       user
@@ -433,7 +440,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
-        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email].downcase) }
       else
         false
       end

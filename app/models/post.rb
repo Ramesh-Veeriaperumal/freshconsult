@@ -43,6 +43,12 @@ class Post < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
 
+  def as_json (options={})
+    options[:except]=[:account_id,:import_id]
+    json_str=super options
+    return json_str
+  end
+
   def to_liquid
     forum_post_drop ||= Forum::PostDrop.new self
   end

@@ -1,7 +1,7 @@
 module Mobile::Actions::Article
 
 	JSON_OPTIONS = { 
-		:only=> [ :id, :title, :desc_un_html ]
+		:only=> [ :id, :title, :desc_un_html,:description ]
   }
 
 
@@ -10,7 +10,6 @@ module Mobile::Actions::Article
   end
 
   def to_mob_json_search
-    JSON_OPTIONS[:only] << :description
   	to_json JSON_OPTIONS
   end
 

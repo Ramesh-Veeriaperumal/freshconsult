@@ -1,4 +1,3 @@
-<% content_for :sidebar do -%><%-end %>
 <h3 class="title"><%=t('solution.edit')%></h3>
 <% form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
 	<%= render :partial => 'article_form', :locals => { :f => f } %>

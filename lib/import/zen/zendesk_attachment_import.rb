@@ -3,7 +3,6 @@ class Import::Zen::ZendeskAttachmentImport
   @queue = 'ImportAttachmentWorker'
 
   def self.perform(args)
-  	model = args[:model].to_sym
-    Import::Attachment.new(args[:item_id] ,args[:attachment_url], model).perform
+    Import::Attachment.new(args).perform
   end
 end

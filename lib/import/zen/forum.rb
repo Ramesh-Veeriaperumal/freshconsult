@@ -81,6 +81,7 @@ module Import::Zen::Forum
    topic = Topic.find_by_account_id_and_import_id(@current_account.id,topic_prop.import_id)   
    unless topic
        user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
+       return unless user
        topic_hash = topic_prop.to_hash.tap { |hs| hs.delete(:body) }.merge({:forum_id =>forum.id ,:user_id =>user.id })
        topic = forum.topics.build(topic_hash)
        topic.account_id = @current_account.id
@@ -94,7 +95,9 @@ module Import::Zen::Forum
               Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
                                                                     :attachment_url => URI.encode(attachment.url), 
                                                                     :model => :post,
-                                                                    :account_id => @current_account.id})
+                                                                    :account_id => @current_account.id,
+                                                                    :username => username,
+                                                                    :password => password})
           end 
        end
    else
@@ -111,6 +114,7 @@ module Import::Zen::Forum
     post = topic.posts.find_by_import_id(post_prop.import_id) 
     unless post
       user = @current_account.all_users.find_by_import_id(post_prop.user_id)
+      return unless user
       post_hash = post_prop.to_hash.tap { |hs| hs.delete(:entry_id) }.merge({:user_id =>user.id ,:forum_id => topic.forum_id, :body_html =>post_prop.body})
       post = topic.posts.build(post_hash)
       post.account_id = @current_account.id
@@ -120,7 +124,9 @@ module Import::Zen::Forum
         Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :post,
-                                                              :account_id => @current_account.id})
+                                                              :account_id => @current_account.id,
+                                                              :username => username,
+                                                              :password => password})
       end 
     else
       post.update_attribute(:import_id , post_prop.import_id )
@@ -147,6 +153,7 @@ def save_solution_article topic_prop
   unless article    
     sol_folder = @current_account.folders.find_by_import_id(topic_prop.forum_id)
     user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
+    return unless user
     article_hash = topic_prop.to_hash.delete_if{|k, v| [:body,:stamp_type,:forum_id].include? k }.merge({:user_id =>user.id ,
                                                                                                :description => topic_prop.body,
                                                                                                :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
@@ -159,7 +166,9 @@ def save_solution_article topic_prop
         Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => article.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :article,
-                                                              :account_id => @current_account.id})
+                                                              :account_id => @current_account.id,
+                                                              :username => username,
+                                                              :password => password})
     end 
   else
     article.update_attribute(:import_id , topic_prop.import_id )
