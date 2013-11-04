@@ -1,7 +1,7 @@
 class BaseDrop < Liquid::Drop
   
   class_inheritable_reader :liquid_attributes
-  write_inheritable_attribute :liquid_attributes, [:id]
+  write_inheritable_attribute :liquid_attributes, [:object_id]
   attr_reader :source
   delegate :hash, :to => :source
   
@@ -16,7 +16,7 @@ class BaseDrop < Liquid::Drop
     #current_context.registers[:controller].send(:cached_references) << @source if @source && current_context.registers[:controller]
     
     # @portal is set for every drop except PortalDrop, or you get into an infinite loop
-    @portal = current_context['current_portal'].source if 
+    @portal = current_context['current_portal'].source.to_liquid if 
       !is_a?(PortalDrop) && @portal.nil? && current_context['current_portal']
 
     # Pagination variables for when liquid is created with pagination
@@ -71,7 +71,7 @@ class BaseDrop < Liquid::Drop
 
     def portal_account
       @portal_account ||= Account.current
-    end 
+    end
 
     def allowed_in_portal? f
       portal_user || feature?(f)

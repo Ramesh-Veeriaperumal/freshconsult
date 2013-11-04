@@ -1,4 +1,5 @@
 class Reports::RedshiftQueries < Reports::Queries
+	extend ::NewRelic::Agent::MethodTracer
 
 	include Reports::Constants
 	include Reports::Redshift
@@ -12,7 +13,8 @@ class Reports::RedshiftQueries < Reports::Queries
 
 	def summary_report_metrics
 		%( #{select_resolved_tickets}, #{select_sla_tickets}, #{select_fcr_tickets},
-			#{select_avg_response_time_per_ticket}, #{select_avg_first_resp_time_per_ticket})
+			#{select_avg_response_time_per_ticket}, #{select_avg_first_resp_time_per_ticket},
+			#{select_avg_resolution_time_per_ticket})
 	end
 
 	def select_received_tickets
@@ -126,7 +128,10 @@ class Reports::RedshiftQueries < Reports::Queries
 
 	def execute(options)
 		query = stats_query(options.merge!(:table => %(#{REPORTS_TABLE} as report_table)))
+		::NewRelic::Agent.add_custom_parameters(:redshift_query => query)
 		execute_redshift_query(query, true)
 	end
+
+	add_method_tracer :execute, 'Custom/Redshift/execute_query'
 	
 end

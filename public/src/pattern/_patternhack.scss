@@ -42,11 +42,9 @@ strong {
   margin-top:0;
   padding-top:0;
 }
-.row-fluid [class*="span"] {
-  &.clear-left-margin{
+.clear-left-margin{
     margin-left: 0;
   }
-}
 /* fix for form label center alignment*/
 .control-label{
   padding-top: 5px;
@@ -54,6 +52,12 @@ strong {
 
 .muted {
   color: #999999;
+}
+
+small.input-information{
+  color: $grayLight;
+  margin-top: -7px;
+  display: block;
 }
 .page-header {
   padding-bottom: 9px;
@@ -75,12 +79,6 @@ strong {
   margin-left: -20px;
   padding-right: 20px;
   padding-left:20px;
-}
-.pagination ul > li > a:hover{ 
-        .arrow-up {border-bottom-color: #fff;}
-        .arrow-right {border-left-color: #fff;}         
-        .arrow-down {border-top-color: #fff;}
-        .arrow-left {border-right-color: #fff;}    
 }
 .vertical-alignment{
   display: inline-block;
@@ -321,15 +319,6 @@ html.touch .dialog-well .actions {
 
 
 /*  End of Button overriding */
-.pagination{
-  border-bottom:0 ;
-  a{
-   font-weight:normal;
-   &:hover, &:focus{
-    text-decoration:none;
-   }
-  }
-}
 
 /* This class overriding app-bootstrap css. */
 
@@ -453,6 +442,11 @@ ul.inline > li, ol.inline > li {
 .nested-input{
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;
+}
+
+
+.text-right{
+  text-align: right;
 }
 
 .widget h6{ text-transform: none; }
@@ -665,6 +659,7 @@ ul.inline > li, ol.inline > li {
     margin-left: 0px;
   }
 }
+
 .btn-primary.btn-mini{
   padding-left:10px;
   padding-right:10px;

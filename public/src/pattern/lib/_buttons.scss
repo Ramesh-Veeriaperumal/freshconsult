@@ -11,6 +11,7 @@
   display: inline-block;
   @include ie7-inline-block();
   padding: 4px 14px;
+  margin-top:0;
   margin-bottom: 0; // For input.btn
   margin-right: 4px;
   font-size: $baseFontSize;
@@ -37,7 +38,7 @@
 
     // transition is only when going to hover, otherwise the background
     // behind the gradient (there for IE<=9 fallback) gets mismatched
-    @include transition(background-position .1s linear);
+    @include transition( (background-position .1s linear, background-color 500ms ease-out) );
   }
 
   // Focus state for keyboard and accessibility

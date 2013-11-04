@@ -63,10 +63,14 @@ class User < ActiveRecord::Base
     end
     #Search display ends here
 
-    def filter(letter, page, state = "verified", per_page = 50)
-      paginate :per_page => per_page, :page => page,
+    def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
+      begin
+        paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
-             :order => 'name'
+             :order => order_by 
+      rescue Exception =>exp
+        raise "Invalid fetch request for contacts"
+      end
     end
 
     def filter_condition(state, letter)
@@ -194,7 +198,15 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
+    if (!deleted and !email.blank?)
+      if self.language.nil?
+        args = [ portal,false, params[:email_config]]
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
+          nil, 5.minutes.from_now) 
+      else
+        deliver_activation_instructions!(portal,false, params[:email_config])
+      end
+    end
     true
   end
 
@@ -259,7 +271,16 @@ class User < ActiveRecord::Base
     !agent?
   end
   alias :is_customer :customer?
-  
+
+  def requester? ticket
+    self.id == ticket.requester_id
+  end
+  alias :is_requester :requester?
+
+  def requester_or_cc? ticket
+    requester?(ticket) || customer?
+  end
+
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)

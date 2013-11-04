@@ -8,12 +8,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
+  include Helpdesk::Utils::Attachment
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
   def perform
-    from_email = parse_from_email
+    # from_email = parse_from_email
     to_email = parse_to_email
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
@@ -21,6 +22,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       encode_stuffs
+      from_email = parse_from_email
       kbase_email = account.kbase_email
       
       #need to format this code --Suman
@@ -28,7 +30,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        email_cmds_regex = get_email_cmd_regex(account) 
        params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
       end
-
+      
+      params[:text] = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html])
+      
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
@@ -69,6 +73,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
+    article_params[:attachment_info] = JSON.parse(params["attachment-info"]) if params["attachment-info"]
     attachments = {}
     
     Integer(params[:attachments]).times do |i|
@@ -83,10 +88,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   private
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
-      [ :html, :text ].each do |t_format|
+      [ :html, :text, :subject, :headers, :from ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s].strip()
-          if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
+          # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
@@ -105,7 +110,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
               end
             end
-          end
+          # end
         end
       end
     end
@@ -231,6 +236,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save_ticket!
+      rescue AWS::S3::Errors::InvalidURI => e
+        FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        raise e
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -339,9 +347,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
+        language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false}, :email_config => email_config},portal)
+          :helpdesk_agent => false, :language => language }, :email_config => email_config},portal)
+        Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params[:text][0..500]) if language.nil?
       end
       user.make_current
       user
@@ -351,6 +361,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
       content_id_hash = {}
      
+      attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
         if content_ids["attachment#{i+1}"]
           description = "content_id"
@@ -358,6 +369,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         begin
           created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description)
+            created_attachment = create_attachment_from_params(created_attachment,
+                                    attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
@@ -444,7 +457,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
-        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email].downcase) }
       else
         false
       end

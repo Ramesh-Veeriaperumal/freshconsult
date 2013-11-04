@@ -1,6 +1,7 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
 
   include Va::Observer::Util
+  include ApplicationHelper
 
   set_table_name "helpdesk_time_sheets"
   

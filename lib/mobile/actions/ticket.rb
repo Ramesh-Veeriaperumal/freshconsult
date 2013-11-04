@@ -4,7 +4,7 @@ module Mobile::Actions::Ticket
   include ActionView::Helpers::DateHelper
 
   NOTES_OPTION = {
-      :only => [ :created_at, :user_id, :id, :private ],
+      :only => [ :created_at, :user_id, :id, :private, :deleted ],
       :include => {
         :user => {
           :only => [ :name, :email, :id ],
@@ -58,7 +58,7 @@ module Mobile::Actions::Ticket
             :only => [ :id, :page_name ]
           }
         }
-       }
+      }
     }
     if only_public_notes
      json_inlcude[:public_notes] = NOTES_OPTION 
@@ -67,7 +67,7 @@ module Mobile::Actions::Ticket
 	 end
     end
     options = {
-      :only => [ :id, :display_id, :subject, :description, :description_html, 
+      :only => [ :id, :display_id, :subject, :description_html, 
                  :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
                     :source_name, :is_closed, :to_cc_emails,:conversation_count, 
@@ -84,7 +84,7 @@ module Mobile::Actions::Ticket
       :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :need_attention, :pretty_updated_date ]
     }
-    to_json options
+    to_json(options,false) 
   end
   
 	def to_mob_json_search

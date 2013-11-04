@@ -14,7 +14,8 @@ module Reports::ConstructReport
       responder_hash.store(:average_first_response_time, rec['avgfirstresptime'])
       responder_hash.store(:fcr, rec['fcr_tickets'])
       responder_hash.store(:tkt_res_on_time, rec['sla_tickets'])
-      responder_hash.store(:average_response_time, rec['avgresponsetime'])
+      responder_hash.store(:average_response_time, rec['avgresponsetime']) 
+      responder_hash.store(:average_resolution_time, rec['avgresolutiontime'])
       data.store(responder,responder_hash)
     end
     data

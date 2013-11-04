@@ -2304,36 +2304,7 @@ a.page_title{
 	}
 }
 
-.pagination{
-   background:#f1f1f1;
-   padding:5px 8px 8px 0;
-	border-bottom:1px solid #dfdfdf;
-	border-top:1px solid #ffffff;
-   text-align: center;
-   padding: 1em;
-   cursor: default;
-   a, span { padding: 0.2em 0.3em; }
-   .disabled { color: #aaaaaa; }
-   .current {
-       font-style: normal;
-       font-weight: bold;
-       background-color: #bebebe;
-       display: inline-block;
-       width: 1.4em;
-       height: 1.4em;
-       line-height: 1.5;
-       -moz-border-radius: 1em;
-       -webkit-border-radius: 1em;
-       border-radius: 1em;
-       text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; 
-   }
-	a{
-		@include link-colors(#336699, $default_txt_color, #336699, #336699);
-		font-weight:bold;
-		text-decoration:none;
-	}	
-	a:hover, a:focus { text-decoration: underline; }
-}
+
 
 .meta_info{
 	font-size:10px;
@@ -5595,6 +5566,7 @@ a.close{
 		    padding: 10px;
 		    border-bottom:1px solid rgba(#ccc, 0.3);
 		    margin:0;
+		    width: 96%;
 		}
 	}
 	.int-select{
@@ -7500,7 +7472,7 @@ div.watchers_tooltip{
     padding:10px;
     font-size:13px;
     background-color: white;
-    @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
+    @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4), 0px -2px 0px rgba(0, 0, 0, 0.4));
     @include border-radius(5px);
     z-index: 10000;
     .watcher-close{
@@ -7509,12 +7481,13 @@ div.watchers_tooltip{
 		border-radius: 20px;
 		background: #666;
 		width: 17px;
-		height: 15px;
+		height: 16px;
 		color: #fff;
 		font-weight: bold;
+		font-size:16px;
 		line-height: 11px;
 		text-align: center;
-		padding-top: 2px;
+		padding-top: 1px;
 		cursor: pointer;
     }
     .watcher_label{
@@ -7655,7 +7628,7 @@ div.watchers_tooltip{
 		border-width: 10px;
 		&:before{
 			border-left: 9px solid transparent;
-			border-bottom: 9px solid white;
+			border-bottom: 9px solid #999;
 			border-right: 9px solid transparent;
 			height: 0;
 			width: 0;
@@ -7671,7 +7644,7 @@ div.watchers_tooltip{
 	}
 
     .watcher_input{
-    	margin:10px 0;
+    	margin: 10px 0px 0px 0px;
 		width: 100%;
     	.select2-choices{
     		padding-left:20px;
@@ -8506,6 +8479,7 @@ height: auto;
 	background-color: #fefdee !important; 
 }
 
+
 .agent-list-page {
   &.deleted-list{
     tr td
@@ -8923,8 +8897,6 @@ height: auto;
 	}
 }
 
-/*!pattern Need to delete after pattern intagrated to product */
-
 .ff_item{
 	.select2{
 		width: 190px;
@@ -9157,6 +9129,133 @@ height: auto;
 	margin-top: 8px;
 }
 
+.email-notification{
+	.event-name{
+		margin-left:5px;
+	}
+}
+.common-icons-outdated, .common-icons-updated{
+			display:inline-block;
+			margin-left: 0px;
+			margin-right: 3px;
+			margin-top: -4px;
+			vertical-align: middle;
+		}
+.list-page.email-notification-edit{
+	.email-notification-footer{
+		margin-top: 15px;
+	}
+	.notify-agent-name{
+		label{
+			border-radius: 3px;
+			border-radius: 10px;
+			background: #F2F2F2;
+			border: 1px solid #CCC;
+			display: inline-block;
+			margin-right: 5px;
+			padding: 2px 9px;
+			@include box-shadow(0 0 0px #CCC);
+			@include text-shadow(1px 1px 1px #FFF);
+			&:last-child{margin-right:20px;}
+		}
+	}
+	.tabs{
+		margin-top:20px;
+		margin-bottom:0;
+		padding-right:0;
+	}
+	.nav-tabs > li > a{
+		padding-top: 7px;
+		padding-bottom: 7px;
+		padding-right: 10px;
+		padding-left: 10px;
+		
+	}
+	 .tab-content{
+	 	margin-top:10px;
+	 }
+	.list-page-body {
+		border: 1px solid #CCC;
+		border-top:0;
+		@include border-top-left-radius(0);
+		@include border-top-right-radius(0);
+		padding:15px;
+	}
+	.notification-icon{
+		display: inline-block;
+		vertical-align: top;
+		margin-right: 5px;
+		margin-left: -6px;
+	}
+	.notification-message{
+		display: inline-block;
+		vertical-align: top;
+		margin-bottom: 20px;
+	}
+	.default-lang{
+		float:right;
+		padding-top:10px;
+		vertical-align: baseline;
+	}
+	.reset_template{
+		display: block;
+		margin-top: 5px;
+	}
+	.email-notification-subject{
+		padding-right:0;
+	}
+	.default-lang-text{
+		position: relative;
+		right: 10px;
+	}
+	.default-lang-wrapper{
+		text-align: left;
+		border: 1px solid #8d8d8d;
+		@include border-radius(5px);
+		position: absolute;
+		left: 100%;
+		top: 40px;
+		width:300px;
+		height:460px;
+		background: #ececec;
+		z-index: 999;
+		padding: 15px;
+		@include box-shadow(0px 0px 16px #CCC);
+		.default-lang-content{
+			background: #fff;
+			border:1px solid #c6c6c6;
+			@include border-radius(5px);
+			overflow-y: scroll;
+			height: 94%;
+			padding: 12px;
+			@include box-shadow(inset 0 0 5px #CCC);
+		}
+		&:after, &:before {
+			right: 100%;
+			border: solid transparent;
+			content: " ";
+			height: 0;
+			width: 0;
+			position: absolute;
+			pointer-events: none;
+		}
+
+		&:after {
+			border-color: rgba(236, 236, 236, 0);
+			border-right-color: #ececec;
+			border-width: 9px;
+			top: 42px;
+			margin-top: -9px;
+		}
+		&:before {
+			border-color: rgba(141, 141, 141, 0);
+			border-right-color: #555;
+			border-width: 10px;
+			top: 22px;
+			margin-top: 10px;
+		}
+	}
+}
 #mergebox_confirm{
 	.info-text{
 		float: right;
@@ -10273,8 +10372,9 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text{ color: #D00; }
 
 #footer {
-	margin: 20px auto 30px;
+	margin: 30px auto 60px;
 	clear: both;
+	text-align: center;
 }
 
 .group-management .toggle-button{
@@ -10357,6 +10457,17 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		width: auto;
 	}
 }
+
+
+
+//Dynamic content Email notification
+
+.email-tip{ width:50px; }
+
+.link_agents{
+	margin-left: 94px;
+}
+
 .error-text {
 	color: #D00;
 }
@@ -10378,6 +10489,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
+
 
 //facebook-page-tab
 
@@ -10609,4 +10721,20 @@ label.last-label{ margin-bottom: 0px; }
       color: #0066cc;
     }
   }
+}
+//Contacts import
+.map_fields{
+	.sample_values{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		cursor: default;
+		max-width: 300px;
+		padding-left: 10px;
+		display: inline-block;
+		margin-top: 5px;
+	}
 }

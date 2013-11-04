@@ -110,6 +110,7 @@ class TopicsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
         format.xml  { head 200 }
+        format.json { head 200 }
       end
     else
       respond_to do |format|  
@@ -152,6 +153,7 @@ class TopicsController < ApplicationController
       @vote = Vote.new(:vote => params[:vote] == "for")  
       @vote.user_id = current_user.id  
       @topic.votes << @vote
+      @topic.reload
       render :partial => "forum_shared/topic_vote", :object => @topic
     end  
   end 
@@ -159,6 +161,7 @@ class TopicsController < ApplicationController
   def destroy_vote   
     @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
     @votes.first.destroy
+    @topic.reload
     render :partial => "forum_shared/topic_vote", :object => @topic
   end  
 

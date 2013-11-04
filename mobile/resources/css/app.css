@@ -6146,12 +6146,12 @@ audio {
   -webkit-transform-origin: 0% 0%;
 }
 .x-anchor.x-anchor-top {
-  margin-left: -0.816em;
+  margin-left: -0.8155em;
   margin-top: -0.7em;
 }
 .x-anchor.x-anchor-bottom {
   -webkit-transform: rotate(180deg);
-  margin-left: 0.816em;
+  margin-left: 0.8155em;
   margin-top: 0.6em;
 }
 .x-anchor.x-anchor-left {
@@ -6316,33 +6316,33 @@ audio {
 .x-button-forward:before, .x-button-forward:after, .x-button-back:before, .x-button-back:after {
   content: "";
   position: absolute;
-  width: 0.773em;
+  width: 0.77253em;
   height: 1.8em;
   top: -0.1em;
   left: auto;
   z-index: 2;
   -webkit-mask: 0.145em 0 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAABGCAYAAADb7SQ4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAiNJREFUeNrEWb9LQlEUvj5BcHoQvMnVKXD1D3CLwqBJbHJsazQaWoSCxgbHJiMIAiNok6AhCDdXVycnJ8EQOgeOYaG+d39998KH+HyP753zzjnfd325xfdSgVeV8B6BScuEV0IRSbxHeCMk/AVFXCA8ScQKSXxPqK0fQBBfE5r/D+Y8VzUT9jb94DPimqRYIYkrhGcpKhhxIqTxrpNcExdlQJTTTnRJnCc8ykhUSOIOoZ71ZFfEZ4S2zgUu+rguxZRHEnPbfKRVsOtUl0RtYpOLTYljIS2Z3nVk2DY9SbNCEt8RDm0rUpe4La1jvXSqmtum72raZI24KuNQIYl/nSGSOJb0Jq61M0pxhjwK9304hUjHGSKILzc5Q5drUzttdYY+I97pDH1FzG0zNFUb04gTG4kzJS5kdYauiZtZnaFr4ooKsCIVaDHxKAQxt1NBnGIVHfGCcEQYh3jGU8KBfMKLiyM+lgzAq/qT0ArVTg+Ei1B9fEPoovV4fcfQd2HedScX39GprwGTNjJn0maTELN6IuSzECLB6T5x2eM66jQgnIeSxa60GnS3uL56tr7b1Ai0JPVwYi6yho2U2lgfKym19VxjMRHzEGbvS9K+RBPzetGVUpf29lZHSl2/DMnLvwh1ZMQrKW3Ic4fvJOZS6ZMQW5hpmpT63DvtlFLfm7bBNruM2C2yXb7y3U6ZpRS5P/4jpUjihRTbCJ3q1eL3GMMfAQYAJmB6SBO619IAAAAASUVORK5CYII=') no-repeat;
-  -webkit-mask-size: 0.773em 1.8em;
+  -webkit-mask-size: 0.77253em 1.8em;
   overflow: hidden;
 }
 
 .x-button-back,
 .x-toolbar .x-button-back {
-  margin-left: 0.828em;
+  margin-left: 0.82753em;
   padding-left: .4em;
 }
 .x-button-back:before,
 .x-toolbar .x-button-back:before {
-  left: -0.693em;
+  left: -0.69253em;
 }
 .x-button-back:after,
 .x-toolbar .x-button-back:after {
-  left: -0.628em;
+  left: -0.62753em;
 }
 
 .x-button-forward,
 .x-toolbar .x-button-forward {
-  margin-right: 0.828em;
+  margin-right: 0.82753em;
   padding-right: .4em;
 }
 .x-button-forward:before, .x-button-forward:after,
@@ -6352,11 +6352,11 @@ audio {
 }
 .x-button-forward:before,
 .x-toolbar .x-button-forward:before {
-  right: -0.693em;
+  right: -0.69253em;
 }
 .x-button-forward:after,
 .x-toolbar .x-button-forward:after {
-  right: -0.628em;
+  right: -0.62753em;
 }
 
 .x-button.x-button-plain,
@@ -7013,7 +7013,7 @@ audio {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(3%, #ededed), color-stop(100%, #d3d3d3));
   background-image: -webkit-linear-gradient(top, #ffffff, #ededed 3%, #d3d3d3);
   background-image: linear-gradient(top, #ffffff, #ededed 3%, #d3d3d3);
-  border-top-color: #d3d3d3;
+  border-top-color: lightgrey;
   border-bottom-color: #bababa;
 }
 .x-tabbar-neutral .x-tab {
@@ -7039,7 +7039,7 @@ audio {
 }
 .x-tabbar-neutral.x-docked-bottom .x-tab-active {
   background-image: none;
-  background-color: #d3d3d3;
+  background-color: lightgrey;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #bababa), color-stop(10%, #c7c7c7), color-stop(65%, #d3d3d3), color-stop(100%, #d5d5d5));
   background-image: -webkit-linear-gradient(top, #bababa, #c7c7c7 10%, #d3d3d3 65%, #d5d5d5);
   background-image: linear-gradient(top, #bababa, #c7c7c7 10%, #d3d3d3 65%, #d5d5d5);
@@ -7057,7 +7057,7 @@ audio {
 
 .x-tabbar-neutral.x-docked-top .x-tab-active {
   background-image: none;
-  background-color: #d3d3d3;
+  background-color: lightgrey;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #bababa), color-stop(10%, #c7c7c7), color-stop(65%, #d3d3d3), color-stop(100%, #d5d5d5));
   background-image: -webkit-linear-gradient(top, #bababa, #c7c7c7 10%, #d3d3d3 65%, #d5d5d5);
   background-image: linear-gradient(top, #bababa, #c7c7c7 10%, #d3d3d3 65%, #d5d5d5);
@@ -7262,29 +7262,81 @@ audio {
 .x-toolbar-light.x-docked-right {
   border-left-color: #19212d;
 }
-.x-toolbar-light .x-button, .x-toolbar .x-toolbar-light .x-button, .x-toolbar-light .x-field-select .x-component-outer, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer, .x-toolbar-light .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before {
+.x-toolbar-light .x-button, .x-toolbar .x-toolbar-light .x-button,
+.x-toolbar-light .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer,
+.x-toolbar-light .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before {
   border: 1px solid #455e80;
   border-top-color: #4e6a91;
   color: black;
 }
-.x-toolbar-light .x-button.x-button-back:before, .x-toolbar-light .x-button.x-button-forward:before, .x-toolbar .x-toolbar-light .x-button.x-button-back:before, .x-toolbar .x-toolbar-light .x-button.x-button-forward:before, .x-toolbar-light .x-field-select .x-component-outer.x-button-back:before, .x-toolbar-light .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-back:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:before {
+.x-toolbar-light .x-button.x-button-back:before, .x-toolbar-light .x-button.x-button-forward:before, .x-toolbar .x-toolbar-light .x-button.x-button-back:before, .x-toolbar .x-toolbar-light .x-button.x-button-forward:before,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-back:before,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-back:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-forward:before,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:before,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:before {
   background: #455e80;
 }
-.x-toolbar-light .x-button, .x-toolbar-light .x-button.x-button-back:after, .x-toolbar-light .x-button.x-button-forward:after, .x-toolbar .x-toolbar-light .x-button, .x-toolbar .x-toolbar-light .x-button.x-button-back:after, .x-toolbar .x-toolbar-light .x-button.x-button-forward:after, .x-toolbar-light .x-field-select .x-component-outer, .x-toolbar-light .x-field-select .x-component-outer.x-button-back:after, .x-toolbar-light .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-back:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar-light .x-field-select .x-component-outer:before, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:after {
+.x-toolbar-light .x-button, .x-toolbar-light .x-button.x-button-back:after, .x-toolbar-light .x-button.x-button-forward:after, .x-toolbar .x-toolbar-light .x-button, .x-toolbar .x-toolbar-light .x-button.x-button-back:after, .x-toolbar .x-toolbar-light .x-button.x-button-forward:after,
+.x-toolbar-light .x-field-select .x-component-outer,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-back:after,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-back:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-forward:after,
+.x-toolbar-light .x-field-select .x-component-outer:before,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:after,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-forward:after {
   background-image: none;
   background-color: #7691b5;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #a8b9d0), color-stop(3%, #879ebe), color-stop(100%, #6683ac));
   background-image: -webkit-linear-gradient(top, #a8b9d0, #879ebe 3%, #6683ac);
   background-image: linear-gradient(top, #a8b9d0, #879ebe 3%, #6683ac);
 }
-.x-toolbar-light .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-light .x-button .x-button-icon.x-icon-mask, .x-toolbar-light .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar-light .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
+.x-toolbar-light .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-light .x-button .x-button-icon.x-icon-mask,
+.x-toolbar-light .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer .x-button-icon.x-icon-mask,
+.x-toolbar-light .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
   background-image: none;
   background-color: black;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1b2432), color-stop(3%, #090c11), color-stop(100%, #000000));
   background-image: -webkit-linear-gradient(top, #1b2432, #090c11 3%, #000000);
   background-image: linear-gradient(top, #1b2432, #090c11 3%, #000000);
 }
-.x-toolbar-light .x-button.x-button-pressing, .x-toolbar-light .x-button.x-button-pressing:after, .x-toolbar-light .x-button.x-button-pressed, .x-toolbar-light .x-button.x-button-pressed:after, .x-toolbar-light .x-button.x-button-active, .x-toolbar-light .x-button.x-button-active:after, .x-toolbar .x-toolbar-light .x-button.x-button-pressing, .x-toolbar .x-toolbar-light .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-light .x-button.x-button-pressed, .x-toolbar .x-toolbar-light .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-light .x-button.x-button-active, .x-toolbar .x-toolbar-light .x-button.x-button-active:after, .x-toolbar-light .x-field-select .x-component-outer.x-button-pressing, .x-toolbar-light .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar-light .x-field-select .x-component-outer.x-button-pressed, .x-toolbar-light .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar-light .x-field-select .x-component-outer.x-button-active, .x-toolbar-light .x-field-select .x-component-outer.x-button-active:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-pressing, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-pressed, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-active, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer.x-button-active:after, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-active, .x-toolbar-light .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-active, .x-toolbar .x-toolbar-light .x-field-select .x-component-outer:before.x-button-active:after {
+.x-toolbar-light .x-button.x-button-pressing, .x-toolbar-light .x-button.x-button-pressing:after, .x-toolbar-light .x-button.x-button-pressed, .x-toolbar-light .x-button.x-button-pressed:after, .x-toolbar-light .x-button.x-button-active, .x-toolbar-light .x-button.x-button-active:after, .x-toolbar .x-toolbar-light .x-button.x-button-pressing, .x-toolbar .x-toolbar-light .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-light .x-button.x-button-pressed, .x-toolbar .x-toolbar-light .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-light .x-button.x-button-active, .x-toolbar .x-toolbar-light .x-button.x-button-active:after,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressing,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressing:after,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressed,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressed:after,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-active,
+.x-toolbar-light .x-field-select .x-component-outer.x-button-active:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressing, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressed, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-active, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer.x-button-active:after,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing:after,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed:after,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-active,
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-active, .x-toolbar
+.x-toolbar-light .x-field-select .x-component-outer:before.x-button-active:after {
   background-image: none;
   background-color: #6d89b0;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #526f97), color-stop(10%, #5c7ba7), color-stop(65%, #6d89b0), color-stop(100%, #6e8ab1));
@@ -7320,29 +7372,81 @@ audio {
 .x-toolbar-neutral.x-docked-right {
   border-left-color: #616161;
 }
-.x-toolbar-neutral .x-button, .x-toolbar .x-toolbar-neutral .x-button, .x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar-neutral .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before {
+.x-toolbar-neutral .x-button, .x-toolbar .x-toolbar-neutral .x-button,
+.x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer,
+.x-toolbar-neutral .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before {
   border: 1px solid #a0a0a0;
   border-top-color: #adadad;
   color: black;
 }
-.x-toolbar-neutral .x-button.x-button-back:before, .x-toolbar-neutral .x-button.x-button-forward:before, .x-toolbar .x-toolbar-neutral .x-button.x-button-back:before, .x-toolbar .x-toolbar-neutral .x-button.x-button-forward:before, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:before, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:before {
+.x-toolbar-neutral .x-button.x-button-back:before, .x-toolbar-neutral .x-button.x-button-forward:before, .x-toolbar .x-toolbar-neutral .x-button.x-button-back:before, .x-toolbar .x-toolbar-neutral .x-button.x-button-forward:before,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:before,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:before,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:before,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:before {
   background: #a0a0a0;
 }
-.x-toolbar-neutral .x-button, .x-toolbar-neutral .x-button.x-button-back:after, .x-toolbar-neutral .x-button.x-button-forward:after, .x-toolbar .x-toolbar-neutral .x-button, .x-toolbar .x-toolbar-neutral .x-button.x-button-back:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-forward:after, .x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:after, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar-neutral .x-field-select .x-component-outer:before, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:after {
+.x-toolbar-neutral .x-button, .x-toolbar-neutral .x-button.x-button-back:after, .x-toolbar-neutral .x-button.x-button-forward:after, .x-toolbar .x-toolbar-neutral .x-button, .x-toolbar .x-toolbar-neutral .x-button.x-button-back:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-forward:after,
+.x-toolbar-neutral .x-field-select .x-component-outer,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:after,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-back:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-forward:after,
+.x-toolbar-neutral .x-field-select .x-component-outer:before,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:after,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-forward:after {
   background-image: none;
-  background-color: #d3d3d3;
+  background-color: lightgrey;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fafafa), color-stop(3%, #e0e0e0), color-stop(100%, #c7c7c7));
   background-image: -webkit-linear-gradient(top, #fafafa, #e0e0e0 3%, #c7c7c7);
   background-image: linear-gradient(top, #fafafa, #e0e0e0 3%, #c7c7c7);
 }
-.x-toolbar-neutral .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-neutral .x-button .x-button-icon.x-icon-mask, .x-toolbar-neutral .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar-neutral .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
+.x-toolbar-neutral .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-neutral .x-button .x-button-icon.x-icon-mask,
+.x-toolbar-neutral .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer .x-button-icon.x-icon-mask,
+.x-toolbar-neutral .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
   background-image: none;
   background-color: black;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #262626), color-stop(3%, #0d0d0d), color-stop(100%, #000000));
   background-image: -webkit-linear-gradient(top, #262626, #0d0d0d 3%, #000000);
   background-image: linear-gradient(top, #262626, #0d0d0d 3%, #000000);
 }
-.x-toolbar-neutral .x-button.x-button-pressing, .x-toolbar-neutral .x-button.x-button-pressing:after, .x-toolbar-neutral .x-button.x-button-pressed, .x-toolbar-neutral .x-button.x-button-pressed:after, .x-toolbar-neutral .x-button.x-button-active, .x-toolbar-neutral .x-button.x-button-active:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressing, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressed, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-active, .x-toolbar .x-toolbar-neutral .x-button.x-button-active:after, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-active, .x-toolbar-neutral .x-field-select .x-component-outer.x-button-active:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-active, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer.x-button-active:after, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active, .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active, .x-toolbar .x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active:after {
+.x-toolbar-neutral .x-button.x-button-pressing, .x-toolbar-neutral .x-button.x-button-pressing:after, .x-toolbar-neutral .x-button.x-button-pressed, .x-toolbar-neutral .x-button.x-button-pressed:after, .x-toolbar-neutral .x-button.x-button-active, .x-toolbar-neutral .x-button.x-button-active:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressing, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressed, .x-toolbar .x-toolbar-neutral .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-neutral .x-button.x-button-active, .x-toolbar .x-toolbar-neutral .x-button.x-button-active:after,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing:after,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed:after,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-active,
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-active:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-active, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer.x-button-active:after,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing:after,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed:after,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active,
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active, .x-toolbar
+.x-toolbar-neutral .x-field-select .x-component-outer:before.x-button-active:after {
   background-image: none;
   background-color: #cccccc;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b2b2b2), color-stop(10%, #bfbfbf), color-stop(65%, #cccccc), color-stop(100%, #cdcdcd));
@@ -8535,7 +8639,7 @@ html, body {
   position: absolute;
   width: auto;
   height: 0.8em;
-  top: 0.737em;
+  top: 0.7375em;
   left: 0;
   right: 0;
   margin: 0 0.925em;
@@ -9055,29 +9159,81 @@ input[type="search"]::-webkit-search-cancel-button {
 .x-toolbar-header.x-docked-right {
   border-left-color: #07090b;
 }
-.x-toolbar-header .x-button, .x-toolbar .x-toolbar-header .x-button, .x-toolbar-header .x-field-select .x-component-outer, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer, .x-toolbar-header .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before {
+.x-toolbar-header .x-button, .x-toolbar .x-toolbar-header .x-button,
+.x-toolbar-header .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer,
+.x-toolbar-header .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before {
   border: 1px solid #384659;
   border-top-color: #425269;
   color: white;
 }
-.x-toolbar-header .x-button.x-button-back:before, .x-toolbar-header .x-button.x-button-forward:before, .x-toolbar .x-toolbar-header .x-button.x-button-back:before, .x-toolbar .x-toolbar-header .x-button.x-button-forward:before, .x-toolbar-header .x-field-select .x-component-outer.x-button-back:before, .x-toolbar-header .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-back:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:before {
+.x-toolbar-header .x-button.x-button-back:before, .x-toolbar-header .x-button.x-button-forward:before, .x-toolbar .x-toolbar-header .x-button.x-button-back:before, .x-toolbar .x-toolbar-header .x-button.x-button-forward:before,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-back:before,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-back:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-forward:before,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:before,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:before {
   background: #384659;
 }
-.x-toolbar-header .x-button, .x-toolbar-header .x-button.x-button-back:after, .x-toolbar-header .x-button.x-button-forward:after, .x-toolbar .x-toolbar-header .x-button, .x-toolbar .x-toolbar-header .x-button.x-button-back:after, .x-toolbar .x-toolbar-header .x-button.x-button-forward:after, .x-toolbar-header .x-field-select .x-component-outer, .x-toolbar-header .x-field-select .x-component-outer.x-button-back:after, .x-toolbar-header .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-back:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar-header .x-field-select .x-component-outer:before, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:after {
+.x-toolbar-header .x-button, .x-toolbar-header .x-button.x-button-back:after, .x-toolbar-header .x-button.x-button-forward:after, .x-toolbar .x-toolbar-header .x-button, .x-toolbar .x-toolbar-header .x-button.x-button-back:after, .x-toolbar .x-toolbar-header .x-button.x-button-forward:after,
+.x-toolbar-header .x-field-select .x-component-outer,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-back:after,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-back:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-forward:after,
+.x-toolbar-header .x-field-select .x-component-outer:before,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:after,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-forward:after {
   background-image: none;
   background-color: #607797;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8d9eb7), color-stop(50%, #6e84a3), color-stop(51%, #607797), color-stop(100%, #566b88));
   background-image: -webkit-linear-gradient(top, #8d9eb7, #6e84a3 50%, #607797 51%, #566b88);
   background-image: linear-gradient(top, #8d9eb7, #6e84a3 50%, #607797 51%, #566b88);
 }
-.x-toolbar-header .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-header .x-button .x-button-icon.x-icon-mask, .x-toolbar-header .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar-header .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
+.x-toolbar-header .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-header .x-button .x-button-icon.x-icon-mask,
+.x-toolbar-header .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer .x-button-icon.x-icon-mask,
+.x-toolbar-header .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
   background-image: none;
   background-color: white;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(3%, #ffffff), color-stop(100%, #eff2f5));
   background-image: -webkit-linear-gradient(top, #ffffff, #ffffff 3%, #eff2f5);
   background-image: linear-gradient(top, #ffffff, #ffffff 3%, #eff2f5);
 }
-.x-toolbar-header .x-button.x-button-pressing, .x-toolbar-header .x-button.x-button-pressing:after, .x-toolbar-header .x-button.x-button-pressed, .x-toolbar-header .x-button.x-button-pressed:after, .x-toolbar-header .x-button.x-button-active, .x-toolbar-header .x-button.x-button-active:after, .x-toolbar .x-toolbar-header .x-button.x-button-pressing, .x-toolbar .x-toolbar-header .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-header .x-button.x-button-pressed, .x-toolbar .x-toolbar-header .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-header .x-button.x-button-active, .x-toolbar .x-toolbar-header .x-button.x-button-active:after, .x-toolbar-header .x-field-select .x-component-outer.x-button-pressing, .x-toolbar-header .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar-header .x-field-select .x-component-outer.x-button-pressed, .x-toolbar-header .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar-header .x-field-select .x-component-outer.x-button-active, .x-toolbar-header .x-field-select .x-component-outer.x-button-active:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-pressing, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-pressed, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-active, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer.x-button-active:after, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-active, .x-toolbar-header .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-active, .x-toolbar .x-toolbar-header .x-field-select .x-component-outer:before.x-button-active:after {
+.x-toolbar-header .x-button.x-button-pressing, .x-toolbar-header .x-button.x-button-pressing:after, .x-toolbar-header .x-button.x-button-pressed, .x-toolbar-header .x-button.x-button-pressed:after, .x-toolbar-header .x-button.x-button-active, .x-toolbar-header .x-button.x-button-active:after, .x-toolbar .x-toolbar-header .x-button.x-button-pressing, .x-toolbar .x-toolbar-header .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-header .x-button.x-button-pressed, .x-toolbar .x-toolbar-header .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-header .x-button.x-button-active, .x-toolbar .x-toolbar-header .x-button.x-button-active:after,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressing,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressing:after,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressed,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressed:after,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-active,
+.x-toolbar-header .x-field-select .x-component-outer.x-button-active:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressing, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressed, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-active, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer.x-button-active:after,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing:after,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed:after,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-active,
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-active, .x-toolbar
+.x-toolbar-header .x-field-select .x-component-outer:before.x-button-active:after {
   background-image: none;
   background-color: #5a708e;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #46576f), color-stop(10%, #50637e), color-stop(65%, #5a708e), color-stop(100%, #5b7190));
@@ -9110,26 +9266,78 @@ input[type="search"]::-webkit-search-cancel-button {
 .x-toolbar-subheader.x-docked-right {
   border-left-color: #656565;
 }
-.x-toolbar-subheader .x-button, .x-toolbar .x-toolbar-subheader .x-button, .x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar-subheader .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before {
+.x-toolbar-subheader .x-button, .x-toolbar .x-toolbar-subheader .x-button,
+.x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer,
+.x-toolbar-subheader .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before {
   border: 1px solid #a4a4a4;
   border-top-color: #b1b1b1;
   color: black;
 }
-.x-toolbar-subheader .x-button.x-button-back:before, .x-toolbar-subheader .x-button.x-button-forward:before, .x-toolbar .x-toolbar-subheader .x-button.x-button-back:before, .x-toolbar .x-toolbar-subheader .x-button.x-button-forward:before, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:before {
+.x-toolbar-subheader .x-button.x-button-back:before, .x-toolbar-subheader .x-button.x-button-forward:before, .x-toolbar .x-toolbar-subheader .x-button.x-button-back:before, .x-toolbar .x-toolbar-subheader .x-button.x-button-forward:before,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:before,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:before,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:before,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:before {
   background: #a4a4a4;
 }
-.x-toolbar-subheader .x-button, .x-toolbar-subheader .x-button.x-button-back:after, .x-toolbar-subheader .x-button.x-button-forward:after, .x-toolbar .x-toolbar-subheader .x-button, .x-toolbar .x-toolbar-subheader .x-button.x-button-back:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-forward:after, .x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar-subheader .x-field-select .x-component-outer:before, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:after {
+.x-toolbar-subheader .x-button, .x-toolbar-subheader .x-button.x-button-back:after, .x-toolbar-subheader .x-button.x-button-forward:after, .x-toolbar .x-toolbar-subheader .x-button, .x-toolbar .x-toolbar-subheader .x-button.x-button-back:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-forward:after,
+.x-toolbar-subheader .x-field-select .x-component-outer,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:after,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-forward:after,
+.x-toolbar-subheader .x-field-select .x-component-outer:before,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:after,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-forward:after {
   background-image: none;
   background-color: #d7d7d7;
 }
-.x-toolbar-subheader .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-subheader .x-button .x-button-icon.x-icon-mask, .x-toolbar-subheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar-subheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
+.x-toolbar-subheader .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-subheader .x-button .x-button-icon.x-icon-mask,
+.x-toolbar-subheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask,
+.x-toolbar-subheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
   background-image: none;
   background-color: black;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #262626), color-stop(3%, #0d0d0d), color-stop(100%, #000000));
   background-image: -webkit-linear-gradient(top, #262626, #0d0d0d 3%, #000000);
   background-image: linear-gradient(top, #262626, #0d0d0d 3%, #000000);
 }
-.x-toolbar-subheader .x-button.x-button-pressing, .x-toolbar-subheader .x-button.x-button-pressing:after, .x-toolbar-subheader .x-button.x-button-pressed, .x-toolbar-subheader .x-button.x-button-pressed:after, .x-toolbar-subheader .x-button.x-button-active, .x-toolbar-subheader .x-button.x-button-active:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressing, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressed, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-active, .x-toolbar .x-toolbar-subheader .x-button.x-button-active:after, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-active, .x-toolbar-subheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-active, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar .x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active:after {
+.x-toolbar-subheader .x-button.x-button-pressing, .x-toolbar-subheader .x-button.x-button-pressing:after, .x-toolbar-subheader .x-button.x-button-pressed, .x-toolbar-subheader .x-button.x-button-pressed:after, .x-toolbar-subheader .x-button.x-button-active, .x-toolbar-subheader .x-button.x-button-active:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressing, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressed, .x-toolbar .x-toolbar-subheader .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-subheader .x-button.x-button-active, .x-toolbar .x-toolbar-subheader .x-button.x-button-active:after,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing:after,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed:after,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-active,
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-active, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer.x-button-active:after,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing:after,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed:after,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active,
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar
+.x-toolbar-subheader .x-field-select .x-component-outer:before.x-button-active:after {
   background-image: none;
   background-color: #d0d0d0;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b6b6b6), color-stop(10%, #c3c3c3), color-stop(65%, #d0d0d0), color-stop(100%, #d1d1d1));
@@ -9162,26 +9370,78 @@ input[type="search"]::-webkit-search-cancel-button {
 .x-toolbar-formSubheader.x-docked-right {
   border-left-color: #907060;
 }
-.x-toolbar-formSubheader .x-button, .x-toolbar .x-toolbar-formSubheader .x-button, .x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar-formSubheader .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before {
+.x-toolbar-formSubheader .x-button, .x-toolbar .x-toolbar-formSubheader .x-button,
+.x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before {
   border: 1px solid #c6b3aa;
   border-top-color: #d0c1b9;
   color: #16110e;
 }
-.x-toolbar-formSubheader .x-button.x-button-back:before, .x-toolbar-formSubheader .x-button.x-button-forward:before, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-back:before, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-forward:before, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:before {
+.x-toolbar-formSubheader .x-button.x-button-back:before, .x-toolbar-formSubheader .x-button.x-button-forward:before, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-back:before, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-forward:before,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:before,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:before,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:before,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:before {
   background: #c6b3aa;
 }
-.x-toolbar-formSubheader .x-button, .x-toolbar-formSubheader .x-button.x-button-back:after, .x-toolbar-formSubheader .x-button.x-button-forward:after, .x-toolbar .x-toolbar-formSubheader .x-button, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-back:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-forward:after, .x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar-formSubheader .x-field-select .x-component-outer:before, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:after {
+.x-toolbar-formSubheader .x-button, .x-toolbar-formSubheader .x-button.x-button-back:after, .x-toolbar-formSubheader .x-button.x-button-forward:after, .x-toolbar .x-toolbar-formSubheader .x-button, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-back:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-forward:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-back:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-forward:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-back:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-forward:after {
   background-image: none;
   background-color: #efe9e7;
 }
-.x-toolbar-formSubheader .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-formSubheader .x-button .x-button-icon.x-icon-mask, .x-toolbar-formSubheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar-formSubheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
+.x-toolbar-formSubheader .x-button .x-button-icon.x-icon-mask, .x-toolbar .x-toolbar-formSubheader .x-button .x-button-icon.x-icon-mask,
+.x-toolbar-formSubheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer .x-button-icon.x-icon-mask,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before .x-button-icon.x-icon-mask {
   background-image: none;
   background-color: black;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2e241f), color-stop(3%, #0f0c0a), color-stop(100%, #000000));
   background-image: -webkit-linear-gradient(top, #2e241f, #0f0c0a 3%, #000000);
   background-image: linear-gradient(top, #2e241f, #0f0c0a 3%, #000000);
 }
-.x-toolbar-formSubheader .x-button.x-button-pressing, .x-toolbar-formSubheader .x-button.x-button-pressing:after, .x-toolbar-formSubheader .x-button.x-button-pressed, .x-toolbar-formSubheader .x-button.x-button-pressed:after, .x-toolbar-formSubheader .x-button.x-button-active, .x-toolbar-formSubheader .x-button.x-button-active:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressing, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressed, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-active, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-active:after, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active, .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar .x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active:after {
+.x-toolbar-formSubheader .x-button.x-button-pressing, .x-toolbar-formSubheader .x-button.x-button-pressing:after, .x-toolbar-formSubheader .x-button.x-button-pressed, .x-toolbar-formSubheader .x-button.x-button-pressed:after, .x-toolbar-formSubheader .x-button.x-button-active, .x-toolbar-formSubheader .x-button.x-button-active:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressing, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressing:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressed, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-pressed:after, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-active, .x-toolbar .x-toolbar-formSubheader .x-button.x-button-active:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active,
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressing:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-pressed:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer.x-button-active:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed:after,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active,
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressing:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-pressed:after, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active, .x-toolbar
+.x-toolbar-formSubheader .x-field-select .x-component-outer:before.x-button-active:after {
   background-image: none;
   background-color: #e9e1de;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d4c6bf), color-stop(10%, #ded4ce), color-stop(65%, #e9e1de), color-stop(100%, #eae3df));
@@ -9376,33 +9636,7 @@ input[type="search"]::-webkit-search-cancel-button {
     }*/
 }
 
-.iconSmall {
-  width: 18px;
-  height: 18px;
-  float: left;
-}
-.iconSmall.email {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -340px no-repeat;
-}
-.iconSmall.phone {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -394px no-repeat;
-}
-.iconSmall.portal {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -413px no-repeat;
-}
-.iconSmall.forum {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -645px no-repeat;
-}
-.iconSmall.twitter {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -432px no-repeat;
-}
-.iconSmall.facebook {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -360px no-repat;
-}
-.iconSmall.chat {
-  background: url("../images/symbols-s3e131fbe04.png") 0px -322px no-repeat;
-}
-
+/*@import '_icons.scss';*/
 @font-face {
   font-family: 'Freshdesk';
   src: url("../icons/Freshdesk.eot");
@@ -10336,6 +10570,56 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .icon-arrow-8:before {
   content: "\e076";
+}
+
+@font-face {
+  font-family: 'Fresh';
+  src: url("../icons/Fresh.eot");
+  src: url("../icons/Fresh.eot?#iefix") format("embedded-opentype"), url("../icons/Fresh.woff") format("woff"), url("../icons/Fresh.ttf") format("truetype"), url("../icons/Fresh.svg#Fresh") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+  font-family: 'Fresh';
+  content: attr(data-icon);
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="icon2-"] {
+*/
+.icon2-clock, .ticketDetails #details ul.actions li a.time, .icon2-clock-2, .icon2-dollar, .timerList .billable {
+  font-family: 'Fresh';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon2-clock:before, .ticketDetails #details ul.actions li a.time:before {
+  content: "\e000";
+}
+
+.icon2-clock-2:before {
+  content: "\e001";
+}
+
+.icon2-dollar:before, .timerList .billable:before {
+  content: "\f155";
 }
 
 * {
@@ -11277,15 +11561,15 @@ a {
 .ticketDetails #details ul.actions li a.reply:active {
   color: #1d60bd;
 }
-.ticketDetails #details ul.actions li a.close:before {
-  content: '\e047';
-}
 .ticketDetails #details ul.actions li a.trash {
   position: relative;
   bottom: -5px;
 }
 .ticketDetails #details ul.actions li a.trash:before {
   content: '\f014';
+}
+.ticketDetails #details ul.actions li a.time {
+  font-size: 150%;
 }
 .ticketDetails #details .oldconvMsg {
   padding: 10px 0px;
@@ -11460,7 +11744,7 @@ a {
   padding: 6px 6px 1px 1em;
 }
 .ticketDetails .conversation .msg:before {
-  border-bottom: 0.5em solid #f5f5f5;
+  border-bottom: 0.5em solid whitesmoke;
   border-left: 0.5em solid transparent;
   border-right: 0.5em solid transparent;
   height: 0;
@@ -12169,6 +12453,49 @@ input[readonly=true] {
   border: 1px solid #45505d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.25);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.timerList .time-spent {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 700;
+  float: right;
+  margin-right: 5%;
+}
+.timerList .agent-name {
+  margin-bottom: 0.25em;
+  font-size: 100%;
+}
+.timerList .time-spent-container {
+  float: left;
+  background-color: #eee;
+  padding: 1em;
+  margin: -0.65em 10px 0 -0.8em;
+  font-weight: 700;
+}
+.timerList .muted {
+  color: #999;
+  font-size: 60%;
+}
+.timerList .billable {
+  float: right;
+  margin-right: 3%;
+  color: #888;
+  margin-top: .76em;
+  font-size: 80%;
+}
+.timerList .arrow {
+  float: right;
+  zoom: 1.25;
+  margin-top: 0.25em;
+}
+
+.x-item-pressed .time-spent-container, .x-item-selected .time-spent-container {
+  background: url("../images/activebg.png");
+}
+
+.timer_form .x-button-label, .timer_form .x-hasbadge .x-badge, .x-hasbadge .timer_form .x-badge {
+  text-shadow: none !important;
 }
 
 .x-list-options {

@@ -12,7 +12,7 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
-   before_filter :set_native_mobile, :only => [:show, :index, :create]
+   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy]
   
    
    def check_demo_site
@@ -294,9 +294,12 @@ protected
           cookies[:contacts_sort] = 'verified'
        end
        connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
+       per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+       order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
+       order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page],params.fetch(:state , cookies[:contacts_sort]))
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , cookies[:contacts_sort]),per_page,order_by)
         end
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}

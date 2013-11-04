@@ -198,9 +198,12 @@ $navbarInverseBrandColor:                $navbarInverseLinkColor !default;
 
 // Pagination
 // -------------------------
-$paginationBackground:                #fff !default;
-$paginationBorder:                    #ddd !default;
-$paginationActiveBackground:          #f5f5f5 !default;
+$paginationBackground:                	transparent !default;
+$paginationBorder:                    	#ccc !default;
+$paginationNoActiveBackground:          #595959 !default;
+$paginationTextColor:                 	#333 !default;
+$paginationNoHover:                     #fff !default;
+$paginationNoBackground:              	#fff !default;
 
 
 // Hero unit

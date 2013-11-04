@@ -141,7 +141,6 @@ javascripts:
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
-    - public/javascripts/chat/lib/backbone.js
     - public/javascripts/chat/lib/tab.overflow.js
     - public/javascripts/chat/lib/localstore.js
     - public/javascripts/chat/lib/ticket_search.js
@@ -306,10 +305,7 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
-  behaviour:
-    - public/javascripts/chat/views/settings/behaviour_text.js
-  spinner:
-    - public/javascripts/chat/lib/spin.min.js
+
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js

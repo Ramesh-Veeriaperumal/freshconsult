@@ -1,27 +1,6 @@
 <% (params[:filter] == "archive")? @page_title = "Chat Archive" : @page_title = "Visitors List" %>
-<%= include_cloudfront_js :spinner %>
-<div id="chat-splash"></div>	
+
+<div id="chat-splash" class="sloading loading-block"></div>
 <% javascript_tag do %>
 	window.chat_action = "<%=params[:filter]%>";
-
-	var Splash_opts = {
-          lines: 10, // The number of lines to draw
-          length: 1, // The length of each line
-          width: 6, // The line thickness
-          radius: 15, // The radius of the inner circle
-          corners: 1, // Corner roundness (0..1)
-          rotate: 0, // The rotation offset
-          color: '#000', // #rgb or #rrggbb
-          speed: 1, // Rounds per second
-          trail: 30, // Afterglow percentage
-          shadow: false, // Whether to render a shadow
-          hwaccel: false, // Whether to use hardware acceleration
-          className: 'spinner', // The CSS class to assign to the spinner
-          zIndex: 2e9, // The z-index (defaults to 2000000000)
-          top: '180', // Top position relative to parent in px
-          left: '0', // Left position relative to parent in px
-          opacity: 1/20
-        };
-        var target = document.getElementById('chat-splash');
-        var spinner = new Spinner(Splash_opts).spin(target);
 <%end%>

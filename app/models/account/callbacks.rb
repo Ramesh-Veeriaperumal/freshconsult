@@ -5,10 +5,10 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
-  after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone,:update_google_domain
+  after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain
   after_destroy :remove_shard_mapping
 
-  after_commit_on_create :add_to_billing, :add_affiliate_subscription, :enable_elastic_search
+  after_commit_on_create :add_to_billing, :enable_elastic_search
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
 
@@ -21,13 +21,9 @@ class Account < ActiveRecord::Base
   end
 
   def update_users_time_zone #Ideally this should be called in after_update
-    if time_zone_changed? && !features.multi_timezone?
+    if time_zone_changed? && !features?(:multi_timezone)
       all_users.update_all(:time_zone => time_zone)
     end
-  end
-  
-  def update_users_language
-    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
 
   def enable_elastic_search
@@ -125,10 +121,6 @@ class Account < ActiveRecord::Base
         default_business_calender.time_zone = self.time_zone
         default_business_calender.save
       end
-    end
-
-    def add_affiliate_subscription
-      Resque.enqueue(Subscription::AddAffiliateSubscription, { :account_id => id })
     end
 
 end
