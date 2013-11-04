@@ -1,11 +1,11 @@
 module Helpdesk::NotifierFormattingMethods
 
   def formatted_subject(ticket)
-    "Re: #{ticket.encode_display_id} #{ticket.subject}"
+    "Re: #{encoded_ticket_id(ticket)} #{ticket.subject}"
   end
 
   def fwd_formatted_subject(ticket)
-    "Fwd: #{ticket.encode_display_id} #{ticket.subject}"
+    "Fwd: #{encoded_ticket_id(ticket)} #{ticket.subject}"
   end
 
   def formatted_export_subject(params)
@@ -24,6 +24,10 @@ module Helpdesk::NotifierFormattingMethods
     else
       html.html_safe
     end
+  end
+
+  def encoded_ticket_id ticket
+    ticket.encode_display_id unless ticket.account.features?(:id_less_tickets)
   end
 
   def generate_email_references(ticket)
