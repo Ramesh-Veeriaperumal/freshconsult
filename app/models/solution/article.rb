@@ -107,7 +107,7 @@ class Solution::Article < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
   def to_indexed_json
@@ -121,6 +121,17 @@ class Solution::Article < ActiveRecord::Base
                           :attachments => { :only => [:content_file_name] }
                         }
            )
+  end
+ 
+  def as_json(options={})
+    options[:except]=[:account_id,:import_id]
+    options[:include]={ :tags => { :only => [:name] },
+                        :folder => { :except => [:account_id,:import_id],
+                                     :include => { :customer_folders => { :only => [:customer_id] } }
+                                   }
+                        }
+    json_str=super options
+    return json_str
   end
 
   # Added for portal customisation drop

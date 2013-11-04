@@ -242,12 +242,13 @@
   @include border-bottom-left-radius($radius);
 }
 
+/* Removed because of conflict with compass mixin when we pass two aruguments
 // Drop shadows
 @mixin box-shadow($shadow) { // ToDo: Multiple shadow solution for SASS
   -webkit-box-shadow: $shadow;
      -moz-box-shadow: $shadow;
           box-shadow: $shadow;
-}
+}*/
 
 // Transitions
 @mixin transition($transition) {

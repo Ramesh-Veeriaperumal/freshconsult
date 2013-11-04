@@ -43,7 +43,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer?
+      if user.requester_or_cc?(notable)
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),

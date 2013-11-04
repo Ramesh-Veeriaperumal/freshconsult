@@ -11,7 +11,6 @@ before_filter :check_zendesk_import_status, :only => :index
     
     @item = current_account.build_zendesk_import({:status=>true })   
     if @item.save
-       @item.attachments.create(:content => params[:zendesk][:file], :description => 'zen data', :account_id => @item.account_id)
        handle_zen_import
        flash[:notice] =  t(:'flash.data_import.zendesk.success')
        redirect_to  admin_home_index_url
@@ -29,7 +28,8 @@ before_filter :check_zendesk_import_status, :only => :index
                   :zendesk =>{:url => params[:zendesk][:url], 
                               :user_name => params[:zendesk][:user_name],
                               :user_pwd => params[:zendesk][:user_pwd],
-                              :files => params[:import][:files]
+                              :files => params[:import][:files],
+                              :file_url => params[:zendesk][:file_url]
                               }
                   }
    

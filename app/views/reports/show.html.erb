@@ -90,6 +90,10 @@ jQuery(document).ready(function() {
 				<th>
 					<%= t('reports.summary_report.avg_response_time').html_safe %>
 				</th>
+
+				<th>
+					<%= t('reports.summary_report.avg_resolution_time').html_safe %>
+				</th>
 			</tr>
 		</thead>
 		<% @current_object.each do |obj| %>
@@ -116,7 +120,7 @@ jQuery(document).ready(function() {
 			fcr_percentage = percentage(data.fetch(:fcr,0).to_i,resolved_count)
 			afrt = data.fetch(:average_first_response_time, 0)
 			art = data.fetch(:average_response_time, 0)
-
+			areslt = data.fetch(:average_resolution_time, 0)
 			%>
 			<td>
 				<%= resolved_count %>
@@ -141,6 +145,9 @@ jQuery(document).ready(function() {
 			<td>
 				<%= timediff_in_words(art) %>
 			</td>
+			<td>
+				<%= timediff_in_words(areslt) %>
+			</td>
 		</tr>
 		<% end %>
 		<%if @report_data.key?("Unassigned")
@@ -150,6 +157,7 @@ jQuery(document).ready(function() {
 			fcr_percentage = percentage(data.fetch(:fcr,0).to_i,resolved_count)
 			afrt = data.fetch(:average_first_response_time, 0)
 			art = data.fetch(:average_response_time, 0)
+			areslt = data.fetch(:average_resolution_time, 0)
 		%>
 		<tr class="<%= cycle("odd", "even") %>">
 			<td><%=t('filter_options.unassigned')%></td>
@@ -175,6 +183,9 @@ jQuery(document).ready(function() {
 			</td>
 			<td>
 				<%= timediff_in_words(art) %>
+			</td>
+			<td>
+				<%= timediff_in_words(areslt) %>
 			</td>
 		</tr>
 		<%end%>

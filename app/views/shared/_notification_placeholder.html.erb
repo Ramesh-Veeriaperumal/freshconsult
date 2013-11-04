@@ -11,7 +11,19 @@
 
 
 	jQuery("#placeholder-list-1 a").click(function(ev){       
+		
       if(active_email_body.get(0)){
+
+  			//Checking if there is a visible Redactor with focus.
+				//If so, changing the active_email_body to that.
+
+				if(active_email_body.is('input')) {
+					var visible_redactors_with_focus = jQuery('.redactor_box.redactor_focus:visible');
+					if(visible_redactors_with_focus.length > 0) {
+						active_email_body = visible_redactors_with_focus.first().find('textarea');
+					}
+				}
+
         var placeHolderText = jQuery(this).data("placeholder");  
         
 

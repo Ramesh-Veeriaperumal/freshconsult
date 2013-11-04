@@ -1,243 +1,132 @@
 <% javascript_tag do %>
 	var active_email_body = null;
 	jQuery(document).ready(function(){
-		var active_template = null;
-		var active_link     = null;
-		var notifyType =$H();
-		var hideData=null;
-		var editorName =null;
-		jQuery("a.notify_check").on("click", function(ev){
-			//jQuery(active_template).hide();
-			hideData = (jQuery(this).parents("tr").attr("notify_type"));
-			var emailTr = jQuery(this).parents("tr").next();
-			if(active_link != null && active_link == this){
-				jQuery(active_template).hide(); 
-				jQuery("#"+active_link.getAttribute("showdiv")).hide();
-				active_link = null;
-			}
-			else{			
-				jQuery(active_template).hide();	
-				jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
-				jQuery('#place-dialog').hide();
-				
-				active_template = jQuery(emailTr).show(); 
-				jQuery("#"+this.getAttribute("showdiv")).show();
-				
-				active_link = this;
-
-
-				var template_name=jQuery("#"+active_link.getAttribute("showdiv")).get(0).id;
-				var index =template_name.indexOf('_div');
-				editorName=template_name.substring(0,index);
-				lang = "<%=current_account.language%>";
-				invokeRedactor(editorName+"_"+hideData);
-				active_email_body=null;
-					
-			}
-		});
-	jQuery("a.close_template").on("click", function(ev){
-		
-			jQuery(active_template).hide();	
-			jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
-			jQuery('#place-dialog').hide();
-			hideData=null;
-			active_link = null;
-	});
-		
-	jQuery("a.reset_template").on("click", function(ev){
-      jQuery(this).prevAll("input[name$=_subject_template]")
-        .val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
-			template = jQuery(this).prevAll("textarea.desc_info");
-			hidname=editorName+"_"+hideData+"_hid";
-			 
-
-			jQuery("#"+editorName+"_"+hideData).setCode(jQuery(this).prevAll("input[name$="+hidname+"]").val());
-			
-		  agent_select = jQuery(this).find("select.customSelect");
-		  jQuery.each(agent_select.children("options"), function(i, item){
-    	     item.removeAttribute("selected");
-		  });         
-		  agent_select.val((agent_select.data('default')+"").split(","));		  
-		  agent_select.trigger("liszt:updated");
-	});
-
-
-		
-		jQuery("#Updateform").submit(function(){
-			allNotificationsDom   = jQuery("tr.main_rows");
-			var allNotifications  = $H();
-			var notifyAgents = $H();
-			var currentNotify	  = 0;
-			jQuery.each(allNotificationsDom, function(index, item){
-				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_subject_template: "", agent_subject_template: "", requester_template: "", agent_template: "" };
-				currentNotify 	  = item.getAttribute("notify_type");
-				jQuery.each(jQuery(item).find("input.checkbox"), function(index, checkItem){
-					tempHash[checkItem.name] = (checkItem.checked)?1:0;		
-				});
-				
-				jQuery.each(jQuery(item).next().find("input[name$=_subject_template]"), function(index, textItem){
-					tempHash[textItem.name] = textItem.value;
-				});
-				
-				jQuery.each(jQuery(item).next().find("textarea"), function(index, textareaItem){
-					
-				tempHash[textareaItem.name] = textareaItem.value;
-			
-				});
-				
-				notifyAgents.set(currentNotify, jQuery("#notify_agents_"+currentNotify).val());
-				allNotifications.set(currentNotify, tempHash);
+		jQuery('[name=timer]').change(function() {
+		  var form_data = {};
+		  form_data[jQuery(this).data('type')] = jQuery(this).is(':checked');
+			jQuery.ajax({
+				type: "PUT",
+				dataType: 'script',
+				url: jQuery(this).data('url'),
+				data: form_data,
 			});
-			jQuery("#AllNotification").val(allNotifications.toJSON()); 
-			jQuery("#NotifyAgents").val(notifyAgents.toJSON());
 		});
-
-
-		jQuery('.link_placeholder').live("click", function(ev){
-		    ev.preventDefault();
-				jQuery("#"+editorName+"_"+hideData).live("click",function(){
-			});
-				jQuery('#place-dialog').slideDown();	
-
-		});
-       jQuery('.redactor_editor').live('click', function(){
-					active_email_body = jQuery("#"+editorName+"_"+hideData);	
-		});	
-		
-			
 	});
 <% end %>
 
-<h3 class="title"><%=t('email_notifications.title')%></h3>
-<div>
-	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
-	<%= f.hidden_field :notification_data, { :id => "AllNotification" } %>
-	<%= f.hidden_field :notifyagents_data, { :id => "NotifyAgents" } %>
-	<div class="grid">
-		<table border="0">
-			<tr>
-				<th><%=t('email_notifications.event')%></th>
-				<th><%=t('email_notifications.requestor_notification')%></th>
-				<th><%=t('email_notifications.agent_notification')%></th>
-			</tr>
-			<% @notifications.each do |item| %>
-			<% data = item[:obj] %>
-			<%if data[:notification_type] == EmailNotification::DEFAULT_REPLY_TEMPLATE%>
-			<tr class="special_row">
-				<td colspan="3">
-					<div></div>
-				</td>
-			</tr>
-			<tr class="main_rows" notify_type=<%= data.id %>>
-				<td><%= item[:type] %> 
-				<span class="notif-link">
-					<% if (item[:requester])  %>
-						<% if (item[:userSelect] == false )  
-						   	 checkStyle = "visibility:hidden" 
-						   end %>
-						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check" id="agent_reply_template_id"><%=t('email_notifications.edit_reply_template')%> </a>
-					<% end %>
-				</span	>
-					</td>
-					<td>&nbsp;
-				</td>
-			<%else%>
-			<tr class="main_rows" notify_type=<%= data.id %>>
-				<td><%= item[:type] %> </td>
-				<td>
-					<% if (item[:requester])  %>
-						<% if (item[:userSelect] == false )  
-						   	 checkStyle = "visibility:hidden" 
-						   end %>
-						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check" > <%=t('email_notifications.customize_email')%> </a>
-					<% end %>
-					&nbsp;
-				</td>
-			<%end%>
-				<td>
-					<% if (item[:agent])  %>
-						<% if (item[:agentSelect] == false )  
-						   	 checkStyle = "visibility:hidden" 
-						   end %>
-						<input type="checkbox" style="<%=checkStyle%>" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "agent_template_div_#{data.id}" %>' class="notify_check" id='<%= "agent_id_#{data.notification_type}" %>' ><%=t('email_notifications.customize_email')%></a>
-					<% end %>
-					&nbsp;					
-				</td>				
-			</tr>
-			<tr style="display:none;" notify_type=<%= data.id %>>
-				<td colspan="3">
-					<div class="requester_div" style="display:none;" id='<%="requester_template_div_#{data.id}" %>'>
-						<%if item[:placeholder] != false %>
-							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
-						<% end %>
-						 <%if data[:notification_type] == EmailNotification::DEFAULT_REPLY_TEMPLATE%>
-						<h4 class="title"><%=t('email_notifications.default_reply_template_title')%></h4> 
-						<div class="info-data"><%=t('email_notifications.default_reply_template_info')%></div>
-						 <%else%>
-						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
-            <input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />              
-						<label><%= t('email_notifications.subject') %></label>
-						
-						<input type="text" name="requester_subject_template" class="text" value="<%= h ("#{data.requester_subject_template}") %>" />
-						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
-							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
-						<%end%>						
-						<%end%>		
-						<label><%= t('message') %></label>
-						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" name="<%= "requester_template_#{data.id}_hid"%>"/>
-						
-						<textarea name="requester_template" class="desc_info requesteremail" id="<%="requester_template_#{data.id}"%>" ><%=sanitize( h("#{data.requester_template}"), :tags => %w(p span strong))%></textarea>
-						<div class="seperator"></div>						
-						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
-					</div>
-					<div class="agent_div" style="display:none;" id='<%="agent_template_div_#{data.id}"%>'>
-						<%if item[:placeholder] != false %>
-							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
-						<% end %>
-						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
-						 
-						<input type="hidden" name="agent_subject_template_hid" value="<%= h ("#{data.agent_subject_template}") %>" />						    
-						<label><%= t('email_notifications.subject') %></label>
-						<input type="text" class="text" name="agent_subject_template" value="<%= h ("#{data.agent_subject_template}") %>" />						
-						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
-							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
-						<%end%>
-											     
-						<label><%= t('message') %></label>
-						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" name="<%= "agent_template_#{data.id}_hid"%>"/>
-						<textarea name="agent_template" class="desc_info agentemail" id="<%= "agent_template_#{data.id}"%>"><%=sanitize( h("#{data.agent_template}"), :tags => %w(p span strong))%></textarea>
-						     
-						<% if data[:notification_type] == EmailNotification::NEW_TICKET %>
-							<label><%= t('agent.title') %></label>         
-							<%= select_tag "notify_agents_#{data.id}", options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> t('email_notifications_agent_selection_msg'), :class => "customSelect", "data-default" => data.agents.collect{|a| a.id}.join(",").html_safe } %>
-						<% end %>                                
-						<div class="seperator"></div>
-						
-						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
-					</div> 
-				</td>
-			</tr>
-			<% end %> 
-			
-		</table>
+<div class="list-page email-notification">
+	<div class="list-page-header"> 
+		<h3 class="lead"><%= t('email_notifications.title')%></h3>
 	</div>
+	<ul class="tabs nav-tabs" id="email-notifications-tabs">
+		<li class="first active">
+			<a id="agent-tab" data-toggle="tab" href="#agent"><%=t('email_notifications.agent_notifications')%></a>
+		</li>
+		<li >
+			<a id="requester-tab" data-toggle="tab" href="#requester"><%=t('email_notifications.requestor_notifications')%></a>
+		</li>
+		<li>
+			<a id="template-tab" data-toggle="tab" href="#template"><%=t('email_notifications.notification_template')%></a>
+		</li>
+	</ul>
+	<div class="list-page-body tab-content">
+		<div class="tab-pane active" id="agent"> 
+			<table class="table table-striped">
+					<% @agent_notifications.each do |item| %>						
+							<tr>
+								<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if  !(item.can_turn_off_for_agent?)  %>>
+									<% if !(item.can_turn_off_for_agent?) %>	
+										<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.agent_notification) ? "checked" : "" %> data-disable="true" >
+									<%else%>
+										<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.agent_notification) ? "checked" : "" %> data-type="email_notification[agent_notification]" data-url=<%=admin_email_notification_path(item.id) %> >
+									<%end%> 
+								</td>
+								<td>
+									<span class="vertical-alignment event-name">
+										<strong>
+										<a href="<%=admin_edit_notification_path(:id => item.id, :type =>"agent_template") %>"><%= t("#{item.token}") %></a>
+										</strong>
+									</span>
+								</td>
+									<td class="text-right">
+										<% if (item.outdated_agent_content == true ) %>
+											<i class="common-icons-outdated"></i>
+											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+									<%end%>	
+									</td>
+								
+								<td class="text-right">
+									<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"agent_template"), :class => 'btn btn-mini') %>
+								</td>
+							</tr>
+					<%end%>		
+				</table>
+			</div>
+			<div class="tab-pane hide" id="requester"> 
+				<table class="table table-striped">
+					<% @user_notifications.each do |item| %>
+							<tr>
+								<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(item.can_turn_off_for_requester?) %>>
+									<% if !(item.can_turn_off_for_requester?) %>
+										<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> data-disable="true"  >
+									<%else%> 	
+										<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(item.id) %>  >
+									<%end%>	
+								</td>
+								<td>
+									<span class="vertical-alignment event-name">
+										<strong>
+										<a href="<%= admin_edit_notification_path(:id => item.id, :type =>"requester_template")%>"> <%= t("#{item.token}") %></a>
+										</strong> 
+									</span>	
+								</td>
 
-		<div class="email-notif-button-container">
-			<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", { :class => "uiButton floatl" } %>
-			<div class="notif-button"><%= f.submit t('save'), { :class => "uiButton floatl " } %></div>
-		</div>
-	<% end %>
+									<td class="text-right">
+										<% if (item.outdated_requester_content == true ) %>
+											<i class="common-icons-outdated"></i>
+											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+										<%end%>	
+									</td>
+								
+								<td class="text-right">
+									<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"requester_template"), :class => 'btn btn-mini' ) %>
+								</td>
+							</tr>
+					<%end%>
+				</table>
+			</div>
+			<div class="tab-pane hide" id="template"> 
+				<table class="table table-striped ">
+					<% @reply_templates.each do |item| %>	
+						<tr>
+							<td class='email-tip'>
+								<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> data-disable="true" >
+							</td>
+							<td>
+								<span class="vertical-alignment event-name">
+									<strong>
+									<a href="<%= admin_edit_notification_path(:id => item.id, :type =>"reply_template")%>"><%= t("#{item.token}") %></a>
+									</strong>
+								</span>
+							</td>
+								<td class="text-right">
+									<% if (item.outdated_requester_content == true ) %>
+										<i class="common-icons-outdated"></i>
+										<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+									<%end%>	
+								</td>
+								
+							<td class="text-right">
+								<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"reply_template"), :class => 'btn btn-mini') %>
+							</td>
+						</tr>
+					<%end%>	
+				</table>	
+			</div>
+	</div>
 </div>
 
-<% content_for :pagefixed do %>
-	<%= render :partial => "shared/notification_placeholder" %>
-<% end %>
 
 <% content_for :sidebar do %> 
-	<%= render :partial => "helpnote" %>	
+	<%= render :partial => "helpnoteindex" %>	
 <% end %>

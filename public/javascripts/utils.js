@@ -93,9 +93,9 @@ function pad2(number) {
 
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
-	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer
-	
-	source.onmousedown = function () { return false; };						// Other browsers
+  if (document.all) source.onselectstart = function () { return false; }; // Internet Explorer
+  
+  source.onmousedown = function () { return false; };           // Other browsers
 };
 
 // Image error problem
@@ -143,15 +143,15 @@ function getParameterByName(name, url)
 
 // Reorder show hide functions
 function showSortableForm(buttonid, listid, formid){
-	jQuery("#"+listid).hide();
-	jQuery("#"+buttonid).hide();
-	jQuery("#"+formid).fadeIn(300);
+  jQuery("#"+listid).hide();
+  jQuery("#"+buttonid).hide();
+  jQuery("#"+formid).fadeIn(300);
 }
 
-function hideSortableForm(buttonid, listid, formid){		
-	jQuery("#"+listid).fadeIn(300);
-	jQuery("#"+buttonid).show();
-	jQuery("#"+formid).hide();
+function hideSortableForm(buttonid, listid, formid){    
+  jQuery("#"+listid).fadeIn(300);
+  jQuery("#"+buttonid).show();
+  jQuery("#"+formid).hide();
 }
 
 //Bitly url shortner
@@ -174,11 +174,11 @@ function get_short_url(long_url, callback)
 
 // Delay in typing of search text
 var delay = (function(){
-	var timer = 0;
-	return function(callback, ms){
-	    clearTimeout (timer);
-	    timer = setTimeout(callback, ms);
-	};
+  var timer = 0;
+  return function(callback, ms){
+      clearTimeout (timer);
+      timer = setTimeout(callback, ms);
+  };
 })();
 
 // Inserting Text at the place where a cursor is currently
@@ -260,16 +260,16 @@ function canned_response_submit(url, method, params){
 }
 
 function setSelRange(inputEl, selStart, selEnd) { 
-	 if (inputEl.setSelectionRange) { 
-	  inputEl.focus(); 
-	  inputEl.setSelectionRange(selStart, selEnd); 
-	 } else if (inputEl.createTextRange) { 
-	  var range = inputEl.createTextRange(); 
-	  range.collapse(true); 
-	  range.moveEnd('character', selEnd); 
-	  range.moveStart('character', selStart); 
-	  range.select(); 
-	 } 
+   if (inputEl.setSelectionRange) { 
+    inputEl.focus(); 
+    inputEl.setSelectionRange(selStart, selEnd); 
+   } else if (inputEl.createTextRange) { 
+    var range = inputEl.createTextRange(); 
+    range.collapse(true); 
+    range.moveEnd('character', selEnd); 
+    range.moveStart('character', selStart); 
+    range.select(); 
+   } 
 }
 
 function setCaretToPos(input, pos) {
@@ -285,7 +285,7 @@ function construct_reply_url(to_email, account_full_domain){
    reply_email  = "@"+account_full_domain;
 
    if(email_domain.toLowerCase() == account_full_domain){
-      reply_email = email_name + reply_email;		
+      reply_email = email_name + reply_email;   
    }
    else{
       reply_email = email_domain.replace(/\./g,'') + email_name + reply_email;
@@ -314,7 +314,7 @@ function setPostParam(form, name, value){
                child_quote.toggle();
             });
             jQuery(item).removeClass("request_mail");
-            jQuery(item).attr("data-quoted", true);	
+            jQuery(item).attr("data-quoted", true); 
       }
    }
 
@@ -422,7 +422,7 @@ active_dialog = null;
  }; 
 
  $(document).bind('mousedown', function(e) {       
-	 if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+   if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
   if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
@@ -897,3 +897,17 @@ jQuery.scrollTo = function(element, options) {
       scrollTop: el.offset().top - opts.offset
     }, opts.speed);
 };
+
+// Window tab section based on anchor url
+function hashTabSelect(){
+  if(window.location.hash != '') {
+    hash = window.location.hash.split('/');
+    jQuery.each(hash, function(index, value){
+      setTimeout(function(){
+        catchException(function(){ 
+          jQuery(value + "-tab").trigger('click') 
+        }, "Error in File globalinit.js");
+      }, ((index+1)*10) )
+    })
+  }
+}

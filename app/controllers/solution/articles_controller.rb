@@ -22,8 +22,8 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
     respond_to do |format|
       format.html
-      format.xml  { render :xml => @article.to_xml(:include => :folder) }
-      format.json { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
+      format.xml  { render :xml => @article }
+      format.json { render :json => @article }
     end    
   end
 
@@ -59,6 +59,7 @@ class Solution::ArticlesController < ApplicationController
       if @article.save
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
+        format.json  { render :json => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
@@ -78,6 +79,7 @@ class Solution::ArticlesController < ApplicationController
       if @article.update_attributes(params[nscname])  
         format.html { redirect_to @article }
         format.xml  { render :xml => @article, :status => :created, :location => @article }     
+        format.json  { render :json => @article, :status => :ok, :location => @article }    
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
@@ -92,6 +94,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(solution_category_folder_url(params[:category_id],params[:folder_id])) }
       format.xml  { head :ok }
+      format.json { head :ok }
     end
   end
    

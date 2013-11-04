@@ -311,6 +311,9 @@ FD.Util = {
             FD.Util.setAgentOptions(FD.all_responders)
         }
     },
+    validate_time_entry : function(time_entry){
+        return (/(^[0-9]*$)|(^[0-9]*:([0-5][0-9]{0,1}|[0-9])$)|(^[0-9]*\.{1}[0-9]+$)/).test(time_entry);
+    },
     showTicket : function(id){
         alert(id);
         location.href="#tickets/show/"+id;

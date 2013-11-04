@@ -1,12 +1,14 @@
 
 
 class Import::Attachment
-  attr_accessor :id , :attach_url , :model, :account
-  def initialize(id ,attach_url , model)
-    self.id = id
-    self.attach_url = attach_url
-    self.model = model
+  attr_accessor :id , :attach_url , :model, :account, :username, :password
+  def initialize(params={})
+    self.id = params[:item_id]
+    self.attach_url = params[:attachment_url]
+    self.model = params[:model].to_sym
     self.account = Account.current
+    self.username = params[:username]
+    self.password = params[:password]
   end
   
   def perform
@@ -23,11 +25,12 @@ class Import::Attachment
     end
     if @item
      begin
-        file = RemoteFile.new(attach_url)
+        file = RemoteFile.new(attach_url, username, password)
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
         attachment.save!
       rescue => e
-        puts "Attachmnet exceed the limit!"
+        puts "#{e.message}\n#{e.backtrace.join("\n")}"
+        puts "Attachment exceed the limit!"
         NewRelic::Agent.notice_error(e)
       ensure
         if file

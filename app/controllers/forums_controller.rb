@@ -55,6 +55,7 @@ class ForumsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => I18n.t('forum.forum_created')) }
         format.xml  { render :xml => @forum,:status => 200 }
+        format.json  { render :json => @forum,:status => :created }
       end
     else
       respond_to do |format|
@@ -70,6 +71,7 @@ class ForumsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to category_forum_path(@forum_category,@forum) }
         format.xml  { head 200 }
+        format.json { head 200 }
       end
     else
      respond_to do |format|
@@ -93,6 +95,7 @@ class ForumsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to categories_path }
       format.xml  { head 200 }
+      format.json { head 200 }
     end
   end
 

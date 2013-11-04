@@ -15,20 +15,20 @@ module APIHelperMethods
       raise "Not able to parse the query."
     end
   end
- 
+
   def validate(value,column)
     raise "Error : Invalid value passed" if value.match(COLUMNS_REGEX[column]).nil?
     value.match(COLUMNS_REGEX[column])[0]
   end
- 
+
   #white listed colums.
   ALLOWED_QUERY_COLUMNS =["email","phone","mobile"]
- 
+
   #operator conversion
   OPERATORS = {"is"=>"=","like"=>"like"}
- 
+
   #add the appropriate regex here.
   COLUMNS_REGEX ={"email"=>User::EMAIL_REGEX,"phone"=>/\d+/,"mobile"=>/\d+/}
- 
+
 
 end
