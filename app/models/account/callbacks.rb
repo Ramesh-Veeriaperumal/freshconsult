@@ -64,14 +64,19 @@ class Account < ActiveRecord::Base
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
-    def set_shard_mapping
+    def create_shard_mapping
       shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
       shard_mapping.domains.build({:domain => full_domain})  
       populate_google_domain(shard_mapping) if google_account?
-      if shard_mapping.save
-        self.id = shard_mapping.id
-      else
-        errors.add_to_base("Domain not available")
+      shard_mapping.save!
+      self.id = shard_mapping.id
+    end
+
+    def set_shard_mapping
+      begin
+        create_shard_mapping
+      rescue
+        errors.add_to_base("Domain Not available !")
         false
       end
     end
