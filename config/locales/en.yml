@@ -2867,6 +2867,7 @@ en:
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
+    private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
     integrations:      
       jira: 
