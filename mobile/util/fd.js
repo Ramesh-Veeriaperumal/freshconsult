@@ -317,5 +317,20 @@ FD.Util = {
     showTicket : function(id){
         alert(id);
         location.href="#tickets/show/"+id;
+    },
+    deleteTimer : function(id,ticket_id){
+        var ajaxOpts = {
+            url: '/helpdesk/time_sheets/'+id,
+            params:{
+                format:'xml',
+                '_method':'delete',
+                'action':'destroy'
+            },
+            scope:this
+        },
+        ajaxCallb = function(res){
+            location.href="#tickets/timer/"+ticket_id;
+        };
+        FD.Util.ajax(ajaxOpts,ajaxCallb,this,false);
     }
 }

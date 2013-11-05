@@ -9,7 +9,7 @@ Ext.define("Freshdesk.view.Timer", {
         itemTpl: Ext.create('Ext.XTemplate',
                 ['<tpl for=".">',
                       '<div class="time-spent-container">',
-                        '{time_entry.timespent}',  
+                        '{time_entry.timespent:this.formatTime}',  
                       '</div>',
                       '<div> ', 
                         '<span class="agent-name">{time_entry.agent_name}</span>',
@@ -27,6 +27,15 @@ Ext.define("Freshdesk.view.Timer", {
                 {
                         time_in_words : function(item){
                             return FD.Util.humaneDate(item);
+                        },
+                        formatTime : function(timespent){
+                            var minutes_spent = (((timespent)%1)*0.6);
+                            var mins = parseFloat(minutes_spent.toFixed(2));
+                            var mins_displayed = parseInt(mins*100);
+                            if(mins_displayed<10)
+                            mins_displayed = "0"+mins_displayed;
+                            var hours_spent = parseInt(timespent);
+                            return hours_spent+":"+mins_displayed;
                         },
                         formatedDate : function(item){
                             return FD.Util.formatedDate(item);
