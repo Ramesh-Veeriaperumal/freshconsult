@@ -71,8 +71,8 @@ module Mobile::Actions::Ticket
                  :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
                     :source_name, :is_closed, :to_cc_emails,:conversation_count, 
-                    :selected_reply_email, :from_email, :is_twitter, :is_facebook, 
-                    :fetch_twitter_handle, :is_fb_message, :formatted_created_at , :ticket_notes],
+                    :selected_reply_email, :from_email, :is_twitter, :is_facebook,
+                    :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , :ticket_notes],
       :include => json_inlcude
     }
     to_json(options,false) 
@@ -113,4 +113,9 @@ module Mobile::Actions::Ticket
     closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
     subject_style(self,closed_status)
   end
+
+  def fetch_tweet_type
+    tweet.tweet_type unless tweet.blank?
+  end
+
 end

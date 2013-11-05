@@ -45,9 +45,9 @@ module Mobile::Controllers::Ticket
       ]
       top_views_array = [].concat(default_views).concat(dynamic_views)
       top_views_array;
-    end
+  end
     
-    def get_summary_count
+  def get_summary_count
       summary_count_array = [
         { :id => "overdue",    :value => filter_count(:overdue),      :name => t("helpdesk.dashboard.summary.overdue")},
         { :id => "open",       :value => filter_count(:open),         :name => t("helpdesk.dashboard.summary.open")},
@@ -56,7 +56,7 @@ module Mobile::Controllers::Ticket
         { :id => "new",        :value => filter_count(:new),          :name => t("helpdesk.dashboard.summary.unassigned")}
       ]
       summary_count_array;
-    end
+  end
 
   private
     def add_cc_field fields, field
@@ -74,4 +74,9 @@ module Mobile::Controllers::Ticket
           });
       end
     end
+
+  def twitter_handles_map
+    twitter_handle = current_account.twitter_handles.map { |handle| {:id => handle.id, :name => handle.formatted_handle}}
+  end
+
 end
