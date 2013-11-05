@@ -11,5 +11,8 @@ class Search::UpdateSearchIndex
       @update_item.class.index_name @update_item.search_alias_name
       @update_item.tire.update_index_es
     end
+    ensure
+      key = Redis::RedisKeys::SEARCH_KEY % { :account_id => args[:account_id], :klass_name => args[:klass_name], :id => args[:id] }
+      Search::Job.remove_job_key(key)
   end
 end

@@ -118,13 +118,13 @@ def init_es_indexing(es_account_ids)
       ENV['ACCOUNT_ID'] = account_id.to_s
       Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
     else
-      puts '='*100, ' '*10+"Index already exists for Account ID: #{account_id}. Please use reindex task for Account ID: #{account_id}", '='*100, ""
+      puts '='*100, ' '*10+"Index already exists for Account ID: #{account_id}. Please use partial_reindex task for Account ID: #{account_id}", '='*100, ""
       existing_accounts.push(account_id)
     end
     Account.reset_current_account
    end
   end
-  puts '='*100, ' '*10+"Index already exists for following accounts: #{existing_accounts.inspect}. You can use reindex task to index the same", '='*100, "" unless existing_accounts.blank?
+  puts '='*100, ' '*10+"Index already exists for following accounts: #{existing_accounts.inspect}. You can use partial_reindex task to index the same", '='*100, "" unless existing_accounts.blank?
 end
 
 def init_partial_reindex(es_account_ids)
