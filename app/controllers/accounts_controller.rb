@@ -48,7 +48,7 @@ class AccountsController < ApplicationController
       :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain) }, 
       :callback => params[:callback]
     else
-      render :json => { :success => false, :errors => @signup.errors.to_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 
     end    
   end
   
