@@ -6,7 +6,7 @@ run "sudo chmod 755 #{config.release_path}/script/runner"
 # All files in public/stylesheets/app will be ignored and cannot be checked in
 on_app_servers do
 	
-	if config.current_role == "app_master"
+	if config.current_role == "app_master" || config.current_role == "solo"
 		run "RAILS_ENV=#{config.node[:environment][:framework_env]} bundle exec rake cloudfront_assets:upload"
 	else
 		run "RAILS_ENV=#{config.node[:environment][:framework_env]} bundle exec rake cloudfront_assets:compile"
