@@ -92,10 +92,12 @@
 
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
-				active_email_body=jQuery('#' + current_tab);
 				jQuery('#place-dialog').slideDown();	
 
 		});
+		jQuery('.redactor_editor').live('click', function(){
+            active_email_body = jQuery("#"+ current_tab);        
+        }); 
 
 		jQuery('#default_help').click(function(ev){
 			ev.preventDefault();
