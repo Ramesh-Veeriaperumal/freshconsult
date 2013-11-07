@@ -25,7 +25,7 @@ VARule.seed_many(:account_id, :name, :rule_type, [
         :events => [
                       { :name => 'reply_sent' }
                     ],
-        :performer => { :type => Va::Performer::REQUESTER },
+        :performer => { :type => Va::Performer::CUSTOMER },
         :conditions => [
                           { :value => "2", :operator => 'is_not', :name => 'status' }
                       ]
