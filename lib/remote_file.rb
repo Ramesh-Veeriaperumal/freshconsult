@@ -3,10 +3,12 @@ require 'open-uri'
 require 'digest/sha1'
  
 class RemoteFile < ::Tempfile
+  require 'openssl'
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
  
    attr_accessor :open_uri_path, :username, :password
 
-  def initialize(path, username, password, tmpdir = Dir::tmpdir)
+  def initialize(path, username = nil, password = nil, tmpdir = Dir::tmpdir)
     @original_filename  = File.basename(path).split('=')[1] || File.basename(path)
     @remote_path        = path
     self.username = username
