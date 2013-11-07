@@ -6,5 +6,6 @@
 				:surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false } %>
 
 	<%= render :partial => 'shared/free_plan_message' %>
-	<%#render :partial => "quoted_text", :locals => { :ticket => @ticket, :note => @note } if @include_quoted_text %>
+
+	<%= hidden_ticket_identifier(@ticket) %>
 </div>

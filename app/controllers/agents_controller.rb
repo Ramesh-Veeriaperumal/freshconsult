@@ -19,6 +19,7 @@ class AgentsController < ApplicationController
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
+  before_filter :set_native_mobile, :only => :show
   
   def list
     respond_to do |format|
@@ -65,6 +66,7 @@ class AgentsController < ApplicationController
       format.html
       format.xml  { render :xml => @agent.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
       format.json { render :json => @agent.as_json(:include => :user) }
+      format.nmobile { render :json => @user.to_mob_json }
     end
   end
 

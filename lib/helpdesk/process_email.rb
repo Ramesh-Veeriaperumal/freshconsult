@@ -14,7 +14,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   MESSAGE_LIMIT = 10.megabytes
 
   def perform
-    from_email = parse_from_email
+    # from_email = parse_from_email
     to_email = parse_to_email
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
@@ -22,6 +22,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       encode_stuffs
+      from_email = parse_from_email
       kbase_email = account.kbase_email
       
       #need to format this code --Suman
@@ -87,10 +88,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   private
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
-      [ :html, :text ].each do |t_format|
+      [ :html, :text, :subject, :headers, :from ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s].strip()
-          if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
+          # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
@@ -109,7 +110,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
               end
             end
-          end
+          # end
         end
       end
     end
@@ -192,6 +193,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_headers(from_email, account)
       return ticket if can_be_added_to_ticket?(ticket, user)
+      ticket = ticket_from_email_body(account)
+      return ticket if can_be_added_to_ticket?(ticket, user)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)            
@@ -233,6 +236,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save_ticket!
+      rescue AWS::S3::Errors::InvalidURI => e
+        FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        raise e
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -263,6 +269,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def check_support_emails_from(account, ticket, user)
       ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
+    end
+
+    def ticket_from_email_body(account)
+      display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
     end
 
     def add_email_to_ticket(ticket, from_email, user)
@@ -408,11 +422,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       #Sanitizing the original msg   
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+        remove_identifier_span(sanitized_org_msg)
         original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+        remove_identifier_span(sanitized_old_msg)
         old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
       end
         
@@ -425,6 +441,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "</div>"
       end 
       {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
+    end
+
+    def remove_identifier_span msg
+      id_span = msg.css("span[title='fd_tkt_identifier']")
+      id_span.remove if id_span
     end
 
     def get_envelope_to

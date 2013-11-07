@@ -5,15 +5,16 @@ class ContactImportController < ApplicationController
    before_filter :disable_user_activation
    after_filter :enable_notification
    field_labels = [   I18n.t("contact_import.name"),
-                      I18n.t("contact_import.email"),
                       I18n.t("contact_import.job_title"),
-                      I18n.t("contact_import.tags"),
-                      I18n.t("contact_import.company"),
-                      I18n.t("contact_import.address"),
+                      I18n.t("contact_import.email"),
                       I18n.t("contact_import.work_phone"),
                       I18n.t("contact_import.mobile_phone"),
-                      I18n.t("contact_import.twitter_id"),                                           
-                      I18n.t("contact_import.background_info") ]
+                      I18n.t("contact_import.twitter_id"),  
+                      I18n.t("contact_import.company"),
+                      I18n.t("contact_import.address"),
+                      I18n.t("contact_import.tags"),                      
+                      I18n.t("contact_import.background_info"),
+                      I18n.t("contact_import.can_see_all_tickets_of_the_company") ]
                       
    map_fields :create, field_labels, 
                     :file_field => :file, 

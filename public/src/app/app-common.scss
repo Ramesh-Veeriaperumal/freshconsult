@@ -8819,14 +8819,14 @@ height: auto;
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; } 
 
-.autocomplete_requester_filter{
+.autocomplete_filter{
 	.select2-choices{
 		border-radius: 5px;
 	}
 	.select2-search-field{
 		height: 27px;
 	}
-	#s2id_requester_filter{
+	.select2-container{
 		width: 190px;
 	}
 }
@@ -10721,4 +10721,20 @@ label.last-label{ margin-bottom: 0px; }
       color: #0066cc;
     }
   }
+}
+//Contacts import
+.map_fields{
+	.sample_values{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		cursor: default;
+		max-width: 300px;
+		padding-left: 10px;
+		display: inline-block;
+		margin-top: 5px;
+	}
 }
