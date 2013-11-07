@@ -26,11 +26,7 @@ class Helpdesk::AutocompleteController < ApplicationController
   protected
 
   	def results
-  		@results ||= scoper.find (
-  			:all,
-  			:conditions => send("#{current_action}_conditions"),
-  			:limit => 100
-			)
+  		@results ||= scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
   	end
   	
   	def scoper
