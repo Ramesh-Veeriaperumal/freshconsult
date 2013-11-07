@@ -8819,14 +8819,14 @@ height: auto;
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; } 
 
-.autocomplete_requester_filter{
+.autocomplete_filter{
 	.select2-choices{
 		border-radius: 5px;
 	}
 	.select2-search-field{
 		height: 27px;
 	}
-	#s2id_requester_filter{
+	.select2-container{
 		width: 190px;
 	}
 }

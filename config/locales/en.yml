@@ -3382,7 +3382,8 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
-    requester_name_or_email: "Name or Email"
+    requester_placeholder: "Name or Email"
+    customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:

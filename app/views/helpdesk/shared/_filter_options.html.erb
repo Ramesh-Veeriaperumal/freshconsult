@@ -21,6 +21,9 @@
       else if(container == "requester"){
         value = jQuery('#requester_filter').val().toString() || '';
       }
+      else if(container == "customers"){
+        value = jQuery('#customers_filter').val().toString() || '';
+      }
       else if(container == "single_select"){
         if(jQuery('#created_at option:selected').val() != "any_time")
           value =  jQuery('#created_at option:selected').val();
@@ -70,8 +73,10 @@
             container = "nested_field"
           elsif c_hash[:name] == 'created_at'
             container = "single_select"
-          elsif  
-            container = (c_hash[:name] == 'requester') ? 'requester': (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+          elsif ['requester', 'customers'].include?(c_hash[:name])
+            container = c_hash[:name]
+          else
+            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
     	  <% 
@@ -83,7 +88,7 @@
                                 :ff_name     => c_hash[:ff_name],
                                 :container   => container } do %>
             <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe : c_hash[:name].html_safe %></h4>
-            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end 
         end %>
