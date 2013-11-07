@@ -266,12 +266,17 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-        last_reply = bind_last_reply(@ticket, @signature, false, true)
-        last_forward = bind_last_conv(@ticket, @signature, true)
-        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => last_reply}.to_json[1..-2]},#{{:last_forward => last_forward}.to_json[1..-2]},#{{:ticket_properties => ticket_props}.to_json[1..-2]}"
+        response = "{
+        #{@item.to_mob_json(false,false)[1..-2]},
+        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},
+        #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
+        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
+        #{{:last_forward => bind_last_conv(@ticket, @signature, true)}.to_json[1..-2]},
+        #{{:ticket_properties => ticket_props}.to_json[1..-2]}"
+        response << ",#{{:default_twitter_body_val => default_twitter_body_val(@ticket)}.to_json[1..-2]}" if @item.is_twitter?
+        response << ",#{{:twitter_handles_map => twitter_handles_map}.to_json[1..-2]}" if @item.is_twitter?
         response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
         response << "}";
-
         render :json => response
       }
       format.mobile {
