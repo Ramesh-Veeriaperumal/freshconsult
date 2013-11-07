@@ -271,16 +271,7 @@ class User < ActiveRecord::Base
     !agent?
   end
   alias :is_customer :customer?
-
-  def requester? ticket
-    self.id == ticket.requester_id
-  end
-  alias :is_requester :requester?
-
-  def requester_or_cc? ticket
-    requester?(ticket) || customer?
-  end
-
+  
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)
