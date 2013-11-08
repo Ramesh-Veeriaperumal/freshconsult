@@ -395,6 +395,7 @@ class User < ActiveRecord::Base
     update_attributes({:helpdesk_agent => false, :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+    email_notification_agents.destroy_all
   end
   
   def make_agent(args = {})
