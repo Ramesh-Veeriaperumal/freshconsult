@@ -25,15 +25,13 @@
               .append(_proxy)
               .bind("click", function(ev){
                 ev.preventDefault();
-                if(_checkbox.prop('disabled')){ return; }
                 $(this).toggleClass('active');
                 _checkbox
                   .prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'))
                   .trigger("change");
               });
-
-        if($(this).prop('disabled')){
-          $(_ibutton).addClass(opts.buttonDisabledClass);
+        if($(this).data('disable')){
+          $(_ibutton).addClass('toggle-disabled');
         }
         _container.append(_onLabel).append(_handle).append(_offLabel);
 
@@ -45,7 +43,6 @@
         // Updating the button class when a change event is triggered for the checkbox
         $(_checkbox).bind("change", function(ev){
           var _ibutton = $(this).data("button-dom");
-          $(_ibutton).toggleClass(opts.buttonDisabledClass, (opts.inverted ? !_checkbox.prop('disabled') : _checkbox.prop('disabled')));          
           $(_ibutton).toggleClass('active', (opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked')) );
         });
 
@@ -66,7 +63,6 @@
   // publicly accessible defaults
   $.fn.itoggle.defaults = {
     buttonClass: "toggle-button",
-    buttonDisabledClass: "toggle-disabled",
     checkedLabel: "on",
     uncheckedLabel: "off",
     activeClass: "",
