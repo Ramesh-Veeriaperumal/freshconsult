@@ -107,7 +107,6 @@
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , :collection => { :existing_email => :get }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
-    admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
     admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calendars
     admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }

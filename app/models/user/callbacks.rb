@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
 
 	before_validation :downcase_email
-  before_create :set_time_zone , :set_company_name 
+  before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_customer_privilege, :if => :customer?
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_update :populate_privileges, :if => :roles_changed?

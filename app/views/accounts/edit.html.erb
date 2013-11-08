@@ -4,9 +4,6 @@
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
 	jQuery(document).ready(function(){ 
-		if(<%=request.referrer.include?('email_notification')%>){
-			jQuery("#supported_language_list").animateHighlight();
-		}
 		jQuery("#ResetColors").click(function(){
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
 			jQuery("#TabColor").val("#006063").trigger("keyup");
@@ -22,16 +19,6 @@
 			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
 			}
 		});
-		jQuery("#account_submit").bind('click', function(ev){
-				var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
-				if(language_flag != -1 ){
-				ev.preventDefault(); 
-				alert("<%= t('account.same_language_alert')%>");
-				}
-		    if ((jQuery("#edit_form").valid()) && (jQuery('.portal_url').val() != "")) {
-		        totango.track("CNAME Updated", "Portal Customization");
-	      	}
-    	});
 	}); 
 <% end %>
 <div id="admin-account-rebraning-page" class="rebrand-page">
@@ -86,26 +73,11 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<%= portal.label :language, t('account.primary_language'), :class => "control-label"  %>
+							<%= portal.label :language, t('account.language'), :class => "control-label"  %>
 							<div class="controls">
 								<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
 							</div>
 						</div>
-						<% if feature?(:dynamic_content) %>
-							<% f.fields_for :account_additional_settings do |settings| %>
-								<div class="control-group" id="supported_language_list">
-									<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
-									<div class="controls">
-										<div class="row-fluid">
-											<%= settings.select :supported_languages, options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, :selected => @supported_languages_list ? @supported_languages_list.collect(&:to_sym) : []), {}, { :multiple => true, "data-placeholder"=>"select language", :class => "select2 span9" } %>
-										</div>
-										<div class="muted">
-											<%=t('account.info6')%>
-										</div>	
-									</div>					
-								</div>
-							<%end%>	
-						<%end%>	
 						<div class="control-group">
 							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
 							<div class="controls">
@@ -197,14 +169,13 @@
 			</div>
 		<% end %>
 	</div>
-
 	<hr>
 	<div class="row-fluid">
   		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
 		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "btn floatl" %>
 		<%= submit_tag t('account.save'), :class => 'btn btn-primary pull-right', :id => 'account_submit' %>
 	</div>
-	
+
 <% end %>
 </div>
 <% content_for :onload_script do %>

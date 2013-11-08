@@ -30,9 +30,7 @@
                   .prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'))
                   .trigger("change");
               });
-        if($(this).data('disable')){
-          $(_ibutton).addClass('toggle-disabled');
-        }
+
         _container.append(_onLabel).append(_handle).append(_offLabel);
 
         _checkbox.data("button-dom", _ibutton);

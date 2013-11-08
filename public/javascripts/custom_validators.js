@@ -206,11 +206,4 @@ $.validator.addMethod("trim_spaces", function(value, element){
 }, "Auto trim of leading & trailing whitespace");
 $.validator.addClassRules("trim_spaces", { trim_spaces: true });
 
-// Redactor validator
-$.validator.addMethod("required_redactor", function(value, element, param) {
-  return $(element).data('redactor').isEmpty();
-}, "This field is required.")
-$.validator.addClassRules("required_redactor", { required_redactor : true });
-
-
 })(jQuery);

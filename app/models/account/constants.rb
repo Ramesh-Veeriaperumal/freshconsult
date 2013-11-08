@@ -17,7 +17,7 @@ class Account < ActiveRecord::Base
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language, :enterprise_reporting, :dynamic_content],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :enterprise_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
     },
     
@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content ],
+        :css_customization, :advanced_reporting, :multiple_business_hours ],
       :inherits => [ :blossom ]
     },
 
@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :dynamic_content ],
+        :css_customization, :advanced_reporting ],
       :inherits => [ :blossom_classic ]
     },
 
