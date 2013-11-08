@@ -73,7 +73,7 @@
         _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser") //for not editing add new requester
 
-    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/.test(value)){
+    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/.test(value)){
         _returnCondition = true
         jQuery('#helpdesk_ticket_requester_id').val('') 
     }
