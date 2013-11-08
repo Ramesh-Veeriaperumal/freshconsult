@@ -198,15 +198,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
     return false unless save_without_session_maintenance
-    if (!deleted and !email.blank?)
-      if self.language.nil?
-        args = [ portal,false, params[:email_config]]
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
-          nil, 5.minutes.from_now) 
-      else
-        deliver_activation_instructions!(portal,false, params[:email_config])
-      end
-    end
+    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
     true
   end
 

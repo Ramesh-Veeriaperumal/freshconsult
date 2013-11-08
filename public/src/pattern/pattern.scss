@@ -9,7 +9,6 @@
  */
 
 @import "../app/lib/settings";
-@import "../app/lib/animations"; // Mixin for animation
 
 // Core variables and mixins
 @import "lib/variables"; // Modify this for custom colors, font-sizes, etc
@@ -44,7 +43,7 @@
 // Components: Nav
 @import "lib/navs";
 @import "lib/navbar";
-//@import "lib/breadcrumbs";
+@import "lib/breadcrumbs";
 @import "lib/adminbreadcrumbs";
 @import "lib/pagination";
 //@import "lib/pager";

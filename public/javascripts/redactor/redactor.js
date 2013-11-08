@@ -1082,9 +1082,6 @@ Redactor.prototype = {
 		}, this));
 
 	},	
-	isEmpty:function(e){
-		return (this.$editor.text().trim() !== "");
-	},
 	showAir: function(e)
 	{
 		$('.redactor_air').hide();
