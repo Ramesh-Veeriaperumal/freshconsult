@@ -13,13 +13,6 @@
 			});
 		});
 
-		jQuery(document).on('click', '#agent-dialog-cancel', function (ev) {
-			ev.preventDefault();
-			jQuery('#agent_dialog_form')
-					.resetForm()
-					.find('select').trigger('change');
-		});
-
 		if (<%=@supported_languages.blank? %>){
 			jQuery('#language-tab').hide();
 			jQuery('#last_saved_reset').hide();
