@@ -24,6 +24,18 @@ namespace :freshdesk_tire do
         $ rake freshdesk_tire:create_index ACCOUNT_ID='Id/Ids' CLASS='Article'
   DESC
 
+  class_import_comment = <<-DESC
+    - Class import task aborted!!!
+
+      * The class import runs with a default condition. If you want to manually specify condition please use
+        multi_class_import task. (The multi_class_import task can be done for one account at a time)
+      * Minimum number of account ids to be specified = 1
+      * Minimum number of classes to be specified = 1
+      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
+        in the ACCOUNT_ID variable
+        $ rake freshdesk_tire:class_import ACCOUNT_ID='Id/Ids' CLASS='Article'
+  DESC
+
   delete_indices_comment = <<-DESC
     - Delete indices task aborted!!!
       * Delete indices passed in the INDICES environment variable; separate multiple indices by comma.
@@ -82,6 +94,24 @@ namespace :freshdesk_tire do
       end
       account.es_enabled_account.update_attribute(:imported, true)
       Account.reset_current_account
+    end
+  end
+
+  task :class_import  => :environment do
+    begin
+      klasses = ENV['CLASS']
+      if ENV['CLASS'].blank?
+        puts '='*100, ' '*45+'USAGE', '='*100, class_import_comment, ""
+        exit(1)
+      end
+      es_account_ids = ENV['ACCOUNT_ID'].split(',')
+      es_account_ids.each do |account_id|
+        ENV['CLASS'] = import_classes(account_id, klasses)
+        ENV['ACCOUNT_ID'] = account_id.to_s
+        Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
+      end
+    rescue
+      puts '='*100, ' '*45+'USAGE', '='*100, class_import_comment, ""
     end
   end
 
