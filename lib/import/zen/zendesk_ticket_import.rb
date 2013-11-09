@@ -4,6 +4,6 @@ class Import::Zen::ZendeskTicketImport
   @queue = "zendeskTicketImport"
 
   def self.perform(args)
-  	Import::Zen::TicketImport.new(args[:ticket_xml])
+  	Import::Zen::TicketImport.new(args)
   end
 end

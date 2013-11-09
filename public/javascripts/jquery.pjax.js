@@ -4,6 +4,7 @@
 
 (function($){
 
+
 // When called on a container with a selector, fetches the href with
 // ajax into the container or with the data-pjax attribute on the link
 // itself.
@@ -86,7 +87,6 @@ function handleClick(event, container, options) {
     url: link.href,
     container: $(link).attr('data-pjax'),
     target: link,
-    fragment: null
   }
 
   pjax($.extend({}, defaults, options))
@@ -123,7 +123,6 @@ function handleSubmit(event, container, options) {
     data: $(form).serializeArray(),
     container: $(form).attr('data-pjax'),
     target: form,
-    fragment: null,
     timeout: 0
   }
 
@@ -153,7 +152,7 @@ function handleSubmit(event, container, options) {
 // Returns whatever $.ajax returns.
 function pjax(options) {
   options = $.extend(true, {}, $.ajaxSettings, pjax.defaults, options)
-
+  //hack for previous css
   if ($.isFunction(options.url)) {
     options.url = options.url()
   }
@@ -200,8 +199,7 @@ function pjax(options) {
     xhr.setRequestHeader('X-PJAX-Container', context.selector)
 
     var result
-
-    if (!fire('pjax:beforeSend', [xhr, settings]))
+    if (!fire('pjax:beforeSend', [xhr, settings, options]))
       return false
 
     options.requestUrl = parseURL(settings.url).href
@@ -233,20 +231,33 @@ function pjax(options) {
       locationReplace(container.url)
       return
     }
-
     pjax.state = {
       id: options.id || uniqueId(),
       url: container.url,
       title: container.title,
       container: context.selector,
-      fragment: options.fragment,
-      timeout: options.timeout
+      timeout: options.timeout,
+      data: $(options.target).data()
     }
-
+    for (var key in pjax.state.data) {
+      if (pjax.state.data.hasOwnProperty(key)) {
+            var obj = pjax.state.data[key];
+            if($.type(obj) == 'object')
+            {
+              pjax.state.data[key] = '';
+            }
+        }
+    }
     if (options.push || options.replace) {
-      window.history.replaceState(pjax.state, container.title, container.url)
+      try
+      {
+        window.history.replaceState(pjax.state, container.title, container.url)
+      }
+      catch(err)
+      {
+        window.location = container.url;
+      }
     }
-
     if (container.title) document.title = container.title
     context.html(container.contents)
 
@@ -279,39 +290,70 @@ function pjax(options) {
     fire('pjax:success', [data, status, xhr, options])
   }
 
-
+ 
   // Initialize pjax.state for the initial page load. Assume we're
   // using the container and options of the link we're loading for the
   // back button to the initial page. This ensures good back button
   // behavior.
   if (!pjax.state) {
+    var pjax_data = null;
+    if(Fjax.pjax_parallel_request != null)
+    {
+      pjax_data = Fjax.pjax_parallel_request;
+      Fjax.pjax_parallel_request = null;
+    }
     pjax.state = {
       id: uniqueId(),
       url: window.location.href,
       title: document.title,
       container: context.selector,
-      fragment: options.fragment,
-      timeout: options.timeout
+      timeout: options.timeout,
+      data: pjax_data
     }
+    cacheBackData.push(pjax_data);
     window.history.replaceState(pjax.state, document.title)
   }
+    
+  cacheBackData.push($(target).data());        
 
   // Cancel the current request if we're already pjaxing
   var xhr = pjax.xhr
   if ( xhr && xhr.readyState < 4) {
-    xhr.onreadystatechange = $.noop
-    xhr.abort()
+    if(cancelPopstate)
+    {
+      xhr.onreadystatechange = $.noop
+      xhr.abort()
+    }
+    else
+    {
+      cancelClick = true;
+      xhr.onreadystatechange = $.noop;
+      xhr.abort();
+    }
+  }
+  else
+  {
+    cancelClick = false;
+    cancelPopstate = false;
   }
 
   pjax.options = options
   var xhr = pjax.xhr = $.ajax(options)
-
   if (xhr.readyState > 0) {
     if (options.push && !options.replace) {
       // Cache current container element before replacing it
-      cachePush(pjax.state.id, context.clone().contents())
-
-      window.history.pushState(null, "", stripPjaxParam(options.requestUrl))
+      cachePush(pjax.state.id, '1');
+      if(cancelPopstate || cancelClick)
+      {
+        window.history.replaceState(null, "", stripPjaxParam(options.requestUrl))
+        cancelPopstate = false;
+        cancelClick = false;
+      }
+      else
+      {
+        window.history.pushState(null, "", stripPjaxParam(options.requestUrl))
+      }
+      
     }
 
     fire('pjax:start', [xhr, options])
@@ -352,50 +394,43 @@ function locationReplace(url) {
 // stuff yet.
 function onPjaxPopstate(event) {
   var state = event.state
-  //Temp . removed pjax on browser back button
-  if (state && state.container && false) {
-    var container = $(state.container)
+  if (state && state.container) {
+    if($.browser.opera)
+    {
+      window.location.href = state.url; 
+    }
+    var container = $(state.container);
     if (container.length) {
       var contents = cacheMapping[state.id]
 
       if (pjax.state) {
         // Since state ids always increase, we can deduce the history
         // direction from the previous state.
-        var direction = pjax.state.id < state.id ? 'forward' : 'back'
-
+        var direction = pjax.state.id < state.id ? 'forward' : 'back'; 
         // Cache current container before replacement and inform the
         // cache which direction the history shifted.
-        cachePop(direction, pjax.state.id, container.clone().contents())
+        cachePop(direction, pjax.state.id,'1');
+        $.xhrPool_Abort(); 
+
       }
 
       var popstateEvent = $.Event('pjax:popstate', {
         state: state,
         direction: direction
       })
-      container.trigger(popstateEvent)
 
+      cancelPopstate = true;
+      container.trigger(popstateEvent);
       var options = {
         id: state.id,
+        data: state.data,
         url: state.url,
         container: container,
         push: false,
-        fragment: state.fragment,
         timeout: state.timeout,
         scrollTo: false
       }
-
-      if (contents) {
-        container.trigger('pjax:start', [null, options])
-
-        if (state.title) document.title = state.title
-        container.html(contents)
-        pjax.state = state
-
-        container.trigger('pjax:end', [null, options])
-      } else {
-        pjax(options)
-      }
-
+        pjax(options);
       // Force reflow/relayout before the browser tries to restore the
       // scroll position.
       container[0].offsetHeight
@@ -583,25 +618,7 @@ function extractContainer(data, xhr, options) {
   // the page's title.
   obj.title = findAll($head, 'title').last().text()
 
-  if (options.fragment) {
-    // If they specified a fragment, look for it in the response
-    // and pull it out.
-    if (options.fragment === 'body') {
-      var $fragment = $body
-    } else {
-      var $fragment = findAll($body, options.fragment).first()
-    }
-
-    if ($fragment.length) {
-      obj.contents = $fragment.contents()
-
-      // If there's no title, look for data-title and title attributes
-      // on the fragment
-      if (!obj.title)
-        obj.title = $fragment.attr('title') || $fragment.data('title')
-    }
-
-  } else if (!/<html/i.test(data)) {
+  if (!/<html/i.test(data)) {
     obj.contents = $body
   } else if (! $data.is('html')) {
     //If none of top level tags are HTML, continue
@@ -627,6 +644,10 @@ function extractContainer(data, xhr, options) {
 var cacheMapping      = {}
 var cacheForwardStack = []
 var cacheBackStack    = []
+var cacheBackData = []
+var cancelPopstate = false;
+var cancelClick = false;
+
 
 // Push previous state id and container contents into the history
 // cache. Should be called in conjunction with `pushState` to save the
@@ -637,18 +658,23 @@ var cacheBackStack    = []
 //
 // Returns nothing.
 function cachePush(id, value) {
-  cacheMapping[id] = value
-  cacheBackStack.push(id)
 
+  cacheMapping[id] = value 
   // Remove all entires in forward history stack after pushing
   // a new page.
   while (cacheForwardStack.length)
+  {
     delete cacheMapping[cacheForwardStack.shift()]
+  }
 
   // Trim back history stack to max cache length.
   while (cacheBackStack.length > pjax.defaults.maxCacheLength)
+  {
     delete cacheMapping[cacheBackStack.shift()]
+  }
+
 }
+
 
 // Shifts cache from directional history cache. Should be
 // called on `popstate` with the previous state id and container
@@ -660,7 +686,8 @@ function cachePush(id, value) {
 //
 // Returns nothing.
 function cachePop(direction, id, value) {
-  var pushStack, popStack
+  var pushStack, popStack , style_list;
+ 
   cacheMapping[id] = value
 
   if (direction === 'forward') {

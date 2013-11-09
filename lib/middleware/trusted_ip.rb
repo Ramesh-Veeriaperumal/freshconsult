@@ -32,7 +32,7 @@ class Middleware::TrustedIp
   end
 
   def trusted_ips_enabled?
-    @current_account.features_included?(:whitelisted_ips) && 
+    @current_account.features?(:whitelisted_ips) && 
           (@current_account.whitelisted_ip_from_cache || {})[:enabled] 
   end
 

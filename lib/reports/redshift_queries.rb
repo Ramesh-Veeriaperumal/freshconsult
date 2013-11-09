@@ -13,7 +13,8 @@ class Reports::RedshiftQueries < Reports::Queries
 
 	def summary_report_metrics
 		%( #{select_resolved_tickets}, #{select_sla_tickets}, #{select_fcr_tickets},
-			#{select_avg_response_time_per_ticket}, #{select_avg_first_resp_time_per_ticket})
+			#{select_avg_response_time_per_ticket}, #{select_avg_first_resp_time_per_ticket},
+			#{select_avg_resolution_time_per_ticket})
 	end
 
 	def select_received_tickets

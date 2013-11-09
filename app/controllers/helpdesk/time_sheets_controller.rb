@@ -11,6 +11,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :create_permission, :only => :create 
   before_filter :timer_permission, :only => :toggle_timer
   before_filter :check_agents_in_account, :only =>[:create]
+  before_filter :set_mobile, :only =>[:index , :create , :update , :show]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -29,6 +30,9 @@ class Helpdesk::TimeSheetsController < ApplicationController
       end
        format.json do
         render :json=>@time_sheets.to_json()
+      end
+      format.mobile do
+        render :json=>@time_sheets.all(:order => "executed_at").to_json()
       end
     end
   end
@@ -194,6 +198,9 @@ private
       format.xml do 
         render :xml => result.to_xml and return 
       end
+      format.mobile {
+          render :json => {:success => true, :item => result}.to_json
+      }
       format.json do
         render :json => result.to_json and return 
       end

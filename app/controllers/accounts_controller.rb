@@ -238,7 +238,8 @@ class AccountsController < ApplicationController
   protected
     
     def choose_layout 
-      (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name)) ? 'signup_google' : 'application'
+      return "signup_google" if (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name))
+      request.headers['X-PJAX'] ? 'maincontent' : 'application'
 	  end
 	
     def load_object

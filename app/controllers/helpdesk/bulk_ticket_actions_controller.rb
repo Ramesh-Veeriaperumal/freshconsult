@@ -3,70 +3,67 @@ require 'fastercsv'
 class Helpdesk::BulkTicketActionsController < ApplicationController
   include ActionView::Helpers::TextHelper
   include ParserUtil
-  include HelpdeskControllerMethods  
-  include Conversations::Twitter
-  include Conversations::Facebook
+  include HelpdeskControllerMethods
 
   before_filter :load_multiple_items, :only => :update_multiple
 
   def update_multiple             
-    # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
-    #           params[nscname][:custom_field].nil?
     failed_tickets = []
-    reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
+    
     @items.each do |ticket|
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
       ticket.save_ticket
-      if privilege?(:reply_ticket)
-        begin
-          reply_multiple reply_content, ticket
-        rescue Exception => e
-          if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
-            flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
-            redirect_to helpdesk_tickets_path and return 
-          end
-          failed_tickets.push(ticket)
-          NewRelic::Agent.notice_error(e)
-          Rails.logger.error("Error while sending reply")
-        end
-      end
     end
     flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
                                       :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })
+    queue_replies
     redirect_to helpdesk_tickets_path
   end
 
   protected
 
-    def reply_multiple reply_content, ticket
-      return if reply_content.blank? 
-      build_note_params ticket, reply_content
-      note = ticket.notes.build(params[:helpdesk_note])
-      build_attachments note, :helpdesk_note
-      send("#{note.source_name}_reply", ticket, note) if note.save_note
+    def queue_replies
+      reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
+      if privilege?(:reply_ticket) and reply_content.present?
+        return unless check_attachments
+        Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
+      end
     end
 
-    def build_note_params ticket, reply_content
-      source = Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[ticket.source]
-      params[:helpdesk_note].merge!( :source => source, 
-        :note_body_attributes => {:body_html => Liquid::Template.parse(reply_content).render(
-        'ticket' => ticket, 'helpdesk_name' => ticket.portal_name)} )
-    end  
+    def check_attachments
+      return true if params[:helpdesk_note][:attachments].blank?
+      if total_attachment_size > 15.megabyte
+        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+        return false
+      end
+      save_attachments
 
-    def email_reply ticket, note
-      #Do nothing
     end
 
-    def facebook_reply ticket, note
-      ticket.is_fb_message? ? send_facebook_message(ticket, note) : send_facebook_comment(ticket, note)
+    def total_attachment_size
+      (params[:helpdesk_note][:attachments] || []).collect{ |a| a['resource'].size }.sum
     end
-    
-    def twitter_reply ticket, note
-      params[:twitter_handle] = ticket.fetch_twitter_handle
-      twt_type = ticket.tweet.tweet_type || :mention.to_s
-      send("send_tweet_as_#{twt_type}", ticket, note)
+
+    def save_attachments
+      saved_attachments = []
+      (params[:helpdesk_note][:attachments] || []).each do |a|
+        attached = current_account.attachments.build({
+                      :content => a[:resource], 
+                      :attachable_type => "Account", :attachable_id => current_account.id
+                    })
+        if attached.save
+          saved_attachments << attached.id 
+        else
+          Rails.logger.error "Could not save the file :: #{a[:resource].inspect}"
+        end
+      end
+      params[:helpdesk_note][:attachments] = saved_attachments
+    end
+
+    def params_for_queue
+      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'dropbox_url', 'shared_attachments')
     end
 
     def get_updated_ticket_count

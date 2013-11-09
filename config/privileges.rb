@@ -80,7 +80,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer]
+    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
   end
 
   edit_time_entries do

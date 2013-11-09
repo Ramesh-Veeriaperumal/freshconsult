@@ -3,19 +3,23 @@ require 'open-uri'
 require 'digest/sha1'
  
 class RemoteFile < ::Tempfile
+  require 'openssl'
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
  
-   attr_accessor :open_uri_path
+   attr_accessor :open_uri_path, :username, :password
 
-  def initialize(path, tmpdir = Dir::tmpdir)
+  def initialize(path, username = nil, password = nil, tmpdir = Dir::tmpdir)
     @original_filename  = File.basename(path).split('=')[1] || File.basename(path)
     @remote_path        = path
+    self.username = username
+    self.password = password
  
     super Digest::SHA1.hexdigest(path), tmpdir
     fetch
   end
  
   def fetch
-    string_io = OpenURI.send(:open, @remote_path)
+    string_io = OpenURI.send(:open, @remote_path, :http_basic_authentication => [username , password])
     self.open_uri_path = string_io.path if string_io.respond_to?(:path)
     self.write "RUBY_VERSION".respond_to?(:force_encoding) ? string_io.read.force_encoding("UTF-8") : string_io.read
     self.rewind

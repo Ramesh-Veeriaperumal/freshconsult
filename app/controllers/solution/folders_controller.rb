@@ -21,7 +21,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(current_category, @item) }
       format.xml  { render :xml => @item.to_xml(:include => articles_scope) }
-      format.json { render :json => @item.to_json(:except => [:account_id,:import_id],:include => articles_scope) }
+      format.json { render :json => @item.as_json(:include => articles_scope) }
     end
   end
   
@@ -81,8 +81,8 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|     
       if @folder.update_attributes(params[nscname])       
         format.html { redirect_to redirect_to_url }
-        format.xml  { render :xml => @folder, :status => :success } 
-        format.json  { render :json => @folder, :status => :success }     
+        format.xml  { render :xml => @folder, :status => :ok } 
+        format.json  { render :json => @folder, :status => :ok }     
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }

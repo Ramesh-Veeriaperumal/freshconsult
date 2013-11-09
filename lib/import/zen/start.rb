@@ -15,14 +15,21 @@ class Import::Zen::Start < Struct.new(:params)
     SUB_FUNCTION_MAP = {:customers =>[:organization, :user] , :tickets =>[:group , :record, :ticket] , :forums => [:category,:forum,:entry,:post] }
  
   
-  def perform
+  attr_accessor :params, :username, :password
+
+  def initialize(params={})
     params.symbolize_keys!
     params[:zendesk].symbolize_keys! if params[:zendesk]
+    self.params = params
+    self.username = params[:zendesk][:user_name]
+    self.password = params[:zendesk][:user_pwd]
+  end
 
+  def perform
     @current_account = Account.current  
     return if @current_account.blank?
     begin
-      @base_dir = extract_zendesk_zip
+      @base_dir = extract_zendesk_zip(params[:zendesk][:file_url], username, password)
       disable_notification(@current_account)
       handle_migration(params[:zendesk][:files] , @base_dir)
       enable_notification(@current_account)
@@ -56,11 +63,9 @@ def read_data(obj_node)
        if reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT and reader.name == obj_node
           if obj_node.eql?("ticket")
               Resque.enqueue( Import::Zen::ZendeskTicketImport , { :ticket_xml => reader.outer_xml, 
-                                                                   :account_id => @current_account.id})
-          elsif obj_node.eql?("user")
-              Resque.enqueue( Import::Zen::ZendeskUserImport , { :user_xml => reader.outer_xml, 
-                                                                   :account_id => @current_account.id})
-            
+                                                                   :account_id => @current_account.id,
+                                                                   :username => username,
+                                                                   :password => password})
           else
             send("save_#{obj_node}" , reader.outer_xml)
           end

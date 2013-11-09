@@ -21,13 +21,13 @@ class Account < ActiveRecord::Base
   end
 
   def update_users_time_zone #Ideally this should be called in after_update
-    if time_zone_changed? && !features.multi_timezone?
+    if time_zone_changed? && !features?(:multi_timezone)
       all_users.update_all(:time_zone => time_zone)
     end
   end
   
   def update_users_language
-    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
+    all_users.update_all(:language => main_portal.language) if !features?(:multi_language) and main_portal
   end
 
   def enable_elastic_search

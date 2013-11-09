@@ -2368,6 +2368,7 @@ en:
   garden_details: Everything in "Blossom" Plan plus Multiple Product Support, Multiple languages, Multi-timezone support, Multiple SLA policies, CSS-level customer portal customizations and Advanced Reporting
   estate_details: Everything in "Garden" Plan plus Gamification, Agent Collision, Customer Portal Layout Customization and access to the FreshThemes Gallery, Custom Roles and Enterprise Insights.
   zendesk_credentials: Zendesk Credentials
+  file_url: Full XML Export URL
   how_to: Question
   customers: Customers
   companies:
@@ -2795,6 +2796,7 @@ en:
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
+    private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
     integrations:      
       jira: 
@@ -3896,6 +3898,7 @@ en:
         fcr_percent: "FCR %"
         avg_1st_response_time: "Average First <br> Response Time"
         avg_response_time: "Average Response <br> Time"
+        avg_resolution_time: "Average Resolution <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"

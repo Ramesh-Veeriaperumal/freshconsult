@@ -19,6 +19,9 @@ namespace :db do
     #related tables should have been created as part of 'db:schema:load' rake.
     #puts 'Bootstraping savage_beast...'
     #Rake::Task["savage_beast:bootstrap_db"].invoke
+
+    puts "Populating the default record for global_blacklisted_ips table"
+    PopulateGlobalBlacklistIpsTable.create_default_record
     
     puts 'Changing secret in environment.rb...'
     new_secret = ActiveSupport::SecureRandom.hex(64)

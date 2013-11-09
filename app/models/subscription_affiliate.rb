@@ -40,9 +40,15 @@ class SubscriptionAffiliate < ActiveRecord::Base
 
     :flexjobs => {
       :name => "Flexjobs",
-      :affiliate_param => "flexjobs.com/members/savings",
+      :affiliate_param => "flexjobs.com/members/employers/savings",
       :token => "flexjobs"
-    }
+    },
+
+    :dpu => {
+      :name => "Digital Publisher University",
+      :affiliate_param => "digitalpublisheruniversity.com/offers/freshdesk",
+      :token => "dpu"
+    }    
   }
   
   AFFILIATE_PARAMS = AFFILIATES.collect { |affiliate, details| details[:affiliate_param] }
@@ -83,6 +89,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
           find_by_token(AFFILIATES[:huddlebuy][:token])
         when flexjobs_subscription?(affiliate_param)
           find_by_token(AFFILIATES[:flexjobs][:token])
+        when dpu_subscription?(affiliate_param)
+          find_by_token(AFFILIATES[:dpu][:token])
         else
           nil
       end

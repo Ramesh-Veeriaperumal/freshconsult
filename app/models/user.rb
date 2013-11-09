@@ -63,11 +63,11 @@ class User < ActiveRecord::Base
     end
     #Search display ends here
 
-    def filter(letter, page, state = "verified", per_page = 50)
+    def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
         paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
-             :order => 'name'
+             :order => order_by 
       rescue Exception =>exp
         raise "Invalid fetch request for contacts"
       end

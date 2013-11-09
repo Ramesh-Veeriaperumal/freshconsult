@@ -93,7 +93,7 @@
 			<% end %>
 		</span>
 
-		<% if current_account.features_included?(:whitelisted_ips) %>
+		<% if current_account.features?(:whitelisted_ips) %>
 		<li class="inline-field">
 		  <%= check_box('account[whitelisted_ip_attributes]', 'enabled', options = { :checked => @whitelisted_ips.enabled}, checked_value = "1", unchecked_value = "0") %> 
 		  <span class="enable_heading">
@@ -198,7 +198,7 @@
 			}
 		});
 
-		<% if current_account.features_included?(:whitelisted_ips) %>
+		<% if current_account.features?(:whitelisted_ips) %>
 			
 
 			_ip_template = $("#security-ip-range-template").template();
