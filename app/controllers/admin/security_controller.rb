@@ -18,7 +18,7 @@ class Admin::SecurityController <  Admin::AdminController
    @account.whitelisted_ip.enabled = params[:account][:whitelisted_ip_attributes][:enabled] unless 
    						@account.whitelisted_ip.nil?
    						
-   if current_account.features?(:whitelisted_ips) && (@account.whitelisted_ip ? 
+   if current_account.features_included?(:whitelisted_ips) && (@account.whitelisted_ip ? 
    						@account.whitelisted_ip.enabled : params[:account][:whitelisted_ip_attributes][:enabled])
    		@account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
 			@whitelisted_ips = @account.whitelisted_ip
@@ -58,7 +58,7 @@ class Admin::SecurityController <  Admin::AdminController
  end 
 
  def load_whitelisted_ips
-		if current_account.features?(:whitelisted_ips)
+		if current_account.features_included?(:whitelisted_ips)
 			@whitelisted_ips = current_account.whitelisted_ip_from_cache || current_account.build_whitelisted_ip
 		end
  end

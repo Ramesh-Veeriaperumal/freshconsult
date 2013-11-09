@@ -19,9 +19,10 @@ module Features
   
     LIST = []
   
-    after_create :reset_owner_association, :clear_features_from_cache
-    after_destroy :reset_owner_association, :clear_features_from_cache
-    before_destroy :destroy_dependant_features
+    after_create :reset_owner_association
+    after_destroy :reset_owner_association
+    before_destroy :destroy_dependant_features, :clear_features_from_cache
+    before_create :clear_features_from_cache
   
     def available?
       feature_owner_instance.features.available?(to_sym)
@@ -131,7 +132,6 @@ module Features
 
     def clear_features_from_cache
       key = FEATURES_LIST % { :account_id => self.account_id }
-      return if MemcacheKeys.get_from_cache(key).nil?
       MemcacheKeys.delete_from_cache key
     end
   end
