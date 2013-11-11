@@ -22,6 +22,7 @@ stylesheets:
     - public/stylesheets/chat/icomoon.css
     - public/stylesheets/chat/base.css
     - public/stylesheets/chat/clean.css
+    - public/stylesheets/chat/sprites.css
 
   non_pattern:    
     - public/stylesheets/app/app-common.css

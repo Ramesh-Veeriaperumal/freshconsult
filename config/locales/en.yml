@@ -4504,6 +4504,9 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    click_to_go_online: "You are offline now <br> Click to go online"
+    click_to_go_offline: "You are online now <br> Click to go offline"
+    fetching: "Fetching"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
