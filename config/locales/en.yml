@@ -2252,7 +2252,8 @@ en:
       howto_users_voted_title: People who have this question
     tickets:
       export: "Export tickets"
-      export_ticket_data: "Export ticket data to CSV"
+      submit_export: "Export"
+      export_ticket_data: "Export tickets"
       export_to_csv: "Export to CSV"
       ticket_list: Tickets list
       mark_closed: Mark ticket as closed
@@ -2787,6 +2788,7 @@ en:
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
+    export_tickets: "Export Tickets"
     delete_btn: Delete
     status: Status
     source: Source
@@ -3351,10 +3353,14 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select fields to export"
+    select_format: "Export as:"
+    csv: "CSV"
+    xls: "Excel"
     filter_label_customer: "Filter tickets created in"
     filter_label_agent: "Filter tickets by:"
     field_select_title: Select fields to export
     export_to_csv: Export to CSV
+    export: Export
     thirt_days: "Last 30 Days"
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
@@ -3368,7 +3374,8 @@ en:
     mail:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
-      body: Please find the CSV file attached.
+      csv_body: Please find the CSV file attached.
+      xls_body: Please find the Excel file attached.
   date:
     ago: ago
     from: from now
