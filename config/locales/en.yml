@@ -1254,7 +1254,8 @@ en:
     login: 
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso: 
-        expected_params: "Expected params are name, email and hash which are not present "
+        expected_params: "Expected params are name, email, hash and current timestamp, which are not present "
+        invalid_time_entry: "Inavlid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
@@ -4542,3 +4543,4 @@ en:
       forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
       browse_topics: "Browse Topics"
       browse_articles: "Browse Articles"
+     
