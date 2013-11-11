@@ -109,4 +109,28 @@ module ExportCsvUtil
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=tickets.csv"
   end
+
+  def export_xls(items, xls_hash, is_portal=false)
+    unless xls_hash.blank?
+      @xls_hash = xls_hash
+      @headers = xls_hash.keys.sort
+      if is_portal
+        vfs = visible_fields
+        @headers.delete_if{|header_key|
+          field_name = Helpdesk::TicketModelExtension.field_name header_key
+          true unless vfs.include?(field_name)
+        }
+      end
+      @records = []
+      items.each do |item|
+        record = Hash.new
+        @headers.each do |val|
+          data = item.send(val)
+          record[val] = ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
+        end
+        @records.push(record)
+      end
+    end
+  end
+
 end
