@@ -71,8 +71,11 @@ class Support::TicketsController < SupportController
       params[:id] = params[:i]
     end 
     items = build_tickets
-    export_data items, csv_hash, true
-  end
+    respond_to do |format|
+      format.csv { export_data items, csv_hash, true }
+      format.xls { export_xls items, csv_hash, true; headers["Content-Disposition"] = "attachment; filename=\"tickets.xls" }
+    end
+   end
 
   def close
     status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
