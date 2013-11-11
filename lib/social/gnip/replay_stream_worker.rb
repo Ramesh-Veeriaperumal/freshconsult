@@ -27,7 +27,12 @@ class Social::Gnip::ReplayStreamWorker
 
       c.on_body do |tweet|
         if !(tweet.eql?(DELIMITER[:replay_stream]) || tweet.eql?(DELIMITER[:production_stream]))
-          @queue.send_message(tweet)
+          tweet_dup = tweet.dup
+          #This is to ensure that aws-sdk send_message works properly with non UTF-8 chars
+          if RUBY_VERSION >= '1.9'
+            tweet_dup.force_encoding("UTF-8")
+          end          
+          @queue.send_message(tweet_dup)
         end
         tweet.size
       end

@@ -6,24 +6,34 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
 		mapped_fields, fields = params[:contacts][:mapped_fields], params[:contacts][:fields]
 		current_account = Account.current || Account.find_by_id(params[:account_id])
 		current_user = current_account.users.find_by_email(params[:email])
-	  mapped_fields.shift if params[:contacts][:ignore_first_row].to_i == 1
+	  mapped_fields.shift
 	  created = updated = 0
     disable_user_activation(current_account)
+    for i in 0...fields.size
+      if fields["#{i}"] !=""
+        fields["#{i}"] = fields["#{i}"].to_i
+      else
+        fields["#{i}"] = 999 #to_i of blank was converting to 0. To avoid it, value of 999 is used.
+      end
+    end
+
 		mapped_fields.each do |row|
-          @params_hash ={ :user => {:name => row[fields["0"].to_i],
-                                    :email =>  row[fields["1"].to_i],
-                                    :job_title => row[fields["2"].to_i],
-                                    :tags => row[fields["3"].to_i],
-                                    :company => row[fields["4"].to_i],
-                                    :address => row[fields["5"].to_i],
-                                    :phone => row[fields["6"].to_i],
-                                    :mobile => row[fields["7"].to_i], 
-                                    :twitter_id => row[fields["8"].to_i],
-                                    :description => row[fields["9"].to_i],
+          @params_hash ={ :user => {:name => (row[fields["0"]] ),
+                                    :job_title => (row[fields["1"]] ) ,
+                                    :email =>  (row[fields["2"]] ) ,
+                                    :phone => (row[fields["3"]] ) ,
+                                    :mobile => (row[fields["4"]] ) , 
+                                    :twitter_id => (row[fields["5"]] ) ,
+                                    :company => (row[fields["6"]] ) ,
+                                    :address => (row[fields["7"]] ) ,
+                                    :tags => (row[fields["8"]] ) ,
+                                    :description => (row[fields["9"]] ) ,
+                                    :client_manager => (row[fields["10"]] ) ,
                                 :customer_id => nil
                                  }
                       }
           company_name = @params_hash[:user][:company].to_s.strip
+          @params_hash[:user][:client_manager] = @params_hash[:user][:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
           user = current_account.users.find_by_email(@params_hash[:user][:email])   
           unless user.nil?

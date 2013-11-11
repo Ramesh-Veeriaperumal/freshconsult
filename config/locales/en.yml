@@ -135,6 +135,9 @@ en:
     name: Name
     secondary: secondary
     phone_no: Phone No
+    work_phone: Work Phone
+    profile_picture: Profile Picture
+    mobile_phone: Mobile Phone
     mobile: Mobile
     address: Address
     work: Work
@@ -2008,6 +2011,7 @@ en:
     edit_contact: Edit contact
     edit: Edit Contact
     save_changes: Save changes
+    save: Save
     deleted_message: This is a deleted contact
     contacts_in_companies: "%{contacts}"
     contact: contact
@@ -2336,6 +2340,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    sample_data: Sample data
+    can_see_all_tickets_of_the_company: Can view all company tickets ?
+    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
+    can_see_all_tickets: Important - Above field accepts accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -2947,7 +2955,7 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  import_step2_info: Map the following CSV fields with database fields and import.
+  import_step2_info: Map fields from your CSV with contact fields.
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
@@ -3300,7 +3308,8 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
-    requester_name_or_email: "Name or Email"
+    requester_placeholder: "Name or Email"
+    customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:

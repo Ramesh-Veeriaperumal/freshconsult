@@ -29,5 +29,7 @@ Hi,
 <p><%= @email_cmds_delimiter %> "action":"note" <%= @email_cmds_delimiter %></p>
 <br />
 <%= render :partial => '/shared/free_plan_message' %>
+
+<%= hidden_ticket_identifier(@ticket) %>
 </div>
 

@@ -21,6 +21,7 @@ Authority::Authorization::PrivilegeList.build do
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
     resource :"helpdesk/visitor"
+    resource :"helpdesk/autocomplete"
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/search"

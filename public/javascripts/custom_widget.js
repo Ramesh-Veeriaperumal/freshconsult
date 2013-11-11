@@ -1107,14 +1107,9 @@ var UIUtil = {
 	},
 
 	isMatched: function(dataNode, filterKey, filterValue) {
-		keys = filterKey.split(',');
-		if(keys.length>1) {
-			first_level_nodes = parser.extractEntities(dataNode, keys[0]);
-			for(var i=0;i<first_level_nodes.length;i++) {
-				actualVal = parser.getNodeValueStr(first_level_nodes[i], keys[1]);
-				if(actualVal == filterValue) return true;
-			}
-			return false;
+		if(filterKey.indexOf(',')!=(-1)) {
+			matching_nodes_data = jQuery(filterKey.replace(/,/ig,' '), dataNode).map(function(i, node){return node.textContent;}).get();
+			return matching_nodes_data.include(filterValue);
 		} else {
 			actualVal = parser.getNodeValueStr(dataNode, filterKey);
 			return actualVal == filterValue;
