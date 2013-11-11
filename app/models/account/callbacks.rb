@@ -21,13 +21,13 @@ class Account < ActiveRecord::Base
   end
 
   def update_users_time_zone #Ideally this should be called in after_update
-    if time_zone_changed? && !features?(:multi_timezone)
+    if time_zone_changed? && !features.multi_timezone?
       all_users.update_all(:time_zone => time_zone)
     end
   end
   
   def update_users_language
-    all_users.update_all(:language => main_portal.language) if !features?(:multi_language) and main_portal
+    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
 
   def enable_elastic_search
@@ -64,12 +64,22 @@ class Account < ActiveRecord::Base
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
-    def set_shard_mapping
+    def create_shard_mapping
       shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
       shard_mapping.domains.build({:domain => full_domain})  
       populate_google_domain(shard_mapping) if google_account?
-      shard_mapping.save                             
+      shard_mapping.save!                            
       self.id = shard_mapping.id
+    end
+
+    def set_shard_mapping
+      begin
+        create_shard_mapping
+       rescue
+        Rails.logger.info "Shard mapping exception caught"
+        errors.add_to_base("Domain is not available!")
+        return false
+      end
     end
 
     def populate_google_domain(shard_mapping)

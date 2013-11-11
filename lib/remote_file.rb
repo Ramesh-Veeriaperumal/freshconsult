@@ -20,8 +20,8 @@ class RemoteFile < ::Tempfile
  
   def fetch
     string_io = OpenURI.send(:open, @remote_path, :http_basic_authentication => [username , password])
-    self.open_uri_path = string_io.path 
-    self.write string_io.read
+    self.open_uri_path = string_io.path if string_io.respond_to?(:path)
+    self.write "RUBY_VERSION".respond_to?(:force_encoding) ? string_io.read.force_encoding("UTF-8") : string_io.read
     self.rewind
     self
   end

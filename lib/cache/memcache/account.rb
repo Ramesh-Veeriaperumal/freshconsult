@@ -53,7 +53,11 @@ module Cache::Memcache::Account
 
   def feature_from_cache
     key = FEATURES_LIST % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.features.find(:all) }
+    MemcacheKeys.fetch(key) { self.features }
+  end
+
+  def features_included?(*feature_names)
+    feature_names.all? { |feature_name| feature_from_cache.send("#{feature_name}?") }
   end
 
   def customers_from_cache
