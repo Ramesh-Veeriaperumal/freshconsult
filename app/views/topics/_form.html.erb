@@ -28,10 +28,15 @@
 	<li>
 		<%= render :partial=> "/forum_shared/attachment_form" %>
 	</li>
+	<% if is_application_installed?("screenr") %>
+	  <li>
+		<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+	  </li>
+	<% end %>
 	
 	<% unless @topic.new_record? %>
 	<div class="attachment-list-container">
-	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>	
 	    <table class="attachment-list">
 	      <%= render(
 	        :partial => '/helpdesk/shared/attachment', 

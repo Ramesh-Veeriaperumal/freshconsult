@@ -25,6 +25,9 @@
 			  </div>
 			</script>
 		</div>
+		<% if is_application_installed?("screenr") %>
+	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
+	  	<% end %>
 		<hr />
 		<div>
 			<%= submit_tag t('topic.add_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 
