@@ -131,6 +131,41 @@ if Integrations::Application.count == 0
     s.application_id = jira_app.id
   end
 
+  status_change_biz_rule = VARule.seed(:account_id, :name) do |s|
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.rule_type = VAConfig::APP_BUSINESS_RULE
+    s.name = "fd_status_sync"
+    s.match_type = "any"
+    s.filter_data = [
+        { :name => "any", :operator => "is", :value => "any", :action_performed=>{:entity=>"Helpdesk::Ticket", :action=>:update_status} } ]
+    s.action_data = [
+        { :name => "Integrations::JiraUtil", :value => "status_changed" } ]
+    s.active = true
+    s.description = 'This rule will update the JIRA status when linked ticket status is affected.'
+  end
+
+  status_change_jira_biz_rule = Integrations::AppBusinessRule.seed do |s|
+    s.application = jira_app
+    s.va_rule = status_change_biz_rule
+  end
+
+  comment_add_biz_rule = VARule.seed(:account_id, :name) do |s|
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.rule_type = VAConfig::APP_BUSINESS_RULE
+    s.name = "fd_comment_sync"
+    s.match_type = "any"
+    s.filter_data = [
+        { :name => "any", :operator => "is", :value => "any", :action_performed=>{:entity=>"Helpdesk::Note", :action=>:create} } ]
+    s.action_data = [
+        { :name => "Integrations::JiraUtil", :value => "comment_added" } ]
+    s.active = true
+    s.description = 'This rule will add a comment in JIRA when a reply/note is added in the linked ticket.'
+  end
+
+  comment_add_jira_biz_rule = Integrations::AppBusinessRule.seed do |s|
+    s.application = jira_app
+    s.va_rule = comment_add_biz_rule
+  end  
 
   #Google Analytics
 

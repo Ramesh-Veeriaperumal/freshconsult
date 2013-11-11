@@ -42,6 +42,7 @@ defaults: &defaults
     dropdown:             Wf::Containers::TextDelimited
     due_by:               Wf::Containers::DueBy
     requester:            Wf::Containers::TextDelimited
+    customer:             Wf::Containers::TextDelimited
     created_at:           Wf::Containers::Time
     
   data_types:             # mapping between data types and containers 
@@ -69,6 +70,7 @@ defaults: &defaults
          boolean:            [boolean]
          created_at:         [created_at]
          requester:          [requester]
+         customer:           [customer]
     
 
   operators:              # operators precedence

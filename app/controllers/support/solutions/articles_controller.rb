@@ -4,6 +4,8 @@ class Support::Solutions::ArticlesController < SupportController
   
   before_filter :load_and_check_permission
 
+  before_filter { |c| c.check_portal_scope :open_solutions }
+
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
@@ -41,9 +43,16 @@ class Support::Solutions::ArticlesController < SupportController
     
     # Getting a new object for submitting the feeback for the article
     @ticket = Helpdesk::Ticket.new
+    respond_to do |format|
+      format.xml{ head :ok }
+      format.json { head :ok }
+      format.any{
+        # Rendering the feedback form for the user... to get his comments
+        render :partial => "feedback_form", :locals => { :ticket => @ticket, :article => @article }
+      }
+      
+    end
 
-    # Rendering the feedback form for the user... to get his comments
-    render :partial => "feedback_form", :locals => { :ticket => @ticket, :article => @article }
   end
   
   def create_ticket

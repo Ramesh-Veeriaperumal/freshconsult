@@ -135,16 +135,7 @@ class ApplicationController < ActionController::Base
   def persist_user_agent
     Thread.current[:http_user_agent] = request.env['HTTP_USER_AGENT']
   end
-
-  protected
-    def silence_logging
-      @bak_log_level = logger.level 
-      logger.level = Logger::ERROR
-    end
-
-    def revoke_logging
-      logger.level = @bak_log_level 
-    end
+    
   private
     def redactor_form_builder
       ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder

@@ -64,6 +64,7 @@ class Solution::CategoriesController < ApplicationController
       if @category.save
         format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
+        format.json { render :json => @category, :status => :created, :location => @category }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
@@ -78,6 +79,7 @@ class Solution::CategoriesController < ApplicationController
       if @category.update_attributes(params[nscname])       
         format.html { redirect_to :action =>"index" }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
+        format.json { render :json => @category, :status => :ok, :location => @category }     
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
@@ -92,6 +94,7 @@ class Solution::CategoriesController < ApplicationController
     respond_to do |format|
       format.html {  redirect_to :action =>"index" }
       format.xml  { head :ok }
+      format.json { head :ok }
     end
   end
 

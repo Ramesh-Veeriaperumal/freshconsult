@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
 
   concerned_with :associations, :callbacks
 
@@ -64,9 +64,13 @@ class User < ActiveRecord::Base
     #Search display ends here
 
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
-      paginate :per_page => per_page, :page => page,
+      begin
+        paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
              :order => order_by 
+      rescue Exception =>exp
+        raise "Invalid fetch request for contacts"
+      end
     end
 
     def filter_condition(state, letter)
@@ -391,6 +395,7 @@ class User < ActiveRecord::Base
     update_attributes({:helpdesk_agent => false, :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+    email_notification_agents.destroy_all
   end
   
   def make_agent(args = {})

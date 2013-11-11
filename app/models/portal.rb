@@ -8,6 +8,7 @@ class Portal < ActiveRecord::Base
   :allow_nil => true, :allow_blank => true
 
   delegate :friendly_email, :to => :product, :allow_nil => true
+  before_save :downcase_portal_url
   
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -36,8 +37,8 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD40"
-    
+  APP_CACHE_VERSION = "FD41"
+
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
   end
@@ -140,6 +141,10 @@ class Portal < ActiveRecord::Base
       else
         send(icon_field).update_attributes(icon_attr)
       end
+    end
+
+    def downcase_portal_url
+      self.portal_url = portal_url.downcase if portal_url 
     end
     
     def filter_fields(f_list)

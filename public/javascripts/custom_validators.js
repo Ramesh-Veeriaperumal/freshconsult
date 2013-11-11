@@ -7,7 +7,7 @@
   $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
   $.validator.addClassRules("tweet", { tweet: 140 });
-  $.validator.addClassRules("facebook", { tweet: 8000 });
+  $.validator.addClassRules("facebook", { facebook: 8000 });
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
   }, "This element should not be equal to");
@@ -73,7 +73,7 @@
         _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser") //for not editing add new requester
 
-    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/.test(value)){
+    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/.test(value)){
         _returnCondition = true
         jQuery('#helpdesk_ticket_requester_id').val('') 
     }

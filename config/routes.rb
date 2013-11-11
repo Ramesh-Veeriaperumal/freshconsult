@@ -386,7 +386,9 @@
     helpdesk.resources :dropboxes
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
-                  :requester_autocomplete => :get, :company_autocomplete => :get }
+                                                        :company_autocomplete => :get }
+
+    helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
     
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show

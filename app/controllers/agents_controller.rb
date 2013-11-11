@@ -19,6 +19,7 @@ class AgentsController < ApplicationController
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
+  before_filter :set_native_mobile, :only => :show
   
   def list
     respond_to do |format|
@@ -53,9 +54,7 @@ class AgentsController < ApplicationController
       format.html # index.html.erb
       format.js
       format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
-      format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
+      format.json  { render :json => @agents.to_json(:include=>:user) } #Adding the attributes from user as that is what is needed
     end
   end
 
@@ -63,7 +62,12 @@ class AgentsController < ApplicationController
     @agent = current_account.all_agents.find(params[:id])
     @user  = @agent.user
     @recent_unresolved_tickets = current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
-    #redirect_to :action => 'edit'
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @agent.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
+      format.json { render :json => @agent.as_json(:include => :user) }
+      format.nmobile { render :json => @user.to_mob_json }
+    end
   end
 
   def new    
@@ -180,6 +184,7 @@ class AgentsController < ApplicationController
   
   def destroy    
     if @agent.user.update_attributes(:deleted => true)    
+       @agent.user.email_notification_agents.destroy_all
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else

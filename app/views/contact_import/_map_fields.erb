@@ -1,48 +1,80 @@
 <% javascript_tag do %>
-	jQuery(document).ready(function(){
-		jQuery.validator.addMethod("required_blank_label", function(value, element) {
-		  	return(jQuery(element).find(":selected").text().trim() != "");  
-		}, "Email is a required field for importing to contacts");
+
+jQuery(document).ready(function(){
 		
-		jQuery.validator.addClassRules("required_blank_label", {
-		  required_blank_label: true
-		});
-	});
-<% end %>
-    <% form_tag nil, :method => :post do -%>
+		sample_value = [<%= raw @rows[1].to_json %>];
+
+		jQuery(".table_header").change(function(){ 
+				var select_num = (this.id.match(/\[(.*?)\]/))[1];
+				var table_header_val = jQuery(this).val();
+				var display_text = sample_value[0][table_header_val];
+				if(jQuery(this).val() == sample_value[0].length.toString() || isNaN(parseInt(table_header_val)) )
+				{
+					display_text = "";
+				}
+				jQuery(".sample_value_"+select_num).html(display_text);
+			})
+
+
+});
+
+
+
+	<% end %>
+    <% form_tag nil, :method => :post , :rel => "validate" do -%>
 	  <% @parameters.each do |arr| -%>
 	    <%= hidden_field_tag arr[0], arr[1] %>
 	  <% end -%>
-	  <ul class="ui-form">
-	  	  <li>
+
+	  <ul class="form-horizontal map_fields">
+	  	  <li class="control-group">
 		      <label for="file"><%= content_tag(:b, t('step2')) %>: <%= t('import_step2_info') %></label>
 		  </li>
-		  <li class="map_fields">
-		  	<style>table td{ vertical-align:top; }</style>
-		   <table cellspacing="0">
-		      <thead>
-		      	<% @fields.each do |k,v| -%>
-		        <tr>
-		        	<td width="30%"><%= k %></td>
-					<td>
-						<%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)), 
-											{ :class => ((k == "Email") ? "required_blank_label" : "") } %>
-					</td>
-		        </tr>
-				 <% end -%>
-		      </thead>
-			 </table>
-		  </li>
-		  <li class="checkbox">
-		    <%= check_box_tag 'ignore_first_row', '1', true, :id => 'ignore_first_row_option' %><label for="ignore_first_row_option"><%=t('import_ignore_first_row')%></label>
-		  </li>
-		  <li class="seperator"></li>
-		  <li>
+
+		      	<% @fields.each do |key,value| -%>
+			      	<% if key == t("contact_import.can_see_all_tickets_of_the_company") %>
+
+			      		<li class="control-group">
+
+			      		</li>
+						<li class="control-group  row-fluid">
+			        		<%= render :partial => 'table_fields' , :locals => {:key => key, :value => value} %>
+						    </br>
+							<div class="controls">
+								 <%= content_tag(:small , 
+						        	t("contact_import.can_see_all_tickets"),
+						        	:class => "muted")%>
+						       	<%= content_tag(:small , 
+						        	t("contact_import.can_see_all_tickets_information"),
+						        	:class => "muted")%>
+							</div>
+			        	</li>
+			        <li class="control-group">
+			        	<label class="control-label"> </label>
+			        	<div class="controls">
+
+			        	</div>
+			        </li>
+
+			      	<% else %>
+				      	<li class="control-group  row-fluid">
+				      		<%= render :partial => 'table_fields' , :locals => {:key => key, :value => value} %>
+				      	</li>
+			        <% end %>
+				<% end -%>
+
+
+		  <li class="seperator control-group"></li>
+		  <li class="control-group">
 		  	<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
 		  </li>	
-		  <li class="button-container">
-			<%= submit_tag t('import'), { :class => "uiButton" } %>
-		  	<%= link_to t('cancel'), contacts_path, :class => "uiButton"  %>
-		 </li>
+		  <li>
+
+		</li>
+		 	<div class="button-container">
+			  	<%= link_to t('cancel'), contacts_path, :class => "btn"  %>
+			  	<%= submit_tag t('import'), { :class => "btn btn-primary" } %>
+		 	</div>
+
 	  </ul>
 	<% end -%>

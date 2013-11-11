@@ -135,6 +135,9 @@ en:
     name: Name
     secondary: secondary
     phone_no: Phone No
+    work_phone: Work Phone
+    profile_picture: Profile Picture
+    mobile_phone: Mobile Phone
     mobile: Mobile
     address: Address
     work: Work
@@ -2009,6 +2012,7 @@ en:
     edit_contact: Edit contact
     edit: Edit Contact
     save_changes: Save changes
+    save: Save
     deleted_message: This is a deleted contact
     contacts_in_companies: "%{contacts}"
     contact: contact
@@ -2337,6 +2341,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    sample_data: Sample data
+    can_see_all_tickets_of_the_company: Can view all company tickets ?
+    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
+    can_see_all_tickets: Important - Above field accepts accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -2369,6 +2377,7 @@ en:
   garden_details: Everything in "Blossom" Plan plus Multiple Product Support, Multiple languages, Multi-timezone support, Multiple SLA policies, CSS-level customer portal customizations and Advanced Reporting
   estate_details: Everything in "Garden" Plan plus Gamification, Agent Collision, Customer Portal Layout Customization and access to the FreshThemes Gallery, Custom Roles and Enterprise Insights.
   zendesk_credentials: Zendesk Credentials
+  file_url: Full XML Export URL
   how_to: Question
   customers: Customers
   companies:
@@ -2947,7 +2956,7 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  import_step2_info: Map the following CSV fields with database fields and import.
+  import_step2_info: Map fields from your CSV with contact fields.
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
@@ -3300,7 +3309,8 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
-    requester_name_or_email: "Name or Email"
+    requester_placeholder: "Name or Email"
+    customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
@@ -3898,6 +3908,7 @@ en:
         fcr_percent: "FCR %"
         avg_1st_response_time: "Average First <br> Response Time"
         avg_response_time: "Average Response <br> Time"
+        avg_resolution_time: "Average Resolution <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"

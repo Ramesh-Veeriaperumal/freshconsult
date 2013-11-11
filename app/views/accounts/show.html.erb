@@ -116,7 +116,7 @@
 			    		if (jQuery(data).filter(function() { 
 				    		return this.text.localeCompare(term)===0; 
 				    	}).length===0) { 
-								if(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/.test(term)) { 
+								if(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/.test(term)) { 
 									return {
 										id : term, 
 										text : term 
