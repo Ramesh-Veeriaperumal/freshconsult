@@ -31,8 +31,8 @@
 				</tr>
 				<% @portals.each do |portal| %>
 					<tr>
-						<td><%= portal.account_id %></td>
-						<td><%= portal.account.full_domain %></td>
+						<td><%= link_to portal.account_id, admin_account_path(portal.account_id) %></td>
+						<td><%= portal.portal_url %></td>
 						<td><%= portal.elb_dns_name %></td>
 					</tr>
 				<% end %>
