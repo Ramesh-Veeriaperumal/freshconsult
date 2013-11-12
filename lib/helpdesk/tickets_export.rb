@@ -2,7 +2,6 @@ class Helpdesk::TicketsExport
   extend Resque::AroundPerform
   include Helpdesk::Ticketfields::TicketStatus
   @queue = 'ticketsExportQueue'
-  BOM = "\377\376" #Byte Order Mark
 
   def self.perform(export_params)
 
@@ -41,27 +40,39 @@ class Helpdesk::TicketsExport
     end
   end
 
+  def self.escape_html(val)
+    ((val.blank? || val.is_a?(Integer)) ? val : CGI::unescapeHTML(val.to_s).gsub(/\s+/, " "))
+  end
+
+  def self.ticket_data(export_params, records=[])
+    export_fields = export_params[:export_fields]
+    headers = export_fields.keys.sort
+    Account.current.tickets.find_in_batches(:select => @select,
+                                    :conditions => @sql_conditions, 
+                                      :include => [:ticket_states, :ticket_status, :flexifield,
+                                                   :responder, :requester],
+                                      :joins => @all_joins
+                                     ) do |items|
+        items.each do |item|
+        record = []
+        headers.each do |val|
+          data = item.send(val)
+          record << escape_html(data)
+        end
+        records << record
+      end
+    end
+    records
+  end
+
+
   def self.csv_export export_params
     csv_hash = export_params[:export_fields]
     record_headers = csv_hash.keys.sort
     csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
       csv_headers = record_headers.collect {|header| csv_hash[header]}
       csv << csv_headers
-      Account.current.tickets.find_in_batches(:select => @select,
-                                      :conditions => @sql_conditions, 
-                                      :include => [:ticket_states, :ticket_status, :flexifield,
-                                                   :responder, :requester],
-                                      :joins => @all_joins
-                                     ) do |items|
-        items.each do |record|
-          csv_data = []
-          record_headers.each do |val|
-            data = record.send(val)
-            csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s))).to_s.gsub(/\s+/, " ")
-          end
-          csv << csv_data
-        end
-      end
+      ticket_data(export_params,csv)
     end 
     Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
     Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
@@ -72,22 +83,7 @@ class Helpdesk::TicketsExport
     require 'erb'
     @xls_hash = export_params[:export_fields] 
     @headers = @xls_hash.keys.sort
-    @records = []
-    Account.current.tickets.find_in_batches(:select => @select,
-                                    :conditions => @sql_conditions, 
-                                      :include => [:ticket_states, :ticket_status, :flexifield,
-                                                   :responder, :requester],
-                                      :joins => @all_joins
-                                     ) do |items|
-        items.each do |item|
-        record = Hash.new
-        @headers.each do |val|
-          data = item.send(val)
-          record[val] = ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
-        end
-        @records.push(record)
-      end
-    end
+    @records = ticket_data(export_params)
     path =  "#{RAILS_ROOT}/app/views/support/tickets/export_csv.xls.erb"
     renderer = ERB.new(File.read(path))
     xls_string = renderer.result(binding)

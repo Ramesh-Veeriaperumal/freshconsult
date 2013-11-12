@@ -1,24 +1,24 @@
-<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
+<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
   <input type="hidden" name="data_hash" value="" />
-	<ul class="ui-form configure_export">
-		<li class="inline-field">
-			<div>
-				<label class="span2 lead-small"><strong><%= t("export_data.select_format") %></strong></label>
-				<label class="span1 radio">
-					<%= radio_button_tag(:format, "csv", true) %>
-					<%= t('export_data.csv') %>
-				</label>
-				<label class="span1 radio">
-					<%= radio_button_tag(:format, "xls", false) %>
-					<%= t('export_data.xls') %>
-				</label>
-			</div>
+	<ul class="configure_export">
+		<li class="control-group">
+				<label class="control-label"><strong><%= t("export_data.select_format") %></strong></label>
+				<div class="controls">
+					<label class="radio inline">
+						<%= radio_button_tag(:format, "csv", true) %>
+						<%= t('export_data.csv') %>
+					</label>
+					<label class="radio inline">
+						<%= radio_button_tag(:format, "xls", false) %>
+						<%= t('export_data.xls') %>
+					</label>
+				</div>
 		</li>
-		<li class="inline-field">
-			<strong class="caption"><%=t('export_data.filter_label_agent').html_safe%> </strong>
-			<div>
-				<%= select_tag "ticket_state_filter", options_for_select(TicketConstants::STATES_HASH.map {|k,v| [v,k]}, [:created_at]), {:class => "dropdown"} %>
-				<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "dropdown" %>
+		<li class="control-group">
+			<label class="control-label"><%=t('export_data.filter_label_agent').html_safe%> </label>
+			<div class="controls">
+				<%= select_tag "ticket_state_filter", options_for_select(TicketConstants::STATES_HASH.map {|k,v| [v,k]}, [:created_at]), {:class => "select2","data-minimum-results-for-search" => "1000"} %>
+				<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "select2","data-minimum-results-for-search" => "1000" %>
 	 			<div id="datepicker" style="display:none;">
 					<span class="seperator"></span>
 					<label class="caption"><%=t('export_data.from').html_safe%></label>
@@ -30,37 +30,36 @@
 						<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />		
 					</div>
 				</div>
-		</div>
-		</li>
-		<li class="inline-field">
-	 		<span class="seperator"></span>
-			<h4 class="title"><%= t('export_data.select_header') %></h4>
-			<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
-			<div class="threecol-form" id="ticket_fields">
-	 			<% csv_headers.each do |head| %>
-	 			  	<div class="item <%= head[:type] %>">
-		  				<label class="checkbox prime"> 
-		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
-							<%= head[:label].html_safe %>														
-		  				</label>
-		  				<% head[:levels].each do |level| %>
-		  					<br />
-			  				<label class="checkbox level"> 
-			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-								<%= level[:label].html_safe %>
-			  				</label>
-			  			<% end %>
-	  			    </div>	
-	 			<% end %>
 			</div>
+		</li>
+		<hr/>
+		<li>
+			<strong><%= t('export_data.select_header') %><br/><br/></strong>
+				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+				<div class="threecol-form" id="ticket_fields">
+		 			<% csv_headers.each do |head| %>
+		 			  	<div class="item <%= head[:type] %>">
+			  				<label class="checkbox prime"> 
+			    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
+								<%= head[:label].html_safe %>														
+			  				</label>
+			  				<% head[:levels].each do |level| %>
+			  					<br />
+				  				<label class="checkbox level"> 
+				    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
+									<%= level[:label].html_safe %>
+				  				</label>
+				  			<% end %>
+		  			    </div>	
+		 			<% end %>
+				</div>
 		<li>
 	</ul>	
-	<div class="button-container">
-		<%= link_to t('cancel'), '', :class => "uiButton", :id => "export_cancel" %>
-		<%= submit_tag t('export_data.export'), :class => "uiButton", :id => "ExportToCSV" %>
+	<div class="button-container align-right">
+		<%= link_to t('cancel'), '#', :class => "btn", :id => "export_cancel" %>
+		<%= submit_tag t('export_data.export'), :class => "btn btn-primary", :id => "ExportToCSV" %>
 	</div>
 <%end%>
-
 <% javascript_tag do %>
   jQuery("#exportFilter").submit(function() {  
 
