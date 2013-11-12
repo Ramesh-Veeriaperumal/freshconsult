@@ -76,10 +76,15 @@ class Customer < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json( :only => [ :name, :note, :description, :account_id ] )
+    to_json( 
+              :root => "customer",
+              :tailored_json => true,
+              :only => [ :name, :note, :description, :account_id ] 
+           )
   end
   
   def to_json(options = {})
+    return super(options) unless options[:tailored_json].blank?
     options[:except] = [:account_id,:import_id,:delta]
     json_str = super options
     json_str

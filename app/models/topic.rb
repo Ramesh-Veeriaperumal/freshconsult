@@ -179,6 +179,8 @@ class Topic < ActiveRecord::Base
 
   def to_indexed_json
     to_json( 
+          :root => "topic",
+          :tailored_json => true,
           :only => [ :title, :user_id, :account_id ], 
           :include => { :posts => { :only => [:body],
                                     :include => { :attachments => { :only => [:content_file_name] } }
