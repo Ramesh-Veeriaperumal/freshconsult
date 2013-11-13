@@ -1,7 +1,19 @@
 <% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
-	<div class="info-highlight"><%=t('export_data.info')%></div>
 	<ul class="ui-form configure_export">
+		<li class="inline-field">
+			<div>
+				<label class="span2 lead-small"><strong><%= t("export_data.select_format") %></strong></label>
+				<label class="span1 radio">
+					<%= radio_button_tag(:format, "csv", true) %>
+					<%= t('export_data.csv') %>
+				</label>
+				<label class="span1 radio">
+					<%= radio_button_tag(:format, "xls", false) %>
+					<%= t('export_data.xls') %>
+				</label>
+			</div>
+		</li>
 		<li class="inline-field">
 			<strong class="caption"><%=t('export_data.filter_label_agent').html_safe%> </strong>
 			<div>
@@ -44,7 +56,8 @@
 		<li>
 	</ul>	
 	<div class="button-container">
-		<%= submit_tag t('export_data.export_to_csv'), :class => "uiButton", :id => "ExportToCSV" %>
+		<%= link_to t('cancel'), '', :class => "uiButton", :id => "export_cancel" %>
+		<%= submit_tag t('export_data.export'), :class => "uiButton", :id => "ExportToCSV" %>
 	</div>
 <%end%>
 
@@ -67,6 +80,10 @@
 	}
   });
 
+  jQuery('#export_cancel').click(function(ev){
+  	active_dialog.dialog("close");
+  	ev.preventDefault();
+	});
   jQuery("#date_filter").change(function(){
   	jQuery("#datepicker").toggle(jQuery("#date_filter").val() == "<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>");
   });

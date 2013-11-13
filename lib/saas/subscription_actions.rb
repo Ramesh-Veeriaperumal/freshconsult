@@ -12,14 +12,12 @@ class SAAS::SubscriptionActions
       drop_multiple_emails(account)
       drop_css_customization(account)
       drop_custom_roles(account)
-      update_users_language(account)
     when :blossom
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_products(account)
       drop_css_customization(account)
       drop_custom_roles(account)
-      update_users_language(account)
     when :garden
       drop_layout_customization(account)
       drop_custom_roles(account)
@@ -33,10 +31,6 @@ class SAAS::SubscriptionActions
   end
   
   private
-    def update_users_language(account)
-      account.all_users.update_all(:language => account.language) 
-      account.account_additional_settings.update_attributes(:supported_languages => [])
-    end
         
     def update_features(account, old_subscription)
       account.remove_features_of old_subscription.subscription_plan.canon_name

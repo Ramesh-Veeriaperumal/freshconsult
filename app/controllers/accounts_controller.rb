@@ -25,7 +25,6 @@ class AccountsController < ApplicationController
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
-  before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   
   filter_parameter_logging :creditcard,:password
   
@@ -33,8 +32,7 @@ class AccountsController < ApplicationController
   end   
    
   def edit
-    @supported_languages_list = current_account.account_additional_settings.supported_languages 
-  end
+  end  
   
   def check_domain
     puts "#{params[:domain]}"
@@ -184,7 +182,6 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings_attributes = params[:account][:account_additional_settings_attributes] if dynamic_content_available?
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
@@ -239,14 +236,7 @@ class AccountsController < ApplicationController
   end
 
   protected
-    def dynamic_content_available?
-      current_account.features?(:dynamic_content)
-    end
     
-    def check_supported_languages
-      (params[:account][:account_additional_settings_attributes][:supported_languages] = []) if params[:account][:account_additional_settings_attributes][:supported_languages].nil?
-    end
-
     def choose_layout 
       (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name)) ? 'signup_google' : 'application'
 	  end

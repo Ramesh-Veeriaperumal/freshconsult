@@ -403,9 +403,16 @@ is_touch_device = function() {
         $('#Pagearea').css("minHeight", sidebarHeight);
 
       // Tab auto select based on window hash url
-      hashTabSelect();
-      
-      $(window).on('hashchange', hashTabSelect);
+      if(window.location.hash != '') {
+        hash = window.location.hash.split('/');
+        jQuery.each(hash, function(index, value){
+          setTimeout(function(){
+            catchException(function(){ 
+              jQuery(value + "-tab").trigger('click') 
+            }, "Error in File globalinit.js");
+          }, ((index+1)*10) )
+        })
+      }
           
         qtipPositions = {
           normal : {

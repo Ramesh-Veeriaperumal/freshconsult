@@ -14,14 +14,12 @@ module Users
 
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
       if customer?
-        requester_template = e_notification.get_requester_template(self)
-        template = requester_template.last
-        subj_template = requester_template.first
+        template = e_notification.requester_template
+        subj_template = e_notification.requester_subject_template
         user_key = 'contact'
       else
-        agent_template = e_notification.get_agent_template(self)
-        template = agent_template.last
-        subj_template = agent_template.first
+        template = e_notification.agent_template
+        subj_template = e_notification.agent_subject_template
       end
 
       UserNotifier.send_later(:deliver_password_reset_instructions, self, 
@@ -41,25 +39,19 @@ module Users
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if customer?
         return unless e_notification.requester_notification? or force_notification
-        requester_template = e_notification.get_requester_template(self)
-        template = requester_template.last
-        subj_template = requester_template.first
+        template = e_notification.requester_template
+        subj_template = e_notification.requester_subject_template
         user_key = 'contact'
       else
         return unless e_notification.agent_notification?
-        agent_template = e_notification.get_agent_template(self)
-        template = agent_template.last
-        subj_template = agent_template.first
+        template = e_notification.agent_template
+        subj_template = e_notification.agent_subject_template
       end
-      activation_params = { :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-                                  'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 
-                                  'activation_url' => register_url(perishable_token, 
-                                                          :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, 
-                                                          :protocol=> url_protocol)), 
-                            :subject => Liquid::Template.parse(subj_template).render(
-                                  'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name) , 
-                            :reply_email => reply_email}
-      UserNotifier.send_later(:deliver_user_activation, self, activation_params)
+      
+      UserNotifier.send_later(:deliver_user_activation, self, 
+          :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
+            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
+          :subject => Liquid::Template.parse(subj_template).render('portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name) , :reply_email => reply_email)
     end
     
     def deliver_contact_activation(portal)
@@ -69,11 +61,10 @@ module Users
         reset_perishable_token!
     
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-        requester_template = e_notification.get_requester_template(self)
         UserNotifier.send_later(:deliver_user_activation, self, 
-            :email_body => Liquid::Template.parse(requester_template.last).render('contact' => self, 
+            :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
               'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-            :subject => Liquid::Template.parse(e_notification.requester_template.first).render , :reply_email => reply_email)
+            :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
       end
     end
   

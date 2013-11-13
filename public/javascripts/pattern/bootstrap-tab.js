@@ -57,10 +57,6 @@
         relatedTarget: previous
       })
 
-      // !BOOTSTRAP New change done so as to have a 
-      // location hash change without moveing the scroll down
-      window.location.hash = selector
-
       $this.trigger(e)
 
       if (e.isDefaultPrevented()) return

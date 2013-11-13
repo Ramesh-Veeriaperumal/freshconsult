@@ -553,9 +553,9 @@ module ApplicationHelper
     ghost_value = field[:autofill_text]
     encryption_type = field[:encryption_type]
     element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '*' : '' }"
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
     object_name     = "#{object_name.to_s}"
-    label = label_tag object_name+"_"+field_name, field_label
+    label = label_tag object_name+"_"+field_name, field_label.html_safe
     dom_type = dom_type.to_s
 
     case dom_type
@@ -581,7 +581,7 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + '  ' +field_label)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :value => field_value)
     end
@@ -600,7 +600,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_helpdesk_autocomplete_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
@@ -839,4 +839,13 @@ module ApplicationHelper
     super *[collection_or_options, options].compact
   end
   
+  def screenr_visible_in?(current_page, allowed_pages)
+    @screenr_configs_hash ||= get_app_config("screenr")
+    (allowed_pages || []).each do |check_page|
+      return true if current_page == check_page && (@screenr_configs_hash.has_key?(:"visible_#{check_page}") ? @screenr_configs_hash[:"visible_#{check_page}"] == '1' : true )
+    end
+    return false
+    
+    location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
+  end
 end

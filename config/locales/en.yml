@@ -122,8 +122,6 @@ en:
   after_oneweek: After 1 Week
   after_twoweek: After 2 Weeks
   after_onemonth: After 1 Month
-  add_more_lang: Add supported languages to your helpdesk. 
-  support_multi_languge: Supporting customers across more than one language?
   user: 
     company: Company
     photo: Photo
@@ -668,6 +666,7 @@ en:
         feedbackwidget_users_can: "Users can:"
         feedbackwidget_attach_a_file: Attach a file
         feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_screenr_recording: Screenr Recording
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
     supervisor_rules:
@@ -1256,13 +1255,14 @@ en:
     login: 
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso: 
-        expected_params: "Expected params are name, email and hash which are not present "
+        expected_params: "Expected params are name, email and hash, which are not present "
+        invalid_time_entry: "Inavlid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
     email_notifications: 
       update: 
-        success: Email notification has been updated.
+        success: Email notifications have been updated.
     general: 
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
@@ -1296,7 +1296,7 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
-  agent_closes_tkt: Agent Closes the Ticket
+  agent_closes_tkt: Agent closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
   import_topics: Topics
@@ -1579,7 +1579,7 @@ en:
     posted_at: Posted %{post_time} ago
   non_covered_feature_error: This feature is currently locked
   unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.  
-  requester_replies: Requester Replies to Ticket
+  requester_replies: Requester replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
   first_response_sla: First Response SLA Violation
@@ -1974,8 +1974,8 @@ en:
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     browse_community: Browse Community
-  tkt_unattended_in_grp: Ticket Unattended in Group
-  agent_solves_tkt: Agent Solves the Ticket
+  tkt_unattended_in_grp: Ticket unattended in Group
+  agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
@@ -2254,7 +2254,8 @@ en:
       howto_users_voted_title: People who have this question
     tickets:
       export: "Export tickets"
-      export_ticket_data: "Export ticket data to CSV"
+      submit_export: "Export"
+      export_ticket_data: "Export tickets"
       export_to_csv: "Export to CSV"
       ticket_list: Tickets list
       mark_closed: Mark ticket as closed
@@ -2272,7 +2273,7 @@ en:
   first_name: First Name
   pro_brief: For larger Teams
   feedbackwidget_position: Position
-  resolution_time_sla: Resolution Time SLA Violation
+  resolution_time_sla: Resolution time SLA Violation
   replies: replies
   urgent: Urgent
   import_groups: Groups
@@ -2384,7 +2385,7 @@ en:
   companies:
     active:
       no_companies: You don't have any company added to the list.
-      no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
+      no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
@@ -2436,7 +2437,7 @@ en:
       company_tickets: Company Tickets
       social: Social    
     search: Search
-  agent_adds_comment: Agent Adds Comment to Ticket
+  agent_adds_comment: Agent adds comment to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
   portal_customizer_option_tickets: Users can Submit a ticket without logging in 
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
@@ -2449,86 +2450,17 @@ en:
     default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requestor Notification
-    requestor_notifications: Requestor Notifications
-    notification_template: Reply Templates
     title: Email Notifications
-    singular_title: Notification
-    index_outdated: Some translations are outdated 
-    show_default: Show original content
-    hide_default: Hide original content
-    last_saved: Last saved 
-    mark_outdated: Mark all translations as outdated
-    mark_uptodate: Mark this translation as up-to-date
-    reset_last_saved: Reset to last saved content
-    notify_agents: Notify Agents  
-    edit: Edit
-    add: Add
-    no_agents: Add agents
-    disabled_toggle: You cannot turn off this notification.
-    translation_outdated: This translation is outdated.
-    translation_uptodate: This translation is up-to-date.
-    unsaved_confirm: "In your hurry to move on to the next notification, it looks like you forgot to save the previous one. If you really hated what you wrote you can Proceed and lose all changes, but we recommend you go back and save them right away."
-    unsaved_title: "Warning! You haven't saved changes"
-    proceed_anyway: Proceed anyway
-    take_back: Take me back
-    agent_select: Please select the agents you want to notify when a new ticket is created in your helpdesk.
-    agent_select_title: Notify Agents
-    reset_confirm: "All changes will be lost when you reset. Do you still want to continue?"
     helpcard:
-      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_10:
-        topic: "User Activation Email"
-        info1: "The User Activation Email is sent when a new agent is added in your helpdesk. The activation email must necessarily contain the “Agent Activation URL” {{activation_url}} for agents to create their password and complete the signup process.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create an activation email specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_1:
-        topic: New Ticket Created
-        info1: "The New Ticket Created email will be sent out to your agents whenever a new ticket is created in your help desk. You can pick which agent should be receiving this notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_14:
-        topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your agents when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_2:
-        topic: Ticket Assigned to a Group
-        info1: "This notification goes out to all the agents in a group whenever a ticket gets assigned to that group. This email should contain the ticket URL {{ticket.url}} making it easier for the agents to check the ticket. <br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
-      agent_template_3:
-        topic: Ticket Assigned to an Agent
-        info1: "This notification will be sent out to individual agents when a ticket has been assigned to them. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
-      agent_template_11:
-        topic: Ticket Unattended in a Group
-        info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_6:
-        topic: Requestor Replies to the Ticket
-        info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."          
-      agent_template_12:
-        topic: First Response SLA Violation
-        info1: "This notification is sent out to an agent when he has not responded to the ticket within the first response due time of the ticket. This email could contain the ticket URL and the due by time of the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      agent_template_13:
-        topic: Resolution Time SLA Violation
-        info1: "This notification is sent out to agent when the ticket assigned to them has not been resolved within the due by time. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_10:
-        topic: User Activation Email
-        info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_14:
-        topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_1:
-        topic: New Ticket Created
-        info1: "A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_4:
-        topic: Agent Adds Comment to the Ticket
-        info1: "This email is sent to a requestor whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_7:
-        topic: Agent Solves the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
-      requester_template_8:
-        topic: Agent Closes the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."         
-      reply_template_15:
-        topic: Agent Reply Template
-        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."     
+      tour1: Help me manage e-mail notifications
+      tour2: Help me customize the reply template
+      info1: You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email.
+      info2: Note that you can choose to disable notifications, and also create Dispatch’r or Supervisor rules to complement an event.
+      info3: You can also customize the email template for agent replies and even add dynamic content in replies using placeholders.
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
     agent_notification: Agent Notification
-    agent_notifications: Agent Notifications
     subject: Subject
     do_not_delete_ticket_id_from_subject: To capture customer replies as ticket conversations, the ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
@@ -2858,6 +2790,7 @@ en:
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
+    export_tickets: "Export Tickets"
     delete_btn: Delete
     status: Status
     source: Source
@@ -2888,10 +2821,10 @@ en:
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
   import_forum: Forums
   title: Title
-  new_ticket_created: New Ticket Created
+  new_ticket_created: New ticket created
   recent_forum_posts: Recent forum posts
   description: Description
-  tkt_assigned_to_agent: Ticket Assigned to Agent
+  tkt_assigned_to_agent: Ticket assigned to Agent
   is: Is
   helpdesk_title: Helpdesk
   forums: 
@@ -2941,7 +2874,7 @@ en:
   add_tags: Add Tag
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
-  tkt_assigned_to_group: Ticket Assigned to Group
+  tkt_assigned_to_group: Ticket assigned to Group
   import_tickets: Tickets
   twelve: 12 Hours
   agent_info_title: Agent information
@@ -2971,16 +2904,12 @@ en:
     info3: Reset to Default colors
     info5: Reset colors
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
-    info6: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
     save: Save
     time_zone: Time Zone
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
-    primary_language: Primary Language
-    additional_languages: Supported Languages
-    same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"
     logo_and_favicon: "Logo & favicon"
@@ -3382,7 +3311,8 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
-    requester_name_or_email: "Name or Email"
+    requester_placeholder: "Name or Email"
+    customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
@@ -3425,10 +3355,14 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select fields to export"
+    select_format: "Export as:"
+    csv: "CSV"
+    xls: "Excel"
     filter_label_customer: "Filter tickets created in"
     filter_label_agent: "Filter tickets by:"
     field_select_title: Select fields to export
     export_to_csv: Export to CSV
+    export: Export
     thirt_days: "Last 30 Days"
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
@@ -3442,7 +3376,8 @@ en:
     mail:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
-      body: Please find the CSV file attached.
+      csv_body: Please find the CSV file attached.
+      xls_body: Please find the Excel file attached.
   date:
     ago: ago
     from: from now
@@ -3626,6 +3561,36 @@ en:
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
+    screenr:
+      button_label: "Record Screencast"
+      label: "Screenr"
+      desc: "You can record screencasts and post it for speedy resolutions!!"
+      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
+      form:
+        recorder_id: "Recorder ID"
+        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
+        site_address_info: ""
+        site_address: "Screenr Subdomain"
+        widget_title: "Widget Title"
+        visible_agent_forum: "Forum Screen Recording for Agents"
+        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
+        visible_agent_ticket: "Agent Ticket Screen Recording"
+        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
+        visible_solution: "Solution Screen Recording"
+        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
+        visible_portal_ticket: "Portal ticket Screen Recording"
+        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
+        visible_portal_forum: "Forum ticket Screen Recording for portal"
+        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
+        visible_widget: "Widget Screen Recording"
+        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
+      settings:
+        enable_screenr_recording: "Enable Screenr Recording"
+        ticket_interaction: "Tickets page (New, Edit, Reply)"
+        forum_interaction: "Forum page (New, Edit, Comment)"
+        create_solution: "Solution (New, Edit)"
+        for_agents: "For Agents"
+        for_customer: "For Customers"
     harvest:
       label: "Harvest"
       desc: "You can log time spent on tickets into your Harvest projects and tasks."
@@ -4616,3 +4581,4 @@ en:
       forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
       browse_topics: "Browse Topics"
       browse_articles: "Browse Articles"
+     

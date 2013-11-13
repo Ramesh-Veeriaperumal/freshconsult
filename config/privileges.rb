@@ -21,6 +21,7 @@ Authority::Authorization::PrivilegeList.build do
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
     resource :"helpdesk/visitor"
+    resource :"helpdesk/autocomplete"
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/search"
@@ -242,7 +243,6 @@ Authority::Authorization::PrivilegeList.build do
   manage_email_settings do
     resource :"admin/email_config"
     resource :"admin/email_notification"
-    resource :"admin/dynamic_notification_template"
     resource :"admin/email_commands_setting"
     resource :"admin/account_additional_setting"
   end

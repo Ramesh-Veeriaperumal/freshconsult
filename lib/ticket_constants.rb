@@ -65,7 +65,7 @@ module TicketConstants
     [ :priority,            'priority', :dropdown],
     [ :due_by,              'due_by',  :due_by],
     [ "helpdesk_tags.name", "tags",     :dropdown],
-    [ "users.customer_id",  "customers", :dropdown],
+    [ "users.customer_id",  "customers", :customer],
     [ :created_at,          "created_at", :created_at],
     [ :requester_id,        'requester', :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]

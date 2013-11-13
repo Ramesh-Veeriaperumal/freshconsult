@@ -46,10 +46,10 @@ class UsersController < ApplicationController
     logger.debug "in users controller :: show show"
     user = current_account.all_users.find(params[:id])        
     if(user.customer? )
-      redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
+      redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id], :format => params[:format]
     else    
       agent_id = current_account.all_agents.find_by_user_id(params[:id]).id
-      redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
+      redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id, :format => params[:format]    
     end
     
   end

@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
 
   concerned_with :associations, :callbacks
 
@@ -198,15 +198,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
     return false unless save_without_session_maintenance
-    if (!deleted and !email.blank?)
-      if self.language.nil?
-        args = [ portal,false, params[:email_config]]
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
-          nil, 5.minutes.from_now) 
-      else
-        deliver_activation_instructions!(portal,false, params[:email_config])
-      end
-    end
+    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
     true
   end
 
@@ -271,16 +263,7 @@ class User < ActiveRecord::Base
     !agent?
   end
   alias :is_customer :customer?
-
-  def requester? ticket
-    self.id == ticket.requester_id
-  end
-  alias :is_requester :requester?
-
-  def requester_or_cc? ticket
-    requester?(ticket) || customer?
-  end
-
+  
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)
@@ -412,6 +395,7 @@ class User < ActiveRecord::Base
     update_attributes({:helpdesk_agent => false, :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+    email_notification_agents.destroy_all
   end
   
   def make_agent(args = {})

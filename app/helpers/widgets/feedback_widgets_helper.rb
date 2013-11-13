@@ -9,6 +9,7 @@ module Widgets::FeedbackWidgetsHelper
     	{ 
     		:formTitle => (params[:formTitle] || t('feedbackwidget_defaulttitle')).html_safe,
     		:screenshot => params[:screenshot].blank?,
+            :screenr_recording => params[:screenr_recording].blank?,
     		:attachFile => params[:attachFile].blank?,
     		:searchArea => params[:searchArea].blank?,
             :formHeight => params[:formHeight],

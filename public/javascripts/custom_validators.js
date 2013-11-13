@@ -73,7 +73,7 @@
         _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser") //for not editing add new requester
 
-    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/.test(value)){
+    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/.test(value)){
         _returnCondition = true
         jQuery('#helpdesk_ticket_requester_id').val('') 
     }
@@ -205,12 +205,5 @@ $.validator.addMethod("trim_spaces", function(value, element){
   return true;
 }, "Auto trim of leading & trailing whitespace");
 $.validator.addClassRules("trim_spaces", { trim_spaces: true });
-
-// Redactor validator
-$.validator.addMethod("required_redactor", function(value, element, param) {
-  return $(element).data('redactor').isEmpty();
-}, "This field is required.")
-$.validator.addClassRules("required_redactor", { required_redactor : true });
-
 
 })(jQuery);
