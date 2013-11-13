@@ -67,7 +67,7 @@ class Integrations::TimeSheetsSync
     def self.parse_wfm_response(response)
       xml = Nokogiri::XML(response[:text])
       date = xml.css("Date").text
-      date =  Time.iso8601(date).utc.strftime('%Y%m%d')
+      date =  Time.iso8601(date).strftime('%Y%m%d')
       wfm_time_entry = {'staff_id'=>xml.css("Time Staff ID").text,'task_id' => xml.css("Time Task ID").text,'job_id' => xml.css("Time Job ID").text,'date'=>date}
     end
 
