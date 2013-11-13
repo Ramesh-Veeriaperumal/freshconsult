@@ -13,6 +13,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
+  attr_accessor :reply_to_email
+
   def perform
     # from_email = parse_from_email
     to_email = parse_to_email
@@ -22,7 +24,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       encode_stuffs
-      from_email = parse_from_email
+      from_email = parse_from_email(account)
+      return if from_email.nil?
       kbase_email = account.kbase_email
       
       #need to format this code --Suman
@@ -130,6 +133,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       {:name => name, :email => email, :domain => domain}
     end
+
+    def parse_reply_to_email
+      if(!params[:headers].nil? && params[:headers] =~ /Reply-[tT]o: (.+)$/)
+        self.reply_to_email = parse_email($1)
+      end
+      reply_to_email
+    end
     
     def orig_email_from_text #To process mails fwd'ed from agents
       content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html])
@@ -154,17 +164,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parse_email params[:to]
     end
     
-    def parse_from_email
-      f_email = parse_email(params[:from])
-      return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
+    def parse_from_email account
+      reply_to_feature = account.features?(:reply_to_based_tickets)
+      parse_reply_to_email if reply_to_feature
+
+      #Assigns email of reply_to if feature is present or gets it from params[:from]
+      #Will fail if there is spaces and no key after reply_to or has a garbage string
+      f_email = reply_to_email || parse_email(params[:from])
       
-      headers = params[:headers]
-      if(!headers.nil? && headers =~ /Reply-[tT]o: (.+)$/)
-        rt_email = parse_email($1)
-        return rt_email unless rt_email[:email].blank?
-      end
-      
-      f_email
+      #Ticket will be created for no_reply if there is no other reply_to
+      f_email = reply_to_email if valid_from_email?(f_email, reply_to_feature)
+      return f_email unless f_email[:email].blank?
+    end
+
+    def valid_from_email? f_email, reply_to_feature
+      (f_email[:email] =~ /(noreply)|(no-reply)/i or f_email[:email].blank?) and !reply_to_feature and parse_reply_to_email
     end
     
     def parse_cc_email
