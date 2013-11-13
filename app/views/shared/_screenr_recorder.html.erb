@@ -9,7 +9,7 @@
 
 		insertScreenrCode = function(screencast, where_to) {
 			jQuery("#"+where_to).find('.redactor_box textarea')
-				.insertExternal("<a href="+screencast.url+">"+screencast.url+"</a>");
+				.insertExternal('<a href="'+screencast.url+'" target="_blank">'+screencast.url+'</a>');
 		}
 
 	<% elsif (screenr_visible_in?(location, ["solution","agent_forum", "portal_forum"])) %>
