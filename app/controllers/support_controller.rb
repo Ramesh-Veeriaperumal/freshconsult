@@ -2,7 +2,8 @@ class SupportController < ApplicationController
 
   skip_before_filter :check_privilege
   layout :resolve_layout
-  before_filter :portal_context, :page_message
+  before_filter :portal_context
+  
   include Redis::RedisKeys
   include Redis::PortalRedis
 
@@ -46,6 +47,9 @@ class SupportController < ApplicationController
 
 
     def set_portal_page page_token
+      # Set page flash message
+      page_message
+
       # Name of the page to be used to render the static or dynamic page
       @current_page_token = page_token.to_s
 

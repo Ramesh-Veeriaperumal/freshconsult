@@ -104,7 +104,12 @@
       :collection => { :reorder => :put }
     admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
       :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , :collection => { :existing_email => :get }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
+    :collection => { :existing_email => :get, 
+                     :personalized_email_enable => :post, 
+                     :personalized_email_disable => :post, 
+                     :reply_to_email_enable => :post, 
+                     :reply_to_email_disable => :post }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}

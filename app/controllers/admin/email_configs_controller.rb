@@ -83,14 +83,23 @@ class Admin::EmailConfigsController < Admin::AdminController
   
   def personalized_email_enable    
     current_account.features.personalized_email_replies.create
-    current_account.reload  
-  end
-  
-  def personalized_email_disable
-    current_account.features.personalized_email_replies.destroy
-    current_account.reload   
+    post_process  
   end
 
+  def personalized_email_disable
+    current_account.features.personalized_email_replies.destroy
+    post_process
+  end
+
+  def reply_to_email_enable
+    current_account.features.reply_to_based_tickets.create
+    post_process
+  end
+
+  def reply_to_email_disable
+    current_account.features.reply_to_based_tickets.destroy
+    post_process
+  end
 
   def destroy
     @email_config = scoper.find(params[:id])
@@ -128,6 +137,12 @@ class Admin::EmailConfigsController < Admin::AdminController
   protected
     def scoper
       current_account.all_email_configs
+    end
+
+    def post_process
+      current_account.reload 
+      flash[:notice] = t(:'email_configs.config_saved_message')
+      render :partial => 'show_message' 
     end
  
     def human_name

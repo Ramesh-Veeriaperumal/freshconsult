@@ -1,12 +1,11 @@
 <% content_for :sidebar do %> 
 	<%= render :partial => "helpnote" %>	
 <% end %>
-<div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message').html_safe %><a class="close" href="#"></a></div>
 <div id="emailconfig-list" class="email-settings-header">
   <% if feature?(:multiple_emails) %>
     <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn"%>
   <% else %>
-    <%= link_to t('email_configs.new_support_email'), "javascript:;", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
+    <%= link_to t('email_configs.new_support_email'), "#", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
     <% options =  ( current_user.privilege?(:manage_account) ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>
     <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href], :class => "upgrade-message" ) %>
   <% end %>
@@ -67,9 +66,17 @@
     <div id="survey_link_con" class="floatr" style="padding-top:5px;"> 
 
     <input rel="toggle" type="checkbox" id="Personalize_email" name="stop_sla_timer" data-checked-label="<%= t('email_configs.Personalized_email_replies_yes') %>" data-unchecked-label="<%= t('email_configs.Personalized_email_replies_no') %>" <%if current_account.features?(:personalized_email_replies)%>checked="true"<%end%>/>
-
     </div>
     <div style="padding:10px;padding-right:200px;" class="floatl intro"><%= t('email_configs.Personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
+    </div> 
+    <div style="margin:5px 5px 0;font-weight:bold;font-size:14px;color:#555;" class="floatl"><%= t('email_configs.reply_to_tickets') %></div> 
+    <div id="survey_link_con" class="floatr" style="padding-top:5px;"> 
+
+    
+    <input rel="toggle" type="checkbox" id="reply_to_based_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.features?(:reply_to_based_tickets)%>checked="true"<%end%>/>
+
+    </div>
+    <div style="padding:10px;padding-right:200px;" class="floatl intro"><%= t('email_configs.reply_to_tickets_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
     </div> 
   </li>
 </ul>
@@ -82,27 +89,22 @@
       })
     }
     
-    function enable(){
-      update_status("/admin/email_configs/personalized_email_enable");
-    }
-    
-    function disable(){
-      update_status("/admin/email_configs/personalized_email_disable");
-    }
-    
-    jQuery("#Personalize_email").bind("change", function(){
+    jQuery("#Personalize_email").on('change.email_config_feature', function(){
       if(this.checked){
-        enable();
+        update_status("<%= personalized_email_enable_admin_email_configs_path %>");
       }
       else{
-        disable();
+        update_status("<%= personalized_email_disable_admin_email_configs_path %>");
       }
     });
 
-    function showSuccessMsg(){
-      jQuery("#notice_id").show('fast', function nowHide(){
-        setTimeout("jQuery('#notice_id').hide('fast')",4000)
-      });
-    }
+    jQuery("#reply_to_based_tickets").on('change.email_config_feature', function(){
+      if(this.checked){
+        update_status("<%= reply_to_email_enable_admin_email_configs_path %>");
+      }
+      else{
+        update_status("<%= reply_to_email_disable_admin_email_configs_path %>");
+      }
+    });
 <%end%>
    

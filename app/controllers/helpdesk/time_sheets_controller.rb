@@ -184,7 +184,7 @@ private
 
   def sync_installed_apps
     Integrations::TimeSheetsSync.applications.each do |app_name|
-      installed_app = Integrations::InstalledApplication.with_name(app_name)
+      installed_app = current_account.installed_applications.with_name(app_name)
       next if installed_app.blank?  
       Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_entry) unless @time_entry.blank?
       Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_cleared) unless @time_cleared.blank?
