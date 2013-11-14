@@ -1,6 +1,6 @@
 <% responsive = widget_option(:responsive) %>
 <% if(responsive != "no") %>
-	<link href="/stylesheets/portal/lib/responsive-widget.css" media="screen" rel="stylesheet" type="text/css">
+	 <%= include_cloudfront_css :responsive_widget %>
 <% end %>
 <div class="fw-thankyou-page">
 	<div class="modal-header">

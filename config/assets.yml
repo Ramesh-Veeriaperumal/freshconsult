@@ -49,7 +49,9 @@ stylesheets:
     - public/stylesheets/portal/preview.css
 
   widget:
-    - public/stylesheets/portal/widget.css    
+    - public/stylesheets/portal/widget.css
+  responsive_widget:
+    - public/stylesheets/portal/responsive-widget.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css

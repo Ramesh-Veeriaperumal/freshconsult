@@ -1,12 +1,15 @@
 /* Responsive Code */
 //.modal-panel-active will apply only in embedded widget
-@import "settings";
-@import "mixins";
+// Base settings for portal styles
+@import "lib/settings";
+@import "lib/mixins";
+
 $background-color: #e1e1e1;
 $border-color: #bfbfbf;
 $header_footer_height: 50px;
 $animation-speed:.3s;
 $animation-type: ease-in;
+
 @media (max-width: 480px){
 	html,.modal-widget{
 		height: 100%;
