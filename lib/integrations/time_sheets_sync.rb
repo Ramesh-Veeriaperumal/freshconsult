@@ -6,7 +6,7 @@ class Integrations::TimeSheetsSync
 
   def self.update(time_entry)
     applications.each do |app_key|
-      installed_app = Integrations::InstalledApplication.with_name(app_key)
+      installed_app = Account.current.installed_applications.with_name(app_key)
       next if installed_app.blank?  
       Integrations::TimeSheetsSync.send(app_key,installed_app.first,time_entry) unless time_entry.blank?
     end
