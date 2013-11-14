@@ -2567,6 +2567,7 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+    duplicate_status: Tweet is a duplicate. Reply with some other text
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
