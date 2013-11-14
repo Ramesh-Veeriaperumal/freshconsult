@@ -6,7 +6,7 @@ class Integrations::TimeSheetsSync
 
   def self.update(time_entry)
     applications.each do |app_key|
-      installed_app = Integrations::InstalledApplication.with_name(app_key)
+      installed_app = Account.current.installed_applications.with_name(app_key)
       next if installed_app.blank?  
       Integrations::TimeSheetsSync.send(app_key,installed_app.first,time_entry) unless time_entry.blank?
     end
@@ -18,7 +18,8 @@ class Integrations::TimeSheetsSync
     domain = inst_app.configs[:inputs]['api_url'].split('//')[1]
     key = inst_app.configs[:inputs]['api_key']
     params = { :domain => domain, :ssl_enabled => "true", :content_type => "application/xml", :accept_type => "application/xml", :username => key, :password => 'X' }
-    params[:body] = FRESHBOOKS_UPDATE_REQ.render('time_entry_id' => integrated_resource.remote_integratable_id, 'hours' => timeentry.hours, 'notes' => timeentry.note)
+    notes = Liquid::Template.parse(inst_app.configs[:inputs]['freshbooks_note']).render('ticket'=>timeentry.workable)
+    params[:body] = FRESHBOOKS_UPDATE_REQ.render('time_entry_id' => integrated_resource.remote_integratable_id, 'hours' => timeentry.hours, 'notes' => "#{timeentry.note}\n#{notes}")
     response = hrp_request(params,"post","FRESHBOOKS_UPDATE_REQ")
   end
 
@@ -30,7 +31,8 @@ class Integrations::TimeSheetsSync
     params = { :domain => domain, :ssl_enabled => "true", :content_type => "application/xml", :accept_type => "application/xml" }
     wfm_time_entry = wfm_fetch_timeentry(params,apikey,integrated_resource.remote_integratable_id)
     minutes = (timeentry.hours.to_f*60).ceil
-    wfm_time_entry.merge!('time_entry_id'=>integrated_resource.remote_integratable_id,'hours'=> "#{minutes}",'notes'=>timeentry.note)
+    notes = Liquid::Template.parse(inst_app.configs[:inputs]['workflow_max_note']).render('ticket'=>timeentry.workable)
+    wfm_time_entry.merge!('time_entry_id'=>integrated_resource.remote_integratable_id,'hours'=> "#{minutes}",'notes'=>"#{timeentry.note}\n#{notes}")
     wfm_update_timeentry(params,apikey,wfm_time_entry)
   end
 
@@ -67,7 +69,7 @@ class Integrations::TimeSheetsSync
     def self.parse_wfm_response(response)
       xml = Nokogiri::XML(response[:text])
       date = xml.css("Date").text
-      date =  Time.iso8601(date).utc.strftime('%Y%m%d')
+      date =  Time.iso8601(date).strftime('%Y%m%d')
       wfm_time_entry = {'staff_id'=>xml.css("Time Staff ID").text,'task_id' => xml.css("Time Task ID").text,'job_id' => xml.css("Time Job ID").text,'date'=>date}
     end
 
