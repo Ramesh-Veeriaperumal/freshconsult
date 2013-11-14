@@ -18,7 +18,8 @@ class Integrations::TimeSheetsSync
     domain = inst_app.configs[:inputs]['api_url'].split('//')[1]
     key = inst_app.configs[:inputs]['api_key']
     params = { :domain => domain, :ssl_enabled => "true", :content_type => "application/xml", :accept_type => "application/xml", :username => key, :password => 'X' }
-    params[:body] = FRESHBOOKS_UPDATE_REQ.render('time_entry_id' => integrated_resource.remote_integratable_id, 'hours' => timeentry.hours, 'notes' => timeentry.note)
+    notes = Liquid::Template.parse(inst_app.configs[:inputs]['freshbooks_note']).render('ticket'=>timeentry.workable)
+    params[:body] = FRESHBOOKS_UPDATE_REQ.render('time_entry_id' => integrated_resource.remote_integratable_id, 'hours' => timeentry.hours, 'notes' => "#{timeentry.note}\n#{notes}")
     response = hrp_request(params,"post","FRESHBOOKS_UPDATE_REQ")
   end
 
@@ -30,7 +31,8 @@ class Integrations::TimeSheetsSync
     params = { :domain => domain, :ssl_enabled => "true", :content_type => "application/xml", :accept_type => "application/xml" }
     wfm_time_entry = wfm_fetch_timeentry(params,apikey,integrated_resource.remote_integratable_id)
     minutes = (timeentry.hours.to_f*60).ceil
-    wfm_time_entry.merge!('time_entry_id'=>integrated_resource.remote_integratable_id,'hours'=> "#{minutes}",'notes'=>timeentry.note)
+    notes = Liquid::Template.parse(inst_app.configs[:inputs]['workflow_max_note']).render('ticket'=>timeentry.workable)
+    wfm_time_entry.merge!('time_entry_id'=>integrated_resource.remote_integratable_id,'hours'=> "#{minutes}",'notes'=>"#{timeentry.note}\n#{notes}")
     wfm_update_timeentry(params,apikey,wfm_time_entry)
   end
 
