@@ -131,9 +131,8 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
     Sharding.run_on_slave do
-     filter_scope.count
+     TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
     end
   end
   

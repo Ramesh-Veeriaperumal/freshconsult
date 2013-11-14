@@ -723,6 +723,25 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket}
   end
 
+  def summary
+    view_name = params[:view_name] || "new_and_my_open"
+    count = {:error => "Unsupported view name"}
+    if supported_view.include? view_name.to_sym
+      count = {:view_count => filter_count(view_name.to_sym)}
+    end
+    respond_to do |format|
+      format.json{ 
+        render :json => count.to_json       
+      }
+      format.xml {
+        render :xml => count.to_xml(:root => :count)
+      }
+      format.any {
+       render_404
+      }
+    end
+  end
+
   protected
   
     def item_url
@@ -800,6 +819,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   private
   
+    def supported_view
+      [:all, :open, :overdue, :due_today, :on_hold, :new, :new_and_my_open, :my_overdue, :my_groups_open]
+    end
+    
     def reply_to_all_emails
       if @ticket_notes.blank?
         @to_cc_emails = @ticket.reply_to_all_emails
