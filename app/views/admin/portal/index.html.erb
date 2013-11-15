@@ -1,66 +1,57 @@
 <% @enable_pattern = true %>
 <% content_for :sidebar do -%><%- end %> 
 
-<%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "title" ) %>
+<%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "lead" ) %>
 <% form_for(:account, :url => admin_portal_path(@account), :html => { :method => :put }) do |f| %>
-	<ul class="ui-form">
-		<li>
-			<label>
-		      <%= f.feature_check_box :anonymous_tickets %> <%=t('portal_customizer_option_tickets')%>
-		  </label>
-			<%= content_tag( :div, t('portal_customizer_option_tickets_i'), :class => "info-data tabbed" ) %>
-		</li>
-	 	<li>
-			<label>
-		      <%= f.feature_check_box :open_solutions %> <%=t('portal_customizer_option_solutions')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_open_sol_i'), :class => "info-data tabbed" ) %>
-	 	</li>
-	 	<li>
-			<label>
-		      <%= f.feature_check_box :auto_suggest_solutions %> <%=t('portal_customizer_option_auto_suggest_solutions')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_auto_suggest_solutions'), :class => "info-data tabbed" ) %>
-	 	</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :open_forums %> <%=t('portal_customizer_option_forums')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_option_forums_i'), :class => "info-data tabbed" ) %>
-		</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :google_signin %> <%=t('portal_customizer_google_signin')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_anon_for_g'), :class => "info-data tabbed" ) %>
-		</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :twitter_signin %> <%=t('portal_customizer_twitter_signin')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_anon_for_t'), :class => "info-data tabbed" ) %>
-		</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :facebook_signin %> <%=t('portal_customizer_facebook_signin')%>
-		    </label>
-			<%= content_tag( :div, t('portal_customizer_anon_for_f'), :class => "info-data tabbed" ) %>
-		</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :signup_link %> <%=t('portal_signup')%>
-		    </label>
-			<%= content_tag( :div, t('portal_signup_anon'), :class => "info-data tabbed" ) %>
-		</li>
-		<li>
-			<label>
-		      <%= f.feature_check_box :captcha %> <%=t('portal_captcha')%>
-		    </label>
-			<%= content_tag( :div, t('portal_captcha_anon'), :class => "info-data tabbed" ) %>
-		</li>
-	</ul>
-	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn floatl" } %>
-		<%= f.submit t('save'), { :class => "btn btn-primary" } %>
+<div>
+	<div class="checkbox">
+		<%= f.feature_check_box :anonymous_tickets %> <%=t('portal_customizer_option_tickets')%>
+		<%= content_tag( :div, t('portal_customizer_option_tickets_i'), :class => "muted" ) %>
 	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :open_solutions %> <%=t('portal_customizer_option_solutions')%>
+		<%= content_tag( :div, t('portal_customizer_open_sol_i'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :auto_suggest_solutions %> <%=t('portal_customizer_option_auto_suggest_solutions')%>
+		<%= content_tag( :div, t('portal_customizer_auto_suggest_solutions'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :open_forums %> <%=t('portal_customizer_option_forums')%>
+		<%= content_tag( :div, t('portal_customizer_option_forums_i'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :google_signin %> <%=t('portal_customizer_google_signin')%>
+		<%= content_tag( :div, t('portal_customizer_anon_for_g'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :twitter_signin %> <%=t('portal_customizer_twitter_signin')%>
+		<%= content_tag( :div, t('portal_customizer_anon_for_t'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :facebook_signin %> <%=t('portal_customizer_facebook_signin')%>
+		<%= content_tag( :div, t('portal_customizer_anon_for_f'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :signup_link %> <%=t('portal_signup')%>
+		<%= content_tag( :div, t('portal_signup_anon'), :class => "muted" ) %>
+	</div>
+	<br/>
+	<div class="checkbox">
+		<%= f.feature_check_box :captcha %> <%=t('portal_captcha')%>
+		<%= content_tag( :div, t('portal_captcha_anon'), :class => "muted" ) %>
+	</div>
+	<br/>
+</div>
+<div class="align-right">
+	<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
+	<%= f.submit t('save'), { :class => "btn btn-primary" } %>
+</div>
 <% end %>
