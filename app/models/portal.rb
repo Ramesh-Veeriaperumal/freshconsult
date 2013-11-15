@@ -38,7 +38,7 @@ class Portal < ActiveRecord::Base
   belongs_to :forum_category
 
   APP_CACHE_VERSION = "FD41"
-
+  
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
   end

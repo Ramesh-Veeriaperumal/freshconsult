@@ -12,8 +12,9 @@ module Mobile::Actions::User
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, 
       							:is_customer, :recent_tickets, :is_client_manager, :company_name,
-                    :can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :user_time_zone, 
-                    :agent_signature],
+                    :can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :user_time_zone,
+                    :can_view_time_entries, :can_edit_time_entries, :agent_signature ],
+
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
     to_json options
@@ -47,4 +48,12 @@ module Mobile::Actions::User
     Sanitize.clean(agent.signature_html.gsub("<p>","").gsub("</p>","\n")) if agent? 
   end
 
+  def can_view_time_entries
+    privilege?(:view_time_entries)
+  end
+
+  def can_edit_time_entries
+    privilege?(:edit_time_entries)
+  end
+  
 end

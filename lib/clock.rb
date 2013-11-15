@@ -1,5 +1,7 @@
-require 'config/boot'
-require 'config/environment'
+# require 'config/boot'
+# require 'config/environment'
+require File.expand_path('../../config/boot', __FILE__)
+require File.expand_path('../../config/environment', __FILE__)
 include Reports::Constants
 
 Clockwork.every(1.hour, "ArchiveData_By_TimeZone", :at => "**:05", :tz => 'UTC') { 

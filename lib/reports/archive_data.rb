@@ -35,22 +35,22 @@ module Reports
 
 				query_str = " select #{select_aggregate_columns}, #{def_columns} from #{join_query(ff_cols)} "\
     								" where #{conditions(account.id)} group by #{def_columns}"
-				reporting_data = ActiveRecord::Base.connection.execute(query_str)
+				reporting_data = ActiveRecord::Base.connection.select_all(query_str)
   			# write data into csv
   			temp_file = ARCHIVE_DATA_FILE % {:date => stats_date_time.strftime("%Y-%m-%d"), :account_id => account.id}
 				csv_file_path = File.join(FileUtils.mkdir_p(CSV_FILE_DIR),%(#{temp_file}.csv))
-				csv_string = FasterCSV.open(csv_file_path, "w", {:col_sep => "|"}) do |csv|
+				csv_string = CSVBridge.open(csv_file_path, "w", {:col_sep => "|"}) do |csv|
      			csv << (REPORT_COLUMNS + %w(created_at))
-     			reporting_data.each_hash do |hash| 
+     			reporting_data.each do |hash| 
      				val_array = REPORT_COLUMNS.inject([]) do |values, col_name|
-     					values << ( !hash.key?(col_name) ? "\\N" : (hash[col_name].nil? ? "\\N" : Mysql.escape_string(hash[col_name])))
+     					values << ( !hash.key?(col_name) ? "\\N" : (hash[col_name].nil? ? "\\N" : mysql_escape(hash[col_name])))
      					values
      				end
      				val_array << stats_date
      				csv << val_array
      			end
       	end
-      	reporting_data.free
+      	# reporting_data.free
 
       	utc_time = Time.now.utc
       	s3_folder = regenerate ? temp_file : %(#{utc_time.strftime('%Y_%m_%d')}_#{utc_time.hour})
@@ -58,6 +58,15 @@ module Reports
       	
 				File.delete(csv_file_path)
 			end
+
+			def mysql_escape(object)
+				return object unless object.is_a?(String)
+		    if RUBY_VERSION > "1.9"
+		      Mysql2::Client.escape(object)
+		    else
+		      Mysql.escape_string(object)
+		    end
+		  end
 			
 			def select_def_columns(ff_cols)
 				def_cols = DEFAULT_TICKET_COLUMNS.map {|c| "helpdesk_tickets.#{c}"}.join(",")

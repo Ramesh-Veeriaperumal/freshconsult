@@ -12,7 +12,7 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
-   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy]
+   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy,:restore]
   
    
    def check_demo_site

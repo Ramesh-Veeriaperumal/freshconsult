@@ -13,7 +13,7 @@ class Social::TwitterMessage
   def process
     tweets = twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
     last_tweet_id = tweets[0].id unless tweets.blank?
-    create_tickets (tweets , twt_handle )
+    create_tickets(tweets , twt_handle )
     twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
   end
 

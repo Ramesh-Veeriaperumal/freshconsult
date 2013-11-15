@@ -98,13 +98,13 @@ Ext.define('Freshdesk.controller.Timers', {
         formObj.setUrl('/helpdesk/time_sheets/'+id);
         formObj.setMethod('PUT');
         var date_obj = new Date(time_entry.executed_at);
-        // var minutes_spent = (((time_entry.timespent)%1)*0.6);
-        // var mins = parseFloat(minutes_spent.toFixed(2));
-        // var mins_displayed = parseInt(mins*100);
-        // if(mins_displayed<10)
-        // mins_displayed = "0"+mins_displayed;
-        // var hours_spent = parseInt(time_entry.timespent);
-        formObj.items.items[0].items.items[1].setValue(time_entry.timespent);
+        var minutes_spent = (((time_entry.timespent)%1)*0.6);
+        var mins = parseFloat(minutes_spent.toFixed(2));
+        var mins_displayed = parseInt(mins*100);
+        if(mins_displayed<10)
+        mins_displayed = "0"+mins_displayed;
+        var hours_spent = parseInt(time_entry.timespent);
+        formObj.items.items[0].items.items[1].setValue(hours_spent+":"+mins_displayed);
         formObj.items.items[0].items.items[0].setValue(time_entry.user_id);
         
         formObj.items.items[0].items.items[5].ticket_id = time_entry.ticket_id;

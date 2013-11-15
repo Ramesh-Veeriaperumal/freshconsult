@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :set_locale, :force_utf8_params
   before_filter :persist_user_agent
+  before_filter :set_cache_buster
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -135,7 +136,23 @@ class ApplicationController < ActionController::Base
   def persist_user_agent
     Thread.current[:http_user_agent] = request.env['HTTP_USER_AGENT']
   end
-    
+
+  def set_cache_buster
+      response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+      response.headers["Pragma"] = "no-cache"
+      response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  protected
+    def silence_logging
+      @bak_log_level = logger.level 
+      logger.level = Logger::ERROR
+    end
+
+    def revoke_logging
+      logger.level = @bak_log_level 
+    end
+
   private
     def redactor_form_builder
       ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
