@@ -1550,6 +1550,9 @@ a.pill.help{
 
 .popover.right .notice-arrow{
   border-right-color: #5f5f5f;  
+  &:after{
+    border-right-color: #5f5f5f;
+  }
 }
 
 @-webkit-keyframes blink{
