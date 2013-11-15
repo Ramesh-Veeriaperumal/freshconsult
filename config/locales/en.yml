@@ -2344,7 +2344,7 @@ en:
     sample_data: Sample data
     can_see_all_tickets_of_the_company: Can view all company tickets ?
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
-    can_see_all_tickets: Important - Above field accepts accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
+    can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered

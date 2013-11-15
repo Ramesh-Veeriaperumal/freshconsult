@@ -52,7 +52,7 @@ module Mobile::Actions::User
   end
   
   def agent_signature
-    Sanitize.clean(agent.signature_html.gsub("<p>","").gsub("</p>","\n")) if agent? 
+    Sanitize.clean(agent.signature_html.gsub("<p>","").gsub("</p>","\n")) if (agent? && !agent.signature_html.blank?) 
   end
 
 end
