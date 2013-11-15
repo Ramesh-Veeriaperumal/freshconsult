@@ -67,8 +67,10 @@ Ext.define('Freshdesk.view.TimerContainer', {
     },
 
     newTimer:function(){
-        id = this.ticket_id;
-        location.href = "#tickets/addTimer/"+id;
+        if(FD.current_user.can_edit_time_entries){
+            id = this.ticket_id;
+            location.href = "#tickets/addTimer/"+id;
+        }
     },
 
 
@@ -79,7 +81,8 @@ Ext.define('Freshdesk.view.TimerContainer', {
     },
 
     onTimerDisclose: function(list, index, target, record, evt, options){
-        location.href = "#tickets/editTimer/"+record.data.time_entry.id;
+        if(FD.current_user.can_edit_time_entries)
+            location.href = "#tickets/editTimer/"+record.data.time_entry.id;
     },
     onDeleteButton: function(){
     	console.log('delete button');

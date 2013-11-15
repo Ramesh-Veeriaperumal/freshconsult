@@ -6,7 +6,7 @@ module Search::ElasticSearchIndex
 
       def update_es_index
         Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name, :id => self.id,
-                                                    :account_id => self.account_id }) if ES_ENABLED
+                                                    :account_id => self.account_id }) if ES_ENABLED and !queued?
       end
 
       def remove_es_document
@@ -20,6 +20,15 @@ module Search::ElasticSearchIndex
 
       def es_highlight(item)
         self.send("highlight_#{item}") || h(self.send("#{item}"))
+      end
+
+      def queued?
+        key = self.search_job_key
+        Search::Job.check_in_queue key
+      end
+
+      def search_job_key
+        Redis::RedisKeys::SEARCH_KEY % { :account_id => self.account_id, :klass_name => self.class.name, :id => self.id }
       end
       
     end

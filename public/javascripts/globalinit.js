@@ -2,17 +2,50 @@
  * @author venom
  */
 var $J = jQuery.noConflict();
-window.pjaxBeforeSend = null, window.pjaxUnload = null, window.pjaxPrevUnload = null, window.pjaxBodyClass = null, window.pjaxPrevBodyClass = null;
 is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers 
       || !!('onmsgesturechange' in window); // works on ie10
 };
-
+window.xhrPool = [];
 (function($){
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;   
        
   // App initialisation  
+  $.oldajax = $.ajax;
+  $.xhrPool_Abort  = function(){ 
+    if(window.xhrPool)
+    {
+      for (var i = 0; i < window.xhrPool.length; i++) {
+        window.xhrPool[i].abort();
+      }
+      window.xhrPool = [];
+    }
+  }
+  $.ajax = function(options)
+  {
+    if(options.persist)
+    {
+      return $.oldajax(options);
+    }
+    else
+    {
+      var original_complete = options.complete || function(){};
+      options.complete = function(xhr,status)
+      {
+        var index = window.xhrPool.indexOf(xhr)
+        if(index> -1)
+        {
+          window.xhrPool.splice(index,1);
+        }
+        original_complete(xhr,status);
+      }
+      var xhr = $.oldajax(options);
+      window.xhrPool.push(xhr);
+      return xhr;
+    }
+  
+  }
   $(document).ready(function() {
     var widgetPopup = null;
     var hoverPopup =  false;
@@ -231,7 +264,9 @@ is_touch_device = function() {
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
-      $("select.select2").livequery(function(){ $(this).select2($(this).data()); });
+      $("select.select2").livequery(function(){ 
+          $(this).select2($(this).data());   
+      });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
@@ -530,120 +565,74 @@ is_touch_device = function() {
         $.scrollTo('body');
       })
 
-      $('#Activity .activity > a').livequery(function() {
+      $('#Activity .activity > a.notelink').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
       })
-
-      // Sticky Header
-
-      var setupScroll = function() {
-        if(!$('#sticky_header').length) return;
-
-        var the_window = $(window),
-            sticky_header = $('#sticky_header');
-
-        var hasScrolled = false,
-            REAL_TOP = sticky_header.offset().top;
-
-
-        var handleScroll = function() {
-          if(the_window.scrollTop() > REAL_TOP) {
-            if(!sticky_header.hasClass('stuck')) {
-              sticky_header.addClass('stuck');
-              sticky_header.wrap('<div id="sticky_wrap" ><div class="fixed_wrap" ><div class="wrapper">');
-              $('#sticky_wrap').height(sticky_header.outerHeight());
-              
-              $('#scroll-to-top').addClass('visible');
-            }
-
-          } else {
-            if(sticky_header.hasClass('stuck')) {
-              sticky_header.removeClass('stuck');
-              sticky_header.unwrap().unwrap().unwrap();
-              
-              $('#scroll-to-top').removeClass('visible');
-            }
+    
+     // Sticky Header
+    
+    window.setupScroll = function() {
+      if(!$('#sticky_header').length) return;
+    
+      var the_window = $(window),
+          sticky_header = $('#sticky_header');
+    
+      var hasScrolled = false,
+          REAL_TOP = sticky_header.offset().top;
+    
+    
+      var handleScroll = function() {
+        if(the_window.scrollTop() > REAL_TOP) {
+          if(!sticky_header.hasClass('stuck')) {
+            sticky_header.addClass('stuck');
+            sticky_header.wrap('<div id="sticky_wrap" ><div class="fixed_wrap" ><div class="wrapper">');
+            $('#sticky_wrap').height(sticky_header.outerHeight());
+            
+            $('#scroll-to-top').addClass('visible');
           }
-
-          hasScrolled = false;
-        }
-        the_window.on('scroll.freshdesk', handleScroll);
-
-        $(window).on('resize.freshdesk', function() {
-          
-          var to_collapse = false, extra_buffer = 20;
-
-          var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
-
-          if(sticky_header.hasClass('collapsed')) {
-            var hidden_elements_width = 0;
-            sticky_header.find('.hide_on_collapse').each(function() {
-              hidden_elements_width += $(this).outerWidth();
-            });
-            if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
-              to_collapse = true;
-            }
-          } else {
-            to_collapse = sticky_header.width() < width_elements_visible;
+    
+        } else {
+          if(sticky_header.hasClass('stuck')) {
+            sticky_header.removeClass('stuck');
+            sticky_header.unwrap().unwrap().unwrap();
+            
+            $('#scroll-to-top').removeClass('visible');
           }
-          sticky_header.toggleClass('collapsed', to_collapse);
-          
-        }).trigger('resize');
-
-      }
-
-      var destroyScroll = function() {
-        $(window).off('scroll.freshdesk');
-        $(window).off('resize.freshdesk');
-      }
-
-      setupScroll();
-
-      //Not using pjax for IE10- Temporary fix for IE pjax load issue
-      //in dashboard and tickets filter. Remove the condition once we get permanent fix
-    if (!$.browser.msie) {
-      $(document).pjax('a[data-pjax]',{
-          timeout: -1,
-          push : false,
-          maxCacheLength: 0,
-          replace: true
-        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
-          jQuery(document).data("requestDone",false);
-          jQuery(document).data("parallelData",undefined);
-          start_time = new Date();
-          var bHeight = $('#body-container').height(),
-              clkdLI = $(evnt.relatedTarget).parent();
-          $('ul.header-tabs li.active').removeClass('active');
-          clkdLI.addClass('active');
-          initParallelRequest($(evnt.relatedTarget))
-
-          // BeforeSend
-          return Fjax.callBeforeSend();
-      }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
-        Fjax.callBeforeReplace();
-      }).bind('pjax:end',function(evnt,xhr,settings){
-        
-        //AfterReceive
-        Fjax.callAfterReceive();
-
-        destroyScroll();
-        if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
-        window.pjaxPrevUnload = null;
-        
-        end_time = new Date();
-        setTimeout(function() {
-          $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
-        },10);
-        Fjax.callAtEnd();
-        var options = jQuery(document).data();
-        jQuery(document).data("requestDone",true);
-        if(options.parallelData && $(evnt.relatedTarget).data()){
-          $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
         }
-        setupScroll();
-        return true;
-      })
+    
+        hasScrolled = false;
+      }
+      the_window.on('scroll.freshdesk', handleScroll);
+    
+      $(window).on('resize.freshdesk', function() {
+        var to_collapse = false, extra_buffer = 20;
+    
+        var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+    
+        if(sticky_header.hasClass('collapsed')) {
+          var hidden_elements_width = 0;
+          sticky_header.find('.hide_on_collapse').each(function() {
+            hidden_elements_width += $(this).outerWidth();
+          });
+          if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
+            to_collapse = true;
+          }
+        } else {
+          to_collapse = sticky_header.width() < width_elements_visible;
+        }
+        sticky_header.toggleClass('collapsed', to_collapse);
+        
+      }).trigger('resize');
+    
+    };
+    
+    window.destroyScroll = function() {
+      $(window).off('scroll.freshdesk');
+      $(window).off('resize.freshdesk');
     }
+    
+    setupScroll();
+      
    });
  
 })(jQuery);
@@ -652,27 +641,10 @@ function closeableFlash(flash){
    flash = jQuery(flash);
    jQuery("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
       flash.fadeOut(600);
+      return false;
    });
    setTimeout(function() {
       if(flash.css("display") != 'none')
          flash.hide('blind', {}, 500);
     }, 20000);
-}
-
-function initParallelRequest(target){
-  if(!target.data('parallelUrl')){
-    return;
-  }
-  var options = target.data();
-  jQuery.get(options.parallelUrl,
-    function(data){
-      if(jQuery(document).data("requestDone")){
-        console.log("parent request done")
-        jQuery(options.parallelPlaceholder).html(data)
-      }
-      else{
-        console.log("parallel request done")
-        jQuery(document).data("parallelData",data);
-      }
-  })
 }

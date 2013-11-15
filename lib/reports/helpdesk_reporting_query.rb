@@ -19,7 +19,7 @@ module Reports::HelpdeskReportingQuery
     options = {:select_cols => %(SUM(received_tickets) as count, #{columns[:group_by]}), 
       :conditions => %(#{r_db.conditions} %s #{conditions} AND 
       #{columns[:column_name]} IS NOT NULL) % (conditions.blank? ? "" : "AND"),
-      :group_by => columns[:group_by]}
+      :group_by => columns[:group_by], :order_by => columns[:group_by]}
     r_db.execute(options)
   end
 

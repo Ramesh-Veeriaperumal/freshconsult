@@ -48,7 +48,7 @@ class AccountsController < ApplicationController
       :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain) }, 
       :callback => params[:callback]
     else
-      render :json => { :success => false, :errors => @signup.errors.to_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 
     end    
   end
   
@@ -238,7 +238,8 @@ class AccountsController < ApplicationController
   protected
     
     def choose_layout 
-      (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name)) ? 'signup_google' : 'application'
+      return "signup_google" if (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name))
+      request.headers['X-PJAX'] ? 'maincontent' : 'application'
 	  end
 	
     def load_object
