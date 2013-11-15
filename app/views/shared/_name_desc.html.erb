@@ -1,17 +1,16 @@
 <p style="float:right; margin-top:0"></p>
-
-<ul class="ui-form">
-	<li id="forum_name">
-		<label><%= t('title') %></label>
-		<div>
+<div class="form-horizontal">
+	<div class="control-group" id="forum_name">
+		<label class="control-label"><%= t('title') %></label>
+		<div class="controls">
 			<%= form.text_field :name, :class => "primary" %>
 		</div>
-	</li>	
-	<li id="forum_descripion">
-		<label><%= t('description') %></label>
-		<div>
+	</div>
+	<div class="control-group" id="forum_descripion">
+		<label class="control-label"><%= t('description') %></label>
+		<div class="controls">
 			<%= form.text_area :description, :rows => 7 %>
 		</div>
-	</li>
-</ul>
+	</div>
+</div>
  
