@@ -48,6 +48,7 @@ class ShardMapping < ActiveRecord::Base
  end
 
  def clear_cache
+    domains.each {|d| d.clear_cache }
     key = SHARD_BY_ACCOUNT_ID % { :account_id => account_id }
     MemcacheKeys.delete_from_cache key
   end
