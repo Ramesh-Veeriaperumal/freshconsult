@@ -76,25 +76,52 @@
 
 
 	 	 
-	<ul class="ui-form">	
-		<li>
-			<%= label(:user, :name, t('user.full_name')) %>
-			<%= text_field(:user, :name, :class => "text required" )  %>
+	<ul class="form-horizontal">	
+		<li class="control-group">
+			<%= label(:user, :name, t('user.full_name'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_field(:user, :name, :class => "text required" )  %>
+			</div>
 		</li>
-		<li>
-			<%= label(:user, :email, t('user.email')) %> 
-			<%= text_field(:user, :email, :id => "email_primary", :class => "email") %> 
+		<li class="control-group">
+			<%= label(:user, :job_title, t('user.title'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_field(:user, :job_title, :class => "text" ) %>
+			</div>
 		</li>
-		<li>
-			<%= label(:user, :job_title, t('user.title')) %>
-			<%= text_field(:user, :job_title, :class => "text" ) %>
+		<li class="control-group">
+			<%= label(:user, :email, t('user.email'), :class => "control-label") %> 
+			<div class="controls">
+				<%= text_field(:user, :email, :id => "email_primary", :class => "email") %> 
+			</div>
 		</li>
-		<li>
-			<%= label(:user, :tags, t('tag.title')) %>
-			<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
+		<li class="control-group">
+			<%= label(:user, :phone, "#{t('user.work_phone')}.",:class => "control-label" ) %>
+			<div class="controls">
+				<%= text_field(:user, :phone, :class => "text", :id => "phone_work" , :placeholder => t('user.work') ) %>
+			</div>
+		</li>
+		<li class="control-group">
+			<%= label(:user, :phone, "#{t('user.mobile_phone')}.",:class => "control-label" ) %>
+			<div class="controls">
+				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" , :placeholder => t('user.mobile') ) %>
+			</div>
+		</li>
+		<li class="control-group">
+			<%= label(:user, :twitter_id, t('user.twitter_id'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_field(:user, :twitter_id, :class => "text" ) %>
+			</div>
+		</li>
+		<li class="control-group">
+			<label class="control-label"><%=t("user.profile_picture")%></label>
+			<div class="controls">
+				<%= render :partial => "/shared/profileavatar.html", :locals => { :user => @user, :type => type } %> 
+			</div>
 		</li>
 
-		<li>
+
+		<li class="control-group">
 			<%
 				company_name = "";
 				role_disabled = true
@@ -103,58 +130,54 @@
 					role_disabled = false
 				end
 			%>
-			<%= label(:user, :customer, t('user.company')) %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer") %>
+			<%= label(:user, :customer, t('user.company'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer") %>
+			</div>
 		</li>
-		<li>			
+		<li class="control-group">	
+			<label class="control-label"></label>
+			<div class="controls">		
 			<%= check_box(:user, :client_manager, { :disabled => role_disabled, :id =>'contact_role', :checked => @user.privilege?(:client_manager) }, true, false) %>
-      <%= t('contacts.role.info') %>
+			   	<%= t('contacts.role.info') %>
+			</div>
 		</li>
-		<li>
-			<%= label(:user, :address, t('user.address')) %>
-			<%= text_area(:user, :address, :class => "text" ) %>
+		<li class="control-group">
+			<%= label(:user, :address, t('user.address'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_area(:user, :address, :class => "text", :rows => 5 ) %>
+			</div>
 		</li>		
-		<li class="small">	
-			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
-			<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
-			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
-			<br />
-			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
-			<!--%= label(:user, :mobile, "Mobile") %-->
-			<label class="overlabel" for="phone_mobile"><%=t('user.mobile')%></label>
-			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
-		</li>
-		
-		
-		<li class="small">
-			<%= label(:user, :twitter_id, t('user.twitter_id')) %>
-			<%= text_field(:user, :twitter_id, :class => "text" ) %>
-		</li>
-		<li>
-			<%= render :partial => "/shared/profileavatar.html", :locals => { :user => @user, :type => type } %> 
-		</li>
 		
 		<% if feature?(:multi_timezone) %>
-			<li>
-				<%= label(:user, :time_zone, t('account.time_zone')) %>
-				<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , :default => @user.time_zone %>
+			<li class="control-group">
+				<%= label(:user, :time_zone, t('account.time_zone'), :class => "control-label") %>
+				<div class="controls">
+					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , {:default => @user.time_zone} , {:class => 'select2'} %>
+				</div>
 			</li>
 		<% end %>
 		
 		<% if feature?(:multi_language) %>  
-			<li>
-				<%= label(:user, :language, t('account.language')) %>
-				<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()}%>
+			<li class="control-group">
+				<%= label(:user, :language, t('account.language'), :class => "control-label") %>
+				<div class="controls">
+					<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()} , :class => "select2"%>
+				</div>
 			</li>
 		<% end %>
-
-		<li>
-			<%= label(:user, :description, t('user.back_info')) %>
-			<label class="overlabel" for="user_binfo">
-				<%=t('contacts.info6')%>
-				example - LA Lakers fan etc.
-			</label>
-			<%= text_area(:user, :description, :class => "text", :id => "user_binfo", :rows => 5 ) %>
+		<li class="control-group">
+			<%= label(:user, :tags, t('tag.title'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
+			</div>
+		</li>
+		<li class="control-group">
+			<%= label(:user, :description, t('user.back_info'), :class => "control-label") %>
+			<div class="controls">
+				<%= text_area(:user, :description, :class => "text", :id => "user_binfo", :rows => 5, 
+					:placeholder => "example - LA Lakers fan etc." ) %>
+			</div>
 		</li>		
 		
 	</ul>	 

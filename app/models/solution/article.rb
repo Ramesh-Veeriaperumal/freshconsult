@@ -113,6 +113,7 @@ class Solution::Article < ActiveRecord::Base
   def to_indexed_json
     to_json(
             :root => "solution/article",
+            :tailored_json => true,
             :only => [ :title, :desc_un_html, :user_id, :status, :account_id ],
             :include => { :tags => { :only => [:name] },
                           :folder => { :only => [:category_id, :visibility], 
@@ -124,6 +125,7 @@ class Solution::Article < ActiveRecord::Base
   end
  
   def as_json(options={})
+    return super(options) unless options[:tailored_json].blank?
     options[:except]=[:account_id,:import_id]
     options[:include]={ :tags => { :only => [:name] },
                         :folder => { :except => [:account_id,:import_id],

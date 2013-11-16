@@ -468,6 +468,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
+    return super(options) unless options[:tailored_json].blank?
     options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
@@ -601,6 +602,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_indexed_json
     to_json({
             :root => "helpdesk/ticket",
+            :tailored_json => true,
             :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
             :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
             :include => { :flexifield => { :only => es_flexifield_columns },

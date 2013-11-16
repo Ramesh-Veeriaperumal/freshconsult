@@ -27,7 +27,8 @@ var CHAT_DEBUG = "<%=chat_debug%>";
 var USER_LIST = [];
 var CURRENT_USER = {
     'id':'<%=current_user.id%>',
-    'username':'<%=current_user.name%>'
+    'username':'<%=current_user.name%>',
+    'isAdmin': <%=current_user.privilege?(:admin_tasks)%>
 };
 
 var SITE_ID = '<%=current_account.chat_setting.display_id%>';
@@ -140,7 +141,10 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             transfer_accepted_msg: "<%= t('freshchat.transfer_accepted_msg') %>",
             transfer_request_timeout_msg: "<%= t('freshchat.transfer_request_timeout_msg') %>",
             integrate_freshchat_title: "<%= t('freshchat.integrate_freshchat_title') %>",
-            integrate_freshchat_info: "<%= t('freshchat.integrate_freshchat_info') %>"
+            integrate_freshchat_info: "<%= t('freshchat.integrate_freshchat_info') %>",
+            click_to_go_online: "<%= t('freshchat.click_to_go_online').html_safe %>",
+            click_to_go_offline: "<%= t('freshchat.click_to_go_offline').html_safe %>",
+            fetching: "<%= t('freshchat.fetching') %>"
         }
 </script>
     <!-- Chat related contents ends -->

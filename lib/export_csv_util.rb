@@ -2,7 +2,6 @@
 require 'csv'
 module ExportCsvUtil
 
-  BOM = "\377\376" #Byte Order Mark
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
     params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
@@ -81,32 +80,51 @@ module ExportCsvUtil
     csv_string = ""
     unless csv_hash.blank?
       csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
-        headers = csv_hash.keys.sort
-        if is_portal
-          vfs = visible_fields
-          headers.delete_if{|header_key|
-            field_name = Helpdesk::TicketModelExtension.field_name header_key
-            true unless vfs.include?(field_name)
-          }
-        end
+        headers = delete_invisible_fields(csv_hash, is_portal)
         csv << headers.collect {|header| csv_hash[header]}
-        items.each do |record|
-          csv_data = []
-          headers.each do |val|
-            data = record.send(val)
-            csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
-          end
-          csv << csv_data
-        end
+        tickets_data(items, headers, csv)
       end
     end
-    bom = BOM
-    bom = RubyBridge.convert_string_encoding("utf-16le", "ASCII-8BIT", bom) if csv_string.respond_to?(:force_encoding)
-    csv_string = bom + RubyBridge.convert_string_encoding("utf-16le", "utf-8", csv_string)
-    csv_string = RubyBridge.force_binary_encoding(csv_string)
     
     send_data csv_string, 
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=tickets.csv"
   end
+
+  def export_xls(items, xls_hash, is_portal=false)
+    unless xls_hash.blank?
+      @xls_hash = xls_hash
+      @headers = delete_invisible_fields(xls_hash, is_portal)
+      @records = tickets_data(items, @headers)
+    end
+  end
+
+  def tickets_data(items, headers, records = [])
+    items.each do |item|
+      record = []
+      headers.each do |val|
+        data = item.send(val)
+        record << unescape_html(data)
+      end
+      records << record
+    end
+    records
+  end
+
+  def unescape_html(data)
+    ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
+  end
+
+  def delete_invisible_fields(header_hash, is_portal)
+    headers = header_hash.keys.sort
+    if is_portal
+      vfs = visible_fields
+      headers.delete_if{|header_key|
+        field_name = Helpdesk::TicketModelExtension.field_name header_key
+        true unless vfs.include?(field_name)
+      }
+    end
+    headers
+  end
+
 end

@@ -145,6 +145,7 @@
 .fc_sneakpeak_wrap{
     position: fixed;
     bottom: 0;
+    left: 3px;
     height: 39px;
     z-index: 999999;
     color: #fff;
@@ -205,7 +206,7 @@
 }
 
 #visitor-list{
-    left: 56px;
+    left: 24px;
     min-width: 125px;
     &.sneakpeak:after, &.sneakpeak:before{
         left: 123px;
@@ -214,6 +215,11 @@
         display:block;
         font-size: 22px;
     }
+}
+
+.fc_fetch_msg{
+    color: #999;
+    padding: 10px;
 }
 
 .sneakpeak ul {
@@ -411,27 +417,11 @@ li.ui-state-active {
     position: fixed;
     top: 50px;
     right: 10px;
-    -webkit-animation: fadeInDownBig 0.5s linear 1;
-       -moz-animation: fadeInDownBig 0.5s linear 1;
-        -ms-animation: fadeInDownBig 0.5s linear 1;
-            animation: fadeInDownBig 0.5s linear 1;
-    -webkit-transition: 1s ease;
-       -moz-transition: 1s ease;
-        -ms-transition: 1s ease;
-            transition: 1s ease;
     .notifier{    
         width: 300px;
         padding-top: 10px;
         border-radius: 4px;
         box-shadow: 0px 0px 20px #999;
-         -webkit-animation: shake 1.5s ease 2;
-            -moz-animation: shake 1.5s ease 2;
-             -ms-animation: shake 1.5s ease 2;
-                 animation: shake 1.5s ease 2;
-                  -webkit-animation-delay: 1s;
-                     -moz-animation-delay: 1s;
-                      -ms-animation-delay: 1s;
-                          animation-delay: 1s;
     }
     .notifier img {
         float: left;
@@ -768,12 +758,21 @@ li.ui-state-active {
 
 .rsltavatar{
     float: left;
-    width: 26px;
+    width: 30px;
     border-radius: 4px;
     height: 31px;
     img{
         border-radius: 4px;
         width: 26px;
+        float: left;
+        border: 1px #eaeaea solid;
+    }
+    .icon-arrow-left, .icon-arrow-right{
+        background: none;
+        float: left;
+        margin: 0px 10px;
+        position: relative;
+        line-height: 27px;
     }
 }
 
@@ -803,7 +802,7 @@ li.ui-state-active {
 
 .rsltmsg{
     width: 98%;
-    padding: 0px 0px 9px 37px;
+    padding: 0px 0px 9px 8px;
     display: block;
     .rslttime{
         display: none;
@@ -1009,7 +1008,7 @@ li.ui-state-active {
 }
 
 .recent{
-    padding: 0px 0px 0px 4px;
+    padding: 0px 10px;
     height:26px;
     float: left;
     text-align: center;
@@ -1034,7 +1033,7 @@ li.ui-state-active {
     display: none;
     float:left;
     position:fixed;
-    left:111px;
+    left:80px;
     bottom:50px !important;
     border: 1px solid;
     width: 300px;
@@ -1101,6 +1100,46 @@ li.ui-state-active {
     }
     &:last-child{
         border-radius: 0px 0px 5px 5px;
+    }
+    .rsltgrp{
+        .archive_deck {
+            position: absolute;
+            background: #FEFEF0;
+            border: 1px solid #ccc;
+            display: none;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .archive_deck:after, .archive_deck:before {
+            bottom: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .archive_deck:after {
+            border-color: rgba(254, 254, 240, 0);
+            border-bottom-color: #FEFEF0;
+            border-width: 10px;
+            left: 100px;
+            margin-left: -10px;
+        }
+        .archive_deck:before {
+            border-color: rgba(153, 153, 153, 0);
+            border-bottom-color: #ccc;
+            border-width: 11px;
+            left: 100px;
+            margin-left: -11px;
+        }
+
+        &:hover{
+            .archive_deck{
+                display: inline-block;
+            }
+        }
     }
 }
 
@@ -2425,3 +2464,13 @@ div.color{
        border-top: 1px #eee solid;
    }
 }
+
+/* Chat Toggle */
+    .chat-toggle{
+       border-right: 1px rgba(255, 255, 255, 0.2) solid;
+       cursor: pointer;
+       img{
+            width: 35px;
+            height: 35px;
+       }
+    }

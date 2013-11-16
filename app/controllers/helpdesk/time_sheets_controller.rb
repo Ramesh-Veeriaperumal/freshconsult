@@ -56,6 +56,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
     
+    sync_installed_apps #added to sync the installed apps
+
     #Added for API calls where user will not be knowing the id for ticket, instead provide only the display id.
     #Need to think about another way of handling this
     if params[:time_entry][:workable_id].blank? #this will be always present when called from portal's 'Add Time'
@@ -105,6 +107,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         update_running_timer @time_entry.user_id
         @time_entry.update_attributes({ :timer_running => true, :start_time => Time.zone.now })
      end
+     sync_installed_apps
      respond_to_format @time_entry
   end
   
@@ -176,6 +179,15 @@ private
     @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id, true)
     if @time_cleared
        @time_cleared.update_attributes({:timer_running => false, :time_spent => calculate_time_spent(@time_cleared) }) 
+    end
+  end
+
+  def sync_installed_apps
+    Integrations::TimeSheetsSync.applications.each do |app_name|
+      installed_app = current_account.installed_applications.with_name(app_name)
+      next if installed_app.blank?  
+      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_entry) unless @time_entry.blank?
+      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_cleared) unless @time_cleared.blank?
     end
   end
   

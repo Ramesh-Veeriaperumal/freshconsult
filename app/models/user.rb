@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
 
   concerned_with :associations, :callbacks
 
@@ -395,6 +395,7 @@ class User < ActiveRecord::Base
     update_attributes({:helpdesk_agent => false, :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+    email_notification_agents.destroy_all
   end
   
   def make_agent(args = {})
@@ -410,6 +411,8 @@ class User < ActiveRecord::Base
 
   def to_indexed_json
     to_json( 
+              :root => "user",
+              :tailored_json => true,
               :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
               :include => { :customer => { :only => [:name] } } 
            )

@@ -46,7 +46,7 @@
           <% if @current_view == "deleted" %>
             <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, :method => 'delete', :class => 'padding6', :id => 'empty_trash' if privilege?(:delete_ticket) %>
           <% elsif @current_view != "spam" %>
-            <a href="/helpdesk/tickets/configure_export" class="padding6 dialog2" title="Export to CSV"  "data-width" ="650" id = 'export_tickets'><%= t('ticket.export')%></a>
+            <a href="/helpdesk/tickets/configure_export" class="padding6 dialog2" title='<%= t("ticket.export_tickets") %>'  "data-width" ="650" id = 'export_tickets'><%= t('ticket.export')%></a>
           <% end %>
 
           <ul id="ticket_view_choices">

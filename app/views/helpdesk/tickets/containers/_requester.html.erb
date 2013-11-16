@@ -1,2 +1,2 @@
-<%= render(:partial => "helpdesk/shared/autocomplete_requester_email", 
-	:locals => { :url => requester_autocomplete_helpdesk_authorizations_path, :selected_requesters => @selected_requesters}) %>
+<%= render(:partial => "helpdesk/shared/autocomplete_select", 
+	:locals => { :url => requester_helpdesk_autocomplete_path, :selected_values => @selected_requesters, :container => container }) %>

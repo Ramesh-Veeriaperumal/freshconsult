@@ -134,6 +134,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_json(options = {})
+    return super(options) unless options[:tailored_json].blank?
     options[:include] = [:attachments] if options[:include].blank?
     options[:methods] = [:user_name,:source_name] unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
@@ -261,6 +262,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def to_indexed_json
     to_json({
             :root => "helpdesk/note",
+            :tailored_json => true,
             :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id, :notable_deleted, :notable_spam, :notable_requester_id ],
             :only => [ :notable_id, :deleted, :private, :body, :account_id ], 
             :include => { 

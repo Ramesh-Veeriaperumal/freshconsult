@@ -135,6 +135,9 @@ en:
     name: Name
     secondary: secondary
     phone_no: Phone No
+    work_phone: Work Phone
+    profile_picture: Profile Picture
+    mobile_phone: Mobile Phone
     mobile: Mobile
     address: Address
     work: Work
@@ -2008,6 +2011,7 @@ en:
     edit_contact: Edit contact
     edit: Edit Contact
     save_changes: Save changes
+    save: Save
     deleted_message: This is a deleted contact
     contacts_in_companies: "%{contacts}"
     contact: contact
@@ -2248,7 +2252,8 @@ en:
       howto_users_voted_title: People who have this question
     tickets:
       export: "Export tickets"
-      export_ticket_data: "Export ticket data to CSV"
+      submit_export: "Export"
+      export_ticket_data: "Export tickets"
       export_to_csv: "Export to CSV"
       ticket_list: Tickets list
       mark_closed: Mark ticket as closed
@@ -2336,6 +2341,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    sample_data: Sample data
+    can_see_all_tickets_of_the_company: Can view all company tickets ?
+    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
+    can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -2558,6 +2567,7 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+    duplicate_status: Tweet is a duplicate. Reply with some other text
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
@@ -2779,6 +2789,7 @@ en:
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
+    export_tickets: "Export Tickets"
     delete_btn: Delete
     status: Status
     source: Source
@@ -2796,7 +2807,6 @@ en:
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
-    private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
     integrations:      
       jira: 
@@ -2947,7 +2957,7 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  import_step2_info: Map the following CSV fields with database fields and import.
+  import_step2_info: Map fields from your CSV with contact fields.
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
@@ -3300,7 +3310,8 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
-    requester_name_or_email: "Name or Email"
+    requester_placeholder: "Name or Email"
+    customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
@@ -3343,10 +3354,14 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select fields to export"
+    select_format: "Export as:"
+    csv: "CSV"
+    xls: "Excel"
     filter_label_customer: "Filter tickets created in"
     filter_label_agent: "Filter tickets by:"
     field_select_title: Select fields to export
     export_to_csv: Export to CSV
+    export: Export
     thirt_days: "Last 30 Days"
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
@@ -3360,7 +3375,8 @@ en:
     mail:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
-      body: Please find the CSV file attached.
+      csv_body: Please find the CSV file attached.
+      xls_body: Please find the Excel file attached.
   date:
     ago: ago
     from: from now
@@ -4495,6 +4511,9 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    click_to_go_online: "You are offline now <br> Click to go online"
+    click_to_go_offline: "You are online now <br> Click to go offline"
+    fetching: "Fetching"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

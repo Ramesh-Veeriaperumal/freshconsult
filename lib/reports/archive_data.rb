@@ -80,7 +80,7 @@ module Reports
 			# backlog_columns and all survey rated tickets count will be calculated till the end of the selected time period
 			# avg_response_time,agent_interactions,customer_interactions will be considered only for resolved tickets
 			def select_aggregate_columns
-				%( IFNULL(SUM(received_tickets),0) as received_tickets, IFNULL(SUM(resolved_tickets),0) as resolved_tickets, 
+				%( CAST(IFNULL(SUM(received_tickets),0) as SIGNED) as received_tickets, CAST(IFNULL(SUM(resolved_tickets),0) as SIGNED) as resolved_tickets, 
 				count(if((helpdesk_tickets.status not in (4,5) and (helpdesk_ticket_states.resolved_at is NULL or 
       	helpdesk_ticket_states.resolved_at > '#{stats_end_time.to_s(:db)}')),1,NULL)) as backlog_tickets,
 				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
@@ -88,23 +88,23 @@ module Reports
 				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
 					helpdesk_ticket_states.avg_response_time_by_bhrs,NULL)) as avg_resp_time_by_bhrs,
 				count(if((#{time_condition('helpdesk_ticket_states.first_response_time')}), 1, NULL)) as first_responded_tickets, 
-				SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
-					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.first_response_time),NULL)) 
+				CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
+					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.first_response_time),NULL)) as SIGNED) 
 					as first_resp_time,
-				SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
-					helpdesk_ticket_states.first_resp_time_by_bhrs,NULL)) as first_resp_time_by_bhrs,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.resolved_at),NULL))
+				CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
+					helpdesk_ticket_states.first_resp_time_by_bhrs,NULL)) as SIGNED) as first_resp_time_by_bhrs,
+				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.resolved_at),NULL)) as SIGNED)
 					as resolution_time,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.resolution_time_by_bhrs,NULL)) as resolution_time_by_bhrs,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.inbound_count,0)) as customer_interactions,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.outbound_count,0)) as agent_interactions,
-				IFNULL(SUM(num_of_reopens),0) as num_of_reopens,
-				IFNULL(SUM(assigned_tickets),0) as assigned_tickets, IFNULL(SUM(num_of_reassigns),0) as num_of_reassigns,
-				IFNULL(SUM(fcr_tickets),0) as fcr_tickets,IFNULL(SUM(sla_tickets),0) as sla_tickets,
+				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+					helpdesk_ticket_states.resolution_time_by_bhrs,NULL)) as SIGNED) as resolution_time_by_bhrs,
+				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+					helpdesk_ticket_states.inbound_count,0)) as SIGNED) as customer_interactions,
+				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+					helpdesk_ticket_states.outbound_count,0)) as SIGNED) as agent_interactions,
+				CAST(IFNULL(SUM(num_of_reopens),0) as SIGNED) as num_of_reopens,
+				CAST(IFNULL(SUM(assigned_tickets),0) as SIGNED) as assigned_tickets, CAST(IFNULL(SUM(num_of_reassigns),0) as SIGNED) as num_of_reassigns,
+				CAST(IFNULL(SUM(fcr_tickets),0) as SIGNED) as fcr_tickets,CAST(IFNULL(SUM(sla_tickets),0) as SIGNED) as sla_tickets,
 				#{happy_rated_tkts(stats_end_time)} as happy_rated_tickets,
 				#{neutral_rated_tkts(stats_end_time)} as neutral_rated_tickets,
 				#{unhappy_rated_tkts(stats_end_time)} as unhappy_rated_tickets)

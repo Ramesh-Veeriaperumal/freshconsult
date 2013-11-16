@@ -234,11 +234,16 @@ class Social::TwitterHandlesController < ApplicationController
   
   def send_tweet
     reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
-    unless reply_twitter.nil?
-      @wrapper = TwitterWrapper.new reply_twitter
-      twitter  = @wrapper.get_twitter
-      twitter.update(params[:tweet][:body].strip)
-      flash.now[:notice] = "Successfully sent a tweet"
+    begin
+      unless reply_twitter.nil?
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter  = @wrapper.get_twitter
+        twitter.update(params[:tweet][:body].strip)
+        flash.now[:notice] = "Successfully sent a tweet"
+      end
+    rescue Twitter::Error::Forbidden => e
+      NewRelic::Agent.notice_error(e)
+      flash.now[:notice] = t('twitter.duplicate_status')
     end
     respond_to do |format|
       format.html { redirect_to :back }

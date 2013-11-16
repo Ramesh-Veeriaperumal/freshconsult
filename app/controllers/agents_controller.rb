@@ -184,6 +184,7 @@ class AgentsController < ApplicationController
   
   def destroy    
     if @agent.user.update_attributes(:deleted => true)    
+       @agent.user.email_notification_agents.destroy_all
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else

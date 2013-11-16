@@ -1,7 +1,21 @@
-<% form_tag(export_csv_support_tickets_path(:a => params[:a], :i => params[:i]), { :method => :post }) do %>
+<% form_tag(export_csv_support_tickets_path(:a => params[:a], :i => params[:i]), { :method => :post, :class => "form-portal" }) do %>
   	<input type="hidden" name="data_hash" value="" />
   	<input type="hidden" name="_method" value="post" />
-	<div class="alert"><%=t('export_data.info')%></div>
+  	<div class="row-fluid">
+  		<div class="span2">
+  			<label class="lead-small"><%= t("export_data.select_format") %></label>
+  		</div>
+  		<div class="span8">
+  			<label class="radio inline">
+				<%= radio_button_tag(:format, "csv", true) %>
+				<%= t('export_data.csv') %>
+			</label>
+			<label class="radio inline">
+				<%= radio_button_tag(:format, "xls", false) %>
+				<%= t('export_data.xls') %>
+			</label>
+  		</div>
+  	</div>
 	<fieldset class="row-fluid">
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>

@@ -37,7 +37,7 @@ class WhitelistedIp < ActiveRecord::Base
 			start_ip = IPAddress ip["start_ip"]
 			end_ip = IPAddress ip["end_ip"]
 			if start_ip.send(@current_ip_version) && end_ip.send(@current_ip_version)
-        if (start_ip..end_ip) === @current_ip
+        if @current_ip >= start_ip && @current_ip <= end_ip
        		return true
        	end
       end
