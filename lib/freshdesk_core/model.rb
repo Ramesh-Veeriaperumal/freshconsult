@@ -105,7 +105,10 @@ module FreshdeskCore::Model
                         "va_rules", 
                         "wf_filters",
                         "report_filters",
-                        "whitelisted_ips"
+                        "whitelisted_ips",
+                        "helpdesk_ticket_fields",
+                        "helpdesk_nested_ticket_fields", 
+                        "helpdesk_shared_attachments"
                     ]
 
   STATUS = {
