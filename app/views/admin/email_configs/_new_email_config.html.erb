@@ -27,16 +27,16 @@
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.info9').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2") %>
-				<div class="muted"><%=t('email_configs.info10').html_safe%> </div>
-			<div class="controls">
+				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2 span5") %>
+				<div class="muted span8 clear-left-margin"><%=t('email_configs.info10').html_safe%> </div>
+			</div>
 	</li> 
 	<% if feature?(:multi_product) && !@products.empty? %> 
 		<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.assign_to_product_msg').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." },:class =>"select2") %>
-				<div class="muted"><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path).html_safe%></div> 
+				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." },:class =>"select2 span5") %>
+				<div class="muted span8 clear-left-margin"><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path).html_safe%></div> 
 			</div>
 		</li> 
 	<% end %>	

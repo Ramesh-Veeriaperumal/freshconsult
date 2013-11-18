@@ -85,6 +85,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		in_user_time_zone(@source.due_by).strftime("%I:%M %p")
 	end
 
+	def fr_due_by_time
+		in_user_time_zone(@source.frDueBy).strftime("%B %e %Y at %I:%M %p")
+	end
+
 	def fr_due_by_hrs
 		in_user_time_zone(@source.frDueBy).strftime("%I:%M %p")
 	end

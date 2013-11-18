@@ -666,6 +666,7 @@ en:
         feedbackwidget_users_can: "Users can:"
         feedbackwidget_attach_a_file: Attach a file
         feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_screenr_recording: Screenr Recording
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
     supervisor_rules:
@@ -1254,7 +1255,8 @@ en:
     login: 
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso: 
-        expected_params: "Expected params are name, email and hash which are not present "
+        expected_params: "Expected params are name, email and hash, which are not present "
+        invalid_time_entry: "Inavlid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
@@ -2552,7 +2554,9 @@ en:
     Personalized_email_replies_info: If YES then agent replies will have agent's name as the sender name (Email address will still be your Support Email address). For example '%{current_user_name} &lt;%{current_account_domain}&gt;'.
     Personalized_email_replies_yes: "Yes"
     Personalized_email_replies_no: "No"
-    Personalized_email_replies_message: Your setting is succesfully saved.
+    config_saved_message: Your setting is succesfully saved.
+    reply_to_tickets: Use 'reply-to' message headers for threading tickets
+    reply_to_tickets_info: If YES, your helpdesk will look at the 'reply-to' header of incoming emails before adding them to ticket conversations. You will also be able to direct agent replies to the right email address when your requesters are using an alias.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -3560,6 +3564,36 @@ en:
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
+    screenr:
+      button_label: "Record Screencast"
+      label: "Screenr"
+      desc: "You can record screencasts and post it for speedy resolutions!!"
+      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
+      form:
+        recorder_id: "Recorder ID"
+        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
+        site_address_info: ""
+        site_address: "Screenr Subdomain"
+        widget_title: "Widget Title"
+        visible_agent_forum: "Forum Screen Recording for Agents"
+        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
+        visible_agent_ticket: "Agent Ticket Screen Recording"
+        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
+        visible_solution: "Solution Screen Recording"
+        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
+        visible_portal_ticket: "Portal ticket Screen Recording"
+        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
+        visible_portal_forum: "Forum ticket Screen Recording for portal"
+        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
+        visible_widget: "Widget Screen Recording"
+        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
+      settings:
+        enable_screenr_recording: "Enable Screenr Recording"
+        ticket_interaction: "Tickets page (New, Edit, Reply)"
+        forum_interaction: "Forum page (New, Edit, Comment)"
+        create_solution: "Solution (New, Edit)"
+        for_agents: "For Agents"
+        for_customer: "For Customers"
     harvest:
       label: "Harvest"
       desc: "You can log time spent on tickets into your Harvest projects and tasks."
@@ -4496,8 +4530,7 @@ en:
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Install the script</a> on your site to see your visitors
     window_offset_error_msg: "Please enter a valid offset value(< 500px)."
     nochat: "No chat available"
-    chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
-    chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
+    chat_with_archive: "<b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
     ticket_subject: "Chat with $1 on $2"
     ticket_description: "Chat transcript created via Freshchat. Conversation was between <b>$1</b>$2and <b>$3</b>."
@@ -4513,7 +4546,12 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Fetching"
+    fetching: "Fetching..."
+    loading: "Loading..."
+    last_7_days: "Last 7 days"
+    last_30_days: "Last 30 days"
+    last_90_days: "Last 90 days"
+    date_range: "Date Range"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
@@ -4553,3 +4591,4 @@ en:
       forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
       browse_topics: "Browse Topics"
       browse_articles: "Browse Articles"
+     

@@ -26,7 +26,10 @@ class Helpdesk::AutocompleteController < ApplicationController
   protected
 
   	def results
-  		@results ||= scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
+      @results ||= begin 
+        return [] if params[:q].blank? 
+        scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
+      end
   	end
   	
   	def scoper

@@ -621,25 +621,25 @@ $single_stackbar_chart_height: 120px;
 	margin-right: 5px;
 	width:0;
 	height:0;
-	&.up{
+	&.report-arrow-up{
 		border-left: 5px solid transparent;
 		border-right: 5px solid transparent;
 		border-bottom: 5px solid;
-		&.green{
+		&.report-arrow-green{
 		border-bottom-color:#009900;
 		}
-		&.red{
+		&.report-arrow-red{
 			border-bottom-color:#990000;
 		}
 	}
-	&.down{
+	&.report-arrow-down{
 		border-left: 5px solid transparent;
 		border-right: 5px solid transparent;
 		border-top: 5px solid;
-		&.green{
+		&.report-arrow-green{
 		border-top-color:#009900;
 		}
-		&.red{
+		&.report-arrow-red{
 			border-top-color:#990000;
 		}
 	}

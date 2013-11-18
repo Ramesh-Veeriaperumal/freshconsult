@@ -66,6 +66,11 @@
 	    </table>
 	  </div>
 	<%end%>
+	<div class="controls">
+		<% if is_application_installed?("screenr") %>
+		  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
+		<% end %>
+	</div>
 	
 	<div class="form-actions">
 		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />

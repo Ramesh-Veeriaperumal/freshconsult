@@ -72,6 +72,6 @@ class Account < ActiveRecord::Base
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => false, :chat => false, :cascade_dispatchr => false,
-    :whitelisted_ips => false }
+    :whitelisted_ips => false, :id_less_tickets => false, :reply_to_based_tickets => true }
 
 end

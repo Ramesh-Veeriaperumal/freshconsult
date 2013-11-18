@@ -1,5 +1,3 @@
-<p style="float:right; margin-top:0"></p>
-
 <!--table border="0" cellspacing="0" cellpadding="0" class="noborder nopad wide">
   <td>
     <label><%= 'Title'[:title_title] %></label><br />
@@ -10,40 +8,39 @@
     <%= form.text_field :position, :size => 5 %>
   </td>
 </table-->
-
 <%= form.error_messages %>
-<ul class="ui-form">
-	<li id="forum_name">
-		<label><%=t('title')%></label>
-		<div>
+<div class="form-horizontal">
+	<div class="control-group" id="forum_name">
+		<label class="control-label"><%=t('title')%></label>
+		<div class="controls">
 			<%= form.text_field :name, :class => "primary" %>
 		</div>
-	</li>	
-	<li id="forum_descripion">
-		<label><%=t('description')%></label>
-		<div>
+	</div>
+	<div class="control-group" id="forum_descripion">
+		<label class="control-label"><%=t('description')%></label>
+		<div class="controls">
 			<%= form.text_area :description, :rows => 7 %>
 		</div>
-	</li>
-	<li class="small">
-    <%= form.label :forum_type, t('.type') %>
-    <%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
-  </li>
-  <li class="dropdown">
-  </li>
-  <li class="companies_select">
-    <%= form.label :forum_visibility, t('.visible_to') %>
-    <%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
-
-      	<% form.fields_for :customer_forums_attributes do |cust| %>
+	</div>
+	<div class="control-group" id="forum_descripion">
+		<%= form.label :forum_type, t('.type'), :class => "control-label" %>
+		<div class="controls">
+			<%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
+		</div>
+	</div>
+	<div class="control-group" id="forum_descripion">
+		<%= form.label :forum_visibility, t('.visible_to'), :class => "control-label" %>
+		<div class="controls">
+			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
+			<br/><br/>
+			<% form.fields_for :customer_forums_attributes do |cust| %>
     	    	<span id="company_forums">
       			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
       			</span>
-      		
       		<%end%> 
-  </li>
-  	
-</ul>
+		</div>
+	</div>
+</div>
     <% javascript_tag do %>  
      jQuery(document).ready(function(){ 			         
 		jQuery('#forum_forum_visibility')

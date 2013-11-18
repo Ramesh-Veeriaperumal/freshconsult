@@ -104,7 +104,12 @@
       :collection => { :reorder => :put }
     admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
       :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , :collection => { :existing_email => :get }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
+    :collection => { :existing_email => :get, 
+                     :personalized_email_enable => :post, 
+                     :personalized_email_disable => :post, 
+                     :reply_to_email_enable => :post, 
+                     :reply_to_email_disable => :post }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
@@ -321,7 +326,7 @@
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get},  
+                                    :filter_options => :get, :full_paginate => :get, :summary => :get},  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 

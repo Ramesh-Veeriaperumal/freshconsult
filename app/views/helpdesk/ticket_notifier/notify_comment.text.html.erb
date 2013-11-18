@@ -28,5 +28,7 @@ Hi,
 <%= @body_html.html_safe %>
 </p><br />
 <%= render :partial => '/shared/free_plan_message' %>
+
+<%= hidden_ticket_identifier(@ticket) %>
 </div>
 
