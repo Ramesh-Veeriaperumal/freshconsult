@@ -34,7 +34,7 @@ var CURRENT_USER = {
 var SITE_ID = '<%=current_account.chat_setting.display_id%>';
 var IS_TYPING = '<%=current_account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
-var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
+var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             title:'<%= t("freshchat.title") %>',
             says:'<%= t("freshchat.says") %>',
             tag_msg:'<%= t("freshchat.tag_msg") %>',
