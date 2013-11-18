@@ -35,14 +35,33 @@ class Workers::Supervisor
     run
   end
 
- 
+  def self.log_file
+    @log_file_path = "#{Rails.root}/log/supervisor.log"      
+  end 
+  
+  def self.logging_format(account,tickets,rule,rule_total_time)
+    @log_file_format = "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets=#{tickets.size}, time_taken=#{rule_total_time}, rule=#{rule.name}, host_name=#{Socket.gethostname} "      
+  end 
+  
+  def custom_logger(path)
+    @custom_logger||=CustomLogger.new(path)
+  end
 
   def self.run
+    begin
+      path = log_file
+      supervisor_logger = custom_logger(path)
+    rescue Exception => e
+      puts "Error occured while #{e}"
+      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor",:recipients => "pradeep.t@freshdesk.com"})  
+    end
     account = Account.current
     return unless account.supervisor_rules.count > 0 
-      start_time = Time.now.utc
+    start_time = Time.now.utc
     account.supervisor_rules.each do |rule|
       begin
+        rule_start_time = Time.now.utc
+        puts "rule name before checking the condition ::::::::::#{rule.name}"
         conditions = rule.filter_query
         next if conditions.empty?
         negate_conditions = [""]
@@ -56,18 +75,21 @@ class Workers::Supervisor
           rule.trigger_actions ticket
           ticket.save!
         end
-
+        rule_end_time = Time.now.utc
+        rule_total_time = (rule_end_time - rule_start_time )
+        log_format=logging_format(account,tickets,rule,rule_total_time)
+        supervisor_logger.info "#{log_format}" unless supervisor_logger.nil?  
       rescue Exception => e
         puts e.backtrace.join("\n")
         puts "something is wrong: #{e.message}"
       rescue
-        puts "something went wrong"
+        puts "something went wrong" 
       end
-    end
+    end    
     end_time = Time.now.utc
     if((end_time - start_time) > 250)
       total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
     end
-  end
-end
+  end  
+end  
