@@ -1,36 +1,36 @@
 --- 
-:max_value: 32
 :privileges: 
+  :manage_canned_responses: 25
+  :view_admin: 23
+  :manage_tickets: 0
+  :publish_solution: 11
+  :edit_topic: 17
+  :edit_conversation: 5
+  :manage_supervisor_rules: 27
   :manage_account: 31
+  :forward_ticket: 2
   :view_contacts: 19
   :edit_time_entries: 8
   :client_manager: 32
-  :manage_users: 24
-  :manage_solutions: 13
-  :manage_scenario_automation_rules: 28
-  :edit_conversation: 5
-  :forward_ticket: 2
-  :delete_contact: 21
-  :manage_dispatch_rules: 26
   :edit_ticket_properties: 4
+  :manage_solutions: 13
+  :edit_note: 6
+  :reply_ticket: 1
+  :manage_users: 24
   :view_forums: 14
   :manage_contacts: 20
-  :edit_note: 6
+  :manage_scenario_automation_rules: 28
+  :delete_contact: 21
+  :manage_dispatch_rules: 26
   :delete_ticket: 9
-  :view_reports: 22
-  :admin_tasks: 30
-  :reply_ticket: 1
-  :manage_tickets: 0
   :manage_forums: 15
   :view_time_entries: 7
-  :manage_email_settings: 29
   :merge_or_split_ticket: 3
-  :manage_canned_responses: 25
-  :view_admin: 23
+  :view_reports: 22
+  :admin_tasks: 30
   :create_topic: 16
-  :manage_supervisor_rules: 27
+  :manage_email_settings: 29
   :view_solutions: 10
   :delete_solution: 12
   :delete_topic: 18
-  :publish_solution: 11
-  :edit_topic: 17
+:max_value: 32

@@ -11,7 +11,6 @@ class EmailController < ApplicationController
   skip_before_filter :check_account_state, :except => [:show,:index]
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
-  skip_before_filter :logging_details
   
   def new
     render :layout => false
@@ -22,10 +21,5 @@ class EmailController < ApplicationController
     Helpdesk::ProcessEmail.new(params).perform
     render :layout => 'email'
   end
-
-  #overridding custom logger log_file 
-  def log_file
-    @filename = "#{Rails.root}/log/email.log"      
-  end 
 
 end

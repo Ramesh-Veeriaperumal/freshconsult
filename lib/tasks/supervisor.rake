@@ -2,7 +2,9 @@ def log_file
     @log_file_path = "#{Rails.root}/log/rake.log"      
 end 
 
-
+def custom_logger(path)
+    @custom_logger||=CustomLogger.new(path)
+end
 
 SUPERVISOR_TAKS = {
                    
@@ -54,9 +56,7 @@ def execute_supevisor(task_name)
     begin
       puts "Check for SLA violation initialized at #{Time.zone.now}"
       path = log_file
-      logfile = File.open(path, 'a')  # create log file
-      logfile.sync = true 
-      rake_logger = CustomLogger.new(logfile)  
+      rake_logger = custom_logger(path)
     rescue Exception => e
       puts "Error occured #{e}" 
       FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor.rake",:recipients => "pradeep.t@freshdesk.com"})       

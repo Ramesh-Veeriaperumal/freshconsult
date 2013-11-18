@@ -16,22 +16,18 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale, :force_utf8_params
   before_filter :persist_user_agent
   before_filter :set_cache_buster
-
+  before_filter :logging_details 
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
   
   include AuthenticationSystem
-  #include SavageBeast::AuthenticationSystem
-  include HelpdeskSystem
-
+  include HelpdeskSystem  
   include ControllerLogger
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-
-  before_filter :logging_details 
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store

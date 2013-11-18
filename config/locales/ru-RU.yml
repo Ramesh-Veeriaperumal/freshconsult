@@ -1,18 +1,42 @@
 ru-RU:
   meta:
      language_name: 'Russian'
+  updated_on: "%{user_name} обновил %{note_date}"
+  mobile: 
+    home: 
+      remember: "Запомнить меня  "
+      login: Войти
+      sign_in_using: "…или войти с помощью"
+      sign_in_error: "Неверный адрес или пароль"
+  any: Любой
+  or: или
   integrations: 
+    native_integrations: "Собственная интеграция"
+    freshplugs_title: "Собственный виджет"
+    new_freshplug: "Новый собственный виджет"
+    no_freshplugs: "У вас нет собственных виджетов."
+    add_new_freshplug: "Добавить новый собственный виджет"
+    freshplugs: 
+      refresh: Обновить
+      custom_widget_preview: "Предварительный просмотр собственных виджетов"
+      show_preview: "Предварительный просмотр"
+      hide_preview: "Закрыть предварительный просмотр"
+      show_widget_in_ticket_view_page: "Показать виджет на странице просмотра заявок."
+      show_the_widget_in_contact_view_page: "Показать виджет на странице просмотра контактов."
+    capsule_crm: 
+      label: "Капсула CRM"
+      helptext: "<h4>Перейдите из капсулы в Freshdesk</h4><p><br/> Вы можете создать ссылку на Капсулу CRM, чтобы росматривать талоны во  Freshdesk.</p> <p> Для этого перейдите по ссылке <br /><b>Настройки -> Изменить поле -> Для частных лиц и организаций</b></p><p> Нажмите \"Добавить новую...\" и выберите <b>\"Готовая ссылка\"</b></p> <p>Скопируйте URl в точности, как указано ниже, и вставьте его в Капсулу CRM как определение ссылки <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
     capsule: 
+      label: "Капсула CRM"
+      desc: "Вы можете посмотреть информацию о Контактах из Капсулы CRM на Freshdesk. Эту информацию можно получить на странице деталей талонов и странице деталей контактов. "
       form: 
-        api_key: "API-ключ  "
-        api_key_info: "Чтобы получить уникальный API-ключ, войдите в учетную запись капсулы CRM и пройдите по ссылке <br /> <b>“Пользователь -> Мои настройки”</b> (В правом верхнем углу страницы).<br /> Нажмите <b>“Токен API-аутентификации”</b>, и, чтобы получить уникальный API-ключ,<br /> вставьте его в поле сверху."
-        widget_title: "Заголовок виджета"
         bcc_drop_box_mail: "Адрес почтового ящика"
         bcc_drop_box_mail_info: "Вы можете настроить уникальный адрес почтового ящика в <b>“Настройки -> Почтовый ящик”</b>.<br /> (В правом верхнем углу страницы).<br /> Скопируйте адрес электронного ящика в поле наверху. <br /> Freshdesk будет автоматически добавлять этот адрес в поле скрытой копии при отправке ответов на талоны"
         domain: Домен
         domain_info: "Вставьте просто адрес, без https. Например: example.capsulecrm.com"
-      label: "Капсула CRM"
-      desc: "Вы можете посмотреть информацию о Контактах из Капсулы CRM на Freshdesk. Эту информацию можно получить на странице деталей талонов и странице деталей контактов. "
+        api_key: "API-ключ  "
+        api_key_info: "Чтобы получить уникальный API-ключ, войдите в учетную запись капсулы CRM и пройдите по ссылке <br /> <b>“Пользователь -> Мои настройки”</b> (В правом верхнем углу страницы).<br /> Нажмите <b>“Токен API-аутентификации”</b>, и, чтобы получить уникальный API-ключ,<br /> вставьте его в поле сверху."
+        widget_title: "Заголовок виджета"
     freshbooks: 
       label: Freshbooks
       desc: "Вы можете вести учет времени, потраченного на талоны, в проектах и задачах Freshdesk. "
@@ -273,7 +297,7 @@ ru-RU:
         username: "Имя пользователя iContact"
         api_password: "Пароль API"
         api_url: "URL API"
-        api_url_info: "Чтобы получить URL API, пройдите по ссылке https://app.icontact.com/icp/core/externallogin и скопируйте URL API из раздела &quot;Информация об учетной записи&quot;. "
+        api_url_info: "Чтобы получить URL API, пройдите по ссылке https://app.icontact.com/icp/core/externallogin и скопируйте URL API из раздела &amp;quot;Информация об учетной записи&amp;quot;. "
     dropbox: 
       label: DropBox
       desc: "Прикрепляйте и отправляйте данные и файлы из DropBox."
@@ -281,23 +305,6 @@ ru-RU:
       form: 
         app_key: "Зарегистрированный ключ приложения для вашего домена"
         app_key_info: "Создайте приложение в DropBox и вставьте туда ключ приложения."
-    native_integrations: "Собственная интеграция"
-    freshplugs_title: "Собственный виджет"
-    new_freshplug: "Новый собственный виджет"
-    no_freshplugs: "У вас нет собственных виджетов."
-    add_new_freshplug: "Добавить новый собственный виджет"
-    freshplugs: 
-      refresh: Обновить
-      custom_widget_preview: "Предварительный просмотр собственных виджетов"
-      show_preview: "Предварительный просмотр"
-      hide_preview: "Закрыть предварительный просмотр"
-      show_widget_in_ticket_view_page: "Показать виджет на странице просмотра заявок."
-      show_the_widget_in_contact_view_page: "Показать виджет на странице просмотра контактов."
-    capsule_crm: 
-      label: "Капсула CRM"
-      helptext: "<h4>Перейдите из капсулы в Freshdesk</h4><p><br/> Вы можете создать ссылку на Капсулу CRM, чтобы росматривать талоны во  Freshdesk.</p> <p> Для этого перейдите по ссылке <br /><b>Настройки -> Изменить поле -> Для частных лиц и организаций</b></p><p> Нажмите \"Добавить новую...\" и выберите <b>\"Готовая ссылка\"</b></p> <p>Скопируйте URl в точности, как указано ниже, и вставьте его в Капсулу CRM как определение ссылки <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  any: Любой
-  or: или
   plain_yes: Да
   plain_no: Нет
   unspam: "Не спам"
@@ -564,10 +571,6 @@ ru-RU:
         neutral_info: "Жаль, что вы не так рады"
         unhappy_info: "В следующий раз мы обязательно проявим больше внимания."
         additional_info: "Кроме того, вы можете поделиться своим опытом, работая с нами."
-  widgets: 
-    contact_widget: 
-      description: "Отобразить контакт или опцию, чтобы добавить контакт в капсулу."
-  reorder: Перезаказать
   gamification: 
     levels: 
       beginner: Новичок
@@ -596,6 +599,33 @@ ru-RU:
       speed_trophie_info_group: "Группа с максимальным количеством очков за самое быстрое решение проблемы в текущем месяце"
       love_trophie_label_group: "Чемпионы по удивлению клиентов"
       love_trophie_info_group: "Группа с максимальным количеством очков за удовлетворенных клиентов"
+  widgets: 
+    contact_widget: 
+      description: "Отобразить контакт или опцию, чтобы добавить контакт в капсулу."
+  quests: 
+    delete: "Вы уверены, что хотите удалить это соревнование?"
+    inactive_quests: "Неактивные соревнования"
+    date: Дата
+    satisfaction: "Рейтинг удовлетворенности клиентов"
+    forums: Форумы
+    forum_category: Категория
+    solution_articles: Статья
+    solution_folder: Папка
+    fcr: "Решение при первом обращении"
+    customer_votes: "Количество голосов"
+    solution_likes: "Количество лайков"
+    ? "true"
+    : "1"
+    ticket_mand: "Укажите количество решенных талонов"
+    solution_mand: "Укажите количество решений"
+    forum_mand: "Укажите количество форумов"
+    badge_mand: "Выберите жетон"
+    name_mand: "Дайте название соревнованию"
+    js_ticket_txt: "Решите талоны на $questvalue$$ за промежуток времени $$questtime$$ в соответствии с этими условиями."
+    js_solution_txt: "Создайте статью базы знаний на $$questvalue$$ за промежуток времени $$questtime$$ и соответствующую этим условиям."
+    js_forum_txt: "$$questmode$$ $$questvalue$$ - эти темы на форумах учитываются за временной промежуток $$questtime$$ и соответствуют этим условиям."
+    js_quest_txt: "При успешном выступлении на соревновании вы можете открыть жетоны $$badgename$$ и бонусные баллы $$questpoints$$."
+  reorder: Перезаказать
   reports: 
     no_data: "Нет данных для отображения!"
     tab_heading: Отчеты
@@ -683,29 +713,6 @@ ru-RU:
         filter_by: "Обзор удовлетворенности"
         view_report_date: "Посмотреть отчеты за"
         helptext: "<b>Зачем нужен Отчет удовлетворенности клиента?</b><p>Отчет удовлетворенности клиента дает вам представление о качестве услуг, предоставляемых вашими агентами.<br> Отчет помогает понять коэффицент радости ваших клиентов, представленный в процентном соотношении (радостный, нейтральный или недовольный) для каждого агента поддержки.<br><br><b> Что еще можно сделать? </b><br><p style='margin-left:15px;'> 1.Установить фильтр для результатов отчетов для агентов, групп или компаний<br> 2.Просмотреть отчеты за определенный период </p></p>"
-  quests: 
-    delete: "Вы уверены, что хотите удалить это соревнование?"
-    inactive_quests: "Неактивные соревнования"
-    date: Дата
-    satisfaction: "Рейтинг удовлетворенности клиентов"
-    forums: Форумы
-    forum_category: Категория
-    solution_articles: Статья
-    solution_folder: Папка
-    fcr: "Решение при первом обращении"
-    customer_votes: "Количество голосов"
-    solution_likes: "Количество лайков"
-    ? "true"
-    : "1"
-    ticket_mand: "Укажите количество решенных талонов"
-    solution_mand: "Укажите количество решений"
-    forum_mand: "Укажите количество форумов"
-    badge_mand: "Выберите жетон"
-    name_mand: "Дайте название соревнованию"
-    js_ticket_txt: "Решите талоны на $questvalue$$ за промежуток времени $$questtime$$ в соответствии с этими условиями."
-    js_solution_txt: "Создайте статью базы знаний на $$questvalue$$ за промежуток времени $$questtime$$ и соответствующую этим условиям."
-    js_forum_txt: "$$questmode$$ $$questvalue$$ - эти темы на форумах учитываются за временной промежуток $$questtime$$ и соответствуют этим условиям."
-    js_quest_txt: "При успешном выступлении на соревновании вы можете открыть жетоны $$badgename$$ и бонусные баллы $$questpoints$$."
   portal_pages: 
     groups: 
       general: "Главные страницы"
@@ -730,11 +737,6 @@ ru-RU:
       submit_ticket: "Новая заявка"
       ticket_list: "Заявки пользователей"
       ticket_view: "Детали заявок"
-  delete_the_ticket: "Удалить заявку"
-  mark_as_spam: "Отметить как спам"
-  bulk_actions: "Эффект наполнения"
-  update_multiple_tickets: "Изменить несколько заявок"
-  no_change: "Без изменений"
   admin: 
     portal_settings: 
       simple: 
@@ -1141,6 +1143,11 @@ ru-RU:
         security: Безопасность
         email_commands_setting: "Email Command Settings"
         billing: "Тарифы и оплата"
+  delete_the_ticket: "Удалить заявку"
+  mark_as_spam: "Отметить как спам"
+  bulk_actions: "Эффект наполнения"
+  update_multiple_tickets: "Изменить несколько заявок"
+  no_change: "Без изменений"
   select: "Выбрать …"
   ticket_update_multiple_button: Обновить
   ticket_cancel_multiple_button: Отмена
@@ -1430,7 +1437,7 @@ ru-RU:
       select_company: "Выбрать компании"
   password_reset_email: "Письмо со сбросом пароля"
   default_reply_template: "Шаблон ответа агенту"
-  import_user_org: "Пользователи &amp; Организации"
+  import_user_org: "Пользователи &amp;amp; Организации"
   does_not_contain: "Не содержит"
   flash: 
     gmail_gadgets: 
@@ -1643,7 +1650,7 @@ ru-RU:
     not_authorized: "Вы не авторизовались на Facebook"
   import_user_notification: "Из вкладки «Клиенты» можно отправить письмо активации пользователя импортированным контактам "
   what_is_cvv: "Что такое cvv?"
-  pro_details: "Все в &quot;Basic&quot; Plan plus, Автоматизация сценариев, специализированные клиентские SLA, Рабочие часы, Форумы, Сообщества &amp; Поддержка по Email."
+  pro_details: "Все в &amp;quot;Basic&amp;quot; Plan plus, Автоматизация сценариев, специализированные клиентские SLA, Рабочие часы, Форумы, Сообщества &amp;amp; Поддержка по Email."
   open: Открыто
   zendesk_url: "Zendesk URL"
   special_beta_offer: "Специальное предложение для учетных записей бета"
@@ -1925,7 +1932,7 @@ ru-RU:
   delete: Удалить
   message: Сообщение
   edit_forum_category: "Редактировать категорию форума"
-  agent_assigned_title: "Недавно назначенные талоны (Открытые &amp; Ожидающие)"
+  agent_assigned_title: "Недавно назначенные талоны (Открытые &amp;amp; Ожидающие)"
   send_email_to_requester: "Отправить E-mail заявителю"
   feedbackwidget_btcustomize: "Настройка кнопок"
   solution_category: 
@@ -2504,7 +2511,6 @@ ru-RU:
     add_new_solution: "Добавить новое решение"
     title: Решения
     title_singular: Решение
-    info1: "Решения на Freshdesk - ваша база знаний"
     info2: "Решения могут быть <b>публичными</b> или <b>приватными</b>. Публичные решения видны в разделе Портал и появляются в результатах поиска"
     info3: "Приватные решения видны и используются только агентами для внутреннего обмена знаниями"
     no_solutions_info: "В этой папке нет решений"
@@ -2557,7 +2563,7 @@ ru-RU:
       reset_warning: "При сбросе API-ключа все приложения, использующие его, перестанут работать. Вы уверены, что хотите продолжить?"
   add_to_do: "Добавить цель"
   subject_or_description: "Тема или описание"
-  premium_details: "Все в &quot;Pro&quot; Plan plus, Поддержка нескольких проектов,  Поддержка в нескольких часовых поясах, сообщества, электронные адреса &amp; Поддержка по телефону"
+  premium_details: "Все в &amp;quot;Pro&amp;quot; Plan plus, Поддержка нескольких проектов,  Поддержка в нескольких часовых поясах, сообщества, электронные адреса &amp;amp; Поддержка по телефону"
   sprout_details: "Управление реагированием по E-mail, вся автоматизация, стандартная политика SLA, база знаний, портал самообслуживания, базовые отчеты, поддержка сообщества."
   blossom_details: "Все в &quot;Sprout&quot; Plan plus, Поддержка Twitter, Поддержка Facebook, поддержка E-mail, форумы, Сообщества, меппинг домена и несколько E-mail."
   garden_details: "Все в &quot;Blossom&quot; Plan plus, Мультипродуктовая поддержка, Продвинутые отчеты, Сообщество, E-mail &amp; Поддержка по телефону"
@@ -3036,7 +3042,7 @@ ru-RU:
   your_trial_account: "Ваш пробный аккаунт"
   reply_comment: "Добавить комментарий"
   import_step2_info: "Сопоставьте поля CSV с полями базы данных и импортируйте."
-  feedbackwidget_defaulttitle: "Справка &amp; Поддержка"
+  feedbackwidget_defaulttitle: "Справка &amp;amp; Поддержка"
   two: "2 часа"
   set_status_as: "Установить статус как"
   selected: Выбранные
@@ -3362,7 +3368,7 @@ ru-RU:
         target_note_description3: 
           one: "Заявка с ID %{source_tickets} объединена в заявку%{target_ticket_id} с этим запросом"
           other: "Заявки с ID %{source_tickets} объединены в заявку%{target_ticket_id} с этим запросом"
-  import_ticket_group: "Группа &amp; задач"
+  import_ticket_group: "Группа &amp;amp; задач"
   tickets_filter: 
     title: "Фильтр талонов"
     unsaved_view: "Вид без названия"
@@ -3424,7 +3430,6 @@ ru-RU:
     mail: 
       info: "Информация о вашем талоне будет отправлена в ближайшее время!"
       subject: "Экспорт талонов - %{filter} - ( %{start_date} до %{end_date} )"
-      body: "CSV-файл находится в приложении. "
   date: 
     ago: назад
     from: "от настоящего момента"
@@ -3555,10 +3560,3 @@ ru-RU:
       sign_in_using: "Войти с помощью"
       sign_in_using_google: "Войти с помощью учетной записи Google"
   settings: "настройки   "
-  updated_on: "%{user_name} обновил %{note_date}"
-  mobile: 
-    home: 
-      remember: "Запомнить меня  "
-      login: Войти
-      sign_in_using: "…или войти с помощью"
-      sign_in_error: "Неверный адрес или пароль"

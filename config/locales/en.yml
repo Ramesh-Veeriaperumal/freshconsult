@@ -4530,8 +4530,7 @@ en:
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Install the script</a> on your site to see your visitors
     window_offset_error_msg: "Please enter a valid offset value(< 500px)."
     nochat: "No chat available"
-    chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
-    chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
+    chat_with_archive: "<b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
     ticket_subject: "Chat with $1 on $2"
     ticket_description: "Chat transcript created via Freshchat. Conversation was between <b>$1</b>$2and <b>$3</b>."
@@ -4547,7 +4546,12 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Fetching"
+    fetching: "Fetching..."
+    loading: "Loading..."
+    last_7_days: "Last 7 days"
+    last_30_days: "Last 30 days"
+    last_90_days: "Last 90 days"
+    date_range: "Date Range"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
