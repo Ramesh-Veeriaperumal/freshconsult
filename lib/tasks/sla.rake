@@ -1,24 +1,7 @@
-
-def log_file
-    @log_file_path = "#{Rails.root}/log/rake.log"      
-end 
-
-def custom_logger(path)
-    @custom_logger||=CustomLogger.new(path)
-end
-
 namespace :sla do
   desc 'Check for SLA violation and trigger emails..'
   task :escalate => :environment do
-    begin
-      puts "Check for SLA violation initialized at #{Time.zone.now}"
-      path = log_file
-      rake_logger = custom_logger(path)
-    rescue Exception => e
-      puts "Error occured #{e}"  
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rake",:recipients => "pradeep.t@freshdesk.com"})      
-    end
-    rake_logger.info "rake=SLA" unless rake_logger.nil?
+    puts "Check for SLA violation initialized at #{Time.zone.now}"
     queue_name = "sla_worker"
     if sla_should_run?(queue_name)
       Monitoring::RecordMetrics.register({:task_name => "SLA Escalate"})
@@ -30,6 +13,8 @@ namespace :sla do
     end
     puts "SLA rule check finished at #{Time.zone.now}."
   end
+
+ 
 end
 
 def sla_should_run?(queue_name)
@@ -37,4 +22,3 @@ def sla_should_run?(queue_name)
   puts "#{queue_name} queue length is #{queue_length}"
   queue_length < 1 and !Rails.env.staging?
 end
-

@@ -19,7 +19,7 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3", :platforms => :ruby_18
-gem 'debugger', "1.6.2", :platforms => :ruby_19
+gem 'debugger', :platforms => :ruby_19
 gem 'test-unit', '1.2.3', :platforms => :ruby_19
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"

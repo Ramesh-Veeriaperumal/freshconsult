@@ -1,4 +1,4 @@
-# encoding: utf-8 
+# encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   
@@ -10,15 +10,6 @@ class Solution::CategoriesController < ApplicationController
   before_filter :set_selected_tab     
   before_filter :page_title
   
-  
-  def log_file_path
-    @log_file_path = "#{Rails.root}/log/categories.log"      
-  end 
-  
-  def log_file_format
-    @log_file_format = "domain=#{request.env['HTTP_HOST']}, controller=#{request.parameters[:controller]}, action=#{request.parameters[:action]}, url=#{request.url}, params=#{params.inspect}"      
-  end 
-
   def index
     @categories = current_portal.solution_categories
 
