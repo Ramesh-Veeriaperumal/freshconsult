@@ -33,9 +33,10 @@ development:
   consumer_secret: 27b2144bd5c63ee7
  surveymonkey:
   consumer_token: kaushiksv
-  consumer_secret: vsg6tg9qsdhmp28q2yugtdng
+  consumer_secret: AdX7FkGCVV5wYvmD4dhvMnBxmjmS9782
   options:
     scope: read write sign
+    api_key: vsg6tg9qsdhmp28q2yugtdng
  google_oauth2:
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
@@ -95,9 +96,10 @@ staging:
   consumer_secret: 3mtvtpzzl9bqus9iq07
  surveymonkey:
   consumer_token: kaushiksv
-  consumer_secret: cjw2pjzf2s9fbvkz8863wwmt
+  consumer_secret: kttMNYcFuwHjKchhrDCYkdVNpQn4VXFb
   options:
     scope: read write sign
+    api_key: cjw2pjzf2s9fbvkz8863wwmt
 
 production:
  salesforce:
@@ -122,6 +124,7 @@ production:
   consumer_secret: 27b2144bd5c63ee7
  surveymonkey:
   consumer_token: freshdesk
-  consumer_secret: d499g57y8synva8crhycgmfx
+  consumer_secret: AgxG9yrJY9rS2mWW9M2tJaQEATXjvBCm
   options:
+    api_key: d499g57y8synva8crhycgmfx
     scope: read write sign
