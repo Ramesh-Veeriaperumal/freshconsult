@@ -1,12 +1,16 @@
-<ul id="folder-form-container" class="ui-form">  
-    <%= f.error_messages %>
-	<li>
-	   	<%= f.label(:name, "#{t('solution_category.name')} *") %>
-	   	<%= f.text_field :name, :class => "text required" %>
-	</li>
-	<li>
-		<%= f.label(:description, t('description')) %>
-	 	<%= f.text_area :description %>
-	</li>  
-</ul>	
+<div class="form-horizontal">
+	<%= f.error_messages %>
+	<div class="control-group">
+		<%= f.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
+		<div class="controls">
+			<%= f.text_field :name, :class => "text required" %>
+		</div>
+	</div>
+	<div class="control-group">
+		<%= f.label(:description, t('description'), {:class =>'control-label'}) %>
+		<div class="controls">
+			<%= f.text_area :description %>
+		</div>
+	</div>
+</div>
 	

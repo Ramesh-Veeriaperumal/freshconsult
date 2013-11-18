@@ -38,13 +38,15 @@
 			<%= render :partial=> "/forum_shared/attachment_form" %>
 			<% unless @topic.new_record? %>
 				<div class="attachment-list-container">
-				    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>	
-				    <table class="attachment-list">
-				      <%= render(
-				        :partial => '/helpdesk/shared/attachment', 
-				        :collection => @topic.posts.first.attachments,
-				        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-				    </table>
+					<ul>
+				    	<%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+					    <table class="attachment-list">
+					      <%= render(
+					        :partial => '/helpdesk/shared/attachment', 
+					        :collection => @topic.posts.first.attachments,
+					        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+					    </table>
+				    </ul>
 				</div>
 			<%end%>
 		</div>

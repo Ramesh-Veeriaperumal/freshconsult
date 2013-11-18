@@ -1,16 +1,20 @@
 <%= f.error_messages %>
-	<ul class="ui-form">
-		<li>
-			<%= f.label(:title, t('title')) %>
-			<%= f.text_field :title, :class => "text required", :autofocus => true %>
-		</li>
-		<li>
-			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "350px", :class => "required"  %>		
-		</li>
-		<li>
+<div class="form-horizontal">
+	<div class="control-group">
+		<%= f.label(:title, t('title'),:class =>"control-label") %>
+		<div class="controls">
+			<%= f.text_field :title, :class => "text required input-medium", :autofocus => true %>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "250px", :class => "required"  %>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
 			<%= render :partial => "/solution/shared/attachment_form" %>
-		</li> 
-		<li class="attachment-list-container">
+			<div class="attachment-list-container">
 			<%= content_tag('h4', t("attachments"), :class => "title") unless @article.attachments.empty? %>
 				<ul class="attachment_list">
 					<%= render(
@@ -18,74 +22,90 @@
 					:collection => @article.attachments,
 					:locals => {:show_delete => true, :url => [@article] }) %>
 				</ul>
-		</li>
-		<% if is_application_installed?("screenr") %>
-		<li>
-	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
-	    </li>
-	  	<% end %>
-		<% fields_for :tags  do |tag| %>
-		<li>
-			<%= tag.label(:name, t('tag.title')) %>
-			<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
-		</li>
-		<%end%>
-		<li class="dropdown">
-			<%= f.label :folder_id, t('solution.folder') %>
-			<%= f.select :folder_id , option_groups_from_collection_for_select(current_account.solution_categories, :folders ,:name, :id,:name,@article.folder_id) , :class => "customSelect" %>
-		</li>			
-		<li class="dropdown">
-			<%= f.label :art_type, t('solution.type') %>
-			<%= f.select :art_type, Solution::Article.article_type_option, :class => "select" %>
-		</li>	
-		<li class="dropdown">
-			<%= f.label :status, t('solution.status') %>
-			<%= f.select :status, Solution::Article.article_status_option, :class => "select" %>
-		</li>
-		<li id="solution-seo-container">
-			<div id="solution-seo-show" class="solution-seo-title">
-				<div class="arrow-right  solution-seo-show" id="show-hide-button">
-				</div>
-				<a href="javascript:void(null);"><%= t('solution.solution_meta') %></a>
 			</div>
-			<div id="solution-seo" class="hide">
-				<ul>
-					<% f.fields_for :seo_data  do |s| %>
-						<li>
-							<%= s.label(:meta_title, t('solution.solution_meta_title')) %>
-							<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
-								'data-counter' => "TitleCounter", 'data-limit' => 72, 
-								:value => (@article.seo_data || {})[:meta_title] %>
+		</div>
+	</div>
+	<% if is_application_installed?("screenr") %>
+		<div class="control-group">
+			<div class="controls">
+				  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+			</div>
 
-							<div class="solution-seo-message">
-								<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
-								<%= t('solution.title_counter_message') %>
-							</div>
-						</li>
-						<li>
-							<%= s.label(:meta_description, t('solution.solution_meta_description')) %>
-				    		<%= s.text_area  :meta_description, :rel => "charcounter", 
-								'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-								:value => (@article.seo_data || {})[:meta_description], 
-								:class => "solution-seo-description" %>
-							<div class="solution-seo-message">
+		</div>
+	<% end %>
+	<% fields_for :tags  do |tag| %>
+		<div class="control-group row-fluid">
+			<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
+			<div class="controls">
+				<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span8"%>
+			</div>
+		</div>
+	<%end%>
+	<div class="control-group">
+		<div class="controls">
+				<div class="pull-left">
+					<%= f.label :folder_id, t('solution.folder') %>
+					<%= f.select :folder_id , option_groups_from_collection_for_select(current_account.solution_categories, :folders ,:name, :id,:name,@article.folder_id) , :class => "select2" %>
+				</div>
+				<div class="pull-left span">
+					<%= f.label :art_type, t('solution.type') %>
+					<%= f.select :art_type, Solution::Article.article_type_option, :class => "select2" %>
+				</div>
+				<div class="pull-left span">
+					<%= f.label :status, t('solution.status') %>
+					<%= f.select :status, Solution::Article.article_status_option, :class => "select2" %>
+				</div>
+		</div>
+	</div>
+	<div id="solution-seo-container">
+		<div id="solution-seo-show" class="solution-seo-title sub-lead">
+			<div class="arrow-right  solution-seo-show" id="show-hide-button">
+			</div>
+			<a href="javascript:void(null);"><%= t('solution.solution_meta') %></a>
+		</div>
+		<br/>
+		<div id="solution-seo" class="hide">
+			<% f.fields_for :seo_data  do |s| %>
+				<div class="control-group">
+					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
+					<div class="controls">
+						<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
+							'data-counter' => "TitleCounter", 'data-limit' => 72, 
+							:value => (@article.seo_data || {})[:meta_title] %>
+
+						<div class="muted">
+							<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
+							<%= t('solution.title_counter_message') %>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<%= s.label(:meta_description, t('solution.solution_meta_description'), :class => 'control-label') %>
+					<div class="controls">
+			    		<%= s.text_area  :meta_description, :rel => "charcounter", 
+							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
+							:value => (@article.seo_data || {})[:meta_description], 
+							:class => "solution-seo-description" %>
+						<div class="muted">
 				    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
 				    		<%= t('solution.description_counter_message') %>
-				    	</div>
-						</li>
-						<li>
-							<%= s.label(:meta_keywords, t('solution.solution_meta_keywords')) %>
-							<%= s.text_field :meta_keywords, :class => "text", 
-								:value => (@article.seo_data || {})[:meta_keywords] %>
-							<div class="solution-seo-message">
-								<%= t('solution.meta_keywords_message') %>
-							</div>
-						</li>
-					<% end %>
-				</ul>
-			</div>
-		</li>
-	</ul>
+		    			</div>
+		    		</div>
+		    	</div>
+				<div class="control-group">
+					<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
+					<div class="controls">
+						<%= s.text_field :meta_keywords, :class => "text", 
+							:value => (@article.seo_data || {})[:meta_keywords] %>
+						<div class="muted">
+							<%= t('solution.meta_keywords_message') %>
+						</div>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
 	<script src="/javascripts/frameworks/plugins/jquery.char_counter.js" type="text/javascript"></script>
 	<% javascript_tag do %>
 		(function($) {
