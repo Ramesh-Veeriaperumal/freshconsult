@@ -35,6 +35,6 @@ end
 def sla_should_run?(queue_name)
   queue_length = Resque.redis.llen "queue:#{queue_name}"
   puts "#{queue_name} queue length is #{queue_length}"
-  queue_length < 1 #and !Rails.env.staging?
+  queue_length < 1 and !Rails.env.staging?
 end
 
