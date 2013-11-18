@@ -2280,7 +2280,7 @@ en:
   solution:    
     folders:
       new:
-        new_folder: New Folder
+        new_folder: Add Folder
       folder_form:
         visible_to: Visible to
     articles:
@@ -2302,7 +2302,7 @@ en:
     edit: Edit Solution
     add: Add Solution
     info10: Private (Visible to Agents only)
-    add_new_solution: Add a new solution
+    add_new_solution: Add solution
     title: Solutions
     title_singular: Solution
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
