@@ -205,6 +205,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_headers(from_email, account)
       return ticket if can_be_added_to_ticket?(ticket, user)
+      ticket = ticket_from_email_body(account)
+      return ticket if can_be_added_to_ticket?(ticket, user)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)            
@@ -279,6 +281,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def check_support_emails_from(account, ticket, user)
       ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
+    end
+
+    def ticket_from_email_body(account)
+      display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
     end
 
     def add_email_to_ticket(ticket, from_email, user)
@@ -422,11 +432,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       #Sanitizing the original msg   
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+        remove_identifier_span(sanitized_org_msg)
         original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+        remove_identifier_span(sanitized_old_msg)
         old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
       end
         
@@ -439,6 +451,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "</div>"
       end 
       {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
+    end
+
+    def remove_identifier_span msg
+      id_span = msg.css("span[title='fd_tkt_identifier']")
+      id_span.remove if id_span
     end
 
     def get_envelope_to
