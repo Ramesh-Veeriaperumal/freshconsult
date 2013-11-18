@@ -17,7 +17,7 @@ development:
       not_a_shard: false
       slave:
         host: 127.0.0.1
-        database: helpkit2
+        database: helpkit1
  
 
       
