@@ -1046,6 +1046,7 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
+        tags: Tags
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -2811,6 +2812,7 @@ en:
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
+    private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
     integrations:      
       jira: 
@@ -3050,7 +3052,52 @@ en:
 
     tags:
       index:
-        title: Tags
+        title: Manage Tags
+        desc: Descending
+        asc: Ascending
+        name: Name
+        usage: Usage
+        helpcard1: This page shows you a list of all tags that are currently being used in your helpdesk. By default, you can get the usage count for every tag, including the number of linked tickets, customers or solution articles at a glance by looking them up from the list. If you want to, you can also open up a complete list of tagged items by clicking on the corresponding numbers.
+        helpcard2: When you want to rename them altogether, click on the tag names to update all of their instances automatically. Additionally, you can choose to merge two or more tags together by giving them the same name.
+        helpcard_title: Managing Tags
+      tag_search_navigate:
+        search: Search Tags starting with...
+        clear: Clear
+      tags_table:
+        merge_tags: Merge Tags
+        delete_tags: Delete Tags
+        no_tags: No tags found
+        view: View
+        all_tags: All Tags
+        tags_merge: Tag with the same name exists. Do you want to merge these tags?
+        remove_tags: Remove Tag association
+        remove_confirmation: Are you sure you want to remove the tag association?
+      tag:
+        ticket: Ticket
+        tickets: Tickets
+        customer: Customer
+        customers: Customers
+        article: Article
+        articles: Articles
+      tag_count:
+        remove_Tickets: Remove tickets associated with the tag
+        remove_Customers: Remove customers associated with the tag
+        remove_Articles: Remove articles associated with the tag
+      tag_bulk_merge:
+        bulk_merge: Merge
+        tags_selected:  tags selected (Associations from the merged tags will be associated with the primary tag)
+        tag_selected:  tag selected (Associations from the merged tags will be associated with the primary tag)
+        mark_primary: Mark as primary
+        remove: Remove this tag
+        tag_uses: Tag usage count
+        cancel: Cancel
+        confirm: Confirm and Merge
+        wait: Please wait...
+      main_panel:
+        merge: Merge
+        merge_tags: Merge Tags
+
+
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"

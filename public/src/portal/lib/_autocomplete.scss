@@ -514,3 +514,37 @@ disabled look for already selected choices in the results dropdown
     background-position: 100% -21px !important;
   }
 }
+
+.ui-menu-item{
+  margin: 4px 0 4px 0;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.ui-menu{
+  background: #fff;
+  color: #333;
+  border: 1px solid #aaa;
+  border-top: 0;
+  position: absolute;
+  top: 100%;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0 4px 5px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.15) 0 4px 5px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 4px 5px;
+  z-index: 9999;
+  width: 100%;
+  margin-top: -5px;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -ms-border-radius: 0 0 4px 4px;
+  -o-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  box-sizing: border-box;
+  top: 405px;
+  left: 77px;
+  width: 190px;
+}
+
+

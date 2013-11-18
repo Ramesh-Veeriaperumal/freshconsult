@@ -1,0 +1,2 @@
+page.replace_html 'tags-list', :partial => '/helpdesk/tags/tags_table'
+

@@ -10584,6 +10584,7 @@ label.last-label{ margin-bottom: 0px; }
     }
   }
 }
+<<<<<<< HEAD
 
 #tag-remove-confirm, #tag-dialog-confirm, #tag-delete-confirm {
 	p { padding: 10px;}
@@ -10678,6 +10679,7 @@ label.last-label{ margin-bottom: 0px; }
 #merge_tag{
   padding-top: 10px;
 }
+=======
 //Contacts import
 .map_fields{
 	.sample_values{
@@ -10699,5 +10701,4 @@ label.last-label{ margin-bottom: 0px; }
 		padding: 10px 0 0 0;
 	}
 }
-
-
+>>>>>>> origin/pre_staging

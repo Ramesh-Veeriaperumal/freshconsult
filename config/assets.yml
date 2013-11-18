@@ -15,7 +15,7 @@ stylesheets:
   plugins:
     - public/stylesheets/plugins.css
 
-  chat:    
+  chat:
     - public/stylesheets/chat/chat.css
     - public/stylesheets/chat/structure.css
     - public/stylesheets/chat/grey-theme.css
@@ -24,7 +24,7 @@ stylesheets:
     - public/stylesheets/chat/clean.css
     - public/stylesheets/chat/sprites.css
 
-  non_pattern:    
+  non_pattern:
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
 
@@ -50,7 +50,7 @@ stylesheets:
     - public/stylesheets/portal/preview.css
 
   widget:
-    - public/stylesheets/portal/widget.css    
+    - public/stylesheets/portal/widget.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -90,7 +90,7 @@ stylesheets:
     - public/stylesheets/print/print.css
 
   report_print:
-    - public/stylesheets/print/report-print.css  
+    - public/stylesheets/print/report-print.css
 
   getting_started:
     - public/stylesheets/app/getting_started.css
@@ -110,7 +110,7 @@ javascripts:
     - public/javascripts/controls.js
 
   frameworks:
-    - public/javascripts/jquery-1.7.1.min.js    
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
@@ -153,12 +153,12 @@ javascripts:
   # Code editor for portal cms
   codemirror:
     - public/javascripts/codemirror/*.js
-  portaltemplate:    
+  portaltemplate:
     - public/javascripts/mousetrap.js
   visitor:
     - public/javascripts/frameworks/session.js
 
-  workspace: 
+  workspace:
     - public/javascripts/bootstrap/twipsy.js
     - public/javascripts/pattern/spin.js
     - public/javascripts/pattern/jquery.spin.js
@@ -191,7 +191,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
-    #- public/javascripts/pattern/bootstrap-tooltip.js    
+    #- public/javascripts/pattern/bootstrap-tooltip.js
     # - public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
   timesheet:
@@ -212,7 +212,7 @@ javascripts:
     - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    # - public/javascripts/lte-ie7/feeback-widget.js    
+    # - public/javascripts/lte-ie7/feeback-widget.js
     - public/javascripts/feedback_widget_form.js
     - public/javascripts/utils.js
 
@@ -221,10 +221,10 @@ javascripts:
 
   portal_head:
     - public/javascripts/prototype.js
-    - public/javascripts/portal/jquery-1.8.3.js    
+    - public/javascripts/portal/jquery-1.8.3.js
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/portal-utils.js
-    - public/javascripts/lib/nestedtree.js    
+    - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
 
   preview:
@@ -250,7 +250,7 @@ javascripts:
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
 
-  subscription:                    
+  subscription:
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
@@ -261,10 +261,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/select2.js
 
   observer_event:
-    - public/javascripts/observer_events.js 
+    - public/javascripts/observer_events.js
 
   conditional:
-    - public/javascripts/autosuggest.js    
+    - public/javascripts/autosuggest.js
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
     - public/javascripts/condition-filter.js
 
@@ -296,7 +296,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
-    - public/javascripts/frameworks/plugins/jquery.validate.js      
+    - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
     - public/javascripts/getting_started.js
@@ -310,3 +310,4 @@ javascripts:
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
+

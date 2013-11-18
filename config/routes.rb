@@ -317,7 +317,7 @@
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get }    
+    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put }
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
@@ -371,6 +371,8 @@
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
+    helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
+
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 

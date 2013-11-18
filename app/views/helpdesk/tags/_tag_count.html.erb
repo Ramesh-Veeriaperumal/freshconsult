@@ -1,0 +1,16 @@
+<td class=" <%= count>0 ? 'count' : 'muted disabled'  %>" id="<%= dom_type+"_"+tag.id.to_s %>"  data-tag-type="<%= type %>" >
+  <% ticket_label=pluralize(count, plurals[0],plurals[1]).split(" ")[1] %>
+  <% if count>0 %>
+      <% if dom_type=="Articles" %>
+          <span class="tag-label"><%= ticket_label %> <span class="cnt-label"><%= count %></span></span>
+      <% else %>
+          <a class="tag-label" href="<%= link %>" >
+            <%= ticket_label %> <span class="cnt-label"><%= count %></span>
+          </a>
+      <% end %>
+      <a href="#" class="removetag" ><i class="symbols-tag-remove tooltip" title = "<%= t('.remove_'+dom_type) %>" ></i></a>
+  <% else %>
+      <div class="tag-label"> <%= ticket_label  %> <span class="cnt-label"><%= count %></span>
+      </div>
+  <% end %>
+</td>

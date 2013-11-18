@@ -38,7 +38,8 @@ HTML
           ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
           ['/agents',                     'agent',                   privilege?(:manage_users) ],
           ['/groups',                     'group',                   privilege?(:admin_tasks) ],
-          ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ]
+          ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ],
+          ['/helpdesk/tags',              'tags',                    privilege?(:admin_tasks) ]
       ], "Helpdesk"],
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher',              privilege?(:manage_dispatch_rules) ],
