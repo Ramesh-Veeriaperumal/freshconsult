@@ -411,6 +411,8 @@ class User < ActiveRecord::Base
 
   def to_indexed_json
     to_json( 
+              :root => "user",
+              :tailored_json => true,
               :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
               :include => { :customer => { :only => [:name] } } 
            )

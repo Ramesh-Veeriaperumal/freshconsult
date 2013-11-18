@@ -1,4 +1,3 @@
-<%= include_cloudfront_css :chat %>
 <% @page_title = "Dashboard" %>
 <% content_for :sidebar do %>
   <% if current_account.subscription.trial? && current_account.subscription.trial_days < AppConfig['show_trail_notifier_in_days'] %>
@@ -12,9 +11,6 @@
 
   <div class="side-panel" id="chat-dashboard" style="display:none">
     <div class="sloading loading-small loading-block"></div>
-    <script>
-          if(window.dashboardView){dashboardView.render(true);}
-    </script>
   </div>
   
   <% if gamification_feature?(current_account) %>

@@ -2346,7 +2346,7 @@ en:
     sample_data: Sample data
     can_see_all_tickets_of_the_company: Can view all company tickets ?
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
-    can_see_all_tickets: Important - Above field accepts accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
+    can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -2571,6 +2571,7 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+    duplicate_status: Tweet is a duplicate. Reply with some other text
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
@@ -2810,7 +2811,6 @@ en:
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
-    private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
     integrations:      
       jira: 
@@ -4545,6 +4545,9 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    click_to_go_online: "You are offline now <br> Click to go online"
+    click_to_go_offline: "You are online now <br> Click to go offline"
+    fetching: "Fetching"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

@@ -340,7 +340,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             fieldSetObj.items.items[7].setValue(bcc_emails)
         }
         fieldSetObj.items.items[6].setValue(cc_emails)
-        if(FD.current_user.is_agent)
+        if(FD.current_user.agent_signature != null)
             fieldSetObj.items.items[9].setValue("\n\n"+FD.current_user.agent_signature);
 
         //setting the url 

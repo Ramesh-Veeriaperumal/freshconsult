@@ -1,0 +1,13 @@
+/* Importing admin icons */
+@import "cdn-ignored/sprites/chat/*.png";
+$chat-layout:horizontal;
+/*@include all-chat-sprites;*/
+
+.header-link-wrapper .agent-fchat-on { background-color: #5c5c5c; }
+.header-link-wrapper .agent-fchat-off { background-color: #f4f4f4; }
+.agent-fchat-on {    
+    box-shadow: inset 0 5px 5px rgba(0,0,0,0.3);
+    img{ @include chat-sprite(status-on); }
+}
+
+.agent-fchat-off img{ @include chat-sprite(status-off); }

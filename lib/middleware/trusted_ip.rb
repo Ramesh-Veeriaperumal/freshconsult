@@ -55,7 +55,7 @@ class Middleware::TrustedIp
   def ip_is_in_range?(start_ip, end_ip, current_ip)
     current_ip_version = current_ip.ipv4? ? "ipv4?" : "ipv6?"
     if start_ip.send(current_ip_version) && end_ip.send(current_ip_version)
-      return true if (start_ip..end_ip) === current_ip
+      return true if current_ip >= start_ip && current_ip <= end_ip
     end
   end
 
