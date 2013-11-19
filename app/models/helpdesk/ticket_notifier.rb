@@ -6,21 +6,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
-      a_template = Liquid::Template.parse(e_notification.formatted_agent_template)
-      a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
-      i_receips = internal_receips(e_notification, ticket)
-      deliver_email_notification({ :ticket => ticket,
-             :notification_type => notification_type,
-             :receips => i_receips,
-             :email_body => a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
-             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
-          }) unless i_receips.nil?
+      if (notification_type == EmailNotification::NEW_TICKET)
+        e_notification.agents.each do |agent|
+          deliver_agent_notification(agent, agent.email, e_notification, ticket, comment)
+        end  
+      else  
+        i_receips = internal_receips(e_notification, ticket)
+        deliver_agent_notification(ticket.responder, i_receips, e_notification, ticket, comment)
+      end 
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.formatted_requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
-      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      requester_template = e_notification.get_requester_template(ticket.requester)
+      r_template = Liquid::Template.parse(requester_template.last.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
@@ -34,21 +33,31 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification(params) if ticket.requester_has_email?
     end
   end
-  
+
+  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment)
+    agent_template = e_notification.get_agent_template(agent)
+      a_template = Liquid::Template.parse(agent_template.last) 
+      a_s_template = Liquid::Template.parse(agent_template.first) 
+      deliver_email_notification({ :ticket => ticket,
+             :notification_type => e_notification.notification_type,
+             :receips => receips,
+             :email_body => a_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
+          }) unless receips.nil?
+  end
+
   def self.internal_receips(e_notification, ticket)
     if(e_notification.notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
       unless ticket.group.nil?
         to_ret = ticket.group.agent_emails
         return to_ret unless to_ret.empty?
       end
-    elsif(e_notification.notification_type == EmailNotification::NEW_TICKET)
-        to_ret = e_notification.agents.collect { |a| a.email }
-        return to_ret unless to_ret.empty?  
     else
       ticket.responder.email unless ticket.responder.nil?
     end
   end
-  
+   
   def email_notification(params)
     subject       params[:subject]
     recipients    params[:receips]

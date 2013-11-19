@@ -33,7 +33,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        email_cmds_regex = get_email_cmd_regex(account) 
        params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
       end
-
+      
+      params[:text] = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html])
+      
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
@@ -359,9 +361,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
+        language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false}, :email_config => email_config},portal)
+          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
+        Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params[:text][0..500]) if language.nil?
       end
       user.make_current
       user
