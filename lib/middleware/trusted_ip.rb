@@ -27,6 +27,10 @@ class Middleware::TrustedIp
       end
     end
     [@status, @headers, @response]
+    rescue DomainNotReady => ex
+      @status, @headers, @response = [302, {"Location" => "/DomainNotReady.html"},
+                                          'Your data is getting moved to a new datacenter.' ]
+      return [@status, @headers, @response]
     ensure
       Thread.current[:account] = nil
   end
