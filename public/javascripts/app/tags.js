@@ -336,7 +336,7 @@ $(document).ready(function(){
                     var name= status["name"]
                     if( status["name"].length>12)
                     {
-                       name=status["name"].slice(0,8)+"..."
+                       name=status["name"].slice(0,10)+"..."
                        tag_name_id.addClass("tooltip").attr("title",status["name"]);
 
                     }
