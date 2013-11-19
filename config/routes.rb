@@ -399,8 +399,6 @@
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 
-    helpdesk.resources :notifications, :only => :index
-
     helpdesk.resources :commons 
     
   end

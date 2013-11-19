@@ -281,10 +281,6 @@ javascripts:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
 
-  notifications:
-    - public/javascripts/jquery.gritter/jquery.gritter.js
-    - public/javascripts/requestAnimFrame.js
-    - public/javascripts/notifications.js
 
   excanvas:
     - public/javascripts/excanvas.js

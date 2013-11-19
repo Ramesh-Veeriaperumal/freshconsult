@@ -1,6 +1,5 @@
 class AgentObserver < ActiveRecord::Observer
 
-  include Notifications::MessageBroker
   include MemcacheKeys
 
   def before_create(agent)
@@ -11,9 +10,7 @@ class AgentObserver < ActiveRecord::Observer
     update_agents_level(agent)
   end
 
-  def after_update(agent)
-    publish_game_notifications(agent)
-  end
+  
 
   def after_save(agent)
     update_agent_levelup(agent)
@@ -36,14 +33,6 @@ class AgentObserver < ActiveRecord::Observer
       level = agent.user.account.scoreboard_levels.level_for_score(agent.points).first
       if level and !(agent.scoreboard_level_id.eql? level.id)
         agent.level = level
-      end
-    end
-
-    def publish_game_notifications(agent)
-      level_change = agent.scoreboard_level_id_changed? && agent.scoreboard_level_id_change 
-      level_up = level_change && ( level_change[0].nil? || level_change[0] < level_change[1] )
-      if level_up
-        publish("#{I18n.t('gamification.notifications.newlevel',:name => agent.level.name)}", [agent.user_id.to_s]) 
       end
     end
 
