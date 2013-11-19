@@ -7,8 +7,8 @@ body, .feedback-wrapper{
 	background:transparent;
 }
 .feedback-wrapper{
-	margin-left: 20px; 
-	margin-right: 20px; 
+	margin-left: 20px;
+	margin-right: 20px;
 	&.embedded-wrapper{
 		margin:0;
 	}
@@ -65,7 +65,7 @@ body, .feedback-wrapper{
 		}
 	}
 	.modal-body{
-		overflow-x:hidden; 
+		overflow-x:hidden;
 		padding-top: 8px;
 		height: 100%;
 		max-height: 100%;
@@ -75,13 +75,13 @@ body, .feedback-wrapper{
 			height:50px;
 		}
 		.redactor_editor, .redactor_editor:focus{
-			min-height: 100px; 
-			height:auto !important; 
+			min-height: 100px;
+			height:auto !important;
 			height: 100px;
 		}
 	}
 	/* Widget Styles without Search Form */
-	&.modal-scroll .modal-header{  
+	&.modal-scroll .modal-header{
 		position: absolute;
 		z-index:11; /* for box shadow */
 		width:100%;
@@ -94,7 +94,7 @@ body, .feedback-wrapper{
 			width: 100%;
 			height: 5px;
 			@include background-image(linear-gradient(to bottom, rgba(0,0,0,0.1) 0,rgba(0,0,0,0) 100%));
-		}		
+		}
 	}
 }
 .modal-panel-active{
@@ -106,7 +106,7 @@ body, .feedback-wrapper{
 		z-index: 10;
 	}
 	.modal-body{ @include border-right-radius(0); }
-	.modal-panel{ width: 40%; display: block; }	
+	.modal-panel{ width: 40%; display: block; }
 	&.modal-scroll .modal-header{
 		width:60%;
 		border-right: 1px solid #e8e8e8;
@@ -117,7 +117,7 @@ body, .feedback-wrapper{
 }
 
 //Fix for Select2 scroll
-.custom_dropdown{					
+.custom_dropdown{
 	overflow-y: hidden;
 }
 
@@ -132,7 +132,7 @@ body, .feedback-wrapper{
 	.embedded-body {
 		max-height: 90%;
 	}
-	.embedded-footer { 
+	.embedded-footer {
 		padding-top:0;
 		border-top: 0; background:none;
 	}
@@ -146,21 +146,21 @@ body, .feedback-wrapper{
 	}
 	.embedded-search-input {
 		margin-top: 50px;
-	} 
-} 
+	}
+}
 
 //Search Panel Style
-.hc-search-input{ 
-  margin: 8px 8px 5px; 
+.hc-search-input{
+  margin: 8px 8px 5px;
   &:before{margin-top:8px;}
 }
-.modal-panel{ 
+.modal-panel{
 	display:none;
-	background-color: #f9f9f9; 
-	position: absolute; 
-	height: 100%; 
-	top: 0; 
-	right: 0; 
+	background-color: #f9f9f9;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	right: 0;
 	@include border-right-radius(6px);
 	z-index: 9;
 	@include box-shadow(-1px 0 0 #e8e8e8);
@@ -175,12 +175,12 @@ body, .feedback-wrapper{
 		font-weight: 100;
 		letter-spacing: 0.04em;
 		margin-bottom: 6px;
-	}	
+	}
 }
-.panel-content{ 
-	padding:0 1em; 
-	.help-text{ 
-		margin-bottom: 2px;  
+.panel-content{
+	padding:0 1em;
+	.help-text{
+		margin-bottom: 2px;
 		max-height: 52px;
 		overflow: hidden;
 		line-height: 18px;
@@ -218,8 +218,8 @@ body, .feedback-wrapper{
 	}
 	.email, .text{ padding-left: 32px; }
 	.html_paragraph{ resize: none; }
-	.control-group{ margin-bottom: 0; }	
-	.control-group.error-group > label{ color: #d0d0d0; }	
+	.control-group{ margin-bottom: 0; }
+	.control-group.error-group > label{ color: #d0d0d0; }
 	div.error {
 		padding: 0;
 		margin-top: -5px;
@@ -228,6 +228,11 @@ body, .feedback-wrapper{
 	.default_description div.error {
 		margin-left: 10px;
 		margin-bottom: 0;
+	}
+}
+.field-order {
+	.control-group {
+		margin-bottom: 0px;
 	}
 }
 .form-portal {
@@ -305,7 +310,7 @@ body, .feedback-wrapper{
 .ie7{
 	position: relative;
 	overflow: hidden;
-	overflow-y: hidden !important; 
+	overflow-y: hidden !important;
 	.feedback-wrapper{
 		overflow: hidden;
 		#feedback-suggest input.special{

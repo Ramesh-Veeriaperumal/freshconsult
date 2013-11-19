@@ -1,8 +1,8 @@
 <%= include_cloudfront_js :widget_config %>
 <%= render :partial => "shared/colorpicker" %>
-<% unless current_account.main_portal.preferences.nil? 
+<% unless current_account.main_portal.preferences.nil?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
-   end %>	
+   end %>
 
 <% content_for :sidebar do -%>
 <%= render :partial => "helpnote" %>
@@ -15,7 +15,7 @@
 
 <div>
 	<ul data-tabs="tabs" class="tabs" id="fw-tabs">
-	    <li class="active">      
+	    <li class="active">
 	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe  %></a>
 	    </li>
 	    <li class="">
@@ -28,7 +28,7 @@
   <div class="tab-pane active" id="popup">
     <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
   </div>
-  <div class="tab-pane" id="embedded">		
+  <div class="tab-pane" id="embedded">
     <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
   </div>
 </div>

@@ -10,14 +10,16 @@
 	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
 	</div>
 </div>
+<% widget_view = widget_option(:widgetView) %>
 <% widget_type = widget_option(:widgetType) %>
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
 <%= hidden_field_tag "searchInputFrom" %>
 <div class="modal-body">
-<% form_for :helpdesk_ticket, @ticket, 
-		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks], :widgetType => widget_type), 
+<% form_for :helpdesk_ticket, @ticket,
+		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks], :widgetType => widget_type),
 		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
-  	<%= f.error_messages %>  	
+  	<%= f.error_messages %>
+  	<% if widget_view %>
   	<div class="form-placeholder">
 	  	<% @ticket_fields_def_pos.each do |tf_field| %>
 	  		<% old_pos = @ticket_fields.map(&:field_type).index(tf_field) %>
@@ -30,7 +32,9 @@
 			<% end %>
 	  	<% end %>
   	</div>
-  	<div class="form-portal">
+  	<% end %>
+  	<% field_spacing = widget_view ? "form-portal" : "field-order" %>
+  	<div class="<%= field_spacing %>">
 		<% @ticket_fields.each do |field| %>
 			<div class="control-group <%= field.field_type %>">
     			<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
@@ -49,16 +53,16 @@
 		<div class="span10">
 			<div class="copyright">
 				<% unless(current_account.subscription.paid_account?) %>
-					<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
+					<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
 					<%= t('footer.by_freshdesk') %>
 					<div class="fw-privacy-policy">
-						<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
+						<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %>
 					</div>
 				<% end %>
 			</div>
 		</div>
 		<div class="span2 omega">
-			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega", 
+			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega",
 				"data-loading-text" => t('ticket.submit_loading') %>
 			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
@@ -74,7 +78,7 @@
 			<span class="wicon-mobile-search"></span>
 		</a>
 		<input type="hidden" name="responsive" id="responsive" value= "<%= responsive %>" />
-		<script type='text/javascript'>		
+		<script type='text/javascript'>
 			jQuery(document).ready(function () {
 				var responsiveWidget = jQuery("#responsive").val();
 				if(responsiveWidget != "no") {
@@ -94,23 +98,23 @@
 		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
 			<div class="hc-search-input">
 				<input placeholder="<%=t('.feedback_widgets_search')%>" type="text" id="fs-input"
-					name="term" class="span12 special" value="" 
+					name="term" class="span12 special" value=""
 		            rel="page-search" data-max-matches="10">
 			</div>
 		</form>
 		<div id="panel-content" class="panel-content hide">
 			<h4 id="ws-results-title"><%=t('.feedback_widgets_search_results')%></h4>
-			<ul class="unstyled" id="ws-results"></ul>	
+			<ul class="unstyled" id="ws-results"></ul>
 		</div>
 		<div id="panel-info" class="panel-info">
 			<h2 class="lead"><%=t('.feedback_widgets_search_our')%><br />
 				<%=t('.feedback_widgets_knowledge_base')%></h2>
-			<%= link_to t('.feedback_widgets_help_articles'), support_solutions_path, 
+			<%= link_to t('.feedback_widgets_help_articles'), support_solutions_path,
 					{ :target => "_blank", :class => "link-pointer" } %>
 		</div>
 	</div>
 
-	<script id="ws-tmpl" type="text/x-jquery-tmpl">      
+	<script id="ws-tmpl" type="text/x-jquery-tmpl">
 		<li>
 			<div class="ellipsis">
 				<a href="${url}" target="_blank">{{html title}}</a>
@@ -124,30 +128,30 @@
 
 		jQuery("#feedback-widget-container").addClass("modal-panel-active");
 
-		var suggestResponse = function(data, term){		
+		var suggestResponse = function(data, term){
 			var searchInputFrom = jQuery("#searchInputFrom").val();
 
 			jQuery("#mobile-counter").removeClass("mobile-counter")
-			jQuery("#mobile-counter").text("") 
+			jQuery("#mobile-counter").text("")
 			jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
-			jQuery("#subject-mobile-counter").text("")  
+			jQuery("#subject-mobile-counter").text("")
 
-		    if(data.item.length > 0){	
+		    if(data.item.length > 0){
 		    	if(data.count < 100){
-			    	jQuery("#mobile-counter").text(data.count)  
-			    	jQuery("#subject-mobile-counter").text(data.count + " matching articles found") 
+			    	jQuery("#mobile-counter").text(data.count)
+			    	jQuery("#subject-mobile-counter").text(data.count + " matching articles found")
 		    	}
 		    	else{
-		    		jQuery("#mobile-counter").text("99+")  
-		    		jQuery("#subject-mobile-counter").text("99+ matching articles found") 
-		    	} 
+		    		jQuery("#mobile-counter").text("99+")
+		    		jQuery("#subject-mobile-counter").text("99+ matching articles found")
+		    	}
 		    	jQuery("#mobile-counter").addClass("mobile-counter")
 		    	jQuery("#subject-mobile-counter").addClass("subject-mobile-counter")
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
 					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
 				jQuery("#panel-content").show()
-				
+
 		    }else if(searchInputFrom == "Subject") {
 		    	jQuery("#panel-info").show();
 		    	jQuery("#fs-input").val("");
@@ -155,7 +159,7 @@
 		    else {
 		    	jQuery("#ws-results").html("No results for " + h(term))
 		    	jQuery("#panel-content").show()
-		    }	    
+		    }
 
 		    jQuery("#fs-input").removeClass("loading-right");
 		}
@@ -190,7 +194,7 @@
 	  		if(searchString != '' && searchString.length > 2){
 	  			jQuery("#fs-input").val(this.value);
 	  			jQuery("#panel-content").hide();
-	  			searchKnowledgeBase(this.value);	
+	  			searchKnowledgeBase(this.value);
 	  		}
 	  	});
 
@@ -201,16 +205,16 @@
 			clearTimeout(suggestDelay);
 		    suggestDelay = setTimeout(function() {
 		    	suggestForSubject = false
-		    		
+
 		    	searchKnowledgeBase($this.val());
-		    	
-		    }, 500)	
+
+		    }, 500)
 
 		    if(ev.keyCode == 13){
 	   			ev.preventDefault();
 	   			return false;
 	   		}
-			
+
 	  	});
 
 	  	function searchKnowledgeBase(searchInput)
@@ -230,16 +234,16 @@
 				suggestForSubject = true;
 
 				jQuery("#mobile-counter").removeClass("mobile-counter")
-				jQuery("#mobile-counter").text("")  
+				jQuery("#mobile-counter").text("")
 				jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
-				jQuery("#subject-mobile-counter").text("") 
+				jQuery("#subject-mobile-counter").text("")
 			}
 	  	}
 	</script>
 <% end %>
 
-<iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" 
-	src="about:blank" frameborder="0" scrolling="auto" 
+<iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame"
+	src="about:blank" frameborder="0" scrolling="auto"
 	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
 </iframe>
 
