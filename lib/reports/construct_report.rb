@@ -59,14 +59,14 @@ module Reports::ConstructReport
 
  def start_date_db(zone = true)
     t = zone ? Time.zone : Time
-    parse_from_date.nil? ? (t.now.ago 30.day).beginning_of_day.to_s(:db) : 
-        t.parse(parse_from_date).beginning_of_day.to_s(:db) 
+    parse_start_date.nil? ? (t.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        t.parse(parse_start_date).beginning_of_day.to_s(:db) 
 end
 
 def end_date_db(zone = true)
   t = zone ? Time.zone : Time
-  parse_to_date.nil? ? t.now.end_of_day.to_s(:db) : 
-      t.parse(parse_to_date).end_of_day.to_s(:db)
+  parse_end_date.nil? ? t.now.end_of_day.to_s(:db) : 
+      t.parse(parse_end_date).end_of_day.to_s(:db)
 end
 
 def parse_start_date
