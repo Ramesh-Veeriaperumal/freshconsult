@@ -12,6 +12,7 @@ class Topic < ActiveRecord::Base
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
 
   before_create :set_locked
+  before_save :set_sticky
 
   has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
@@ -134,6 +135,10 @@ class Topic < ActiveRecord::Base
 
   def set_locked
     self.locked = false if self.locked.nil?
+  end
+
+  def set_sticky
+    self.sticky = 0 if self.sticky.nil?
   end
   
   def last_page
