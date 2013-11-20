@@ -336,7 +336,7 @@ class Helpdesk::TicketsController < ApplicationController
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
       end
-
+      verify_permission
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -972,6 +972,8 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t("flash.general.access_denied") 
         if params['format'] == "widget"
           return false
+        elsif request.xhr?
+          params[:redirect] = "true"
         else
           redirect_to helpdesk_tickets_url
         end
