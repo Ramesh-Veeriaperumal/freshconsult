@@ -5,7 +5,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   set_table_name "helpdesk_time_sheets"
 
-  default_scope :order => "created_at DESC"
+  default_scope :order => "executed_at DESC"
   
   belongs_to :workable, :polymorphic => true
   delegate :product_name, :group_name, :to => :workable
