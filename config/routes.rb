@@ -28,7 +28,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
@@ -67,6 +67,25 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
+
+  map.namespace :freshfone do |freshfone|
+    freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
+    freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
+    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :bridge => :post, :hangup => :post}  
+    freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
+    freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
+    freshfone.resources :call_history, :collection => { :custom_search => :get, 
+                                                       :children => :get, :recent_calls => :get }
+    freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
+                           :refresh_token => :post, :in_call => :post }
+  end
+
+  map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
+                                  :dashboard_stats => :get, :get_available_agents => :get, 
+                                  :credit_balance => :get, :ivr_flow => :get, :preview_ivr => :get
+                                }
+
   map.resources :users, :member => { :delete_avatar => :delete, 
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
@@ -91,6 +110,7 @@
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
+    integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
   end
 
   map.namespace :admin do |admin|
@@ -136,6 +156,11 @@
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
+    admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
+    admin.namespace :freshfone do |freshfone|
+      freshfone.resources :numbers, :collection => { :purchase => :post }
+      freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
+    end
     admin.resources :roles
   end
 
@@ -214,7 +239,7 @@
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
+      admin.resources :accounts,:member => {:add_day_passes => :post, :toggle_freshfone => :post, :add_freshfone_credits => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
@@ -552,5 +577,4 @@
   map.connect '/all_agents.:format', :controller => 'agents', :action => 'list'
   map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-
 end

@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :chat ],
       :inherits => [ :blossom ]
     },
 
@@ -72,6 +72,6 @@ class Account < ActiveRecord::Base
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => false, :chat => false, :cascade_dispatchr => false,
-    :whitelisted_ips => false, :id_less_tickets => false, :reply_to_based_tickets => true }
+    :whitelisted_ips => false, :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false }
 
 end

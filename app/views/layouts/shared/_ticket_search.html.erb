@@ -1,0 +1,29 @@
+<div class='<%= container || "search_container" %>'>
+	<div class="search_header">
+		<%= select_tag "ticket-search-type", options_for_select([['Id', 'display_id'], 
+																	['Subject', 'subject'], ['Requester', 'requester']], 'requester'), 
+																	:class => "search-type select2 span2" %>
+
+		<% search_text = [
+			['display_id', 'select-id', t("ticket.id_placeholder"), 'hide' ],
+			['requester', 'select-requester', t("ticket.requester_placeholder")],
+			['subject', 'select-subject', t("ticket.subject_placeholder"), 'hide']] %>
+		<% search_text.map do |t|  %>
+			<div class="searchticket <%= t[0] %> <%= t[3] %>">
+				<input type="text" id='<%= t[1] %>'  
+							 name='<%= t[1] %>' 
+							 class="search_input <%= t[1] %>"  
+							 placeholder='<%=t[2]%>' />
+				<span class="searchicon"></span>
+			</div>
+		<% end %>
+	</div>	
+	<div class="display_id_results ticket_search_results hide"></div>
+	<div class="requester_results ticket_search_results hide"></div>
+	<div class="subject_results ticket_search_results hide"></div>
+</div>
+
+<% javascript_tag do %>
+	var search_container = jQuery('.' + '<%= container %>' || "search_container")
+												.freshTicketSearch({ className: '<%= container %>' });
+<% end %>

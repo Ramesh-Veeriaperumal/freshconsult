@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
   has_many_attachments
   
   serialize :sso_options, Hash
-
+  
   concerned_with :associations, :constants, :validations, :callbacks
   
   xss_sanitize  :only => [:name,:helpdesk_name]
@@ -56,6 +56,10 @@ class Account < ActiveRecord::Base
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
+  end
+
+  def freshfone_enabled?
+    features?(:freshfone) and freshfone_account.present?
   end
 
   class << self # class methods

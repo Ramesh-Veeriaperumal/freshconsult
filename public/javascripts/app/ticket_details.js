@@ -547,7 +547,7 @@ var scrollToError = function(){
 
 
 	$("body.ticket_details .ticket_show select").data('placeholder','');
-	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, body.ticket_details select.select2").livequery(function(){
+	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").livequery(function(){
 		if (this.id == 'helpdesk_ticket_priority') {
 			$(this).select2({
 				formatSelection: formatPriority,

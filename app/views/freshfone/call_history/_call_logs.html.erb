@@ -1,0 +1,102 @@
+<tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
+	<td class="user_details width1">
+		<div class="freshfone_customer" align="left"
+			 data-number='<%= call.customer_number %>'>
+			 <%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
+				 <div class="ellipsis">
+					 <b><%= call.customer_name || call.customer_number %></b>
+				</div>
+				<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
+							data-number='<%= call.customer_number %>'>
+					<%= call.location %>
+			 </div>
+		</div>
+	</td>
+	<td>
+		<div align="left">
+			<span class='<%= call_direction_class(call) %> call_direction tooltip' title='<%= call_status_title(call) %>'>
+			</span>
+			<% if call.children_count > 0 %>
+				<span class="child_calls tooltip" data-id='<%= call.id %>'
+							title="<%= t('freshfone.call_history.view_transferred_calls') %>">
+					<%= call.children_count %> +
+				</span>
+			<% end %>
+		</div>
+	</td>
+	<td class="user_details width1">
+		<div class="vertical-alignment relative"
+			align="left">
+			<% if children %>
+				<div class="transfer_agent_pointer"></div>
+			<% end %>
+			<% if call.agent.blank? %>
+				<div class="callhistory_helpdesk_avatar vertical-alignment"></div>
+				<div class="vertical-alignment">
+					<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
+					<div class="helpdesk_number ff-user-location muted">
+						<%= call.direct_dial_number || call.number %>
+					</div>
+				</div>
+			<% else %>
+				<div class="vertical-alignment">
+					<%= user_avatar(call.agent) unless call.agent.blank? %>
+				</div>
+				<div class="vertical-alignment"><b class="ellipsis"><%= call.agent_name %></b></div>
+			<% end %>
+		</div>
+	</td>
+	<td class="width2">
+		<div class="time_in_words" align="left">
+			<abbr data-livestamp='<%= call.created_at.to_i %>'>
+				<%= formated_date(call.created_at) %>
+			</abbr>
+		</div>
+	</td>
+	<td class="width3">
+		<div class="assigned_ticket" align="left">
+			<% if call.notable_present? %>
+				<% ticket = call.associated_ticket %>
+				<%= link_to "##{ticket.display_id}", helpdesk_ticket_path(ticket),
+										:target => "_blank",
+										:class => "converted_ticket tooltip",
+										:title => ticket.subject %>
+			<% else %>
+				<%= link_to t('freshfone.call_history.convert'), "#", 
+										:class => "create_freshfone_ticket tooltip",
+										"data-id" => call.id, "data-customer-id" => call.customer_id,
+										"data-number" => call.customer_number,
+										"data-date" => call.created_at,
+										"data-customer-name" => call.customer_name,
+										:title => t('freshfone.call_history.save_ticket') %>
+			<% end %>
+		</div>
+	</td>
+	<td class="width4">
+		<div align="left">
+		<% unless children %>
+			<% if call.call_cost.blank? %>
+				<b id="ticket_list_count" class="callhistory-payment-loader"></b>
+			<%else%>
+				$<%= call.call_cost %>
+			<%end%>
+		<% end %>
+		</div>
+	</td>
+	<td class="width3">
+		<div align="left">
+			<% unless call.recording_url.blank? %>
+				<div class="ui360">
+					<a href="<%= call.recording_url %>.mp3"
+						 class="call_duration"
+						 data-time="<%= call.call_duration %>"></a>
+				</div>
+			<% end %>
+		</div>
+	</td>
+	<td>
+		<div class="call_user" align="left">
+				<%= can_make_calls(call.customer_number, "", call.freshfone_number_id) %>
+		</div>
+	</td>
+</tr>

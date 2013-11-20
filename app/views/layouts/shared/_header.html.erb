@@ -15,6 +15,13 @@
 	</div>	
 	 <% if current_user then %>  
   	<div class="header-link-wrapper">
+  		<% if current_account.freshfone_enabled? %>
+				<a href="#" id="freshfone-presence-toggle" class="tooltip"
+					data-placement="below"  
+				 	title="<%= current_user.freshfone_user_online? ? "You are available to take calls" : "You are unavailable to take calls" %>" data-html="true">
+				 	<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
+  			</a>
+  		<% end %>
   		<% if feature?(:round_robin) && current_user.in_round_robin? %>
   		<%
   			availabilty_tooltip = ""
@@ -26,7 +33,7 @@
   		%>
 	  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
 	  		title="<%= availabilty_tooltip %>" data-html="true">
-	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
 	  		</a>
 	  	<% end %>
 		<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
@@ -142,7 +149,7 @@
 	<% javascript_tag do %>
 	 function toggleAgent() {
 		var user_id = '<%= current_user.id %>'
-	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
+	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )
 	 
 	  	new Ajax.Request('/agents/toggle_availability', 
 	                   { parameters: {value: !value, id: user_id},
@@ -152,14 +159,14 @@
 	                      onSuccess: function(response) {
 	                       //change the icon class.
 	                      jQuery('#available_icon').removeClass('header-spinner')
-	                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
+	                      if (jQuery('#available_icon').hasClass('header-icons-agent-roundrobin-on'))
 	                      {
-	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
+	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-on').addClass('header-icons-agent-roundrobin-off')
 	                        jQuery('#availabilty-toggle')
 	                        	.attr('title',"<%= t('header.user_not_available').html_safe %>")
 	                      }
 	                      else{
-	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
+	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-off').addClass('header-icons-agent-roundrobin-on')
 	                        jQuery('#availabilty-toggle')
 	                        	.attr('title',"<%= t('header.user_available').html_safe %>")
 	                      }

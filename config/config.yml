@@ -85,6 +85,9 @@ integrations_url:
     # staging: "https://login.freshitil.com"
     #staging: "https://login.freshpo.com"
 
+twilio:
+  account_sid: "AC369004863456a98511d7af236ecc1bfb"
+  auth_token: "e439d43561d2e48ad0c1927dac31e8b7"
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false

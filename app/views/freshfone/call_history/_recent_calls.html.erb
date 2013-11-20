@@ -1,0 +1,27 @@
+<div class="recent_call_entry can-make-calls" data-phone-number=<%= call.customer_number %>>
+	<div class="recent_calls_direction <%= call_direction_class(call) %>"></div>
+	<div class="recent_calls_caller_details">
+		<div class="item_actions">
+			 <span class="user_name">
+				 <%= call.customer ? link_to_user(call.customer, {"data-placement" => "topLeft"}) :
+				 	 										number_to_phone(call.customer_number) %>
+			 </span>
+		</div>
+		<% unless call.customer_id.blank? %>
+			<div class="recent_calls_user_number">
+				<%= number_to_phone call.customer_number %>
+			</div>
+		<% end %>
+		<% if call.call_duration %>
+			<div class="recent_calls_call_duration" data-time="<%= call.call_duration %>"></div>
+		<% end %>
+		<div class="recent_calls_time_ago time_in_words">
+			<abbr data-livestamp='<%= call.created_at.to_i %>'>
+				<%#= formated_date(call.created_at) %>
+			</abbr>
+		</div>
+	</div>
+	<div class="recent_calls_call_user">
+			<%= can_make_phone_calls(call.customer_number) %>
+	</div>
+</div>

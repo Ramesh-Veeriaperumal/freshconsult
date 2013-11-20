@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone,:update_google_domain
+  after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_destroy :remove_shard_mapping
 
   after_commit_on_create :add_to_billing, :enable_elastic_search
@@ -126,6 +127,12 @@ class Account < ActiveRecord::Base
 
     def delete_reports_archived_data
       Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
+
+    def update_freshfone_voice_url
+      if full_domain_changed? or ssl_enabled_changed?
+        freshfone_account.update_voice_url
+      end
     end
 
     def update_default_business_hours_time_zone

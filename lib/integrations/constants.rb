@@ -30,4 +30,5 @@ module Integrations::Constants
   APP_CATEGORY_NAME_TO_ID = Hash[APP_CATEGORY_ID_TO_NAME.map{|val| [val[1], val[0]]}]
 
   SYSTEM_ACCOUNT_ID = 0
+
 end

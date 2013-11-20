@@ -55,6 +55,13 @@ GIT
       rest-client (~> 1.6)
 
 GIT
+  remote: git://github.com/jim/carmen.git
+  revision: 964e2ceeef601b792c4c99cd30f4667dbade587d
+  tag: ruby-18
+  specs:
+    carmen (1.0.0.beta2)
+
+GIT
   remote: git://github.com/mperham/memcache-client.git
   revision: a014dc272d7cb79306961c0806e2da09acb6d002
   specs:
@@ -95,6 +102,8 @@ GEM
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
+    ancestry (1.3.0)
+      activerecord (>= 2.3.14)
     arel (2.0.7)
     authlogic (2.1.6)
       activesupport
@@ -151,6 +160,7 @@ GEM
     forgery (0.5.0)
     fssm (0.2.9)
     gem_plugin (0.2.3)
+    global_phone (1.0.1)
     gnip-rule (0.4.0)
       json (~> 1.7.7)
       rest-client (~> 1.6.7)
@@ -316,6 +326,7 @@ GEM
     ruby-ole (1.2.11.3)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
+    rubytree (0.8.2)
     rubyzip (0.9.4)
     rufus-scheduler (2.0.19)
       tzinfo (>= 0.3.23)
@@ -360,6 +371,10 @@ GEM
     test-unit (1.2.3)
       hoe (>= 1.5.1)
     tilt (1.3.3)
+    twilio-ruby (3.9.0)
+      builder (>= 2.1.2)
+      jwt (>= 0.1.2)
+      multi_json (>= 1.3.0)
     twitter (4.6.2)
       faraday (~> 0.8, < 0.10)
       multi_json (~> 1.0)
@@ -387,6 +402,7 @@ DEPENDENCIES
   active_presenter (= 1.4.0)
   active_record_shards (= 2.7.0)
   after_commit (= 1.0.11)
+  ancestry (= 1.3)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   autotest-fsevent (= 0.1.1)
@@ -394,6 +410,7 @@ DEPENDENCIES
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.11.3)
   braintree (= 2.10.0)
+  carmen!
   chargebee (~> 1.1.7)
   clockwork (= 0.4.1)
   cloudfront_asset_host!
@@ -406,6 +423,7 @@ DEPENDENCIES
   factory_girl (= 1.2.3)
   forgery (= 0.5.0)
   freshdesk_authority!
+  global_phone
   gnip-rule (~> 0.4.0)
   google-api-client (~> 0.6.3)
   http_accept_language (= 1.0.1)
@@ -462,6 +480,7 @@ DEPENDENCIES
   ruby-debug (= 0.10.3)
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
+  rubytree
   rubyzip (= 0.9.4)
   sanitize (= 2.0.3)
   sass (= 3.2.1)
@@ -473,6 +492,7 @@ DEPENDENCIES
   susy
   test-unit (= 1.2.3)
   tire!
+  twilio-ruby
   twitter (~> 4.6.2)
   tzinfo
   useragent (~> 0.4.16)

@@ -705,7 +705,7 @@
                             label=$("<div></div>");
                             label.addClass("select2-result-label");
 
-                            formatted=opts.formatResult(result, label, query);
+                            formatted=opts.formatResult(result, label, query, node);
                             if (formatted!==undefined) {
                                 label.html(self.opts.escapeMarkup(formatted));
                             }

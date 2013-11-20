@@ -1046,6 +1046,7 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
+        freshfone: "Freshfone"
         tags: Tags
   ends_with: Ends with
   last_name: Last Name
@@ -1120,6 +1121,16 @@ en:
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information. 
+
+    freshfone:
+      credits:
+        success: "Successfully purchased Freshfone Credits"
+        error: "Error purchasing Freshfone Credits"
+      number:
+        success: "Number successfully added to your Freshfone account"
+        error: "Error purchasing number for your Freshfone account."
+        blank_message: "%{num_type} cannot be blank"
+
     profile: 
       api_key:
         reset_success: "API Key has been reset successfully." 
@@ -1287,6 +1298,7 @@ en:
         success: The %{human_name} has been created.
       update: 
         success: The %{human_name} has been updated.
+        failure: The %{human_name} could not be updated.
     post:
       deleted: "Post of '{title}' was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
@@ -2473,7 +2485,7 @@ en:
   activate_and_login: "Activate & login"
   password: "Password"
   enter_payment: Enter Payment details...
-  downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>{{from}}</b> plan to the <b>{{to}}</b> plan. Please note that all data and configurations associated with features available in {{from}} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     delete_confirm: Are you sure you want to delete this config? 
@@ -3309,6 +3321,7 @@ en:
         created_on_live:
           private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          phone_note: "%{user_name} added a phone conversation <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
@@ -4450,6 +4463,183 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
+  date_invalid: Invalid date      
+  freshfone:
+    not_enough_credit: "Not Enough Credit !"
+    recharge: "Recharge"
+    number: "Freshfone Number"
+    dialpad:
+      not_valid_number: "Please enter a valid number"
+      not_enough_credit: "Not Enough Credit"
+    call_status:
+      default: ""
+      completed: "Completed"
+      busy: "Busy"
+      missedcall: "Missed call"
+      noanswer: "No answer"
+      canceled: "Canceled"
+      failed: "Failed"
+    general:
+      suspended_account: "Your Freshfone account is currently suspended. Please recharge to activate your account"
+    dashboard:
+      in_progress: "In progress"
+      available: "Available"
+      calls: "Calls"
+      agents: "Agents"
+    widget:
+      ignore: "Ignore"
+      accept: "Accept"
+      end_call: "End Call"
+      mute: "Mute"
+      transfer_call: "Transfer Call"
+      dialpad: "Dialpad"
+      call_notes: "Call Notes"
+      on_phone: "Available on Phone"
+      on_browser: "Available on Browser"
+      no_calls: "No recent calls found"
+      available: "You are available to take calls"
+      unavailable: "You are unavailable to take calls"
+      recent_calls: "Recent Calls"
+      transferring: "<span>Transferring Call</span><br />Please wait..."
+      transfer_agents: "Search Available Agents..."
+      unavailable_agents: "Agents are not available to transfer call"
+      ticket_info: "Use this phone call to create a new ticket, or add a note to an existing one. Your recorded conversation will be attached to the ticket automatically. "
+      add_note: "Add Notes"
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "Your recordings will be available in Call History"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
+      notes: "Notes"
+    call_history:
+      title: "Call History"
+      sorted_by: "Sorted by:"
+      filtered_by: "Filtered by:"
+      received_date: "Received Date"
+      duration: "Duration"
+      cost: "Cost"
+      asc: "Ascending"
+      desc: "Descending"
+      all_time: "All time"
+      today: "Today"
+      yesterday: "Yesterday"
+      this_week: "This week"
+      this_month: "This month"
+      month: "Last %{month} months"
+      no_calls: "No Calls found"
+      view_transferred_calls: "View transfered calls"
+      save_ticket: "Convert to ticket"
+      convert: "Convert"
+      helpdesk: Helpdesk
+    ticket:
+      recording: "Freshfone Recording"
+      desc: "Ticket created from Freshfone. Requester Location: %{location}. " 
+      agent: "Agent: %{agent}. <br/ >"
+      dial_a_number: "Call connected from IVR to number: %{direct_dial_number}"
+      default_subject: "Call with %{customer} on %{call_date}"
+      voicemail_subject: "Voicemail from %{customer}"
+      human_name: "ticket"
+      view: "View"
+    note:
+      human_name: "note"
+      view: "View"
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    admin:
+      important: "Important"
+      general: "General"
+      settings: "Settings"
+      greetings: "Greetings"
+      messages: "Messages"
+      freshfone_numbers: "Freshfone Numbers"
+      disable_alert: "<b>Important:</b> Disabling your freshfone account will not prevent the monthly rental on your freshfone numbers. To avoid getting charged, please delete the purchased numbers. "
+      purchase_credit: "Purchase Freshfone credits to buy local or toll-free numbers and start using Freshfone"
+      purchase_numbers: "Buy local or toll-free numbers to start using Freshfone and support your customers over phone"
+      search: "Search by digits or phrases"
+      local: "Local"
+      toll_free: "Toll-Free"
+      number_settings:
+        title: "Managing your Freshfone number"
+        info: "You can configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers.  Once either of them are reached, a non-availability message will be played to your customers automatically. <br/><br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/>You could also use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2. <br/><br/>Additionally,  you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature."
+        non_business_hours: "Accept calls during Non-Business hours"
+        business_calendar: "Business calendar"
+        transcript_voice: "Transcript Voice"
+        text_to_speech: "Text to speech"
+        record_calls: "Record Calls"
+        record_all: "Record all calls"
+        record_none: "Do not record calls"
+        record_alert: "Legal restrictions on recording calls requires you to notify customers before recording each call. Please configure your Greeting messages to include this"
+        max_queue_calls: "Max Calls in Queue"
+        call_wait_time: "Call wait time"
+        wait_message: "Wait Message"
+        non_availability_message: "Non-Availability Message"
+        voicemail_message: "Voicemail Message"
+        record_voice: "Record your voice"
+        upload_voice: "Upload audio files"
+        read_message: "Text to speech"
+        start_recording: "Start recording"
+        stop_recording: "<span></span>Stop Recording" 
+        preparing_recording: "Preparing your message..."
+        recorded_voice: "Recorded Voice"
+        audio_upload: "Select file to upload"
+        greeting_message: "Enter your message here"
+        attachment_help_info: "Accepts audio files < 5mb"
+        recording_help_info: "Turn on the microphone. Max duration - 5 mins."
+        cancel: "Cancel"
+        change: "Change"
+      numbers:
+        title: "Supporting customers over phone using Freshfone"
+        info: "Freshfone is Freshdesk's integrated phone system that lets agents take support calls from inside your helpdesk. It helps you record and maintain a history of phone conversations and makes it easy to log tickets even as you are talking over the phone with a customer.<br/><br/>You can purchase multiple incoming Freshfone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk.<br/><br/>Once you have purchased a Freshfone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically.<br/><br/>Learn more about Freshfone credits and our pricing plans."
+        purchase_number: "Purchase Number"
+        buy: "Buy Number"
+        purchase: "Purchase"
+        purchase_alert: " will be deducted from your balance monthly."
+        not_available: "No results returned. Please try a different search term"
+        address_certification: "Due to local regulation, you or your customer must have a business or personal address within <span class='certification-country'></span>  to purchase this phone number."
+        purchase_confirm: "Are you sure?"
+        delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
+        manage: "Manage"
+        cannot_purchase: "Unable to purchase number for your Freshfone account"
+      invalid_attachment: "Attachment '%{name}' is not a valid audio file/ its size is greater than 5MB"
+      ivr:
+        welcome_message: "Welcome Message"
+        transcript_voice: "Transcript Voice"
+        text_to_speech: "Text to speech"
+        turned_off: "Welcome message is turned OFF. All incoming calls will directly reach your helpdesk."
+        turned_on: "Welcome message will be played for all incoming calls."
+        turn_on: "On"
+        turn_off: "Off"
+        add_new_menu: "Add New <b>Menu</b>"
+        add_new_menu_from_option: "Add new menu"
+        add_new_option: "Add <b>Keypress</b> Option"
+        keypress: "Keypress"
+        input_number: "Enter the number"
+        action: "Action"
+        male: "Male Voice"
+        female: "Female Voice"
+        rename: "rename"
+        done: "done"
+        save: "Save"
+        saving: "Saving..."
+        preview: "Preview"
+        previewing: "Previewing..."
+        delete_menu: "Delete menu"
+        jump_to: "Jump To"
+        call_agent: "Call Agent"
+        call_agent_group: "Call Agent Group"
+        call_number: "Call Number"
+        back_to_menu: "Back to main menu"
+        invalid_performer_type: "Invalid Performer Type"
+        invalid_number: "Invalid number in menu %{menu}"
+        invalid_jump_to: "Cannot have 'Jump To' for non-root menu %{menu}"
+        seed_message: "Welcome to customer support"
+        seed_menu_name: "Welcome/Start Menu"
   freshchat:
     title: "Freshchat"
     widget: "Widget"

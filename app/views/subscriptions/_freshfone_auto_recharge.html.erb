@@ -1,0 +1,52 @@
+<% if @freshfone_credit.present? %> 
+	<div class="row-fluid auto_recharge_quantity">
+		<div class="recharge-now-text">
+			We'll only charge your account when the balance falls below $5
+		</div>
+		<% if @freshfone_credit.auto_recharge? %>
+			<div class="enabled-auto-recharge">
+				<span class="recharge-amt-lbl">Recharge Amount</span>
+				<span class="recharge-amt"><%= number_to_currency(@freshfone_credit.recharge_quantity, :unit => "$") %></span>	
+				<div class="action-links">
+					<% form_tag(disable_auto_recharge_admin_freshfone_credits_path, 
+											:method => :put, 
+											:class => "disable_auto_recharge_form") do %>
+						<%= link_to "Edit", "#", :class => "edit_auto_recharge" %> | 
+						<%= link_to "Disable", "#", :class => "disable_auto_recharge" %>
+					<% end %>
+				</div>
+			</div>
+		<% end %>
+		<% form_for :freshfone_credits, @freshfone_credit,
+						:url => {:action => "enable_auto_recharge", :controller => "admin/freshfone/credits"}, 
+						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
+
+			<%= f.label :recharge_quantity, "Auto Recharge Amount", :class => "credits_lbl" %>
+			<%= f.select :recharge_quantity, auto_recharge_options,
+										{}, {:class => 'select2'} %>
+			<%= submit_tag "Enable", :class => "button" %>
+			<%= link_to "Cancel", "#", :class => "cancel_edit_auto_recharge" %>
+		<% end %>
+	</div>
+	<script type="text/javascript">
+		(function($){
+			var isAutoRechargeEnabled = "<%= @freshfone_credit.auto_recharge? %>";
+			if(isAutoRechargeEnabled == "true"){
+				$('.auto_recharge_form').hide();
+			}
+			$('.disable_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.disable_auto_recharge_form').submit();
+			});
+			$('.edit_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.auto_recharge_form, .enabled-auto-recharge').toggle();
+				$('.cancel_edit_auto_recharge').show();
+			});
+			$('.cancel_edit_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.auto_recharge_form, .enabled-auto-recharge').toggle();
+			});
+		})(jQuery);
+	</script>
+<% end %>

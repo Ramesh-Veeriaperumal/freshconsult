@@ -12,8 +12,8 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
-   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy,:restore]
-  
+   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
+   before_filter :load_user_by_phone, :only => :freshfone_user_info
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -115,6 +115,15 @@ class ContactsController < ApplicationController
   def hover_card
     @user = current_account.all_users.find(params[:id])    
     render :partial => "hover_card"
+  end
+
+  def freshfone_user_info
+    render :json => {
+      :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
+                           :locals => { :user => @user }),
+      :user_name => (@user || {})[:name],
+      :user_id => (@user || {})[:id]
+    }
   end
 
   def configure_export
@@ -305,4 +314,8 @@ protected
         @contacts = {:error => get_formatted_message(e)}
       end
     end
+
+		def load_user_by_phone
+			@user = Freshfone::Search.search_user_with_number(params[:PhoneNumber])
+		end
 end

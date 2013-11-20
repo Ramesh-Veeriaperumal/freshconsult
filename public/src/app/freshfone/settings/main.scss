@@ -1,0 +1,74 @@
+@import "../../lib/settings";
+@import "../variables";
+
+.number-settings .settings-label {
+	margin-right: 15px;
+	font-weight: 600;
+	width:150px;
+}
+.general-settings .row-fluid{
+	margin-bottom: 12px;
+}
+
+.number-settings {
+	.menu-label {
+		margin-top: 8px;
+	}
+	.settings-label {
+		margin-right: 15px;
+		margin-bottom: 20px;
+		font-weight: 600;
+		width:150px;
+	}
+	.message_value_container {
+		margin-bottom: 10px;
+		display: inline-block;
+		padding-top: 0;
+		margin-left: 5px;
+	}
+	.message-input {
+		width: 99%;
+	}
+	.recording-alert{
+		padding: 6px 0;
+		span{
+			margin-right: 7px;
+			line-height: 1.4em;
+		}
+	}
+	.freshfone-controls {
+		.select2-container { margin-left: 0; }
+		.toggle-button {
+			margin-top: 3px;
+			margin-left: 0;
+		}
+	}
+}
+.freshfone-title{
+	font-size: 18px;
+	font-weight: 300;
+	margin-bottom: 20px;
+	display: inline-block;
+}
+
+
+.multi_business_hours {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 25px;
+	.business_calendar_label{
+		display: inline-block;
+	}
+	.business_calendar_select2{
+		width: 150px;
+		margin-left: 5px;
+	}
+}
+
+.toggle_freshfone_form{
+	display: inline-block;
+	padding-right: 10px;
+}
+.freshfone-disabled-alert{
+	margin-bottom: 25px;
+}

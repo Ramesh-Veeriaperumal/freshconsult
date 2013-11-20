@@ -1,0 +1,49 @@
+ISO,Country,Country Code,Price /num/month,Beta Status,Address Required,Type of number,Inbound price/min
+AU,Australia,+61,$3.00 ,No,Yes,Geographic,$0.01 
+AT,Austria,+43,$1.00 ,No,No,National,$0.01 
+BE,Belgium,+32,$1.00 ,Yes,Yes,Geographic,$0.01 
+BE,Belgium,+32,$1.00 ,No,No,National,$0.01 
+BG,Bulgaria,+359,$1.00 ,No,Yes,Geographic,$0.01 
+BH,Bahrain,+973,$8.00 ,Yes,No,Geographic,$0.01 
+BR,Brazil,+55,$3.00 ,Yes,No,Geographic,$0.01 
+CA,Canada,+1,$1.00 ,No,No,Geographic,$0.01 
+CA,Canada,+1,$2.00 ,No,No,Toll Free,$0.03 
+CH,Switzerland,+41,$1.00 ,No,Yes,Geographic,$0.01 
+CY,Cyprus,+357,$4.00 ,Yes,No,National,$0.01 
+CZ,Czech Republic,+420,$1.00 ,No,Yes,Geographic,$0.01 
+DK,Denmark,+45,$1.00 ,No,No,National,$0.01 
+DO,Dominican Republic,+1809,$7.00 ,Yes,No,Geographic,$0.01 
+EE,Estonia,+372,$1.00 ,Yes,No,National,$0.01 
+ES,Spain,+34,$1.00 ,Yes,Yes,Geographic,$0.01 
+ES,Spain,+34,$1.00 ,No,No,National,$0.01 
+FI,Finland,+358,$1.00 ,Yes,Yes,Geographic,$0.01 
+FI,Finland,+358,$1.00 ,No,No,National,$0.01 
+FR,France,+33,$1.00 ,No,No,National,$0.01 
+GB,United Kingdom,+44,$1.00 ,No,No,Geographic,$0.01 
+GB,United Kingdom,+44,$1.00 ,No,No,National,$0.01 
+GB,United Kingdom,+44,$2.00 ,No,No,Toll Free,$0.06 
+GR,Greece,+30,$1.00 ,No,Yes,Geographic,$0.01 
+HK,Hong Kong,+852,$8.00 ,No,No,National,$0.01 
+IE,Ireland,+353,$1.00 ,No,No,National,$0.01 
+IL,Israel,+972,$5.00 ,No,No,Geographic,$0.01 
+IT,Italy,+39,$1.00 ,No,No,Geographic,$0.01 
+JP,Japan,+81,$5.00 ,No,No,Geographic,$0.01 
+LT,Lithuania,+370,$1.00 ,Yes,No,Geographic,$0.01 
+LU,Luxembourg,+352,$3.00 ,Yes,Yes,Geographic,$0.01 
+LV,Latvia,+371,$1.00 ,Yes,Yes,Geographic,$0.01 
+MT,Malta,+356,$5.00 ,Yes,No,National,$0.01 
+MX,Mexico,+52,$3.00 ,No,Yes,Geographic,$0.01 
+NL,The Netherlands,+31,$1.00 ,No,No,National,$0.01 
+NZ,New Zealand,+64,$3.00 ,No,No,Geographic,$0.01 
+PE,Peru,+51,$5.00 ,Yes,No,Geographic,$0.01 
+PL,Poland,+48,$1.00 ,No,No,Geographic,$0.01 
+PR,Puerto Rico,+1787,$8.00 ,No,No,National,$0.01 
+PT,Portugal,+351,$1.00 ,No,No,National,$0.01 
+RO,Romania,+40,$5.00 ,No,Yes,Geographic,$0.01 
+SE,Sweden,+46,$1.00 ,Yes,Yes,Geographic,$0.01 
+SE,Sweden,+46,$1.00 ,No,No,National,$0.01 
+SK,Slovakia,+421,$1.00 ,No,Yes,Geographic,$0.01 
+SV,El Salvador,+503,$10.00 ,Yes,No,Geographic,$0.01 
+US,United States,+1,$1.00 ,No,No,Geographic,$0.01 
+US,United States,+1,$2.00 ,No,No,Toll Free,$0.03 
+ZA,South Africa,+27,$1.00 ,Yes,No,National,$0.01 

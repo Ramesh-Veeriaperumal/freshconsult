@@ -24,6 +24,18 @@ module Redis::RedisKeys
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
 	AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
 	
+	NEW_QUEUE_MEMBER = "FRESHFONE:NEW_QUEUE_MEMBER:%{account_id}:%{queue_id}"
+	AGENT_AVAILABILITY = "FRESHFONE:AGENT_AVAILABILITY:%{account_id}"
+	NEW_CALL = "FRESHFONE:NEW_CALL:%{account_id}"
+	ACTIVE_CALL = "FRESHFONE_ACTIVE_CALL:%{call_sid}"
+	FRESHFONE_CHANNEL = "FRESHFONE:%{account_id}"
+	FRESHFONE_QUEUE_WAIT = "FRESHFONE:QUEUE:%{account_id}:%{call_sid}"
+	FRESHFONE_QUEUED_CALLS = "FRESHFONE:CALLS:QUEUE:%{account_id}"
+	FRESHFONE_GROUP_QUEUE = "FRESHFONE:GROUP_QUEUE:%{account_id}"
+	FRESHFONE_AGENT_QUEUE = "FRESHFONE:AGENT_QUEUE:%{account_id}"
+	FRESHFONE_TRANSFER_LOG = "FRESHFONE:TRANSFERS:%{account_id}:%{call_sid}"
+	FRESHFONE_CLIENT_CALL = "FRESHFONE:CLIENT_CALLS:%{account_id}"
+
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
@@ -87,9 +99,9 @@ module Redis::RedisKeys
 	# 	newrelic_begin_rescue { $redis.srem(key, value) }
 	# end
 
-	# def set_members(key)
-	# 	newrelic_begin_rescue { $redis.smembers(key) }
-	# end
+	def set_members(key)
+		newrelic_begin_rescue { $redis.smembers(key) }
+	end
 
 	# def list_push(key,values,direction = 'right', expires = 3600)
 	# 	newrelic_begin_rescue do

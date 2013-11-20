@@ -1,0 +1,18 @@
+<div class="end_call_notes_container">
+	<p><%= t('freshfone.widget.ticket_info') %></p>
+	<label for="end_call_notes" class="notes_label"><%= t('freshfone.widget.add_note') %></label>
+	<textarea id="end_call_notes" class="final_call_notes"
+						placeholder="<%= t('freshfone.widget.note_placeholder') %>"></textarea>
+	<div class="end_call_form_btns">
+		<button class="btn end_call_save">
+			<%= t('freshfone.widget.new_ticket') %><span class="arrow-right"></span>
+		</button>
+		<button class="btn save_to_existing">
+			<%= t('freshfone.widget.save_to_existing') %><span class="arrow-right"></span>
+		</button>
+		<button class="btn end_call_cancel">
+			<%= t('freshfone.widget.ignore_ticket') %>
+			<p class="btn-notes"><%= t('freshfone.widget.ignore_ticket_info') %></p>
+		</button>
+	</div>
+</div>

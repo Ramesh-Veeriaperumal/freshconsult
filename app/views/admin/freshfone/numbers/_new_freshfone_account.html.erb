@@ -1,0 +1,13 @@
+<div class="new_freshfone_number_search">
+	<% if current_account.freshfone_credit.blank? %>
+		<div class="number_purchase_info">
+			<%= t('freshfone.admin.purchase_credit') %>
+		</div>
+		<%= link_to "Buy Freshfone Credits", subscription_url, :class => "uiButton" %>
+	<% else %>
+		<div class="number_purchase_info">
+			<%= t('freshfone.admin.purchase_numbers') %>
+		</div>
+		<%= link_to "Buy Freshfone Numbers", "/admin/freshfone/search", :class => "uiButton" %>	
+	<% end %>
+</div>

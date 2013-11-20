@@ -27,7 +27,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
     
- named_scope :gallery_images,  
+   named_scope :gallery_images,  
     {
       :conditions => ['description = ? and attachable_type = ?', 
       'public', 'Image Upload'],
@@ -73,6 +73,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
   def image?
     (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
+	
+	def audio?
+		(!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
+	end
 
   def attachment_sizes
    if self.description == "logo"

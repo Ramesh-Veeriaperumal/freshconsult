@@ -22,6 +22,31 @@ class SubscriptionAdmin::AccountsController < ApplicationController
    end
   end
 
+  def add_freshfone_credits
+    Sharding.select_shard_of(params[:id]) do 
+      @account = Account.find(params[:id])
+      if request.post? and !params[:freshfone_credits].blank?
+        freshfone_credit = Freshfone::Credit.find_or_create_by_account_id(@account)
+        credit = params[:freshfone_credits].to_i
+        freshfone_credit.update_attributes(:available_credit => (freshfone_credit.available_credit +  credit))
+        Rails.logger.info "ADDED $#{credit} FRESHFONE CREDITS FOR ACCOUNT ##{@account.id}-#{@account}"
+      end
+      redirect_to :action => "show"
+    end
+  end
+
+  def toggle_freshfone
+    Sharding.select_shard_of(params[:id]) do 
+      @account = Account.find(params[:id])
+      if feature?(:freshfone)
+        @account.features.freshfone.destroy
+      else
+        @account.features.freshfone.create
+      end
+      redirect_to :action => "show"
+    end
+  end
+
   def select_account_shard
     Sharding.select_shard_of(params[:id]) do 
       Sharding.run_on_slave do

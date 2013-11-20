@@ -19,7 +19,6 @@ stylesheets:
     - public/stylesheets/chat/chat.css
     - public/stylesheets/chat/structure.css
     - public/stylesheets/chat/grey-theme.css
-    - public/stylesheets/chat/icomoon.css
     - public/stylesheets/chat/base.css
     - public/stylesheets/chat/clean.css
     - public/stylesheets/chat/sprites.css
@@ -54,6 +53,31 @@ stylesheets:
 
   freshwidget:
     - public/stylesheets/freshwidget.css
+
+  icomoon:
+    - public/stylesheets/chat/icomoon.css
+
+  freshfone:
+    - public/stylesheets/app/freshfone.css
+    - public/stylesheets/jquery.keypad.css
+
+  freshfone_call_history:
+    - public/stylesheets/app/freshfone/call_history.css
+   
+  freshfone_ivr:
+    - public/stylesheets/app/freshfone/ivr/main.css
+
+  freshfone_settings:
+    - public/stylesheets/app/freshfone/settings/main.css
+
+  freshfone_admin:
+    - public/stylesheets/app/freshfone/admin.css
+
+  freshfone_message_select:
+    - public/stylesheets/app/freshfone/message_select.css
+
+  360player:
+    - public/stylesheets/360player.css
 
   tkt_details:
     - public/stylesheets/app/tkt_details.css
@@ -127,6 +151,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/frameworks/plugins/moment.js
     - public/javascripts/frameworks/plugins/livestamp.js
@@ -141,6 +166,9 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js    
+    - public/javascripts/chat/lib/tab.overflow.js
+    - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/chat/lib/tab.overflow.js
     - public/javascripts/chat/lib/localstore.js
@@ -178,6 +206,7 @@ javascripts:
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js
+    - public/javascripts/freshfone/global.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -218,6 +247,52 @@ javascripts:
 
   custom_widget:
     - public/javascripts/custom_widget.js
+  
+  freshfone_ticket_search:
+    - public/javascripts/freshfone/plugin/ticket_search.js
+
+  freshfone:
+    - public/javascripts/freshfone.js
+
+  freshfone_client:
+    - public/javascripts/freshfone/list.js
+    - public/javascripts/frameworks/plugins/jquery.popupbox.js
+    - public/javascripts/freshfone/components/calls.js
+    - public/javascripts/freshfone/components/user_info.js
+    - public/javascripts/freshfone/components/connections.js
+    - public/javascripts/freshfone/components/notifications.js
+    - public/javascripts/freshfone/components/user.js
+    - public/javascripts/freshfone/components/widget.js
+    - public/javascripts/freshfone/components/timer.js
+    - public/javascripts/freshfone/components/socket.js
+    - public/javascripts/freshfone/components/end_call_form.js
+    - public/javascripts/freshfone/components/components_main.js
+    - public/javascripts/freshfone/device.js
+    - public/javascripts/freshfone/client.js
+    - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/phoneformatutil.js
+
+  freshfone_call_history:
+    - public/javascripts/freshfone/call_history.js
+
+  freshfone_settings:
+    - public/javascripts/freshfone/message_selector.js
+    - public/javascripts/freshfone/settings/settings.js
+
+  freshfone_ivr:
+    - public/javascripts/freshfone/ivr/ivr.js
+    - public/javascripts/freshfone/ivr/menu.js
+    - public/javascripts/freshfone/ivr/option.js
+    - public/javascripts/freshfone/ivr/ivr_main.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+
+  soundmanager:
+    - public/javascripts/sound/soundmanager2-jsmin.js
+
+  360player:
+    - public/javascripts/soundmanager2/berniecode-animator.js
+    - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
 
   portal_head:
     - public/javascripts/prototype.js
@@ -256,6 +331,7 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/subscription/subscription_init.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/frameworks/plugins/select2.js

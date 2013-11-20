@@ -24,10 +24,10 @@ class Sanitize
   module Config
     HTML_RELAXED = {
       :elements => %w[
-        a abbr acronym address b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
+        a abbr acronym address audio b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
         dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
-        tfoot th thead time tr tt u ul var wbr span iframe
+        tfoot th thead time tr tt u ul var wbr span iframe source
       ],
       :remove_contents => [ 'style','title','script' ],
       :attributes => {
@@ -47,7 +47,9 @@ class Sanitize
         'time'       => ['datetime', 'pubdate'],
         'ul'         => ['type'],
         'div'        => ['class'],
-        'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen']
+        'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
+        'source'     => ['src', 'type'],
+        'audio'      => ['controls', 'width', 'height']
       },
 
       :protocols => {
@@ -57,6 +59,7 @@ class Sanitize
         'img'        => {'src'  => ['http', 'https', :relative]},
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]},
+        'source'     => {'src'	=> ['http']},
         'iframe'     => {'src'  => ['http', 'https', :relative]}
       }
     }

@@ -9,10 +9,9 @@
 	/* DIALOG PUBLIC CLASS DEFINITION
 	* ============================== */
 
-	var Freshdialog = function (element, options) {
-		this.$element = $(element)
+	var Freshdialog = function (data, options, title) {
 
-		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data())		
+		this.options = $.extend({}, $.fn.freshdialog.defaults, options, data);
 
 		// Removing the hash in-front of the target
 		this.$dialogid = this.options.targetId.substring(1)
@@ -31,7 +30,7 @@
         
         if(this.options.templateHeader != ""){
         	// Title for the header        
-        	this.dialogTitle = element.getAttribute('title') || this.options.title
+        	this.dialogTitle = title || this.options.title;
 
         // Setting modal dialogs header and its title
 	    	this.$dynamicTarget
@@ -102,10 +101,23 @@
 			, data = $this.data('freshdialog')
 			, options = typeof option == 'object' && option
 
-			if (!data) $this.data('freshdialog', (data = new Freshdialog(this, options)))
+			if (!data) {
+				$this
+					.data('freshdialog',
+						(data = new Freshdialog($(this).data(), options, this.getAttribute('title'))));
+			}
 
 			if (typeof option == 'string') data[option]()
 		})
+	}
+	
+	$.freshdialog = function (option) {
+		var options = typeof option == 'object' && option,
+			freshdialog = new Freshdialog({}, options),
+			$target;
+		$target = $(options.targetId);
+		$target.modal(options);
+		return (freshdialog);
 	}
 
 	$.fn.freshdialog.defaults = {

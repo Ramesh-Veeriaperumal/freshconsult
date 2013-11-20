@@ -1,0 +1,35 @@
+<%#= render :partial => 'layouts/shared/freshfone/freshfone' %>
+<%= include_cloudfront_css :freshfone %>
+<%= include_cloudfront_js :freshfone_ticket_search %>
+<div>
+	<%= render 'layouts/shared/freshfone/freshfone_notification_slimmer' %>
+</div>
+<div id="sidebar">
+	<div class="freshfone_widget">
+		<%= render 'layouts/shared/freshfone/freshfone_popup_tabs' %>
+	</div>
+	<div class="sidebar_tabs_container hide" data-freshfone=false data-chat=false></div>
+</div>
+<div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
+	<%= render 'layouts/shared/freshfone/freshfone_popupbox_content' %>
+</div>
+
+<% javascript_tag do %>
+	if (typeof freshfone === "undefined") { freshfone = {}; }
+	freshfone.current_user = <%= current_user.id %>;
+	freshfone.current_account = <%= current_account.id%>;
+	freshfone.user_phone = "<%= current_user.available_number %>";
+	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
+												Freshfone::User::PRESENCE[:offline] %>";
+	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
+	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_path %>";
+	freshfone.available_on_phone_text = "<%= t('freshfone.widget.on_phone') %>";
+	freshfone.available_on_browser_text = "<%= t('freshfone.widget.on_browser') %>";
+	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
+	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
+	freshfone.freshfone_nodejs_url = '<%= nodejs_url("freshfone") %>';
+	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.host %>';
+<% end %>
+<%= include_cloudfront_js :freshfone_client %>
+
+

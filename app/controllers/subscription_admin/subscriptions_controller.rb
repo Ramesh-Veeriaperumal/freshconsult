@@ -15,11 +15,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
-  end
-
-  
-  
-  
+  end  
   
   def deleted_customers
     @deleted_customers = DeletedCustomers.all(:conditions =>  ['status not in (?)', [0]], 
@@ -105,8 +101,6 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   
   protected
-
-
   
    def search(search)
     results = nil

@@ -31,17 +31,17 @@
 			<%= content_tag(:p, "#{t('user.email')}: #{render_item(h(user.email), "link")}".html_safe ) unless user.email.blank? %>
 			<%= content_tag(:p, "#{t('user.twitter_id')}: #{render_item(h(user.twitter_id),'twitter')}".html_safe ) unless user.twitter_id.blank? %>
 			<%= content_tag(:p, "#{t('user.facebook')}: #{render_item(h(user.fb_profile_id), "facebook")}".html_safe ) unless user.fb_profile_id.blank? %>
-			<%= content_tag(:p, "#{t('user.phone_no')}: #{h(user.phone)}".html_safe ) unless user.phone.blank? %>
-			<%= content_tag(:p, "#{t('user.mobile')}: #{h(user.mobile)}".html_safe ) unless user.mobile.blank? %>
+			<%= content_tag(:p, "#{t('user.phone_no')}: #{can_make_phone_calls(h(user.phone))}".html_safe ) unless user.phone.blank? %>
+			<%= content_tag(:p, "#{t('user.mobile')}: #{can_make_mobile_calls(h(user.mobile))}".html_safe ) unless user.mobile.blank? %>
 			
 			<% if current_user.can_view_all_tickets? %>
-			<div class='more_details'>
-				<%= link_to( "Recent tickets", "/helpdesk/tickets/component/#{@ticket.id}?component=requester_tickets", 
-										  				:rel => 'freshdialog', "data-target" => "#requester_tickets",
-										  				"data-template-footer" => "",
+				<div class='more_details'>
+					<%= link_to( "Recent tickets", "/helpdesk/tickets/component/#{@ticket.id}?component=requester_tickets", 
+											  				:rel => 'freshdialog', "data-target" => "#requester_tickets",
+											  				"data-template-footer" => "",
 
-										  				:title => t('contacts.info4',:nick_name => CGI.escapeHTML(h(user.display_name))).html_safe ) %>
-			</div>
+											  				:title => t('contacts.info4',:nick_name => CGI.escapeHTML(h(user.display_name))).html_safe ) %>
+				</div>
 			<% end %>
 		</div>
 		<div class="clearfix"></div>
