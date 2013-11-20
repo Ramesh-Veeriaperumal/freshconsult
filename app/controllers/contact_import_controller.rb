@@ -38,7 +38,7 @@ class ContactImportController < ApplicationController
     else
       render
     end
-  rescue FasterCSV::MalformedCSVError => e
+  rescue CSVBridge::MalformedCSVError => e
     redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.wrong_format')}
   rescue MapFields::InconsistentStateError
     redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.failure')}
