@@ -14,10 +14,10 @@ class Screenr < ActiveRecord::Migration
     }.to_yaml
 
     execute("INSERT INTO applications(name, display_name, description, options, listing_order) VALUES ('#{@app_name}', '#{display_name}', '#{description}', '#{options}', '#{listing_order}')")
-    res = execute("SELECT id FROM applications WHERE name='#{@app_name}'")
-    res.data_seek(0)
-    app_id = res.fetch_row[0]
-    Rails.logger.debug "INSERTED screenr APP ID #{app_id}"
+    # res = execute("SELECT id FROM applications WHERE name='#{@app_name}'")
+    # res.data_seek(0)
+    # app_id = res.fetch_row[0]
+    Rails.logger.debug "INSERTED screenr app"
   end
 
   def self.down

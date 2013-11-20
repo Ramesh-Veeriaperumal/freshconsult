@@ -23,10 +23,12 @@
 
 	jQuery(document).ready(function() {
 		jQuery('.btn-record').hide();
+		jQuery("#screenr-loading").addClass("sloading screenr_button_loader");
 		var screenrInterval = setInterval(function() {
 			if (typeof(Screenr) != 'undefined') {
 				clearInterval(screenrInterval);
 				jQuery('.btn-record').show();
+				jQuery("#screenr-loading").removeClass("sloading screenr_button_loader");
 				jQuery('.btn-record').on('click', function(ev) {
 					ev.preventDefault();
 					var $this = jQuery(this);
@@ -50,6 +52,7 @@
 	<a href="#" class="btn btn-record">
 		<%= t("integrations.screenr.button_label") %>
 	</a>
+	<div id="screenr-loading"></div>
 	<a href="https://support.freshdesk.com/support/solutions/articles/154001" class="btn btn-help-rounded" target="_blank"><strong>?</strong></a>
 
 <%elsif (screenr_visible_in?(location, ["portal_ticket","portal_forum"]))%>
@@ -57,11 +60,13 @@
 	<a href="#" class="btn btn-record">
 		<%= t("integrations.screenr.button_label") %>
 	</a>
+	<div id="screenr-loading"></div>
 
 <% elsif (location=="widget") %>
 
 	<a href="#" class="btn-record">
 		<%= t("integrations.screenr.button_label") %>
 	</a>
+	<div id="screenr-loading"></div>
 	
 <% end %>
