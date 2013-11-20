@@ -44,10 +44,6 @@ module Mobile::Actions::User
     privilege?(:delete_ticket)
   end
 
-  def agent_signature
-    Sanitize.clean(agent.signature_html.gsub("<p>","").gsub("</p>","\n")) if agent? 
-  end
-
   def can_view_time_entries
     privilege?(:view_time_entries)
   end
