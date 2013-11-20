@@ -32,7 +32,8 @@ class CreateFreshfoneCalls < ActiveRecord::Migration
   KEY `index_freshfone_calls_on_account_id_and_call_status_and_user` (`account_id`,`call_status`, `user_id`),
   KEY `index_ff_calls_on_account_user_ancestry_and_created_at` (`account_id`,`user_id`,`created_at`,`ancestry`),
   KEY `index_freshfone_calls_on_account_id_and_customer_number` (`account_id`,`customer_number`(16))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+/*!50100 PARTITION BY HASH (`account_id`) PARTITIONS 128 */;");
 	end
 
 	def self.down
