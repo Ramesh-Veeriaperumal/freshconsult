@@ -74,6 +74,9 @@ var FreshfoneCalls;
 		setDirectionIncoming: function () {
 			this.direction = callDirection.INCOMING;
 		},
+		setDirectionOutgoing: function () {
+			this.direction = callDirection.OUTGOING;
+		},
 		getCallSid: function () {
 			return this.callSid || this.tConn.parameters.CallSid;
 		},
@@ -97,6 +100,7 @@ var FreshfoneCalls;
 				return false;
 			}
 			var self = this;
+			this.setDirectionOutgoing();
 			this.actionsCall(function () { Twilio.Device.connect({ record: true, agent: self.currentUser }); } );
 			
 		},
@@ -151,7 +155,7 @@ var FreshfoneCalls;
 			this.toggleInvalidNumberText(false);
 
 			this.status = callStatus.OUTGOINGINIT;
-			this.direction = callDirection.OUTGOING;
+			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
 		},
 
@@ -168,7 +172,7 @@ var FreshfoneCalls;
 				return false;
 			}
 			this.disableCallButton();
-			this.direction = callDirection.OUTGOING
+			this.setDirectionOutgoing();
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 			
 		},
