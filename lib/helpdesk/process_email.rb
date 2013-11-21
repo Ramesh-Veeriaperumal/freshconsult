@@ -135,7 +135,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def parse_reply_to_email
-      if(!params[:headers].nil? && params[:headers] =~ /Reply-[tT]o: (.+)$/)
+      if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
         self.reply_to_email = parse_email($1)
       end
       reply_to_email
