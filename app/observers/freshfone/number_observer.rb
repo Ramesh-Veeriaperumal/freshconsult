@@ -89,7 +89,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 				message = freshfone_number[msg_type] || {}
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => message["attachment_id"].blank? ? nil : message["attachment_id"].to_i,
-					:message => message["message"], 
+					:message => CGI::escapeHTML(message["message"]),
 					:message_type => message["message_type"].to_i,
 					:recording_url => message["recording_url"],
 					:type => msg_type

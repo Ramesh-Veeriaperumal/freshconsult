@@ -26,7 +26,7 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 						:attachment_id => v["attachment_id"].blank? ? nil : v["attachment_id"].to_i,
 						:children => [],
 						:children_hash => {},
-						:message => v["message"], 
+						:message => CGI::escapeHTML(v["message"]),
 						:message_type => v["message_type"].to_i,
 						:menu_options => v["options"],
 						:menu_id => k.to_i,
