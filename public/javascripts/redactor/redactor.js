@@ -737,8 +737,8 @@ Redactor.prototype = {
 		// FF fix
 		if ($.browser.mozilla)
 		{
-			document.execCommand('enableObjectResizing', false, false);
-			document.execCommand('enableInlineTableEditing', false, false);			
+			// document.execCommand('enableObjectResizing', false, false);
+			// document.execCommand('enableInlineTableEditing', false, false);			
 		}
 			
 		// focus
