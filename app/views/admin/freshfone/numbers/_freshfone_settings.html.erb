@@ -20,7 +20,7 @@
 	<div class="row-fluid">
 		<label class="caption freshfone-title span6"><%= t('freshfone.admin.messages') %></label>
 		<div class="span6">
-			<%= f.label :voice, t('freshfone.admin.number_settings.text_to_speech'),
+			<%= f.label :voice, t('freshfone.admin.number_settings.transcript_voice'),
 									:class => "menu-label span8 align-right" %>
 			<%= f.select :voice, Freshfone::Number::VOICE_OPTIONS, {},
 								{ :class => 'select2 span4' } %>

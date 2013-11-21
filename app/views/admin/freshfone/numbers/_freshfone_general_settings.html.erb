@@ -3,7 +3,7 @@
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_business_hours') %></label>
 		<div class="controls freshfone-controls">
 			<%= check_box_tag :non_business_hour_calls, 1, number.non_business_hour_calls?, :class => 'non_business_hour_calls' %>
-			<div class="multi_business_hours">
+			<div class="multi_business_hours ">
 				<% if multiple_hours_enabled? %>
 					<%= label_tag :business_calendar, t('freshfone.admin.number_settings.business_calendar'),
 					:class => "menu-label business_calendar_label" %>
@@ -25,7 +25,7 @@
 			<%= f.label :record, t('freshfone.admin.number_settings.record_none'), :class => "radiolabel", :value => "false" %>
 		</div>
 		<div class="controls muted recording-alert">
-			<span class="label label-important"><%= t('freshfone.admin.important') %></span>
+			<b><%= t('freshfone.admin.important') %></b>
 			<span><%= t('freshfone.admin.number_settings.record_alert') %></span>
 		</div>
 	</div>
