@@ -1,23 +1,23 @@
-#freshfone_status {	float: right; }
+.grey_widget_background {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	border-top: 1px solid;
+	height: 39px;
+	min-width: 1140px;
+	background-color: rgba(160, 160, 160, 0.3);
+	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkgAAfIN7CCGOAREAcGPABADAhAlB0iCcdAAAAAElFTkSuQmCC);
+	border-top-color: #bbb;
+	box-shadow: inset 0 0 30px rgba(0,0,0,0.1), inset 0px 1px 0px 0px #fff; 
+	z-index: 1;
+}
 .freshfone_widget {
 	position: fixed;
 	bottom: 0;
 	height: 39px;
-	z-index: 1002;
 	color: #FFF;
 	right: 10px;
-	.sidebar_tabs_container {
-		position: fixed;
-		bottom: 0;
-		width: 100%;
-		border-top: 1px solid;
-		height: 39px;
-		min-width: 1140px;
-		background-color: rgba(160, 160, 160, 0.3);
-		background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkgAAfIN7CCGOAREAcGPABADAhAlB0iCcdAAAAAElFTkSuQmCC);
-		border-top-color: #bbb;
-		box-shadow: inset 0 0 30px rgba(0,0,0,0.1), inset 0px 1px 0px 0px #fff; 
-	}
+	z-index: 2;
 }
 
 .popupbox-tabs {

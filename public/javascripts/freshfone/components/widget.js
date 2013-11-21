@@ -6,7 +6,7 @@ var FreshfoneWidget;
 		this.freshfonecalls = freshfonecalls;
 		this.isWidgetUninitialized = true;
 		this.widget = $('.freshfone_widget');
-		this.$sidebarTabsContainer = $('#sidebar .sidebar_tabs_container');
+		this.$sidebarTabsContainer = $('.grey_widget_background');
 	};
 
 	FreshfoneWidget.prototype = {
