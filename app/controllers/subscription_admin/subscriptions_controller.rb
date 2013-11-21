@@ -103,15 +103,18 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   protected
   
    def search(search)
-    results = nil
-    results = Sharding.run_on_all_slaves do
-      unless search.blank?
-        Subscription.find(:all,:include => :account,
-          :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
-          :conditions => ['full_domain LIKE ?', "%#{search}%"],
-          :limit => 30)
+    results = []
+    domain_mappings = DomainMapping.find(:all, :conditions => ['domain LIKE ?', "%#{search}%"])
+    
+    unless search.blank?
+      domain_mappings.each do |domain|
+        Sharding.select_shard_of(domain.account_id) do
+          Sharding.run_on_slave do
+            results << Subscription.find_by_account_id(domain.account_id)
+          end
+        end
       end
-     end
+    end
     results
   end
     
