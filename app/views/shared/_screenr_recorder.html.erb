@@ -30,7 +30,6 @@
 				jQuery('.btn-record').show();
 				jQuery("#screenr-loading").removeClass("sloading screenr_button_loader");
 				jQuery('.btn-record').on('click', function(ev) {
-					ev.preventDefault();
 					var $this = jQuery(this);
 					var recorder = Screenr.Recorder({id:"<%= @screenr_configs_hash[:recorder_id] %>"});
 					recorder.record();
