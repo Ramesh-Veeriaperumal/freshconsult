@@ -37,7 +37,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	def update
 		# send http status codes in json response
 		if @number.update_attributes(params[nscname])
-			# remove_unused_attachments
+			remove_unused_attachments
 			flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
 
 			respond_to do |format|
@@ -111,7 +111,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		
 		def remove_unused_attachments
 			unused_attachments = @number.unused_attachments.map(&:id)
-			Resque.enqueue(Freshfone::AttachmentsDelete, { 
+			Resque.enqueue(Freshfone::Jobs::AttachmentsDelete, { 
 					:attachment_ids => unused_attachments 
 				}) if unused_attachments.present?
 		end

@@ -37,7 +37,7 @@ class Freshfone::IvrsController < ApplicationController
 	def update
 		# send http status codes in json response
 		if @ivr.update_attributes(params[nscname])
-			# remove_unused_attachments
+			remove_unused_attachments
 			flash[:notice] = t(:'flash.general.update.success', :human_name => "IVR")
 
 			respond_to do |format|
@@ -128,7 +128,7 @@ class Freshfone::IvrsController < ApplicationController
 
 		def remove_unused_attachments
 			unused_attachments = @ivr.unused_attachments.map(&:id)
-			Resque.enqueue(Freshfone::AttachmentsDelete, { 
+			Resque.enqueue(Freshfone::Jobs::AttachmentsDelete, { 
 					:attachment_ids => unused_attachments 
 				}) if unused_attachments.present?
 		end

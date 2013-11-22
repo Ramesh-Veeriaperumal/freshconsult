@@ -19,5 +19,15 @@ module Freshfone::Jobs
 		end
 		# VVERBOSE=1 QUEUE=FRESHFONE_QUEUE rake resque:work
 	end
+	
+	class AttachmentsDelete < FoneJobs
+		@queue = QUEUE
+
+		def self.perform_job(args)
+			account = Account.current
+			attachments = account.attachments.find_all_by_id(args[:attachment_ids])
+			attachments.each { |attachment| attachment.destroy }
+		end
+	end
 
 end
