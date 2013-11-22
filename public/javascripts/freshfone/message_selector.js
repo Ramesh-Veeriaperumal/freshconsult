@@ -101,8 +101,9 @@
 			var self = this;
 
 			this.$attachmentFileInput.change(function () {
-                self.$attachmentFileLink.hide();
-				self.$attachmentFileName.html(self.getFileName());
+				self.$attachmentFileLink.hide();
+				this.fileName="<i class='attach-file-done'></i>"+self.getFileName()
+				self.$attachmentFileName.html(this.fileName);
 				self.$attachmentRemoveLink.show();
 				self.$attachmentFile.show();
 

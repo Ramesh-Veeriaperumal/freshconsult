@@ -45,13 +45,16 @@
 		@include border-bottom-radius(6px);
 	}
 	.delete-symbol {
-		opacity: 0.3;
+		@include opacity(0.3);
 		width: 16px;
 		height: 16px;
 		position: absolute;
 		cursor: pointer;
 		top: 17px;
 		left: 15px;
+		&:hover{
+			@include opacity(0.8);
+		}
 	}
 //	.custom-keypad-select2 a, .select2 a{
 //		background-image: none;
@@ -59,7 +62,7 @@
 	.badge {
 		font-size: 16px;
 		padding: 12px;
-		border-radius: 4px 0 0 0;
+		@include border-radius(4px 0 0 0);
 		margin: 0;
 	}
 	.menu-title {
@@ -72,7 +75,7 @@
 		margin-right: 10px;
 		text-overflow: ellipsis;
 		@include box-shadow(none);
-		border-radius: 0;
+		@include border-radius(0);
 		border-top-left-radius: 4px;
 		background-repeat: no-repeat;
 		background-color: $ivr-menu-title-background;
@@ -95,7 +98,7 @@
 		}
 	}
 	.rename {
-		opacity:0.8;
+		@include opacity(0.8);
 	}
 	// message selector overrides starts
 	.message_value_container {
@@ -157,7 +160,7 @@
 	}
 	.options-keypad-container {
 		float: left;
-		margin-left: 0px;
+		margin-left: 0;
 	}
 	.performer-container {
 		float: left;
@@ -182,7 +185,7 @@
 		width: 260px;
 		@include box-sizing(border-box);
 		height: 27px;
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 	.close-btn, .turn-off-btn, .turn-on-btn {
 		padding: 0 10px;
@@ -252,7 +255,7 @@
 	.select2-result-label {
 		cursor: default;
 	}
-	opacity: 0.5;
+	@include opacity(0.5);
 }
 .errorExplanation {
 	clear:both;

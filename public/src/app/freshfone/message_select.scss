@@ -22,7 +22,7 @@
 		font-weight: 500;
 		min-width: 120px;
 		height: 30px;
-		border-radius: 6px;
+		@include border-radius(6px);
 		background-color: $ms-record-background;
 		border: 1px solid $ms-record-border;
 		cursor: pointer;
@@ -84,6 +84,12 @@
 		margin-left:-140px;
 		width:140px;
 	}
+	.attach-file-done { 
+		display: inline-block;
+		width: 14px;
+		height: 13px;
+		margin-right: 25px;
+	}
 	.attached_file, .recorded-message {
 		border: 1px solid $ms-attachment-container-border;
 		float: left;
@@ -120,6 +126,7 @@
 		float: left;
 		margin-top: 7px;
 		margin-left: 10px;
+		max-width: 280px;
 	}
 	.attached_file_link, .recorded_file_link {
 		display: block;
