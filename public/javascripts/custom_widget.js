@@ -28,10 +28,6 @@ Freshdesk.Widget.prototype={
 		if(this.options.username.blank() && this.options.password.blank()) {
 			this.alert_failure("Please provide Username and password.");
 		} else {
-			if (credentials.remember_me.value == "true") {
-				Cookie.update(this.options.widget_name + "_username", this.options.username);
-				Cookie.update(this.options.widget_name + "_password", this.options.password);
-			}
 			this.display();
 			this.call_init_requests();
 		}

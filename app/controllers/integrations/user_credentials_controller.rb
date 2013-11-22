@@ -32,5 +32,14 @@ class Integrations::UserCredentialsController < ApplicationController
 
       redirect_back_using_cookie(request, privilege?(:admin_tasks) ? integrations_applications_path : root_path )
   end
+
+  def create
+    app_name = params["app_name"]
+    installed_application = current_account.installed_applications.find_by_application_id(
+                                                Integrations::Application.find_by_name(app_name).id)
+    options ={:username=>params["username"],:password=>params["password"]}
+    user_credential = Integrations::UserCredential.add_or_update(installed_application, current_user.id, options)     
+    render :json => user_credential, :status => :created
+  end
   
 end
