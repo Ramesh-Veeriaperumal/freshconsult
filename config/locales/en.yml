@@ -2568,8 +2568,8 @@ en:
     Personalized_email_replies_yes: "Yes"
     Personalized_email_replies_no: "No"
     config_saved_message: Your setting is succesfully saved.
-    reply_to_tickets: Use 'reply-to' message headers for threading tickets
-    reply_to_tickets_info: If YES, your helpdesk will look at the 'reply-to' header of incoming emails before adding them to ticket conversations. You will also be able to direct agent replies to the right email address when your requesters are using an alias.
+    reply_to_tickets: Use "Reply-to" email address to create requestor contacts
+    reply_to_tickets_info: Note: If disabled, requestor will be created using "From" address in email.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
