@@ -31,6 +31,7 @@ module Redis::RedisKeys
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}" 
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
+	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}" 
 
 	def newrelic_begin_rescue
 	    begin

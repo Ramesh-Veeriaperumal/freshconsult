@@ -148,3 +148,9 @@
         }
     }
 }
+/*To be used when you need really small cells*/
+.table-striped{
+    td.tiny{
+        width:20px;
+    }
+}

@@ -1,7 +1,10 @@
 <% content_for :sidebar do -%><%- end %> 
 
-<%= content_tag( :h3,  t('import_zendesk_title').html_safe, :class => "title" ) %>
-
-<%= render :partial => "form"%>
+<% unless @zendesk_import %>
+	<%= content_tag( :h3,  t('import_zendesk_title').html_safe, :class => "lead" ) %>
+	<%= render :partial => "form"%>
+<% else %>
+	<%= render :partial => "import_progress"%>
+<% end %>
 
 

@@ -135,7 +135,7 @@
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
     admin.resources :quests, :member => { :toggle => :put }
-    admin.resources :zen_import, :collection => {:import_data => :any }
+    admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :roles

@@ -670,3 +670,15 @@ ul.inline > li, ol.inline > li {
     margin-left: 2px;
   }
 }
+
+.left-aligned .control-group {
+  .toggle-button {
+    margin-left: 0;
+  }
+  .tab {
+    margin-left: 78px;
+  }
+  strong{
+    margin-left: 17px
+  }
+}

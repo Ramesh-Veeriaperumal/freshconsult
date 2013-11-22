@@ -1,4 +1,5 @@
 module Import::Zen::Ticket
+  include Import::Zen::Redis
  
   ZENDESK_TICKET_TYPES = {0 => "No Type Set", 1 => "Question", 2 => "Incident", 3 => "Problem", 4 => "Task"}                          
   ZENDESK_TICKET_STATUS = {1 => 2,  2=> 3, 3=> 4, 4 =>5 }         
@@ -44,6 +45,9 @@ module Import::Zen::Ticket
 end
 
 def save_ticket ticket_xml
+
+  increment_key 'tickets_completed'
+
   ticket_prop = TicketProp.parse(ticket_xml)    
   requester = @current_account.all_users.find_by_import_id(ticket_prop.requester_id)
   return unless requester
@@ -107,6 +111,7 @@ def ticket_post_process ticket_prop , ticket
   end
   #Attachment
   ticket_prop.attachments.each do |attachment|   
+    increment_key 'attachments_queued'   
     #Delayed::Job.enqueue Import::Attachment.new(ticket.id , URI.encode(attachment.url), :ticket )
     Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => ticket.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
@@ -136,6 +141,7 @@ def ticket_post_process ticket_prop , ticket
     end
     
     comment.attachments.each do |attachment| 
+      increment_key 'attachments_queued'
       #Delayed::Job.enqueue Import::Attachment.new(@note.id ,URI.encode(attachment.url), :note)
       Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => @note.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
