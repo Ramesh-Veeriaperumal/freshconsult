@@ -23,7 +23,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
-  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -1087,5 +1087,9 @@ class Helpdesk::TicketsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def load_sort_order
+    params[:wf_order] = @template.current_wf_order.to_s
+    params[:wf_order_type] = @template.current_wf_order_type.to_s
+  end
  
 end
