@@ -33,15 +33,14 @@
 			<div class="address-required-alert hide">
 			 <%= t('freshfone.admin.numbers.address_certification').html_safe %>
 			</div>
-				<p><br/><%= t('freshfone.admin.numbers.purchase_confirm') %></p>
 		</div>
 	</div>
 </div>
 
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title"><%=t('freshfone.admin.numbers.title')%></h3>
-		<p><%= t('freshfone.admin.numbers.info').html_safe %></p>
+		<h3 class="title"><%=t('freshfone.admin.numbers.setup.title')%></h3>
+		<p><%= t('freshfone.admin.numbers.setup.info').html_safe %></p>
 	</div>
 <% end %>
 <%= include_cloudfront_js :freshfone %>
