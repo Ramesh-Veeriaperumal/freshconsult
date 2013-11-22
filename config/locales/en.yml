@@ -1909,6 +1909,7 @@ en:
       agent_deleted: The agent has been deleted
       no_agents: You dont have any deleted agents
     trial: In trial version
+    account_suspended: account suspended
     buy: Buy more
     available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
