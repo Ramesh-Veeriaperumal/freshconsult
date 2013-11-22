@@ -100,7 +100,6 @@ var FreshfoneEndCall;
 			this.number = null;
 			this.date = null;
 			this.inCall = true;
-			this.hideEndCallForm();
 			this.resetForm();
 		},
 		saveNewTicket: function () {
