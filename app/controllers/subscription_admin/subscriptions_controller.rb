@@ -110,7 +110,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
       domain_mappings.each do |domain|
         Sharding.select_shard_of(domain.account_id) do
           Sharding.run_on_slave do
-            results << Subscription.find_by_account_id(domain.account_id)
+            results << Subscription.find_by_account_id(domain.account_id, :include => :account)
           end
         end
       end
