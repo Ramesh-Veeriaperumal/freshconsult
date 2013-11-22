@@ -151,7 +151,7 @@
 				                  			var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
                 					 
 							   				new Autocompleter.MultiValue("agents_invite_email",  agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
-							   			})						
+							   			})
 									<%-end%>
 									<div id="agent_box">
 										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit" data-tab-ignore="true">
