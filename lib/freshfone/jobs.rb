@@ -1,5 +1,5 @@
 module Freshfone::Jobs
-  QUEUE = "FRESHFONE_QUEUE"
+  QUEUE = "freshfone_default_queue"
   
 	class FoneJobs 
 		extend Resque::AroundPerform

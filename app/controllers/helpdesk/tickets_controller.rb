@@ -820,7 +820,7 @@ class Helpdesk::TicketsController < ApplicationController
   private
   
     def supported_view
-      [:all, :open, :overdue, :due_today, :on_hold, :new, :new_and_my_open, :my_overdue, :my_groups_open]
+      [:all, :open, :overdue, :due_today, :on_hold, :new, :new_and_my_open, :my_groups_open]
     end
     
     def reply_to_all_emails

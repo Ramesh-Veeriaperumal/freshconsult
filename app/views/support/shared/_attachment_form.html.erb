@@ -59,13 +59,15 @@
       <% if is_application_installed?("screenr") && widget_option(:screenr_recording)%>
         <div class="screenshot-wrap controls">
           <div class="ie8plusonly pull-right">        
-            <div id="takescreen-btn" class="dropdown">
+            <div class="dropdown">
               <div class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
                 Screen Capture<b class="caret"></b>
               </div>
               <ul class="dropdown-menu screenr-dropdown align-left" role="menu" aria-labelledby="dLabel">
                 <li class="portal-attach">
-                  <a href="#"><i class="wicon-camera"></i> <%=t('.feedback_widgets_screenshot')%></a>
+                  <div id="takescreen-btn">
+                    <a href="#"><i class="wicon-camera"></i> <%=t('.feedback_widgets_screenshot')%></a>
+                  </div>
                 </li>
                 <li>
                   <%= render :partial => "shared/screenr_recorder", :locals => { :location => "widget" } %>
