@@ -143,6 +143,8 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+    search.ticket_related_solutions    '/related_solutions/ticket/:ticket/', :controller => 'home', :action => 'related_solutions'
+    search.ticket_search_solutions    '/search_solutions/ticket/:ticket/', :controller => 'home', :action => 'search_solutions'
   end
 
   map.namespace :reports do |report|
