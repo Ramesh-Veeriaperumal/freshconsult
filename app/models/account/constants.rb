@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :chat ],
+        :css_customization, :advanced_reporting, :multiple_business_hours ],
       :inherits => [ :blossom ]
     },
 
