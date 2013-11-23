@@ -79,7 +79,7 @@ module ExportCsvUtil
   def export_data(items, csv_hash, is_portal=false)
     csv_string = ""
     unless csv_hash.blank?
-      csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
+      csv_string = CSVBridge.generate do |csv|
         headers = delete_invisible_fields(csv_hash, is_portal)
         csv << headers.collect {|header| csv_hash[header]}
         tickets_data(items, headers, csv)

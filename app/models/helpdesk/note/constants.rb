@@ -1,6 +1,6 @@
 class Helpdesk::Note < ActiveRecord::Base
 
-	SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
+	SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone}
 
   NOTE_TYPE = { true => :private, false => :public }
   

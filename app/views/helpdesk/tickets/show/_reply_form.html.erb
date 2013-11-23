@@ -106,8 +106,13 @@
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>    
-      </li>
-
+      </li> 
+      <br>
+        <% if is_application_installed?("screenr")%>
+          <li>
+          <%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_ticket" } %>
+          </li>
+        <% end %>
     </ul>
     
       <!-- reply will be always public -->

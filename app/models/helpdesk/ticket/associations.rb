@@ -64,4 +64,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   accepts_nested_attributes_for :tweet, :fb_post
 
+  has_many :freshfone_calls
+
 end

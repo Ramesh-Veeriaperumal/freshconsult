@@ -1,8 +1,8 @@
 module Reports::GlanceReportsHelper
-	UP_RED       = "report-arrow up red"
-	UP_GREEN     = "report-arrow up green"
-	DOWN_RED     = "report-arrow down red"
-	DOWN_GREEN   = "report-arrow down green"
+	UP_RED       = "report-arrow report-arrow-up report-arrow-red"
+	UP_GREEN     = "report-arrow report-arrow-up report-arrow-green"
+	DOWN_RED     = "report-arrow report-arrow-down report-arrow-red"
+	DOWN_GREEN   = "report-arrow report-arrow-down report-arrow-green"
 	METRIC_ICONS ={
 		:received_tickets         => [DOWN_RED,UP_GREEN],
 		:resolved_tickets         => [DOWN_RED,UP_GREEN],

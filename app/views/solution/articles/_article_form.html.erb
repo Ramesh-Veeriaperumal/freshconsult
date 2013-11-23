@@ -19,6 +19,11 @@
 					:locals => {:show_delete => true, :url => [@article] }) %>
 				</ul>
 		</li>
+		<% if is_application_installed?("screenr") %>
+		<li>
+	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+	    </li>
+	  	<% end %>
 		<% fields_for :tags  do |tag| %>
 		<li>
 			<%= tag.label(:name, t('tag.title')) %>

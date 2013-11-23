@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title"><%= t('topic.edit') %></h3>
+<h3 class="lead"><%= t('topic.edit') %></h3>
 <%= error_messages_for :topic %>
 <% form_for @topic,
      :url  => category_forum_topic_path(@forum_category, @forum, @topic),
@@ -9,11 +9,11 @@
 	
 	<div class="button-container">
     <% if privilege?(:delete_topic, @topic) %>
-  		<div class="floatl">
-  			<%= link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic) , :class => "uiButton red" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %> 
+  		<div class="pull-left">
+  			<%= link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic) , :class => "btn" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %> 
   		</div>
     <% end %>
-		<%= f.submit t('save'), :class => "uiButton" %>
-		<%= link_to(t('cancel') , category_forum_topic_path(@forum_category,@forum, @topic), :class => "uiButton grey" ) %> 
+    <%= link_to(t('cancel') , category_forum_topic_path(@forum_category,@forum, @topic), :class => "btn" ) %> 
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>
 <% end -%>

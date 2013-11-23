@@ -19,24 +19,14 @@ define([
           });
   }
   var setupSound = function(){
-    soundManager.setup({
-        url: '/swf/',
-        // optional: use 100% HTML5 mode where available
-        preferFlash: false,
-        onready: function() {
-          soundManager.createSound({
-            id: 'alert',
-            url: '/sound/alert.mp3'
-          });
-          soundManager.createSound({
-            id: 'new_msg',
-            url: '/sound/salient.mp3'
-          });          
-        },
-        ontimeout: function() {           
-          // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
-        }
-      });    
+      soundManager.createSound({
+        id: 'alert',
+        url: '/sound/alert.mp3'
+      });
+      soundManager.createSound({
+        id: 'new_msg',
+        url: '/sound/salient.mp3'
+      });          
       window.startMusic = function(id){
         if(window.playSound){
           soundManager.play(id);

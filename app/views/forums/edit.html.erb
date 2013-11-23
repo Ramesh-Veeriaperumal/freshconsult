@@ -1,14 +1,13 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title"><%= t('forum.edit') %></h3>
+<h3 class="lead"><%= t('forum.edit') %></h3>
 <% form_for @forum, :url => category_forum_path(@forum.forum_category_id,@forum)   do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	
-	<div class="button-container">	
-		<div class="floatl">
-			<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "uiButton red",  :confirm => t('forum.confim_msg1') ) %>
+	<div class="button-container align-left">	
+		<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "btn",  :confirm => t('forum.confim_msg1') ) %>
+		<div class="pull-right align-right">
+			<%= link_to(t('cancel'), category_path(@forum_category), :class => "btn" ) -%>
+			<%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%> 
 		</div>
-		
-		<%= submit_tag t('save'), { :class => "uiButton",  :action => :update } -%> 
-		<%= link_to(t('cancel'), category_path(@forum_category), :class => "uiButton grey" ) -%>
 	</div>
 <% end -%>

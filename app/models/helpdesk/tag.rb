@@ -8,7 +8,7 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   set_table_name "helpdesk_tags"
   
-  belongs_to :account
+  belongs_to_account
 
   has_many :tag_uses,
     :class_name => 'Helpdesk::TagUse',
@@ -33,18 +33,32 @@ class Helpdesk::Tag < ActiveRecord::Base
     :through => :tag_uses,
     :conditions => { :helpdesk_agent => false, :deleted => false }
 
-  named_scope :with_taggable_type, lambda { |taggable_type| { 
+  has_many :solution_articles,
+           :class_name => 'Solution::Article',
+           :source => :taggable,
+           :source_type => "Solution::Article",
+           :through => :tag_uses
+
+  named_scope :with_taggable_type, lambda { |taggable_type| {
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
         }
   named_scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
         }
 
+  named_scope :sort_tags, lambda  { |sort_type| { :order => SORT_SQL_BY_KEY[(sort_type).to_sym] || SORT_SQL_BY_KEY[:activity_desc] }  }
+
+  named_scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
+
+
+
+
+
   SORT_FIELDS = [
     [ :activity_desc, 'Most Used',    "tag_uses_count DESC"  ],
     [ :activity_asc,  'Least Used',   "tag_uses_count ASC"  ],
     [ :name_asc,      'Name (a..z)',  "name ASC"  ],
-    [ :name_desc,     'Name (z..a)',  "name DESC"  ],
+    [ :name_desc,     'Name (z..a)',  "name DESC"  ]
   ]
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
@@ -81,5 +95,9 @@ class Helpdesk::Tag < ActiveRecord::Base
   
   def to_liquid
     @helpdesk_tag_drop ||= (Helpdesk::TagDrop.new self)
+  end
+
+  def ticket_count
+    tickets.visible.size
   end
 end

@@ -24,7 +24,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
-  before_filter :clear_filter, :only => :index
+  before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :disable_notification, :if => :notification_not_required?
@@ -723,6 +723,25 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket}
   end
 
+  def summary
+    view_name = params[:view_name] || "new_and_my_open"
+    count = {:error => "Unsupported view name"}
+    if supported_view.include? view_name.to_sym
+      count = {:view_count => filter_count(view_name.to_sym)}
+    end
+    respond_to do |format|
+      format.json{ 
+        render :json => count.to_json       
+      }
+      format.xml {
+        render :xml => count.to_xml(:root => :count)
+      }
+      format.any {
+       render_404
+      }
+    end
+  end
+
   protected
   
     def item_url
@@ -800,6 +819,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   private
   
+    def supported_view
+      [:all, :open, :overdue, :due_today, :on_hold, :new, :new_and_my_open, :my_groups_open]
+    end
+    
     def reply_to_all_emails
       if @ticket_notes.blank?
         @to_cc_emails = @ticket.reply_to_all_emails
@@ -897,7 +920,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def custom_filter?
-      params[:filter_key].blank? and params[:filter_name].blank? and params[:requester_id].blank?
+      params[:filter_key].blank? and params[:filter_name].blank? and params[:requester_id].blank? and params[:tag_id].blank?
     end
 
     def load_ticket_filter

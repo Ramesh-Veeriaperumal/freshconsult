@@ -43,6 +43,7 @@
 	<%= include_cloudfront_js :notifications %>
 	<%= include_cloudfront_js :redactor  %>
 
+
 	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
 	<%= include_cloudfront_js :pattern  %>
 	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
@@ -50,6 +51,13 @@
 	<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 
 	<%= include_cloudfront_js :custom_widget %>
+	
+	<% if current_account.freshfone_enabled? ||
+		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
+		<%= include_cloudfront_js :soundmanager %>
+		<%= include_cloudfront_css :icomoon %>
+	<% end %>
+
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
 	</script>

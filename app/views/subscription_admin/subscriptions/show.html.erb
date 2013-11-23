@@ -48,6 +48,11 @@
 		    <td><%= @subscription.account.day_pass_config.available_passes %></td>
 		  </tr>
 		  <tr>
+		    <th>Freshfone Credits</th>
+		    <% credit = @subscription.account.freshfone_credit %>
+		    <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
+		  </tr>
+		  <tr>
 		    <th>State</th>
 		    <td><%= @subscription.state %></td>
 		  </tr>
@@ -150,6 +155,15 @@
 
 <% content_for :pagefixed do -%>
   <script type="text/javascript" charset="utf-8">
+  	(function($){
+			$('.toggle_freshfone').itoggle({
+				checkedLabel: 'Enabled',
+				uncheckedLabel: 'Disabled'
+			}).change(function() {
+				$(this).parent().submit();
+			});
+		})(jQuery);
+    
     function checkForm() {
       amt = document.getElementById('amount')
       amt.value = amt.value.replace(/[\$,]/g, '')

@@ -15,6 +15,7 @@ class SubscriptionsController < ApplicationController
   before_filter :check_free_agent_limit, :only => [:convert_subscription_to_free]
   before_filter :check_credit_card_for_free, :only => [:plan,:plans]
   before_filter :billing_subscription, :only => [:plan, :billing, :calculate_amount, :convert_subscription_to_free]
+  before_filter :load_freshfone_credits, :only => [:show]
   
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
@@ -162,6 +163,10 @@ class SubscriptionsController < ApplicationController
       plans = SubscriptionPlan.current
       plans << @subscription.subscription_plan if @subscription.subscription_plan.classic?
       @plans = plans
+    end
+
+    def load_freshfone_credits
+      @freshfone_credit = current_account.freshfone_credit
     end
 
     def admin_selected_tab

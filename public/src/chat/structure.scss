@@ -191,7 +191,7 @@
         #agent_search{
             width: 177px;
             padding: 5px;
-            border-radius: 4px !important;
+            border-radius: 4px;
         }
     }
 }
@@ -603,7 +603,7 @@ li.ui-state-active {
 }
 
 /* Style the calendar custom widget */
-#date-range {
+#date-range-container {
     position: relative;
 }
 
@@ -619,13 +619,16 @@ li.ui-state-active {
 }
 
 #date-range-field a {
-    color: #B2B2B2;
     background-color: #F7F7F7;
     text-align: center;
     display: block;
     position: absolute;
-    width: 26px;
+    width: 18px;
     height: 23px;
+    font-size: 8px;
+    border-left: 1px #eaeaea solid;
+    color: #888;
+    line-height: 15px;
     top: 0;
     right: 0;
     text-decoration: none;
@@ -647,12 +650,52 @@ li.ui-state-active {
     padding: 0 5px;
 }
 
-#datepicker-calendar {
+.date-select-option{
     position: absolute;
     top: 27px;
     left: 0;
+    width: 171px;
+    background-color: #FFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 0 0 5px 5px;
+    display: none;
+    padding: 10px 0 10px 10px;
+    z-index: 10;
+    line-height: 28px;
+}
+
+.date-select-option-expanded{
+    width: 521px;
+    box-shadow: 0px 2px 10px #CCC;
+    z-index: 11;
+}
+
+#search_filter{
+    td.datepickerSelected{
+        span{
+            color: #fff;
+        }
+    }
+}
+
+.date-dropotions{
+    float: left;
+    width: 162px;
+    li{
+        padding-left: 5px;
+        border-radius: 3px;
+        cursor: pointer;
+        &:hover{
+            background-color: #eaeaea;
+        }
+    }
+}
+
+#datepicker-calendar {
+    top: 27px;
+    left: 0;
     overflow: hidden;
-    width: 497px;
+    width: 336px;
     height: 153px;
     background-color: #F7F7F7;
     border: 1px solid #CCCCCC;
@@ -758,7 +801,7 @@ li.ui-state-active {
 
 .rsltavatar{
     float: left;
-    width: 30px;
+    width: 100px;
     border-radius: 4px;
     height: 31px;
     img{
@@ -773,16 +816,20 @@ li.ui-state-active {
         margin: 0px 10px;
         position: relative;
         line-height: 27px;
+        font-size: 10px;
+        color: #ccc;
+    }
+    .icon-arrow-left{
+        color: #999;
     }
 }
 
 .rsltname{
     font-size: 14px;
     color: #1272de;
-    display: block;
-    width: 98%;
-    padding: 1%;
+    float: left;
     word-break: break-word;
+    width: 75%;
     .rslttime{
         font-size: 12px;
     }
@@ -790,6 +837,11 @@ li.ui-state-active {
         font-size: 20px;
         line-height: 14px;
         margin-right: 10px;
+    }
+    .chat_archive_location{
+        margin-top: 5px;
+        color: #999;
+        font-size: 12px;
     }
 }
 
@@ -802,16 +854,8 @@ li.ui-state-active {
 
 .rsltmsg{
     width: 98%;
-    padding: 0px 0px 9px 8px;
+    padding: 11px 0px 9px 8px;
     display: block;
-    .rslttime{
-        display: none;
-    }
-    &:hover{
-        .rslttime{
-            display: inline-block;
-        }
-    }
 }
 
 .rsltplit{
@@ -1101,14 +1145,38 @@ li.ui-state-active {
     &:last-child{
         border-radius: 0px 0px 5px 5px;
     }
-    .rsltgrp{
+    .rsltmsg{
+        overflow: visible;
+    }
+    .rsltname_title{
+        position: relative;
         .archive_deck {
             position: absolute;
+            z-index: 10;
             background: #FEFEF0;
-            border: 1px solid #ccc;
             display: none;
+            border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
+            width: 580px;
+            top: 23px;
+            box-shadow: 0px 0px 10px rgba(0,0,0, 0.2);
+            .icon-comments{
+                color: #999;
+                font-size: 14px;
+                float: left;
+            }
+
+            .archive_deck_msg{
+                float: left;
+                color: #666;
+                font-size: 12px;
+                line-height: 18px;
+                width: 95%;
+                p:first-child{
+                    margin-bottom: 15px;
+                }
+            }
         }
         .archive_deck:after, .archive_deck:before {
             bottom: 100%;
@@ -1124,21 +1192,15 @@ li.ui-state-active {
             border-color: rgba(254, 254, 240, 0);
             border-bottom-color: #FEFEF0;
             border-width: 10px;
-            left: 100px;
+            left: 50px;
             margin-left: -10px;
         }
         .archive_deck:before {
             border-color: rgba(153, 153, 153, 0);
             border-bottom-color: #ccc;
             border-width: 11px;
-            left: 100px;
+            left: 50px;
             margin-left: -11px;
-        }
-
-        &:hover{
-            .archive_deck{
-                display: inline-block;
-            }
         }
     }
 }
@@ -1884,52 +1946,6 @@ div.file_upload input {
     text-align: center;
 }
 
-.red_theme{
-     background-color: #ea4b1b;
-}
-
-.blue_theme{
-    background-color: #357abb;
-}
-.green_theme{
-    background-color: #28ac37;
-}
-.orange_theme{
-    background-color: #faa644;
-}
-.teel_theme{
-    background-color: #008585;
-}
-.gray_theme{
-    background-color: #888;
-}
-
-.red{
-     background-color: #ea4b1b !important;
-}
-
-.blue{
-    background-color: #357abb !important;
-}
-
-.green{
-    background-color: #28ac37 !important; 
-}
-
-.orange{
-    background-color: #faa644 !important;
-}
-
-.teel{
-    background-color: #008585 !important;
-}
-
-.gray{
-    background-color: #888 !important;
-}
-
-.look_and_feel
-
 .look_and_feel_left{
     padding: 20px;
     width: 259px;
@@ -2255,6 +2271,7 @@ div.color{
     border: 1px #f1f1f1 solid;
     border-top: 1px transparent solid;
 }
+ 
 .conversation_user{
     background-color: transparent !important;
 }
@@ -2423,6 +2440,9 @@ div.color{
         width: 95%;
         padding-left: 9px;
     }
+    .rsltavatar{
+        width: 30px;
+    }
     .rslttime{
         visibility: hidden;
         float: right;
@@ -2466,11 +2486,12 @@ div.color{
 }
 
 /* Chat Toggle */
-    .chat-toggle{
-       border-right: 1px rgba(255, 255, 255, 0.2) solid;
-       cursor: pointer;
-       img{
-            width: 35px;
-            height: 35px;
-       }
-    }
+
+.chat-toggle{
+   border-right: 1px rgba(255, 255, 255, 0.2) solid;
+   cursor: pointer;
+   img{
+        width: 35px;
+        height: 35px;
+   }
+}

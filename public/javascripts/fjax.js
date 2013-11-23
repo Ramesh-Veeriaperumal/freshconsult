@@ -47,6 +47,12 @@ FreshdeskPjax.prototype = {
     callAfterReceive: function() {
     	this._removeLoading();
     	this._afterReceiveCleanup();
+
+    	var body = $(body);
+    	if(this._prevBodyClass != this.bodyClass)
+    		body.removeClass(this._prevBodyClass).addClass(this.bodyClass);
+    	this._prevBodyClass = null;
+    	$('body').trigger('pjaxDone');
     },
 
     callAtEnd: function() {
@@ -117,7 +123,7 @@ FreshdeskPjax.prototype = {
 
     _afterReceiveCleanup: function() {
 			$('.popover').remove();
-			$('.modal, .modal-backdrop').remove();
+			$('.modal:not(.persistent_modal), .modal-backdrop').remove();
 			$('.twipsy').remove();
     },
 

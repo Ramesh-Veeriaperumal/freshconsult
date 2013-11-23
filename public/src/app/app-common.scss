@@ -7394,7 +7394,7 @@ a.mobile_switchBtn {
 	margin-left: -10px;
 
 	li{
-		padding-top: 30px;
+		padding-top: 15px;
 	}
 }
 
@@ -10353,6 +10353,11 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
 
+//Temp.. Should be removed from this place
+.new_freshfone_number_search{
+	text-align: center;
+	line-height: 3;
+}
 //facebook-page-tab
 
 #configure_page_tab{ min-height: 50px; }
@@ -10584,6 +10589,100 @@ label.last-label{ margin-bottom: 0px; }
     }
   }
 }
+
+#tag-remove-confirm, #tag-dialog-confirm, #tag-delete-confirm {
+	p { padding: 10px;}
+
+	.ui-icon {
+      display: inline-block;
+	  float: left;
+	  margin: 0 7px 20px 0;
+	}
+}
+
+.tag-list{
+
+	.removetag, .edittag { display:none; }
+
+	.count:hover .removetag, .name:hover .edittag { display: inline-block; } 
+
+
+  .list-page-table-header .bulk-action{
+    left: 3px;
+    top: -2px;
+    position: relative;
+  }
+  .tags-checkbox-label{
+    left: 3px;
+    top: 2px;
+    position: relative;
+  }
+  .removetag, .edittag{
+    position: relative;
+    left: 10px;
+    top:8px;
+    i{
+      width: 26px;
+      height: 25px;
+      display: inline-block;
+      margin-top: -15px;
+    }
+  }
+  .edittag{
+    left:5px;
+  }
+  .tags-total-counter{
+    padding: 0px 8px;
+    background: #eee;
+    font-size: 90%;
+    font-weight: 500;
+    color: #333;
+    display: inline-block;
+    @include border-radius(9px);
+    @include text-shadow(1px 1px 0 rgba(#fff, 0.5));
+  }
+  .tag_name{
+    padding :3px;
+  }
+  .tag-label{
+    display:inline-block;
+    padding: 3px 10px;
+    border: 1px solid #aaa;
+    background: #fff;
+    @include border-radius(20px);
+    margin-right: -10px;
+    position: relative;
+    padding-right: 50px;
+    min-width:63px;
+    >span{
+      background: #888;
+      padding: 0px 8px;
+      right: 3px;
+      position: absolute;
+      font-size: 90%;
+      font-weight: 500;
+      top: 3px;
+      color: #fff;
+      @include border-radius(9px);
+      @include text-shadow(-1px -1px 0 #888);
+    }
+  }
+  .disabled{
+    .tag-label{
+      @include opacity(0.3);
+    }
+  }
+}
+.tag-search-results{
+  background:#fff;
+  @include border-radius(0 0 5px 5px);
+}
+#merge-content{
+  width: 45.93617%;
+}
+#merge_tag{
+  padding-top: 10px;
+}
 //Contacts import
 .map_fields{
 	.sample_values{
@@ -10600,3 +10699,19 @@ label.last-label{ margin-bottom: 0px; }
 		margin-top: 5px;
 	}
 }
+.screenr-table{
+	td{
+		padding: 10px 0 0 0;
+	}
+}
+
+#screenr-loading{
+	display:none;
+}
+
+.screenr_button_loader{
+	width: 137px;
+	height: 22px;
+	display: inline-block !important;
+}
+

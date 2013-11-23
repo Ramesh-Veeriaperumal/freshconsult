@@ -29,8 +29,6 @@
 			"closeButton"   : null
 		}
 
-	console.log($widget_attr)
-
 	 // Utility methods for FreshWidget	
 	 function catchException(fn) {
 		try {

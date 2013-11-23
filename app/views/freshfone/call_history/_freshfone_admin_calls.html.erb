@@ -1,0 +1,44 @@
+<div class="list-page fresfone-call-history">
+	<div class="list-page-header row-fluid">
+		<div>
+				<span class="lead"><%= t('freshfone.call_history.title') %></span>
+				<span class="dropdown">
+					<a role="button" 
+						 class="dropdown-toggle drop-right" 
+						 id="sorting_dropdown" 
+						 data-toggle="dropdown" 
+						 href="#"> 
+						 <span class="filter-name lead normal"> <%= @current_number.number %>
+						 </span>
+						 <b class="caret freshfone-number-caret"></b>
+					</a>
+					<ul class="dropdown-menu right" 
+							role="menu" 
+							aria-labelledby="sorting_dropdown_list">
+						<% current_account.all_freshfone_numbers.each do |n| %>
+							<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+								<% if @current_number.number == n.number %>
+									<span class="icon ticksymbol"></span>
+								<% end %>
+								<%= n.number %>
+							</a></li>
+						<% end %>
+					</ul>
+				</span>
+	</div>
+		<div class="row-fluid" id="list-page-subheader">
+			<%= render :partial => 'call_history_sub_header' %>
+		</div>
+	</div>
+	<div class="list-page-body">
+		<%= render :partial => 'call_log_body', :locals => {:calls => @calls, :children => :false} %>
+	</div>
+</div>
+<form id="SortFilterCalls" action="#">
+	<input type="hidden" name="wf_order" value="<%= params[:wf_order] || 'created_at' %>" />
+	<input type="hidden" name="wf_order_type" value="<%= params[:wf_order_type] || 'desc' %>" />    
+	<input type="hidden" name="page" value="1" />
+	<input type="hidden" name="number_id" value="<%= @current_number.id %>" />
+	<div rel='filter'>
+	</div>
+</form>

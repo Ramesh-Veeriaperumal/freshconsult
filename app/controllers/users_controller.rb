@@ -2,6 +2,10 @@ class UsersController < ApplicationController
 
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
+  include ApplicationHelper
+  include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper
+  # include ActionView::Helpers::AssetTagHelper
+  # include ActionView::AssetPaths
 
   skip_before_filter :check_privilege, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
@@ -46,10 +50,10 @@ class UsersController < ApplicationController
     logger.debug "in users controller :: show show"
     user = current_account.all_users.find(params[:id])        
     if(user.customer? )
-      redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
+      redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id], :format => params[:format]
     else    
       agent_id = current_account.all_agents.find_by_user_id(params[:id]).id
-      redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
+      redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id, :format => params[:format]    
     end
     
   end
@@ -91,7 +95,6 @@ class UsersController < ApplicationController
     end
     redirect_to "/"
   end
- 
   protected
   
     def scoper

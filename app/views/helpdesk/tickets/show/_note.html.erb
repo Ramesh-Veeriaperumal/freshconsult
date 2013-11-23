@@ -8,7 +8,7 @@ minimizable ||= false
 
 %>
 
-<li id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
+<div id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
 	<% if note.user %>
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
 	<% end %>
@@ -43,7 +43,7 @@ minimizable ||= false
         <% end %>
         <% if privilege?(:edit_note, note) %>
 					<%= link_to_function(t("edit"), 
-								"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow')",
+								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
 								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent?) %>
         <% end %>
 		    </div>
@@ -104,4 +104,4 @@ minimizable ||= false
 		if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id']  == null || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
 			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;
 	</script>
-</li>
+</div>

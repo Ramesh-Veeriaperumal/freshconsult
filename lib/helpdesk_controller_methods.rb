@@ -84,10 +84,10 @@ module HelpdeskControllerMethods
         redirect_to after_destroy_url
       end
       expects.mobile{
-        render :json => {:success => true  , :success_message => "#{h(@items.length)} tickets were deleted" }.to_json
+        render :json => {:success => true}
       }
       expects.nmobile{
-        render :json => {:success => true  , :success_message => "#{h(@items.length)} notes were deleted" }.to_json
+        render :json => {:success => true}
       }
       expects.json  { render :json => :deleted}
       expects.js { 

@@ -12,6 +12,11 @@
 		<%= link_to(t('footer.browse_community'), "https://support.freshdesk.com/support/discussions", :target => "_blank") %>
 	</div> 
 </div>
+<% if current_user && current_user.agent? && current_account.freshfone_enabled? %>
+	<script type="text/javascript" src="https://static.twilio.com/libs/twiliojs/1.1/twilio.js">
+	</script>
+	<%= render :partial => 'layouts/shared/freshfone' %>
+<% end %>
 <%if @debuging %>
 	<script type="text/javascript" src="/javascripts/labs/boomerang.js"></script>
 	<script type="text/javascript" src="/javascripts/labs/benchmark_init.js"></script>

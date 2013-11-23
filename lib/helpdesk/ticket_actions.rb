@@ -5,7 +5,7 @@ module Helpdesk::TicketActions
   include ParserUtil
   include ExportCsvUtil
   include Helpdesk::ToggleEmailNotification
-  
+
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
     ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
@@ -215,6 +215,13 @@ module Helpdesk::TicketActions
     @ticket_count = total_entries.to_i
   end
 
+  def get_tag_name
+    if params[:tag_id].present?
+    params[:tag_name] = Helpdesk::Tag.find(params[:tag_id]).name
+    end
+
+  end
+
   def clear_filter
     if params[:requester_id]
       params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
@@ -225,6 +232,14 @@ module Helpdesk::TicketActions
                                     
       cache_filter_params
       @requester_id_param = params[:requester_id]
+    elsif params[:tag_name]
+      params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in",
+                                                        "condition"=>"helpdesk_tags.name", "value"=> params[:tag_name] }]
+
+      @ticket_filter.query_hash = [{"operator"=>"is_in",
+                                    "condition"=>"helpdesk_tags.name", "value"=> params[:tag_name] }]
+
+      cache_filter_params
     end
   end
 end

@@ -12,8 +12,8 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
-   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy,:restore]
-  
+   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
+   before_filter :load_user_by_phone, :only => :freshfone_user_info
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -117,6 +117,15 @@ class ContactsController < ApplicationController
     render :partial => "hover_card"
   end
 
+  def freshfone_user_info
+    render :json => {
+      :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
+                           :locals => { :user => @user }),
+      :user_name => (@user || {})[:name],
+      :user_id => (@user || {})[:id]
+    }
+  end
+
   def configure_export
     render :partial => "contacts/contact_export", :locals => {:csv_headers => export_contact_fields}
   end
@@ -151,7 +160,7 @@ class ContactsController < ApplicationController
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
-      format.nmobile { render :json => @user.to_mob_json }
+      format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
     end
   end
   
@@ -305,4 +314,8 @@ protected
         @contacts = {:error => get_formatted_message(e)}
       end
     end
+
+		def load_user_by_phone
+			@user = Freshfone::Search.search_user_with_number(params[:PhoneNumber])
+		end
 end

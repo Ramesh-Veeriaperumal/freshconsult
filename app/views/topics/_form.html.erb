@@ -1,52 +1,68 @@
-<ul class="ui-form">
-	<li>
-		<label for="topic_title"><%= t('topic.name') %>*</label>
-		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %></div>
-	</li>	 
-	<li>
-		<label for="topic_body"><%= t('message') %></label>
-		<%= form.rich_editor(:body_html, 
+<div class="form-horizontal">
+	<div class="control-group">
+		<label for="topic_title" class="control-label"><%= t('topic.name') %>*</label>
+		<div class="controls">
+			<%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="topic_body" class="control-label"><%= t('message') %></label>
+		<div class="controls">
+			<%= form.rich_editor(:body_html, 
 			:value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-			:tabindex => 20, :height => "250px", 'editor-type' => :forum) %>
-	</li>
+			:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
+		</div>
+	</div>
 	<% if privilege?(:view_admin) and not @topic.new_record? %>
-		<li id="topic_forum_id">
-	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
-	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
-		</li>
+		<div id="topic_forum_id" class="control-group">
+	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
+	  		<div class="controls">
+	  			<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
+	  		</div>
+		</div>
 	<% end %>
-	<li class="inlineChecklist">
+	<div class="inlineChecklist control-group">
 		<% if privilege?(:view_admin) or current_user.moderator_of?(@topic.forum) %>
-			<label>
-				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
-			</label>
-			<label>
-				<%= form.check_box :locked %> <%= t('topic.locked') %>
-			</label>
+			<div class="controls">
+				<div class="checkbox inline">
+					<%= form.check_box :sticky %> <%= t('topic.sticky') %>
+				</div>
+				<div class="checkbox inline">
+					<%= form.check_box :locked %> <%= t('topic.locked') %>
+				</div>
+			</div>
 		<% end %>
-	</li>	  
-	<li>
-		<%= render :partial=> "/forum_shared/attachment_form" %>
-	</li>
-	
-	<% unless @topic.new_record? %>
-	<div class="attachment-list-container">
-	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
-	    <table class="attachment-list">
-	      <%= render(
-	        :partial => '/helpdesk/shared/attachment', 
-	        :collection => @topic.posts.first.attachments,
-	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-	    </table>
+	</div>	  
+	<div class="control-group">
+		<div class="controls">
+			<%= render :partial=> "/forum_shared/attachment_form" %>
+			<% unless @topic.new_record? %>
+				<div class="attachment-list-container">
+					<ul class="attachment_list">
+					    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>	
+						<%= render(
+						:partial => '/helpdesk/shared/attachment', 
+						:collection => @topic.posts.first.attachments,
+						:locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+					</ul>
+				</div>
+			<%end%>
+		</div>
+	</div>
+	<% if is_application_installed?("screenr") %>
+	  <div class="control-group">
+	  	<div class="controls">
+			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+		</div>
 	  </div>
-	<%end%>
-</ul>
+	<% end %>
+</div>
 
 <% javascript_tag do %>
 	jQuery("#topic_locked").click(function(ev){
 		jQuery("#monitor-topic-lable").toggle(!this.checked);
 	});
-	jQuery("#monitor-topic-lable").toggle(!jQuery("#topic_locked").checked);
+	 .toggle(!jQuery("#topic_locked").checked);
 <% end %>
 
 <script id="file-list-template" type="text/x-jquery-tmpl">			

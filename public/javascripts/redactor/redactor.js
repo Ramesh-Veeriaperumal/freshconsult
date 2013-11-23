@@ -737,8 +737,8 @@ Redactor.prototype = {
 		// FF fix
 		if ($.browser.mozilla)
 		{
-			document.execCommand('enableObjectResizing', false, false);
-			document.execCommand('enableInlineTableEditing', false, false);			
+			// document.execCommand('enableObjectResizing', false, false);
+			// document.execCommand('enableInlineTableEditing', false, false);			
 		}
 			
 		// focus
@@ -2712,12 +2712,43 @@ Redactor.prototype = {
 	{
 		var data = $('#redactor_insert_video_area').val();
 		data = this.stripTags(data);
-
 		this.restoreSelection();
 		this.execCommand('inserthtml', data);
 		this.modalClose();
 	},
 
+	setDefaultSelection: function() {
+		if(!this.getSelection().getRangeAt(0).commonAncestorContainer.isEqualNode(this.$editor.get(0)))
+		{
+				var my_selection = this.getSelection();
+				my_selection.removeAllRanges();
+				var my_range = document.createRange();
+				my_range.setStart(this.$editor.get(0),0);
+				my_range.setEnd(this.$editor.get(0),0);
+				my_selection.addRange(my_range);
+		}
+	},
+	
+	insertExternal: function(html) {
+		this.$editor.focus();
+		this.setDefaultSelection();
+		
+		var iframe = $(this.stripTags(html)).get(0);
+		this.execCommand('inserthtml', this.stripTags(html));
+		var selection = this.getSelection();
+        var range = document.createRange();
+        selection.removeAllRanges();
+		this.$editor.find('iframe').each(function()
+		{
+			if($(this).attr('src') == $(iframe).attr('src'))
+			{
+                range.selectNode($(this).get(0));
+                range.collapse(false);
+                selection.addRange(range);
+			}
+		});
+		this.syncCode();
+	},
 	// INSERT IMAGE
 	imageEdit: function(e)
 	{
@@ -3735,6 +3766,11 @@ $.fn.setFocus = function()
 $.fn.execCommand = function(cmd, param)
 {
 	this.data('redactor').execCommand(cmd, param);
+};
+
+$.fn.insertExternal = function(html)
+{
+	this.data('redactor').insertExternal(html);
 };
 
 })(jQuery);

@@ -16,7 +16,7 @@ Authority::Authorization::PrivilegeList.build do
                       :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                       :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
                       :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                      :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets]
+                      :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary]
     resource :"helpdesk/subscription"
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -34,6 +34,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
+    
+    #Freshfone
+    resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
+    resource :"freshfone/ivr"
+    resource :"freshfone/user"
+    resource :"freshfone/call_history"
+    resource :"freshfone/call_transfer", :only => [:initiate]
+    resource :"freshfone/device", :only => [:recorded_greeting]
+    resource :"freshfone/queue", :only => [:bridge]
 
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"
@@ -159,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
 	view_contacts do
-	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv]
+	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv, :freshfone_user_info]
 	 resource :customer, :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
@@ -265,7 +274,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/widget_config"
     resource :"integrations/application"
     resource :"integrations/installed_application"
-    resource :"integrations/google_account"     
+    resource :"integrations/google_account"
+    resource :"admin/freshfone"
+    resource :"admin/freshfone/number"
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
@@ -284,6 +295,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
+    resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
   end
 

@@ -1,0 +1,209 @@
+--- 
+ES: 
+  national: 1.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Spain
+EE: 
+  national: 1.0
+  address_required: false
+  beta: true
+  name: Estonia
+SV: 
+  address_required: false
+  local: 10.0
+  beta: true
+  name: El Salvador
+SK: 
+  address_required: true
+  local: 1.0
+  beta: false
+  name: Slovakia
+SE: 
+  national: 1.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Sweden
+MX: 
+  address_required: true
+  local: 3.0
+  beta: false
+  name: Mexico
+MT: 
+  national: 5.0
+  address_required: false
+  beta: true
+  name: Malta
+BR: 
+  address_required: false
+  local: 3.0
+  beta: true
+  name: Brazil
+BH: 
+  address_required: false
+  local: 8.0
+  beta: true
+  name: Bahrain
+BG: 
+  address_required: true
+  local: 1.0
+  beta: false
+  name: Bulgaria
+BE: 
+  national: 1.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Belgium
+PT: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: Portugal
+PR: 
+  national: 8.0
+  address_required: false
+  beta: false
+  name: Puerto Rico
+PL: 
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Poland
+PE: 
+  address_required: false
+  local: 5.0
+  beta: true
+  name: Peru
+JP: 
+  address_required: false
+  local: 5.0
+  beta: false
+  name: Japan
+GR: 
+  address_required: true
+  local: 1.0
+  beta: false
+  name: Greece
+GB: 
+  toll_free: 2.0
+  national: 1.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: United Kingdom
+US: 
+  toll_free: 2.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: United States
+DO: 
+  address_required: false
+  local: 7.0
+  beta: true
+  name: Dominican Republic
+DK: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: Denmark
+RO: 
+  address_required: true
+  local: 5.0
+  beta: false
+  name: Romania
+LV: 
+  address_required: true
+  local: 1.0
+  beta: true
+  name: Latvia
+LU: 
+  address_required: true
+  local: 3.0
+  beta: true
+  name: Luxembourg
+LT: 
+  address_required: false
+  local: 1.0
+  beta: true
+  name: Lithuania
+AT: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: Austria
+AU: 
+  address_required: true
+  local: 3.0
+  beta: false
+  name: Australia
+ZA: 
+  national: 1.0
+  address_required: false
+  beta: true
+  name: South Africa
+IT: 
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Italy
+IL: 
+  address_required: false
+  local: 5.0
+  beta: false
+  name: Israel
+IE: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: Ireland
+FR: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: France
+FI: 
+  national: 1.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Finland
+NZ: 
+  address_required: false
+  local: 3.0
+  beta: false
+  name: New Zealand
+NL: 
+  national: 1.0
+  address_required: false
+  beta: false
+  name: The Netherlands
+CZ: 
+  address_required: true
+  local: 1.0
+  beta: false
+  name: Czech Republic
+CY: 
+  national: 4.0
+  address_required: false
+  beta: true
+  name: Cyprus
+CH: 
+  address_required: true
+  local: 1.0
+  beta: false
+  name: Switzerland
+CA: 
+  toll_free: 2.0
+  address_required: false
+  local: 1.0
+  beta: false
+  name: Canada
+HK: 
+  national: 8.0
+  address_required: false
+  beta: false
+  name: Hong Kong

@@ -53,7 +53,7 @@ Rails::Initializer.run do |config|
   #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
   config.autoload_paths += %W(#{RAILS_ROOT}/app/observers)
   Dir.chdir("#{RAILS_ROOT}/app/observers") do
-    config.active_record.observers = Dir["*_observer.rb"].collect {|ob_name| ob_name.split(".").first}
+    config.active_record.observers = Dir.glob("**/*_observer.rb").collect {|ob_name| ob_name.split(".").first}
   end
   #To load all the i18n files
   #config.i18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', '**', '*.{rb,yml}')]
@@ -67,7 +67,7 @@ Rails::Initializer.run do |config|
   # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
   config.time_zone = 'Chennai'  
  
-  
+  ActiveSupport::JSON.backend = "JSONGem"
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 

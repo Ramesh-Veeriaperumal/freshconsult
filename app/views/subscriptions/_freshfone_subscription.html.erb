@@ -1,0 +1,57 @@
+<% if feature?(:freshfone) %>
+	<%= include_cloudfront_css :freshfone_admin %>
+	<div class="freshfone_subscription">
+		<h3 class= "title">Freshfone</h3>
+		<ul class="ui-form">
+			<li class="current-balance">
+				<p class="current-balance-text">Your current balance</p>
+				<div class="current-balance-amt"><%= current_freshfone_balance(@freshfone_credit) %></div>
+			</li>
+		  <li class="recharge-now">
+		  	<% if current_account.subscription.active? %>
+		  		<% if @freshfone_credit.present? %>
+			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> Purchase Freshfone Credits </a></div>
+			  		<div class="show-freshfone-credits" style="display:none;" >
+			  			<%= render :partial => "purchase_freshfone_credits" %>
+			  		</div>
+				  	<div class="choose-plan-title"><a class="auto-recharge" href="#"> Setup Auto Recharge </a></div>
+				  	<div class="show-freshfone-auto-recharge" style="display:none;" >
+			  			<%= render :partial => "freshfone_auto_recharge" %>
+			  		</div>
+			  	<% else %>
+			  		<%= render :partial => "purchase_freshfone_credits" %>
+			  	<% end %>
+				<% else %>
+			  	<p class="alert alert-error">
+						<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= "Enter payment information to purchase Freshfone credits" %>
+						<br />                
+						<br />                                               
+						<%= link_to( t('admin.day_passes.index.add_payment_info'), billing_subscription_url, :class => "btn" ) %> 
+				 </p>
+			 <% end %>
+		  </li>
+		</ul>
+	</div>
+<% end %>
+
+<script type="text/javascript">
+	(function($){
+
+    $(".recharge-funds").live("click", function(ev){
+      ev.preventDefault();
+      $('.show-freshfone-credits').animate({
+        height: ['toggle', 'linear']
+      }, 100, 'easeInOut');
+      //$(".recharge-funds").toggleClass("plan-expand-click");
+    });
+
+    $(".auto-recharge").live("click", function(ev){
+      ev.preventDefault();
+      $('.show-freshfone-auto-recharge').animate({
+        height: ['toggle', 'linear']
+      }, 100, 'easeInOut');
+      //$(".recharge-funds").toggleClass("plan-expand-click");
+    });
+
+  })(jQuery);
+</script>

@@ -23,6 +23,12 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 	end
   end
 
+  def select_shard(&block)
+    Sharding.select_shard_of(params[:tracking]) do 
+        yield 
+    end
+  end
+
   protected
 
     def ensure_right_parameters

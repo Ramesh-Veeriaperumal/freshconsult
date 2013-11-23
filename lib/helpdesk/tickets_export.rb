@@ -69,7 +69,7 @@ class Helpdesk::TicketsExport
   def self.csv_export export_params
     csv_hash = export_params[:export_fields]
     record_headers = csv_hash.keys.sort
-    csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
+    csv_string = CSVBridge.generate do |csv|
       csv_headers = record_headers.collect {|header| csv_hash[header]}
       csv << csv_headers
       ticket_data(export_params,csv)

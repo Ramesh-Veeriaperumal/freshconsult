@@ -135,6 +135,7 @@
 .cont-primary #marker{ @include symbols-sprite(tickSelect); }
 
 .sla_policy_form .delete, .sla_policy_form .delete_conditions{ @include symbols-sprite(delete);  }
+.ivr-menu .delete-symbol{ @include symbols-sprite(delete);  }
 
 /* %% tkt_details  */
 // Fix!!! - Remove content controls
@@ -206,4 +207,8 @@ a.new_ticket span{ @include symbols-sprite(add); }
 .ui-solution-suggest:after{ @include symbols-sprite(new-solution-arrow); }
 
 
+/* Freshfone symbols */
+.phone-icons { @include symbols-sprite(phone); }
+.mobile-icons { @include symbols-sprite(mobile); }
+.phone-icons, .mobile-icons { padding-left: 20px; }
 #scroll-to-top { @include symbols-sprite(scroll-to-top); }

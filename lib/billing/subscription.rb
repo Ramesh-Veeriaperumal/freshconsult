@@ -88,7 +88,11 @@ class Billing::Subscription
   end
 
   def buy_day_passes(account, quantity)
-    ChargeBee::Invoice.charge_addon( add_on_data(account, quantity) )                                           
+    ChargeBee::Invoice.charge_addon( add_on_data(account, quantity) )
+  end
+
+  def purchase_freshfone_credits(account, quantity)
+    ChargeBee::Invoice.charge_addon( freshfone_addon(account, quantity) )
   end
 
   def cancel_subscription(account)
@@ -140,6 +144,14 @@ class Billing::Subscription
       { 
         :subscription_id => account.id,
         :addon_id => account.plan_name.to_s, 
+        :addon_quantity => quantity
+      }
+    end
+
+    def freshfone_addon(account, quantity)
+      { 
+        :subscription_id => account.id,
+        :addon_id => "freshfonecredits", 
         :addon_quantity => quantity
       }
     end

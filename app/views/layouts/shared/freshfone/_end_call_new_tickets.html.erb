@@ -1,0 +1,26 @@
+<span class="title back">&lt; <%= t('freshfone.widget.back') %> - </span><b class="title"> <%= t('freshfone.widget.new_ticket') %></b>
+<div class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label" for="ticketSubject"><%= t('freshfone.widget.subject') %></label>
+		<div class="controls">
+			<input type="text" name="ticket_subject" id="ticketSubject" />
+		</div>
+	</div>
+	<div class="requester_name_container">
+		<div class="control-group">
+			<label class="control-label" for="requesterName"><%= t('freshfone.widget.requester_name') %></label>
+			<div class="controls">
+				<input type="text" name="requester_name" id="requesterName" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="requesterEmail"><%= t('freshfone.widget.requester_email') %></label>
+			<div class="controls">
+				<input type="text" name="requester_name" id="requesterEmail" />
+			</div>
+		</div>
+	</div>
+</div>
+<div class="btn-group ">
+	<button class="btn btn-primary save_ticket"><%= t('freshfone.widget.save') %></button>
+</div>

@@ -188,6 +188,19 @@ class Account < ActiveRecord::Base
   has_many :portal_templates,  :class_name=> 'Portal::Template'
   has_many :portal_pages,  :class_name=> 'Portal::Page'
 
+  #Freshfone
+  has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
+  has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"
+  has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
+  has_many :ivrs, :class_name => 'Freshfone::Ivr'
+  has_many :freshfone_calls, :class_name => 'Freshfone::Call'
+  delegate :find_by_call_sid, :to => :freshfone_calls
+  has_one  :freshfone_credit, :class_name => 'Freshfone::Credit'
+  has_many :freshfone_payments, :class_name => 'Freshfone::Payment'
+  delegate :freshfone_subaccount, :allow_nil => true, :to => :freshfone_account
+  has_many :freshfone_users, :class_name => "Freshfone::User"
+  
+  has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   
   has_one :chat_setting

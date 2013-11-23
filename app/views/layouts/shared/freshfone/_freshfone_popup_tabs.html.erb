@@ -1,0 +1,43 @@
+<ul class="popupbox-tabs ongoing hide">
+	<li>
+		<a href="#no_popup" class="end_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
+		</a>
+	</li><li class="call_details no_action">
+		<div id="incall_user_info"></div>
+		<a href="#" id="call_timings" class="call_duration">00:00</a>
+	</li><li>
+		<a href="#no_popup" id="mute" class="mute tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.mute') %>"></a>
+	</li><li>
+		<a href="#transfer_call" class="transfer_call tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.transfer_call') %>"></a>
+	</li><li>
+		<a href="#freshfone_dialpad" class="ongoingDialpad tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.dialpad') %>"></a>
+	</li><li>
+		<a href="#freshfone_add_notes" class="add_notes tooltip" data-toggle="popupbox"
+			 data-offset=12 title="<%= t('freshfone.widget.call_notes') %>"></a>
+	</li>
+	<!-- <li>
+		<a href="#recent_tickets" class="recent_tickets" data-toggle="popupbox"></a>
+	</li> -->
+	<!-- <li class="pause">
+		<a href="#" data-toggle="popupbox"></a>
+	</li> -->
+</ul>
+
+<ul class="popupbox-tabs outgoing hide">
+	<li>
+		<a href="#no_popup" 
+			 class="availabilityOnPhone tooltip
+							<%= current_user.available_on_phone? ? 'active' : '' %> persist"
+			 data-toggle="popupbox" data-placement="above" data-html="true"
+			 title="<%= current_user.available_on_phone? ? t('freshfone.widget.on_phone') : t('freshfone.widget.on_browser') %>"></a>
+	</li><li>
+		<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.dialpad') %>"></a>
+	</li><li>
+		<a href="#recent_calls" class="recentCalls tooltip" data-toggle="popupbox"
+			 data-offset=12 title="<%= t('freshfone.widget.recent_calls') %>"></a>
+	</li>
+</ul>

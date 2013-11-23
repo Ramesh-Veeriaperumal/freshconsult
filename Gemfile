@@ -19,7 +19,7 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3", :platforms => :ruby_18
-gem 'debugger', :platforms => :ruby_19
+gem 'debugger', "1.6.2", :platforms => :ruby_19
 gem 'test-unit', '1.2.3', :platforms => :ruby_19
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
@@ -38,6 +38,8 @@ gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
+gem "twilio-ruby"
+gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
@@ -86,6 +88,10 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem 'ancestry', '1.3'
+gem 'rubytree'
+gem 'global_phone'
+# gem "global_phone_dbgen", "~> 1.0.0"
 gem "useragent", "~> 0.4.16"
 
 gem "active_record_shards","2.7.0", :require => 'active_record_shards'

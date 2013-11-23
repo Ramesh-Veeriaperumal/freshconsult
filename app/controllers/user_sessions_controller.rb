@@ -1,5 +1,7 @@
 require "digest"
 class UserSessionsController < ApplicationController
+
+  SSO_ALLOWED_IN_SECS = 1800
   
 require 'gapps_openid'
 require 'rack/openid'
@@ -58,13 +60,13 @@ include Redis::TicketsRedis
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
         remove_old_filters  if @current_user.agent?
-        flash[:notice] = t(:'flash.login.success')
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
         flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     else
+      flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
     end  
   end
@@ -124,9 +126,7 @@ include Redis::TicketsRedis
      return generated_hash;
   end
 
-  def gen_hash_from_params_hash
-    Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
-  end
+  
   
   def show
     redirect_to :action => :new
@@ -348,10 +348,27 @@ include Redis::TicketsRedis
     end
 
     def check_sso_params
-      if params[:name].blank? or params[:email].blank? or params[:hash].blank?
+      time_in_utc = get_time_in_utc
+      if ![:name, :email, :hash].all? {|s| params.key? s} 
         flash[:notice] = t(:'flash.login.sso.expected_params')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),time_in_utc )
+        flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
       end
+    end
+
+    def gen_hash_from_params_hash
+      if params[:timestamp].blank?
+        Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+      else
+        digest  = OpenSSL::Digest::Digest.new('MD5')
+        OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,params[:name]+params[:email]+params[:timestamp])
+      end
+    end
+
+    def get_time_in_utc
+      Time.now.getutc.to_i
     end
     
     def note_failed_login

@@ -190,3 +190,24 @@ input[type="submit"].btn {
     *padding-bottom: 1px;
   }
 }
+
+//Record Button
+.btn-record{
+ &:before{
+  content:"";
+  width:10px;
+  height:10px;
+  background:#d00;
+  @include border-radius(100%);
+  display: inline-block;
+  margin: 3px 5px 0 -8px;
+  } 
+}
+
+.btn-help-rounded{
+  background: none;
+  border-color: #ddd;
+  box-shadow: none;
+  border-radius: 100%;
+  padding: 1px 6px;
+}

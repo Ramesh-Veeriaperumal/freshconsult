@@ -1,0 +1,37 @@
+<%= include_cloudfront_css :freshfone_message_select %>
+<%= include_cloudfront_css :freshfone_settings %>
+<%= include_cloudfront_css :freshfone_ivr %>
+<%= include_cloudfront_css :'360player' %>
+
+<ul data-tabs="tabs" class="tabs admin-tabs">
+	<div class="lead">
+		<%= "#{t('freshfone.admin.numbers.manage')} #{@number.display_number}" %>
+	</div>
+	<li class="active first">
+		<a id="settings-tab" href="#settings"><%= t('freshfone.admin.general') %></a>
+	</li>
+	<li>
+		<a id="welcome_messages-tab" href="#welcome_messages"><%= t('freshfone.admin.greetings') %></a>
+	</li>
+</ul>
+<div class="tab-content">
+	<div id="settings" class="tab-pane active">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_settings" %>
+	</div>
+	<div id="welcome_messages" class="tab-pane freshfone-ivr">
+		<%= render :partial => '/admin/freshfone/freshfone_admin_ivr' %>
+	</div>
+</div>
+		
+
+<% javascript_tag do %>
+	if (typeof freshfone === "undefined") { freshfone = {}; }
+	freshfone.is_ivr_active = <%= @ivr.active %>;
+	freshfone.IVR_TURN_OFF_MESSAGE = '<%= t('freshfone.admin.ivr.turn_off') %>';
+	freshfone.IVR_TURN_ON_MESSAGE = '<%= t('freshfone.admin.ivr.turn_on') %>';
+	freshfone.number_message_settings_json = <%= @number.to_json.html_safe %>;
+<% end %>
+
+<%= include_cloudfront_js :freshfone_settings %>
+<%= include_cloudfront_js :freshfone_ivr %>
+<%= include_cloudfront_js :'360player' %>
