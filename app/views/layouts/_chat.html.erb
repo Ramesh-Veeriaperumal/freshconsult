@@ -1,4 +1,4 @@
-<%if(current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?))
+<%if(current_user && current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
 %>
