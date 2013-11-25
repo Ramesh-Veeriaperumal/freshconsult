@@ -106,8 +106,6 @@
 	    var version = parseFloat(browser[1]);
 	    if ((version >= 5.5) && (version < 7) && (document.body.filters)) {
 	      item.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url + "', sizingMethod='crop')";
-	    } else {
-	      item.style.backgroundImage = 'url(' + url + ')';
 	    }
 		return item;
 	 }
