@@ -168,12 +168,14 @@
   .list-page-body{
     margin-top:-10px;
     table{
+      table-layout:fixed;
       td.name{
-        width: 30%;
+        width: 33%;
       }
       td{
-        width:23%;
+        width:22%;
         height:35px;
+        padding-right:0;
         .tag_text{
           max-width:50%;
           top: 5px;

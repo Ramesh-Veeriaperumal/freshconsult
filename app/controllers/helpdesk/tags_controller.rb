@@ -45,8 +45,7 @@ class Helpdesk::TagsController < ApplicationController
   def remove_tag
     tag_uses = Helpdesk::TagUse.find_all_by_taggable_type(params[:tag_type], :conditions => ["tag_id = ? ", params[:tag_id]])
     tag_uses.each {|t| t.destroy}
-    tag_count = Helpdesk::Tag.find(params[:tag_id]).tag_uses_count
-    render :json => {:tag_usage_count => tag_count }
+    render :json => {:tag_uses_removed_count => tag_uses.size }
   end
 
 

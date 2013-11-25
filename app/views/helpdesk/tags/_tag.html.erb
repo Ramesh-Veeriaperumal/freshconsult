@@ -1,8 +1,12 @@
+<% ticket_tags =  tag.tickets.visible.size
+   customer_tags = tag.contacts.visible.size
+   article_tags =  tag.solution_articles.size
+%>
 <tr class="<%= cycle('stripe', '') %>" id="<%= dom_id(tag) %>" data-tag-id="<%=tag.id%>" >
   <td class="name">
     <%= check_box_tag('ids[]', tag.to_param,  false, :class => 'selector') %>
     <span class="tags-checkbox-label">
-        <span class="tags-total-counter"><%= tag.tag_uses_count  %></span>
+        <span class="tags-total-counter"><%= ticket_tags + article_tags + customer_tags  %></span>
         <span> <strong>
           <a href="#" class="tag_name tooltip" id="tag_name_<%= tag.id.to_s %>" data-tag-name="<%= tag.name %>" title="<%= if tag.name.length>12 then  h(tag.name) end %>" ><%= tag.name.length>12 ? h(tag.name).slice(0,10)+"..." : h(tag.name) %></a> </strong>
         <span id="tag_text_container_<%= tag.id.to_s %>" class="hide">
@@ -15,7 +19,7 @@
 
   <%= render :partial => 'tag_count', :locals => {
           :tag => tag,
-          :count => tag.tickets.visible.size,
+          :count => ticket_tags,
           :plurals => [t('.ticket'), t('.tickets')],
           :type => "Helpdesk::Ticket",
           :dom_type => 'Tickets',
@@ -25,7 +29,7 @@
 
   <%= render :partial => 'tag_count', :locals => {
           :tag => tag,
-          :count => tag.contacts.visible.size,
+          :count => customer_tags,
           :plurals => [t('.customer'),t('.customers')],
           :type => "User",
           :dom_type => 'Customers',
@@ -34,7 +38,7 @@
 
   <%= render :partial => 'tag_count', :locals => {
           :tag => tag,
-          :count => tag.solution_articles.size,
+          :count => article_tags,
           :plurals => [t('.article'),t('.articles')],
           :type => "Solution::Article",
           :dom_type => 'Articles',
