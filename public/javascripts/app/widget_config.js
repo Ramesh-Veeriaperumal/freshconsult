@@ -100,8 +100,10 @@ var WidgetConfig = function () {};
 		buildHash: function () {
 			var formArray = this.activeForm.serializeArray(), $this = this;
 			if($("[name=buttonType]:checked").val() == "image")
-				this.formHash.set('backgroundImage', 'http://localhost:3000/widget/help-button.png');	//Setting a default empty value
-
+			{
+				this.formHash.set('backgroundImage', this.asset_url + '/help-button.png');	//Setting a default empty value
+				$('#backgroundImage').attr("placeholder", this.asset_url + '/help-button.png')
+			}
 			$.each(formArray, function (index, item) {
 				var $item = $this.activeForm.find('[name=' + item.name + ']');
 				$this.updateHashFor(item, $item);
