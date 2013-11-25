@@ -38,7 +38,7 @@ function toggleGroup(access_id)
 
 
 <%= f.error_messages :object_name => 'canned_response_response' %>
-<ul>
+<ul class="cnt">
 	<li>
 		<%= f.label(:title, t('.response_name')) %>
 		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
@@ -48,7 +48,7 @@ function toggleGroup(access_id)
 			<%= t('message') %>
 			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
 		</label>
-   		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
+   		<%= f.text_area :content_html, :class => "ca_content_body required_redactor", :id => 'ca-content' %>		
 	</li>
 	<li>
       <div class="control-group"><%= render "attachment_form" %></div>

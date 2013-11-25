@@ -42,11 +42,9 @@ strong {
   margin-top:0;
   padding-top:0;
 }
-.row-fluid [class*="span"] {
-  &.clear-left-margin{
+.clear-left-margin{
     margin-left: 0;
   }
-}
 /* fix for form label center alignment*/
 .control-label{
   padding-top: 5px;
@@ -54,6 +52,12 @@ strong {
 
 .muted {
   color: #999999;
+}
+
+small.input-information{
+  color: $grayLight;
+  margin-top: -7px;
+  display: block;
 }
 .page-header {
   padding-bottom: 9px;
@@ -435,6 +439,11 @@ ul.inline > li, ol.inline > li {
   padding-left: 8px;
 }
 
+
+.text-right{
+  text-align: right;
+}
+
 .widget h6{ text-transform: none; }
 .info-text{ color:#888888; }
 .list-widget{ 
@@ -645,6 +654,7 @@ ul.inline > li, ol.inline > li {
     margin-left: 0px;
   }
 }
+
 .btn-primary.btn-mini{
   padding-left:10px;
   padding-right:10px;
@@ -655,6 +665,19 @@ ul.inline > li, ol.inline > li {
     margin-left: 2px;
   }
 }
+
+.left-aligned .control-group {
+  .toggle-button {
+    margin-left: 0;
+  }
+  .tab {
+    margin-left: 78px;
+  }
+  strong{
+    margin-left: 17px
+    }
+}
+
 .clear-text-wrap{
   position:relative;
     .input-padding{

@@ -1,6 +1,6 @@
 <% javascript_tag do %>	
 	jQuery(document).ready(function(){
-		jQuery("input[name$=_subject_template]").live("focus", function(){
+		jQuery("input.email-notification-subject").live("focus", function(){
 			active_email_body = jQuery(this);
 		});
 			
@@ -11,7 +11,9 @@
 
 
 	jQuery("#placeholder-list-1 a").click(function(ev){       
+		
       if(active_email_body.get(0)){
+
         var placeHolderText = jQuery(this).data("placeholder");  
         
 

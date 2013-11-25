@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :unless => :customer?
   validate :has_role?, :unless => :customer?
 
-  attr_accessor :import, :highlight_name, :highlight_job_title
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email
   
   attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
@@ -202,8 +202,17 @@ class User < ActiveRecord::Base
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
+    self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
+    if (!deleted and !email.blank?)
+      if self.language.nil?
+        args = [ portal,false, params[:email_config]]
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
+          nil, 5.minutes.from_now) 
+      else
+        deliver_activation_instructions!(portal,false, params[:email_config])
+      end
+    end
     true
   end
 
@@ -355,7 +364,7 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder == self ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
   def restricted?

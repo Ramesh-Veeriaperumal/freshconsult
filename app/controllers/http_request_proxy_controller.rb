@@ -22,10 +22,19 @@ class HttpRequestProxyController < ApplicationController
           params[:custom_auth_header] = {"API-Version" => "2.0", "API-AppId" => key_hash["app_id"] , "API-Username" => installed_app.configs_username, "API-Password" => installed_app.configsdecrypt_password}
         elsif params[:app_name] == "surveymonkey" and params[:domain]=='api.surveymonkey.net'
           params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
+        elsif params[:app_name] == "harvest"
+          harvest_auth(installed_app)
         else
           params[:password] = installed_app.configsdecrypt_password
         end
       end
+    end
+
+    def harvest_auth(installed_app)
+      user_credential = installed_app.user_credentials.find_by_user_id(current_user)
+      return if user_credential.blank?
+      params[:username] = user_credential.auth_info[:username]
+      params[:password] = Base64.decode64(user_credential.auth_info[:password])
     end
 
     def authenticated_agent_check

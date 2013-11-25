@@ -304,6 +304,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     time_spent
   end
 
+  def time_tracked_hours
+    seconds = time_tracked
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600) / 60).to_i
+    "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}"
+  end
+
   def train(category)
     self[:trained] = true
     self[:spam] = (category == :spam)

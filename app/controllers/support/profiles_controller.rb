@@ -12,7 +12,7 @@ class Support::ProfilesController < SupportController
       flash[:notice] = t(:'flash.profile.update.success')
       redirect_to :back
     else
-      logger.debug "error while saving #{@obj.errors.inspect}"
+      logger.debug "error while saving #{@profile.errors.inspect}"
       redirect_to :action => 'edit'
     end
   end

@@ -9,6 +9,7 @@ module ApplicationHelper
   include MemcacheKeys
 
   require "twitter"
+  require "digest"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
 
@@ -448,10 +449,20 @@ module ApplicationHelper
     if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
+    elsif user.email # User will see his gravatar if he has no profile pic uploaded or facebook login . 
+      gravatar(user.email , profile_size)
     else
       "/images/fillers/profile_blank_#{profile_size}.gif"
     end
-  end   
+  end
+
+  #Generate gravatar link with default pointing to freshdesk default image
+  def gravatar(email , profile_size = :thumb )
+      size = (profile_size == :medium)?  90 : 36;
+      email_hash = Digest::MD5.hexdigest(email.strip.downcase)
+      defaultImg = URI.encode("#{request.protocol}#{request.host}/images/fillers/profile_blank_#{profile_size}.gif")
+      request.ssl? ? "https://secure.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}" : "http://www.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}"
+  end
   
   def twitter_avatar(handle, profile_size = "thumb")
     handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"

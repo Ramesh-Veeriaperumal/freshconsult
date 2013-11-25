@@ -107,6 +107,7 @@
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :salesforce, :collection => {:fields_metadata => :get}
+    integration.resources :user_credentials
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
@@ -132,6 +133,7 @@
                      :reply_to_email_disable => :post }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
+    admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
     admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calendars
     admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }
@@ -153,7 +155,7 @@
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
     admin.resources :quests, :member => { :toggle => :put }
-    admin.resources :zen_import, :collection => {:import_data => :any }
+    admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
@@ -166,6 +168,8 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+    search.ticket_related_solutions    '/related_solutions/ticket/:ticket/', :controller => 'home', :action => 'related_solutions'
+    search.ticket_search_solutions    '/search_solutions/ticket/:ticket/', :controller => 'home', :action => 'search_solutions'
   end
 
   map.namespace :reports do |report|
@@ -424,8 +428,6 @@
     
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
-
-    helpdesk.resources :notifications, :only => :index
 
     helpdesk.resources :commons 
     

@@ -1,9 +1,4 @@
 <div class="sidepanel">
-	<h3 class="title"><%=t('email_notifications.title')%></h3>
-	<p><%=t('email_notifications.helpcard.info1').html_safe%></p> 
-	<p><%=t('email_notifications.helpcard.info2').html_safe%></p> 
-    <%= tour_button(t('email_notifications.helpcard.tour1').html_safe, '50166b42e13a4631dc000002') %>
-	</br>
-	<p><%=t('email_notifications.helpcard.info3')%></p> 
-    <%= tour_button(t('email_notifications.helpcard.tour2').html_safe, '508a3e1cbc1fbe7f1d0001f4') %>
+	<h3 class="title"><%=t("email_notifications.helpcard.#{category}_#{type}.topic").html_safe%></h3>
+	<p><%=t("email_notifications.helpcard.#{category}_#{type}.info1").html_safe%></p> 
 </div>

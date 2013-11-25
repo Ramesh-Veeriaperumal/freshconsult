@@ -43,6 +43,7 @@ jQuery(document).ready(function() {
 		earliestDate:Date.parse('04/01/2013'),
 		latestDate:Date.parse('Today-1'),
 		presetRanges: [
+		  {text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
 			{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
 			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
 			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},

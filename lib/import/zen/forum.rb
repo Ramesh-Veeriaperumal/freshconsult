@@ -92,6 +92,7 @@ module Import::Zen::Forum
           post.account_id = @current_account.id
           post.save
           topic_prop.attachments.each do |attachment|   
+              increment_key 'attachments_queued'
               Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
                                                                     :attachment_url => URI.encode(attachment.url), 
                                                                     :model => :post,
@@ -121,6 +122,7 @@ module Import::Zen::Forum
       post.save
     
       post_prop.attachments.each do |attachment|   
+        increment_key 'attachments_queued'  
         Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :post,
@@ -163,6 +165,7 @@ def save_solution_article topic_prop
     article.save
 
     topic_prop.attachments.each do |attachment|   
+        increment_key 'attachments_queued'  
         Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => article.id, 
                                                               :attachment_url => URI.encode(attachment.url), 
                                                               :model => :article,

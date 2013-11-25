@@ -1,0 +1,32 @@
+<% content_for :sidebar do %>
+  
+<% end %>
+<div class="list-page">
+  <div class="list-page-header row-fluid">
+    <div class="span7">
+    	<div class="lead"><strong><%=t('zendesk_import.title')%></strong></div>
+      <div class="muted"><%= t('zendesk_import.details', :time => formated_date(@zendesk_import.created_at), :user => @importing_agent.user.name).html_safe%></div>
+    </div>
+    <div class="span5 muted align-right">
+      <br/><%= t('zendesk_import.autorefresh')%>
+    </div>
+  </div>
+  <div id="status_container">
+    <%= render :partial => 'status'%>
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+    new PeriodicalExecuter(refreshstatus, 60);
+  });   
+
+  function refreshstatus(){
+    jQuery.ajax({
+          url: "/admin/zen_import/status",
+          type: "GET",
+          success: function(data){
+             jQuery("#status_container").html(data);
+          }
+        });  
+  }     
+</script>

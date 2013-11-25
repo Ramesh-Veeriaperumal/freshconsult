@@ -1,13 +1,13 @@
-<h3 class="title"><%=t('solution.edit')%></h3>
+<h3 class="lead"><%=t('solution.edit')%></h3>
 <% form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
 	<%= render :partial => 'article_form', :locals => { :f => f } %>
-	<div class="button-container">
-    <% if privilege?(:delete_solution, @article) %>
-  		<div class="floatl">
-  			<%= link_to(t('delete'), solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :method => 'delete', :confirm => "#{t('solution.info8')}?", :class => "uiButton" ) %>
-  		</div>
-    <% end %>
-		<%= submit_tag t('save'), :class => "uiButton" %>    
-		<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "uiButton" ) %>
+	<div class="button-container align-right">
+	    <% if privilege?(:delete_solution, @article) %>
+	  		<div class="pull-left">
+	  			<%= link_to(t('delete'), solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :method => 'delete', :confirm => "#{t('solution.info8')}?", :class => "btn" ) %>
+	  		</div>
+	    <% end %>   
+		<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn" ) %>
+		<%= submit_tag t('save'), :class => "btn btn-primary" %> 
 	</div>
 <% end %>

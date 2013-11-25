@@ -12,20 +12,29 @@ class Admin::DataImportMailer < ActionMailer::Base
   end 
   
    def import_error_email(options={}) 
-    recipients    options[:email]
+    recipients    options[:user][:email]
     from          "support@freshdesk.com"
     subject       "Data Import for #{options[:domain]}"
     sent_on       Time.now
-    body          (options)
+    body          :user => options[:user][:name]
     content_type  "text/html"
   end 
 
   def import_format_error_email(options={}) 
-    recipients    options[:email]
+    recipients    options[:user][:email]
     from          "support@freshdesk.com"
     subject       "Data Import for #{options[:domain]}"
     sent_on       Time.now
-    body          (options)
+    body          :user => options[:user][:name]
+    content_type  "text/html"
+  end
+
+  def import_summary(options={})
+    recipients    options[:user][:email]
+    from          "support@freshdesk.com"
+    subject       "Import from Zendesk successful"
+    sent_on       Time.now
+    body          :user => options[:user][:name]
     content_type  "text/html"
   end 
   

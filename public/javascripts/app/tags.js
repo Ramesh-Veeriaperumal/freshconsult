@@ -281,7 +281,8 @@ $(document).ready(function(){
                     .addClass("muted disabled")
                     .find(".tag-label a ").replaceWith(count_id.split("_")[0]);
                 this_count_id.find(".cnt-label").html("0");
-                $("tr#helpdesk_tag_"+tag_id).find(".tags-total-counter").html(status["tag_usage_count"]);
+                var tag_total = $("tr#helpdesk_tag_"+tag_id).find(".tags-total-counter").html()-status["tag_uses_removed_count"]
+                $("tr#helpdesk_tag_"+tag_id).find(".tags-total-counter").html(tag_total);
 
             }
         });

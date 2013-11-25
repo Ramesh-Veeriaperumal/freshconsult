@@ -17,7 +17,7 @@ module HttpProxyMethods
   def surveymonkey_apikey(rest_url)
     MemcacheKeys.fetch('surveymonkey_consumer_secret') {
       key_hash = Integrations::OauthHelper.get_oauth_keys('surveymonkey')
-      key_hash['consumer_secret']
+      key_hash['options']['api_key']
     }
   end
   

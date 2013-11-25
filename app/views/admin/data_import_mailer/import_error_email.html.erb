@@ -1,13 +1,17 @@
+<p>Dear <%= @user %>,</p>
+<p>Our attempts to import data from your Zendesk account has failed.</p>
+<p>Reasons for failure could be one of following:</p>
 <p>
-Dear User,
-
+<ol>
+	<li>Your Zendesk backup URL has expired. </li>
+	<li>You have entered the wrong Zendesk credentials. </li>
+</ol>
 </p>
 <p>
-
-We couldn't import data from zendesk. The reason may be the zendesk credentials are not matching. Please enter the credentials correctly and re-try
+If your Zendesk credentials are correct, please request Zendesk for another Backup URL and try again. 
 </p>
 <p>
-Regards
-<br/>
-Freshdesk Team
+If you aren't sure what to do, please shoot an email to <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>. 
 </p>
+<p>Regards</p>
+<p>Freshdesk Team</p>

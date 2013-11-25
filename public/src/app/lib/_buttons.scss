@@ -440,6 +440,10 @@ div.action_buttons:hover{
   &, .on-label{
     @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset);
   }
+  &.toggle-disabled{
+    cursor: default;
+    @include opacity(0.35);
+  }
   .toggle-container{    
     width:200%;
     height:100%;
