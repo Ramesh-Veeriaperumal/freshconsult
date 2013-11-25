@@ -1,0 +1,47 @@
+<%= (link_to t('cancel'), admin_freshfone_index_path, :class => "btn pull-right") %>
+<h3 class="lead"><%= t('freshfone.admin.numbers.buy') %></h3>
+
+<div class="twilio-buy-numbers">
+	<ul data-tabs="tabs" class="tabs admin-tabs">
+		<li class="active first">
+			<a id="local-tab" href="#local"><%= t('freshfone.admin.local') %></a>
+		</li>
+		<li>
+			<a id="toll-free-tab" href="#toll-free"><%= t('freshfone.admin.toll_free') %></a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<div id="local" class="tab-pane active">
+			<%= render :partial => "local_search" %>
+		</div>			  
+		<div id="toll-free" class="tab-pane">
+			<%= render :partial => "toll_free_search" %>
+		</div>
+	</div>
+
+	<button class="hide" id="open-purchase-confirmation"
+		rel="freshdialog"
+		data-submit-label="<%=t('freshfone.admin.numbers.purchase')%>"
+		data-close-label="<%= t('cancel') %>"
+		data-width="543"
+		data-target="#purchase-confirmation" ></button>
+
+	<div id="purchase-confirmation" class="hide">
+		<div class="number-message">
+			<span class="label label-important"><%= t('freshfone.admin.important') %></span>
+			<strong class="number-rate"></strong> <%= t('freshfone.admin.numbers.purchase_alert') %>
+			<div class="address-required-alert hide">
+			 <%= t('freshfone.admin.numbers.address_certification').html_safe %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<h3 class="title"><%=t('freshfone.admin.numbers.setup.title')%></h3>
+		<p><%= t('freshfone.admin.numbers.setup.info').html_safe %></p>
+	</div>
+<% end %>
+<%= include_cloudfront_js :freshfone %>
+<%= include_cloudfront_css :freshfone_admin %>

@@ -334,8 +334,8 @@ module ApplicationHelper
     link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
   
-  def comment_path(args_hash, link_display = 'note')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#note#{args_hash['comment_id']}")
+  def comment_path(args_hash, link_display = 'note', options={ :'data-pjax' => false })
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#note#{args_hash['comment_id']}", options)
   end
   
   def email_response_path(args_hash)
@@ -432,6 +432,15 @@ module ApplicationHelper
     avatar_content
   end
 
+  def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
+    img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
+    if options.include?(:width)  
+      img_tag_options[:width] = options.fetch(:width)
+      img_tag_options[:height] = options.fetch(:height)
+    end 
+    content_tag( :div, (image_tag "/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+  end
+
   def user_avatar_with_expiry( user, expiry = 300)
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
@@ -474,7 +483,7 @@ module ApplicationHelper
                        "data-placement" => "topRight", 
                        "data-contact-url" => hover_card_contact_path(user)  }
 
-      link_to(h(user), user, default_opts.merge(options))
+      link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
       # link_to(h(user.display_name), user, options)
     else 
       content_tag(:strong, h(user.display_name), options)
@@ -849,6 +858,42 @@ module ApplicationHelper
     end
     super *[collection_or_options, options].compact
   end
+
+  def can_view_freshfone_admin?
+    feature?(:freshfone) or current_account.freshfone_numbers.any?
+  end
+
+# helpers for fresfone callable links -- starts
+	def can_make_phone_calls(number, freshfone_number_id=nil)
+		can_make_calls(number, 'phone-icons', freshfone_number_id)
+	end
+	
+	def can_make_mobile_calls(number, freshfone_number_id=nil)
+		can_make_calls(number, 'mobile-icons', freshfone_number_id)
+	end
+	
+	def can_make_calls(number, class_name=nil, freshfone_number_id=nil)
+		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
+		#																	 :'data-freshfone-number-id' => freshfone_number_id,
+    #																	 :class => "can-make-calls #{class_name}" }
+    content_tag(:span , number, { :'data-phone-number' => "#{number}",
+                                  :'data-freshfone-number-id' => freshfone_number_id,
+                                  :class => "can-make-calls #{class_name}" })
+
+	end
+	
+	def current_account_freshfone_numbers
+		current_account.freshfone_numbers.map{|n| [n.number, n.id]}
+	end
+	
+	def call_direction_class(call)
+		if call.call_type == Freshfone::Call::CALL_TYPE_HASH[:incoming]
+			return (call.call_status == Freshfone::Call::CALL_STATUS_HASH[:completed] ? "incoming_call_icon" : "incoming_missed_call_icon")
+		elsif call.call_type == Freshfone::Call::CALL_TYPE_HASH[:outgoing]
+			return (call.call_status == Freshfone::Call::CALL_STATUS_HASH[:completed] ? "outgoing_call_icon" : "outgoing_missed_call_icon")
+		end
+	end
+# helpers for fresfone callable links -- ends
   
   def screenr_visible_in?(current_page, allowed_pages)
     @screenr_configs_hash ||= get_app_config("screenr")

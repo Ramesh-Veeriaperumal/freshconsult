@@ -1,0 +1,44 @@
+<div class="message-container-template hide">
+	<%= render :partial => "/admin/freshfone/numbers/message_select", :locals => { 
+		:name_prefix => "admin_freshfone_number[${type}]",
+		:id_prefix => "admin_freshfone_number_${type}",
+		:attachment_prefix => "admin_freshfone_number[attachments][${type}]"
+	} %>
+</div>
+
+<% form_for :admin_freshfone_number, @number,
+			:url => admin_freshfone_number_path(@number),
+			:html => { :class => "form-horizontal number-settings",
+				:multipart => true,
+				:method => :put }  do |f| %>
+	<%= f.error_messages %>
+	<%= content_tag :label, t('freshfone.admin.settings'), :class => "caption freshfone-title" %>
+	<div class="general-settings">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_general_settings",
+							 :locals => {:f => f, :number => @number} %>
+	</div>
+	<div class="row-fluid">
+		<label class="caption freshfone-title span6"><%= t('freshfone.admin.messages') %></label>
+		<div class="span6">
+			<%= f.label :voice, t('freshfone.admin.number_settings.transcript_voice'),
+									:class => "menu-label span8 align-right" %>
+			<%= f.select :voice, Freshfone::Number::VOICE_OPTIONS, {},
+								{ :class => 'select2 span4' } %>
+		</div>
+	</div>
+	<div class="greetings">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_greetings" %>
+	</div>
+	<div class="button-container">
+		<%= (link_to t('back'), admin_freshfone_index_path,
+					:class => "btn pull-left") %>
+		<input type="submit" class="btn btn-primary" value=<%=t('save')%> />
+		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+	</div>
+<% end %>
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<h3 class="title"><%=t('freshfone.admin.number_settings.title')%></h3>
+		<p><%= t('freshfone.admin.number_settings.info').html_safe %></p>
+	</div>
+<% end %>

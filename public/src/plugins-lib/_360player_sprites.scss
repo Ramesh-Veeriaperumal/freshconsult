@@ -1,0 +1,32 @@
+$threesixtyplayer-sprite: sprite-map("cdn-ignored/sprites/360player/*.png");
+
+.threesixtyplayer-sprite{ background-image: sprite-url($threesixtyplayer-sprite); }
+
+@mixin threesixtyplayer-sprite($sprite-name, $offset-x: 0, $offset-y: 0) {
+	@extend .threesixtyplayer-sprite;
+	background-position:sprite-position($threesixtyplayer-sprite, #{$sprite-name}, $offset-x, $offset-y);
+}
+
+.ui360 .sm2-360ui.sm2_playing .sm2-360btn,
+.ui360 .sm2-360btn-playing {
+	@include threesixtyplayer-sprite(pause);
+}
+
+.ui360 .sm2-360ui.sm2_playing .sm2-360btn:hover,
+.ui360 .sm2-360btn-playing:hover {
+	@include threesixtyplayer-sprite(pause-light);
+}
+
+.ui360 .sm2-360btn-default:hover,
+.ui360 .sm2-360ui.sm2_paused .sm2-360btn:hover {
+	@include threesixtyplayer-sprite(play-light);
+}
+.ui360 .sm2-360ui.sm2_buffering .sm2-360btn,
+.ui360 .sm2-360ui.sm2_buffering .sm2-360btn:hover {
+	@include threesixtyplayer-sprite(play);
+}
+.ui360,
+.ui360 .sm2-360btn-default,
+.ui360 .sm2-360ui.sm2_paused .sm2-360btn {
+	@include threesixtyplayer-sprite(play);
+}

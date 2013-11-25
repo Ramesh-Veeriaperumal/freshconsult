@@ -171,6 +171,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
 
     add_requester_conditions(params)
+    add_tag_filter(params)
     
     if params[:wf_submitted] == 'true'
       validate!
@@ -182,6 +183,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
     add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
+  end
+
+  def add_tag_filter(params)
+  add_condition("helpdesk_tags.id", :is_in, params[:tag_id]) unless params[:tag_id].blank?
   end
 
   def ticket_select

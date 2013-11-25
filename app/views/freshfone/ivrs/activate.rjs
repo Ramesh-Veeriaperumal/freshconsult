@@ -1,0 +1,3 @@
+show_ajax_flash page
+page << "jQuery('.ivr-disabled-message').hide();"
+page << "jQuery('.ivr-enabled-message').show();"

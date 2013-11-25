@@ -25,4 +25,27 @@ module SubscriptionsHelper
 	        <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
 	          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
   	end
+
+  def current_freshfone_balance(freshfone_credit)
+  	balance = (freshfone_credit) ? freshfone_credit.available_credit : 0
+  	number_to_currency(balance) 
+  end
+
+  #Options to be re-written before release
+  def auto_recharge_options
+  	[
+  		["$25", 25], 
+  		["$50", 50], 
+  		["$100", 100]
+  	]
+  end
+
+  def recharge_options
+  	[
+  		["$25", 25], 
+  		["$50", 50], 
+  		["$100", 100]
+  	]
+  end
+
  end

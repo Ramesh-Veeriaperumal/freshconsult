@@ -2,6 +2,10 @@ class UsersController < ApplicationController
 
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
+  include ApplicationHelper
+  include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper
+  # include ActionView::Helpers::AssetTagHelper
+  # include ActionView::AssetPaths
 
   skip_before_filter :check_privilege, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
@@ -91,7 +95,6 @@ class UsersController < ApplicationController
     end
     redirect_to "/"
   end
- 
   protected
   
     def scoper

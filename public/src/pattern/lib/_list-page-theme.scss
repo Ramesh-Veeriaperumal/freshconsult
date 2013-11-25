@@ -23,6 +23,15 @@
         padding:8px 0 8px 0;
         @include border-radius(5px);
         @include box-shadow(0px 0px 10px rgba(200, 200, 200, 0.2));
+        .checkbox.with-button{
+          .btn.disabled, .btn[disabled]{
+            color:#333;
+            background-color:transparent;
+          }
+          input[type="checkbox"]{
+            margin-top:10px;
+          }
+        }
         .preview_pic{
             img{
                 width: 30px;
@@ -153,4 +162,24 @@
     td.tiny{
         width:20px;
     }
+}
+
+.tag-list{
+  .list-page-body{
+    margin-top:-10px;
+    table{
+      td.name{
+        width: 30%;
+      }
+      td{
+        width:23%;
+        height:35px;
+        .tag_text{
+          max-width:50%;
+          top: 5px;
+          position: relative;
+        }
+      }
+    }
+  }
 }

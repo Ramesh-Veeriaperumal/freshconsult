@@ -15,11 +15,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
-  end
-
-  
-  
-  
+  end  
   
   def deleted_customers
     @deleted_customers = DeletedCustomers.all(:conditions =>  ['status not in (?)', [0]], 
@@ -105,19 +101,20 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   
   protected
-
-
   
    def search(search)
-    results = nil
-    results = Sharding.run_on_all_slaves do
-      unless search.blank?
-        Subscription.find(:all,:include => :account,
-          :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
-          :conditions => ['full_domain LIKE ?', "%#{search}%"],
-          :limit => 30)
+    results = []
+    domain_mappings = DomainMapping.find(:all, :conditions => ['domain LIKE ?', "%#{search}%"])
+    
+    unless search.blank?
+      domain_mappings.each do |domain|
+        Sharding.select_shard_of(domain.account_id) do
+          Sharding.run_on_slave do
+            results << Subscription.find_by_account_id(domain.account_id, :include => :account)
+          end
+        end
       end
-     end
+    end
     results
   end
     

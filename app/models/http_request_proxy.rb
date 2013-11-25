@@ -92,15 +92,17 @@ class HttpRequestProxy
     response_type = accept_type if response_type.blank?
     begin
       x_headers = {}
-      proxy_response.headers.map { |key, value|
-        x_headers[key] = value if key.start_with?("x-")
-      }
-      if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
-        response_body = proxy_response.parsed_response.to_json
-        response_type = "application/json"
+      if proxy_response.present?
+        proxy_response.headers.map { |key, value|
+          x_headers[key] = value if key.start_with?("x-")
+        }
+        if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
+          response_body = proxy_response.parsed_response.to_json
+          response_type = "application/json"
+        end
       end
     rescue => e
-      Rails.logger.error("Error while parsing remote response.")
+     Rails.logger.error("Error while parsing remote response.")
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end

@@ -1,0 +1,24 @@
+<div class="side-panel freshfone_dashboard">
+	<h3 class="title">Freshfone</h3>
+
+	<div class="freshfone_dashboard_cells">
+		<h4> <span class="live-calls">0</span> <%= t('freshfone.dashboard.calls') %> </h4>
+		<span class="dash-lbl"><%= t('freshfone.dashboard.in_progress') %></span>
+	</div>
+	<div class="freshfone_dashboard_cells">
+		<h4> <span class="live-available-agents">0</span> <%= t('freshfone.dashboard.agents') %> </h4>
+		<span class="dash-lbl"><%= t('freshfone.dashboard.available') %></span>
+	</div>
+	<!-- <div class="freshfone_dashboard_cells">
+		<h4 class="daily-burn"> $18.75 </h4>
+		<span class="dash-lbl">Daily Burn Rate</span>
+	</div>
+	<div class="freshfone_dashboard_cells">
+		<h4 class="available-credit"> $100.56 </h4>
+		<span class="dash-lbl">Available Credit</span>
+	</div> -->
+	<%= link_to 'Call History', freshfone_call_history_index_path,
+							:class => 'dashboard_call_history_link',
+							:'data-pjax' => "#body-container" %>
+</div>
+

@@ -18,9 +18,9 @@ class Integrations::GoogleContactsImporter
           Rails.logger.info "Account #{google_account.account.name} expired.  Google contacts syncing disabled."
         else
           goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
-          if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
+          #if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
             goog_cnt_importer.sync_google_contacts
-          end
+          #end
         end
       rescue => err
         Rails.logger.error "Error while syncing google_contacts for account #{google_account.inspect}. \n#{err.message}\n#{err.backtrace.join("\n\t")}"

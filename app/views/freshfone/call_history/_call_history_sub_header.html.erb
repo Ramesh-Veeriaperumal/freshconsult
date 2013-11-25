@@ -1,0 +1,55 @@
+<span class="dropdown">
+	<b><%= t('freshfone.call_history.sorted_by') %></b>
+	<a role="button" 
+		 class="dropdown-toggle drop-right" 
+		 id="sorting_dropdown" 
+		 data-toggle="dropdown" 
+		 href="#"> 
+		 <span class="filter-name"><%= t('freshfone.call_history.received_date') %></span>
+		 <b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu right" 
+			role="menu" 
+			aria-labelledby="sorting_dropdown_list">
+		<% sort_by_primary_filters.each_with_index do |wf_order, i| %>
+			<li><a class="wf_order" href="#" wf_order="<%= wf_order[1] %>" >
+				<% if i == 0 %>
+					<span class="icon ticksymbol"></span>
+				<% end %>
+				<%= wf_order[0] %>
+			</a></li>
+		<% end %>
+		<span class="seperator"></span>
+		<% sort_by_secondary_filters.each_with_index do |wf_order_type, i| %>
+			<li><a class="wf_order_type" href="#" wf_order_type="<%= wf_order_type[1] %>" >
+				<% if i == 0 %>
+					<span class="icon ticksymbol"></span>
+				<% end %>
+				<%= wf_order_type[0] %>
+			</a></li>
+		<% end %>
+	</ul>
+</span> 
+<span class="dropdown ff_item" condition="created_at" operator="is_greater_than">
+	<b><%= t('freshfone.call_history.filtered_by') %></b>
+	<a role="button" 
+		 class="dropdown-toggle drop-right" 
+		 id="sorting_dropdown" 
+		 data-toggle="dropdown" 
+		 href="#"> 
+		 <span class="filter-name"><%= t('freshfone.call_history.all_time') %></span>
+		 <b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu right" 
+			role="menu" 
+			aria-labelledby="sorting_dropdown_list">
+		<% filtered_by_options.each_with_index do |wf_order, i| %>
+			<li><a class="wf_filter" href="#" wf_filter="<%= wf_order[1] %>" >
+				<% if i == 0 %>
+					<span class="icon ticksymbol"></span>
+				<% end %>
+				<%= wf_order[0] %>
+			</a></li>
+		<% end %>
+	</ul>
+</span> 

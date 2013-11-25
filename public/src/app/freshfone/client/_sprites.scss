@@ -1,0 +1,92 @@
+$freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
+
+.freshfone-sprite{ background-image: sprite-url($freshfone-sprite); }
+
+@mixin freshfone-sprite($sprite-name, $offset-x: 0, $offset-y: 0) {
+	@extend .freshfone-sprite;
+	background-position:sprite-position($freshfone-sprite, #{$sprite-name}, $offset-x, $offset-y);
+}
+
+.ongoing{
+	.end_call { @include freshfone-sprite(oncall-endcall); }
+	.mute {
+		@include freshfone-sprite(oncall-mute);
+		&.active {
+			@include freshfone-sprite(oncall-muted);
+		}
+	}
+	.transfer_call {
+		@include freshfone-sprite(oncall-transfer);
+		&.active { @include freshfone-sprite(oncall-transfering); }
+	}
+	.add_notes {
+		@include freshfone-sprite(oncall-note);
+		&.active { @include freshfone-sprite(oncall-noting); }
+	}
+	.ongoingDialpad {
+		@include freshfone-sprite(oncall-dial);
+		&.active { @include freshfone-sprite(oncall-dialing); }
+	}
+}
+
+.outgoing {
+	.availabilityOnPhone {
+		@include freshfone-sprite(call-via-web);
+		&.active { 
+			@include freshfone-sprite(call-via-mobile);
+		}
+	}
+	.showDialpad { @include freshfone-sprite(call-dailer-pad); }
+	.recentCalls { @include freshfone-sprite(call-dailer); }
+}
+.notifier-container-slimmer {
+	.accept { @include freshfone-sprite(accept-call); }
+	.ignore { @include freshfone-sprite(ignore-call); }
+}
+.recent_calls_call_user .can-make-calls,
+.fresfone-call-history .call_user .can-make-calls {
+	@include freshfone-sprite(recentcall);
+}
+.recent_call_entry:hover .recent_calls_call_user .can-make-calls,
+.fresfone-call-history .call_user .can-make-calls:hover {
+	 @include freshfone-sprite(recentcall-hover); 
+};
+
+.popupbox-content .keypad-call:before {
+	content:"";
+	display: inline-block;
+	padding: 20px 16px;
+	width: 0;
+	height: 0;
+	margin-top: -20px;
+	position: relative;
+	top: 12px;
+	margin-right: 5px;
+	
+	@include freshfone-sprite(call-agent);
+}
+
+.message-container {
+	.record_voice { @include freshfone-sprite(ivr-record-icon); }
+	.upload_voice { @include freshfone-sprite(ivr-upload-icon); }
+	.read_message { @include freshfone-sprite(ivr-transcript-icon); }
+	.attach-file-done { @include freshfone-sprite(attached-file); }
+
+}
+.create_freshfone_ticket { @include freshfone-sprite(callhistory-convert); }
+.converted_ticket { @include freshfone-sprite(callhistory-converted); }
+
+.outgoing_call_icon { @include freshfone-sprite(call-history-outgoing); }
+.outgoing_missed_call_icon { @include freshfone-sprite(call-history-outgoing-miss); }
+.incoming_call_icon { @include freshfone-sprite(call-history-incoming); }
+.incoming_missed_call_icon { @include freshfone-sprite(call-history-incoming-miss); }
+.recent_call_entry {
+	.incoming_call_icon, .incoming_missed_call_icon {
+		@include freshfone-sprite(recentcall-incoming);
+	}
+	.outgoing_call_icon { @include freshfone-sprite(recentcall-outgoing); }
+	.outgoing_missed_call_icon { @include freshfone-sprite(recentcall-missed); }
+}
+.transfer_agent_pointer { @include freshfone-sprite(callhistory-transferred); }
+.callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
+.callhistory-payment-loader { background-image:url('/images/animated/payment-loader.gif') }

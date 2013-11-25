@@ -1,0 +1,2 @@
+module Freshfone::UsersHelper
+end

@@ -1,8 +1,46 @@
-<tr class="<%= cycle('stripe', '') %>">
-  <td class="check">
+<tr class="<%= cycle('stripe', '') %>" id="<%= dom_id(tag) %>" data-tag-id="<%=tag.id%>" >
+  <td class="name">
     <%= check_box_tag('ids[]', tag.to_param,  false, :class => 'selector') %>
+    <span class="tags-checkbox-label">
+        <span class="tags-total-counter"><%= tag.tag_uses_count  %></span>
+        <span> <strong>
+          <a href="#" class="tag_name tooltip" id="tag_name_<%= tag.id.to_s %>" data-tag-name="<%= tag.name %>" title="<%= if tag.name.length>12 then  h(tag.name) end %>" ><%= tag.name.length>12 ? h(tag.name).slice(0,10)+"..." : h(tag.name) %></a> </strong>
+        <span id="tag_text_container_<%= tag.id.to_s %>" class="hide">
+          <input type="text" tag_id="<%= tag.id.to_s %>" class="textbox tag_text" value="<%= tag.name %>" >
+        </span>
+    </span>
+      <a class="edittag"><i class="symbols-tag-edit tooltip" title="Rename Tag"></i> </a>
+   </span>
   </td>
-  <td><h3><%= link_to(h(tag.name), tag) %></h3></td>
-  <td class="count"><%= pluralize(tag.tickets.visible.size, 'ticket', 'tickets') %></td>
-</tr>
 
+  <%= render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => tag.tickets.visible.size,
+          :plurals => [t('.ticket'), t('.tickets')],
+          :type => "Helpdesk::Ticket",
+          :dom_type => 'Tickets',
+          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}"
+  } %>
+
+
+  <%= render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => tag.contacts.visible.size,
+          :plurals => [t('.customer'),t('.customers')],
+          :type => "User",
+          :dom_type => 'Customers',
+          :link => "/contacts/filter/all?tag="+tag.id.to_s
+  } %>
+
+  <%= render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => tag.solution_articles.size,
+          :plurals => [t('.article'),t('.articles')],
+          :type => "Solution::Article",
+          :dom_type => 'Articles',
+          :link => ""
+  } %>
+
+
+
+</tr>

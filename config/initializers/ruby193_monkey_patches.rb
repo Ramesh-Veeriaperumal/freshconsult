@@ -328,6 +328,9 @@ if RUBY_VERSION > "1.9"
     def map
       [self]
     end
+    def to_a
+      [self]
+    end
   end
 
   # Make sure the logger supports encodings properly.

@@ -33,12 +33,14 @@ HTML
           ['/admin/business_calendars',   'business-hours',          feature?(:business_hours) && privilege?(:admin_tasks) ],
           ['/admin/products',             'multi-product',           feature?(:multi_product) && privilege?(:admin_tasks) ],
           ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
+          ['/admin/freshfone',            'freshfone',               can_view_freshfone_admin? && privilege?(:admin_tasks) ],
           ['/social/twitters',            'twitter-setting',         feature?(:twitter) && privilege?(:admin_tasks) ],
           ['/social/facebook',            'facebook-setting',        current_account.features?(:facebook) && privilege?(:admin_tasks) ],
           ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
           ['/agents',                     'agent',                   privilege?(:manage_users) ],
           ['/groups',                     'group',                   privilege?(:admin_tasks) ],
-          ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ]
+          ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ],
+          ['/helpdesk/tags',              'tags',                    privilege?(:admin_tasks) ]
       ], "Helpdesk"],
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher',              privilege?(:manage_dispatch_rules) ],
@@ -54,7 +56,7 @@ HTML
       [ [t(".customer"),t(".portal")], [        
           ['/admin/security',             'security',                privilege?(:admin_tasks) ],
           ['/admin/portal',               'customer-portal',         privilege?(:admin_tasks) ],
-          ['/admin/widget_config',        'feedback',                privilege?(:admin_tasks) ],
+          ['/admin/widget_config',        'feedback',                privilege?(:admin_tasks) ]
       ], "CustomerPortal"],
       
       [ [t(".account")], [

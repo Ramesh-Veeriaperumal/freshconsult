@@ -859,6 +859,12 @@ jQuery.fn.serializeObject = function(){
         return json;
     };
 
+Number.prototype.toTime = function(format) {
+  return (new Date())
+          .clearTime()
+          .addSeconds(this)
+          .toString(format || "mm:ss");
+}
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }

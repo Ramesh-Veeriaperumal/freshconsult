@@ -87,9 +87,8 @@ class BusinessCalendar < ActiveRecord::Base
   end
   
   def self.config
-    group = Thread.current[TicketConstants::GROUP_THREAD]
-    if Account.current.features?(:multiple_business_hours) && group && group.business_calendar
-      group.business_calendar
+    if multiple_business_hours_enabled?
+      @business_hour_caller.business_calendar
     elsif Account.current 
       key = DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
       MemcacheKeys.fetch(key) do
@@ -144,6 +143,13 @@ class BusinessCalendar < ActiveRecord::Base
 
     def set_default_version
       self.version = 2
+    end
+
+    def self.multiple_business_hours_enabled?
+      @business_hour_caller = Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD]
+      Account.current.features?(:multiple_business_hours) &&
+       @business_hour_caller && 
+       @business_hour_caller.business_calendar
     end
 
 end

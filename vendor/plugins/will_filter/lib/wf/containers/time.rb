@@ -2,6 +2,7 @@
 
 class Wf::Containers::Time < Wf::FilterContainer
 
+  delegate :table_name, :to => :filter
   def self.operators
     [ :is_greater_than ]
   end
@@ -23,20 +24,20 @@ class Wf::Containers::Time < Wf::FilterContainer
   def sql_condition
     case value
       when "today" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.to_s(:db)}' "]
+        return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.to_s(:db)}' "]
       when "yesterday" then
-        return [%( `helpdesk_tickets`.created_at > '#{Time.zone.now.yesterday.beginning_of_day.to_s(:db)}' and
-          `helpdesk_tickets`.created_at < '#{Time.zone.now.beginning_of_day.to_s(:db)}' )]
+        return [%( #{table_name}.created_at > '#{Time.zone.now.yesterday.beginning_of_day.to_s(:db)}' and
+          #{table_name}.created_at < '#{Time.zone.now.beginning_of_day.to_s(:db)}' )]
       when "week" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_week.to_s(:db)}' "]
+        return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_week.to_s(:db)}' "]
       when "month" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_month.to_s(:db)}' "]
+        return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_month.to_s(:db)}' "]
       when "two_months" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
+        return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
       when "six_months" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(6.months).to_s(:db)}' "]
+        return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.ago(6.months).to_s(:db)}' "]
       else
-        return [" `helpdesk_tickets`.created_at > ? ", time]
+        return [" #{table_name}.created_at > ? ", time]
     end 
   end
 

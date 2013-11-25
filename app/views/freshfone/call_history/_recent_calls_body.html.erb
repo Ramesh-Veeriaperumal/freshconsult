@@ -1,0 +1,9 @@
+<div class="recent_calls_container">
+	<% unless calls.blank? %>
+		<%= render :partial => "recent_calls",
+		:collection => calls,
+		:as => :call %>
+	<% else %>
+		<p class="no_call_history"><%= t('freshfone.widget.no_calls') %></p>
+	<% end %>
+</div>

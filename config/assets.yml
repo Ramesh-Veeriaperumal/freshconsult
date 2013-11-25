@@ -15,16 +15,15 @@ stylesheets:
   plugins:
     - public/stylesheets/plugins.css
 
-  chat:    
+  chat:
     - public/stylesheets/chat/chat.css
     - public/stylesheets/chat/structure.css
     - public/stylesheets/chat/grey-theme.css
-    - public/stylesheets/chat/icomoon.css
     - public/stylesheets/chat/base.css
     - public/stylesheets/chat/clean.css
     - public/stylesheets/chat/sprites.css
 
-  non_pattern:    
+  non_pattern:
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
 
@@ -50,10 +49,35 @@ stylesheets:
     - public/stylesheets/portal/preview.css
 
   widget:
-    - public/stylesheets/portal/widget.css    
+    - public/stylesheets/portal/widget.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css
+
+  icomoon:
+    - public/stylesheets/chat/icomoon.css
+
+  freshfone:
+    - public/stylesheets/app/freshfone.css
+    - public/stylesheets/jquery.keypad.css
+
+  freshfone_call_history:
+    - public/stylesheets/app/freshfone/call_history.css
+   
+  freshfone_ivr:
+    - public/stylesheets/app/freshfone/ivr/main.css
+
+  freshfone_settings:
+    - public/stylesheets/app/freshfone/settings/main.css
+
+  freshfone_admin:
+    - public/stylesheets/app/freshfone/admin.css
+
+  freshfone_message_select:
+    - public/stylesheets/app/freshfone/message_select.css
+
+  360player:
+    - public/stylesheets/360player.css
 
   tkt_details:
     - public/stylesheets/app/tkt_details.css
@@ -90,7 +114,7 @@ stylesheets:
     - public/stylesheets/print/print.css
 
   report_print:
-    - public/stylesheets/print/report-print.css  
+    - public/stylesheets/print/report-print.css
 
   getting_started:
     - public/stylesheets/app/getting_started.css
@@ -110,7 +134,7 @@ javascripts:
     - public/javascripts/controls.js
 
   frameworks:
-    - public/javascripts/jquery-1.7.1.min.js    
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
@@ -127,6 +151,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/frameworks/plugins/moment.js
     - public/javascripts/frameworks/plugins/livestamp.js
@@ -141,6 +166,9 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js    
+    - public/javascripts/chat/lib/tab.overflow.js
+    - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/chat/lib/tab.overflow.js
     - public/javascripts/chat/lib/localstore.js
@@ -153,12 +181,12 @@ javascripts:
   # Code editor for portal cms
   codemirror:
     - public/javascripts/codemirror/*.js
-  portaltemplate:    
+  portaltemplate:
     - public/javascripts/mousetrap.js
   visitor:
     - public/javascripts/frameworks/session.js
 
-  workspace: 
+  workspace:
     - public/javascripts/bootstrap/twipsy.js
     - public/javascripts/pattern/spin.js
     - public/javascripts/pattern/jquery.spin.js
@@ -178,6 +206,7 @@ javascripts:
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js
+    - public/javascripts/freshfone/global.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -191,7 +220,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
-    #- public/javascripts/pattern/bootstrap-tooltip.js    
+    #- public/javascripts/pattern/bootstrap-tooltip.js
     # - public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
   timesheet:
@@ -212,19 +241,65 @@ javascripts:
     - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    # - public/javascripts/lte-ie7/feeback-widget.js    
+    # - public/javascripts/lte-ie7/feeback-widget.js
     - public/javascripts/feedback_widget_form.js
     - public/javascripts/utils.js
 
   custom_widget:
     - public/javascripts/custom_widget.js
+  
+  freshfone_ticket_search:
+    - public/javascripts/freshfone/plugin/ticket_search.js
+
+  freshfone:
+    - public/javascripts/freshfone.js
+
+  freshfone_client:
+    - public/javascripts/freshfone/list.js
+    - public/javascripts/frameworks/plugins/jquery.popupbox.js
+    - public/javascripts/freshfone/components/calls.js
+    - public/javascripts/freshfone/components/user_info.js
+    - public/javascripts/freshfone/components/connections.js
+    - public/javascripts/freshfone/components/notifications.js
+    - public/javascripts/freshfone/components/user.js
+    - public/javascripts/freshfone/components/widget.js
+    - public/javascripts/freshfone/components/timer.js
+    - public/javascripts/freshfone/components/socket.js
+    - public/javascripts/freshfone/components/end_call_form.js
+    - public/javascripts/freshfone/components/components_main.js
+    - public/javascripts/freshfone/device.js
+    - public/javascripts/freshfone/client.js
+    - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/phoneformatutil.js
+
+  freshfone_call_history:
+    - public/javascripts/freshfone/call_history.js
+
+  freshfone_settings:
+    - public/javascripts/freshfone/message_selector.js
+    - public/javascripts/freshfone/settings/settings.js
+
+  freshfone_ivr:
+    - public/javascripts/freshfone/ivr/ivr.js
+    - public/javascripts/freshfone/ivr/menu.js
+    - public/javascripts/freshfone/ivr/option.js
+    - public/javascripts/freshfone/ivr/ivr_main.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+
+  soundmanager:
+    - public/javascripts/sound/soundmanager2-jsmin.js
+
+  360player:
+    - public/javascripts/soundmanager2/berniecode-animator.js
+    - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
 
   portal_head:
     - public/javascripts/prototype.js
-    - public/javascripts/portal/jquery-1.8.3.js    
+    - public/javascripts/portal/jquery-1.8.3.js
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/portal-utils.js
-    - public/javascripts/lib/nestedtree.js    
+    - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
 
   preview:
@@ -250,21 +325,22 @@ javascripts:
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
 
-  subscription:                    
+  subscription:
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/subscription/subscription_init.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/frameworks/plugins/select2.js
 
   observer_event:
-    - public/javascripts/observer_events.js 
+    - public/javascripts/observer_events.js
 
   conditional:
-    - public/javascripts/autosuggest.js    
+    - public/javascripts/autosuggest.js
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
     - public/javascripts/condition-filter.js
 
@@ -292,7 +368,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
-    - public/javascripts/frameworks/plugins/jquery.validate.js      
+    - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
     - public/javascripts/getting_started.js
@@ -306,3 +382,4 @@ javascripts:
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
+

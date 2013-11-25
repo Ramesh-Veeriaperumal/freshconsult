@@ -1,0 +1,18 @@
+<div id="tag-toolbar" class="list-page-table-header">
+
+  <% if privilege? (:admin_tasks) %>
+        <input type="checkbox" id="tag-select-all" class="tags-header" />
+        <span class="bulk-action">
+            <input class="btn" type="button"
+               value="<%=t('delete')%>" disabled="disabled" id="tag-delete">
+       </span>
+  <% end %>
+
+</div>
+
+  <form action="/helpdesk/tags/delete" id="tags-expanded" method="post">
+    <input name="_method" type="hidden" value="delete">
+    <div id="tags-list" class="detailed_view">
+      <%= render :partial => "tags_table" , :inline => true %>
+    </div>
+  </form>

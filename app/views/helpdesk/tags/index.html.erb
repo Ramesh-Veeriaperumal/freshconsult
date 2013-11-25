@@ -1,84 +1,46 @@
-<% content_for :pagefixed do %>
-  <script src="/javascripts/helpdesk/core.js" type="text/javascript"></script>
-  <script src="/javascripts/helpdesk/id_selector.js" type="text/javascript"></script>
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){  
-	  Helpdesk.sel = new Helpdesk.MultiSelector({
-        form: 'list'
-      }); 
-	  Helpdesk.submitOnChange('sort'); 
-	  Helpdesk.sel.toggleCheckAll = function(source){
-	  	if(source.checked)
-			Helpdesk.sel.checkAll();
-		else
-			Helpdesk.sel.uncheckAll();
-	  } 
-    });
-  <% end %>
-<% end %>
-
+<script type="text/javascript">
+    TAGS_INDEX = {
+        no_results    :   "<%= t('no_tags') %>",
+        name          :   "<%= params[:name] || "" %>",
+        sort          :   "<%= params[:sort] || 'activity_desc' %>"
+    };
+</script>
+<script type="text/javascript" src="/javascripts/app/tags.js"></script>
 <% content_for :sidebar do %>
-  <%= render :partial => 'tag_search_navigate' %>
+    <div class="sidepanel">
+      <h3 class="title">
+      <%= t('.helpcard_title') %>
+      </h3>
+      <br>
+      <p>
+        <%= t('.helpcard1') %>
+      </p>
+      <p>
+        <%= t('.helpcard2') %>
+      </p>
+    </div>
 <% end %>
 
-<% content_for :main_panel_title do %>
-  <h3 class="title">
-	  <%= t(".title") %>
-	  <!--%= render :partial => "/helpdesk/tickets/filters" %-->
-  </h3>
-  <!--All Tags--> <!--sup><%= Helpdesk::Tag.all(:conditions => { :account_id => current_account.id }).size %></sup-->
-<% end %>
-
-<% content_for :main_panel_actions do %>
-<% end %>
-
-<% content_for :main_panel_toolbar do %>
-  
-<% end %>
-
-<% content_for :main_panel_selected_toolbar do %>
-<% end %> 
-
-<% content_for :main_panel_content do %> 
-  <div id="pages" class="tickets-container"> 
-    <div class="ticket-header">
-      <table class="tickets" width="100%">
-      	<thead>
-      		<tr>
-	      		<th class="check">
-	      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
-	      		</th>
-				    <th>
-			       <%= link_to_function(t('delete'), "if(confirm('Really delete?')) Helpdesk.sel.submit('#{ helpdesk_tag_path('multiple') }', 'delete')", :class => "button") %>
-				   </th>	
-				   <th>
-			       <div class="actions">
-    			     <form class="sort">
-      				   <%= t('ticket.sort_by') %>
-      				   <%= select_tag :sort, options_for_select(Helpdesk::Tag::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
-    			     </form>
-  			     </div>
-			    </th>	
-			  </tr>
-      </thead>
-	  </table>
-	</div>
-	  <% form_tag "", { :method => :put, :id => :list } do  %>
-	    <table class="tickets">	
-			  <tbody>
-          <%= render :partial => "tag", :collection => @tags %>
-		    </thead>
-      </table>
-    <% end %>
+<div class="list-page tag-list">
+  <div class="list-page-header row-fluid">
+    <h3 class="lead span6">
+      <% if params["name"].nil? & params[:tag_id].nil? %>
+        <%= t(".title") %>
+      <% else %>
+        <a href="/helpdesk/tags"><%= t(".title") %></a>
+      <% end %>
+    </h3>
+  </div>
+  <div id="ticket-sub-toolbar" class="list-page-subheader row-fluid">
+    <div class="span6">
+      <%= sort_menu unless @tags.empty? %>
+    </div>
+    <div class="span6 pull-right">
+      <%= render :partial => 'tag_search_navigate' %>
+    </div>
   </div>
 
-
-  <%= will_paginate @tags %>
-
-  <div class="clear"></div>
-<% end %>
-
-
-
-
-<%= render :partial => "/helpdesk/shared/main_panel" %>
+  <div class="list-page-body" id="TagsList">
+    <%= render :partial => "main_panel", :locals => {:tags => @tags}  %>
+  </div>
+</div>

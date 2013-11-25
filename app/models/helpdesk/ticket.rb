@@ -35,7 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -52,6 +52,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         }
 
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
+  named_scope :user_open_tickets, lambda { |user| 
+    { :conditions => { :status => [OPEN], :requester_id => user.id } }
+  }
   
   named_scope :all_company_tickets,lambda { |customer| { 
         :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 

@@ -269,9 +269,12 @@ window.xhrPool = [];
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
-      $("select.select2").livequery(function(){ 
-          $(this).select2($(this).data());   
-      });
+			$("select.select2").livequery(function(){ 
+				if (!$(this).data('minimumResultsForSearch')) {
+					$(this).data('minimumResultsForSearch', 10);
+				}
+				$(this).select2($(this).data()); 
+			});
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 

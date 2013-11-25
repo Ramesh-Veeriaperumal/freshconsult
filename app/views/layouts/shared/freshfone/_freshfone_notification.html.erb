@@ -1,0 +1,34 @@
+<div class="freshfone_notification">
+	<div class="notifier-container" id="freshfone_notification_container">
+		<script id="incomingWidget" type="text/x-jquery-tmpl">
+			<div class="notifier">
+				<div class="avatar">
+				</div>
+				<div class="visitor">
+				</div>
+				<div class="action">
+					<div class="chat-icon-alarm">
+						<i class="icon-phone"></i>
+					</div>
+					<div class="ignore" id="reject_call">
+						<i>×</i><%= t('freshfone.widget.ignore') %>
+					</div>
+					<div class="accept" id="accept_call">
+						<i class="icon-ok"></i><%= t('freshfone.widget.accept') %>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</script>
+	</div>
+</div>
+<div id="freshfone-contact-template" class="hide">
+	<b>${callerName}</b>
+	<div class="notifier_number">${formattedNumber}</div>
+	<div class="place-info">
+		<p class="country">
+			<i class="icon-location"></i>
+			<span>${callerLocation}</span>
+		</p>
+	</div>
+</div>

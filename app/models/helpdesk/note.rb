@@ -116,6 +116,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def public_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && !private
   end
+
+  def phone_note?
+    source == SOURCE_KEYS_BY_TOKEN["phone"]
+  end
   
   def inbound_email?
     email? && incoming
@@ -251,6 +255,7 @@ class Helpdesk::Note < ActiveRecord::Base
     return "private_note" if private_note?
     return "public_note" if public_note?
     return "forward" if fwd_email?
+    return "phone_note" if phone_note?
     "reply"
   end
 

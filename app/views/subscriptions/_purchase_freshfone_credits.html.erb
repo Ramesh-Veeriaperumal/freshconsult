@@ -1,0 +1,10 @@
+<% form_for :freshfone_credits, @freshfone_credit,
+						:url => {:action => "purchase", :controller => "admin/freshfone/credits"}, 
+						:html => {:class => "purchase_freshfone"} do |f| %>
+	<div class="row-fluid">
+		<div class="recharge-now-text">Refill your balance with a one-time payment</div>
+		<%= f.select "credit", recharge_options, {}, 
+					:class => 'select2' %>
+		<%= submit_tag "Purchase Credits", :class => "button" %>
+	</div>
+<% end %>

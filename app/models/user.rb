@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   named_scope :visible, :conditions => { :deleted => false }
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-  
+
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
@@ -174,6 +174,11 @@ class User < ActiveRecord::Base
     end
     return false
   end
+	
+	def available_number
+		phone.blank? ? mobile : phone
+	end
+
 
   def signup!(params , portal=nil)   
     self.email = (params[:user][:email]).strip if params[:user][:email]
@@ -333,7 +338,7 @@ class User < ActiveRecord::Base
   def occasional_agent?
     agent && agent.occasional
   end
-  
+
   def day_pass_granted_on(start_time = DayPassUsage.start_time) #Revisit..
     day_pass_usages.on_the_day(start_time).first
   end
@@ -404,6 +409,7 @@ class User < ActiveRecord::Base
     update_attributes({:helpdesk_agent => false, :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+    freshfone_user.destroy if freshfone_user
     email_notification_agents.destroy_all
   end
   

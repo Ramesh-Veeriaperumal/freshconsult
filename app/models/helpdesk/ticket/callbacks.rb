@@ -171,9 +171,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    Thread.current[TicketConstants::GROUP_THREAD] = self.group
+    Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = self.group
     set_sla_time(ticket_status_changed)
-    Thread.current[TicketConstants::GROUP_THREAD] = nil
+    Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = nil
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
@@ -286,7 +286,8 @@ private
       requester.signup!({:user => {
         :email => email , :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
-        :helpdesk_agent => false, :active => email.blank? }}, 
+        :helpdesk_agent => false, :active => email.blank?,
+        :phone => phone }}, 
         portal) # check @requester_name and active
       
       self.requester = requester
@@ -294,7 +295,7 @@ private
   end
 
   def can_add_requester?
-    email.present? || twitter_id.present? || external_id.present? 
+    email.present? || twitter_id.present? || external_id.present? || phone.present?
   end
 
   def update_content_ids

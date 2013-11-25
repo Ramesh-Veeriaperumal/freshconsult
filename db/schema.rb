@@ -574,6 +574,133 @@ ActiveRecord::Schema.define(:version => 20131120154839) do
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
 
+  create_table "freshfone_accounts", :force => true do |t|
+    t.integer  "account_id",              :limit => 8
+    t.string   "friendly_name"
+    t.string   "twilio_subaccount_id"
+    t.string   "twilio_subaccount_token"
+    t.string   "twilio_application_id"
+    t.integer  "state",                   :limit => 1, :default => 1
+    t.boolean  "deleted",                              :default => false
+    t.string   "queue"
+    t.datetime "expires_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
+  add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id"
+
+  create_table "freshfone_calls", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
+    t.integer  "user_id",             :limit => 8
+    t.integer  "customer_id",         :limit => 8
+    t.string   "call_sid",            :limit => 50
+    t.string   "dial_call_sid",       :limit => 50
+    t.integer  "call_status",                       :default => 0
+    t.integer  "call_type",                         :default => 0
+    t.integer  "call_duration"
+    t.string   "recording_url"
+    t.string   "customer_number",     :limit => 50
+    t.text     "customer_data"
+    t.float    "call_cost"
+    t.string   "currency",            :limit => 20, :default => "USD"
+    t.string   "ancestry"
+    t.integer  "children_count",                    :default => 0
+    t.integer  "notable_id",          :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
+  add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
+  add_index "freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
+  add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
+  add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "freshfone_calls", ["account_id", "freshfone_number_id"], :name => "index_freshfone_calls_on_account_id_and_freshfone_number_id"
+  add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
+  add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+
+  create_table "freshfone_credits", :force => true do |t|
+    t.integer  "account_id",              :limit => 8
+    t.decimal  "available_credit",                     :precision => 10, :scale => 4, :default => 0.0
+    t.boolean  "auto_recharge",                                                       :default => false
+    t.integer  "recharge_quantity"
+    t.integer  "auto_recharge_threshold",                                             :default => 5
+    t.decimal  "last_purchased_credit",                :precision => 6,  :scale => 2, :default => 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_credits", ["account_id"], :name => "index_freshfone_credits_on_account_id"
+
+  create_table "freshfone_ivrs", :force => true do |t|
+    t.integer  "account_id",          :limit => 8,                   :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                   :null => false
+    t.text     "ivr_data"
+    t.text     "ivr_draft_data"
+    t.boolean  "active",                           :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
+
+  create_table "freshfone_numbers", :force => true do |t|
+    t.integer  "account_id",               :limit => 8
+    t.string   "number",                   :limit => 50
+    t.string   "display_number",           :limit => 50
+    t.string   "region",                   :limit => 100,                               :default => ""
+    t.string   "country",                  :limit => 20,                                :default => ""
+    t.decimal  "rate",                                    :precision => 6, :scale => 2
+    t.boolean  "record",                                                                :default => true
+    t.integer  "queue_wait_time",                                                       :default => 2
+    t.integer  "max_queue_length",                                                      :default => 3
+    t.integer  "state",                    :limit => 1,                                 :default => 1
+    t.string   "number_sid"
+    t.integer  "number_type"
+    t.integer  "voice",                                                                 :default => 0
+    t.boolean  "deleted",                                                               :default => false
+    t.text     "on_hold_message"
+    t.text     "non_availability_message"
+    t.text     "voicemail_message"
+    t.integer  "business_calendar_id",     :limit => 8
+    t.datetime "next_renewal_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
+  add_index "freshfone_numbers", ["state", "next_renewal_at"], :name => "index_freshfone_numbers_on_state_and_next_renewal_at"
+
+  create_table "freshfone_payments", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.decimal  "purchased_credit",              :precision => 10, :scale => 4, :default => 0.0
+    t.boolean  "status"
+    t.string   "status_message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_payments", ["account_id"], :name => "index_freshfone_payments_on_account_id"
+
+  create_table "freshfone_users", :force => true do |t|
+    t.integer  "account_id",          :limit => 8,                    :null => false
+    t.integer  "user_id",             :limit => 8,                    :null => false
+    t.integer  "presence",                         :default => 0
+    t.integer  "incoming_preference",              :default => 0
+    t.boolean  "available_on_phone",               :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
+  add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
+
   create_table "google_accounts", :force => true do |t|
     t.string   "name"
     t.string   "email"
