@@ -112,8 +112,8 @@ module HelpdeskControllerMethods
           :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
         redirect_to after_restore_url 
       }
-      result.mobile { render :json => { :success => true , :success_message => "#{h(@items.length)} tickets were restored" }.to_json}
-      result.nmobile { render :json => { :success => true , :success_message => "#{h(@items.length)} notes were restored" }.to_json}
+      result.mobile { render :json => { :success => true }}
+      result.nmobile { render :json => { :success => true }}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
     end
