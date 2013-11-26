@@ -39,9 +39,11 @@ class Integrations::TimeSheetsSync
   def self.harvest(inst_app,timeentry,user)
     integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
     return if integrated_resource.blank?
+    domain = inst_app.configs[:inputs]['domain'] #fetching domain for installed app
     user_credential = inst_app.user_credentials.find_by_user_id(user)
-    rest_url = "/daily/update/#{integrated_resource.remote_integratable_id}"
+    rest_url = "daily/update/#{integrated_resource.remote_integratable_id}"
     params = harvest_params(user_credential,timeentry,rest_url)
+    params.merge!(:domain=>domain)
     response = hrp_request(params,"post","HARVEST_UPDATE_REQ")
   end
 
@@ -84,7 +86,7 @@ class Integrations::TimeSheetsSync
 
     def self.harvest_params(credential,timeentry,rest_url)
       password = Base64.decode64(credential.auth_info[:password])
-      params = { :domain => "anc.harvestapp.com", :ssl_enabled => "true", :rest_url=>rest_url, :content_type => "application/xml", :accept_type => "application/xml", :username => credential.auth_info[:username], :password => password }
+      params = {:ssl_enabled => "true", :rest_url=>rest_url, :content_type => "application/xml", :accept_type => "application/xml", :username => credential.auth_info[:username], :password => password }
       params[:body] = HARVEST_UPDATE_REQ.render('hours'=>timeentry.hours)
       params
     end
