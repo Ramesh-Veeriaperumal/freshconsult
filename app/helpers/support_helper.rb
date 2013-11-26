@@ -20,7 +20,7 @@ module SupportHelper
 					}
 
     def time_ago(date_time)
-		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
+		%( <span class='timeago' title='#{short_day_with_time(date_time)}' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
 		   </span> ).html_safe unless date_time.nil?
 	end
