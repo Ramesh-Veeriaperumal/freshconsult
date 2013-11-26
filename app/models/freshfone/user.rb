@@ -5,6 +5,7 @@ class Freshfone::User < ActiveRecord::Base
 	belongs_to :user, :inverse_of => :freshfone_user
 	has_many :agent_groups, :through => :user
 	delegate :available_number, :name, :avatar, :to => :user
+	attr_accessor :user_avatar
 
 	attr_protected :account_id
 
@@ -47,7 +48,8 @@ class Freshfone::User < ActiveRecord::Base
 		self
 	end
 	
-	def change_presence_and_preference(status)
+	def change_presence_and_preference(status, user_avatar_content)
+		self.user_avatar = user_avatar_content
 		self.incoming_preference = status
 		self.presence = status if !busy?
 	end

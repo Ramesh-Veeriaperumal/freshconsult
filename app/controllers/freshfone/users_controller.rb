@@ -24,7 +24,7 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status])
+		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user))
 		respond_to do |format|
 			format.json {
 				if @freshfone_user.save

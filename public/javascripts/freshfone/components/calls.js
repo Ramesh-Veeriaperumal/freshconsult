@@ -2,7 +2,8 @@ var FreshfoneCalls;
 (function ($) {
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
-		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 };
+		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
+		numbersHash = freshfone.numbersHash;
 	FreshfoneCalls = function (timer, freshfoneUserInfo) {
 		this.init();
 		this.timer = timer;
@@ -42,11 +43,13 @@ var FreshfoneCalls;
 																			this.$container.find('#outgoing_number_selector');
 		},
 		
-		outgoingNumber: function () {
+		outgoingNumberId: function () {
 			return (this.$outgoingNumberSelector().val() || 
 							this.$outgoingNumberSelector().data('number_id'));
 		},
-		
+
+		outgoingNumber: function () { return numbersHash[this.outgoingNumberId()]; },
+
 		$dialpadButton: $('.freshfone_widget .showDialpad'),
 		$transferAgent: $('#transfer_call .transfering_call'),
 		$number: $("#number"),
@@ -139,11 +142,11 @@ var FreshfoneCalls;
 			}
 		},
 		makeOutgoing: function () {
-			if (!isValidNumber(this.number)) { return this.toggleInvalidNumberText(true); }
+			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 			this.number = formatE164(this.callerLocation(), this.number);
 			
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumber(), agent: this.currentUser };
+										number_id: this.outgoingNumberId(), agent: this.currentUser };
 
 			if(!this.credit_balance()) {
 				return false;
@@ -161,6 +164,10 @@ var FreshfoneCalls;
 
 		toggleInvalidNumberText: function (show) {
 			this.$invalidNumberText().toggle(show || false);
+		},
+
+		canDialNumber: function () {
+			return (this.number !== this.outgoingNumber()) && isValidNumber(this.number);
 		},
 
 		previewIvr: function (id) {

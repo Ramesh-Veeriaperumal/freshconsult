@@ -6,8 +6,8 @@ class Freshfone::IvrMethods
 
 	attr_accessor :params, :type, :response_object, :account, :number, :call_flow
 	
-	delegate :load_available_and_busy_agents, :incoming, :call_hunting,
-					 :call_users_in_group, :call_user_with_id, :call_user_with_number, :to => :call_flow
+	delegate	:incoming, :call_hunting, :call_users_in_group,
+						:call_user_with_id, :call_user_with_number, :to => :call_flow
 	
 	RESPONSE_TYPE = {
 		:twiml_response => :twiml,

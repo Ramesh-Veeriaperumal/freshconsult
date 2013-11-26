@@ -33,7 +33,7 @@ class Freshfone::CallFlow
 
   def incoming
     transfered ? register_call_transfer(outgoing_transfer) : register_incoming_call
-    
+
     if available_agents.any?
       connect_caller_to_agent
     elsif all_agents_busy?
@@ -47,16 +47,9 @@ class Freshfone::CallFlow
     register_outgoing_call
     return initiate_outgoing
   end
-  
-  def load_available_and_busy_agents
-    self.available_agents = freshfone_users.online_agents
-    self.busy_agents = freshfone_users.busy_agents
-  end
-  
+
   def call_users_in_group(performer_id)
-    self.available_agents = freshfone_users.online_agents_in_group(performer_id)
-    self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
-    set_hunt_options(:group, performer_id) 
+    load_users_from_group(performer_id)
     incoming
   end
 
@@ -141,11 +134,27 @@ class Freshfone::CallFlow
     def outgoing?
       params[:To].blank?
     end
-  
+
     def find_user_with_id(performer_id, freshfone_user=nil)
       freshfone_user = freshfone_users.find_by_user_id(performer_id) if freshfone_user.blank?
       self.available_agents = freshfone_user && freshfone_user.online? ? [freshfone_user] : []
       self.busy_agents = freshfone_user && freshfone_user.busy? ? [freshfone_user] : []
+    end
+
+    def load_available_and_busy_agents
+      return load_users_from_group(current_number.group_id) if current_number.group.present?
+      load_all_available_and_busy_agents
+    end
+
+    def load_users_from_group(performer_id)
+      self.available_agents = freshfone_users.online_agents_in_group(performer_id)
+      self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
+      set_hunt_options(:group, performer_id)
+    end
+
+    def load_all_available_and_busy_agents
+      self.available_agents = freshfone_users.online_agents
+      self.busy_agents = freshfone_users.busy_agents
     end
 
 end

@@ -11,6 +11,7 @@ class Freshfone::Number < ActiveRecord::Base
 						:foreign_key => :freshfone_number_id, :dependent => :delete_all
 	has_one :ivr, :class_name => 'Freshfone::Ivr',
 					:foreign_key => :freshfone_number_id, :dependent => :delete
+	belongs_to :group
 	belongs_to :business_calendar
 
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 

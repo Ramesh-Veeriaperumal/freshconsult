@@ -35,6 +35,7 @@ module Redis::RedisKeys
 	FRESHFONE_AGENT_QUEUE = "FRESHFONE:AGENT_QUEUE:%{account_id}"
 	FRESHFONE_TRANSFER_LOG = "FRESHFONE:TRANSFERS:%{account_id}:%{call_sid}"
 	FRESHFONE_CLIENT_CALL = "FRESHFONE:CLIENT_CALLS:%{account_id}"
+	FRESHFONE_AGENTS_BATCH = "FRESHFONE:AGENTS_BATCH:%{account_id}:%{call_sid}"
 
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id

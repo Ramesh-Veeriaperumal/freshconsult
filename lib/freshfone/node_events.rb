@@ -34,14 +34,14 @@ module Freshfone::NodeEvents
     set_key(active_call_key, active_call_message.to_json)
   end
 
-	def publish_freshfone_presence(user, deleted=false)
+	def publish_freshfone_presence(freshfone_user, user, deleted=false)
 		key = AGENT_AVAILABILITY % {:account_id => user.account_id}
 		channel = FRESHFONE_CHANNEL % {:account_id => user.account_id}
 		if !deleted && user.freshfone_user_online?
 			message = { :type => 'agent_available', 
 				:user => { :id => user.id, 
 					:name => user.name,
-					:avatar => user_avatar(user)
+					:avatar => freshfone_user.user_avatar
 				}
 			}
 			add_to_set(key, user.id)

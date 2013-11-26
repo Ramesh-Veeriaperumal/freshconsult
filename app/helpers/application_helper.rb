@@ -883,7 +883,7 @@ module ApplicationHelper
 	end
 	
 	def current_account_freshfone_numbers
-		current_account.freshfone_numbers.map{|n| [n.number, n.id]}
+		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.map{|n| [n.number, n.id]}
 	end
 	
 	def call_direction_class(call)

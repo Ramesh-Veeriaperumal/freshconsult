@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131120154839) do
+ActiveRecord::Schema.define(:version => 20131123090353) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -672,6 +672,7 @@ ActiveRecord::Schema.define(:version => 20131120154839) do
     t.datetime "next_renewal_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "group_id",                 :limit => 8
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
