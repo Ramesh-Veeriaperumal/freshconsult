@@ -1,8 +1,12 @@
 development:
   twitter_realtime_queue: social_gnip_tweet_dev
+  facebook_realtime_queue: social_fb_feed_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging
+  facebook_realtime_queue: social_fb_feed_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
+  facebook_realtime_queue: social_fb_feed_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
+  facebook_realtime_queue: social_fb_feed_test

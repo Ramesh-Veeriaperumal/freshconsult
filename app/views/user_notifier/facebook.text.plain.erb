@@ -1,0 +1,11 @@
+Hi <%=@admin_name%>,
+
+The access token for your <%=@fb_page.page_name%> page has expired. This could be because
+1. One of the admin's changed their facebook password.
+2. One of the admin's has revoked some app permissions.
+3. It has been 60 days since the last time you authorized the app. 
+
+Please click on this link  <%=@facebook_url%> to reauthorize your facebook page and continue receiving facebook posts as tickets.
+
+Regards,
+Freshdesk Support

@@ -6,6 +6,7 @@ module AccountHelper
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
     @acc = Account.last
     unless @acc.nil?
+      @acc.make_current
       create_dummy_customer
       return @acc
     end
@@ -21,9 +22,11 @@ module AccountHelper
     @acc.main_portal = @portal
     PortalObserver.any_instance.stubs(:after_save => true)
     Account.any_instance.stubs(:change_shard_mapping => true)
+    AccountConfiguration.any_instance.stubs(:after_update => true)
     Account.any_instance.stubs(:change_shard_status => true)
-    create_dummy_customer
     @acc.save(false)
+    @acc.make_current
+    create_dummy_customer
     @acc
   end
 

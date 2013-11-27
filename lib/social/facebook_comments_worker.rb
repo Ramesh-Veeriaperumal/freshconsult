@@ -26,10 +26,10 @@ class Social::FacebookCommentsWorker
         puts "API Limit reached - #{e.to_s} :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
         NewRelic::Agent.notice_error(e, {:custom_params => {:error_type => e.fb_error_type, :error_msg => e.to_s}})
       else
-        @fan_page.attributes = {:enable_page => false} if e.to_s.include?(Social::FacebookWorker::ERROR_MESSAGES[:access_token_error]) ||
-                                                          e.to_s.include?(Social::FacebookWorker::ERROR_MESSAGES[:permission_error])
+        @fan_page.attributes = {:enable_page => false} if e.to_s.include?(Facebook::Worker::FacebookMessage::ERROR_MESSAGES[:access_token_error]) ||
+                                                          e.to_s.include?(Facebook::Worker::FacebookMessage::ERROR_MESSAGES[:permission_error])
         @fan_page.attributes = { :reauth_required => true, :last_error => e.to_s }  \
-                        if Social::FacebookWorker::ERROR_MESSAGES.any? {|k,v| e.to_s.include?(v)} 
+                        if Facebook::Worker::FacebookMessage::ERROR_MESSAGES.any? {|k,v| e.to_s.include?(v)} 
         @fan_page.save
         NewRelic::Agent.notice_error(e, {:custom_params => {:error_type => e.fb_error_type, :error_msg => e.to_s, 
                                             :account_id => @fan_page.account_id, :id => @fan_page.id }})

@@ -93,6 +93,28 @@ class UserNotifier < ActionMailer::Base
 
   end
 
+  def notify_facebook_reauth(account,facebook_page)
+    subject "Need Attention, Facebook app should be reauthorized"
+    recipients account.admin_email  
+    from AppConfig['from_email']
+    sent_on       Time.now
+    content_type  "multipart/mixed"
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body   render_message("facebook.text.plain.erb",
+                                    :facebook_url => social_facebook_index_url(:host => account.host), 
+                                    :fb_page => facebook_page, 
+                                    :admin_name=> account.admin_first_name)
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("facebook.text.html.erb",
+                                    :facebook_url => social_facebook_index_url(:host => account.host), 
+                                    :fb_page => facebook_page,
+                                    :admin_name=> account.admin_first_name)
+      end
+    end
+  end
+
   def helpdesk_url_reminder(email_id, helpdesk_urls)
     subject       "Your Freshdesk Portal Information"
     recipients    email_id

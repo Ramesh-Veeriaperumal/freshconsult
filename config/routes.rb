@@ -228,12 +228,6 @@
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
-    social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any, :update_page_token => :any },
-                :member     =>  { :edit => :any } do |fb|
-                  fb.resources :tabs, :controller => 'facebook_tabs',
-                            :collection => { :configure => :any, :remove => :any }
-                end
     social.resources :gnip, :controller => 'gnip_twitter',
                 :collection => {:reconnect => :post}
   end
@@ -465,8 +459,6 @@
 
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
-
-  map.filter 'facebook'
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
@@ -543,9 +535,6 @@
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
-
-    support.facebook_tab_home "/facebook_tab/redirect/:app_id", :controller => 'facebook_tabs', 
-      :action => :redirect, :app_id => nil
 
   end
   

@@ -210,7 +210,7 @@ GEM
       fastercsv (>= 1.2.3)
     metaclass (0.0.1)
     mime-types (1.16)
-    mocha (0.13.3)
+    mocha (0.12.10)
       metaclass (~> 0.0.1)
     mongrel (1.2.0.pre2)
       daemons (~> 1.0.10)
@@ -313,7 +313,7 @@ GEM
     right_http_connection (1.3.0)
     routing-filter (0.3.1)
       actionpack
-    rr (1.1.0)
+    rr (1.1.1)
     rspec (1.3.1)
     rspec-rails (1.3.3)
       rack (>= 1.0.0)
@@ -421,6 +421,7 @@ DEPENDENCIES
   delayed_job (= 1.8.4)
   erubis (= 2.7.0)
   factory_girl (= 1.2.3)
+  faraday (= 0.8.7)
   forgery (= 0.5.0)
   freshdesk_authority!
   global_phone
@@ -440,7 +441,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   marketo!
   memcache-client (= 1.8.5)!
-  mocha (~> 0.13.3)
+  mocha (~> 0.12.8)
   mongrel (>= 1.2.0.pre2)
   mysql (= 2.8.1)
   mysql2 (~> 0.2.7)
@@ -474,7 +475,7 @@ DEPENDENCIES
   riddle (= 1.2.2)
   rinku!
   routing-filter (~> 0.3.1)
-  rr (= 1.1.0)
+  rr (= 1.1.1)
   rspec (= 1.3.1)
   rspec-rails (= 1.3.3)
   ruby-debug (= 0.10.3)

@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :facebook_realtime, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
     
@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+      :features => [ :twitter, :facebook, :facebook_realtime, :forums, :surveys , :scoreboard, :timesheets, 
         :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :twitter, :facebook, :facebook_realtime, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
