@@ -30,7 +30,7 @@
 			"iframe" 		: null,
 			"iframeLoaded"	: false,
 			"closeButton"   : null,
-			"mobileCloseButton" : null,
+			"mobileCloseButton" : null
 		}
 
 	 // Utility methods for FreshWidget
