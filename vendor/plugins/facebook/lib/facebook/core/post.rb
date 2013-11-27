@@ -20,7 +20,7 @@ class Facebook::Core::Post
   def add_as_ticket(koala_post=nil, real_time_update=true)
     @koala_post  = koala_post if koala_post
     group_id = @fan_page.product.primary_email_config.group_id unless @fan_page.product.blank?
-    unless @koala_post.description.blank?
+    if !@koala_post.description.blank? || (@koala_post.feed_type == "photo" || @koala_post.feed_type == "video")
       @ticket = @account.tickets.build(
         :subject => @koala_post.subject,
         :requester => @koala_post.requester,

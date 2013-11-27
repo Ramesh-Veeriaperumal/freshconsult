@@ -1,5 +1,5 @@
 class Facebook::KoalaWrapper::Post
-  attr_accessor :post, :post_id, :requester, :description, :description_html, :subject
+  attr_accessor :post, :post_id, :requester, :description, :description_html, :subject, :feed_type
   attr_accessor :created_at, :create_ticket, :comments
   include Facebook::Core::Util
 
@@ -17,8 +17,9 @@ class Facebook::KoalaWrapper::Post
   def parse
     @post =  @post.symbolize_keys!
     @post_id = @post[:id]
+    @feed_type = @post[:type]
     @requester = facebook_user(@post[:from])
-    @description = @post[:message]
+    @description = @post[:message].to_s
     @description_html = get_html_content_from_feed(@post)
     @subject = truncate_subject(@description, 100)
     @created_at = Time.zone.parse(@post[:created_time])
