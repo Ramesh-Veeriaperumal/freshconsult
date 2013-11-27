@@ -10,6 +10,7 @@ gem "json", "~> 1.7.7"
 # gem "mysql"
 gem "mysql", "2.8.1", :platforms => :ruby_18
 gem "mysql2", "~> 0.2.7", :platforms => :ruby_19
+gem "mail", :platforms => :ruby_19
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
