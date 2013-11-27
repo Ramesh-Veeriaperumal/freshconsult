@@ -165,7 +165,7 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def get_agent_template(agent)
-    if (agent.language.nil? || account.language == agent.language || !account.features?(:dynamic_content))
+    if (agent.nil? || agent.language.nil? || account.language == agent.language || !account.features?(:dynamic_content))
       template = [ agent_subject_template, agent_template]                  
     else  
       d_template = dynamic_notification_templates.agent_template.active.for_language(agent.language).first
