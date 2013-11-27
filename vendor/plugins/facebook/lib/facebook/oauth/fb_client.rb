@@ -8,7 +8,7 @@ module Facebook
 
       attr_accessor :fb_app_id, :fb_app_secret, :call_back_url, :oauth, :app_type
 
-      REALTIME_BLOCK = Proc.new { |pages,oauth_access_token|
+      REALTIME_BLOCK = Proc.new { |pages, oauth_access_token|
         graph = Koala::Facebook::GraphAndRestAPI.new(oauth_access_token)
         profile = graph.get_object("me")
         profile_id=profile["id"]
@@ -99,13 +99,13 @@ module Facebook
 
       # gets the access token and page token once code is passed
       # returns all the pages if @app_type = "realtime"
-      # update the pages with page_token_tab  if @app_type = ""
+      # update the pages with page_token_tab  if @app_type = "page_tab"
       def auth(code)
         oauth_access_token = @oauth.get_access_token(code)
         @graph = Koala::Facebook::GraphAndRestAPI.new(oauth_access_token)
         pages = @graph.get_connections("me", "accounts")
         pages = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
-        eval((@app_type+"_block").upcase).call(pages,oauth_access_token)
+        eval((@app_type+"_block").upcase).call(pages, oauth_access_token)
       end
 
       def profile_name(profile_id)

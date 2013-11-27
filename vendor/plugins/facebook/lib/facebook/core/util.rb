@@ -1,7 +1,7 @@
 module Facebook::Core::Util
 
   def truncate_subject(subject, count)
-    puts "truncate subject #{subject}"
+    #puts "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
 
@@ -90,22 +90,19 @@ module Facebook::Core::Util
 
   #Parse the content from facebook
   def get_html_content_from_feed(feed)
-    puts "get_html_content"
+    #puts "get_html_content"
     html_content =  CGI.escapeHTML(feed[:message])
-    if "video".eql?(feed[:type])
 
+    if "video".eql?(feed[:type])
       desc = feed[:description] || ""
       html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a>" +
         "<div><p><a href=\"#{feed[:link]}\" target=\"_blank\">"+feed[:name].to_s+"</a></p>"+
         "<p><strong>"+feed[:message].to_s+"</strong></p>"+
         "<p>"+desc+"</p>"+
         "</div></div>"
-
     elsif "photo".eql?(feed[:type])
-
       html_content =  "<div class=\"facebook_post\"><p>"+feed[:message].to_s+"</p>"+
         "<p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
-
     end
 
     return html_content

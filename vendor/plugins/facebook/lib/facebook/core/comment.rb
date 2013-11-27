@@ -50,7 +50,7 @@ class Facebook::Core::Comment
       begin
         @koala_comment.user.make_current
         if @note.save_note
-          if real_time_update && @koala_comment.created_at
+          if real_time_update && !@koala_comment.created_at.blank?
             @fan_page.update_attribute(:fetch_since, @koala_comment.created_at.to_i)
           end
         else
@@ -82,7 +82,7 @@ class Facebook::Core::Comment
   end
 
   private
-  
+
     def add_as_post_and_note(post_id)
       @koala_post.fetch(post_id)
       if @koala_post.create_ticket

@@ -59,16 +59,6 @@ namespace :facebook do
     end
   end
 
-  task :subscribe => :environment do
-    Sharding.execute_on_all_shards do
-      Account.active_accounts.each do |account|
-        account.facebook_pages.each do |fb_page|
-          fb_page.register_stream_subscription
-        end
-      end
-    end
-  end
-
   task :subscribe_facebook_realtime, [:from_account_id,:to_account_id,:shard] => :environment do |task,args|
     Sharding.run_on_shard(args.shard) do
       (args.from_account_id.to_i..args.to_account_id.to_i).each do |account_id|

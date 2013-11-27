@@ -43,14 +43,14 @@ class Facebook::Core::Feed
 
   #returns a string containing add or remove
   def meta_method_and_class
-    verb_data = @entry_change["value"]["verb"]
+    verb_data = @entry_change["value"]["verb"].downcase if @entry_change["value"]["verb"]
     @method = verb_data if VERB_LIST.include?(verb_data)
     meta_class if @method
   end
 
   #returns a string containing type of feed is either status,post,comment
   def meta_class
-    item_data = @entry_change["value"]["item"]
+    item_data = @entry_change["value"]["item"].downcase if @entry_change["value"]["item"]
     @clazz = item_data if ITEM_LIST.include?(item_data)
   end
 
