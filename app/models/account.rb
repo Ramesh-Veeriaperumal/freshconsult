@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
-                  :language, :ssl_enabled, :whitelisted_ip_attributes
+                  :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   

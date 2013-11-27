@@ -48,12 +48,20 @@ module Helpdesk::TicketNotifications
     end
   end
 
-  def notify_by_email_without_delay(notification_type)    
+  def notify_by_email_without_delay(notification_type) 
     Helpdesk::TicketNotifier.notify_by_email(notification_type, self) if notify_enabled?(notification_type)
   end
   
   def notify_by_email(notification_type)
-    Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
+    if notify_enabled?(notification_type)
+      if (self.requester.language != nil)
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
+      else
+        args = [notification_type, self]
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), 
+          nil, 5.minutes.from_now) 
+      end
+    end  
   end
   
   def notify_enabled?(notification_type)

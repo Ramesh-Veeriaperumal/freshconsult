@@ -446,16 +446,9 @@ window.xhrPool = [];
         $('#Pagearea').css("minHeight", sidebarHeight);
 
       // Tab auto select based on window hash url
-      if(window.location.hash != '') {
-        hash = window.location.hash.split('/');
-        jQuery.each(hash, function(index, value){
-          setTimeout(function(){
-            catchException(function(){ 
-              jQuery(value + "-tab").trigger('click') 
-            }, "Error in File globalinit.js");
-          }, ((index+1)*10) )
-        })
-      }
+      hashTabSelect();
+      
+      $(window).on('hashchange', hashTabSelect);
           
         qtipPositions = {
           normal : {
