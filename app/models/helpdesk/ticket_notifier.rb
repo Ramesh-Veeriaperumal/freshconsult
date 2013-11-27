@@ -18,13 +18,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     if e_notification.requester_notification? and !ticket.out_of_office?
       requester_template = e_notification.get_requester_template(ticket.requester)
+      requester_plain_template = e_notification.get_requester_plain_template(ticket.requester)
       r_template = Liquid::Template.parse(requester_template.last.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      html_version = r_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      plain_version = r_plain_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
-             :email_body => r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :email_body_plain => plain_version,
+             :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
@@ -35,14 +41,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment)
-    agent_template = e_notification.get_agent_template(agent)
+      agent_template = e_notification.get_agent_template(agent)
+      agent_plain_template = e_notification.get_agent_plain_template(agent)
       a_template = Liquid::Template.parse(agent_template.last) 
+      a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
+      html_version = a_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      plain_version = a_plain_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       deliver_email_notification({ :ticket => ticket,
              :notification_type => e_notification.notification_type,
              :receips => receips,
-             :email_body => a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :email_body_plain => plain_version,
+             :email_body_html => html_version,
              :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
           }) unless receips.nil?
   end
@@ -70,15 +82,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     
     part :content_type => "multipart/alternative" do |alt|
-      # alt.part "text/plain" do |plain|
-      #   plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
-      #               :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-      #               params[:notification_type]),
-      #               :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
-      # end
+       alt.part "text/plain" do |plain|
+         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body_plain], :dropboxes=>params[:dropboxes],
+                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                     params[:notification_type]),
+                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
+       end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
-                    :body => generate_body_html(params[:email_body], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
+                    :body => generate_body_html(params[:email_body_html], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type]),
                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))

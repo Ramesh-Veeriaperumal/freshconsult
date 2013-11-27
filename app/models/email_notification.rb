@@ -154,6 +154,16 @@ class EmailNotification < ActiveRecord::Base
     requester_template
   end
 
+  def get_agent_plain_template(agent)
+    template = get_agent_template(agent)
+    Helpdesk::HTMLSanitizer.plain(template.last)
+  end
+
+  def get_requester_plain_template(requester)
+    template = get_requester_template(requester)
+    Helpdesk::HTMLSanitizer.plain(template.last)
+  end
+
   def get_agent_template(agent)
     if (agent.language.nil? || account.language == agent.language || !account.features?(:dynamic_content))
       template = [ agent_subject_template, agent_template]                  
