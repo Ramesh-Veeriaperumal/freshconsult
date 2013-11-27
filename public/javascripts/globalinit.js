@@ -8,6 +8,11 @@ is_touch_device = function() {
 };
 window.xhrPool = [];
 (function($){
+    // IE 11
+    if (!!navigator.userAgent.match(/^(?=.*\bTrident\b)(?=.*\brv\b).*$/)){
+      $.browser = { msie: true, version: "11" };
+      $('html').addClass('ie ie11');
+    }
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;   
        
