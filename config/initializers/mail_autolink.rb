@@ -23,7 +23,7 @@ module MailAutolink
         auto_link_section(mail.parts)
       # if no parts and content is html then auto_link
       elsif(mail.content_type.start_with?("text/html"))
-        autolinked_body = Rinku.auto_link(mail.body, :urls)
+        autolinked_body = Rinku.auto_link(mail.body.to_s, :urls)
         encode_body(mail, autolinked_body)
       end
       
