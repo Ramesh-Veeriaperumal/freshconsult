@@ -458,10 +458,10 @@ module ApplicationHelper
 
   #Generate gravatar link with default pointing to freshdesk default image
   def gravatar(email , profile_size = :thumb )
-      size = (profile_size == :medium)?  90 : 36;
-      email_hash = Digest::MD5.hexdigest(email.strip.downcase)
-      defaultImg = URI.encode("#{request.protocol}#{request.host}/images/fillers/profile_blank_#{profile_size}.gif")
-      request.ssl? ? "https://secure.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}" : "http://www.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}"
+    size = (profile_size == :medium)?  90 : 36;
+    email_hash = Digest::MD5.hexdigest(email.strip.downcase)
+    defaultImg = URI.encode( image_path("/images/fillers/profile_blank_#{profile_size}.gif"))
+    request.ssl? ? "https://secure.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}" : "http://www.gravatar.com/avatar/#{email_hash}?s=#{size}&d=#{defaultImg}"
   end
   
   def twitter_avatar(handle, profile_size = "thumb")
