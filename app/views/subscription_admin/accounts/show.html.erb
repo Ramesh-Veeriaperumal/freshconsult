@@ -48,11 +48,6 @@
         <td><%= @account.day_pass_config.available_passes %></td>
       </tr>
       <tr>
-        <th>Freshfone Credits</th>
-        <% credit = @account.freshfone_credit %>
-        <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
-      </tr>
-      <tr>
         <th>State</th>
         <td><%= @account.subscription.state %></td>
       </tr>
@@ -132,32 +127,4 @@
     <% end %>
   </div> 
 
-  <div class="span4">
-    <h3>Freshfone</h3>
-    <% form_tag({:action => 'toggle_freshfone'}, :id => 'freshfone_form', :class => "well") do %>
-      <b>Freshfone</b> <%= check_box_tag :toggle_freshfone, 1, @account.features?(:freshfone),
-                     :class => 'toggle_freshfone'%>
-
-    <% end %>
-    <% if @account.features?(:freshfone) %>
-      <% form_tag({:action => 'add_freshfone_credits'}, :id => 'freshfone_credits_form', :class => "well form-inline") do %>
-        <input type="text" name="freshfone_credits" id="freshfone_credits" placeholder="Freshfone credits" />
-        <input type="submit" value="Add Credits" class="btn" />
-      <% end %>
-    <% end %>
-  </div>       
-  
 </div>
-
-<% content_for :pagefixed do %>
-  <% javascript_tag do %>
-    (function($){
-      $('.toggle_freshfone').itoggle({
-        checkedLabel: 'Enabled',
-        uncheckedLabel: 'Disabled'
-      }).change(function() {
-        $(this).parent().submit();
-      });
-    })(jQuery);
-  <% end %>
-<% end %>
