@@ -12,6 +12,10 @@ class CustomerForum < ActiveRecord::Base
 
 	validates_presence_of :customer_id
 
+	delegate :update_search_index, :to => :forum, :allow_nil => true
+	
+	after_commit_on_create :update_search_index
+
 	protected 
 
 	def set_account_id

@@ -658,6 +658,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   # flexifield - custom_field syncing code ends here
 
+  protected
+
+    def search_fields_updated?
+      attribute_fields = [:subject, :description, :responder_id, :group_id, :requester_id,
+                         :status, :spam, :deleted, :source, :to_emails, :cc_email]
+      include_fields = es_flexifield_columns.map(&:to_sym)
+      all_fields = attribute_fields | include_fields
+      (@model_changes.keys & all_fields).any?
+    end
+
   private
 
     def sphinx_data_changed?
