@@ -10,7 +10,7 @@
 			['subject', 'select-subject', t("ticket.subject_placeholder"), 'hide']] %>
 		<% search_text.map do |t|  %>
 			<div class="searchticket <%= t[0] %> <%= t[3] %>">
-				<input type="text" id='<%= t[1] %>'  
+				<input type="text"
 							 name='<%= t[1] %>' 
 							 class="search_input <%= t[1] %>"  
 							 placeholder='<%=t[2]%>' />
