@@ -14,7 +14,6 @@ module Helpdesk::MergeTicketActions
 			move_source_description_to_target(source_ticket)
 			close_source_ticket(source_ticket)
 			update_header_info(source_ticket.header_info) if source_ticket.header_info
-			update_merge_activity(source_ticket) 
 		end
     move_source_notes_to_target
 		add_header_to_target if !@header.blank?
@@ -77,13 +76,6 @@ module Helpdesk::MergeTicketActions
 			end
 			@target_ticket.save  
 		end  
-
-		def update_merge_activity source_ticket
-		  source_ticket.create_activity(current_user, 'activities.tickets.ticket_merge.long',
-		        {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
-		        {'ticket_id' => @target_ticket.display_id, 'subject' => @target_ticket.subject}]}}, 
-		        											'activities.tickets.ticket_merge.short') 
-		end
 
 		def move_source_time_sheets_to_target source_ticket
 		  source_ticket.time_sheets.each do |time_sheet|
