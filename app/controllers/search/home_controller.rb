@@ -2,9 +2,23 @@
 class Search::HomeController < ApplicationController
 
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
+  before_filter :set_native_mobile, :only => :index
 
   def index
     search(searchable_classes)
+    respond_to do |format|
+      format.html
+      format.nmobile {
+            json="[" 
+            sep=""
+            @search_results.each { |item|
+              json << sep+"#{item.to_mob_json_search}"
+              sep = ","
+            }
+            json << "]"
+        render :json => json
+      }
+      end
   end
 
   def suggest

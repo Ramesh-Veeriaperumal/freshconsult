@@ -56,4 +56,12 @@ module Mobile::Actions::User
     Helpdesk::HTMLSanitizer.plain(agent.signature_html.gsub("</p>","\n").gsub("</div>","\n").gsub("<br>","\n").gsub("</br>","\n")) if (agent? && !agent.signature_html.blank?) 
   end
 
+  def manage_scenarios
+    privilege?(:manage_scenario_automation_rules)
+  end
+
+  def can_forward_ticket
+    privilege?(:forward_ticket)
+  end
+
 end
