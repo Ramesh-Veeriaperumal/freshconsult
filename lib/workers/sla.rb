@@ -118,7 +118,7 @@ class Workers::Sla
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
     email_body = Liquid::Template.parse(agent_template.last).render(
                                 'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    SlaNotifier.deliver_escalation(ticket, [agent], :email_body => email_body, :subject => email_subject)
+    SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end
