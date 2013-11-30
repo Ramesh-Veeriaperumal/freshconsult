@@ -39,8 +39,8 @@ class Workers::Supervisor
     @log_file_path = "#{Rails.root}/log/supervisor.log"      
   end 
   
-  def self.logging_format(account,tickets,rule,rule_total_time)
-    @log_file_format = "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets=#{tickets.size}, time_taken=#{rule_total_time}, rule=#{rule.name}, host_name=#{Socket.gethostname} "      
+  def self.logging_format(account,tickets_count,rule,rule_total_time)
+    @log_file_format = "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets=#{tickets_count}, time_taken=#{rule_total_time}, rule=#{rule.name}, host_name=#{Socket.gethostname} "      
   end 
   
   def custom_logger(path)
@@ -77,7 +77,7 @@ class Workers::Supervisor
         end
         rule_end_time = Time.now.utc
         rule_total_time = (rule_end_time - rule_start_time )
-        log_format=logging_format(account,tickets,rule,rule_total_time)
+        log_format=logging_format(account,tickets.length,rule,rule_total_time)
         supervisor_logger.info "#{log_format}" unless supervisor_logger.nil?  
       rescue Exception => e
         puts e.backtrace.join("\n")

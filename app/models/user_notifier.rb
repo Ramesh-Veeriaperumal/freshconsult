@@ -53,7 +53,7 @@ class UserNotifier < ActionMailer::Base
     from          AppConfig['from_email']
     recipients    account.admin_email
     subject       "Custom SSL Activated"
-    body          :admin_name => "#{account.admin_first_name} #{account.admin_last_name}", :portal_url => portal_url, :elb_name => elb_name
+    # body          :admin_name => "#{account.admin_first_name} #{account.admin_last_name}", :portal_url => portal_url, :elb_name => elb_name
     sent_on       Time.now
 
     content_type  "multipart/mixed"
@@ -76,7 +76,7 @@ class UserNotifier < ActionMailer::Base
     subject       "Contacts Import for #{user.account.full_domain}"
     recipients    user.email
     from          user.account.default_friendly_email
-    body          :user => user
+    # body          :user => user
     sent_on       Time.now
     headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "multipart/mixed"

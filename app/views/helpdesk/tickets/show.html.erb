@@ -1,9 +1,4 @@
 <% content_for :sidebar do -%>
-	<div id="switch_details_view" class="sidepanel">
-		<%= link_to t('ticket.switch_view.new_view').html_safe, helpdesk_ticket_path(@ticket), :class => "switch" %>
-		<%= link_to t('ticket.switch_view.whats_new').html_safe, "https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", :target => "_blank" %>
-	</div>
-
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
 
   <div class="rtCnt sidepanel ticket-panel">
@@ -249,3 +244,29 @@
 		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
 	});
 <%- end %>
+<div id="switch_details_view" class="sidepanel">
+		<p>
+			This ticket view will be retired on 14th December 2013. 
+			<%= link_to "Switch to the New Ticket View", helpdesk_ticket_path(@ticket), :class => "switch" %>
+		</p>
+</div>
+<style type="text/css">
+	#switch_details_view {
+		margin-top: 10px;
+		margin-right: 20px;
+		padding-bottom: 0;
+	}
+
+	#switch_details_view a.switch{
+		margin: 0 15px;
+		border: none;
+		display: inline;
+	}
+</style>
+<script type="text/javascript">
+(function($) {
+	var switch_view = $('#switch_details_view').detach();
+	switch_view.removeClass('hide');
+	switch_view.prependTo('#body-container .wrapper');
+})(jQuery)
+</script>

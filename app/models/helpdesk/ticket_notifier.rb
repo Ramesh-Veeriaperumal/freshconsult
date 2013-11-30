@@ -6,26 +6,31 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
-      a_template = Liquid::Template.parse(e_notification.formatted_agent_template)
-      a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
-      i_receips = internal_receips(e_notification, ticket)
-      deliver_email_notification({ :ticket => ticket,
-             :notification_type => notification_type,
-             :receips => i_receips,
-             :email_body => a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
-             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
-          }) unless i_receips.nil?
+      if (notification_type == EmailNotification::NEW_TICKET)
+        e_notification.agents.each do |agent|
+          deliver_agent_notification(agent, agent.email, e_notification, ticket, comment)
+        end  
+      else  
+        i_receips = internal_receips(e_notification, ticket)
+        deliver_agent_notification(ticket.responder, i_receips, e_notification, ticket, comment)
+      end 
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.formatted_requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
-      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      requester_template = e_notification.get_requester_template(ticket.requester)
+      requester_plain_template = e_notification.get_requester_plain_template(ticket.requester)
+      r_template = Liquid::Template.parse(requester_template.last.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
+      r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      html_version = r_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      plain_version = r_plain_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
-             :email_body => r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :email_body_plain => plain_version,
+             :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
@@ -34,21 +39,37 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification(params) if ticket.requester_has_email?
     end
   end
-  
+
+  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment)
+      agent_template = e_notification.get_agent_template(agent)
+      agent_plain_template = e_notification.get_agent_plain_template(agent)
+      a_template = Liquid::Template.parse(agent_template.last) 
+      a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
+      a_s_template = Liquid::Template.parse(agent_template.first) 
+      html_version = a_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      plain_version = a_plain_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      deliver_email_notification({ :ticket => ticket,
+             :notification_type => e_notification.notification_type,
+             :receips => receips,
+             :email_body_plain => plain_version,
+             :email_body_html => html_version,
+             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
+          }) unless receips.nil?
+  end
+
   def self.internal_receips(e_notification, ticket)
     if(e_notification.notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
       unless ticket.group.nil?
         to_ret = ticket.group.agent_emails
         return to_ret unless to_ret.empty?
       end
-    elsif(e_notification.notification_type == EmailNotification::NEW_TICKET)
-        to_ret = e_notification.agents.collect { |a| a.email }
-        return to_ret unless to_ret.empty?  
     else
       ticket.responder.email unless ticket.responder.nil?
     end
   end
-  
+   
   def email_notification(params)
     subject       params[:subject]
     recipients    params[:receips]
@@ -61,15 +82,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     
     part :content_type => "multipart/alternative" do |alt|
-      # alt.part "text/plain" do |plain|
-      #   plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
-      #               :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-      #               params[:notification_type]),
-      #               :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
-      # end
+       alt.part "text/plain" do |plain|
+         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body_plain], :dropboxes=>params[:dropboxes],
+                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                     params[:notification_type]),
+                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
+       end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
-                    :body => generate_body_html(params[:email_body], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
+                    :body => generate_body_html(params[:email_body_html], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type]),
                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
@@ -274,7 +295,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email
-    body          content
+    # body          content
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"

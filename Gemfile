@@ -10,6 +10,7 @@ gem "json", "~> 1.7.7"
 # gem "mysql"
 gem "mysql", "2.8.1", :platforms => :ruby_18
 gem "mysql2", "~> 0.2.7", :platforms => :ruby_19
+gem "mail", :platforms => :ruby_19
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
@@ -29,7 +30,7 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
-gem "omniauth-surveymonkey", "0.0.0"
+gem "omniauth-surveymonkey", "1.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
 gem "ipaddress", "0.8.0"

@@ -1,12 +1,12 @@
 # Add workday and weekday concepts to the Time class
 class Time
-  class << self
+  # class << self
     # Gives the time at the end of the workday, assuming that this time falls on a
     # workday.
     # Note: It pretends that this day is a workday whether or not it really is a
     # workday.
 
-    def end_of_workday(day)
+    def self.end_of_workday(day)
       time = workday?(day) ? BusinessCalendar.config.end_of_workday(day.wday) : "0:00:00"
       time_with_format(time, day)
       
@@ -16,40 +16,40 @@ class Time
     # falls on a workday.
     # Note: It pretends that this day is a workday whether or not it really is a
     # workday.
-    def beginning_of_workday(day)
+    def self.beginning_of_workday(day)
       time = workday?(day) ? BusinessCalendar.config.beginning_of_workday(day.wday) : "0:00:00"
       time_with_format(time, day)
     end
 
     # True if this time is on a workday (between 00:00:00 and 23:59:59), even if
     # this time falls outside of normal business hours.
-    def workday?(day)
+    def self.workday?(day)
       Time.weekday?(day) &&
           !BusinessCalendar.config.holidays.include?(day.to_date)
     end
 
     # True if this time falls on a weekday.
-    def weekday?(day)
+    def self.weekday?(day)
       # TODO AS: Internationalize this!
       #[1,2,3,4,5].include? day.wday
       BusinessCalendar.config.weekdays.include? day.wday
     end
 
-    def before_business_hours?(time)
+    def self.before_business_hours?(time)
       time < beginning_of_workday(time)
     end
 
-    def after_business_hours?(time)
+    def self.after_business_hours?(time)
       time > end_of_workday(time)
     end
 
-    def working_hours?(time)
+    def self.working_hours?(time)
       (time >= beginning_of_workday(time)) and (time <= end_of_workday(time))
     end
 
     # Rolls forward to the next beginning_of_workday
     # when the time is outside of business hours
-    def roll_forward(time)
+    def self.roll_forward(time)
       if (Time.before_business_hours?(time) || !Time.workday?(time))
         next_business_time = Time.beginning_of_workday(time)
       elsif Time.after_business_hours?(time)
@@ -65,7 +65,7 @@ class Time
       next_business_time
     end
 
-    def roll_backward(time)
+    def self.roll_backward(time)
       if Time.after_business_hours?(time) || !Time.workday?(time)
         previous_business_time = Time.end_of_workday(time)
       elsif Time.before_business_hours?(time)
@@ -83,12 +83,12 @@ class Time
 
     private
 
-     def time_with_format(time, day)
+     def self.time_with_format(time, day)
       format = "%B %d %Y #{time}"
         Time.zone ? Time.zone.parse(day.strftime(format)) :
           Time.parse(day.strftime(format))
      end
-  end
+  # end
 end
 
 

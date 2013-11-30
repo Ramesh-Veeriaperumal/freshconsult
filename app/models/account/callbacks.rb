@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
-  after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone,:update_google_domain
+  after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_destroy :remove_shard_mapping
 
@@ -25,10 +25,6 @@ class Account < ActiveRecord::Base
     if time_zone_changed? && !features.multi_timezone?
       all_users.update_all(:time_zone => time_zone)
     end
-  end
-  
-  def update_users_language
-    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
 
   def enable_elastic_search

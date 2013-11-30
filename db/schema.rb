@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20131118093207) do
     t.string   "ticket_id_delimiter",               :default => "#"
     t.boolean  "pass_through_enabled",              :default => true
     t.string   "bcc_email"
+    t.text     "supported_languages"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -345,6 +346,19 @@ ActiveRecord::Schema.define(:version => 20131118093207) do
   add_index "domain_mappings", ["account_id", "portal_id"], :name => "index_domain_mappings_on_account_id_and_portal_id", :unique => true
   add_index "domain_mappings", ["domain"], :name => "index_domain_mappings_on_domain", :unique => true
 
+  create_table "dynamic_notification_templates", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "email_notification_id", :limit => 8
+    t.integer  "category"
+    t.integer  "language"
+    t.text     "description"
+    t.text     "subject"
+    t.boolean  "outdated"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -384,6 +398,8 @@ ActiveRecord::Schema.define(:version => 20131118093207) do
     t.text     "requester_subject_template"
     t.text     "agent_subject_template"
     t.integer  "version",                                 :default => 1
+    t.boolean  "outdated_requester_content",              :default => false
+    t.boolean  "outdated_agent_content",                  :default => false
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true

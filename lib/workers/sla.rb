@@ -113,11 +113,12 @@ class Workers::Sla
     e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
     return unless e_notification.agent_notification
     agent.make_current
-    email_subject = Liquid::Template.parse(e_notification.agent_subject_template).render(
+    agent_template = e_notification.get_agent_template(agent)
+    email_subject = Liquid::Template.parse(agent_template.first).render(
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    email_body = Liquid::Template.parse(e_notification.formatted_agent_template).render(
+    email_body = Liquid::Template.parse(agent_template.last).render(
                                 'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    SlaNotifier.deliver_escalation(ticket, [agent], :email_body => email_body, :subject => email_subject)
+    SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end

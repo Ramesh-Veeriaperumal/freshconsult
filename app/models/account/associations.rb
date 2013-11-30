@@ -19,10 +19,13 @@ class Account < ActiveRecord::Base
   has_many :roles, :dependent => :delete_all, :order => "default_role desc"
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
+  has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   has_one  :whitelisted_ip
+  has_many :dynamic_notification_templates
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
+  accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
 
 
@@ -41,7 +44,7 @@ class Account < ActiveRecord::Base
   
   has_one :data_export
   
-  has_one :account_additional_settings
+  
 
   has_one :account_configuration
 
