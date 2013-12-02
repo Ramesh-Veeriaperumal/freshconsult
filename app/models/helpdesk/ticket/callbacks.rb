@@ -88,13 +88,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check, freshdesk_webhook?) unless import_id
+    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless import_id
   end
   
-  def delayed_rule_check freshdesk_webhook
+  def delayed_rule_check current_user, freshdesk_webhook
    begin
     set_account_time_zone
-    evaluate_on = check_rules unless freshdesk_webhook
+    evaluate_on = check_rules(current_user) unless freshdesk_webhook
     autoreply 
     assign_tickets_to_agents unless spam? || deleted?
    rescue Exception => e #better to write some rescue code 
@@ -117,10 +117,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.save
   end
 
-  def check_rules
+  def check_rules current_user
     evaluate_on = self
     account.va_rules.each do |vr|
-      evaluate_on = vr.pass_through(self)
+      evaluate_on = vr.pass_through(self,nil,current_user)
       next if account.features?(:cascade_dispatchr)
       return evaluate_on unless evaluate_on.nil?
     end

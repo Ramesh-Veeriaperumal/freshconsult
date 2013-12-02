@@ -10,8 +10,7 @@
 	}
 
 	jQuery(document).ready(function(){
-
-		jQuery('body').on('focus',"input[name$=_subject_template], input[name=email_subject], textarea[name=email_body], textarea[name=url], textarea[name=params], textarea[id=application_script]"
+		jQuery('body').on('focus',"input[name$=_subject_template], input[name=email_subject], textarea[name=email_body], textarea[name=url], textarea[name=params], textarea[name=comment], textarea[id=application_script]"
 		, function(){
 			active_email_body = this;
 			ignorePlaceholders();

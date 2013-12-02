@@ -6,6 +6,7 @@ fields:
         to_email: email
         subject: text
         description: text
+        last_interaction: text
         subject_or_description: text_array
         priority: numeric
         tag_names: text_array
@@ -15,9 +16,10 @@ fields:
         product_id: object_id
         contact: text
         company: text
-        responder_id: object_id
+        responder_id: agent_object_id
         group_id: object_id
         company_id: object_id
+        ticlet_cc: email
 
         created_at: date_time
         opened_at: date_time
@@ -57,7 +59,7 @@ fields:
         priority: update
         ticket_type: update
         status: update
-        responder_id: change
+        responder_id: update
         group_id: update
         note_type: value
         reply_sent: change

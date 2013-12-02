@@ -1636,6 +1636,8 @@ en:
   already_overdue: Overdue by %{time_words}
   automations:
     actions: Actions
+    activity:
+      added_watcher(s): "Added Watcher(s)"
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -1687,6 +1689,7 @@ en:
     cascade: all matching rules
     no_cascade: first matching rule
     add_new_choice: Add New choice
+    add_watcher: Add Watcher
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
@@ -3302,6 +3305,7 @@ en:
         mail:
           hi: Hi
           added_as_watcher: '%{agent_name} has added you as a watcher of a ticket'
+          added_as_watcher_by_automation: 'You have been added as a watcher of this ticket'
           new_activity: New activity on your watched ticket
           activity: Activity
           ticket: Ticket
@@ -4242,6 +4246,7 @@ en:
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
   add_cc: Add Cc
+  add_a_cc: Add a CC
   add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
@@ -4939,4 +4944,7 @@ en:
       forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
       browse_topics: "Browse Topics"
       browse_articles: "Browse Articles"
-     
+  last_interaction: "Last Interaction"
+  ticket_creating_agent: "Ticket Creating Agent"
+  ticket_cc: "Ticket CC"
+  select_watchers: "Select Watchers"

@@ -11,7 +11,7 @@ va_handlers:
         object_id: Va::Handlers::ObjectId
         nested_field: Va::Handlers::NestedField
         allow_all: Va::Handlers::AllowAll
-
+        agent_object_id: Va::Handlers::AgentObjectId
     event:
         default: Va::EventHandlers::Update
         update: Va::EventHandlers::Update # [:from, :to] comparison handler

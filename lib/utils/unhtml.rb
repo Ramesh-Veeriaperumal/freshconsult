@@ -4,7 +4,7 @@ module Utils
       elements.flatten!
       elements.each do |body|
         if item.send(:read_attribute,body).blank? && !item.send(:read_attribute , "#{body}_html").blank?
-          item.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(item.send(:read_attribute,"#{body}_html")))
+          item.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(item.send(:read_attribute,"#{body}_html")).strip)
         elsif item.send(:read_attribute , "#{body}_html").blank? && !item.send(:read_attribute,body).blank?
           item.send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(item.send(:read_attribute,body))))
         elsif item.send(:read_attribute,body).blank? && item.send(:read_attribute , "#{body}_html").blank?
