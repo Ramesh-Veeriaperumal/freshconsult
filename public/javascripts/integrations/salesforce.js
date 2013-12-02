@@ -144,10 +144,6 @@ SalesforceWidget.prototype= {
 			if(fields[i]=="Name"){
 				continue;
 			}
-			field_name =fields[i].split('__');//for custom fields to get the label
-   		if(field_name[1] !=undefined){
-   				fields[i] = field_name[1];
-   			}
 			if(value==null || value == undefined){
 				value ="N/A";
 			}
