@@ -419,7 +419,7 @@ var scrollToError = function(){
 			$("#calender-buttons").show();
 			$("#calender-info").hide();
 		}               
-		return _date_time;
+		return moment(_date_time).format("ddd MMM DD YYYY HH:mm:ss")+" GMT"+moment().format("Z").replace(":","");
 	}
 	
 	$("#DueDateForm").submit(function(){  
