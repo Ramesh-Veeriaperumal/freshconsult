@@ -41,6 +41,8 @@ class Integrations::ApplicationsController < Admin::AdminController
           else
             config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
             config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
+            config_hash['contact_labels'] = params['contact_labels']
+            config_hash['lead_labels'] = params['lead_labels']
           end
         end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
