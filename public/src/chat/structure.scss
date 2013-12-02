@@ -1467,6 +1467,9 @@ li.ui-state-active {
 #visitor_results table{
     width: 100%;
     border-collapse: collapse;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
     tr td{
         border-collapse: collapse;
         border-bottom:1px solid;
@@ -1474,30 +1477,48 @@ li.ui-state-active {
         a{
             cursor: pointer;
         }
+
+        &.visitor_list_time{
+            width: 5%;
+            color: #999;
+            font-size: 11px;
+            span{ padding-left: 2px;}
+        }
+        .icon-location, .icon-eye{
+            color: #ccc;
+        }
+
+        &.new-visitor, &.location, &.lookpage{
+            a, span{
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+                position: relative;
+                top: 3px;
+                width: 80%;
+            }
+        }
+        &.new-visitor{
+            width: 30%;
+        }
+        &.location {
+            width: 30%;
+        }
+        &.lookpage {
+            width: 35%;
+            i{
+                float: left;
+                font-size: 17px;
+                padding-right: 10px;
+            }
+        }
     }
 }
 
 .return-visitor, .lookpage, .location, .new-visitor, .chat-visitor{
     padding-left: 15px !important;
-}
-
-.lookpage {
-        width: 150px;
-    i{
-        float: left;
-        font-size: 17px;
-        padding-right: 10px;
-    }
-    a{
-        float: left;
-        width: 100px;
-        white-space: nowrap;
-        overflow: hidden;
-        -webkit-text-overflow: ellipsis;
-           -moz-text-overflow: ellipsis;
-            -ms-text-overflow: ellipsis;
-                text-overflow: ellipsis;
-    }
 }
 
 .return-visitor i, .new-visitor i, .chat-visitor i, .location i{
