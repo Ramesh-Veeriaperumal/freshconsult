@@ -43,8 +43,7 @@
 									 "data-placeholder".to_sym() => t('.select_group') } %>
         
 		<label><%=t('helpdesk.time_sheets.billing_type')%></label>
-		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options , 
-		 									(@billable.eql? ([true,false]) ? "" : @billable)), 
+		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options), 
 		 				{ :multiple => true, 
 		 				  :class => "customSelect auto",
 		 						    "data-placeholder".to_sym() => t('.select_billable')} %>

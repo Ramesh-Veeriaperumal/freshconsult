@@ -36,10 +36,14 @@ module Reports::TimesheetReport
     @customer_id = params[:customer_id] || []
     @user_id = params[:user_id] || []
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }
-    @billable = (!params[:billable].blank? && !params[:billable].to_s.eql?("falsetrue")) ? [params[:billable].to_s.to_bool] : [true,false]
+    @billable = billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool]
     @group_id = params[:group_id] || []
 
 end
+
+  def billable_and_non?
+    params[:billable].blank? or (params[:billable].include?("true") and params[:billable].include?("false"))
+  end
 
   def group_by_caluse
     group_by_caluse = params[:group_by] || :customer_name
