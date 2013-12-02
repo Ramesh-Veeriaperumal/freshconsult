@@ -237,7 +237,7 @@
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts,:member => {:add_day_passes => :post, :toggle_freshfone => :post, :add_freshfone_credits => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
+      admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },

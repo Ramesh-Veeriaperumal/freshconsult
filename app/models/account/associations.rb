@@ -27,11 +27,6 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :main_portal
   accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
-  has_one  :whitelisted_ip
-
-  accepts_nested_attributes_for :primary_email_config
-  accepts_nested_attributes_for :main_portal
-  accepts_nested_attributes_for :whitelisted_ip
 
 
   has_many :survey_results

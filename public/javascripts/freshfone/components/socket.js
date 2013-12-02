@@ -37,7 +37,6 @@ var FreshfoneSocket;
 		$transferNoAvailableAgent: $('#transfer_call .no_available_agents'),
 		$transferAvailableAgentsList: $('#transfer_call #online-agents-list'),
 		handleFailure: function () {
-			console.log("Error connecting to dashboard_socket Client");
 		},
 		disconnect: function () {
 			if (this.freshfone_socket_channel === undefined) { return; }
@@ -58,14 +57,12 @@ var FreshfoneSocket;
 
 			
 			this.freshfone_socket_channel.on('turn_on_incoming_sound', function () {
-				console.log('turning on incoming sound');
 				if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
 					Twilio.Device.sounds.incoming(true);
 				}
 			});
 
 			this.freshfone_socket_channel.on('turn_off_incoming_sound', function () {
-				console.log('turning off incoming sound');
 				if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
 					Twilio.Device.sounds.incoming(false);
 				}
@@ -73,8 +70,6 @@ var FreshfoneSocket;
 
 	//  Receive to agent_availability and unavailability messages
 			this.freshfone_socket_channel.on('agent_available', function (data) {
-				console.log('agent_available');
-				console.log(data);
 				data = JSON.parse(data) || {};
 				if (data.user) { self.addToAvailableAgents(data.user); }
 			});
@@ -91,7 +86,6 @@ var FreshfoneSocket;
 			});
 
 			this.freshfone_socket_channel.on('message', function (data) {
-				console.log('message');
 				data = JSON.parse(data);
 				switch (data.type) {
 				case 'total_agents_available':
@@ -123,7 +117,6 @@ var FreshfoneSocket;
 		},
 		tryUpdateDashboard: function () {
 			if ((this.$availableAgents || this.$liveCalls) === undefined) { return false; }
-			console.log('tryUpdateDashboard');
 
 			this.$availableAgents.text(this.totalAgents);
 			this.$liveCalls.text(this.activeCalls);

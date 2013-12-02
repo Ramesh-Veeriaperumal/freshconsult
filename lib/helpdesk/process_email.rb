@@ -363,9 +363,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
+        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
           :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
-        Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params[:text][0..500]) if language.nil?
+        Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params[:text][0..500]) if language.nil? and signup_status
       end
       user.make_current
       user
