@@ -281,7 +281,13 @@ class Support::SearchController < SupportController
           set_portal_page :search
           render :show
         }
-        format.json { render :json => @search_results.to_json }
+        format.json{ 
+          if (params.has_key?(:need_count) && params[:need_count].to_s == "true")
+            render :json => {:count => @items.total_entries,:item => @search_results}.to_json
+          else
+            render :json => @search_results.to_json 
+          end
+        }
       end
     end
 
