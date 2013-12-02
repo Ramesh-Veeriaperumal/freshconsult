@@ -3729,7 +3729,7 @@ en:
     screenr:
       button_label: "Record Screencast"
       label: "Screenr"
-      desc: "You can record screencasts and post it for speedy resolutions!!"
+      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
       helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
       form:
         recorder_id: "Recorder ID"
