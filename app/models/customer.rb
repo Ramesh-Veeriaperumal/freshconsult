@@ -31,7 +31,7 @@ class Customer < ActiveRecord::Base
   after_update :map_contacts_on_update, :if => :domains_changed?
   
   before_create :check_sla_policy
-  before_update :check_sla_policy
+  before_update :check_sla_policy, :backup_customer_changes
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
@@ -90,6 +90,13 @@ class Customer < ActiveRecord::Base
     json_str
   end
 
+  protected
+
+    def search_fields_updated?
+      all_fields = [:name, :description, :note]
+      (@model_changes.keys & all_fields).any?
+    end
+
   private
     def map_contacts_on_update
       domain_changes = self.changes["domains"].compact
@@ -106,6 +113,11 @@ class Customer < ActiveRecord::Base
 
     def get_domain(domains)
       domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+    end
+
+    def backup_customer_changes
+      @model_changes = self.changes.clone
+      @model_changes.symbolize_keys!
     end
   
 end

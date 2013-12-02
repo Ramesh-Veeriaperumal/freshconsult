@@ -457,6 +457,14 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  protected
+  
+    def search_fields_updated?
+      all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
+                          :twitter_id, :fb_profile_id, :deleted]
+      (@all_changes.keys & all_fields).any?
+    end
+
   private
     def name_part(part)
       parsed_name[part].blank? ? name : parsed_name[part]

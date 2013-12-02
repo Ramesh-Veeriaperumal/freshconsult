@@ -16,7 +16,7 @@ module ControllerLogger
   end 
   
   def logging_format
-    @log_file_format = "ip=#{request.env['CLIENT_IP']}, domain=#{request.env['HTTP_HOST']}, controller=#{request.parameters[:controller]}, action=#{request.parameters[:action]}, url=#{request.url}, params=#{params.inspect}, server_ip=#{request.env['SERVER_ADDR']}"     
+    @log_file_format = "ip=#{request.env['CLIENT_IP']}, domain=#{request.env['HTTP_HOST']}, controller=#{request.parameters[:controller]}, action=#{request.parameters[:action]}, url=#{request.url}, server_ip=#{request.env['SERVER_ADDR']}"     
   end 
 
   def custom_logger(path)

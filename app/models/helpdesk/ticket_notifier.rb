@@ -295,7 +295,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email
-    body          content
+    # body          content
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"

@@ -7,7 +7,7 @@ class EsIndexObserver < ActiveRecord::Observer
 	end
 
 	def after_commit_on_update(model)
-		model.update_es_index
+		model.update_es_index if model.respond_to?(:search_fields_updated?) ? model.send(:search_fields_updated?) : true
 		model.update_notes_es_index if [:"Helpdesk::Ticket"].include? model.class.name.to_sym
 	end
 
