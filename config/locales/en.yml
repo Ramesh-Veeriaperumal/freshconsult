@@ -4874,7 +4874,7 @@ en:
     requester_email: "Requester E-mail"
     view_details: "View details"
     saving: "Saving..."
-    start_chat: "Start chat"
+    begin_chat: "Begin chat"
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
@@ -4887,7 +4887,12 @@ en:
     last_30_days: "Last 30 days"
     last_90_days: "Last 90 days"
     date_range: "Date Range"
-  date_invalid: Invalid date  
+    date_invalid: Invalid date
+    joining_chat: "Joining chat"
+    agent_joined_msg: "$ has joined the chat"
+    agent_left_msg: "$ has left the chat"
+    connecting_msg: "Waiting for an agent"
+    ignore_msg: "Looks like all our agents are tied up right now :( Sorry about that, but please <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>leave us a message</a> and we'll get right back."
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
