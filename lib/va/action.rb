@@ -158,7 +158,7 @@ class Va::Action
 
     def add_watcher(act_on)
       watchers = Array.new
-      value.each do |agent_id|
+      value.split(',').each do |agent_id|
         watcher = act_on.subscriptions.find_by_user_id(agent_id)
         unless watcher.present?
           subscription = act_on.subscriptions.create( {:user_id => agent_id} )
