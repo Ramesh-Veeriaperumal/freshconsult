@@ -23,7 +23,7 @@ module Utils
           attributes[nested_attribute][element_html] =
             Rinku.auto_link(Helpdesk::HTMLSanitizer.clean(attributes[nested_attribute][element_html]), :urls)
           attributes[nested_attribute][element]=
-            Helpdesk::HTMLSanitizer.plain(attributes[nested_attribute][element_html])
+            Helpdesk::HTMLSanitizer.plain(attributes[nested_attribute][element_html]).strip
         end
       end
       attributes

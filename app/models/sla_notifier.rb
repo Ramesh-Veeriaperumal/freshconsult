@@ -2,7 +2,7 @@ class SlaNotifier < ActionMailer::Base
 	
 	def escalation(ticket, agent, params)
 		subject       params[:subject]
-		body          params[:email_body].html_safe
+		# body          params[:email_body].html_safe
 		recipients    agent.email 
 		from          ticket.account.default_friendly_email
 		sent_on       Time.now 

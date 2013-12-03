@@ -51,7 +51,7 @@
 		<%= ("<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>").html_safe unless ticket_style.blank? %>
 	</td>
   <td class="source-icon hideForList">
-	<div class="status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
+	<div class="status-source source-detailed-<%= TicketConstants::SOURCE_TOKEN_BY_KEY[ticket.source].to_s %> hideForList" 
   		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"
   		>  </div>
   </td>

@@ -93,6 +93,7 @@ class Forum < ActiveRecord::Base
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums, :backup_forum_changes
   after_commit_on_update :update_search_index, :if => :forum_visibility_updated?
+  after_commit_on_destroy :remove_topics_from_es
   
   def after_create 
     create_activity('new_forum')
@@ -217,6 +218,14 @@ class Forum < ActiveRecord::Base
 
   def update_search_index
     Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
+  end
+
+  def remove_topics_from_es
+    Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids })
+  end
+
+  def backup_forum_topic_ids
+    @deleted_topic_ids = self.topics.map(&:id)
   end
 
   private

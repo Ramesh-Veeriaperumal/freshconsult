@@ -35,7 +35,7 @@
 				<div class="vertical-alignment">
 					<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
 					<div class="helpdesk_number ff-user-location muted">
-						<%= call.direct_dial_number || call.number %>
+						<%= call.direct_dial_number || @current_number.number %>
 					</div>
 				</div>
 			<% else %>

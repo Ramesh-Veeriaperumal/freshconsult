@@ -132,6 +132,35 @@ if RUBY_VERSION > "1.9"
       traverse.call(value, force_encoding)
     end
     alias_method_chain :unserialize_attribute, :utf8
+
+    # https://rails.lighthouseapp.com/projects/8994/tickets/2283 Backport patch to 2-3-stable. to fix Module is not missing Model error
+    (class << self; self; end).instance_eval do 
+      define_method "compute_type_with_class_load_fix" do |type_name|
+        if type_name.match(/^::/)
+          # If the type is prefixed with a scope operator then we assume that
+          # the type_name is an absolute reference.
+          type_name.constantize
+        else
+          # Build a list of candidates to search for
+          candidates = []
+          name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
+          candidates << type_name
+
+          candidates.each do |candidate|
+            begin
+              constant = candidate.constantize
+              return constant if candidate == constant.to_s
+            rescue NameError
+            rescue ArgumentError
+            end
+          end
+
+          raise NameError, "uninitialized constant #{candidates.first}"
+        end
+      end
+      alias_method_chain :compute_type, :class_load_fix
+    end if Rails.env.development?
+    
   end
 
   #https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/

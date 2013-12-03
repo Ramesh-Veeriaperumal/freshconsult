@@ -14,6 +14,27 @@ class Search::RemoveFromIndex
     end
   end
 
+  class ForumTopics < Search::RemoveFromIndex
+    extend Resque::AroundPerform
+    @queue = 'es_index_queue'
+
+    def self.perform(args)
+      args.symbolize_keys!
+      query = Tire.search do |search|
+                search.query do |query|
+                  query.filtered do |f|
+                    f.filter :term,  { :account_id => args[:account_id] } 
+                    f.filter :terms,  { :_id => args[:deleted_topics] } 
+                  end
+                end
+              end
+      index_alias = Search::EsIndexDefinition.searchable_aliases([Topic], args[:account_id]).to_s
+      Search::EsIndexDefinition.es_cluster(args[:account_id])
+      index = Tire.index(index_alias)
+      Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
+    end
+  end
+
   class AllDocuments < Search::RemoveFromIndex
     @queue = 'es_index_queue'
 

@@ -1,7 +1,7 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
-LIMITS = {:shard_1 => {:tickets_limit => 22031161, :notes_limit => 20174400},
+LIMITS = {:shard_1 => {:tickets_limit => 26031161, :notes_limit => 24174400},
           :shard_2 => {:tickets_limit => 0, :notes_limit => 0},
           :shard_3 => {:tickets_limit => 25031161, :notes_limit => 24174400} } 
 
@@ -65,10 +65,8 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     ignore_list = []
     puts "::::::::->#{users.inspect}"
     users.each do |usr|
-      puts "#{current_time.to_s(:db)}::::::::->#{ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"])} ::::: #{60.minutes.ago(current_time.utc)}" if usr["deleted_at"]
-      puts "#{current_time.to_s(:db)}::::::::->#{ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"])} ::::: #{60.minutes.ago(current_time.utc)}" if usr["deleted_at"] and ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"]) < 60.minutes.ago(current_time.utc)
-      if "1".eql?(usr["deleted"]) 
-        blocked_users << usr["id"] if (usr["deleted_at"] && ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"]) < 60.minutes.ago(current_time.utc))
+      if 1.eql?(usr["deleted"]) 
+        blocked_users << usr["id"] if (usr["deleted_at"] && ActiveSupport::TimeZone.new('UTC').at(usr["deleted_at"]) < 60.minutes.ago(current_time.utc))
       else
         deleted_users << usr["id"] 
         account_ids[usr["account_id"]] << usr["id"] if account_ids[usr["account_id"]]

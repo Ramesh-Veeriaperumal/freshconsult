@@ -11,9 +11,12 @@ $wicon-sprite-dimensions:true;
   background-repeat: no-repeat;
 }
 
-.default_requester .controls:before{ @extend .wicon-email; }
-.default_subject .controls:before{ @extend .wicon-question-sign; }
-.default_name_field:before{ @extend .wicon-user; }
+.form-placeholder{
+	.default_requester .controls:before{ @extend .wicon-email; }
+	.default_subject .controls:before{ @extend .wicon-question-sign; }
+	.default_name_field:before{ @extend .wicon-user; }
+}
+
 .hc-search-input:before{ @extend .wicon-search; }
 .default_requester .controls, .default_subject .controls, .default_name_field, .hc-search-input{
 	&:before{

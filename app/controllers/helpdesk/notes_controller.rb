@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   include ParserUtil
   include Conversations::Twitter
-  include Conversations::Facebook
+  include Facebook::Core::Util
   include Helpdesk::Activities
   include Helpdesk::ShowVersion
   

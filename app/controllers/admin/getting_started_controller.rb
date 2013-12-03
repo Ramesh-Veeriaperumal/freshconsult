@@ -1,6 +1,6 @@
 class Admin::GettingStartedController < Admin::AdminController
   
-  before_filter :build_twitter_item, :twitter_wrapper, :build_fb_item, :set_session_state ,:fb_client
+  before_filter :build_twitter_item, :twitter_wrapper, :set_session_state ,:fb_client
 
   helper Admin::GettingStartedHelper
   
@@ -66,12 +66,7 @@ class Admin::GettingStartedController < Admin::AdminController
     
     
     def fb_client   
-      @fb_client = FBClient.new @fb_item, {  :current_account => current_account,
-                                          :callback_url => social_facebook_index_url }
-    end
-    
-    def build_fb_item
-      @fb_item = current_account.facebook_pages.build
+      @fb_client = Oauth::FbClient.new(nil, social_facebook_index_url) 
     end
     
     def set_session_state

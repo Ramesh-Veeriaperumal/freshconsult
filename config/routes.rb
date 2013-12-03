@@ -106,7 +106,6 @@
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
-    integration.resources :salesforce, :collection => {:fields_metadata => :get}
     integration.resources :user_credentials
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
@@ -228,12 +227,6 @@
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
-    social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any, :update_page_token => :any },
-                :member     =>  { :edit => :any } do |fb|
-                  fb.resources :tabs, :controller => 'facebook_tabs',
-                            :collection => { :configure => :any, :remove => :any }
-                end
     social.resources :gnip, :controller => 'gnip_twitter',
                 :collection => {:reconnect => :post}
   end
@@ -243,7 +236,7 @@
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts,:member => {:add_day_passes => :post, :toggle_freshfone => :post, :add_freshfone_credits => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
+      admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
@@ -465,8 +458,6 @@
 
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
-
-  map.filter 'facebook'
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
@@ -544,9 +535,6 @@
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
 
-    support.facebook_tab_home "/facebook_tab/redirect/:app_id", :controller => 'facebook_tabs', 
-      :action => :redirect, :app_id => nil
-
   end
   
   map.namespace :anonymous do |anonymous|
@@ -561,7 +549,6 @@
 
   map.namespace :mobile do |mobile|
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get , :load_reply_emails => :get}
-    mobile.resources :search,  :collection =>{:search_result => :get}
     mobile.resources :automations, :only =>:index
   end
   

@@ -3,6 +3,7 @@ module AwsWrapper
     #this version of aws_sdk uses "s3.amazonaws.com" 1.11.3
     DEFAULT_HOST = "s3.amazonaws.com"
   end
+
   class S3Object
     
     def self.url_for(content_path,bucket_name,options={})
@@ -26,5 +27,6 @@ module AwsWrapper
     def self.find_with_prefix(bucket,prefix)
       AWS::S3::Bucket.new(bucket).objects.with_prefix(prefix)
     end
+
   end
 end

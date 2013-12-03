@@ -10301,6 +10301,15 @@ div.gcal-confirm-modal-content{ width: 100%; }
 					margin-left: 3px;
 		    	width:150px;
 		    }
+		    	.select2-container-multi{
+		    		.select2-choices .select2-search-choice{
+		    			float: left;
+		    		}
+		    		.select2-search-choice-close{
+						float: left;
+						margin: 0 0 0 8px;	
+					}
+		    	}
 			}
 
       .nested_field{
@@ -10495,6 +10504,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	text-align: center;
 	line-height: 3;
 }
+
 //facebook-page-tab
 
 #configure_page_tab{ min-height: 50px; }
@@ -10686,6 +10696,8 @@ label.last-label{ margin-bottom: 0px; }
 		}
 	}
 	&:last-child{margin-bottom:5px;};
+}
+
 .widget_options {
 	margin-top: 8px;
 	div{
@@ -10693,7 +10705,7 @@ label.last-label{ margin-bottom: 0px; }
 		padding: 5px 10px;
 	}
 }
-}	
+
 .code_area_highlight {
 	background-color: #E4E4E4;
 }

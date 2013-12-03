@@ -94,6 +94,7 @@ class Admin::AutomationsController < Admin::AdminController
       @agents = [[0, t('admin.observer_rules.assigned_agent')]]
       @agents.concat get_event_performer
       @agents.concat [['', t('none')]]+current_account.users.technicians.collect { |au| [au.id, au.name] }
+      watcher_agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
 
       @groups = [[0, t('admin.observer_rules.assigned_group')], ['', t('none')]]
       @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
@@ -116,6 +117,10 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "add_comment", :value => t('add_note'), :domtype => 'comment', 
           :condition => automations_controller? },
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
+        { :name => "add_a_cc", :value => t('add_a_cc'), :domtype => 'single_email', 
+          :condition => va_rules_controller? },
+        { :name => "add_watcher", :value => t('dispatch.add_watcher'), :domtype => 'multiple_select',
+          :choices => watcher_agents, :unique_action => true },
         { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook', 
           :unique_action => true, 
           :condition => (va_rules_controller? || observer_rules_controller?) },

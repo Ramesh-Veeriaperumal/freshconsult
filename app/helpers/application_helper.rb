@@ -451,7 +451,7 @@ module ApplicationHelper
     else
       "/images/fillers/profile_blank_#{profile_size}.gif"
     end
-  end   
+  end
   
   def twitter_avatar(handle, profile_size = "thumb")
     handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"

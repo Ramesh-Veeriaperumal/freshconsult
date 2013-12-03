@@ -8,7 +8,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include ParserUtil
   include Conversations::Email
   include Conversations::Twitter
-  include Conversations::Facebook
+  include Facebook::Core::Util
   include Helpdesk::Activities
   include Redis::RedisKeys
   include Redis::TicketsRedis

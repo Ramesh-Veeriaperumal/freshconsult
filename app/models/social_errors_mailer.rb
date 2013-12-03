@@ -2,7 +2,7 @@ class SocialErrorsMailer < ActionMailer::Base
   
   layout "email_font"
   
-  RECIPIENTS = ["revathi@freshdesk.com","arvind@freshdesk.com"]
+  RECIPIENTS = ["revathi@freshdesk.com","arvind@freshdesk.com","sumankumar@freshdesk.com"]
   
   
   def threshold_reached(options={}) 
@@ -29,6 +29,16 @@ class SocialErrorsMailer < ActionMailer::Base
     subject    "Critical Error - Gnip stream reconnected"
     sent_on    Time.now
     body      ({:params => options})
+    content_type "text/html"
+  end
+
+
+  def facebook_exception(options)
+    recipients RECIPIENTS
+    from       "rachel@freshdesk.com"
+    subject    "Critical Error - Facebook Exception"
+    sent_on    Time.now
+    body(:error =>options)
     content_type "text/html"
   end
 end

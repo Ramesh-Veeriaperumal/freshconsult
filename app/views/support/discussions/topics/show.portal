@@ -152,8 +152,8 @@
 	{% endif %}
 </section>
 
-{% if forum.topics_count > 0 %}
 <section class="sidebar content rounded-6 min-height-on-desktop">	
+	{% if forum.topics_count > 1 %}
 	<div class="cs-g-c">
 		<section class="topic-list">
 			<div class="list-lead">
@@ -176,5 +176,5 @@
 			{% endif %}
 		</section>
 	</div>
+	{% endif %}
 </section>
-{% endif %}

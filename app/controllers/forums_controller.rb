@@ -91,6 +91,7 @@ class ForumsController < ApplicationController
   end 
   
   def destroy
+    @forum.backup_forum_topic_ids
     @forum.destroy
     respond_to do |format|
       format.html { redirect_to categories_path }

@@ -379,6 +379,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def from_email
     requester.email if requester
   end
+
+  def ticlet_cc
+    cc_email[:cc_emails]
+  end
   
   def contact_name
     requester.name if requester
@@ -390,6 +394,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def company_id
     requester.customer_id if requester
+  end
+
+  def last_interaction  
+    notes.visible.public.newest_first.exclude_source("feedback").first.body
   end
 
   #To use liquid template...
@@ -657,6 +665,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     flexifield.set_ff_value ff_alias, ff_value
   end
   # flexifield - custom_field syncing code ends here
+
+  protected
+
+    def search_fields_updated?
+      attribute_fields = [:subject, :description, :responder_id, :group_id, :requester_id,
+                         :status, :spam, :deleted, :source, :to_emails, :cc_email]
+      include_fields = es_flexifield_columns.map(&:to_sym)
+      all_fields = attribute_fields | include_fields
+      (@model_changes.keys & all_fields).any?
+    end
 
   private
 

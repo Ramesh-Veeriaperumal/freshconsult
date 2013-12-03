@@ -26,8 +26,8 @@ class Freshfone::CallHistoryController < ApplicationController
 
 	private
 		def load_calls
-			params[:wf_per_page] = 20
-			@calls = current_number.freshfone_calls.roots.include_all.filter(:params => params)
+			params[:wf_per_page] = 10
+			@calls = current_number.freshfone_calls.roots.filter(:params => params)
 		end
 
 		def current_number
@@ -37,7 +37,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	
 		def load_children
 			#  remove include of number and use current_number instead
-			@parent_call = current_number.freshfone_calls.include_all.find(params[:id])
+			@parent_call = current_number.freshfone_calls.find(params[:id])
 			@calls = @parent_call.descendants.reverse unless @parent_call.blank?
 		end
 

@@ -22,6 +22,9 @@
         break;
         case 'dropdown':
           var choices = [];
+          var agent_updated_flag;
+          // hack for agent updated event to avoid migration - Setting a flag
+          if (initFeed.name === "responder_id" && initFeed[value] === undefined) { agent_updated_flag = 1; }
           initFeed[value] = initFeed[value] || "";
           filter.choices.each(function(arrayItem){
             choices.push({
@@ -30,7 +33,12 @@
             });
           });
           c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
-          jQuery(c_dom).val(initFeed[value]);
+          if(agent_updated_flag == 1){
+            jQuery(c_dom).val("--");
+          }
+          else{
+            jQuery(c_dom).val(initFeed[value]);
+          }
 
           //Monkey patch
           if(initFeed[value]==''){ jQuery(c_dom).attr('placeholder', 'None'); }
@@ -42,11 +50,15 @@
         case 'paragraph':
           c_dom = FactoryUI.paragraph("", value, initFeed[value]);
         break;
-        case 'comment':     
+        case 'comment':  
+          var placeholder = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+
           c_dom = jQuery("<div class=\"s_comment\" />")
+                .append(placeholder)
                 .append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
                 .append(FactoryUI.checkbox("<%= t('ticket.note_form.private_note') %>", "private", initFeed["private"]));
         break;
+
         case 'email_select':
         case 'email_text':
         case 'email':
@@ -90,6 +102,9 @@
                 .append(subject)
                 .append(body);
         break;  
+        case 'single_email':
+          c_dom = FactoryUI.text("", value, initFeed[value], type + ' required email text row-fluid ');
+        break; 
         case 'checkbox':
           if (compName == 'action' || compName == 'event') {
             var choices = [{
@@ -129,6 +144,7 @@
           if(!filter.tree) filter.tree = new NestedField(filter.choices);
           c_dom = jQuery("<div />").addClass(_class_name).nestedselect(filter.tree, _opts, value, _data_attr);
         break;
+
         case 'webhook':
           var method_choices = [  { name: '1', value: 'GET'},
                                   { name: '2', value: 'POST'},
@@ -234,6 +250,20 @@
           c_dom = jQuery('<div class="webhook"/>').append(method).append(url).append(credentials)
                     .append(params);
         break;
+        
+        case 'multiple_select':
+          var choices = [];
+          filter.choices.each(function(arrayItem){
+            choices.push({
+              name: arrayItem[0],
+              value: arrayItem[1]
+            });
+          });
+          c_dom = FactoryUI.dropdown(choices, 'value', 'select2');
+          jQuery(c_dom).attr('placeholder','<%= I18n.t('select_watchers') %>')
+          jQuery(c_dom).prop({'multiple':'multiple'}).val(initFeed["value"]);
+        break;
+
         default:
         c_dom = "";
       }     
