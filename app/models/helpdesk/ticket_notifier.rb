@@ -7,8 +7,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
       if (notification_type == EmailNotification::NEW_TICKET)
-        e_notification.agents.each do |agent|
-          deliver_agent_notification(agent, agent.email, e_notification, ticket, comment)
+        e_notification.agents.group_by{|agent| agent[:language]}.each do |email_agents|
+          agents = email_agents.last
+          i_receips = agents.collect{ |a| a.email }
+          deliver_agent_notification(agents.first, i_receips, e_notification, ticket, comment)          
         end  
       else  
         i_receips = internal_receips(e_notification, ticket)
