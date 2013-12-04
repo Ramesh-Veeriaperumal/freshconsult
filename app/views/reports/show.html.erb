@@ -41,7 +41,7 @@ date_range = params[:date_range].blank? ? "#{31.days.ago.strftime("%d %B %Y")} -
 jQuery(document).ready(function() {
 	jQuery("#date_range").daterangepicker({
 		earliestDate:Date.parse('04/01/2013'),
-		latestDate:Date.parse('Today-1'),
+		latestDate:Date.parse('Today'),
 		presetRanges: [
 		  {text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
 			{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
