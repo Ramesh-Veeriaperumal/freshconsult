@@ -1,10 +1,14 @@
 class AddVoicemailActiveToNumber < ActiveRecord::Migration
   shard :none
   def self.up
-    add_column :freshfone_numbers, :voicemail_active, :boolean, :default => false
+  	Lhm.change_table :freshfone_numbers, :atomic_switch => true do |m|
+  		m.add_column :voicemail_active, "tinyint(1) DEFAULT 0"
+    end
   end
 
   def self.down
-    remove_column :freshfone_numbers, :voicemail_active
+    Lhm.change_table :freshfone_numbers, :atomic_switch => true do |m|
+  		m.remove_column :voicemail_active
+    end
   end
 end

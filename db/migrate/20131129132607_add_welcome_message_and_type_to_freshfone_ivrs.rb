@@ -1,12 +1,16 @@
 class AddWelcomeMessageAndTypeToFreshfoneIvrs < ActiveRecord::Migration
 	shard :none
 	def self.up
-		add_column :freshfone_ivrs, :welcome_message, :text
-		add_column :freshfone_ivrs, :message_type, :integer, :default => 0
+		Lhm.change_table :freshfone_ivrs, :atomic_switch => true do |m|
+      m.add_column :welcome_message, "text COLLATE utf8_unicode_ci"
+      m.add_column :message_type, "int(11) DEFAULT 0"
+    end
 	end
  
 	def self.down
-		remove_column :freshfone_ivrs, :message_type
-		remove_column :freshfone_ivrs, :welcome_message
+		Lhm.change_table :freshfone_ivrs, :atomic_switch => true do |m|
+			m.remove_column :welcome_message
+			m.remove_column :message_type
+		end
 	end
 end
