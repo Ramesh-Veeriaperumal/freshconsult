@@ -11,6 +11,8 @@ class Facebook::Core::Feed
   def parse(feed)
     begin
       @feed=JSON.parse(feed)
+      #Send the fb realtime data to Splunk for debugging
+      Monitoring::RecordMetrics.register(@feed)
       convert_to_object if @feed
     rescue Exception => e
       Rails.logger.error("Failed in parsing to json")
