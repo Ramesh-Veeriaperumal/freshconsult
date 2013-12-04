@@ -66,7 +66,7 @@ class Admin::GettingStartedController < Admin::AdminController
     
     
     def fb_client   
-      @fb_client = Oauth::FbClient.new(nil, social_facebook_index_url) 
+      @fb_client = Facebook::Oauth::FbClient.new(nil, social_facebook_index_url) 
     end
     
     def set_session_state

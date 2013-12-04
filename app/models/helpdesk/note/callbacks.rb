@@ -142,7 +142,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def ticket_cc_email_backup
-      @prev_cc_email = notable.cc_email.dup
+      @prev_cc_email = notable.cc_email.dup unless notable.cc_email.nil?
     end
 		
     # VA - Observer Rule 
