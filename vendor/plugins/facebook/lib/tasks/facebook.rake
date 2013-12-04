@@ -8,7 +8,7 @@ namespace :facebook do
     queue_name = "FacebookWorker"
     if queue_empty?(queue_name)
       puts "Facebook Worker initialized at #{Time.zone.now}"
-      Sharding.execute_on_all_shards do
+      Sharding.run_on_all_slaves do
         Account.active_accounts.each do |account|
           next if check_if_premium?(account) || account.facebook_pages.empty?
           Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => account.id} )
@@ -45,7 +45,7 @@ namespace :facebook do
             :joins => %(
               LEFT JOIN  accounts on accounts.id = social_facebook_pages.account_id
             INNER JOIN `subscriptions` ON subscriptions.account_id = accounts.id),
-            :conditions => "subscriptions.next_renewal_at > now() "
+            :conditions => "subscriptions.state != 'suspended' "
           ) do |page_block|
             page_block.each do |page|
               Resque.enqueue(Social::FacebookCommentsWorker ,
