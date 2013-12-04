@@ -5,6 +5,7 @@ var Ivr;
 		this.$loadingDiv = false;
 		this.$ivrDisabledMessage	= $('.ivr-disabled-message');
 		this.$ivrEnabledMessage	= $('.ivr-enabled-message');
+		this.$welcomeMessage =$('.freshfone_welcome_message_alert');
 		this.$ivrSetting = $('.ivr_setting');
         this.$activateIvrToggle = this.$ivrSetting.find('.activate_ivr');
 		this.bindTurnOnandTurnOffIvr();
@@ -16,6 +17,7 @@ var Ivr;
 			var self = this;
 			this.$ivrDisabledMessage.toggle(!freshfone.is_ivr_active);
 			this.$ivrEnabledMessage.toggle(freshfone.is_ivr_active);
+			this.$welcomeMessage.toggle(freshfone.is_ivr_active);
 			this.$activateIvrToggle.itoggle({
 				checkedLabel: freshfone.IVR_TURN_ON_MESSAGE,
 				uncheckedLabel: freshfone.IVR_TURN_OFF_MESSAGE

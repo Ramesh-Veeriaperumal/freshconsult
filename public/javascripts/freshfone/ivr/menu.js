@@ -54,7 +54,10 @@ var globalmenus = {},
 		buildFromTemplate: function () {
 			var template = $('#menuTemplate').clone(true, true);
 			template.find('div.select2-container').remove();
-			this.template = template.tmpl(this.jsonMenu || this);
+			var prefix = replacePrefix(freshfone.ivr_prefix, 'menuId',
+																									this.menuId);
+			var templateOptions = $.extend({}, (this.jsonMenu || this), prefix);
+			this.template = template.tmpl(templateOptions);
 			this.template.find('.attached_file').hide();
 			this.template.find('.recorded-message').hide();
 		},
@@ -243,6 +246,15 @@ var globalmenus = {},
 		handleAttachmentsDelete: function (id) {
 		}
 	};
+	
+	function replacePrefix(source, replaceText, replaceWith) {
+		var replaceFiller = new RegExp('\\$\\{' + replaceText + '\\}');
+		source = $.extend({}, source); // clone
+		for(var prefix in source) {
+			source[prefix] = source[prefix].replace(replaceFiller, replaceWith);
+		}
+		return source;
+	}
 	IvrMenu.prototype.relations = { 0 : []};
 	IvrMenu.prototype.menusList = [];
 }(jQuery));

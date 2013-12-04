@@ -1,8 +1,8 @@
 class Freshfone::Number::Message
 	include Freshfone::MessageMethods
 	attr_accessor :message, :message_type, :attachment_id, :recording_url, :type,
-								:number
-	delegate :account, :has_new_attachment?, :attachments, :voice_type, :to => :number
+								:parent, :group_id
+	delegate :account, :has_new_attachment?, :attachments, :voice_type, :to => :parent
 
 	def initialize(message)
 		message.each_pair do |k,v|
@@ -17,17 +17,22 @@ class Freshfone::Number::Message
 			:attachmentName => attachment_name,
 			:attachmentUrl => attachment_url,
 			:recordingUrl => recording_url,
-			:type => type
+			:type => type,
+			:group_id => group_id
 		}.to_json
 	end
 	
 	def validate
-		number.errors.add_to_base(I18n.t('flash.freshfone.number.blank_message', 
+		parent.errors.add_to_base(I18n.t('flash.freshfone.number.blank_message', 
 															{:num_type => type.to_s.humanize})) unless has_message?
 	end
 	
 	def to_yaml_properties
-		instance_variables.reject{|v| [:@number].include? v }
+		instance_variables.reject{|v| [:@parent].include? v }
+	end
+	
+	def group
+		@group ||= account.groups.find_by_id(group_id)
 	end
 	
 	def speak(xml_builder)

@@ -11,13 +11,17 @@ Array.prototype.deleteElement = function (element) {
 		preview = false,
 		$ivrSubmit = $('#ivr_submit'),
 		$ivrPreview = $('#ivr_preview'),
-		$ivrForm = $('.edit_freshfone_ivr');
+		$ivrForm = $('.edit_freshfone_ivr'),
+		$simpleMessageSubmit = $('#simple_message_submit'),
+		$simpleMessageForm = $('.ivr_setting.simple_message');
 
 	ivr = new Ivr();
 	ivr.buildExistingIvr(menu_json);
 
 	$(document).ready(function () {
 		$('.new-menu').click(function () { ivr.menuCreation(); });
+		var setting = new FreshfoneMessage(freshfone.welcome_message_settings_json, 'ivr_setting',
+														freshfone.welcome_message_prefix);
 	});
 
 	formatResultWithDisable = function (object, container, query, node) {
@@ -48,5 +52,17 @@ Array.prototype.deleteElement = function (element) {
 			ivr.submitIvr($submitButton, $ivrForm, preview);
 		}
 	});
-
+	$simpleMessageForm.submit(function (ev) {
+		// 'Secure' IE forced hack
+		if (!$.browser.msie) {
+			ev.preventDefault();
+			ivr.submitIvr($simpleMessageSubmit, $simpleMessageForm, false);
+		}
+	});
+	$('.welcome_message_select').change(function () {
+		var simple = $(this).val() === "0" ? true : false;
+		$('.numbers_simple_message').toggle(simple);
+		$('.numbers_ivr_message').toggle(!simple);
+	});
+	
 }(jQuery));

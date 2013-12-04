@@ -2,9 +2,11 @@ class Freshfone::Ivr < ActiveRecord::Base
 	set_table_name "freshfone_ivrs"
 	require_dependency 'freshfone/menu'
 	require_dependency 'freshfone/option'
+	require_dependency 'freshfone/number/message'
 
 	serialize :ivr_data, Hash
 	serialize :ivr_draft_data, Hash
+	serialize :welcome_message
 
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy
@@ -14,6 +16,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 	belongs_to_account
 	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
 	delegate :voice_type, :to => :freshfone_number
+	delegate :group_id, :group, :to => :welcome_message, :allow_nil => true
 
 	attr_protected :account_id
   attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
@@ -21,6 +24,23 @@ class Freshfone::Ivr < ActiveRecord::Base
 	# Format: [symbol, twilio_type, display_name, value_for_select_tag]
 
 	validates_presence_of :account_id, :freshfone_number_id
+	
+	MESSAGE_TYPE = [
+		[ :simple, 'Simple', 0 ],
+		[ :ivr,	'ivr',	1 ],
+	]
+
+	MESSAGE_TYPE_HASH = Hash[*MESSAGE_TYPE.map { |i| [i[0], i[2]] }.flatten]
+	
+	MESSAGE_TYPE_HASH.each_pair do |k, v|
+		define_method("#{k}_message?") do
+			message_type == v
+		end
+	end
+	
+	def after_find
+		assign_ivr_to_welcome_message
+	end
 
 	def menus
 		self.menus_list ||= begin
@@ -72,6 +92,10 @@ class Freshfone::Ivr < ActiveRecord::Base
 	def get_ivr_data
 		preview_mode && self.ivr_draft_data.present? ? self.ivr_draft_data : self.ivr_data
 	end
+	
+	def read_welcome_message(xml_builder)
+		welcome_message.speak(xml_builder) if welcome_message.present? && simple_message?
+	end
 
 	private
 
@@ -103,6 +127,10 @@ class Freshfone::Ivr < ActiveRecord::Base
 				v.ivr = self
 				v
 			end.sort_by { |m| m.menu_id }
+		end
+		
+		def assign_ivr_to_welcome_message
+			self.welcome_message.parent = self unless welcome_message.blank?
 		end
 
 end

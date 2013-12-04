@@ -10,10 +10,14 @@
 		<div class="control-group">
 			<label class="control-label" for="requesterName"><%= t('freshfone.widget.requester_name') %></label>
 			<div class="controls">
-				<input type="text" name="requester_name" id="requesterName" />
+				<form>
+				<input type="text" name="requester_name" id="requesterName"  class="requesterName" data-partialRequesterList="" data-current-user />
+				<input type="hidden"  id="requesterId" />
+				 <div id="requesterName_choices" class="autocomplete"></div>
+				</form>
 			</div>
 		</div>
-		<div class="control-group">
+		<div class="control-group hide" id="requesterEmail_dom">
 			<label class="control-label" for="requesterEmail"><%= t('freshfone.widget.requester_email') %></label>
 			<div class="controls">
 				<input type="text" name="requester_name" id="requesterEmail" />

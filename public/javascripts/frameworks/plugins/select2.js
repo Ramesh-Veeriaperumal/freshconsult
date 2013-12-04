@@ -314,7 +314,7 @@
                         }
                         // TODO 3.0 - replace query.page with query so users have access to term, page, etc.
                         
-                        var results = options.results(data, query.page);
+                        var results = options.results(data, query.page, query);
                         query.callback(results);
                     }
                 });
@@ -566,7 +566,9 @@
             this.container.attr("id", this.containerId);
 
             // cache the body so future lookups are cheap
-            this.body = thunk(function() { return opts.element.closest("body"); });
+            
+            this.body = thunk(function() { return opts.element.closest(opts.attachtoContainerClass); });
+            
 
             if (opts.element.attr("class") !== undefined) {
                 this.container.addClass(opts.element.attr("class").replace(/validate\[[\S ]+] ?/, ''));
@@ -2365,6 +2367,7 @@
         dropdownCss: {},
         containerCssClass: "",
         dropdownCssClass: "",
+        attachtoContainerClass: "body",
         formatResult: function(result, container, query) {
             var markup=[];
             markMatch(result.text.escapeHTML(), query.term, markup);

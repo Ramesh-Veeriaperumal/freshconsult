@@ -231,6 +231,9 @@
 		margin-bottom: 5px;
 		@include box-sizing(border-box);
 	}
+	.final_call_notes{
+		margin-top: 10px;
+	}
 	.main_content {
 		padding: 12px;
 	}
@@ -251,6 +254,10 @@
 		background-color: $ec-newticket-form-background;
 		input {
 			width:94%;
+		}
+		.select2-container{
+			width: auto;
+			min-width: 200px;
 		}
 	}
 	.controls {

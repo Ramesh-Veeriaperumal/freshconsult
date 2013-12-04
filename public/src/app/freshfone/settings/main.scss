@@ -36,6 +36,11 @@
 			line-height: 1.4em;
 		}
 	}
+	.Message-alert{
+		padding: 6px 0;
+		text-align: center;
+		margin-left: 150px;		
+	}
 	.freshfone-controls {
 		.select2-container { margin-left: 0; }
 		.toggle-button {
@@ -65,7 +70,9 @@
 		
 	}
 }
-
+.freshfone_welcome_message_alert{
+	margin-bottom: 10px;
+}
 .toggle_freshfone_form{
 	display: inline-block;
 	padding-right: 10px;

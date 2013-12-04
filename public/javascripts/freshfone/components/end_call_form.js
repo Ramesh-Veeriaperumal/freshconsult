@@ -16,6 +16,7 @@ var FreshfoneEndCall;
 		this.$requesterNameContainer = this.$endCall.find('.requester_name_container');
 		this.$requesterName = this.$requesterNameContainer.find("#requesterName");
 		this.$requesterEmail = this.$requesterNameContainer.find("#requesterEmail");
+		this.$requesterEmailDom = this.$requesterNameContainer.find("#requesterEmail_dom");	
 		this.$ticketSubject = this.$endCall.find("#ticketSubject");
 		this.$requesterTicketSearch = this.$endCall.find('.end_call_ticket_search');
 		this.$callNote = $('#call_notes');
@@ -65,6 +66,57 @@ var FreshfoneEndCall;
 		self.$endCallShowSaveTicketFormButton.bind('click', function () {
 			self.$endCallMainContent.hide();
 			self.$endCallNewTicketDetailsForm.show();
+
+		});
+		// Requeser Field in new ticket form -- end call form
+		self.$requesterName.select2({
+			placeholder: 'Requesters',
+			minimumInputLength: 1,
+			multiple: false,
+			ajax: {
+				url: freshfone.requester_autocomplete_path,
+				quietMillis: 1000,
+				data: function (term) { 
+					return {
+						v: term
+					};
+				},
+				results: function (data, page, query) {
+					var temp;
+					if (!data.results.length) {
+						return { results: [ { value: query.term, id: ""} ] }
+					}
+					$(data.results).each(function(){
+						temp = this.id;
+						this.id = this.user_id;
+						this.email = temp;
+					});
+
+
+					return {results: data.results};
+				}
+			},
+			formatResult: function (result) {
+				var email = result.email;
+				if(email && $(email).trim != "") {
+					email = "  (" + email + ")";
+				}
+				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+								(email || "New requester") + "</span>"; 
+			},
+			formatSelection: function (result) {
+				console.log('result');
+				console.log(result);
+				self.$requesterEmailDom.toggle(!result.id);
+				self.$requesterEmail.val(result.email);
+				self.$requesterName.val(result.value);
+				return result.value;
+			}
+			// createSearchChoice: function (term) {
+			// 	console.log(term);
+			// 	return ({ id: "", value: term });
+
+			// }
 		});
 		
 		// Action to perform after selecting ticket from search result Save to ticket

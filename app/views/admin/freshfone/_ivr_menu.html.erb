@@ -21,15 +21,8 @@
 	<%= f.error_messages %>
 	
 	<%= f.hidden_field :relations, :rel => :menu_relations %>
+	<%= f.hidden_field :message_type, :value => 1 %> 
 	<%= hidden_field_tag :preview, false %>
-	<div class="alert ivr-message">
-		<%= f.check_box :active, {:class => 'activate_ivr',
-															:'data-activate-url'=> activate_freshfone_ivr_path(@ivr),
-															:'data-deactivate-url'=> deactivate_freshfone_ivr_path(@ivr)
-														}, true, false %>
-		<span class="ivr-disabled-message hide"><%= t('freshfone.admin.ivr.turned_off') %></span>
-		<span class="ivr-enabled-message hide"><%= t('freshfone.admin.ivr.turned_on') %></span>
-	</div>
 
 	<div class="add-new new-menu">
 		<div class="icon-detail"><span class="symbols-add"></span></div>

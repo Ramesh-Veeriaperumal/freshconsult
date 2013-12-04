@@ -4,7 +4,7 @@
 			 data-number='<%= call.customer_number %>'>
 			 <%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
 				 <div class="ellipsis">
-					 <b><%= call.customer_name || call.customer_number %></b>
+					 <b><%= call.customer.present? ? link_to_user(call.customer) : call.customer_number %></b>
 				</div>
 				<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
 							data-number='<%= call.customer_number %>'>
@@ -42,7 +42,7 @@
 				<div class="vertical-alignment">
 					<%= user_avatar(call.agent) unless call.agent.blank? %>
 				</div>
-				<div class="vertical-alignment"><b class="ellipsis"><%= call.agent_name %></b></div>
+				<div class="vertical-alignment"><b class="ellipsis"><%= link_to_user(call.agent) %></b></div>
 			<% end %>
 		</div>
 	</td>

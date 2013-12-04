@@ -2,7 +2,11 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 	observe Freshfone::Ivr
 
 	def before_validation_on_update(freshfone_ivr)
-		build_menus_and_relations(freshfone_ivr) if freshfone_ivr.any_ivr_data_changed?
+		if freshfone_ivr.ivr_message?
+			build_menus_and_relations(freshfone_ivr) if freshfone_ivr.any_ivr_data_changed?
+		else
+			build_welcome_message(freshfone_ivr) if freshfone_ivr.welcome_message_changed?
+		end
 	end
 
 	def before_save(freshfone_ivr)
@@ -79,6 +83,18 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 			(freshfone_ivr.attachments_hash || {}).each_pair do |menu_id, attachment|
 				freshfone_ivr.menus_hash[menu_id].attachment_id = attachment.id
 			end
+		end
+		
+		def build_welcome_message(freshfone_ivr)
+			message = freshfone_ivr.welcome_message
+			freshfone_ivr.welcome_message = Freshfone::Number::Message.new({
+				:attachment_id => message["attachment_id"].blank? ? nil : message["attachment_id"].to_i,
+				:message => CGI::escapeHTML(message["message"]),
+				:message_type => message["message_type"].to_i,
+				:recording_url => message["recording_url"],
+				:type => :welcome_message,
+				:group_id => message["group_id"].to_i
+			})
 		end
 		
 		

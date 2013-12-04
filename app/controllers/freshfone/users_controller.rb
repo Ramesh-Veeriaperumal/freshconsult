@@ -4,10 +4,12 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::NodeEvents
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
+ 	include Freshfone::Queue
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
 	before_filter :load_or_build_freshfone_user
+	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
 
 	def presence 
 		#Does not update presence when user is available on phone and disconnect is fired from node
@@ -81,5 +83,9 @@ class Freshfone::UsersController < ApplicationController
 		
 		def outgoing?
 			params[:outgoing].to_bool
+		end
+
+		def check_for_bridged_calls
+			bridge_queued_call
 		end
 end

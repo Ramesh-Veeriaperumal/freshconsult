@@ -14,13 +14,7 @@
 	}
 }
 
-.outgoing_numbers_list_dropdown {
-	background: $numbers-list-background;
-	color: $numbers-list-text;
-	border: none;
-	position: fixed;
-	@include box-shadow(none);
-}
+
 
 .popupbox-content {
 	#freshfone_dialpad, #recent_calls {
@@ -29,6 +23,12 @@
 	}
 	.keypad-popup {
 		border:none;
+	}
+	.outgoing_numbers_list_dropdown {
+		background: $numbers-list-background;
+		color: $numbers-list-text;
+		border: none;
+		@include box-shadow(none);
 	}
 	.invalid_phone_text, .info_message {
 		position: absolute;

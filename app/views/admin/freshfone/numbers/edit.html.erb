@@ -30,6 +30,23 @@
 	freshfone.IVR_TURN_OFF_MESSAGE = '<%= t('freshfone.admin.ivr.turn_off') %>';
 	freshfone.IVR_TURN_ON_MESSAGE = '<%= t('freshfone.admin.ivr.turn_on') %>';
 	freshfone.number_message_settings_json = <%= @number.to_json.html_safe %>;
+	freshfone.ivr_prefix = {
+		name_prefix : "freshfone_ivr[ivr_data][${menuId}]",
+		id_prefix : "freshfone_ivr_ivr_data_${menuId}",
+		attachment_prefix : "freshfone_ivr[attachments][${menuId}]"
+	};
+	freshfone.welcome_message_prefix = {
+		name_prefix : "freshfone_ivr[welcome_message]",
+		id_prefix : "freshfone_ivr_welcome_message",
+		attachment_prefix : "freshfone_ivr[attachments][welcome_message]"
+	};
+	freshfone.number_settings_prefix = {
+		name_prefix : "admin_freshfone_number[${type}]",
+		id_prefix : "admin_freshfone_number_${type}",
+		attachment_prefix : "admin_freshfone_number[attachments][${type}]"
+	};
+	freshfone.welcome_message_settings_json = <%= (@ivr.welcome_message || {}).to_json.html_safe %>
+	
 <% end %>
 
 <%= include_cloudfront_js :freshfone_settings %>

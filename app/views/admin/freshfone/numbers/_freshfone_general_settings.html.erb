@@ -18,39 +18,89 @@
 	</div>
 	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.record_calls') %></label>
-		<div class="controls choicelist">
-			<%= f.radio_button :record, true, :class => "radio" %> 
-			<%= f.label :record, t('freshfone.admin.number_settings.record_all'), :class => "radiolabel", :value => "true" %>
-			<%= f.radio_button :record, false, :class => "radio" %> 
-			<%= f.label :record, t('freshfone.admin.number_settings.record_none'), :class => "radiolabel", :value => "false" %>
+		<div class="controls ">
+			<div class="radio inline">
+				<%= f.radio_button :record, true, :class => "radio" %> 
+				<%= f.label :record, t('freshfone.admin.number_settings.record_all'), :class => "radiolabel", :value => "true" %>
+			</div>
+			<div class="radio inline">
+				<%= f.radio_button :record, false, :class => "radio" %> 
+				<%= f.label :record, t('freshfone.admin.number_settings.record_none'), :class => "radiolabel", :value => "false" %>
+			</div>
 		</div>
 		<div class="controls muted recording-alert">
 			<b><%= t('freshfone.admin.important') %></b>
 			<span><%= t('freshfone.admin.number_settings.record_alert') %></span>
 		</div>
 	</div>
+
+	<div class="control-group">
+		<%= f.label :voice, t('freshfone.admin.number_settings.transcript_voice'),
+								:class => "control-label settings-label" %>
+		<div class="controls">
+			<div class="radio inline">
+				<%= f.radio_button :voice, 0, :class => "radio" %> 
+				<%= f.label :voice, t('freshfone.admin.ivr.male'), :class => "radiolabel", :value => 0 %>
+			</div>
+			<div class="radio inline">
+				<%= f.radio_button :voice, 1, :class => "radio" %> 
+				<%= f.label :voice, t('freshfone.admin.ivr.female'), :class => "radiolabel", :value => 1 %>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.voicemail') %></label>
+		<div class="controls">
+			<div class="radio inline">
+				<%= f.radio_button :voicemail_active, true, :class => "radio voicemail_on_state" %> 
+				<%= f.label :voicemail_active, t('freshfone.admin.number_settings.voicemail_on'), :class => "radiolabel", :value => true %>
+			</div>
+			<div class="radio inline">
+				<%= f.radio_button :voicemail_active, false, :class => "radio voicemail_off_state" %> 
+				<%= f.label :voicemail_active, t('freshfone.admin.number_settings.voicemail_off'), :class => "radiolabel", :value => false %>
+			</div>
+		</div>
+		
+	</div>
+	<div class="control-group voicmail_message_div ">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.voicemail_message') %></label>
+		<div class="controls">
+			<div class="freshfone-controls voicemail_message"></div>
+		</div>
+	</div>
+
 	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.max_queue_calls') %></label>
 		<div class="controls freshfone-controls">
 			<%= f.select :max_queue_length, max_queue_length_options, {},
-					{:class => "select2 span2"} %>
+					{:class => "select2 span2 max_queue_length_select2"} %>
+		</div>
+	</div>
+	<div class="queue_setting_div hide">
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.call_wait_time') %></label>
+			<div class="controls freshfone-controls">
+				<%= f.select :queue_wait_time, queue_wait_time_options, 
+						{}, {:class => "select2 span2"} %>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.wait_message') %></label>
+			<div class="controls">
+				<div class="freshfone-controls on_hold_message"></div>
+			</div>
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.call_wait_time') %></label>
-		<div class="controls freshfone-controls">
-			<%= f.select :queue_wait_time, queue_wait_time_options, 
-					{}, {:class => "select2 span2"} %>
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
+		<div class="controls">
+			<div class="freshfone-controls non_availability_message"></div>
 		</div>
 	</div>
-	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.call_hunting_group') %></label>
-		<div class="controls freshfone-controls">
-			<%= f.select :group_id,
-					[[t('freshfone.admin.number_settings.all_groups'), nil]] + @groups.map{ |g| [g.name, g.id] },
-					{}, {:class => "select2 span3"} %>
-		</div>
-	</div>
+	
+	
 </div>
 <script type="text/javascript">
 	(function($){
@@ -65,5 +115,8 @@
 		}).change(function() {
 			$('.multi_business_hours').toggle();
 		});
+		
+		
 	})(jQuery)
+
 </script>

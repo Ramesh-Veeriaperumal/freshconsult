@@ -7,12 +7,12 @@ class Freshfone::Call < ActiveRecord::Base
 	belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
 	belongs_to_account
 	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
+	belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'
+	belongs_to :note, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Note'
 
 	belongs_to :customer, :class_name => 'User', :foreign_key => 'customer_id'
 
 	belongs_to :notable, :polymorphic => true, :validate => true
-	belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'
-	belongs_to :note, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Note'
 
 	has_ancestry :orphan_strategy => :destroy
 
@@ -68,8 +68,8 @@ class Freshfone::Call < ActiveRecord::Base
 	}
 	named_scope :include_ticket_number, { 
 		:include => [ :ticket, :note, :freshfone_number ] }
-	named_scope :include_customer, { :include => [:customer => [:avatar]] }
-	named_scope :include_agent, { :include => [:agent => [:avatar]] }
+	named_scope :include_customer, { :include => [ :customer ] }
+	named_scope :include_agent, { :include => [ :agent ] }
 	named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
 	named_scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
 
@@ -134,6 +134,7 @@ class Freshfone::Call < ActiveRecord::Base
 	
 	def initialize_ticket(params)
 		self.params = params
+		self.customer_id = params[:custom_requester_id] if customer_id.blank?
 		self.notable.attributes = {
 			:account_id => account_id,
 			:ticket_body_attributes => { :description_html => description_html },
@@ -176,14 +177,14 @@ class Freshfone::Call < ActiveRecord::Base
 	def direction_in_words
 		incoming? ? CALL_DIRECTION_STR[:incoming] : CALL_DIRECTION_STR[:outgoing]
 	end
-	
+
 	def notable_present?
 		notable_id.present? && !included_notable.nil?
 	end
-	
+
 	def associated_ticket
 		# if notable is_a? 'Helpdesk::Note', notable.notable will return the ticket of that note
-		ticket_notable? ? ticket : note.notable 
+		ticket_notable? ? ticket : note.notable
 	end
 	
 	private
@@ -247,5 +248,4 @@ class Freshfone::Call < ActiveRecord::Base
 		def included_notable
 			ticket_notable? ? ticket : note
 		end
-
 end

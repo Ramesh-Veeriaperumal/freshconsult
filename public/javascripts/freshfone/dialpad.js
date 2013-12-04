@@ -86,4 +86,12 @@
 		}).on('hidden', function (e) {
 			$number.keypad('hide');
 		});
+		
+		$('.outgoing_numbers_list').on("change",function(){
+			
+				console.log("select2 result");
+	      	var callerIdNumber = $('.outgoing_numbers_list').select2("val");
+			localStorage.setItem("callerIdNumber", callerIdNumber);
+			
+		});
 }(jQuery));

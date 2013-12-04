@@ -9,6 +9,7 @@ class Freshfone::CallFlow
                 :outgoing_transfer, :call_actions, :numbers, :hunt_options
   delegate :record?, :non_business_hour_calls?, :ivr, :to => :current_number
   delegate :freshfone_users, :to => :current_account
+	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :initiate_voicemail,
           :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call,
@@ -69,11 +70,6 @@ class Freshfone::CallFlow
     Freshfone::IvrMethods.trigger_ivr_flow(params, current_account, current_number, self)
   end
   
-  def call_hunting(menu_object)
-    self.welcome_menu = menu_object
-    regular_incoming
-  end
-  
   def transfer(agent, outgoing=false)
     self.outgoing_transfer = outgoing
     self.transfered = true
@@ -118,7 +114,7 @@ class Freshfone::CallFlow
 
     def incoming_or_ivr
       return non_business_hour_call unless working_hours?
-      ivr.active? ? trigger_ivr_flow : regular_incoming
+      ivr.ivr_message? ? trigger_ivr_flow : regular_incoming
     end
     
     def regular_incoming
@@ -142,7 +138,7 @@ class Freshfone::CallFlow
     end
 
     def load_available_and_busy_agents
-      return load_users_from_group(current_number.group_id) if current_number.group.present?
+      return load_users_from_group(current_number.group_id) if current_number.group_id.present?
       load_all_available_and_busy_agents
     end
 

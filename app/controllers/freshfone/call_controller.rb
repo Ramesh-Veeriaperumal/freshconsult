@@ -8,6 +8,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Queue
 	
 	before_filter :populate_call_details, :only => [:status]
+	before_filter :force_termination, :only => [ :status ]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :prepare_message_for_publish,  :only => [:forward]
 	before_filter :handle_batch_calls, :only => [ :status ]
@@ -37,6 +38,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	end
 
 	def handle_missed_calls
+		update_call
 		render :xml =>  call_initiator.initiate_voicemail if missed_call?
 	end
 
@@ -83,6 +85,13 @@ class Freshfone::CallController < FreshfoneBaseController
 											 :call_sid => (params[:ParentCallSid] || params[:CallSid]) }
 			@transferred_calls ||= get_key(@transfer_key)
 			@transferred_calls.present?
+		end
+		
+		def force_termination
+			unless params[:force_termination].blank?
+				add_cost_job
+				return empty_twiml
+			end
 		end
 
 		def transfer_complete?
@@ -168,7 +177,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call])
+			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call, :force_termination])
 			super
 		end
 
