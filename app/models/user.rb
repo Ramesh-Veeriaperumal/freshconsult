@@ -461,7 +461,7 @@ class User < ActiveRecord::Base
   
     def search_fields_updated?
       all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                          :twitter_id, :fb_profile_id, :deleted]
+                          :twitter_id, :fb_profile_id, :customer_id, :deleted]
       (@all_changes.keys & all_fields).any?
     end
 
