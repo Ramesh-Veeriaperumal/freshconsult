@@ -10,7 +10,7 @@ $header_footer_height: 50px;
 $animation-speed:.3s;
 $animation-type: ease-in;
 
-@media (max-width: 480px){
+@media (max-width: 768px){
 	html,.modal-widget{
 		height: 100%;
 	}
