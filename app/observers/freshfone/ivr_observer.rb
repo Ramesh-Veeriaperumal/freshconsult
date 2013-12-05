@@ -55,6 +55,14 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 
 		def build_seed_menu(freshfone_ivr)
 			freshfone_ivr.ivr_data = { 0 => seed_menu }
+  		freshfone_ivr.welcome_message = Freshfone::Number::Message.new({
+  			:attachment_id => nil ,
+  			:message => I18n.t('freshfone.admin.ivr.seed_message'),
+  			:message_type => 2,
+  			:recording_url => nil,
+  			:type => :welcome_message,
+  			:group_id => 0
+  		})
 		end
 
 		def seed_menu
