@@ -75,12 +75,12 @@ class Social::FacebookPosts
     puts "get_html_content"
     post = @rest.get_object(post_id)
     post.symbolize_keys!
-    html_content =  CGI.escapeHTML(post[:message])
+    html_content =  CGI.escapeHTML(post[:message]).to_s
     if "video".eql?(post[:type])
 
       desc = post[:description] || ""
       html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a>" +
-        "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name]+"</a></p>"+
+        "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name].to_s+"</a></p>"+
         "<p><strong>"+html_content+"</strong></p>"+
         "<p>"+desc+"</p>"+
         "</div></div>"
