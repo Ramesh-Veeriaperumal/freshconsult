@@ -161,7 +161,7 @@ $button-radius: 6px;
 			z-index:10;
 			cursor:pointer;
 			&:before{
-				content: "×";
+				content: "\00d7";
 			}
 		}
 		.freshwidget-dialog{
