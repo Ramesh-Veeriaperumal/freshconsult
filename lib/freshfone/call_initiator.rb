@@ -8,7 +8,7 @@ class Freshfone::CallInitiator
 
 	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_process
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
-					 :outgoing_transfer, :numbers, :read_welcome_message, :to => :call_flow, :allow_nil => true
+					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :to => :call_flow, :allow_nil => true
 	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :to => :current_number
 	
 	def initialize(params={}, current_account=nil, current_number=nil, call_flow=nil)
@@ -21,7 +21,8 @@ class Freshfone::CallInitiator
 	# agent class -> Freshfone::User
 	def connect_caller_to_agent(agents=nil)
 		twiml_response do |r|
-			read_welcome_message(r)
+      
+			read_welcome_message(r) if !transfered
 			# welcome_menu.ivr_message(r) if welcome_menu
 			agents_to_be_called = process_in_batch(agents || available_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],

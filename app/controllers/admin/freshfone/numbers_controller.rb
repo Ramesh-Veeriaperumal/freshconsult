@@ -79,8 +79,8 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def load_ivr
 			@ivr = @number.ivr
-			@agents = current_account.users.technicians
-			@groups = current_account.groups.reject { |g| g.agent_groups.empty? } 
+			@agents = current_account.users.technicians.visible
+			@groups = current_account.groups.reject { |g| g.agents.empty? } 
 		end
 
 		def set_business_calendar
