@@ -49,10 +49,13 @@ var WidgetConfig = function () {};
 			this.activeForm.find('[name="buttonText"]').keyup(function (ev) { $this.onConfigChange(); });
 			$('#TabColor').bind('colorpicked', function (ev) { $this.onConfigChange(); });
 			$("#fw-tabs a").on("change.widget_config", function (ev) {
-				$this.activeForm = $("#fw-tab-content form:visible").trigger("change");
+				$this.activeForm = $("#fw-tab-content form:visible");
+				var checked = $this.activeForm.find('.httpsHttp').prop('checked');
+				$this.asset_url = (checked) ? $this.urls.https : $this.urls.http;
+				$this.onConfigChange();
 			});
 
-			$('#httpsHttp').on('change.widget_config', function (ev) {
+			$('.httpsHttp').on('change.widget_config', function (ev) {
 				$this.asset_url = (this.checked) ? $this.urls.https : $this.urls.http;
 			});
 
@@ -71,7 +74,7 @@ var WidgetConfig = function () {};
 			this.setDefaults();
 			this.buildHash();
 			FreshWidget.update(this.formHash.toObject());
-
+			$('#freshwidget-frame').attr('src', this.account_url + '/widgets/feedback_widget/new?' + this.formHash.get('queryString').sub('embedded','popup'));
 			this.updateCode();
 			this.highlightCode();
 		},
