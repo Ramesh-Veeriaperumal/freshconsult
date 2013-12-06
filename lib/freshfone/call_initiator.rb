@@ -77,6 +77,8 @@ class Freshfone::CallInitiator
 				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
 
 			end
+		else
+			Twilio::TwiML::Response.new.text
 		end
 	end
 
