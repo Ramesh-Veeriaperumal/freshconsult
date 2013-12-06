@@ -166,7 +166,7 @@ class Account < ActiveRecord::Base
   end
   
   def full_url
-    "http://#{host}"
+    "#{url_protocol}://#{host}"
   end
 
   def url_protocol
