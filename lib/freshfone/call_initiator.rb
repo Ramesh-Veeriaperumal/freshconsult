@@ -69,7 +69,7 @@ class Freshfone::CallInitiator
 	end
 
 	def initiate_voicemail(type = "default")
-		if current_number.voicemail_active
+		if current_number.voicemail_active or type == "non_business_hours"
 			twiml_response do |r|
 				#skipping IVR on reaching non-responsive office
 				# welcome_menu.ivr_message(r) if welcome_menu
