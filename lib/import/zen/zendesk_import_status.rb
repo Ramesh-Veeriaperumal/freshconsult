@@ -1,6 +1,6 @@
 class Import::Zen::ZendeskImportStatus
   extend Resque::AroundPerform
-  @queue = "ZendeskImportStatus"
+  @queue = "zendesk_import_status"
 
   def self.perform(args)
    Import::Zen::ZenStatusWorker.new(args).perform
