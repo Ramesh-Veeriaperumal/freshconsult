@@ -41,6 +41,7 @@ class Search::HomeController < ApplicationController
   end
 
   def search_solutions
+    @search_query = params[:q]
     render :layout => false
   end
 
