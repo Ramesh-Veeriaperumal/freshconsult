@@ -8,7 +8,7 @@ namespace :twitter do
     queue_name = "TwitterWorker"
     if queue_empty?(queue_name)
         puts "Twitter Queue is empty... queuing at #{Time.zone.now}"
-        Sharding.execute_on_all_shards do
+        Sharding.run_on_all_slaves do
     	   Account.active_accounts.each do |account|  
             next if check_if_premium?(account) || account.twitter_handles.empty?  
        		Resque.enqueue(Social::TwitterWorker ,{:account_id => account.id } )

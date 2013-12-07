@@ -1,7 +1,7 @@
 class Integrations::TimeSheetsSync 
 
   def self.applications
-    [Integrations::Constants::APP_NAMES[:freshbooks],Integrations::Constants::APP_NAMES[:workflow_max]]
+    [Integrations::Constants::APP_NAMES[:freshbooks], Integrations::Constants::APP_NAMES[:workflow_max], Integrations::Constants::APP_NAMES[:harvest]]
   end
 
   def self.update(time_entry)
@@ -12,7 +12,7 @@ class Integrations::TimeSheetsSync
     end
   end
 
-  def self.freshbooks(inst_app,timeentry)
+  def self.freshbooks(inst_app,timeentry,user)
     integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
     return if integrated_resource.blank?
     domain = inst_app.configs[:inputs]['api_url'].split('//')[1]
@@ -23,7 +23,7 @@ class Integrations::TimeSheetsSync
     response = hrp_request(params,"post","FRESHBOOKS_UPDATE_REQ")
   end
 
-  def self.workflow_max(inst_app,timeentry)
+  def self.workflow_max(inst_app,timeentry,user)
     integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
     return if integrated_resource.blank?
     domain = "api.workflowmax.com" #a global api access url 
@@ -34,6 +34,17 @@ class Integrations::TimeSheetsSync
     notes = Liquid::Template.parse(inst_app.configs[:inputs]['workflow_max_note']).render('ticket'=>timeentry.workable)
     wfm_time_entry.merge!('time_entry_id'=>integrated_resource.remote_integratable_id,'hours'=> "#{minutes}",'notes'=>"#{timeentry.note}\n#{notes}")
     wfm_update_timeentry(params,apikey,wfm_time_entry)
+  end
+
+  def self.harvest(inst_app,timeentry,user)
+    integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
+    return if integrated_resource.blank?
+    domain = inst_app.configs[:inputs]['domain'] #fetching domain for installed app
+    user_credential = inst_app.user_credentials.find_by_user_id(user)
+    rest_url = "daily/update/#{integrated_resource.remote_integratable_id}"
+    params = harvest_params(user_credential,timeentry,rest_url)
+    params.merge!(:domain=>domain)
+    response = hrp_request(params,"post","HARVEST_UPDATE_REQ")
   end
 
   private
@@ -73,9 +84,18 @@ class Integrations::TimeSheetsSync
       wfm_time_entry = {'staff_id'=>xml.css("Time Staff ID").text,'task_id' => xml.css("Time Task ID").text,'job_id' => xml.css("Time Job ID").text,'date'=>date}
     end
 
+    def self.harvest_params(credential,timeentry,rest_url)
+      password = Base64.decode64(credential.auth_info[:password])
+      params = {:ssl_enabled => "true", :rest_url=>rest_url, :content_type => "application/xml", :accept_type => "application/xml", :username => credential.auth_info[:username], :password => password }
+      params[:body] = HARVEST_UPDATE_REQ.render('hours'=>timeentry.hours)
+      params
+    end
+
     #Request Templates for the update operations on the third party apps.
     FRESHBOOKS_UPDATE_REQ =  Liquid::Template.parse('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.update"><time_entry><time_entry_id>{{time_entry_id}}</time_entry_id><hours>{{hours}}</hours><notes><![CDATA[{{notes}}]]></notes></time_entry></request>')
   
     WFM_UPDATE_REQ = Liquid::Template.parse('<Timesheet><ID>{{time_entry_id}}</ID><Job>{{job_id}}</Job><Task>{{task_id}}</Task><Staff>{{staff_id}}</Staff><Date>{{date}}</Date><Minutes>{{hours}}</Minutes><Note><![CDATA[{{notes}}]]></Note></Timesheet>')
+
+    HARVEST_UPDATE_REQ = Liquid::Template.parse('<request><hours>{{hours}}</hours></request>')
 
 end

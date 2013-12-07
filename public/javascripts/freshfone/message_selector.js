@@ -92,6 +92,11 @@
 			this.msgtype = $(element).data('value');
 			this.$allMessageTypesSelectors.hide();
 			this.$container.find('[rel=message_' + this.msgtype + ']').show();
+			if (this.msgtype === messageTypes['TRANSCRIPT'] && !this.textareaResized) {
+				var textarea = this.$container.find('.message-input:visible');
+				if (!textarea.data('autosize')) { textarea.autosize(); }
+				this.textareaResized = true;
+			}
 			this.updateMessageType();
 		},
 		updateMessageType: function () {

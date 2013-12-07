@@ -1,6 +1,7 @@
 class Va::Action
   
   include Va::Webhook::Trigger
+  include ParserUtil
   
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
@@ -123,7 +124,7 @@ class Va::Action
     def add_comment(act_on)
       note = act_on.notes.build()
       note.build_note_body
-      note.note_body.body = act_hash[:comment]
+      note.note_body.body_html = substitute_placeholders(act_on, :comment)
       note.account_id = act_on.account_id
       note.user = User.current
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
@@ -143,6 +144,33 @@ class Va::Action
       end
       
       add_activity("Assigned the tag(s) [<b>#{value.split(',').join(', ')}</b>]")
+    end
+
+    def add_a_cc(act_on)
+      unless value.blank?
+        ticket_cc_emails = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
+        cc_email_value = value.downcase.strip
+        return if ticket_cc_emails.include?(cc_email_value)
+        act_on.cc_email[:cc_emails] << cc_email_value
+        Helpdesk::TicketNotifier.deliver_send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+      end
+    end
+
+    def add_watcher(act_on)
+      watchers = Array.new
+      watcher_value = value.kind_of?(Array) ? value : value.to_a
+      watcher_value.each do |agent_id|
+        watcher = act_on.subscriptions.find_by_user_id(agent_id)
+        unless watcher.present?
+          subscription = act_on.subscriptions.create( {:user_id => agent_id} )
+          watchers.push subscription.user.name if subscription
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+                                               act_on, 
+                                               subscription, 
+                                               "automations rule")
+        end
+      end
+      add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
     end
 
     def send_email_to_requester(act_on)

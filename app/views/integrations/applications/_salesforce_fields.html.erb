@@ -34,10 +34,11 @@
     	  			</div>
               <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
               <%data =selected_fields.join(",").html_safe%>
-
+              <% contact_fields = @salesforce_config['contact_fields'] %>
+              <%=hidden_field_tag :contact_labels %>
       			  <%= select_tag :contacts, 
-                			options_for_select(@salesforce_config['contact_fields'].collect{|field|
-                        field
+                			options_for_select(@salesforce_config['contact_fields'].keys.collect{|field|
+                        [contact_fields[field],field]
                       },data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
           	</span>
       		</div>
@@ -57,8 +58,10 @@
                   </ul>
       	  	</div>
             <%data =selected_lead_fields.join(",").html_safe%>
+            <% lead_fields = @salesforce_config['lead_fields'] %>
+            <%=hidden_field_tag :lead_labels %>
       			<%= select_tag :leads, 
-                			options_for_select(@salesforce_config['lead_fields'].collect{|field| [field]},data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
+                			options_for_select(@salesforce_config['lead_fields'].keys.collect{|field| [lead_fields[field],field] },data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
                 </span>
       	  </div>
         </div>
@@ -67,7 +70,7 @@
     </ul>
     <div class="button-container">
       <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
-      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
     </div>
 
   <%end%>
@@ -76,6 +79,20 @@
 
 <script type="text/javascript">
 
+function fillLabels(){
+   var selectedValues = []; 
+   var leadValues =[];   
+    jQuery("#contacts :selected").each(function(){
+        selectedValues.push(jQuery(this).text()); 
+    });
+    jQuery('#contact_labels').val(selectedValues);
+
+    jQuery("#leads :selected").each(function(){
+        leadValues.push(jQuery(this).text()); 
+    });
+    jQuery('#lead_labels').val(leadValues);
+    return true;
+}
   jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
   jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
@@ -83,14 +100,14 @@
   //setting the Name as default field(can't be removed.)
   jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
     value = jQuery(element).text();
-    if(value =="Name"){
+    if(value =="Full Name"){
       jQuery(element).next("a").remove();
     }
   });
 
 jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
     value = jQuery(element).text();
-    if(value =="Name"){
+    if(value =="Full Name"){
       jQuery(element).next("a").remove();
     }
   });

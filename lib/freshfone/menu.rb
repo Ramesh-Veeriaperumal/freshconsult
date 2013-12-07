@@ -46,6 +46,7 @@ class Freshfone::Menu < Tree::TreeNode
 	
 	def validate
 		ivr.errors.add_to_base("Cannot have blank message for menu '#{menu_name}'") unless has_message?
+		ivr.errors.add_to_base("Atleast one keypress option need for '#{menu_name}'") if  ( !has_options? && ivr.ivr_message?)
 		validate_options
 	end
 	
@@ -72,7 +73,6 @@ class Freshfone::Menu < Tree::TreeNode
 			say_verb(r, "Please enter a valid option.") if options[:invalid]
 			preview_alert_message(r) if options[:preview_alert]
 			has_options? ? menu_gather(r) : ivr_message(r)
-			preview_alert_message(r) if preview_empty_root_menu?
 			r.Redirect "#{status_url}?ivr_status=true&preview=#{preview?}", :method => "POST"
 		end
 		[:twiml, twiml.text]
@@ -126,10 +126,6 @@ class Freshfone::Menu < Tree::TreeNode
 		def live_ivr_url
 			"#{host}/freshfone/ivr_flow?menu_id=#{menu_id}"
 		end
-		
-		def preview_empty_root_menu?
-			preview? && root_with_no_options?
-		end
 
 		def invalid_selection?
 			no_option? && !first_time_entry?
@@ -152,19 +148,11 @@ class Freshfone::Menu < Tree::TreeNode
 		end
 		
 		def invalid_selction_or_root
-			root_with_no_options? && !preview? ? call_hunting : speak(params, { :invalid => invalid_selection? })
+			speak(params, { :invalid => invalid_selection? })
 		end
 		
 		def host
 			account.url_protocol + "://" + account.host
-		end
-		
-		def call_hunting
-			[Freshfone::IvrMethods::RESPONSE_TYPE[:call_hunting], self]
-		end
-	
-		def root_with_no_options?
-			!has_options? && is_root?
 		end
 
 		def has_options?

@@ -12,7 +12,22 @@ SalesforceWidget.prototype= {
 		this.salesforceBundle = salesforceBundle;
 		this.contactFields = ["Name"];
 		this.leadFields=["Name"];
+		this.contactInfo = this.mapFieldLabels(salesforceBundle.contactFields,salesforceBundle.contactLabels);
+		this.leadInfo = this.mapFieldLabels(salesforceBundle.leadFields,salesforceBundle.leadLabels);
 		freshdeskWidget = new Freshdesk.CRMWidget(salesforceBundle, this);
+	},
+	mapFieldLabels: function(fields,labels){
+		var fieldLabels ={}
+		var labelsArr = new Array();
+		fieldsArr = fields.split(",");
+		labelsArr = fieldsArr;//no labels until reenabled,defaults to field-name for existing sf users
+		if(labels != undefined && labels.length != 0){
+			labelsArr = labels.split(",");
+		}
+		for (var i=0;i<fieldsArr.length;i++){
+			fieldLabels[fieldsArr[i]] = labelsArr[i];
+		}
+		return fieldLabels
 	},
 
 	get_contact_request: function() {
@@ -115,9 +130,11 @@ SalesforceWidget.prototype= {
 	},
 	getTemplate:function(eval_params,crmWidget){
 		var contactTemplate ="";
+		var labels = this.contactInfo;
 		var fields = this.salesforceBundle.contactFields.split(",");
 		if(eval_params.type!="Contact"){
 			fields = this.salesforceBundle.leadFields.split(",");
+			labels = this.leadInfo;
 		}
 		for(var i=0;i<fields.length;i++){
 			var value = eval_params[fields[i]];
@@ -127,16 +144,12 @@ SalesforceWidget.prototype= {
 			if(fields[i]=="Name"){
 				continue;
 			}
-			field_name =fields[i].split('__');//for custom fields to get the label
-   		if(field_name[1] !=undefined){
-   				fields[i] = field_name[1];
-   			}
 			if(value==null || value == undefined){
 				value ="N/A";
 			}
    			contactTemplate+= '<div class="salesforce-widget">' +
 		    			'<div class="clearfix">' +
-					    '<span>'+fields[i]+':</span>' +
+					    '<span>'+labels[fields[i]]+':</span>' +
 				    	'<label id="contact-'+fields[i]+'" class="ellipsis tooltip" title="'+value+'">'+value+'</label>' +
 			    		'</div></div>';	
 		}

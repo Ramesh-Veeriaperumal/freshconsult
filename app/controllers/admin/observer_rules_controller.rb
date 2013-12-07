@@ -29,7 +29,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     def load_config
       super
 
-      @agents[0..0] = ['--', t('any_val.any') ], ['-1', t('admin.observer_rules.assigned_agent') ]
+      @agents[0..0] = ['--', t('any_val.any') ], ['', t('none')]
       @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
       @ticket_actions = [ [:update, t('ticket.updated')], [:delete, t('ticket.deleted')],
@@ -47,8 +47,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => [ ['--', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2 },
         { :name => 'group_id', :value => t('observer_events.group'), :domtype => 'dropdown',
           :choices => [ ['--', t('any_val.any_group')] ]+@groups, :type => 2 },
-        { :name => 'responder_id', :value => t('observer_events.agent'),
-          :type => 0 },
+        { :name => 'responder_id', :value => t('observer_events.agent'), :domtype => 'dropdown',
+          :choices => @agents, :type => 2 },
         { :name => 'note_type', :value => t('observer_events.note'), :domtype => 'dropdown',
           :choices => @note_types, :type => 1, :valuelabel => t('event.type') },
         { :name => 'reply_sent', :value => t('observer_events.reply'), :domtype => 'label', :type => 0 },

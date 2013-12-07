@@ -1,6 +1,7 @@
 
 
 class Import::Attachment
+  include Import::Zen::Redis
   attr_accessor :id , :attach_url , :model, :account, :username, :password
   def initialize(params={})
     self.id = params[:item_id]
@@ -40,5 +41,6 @@ class Import::Attachment
         end
       end
     end
+    increment_key 'attachments_completed'
   end
 end

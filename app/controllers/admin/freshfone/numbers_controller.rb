@@ -1,7 +1,7 @@
 class Admin::Freshfone::NumbersController < Admin::AdminController
 	before_filter(:only => [:purchase]) { |c| c.requires_feature :freshfone }
 	before_filter :check_active_account, :only => :edit
-	before_filter :load_number
+	before_filter :load_number, :except => [ :index, :purchase ]
 	before_filter :load_ivr, :only => :edit
 	before_filter :build_attachments, :set_business_calendar,
 							  :only => :update
@@ -74,12 +74,13 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def load_number
 			@number ||= current_account.freshfone_numbers.find_by_id(params[:id])
+			redirect_to admin_freshfone_numbers_path if @number.blank?
 		end
 
 		def load_ivr
 			@ivr = @number.ivr
-			@agents = current_account.users.technicians
-			@groups = current_account.groups
+			@agents = current_account.users.technicians.visible
+			@groups = current_account.groups.reject { |g| g.agents.empty? } 
 		end
 
 		def set_business_calendar

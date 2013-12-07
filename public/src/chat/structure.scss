@@ -1467,6 +1467,9 @@ li.ui-state-active {
 #visitor_results table{
     width: 100%;
     border-collapse: collapse;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
     tr td{
         border-collapse: collapse;
         border-bottom:1px solid;
@@ -1474,30 +1477,65 @@ li.ui-state-active {
         a{
             cursor: pointer;
         }
+
+        &.visitor_list_time{
+            width: 5%;
+            color: #999;
+            font-size: 11px;
+            span{ padding-left: 2px;}
+        }
+        .icon-location, .icon-eye{
+            color: #ccc;
+        }
+
+        &.new-visitor, &.location, &.lookpage{
+            a, span{
+                width: 80%;
+            }
+        }
+        &.lookpage a{
+            width: 80%;
+            word-break: break-all;
+            float: left;
+        }
+
+        &.chat-visitor{
+            width: 30%;
+        }
+
+        &.chat-visitor, &.location{
+            word-break: break-all;
+            i{ float: left;}
+            span{
+                float: left;
+                width: 80%;
+                b{
+                    color: #999;
+                    font-weight: normal;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        &.new-visitor{
+            width: 30%;
+        }
+        &.location {
+            width: 30%;
+        }
+        &.lookpage {
+            width: 35%;
+            i{
+                float: left;
+                font-size: 17px;
+                padding-right: 10px;
+            }
+        }
     }
 }
 
 .return-visitor, .lookpage, .location, .new-visitor, .chat-visitor{
     padding-left: 15px !important;
-}
-
-.lookpage {
-        width: 150px;
-    i{
-        float: left;
-        font-size: 17px;
-        padding-right: 10px;
-    }
-    a{
-        float: left;
-        width: 100px;
-        white-space: nowrap;
-        overflow: hidden;
-        -webkit-text-overflow: ellipsis;
-           -moz-text-overflow: ellipsis;
-            -ms-text-overflow: ellipsis;
-                text-overflow: ellipsis;
-    }
 }
 
 .return-visitor i, .new-visitor i, .chat-visitor i, .location i{
@@ -1538,11 +1576,11 @@ li.ui-state-active {
 }
 
 .agent-search{
-    border-radius: 0 0 0 0 !important;
+    border-radius: 3px;
     font-size: 12px !important;
     font-weight: 300;
     margin: 5px;
-    width: 90%;
+    width: 174px;
 }
 
 .agent-scroll{

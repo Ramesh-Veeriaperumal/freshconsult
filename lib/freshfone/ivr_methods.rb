@@ -6,14 +6,13 @@ class Freshfone::IvrMethods
 
 	attr_accessor :params, :type, :response_object, :account, :number, :call_flow
 	
-	delegate :load_available_and_busy_agents, :incoming, :call_hunting,
-					 :call_users_in_group, :call_user_with_id, :call_user_with_number, :to => :call_flow
+	delegate	:incoming, :call_users_in_group,
+						:call_user_with_id, :call_user_with_number, :to => :call_flow
 	
 	RESPONSE_TYPE = {
 		:twiml_response => :twiml,
 		:call_agent => :User,
 		:call_group => :Group,
-		:call_hunting => :call_hunting,
 		:call_number => :Number
 	}
 
@@ -31,9 +30,7 @@ class Freshfone::IvrMethods
 	def perform_action
 		(self.type, self.response_object) = ivr_scoper.perform_action(params)
 
-		if call_hunting?
-			call_hunting(response_object)
-		elsif call_group?
+		if call_group?
 			call_users_in_group(response_object)
 		elsif call_agent?
 			call_user_with_id(response_object)

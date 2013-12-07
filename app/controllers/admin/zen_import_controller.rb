@@ -1,49 +1,61 @@
 class Admin::ZenImportController < Admin::AdminController
   
+  include Import::Zen::Redis
 
-before_filter :check_zendesk_import_status, :only => :index
+  before_filter :update_status, :only => [ :index, :status ]
 
-  def index  
-    
+  def index
+    @zendesk_import = current_account.zendesk_import
+    find_agent unless @import_status.blank?
   end
   
   def import_data
-    
-    @item = current_account.build_zendesk_import({:status=>true })   
-    if @item.save
-       handle_zen_import
-       flash[:notice] =  t(:'flash.data_import.zendesk.success')
-       redirect_to  admin_home_index_url
+    item = current_account.build_zendesk_import({:status=>true })   
+    if item.save
+      handle_zen_import
+      flash[:notice] =  t(:'flash.data_import.zendesk.success')
     else
       flash[:notice] = t(:'flash.data_import.zendesk.failure')
-      redirect_to :index
+    end
+    redirect_to  admin_zen_import_index_url
+  end
+
+  def status
+    render :partial => 'status'
+  end
+
+  protected
+
+    def update_status
+      @import_status = get_full_hash(zi_key)
     end
 
-  end
-  
-  def handle_zen_import 
-    zen_params = {:account_id => current_account.id,
-                  :domain =>current_account.full_domain,
-                  :email => current_user.email,
-                  :zendesk =>{:url => params[:zendesk][:url], 
-                              :user_name => params[:zendesk][:user_name],
-                              :user_pwd => params[:zendesk][:user_pwd],
-                              :files => params[:import][:files],
-                              :file_url => params[:zendesk][:file_url]
-                              }
-                  }
-   
-    #Delayed::Job.enqueue Import::Zen::Start.new(zen_params)
-    Resque.enqueue( Import::Zen::ZendeskImport,zen_params)
-  end
-  
-  protected
-  
-  def check_zendesk_import_status
-   @import_status = current_account.zendesk_import
-   if  @import_status && @import_status.status
-     flash[:notice] = t(:'flash.data_import.zendesk.running') 
-     redirect_to  admin_home_index_url
-   end
-  end
+    def handle_zen_import
+      set_import_user(current_user.agent.id)
+      set_included_files params[:zendesk][:files]
+      Resque.enqueue( Import::Zen::ZendeskImport,queue_params)
+    end
+
+    def queue_params
+      {
+        :account_id => current_account.id,
+        :domain => current_account.full_domain,
+        :zendesk => params[:zendesk]
+      }
+    end
+
+    def set_included_files nodes
+      nodes.delete_if { |node| node.blank? or node.eql?('solution')}
+      import_files = ['organization','user','group']
+      nodes.each do |node|
+        import_files.push('ticket') if node.eql?('tickets')
+        import_files.push('post') if node.eql?('forums')
+      end
+      set_redis_key('nodes', import_files.to_json)
+    end
+
+    def find_agent
+      @importing_agent = current_account.agents.find(@import_status['current_user'])
+    end
+
 end

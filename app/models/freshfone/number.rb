@@ -16,6 +16,7 @@ class Freshfone::Number < ActiveRecord::Base
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy
 
+	delegate :group_id, :group, :to => :ivr
 	attr_accessor :attachments_hash, :address_required
 	attr_protected :account_id
 
@@ -40,11 +41,13 @@ class Freshfone::Number < ActiveRecord::Base
 	VOICE_OPTIONS = VOICE.map { |i| [ i[2], i[3] ] }
 	VOICE_HASH = Hash[*VOICE.map { |i| [ i[0], i[3] ] }.flatten]
 	VOICE_TYPE_HASH = Hash[*VOICE.map { |i| [ i[0], i[1] ] }.flatten]
+	VOICEMAIL_STATE = { :on => 1, :off => 0}
+	VOICEMAIL_STATE_BY_VALUE = VOICEMAIL_STATE.invert
 	
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
 	validates_inclusion_of :queue_wait_time,  :in => [ 2, 5, 10, 15 ] #Temp options
-	validates_inclusion_of :max_queue_length, :in => [ 3, 5, 10 ] #Temp options
+	validates_inclusion_of :max_queue_length, :in => [ 0, 3, 5, 10 ] #Temp options
 	validates_inclusion_of :voice, :in => VOICE_HASH.values,
 		:message => "%{value} is not a valid voice type"
 	validates_inclusion_of :state, :in => STATE.values,
@@ -79,10 +82,11 @@ class Freshfone::Number < ActiveRecord::Base
 
 	def to_json
 		MESSAGE_FIELDS.map do |msg_type|
+
 			if self[msg_type].blank?
 				{ :type => msg_type }
 			else
-				self[msg_type].number = self
+				self[msg_type].parent = self
 				self[msg_type]
 			end
 		end.to_json
@@ -134,7 +138,7 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 	
 	def message_changed?
-		on_hold_message_changed? || non_availability_message_changed? || voicemail_message_changed?
+		on_hold_message_changed? || non_availability_message_changed? || voicemail_message_changed? 
 	end
 
 	def unused_attachments
@@ -158,7 +162,16 @@ class Freshfone::Number < ActiveRecord::Base
 		def validate_settings
 			MESSAGE_FIELDS.each do |message|
 				return if self[message].blank?
-				self[message].number = self; self[message].validate
+				self[message].parent = self; 
+
+				case message
+					when :voicemail_message
+						self[message].validate unless !voicemail_active
+					when :on_hold_message
+						self[message].validate unless max_queue_length===0
+					else
+						self[message].validate
+				end
 			end
 		end
 
@@ -175,7 +188,7 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 
 		def assign_number_to_message
-			MESSAGE_FIELDS.each {|type| self[type].number = self unless self[type].blank? }
+			MESSAGE_FIELDS.each {|type| self[type].parent = self unless self[type].blank? }
 		end
 		
 		def current_message(type)

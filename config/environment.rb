@@ -67,7 +67,7 @@ Rails::Initializer.run do |config|
   # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
   config.time_zone = 'Chennai'  
  
-  # ActiveSupport::JSON.backend = "JSONGem"
+  ActiveSupport::JSON.backend = "JSONGem"
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 

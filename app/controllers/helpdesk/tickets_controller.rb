@@ -23,7 +23,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
-  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -268,7 +268,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.nmobile {
         response = "{
         #{@item.to_mob_json(false,false)[1..-2]},
-        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},
+        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios, :can_view_time_entries, :can_forward_ticket])[1..-2]},
+        #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
         #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
         #{{:last_forward => bind_last_conv(@ticket, @signature, true)}.to_json[1..-2]},
@@ -336,7 +337,7 @@ class Helpdesk::TicketsController < ApplicationController
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
       end
-
+      verify_permission
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -972,6 +973,8 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t("flash.general.access_denied") 
         if params['format'] == "widget"
           return false
+        elsif request.xhr?
+          params[:redirect] = "true"
         else
           redirect_to helpdesk_tickets_url
         end
@@ -1085,5 +1088,9 @@ class Helpdesk::TicketsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def load_sort_order
+    params[:wf_order] = @template.current_wf_order.to_s
+    params[:wf_order_type] = @template.current_wf_order_type.to_s
+  end
  
 end

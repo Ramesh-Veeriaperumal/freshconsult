@@ -1,7 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
 
 	before_create :validate_schema_less_note, :update_observer_events
-  before_save :load_schema_less_note, :update_category, :load_note_body
+  before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
@@ -70,6 +70,7 @@ class Helpdesk::Note < ActiveRecord::Base
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
+      notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.save
     end
     
@@ -138,6 +139,10 @@ class Helpdesk::Note < ActiveRecord::Base
                                                 notable, subscription, self)
         end
       end
+    end
+
+    def ticket_cc_email_backup
+      @prev_cc_email = notable.cc_email.dup unless notable.cc_email.nil?
     end
 		
     # VA - Observer Rule 

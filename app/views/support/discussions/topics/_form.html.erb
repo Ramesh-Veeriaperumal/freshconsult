@@ -56,22 +56,27 @@
 		</script>
 	</div>
 	<% unless @topic.new_record? %>
-	<div class="attachment-list-container">
-	    <%= content_tag('h5', t('attachments')) unless @topic.posts.first.attachments.empty? %>
-	    <table class="attachment-list">
-	      <%= render(
-	        :partial => '/helpdesk/shared/attachment', 
-	        :collection => @topic.posts.first.attachments,
-	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-	    </table>
-	  </div>
-	<%end%>
-	<div class="controls">
-		<% if is_application_installed?("screenr") %>
-		  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
-		<% end %>
+	<div class="control-group">
+		<div class="controls">
+			<div class="attachment-list-container">
+			    <%= content_tag('h5', t('attachments')) unless @topic.posts.first.attachments.empty? %>
+			    <ul class="attachment-list">
+			      <%= render(
+			        :partial => '/helpdesk/shared/attachment', 
+			        :collection => @topic.posts.first.attachments,
+			        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+			    </ul>
+			</div>
+		</div>
 	</div>
-	
+	<%end%>
+	<div class="control-group">
+		<div class="controls">
+			<% if is_application_installed?("screenr") %>
+			  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
+			<% end %>
+		</div>
+	</div>
 	<div class="form-actions">
 		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />
 		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>

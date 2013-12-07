@@ -1,7 +1,7 @@
 <!-- message_container -> message_value_container -->
 <div class='message-container'>
 	<input rel="message_type_input" type="hidden" 
-				 name='<%= name_prefix %>[message_type]' data-message-type="${messageType}"
+				 name='${name_prefix}[message_type]' data-message-type="${messageType}"
 				 value="${messageType}">
 	<div class="message-type">
 		<span class="span record_voice tooltip"
@@ -25,7 +25,7 @@
 								<span></span><%= t('freshfone.admin.number_settings.start_recording') %>
 				</button>
 				<span class="cancel_recording"><%= t('freshfone.admin.number_settings.cancel') %></span>
-				<span class="help_info mute">
+				<span class="help_info muted">
 					<%= t('freshfone.admin.number_settings.recording_help_info') %></span>
 			</div>
 
@@ -37,7 +37,7 @@
 			</div>
 			<span class="remove_recording"><%= t('freshfone.admin.number_settings.change') %></span>
 
-			<input name='<%= name_prefix %>[recording_url]' 
+			<input name='${name_prefix}[recording_url]' 
 						 type="hidden" rel="recording" value="${recordingUrl}">
 		</div>
 
@@ -46,10 +46,10 @@
 				<div class="file-upload">
 					<span class="file-upload-text"><%= t('freshfone.admin.number_settings.audio_upload') %></span>
 				</div>
-				<input class="span" name="<%= attachment_prefix %>[content]" 
+				<input class="span" name="${attachment_prefix}[content]" 
 							size="30" type="file" accept='audio/*'>
 				
-				<input name='<%= name_prefix %>[attachment_id]' 
+				<input name='${name_prefix}[attachment_id]' 
 							 type="hidden" rel="attachment_id" value="${attachmentId}">
 			</div>
 
@@ -61,13 +61,13 @@
 			</div>
 			<span class="remove_attachment"><%= t('freshfone.admin.number_settings.change') %></span>
 			<span class="cancel_attachment"><%= t('freshfone.admin.number_settings.cancel') %></span>
-			<span class="help_info mute" rel="attachment">
+			<span class="help_info muted" rel="attachment">
 				<%= t('freshfone.admin.number_settings.attachment_help_info') %></span>
 		</div>
 		
 
-		<textarea class="message-input" id="<%= id_prefix %>_message" 
-					 name="<%= name_prefix %>[message]" size="30" 
+		<textarea class="message-input" id="${id_prefix}_message" 
+					 name="${name_prefix}[message]" size="30" 
 					 type="text" rel="message_2"
 					 placeholder="<%= t('freshfone.admin.number_settings.greeting_message') %>">${message}</textarea>
 	</div>

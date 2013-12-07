@@ -54,6 +54,10 @@ class Admin::VaRulesController < Admin::AutomationsController
       @obj = @va_rule #Destroy of model-controller-methods needs @obj
     end
     
+    def get_event_performer
+      [[-2, I18n.t('ticket_creating_agent')]]
+    end
+
     def load_config
       super
       
@@ -72,6 +76,8 @@ class Admin::VaRulesController < Admin::AutomationsController
           :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
         { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
+        { :name => "ticlet_cc", :value => t('ticket_cc'), :domtype => "text",
+          :operatortype => "email", :condition => va_rules_controller? },
         { :name => -1, :value => "-----------------------" },
         { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
           :operatortype => "text" },
@@ -79,6 +85,8 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "text", :condition => !supervisor_rules_controller? },
         { :name => "subject_or_description", :value =>  t('subject_or_description'), 
           :domtype => "text", :operatortype => "text" },
+        { :name => "last_interaction", :value => I18n.t('last_interaction'), :domtype => "text",
+          :operatortype => "text", :condition => observer_rules_controller? },
         { :name => "priority", :value => t('ticket.priority'), :domtype => "dropdown", 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
         { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 

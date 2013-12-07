@@ -1,8 +1,11 @@
 <%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>, 
 
 
-<%=t('helpdesk.tickets.add_watcher.mail.added_as_watcher', :agent_name => @agent_name) %> 
-
+<% if @agent_name == Va::Constants::AUTOMATIONS_MAIL_NAME %>
+    <%= I18n.t('helpdesk.tickets.add_watcher.mail.added_as_watcher_by_automation') %>
+<% else %>
+    <%= I18n.t('helpdesk.tickets.add_watcher.mail.added_as_watcher', :agent_name => @agent_name) %>
+<% end %>
 
 <%=t('helpdesk.tickets.add_watcher.mail.ticket') %> 
 

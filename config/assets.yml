@@ -50,6 +50,9 @@ stylesheets:
 
   widget:
     - public/stylesheets/portal/widget.css
+    
+  responsive_widget:
+    - public/stylesheets/portal/responsive-widget.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -229,6 +232,9 @@ javascripts:
     - public/javascripts/app/ticket_details.js
   freshwidget:
     - public/javascripts/freshwidget.js
+  widget_config:
+    - public/javascripts/freshwidget.js
+    - public/javascripts/app/widget_config.js
   html2canvas:
     - public/javascripts/html2canvas.js
   fdwidget:
@@ -357,10 +363,6 @@ javascripts:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
 
-  notifications:
-    - public/javascripts/jquery.gritter/jquery.gritter.js
-    - public/javascripts/requestAnimFrame.js
-    - public/javascripts/notifications.js
 
   excanvas:
     - public/javascripts/excanvas.js

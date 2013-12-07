@@ -1,5 +1,4 @@
 <div id="menuTemplate" class="hide">
-	<br/>
 	<div class="ivr-menu" rel="new_menu">
 		<fieldset>
 			<span class="close-btn icon-trash tooltip" title="Delete menu"></span>
@@ -15,11 +14,7 @@
 				<input name='<%= name_prefix %>[menu_id]'
 							 type="hidden" value="${menuId}">
 			</div>
-			<%= render :partial => "/admin/freshfone/numbers/message_select", :locals => { 
-				:name_prefix => name_prefix,
-				:id_prefix => id_prefix,
-				:attachment_prefix => attachment_prefix
-			} %>
+			<%= render :partial => "/admin/freshfone/numbers/message_select" %>
 		</fieldset>
 		<div class="add-new new-option">
 			<div class="icon-detail">

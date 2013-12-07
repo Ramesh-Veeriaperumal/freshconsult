@@ -10,7 +10,7 @@ module Va
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
       :greater     => [ "greater_than" ],
-      :object_id   => [ "is" ],
+      :object_id   => [ "is", "is_not"],
       :date_time     => [ "during" ]
     }
 
@@ -36,6 +36,8 @@ module Va
       :greater_than      =>  I18n.t('greater_than'),
       :during            =>  I18n.t('during')
     }
+
+    AUTOMATIONS_MAIL_NAME = "automations rule"
 
   end
 end

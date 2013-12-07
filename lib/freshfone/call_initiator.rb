@@ -1,11 +1,14 @@
 class Freshfone::CallInitiator
 	include FreshfoneHelper
+	include Redis::RedisKeys
+	include Redis::IntegrationsRedis
 
 	VOICEMAIL_TRIGGERS = ['no-answer', 'busy', 'failed']
+	BATCH_SIZE = 10
 
-	attr_accessor :params, :current_account, :current_number, :call_flow
+	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_process
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
-					 :outgoing_transfer, :numbers, :to => :call_flow, :allow_nil => true
+					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :to => :call_flow, :allow_nil => true
 	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :to => :current_number
 	
 	def initialize(params={}, current_account=nil, current_number=nil, call_flow=nil)
@@ -16,16 +19,19 @@ class Freshfone::CallInitiator
 	end
 	
 	# agent class -> Freshfone::User
-	def connect_caller_to_agent
+	def connect_caller_to_agent(agents=nil)
 		twiml_response do |r|
-			welcome_menu.ivr_message(r) if welcome_menu
+      
+			read_welcome_message(r) if !transfered
+			# welcome_menu.ivr_message(r) if welcome_menu
+			agents_to_be_called = process_in_batch(agents || available_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url do |d|
-				available_agents.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent)) }
+				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent)) }
 			end
 		end
 	end
-	
+
 	def connect_caller_to_numbers
 		twiml_response do |r|
 			numbers.each do |number|
@@ -55,18 +61,25 @@ class Freshfone::CallInitiator
 	def add_caller_to_queue(hunt_options)
 		@hunt = hunt_options
 		twiml_response do |r|
-			welcome_menu.ivr_message(r) if welcome_menu
-			read_queue_message(r)
+			# welcome_menu.ivr_message(r) if welcome_menu
+
+			read_queue_message(r) if (current_number.max_queue_length>0)
 			r.Enqueue current_account.name, :waitUrl => enqueue_url, :action => quit_queue_url
 		end
 	end
 
 	def initiate_voicemail(type = "default")
-		twiml_response do |r|
-			#skipping IVR on reaching non-responsive office
-			# welcome_menu.ivr_message(r) if welcome_menu
-			read_voicemail_message(r, type)
-			r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+		if current_number.voicemail_active or type == "non_business_hours"
+			twiml_response do |r|
+				#skipping IVR on reaching non-responsive office
+				# welcome_menu.ivr_message(r) if welcome_menu
+				read_voicemail_message(r, type)
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
+
+			end
+		else
+			Twilio::TwiML::Response.new.text
 		end
 	end
 
@@ -83,7 +96,7 @@ class Freshfone::CallInitiator
 		end
 
 		def status_url
-			"#{host}/freshfone/call/status"
+			batch_process ? "#{host}/freshfone/call/status?batch_call=true" : "#{host}/freshfone/call/status"
 		end
 		
 		def direct_dial_url(number)
@@ -117,4 +130,18 @@ class Freshfone::CallInitiator
 		def quit_voicemail_url
 			"#{host}/freshfone/voicemail/quit_voicemail"
 		end
+
+		def process_in_batch(agents)
+			current_batch_agents = agents.slice!(0, BATCH_SIZE)
+			if agents.present?
+				Rails.logger.debug "Batch Call started for call_sid ==> #{params[:CallSid]} ::
+account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + BATCH_SIZE}" if params[:batch_call].blank?
+				self.batch_process = true
+				key = FRESHFONE_AGENTS_BATCH % { :account_id => current_account.id, :call_sid => params[:CallSid] }
+				agent_ids = agents.collect(&:id).to_json
+				set_key(key, agent_ids, 600)
+			end
+			current_batch_agents
+		end
+
 end

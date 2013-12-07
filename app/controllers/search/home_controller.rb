@@ -1,8 +1,24 @@
 # encoding: utf-8
 class Search::HomeController < ApplicationController
 
+  before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
+  before_filter :set_native_mobile, :only => :index
+
   def index
     search(searchable_classes)
+    respond_to do |format|
+      format.html
+      format.nmobile {
+            json="[" 
+            sep=""
+            @search_results.each { |item|
+              json << sep+"#{item.to_mob_json_search}"
+              sep = ","
+            }
+            json << "]"
+        render :json => json
+      }
+      end
   end
 
   def suggest
@@ -18,6 +34,14 @@ class Search::HomeController < ApplicationController
   def topics
     search [Topic]
     post_process 'topics'
+  end
+
+  def related_solutions
+    render :layout => false
+  end
+
+  def search_solutions
+    render :layout => false
   end
 
   # Search query
@@ -104,6 +128,10 @@ class Search::HomeController < ApplicationController
   end
   
   private
+
+    def load_ticket
+      @ticket = current_account.tickets.find_by_id(params[:ticket])
+    end
   
     def searchable_classes
       to_ret = "" 

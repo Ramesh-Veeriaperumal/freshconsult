@@ -11,8 +11,8 @@ Spork.prefork do
   require 'spec/autorun'
   require 'spec/rails'
   require 'factory_girl'
-  require 'mocha/setup'
-  require 'mocha/api'
+  require 'mocha_standalone'
+  require 'mocha/object'
 
   # Uncomment the next line to use webrat's matchers
   #require 'webrat/integrations/rspec-rails'

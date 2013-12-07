@@ -5,13 +5,13 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :set_show_version
-  before_filter :set_native_mobile , :only => [:create , :destroy]
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
   before_filter :create_permission, :only => :create 
   before_filter :timer_permission, :only => :toggle_timer
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
+  before_filter :set_native_mobile , :only => [:create , :index, :destroy]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -33,6 +33,13 @@ class Helpdesk::TimeSheetsController < ApplicationController
       end
       format.mobile do
         render :json=>@time_sheets.all(:order => "executed_at").to_json()
+      end
+      format.nmobile do
+        time_entries = Array.new
+        @time_sheets.each do |time_entry|
+          time_entries << JSON.parse(time_entry.to_mob_json)
+        end 
+        render :json => time_entries
       end
     end
   end
@@ -186,8 +193,8 @@ private
     Integrations::TimeSheetsSync.applications.each do |app_name|
       installed_app = current_account.installed_applications.with_name(app_name)
       next if installed_app.blank?  
-      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_entry) unless @time_entry.blank?
-      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_cleared) unless @time_cleared.blank?
+      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_entry,current_user) unless @time_entry.blank?
+      Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_cleared,current_user) unless @time_cleared.blank?
     end
   end
   

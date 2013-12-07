@@ -10,8 +10,9 @@
 	}
 	.message-input {
 		padding: 5px;
-		height: 28px;
+		height:30px;
 		@include box-sizing(border-box);
+		display: block;
 	}
 	.message-file input {
 		margin-left: 20px;
@@ -42,6 +43,7 @@
 	.stop-recording {
 		color: $ms-stop-recording-text;
 		span {
+			//@include animation(recording 1s linear infinite);
 			-webkit-animation: recording 1s linear infinite;
 			   -moz-animation: recording 1s linear infinite;
 			        animation: recording 1s linear infinite;
@@ -72,7 +74,6 @@
 		border-left: none;
 	}
 	.message_value_container {
-		height: 35px;
 		clear: both;
 		display: block;
 		margin-left: 10px;
@@ -187,6 +188,14 @@ div.custom-file-upload {
 		}
 	}
 }
+//@include keyframes(recording) {
+//	0% {
+//		@include box-shadow(0px 0px 0px 1px rgba(239, 53, 53, 0.1), inset 0px 0px 0px 10px #EF3535);
+//	}
+//	50% {
+//		@include box-shadow(box-shadow: 0px 0px 0px 1px rgba(239, 53, 53, 0.7), inset 0px 0px 0px 5px #EF3535, inset 0px 0px 0px 20px rgba(255,255,255,0.8));
+//	}
+//}
 @-webkit-keyframes recording{
 	0%{box-shadow: 0px 0px 0px 1px rgba(239, 53, 53, 0.1), inset 0px 0px 0px 10px #EF3535;}
 	50%{box-shadow: 0px 0px 0px 1px rgba(239, 53, 53, 0.7), inset 0px 0px 0px 5px #EF3535, inset 0px 0px 0px 20px rgba(255,255,255,0.8);}

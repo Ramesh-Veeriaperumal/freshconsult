@@ -107,7 +107,7 @@ class Support::TicketsController < SupportController
     end
 
     def redirect_url
-      current_user ? support_ticket_url(@ticket) : root_path
+      params[:redirect_url].presence || (current_user ? support_ticket_url(@ticket) : root_path)
     end
   
     def build_tickets

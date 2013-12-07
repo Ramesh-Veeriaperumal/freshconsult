@@ -39,6 +39,10 @@ on_utilities(all_instances_of('resque')) do
 	run "sudo monit restart all -g helpkit_resque" 
 end
 
-on_utilities(all_instances_of('social_utility')) do
+on_utilities(all_instances_of('twitter_utility')) do
   run "sudo monit restart all -g helpkit_gnip_poll"
+end
+
+on_utilities(all_instances_of('facebook_utility')) do
+  run "sudo monit restart all -g helpkit_facebook_realtime"
 end

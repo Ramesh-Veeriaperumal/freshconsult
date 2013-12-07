@@ -60,7 +60,7 @@
 			<div class="span4 pull-right">
 				<div id="chat_layout" class="pull-right">
 				  <div id="fc-header" class="chat_fc_header" style="background-color:<%=chat_color%>">
-				    <%=t('freshchat.maximized_title')%>
+				    <%=(@chat.maximized_title != nil)? @chat.maximized_title : t('freshchat.maximized_title')%>"
 				    <span id="symbol"><i class="icon-caret-down"></i></span>
 				  </div>
 				  <div id="chat-container" style="display: block;background-color:<%=chat_color%>">

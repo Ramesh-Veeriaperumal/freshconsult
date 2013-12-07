@@ -152,13 +152,10 @@ div.bg_pulp{
 	@include border-radius(3px);
 	a{
 		float:left;
-		background-color:#000;
-		background-color:rgba(#000, 0.2);
-
 		img{
 			height:35px;
 			background-color: rgba(#eaeaea, 0.5);
-			&.header-icons-agent-ffone-on, &.header-icons-agent-roundrobin-on {
+			&.header-icons-agent-ffone-on, &.header-icons-agent-roundrobin-on, &.agent-fchat-on {
 				background-color: #5C5C5C;
 				box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.3);
 			}

@@ -62,6 +62,13 @@ var setLocationIfUnknown;
 
 		if (this.className !== 'wf_order_type') { setDropdownValue(this); }
 	});
+	
+	$freshfoneCallHistory.on("click", ".show_delete_number", function (ev) {
+		ev.preventDefault();
+		ev.stopPropagation();
+		$freshfoneCallHistory.find(".deleted_numbers").slideDown();
+		$(this).hide();
+	});
 	// Filtering
 	$freshfoneCallHistory.on("click", ".wf_filter", function (ev) {
 		ev.preventDefault();

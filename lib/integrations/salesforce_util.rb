@@ -17,13 +17,13 @@ module Integrations::SalesforceUtil
       fields_hash = JSON.parse(fields_meta_data[:text])
       fields_hash = fields_hash["fields"]
 
-      available_fields = Array.new
+      field_labels = Hash.new
       fields_hash.each{ |field|
-         available_fields.push(field["name"])
+         field_labels[field["name"]]= field["label"]
       }
       #Adding an Address field intentionally to group [MailingStreet,City,Country,PostalCode].
       #If the user selects Address in dropdown,full address will be shown formed by above fields.
-      available_fields.push("Address")
+      field_labels.merge!("Address"=>"Address")
     end
 
 end

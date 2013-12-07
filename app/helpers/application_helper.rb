@@ -451,7 +451,7 @@ module ApplicationHelper
     else
       "/images/fillers/profile_blank_#{profile_size}.gif"
     end
-  end   
+  end
   
   def twitter_avatar(handle, profile_size = "thumb")
     handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"
@@ -872,7 +872,7 @@ module ApplicationHelper
 	end
 	
 	def current_account_freshfone_numbers
-		current_account.freshfone_numbers.map{|n| [n.number, n.id]}
+		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.map{|n| [n.number, n.id]}
 	end
 	
 	def call_direction_class(call)

@@ -4,6 +4,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
 
 	def index
+		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")
 	end
 	
 	def custom_search
@@ -26,13 +27,13 @@ class Freshfone::CallHistoryController < ApplicationController
 
 	private
 		def load_calls
-			params[:wf_per_page] = 10
-			@calls = current_number.freshfone_calls.roots.filter(:params => params)
+			params[:wf_per_page] = 30
+			@calls = current_number.freshfone_calls.roots.filter(:params => params, :filter => "Freshfone::Filters::CallFilter")
 		end
 
 		def current_number
-			@current_number ||= (current_account.all_freshfone_numbers.find_by_id(params[:number_id]) || 
-													current_account.all_freshfone_numbers.first)
+			@current_number ||= params[:number_id].present? ? current_account.all_freshfone_numbers.find_by_id(params[:number_id])
+													: current_account.freshfone_numbers.first
 		end
 	
 		def load_children

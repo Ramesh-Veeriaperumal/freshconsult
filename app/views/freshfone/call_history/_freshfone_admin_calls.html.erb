@@ -15,13 +15,27 @@
 					<ul class="dropdown-menu right" 
 							role="menu" 
 							aria-labelledby="sorting_dropdown_list">
-						<% current_account.all_freshfone_numbers.each do |n| %>
+						<% all_freshfone_numbers_deleted = @all_freshfone_numbers.select{ |n| n.deleted? } %>
+						<% all_freshfone_numbers_active = @all_freshfone_numbers.reject{ |n| n.deleted? } %>
+						<% all_freshfone_numbers_active.each do |n| %>
 							<li><a class="number_id" href="#" number_id="<%= n.id %>" >
 								<% if @current_number.number == n.number %>
 									<span class="icon ticksymbol"></span>
 								<% end %>
 								<%= n.number %>
 							</a></li>
+						<% end %>
+						
+						<% if all_freshfone_numbers_deleted.present? %>
+							<a class="show_delete_number" href="#"><%= t('freshfone.call_history.show_deleted') %></a>
+							<div class="hide deleted_numbers">
+								<span class="seperator"></span>
+								<% all_freshfone_numbers_deleted.each do |n| %>
+									<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+										<%= n.number %>
+									</a></li>
+								<% end %>
+							</div>
 						<% end %>
 					</ul>
 				</span>

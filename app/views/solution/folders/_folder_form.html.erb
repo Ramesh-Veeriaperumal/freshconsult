@@ -1,21 +1,29 @@
-	<ul id="folder-form-container" class="ui-form">  
+	<ul id="folder-form-container" class="form-horizontal">  
 	    <%= f.error_messages %>
-		<li>
-	    	<%= f.label(:name, "#{t('name')} *") %>
-	    	<%= f.text_field :name, :class => "required" %>
+		<li class="control-group">
+	    	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
+	    	<div class="controls">
+	    		<%= f.text_field :name, :class => "required" %>
+	    	</div>
 		</li>
-		<li>
-			<%= f.label(:description, t('description')) %>
-		 	<%= f.text_area :description, :class => "smallpara" %>
+		<li class="control-group">
+			<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
+			<div class="controls">
+		 		<%= f.text_area :description, :class => "smallpara" %>
+		 	</div>
 		</li>  
-		<li class="companies_select">
-    	<%= f.label :visibility, t('.visible_to') %>
-    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select" %>
-    
-    	<% f.fields_for :customer_folders_attributes do |cust| %>
-	    	<span id="company_folders">
-  			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @folder.customer_folders.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
-  			</span>
+		<li class="companies_select control-group">
+    	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
+    	<div class="controls">
+    		<div class="row-fluid">
+	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
+	    
+	    	<% f.fields_for :customer_folders_attributes do |cust| %>
+	    	</div>
+	    	<div id="company_folders" class="row-fluid">
+  				<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @folder.customer_folders.map(&:customer_id)}, { :multiple => true, :class => "select2 span8" , "data-placeholder" => 'Select company'}) %>
+  			</div>
+	  	</div>
       <%end%> 
     </li>
 	</ul>	

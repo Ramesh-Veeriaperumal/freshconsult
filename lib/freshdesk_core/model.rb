@@ -54,7 +54,6 @@ module FreshdeskCore::Model
                         "installed_applications", 
                           "integrated_resources", 
                           "integrations_user_credentials", 
-                          "key_value_pairs", 
                           "google_accounts", 
                           "google_contacts", 
 

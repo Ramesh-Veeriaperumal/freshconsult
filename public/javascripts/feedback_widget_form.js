@@ -43,24 +43,39 @@
 		if($placeholder_proxy != undefined)
 			$placeholder_proxy.toggle(!jQuery(".redactor_editor").text());
 		
-		
-		setTimeout(function() {
-	 		jQuery("#fd_feedback_widget").validate({
-				highlight: function(element, errorClass) {
-					// Applying bootstraps error class on the container of the error element
-					$(element).parents(".control-group").addClass(errorClass+"-group")
-				},
-				unhighlight: function(element, errorClass) {
-					// Removed bootstraps error class from the container of the error element
-					$(element).parents(".control-group").removeClass(errorClass+"-group")
-				},
-				onkeyup: false,
-         		focusCleanup: true,
-         		focusInvalid: false,
-         		ignore:"select.nested_field:empty, .portal_url:not(:visible)",
-				errorElement: "div", // Adding div as the error container to highlight it in red
-	 		});
-	 	},500);
+
+ 		jQuery("#fd_feedback_widget").validate({
+			highlight: function(element, errorClass) {
+				// Applying bootstraps error class on the container of the error element
+				$(element).parents(".control-group").addClass(errorClass+"-group")
+			},
+			unhighlight: function(element, errorClass) {
+				// Removed bootstraps error class from the container of the error element
+				$(element).parents(".control-group").removeClass(errorClass+"-group")
+			},
+			onkeyup: false,
+     		focusCleanup: true,
+     		focusInvalid: false,
+     		ignore:"select.nested_field:empty, .portal_url:not(:visible)",
+			errorElement: "div", // Adding div as the error container to highlight it in red
+			submitHandler: function(form, btn) {
+				// Setting the submit button to a loading state
+				$("#helpdesk_ticket_submit").button("loading")
+
+				if (screenshot_flag==0) { 			
+					var img = img_data.replace("data:image/png;base64,","");
+					var time = new Date();
+					var name = String(time);		
+					name = "Screen Shot_" + name ;
+					name = name.replace(/:/g,"-");
+					postscreenshot("data",img);
+					postscreenshot("name",name);
+				}
+
+	  	    	// For all other form it will be a direct page submission			  	
+	  	    	form.submit()
+			}
+ 		});
 
 	 	// USED in ticket form		    
 		// Checking if the email is already present in the system
@@ -102,17 +117,6 @@
 		 	}
 	 	});	 		
 		
-	 	jQuery('#fd_feedback_widget').submit(function(ev) {
-	 		if (screenshot_flag==0) { 			
-				var img = img_data.replace("data:image/png;base64,","");
-				var time = new Date();
-				var name = String(time);		
-				name = "Screen Shot_" + name ;
-				name = name.replace(/:/g,"-");
-				postscreenshot("data",img);
-				postscreenshot("name",name);
-			}
-		});
 
 		jQuery('#takescreen-btn a').bind("click", function(ev){
 			console.log("Image loaded");

@@ -1,19 +1,23 @@
+var FreshfoneMessage;
 (function ($) {
 	"use strict";
-	var settings_json,
-		FreshfoneSetting = function (settingsObject) {
-
-			settingsObject.messageType = settingsObject.messageType;
-			if (settingsObject.messageType === undefined) { settingsObject.messageType = 2; }
-			this.settingsObject = settingsObject;
-			this.init();
-		};
-	FreshfoneSetting.prototype = {
+	var settings_json;
+	FreshfoneMessage = function (settingsObject, containerClass, prefix) {
+		this.containerClass = containerClass;
+		this.prefix = prefix;
+		this.messageType = settingsObject.messageType;
+		if (settingsObject.messageType === undefined) { settingsObject.messageType = 2; }
+		this.settingsObject = settingsObject;
+		this.init();
+	};
+	FreshfoneMessage.prototype = {
 		init: function () {
 			this.buildFromTemplate();
+			this.init_setting();
 			this.template.find('.attached_file').hide();
 			this.template.find('.recorded-message').hide();
-			$('.number-settings .greetings .' + this.settingsObject.type).append(this.template);
+			$('.'+ this.containerClass +' .' + this.settingsObject.type).append(this.template);
+
 			this.template.messageSelector({
 				attachmentName: this.settingsObject.attachmentName,
 				recordingUrl: this.settingsObject.recordingUrl,
@@ -25,14 +29,22 @@
 		},
 		buildFromTemplate: function () {
 			var template = $('.message-container-template').clone(true, true);
-			this.template = template.tmpl(this.settingsObject);
+			var prefix = replacePrefix(this.prefix, 'type', this.settingsObject.type);
+			var templateOptions = $.extend({}, this.settingsObject, prefix);
+			this.template = template.tmpl(templateOptions);
 		},
 		handleAttachmentsDelete: function (id) {
+		},
+		init_setting: function(){
+
+				$('.queue_setting_div').toggle(!($('#admin_freshfone_number_max_queue_length').val()==="0"));
+				$('.voicmail_message_div').toggle(!($('#admin_freshfone_number_voicemail_active_false').is(":checked")===true));
+				
 		}
 	};
 
 	$(freshfone.number_message_settings_json).each(function () {
-		var setting = new FreshfoneSetting(this);
+		var setting = new FreshfoneMessage(this, 'number-settings', freshfone.number_settings_prefix);
 	});
 	
 	$('.number-settings').submit(function (ev) {
@@ -61,6 +73,20 @@
 			
 		}
 	});
+	$('#admin_freshfone_number_max_queue_length').change(function(){
+			($('#admin_freshfone_number_max_queue_length').val()==="0") ? $('.queue_setting_div').slideUp() : $('.queue_setting_div').slideDown();
+			
+	});
+	$("input[name='admin_freshfone_number[voicemail_active]']:radio").change(function(){
+		($(this).val() === 'true') ? $('.voicmail_message_div').slideDown() : $('.voicmail_message_div').slideUp();
+	});
 	
-
+	function replacePrefix(source, replaceText, replaceWith) {
+		var replaceFiller = new RegExp('\\$\\{' + replaceText + '\\}');
+		source = $.extend({}, source); // clone
+		for(var prefix in source) {
+			source[prefix] = source[prefix].replace(replaceFiller, replaceWith);
+		}
+		return source;
+	}
 }(jQuery));

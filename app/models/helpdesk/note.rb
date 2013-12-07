@@ -324,6 +324,13 @@ class Helpdesk::Note < ActiveRecord::Base
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
+    def notable_cc_email_updated?(old_cc, new_cc)
+      return !old_cc.eql?(new_cc) if old_cc.nil?
+      [:cc_emails, :fwd_emails].any? { |f| 
+                                       !(old_cc[f].uniq.sort.eql?(new_cc[f].uniq.sort))
+                                     }
+    end
+
     def method_missing(method, *args, &block)
       begin
         super

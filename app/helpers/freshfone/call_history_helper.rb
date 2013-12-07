@@ -9,20 +9,20 @@ module Freshfone::CallHistoryHelper
 
     def sort_by_secondary_filters
         [
-            [ t('freshfone.call_history.asc'), 'asc' ], 
-            [ t('freshfone.call_history.desc'),'desc']
+            [ t('freshfone.call_history.asc'), :asc ], 
+            [ t('freshfone.call_history.desc'), :desc]
         ]
     end
 
     def filtered_by_options
         [
-            [ t('freshfone.call_history.all_time'), '' ], 
             [ t('freshfone.call_history.today'), :today ], 
             [ t('freshfone.call_history.yesterday'), :yesterday ], 
             [ t('freshfone.call_history.this_week'), :week ], 
             [ t('freshfone.call_history.this_month'), :month ],
             [ t('freshfone.call_history.month', {:month => 2}), :two_months ],
-            [ t('freshfone.call_history.month', {:month => 6}), :six_months ]
+            [ t('freshfone.call_history.month', {:month => 6}), :six_months ],
+            [ t('freshfone.call_history.all_time'), '' ]
         ]
     end
     

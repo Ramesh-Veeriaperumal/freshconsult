@@ -28,7 +28,6 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
 
-
   has_many :survey_results
   has_many :survey_remarks
 

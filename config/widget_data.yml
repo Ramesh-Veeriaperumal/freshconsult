@@ -18,7 +18,7 @@
 
 - options: 
   script: "\n\
-    \t    <div id=\"harvest_widget\" title=\"{{harvest.title}}\">\n       <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"harvest-note\" >{{harvest.harvest_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/harvest.js\");\n        harvestBundle={domain:\"{{harvest.domain}}\", application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n\
+    \t    <div id=\"harvest_widget\" title=\"{{harvest.title}}\">\n       <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"harvest-note\" >{{harvest.harvest_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/harvest.js\");\n        harvestBundle={domain:\"{{harvest.domain}}\", application_id:\"{{application.id}}\", current_user:\"{{current_user.id}}\",integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n\
     \t  "
   name: harvest_timeentry_widget
   id: 3
@@ -72,7 +72,7 @@
             <div class="salesforce-name error hide"></div>
             </div>
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", reqName:"{{requester.name}}"} ;
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name}}"} ;
             CustomWidget.include_js("/javascripts/integrations/salesforce.js");
           </script>
   name: salesforce_widget

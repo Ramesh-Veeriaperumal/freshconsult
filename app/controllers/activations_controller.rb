@@ -19,11 +19,11 @@ class ActivationsController < SupportController
 
   def new
     @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
-    set_portal_page :activation_form
     if @user.nil?
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
+    set_portal_page :activation_form
   end
 
   def create

@@ -134,7 +134,8 @@ class Freshfone::IvrsController < ApplicationController
 		end
 		
 		def handle_draft_save
-			return unless params[:preview].to_bool
+			preview = params[:preview] ? params[:preview].to_bool : false
+			return unless preview
 			@ivr.set_preview_mode
 			params[nscname][:ivr_draft_data] = params[nscname].delete(:ivr_data)
 		end

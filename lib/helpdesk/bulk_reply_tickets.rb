@@ -1,7 +1,6 @@
 class Helpdesk::BulkReplyTickets
   
   include Conversations::Twitter
-  include Conversations::Facebook 
 
   attr_accessor :params, :tickets, :attachments
 
@@ -129,7 +128,11 @@ class Helpdesk::BulkReplyTickets
     end
 
     def facebook_reply ticket, note
-      ticket.is_fb_message? ? send_facebook_message(ticket, note) : send_facebook_comment(ticket, note)
+      if ticket.is_fb_message?
+        Facebook::Core::Message.send(ticket, note)
+      else
+        Facebook::Core::Comment.send(ticket, note)
+      end
     end
     
     def twitter_reply ticket, note

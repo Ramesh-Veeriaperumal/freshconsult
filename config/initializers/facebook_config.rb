@@ -7,5 +7,4 @@ module FacebookConfig
 	CALLBACK_URL = tokens['callback_url']
 	PAGE_TAB_APP_ID = tokens['page_tab_app_id']
 	PAGE_TAB_SECRET_KEY = tokens['page_tab_app_secret']
-	USER_PERMISSIONS = ["user_likes", "email"] #For facebook tab end users
 end

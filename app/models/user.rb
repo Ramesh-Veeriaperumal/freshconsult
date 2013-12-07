@@ -364,7 +364,7 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder == self ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
   def restricted?
@@ -456,6 +456,14 @@ class User < ActiveRecord::Base
   def user_tag
     self.tags
   end
+
+  protected
+  
+    def search_fields_updated?
+      all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
+                          :twitter_id, :fb_profile_id, :customer_id, :deleted]
+      (@all_changes.keys & all_fields).any?
+    end
 
   private
     def name_part(part)

@@ -291,7 +291,7 @@ Autocompleter.MultiValue = Class.create({
   },
   
   onSearchFieldBlur: function(event) {
-    this.addNewValueFromSearchField.bind(this).delay(0.1, event.element());    
+    this.addNewValueFromSearchField.bind(this).delay(0, event.element());    
     this.selectEntry(); 
   },
   

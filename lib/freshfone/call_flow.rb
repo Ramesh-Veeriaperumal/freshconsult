@@ -9,6 +9,7 @@ class Freshfone::CallFlow
                 :outgoing_transfer, :call_actions, :numbers, :hunt_options
   delegate :record?, :non_business_hour_calls?, :ivr, :to => :current_number
   delegate :freshfone_users, :to => :current_account
+	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :initiate_voicemail,
           :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call,
@@ -33,7 +34,7 @@ class Freshfone::CallFlow
 
   def incoming
     transfered ? register_call_transfer(outgoing_transfer) : register_incoming_call
-    
+
     if available_agents.any?
       connect_caller_to_agent
     elsif all_agents_busy?
@@ -47,16 +48,9 @@ class Freshfone::CallFlow
     register_outgoing_call
     return initiate_outgoing
   end
-  
-  def load_available_and_busy_agents
-    self.available_agents = freshfone_users.online_agents
-    self.busy_agents = freshfone_users.busy_agents
-  end
-  
+
   def call_users_in_group(performer_id)
-    self.available_agents = freshfone_users.online_agents_in_group(performer_id)
-    self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
-    set_hunt_options(:group, performer_id) 
+    load_users_from_group(performer_id)
     incoming
   end
 
@@ -74,11 +68,6 @@ class Freshfone::CallFlow
   
   def trigger_ivr_flow
     Freshfone::IvrMethods.trigger_ivr_flow(params, current_account, current_number, self)
-  end
-  
-  def call_hunting(menu_object)
-    self.welcome_menu = menu_object
-    regular_incoming
   end
   
   def transfer(agent, outgoing=false)
@@ -125,7 +114,7 @@ class Freshfone::CallFlow
 
     def incoming_or_ivr
       return non_business_hour_call unless working_hours?
-      ivr.active? ? trigger_ivr_flow : regular_incoming
+      ivr.ivr_message? ? trigger_ivr_flow : regular_incoming
     end
     
     def regular_incoming
@@ -141,11 +130,27 @@ class Freshfone::CallFlow
     def outgoing?
       params[:To].blank?
     end
-  
+
     def find_user_with_id(performer_id, freshfone_user=nil)
       freshfone_user = freshfone_users.find_by_user_id(performer_id) if freshfone_user.blank?
       self.available_agents = freshfone_user && freshfone_user.online? ? [freshfone_user] : []
       self.busy_agents = freshfone_user && freshfone_user.busy? ? [freshfone_user] : []
+    end
+
+    def load_available_and_busy_agents
+      return load_users_from_group(current_number.group_id) if current_number.group_id.present? && (current_number.group_id != 0)
+      load_all_available_and_busy_agents
+    end
+
+    def load_users_from_group(performer_id)
+      self.available_agents = freshfone_users.online_agents_in_group(performer_id)
+      self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
+      set_hunt_options(:group, performer_id)
+    end
+
+    def load_all_available_and_busy_agents
+      self.available_agents = freshfone_users.online_agents
+      self.busy_agents = freshfone_users.busy_agents
     end
 
 end

@@ -1,5 +1,5 @@
 <span class="dropdown">
-	<b><%= t('freshfone.call_history.sorted_by') %></b>
+	<b><%= t('freshfone.call_history.sort_by') %></b>
 	<a role="button" 
 		 class="dropdown-toggle drop-right" 
 		 id="sorting_dropdown" 
@@ -22,7 +22,7 @@
 		<span class="seperator"></span>
 		<% sort_by_secondary_filters.each_with_index do |wf_order_type, i| %>
 			<li><a class="wf_order_type" href="#" wf_order_type="<%= wf_order_type[1] %>" >
-				<% if i == 0 %>
+				<% if wf_order_type[1] === :desc %>
 					<span class="icon ticksymbol"></span>
 				<% end %>
 				<%= wf_order_type[0] %>
@@ -37,7 +37,7 @@
 		 id="sorting_dropdown" 
 		 data-toggle="dropdown" 
 		 href="#"> 
-		 <span class="filter-name"><%= t('freshfone.call_history.all_time') %></span>
+		 <span class="filter-name"><%= t('freshfone.call_history.today') %></span>
 		 <b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu right" 

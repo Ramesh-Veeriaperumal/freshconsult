@@ -8,8 +8,10 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Queue
 	
 	before_filter :populate_call_details, :only => [:status]
+	before_filter :force_termination, :only => [ :status ]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :prepare_message_for_publish,  :only => [:forward]
+	before_filter :handle_batch_calls, :only => [ :status ]
 	before_filter :handle_missed_calls, :only => [:status]
 	after_filter  :check_for_bridged_calls, :only => [:status]
 	
@@ -36,6 +38,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	end
 
 	def handle_missed_calls
+		update_call
 		render :xml =>  call_initiator.initiate_voicemail if missed_call?
 	end
 
@@ -54,6 +57,11 @@ class Freshfone::CallController < FreshfoneBaseController
 			empty_twiml
 		ensure
 			update_user_presence if params[:direct_dial_number].blank?
+		end
+
+		def handle_batch_calls
+			return (render :xml => call_initiator.connect_caller_to_agent(@available_agents)) if batch_call?
+			clear_batch_key if params[:batch_call]
 		end
 
 		def check_for_bridged_calls
@@ -77,6 +85,13 @@ class Freshfone::CallController < FreshfoneBaseController
 											 :call_sid => (params[:ParentCallSid] || params[:CallSid]) }
 			@transferred_calls ||= get_key(@transfer_key)
 			@transferred_calls.present?
+		end
+		
+		def force_termination
+			unless params[:force_termination].blank?
+				add_cost_job
+				return empty_twiml
+			end
 		end
 
 		def transfer_complete?
@@ -162,7 +177,29 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview])
+			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call, :force_termination])
 			super
+		end
+
+		def batch_call?
+			missed_call? && params[:batch_call] && batch_agents_ids.present? && batch_agents_online.present?
+		end
+		
+		def clear_batch_key
+			key = FRESHFONE_AGENTS_BATCH % { :account_id => current_account.id, :call_sid => params[:CallSid] }
+			remove_key(key)
+		end
+		
+		def batch_agents_ids
+			@batch_agents_ids ||= begin
+				key = FRESHFONE_AGENTS_BATCH % { :account_id => current_account.id, :call_sid => params[:CallSid] }
+				batch_agents_ids = get_key(key)
+				remove_key(key)
+				batch_agents_ids.blank? ? batch_agents_ids : JSON::parse(batch_agents_ids)
+			end
+		end
+
+		def batch_agents_online
+			@available_agents = current_account.freshfone_users.online_agents.find_all_by_id(batch_agents_ids)
 		end
 end

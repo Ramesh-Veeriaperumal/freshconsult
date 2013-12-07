@@ -10,7 +10,6 @@ var GettingStarted = {
 		 GettingStarted.i18n[key] = value;
 	}
 };
-
 			
 var Validate = {	
 	email:function(emails){
@@ -178,7 +177,7 @@ jQuery(document).ready(function(){
 		var invalid_emails_exist = false;		
 		
 		jQuery.each( jQuery('input:text', '#agent_invite'), function(index,obj){
- 				if(Validate.isEmpty(obj.name)){obj.name="agents_invite_email[]";}
+ 			if(Validate.isEmpty(obj.name)){obj.name="agents_invite_email[]";}
 		});
 
 		jQuery.each( jQuery('input:[name="agents_invite_email[]"]', '#agent_invite'), function(index,obj){
@@ -189,36 +188,32 @@ jQuery(document).ready(function(){
 				invalid_emails_exist = true;
 			}
 			agent_emails = (agent_emails) ? agent_emails+"," : "";
-			agent_emails += agent_email;													
-		});		
-		
+			agent_emails += agent_email;
+		});
+
 		if(Validate.isEmpty(agent_emails)){
-							Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
-							return false;
+			Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
+			return false;
 		}
-
-		if(!invalid_emails_exist)
-		{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
-
+		if(!invalid_emails_exist){			  	
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
 		}
 		else{
-								
-							Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
-					
+			Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));					
 			invalid_emails_exist = false;
 			loadingDiv.delay(hideDelay).hide(1);
-			setFormFocus()
+			setFormFocus();
 			event.stopPropagation();
 		    return false;
-		}		    
+		}
 	});	
 
 	jQuery('.custom-upload input[type=file]').change(function(){
-				    jQuery(this).next().find('input').val(jQuery(this).val());
+	    jQuery(this).next().find('input').val(jQuery(this).val());
 	});
 
 	jQuery(window).bind('hashchange', function(){
-	  jQuery("#nav-controls [href="+window.location.hash+"]").trigger("click");
+	  	jQuery("#nav-controls [href="+window.location.hash+"]").trigger("click");
 	});
 
 	jQuery("#slide1-1, #slide1-2, #slide1-3, #slide1-4").click(function(ev) {
