@@ -6,6 +6,7 @@ class Va::RuleHandler
   end
 
   def value
+    @value_key||= :value
     rule_hash[value_key]
   end
 
@@ -24,7 +25,6 @@ class Va::RuleHandler
   end
 
   def matches(evaluate_on)
-    @value_key||= :value
     if evaluate_on.respond_to?(condition.dispatcher_key)
       evaluate_rule(evaluate_on.send(condition.dispatcher_key))
     end
