@@ -106,219 +106,189 @@ end
  
 # encoding: utf-8
  
-if RUBY_VERSION > "1.9"
 
-  Encoding.default_external = Encoding::UTF_8
-  Encoding.default_internal = Encoding::UTF_8
- 
 
-  # Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
-  class ActiveRecord::Base
-    def unserialize_attribute_with_utf8(attr_name)
-      traverse = lambda do |object, block|
-        if object.kind_of?(Hash)
-          object.each_value { |o| traverse.call(o, block) }
-        elsif object.kind_of?(Array)
-          object.each { |o| traverse.call(o, block) }
-        else
-          block.call(object)
-        end
-        object
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+
+
+# Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
+class ActiveRecord::Base
+  def unserialize_attribute_with_utf8(attr_name)
+    traverse = lambda do |object, block|
+      if object.kind_of?(Hash)
+        object.each_value { |o| traverse.call(o, block) }
+      elsif object.kind_of?(Array)
+        object.each { |o| traverse.call(o, block) }
+      else
+        block.call(object)
       end
-      force_encoding = lambda do |o|
-        o.force_encoding(Encoding::UTF_8) if o.respond_to?(:force_encoding)
-      end
-      value = unserialize_attribute_without_utf8(attr_name)
-      traverse.call(value, force_encoding)
+      object
     end
-    alias_method_chain :unserialize_attribute, :utf8
-
-    # https://rails.lighthouseapp.com/projects/8994/tickets/2283 Backport patch to 2-3-stable. to fix Module is not missing Model error
-    (class << self; self; end).instance_eval do 
-      define_method "compute_type_with_class_load_fix" do |type_name|
-        if type_name.match(/^::/)
-          # If the type is prefixed with a scope operator then we assume that
-          # the type_name is an absolute reference.
-          type_name.constantize
-        else
-          # Build a list of candidates to search for
-          candidates = []
-          name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
-          candidates << type_name
-
-          candidates.each do |candidate|
-            begin
-              constant = candidate.constantize
-              return constant if candidate == constant.to_s
-            rescue NameError
-            rescue ArgumentError
-            end
-          end
-
-          raise NameError, "uninitialized constant #{candidates.first}"
-        end
-      end
-      alias_method_chain :compute_type, :class_load_fix
-    end if Rails.env.development?
-    
-  end
-
-  #https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
-  module ActionController
-    module Flash
-      class FlashHash
-        def [](k)
-          v = super
-          v.is_a?(String) ? v.force_encoding("UTF-8") : v
-        end
-      end
+    force_encoding = lambda do |o|
+      o.force_encoding(Encoding::UTF_8) if o.respond_to?(:force_encoding)
     end
+    value = unserialize_attribute_without_utf8(attr_name)
+    traverse.call(value, force_encoding)
   end
+  alias_method_chain :unserialize_attribute, :utf8
 
-  # class ActionController::InvalidByteSequenceErrorFromParams < Encoding::InvalidByteSequenceError; end
-  
-  #
-  # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
-  # (fix_params.rb)
- 
-  module ActionController
-    class Request
-      private
- 
-        # Convert nested Hashs to HashWithIndifferentAccess and replace
-        # file upload hashs with UploadedFile objects
-        def normalize_parameters(value)
-          case value
-          when Hash
-            if value.has_key?(:tempfile)
-              upload = value[:tempfile]
-              upload.extend(UploadedFile)
-              upload.original_path = normalize_parameters(value[:filename])
-              upload.content_type = value[:type]
-              upload
-            else
-              h = {}
-              value.each { |k, v| h[normalize_parameters(k.dup)] = normalize_parameters(v) }
-              h.with_indifferent_access
-            end
-          when Array
-            value.map { |e| normalize_parameters(e) }
-          else
-            value.force_encoding(Encoding::UTF_8) if value.respond_to?(:force_encoding)
-            value
-          end
-        end
-    end
-  end
- 
- 
-  #
-  # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
-  # (fix_renderable.rb)
-  #
-  module ActionView
-    module Renderable #:nodoc:
+  # https://rails.lighthouseapp.com/projects/8994/tickets/2283 Backport patch to 2-3-stable. to fix Module is not missing Model error
+  (class << self; self; end).instance_eval do 
+    define_method "compute_type_with_class_load_fix" do |type_name|
+      if type_name.match(/^::/)
+        # If the type is prefixed with a scope operator then we assume that
+        # the type_name is an absolute reference.
+        type_name.constantize
+      else
+        # Build a list of candidates to search for
+        candidates = []
+        name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
+        candidates << type_name
 
-      def render(view, local_assigns = {})
-        compile(local_assigns)
-
-        view.force_encoding(Encoding::UTF_8) if view.respond_to?(:force_encoding)
-
-        view.with_template self do
-          view.send(:_evaluate_assigns_and_ivars)
-          view.send(:_set_controller_content_type, mime_type) if respond_to?(:mime_type)
-
-          view.send(method_name(local_assigns), local_assigns) do |*names|
-            ivar = :@_proc_for_layout
-            if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
-              view.capture(*names, &proc)
-            elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
-              view.instance_variable_get(ivar)
-            end
-          end
-        end
-      end
-
-      private
-        def compile!(render_symbol, local_assigns)
-          locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
- 
-          source = <<-end_src
-            # encoding: utf-8
-            def #{render_symbol}(local_assigns)
-              old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
-            ensure
-              self.output_buffer = old_output_buffer
-            end
-          end_src
-          source.force_encoding(Encoding::UTF_8) if RUBY_VERSION >= '1.9.3'
- 
+        candidates.each do |candidate|
           begin
-            ActionView::Base::CompiledTemplates.module_eval(source, filename, 0)
-          rescue Errno::ENOENT => e
-            raise e # Missing template file, re-raise for Base to rescue
-          rescue Exception => e # errors from template code
-            if logger = defined?(ActionController) && Base.logger
-              logger.debug "ERROR: compiling #{render_symbol} RAISED #{e}"
-              logger.debug "Function body: #{source}"
-              logger.debug "Backtrace: #{e.backtrace.join("\n")}"
-            end
- 
-            raise ActionView::TemplateError.new(self, {}, e)
+            constant = candidate.constantize
+            return constant if candidate == constant.to_s
+          rescue NameError
+          rescue ArgumentError
           end
         end
+
+        raise NameError, "uninitialized constant #{candidates.first}"
+      end
+    end
+    alias_method_chain :compute_type, :class_load_fix
+  end if Rails.env.development?
+  
+end
+
+#https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
+module ActionController
+  module Flash
+    class FlashHash
+      def [](k)
+        v = super
+        v.is_a?(String) ? v.force_encoding("UTF-8") : v
+      end
     end
   end
+end
 
-  require 'date'
+# class ActionController::InvalidByteSequenceErrorFromParams < Encoding::InvalidByteSequenceError; end
 
-  # Modify parsing methods to handle american date format correctly.
-  class << Date
-    # American date format detected by the library.
-    AMERICAN_DATE_RE = eval('%r_(?<!\d)(\d{1,2})/(\d{1,2})/(\d{4}|\d{2})(?!\d)_').freeze
-    # Negative lookbehinds, which are not supported in Ruby 1.8
-    # so by using eval, we prevent an error when this file is first parsed
-    # since the regexp itself will only be parsed at runtime if the RUBY_VERSION condition is met.
+#
+# Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
+# (fix_params.rb)
 
-    # Alias for stdlib Date._parse
-    alias _parse_without_american_date _parse
+module ActionController
+  class Request
+    private
 
-    # Transform american dates into ISO dates before parsing.
-    def _parse(string, comp=true)
-      _parse_without_american_date(convert_american_to_iso(string), comp)
-    end
+      # Convert nested Hashs to HashWithIndifferentAccess and replace
+      # file upload hashs with UploadedFile objects
+      def normalize_parameters(value)
+        case value
+        when Hash
+          if value.has_key?(:tempfile)
+            upload = value[:tempfile]
+            upload.extend(UploadedFile)
+            upload.original_path = normalize_parameters(value[:filename])
+            upload.content_type = value[:type]
+            upload
+          else
+            h = {}
+            value.each { |k, v| h[normalize_parameters(k.dup)] = normalize_parameters(v) }
+            h.with_indifferent_access
+          end
+        when Array
+          value.map { |e| normalize_parameters(e) }
+        else
+          value.force_encoding(Encoding::UTF_8) if value.respond_to?(:force_encoding)
+          value
+        end
+      end
+  end
+end
 
-    if RUBY_VERSION >= '1.9.3'
-      # Alias for stdlib Date.parse
-      alias parse_without_american_date parse
 
-      # Transform american dates into ISO dates before parsing.
-      def parse(string, comp=true)
-        parse_without_american_date(convert_american_to_iso(string), comp)
+#
+# Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
+# (fix_renderable.rb)
+#
+module ActionView
+  module Renderable #:nodoc:
+
+    def render(view, local_assigns = {})
+      compile(local_assigns)
+
+      view.force_encoding(Encoding::UTF_8) if view.respond_to?(:force_encoding)
+
+      view.with_template self do
+        view.send(:_evaluate_assigns_and_ivars)
+        view.send(:_set_controller_content_type, mime_type) if respond_to?(:mime_type)
+
+        view.send(method_name(local_assigns), local_assigns) do |*names|
+          ivar = :@_proc_for_layout
+          if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
+            view.capture(*names, &proc)
+          elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
+            view.instance_variable_get(ivar)
+          end
+        end
       end
     end
 
     private
+      def compile!(render_symbol, local_assigns)
+        locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
 
-    # Transform american date fromat into ISO format.
-    def convert_american_to_iso(string)
-      unless string.is_a?(String)
-        if string.respond_to?(:to_str)
-          str = string.to_str
-          unless str.is_a?(String)
-            raise TypeError, "no implicit conversion of #{string.inspect} into String"
+        source = <<-end_src
+          # encoding: utf-8
+          def #{render_symbol}(local_assigns)
+            old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
+          ensure
+            self.output_buffer = old_output_buffer
           end
-          string = str
-        else
-          raise TypeError, "no implicit conversion of #{string.inspect} into String"
+        end_src
+        source.force_encoding(Encoding::UTF_8) if RUBY_VERSION >= '1.9.3'
+
+        begin
+          ActionView::Base::CompiledTemplates.module_eval(source, filename, 0)
+        rescue Errno::ENOENT => e
+          raise e # Missing template file, re-raise for Base to rescue
+        rescue Exception => e # errors from template code
+          if logger = defined?(ActionController) && Base.logger
+            logger.debug "ERROR: compiling #{render_symbol} RAISED #{e}"
+            logger.debug "Function body: #{source}"
+            logger.debug "Backtrace: #{e.backtrace.join("\n")}"
+          end
+
+          raise ActionView::TemplateError.new(self, {}, e)
         end
       end
-      string.sub(AMERICAN_DATE_RE){|m| "#$3-#$1-#$2"}
-    end
+  end
+end
+
+require 'date'
+
+# Modify parsing methods to handle american date format correctly.
+class << Date
+  # American date format detected by the library.
+  AMERICAN_DATE_RE = eval('%r_(?<!\d)(\d{1,2})/(\d{1,2})/(\d{4}|\d{2})(?!\d)_').freeze
+  # Negative lookbehinds, which are not supported in Ruby 1.8
+  # so by using eval, we prevent an error when this file is first parsed
+  # since the regexp itself will only be parsed at runtime if the RUBY_VERSION condition is met.
+
+  # Alias for stdlib Date._parse
+  alias _parse_without_american_date _parse
+
+  # Transform american dates into ISO dates before parsing.
+  def _parse(string, comp=true)
+    _parse_without_american_date(convert_american_to_iso(string), comp)
   end
 
-  # Modify parsing methods to handle american date format correctly.
-  class << DateTime
+  if RUBY_VERSION >= '1.9.3'
     # Alias for stdlib Date.parse
     alias parse_without_american_date parse
 
@@ -328,59 +298,87 @@ if RUBY_VERSION > "1.9"
     end
   end
 
-  class Mysql2::Result
-    def fetch_hash
-      each(:as => :hash).first
-    end
-  end
+  private
 
-  #memcache marshel load monkey patch...
-  module Marshal
-    class << self
-      def load_with_utf8_enforcement(object, other_proc=nil)
-        @utf8_proc ||= Proc.new do |o|
-          begin  
-            o.force_encoding("UTF-8") if o.is_a?(String) && o.respond_to?(:force_encoding)
-          rescue
-            Rails.logger.debug ":::: encoding error in Marshal load patch...."
-          end
-          other_proc.call(o) if other_proc
-          o
+  # Transform american date fromat into ISO format.
+  def convert_american_to_iso(string)
+    unless string.is_a?(String)
+      if string.respond_to?(:to_str)
+        str = string.to_str
+        unless str.is_a?(String)
+          raise TypeError, "no implicit conversion of #{string.inspect} into String"
         end
-        load_without_utf8_enforcement(object, @utf8_proc)
-      end
-      alias_method_chain :load, :utf8_enforcement
-    end
-  end
-
-  class String
-    def map
-      [self]
-    end
-    def to_a
-      [self]
-    end
-  end
-
-  # Make sure the logger supports encodings properly.
-  # https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
-  module ActiveSupport
-    class BufferedLogger
-      def add(severity, message = nil, progname = nil, &block)
-        return if @level > severity
-        message = (message || (block && block.call) || progname).to_s
-   
-        # If a newline is necessary then create a new message ending with a newline.
-        # Ensures that the original message is not mutated.
-        message = "#{message}\n" unless message[-1] == ?\n
-        message = message.force_encoding(Encoding.default_external) if message.respond_to?(:force_encoding)
-        buffer << message
-        auto_flush
-        message
+        string = str
+      else
+        raise TypeError, "no implicit conversion of #{string.inspect} into String"
       end
     end
+    string.sub(AMERICAN_DATE_RE){|m| "#$3-#$1-#$2"}
   end
-
-
 end
+
+# Modify parsing methods to handle american date format correctly.
+class << DateTime
+  # Alias for stdlib Date.parse
+  alias parse_without_american_date parse
+
+  # Transform american dates into ISO dates before parsing.
+  def parse(string, comp=true)
+    parse_without_american_date(convert_american_to_iso(string), comp)
+  end
+end
+
+class Mysql2::Result
+  def fetch_hash
+    each(:as => :hash).first
+  end
+end
+
+#memcache marshel load monkey patch...
+module Marshal
+  class << self
+    def load_with_utf8_enforcement(object, other_proc=nil)
+      @utf8_proc ||= Proc.new do |o|
+        begin  
+          o.force_encoding("UTF-8") if o.is_a?(String) && o.respond_to?(:force_encoding)
+        rescue
+          Rails.logger.debug ":::: encoding error in Marshal load patch...."
+        end
+        other_proc.call(o) if other_proc
+        o
+      end
+      load_without_utf8_enforcement(object, @utf8_proc)
+    end
+    alias_method_chain :load, :utf8_enforcement
+  end
+end
+
+class String
+  def map
+    [self]
+  end
+  def to_a
+    [self]
+  end
+end
+
+# Make sure the logger supports encodings properly.
+# https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
+module ActiveSupport
+  class BufferedLogger
+    def add(severity, message = nil, progname = nil, &block)
+      return if @level > severity
+      message = (message || (block && block.call) || progname).to_s
+ 
+      # If a newline is necessary then create a new message ending with a newline.
+      # Ensures that the original message is not mutated.
+      message = "#{message}\n" unless message[-1] == ?\n
+      message = message.force_encoding(Encoding.default_external) if message.respond_to?(:force_encoding)
+      buffer << message
+      auto_flush
+      message
+    end
+  end
+end
+
 

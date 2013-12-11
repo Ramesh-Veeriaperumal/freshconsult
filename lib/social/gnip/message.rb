@@ -118,9 +118,7 @@ class Social::Gnip::Message
         options[:delay_seconds] = tweet_obj[:fd_counter] 
         tweet_str = tweet_obj.to_json
         #This is to ensure that aws-sdk send_message works properly with non UTF-8 chars
-        if RUBY_VERSION >= '1.9'
-          tweet_str.force_encoding("UTF-8")
-        end               
+        tweet_str.force_encoding("UTF-8")
         @queue.send_message(tweet_str, options)
       end
     end

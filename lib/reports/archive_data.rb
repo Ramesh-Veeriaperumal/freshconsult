@@ -61,11 +61,7 @@ module Reports
 
 			def mysql_escape(object)
 				return object unless object.is_a?(String)
-		    if RUBY_VERSION > "1.9"
-		      Mysql2::Client.escape(object)
-		    else
-		      Mysql.escape_string(object)
-		    end
+		    Mysql2::Client.escape(object)
 		  end
 			
 			def select_def_columns(ff_cols)

@@ -162,7 +162,6 @@ private
         result = connection.execute(select_sql)
         f_hash = result.fetch_hash
         f_hash.symbolize_keys! unless f_hash.nil?
-        result.free unless RUBY_VERSION >= '1.9.3'
         check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
       end
     rescue Exception => e

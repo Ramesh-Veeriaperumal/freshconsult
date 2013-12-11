@@ -49,11 +49,7 @@ module Reports::HelpdeskReportControllerMethods
   end
 
   def mysql_escape(string)
-    if RUBY_VERSION > "1.9"
-      Mysql2::Client.escape(string)
-    else
-      Mysql.escape_string(string)
-    end
+    Mysql2::Client.escape(string)
   end
 
   def report_filter_data_hash(report_type_id)
