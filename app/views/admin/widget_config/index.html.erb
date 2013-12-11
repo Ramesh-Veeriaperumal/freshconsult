@@ -1,5 +1,4 @@
 <%= include_cloudfront_js :widget_config %>
-<%= render :partial => "shared/colorpicker" %>
 <% unless current_account.main_portal.preferences.nil?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>

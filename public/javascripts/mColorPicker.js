@@ -93,7 +93,6 @@
   $.fn.mColorPicker.start = function() {
 
     $('input[data-mcolorpicker!="true"]').filter(function() {
-  
       return ($i.replace == '[type=color]')? this.getAttribute("type") == 'color': $(this).is($i.replace);
     }).mColorPicker();
   };
@@ -370,25 +369,21 @@
         id = $t.attr('id').replace('mcp_', ''),
         pos = $t.offset(),
         $i = $("#" + id),
-        pickerTop = pos.top + $t.outerHeight(),
+        pickerTop = pos.top + $t.outerHeight(false),
         pickerLeft = pos.left;
-
     if ($i.attr('disabled')) return false;
 
     $o.currentColor = $i.css('border-right-color')
     $o.changeColor = true;
     $o.currentInput = $i;
     $o.currentId = id;
-
     // KEEP COLOR PICKER IN VIEWPORT
     if (pickerTop + $mColorPicker.height() > $document.height()) pickerTop = pos.top - $mColorPicker.height();
-    if (pickerLeft + $mColorPicker.width() > $document.width()) pickerLeft = pos.left - $mColorPicker.width() + $t.outerWidth();
-  
+    if (pickerLeft + $mColorPicker.width() > $document.width()) pickerLeft = pos.left - $mColorPicker.width() + $t.outerWidth(false);
     $mColorPicker.css({
       'top':(pickerTop) + "px",
       'left':(pickerLeft) + "px"
     }).fadeIn("fast");
-  
     $mColorPickerBg.show();
   
     if ($('#' + id).attr('data-text')) $o.color = $t.css('background-color');

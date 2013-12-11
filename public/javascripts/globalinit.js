@@ -608,12 +608,12 @@ window.xhrPool = [];
       $(window).on('resize.freshdesk', function() {
         var to_collapse = false, extra_buffer = 20;
     
-        var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+        var width_elements_visible = $('.sticky_right').outerWidth(false) + $('.sticky_left').outerWidth(false) + extra_buffer;
     
         if(sticky_header.hasClass('collapsed')) {
           var hidden_elements_width = 0;
           sticky_header.find('.hide_on_collapse').each(function() {
-            hidden_elements_width += $(this).outerWidth();
+            hidden_elements_width += $(this).outerWidth(false);
           });
           if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
             to_collapse = true;

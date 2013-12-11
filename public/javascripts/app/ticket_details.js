@@ -855,10 +855,6 @@ var scrollToError = function(){
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
-					if (_form.attr('rel') == 'edit_note_form')  {
-						$('#note_details_' + _form.data('cntId')).show();
-					}
-
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 					}

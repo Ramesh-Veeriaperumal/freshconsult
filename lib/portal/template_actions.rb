@@ -7,11 +7,6 @@ module Portal::TemplateActions
       @portal ||= current_account.portals.find_by_id(params[:portal_id])# || current_portal
   end
 
-  # setting forum builder
-  def set_forum_builder
-    ActionView::Base.default_form_builder = FormBuilders::CodeMirrorBuilder
-  end
-
   def syntax_rescue
     yield
     rescue Exception => e

@@ -1,4 +1,4 @@
-/*
+	/*
 	Redactor v8.0.2
 	Updated: August 18, 2012
 	
@@ -125,7 +125,10 @@ var Redactor = function(element, options)
 {
 	// Element
 	this.redactor_copy_content;
+	this.specialPaste = false;
+	this.textPaste = false;
 	this.$el = $(element);
+	this.paste_supported_browser = (($.browser.mozilla==true) && (navigator.appVersion.indexOf("Win")!=-1)) || ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
 	
 	// Lang
 	if (typeof options !== 'undefined' && typeof options.lang !== 'undefined' && options.lang !== 'en' && typeof RELANG[options.lang] !== 'undefined') 
@@ -628,6 +631,19 @@ Redactor.prototype = {
 	// Initialization
 	init: function()
 	{	
+        var blocked_buttons = ['unorderedlist','orderedlist'];
+        if($.browser.opera == true)
+        {
+        	for(var i=0;i<blocked_buttons.length;i++)
+        	{
+        		var index = this.opts.buttons.indexOf(blocked_buttons[i]);
+		        if (index > -1) {
+				    this.opts.buttons.splice(index, 1);
+				}
+        	}
+        }
+        
+    	$.event.props.push('clipboardData');
 
 		// get dimensions
 		this.height = this.$el.css('height');
@@ -684,13 +700,48 @@ Redactor.prototype = {
 			this.$toolbar.click(observeFormatting);
 		}
 
-		// paste
+    var clipboard_div = $('body').find('[rel=tmpClipboard]');
+    clipboard_div.attr('contenteditable','true');
+    clipboard_div.css('width',"100px");
+    clipboard_div.css('height',"10px");
+    clipboard_div.css('opacity',"0");
+    clipboard_div.css('overflow',"hidden");
+    //paste handling for all the browsers - [pastehandling]
 		if (this.isMobile(true) === false)
 		{	this.cleanStyleAttr();	
+			if($.browser.msie == true)
+			{
+				this.$editor.bind('beforepaste',$.proxy(function()
+				{
+					this.paste_selection_modification(clipboard_div);
+				},this));
+			}
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
-				this.setBuffer();
-
+				if(!this.specialPaste)
+				{
+			        if(this.paste_supported_browser)
+			        {
+			          this.paste_selection_modification(clipboard_div);
+			        }
+			        else
+			        {
+								var pastedFrag = '';
+								pastedFrag = e.clipboardData.getData("text/html");
+								if(pastedFrag.length == 0)
+								{
+									pastedFrag = e.clipboardData.getData("text/plain");
+									this.textPaste = true;
+								}
+								e.preventDefault();
+								this.pasteCleanUp(pastedFrag);        
+			        }
+		   		}
+		   		else
+		   		{
+		   			this.specialPaste = false;
+		   		}
+                
 				if (this.opts.autoresize === true)
 				{
 					this.saveScroll = document.body.scrollTop;
@@ -698,25 +749,8 @@ Redactor.prototype = {
 				else
 				{
 					this.saveScroll = this.$editor.scrollTop();
-				}
-	
-				var frag = this.extractContent();
-				
-				if(this.browser('opera') === true)
-				{
-					this.$editor.append("<span></span>");
-				}
-				setTimeout($.proxy(function()
-				{				
-					var pastedFrag = this.extractContent();
-					this.$editor.append(frag);				
-					this.restoreSelection();
-					
-					var html = this.getFragmentHtml(pastedFrag);
-					this.pasteCleanUp(html);
-				
-				}, this), 1);
-	
+				}   
+                
 			}, this));	
 		}
 
@@ -794,9 +828,56 @@ Redactor.prototype = {
 		else if (cmd == "link") 
 			this.showLink();
 		else
+		{
 			this.execCommand(cmd, false);
+		}
 
-	},		
+	},	
+	paste_selection_modification : function(clipboard_div)
+	{
+		this.saveSelection();
+		var sel = this.getSelection();
+		sel.removeAllRanges();
+		var range = document.createRange();
+		range.selectNodeContents(clipboard_div.get(0));
+		sel.addRange(range);
+		setTimeout($.proxy(function()
+		{
+			var pastedFrag = clipboard_div.html();
+			clipboard_div.html('');
+			this.restoreSelection();
+			this.pasteCleanUp(pastedFrag);
+		},this),1);
+	},
+    recursive_find : function(element)
+    {
+        var self = this;
+        element.contents().each(function()
+                          {
+                              if($(this).get(0).isEqualNode(self.savedSel[0]))
+                              {
+                                self.savedSel[0] = $(this).get(0);
+                              }
+                              if($(this).get(0).isEqualNode(self.savedSelObj[0]))
+                              {
+                                self.savedSelObj[0] = $(this).get(0);
+                              }
+                              self.recursive_find($(this));
+                          });
+
+        element.find('*').each(function()
+                          {
+                              if($(this).get(0).isEqualNode(self.savedSel[0]))
+                              {
+                                self.savedSel[0] = $(this).get(0);
+                              }
+                              if($(this).get(0).isEqualNode(self.savedSelObj[0]))
+                              {
+                                self.savedSelObj[0] = $(this).get(0);
+                              }
+                              self.recursive_find($(this));
+                          });
+    },
 	keyup: function()
 	{
 		this.$editor.keyup($.proxy(function(e)
@@ -853,18 +934,13 @@ Redactor.prototype = {
 			{
 				if (key === 90)
 				{
-					if (this.opts.buffer !== false)
-					{
-						e.preventDefault();
-						this.getBuffer();
-					}
-					else if (e.shiftKey)
+					 if (e.shiftKey)
 					{
 						this.shortcuts(e, 'redo');	// Ctrl + Shift + z
 					}
 					else
 					{
-						this.shortcuts(e, 'undo'); // Ctrl + z
+		        this.shortcuts(e, 'undo'); // Ctrl + z  
 					}
 				}
 				else if(shift)
@@ -892,6 +968,10 @@ Redactor.prototype = {
 					else if (key === 75)
 					{
 						this.shortcuts(e, 'unlink'); // Ctrl + Shift + K
+					}
+					else if( key === 86) //Ctrl + Shift + V
+					{
+						this.specialPaste = true
 					}
 				}
 				else if (key === 220)
@@ -1036,10 +1116,10 @@ Redactor.prototype = {
 				this.$box.insertAfter(this.$editor).append(this.$el).append(this.$editor);
 							
 			}
-			
+      		$('body').append('<div rel="tmpClipboard" />');		
 			// conver newlines to p
 			html = this.paragraphy(html);
-
+			
 			// enable
 			this.$editor.html(html);
 			
@@ -1263,7 +1343,6 @@ Redactor.prototype = {
 	setBuffer: function()
 	{
 		this.saveSelection();
-		this.opts.buffer = this.$editor.html();
 	},
 	getBuffer: function()
 	{	
@@ -1272,7 +1351,6 @@ Redactor.prototype = {
 			return false;
 		}
 		
-		this.$editor.html(this.opts.buffer);
 		
 		if (!$.browser.msie)
 		{
@@ -1288,10 +1366,20 @@ Redactor.prototype = {
 		try
 		{
 			var parent;
-
 			if (cmd === 'inserthtml' && $.browser.msie)
 			{
-				document.selection.createRange().pasteHTML(param);					
+				if (cmd === 'inserthtml' && $.browser.msie)
+				{	
+					if( window.getSelection )
+					{
+						this.pasteHtmlAtCaret(param);
+
+					}
+					else
+					{
+						document.selection.createRange().pasteHTML(param);		
+					}				
+				}				
 			}
 			else if (cmd === 'formatblock' && $.browser.msie)
 			{
@@ -1349,7 +1437,40 @@ Redactor.prototype = {
 			}		
 			else
 			{
-				document.execCommand(cmd, false, param);
+            if(cmd == 'forecolor' || cmd == 'BackColor' || cmd =='fontName' || cmd == 'hilitecolor' || cmd == 'backcolor' || cmd == 'fontSize')
+            {
+                if($.browser.msie == true)
+                {
+                    if(cmd == 'hilitecolor')
+                    {
+                        cmd == 'backColor';
+                    }
+                    else if(cmd == 'forecolor')
+                    {
+                        cmd == 'foreColor';
+                    }
+                }
+    
+                try
+                {
+                  document.execCommand('styleWithCSS',false,true);
+                  document.execCommand(cmd, false, param);
+                  document.execCommand('styleWithCSS',false,false);
+                }
+                catch (e)
+                {
+                    document.execCommand(cmd,false,param);
+                }
+                    
+            }
+            else if((cmd == "undo" || cmd == "redo" ) && ($.browser.msie == true))
+            {
+                document.execCommand(cmd);
+            }
+            else
+            {
+                document.execCommand(cmd, false, param);    
+            }
 			}	
 			if (cmd === 'inserthorizontalrule')
 			{
@@ -1358,7 +1479,6 @@ Redactor.prototype = {
 			
 			
 			this.syncCode();
-			
 			if (this.oldIE())
 			{
 				this.$editor.focus();
@@ -1374,9 +1494,36 @@ Redactor.prototype = {
 				this.air.hide();	
 			}
 		}
-		catch (e) { }
+		catch (e) {
+	      console.log('Error ',e);
+	    }
 	},
-	
+	pasteHtmlAtCaret: function(html){
+		sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            // Range.createContextualFragment() would be useful here but is
+            // only relatively recently standardized and is not supported in
+            // some browsers (IE9, for one)
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
+
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+       }
+	},
 	// FORMAT NEW LINE
 	formatNewLine: function(e)
 	{
@@ -1387,7 +1534,6 @@ Redactor.prototype = {
 			if (parent.nodeName === 'DIV' && parent.className === 'redactor_editor')
 			{
 				e.preventDefault();
-				
 				var element = $(this.getCurrentNode());
 
 				if (element.get(0).tagName === 'DIV' && (element.html() === '' || element.html() === '<br>'))
@@ -1396,7 +1542,6 @@ Redactor.prototype = {
 					element.replaceWith(newElement);
 					newElement.html('<br />');
 					this.setFocusNode(newElement.get(0));
-
 					this.syncCode();
 					return false;
 				}
@@ -1541,6 +1686,12 @@ Redactor.prototype = {
 	stripTags: function(html) 
 	{
 		var allowed = this.opts.allowedTags;
+		// This is capture sytle tags when pasting from safari to chrome
+		//If this is done in firefox - a dangling pointer error occurs while redo after undo 
+		if(($.browser.webkit == true) && (!(navigator.appVersion.indexOf("Win")!=-1))) 
+		{
+			allowed[allowed.length] = 'style';
+		}
 		var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
 		return html.replace(tags, function ($0, $1) 
 		{
@@ -1552,82 +1703,171 @@ Redactor.prototype = {
 	// PASTE CLEANUP
 	pasteCleanUp: function(html)
 	{	
-		var wordpaste = false;
-		if(html.match(/class="?Mso|style="[^"]*\bmso-|w:WordDocument/i))
-			wordpaste = true;
-		// remove comments and php tags		
-		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
-	
-		// remove nbsp
-		html = html.replace(/(&nbsp;){1,}/gi, '&nbsp;');					
-	
-		// remove google docs marker
-		html = html.replace(/<b\sid="internal-source-marker(.*?)">([\w\W]*?)<\/b>/gi, "$2");		
-	
-		// strip tags
-		html = this.stripTags(html);
-			
-		// prevert
-		// html = html.replace(/<td><br><\/td>/gi, '[td]');
-		// html = html.replace(/<a(.*?)>([\w\W]*?)<\/a>/gi, '[a$1]$2[/a]');
-		// html = html.replace(/<iframe(.*?)>([\w\W]*?)<\/iframe>/gi, '[iframe$1]$2[/iframe]');
-		// html = html.replace(/<video(.*?)>([\w\W]*?)<\/video>/gi, '[video$1]$2[/video]');
-		// html = html.replace(/<audio(.*?)>([\w\W]*?)<\/audio>/gi, '[audio$1]$2[/audio]');
-		// html = html.replace(/<object(.*?)>([\w\W]*?)<\/object>/gi, '[object$1]$2[/object]');
-		// html = html.replace(/<img(.*?)>/gi, '[img$1]');
-	
-		// remove attributes
-		// Commented so that styles before and after pasting remain the same
-		// html = html.replace(/<(\w+)([\w\W]*?)>/gi, '<$1>');
-		
-		// remove empty  //Commented by John to avoid empty line cleanup on paste
-		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
-		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
-		
-		// revert
-		// html = html.replace(/\[td\]/gi, '<td><br></td>');
-		// html = html.replace(/\[a(.*?)\]([\w\W]*?)\[\/a\]/gi, '<a$1>$2</a>');
-		// html = html.replace(/\[iframe(.*?)\]([\w\W]*?)\[\/iframe\]/gi, '<iframe$1>$2</iframe>');
-		// html = html.replace(/\[video(.*?)\]([\w\W]*?)\[\/video\]/gi, '<video$1>$2[/video>');
-		// html = html.replace(/\[audio(.*?)\]([\w\W]*?)\[\/audio\]/gi, '<audio$1>$2[/audio>');
-		// html = html.replace(/\[object(.*?)\]([\w\W]*?)\[\/object\]/gi, '<object$1>$2</object>');
-		// html = html.replace(/\[img(.*?)\]/gi, '<img$1>');				
-	
-		// convert div to p
-		if (this.opts.convertDivs)
-		{
-			html = html.replace(/<div(.*?)>([\w\W]*?)<\/div>/gi, '<p>$2</p>');	
-		}
-		
-		// remove span
-		// Commented so that span won't be removed from copied text and hence the style of 
-		// text specified inside span will be same as that in the source
-		//html = html.replace(/<span>([\w\W]*?)<\/span>/gi, '$1');
-		
-		html = html.replace(/\n{3,}/gi, '\n');
-	
-		// remove dirty p
-		html = html.replace(/<p><p>/g, '<p>');
-		html = html.replace(/<\/p><\/p>/g, '</p>');	
-	
-		if($.browser.msie && document.documentMode >= 9) {
-			//IE 9 converts \n to <br> and multiple ' ' between tags to &nbsp;
-			//So we remove these from content
-			html = html.replace(/\n/g, ' ');
-			html = html.replace(/>\s+</g, '><');
-		}
-
-		if(wordpaste) {
-			html = this.cleanWordHTML(html);
-			html = html.replace(/\n/g, ' ');
-			if($.browser.msie && document.documentMode >= 9) {
-				html = html.replace(/<br>\s*<br>/g,'<BR><BR>');
-				html = html.replace(/<br>/g,' ');
-				html = html.replace(/<BR><BR>/g,'<br>');
+		if(this.textPaste == false)
+        {
+	        // remove nbsp
+	        html = html.replace(/(&nbsp;){2,}/gi, '&nbsp;');
+	        html = html.replace(/&nbsp;/gi, ' ');
+	        // convert div to p
+			if (this.opts.convertDivs)
+			{
+				html = html.replace(/<div(.*?)>([\w\W]*?)<\/div>/gi, '<p>$2</p>');	
 			}
-		}
 
-		this.execCommand('inserthtml', html);	
+			//remove script and style tags
+			$.browser.chrome = /chrom(e|ium)/.test(navigator.userAgent.toLowerCase()); 
+			if($.browser.chrome && (navigator.appVersion.indexOf("Win")!=-1))
+			{
+				html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'');
+				html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,'');	
+			}
+
+			//remove comments
+			html = html.replace(/<!--[\s\S]*?-->/g,'');
+
+	        // remove google docs marker
+	        html = html.replace(/<b\sid="internal-source-marker(.*?)">([\w\W]*?)<\/b>/gi, "$2");
+	        
+	        html = html.replace(/\[td\]/gi, '<td>&nbsp;</td>');
+	        html = html.replace(/\[a href="(.*?)"\]([\w\W]*?)\[\/a\]/gi, '<a href="$1">$2</a>');
+	        html = html.replace(/\[iframe(.*?)\]([\w\W]*?)\[\/iframe\]/gi, '<iframe$1>$2</iframe>');
+	        html = html.replace(/\[video(.*?)\]([\w\W]*?)\[\/video\]/gi, '<video$1>$2</video>');
+	        html = html.replace(/\[audio(.*?)\]([\w\W]*?)\[\/audio\]/gi, '<audio$1>$2</audio>');
+	        html = html.replace(/\[embed(.*?)\]([\w\W]*?)\[\/embed\]/gi, '<embed$1>$2</embed>');
+	        html = html.replace(/\[object(.*?)\]([\w\W]*?)\[\/object\]/gi, '<object$1>$2</object>');
+	        html = html.replace(/\[param(.*?)\]/gi, '<param$1>');
+	        html = html.replace(/\[img(.*?)\]/gi, '<img$1>');
+	        html = html.replace(/<div(.*?)>([\w\W]*?)<\/div>/gi, '<p>$2</p>');
+	        html = html.replace(/<\/div><p>/gi, '<p>');
+	        html = html.replace(/<\/p><\/div>/gi, '</p>');
+	        // remove dirty p
+			html = html.replace(/<p><p>/g, '<p>');
+			html = html.replace(/<\/p><\/p>/g, '</p>');	
+
+			html = this.stripTags(html);
+			html = this.cleanParagraphy(html);			
+			html = html.replace(/\n{3,}/gi, '\n');
+			if($.browser.msie && document.documentMode >= 9) {
+				//IE 9 converts \n to <br> and multiple ' ' between tags to &nbsp;
+				//So we remove these from content
+				html = html.replace(/\n/g, ' ');
+				html = html.replace(/>\s+</g, '><');
+			}
+
+
+			var cleaner = $('<div></div>');
+			var boldTag = 'strong';
+
+	        var italicTag = 'em';
+
+	        html = html.replace(/<span style="font-style: italic;">([\w\W]*?)<\/span>/gi, '<' + italicTag + '>$1</' + italicTag + '>');
+	        html = html.replace(/<span style="font-weight: bold;">([\w\W]*?)<\/span>/gi, '<' + boldTag + '>$1</' + boldTag + '>');
+
+	        html = html.replace(/<strong>([\w\W]*?)<\/strong>/gi, '<b>$1</b>');
+	        html = html.replace(/<em>([\w\W]*?)<\/em>/gi, '<i>$1</i>');
+
+	        html = html.replace(/<strike>([\w\W]*?)<\/strike>/gi, '<del>$1</del>');
+	        
+        
+	        cleaner.html(html);
+	        cleaner.find('*').each(function()
+	                                    {
+	                                    	var align = $(this).attr('align');
+	                                    	$(this).removeAttr("align");
+	                                        if(align)
+	                                        {
+	                                        	$(this).css('text-align',align);
+	                                        }
+	                                        style = $(this).attr('style');
+	                                        $(this).removeAttr("style");
+	                                        if(style)
+	                                        {
+	                                            var parts = style.split(/[;]/);
+	                                
+	                                            for (var i=0;i<parts.length;i++) {
+	                                              var subParts = parts[i].split(':');
+	                                              subParts[0] = $.trim(subParts[0]);
+	                                              subParts[1] = $.trim(subParts[1]);
+	                                              
+	                                              if(subParts[0] == 'mso-highlight')
+	                                              {
+	                                                $(this).css('background-color',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'font-family')
+	                                              {
+	                                                $(this).css('font-family',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'color')
+	                                              { 
+	                                                $(this).css('color',subParts[1]);    
+	                                              }
+	                                              else if(subParts[0] == 'font-size')
+	                                              {
+	                                                $(this).css('font-size',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'font-weight')
+	                                              {
+	                                                $(this).css('font-weight',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'background')
+	                                              {
+	                                              	if(($.browser.msie == true) || ($.browser.mozilla == true))
+	                                              	{
+	                                              		$(this).css('background-color',subParts[1]);
+	                                              	}
+	                                              	else
+	                                              	{
+	                                              		$(this).css('background',subParts[1]);
+	                                              	}    
+	                                              }
+	                                              else if(subParts[0] == 'background-color')
+	                                              {
+	                                              	$(this).css('background-color',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'text-align')
+	                                              {
+	                                              	if($.browser.mozilla == true)
+	                                              	{
+	                                              		$(this).attr('align',subParts[1]);
+	                                              		$(this).css('text-align','');
+	                                              	}
+	                                              	else
+	                                              	{
+	                                              		$(this).css('text-align',subParts[1]);
+	                                              	}
+	                                              }
+	                                              else if(subParts[0] == 'margin')
+	                                              {
+	                                              	$(this).css('margin',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'border')
+	                                              {
+	                                              	$(this).css('border',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'padding')
+	                                              {
+	                                              	$(this).css('padding',subParts[1]);
+	                                              }
+	                                            }
+	                                        }
+	                                    });
+			cleaner.find('*').removeAttr("class");
+			cleaner.find('p span:only-child').each(function() {
+				if (!jQuery.trim(jQuery(this).text()).length) {
+					jQuery(this).html("&nbsp;");
+				}
+			});
+
+	        html  = cleaner.html();
+    		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
+
+	        this.execCommand('inserthtml', html);
+	    }
+	    else
+	    {
+	    	this.textPaste = false;
+	    	this.execCommand('inserttext', html);
+	    }	
 		
 		if (this.opts.autoresize === true)
 		{
@@ -1639,35 +1879,109 @@ Redactor.prototype = {
 		}
 		
 	},	
+	cleanParagraphy: function(html)
+    {
+        html = $.trim(html);
+        if (html === '' || html === '<p></p>') return html;
 
-	//From http://www.1stclassmedia.co.uk/developers/clean-ms-word-formatting.php
-	
-	cleanWordHTML : function (str)
-	{
-		str = str.replace(/<o:p>\s*<\/o:p>/g, "") ;
-		str = str.replace(/<o:p>.*?<\/o:p>/g, "&nbsp;") ;
-		str = str.replace( /\s*mso-[^:]+:[^;"]+;?/gi, "" ) ;
-		str = str.replace( /\s*MARGIN: 0cm 0cm 0pt\s*;/gi, "" ) ;
-		str = str.replace( /\s*MARGIN: 0cm 0cm 0pt\s*"/gi, "\"" ) ;
-		str = str.replace( /\s*TEXT-INDENT: 0cm\s*;/gi, "" ) ;
-		str = str.replace( /\s*TEXT-INDENT: 0cm\s*"/gi, "\"" ) ;
-		str = str.replace( /\s*TEXT-ALIGN: [^\s;]+;?"/gi, "\"" ) ;
-		str = str.replace( /\s*PAGE-BREAK-BEFORE: [^\s;]+;?"/gi, "\"" ) ;
-		str = str.replace( /\s*FONT-VARIANT: [^\s;]+;?"/gi, "\"" ) ;
-		str = str.replace( /\s*tab-stops:[^;"]*;?/gi, "" ) ;
-		str = str.replace( /\s*tab-stops:[^"]*/gi, "" ) ;
-		str = str.replace( /\s*face="[^"]*"/gi, "" ) ;
-		str = str.replace( /\s*face=[^ >]*/gi, "" ) ;
-		str = str.replace(/<(\w[^>]*) class=([^ |>]*)([^>]*)/gi, "<$1$3") ;
-		str = str.replace( /<FONT\s*>(.*?)<\/FONT>/gi, '$1' ) ;
-		str = str.replace(/<\\?\?xml[^>]*>/gi, "") ; 
-		str = str.replace(/<\/?\w+:[^>]*>/gi, "") ; 
-		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
-		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
-		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
-		return str ;
-	},
+        html = html + "\n";
 
+        var safes = [];
+        var i = 0;
+        if (html.search(/<(table|div|pre|object)/gi) !== -1)
+        {
+        	var check_elements = html.match(/<(table|div|pre|object)(.*?)>([\w\W]*?)<\/(table|div|pre|object)>/gi);
+        	if(check_elements != null)
+        	{
+        		 $.each(check_elements, function(i,s)
+	            {
+	                i++;
+	                safes[i] = s;
+	                html = html.replace(s, '{replace' + i + '}\n');
+	            });
+        	}
+        
+        }
+
+        // comments safe
+        html = html.replace(/<\!\-\-([\w\W]*?)\-\->/gi, "<comment>$1</comment>");
+
+        html = html.replace(/<br \/>\s*<br \/>/gi, "\n\n");
+
+        function R(str, mod, r)
+        {
+            return html.replace(new RegExp(str, mod), r);
+        }
+
+        var blocks = '(comment|html|body|head|title|meta|style|script|link|iframe|table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|option|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
+
+        html = R('(<' + blocks + '[^>]*>)', 'gi', "\n$1");
+        html = R('(</' + blocks + '>)', 'gi', "$1\n\n");
+        html = R("\r\n", 'g', "\n");
+        html = R("\r", 'g', "\n");
+        html = R("/\n\n+/", 'g', "\n\n");
+
+        var htmls = html.split(new RegExp('\n\s*\n', 'g'), -1);
+
+        html = '';
+        for (var i in htmls)
+        {
+            if (htmls.hasOwnProperty(i))
+            {
+                if (htmls[i].search('{replace') == -1)
+                {
+                    html += '<p>' +  htmls[i].replace(/^\n+|\n+$/g, "") + "</p>";
+                }
+                else html += htmls[i];
+            }
+        }
+
+        // blockquote
+        if (html.search(/<blockquote/gi) !== -1)
+        {
+        	var blockquotes = html.match(/<blockquote(.*?)>([\w\W]*?)<\/blockquote>/gi);
+        	if(blockquotes != null)
+        	{ 
+	        	 $.each(blockquotes, function(i,s)
+	            {
+	                var str = '';
+	                str = s.replace('<p>', '');
+	                str = str.replace('</p>', '<br>');
+	                html = html.replace(s, str);
+	            });
+	        }
+          
+        }
+
+        html = R('<p>\s*</p>', 'gi', '');
+        html = R('<p>([^<]+)</(div|address|form)>', 'gi', "<p>$1</p></$2>");
+        html = R('<p>\s*(</?' + blocks + '[^>]*>)\s*</p>', 'gi', "$1");
+        html = R("<p>(<li.+?)</p>", 'gi', "$1");
+        html = R('<p>\s*(</?' + blocks + '[^>]*>)', 'gi', "$1");
+
+        html = R('(</?' + blocks + '[^>]*>)\s*</p>', 'gi', "$1");
+        html = R('(</?' + blocks + '[^>]*>)\s*<br />', 'gi', "$1");
+        html = R('<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)', 'gi', '$1');
+        html = R("\n</p>", 'gi', '</p>');
+
+        html = R('</li><p>', 'gi', '</li>');
+        //html = R('</ul><p>(.*?)</li>', 'gi', '</ul></li>');
+        html = R('</ol><p>', 'gi', '</ol>');
+        html = R('<p>\t?\n?<p>', 'gi', '<p>');
+        html = R('</dt><p>', 'gi', '</dt>');
+        html = R('</dd><p>', 'gi', '</dd>');
+        html = R('<br></p></blockquote>', 'gi', '</blockquote>');
+
+        $.each(safes, function(i,s)
+        {
+            html = html.replace('{replace' + i + '}', s);
+        });
+
+        // comments safe
+        html = html.replace(/<comment>([\w\W]*?)<\/comment>/gi, '<!--$1-->');
+
+        return $.trim(html);
+    },
 	// TEXTAREA CODE FORMATTING
 	formattingRemove: function(html)
 	{
@@ -1765,12 +2079,30 @@ Redactor.prototype = {
 	
 		return html;	
 	},
-	
+	selectionToggle : function()
+	{
+
+		try{ 
+			if($.browser.msie == true)
+			{
+				this.$editor.html(this.$el.val());
+			}
+			else
+			{
+				var keep_selection = this.getSelection();
+				var keep_range = document.createRange();
+				keep_selection.removeAllRanges();
+				keep_range.selectNodeContents(this.$editor.get(0));
+				keep_selection.addRange(keep_range);
+				this.execCommand('inserthtml',this.$el.val());
+			}
+		} catch(e){ }
+
+	},
 	// TOGGLE
 	toggle: function()
 	{
 		var html;
-	
 		if (this.opts.visual)
 		{
 			this.$editor.hide();
@@ -1791,9 +2123,6 @@ Redactor.prototype = {
 		else
 		{
 			this.$el.hide();
-			
-			try{ this.$editor.html(this.$el.val());	} catch(e){ }
-
 			this.$editor.show();
 
 			if (this.$editor.html() === '')
@@ -1806,11 +2135,10 @@ Redactor.prototype = {
 				{
 					html = this.opts.mozillaEmptyHtml;
 				}
-
-				this.setCode(html);
+				this.$el.val(html);
 			}
+			this.selectionToggle();	
 
-			this.$editor.focus();
 			// Used to show all 'li' elements in toolbar 
 			this.$toolbar.find('li').each( function(){
 				if ($(this).attr('class') == undefined || $(this).attr('class') == "redactor_separator")
@@ -2033,22 +2361,6 @@ Redactor.prototype = {
 			$(swatch).click(function() 
 			{ 
 				_self.execCommand(mode, $(this).attr('rel'));
-				
-				if (mode === 'forecolor')
-				{
-					_self.cleanUpFont('color');
-					_self.cleanUpSpan();
-				}
-				
-				if ($.browser.msie && mode === 'BackColor')
-				{
-					_self.$editor.find('font').replaceWith(function() {
-						
-						return $('<span style="' + $(this).attr('style') + '">' + $(this).html() + '</span>');
-						
-					});						
-				}
-				
 			});
 		}
 
@@ -2074,8 +2386,6 @@ Redactor.prototype = {
 			$(swatch).click(function() 
 			{ 
 				_self.execCommand('fontName', $(this).attr('rel'));
-				_self.cleanUpFont('font-family');
-				_self.cleanUpSpan();
 			});
 		}
 		return dropdown;
@@ -2097,14 +2407,13 @@ Redactor.prototype = {
 			$(swatch).click(function() 
 			{ 
 				_self.execCommand('fontSize', Number($(this).attr('rel')));
-				_self.cleanUpFont('font-size');
-				_self.cleanUpSpan();
 			});
 		}
 		return dropdown;
 	},
 	buildremoveFormat: function()
 	{
+
 		var replacehtml;
 		if(this.getSelectedHtml() == "") {
 			if (confirm(RLANG.confirm_remove_format_for_entire_content)) {
@@ -2114,7 +2423,8 @@ Redactor.prototype = {
 					replacehtml = replacehtml.replace(/\n+/g, "</p><p>");
 				else
 					replacehtml = replacehtml.replace(/\n+/g, "<br /></p><p>");
-				this.setCode("<p>" + replacehtml);
+				this.execCommand('selectAll',null);
+				this.execCommand('inserthtml',"<p>" + replacehtml);
 			}
 		}
 		else
@@ -2162,8 +2472,6 @@ Redactor.prototype = {
 				replacehtml = replacehtml.split("").reverse().join("").replace(/\>p\</,'').split("").reverse().join("");
 			this.insertHtml(replacehtml);
 		}
-		this.cleanUpRedundant();
-		this.cleanUpSpan();
 
 		this.syncCode();
 	},
@@ -2276,15 +2584,20 @@ Redactor.prototype = {
 		}
 		else
 		{
-			this.savedSel = window.Selection.getOrigin(window);
-			this.savedSelObj = window.Selection.getFocus(window);			
+			var sel = this.getSelection();
+			this.savedSel = [];
+			this.savedSelObj = [];
+			this.savedSel[0] = sel.anchorNode;
+			this.savedSel[1] = sel.anchorOffset;
+			this.savedSelObj[0] = sel.focusNode;
+			this.savedSelObj[1] = sel.focusOffset;	
 		}
 	},
 	restoreSelection: function()
 	{	
 		if (this.savedSel !== null && this.savedSelObj !== null && this.savedSel[0].tagName !== 'BODY')
 		{
-			window.Selection.setSelection(window, this.savedSel[0], this.savedSel[1], this.savedSelObj[0], this.savedSelObj[1]);
+            window.Selection.setSelection(window, this.savedSel[0], this.savedSel[1], this.savedSelObj[0], this.savedSelObj[1]);
 		}
 		else 
 		{
@@ -3616,42 +3929,6 @@ Redactor.prototype = {
 		}
 	},
 	// Used to remove span tag with empty style attribute
-	cleanUpSpan: function()
-	{
-		$.each(this.$editor.find('span'), function() {
-			if($(this).attr('style') == undefined || $(this).attr('style') == "")
-				$(this).replaceWith($(this).html());
-		});
-		this.syncCode();
-	},
-	// Used to replace Font tags with span tags
-	cleanUpFont: function(css_property)
-	{
-		_redactor = this;
-		this.$editor.find('font').replaceWith(function() {
-			if ($.browser.msie)
-					$(this).find('span').css(css_property, '');
-			var span = $("<span />");
-			span.html($(this).html());
-			span.css({
-				'font-family': $(this).attr('face'),
-				'font-size': _redactor.opts.fontsize_levels[$(this).attr('size')],
-				'color': $(this).attr('color')
-			});	
-			if(css_property=='font-family')
-			{
-				span.attr('rel', 'temp_redactor_font_family');
-			}
-			else if(css_property=='font-size')
-			{
-				span.attr('rel', 'temp_redactor_font_size');
-			}
-			return $(span);	
-		});
-		this.cleanUpRedundant();
-		this.cleanUpSpan();
-		this.syncCode();
-	},
 	// Used to clean up unnecessary tags
 	cleanUpRedundant: function() 
 	{
@@ -3959,7 +4236,7 @@ $.fn.insertExternal = function(html)
 	
 	$.fn.linkify = function ()
 	{
-		this.each(linkifyThis);
+		// this.each(linkifyThis);
 	};
 
 })(jQuery);

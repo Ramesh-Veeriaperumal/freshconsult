@@ -8,6 +8,7 @@ allow_debugging:        on
 stylesheets:
   common:
     - public/stylesheets/app/common.css
+    - public/stylesheets/nprogress.css
 
   app:
     - public/stylesheets/app/application.css
@@ -137,7 +138,8 @@ javascripts:
     - public/javascripts/controls.js
 
   frameworks:
-    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery-1.8.3.min.js
+    - public/javascripts/nprogress.js
     - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
@@ -183,7 +185,20 @@ javascripts:
 
   # Code editor for portal cms
   codemirror:
-    - public/javascripts/codemirror/*.js
+    - public/javascripts/codemirror/codemirror.js
+    - public/javascripts/codemirror/jquery.codemirror.js
+    - public/javascripts/codemirror/mode-css.js
+    - public/javascripts/codemirror/mode-htmlmixed.js
+    - public/javascripts/codemirror/mode-javascript.js
+    - public/javascripts/codemirror/mode-liquid-mode.js
+    - public/javascripts/codemirror/mode-xml.js
+    - public/javascripts/codemirror/util-match-highlighter.js
+    - public/javascripts/codemirror/util-overlay.js
+    - public/javascripts/codemirror/util-searchcursor.js
+
+  colorpicker:
+    - public/javascripts/mColorPicker.js
+
   portaltemplate:
     - public/javascripts/mousetrap.js
   visitor:
@@ -206,6 +221,7 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
     - public/javascripts/fjax.js
+    - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js

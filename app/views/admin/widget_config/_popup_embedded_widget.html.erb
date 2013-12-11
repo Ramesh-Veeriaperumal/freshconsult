@@ -32,7 +32,7 @@
 			 	</div>
 			 	<div class="color span6">
 			 		<div><%= t("feedbackwidget_background") %></div>
-				 	<input type="color" maxlength="7" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= tab_color %>" />
+				 	<%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"buttonBg" , :value => "#{tab_color}" , :maxlength => "7" %>
 				</div>
 			</div>
 	 </div>

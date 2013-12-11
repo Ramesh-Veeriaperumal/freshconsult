@@ -28,5 +28,5 @@ module Admin::EmailNotificationsHelper
 		current_account.agents.collect { |au| [au.user.id, au.user.name] }
 	end
 
-	ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
+	ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
 end		

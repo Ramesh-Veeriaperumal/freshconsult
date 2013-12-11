@@ -2,7 +2,7 @@ class Admin::TemplatesController < Admin::AdminController
   include Portal::TemplateActions
 
   before_filter :build_objects,  :only => [:show, :update, :soft_reset, :restore_default, :publish]
-  before_filter :clear_preview_session, :default_liquids, :set_forum_builder, :only => :show
+  before_filter :clear_preview_session, :default_liquids , :only => :show
   before_filter :clear_preview_session, :only => :clear_preview
 
   

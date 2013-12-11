@@ -14,7 +14,7 @@
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
-          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+          <%= f.color_picker :class => "color_field required" , :id => "portal_template_prefereces_#{p}" , :name =>"portal_template[preferences][#{p}]" , :value => "#{portal_simple.preferences[p]}" , :maxlength => "7" %>
         </div> 
       </div>
     <% end %>
@@ -27,7 +27,7 @@
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
-          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+          <%= f.color_picker :class => "color_field required" , :id => "portal_template_prefereces_#{p}" , :name =>"portal_template[preferences][#{p}]" , :value => "#{portal_simple.preferences[p]}" , :maxlength => "7" %>
         </div> 
       </div>
     <% end %>
@@ -45,7 +45,7 @@
             </select>
           <% else %>
             <div class="color">
-              <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+              <%= f.color_picker :class => "color_field required" , :id => "portal_template_prefereces_#{p}" , :name =>"portal_template[preferences][#{p}]" , :value => "#{portal_simple.preferences[p]}" , :maxlength => "7" %>
             </div>
           <% end %>          
         </div>
@@ -85,7 +85,7 @@
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
-          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+          <%= f.color_picker :class => "color_field required" , :id => "portal_template_prefereces_#{p}" , :name =>"portal_template[preferences][#{p}]" , :value => "#{portal_simple.preferences[p]}" , :maxlength => "7" %>
         </div> 
       </div>
     <% end %>
@@ -98,7 +98,7 @@
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
-          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+          <%= f.color_picker :class => "color_field required" , :id => "portal_template_prefereces_#{p}" , :name =>"portal_template[preferences][#{p}]" , :value => "#{portal_simple.preferences[p]}" , :maxlength => "7" %>
         </div> 
       </div>
     <% end %>

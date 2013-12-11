@@ -1,8 +1,5 @@
-<%= include_cloudfront_css :codemirror %>
-<%= include_cloudfront_js :codemirror %>
 <%= include_cloudfront_js :portaltemplate %>
 <% content_for :sidebar do %><% end %> 
-<%= render :partial => "shared/colorpicker" %>
 <h3 class="lead">
   <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
 </h3>
@@ -114,7 +111,14 @@
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
     setTimeout(function(){
-      jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh")
+      try
+      {
+        jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh");
+      }
+      catch(e)
+      {
+        console.log('Loading the assets');
+      }
     }, 100)    
   });
 
