@@ -34,7 +34,7 @@ FreshdeskPjax.prototype = {
 	    if(this.bodyClass) this._prevBodyClass = this.bodyClass;
 	    this.bodyClass = null;
 
-      NProgress.start();
+    	this._setLoading();
     	return true;
     },
 
@@ -45,7 +45,7 @@ FreshdeskPjax.prototype = {
     },
 
     callAfterReceive: function() {
-      NProgress.done();
+    	this._removeLoading();
     	this._afterReceiveCleanup();
 
     	var body = $(body);
@@ -62,6 +62,12 @@ FreshdeskPjax.prototype = {
 
     },
 
+    _setLoading: function() {
+      $('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
+        $('.top-loading-wrapper').removeClass('hide');
+      });
+    },
+
     _triggerUnload: function() {
     	if(typeof(this.unload) == 'function') {
 	    	var unload = this.unload();
@@ -71,6 +77,11 @@ FreshdeskPjax.prototype = {
 	    		return confirm(unload);
 	    	}
 	    }
+    },
+
+    _removeLoading: function() {
+      $('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
+      $('.top-loading-wrapper').addClass('hide','slow');
     },
 
     _beforeSendExtras: function(evnt,xhr,settings,options) {

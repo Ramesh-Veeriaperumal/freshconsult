@@ -124,4 +124,38 @@
 		border-color:#a4a4a4;
 		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 	}
+	.top-loading-wrapper {
+		background-color:$header_color;
+		border-bottom:1px solid rgba($loading-color,0.6);
+	}
+	.top-loading-wrapper .top-loading-strip {
+
+	background-image: -webkit-linear-gradient(-45deg, $loading-color 26%, transparent 26%, transparent 51%, $loading-color 51%, $loading-color 76%, transparent 76%, transparent);
+
+	background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, $loading-color), color-stop(.26, transparent), color-stop(.51, transparent), color-stop(.51, $loading-color), color-stop(.76, $loading-color), color-stop(.76, transparent), to(transparent) );
+
+
+	background-image: -moz-linear-gradient(-45deg, $loading-color 25%, transparent 25%, transparent 50%, $loading-color 50%, $loading-color 75%, transparent 75%, transparent);
+
+	-webkit-background-size: 19px 19px;
+	-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+
+	-moz-background-size: 19px 19px;
+	-moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+
+	 
+	background-size: 19px 19px;
+	animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
+	}
+
+	.top-loading-wrapper .top-loading-strip-opera-12 {
+		background-image: -o-repeating-linear-gradient(-45deg, transparent, transparent 20%, $loading-color 20%, $loading-color 49%);
+		background-image: repeating-linear-gradient(-45deg, transparent, transparent 20%, $loading-color 20%, $loading-color 49%);
+		
+		-o-background-size: 19px 19px;
+		-o-animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
+  }
+  .top-loading-strip-opera+.loadingmsg{
+  	color: $header_ctxt_color;
+  }
 <% end %>
