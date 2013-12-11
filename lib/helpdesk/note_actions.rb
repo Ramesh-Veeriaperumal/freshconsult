@@ -28,4 +28,11 @@ module Helpdesk::NoteActions
     content_tag :div, conv_details, :class => "email-details"
   end
 
+  def to_event_data(item)
+    hash = JSON.parse(item.to_json)
+    hash['note']['kind'] = item.kind
+    hash['note']['to'] = item.schema_less_note.to_emails
+    hash.to_json
+  end
+
 end

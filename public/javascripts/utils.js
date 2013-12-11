@@ -904,6 +904,12 @@ jQuery.scrollTo = function(element, options) {
     }, opts.speed);
 };
 
+
+function trigger_event(event_name, event_data){
+  jQuery(document).trigger( event_name , event_data );
+  return true;
+};
+
 // Window tab section based on anchor url
 function hashTabSelect(){
   if(window.location.hash != '') {
@@ -917,3 +923,4 @@ function hashTabSelect(){
     })
   }
 }
+

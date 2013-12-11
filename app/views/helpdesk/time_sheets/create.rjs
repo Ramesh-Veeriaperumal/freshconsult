@@ -1,11 +1,18 @@
-unless @new_show_page
-	page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_entry
-	page << "jQuery('#timeentry_#{@time_entry.id}').effect('highlight', {}, 2000); jQuery('#timeentry_add').removeClass('active_edit');"
+page.insert_html :bottom, "timesheetlist", :partial => "time_entry", :object => @time_entry
 
-	clear_view_timers page, @time_entry, @time_cleared
+pushToTimesheetIntegratedApps page, @time_entry
 
-	pushToTimesheetIntegratedApps page, @time_entry
-
-else
-	page << render(:partial => "helpdesk/time_sheets/v2/create")
-end
+page << "jQuery('#new_timeentry').modal('hide');"
+page << "jQuery('#new_timeentry form.timesheet_form').resetForm();"
+page << "jQuery('#add_new_timer .submit, #add_new_time_entry .submit').each(function(i) {
+                        jQuery(this).attr('disabled',false);
+                        jQuery(this).removeClass('disabled');
+                        jQuery(this).text(jQuery(this).data('resetText'));
+                });"
+page << "jQuery('#timesheetlist .list-noinfo').remove();"
+clear_view_timers page, @time_entry, @time_cleared
+page << "jQuery('#new_timeentry [data-submit=modal]').button('start');"
+page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
+page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
+page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
+page << "trigger_event('time_entry_created', #{@time_entry.to_json} );"

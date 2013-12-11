@@ -2,6 +2,7 @@
 require "open-uri"
 
 module HelpdeskControllerMethods
+  include Helpdesk::NoteActions
 
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
@@ -256,6 +257,7 @@ protected
   def after_destory_js
     render(:update) { |page| 
       @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
+      page << "trigger_event('note_deleted', #{to_event_data(@items[0])});" if @cname == "note"
       show_ajax_flash(page)
     }
   end
