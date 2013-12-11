@@ -250,7 +250,6 @@ class Helpdesk::TicketsController < ApplicationController
           @ticket_notes.reverse!
           @ticket_notes_total = @ticket.conversation_count
 
-          render :action => "details"
       }
       format.atom
       format.xml  { 
