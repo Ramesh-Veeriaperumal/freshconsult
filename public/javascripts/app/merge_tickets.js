@@ -120,7 +120,7 @@ function MergeTicketsInitializer() {
     var list =  jQuery('#'+type+'_results').find('ul');
     list.empty();
     jQuery('#'+type+'_results').addClass("sloading");
-    new Ajax.Request('/helpdesk/merge_tickets/merge_search',
+    new Ajax.Request('/search/home/ticket_search',
                       { 
                         parameters: {
                           search_string: searchString,

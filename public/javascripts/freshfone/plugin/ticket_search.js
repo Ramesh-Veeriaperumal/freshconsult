@@ -38,7 +38,7 @@
 					search_method: "with_" + search_type,
 					rand: (new Date()).getTime()
 				};
-				ajax_request = new Ajax.Request('/helpdesk/merge_tickets/merge_search',
+				ajax_request = new Ajax.Request('/search/home/ticket_search',
 					{ parameters: search_parameters,
 						onSuccess: function (response) {
 							self.$element.find('.ticket_search_results')

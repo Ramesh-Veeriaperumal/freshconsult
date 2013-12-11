@@ -166,7 +166,7 @@
   end
 
   map.namespace :search do |search|
-    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get, :ticket_search => :get }
     search.ticket_related_solutions    '/related_solutions/ticket/:ticket/', :controller => 'home', :action => 'related_solutions'
     search.ticket_search_solutions    '/search_solutions/ticket/:ticket/', :controller => 'home', :action => 'search_solutions'
   end
@@ -382,7 +382,7 @@
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
-    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge_search => :get, :merge => :put }
+    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge => :put }
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
