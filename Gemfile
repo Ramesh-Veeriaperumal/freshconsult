@@ -6,7 +6,6 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.7.7"
-# gem "mysql"
 gem "mysql", "2.8.1", :platforms => :ruby_18
 gem "mysql2", "~> 0.2.7", :platforms => :ruby_19
 
@@ -20,7 +19,7 @@ gem "omniauth-oauth"
 gem "tzinfo"
 
 gem "ruby-debug", "0.10.3", :platforms => :ruby_18
-gem 'debugger', "1.6.2", :platforms => :ruby_19
+gem 'debugger', "1.6.3", :platforms => :ruby_19
 gem 'test-unit', '1.2.3', :platforms => :ruby_19
 
 gem "omniauth-oauth2", "1.0"
@@ -45,9 +44,6 @@ gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
-gem "ruby-debug", "0.10.3", :platforms => :ruby_18
-gem 'debugger', "1.6.2", :platforms => :ruby_19
-gem 'test-unit', '1.2.3', :platforms => :ruby_19
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 
@@ -118,10 +114,6 @@ gem "xml-simple", "~> 1.1.2"
 gem "erubis", "2.7.0"
 gem "rails_xss", "0.4.0"
 
-gem "paperclip", "~> 2.8.0"
-gem "aws-sdk", "~> 1.11.3"
-gem "xml-simple", "~> 1.1.2"
-
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 end
@@ -150,8 +142,6 @@ end
 group :assets do
    gem "sass", "3.2.1"
    gem "compass-rails"
-   # Portal grid system is done using susy grids
-   gem "susy" 
-   # To optimize sprite generation
-   gem "oily_png"
+   gem "susy"  # Portal grid system is done using susy grids
+   gem "oily_png" # To optimize sprite generation
 end
