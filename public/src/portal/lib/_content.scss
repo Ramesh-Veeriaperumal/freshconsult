@@ -163,6 +163,13 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .p-desc{
 	word-break: normal; 
 	word-wrap: break-word; 
+	
+	// Fix for elements breaking layout with inline styles	
+	div, p, ol, ul, li, article, aside,
+	details, figcaption, figure, footer,
+	header, hgroup, nav, section{
+		max-width: 100%;
+	}
 }
 
 .freshdesk_quote{ display: none; }
