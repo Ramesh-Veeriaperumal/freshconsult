@@ -160,7 +160,7 @@ class Helpdesk::TicketsController < ApplicationController
             tickets <<  JSON.parse(tic.to_mob_json_index[19..-2]).as_json(false)
            end
 
-          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
+          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
           response << "}"
           render :json => response
         end
@@ -262,7 +262,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.nmobile {
         response = "{
         #{@item.to_mob_json(false,false)[1..-2]},
-        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios, :can_view_time_entries, :can_forward_ticket])[1..-2]},
+        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
+                                                        :can_view_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
         #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},

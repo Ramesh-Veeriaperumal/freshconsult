@@ -24,7 +24,7 @@ minimizable ||= false
 			</div>
 			<% else %>
 			<div class="actions">
-				<% if privilege?(:delete_ticket) %>
+				<% if privilege?(:edit_conversation) %>
 					<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(notable_object, note), 
 								:method => :delete, :confirm => t("helpdesk.tickets.note.delete_note"), 
 								:html => {:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')}) if note.user && note.user.agent?    %>   

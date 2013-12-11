@@ -64,4 +64,20 @@ module Mobile::Actions::User
     privilege?(:forward_ticket)
   end
 
+  def can_edit_conversation
+    privilege?(:edit_conversation)
+  end
+
+  def can_view_contacts
+    privilege?(:view_contacts)
+  end
+
+  def can_delete_contact
+    privilege?(:delete_contact)
+  end
+
+  def can_manage_tickets
+    privilege?(:manage_tickets)
+  end
+
 end
