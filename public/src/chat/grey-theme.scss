@@ -265,7 +265,13 @@
     }
   }
 
-  #recent_container, .notifier-container{
+  .notifier {
+    background-color: rgb(255, 253, 241);
+    color: rgb(238, 238, 238);
+    border: 1px rgb(132, 132, 132) solid;
+  }
+
+  #recent_container, .fc_notifier-container{
     background: #fff;
     box-shadow: 0 0 5px #888;
     border-color: #5e5e5e;
@@ -320,7 +326,7 @@
     margin-left: -36px;
   }
 
-  #recent_container:after, #recent_container:before, .notifier-container:after, .notifier-container:before {
+  #recent_container:after, #recent_container:before, .fc_notifier-container:after, .fc_notifier-container:before {
     top: 100%;
     border: solid transparent;
     content: " ";
@@ -330,7 +336,7 @@
     pointer-events: none;
   }
 
-  #recent_container:after, .notifier-container:after {
+  #recent_container:after, .fc_notifier-container:after {
     border-color: rgba(255, 255, 255, 0);
     border-top-color: #5e5e5e;
     border-width: 8px;
@@ -338,7 +344,7 @@
     margin-left: -14px;
   }
 
-  #recent_container:before, .notifier-container:before {
+  #recent_container:before, .fc_notifier-container:before {
     border-color: rgba(94, 94, 94, 0);
     border-top-color: #444;
     border-width: 10px;
