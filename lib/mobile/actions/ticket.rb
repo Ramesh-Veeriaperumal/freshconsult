@@ -70,7 +70,7 @@ module Mobile::Actions::Ticket
       :only => [ :id, :display_id, :subject, :description_html, 
                  :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
-                    :source_name, :is_closed, :to_cc_emails,:conversation_count, 
+                    :source_name, :is_closed, :to_emails, :to_cc_emails,:conversation_count, 
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook,
                     :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , :ticket_notes],
       :include => json_inlcude
@@ -82,7 +82,7 @@ module Mobile::Actions::Ticket
     options = { 
       :only => [ :id, :display_id, :subject, :priority, :status, :updated_at],
       :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                    :responder_name, :need_attention, :pretty_updated_date ]
+                    :responder_name, :need_attention, :pretty_updated_date ,:ticket_current_state]
     }
     to_json(options,false) 
   end
@@ -102,6 +102,11 @@ module Mobile::Actions::Ticket
 
   def pretty_updated_date
     distance_of_time_in_words_to_now(updated_at) + " ago"
+  end
+
+  def ticket_current_state
+    ticket_current_state = self.ticket_states.current_state
+    t("ticket.ticket_user_list_status_"+ticket_current_state,:time_ago => time_ago_in_words(self.ticket_states.send(ticket_current_state)))
   end
 
   def ticket_sla_status
