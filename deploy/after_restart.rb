@@ -46,3 +46,5 @@ end
 on_utilities(all_instances_of('facebook_utility')) do
   run "sudo monit restart all -g helpkit_facebook_realtime"
 end
+
+run "cd #{release_path} && bundle exec rake RAILS_ENV=#{environment} APP=#{app} DEPLOYED_BY=\"#{deployed_by}\" REVISION=#{revision.chomp} NR_KEY=#{node[:newrelic_key]} newrelic:notify"
