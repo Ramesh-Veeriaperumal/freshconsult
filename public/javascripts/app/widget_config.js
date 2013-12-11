@@ -141,8 +141,8 @@ var WidgetConfig = function () {};
 			}
 
 			//Special Handling for buttonBg - which sets ButtonColor also by contrasting
-			if (item.name === 'buttonBg') {
-				this.formHash.set('buttonColor', $.fn.mColorPicker.textColor($dom.css("border-right-color")));
+			if (item.name === 'buttonBg') {				
+				this.formHash.set('buttonColor', rgb2hex($dom.css("border-right-color")));
 			}
 
 			return item;
