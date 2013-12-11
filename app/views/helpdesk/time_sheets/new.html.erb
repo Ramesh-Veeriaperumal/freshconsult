@@ -8,7 +8,7 @@
                         "data-modal-id" => "new_timeentry"
                     } do |f| %>
     <%= hidden_field(:time_entry, :workable_id , { :value => @ticket.id }  )%>
-    <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
+    <%= render :partial => "form", :object => f, :locals => { :type => :new } %>
   <% end %>
 <% end %>
 

@@ -1,21 +1,18 @@
-<% unless @new_show_page %>
-<%= render :partial => "helpdesk/time_sheets/new" %>
 <div id="timesheetlist">
-	<%= each_or_message "helpdesk/time_sheets/time_entry", @time_sheets, t(".no_timeentry") %>
+	<%= each_or_message "time_entry", @ticket.time_sheets, t(".no_timeentry") %>
 </div>
-<div id="timesheettotal" class="timeentry <%= @time_sheets.blank? ? 'hide' : '' %>">
-	<div class="user_details"><%= t("total") %></div>
-	<div class="timespent">
-	  <%= content_tag :span, get_total_time(@time_sheets),
-                    :class => "time",
-                    :id => "timeentry_timer_total" %>
-	</div>
+<div class="new_timer">
+	<a id="triggerAddTime" href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
+		rel="freshdialog" data-target="#new_timeentry" data-width="450"
+		 data-submit-label="<%= t('save')%>" data-submit-loading="<%= t('saving')%>"
+		 ><%= t('ticket.add_time') %></a>
 </div>
+<% javascript_tag do -%>
+   jQuery('#timeentry_timer_total').data('staticTotal', false);
+   totalTime("#timesheetlist .time", "#timeentry_timer_total");
+   jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
+<% end %>
 <%= include_cloudfront_js :timesheet %>
-<% 
-else 
-%>
-<%= render :partial => "helpdesk/time_sheets/v2/index" %>
-<%
-end 
-%>
+<div id="timeentry_apps_add" class="ui-form hide">   
+	<%= render :partial => "integration" if timesheet_integrations_enabled? %>
+</div>
