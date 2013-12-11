@@ -27,7 +27,7 @@ module SupportTicketControllerMethods
           redirect_to redirect_url
         } 
         format.json {
-          render :json => {:success => true, :success_message => success_message}
+          render :json => {:success => true}
         }
       end
     else
