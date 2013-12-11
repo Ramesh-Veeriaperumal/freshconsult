@@ -19,11 +19,10 @@ module SupportTicketControllerMethods
   
   def create
     if create_the_ticket(feature?(:captcha))
-      success_message = I18n.t(:'flash.portal.tickets.create.success')
       respond_to do |format|
         format.html {
           flash.keep(:notice)
-          flash[:notice] = success_message
+          flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
           redirect_to redirect_url
         } 
         format.json {
