@@ -5,20 +5,21 @@
 <div id="freshchat_layout"></div>
   <!-- Chat related contents starts -->
 <%= include_cloudfront_css :chat %>
-<script src="<%=comm_url%>/js/chat.js"></script>
+<script src=></script>
 <script language="javascript">
 (function($){
     $(document).ready(function(){
-        window.playSound = !($.cookie('fd::'+SITE_ID));
-        if(window.playSound){
-            $.cookie('fd::'+SITE_ID,true);
-            $(window).unload(function(){
-                jQuery.cookie('fd::'+SITE_ID,null);
-            });
-        }
+        $.getScript("<%=comm_url%>/js/chat.js", function(){
+            window.playSound = !($.cookie('fd::'+SITE_ID));
+            if(window.playSound){
+                $.cookie('fd::'+SITE_ID,true);
+                $(window).unload(function(){
+                    jQuery.cookie('fd::'+SITE_ID,null);
+                });
+            }
+        });
     });    
 })(jQuery);
-
 
 var CS_URL = "<%=comm_url%>";
 var WEB_ROOT = "http://<%=current_account.full_domain%>";
