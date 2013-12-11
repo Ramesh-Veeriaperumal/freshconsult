@@ -41,8 +41,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
-      @status, @headers, @response = [302, {"Location" => "/403.html"}, 
-                                      'You have exceeded the limit of requests per hour']
+      @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
+                                      ["You have exceeded the limit of requests per hour"]]
     end
     
      [@status, @headers, @response]
@@ -55,6 +55,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     else
       return !THROTTLED_TYPES.include?(@content_type)
     end
+  end
+
+  def retry_after
+    get_others_redis_expiry(key+"_expiry").to_s
   end
 
   def key
