@@ -31,7 +31,7 @@ class TicketFieldsController < CustomFieldsController
     end
       }
       format.xml  { render :xml => @ticket_fields.to_xml }
-      format.json  { render :json => Hash.from_xml(@ticket_fields.to_xml) }
+      format.json  { render :json => Hash.from_trusted_xml(@ticket_fields.to_xml) }
     end
   end
 
