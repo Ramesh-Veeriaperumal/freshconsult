@@ -6,7 +6,9 @@ $button-radius: 6px;
 	@include opacity(0.5);
 	background-color:white;
 }
-
+.freshwidget-container{
+	z-index:999999;
+}
 .freshwidget-container, .widget-ovelay {
 	position:fixed;
 	_position:absolute;
@@ -151,7 +153,7 @@ $button-radius: 6px;
 		.mobile-widget-close{
 			display: block;
 			position:fixed;
-			top:0;
+			top:12px;
 			font-size: 32px;
 			color: #000;
 			font-weight: bold;
