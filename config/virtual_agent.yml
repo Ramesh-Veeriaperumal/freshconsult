@@ -16,7 +16,7 @@ fields:
         product_id: object_id
         contact: text
         company: text
-        responder_id: agent_object_id
+        responder_id: object_id
         group_id: object_id
         company_id: object_id
         ticlet_cc: email
@@ -59,7 +59,7 @@ fields:
         priority: update
         ticket_type: update
         status: update
-        responder_id: update
+        responder_id: agent
         group_id: update
         note_type: value
         reply_sent: change

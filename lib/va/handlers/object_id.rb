@@ -1,6 +1,6 @@
 class Va::Handlers::ObjectId < Va::RuleHandler
 
-  protected
+  private
     def proper_value
       value.blank? ? nil : value.to_i
     end
