@@ -7,12 +7,12 @@ def extract_zendesk_zip(file_url,username,password)
       file =  RemoteFile.new(file_url, username, password)   
       @upload_file_name = file.original_filename
       zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+      @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
+      FileUtils.mkdir_p @out_dir
       File.open(zip_file_name , "wb") do |f|
         f.write(file.read)
       end    
       @file_list = Array.new       
-      @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
-      FileUtils.mkdir_p @out_dir    
       zf = Zip::ZipFile.open(zip_file_name)
     
       zf.each do |zip_file|        

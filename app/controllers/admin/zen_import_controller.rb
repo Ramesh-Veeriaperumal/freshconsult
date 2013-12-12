@@ -45,7 +45,6 @@ class Admin::ZenImportController < Admin::AdminController
     end
 
     def set_included_files nodes
-      nodes.delete_if { |node| node.blank? or node.eql?('solution')}
       import_files = ['organization','user','group']
       nodes.each do |node|
         import_files.push('ticket') if node.eql?('tickets')
