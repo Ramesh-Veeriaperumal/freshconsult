@@ -207,8 +207,16 @@
 <% end %>
 </div>
 <% content_for :onload_script do %>
-	jQuery("[data-rebrand-form]").live("change", function(ev){
-		jQuery(this).data('formChanged', true)
+	jQuery("[data-rebrand-form]").on("change", function(ev){
+		var target = jQuery(ev.target);
+		if(target.attr('data-loadedScript'))
+		{
+			target.removeAttr('data-loadedScript');
+		}
+		else
+		{
+			jQuery(this).data('formChanged', true)
+		}
 	})
 	jQuery("[rel=customize-portal]").live("click", function(ev){
 		var form = jQuery(this).parents('form:first')

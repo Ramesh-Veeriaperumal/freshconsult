@@ -391,6 +391,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
+    - public/javascripts/mColorPicker.js
     - public/javascripts/getting_started.js
 
   reports:

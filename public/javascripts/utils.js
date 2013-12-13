@@ -30,6 +30,12 @@ function hex(x) {
   return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
  }
 
+function textColor(val)
+{
+  if (typeof val == 'undefined' || val == 'transparent') return "black";
+
+  return (parseInt(val.substr(1, 2), 16) + parseInt(val.substr(3, 2), 16) + parseInt(val.substr(5, 2), 16) < 400)? 'white': 'black';
+}
 
 // Utility methods for FreshWidget  
 function catchException(fn, message) {

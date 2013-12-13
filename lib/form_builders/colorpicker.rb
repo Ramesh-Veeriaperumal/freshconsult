@@ -10,9 +10,9 @@ module FormBuilders::Colorpicker
       def color_picker_tag(options = {})      
         options = COLORPICKER_DEFAULTS.merge(options)
         output = []
-        output << %( <input type='color' id ="#{options[:id]}" class="#{options[:class]}" value="#{options[:value]}" data-hex="true" name="#{options[:name]}"  maxlength="#{options[:maxlength]}" /> )
+        output << %( <input type='color' id ="#{options[:id]}" class="#{options[:class]}" value="#{options[:value]}" data-hex="true" data-loadedScript="true" name="#{options[:name]}"  maxlength="#{options[:maxlength]}" /> )
         output << %(<script type="text/javascript">
-           scriptLoader.load('colorpicker');
+            scriptLoader.load('colorpicker');
           </script>
         )
         
