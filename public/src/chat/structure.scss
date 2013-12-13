@@ -428,7 +428,7 @@ li.ui-state-active {
 }
 
 .fc_notify_text{
-    width: 206px;
+    width: 202px;
     padding-left: 10px;
     float: left;
     color: #333;
@@ -470,7 +470,7 @@ li.ui-state-active {
 }
 
 .fc_notify_btns{
-    float: right;
+    float: left;
     width: 22px;
     .icon-ok, .icon-close{
         display: inline-block;
@@ -1177,7 +1177,6 @@ li.ui-state-active {
     left:108px;
     .notifier_scroll_wrap{
         max-height: 246px;
-        display: flex;
         overflow: auto;
     }
     .fc_notify_list{
