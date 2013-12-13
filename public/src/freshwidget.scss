@@ -6,9 +6,7 @@ $button-radius: 6px;
 	@include opacity(0.5);
 	background-color:white;
 }
-.freshwidget-container{
-	z-index:999999;
-}
+
 .freshwidget-container, .widget-ovelay {
 	position:fixed;
 	_position:absolute;
@@ -16,6 +14,9 @@ $button-radius: 6px;
 	width:100%;
 	height:100%;
 	z-index:90002;
+}
+.freshwidget-container{
+	z-index:999999; //need to override chat button
 }
 
 .fd-btn-left a{ left:-2px; }
