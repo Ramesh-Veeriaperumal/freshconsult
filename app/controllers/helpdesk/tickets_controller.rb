@@ -11,7 +11,6 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
-  include Helpdesk::ShowVersion
   include ApplicationHelper
   include Mobile::Controllers::Ticket
 
@@ -22,7 +21,6 @@ class Helpdesk::TicketsController < ApplicationController
   around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
-  before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -162,7 +160,7 @@ class Helpdesk::TicketsController < ApplicationController
             tickets <<  JSON.parse(tic.to_mob_json_index[19..-2]).as_json(false)
            end
 
-          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
+          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
           response << "}"
           render :json => response
         end
@@ -207,7 +205,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def view_ticket
     if params['format'] == 'widget'
-      @new_show_page = false
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
@@ -250,12 +247,9 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-        if @new_show_page
           @ticket_notes.reverse!
           @ticket_notes_total = @ticket.conversation_count
 
-          render :action => "details"
-        end
       }
       format.atom
       format.xml  { 
@@ -268,7 +262,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.nmobile {
         response = "{
         #{@item.to_mob_json(false,false)[1..-2]},
-        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios, :can_view_time_entries, :can_forward_ticket])[1..-2]},
+        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
+                                                        :can_view_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
         #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
@@ -560,7 +555,7 @@ class Helpdesk::TicketsController < ApplicationController
   def change_due_by
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
-    render :partial => @new_show_page ? "/helpdesk/tickets/show/due_by" : "due_by", :object => @item.due_by
+    render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
   end  
   
   def get_due_by_time
@@ -812,7 +807,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    default_notes_count = "nmobile".eql?(params[:format])?1:@new_show_page ? 3 : 5
+    default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
     @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end

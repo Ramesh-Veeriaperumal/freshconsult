@@ -42,24 +42,13 @@ module MailAutolink
       end
 
       def encode_body(part, autolinked_body)
-        if RUBY_VERSION > "1.9"
-          case (part.content_transfer_encoding || "").downcase
-            when "base64" then
-              part.body = Mail::Encodings::Base64.encode(autolinked_body)
-            when "quoted-printable"
-              part.body = [normalize_new_lines(autolinked_body)].pack("M*")
-            else
-              part.body = autolinked_body
-          end
-        else
-          case (part.transfer_encoding || "").downcase
-            when "base64" then
-              part.body = TMail::Base64.folding_encode(autolinked_body)
-            when "quoted-printable"
-              part.body = [normalize_new_lines(autolinked_body)].pack("M*")
-            else
-              part.body = autolinked_body
-          end
+        case (part.content_transfer_encoding || "").downcase
+          when "base64" then
+            part.body = Mail::Encodings::Base64.encode(autolinked_body)
+          when "quoted-printable"
+            part.body = [normalize_new_lines(autolinked_body)].pack("M*")
+          else
+            part.body = autolinked_body
         end
       end
   end

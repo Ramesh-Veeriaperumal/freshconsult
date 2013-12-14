@@ -3,7 +3,6 @@ class Admin::PagesController < Admin::AdminController
 
   before_filter :portal_page_label, :only =>[:edit, :update, :soft_reset]
   before_filter :build_or_find, :get_raw_page, :only => [:edit, :update]
-  before_filter :set_forum_builder, :only => :edit
 
   before_filter(:only => [:update]) do |c|
     c.send(:liquid_syntax?, c.request.params[:portal_page][:content])

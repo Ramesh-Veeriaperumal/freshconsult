@@ -1,4 +1,0 @@
-<% @articles = Solution::Article.suggest(@ticket ,search_query)  %>
-<div class="request-list">
-  <%= each_or_message( "helpdesk/tickets/components/article", @articles, t(:'ticket.suggested_solutions.no_result') ) %>
-</div>

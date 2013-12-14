@@ -28,7 +28,7 @@ class Post < ActiveRecord::Base
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
-  after_save  :monitor_topic
+  after_save  :monitor_topic, :if => :can_monitor?
     
   def to_xml(options = {})
     options[:except] ||= []
@@ -55,6 +55,10 @@ class Post < ActiveRecord::Base
 
   def to_s
     topic.title
+  end
+
+  def can_monitor?
+    self.import_id.nil?
   end
 
   def monitor_topic

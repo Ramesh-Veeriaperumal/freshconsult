@@ -1,272 +1,69 @@
-<% content_for :sidebar do -%>
-  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
+<%= include_cloudfront_css :tkt_details_print, :media => "print"  %>
+<%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/sticky.html.erb" %>
+<div class="tkt-wrapper ticket_show" data-showing='notes'>
+	<div class="tkt-wrapper-inner clearfix">
 
-  <div class="rtCnt sidepanel ticket-panel">
-    <%= ticket_sidebar unless @ticket.deleted %>
-  </div>
-  
-  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
-  
-  <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
-<%- end %>
-<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-<%= render :partial => "ticket_info" %>       
+		<%# render :partial => "helpdesk/tickets/show/info.html.erb" %>
+		<div id="forFixed" class="conversation_thread"></div>
+		<div id="tkt-inner" class="scollable_content">
 
-<div class="request-well">			
-	<%= ticket_tabs %>        
-	<% unless @ticket.deleted %>
-		<div class="replylinks">
-			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
-      <% if privilege?(:reply_ticket) %>
-  			<%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
-        <%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
-        <%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
-      <% end %>
-      <% if privilege?(:forward_ticket) %>
-			  <%= link_to_function(("<span></span>" + t('fwd_to')).html_safe, "swapEmailNote('cnt-fwd', this)", :id => "FwdButton", :class => "button forward reply") %>
-      <% end %>
-			<%= link_to_function(t('ticket.add_note').html_safe, "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
-      <% if privilege?(:view_time_entries) %>
-			 <%= link_to_function(t("ticket.add_time").html_safe, "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
-      <% end %>
+			<% unless params[:format] == 'widget' %>
+				<%= render :partial => "helpdesk/tickets/show/sidebar.html.erb" %>
+			<% end %>
+			<!--content Left-->
+			<div class="leftcontent">
+				<div class="conversation_thread" id="original_request">
+					<div class="conversation">
+						<%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
+					</div>
+				</div>
+				<div class="conversation_thread hide" id="show_more">
+					<div class="conversation">
+						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
+							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
+							<span class='count_number loading_only'>...</span>
+							<span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
+						</p></a>
+						<a href="" class="commentbox commentbox-blue">
+							<div><%= t('ticket.expand') %></div>
+						</a>
+					</div>
+				</div>
+				<%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %> 
+				<%= render :partial => "helpdesk/tickets/show/new_conversation.html.erb" %> 
+			</div>
 		</div>
-	<% end %>
-</div>		
-<div class="tab-content">
-	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
-		<% unless @ticket.deleted %>
-		<div id="TicketForms">
-				<% javascript_tag do %> 
-				  function lookup(searchString, callback) { 
-				    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
-				                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
-				                                              onSuccess: function(response) {
-				                                                var choices = $A();
-				                                                response.responseJSON.results.each(function(item){
-				                  if(item.value == "") {
-				                    choices.push([item.id, item.id]);
-				                  } else {
-				                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
-				                  } 
-				                                                });                                                
-				                                                callback(choices);
-				                                              } });
-				                                            }
-				  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
-				  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
-				<% end %>
-		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
-
-		  	<div class="request_panel hide" id="cnt-fwd">
-				<%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
-		  	</div>
-
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.display_id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => t('canned_folders.responses'), :class => "hide insert-canned-response" ) %> 
-		</div>
-		<% end %>
-		<% unless @ticket_notes.blank? %>
-			<%= render :partial => 'note', :collection => @ticket_notes %>
-			<%= will_paginate @ticket_notes %>
-		<% end %>	
-  </div>			  
-	<div class="requestCnt request-conversation tab-pane" id="Timesheet">
-	  <div class="sloading loading-small loading-block"></div>
 	</div>
 </div>
 
-
-
-<% content_for :pagefixed do %> 
-  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
-	<% javascript_tag do %>
-		MergeTicketsInitializer();
-		var activeForm = null;
-		swapEmailNote = function(formid, link){  
-				jQuery("#PagesTab").click();
-				
-				if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
-					//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
-					jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
-				}
-
-				//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
-				activeForm = jQuery('#'+formid).show().trigger('visibility');
-
-				switch(formid){
-					case 'cnt-reply':
-					case 'cnt-note':
-					case 'cnt-fwd':					
-							invokeRedactor(formid+"-body","cnt-reply");
-							jQuery('#'+formid+"-body").getEditor().focus();
-							if(jQuery.browser.mozilla){
-								jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
-							}
-							jQuery('#'+formid+"-body").getEditor().on('blur',function(){
-								try{
-									jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
-									jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
-								}catch(e){}
-							});
-						
-
-					break; 
-					case 'cnt-fb-post': 
-						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
-					break;
-					case 'cnt-tweet' : 
-						setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
-					break;
-				}
-			}
-
-		var activeTinyMce = null;
-    function show_canned_response(button, ticket_id){
-      	jQuery("#canned_response_container").css(jQuery(button).offset());
-
-      	activeTinyMce = jQuery(button).data("tinyMceId") || "";
-      	
-      	jQuery("#canned_response_container")   	
-        	.show()
-        	.addClass("sloading loading-small");
-
-      	jQuery("#canned_response_list")
-        	.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
-          		jQuery("#canned_response_container")
-            		.removeClass("sloading loading-small");
-        	})
-      		.show();        
-    }
-
-         
-		function insertIntoConversation(value,element_id){
-			note_area  = jQuery('#cnt-note');
-			reply_area = jQuery('#cnt-reply');
-			fwd_area = jQuery('#cnt-fwd');
-			tweet_area = jQuery('#cnt-tweet');
-
-			if(element_id == undefined){
-				 if(reply_area.css('display')== 'block') {
-					 element_id = "cnt-reply-body";
-				}
-				else if (note_area.css('display') =='block'){
-					element_id = "cnt-note-body";
-				}
-				else if (fwd_area.css('display') =='block'){
-					element_id = "cnt-fwd-body";
-				}
-				else{
-					element_id = jQuery('#canned_response_show').data('editor-id');
-				}
-			}
-			if(tweet_area.css("display") == 'block'){
-				get_short_url(value, function(bitly){
-						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
-						jQuery('#send-tweet-cnt-tweet-body')
-								.trigger("focus")
-								.trigger("keydown");
-				});			
-			}
-
-			if(jQuery(element_id)){
-		        	jQuery("#"+element_id).getEditor().focus();
-		       		jQuery("#"+element_id).insertHtml(value);
-			}        
-
-			return;
-		}
-
-		function getCannedResponse(ticket_id, ca_resp_id, element) {
-			jQuery("#canned_response_container").addClass("sloading loading-small")
-			jQuery(element).addClass("response-loading");
-  			jQuery.ajax({	type: 'POST',
-  						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-  						contentType: 'application/text',
-  						dataType: 'script',
-  						async: true,
-						success: function(data){	
-  									jQuery(element).removeClass("response-loading");
-  									jQuery(element).qtip('hide');
-  									jQuery('.ui-icon-closethick').trigger('click');
-  									loadRecent();
-  								}
-  						});
-		return true;
-  	}
-
-  	function showHideEmailContainer(){
-  		jQuery(".ccEmailMoreContainer").toggle();
-  		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
-  			jQuery(".ccEmailMoreLink").text('');
-  		}
-  	}
-
-  	function showHideToEmailContainer(){
-  		jQuery(".toEmailMoreContainer").toggle();
-  		if(jQuery(".toEmailMoreContainer").css("display") == "inline"){
-  			jQuery(".toEmailMoreLink").text('');
-  		}
-  	}
-
-  	Fjax.afterNextPage = function() {
-        MergeTicketsDestructor();
-    }
-	<% end %>
-<% end %>
-
-
-<% content_for :onload_script do -%>
-	validateOptions = {
-		onkeyup: false,
-		focusCleanup: true,
-		focusInvalid: false,
-		ignore:":not(:visible)"
-    };
-	jQuery('#custom_ticket_form').validate(validateOptions);
-
-    jQuery(".request_panel .cancel").on("click", function(e){
-        jQuery(".shared_attachment_list").empty();
-        jQuery(".attachments").css("display","none");
-    });
-
-	<% unless @draft.nil? %>
-		jQuery("#ReplyButton").trigger('click');
-		var isDirty= false;
-	<% end %>
-	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
-	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
-	deleteCookie('new_details_view', '/');
-	jQuery('#switch_details_view .switch').click(function(ev) {
-		ev.preventDefault();
-		setCookie('new_details_view', 'true', 90,'/');
-		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
-	});
-<%- end %>
-<div id="switch_details_view" class="sidepanel">
-		<p>
-			This ticket view will be retired on 14th December 2013. 
-			<%= link_to "Switch to the New Ticket View", helpdesk_ticket_path(@ticket), :class => "switch" %>
-		</p>
-</div>
-<style type="text/css">
-	#switch_details_view {
-		margin-top: 10px;
-		margin-right: 20px;
-		padding-bottom: 0;
-	}
-
-	#switch_details_view a.switch{
-		margin: 0 15px;
-		border: none;
-		display: inline;
-	}
-</style>
+<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
 <script type="text/javascript">
-(function($) {
-	var switch_view = $('#switch_details_view').detach();
-	switch_view.removeClass('hide');
-	switch_view.prependTo('#body-container .wrapper');
-})(jQuery)
+!function(){
+	"use strict";
+	Fjax.bodyClass = 'ticket_details';
+	TICKET_DETAILS_DOMREADY();
+	Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
+	<% if @ticket.is_twitter? %>
+	jQuery(document).ready(function(){
+		jQuery('#twitter_handle').change();
+	});
+	<% end %>
+	<% unless @draft.nil? %>
+		swapEmailNote('cnt-reply', null);
+		TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+		jQuery(window).trigger('scroll');
+	<% end %>
+
+		jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {
+			ev.preventDefault();;
+			setCookie('new_details_view', 'false', 90, '/');
+			window.location = '<%= helpdesk_ticket_path(@ticket) %>';
+		});
+		deleteCookie('new_details_view', '/');
+		
+		jQuery(".list_agents_replying").addClass("hide");
+}()
 </script>
+<% content_for :layoutType do -%>ticket_details<%- end %>

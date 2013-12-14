@@ -2,7 +2,6 @@
 <%= include_cloudfront_css :pattern %>
 <%= include_cloudfront_js :pattern %>
 <%= include_cloudfront_css :chat %>
-<%= render :partial => "shared/colorpicker" %>
 <% content_for :sidebar do -%>
 <%= render :partial => "helpnote" %>
 <%- end %>
@@ -11,11 +10,12 @@
 </div>
 <div class="tabbable">
   <ul class="nav nav-tabs">
-   <li class="active"><a href="#chat_settings_tab1" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
-   <li id="chat_settings_install"><a href="#chat_settings_tab2" data-toggle="tab">Installation</a></li>
+   <li class="active"><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
+   <li id="chat_settings_install"><a href="#install" data-toggle="tab">Installation</a></li>
   </ul>
+
   <div class="tab-content" id="chat_settings_tab">
-    <div class="tab-pane active" id="chat_settings_tab1">
+    <div class="tab-pane active" id="widget">
       <div class="chat-window-left ui-form clearfix">
 		<div class="ui-form">
 			<ul>
@@ -23,7 +23,7 @@
 					<%= content_tag(:h3, t('freshchat.custom_chat_window'), :class => "title" ) %> 
 				</li>
 			</ul>
-			<form name="chat_settings" id="chat_settings_form">
+			<% form_for "chat_settings", "", :html => { :id => "chat_settings_form" } do |f| %>
 			<% chat_color = (@chat.preferences != nil)? @chat.preferences['window_color'] : "#777777"; %>
 
 			<div class="span5 marLeftNone">
@@ -32,8 +32,11 @@
 				  	<%= content_tag(:label, t('freshchat.chatbox_bgcolor'), :class => "caption" ) %>
 					<div class="fields">
 						<div class="color">
-							<input type="color" maxlength="7" class="color_field required" id="window_color" name="window_color"  data-hex="true" value="<%=chat_color%>" />
-							<label id="window_color_error" generated="true" class="error" style="display:none;"><%=t('freshchat.valid_code')%></label>
+							<%= f.color_picker_tag(:class => "color_field required", 
+									:id => "window_color", :value => chat_color, :name => "window_color") %>
+							<label id="window_color_error" generated="true" class="error" style="display:none;">
+								<%=t('freshchat.valid_code')%>
+							</label>
 						</div>
 					</div>
 				  	</li>
@@ -216,9 +219,9 @@
 			<input class="uiButton special pull-right" id="chat_setting_save" name="commit" type="button" value="<%=t('freshchat.save')%>">
 			<a href="/admin/home" class="uiButton floatl pull-right"><%=t('freshchat.cancel')%></a>	
 		</div>
-		</form>
+		<% end %>
   	  </div>
-      <div class="tab-pane" id="chat_settings_tab2">
+      <div class="tab-pane" id="install">
     	<ul class="ui-form">	
 			<li class="inline-field">
 				<%= content_tag(:h3, t('freshchat.integrate_freshchat_title'), :class => "title" ) %>
@@ -234,7 +237,7 @@
 </div>
 <% javascript_tag do %>
 (function($){
-	$(document).ready(function (){
+	$(window).load(function (){
 		$('#window_color').on('change', function (){
           	behaviour.validateColor($(this).val());
         });

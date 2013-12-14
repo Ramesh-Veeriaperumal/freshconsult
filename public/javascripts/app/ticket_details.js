@@ -855,10 +855,6 @@ var scrollToError = function(){
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
-					if (_form.attr('rel') == 'edit_note_form')  {
-						$('#note_details_' + _form.data('cntId')).show();
-					}
-
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 					}
@@ -979,10 +975,24 @@ var scrollToError = function(){
 				break;
 			}
 		}
-		tkt_form.find('input, select, textarea').each(function() {
-			$(this).data('updated', false);
+		var ticket_fields = tkt_form.find(':input');
+		var data_hash = {};
+		ticket_fields.each(function() {
+			if($(this).data().updated)
+			{	
+				var field_name = $(this).attr('name');
+				data_hash[field_name] = {
+					value: $(this).val(), 
+					datatype: $(this).get(0).tagName.toLowerCase(),
+					type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
+					required: $(this).hasClass('required')
+				};
+			}
 		});
-
+		if (!$.isEmptyObject(data_hash)){
+			trigger_event("ticket_fields_updated",data_hash);
+		}
+		ticket_fields.data('updated', false);
 
 		if(postProcess) {
 			$('.ticket_details .source-badge-wrap .source')
@@ -1043,17 +1053,6 @@ var scrollToError = function(){
 
 		return false;
 	});
-
-	$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
-		
-		if (!dontAjaxUpdate) 
-		{
-			TICKET_DETAILS_DATA['updating_properties'] = true;
-			$(ev.target).data('updated', true);
-			$('#custom_ticket_form').data('updated', true);
-		}
-		dontAjaxUpdate = false;
-	} );
 
     $('body').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
@@ -1159,6 +1158,18 @@ var scrollToError = function(){
 		tkt_prop.append("<div class='sloading loading-small loading-block'></div>");
         tkt_prop.load(tkt_prop.data('remoteUrl'), function(){
             tkt_prop.data('remoteUrl', false);
+
+			$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
+				
+				if (!dontAjaxUpdate) 
+				{
+					TICKET_DETAILS_DATA['updating_properties'] = true;
+					$(ev.target).data('updated', true);
+					$('#custom_ticket_form').data('updated', true);
+				}
+				dontAjaxUpdate = false;
+			} );
+
         });	
 	})()
 

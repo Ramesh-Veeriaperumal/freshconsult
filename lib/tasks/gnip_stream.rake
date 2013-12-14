@@ -55,15 +55,10 @@ namespace :gnip_stream do
       period = JSON.parse(disconnected_period)
       if period[0] && period[1]
         
-        if RUBY_VERSION >= '1.9'
-          end_time = DateTime.strptime(period[1], '%Y%m%d%H%M').to_time
-          difference_in_seconds = (Time.now.utc - end_time).to_i
-        else
-          end_time = DateTime.strptime(period[1], '%Y%m%d%H%M')
-          time_difference = Date.day_fraction_to_time(DateTime.now.utc - end_time)
-          difference_in_seconds = (time_difference[0]*60 + time_difference[1]) * 60
-        end
         
+        end_time = DateTime.strptime(period[1], '%Y%m%d%H%M').to_time
+        difference_in_seconds = (Time.now.utc - end_time).to_i
+
         if difference_in_seconds > Social::Gnip::Constants::TIME[:replay_stream_wait_time]
           args = {:start_time => period[0], :end_time => period[1]}
           puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"

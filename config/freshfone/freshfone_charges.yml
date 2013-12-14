@@ -555,6 +555,11 @@ CA:
       :standard: 0.386
       :usca_tollfree: 0.411
       :uk_tollfree: 0.449
+    "1": 
+      :outgoing: 0.025
+      :standard: 0.038
+      :usca_tollfree: 0.063
+      :uk_tollfree: 0.1
 HR: 
   :max_digits: 6
   :country: Croatia

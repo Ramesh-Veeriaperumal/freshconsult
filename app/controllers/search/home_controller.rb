@@ -1,8 +1,14 @@
 # encoding: utf-8
 class Search::HomeController < ApplicationController
 
+  include ActionView::Helpers::DateHelper
+
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
   before_filter :set_native_mobile, :only => :index
+
+  TICKET_SEARCH_METHODS = [ "with_display_id", "with_requester" ]
+
+  TICKET_SEARCH_KEYS = [ "display_id", "subject" ]
 
   def index
     search(searchable_classes)
@@ -34,6 +40,48 @@ class Search::HomeController < ApplicationController
   def topics
     search [Topic]
     post_process 'topics'
+  end
+
+  def ticket_search
+    items = []
+    if params[:search_method] == 'with_subject'
+      Search::EsIndexDefinition.es_cluster(current_account.id)
+          options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
+          es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
+            search.query do |query|
+                query.filtered do |f|
+                  if SearchUtil.es_exact_match?(params[:search_string])
+                      f.query { |q| q.text :subject, SearchUtil.es_filter_exact(params[:search_string]), :type => :phrase }
+                  else
+                      f.query { |q| q.string SearchUtil.es_filter_key(params[:search_string]), :fields => ['subject'], :analyzer => "include_stop" }
+                  end
+                  f.filter :term, { :deleted => false }
+                  f.filter :term, { :spam => false }
+                  f.filter :term, { :account_id => current_account.id }
+                  if current_user.restricted?
+                      user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
+                      f.filter :or, { :not => { :exists => { :field => :responder_id } } },
+                                    { :term => { :responder_id => current_user.id } },
+                                    { :terms => { :group_id => user_groups } }
+                  end
+                end
+            end
+          end
+          items = es_items.results
+    else
+      scope = current_account.tickets.permissible(current_user)
+      items = scope.send( params[:search_method], params[:search_string] ) if TICKET_SEARCH_METHODS.include?(params[:search_method])
+    end
+    r = {:results => items.map{|i| {
+        :display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),
+        :searchKey => 
+          (params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if TICKET_SEARCH_KEYS.include?(params[:key]) ),  
+        :info => t("ticket.merge_ticket_list_status_created_at", 
+          :username => "<span class='muted'>#{( (params[:key] == 'requester') ? i[:requester_name] : i.requester )}</span>", 
+          :time_ago => time_ago_in_words(i.created_at) ) }}}
+    respond_to do |format|
+      format.json { render :json => r.to_json }
+    end
   end
 
   def related_solutions

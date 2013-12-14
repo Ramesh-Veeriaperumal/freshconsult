@@ -18,6 +18,25 @@ function log() {
   }
 }
 
+//Function to convert hex format to a rgb color
+function rgb2hex(rgb) {
+ rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+ return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
+
+function hex(x) {
+  var hexDigits = new Array
+        ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"); 
+  return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+ }
+
+function textColor(val)
+{
+  if (typeof val == 'undefined' || val == 'transparent') return "black";
+
+  return (parseInt(val.substr(1, 2), 16) + parseInt(val.substr(3, 2), 16) + parseInt(val.substr(5, 2), 16) < 400)? 'white': 'black';
+}
+
 // Utility methods for FreshWidget  
 function catchException(fn, message) {
   try {
@@ -904,6 +923,12 @@ jQuery.scrollTo = function(element, options) {
     }, opts.speed);
 };
 
+
+function trigger_event(event_name, event_data){
+  jQuery(document).trigger( event_name , event_data );
+  return true;
+};
+
 // Window tab section based on anchor url
 function hashTabSelect(){
   if(window.location.hash != '') {
@@ -917,3 +942,4 @@ function hashTabSelect(){
     })
   }
 }
+

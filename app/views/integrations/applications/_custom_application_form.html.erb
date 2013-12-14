@@ -34,8 +34,8 @@
             <%= text_field_tag "application[description]", @application.description%>
           </li>
           <li class="field">
-            <label class="caption"><%=t('integrations.custom_application.script').html_safe%></label>
-            <%= text_area_tag "application[script]", widget.script%>
+            <label><%=t('integrations.custom_application.script').html_safe%></label>
+            <%= f.code_editor_tag nil , nil , :id => "application_script" , :name => "application[script]" , :value => widget.script %>   
           </li>
           <li class="field custom_app_preview">
             <a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder').html_safe %> &raquo;</a>

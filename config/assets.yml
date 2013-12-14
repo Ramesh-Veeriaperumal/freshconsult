@@ -183,7 +183,20 @@ javascripts:
 
   # Code editor for portal cms
   codemirror:
-    - public/javascripts/codemirror/*.js
+    - public/javascripts/codemirror/codemirror.js
+    - public/javascripts/codemirror/jquery.codemirror.js
+    - public/javascripts/codemirror/mode-css.js
+    - public/javascripts/codemirror/mode-htmlmixed.js
+    - public/javascripts/codemirror/mode-javascript.js
+    - public/javascripts/codemirror/mode-liquid-mode.js
+    - public/javascripts/codemirror/mode-xml.js
+    - public/javascripts/codemirror/util-match-highlighter.js
+    - public/javascripts/codemirror/util-overlay.js
+    - public/javascripts/codemirror/util-searchcursor.js
+
+  colorpicker:
+    - public/javascripts/mColorPicker.js
+
   portaltemplate:
     - public/javascripts/mousetrap.js
   visitor:
@@ -206,6 +219,7 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
     - public/javascripts/fjax.js
+    - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js
@@ -377,6 +391,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
+    - public/javascripts/mColorPicker.js
     - public/javascripts/getting_started.js
 
   reports:

@@ -39,7 +39,6 @@
 					<%= link_to( "Recent tickets", "/helpdesk/tickets/component/#{@ticket.id}?component=requester_tickets", 
 											  				:rel => 'freshdialog', "data-target" => "#requester_tickets",
 											  				"data-template-footer" => "",
-
 											  				:title => t('contacts.info4',:nick_name => CGI.escapeHTML(h(user.display_name))).html_safe ) %>
 				</div>
 			<% end %>

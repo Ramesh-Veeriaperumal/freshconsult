@@ -8,4 +8,5 @@ if params[:showing] == 'activities'
 else
 	@notes = @parent.conversation_since(params[:since_id])
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
+	page << "trigger_event('note_created', #{to_event_data(@item)} );"
 end

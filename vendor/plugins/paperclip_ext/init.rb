@@ -21,6 +21,9 @@ Paperclip::Storage::S3.module_eval do
         retry
       end
     end
+    after_flush_writes # allows attachment to clean up temp files
+
+    @queued_for_write = {}
   end
 
   def s3_helpkit_permissions

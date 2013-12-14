@@ -1,7 +1,4 @@
-module FormBuilders
-  class RedactorBuilder < ActionView::Helpers::FormBuilder
-      include ActionView::Helpers::TagHelper
-      include ActionView::Helpers::FormTagHelper
+module FormBuilders::Redactor
 
       # !REDACTOR TODO need to keep a default settings options and then later modify based on other editor type
       # If possible move this to a lib settings file
@@ -78,14 +75,6 @@ module FormBuilders
         output.join('')  
       end
 
-      def field_name(label, index = nil)
-        @object_name.to_s + ( index ? "[#{index}]" : '' ) + "[#{label}]"
-      end
-
-      def field_id(label, index = nil)
-        @object_name.to_s + ( index ? "_#{index}" : '' ) + "_#{label}"
-      end
-
       def redactor_type _type
         case _type
           when :solution then
@@ -99,5 +88,4 @@ module FormBuilders
         end
       end
 
-  end
 end

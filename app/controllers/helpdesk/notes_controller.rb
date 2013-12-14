@@ -9,7 +9,6 @@ class Helpdesk::NotesController < ApplicationController
   include Conversations::Twitter
   include Facebook::Core::Util
   include Helpdesk::Activities
-  include Helpdesk::ShowVersion
   
   skip_before_filter :build_item, :only => [:create]
   alias :build_note :build_item
@@ -17,7 +16,6 @@ class Helpdesk::NotesController < ApplicationController
 
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
-  before_filter :set_show_version
   before_filter :set_native_mobile, :only=>[:index , :destroy , :restore]
   def index
 

@@ -1,7 +1,6 @@
 <% content_for :sidebar do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-<%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
 	jQuery(document).ready(function(){ 
 		if(<%=request.referrer.include?('email_notification')%>){
@@ -154,19 +153,19 @@
 							<div class="span3">
 								<%= p.label :header_color, t('account.page_colors.header') %>
 								<div class="color">
-									<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" />
+									<%= f.color_picker :class => "color_field required" , :id => "HeaderColor" , :name =>"account[main_portal_attributes][preferences][header_color]" , :value => "#{portal_pref(@account.main_portal, :header_color)}" , :maxlength => "7" %>
 								</div>
 							</div>
 							<div class="span3">
 								<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
 								<div class="color">
-									<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /> 
+									<%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"account[main_portal_attributes][preferences][tab_color]" , :value => "#{portal_pref(@account.main_portal, :tab_color)}" , :maxlength => "7" %>
 								</div>	
 							</div>
 							<div class="span3 omega">
 								<%= p.label :bg_color, t('account.page_colors.background') %>
 								<div class="color"> 
-									<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
+									<%= f.color_picker :class => "color_field required" , :id => "BackgroundColor" , :name =>"account[main_portal_attributes][preferences][bg_color]" , :value => "#{portal_pref(@account.main_portal, :bg_color)}" , :maxlength => "7" %>
 								</div>
 							</div>	
 				  		<% end %>
@@ -208,8 +207,16 @@
 <% end %>
 </div>
 <% content_for :onload_script do %>
-	jQuery("[data-rebrand-form]").live("change", function(ev){
-		jQuery(this).data('formChanged', true)
+	jQuery("[data-rebrand-form]").on("change", function(ev){
+		var target = jQuery(ev.target);
+		if(target.attr('data-loadedScript'))
+		{
+			target.removeAttr('data-loadedScript');
+		}
+		else
+		{
+			jQuery(this).data('formChanged', true)
+		}
 	})
 	jQuery("[rel=customize-portal]").live("click", function(ev){
 		var form = jQuery(this).parents('form:first')

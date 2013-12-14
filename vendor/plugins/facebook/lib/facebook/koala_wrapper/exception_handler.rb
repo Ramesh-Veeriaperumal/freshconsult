@@ -27,16 +27,22 @@ module Facebook::KoalaWrapper::ExceptionHandler
           NewRelic::Agent.notice_error(e, newrelic_custom_params)
         else
           if @fan_page && !@fan_page.reauth_required
-            @fan_page.update_attributes({
-                                          :enable_page => false,
-                                          :reauth_required => true,
-                                          :last_error => e.to_s
-            })
-            #send mail to the account admin if needed
-            UserNotifier.send_later(:deliver_notify_facebook_reauth,@fan_page.account,@fan_page)
-          end
-          if @intial_feed && !return_value
-            Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed)
+            error_strings = Facebook::Worker::FacebookMessage::ERROR_MESSAGES
+            if error_strings.any?{|k,v| e.to_s.include?(v)}
+              @fan_page.update_attributes({
+                                            :enable_page => false,
+                                            :reauth_required => true,
+                                            :last_error => e.to_s
+              })
+
+              #send mail to the account admin if needed
+              UserNotifier.send_later(:deliver_notify_facebook_reauth,@fan_page.account,@fan_page)
+              if @intial_feed && !return_value
+                Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed)
+              end
+            else
+              SocialErrorsMailer.deliver_facebook_exception(e)
+            end
           end
           newrelic_custom_params = {
             :custom_params => {

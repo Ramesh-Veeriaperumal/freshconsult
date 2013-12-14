@@ -3137,36 +3137,36 @@ en:
         agent: Agent
         hours: Hours
         note: Note
-      v2:
-        index:
-          no_timeentry: "No time entry logged for this ticket"
-          start_timer: "Start Timer"
-          add_entry: "Add Time Entry"
-        time_entry:
-          toggle_timer_true: "Start timer"
-          toggle_timer_false: "Stop timer"
-        new:
-          title: "New time entry"
-        ticket: Ticket
-        customer: Customer
-        executed_at: Date
-        hours: Hours
+      index:
+        no_timeentry: "No time entry logged for this ticket"
+        start_timer: "Start Timer"
+        add_entry: "Add Time Entry"
+      time_entry:
+        toggle_timer_true: "Start timer"
+        toggle_timer_false: "Stop timer"
+      new:
+        title: "New time entry"
+      ticket: Ticket
+      customer: Customer
+      executed_at: Date
+      hours: Hours
+      agent: Agent
+      note: Note
+      billing_type: Billing Type
+      group_by: Group By
+      report:
+        no_timeentry: "No data available"
+        total: Total
+      form:
+        start_timer: "Start Timer"
+        add_entry: "Add Time Entry"
         agent: Agent
+        hours: Hours
+        billing_hours: Billable
         note: Note
-        billing_type: Billing Type
-        group_by: Group By
-        report:
-          no_timeentry: "No data available"
-          total: Total
-        form:
-          start_timer: "Start Timer"
-          add_entry: "Add Time Entry"
-          agent: Agent
-          hours: Hours
-          billing_hours: Billable
-          note: Note
-          on: on
-        note: Notes
+        on: on
+        hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
+      note: Notes
 
     tags:
       index:

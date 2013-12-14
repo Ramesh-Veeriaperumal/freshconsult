@@ -47,7 +47,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest, :related_solutions, :search_solutions]
+    resource :"search/home", :only => [:index, :suggest, :related_solutions, :search_solutions, :ticket_search]
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
     # resource :"helpdesk/common", :only => [:group_agents]

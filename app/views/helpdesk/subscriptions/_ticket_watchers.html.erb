@@ -46,7 +46,7 @@
               <%= image_tag "/images/delete.png" %>
             </div>
             <div class="watcher_list">
-              <b><%= t('helpdesk.tickets.add_watcher.you') %></b>&nbsp;
+              <b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
               <span class="agent_name" title="<%=current_user.name%>"> 
                 (<%= current_user.name %>)
               </span>
@@ -130,7 +130,7 @@
                       jQuery("select.watcher_input")
                         .prepend(jQuery("<option></option>")
                         .attr("value",<%= current_user.id %>)
-                        .text("<%=t("helpdesk.tickets.add_watcher.you")%>"));
+                        .text("<%=t("helpdesk.tickets.add_watcher.me")%>"));
                     } else {
                       selected_ids.splice(selected_ids.indexOf("<%= current_user.id %>"), 1);
                     }
@@ -177,11 +177,11 @@
       clone.wrap('<div id="watcherlist" />').wrap('<ul class="trans-bg" />');
     }
     
-    if(jQuery("#watcherlist li").first().find(".watcher_list b").text() == "<%=t("helpdesk.tickets.add_watcher.you")%>" ){
+    if(jQuery("#watcherlist li").first().find(".watcher_list b").text() == "<%=t("helpdesk.tickets.add_watcher.me")%>" ){
       clone.insertAfter(jQuery("#watcherlist ul li:nth-child(1)"));
     }
     else{
-      if(name == "<%=t("helpdesk.tickets.add_watcher.you")%>" ){
+      if(name == "<%=t("helpdesk.tickets.add_watcher.me")%>" ){
         clone.find(".agent_name").html('<b>'+name+'</b>'+ '(' + '<%= current_user.name %>' + ')' );
         jQuery(".construct .unwatch").first().insertBefore(jQuery(clone).find(".watcher_list"));
         jQuery("#watcherlist ul").prepend(clone);
