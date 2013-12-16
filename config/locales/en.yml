@@ -2018,7 +2018,7 @@ en:
     browse_community: Browse Community
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
-  zendesk_url_info: e.g:- http://acme.zendesk.com
+  zendesk_url_info: e.g:- http://acme.zendesk.com or https://acme.zendesk.com
   zendesk_url_expired: 'Note: Make sure that the url has not expired'
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
@@ -2958,6 +2958,7 @@ en:
   next_charge_amount: "%{type} cost:"
   company:
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
+    sla_policy_name: SLA Policy
     name: Company name
     new: New Company
     edit: Edit Company

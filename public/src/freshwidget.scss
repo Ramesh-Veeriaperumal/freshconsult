@@ -15,6 +15,9 @@ $button-radius: 6px;
 	height:100%;
 	z-index:90002;
 }
+.freshwidget-container{
+	z-index:999999; //need to override chat button
+}
 
 .fd-btn-left a{ left:-2px; }
 .fd-btn-left a:hover{ left:0px; }
@@ -151,7 +154,7 @@ $button-radius: 6px;
 		.mobile-widget-close{
 			display: block;
 			position:fixed;
-			top:0;
+			top:12px;
 			font-size: 32px;
 			color: #000;
 			font-weight: bold;

@@ -1,7 +1,7 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
-LIMITS = {:shard_1 => {:tickets_limit => 26031161, :notes_limit => 24174400},
+LIMITS = {:shard_1 => {:tickets_limit => 28689692, :notes_limit => 26686314},
           :shard_2 => {:tickets_limit => 0, :notes_limit => 0},
           :shard_3 => {:tickets_limit => 25031161, :notes_limit => 24174400} } 
 

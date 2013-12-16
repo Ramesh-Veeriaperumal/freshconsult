@@ -32,10 +32,10 @@
 	<h5 class="lead"><%= t('zendesk_import_files') %></h6>
 	<div class="control-group">
 		<label>
-			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :disabled => true, :rel => 'toggle'}, "customers" , nil ) %>
+			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :disabled => true, :rel => 'toggle', "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') }, "customers" , nil ) %>
 			<strong><%= t('import_user_org') %></strong>
 			<div class="muted tab">
-				<%= t('import_user_org_text') %>				
+				<%= t('import_user_org_text').html_safe %>				
 			</div>
 			<div class="muted tab">
 				<%= t('note')%><%= t('import_user_notification') %>
@@ -44,19 +44,19 @@
 	</div>
 	<div class="control-group">
 		<label>		  
-			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :rel => 'toggle' }, "tickets" , nil) %>
+			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :rel => 'toggle', "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') }, "tickets" , nil) %>
 			<strong ><%= t('import_ticket_group') %></strong>
 		</label>
 	</div>
 	<div class="control-group">
 		<label>
-			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :rel => 'toggle'}, "forums" , nil) %>
+			<%= check_box( "zendesk", "files", { :multiple => true, :checked => true, :rel => 'toggle', "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no')}, "forums" , nil) %>
 			<strong><%= t('import_forum')  %></strong>
 		</label>
 	</div>
 	<div class="control-group">
 		<label>
-			<%= check_box("zendesk", "files", { :multiple => true, :checked => false, :rel => 'toggle'}, "solution" , nil) %>
+			<%= check_box("zendesk", "files", { :multiple => true, :checked => false, :rel => 'toggle', "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') }, "solution" , nil) %>
 			<strong><%= t('import_solution_article') %></strong>
 			<div class="muted tab">
 				<%= t('import_solution_article_info') %>
