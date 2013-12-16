@@ -20,7 +20,6 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
-    
 
   before_create :set_renewal_at
   before_save :update_amount
@@ -34,8 +33,14 @@ class Subscription < ActiveRecord::Base
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
+  named_scope :filter_with_state, lambda { |state| {
+    :conditions => { :state => state }
+  }}
+
+
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
             :invoice_emails, :to => "account.account_configuration"
+  delegate :name, :full_domain, :to => "account", :prefix => true
 
   # renewal_period is the number of months to bill at a time
   # default is 1
@@ -70,6 +75,9 @@ class Subscription < ActiveRecord::Base
     sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00"]).to_f
   end
 
+  def cmrr
+    (amount/renewal_period).to_f
+  end
   
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
