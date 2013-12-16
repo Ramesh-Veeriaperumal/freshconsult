@@ -2958,6 +2958,7 @@ en:
   next_charge_amount: "%{type} cost:"
   company:
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
+    sla_policy_name: SLA Policy
     name: Company name
     new: New Company
     edit: Edit Company
