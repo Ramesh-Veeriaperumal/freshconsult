@@ -59,7 +59,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
       rescue => e
         puts e.to_s
         $sqs_facebook.requeue(@feed.feed) if @intial_feed && !return_value
-        SocialErrorsMailer.deliver_facebook_exception(e)
+        SocialErrorsMailer.deliver_facebook_exception(e,@feed.feed) if @intial_feed
         NewRelic::Agent.notice_error(e)
         puts "Error while processing facebook - #{e.to_s}"
         return_value = false

@@ -1,4 +1,4 @@
- $facebook_requeue_counter = 15
+ $facebook_requeue_counter = 5
  $facebook_delay_seconds = 60
  class AwsWrapper::Sqs
   #Initialize with the sqs queue name
@@ -27,13 +27,13 @@
   end
 
   def requeue(msg,options={})
-    if msg[:counter]
-      msg[:counter] = msg[:counter].to_i + 1
-      return false if msg[:counter] > $facebook_requeue_counter #removing from the queue after 15 mins
+    if msg["counter"]
+      msg["counter"] = msg["counter"].to_i + 1
+      return false if msg["counter"] > $facebook_requeue_counter #removing from the queue after 15 mins
     else
-      msg[:counter] = 1
+      msg["counter"] = 1
     end
-    options[:delay_seconds] = msg[:counter]*$facebook_delay_seconds
+    options[:delay_seconds] = msg["counter"]*$facebook_delay_seconds
     msg = msg.to_json
     send_message(msg,options)
     return true

@@ -85,7 +85,7 @@ describe Facebook::Core::Parser do
     it "authentication error check if it is pushed into dynamo db" do
       Social::FacebookPage.first.update_attribute(:import_company_posts,true)
       json_data = {"entry"=>{"id"=>"532218423476440", "time"=>1374146491, "changes"=>[{"field"=>"feed", "value"=>{"item"=>"status", "verb"=>"add", "post_id"=>"532218423476440_603468519684763"}}]}}.to_json
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db"))
+      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
       Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(190)
       AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
       Facebook::Core::Parser.new(json_data).parse
@@ -144,7 +144,7 @@ describe Facebook::Core::Parser do
 
     it "authentication error check if it is pushed into dynamo db" do
       json_data = {"entry"=>{"id"=>"532218423476440", "time"=>1374146359, "changes"=>[{"field"=>"feed", "value"=>{"item"=>"post", "verb"=>"add", "post_id"=>603467223018226}}]}}.to_json
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db"))
+      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
       Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(190)
       AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
       Facebook::Core::Parser.new(json_data).parse
