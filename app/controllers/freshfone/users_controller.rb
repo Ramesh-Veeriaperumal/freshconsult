@@ -64,7 +64,7 @@ class Freshfone::UsersController < ApplicationController
 			if params[:status].to_i == Freshfone::User::PRESENCE[:online]
 				capability.allow_client_incoming default_client
 			end
-			return capability.generate
+			return capability.generate(expires=43200)
 		end
 
 		def reset_client_presence

@@ -80,4 +80,8 @@ module Mobile::Actions::User
     privilege?(:manage_tickets)
   end
 
+  def can_view_solutions
+    privilege?(:view_solutions)
+  end
+
 end
