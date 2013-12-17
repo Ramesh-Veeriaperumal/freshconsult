@@ -184,7 +184,7 @@
 									<li class="colorland-header" id="HeaderColorView"  style="background-color:<%=@account.main_portal.preferences[:header_color]%>;">
 										<div class="colorpicker"><input id="HeaderColor" type="color" class="color required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>"/></div>
 										<div class="colorland">
-											<span class="uploaded-logo-wrap"><img id="logo-preview" src="<%=get_logo%>"/></span>
+											<span class="uploaded-logo-wrap"><img id="logo-preview" src="<%=get_logo%>" alt="<%= t('logo') %>"/></span>
 											<span class="uploaded-company-name" id="test_account_name"><%=@account.main_portal.name%></span>
 										</div>
 									</li>

@@ -49,7 +49,7 @@
 						<div class="cs-g-3 attachment">
 							<img src="{{ attachment.thumbnail }}" 
 								 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
-								 width="50px" height="50px"  />
+								 width="50px" height="50px" alt="{{ attachment.filename }}" />
 							<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
 								{{ attachment.filename }}
 							</a>
@@ -72,7 +72,7 @@
 						{% for dropbox in ticket.dropboxes %}
 							<div class="cs-g-3 attachment">
 								<img src="{{ dropbox.thumbnail }}" 
-									 class="file-thumbnail" width="50px" height="50px"  />
+									 class="file-thumbnail" width="50px" height="50px" alt="{{ dropbox.filename }}" />
 								<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
 									<i class="icon-dropbox-small"></i>
 									{{ dropbox.filename }}
@@ -116,7 +116,7 @@
 								<div class="cs-g-3 attachment">
 									<img src="{{ attachment.thumbnail }}" 
 										 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
-										 width="50px" height="50px"  />
+										 width="50px" height="50px" alt="{{ attachment.filename }}" />
 									<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
 										{{ attachment.filename }}
 									</a>
@@ -139,7 +139,7 @@
 							{% for dropbox in comment.dropboxes %}
 								<div class="cs-g-3 attachment">
 									<img src="{{ dropbox.thumbnail }}" 
-										 class="file-thumbnail" width="50px" height="50px"  />
+										 class="file-thumbnail" width="50px" height="50px" alt="{{ attachment.filename }}" />
 									<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
 										<i class="icon-dropbox-small"></i>
 										{{ dropbox.filename }}

@@ -420,7 +420,7 @@ module ApplicationHelper
     #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
     #Remove once found the cause. 
     user = User.new if user.nil?
-    img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
+    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
@@ -432,7 +432,7 @@ module ApplicationHelper
   end
 
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
-    img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
+    img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture') }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)

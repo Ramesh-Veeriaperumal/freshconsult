@@ -3,7 +3,7 @@
     <div class="portal-logo-wrap">
       <%= image_tag (product.portal_enabled? && product.portal.logo) ? 
                       product.portal.logo.content.url(:logo) : "default-logo-preview.png", 
-                      :class => "portal-logo" %>
+                      :class => "portal-logo", :alt => product.name %>
     </div>
   </td>
   <td class="portal-text">
