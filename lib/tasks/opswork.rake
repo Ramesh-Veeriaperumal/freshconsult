@@ -9,6 +9,6 @@ namespace :opswork do
     stack_config = opsworks_config
     config_obj = AWS.config(stack_config[:access_config])
     deploy_config = stack_config[:stack_details].merge(stack_config[:deploy_details])
-    AWS::OpsWorks::Client.new(:config => config_obj).create_deployment(stack_config[:stack_details])
+    AWS::OpsWorks::Client.new(:config => config_obj).create_deployment(deploy_config)
   end
 end
