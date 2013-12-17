@@ -92,9 +92,6 @@ stylesheets:
   survey:
     - public/stylesheets/support/rating.css
 
-  survey:
-    - public/stylesheets/support/rating.css
-
   gadget:
     - public/stylesheets/app/common.css
     - public/stylesheets/app/sprites.css
@@ -154,6 +151,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/jquery.gritter.js
     - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/frameworks/plugins/moment.js
