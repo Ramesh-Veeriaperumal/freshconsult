@@ -100,6 +100,10 @@ class Customer < ActiveRecord::Base
     self.account.sla_policies.default.first
   end
 
+  def to_liquid
+    @company_drop ||= CompanyDrop.new self
+  end
+
   protected
 
     def search_fields_updated?
