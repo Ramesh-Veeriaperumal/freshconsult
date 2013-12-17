@@ -20,13 +20,22 @@ namespace :sla do
     end
     rake_logger.info "rake=SLA" unless rake_logger.nil?
     queue_name = "sla_worker"
+    current_time = Time.now.utc
     if sla_should_run?(queue_name)
-      Monitoring::RecordMetrics.register({:task_name => "SLA Escalate"})
+      accounts_queued = 0
       Sharding.execute_on_all_shards do
         Account.active_accounts.each do |account|        
           Resque.enqueue(Workers::Sla::AccountSLA, { :account_id => account.id})
+          accounts_queued += 1
         end
       end
+      redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
+      $stats_redis.set(redis_key, accounts_queued)
+      $stats_redis.expire(redis_key, 144000)
+    else
+      redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
+      $stats_redis.set(redis_key, "skipped")
+      $stats_redis.expire(redis_key, 144000)
     end
     puts "SLA rule check finished at #{Time.zone.now}."
   end

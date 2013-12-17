@@ -51,10 +51,9 @@ end
 
 def execute_supevisor(task_name)
   if supervisor_should_run?(SUPERVISOR_TAKS[task_name][:queue_name])
-    Monitoring::RecordMetrics.register({:task_name => "#{task_name} Supervisor"})
     puts "#{Time.now.strftime("%Y-%d-%m %H:%M:%S")}  rake=#{task_name} Supervisor got triggered"
+    accounts_queued = 0
     begin
-      puts "Check for SLA violation initialized at #{Time.zone.now}"
       path = log_file
       rake_logger = custom_logger(path)
     rescue Exception => e
@@ -66,9 +65,19 @@ def execute_supevisor(task_name)
       Account.send(SUPERVISOR_TAKS[task_name][:account_method]).non_premium_accounts.each do |account| 
         if account.supervisor_rules.count > 0 
           Resque.enqueue(SUPERVISOR_TAKS[task_name][:class_name].constantize, {:account_id => account.id })
+          accounts_queued += 1
         end
       end
     end
+    current_time = Time.now.utc
+    redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
+    $stats_redis.set(redis_key, accounts_queued)
+    $stats_redis.expire(redis_key, 144000)
+  else
+    current_time = Time.now.utc
+    redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
+    $stats_redis.set(redis_key,"skipped")
+    $stats_redis.expire(redis_key, 144000)
   end
 end
 
