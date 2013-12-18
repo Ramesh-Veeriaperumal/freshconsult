@@ -5,7 +5,9 @@ class Support::Discussions::ForumsController < SupportController
 
 	def show
 		@page_title = @forum.name
-	    set_portal_page :topic_list
+		respond_to do |format|
+	      	format.html { set_portal_page :topic_list }
+	    end
 	end
 
 private

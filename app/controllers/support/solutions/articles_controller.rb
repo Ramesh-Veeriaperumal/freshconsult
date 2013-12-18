@@ -27,7 +27,9 @@ class Support::Solutions::ArticlesController < SupportController
     @page_keywords = @article.article_keywords
     @page_canonical = support_article_url(@article)
 
-    set_portal_page :article_view   
+    respond_to do |format|
+      format.html { set_portal_page :article_view }
+    end
   end
    
   def thumbs_up

@@ -4,7 +4,9 @@ class Support::ProfilesController < SupportController
   before_filter :set_profile
 
   def edit
-    set_portal_page :profile_edit
+    respond_to do |format|
+      format.html { set_portal_page :profile_edit }
+    end
   end
 
   def update
