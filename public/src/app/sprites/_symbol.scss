@@ -170,6 +170,8 @@
 		&.source_7 { @include symbols-sprite(source-badge-chat); }
 		// Mobihelp
 		&.source_8 { @include symbols-sprite(source-badge-mobihelp); }
+		// feedback widgets
+		&.source_9 { @include symbols-sprite(source-badge-feedback_widget); }
 	}
 }
 

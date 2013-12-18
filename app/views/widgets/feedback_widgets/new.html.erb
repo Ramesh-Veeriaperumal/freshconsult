@@ -1,4 +1,3 @@
-<% @ticket ||= current_account.tickets.new %>
 <% responsive = widget_option(:responsive) %>
 
 <% if(responsive != "no") %>
@@ -33,6 +32,7 @@
 		  			</div>
 				<% end %>
 		  	<% end %>
+		  	<%= f.hidden_field :source, :value => @ticket.source %>
 	  	</div>
   	<% end %>
   	<% field_spacing = widget_view ? "form-portal" : "field-order" %>

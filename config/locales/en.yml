@@ -20,6 +20,7 @@ en:
   referral: "Referral credit"
   status_deleted: "Status deleted"
   success: "Success"
+  feedback_widget: Feedback Widget
   failure: "Error ..."
   amount: "Amount"
   paid_with: "Paid with"
