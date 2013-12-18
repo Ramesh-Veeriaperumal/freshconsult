@@ -1,11 +1,16 @@
 if node[:opsworks] 
-  if ["delayed-jobs","workers"].include?(node[:opsworks][:instance][:hostname]) 
-    run "sudo monit -g dj_helpkit restart all"
-  elsif ["resque","workers"].include?(node[:opsworks][:instance][:hostname])
+  if ["workers"].include?(node[:opsworks][:instance][:hostname]) 
+    run "sudo monit -g helpkit_dj restart all"
     run "sudo monit restart all -g helpkit_resque"
-  elsif ["facebook-utility","workers"].include?(node[:opsworks][:instance][:hostname])
     run "sudo monit restart all -g helpkit_facebook_realtime"
-  elsif ["twitter-utility","workers"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_gnip_poll"
+  elsif ["delayed-jobs"].include?(node[:opsworks][:instance][:hostname]) 
+    run "sudo monit -g helpkit_dj restart all"
+  elsif ["resque"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_resque"
+  elsif ["facebook-utility"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_facebook_realtime"
+  elsif ["twitter-utility"].include?(node[:opsworks][:instance][:hostname])
     run "sudo monit restart all -g helpkit_gnip_poll"
   end
 else
