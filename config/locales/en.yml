@@ -2728,6 +2728,7 @@ en:
     next: "Next Ticket"
     previous: "Previous Ticket"
     expand: "Expand"
+    view_ticket: "View Ticket"
     insert: "Insert"
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
