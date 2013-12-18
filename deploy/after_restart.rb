@@ -1,12 +1,12 @@
 if node[:opsworks] 
-  case node[:opsworks][:instance][:layers]
-    when "utility" then
-      run "sudo monit restart all -g helpkit_resque"
-      run "sudo monit -g dj_helpkit restart all"
-      run "sudo monit restart all -g helpkit_gnip_poll"
-      run "sudo monit restart all -g helpkit_facebook_realtime"
-    when "resque" then
-      run "sudo monit restart all -g helpkit_resque"
+  if ["delayed-jobs","workers"].include?(node[:opsworks][:instance][:hostname]) 
+    run "sudo monit -g dj_helpkit restart all"
+  elsif ["resque","workers"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_resque"
+  elsif ["facebook-utility","workers"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_facebook_realtime"
+  elsif ["twitter-utility","workers"].include?(node[:opsworks][:instance][:hostname])
+    run "sudo monit restart all -g helpkit_gnip_poll"
   end
 else
   def all_instances_of(engine)
