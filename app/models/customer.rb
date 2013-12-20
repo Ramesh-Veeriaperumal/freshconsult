@@ -90,16 +90,6 @@ class Customer < ActiveRecord::Base
     json_str
   end
 
-  def sla_policy_in_use
-    self.account.sla_policies.each do |sla_policy|
-      next if sla_policy.conditions.nil? || sla_policy.conditions["company_id"].nil?
-      if sla_policy.conditions["company_id"].include?(self.id)
-        return sla_policy
-      end
-    end
-    self.account.sla_policies.default.first
-  end
-
   def to_liquid
     @company_drop ||= CompanyDrop.new self
   end
