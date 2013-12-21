@@ -172,7 +172,7 @@ class AuthorizationsController < ApplicationController
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
       @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
-      @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
+      @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank? and !fb_profile_id.blank?
       if create_for_sso(@omniauth, user_account)
         curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
         random_hash = Digest::MD5.hexdigest(curr_time)
