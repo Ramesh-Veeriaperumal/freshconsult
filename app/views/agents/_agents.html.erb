@@ -1,4 +1,13 @@
 	<% if agents.present? %>
+	  <% if(params[:state] == "deleted") %>
+	  	<div class="ticket_details">
+	  		<div class="open-box">
+	  			<div class="deleted-info">
+					<%= t('agent.deleted_agent_info') %>
+				</div>
+			</div>
+		</div>
+		<% end %>
   <div class="list-page-body">
 		<table class="table table-striped agent-list-page <%= 'deleted-list' if(params[:state] == "deleted") %> ">
 			<% agents.each do |agent| %>
@@ -30,9 +39,23 @@
               <%= link_to t('agent.restore'), restore_agent_path(agent), :method => 'put', :class => "btn btn-mini"%>
             <% else %>
               <% if can_edit?(agent) %>
-                  <%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-    						  <%= link_to("<i class='icon-trash'></i>".html_safe, agent, :confirm => "#{t('agent.info3')}?", 
-    												 :method => :delete, :class => "btn btn-mini") if(current_user != agent.user)%>
+                  	<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+                  	<% if(current_user != agent.user) %>
+						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => agent.id } ,:method => 'put' ,:id => "agent_convert_id_"+agent.id.to_s , :class => "hide"%>
+						 
+				 		<a href="#agent-deletion-confirmation" 
+			 				rel="freshdialog"
+			 				class="btn btn-mini delete_agent_btn"
+			 				data-agent="<%=agent.id%>" 
+			 				title="<%= t('agent.delete_agent')%>" 
+			 				data-submit-label="Confirm"
+			 				data-width="400px"
+			 				data-close-on-submit="true"
+			 				data-close-label="Cancel"			 				
+			 				data-destroy-on-close="true">
+				 			<i class='icon-trash'></i>
+				 		</a>
+					<% end %>
               <% end %>
             <% end %>
 					</td>
@@ -54,3 +77,19 @@
     <% end %>
   </div>
   <% end %>
+
+<div id="agent-deletion-confirmation" class="hide">
+	<p class="margin-bottom lead-desc"><%= t('agent.delete_agent_confirmation')%></p>
+</div>
+
+<% javascript_tag do%>
+	jQuery(".delete_agent_btn").on('click',function(){
+		jQuery("#agent-filters").data('agent', jQuery(this).data('agent'));
+	});
+
+	jQuery('#agent-deletion-confirmation-submit').live("click", function(){
+		var agent_id = jQuery("#agent-filters").data('agent');
+		jQuery('#agent_convert_id_'+agent_id).trigger('click');
+		jQuery("#agent-filters").data('agent', null);
+	});
+<% end %>

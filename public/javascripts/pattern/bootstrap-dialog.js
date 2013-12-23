@@ -9,9 +9,11 @@
 	/* DIALOG PUBLIC CLASS DEFINITION
 	* ============================== */
 
-	var Freshdialog = function (data, options, title) {
+	var Freshdialog = function (element, options, title) {	
 
-		this.options = $.extend({}, $.fn.freshdialog.defaults, options, data);
+		this.$element = element;
+
+		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data());
 
 		// Removing the hash in-front of the target
 		this.$dialogid = this.options.targetId.substring(1)
@@ -78,6 +80,7 @@
 
 	Freshdialog.prototype = {
 		constructor: Freshdialog
+
 		// To submit the first form inside the modal dialog
 	,	formSubmit: function(e){
 			e && e.preventDefault()
@@ -90,6 +93,16 @@
       
          if(this.options.closeOnSubmit) this.$dynamicTarget.modal("hide")
 		}
+		// Destroy the dialog object when a close is invoked
+    , 	destroy: function(e){	 
+    		$(this.$body.html())
+    			.appendTo("body")
+    			.attr("id", this.$dialogid).hide()
+    			
+	    	this.$element.removeData('freshdialog')
+	    	this.$dynamicTarget.off("submit.modal");
+	    }
+
 	}
 
 	/* DIALOG PLUGIN DEFINITION
@@ -101,10 +114,8 @@
 			, data = $this.data('freshdialog')
 			, options = typeof option == 'object' && option
 
-			if (!data) {
-				$this
-					.data('freshdialog',
-						(data = new Freshdialog($(this).data(), options, this.getAttribute('title'))));
+			if(!data) {
+				$this.data('freshdialog', (data = new Freshdialog($this, options, this.getAttribute('title'))));
 			}
 
 			if (typeof option == 'string') data[option]()
@@ -117,24 +128,25 @@
 			$target;
 		$target = $(options.targetId);
 		$target.modal(options);
-		return (freshdialog);
+		return(freshdialog);
 	}
 
 	$.fn.freshdialog.defaults = {
-	  width: 		"710px",
-		title: 		'',
-		classes: 	'',      
-      closeOnSubmit: false,
-		keyboard: 	true, 
-		templateHeader: '<div class="modal-header">' +
-							'<h3 class="ellipsis modal-title"></h3>' +
-						'</div>',
-		templateBody:	'<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>',
-    templateFooter: '<div class="modal-footer"></div>',
-    submitLabel: 	"Submit",
-    submitLoading: 	"", 
-    closeLabel: 	"Close",
-    showClose: true
+	  	width: 				"710px",
+		title: 				'',
+		classes: 			'',      
+      	closeOnSubmit: 		false,
+		keyboard: 			true, 
+		templateHeader: 	'<div class="modal-header">' +
+								'<h3 class="ellipsis modal-title"></h3>' +
+							'</div>',
+		templateBody:		'<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>',
+	    templateFooter: 	'<div class="modal-footer"></div>',
+	    submitLabel: 		"Submit",
+	    submitLoading: 		"", 
+	    closeLabel: 		"Close",
+	    showClose: 			true,
+	    destroyOnClose: 	false
 	}
 
 	$.fn.freshdialog.Constructor = Freshdialog
@@ -145,7 +157,7 @@
 	    var $this = $(this)
 	    ,  	href = $this.attr('href')
 
-	    if ($this.data('lazyload')) {
+	    if($this.data('lazyload')) {
 	    	var content = $($this.data('target') + ' textarea[rel=lazyload]').first().val()
 	    	$($this.data('target')).hide().html(content)
 	    }
@@ -154,18 +166,14 @@
 	    if(!$this.data('freshdialog')){
 	    	$(this).data("targetId", ($this.attr('data-target') || 
 	    		(href && href.replace(/.*(?=#[^\s]+$)/, ''))))
-	    	$this.freshdialog($this.data())
+	    	$this.freshdialog()
 	    }
 
 	    var $target = $($(this).data("targetId"))
 	    var	option = $target.data('modal') ? 'toggle' : $.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data())
 
-	    $target
-			.modal(option);
-			// .one('hide', function () {
-			// 	$this.focus()
-			// })
-
-	  })
+	    $target.data("source", $this)
+	    $target.modal(option);	    
+	})
 
 }(window.jQuery);
