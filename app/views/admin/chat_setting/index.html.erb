@@ -63,7 +63,7 @@
 			<div class="span4 pull-right">
 				<div id="chat_layout" class="pull-right">
 				  <div id="fc-header" class="chat_fc_header" style="background-color:<%=chat_color%>">
-				    <%=(@chat.maximized_title != nil)? @chat.maximized_title : t('freshchat.maximized_title')%>"
+				    <%=(@chat.maximized_title != "")? @chat.maximized_title : t('freshchat.maximized_title')%>
 				    <span id="symbol"><i class="icon-caret-down"></i></span>
 				  </div>
 				  <div id="chat-container" style="display: block;background-color:<%=chat_color%>">
@@ -248,10 +248,13 @@
 			behaviour.validateOffset($(this).val());
 		});
 		$("#maximized_title").keyup(function() {
-			$("#fc-header").text($( "#maximized_title" ).val());
+			if($(this).val()!=""){
+				$("#fc-header").text($(this).val());
+			}else{
+				$("#fc-header").text("<%=t('freshchat.maximized_title')%>");
+			}
 		});
-
-		behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : "Bottom Right"%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:'//<%=@current_account.full_domain%>',nodeurl:'<%=ChatConfig['communication_url'][Rails.env]%>',fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:'<%=ChatConfig['chat_debug'][Rails.env]%>','text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>'});
+		behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : "Bottom Right"%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:'//<%=@current_account.full_domain%>',nodeurl:'<%=ChatConfig['communication_url'][Rails.env]%>',fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:'<%=ChatConfig['chat_debug'][Rails.env]%>','text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>','asset':<%=ChatConfig['asset_url'][Rails.env].to_json.html_safe%>});
 
 		behaviour.updateCode();
 	});
