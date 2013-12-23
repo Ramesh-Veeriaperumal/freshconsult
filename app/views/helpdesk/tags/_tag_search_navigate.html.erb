@@ -1,11 +1,9 @@
-  <form action='' id = "tag-search-form" class = "form-horizontal">
-      <div class="row-fluid align-right clear-text-wrap" xmlns="http://www.w3.org/1999/html">
-        <a href="/helpdesk/tags" class="clear-text pull-right"><%= t('.clear') %></a>
-        <input type="text" id="tag-search" class="span8 input-padding tagsearch"
-               name="name" value="<%= tag_search_text  %>"
-               placeholder="<%= t('.search') %>" />
-        </div>
-      <br/>
-
-  </form>
-
+<form action='<%= local_assigns["url"] %>' class = "form-horizontal tag-search-form" autocomplete="off">
+  <div class="row-fluid align-right clear-text-wrap" id="search_results" xmlns="http://www.w3.org/1999/html">
+    <a href="" class="clear-text pull-right"><%= t('.clear') %></a>
+    <input type="text" id="<%= local_assigns[:search_id] %>" class="tagsearch  input-padding  <%= local_assigns[:merge].present? ? local_assigns[:merge]+" span11 pull-right " : 'span8'  %>"
+           name="name" value="<%= tag_search_text  %>"
+           placeholder="<%= t('.search') %>" />
+  </div>
+  <br>
+</form>

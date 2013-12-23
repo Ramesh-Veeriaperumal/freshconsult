@@ -39,6 +39,7 @@ class Helpdesk::Tag < ActiveRecord::Base
            :source_type => "Solution::Article",
            :through => :tag_uses
 
+  xss_sanitize  :only => [:name]
   named_scope :with_taggable_type, lambda { |taggable_type| {
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }

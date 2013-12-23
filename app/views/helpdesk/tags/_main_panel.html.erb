@@ -5,6 +5,7 @@
         <span class="bulk-action">
             <input class="btn" type="button"
                value="<%=t('delete')%>" disabled="disabled" id="tag-delete">
+          <input type="button" class="btn" id="tag_bulk_merge" rel="freshdialog" data-target="#tags-merge-confirm" disabled="disabled" value="<%= t(".merge") %>" title="<%= t('.merge_tags') %>" />
        </span>
   <% end %>
 
@@ -16,3 +17,9 @@
       <%= render :partial => "tags_table" , :inline => true %>
     </div>
   </form>
+
+
+<div class="hide" id="tags-merge-confirm">
+  <div id="tags_merge_modal" class="sloading">
+  </div>
+</div>

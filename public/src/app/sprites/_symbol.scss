@@ -1,9 +1,9 @@
 @import "cdn-ignored/sprites/symbols/*.png";
 @include all-symbols-sprites;
 
-@include all-symbols-sprites;
-
-/* %% more styles set for this class in some other file */
+//-------------------------------------------------------------------------------------------------------
+// 						%% more styles set for this class in some other file 
+//-------------------------------------------------------------------------------------------------------
 
 .symbols-article-list{
 	@include inline-block;
@@ -46,14 +46,18 @@
 	background-repeat: no-repeat;
 	@include border-radius(none);
 }
-
-/* %% inside */ 
+//-----------------------------------------------------------
+//						 %% inside 
+//-----------------------------------------------------------
 .symbols-article-list{ 	@include symbols-sprite(article-list); }
 .quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
 .private-icon{ 			@include symbols-sprite(private-lock-grey); /* %% inside */ }
 .setting_bottom{ 		@include symbols-sprite(setting); }
 .sort_handle{  		@include symbols-sprite(sort_handle); }
-/* %% app-bootstrap */ 
+
+//-----------------------------------------------------------
+// 						%% app-bootstrap 
+//-----------------------------------------------------------
 .searchicon{ 				 	@include symbols-sprite(search); }
 .clock{ 						@include symbols-sprite(clock-inactive); }
 .time_running .clock{ 			@include symbols-sprite(clock); }
@@ -75,7 +79,9 @@
 .replylinks .tweet span{ 	@include symbols-sprite(reply-tweet); }
 .replylinks .facebook span{ @include symbols-sprite(reply-fb); }
 
-/* The below source styles are being used in view_ticket.widget.erb */
+//-------------------------------------------------------------------------------------------------------
+// 						The below source styles are being used in view_ticket.widget.erb 
+//-------------------------------------------------------------------------------------------------------
 .source-email{   	@include symbols-sprite(source-email); }
 .source-facebook{   @include symbols-sprite(source-facebook); }
 .source-twitter{   	@include symbols-sprite(source-twitter); }
@@ -85,7 +91,9 @@
 .source-forum{   	@include symbols-sprite(source-forum); }
 .add-icon-green{	@include symbols-sprite(bullet-folder1_hover); }
 
- /* %% app-common */
+ //-------------------------------------------------------------------------------------------------------
+ //											 %% app-common 
+ //-------------------------------------------------------------------------------------------------------
 .reminders, .todo{ .delete{ @include symbols-sprite(trash); } }
 .delete_black {@include symbols-sprite(trash_black); }
 .idea-likes .like-image{ 	@include symbols-sprite(like); }
@@ -139,8 +147,42 @@
 .sla_policy_form .delete, .sla_policy_form .delete_conditions{ @include symbols-sprite(delete);  }
 .ivr-menu .delete-symbol{ @include symbols-sprite(delete);  }
 
-/* %% tkt_details  */
-// Fix!!! - Remove content controls
+
+//-------------------------------------------------------------------------------------------------------
+//													Tags Tick Marker
+//-------------------------------------------------------------------------------------------------------
+.selected-tick-mark{ 
+	@include symbols-sprite(tickSelect); 
+	display: inline-block;
+	height: 14px;
+	width: 18px;
+}
+.tags-remove{
+  width: 16px;
+  height:16px;
+  margin-right:10px;
+  float:left;
+  @include symbols-sprite(delete-inactive);
+  &:hover{
+    @include symbols-sprite(delete);
+  }
+}
+.unselected-tick-mark{ 
+	@include symbols-sprite(tickUnselect); 
+	display: inline-block;
+	height: 14px;
+	width: 18px;
+}
+.connecting-image{
+	@include symbols-sprite(connecting-image); 
+	display: inline-block;
+	height: 107px;
+	width: 33px;	
+}
+//-------------------------------------------------------------------------------------------------------
+// 													%% tkt_details  
+// 											Fix!!! - Remove content controls
+//-------------------------------------------------------------------------------------------------------
 .content .controls, .ticket_details .sticky_right {
 	.monitor{ @include symbols-sprite(tkt-not-monitoring); }
 	.monitor_active{ @include symbols-sprite(tkt-monitoring); }
@@ -186,13 +228,17 @@ span.fb_add { @include symbols-sprite(add); }
 
 .open_in_new{ @include symbols-sprite(open_in_new); background-repeat: no-repeat; background-color: transparent; }
 
-/* %% buttons */
+//-------------------------------------------------------------------------------------------------------
+//												 %% buttons 
+//-------------------------------------------------------------------------------------------------------
 .close-button{ @include symbols-sprite(close-delete); }
 .icon-detail .symbols-add{ @include symbols-sprite(add); }
 .toolbar_pagination .prev_page span{ @include symbols-sprite(arrow-left); }
 .toolbar_pagination .next_page span{ @include symbols-sprite(arrow-right); }
 
-/* %% form */
+//-------------------------------------------------------------------------------------------------------
+// 												%% form 
+//-------------------------------------------------------------------------------------------------------
 .ui-datepicker-trigger{ @include symbols-sprite(calendar); }
 .colsets .deleteChoice{ @include symbols-sprite(delete); }
 .colsets .deleteChoice.disabled{ @include symbols-sprite(delete-inactive); }
@@ -210,8 +256,9 @@ a.new_ticket span{ @include symbols-sprite(add); }
 .symbol-done-tick{ @include symbols-sprite(done-tick); }
 .ui-solution-suggest:after{ @include symbols-sprite(new-solution-arrow); }
 
-
-/* Freshfone symbols */
+//-------------------------------------------------------------------------------------------------------
+// 												Freshfone symbols 
+//-------------------------------------------------------------------------------------------------------
 .phone-icons { @include symbols-sprite(phone); }
 .mobile-icons { @include symbols-sprite(mobile); }
 .phone-icons, .mobile-icons { padding-left: 20px; }
