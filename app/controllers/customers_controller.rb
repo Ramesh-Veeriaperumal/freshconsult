@@ -9,16 +9,16 @@ class CustomersController < ApplicationController
   before_filter :set_selected_tab
   
   def index
+    per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+    @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
     respond_to do |format|
       format.html  do
-        @customers =current_account.customers.filter(params[:letter],params[:page], 10)
+        @customers
       end
      format.xml  do
-        @customers =current_account.customers.all
         render :xml => @customers.to_xml
       end
       format.json do
-        @customers =current_account.customers.all
         render :json => @customers.to_json
       end
       
