@@ -17,11 +17,16 @@
 		});
 		
 		jQuery("#placeholder-list-1 a").click(function(ev){  
-      if(active_email_body){
-        var placeHolderText = jQuery(this).data("placeholder"); 
-        insertTextAtCursor(active_email_body, placeHolderText);
-		  }
+	      	if(active_email_body){
+		        var placeHolderText = jQuery(this).data("placeholder"); 
+		        insertTextAtCursor(active_email_body, placeHolderText);
+		        var editor = jQuery(active_email_body).data("CodeMirrorInstance");
+		        if (editor){
+			    	editor.replaceRange(placeHolderText, editor.getCursor());   
+			    }
+			}
 		});
+		
 		jQuery('#placeholder_close').click(function(){
 			jQuery('#place-dialog').hide();	
 		});
