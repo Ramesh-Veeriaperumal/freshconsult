@@ -1,0 +1,5 @@
+page << "jQuery('#tags_merge_modal').removeClass('sloading')"
+page.replace_html 'tags_merge_modal', :partial => 'tag_bulk_merge', :locals => { :source_tags => params[:selected_tags] }
+page << 'jQuery(".square-box-wrap").first().removeClass("non-primary-tag")'
+page << "jQuery('.clear-text').addClass('hide')"
+page << "jQuery('#tags_selected_count').trigger('change')"

@@ -11,6 +11,16 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     failed_tickets = []
     
     @items.each do |ticket|
+
+      if(params[:selected_tags].present?)
+          helpdesk_ticket_tags = params[:selected_tags] - ticket.tags.collect(&:name)
+          helpdesk_ticket_tags.each do |t|
+            tag_selected = current_account.tags.find_by_name(t) || Helpdesk::Tag.create(:name => t ,:account_id => current_account.id)
+            ticket.tags << tag_selected if tag_selected.valid?
+          end
+      end
+
+
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end

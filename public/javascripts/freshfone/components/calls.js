@@ -97,15 +97,15 @@ var FreshfoneCalls;
 		callerLocation: function () {
 			return countryForE164Number(this.number);
 		},
-		recordMessage: function (messageSelector) {
+		recordMessage: function (messageSelector, numberId) {
 			this.recordingInstance = messageSelector;
 			if(!this.credit_balance()) {
 				return false;
 			}
 			var self = this;
 			this.setDirectionOutgoing();
-			this.actionsCall(function () { Twilio.Device.connect({ record: true, agent: self.currentUser }); } );
-			
+			var params = { record: true, number_id: numberId, agent: this.currentUser };
+			this.actionsCall(function () { Twilio.Device.connect(params); } );
 		},
 		resetRecordingState: function () {
 			if(this.recordingInstance) {

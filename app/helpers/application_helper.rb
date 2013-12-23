@@ -880,10 +880,12 @@ module ApplicationHelper
 	end
 	
 	def call_direction_class(call)
-		if call.call_type == Freshfone::Call::CALL_TYPE_HASH[:incoming]
-			return (call.call_status == Freshfone::Call::CALL_STATUS_HASH[:completed] ? "incoming_call_icon" : "incoming_missed_call_icon")
-		elsif call.call_type == Freshfone::Call::CALL_TYPE_HASH[:outgoing]
-			return (call.call_status == Freshfone::Call::CALL_STATUS_HASH[:completed] ? "outgoing_call_icon" : "outgoing_missed_call_icon")
+		if call.incoming?
+			call.completed? ? "incoming_call_icon" : "incoming_missed_call_icon"
+		elsif call.outgoing?
+			call.completed? ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+		elsif call.blocked?
+			"blocked_call_icon"
 		end
 	end
 # helpers for fresfone callable links -- ends

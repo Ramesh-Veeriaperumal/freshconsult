@@ -28,7 +28,14 @@
         <%end%>
   		<%end%>
 	   <%end%>
-  </div>
+
+
+       <div class="bulk_add_tags">
+         <input class="select2 row-fluid" id="helpdesk_ticket_tags" name = "helpdesk_ticket[tags]" size="30" type="text" value="" style="display: none;" placeholder="<%= t('ticket_add_tags_multiple') %>">
+       </div>
+
+
+    </div>
 </div>
 <% end %>
 <% form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
@@ -48,7 +55,7 @@
 <% end %>
 <div class="button-container">
   <div id="loader"></div>
-  <%= button_to_function t('ticket_update_multiple_button'), "submitBulkUpdate()", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
+  <%= button_to_function t('ticket_update_multiple_button'), :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
   <%= link_to t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
 </div>
 </div>
@@ -60,8 +67,19 @@
 </div>
 </div>
 <% end %>
-<% javascript_tag do %> 
-  jQuery('#ticket_cancel_multiple_button').die('click')
+<% javascript_tag do %>
+
+      var tags = new Array();
+      <% current_account.tags.each do |t|  %>
+          tags.push("<%= t.name.html_safe %>")
+      <% end %>
+
+      jQuery("#helpdesk_ticket_tags").select2({
+          tags: tags,
+          tokenSeparators: [',']
+      });
+
+      jQuery('#ticket_cancel_multiple_button').die('click')
   jQuery('#ticket_cancel_multiple_button').live('click',
    	function(){
   		active_dialog.dialog('close');
@@ -72,6 +90,17 @@
     if( !($('addbulkreply') && $('addbulkreply').checked) ||
       jQuery("#reply-multiple-cnt-reply-multiple-body").valid())
     {
+      var form = $("replymultiple");
+      jQuery("#helpdesk_ticket_tags").select2('data').each(function(item){
+          var field = new Element('input', {
+          type: 'hidden'
+          });
+          field.name = "selected_tags[]";
+          field.value = item.text;
+          form.appendChild(field);
+
+      })
+
       <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )".html_safe %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').addClass("sloading loading-small loading-align");
@@ -149,4 +178,18 @@ jQuery('.ui-icon-closethick').live('click', function(){
   if(!jQuery('#no-response').is(':hidden'))
     jQuery('#no-response').click();
 });
+
+      jQuery("#ticket_update_multiple_button").on("click",function(e){
+        if(jQuery('#update-fields .update-check-for-fields:checked, #helpdesk_ticket_tags[value!=""], #addbulkreply:checked').length == 0)
+        {
+            e.preventDefault();
+        }
+        else
+        {
+            submitBulkUpdate();
+        }
+      });
+
+
+
 <% end %>

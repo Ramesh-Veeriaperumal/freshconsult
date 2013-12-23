@@ -13,6 +13,6 @@ class Freshfone::UserObserver < ActiveRecord::Observer
 	
 	private
 		def publish_presence(freshfone_user, deleted=false)
-			publish_freshfone_presence(freshfone_user, freshfone_user.user, deleted)
+			publish_freshfone_presence(freshfone_user.user, deleted)
 		end
 end

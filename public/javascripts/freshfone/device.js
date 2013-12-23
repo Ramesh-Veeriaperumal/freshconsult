@@ -1,8 +1,9 @@
 (function ($) {
     "use strict";
 	freshfoneuser.initializeDevice();
-
-
+	// private methods
+	function previewMode() { return (freshfonecalls.tConn.message || {}).preview; }
+	function recordingMode() { return (freshfonecalls.tConn.message || {}).record; }
 	if (typeof (Twilio) !== "undefined") {
 		Twilio.Device.ready(function (device) {
 			if(freshfonecalls.lastAction){
@@ -30,32 +31,30 @@
 			if(!freshfonecalls.isOutgoing()) { freshfoneNotification.initializeCall(conn); }
 			freshfonecalls.errorcode = null;
 			freshfonecalls.lastAction = null;
-			if ((freshfonecalls.tConn.message|| {}).record) {
-				freshfonecalls.setRecordingState();
-				return;
-			}
+			if (recordingMode()) { return freshfonecalls.setRecordingState(); }
 			$("#log").text("Successfully established call");
 			freshfoneNotification.resetJsonFix();
 			freshfoneNotification.popAllNotification(conn);
 			freshfonetimer.startCallTimer();
-			freshfoneuser.publishLiveCall();
 			freshfonewidget.handleWidgets('ongoing');
 			freshfonecalls.disableCallButton();
-			if ((freshfonecalls.tConn.message || {}).preview) {
+			if (previewMode()) {
 				freshfonewidget.enablePreviewMode();
 			}
+			var dontUpdateCallCount = previewMode() || recordingMode();
+			freshfoneuser.publishLiveCall(dontUpdateCallCount);
 		});
 
 		/* Log a message when a call disconnects. */
 		Twilio.Device.disconnect(function (conn) {
 			$("#log").text("Call ended");
 			freshfoneNotification.resetJsonFix();
-			if ((freshfonecalls.tConn.message || {}).record) {
+			if (recordingMode()) {
 				return freshfonecalls.fetchRecordedUrl();
 			}
 			freshfonetimer.stopCallTimer();
 			freshfonecalls.enableCallButton();
-			if ((freshfonecalls.tConn.message || {}).preview) {
+			if (previewMode()) {
 				freshfonewidget.resetPreviewMode();
 				freshfonewidget.resetPreviewButton();
 				return freshfonewidget.handleWidgets('outgoing');
@@ -64,10 +63,8 @@
 			freshfonecalls.tConn = conn;
 			if (freshfonecalls.hasUnfinishedAction()) {
 				return;
-
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
 				freshfoneendcall.showEndCallForm();
-				
 			} else {
 				freshfonecalls.transferSuccessFlash();
 				freshfoneuser.resetStatusAfterCall();
