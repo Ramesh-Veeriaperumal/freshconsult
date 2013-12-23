@@ -19,10 +19,10 @@ asset_url:
         css: "http://localhost:4000"
         cloudfront: "http://localhost:4000"
     production:
-        js: "http://asset.chat.freshdesk.com"
-        css: "http://asset1.chat.freshdesk.com"
+        js: "http://assets.chat.freshdesk.com"
+        css: "http://assets1.chat.freshdesk.com"
         cloudfront: "https://d36mpcpuzc4ztk.cloudfront.net"
     staging: 
-        js: "http://asset.chat.freshpo.com"
-        css: "http://asset1.chat.freshpo.com"
+        js: "http://assets.chat.freshpo.com"
+        css: "http://assets1.chat.freshpo.com"
         cloudfront: "https://dop9av6nvryqq.cloudfront.net"
