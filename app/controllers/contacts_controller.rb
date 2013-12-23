@@ -74,7 +74,8 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
-        format.nmobile { render :json => { :success => true , :success_message => t("flash.contacts.create.success") 
+        format.nmobile { 
+            render :json => { :requester_id  => @user.id , :success => true , :success_message => t("flash.contacts.create.success") 
                                         }.to_json }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
@@ -88,6 +89,7 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
         format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
