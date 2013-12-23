@@ -1,18 +1,3 @@
-
-
-<button class="hide" id="open-blacklist-confirmation"
-		rel="freshdialog"
-		data-submit-label="<%=t('freshfone.call_history.block_number')%>"
-		data-close-label="<%=t('freshfone.call_history.cancel')%>"
-		data-target="#blacklist-confirmation"
-		data-width="400"></button>
-
-	<div id="blacklist-confirmation" class="hide">
-			<% form_for :blacklist_number, :url => url_for(:action => 'create', :controller => 'freshfone/blacklist_number'), :method => 'post' do |f| %>
-					<%= f.hidden_field :number %>
-				<% end %>
-	</div>
-
 <% unless calls.blank? %>
 	<table class="table table-striped">
 		<%= render :partial => "call_logs",

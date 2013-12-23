@@ -20,8 +20,6 @@
   map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
 
   map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
-
-  map.resources :uploaded_audios, :controller => 'uploaded_audios'
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
@@ -79,7 +77,6 @@
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get, 
                                                        :children => :get, :recent_calls => :get }
-    freshfone.resources :blacklist_number, :collection => {:create => :post}, :member => { :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post }
   end
@@ -342,7 +339,7 @@
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put, :bulk_merge => :get }
+    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put }
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'

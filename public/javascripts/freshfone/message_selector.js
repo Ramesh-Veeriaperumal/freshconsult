@@ -8,8 +8,7 @@
 		UPLOADED_AUDIO : 1,
 		TRANSCRIPT : 2
 	}, MessageSelector,
-	AUDIO_FILE_FORMAT = 'mp3',
-	currentNumberId = freshfone.currentNumberId;
+	AUDIO_FILE_FORMAT = 'mp3';
 	MessageSelector = function (element, options) {
 		var self = this, defaults;
 		this.$container = $(element);
@@ -173,11 +172,12 @@
 			this.$clientRecord.click(function (ev) {
 				ev.preventDefault();
 				var $record_button = $(this);
+
 				if ($record_button.hasClass('active-record')) {
 					self.setPrepearingState();
 					if (freshfonecalls.tConn) { freshfonecalls.tConn.sendDigits('#'); }
 				} else {
-					freshfonecalls.recordMessage(self, currentNumberId);
+					freshfonecalls.recordMessage(self);
 				}
 			});
 		},

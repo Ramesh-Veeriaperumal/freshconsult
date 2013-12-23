@@ -10,11 +10,6 @@ module TwilioMaster
 		:queue => [:enqueue, :dequeue, :trigger_voicemail, :hangup, :quit_queue_on_voicemail],
 		:voicemail => [:quit_voicemail]
 	}
-	
-	CALL_INITIATION_METHODS = {
-		:freshfone => [ :voice ],
-		:device => [ :record ]
-	}
 
 	def self.client
 		account_sid = AppConfig['twilio']['account_sid']

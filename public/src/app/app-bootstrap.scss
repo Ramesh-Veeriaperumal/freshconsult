@@ -828,7 +828,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   visibility: visible;
   padding: 5px;
   font-size: 11px;
-  z-index: 2003;
+  z-index: 1003;
   @include opacity(0.8);
   font-weight: bold;
   &.fade.in{

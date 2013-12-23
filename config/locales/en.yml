@@ -1136,10 +1136,6 @@ en:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
         blank_message: "%{num_type} cannot be blank"
-        add_blacklist_success: "Number blocked successfully"
-        add_blacklist_failure: "Number could not be blocked"
-        remove_blacklist_success: "Number unblocked successfully"
-        remove_blacklist_failure: "Number could not be unblocked"
 
     profile: 
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
@@ -4594,7 +4590,6 @@ en:
     call_status:
       default: ""
       completed: "Completed"
-      blocked: "BlackListed"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4638,12 +4633,9 @@ en:
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
-      block_number: "Block"
-      cancel: "Cancel"
-      blackList_comfirmation: "will be banned !"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
-      received_date: "Date"
+      received_date: "Received Date"
       duration: "Duration"
       cost: "Cost"
       asc: "Ascending"
@@ -4661,8 +4653,8 @@ en:
       helpdesk: Helpdesk
     ticket:
       recording: "Freshfone Recording"
-      ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 
-      agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
+      desc: "Ticket created from Freshfone. Requester Location: %{location}. " 
+      agent: "Agent: %{agent}. <br/ >"
       dial_a_number: "Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"

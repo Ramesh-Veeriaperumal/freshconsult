@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131220111455) do
+ActiveRecord::Schema.define(:version => 20131129132607) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -591,15 +591,6 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
   add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id"
 
-  create_table "freshfone_blacklist_numbers", :force => true do |t|
-    t.integer  "account_id", :limit => 8
-    t.string   "number",     :limit => 50
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "freshfone_blacklist_numbers", ["account_id", "number"], :name => "index_freshfone_blacklist_numbers_on_account_id_and_number"
-
   create_table "freshfone_calls", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                     :null => false
     t.integer  "account_id",          :limit => 8,                     :null => false
@@ -683,22 +674,11 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
     t.datetime "next_renewal_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "voicemail_active",                                                      :default => false
+    t.boolean  "voicemail_active"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
   add_index "freshfone_numbers", ["state", "next_renewal_at"], :name => "index_freshfone_numbers_on_state_and_next_renewal_at"
-
-  create_table "freshfone_other_charges", :force => true do |t|
-    t.integer  "account_id",          :limit => 8
-    t.integer  "action_type"
-    t.integer  "freshfone_number_id", :limit => 8
-    t.float    "debit_payment"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "freshfone_other_charges", ["account_id"], :name => "index_freshfone_other_charges_on_account_id"
 
   create_table "freshfone_payments", :force => true do |t|
     t.integer  "account_id",       :limit => 8

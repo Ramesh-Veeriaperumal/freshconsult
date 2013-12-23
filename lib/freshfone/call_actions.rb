@@ -17,15 +17,6 @@ class Freshfone::CallActions
 		)
 	end
 
-	def register_blocked_call
-		current_account.freshfone_calls.create(
-			:freshfone_number => current_number,
-			:customer => search_customer_with_number(params[:From]),
-			:call_type => Freshfone::Call::CALL_TYPE_HASH[:blocked],
-			:params => params
-		)
-	end
-
 	def register_outgoing_call
 		current_account.freshfone_calls.create(
 			:freshfone_number => current_number,

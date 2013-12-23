@@ -10,13 +10,10 @@
 	* ============================== */
 
 	var Freshdialog = function (element, options, title) {	
-		var data = {};
-		if (element !== null) {
-			this.$element = element;
-			data = this.$element.data();
-		}
 
-		this.options = $.extend({}, $.fn.freshdialog.defaults, options, data);
+		this.$element = element;
+
+		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data());
 
 		// Removing the hash in-front of the target
 		this.$dialogid = this.options.targetId.substring(1)
@@ -102,7 +99,7 @@
     			.appendTo("body")
     			.attr("id", this.$dialogid).hide()
     			
-	    	if (this.$element !== undefined) { this.$element.removeData('freshdialog'); }
+	    	this.$element.removeData('freshdialog')
 	    	this.$dynamicTarget.off("submit.modal");
 	    }
 
@@ -127,7 +124,7 @@
 	
 	$.freshdialog = function (option) {
 		var options = typeof option == 'object' && option,
-			freshdialog = new Freshdialog(null, options),
+			freshdialog = new Freshdialog({}, options),
 			$target;
 		$target = $(options.targetId);
 		$target.modal(options);

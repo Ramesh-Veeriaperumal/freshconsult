@@ -5,12 +5,11 @@ class Freshfone::CallInitiator
 
 	VOICEMAIL_TRIGGERS = ['no-answer', 'busy', 'failed']
 	BATCH_SIZE = 10
-	TIME_LIMIT = 900
 
 	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_process
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
 					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :to => :call_flow, :allow_nil => true
-	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :voice_type, :to => :current_number
+	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :to => :current_number
 	
 	def initialize(params={}, current_account=nil, current_number=nil, call_flow=nil)
 		self.params = params
@@ -22,12 +21,12 @@ class Freshfone::CallInitiator
 	# agent class -> Freshfone::User
 	def connect_caller_to_agent(agents=nil)
 		twiml_response do |r|
+      
 			read_welcome_message(r) if !transfered
 			# welcome_menu.ivr_message(r) if welcome_menu
 			agents_to_be_called = process_in_batch(agents || available_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
-						 :record => record?, :action => status_url,
-						 :timeLimit => timeLimit do |d|
+						 :record => record?, :action => status_url do |d|
 				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent)) }
 			end
 		end
@@ -46,8 +45,7 @@ class Freshfone::CallInitiator
 
 	def initiate_outgoing
 		twiml_response do |r|
-			r.Dial :callerId => number, :record => record?,
-						 :action => outgoing_url, :timeLimit => timeLimit do |d|
+			r.Dial :callerId => number, :record => record?, :action => outgoing_url do |d|
 				d.Number params[:PhoneNumber]
 			end
 		end
@@ -55,8 +53,7 @@ class Freshfone::CallInitiator
 
 	def initiate_recording
 		twiml_response do |r|
-			r.Say 'Record your message after the tone.', 
-				:voice => voice_type
+			r.Say 'Start recording your message at the beep. Your message will be played back to you once completed.'
 			r.Record :action => record_message_url, :finishOnKey => "#", :maxLength => 300
 		end
 	end
@@ -81,13 +78,8 @@ class Freshfone::CallInitiator
 				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
 
 			end
-		 else
- 		      Twilio::TwiML::Response.new.text
-		end
-	end
-	def block_incoming_call
-		twiml_response do |r|
-			r.Reject :reason => "busy"
+		else
+			Twilio::TwiML::Response.new.text
 		end
 	end
 
@@ -120,7 +112,7 @@ class Freshfone::CallInitiator
 		end
 
 		def record_message_url
-			"#{host}/freshfone/device/record?agent=#{params[:agent]}&number_id=#{params[:number_id]}"
+			"#{host}/freshfone/device/record?agent=#{params[:agent]}"
 		end
 
 		def enqueue_url
@@ -152,7 +144,4 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 			current_batch_agents
 		end
 
-		def timeLimit
-			TIME_LIMIT if current_account.freshfone_credit.below_safe_threshold?
-		end
 end

@@ -1,6 +1,5 @@
 class Freshfone::DeviceController < FreshfoneBaseController
 	include FreshfoneHelper
-	include Freshfone::NumberMethods
 	include Freshfone::Presence
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
@@ -9,22 +8,21 @@ class Freshfone::DeviceController < FreshfoneBaseController
 	
 	def record
 		twiml = Twilio::TwiML::Response.new do |r|
-			r.Say "Preparing your recorded message. Make sure to save upon completion.", 
-				:voice => current_number.voice_type
+			r.Say "Preparing your recorded message. Make sure you save your messages upon completion."
 		end
 		render :xml => twiml.text
 	ensure
+		Rails.logger.debug "Added Freshfone Cost Calculation Job for Recorded Message sid::::: #{params[:CallSid]}"
 		Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, 
 											{ :account_id => current_account.id, 
 												:call_sid => params[:CallSid],
-												:billing_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:message_record],
-												:number_id => current_number.id })
+												:dont_update_record => true })
 	end
 
 	def recorded_greeting
-		url = get_key("FRESHFONE:RECORDING:#{current_account.id}:#{default_client}")
-		remove_key("FRESHFONE:RECORDING:#{current_account.id}:#{default_client}")
-		render :json => { :url => url }
+		render :json => {
+			:url => get_key("FRESHFONE:RECORDING:#{current_account.id}:#{default_client}")
+		}
 	end
 
 	private
@@ -33,7 +31,7 @@ class Freshfone::DeviceController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(*[:agent, :number_id])
+			@callback_params = params.except(:agent)
 			super
 		end
 

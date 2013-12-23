@@ -2503,7 +2503,7 @@ input[type="text"].number{
         margin-top : 10px;
     }
     select{
-        width : 180px;
+        width : 150px;
     }
     .fields{
         float :left;
@@ -2527,12 +2527,6 @@ input[type="text"].number{
     	 min-height: 250px;
     	}
     }
-
-    .bulk_add_tags{
-      width: 95%;
-      padding-bottom: 11px;
-    }
-
     .request_panel .ui-form li.inline-field div.fields, .request_panel .ui-form fieldset div.fields { margin-left: 0px; padding-top: 4px; position: relative; }
     .request_panel { 
     	padding : 0 0px 0px 0px; 
@@ -2591,7 +2585,7 @@ input[type="text"].number{
 	display:inline;
 	float:left;
 	width:33%;
-	margin-bottom:8px;
+	margin-bottom:12px; 
 	label{
 		font-size:13px;
 	} 

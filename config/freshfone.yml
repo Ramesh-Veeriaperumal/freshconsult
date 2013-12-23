@@ -1,8 +1,0 @@
-node_url:
-  development: "http://localhost:5000"
-  staging: "https://fone.freshmarketr.com"
-  production: "https://fone.freshdesk.com"
-secret_key:
-  development: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
-  staging: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
-  production: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"

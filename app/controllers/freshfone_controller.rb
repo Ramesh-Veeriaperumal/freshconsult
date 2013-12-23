@@ -34,7 +34,7 @@ class FreshfoneController < FreshfoneBaseController
 	end
 
 	def credit_balance
-		render :json => { :credit_balance => ( !current_account.freshfone_credit.below_calling_threshold? ) }
+		render :json => { :credit_balance => ( current_account.freshfone_credit.available_credit > 0.05 ) }
 	end
 
 	private

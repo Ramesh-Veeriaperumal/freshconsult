@@ -146,9 +146,8 @@ class Freshfone::CallController < FreshfoneBaseController
 				:call => (current_call || {})[:id],
 				:call_forwarded => call_forwarded?,
 				:ivr => ivr?,
-				:billing_type => params[:preview] ? Freshfone::OtherCharge::ACTION_TYPE_HASH[:ivr_preview] : nil,
-				:transfer => call_transferred?,
-				:number_id => params[:number_id]
+				:dont_update_record => params[:preview],
+				:transfer => call_transferred?
 			}
 		end
 
@@ -178,7 +177,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call, :force_termination, :number_id])
+			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call, :force_termination])
 			super
 		end
 

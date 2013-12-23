@@ -201,8 +201,6 @@ class Account < ActiveRecord::Base
   has_many :freshfone_payments, :class_name => 'Freshfone::Payment'
   delegate :freshfone_subaccount, :allow_nil => true, :to => :freshfone_account
   has_many :freshfone_users, :class_name => "Freshfone::User"
-  has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
-  has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
   
   has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
