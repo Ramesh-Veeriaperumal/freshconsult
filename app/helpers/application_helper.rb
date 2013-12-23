@@ -46,6 +46,10 @@ module ApplicationHelper
     end
   end
 
+  def helpdesk_theme_url
+    "/helpdesk/theme.css?v=#{current_portal.updated_at.to_i}"
+  end
+
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
         portal.logo.nil? ? "/images/logo.png?721013" : 

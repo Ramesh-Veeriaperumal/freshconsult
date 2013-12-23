@@ -460,6 +460,7 @@
   # map.resources :home, :only => :index 
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
+  map.connect "/helpdesk/theme.:format", :controller => 'helpdesk_theme', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|
