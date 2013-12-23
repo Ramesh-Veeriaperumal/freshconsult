@@ -90,6 +90,10 @@ class Customer < ActiveRecord::Base
     json_str
   end
 
+  def to_liquid
+    @company_drop ||= CompanyDrop.new self
+  end
+
   protected
 
     def search_fields_updated?

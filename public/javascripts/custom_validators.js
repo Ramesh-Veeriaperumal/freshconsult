@@ -212,5 +212,10 @@ $.validator.addMethod("required_redactor", function(value, element, param) {
 }, "This field is required.")
 $.validator.addClassRules("required_redactor", { required_redactor : true });
 
+  // Color hex validation rules
+  $.validator.addMethod("color_field", function(hexcolor, element, param) {
+    return /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(hexcolor);
+  }, "Please enter a valid hex color value.")
+  $.validator.addClassRules("color_field", { color_field : true });
 
 })(jQuery);

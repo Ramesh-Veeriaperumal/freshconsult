@@ -2,6 +2,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
+  before_filter :build_item, :only => :new
   include SupportTicketControllerMethods 
 
   def new
@@ -9,12 +10,6 @@ class Widgets::FeedbackWidgetsController < SupportController
 
     @ticket_fields = current_portal.customer_editable_ticket_fields
     @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
-       
-    # @ticket_fields_def_pos.reverse.each_with_index do |tf_field, new_pos|
-    #   old_pos = @ticket_fields.map(&:field_type).index(tf_field)
-    #   @ticket_fields.unshift(@ticket_fields.delete_at(old_pos)) if(old_pos != nil)
-    # end
-    set_portal_page :submit_ticket
   end
   
   def thanks
@@ -32,4 +27,13 @@ class Widgets::FeedbackWidgetsController < SupportController
     end
     
   end
+
+  private 
+
+    def build_item
+      @ticket = current_account.tickets.new
+      @ticket.build_ticket_body
+      @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+    end
+
 end

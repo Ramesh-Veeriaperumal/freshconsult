@@ -86,6 +86,60 @@ body#gcgadget {
 	.commentbox .actions, .ticket_details #show_more{
 		display: none !important;
 	}
+
+	.gmail-ticket-widget{
+
+		.commentbox-blue {
+			background: #666;
+			border: 1px #fff solid;
+			@include text-shadow(-1px -1px 0px #093b73);
+			&:hover {
+				color: #FFF;
+			}
+
+			&:after{
+				border-color: rgba(#666, 0);
+				border-right-color: #666;
+			}
+
+			&:before{
+				border-color: rgba(#666, 0);
+				border-right-color: #666;
+			}
+		}
+
+		#tkt-inner {
+		 	padding-right : 0px
+		}
+
+		.source-badge-wrap {
+			padding : 10px 0px 15px 0px;
+			margin : 0px;
+			left : -20px;
+			position : relative;
+		}
+
+		.conversation_thread .conversation {
+			margin : 0px;
+		}
+
+		.commentbox-blue {
+			background : #666;
+			border-color : #eee;
+		}
+
+		.avatar-wrap-collapse {
+			background : #666;
+		}
+
+		#show_more:hover .avatar-wrap-collapse { border-color: #ddd; }
+
+		#ticket_status_box {
+			padding : 0px 0px 15px 0px;
+			margin-left : 30px;
+			width : 100%;
+		}
+	}
 }
 
 body.minimized {
@@ -163,3 +217,4 @@ body.minimized {
 .button-container {
 	margin: 0 25px;
 }
+

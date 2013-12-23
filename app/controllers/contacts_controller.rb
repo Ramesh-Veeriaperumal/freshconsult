@@ -299,17 +299,16 @@ protected
     end
 
     def fetch_contacts
-       unless cookies[:contacts_sort]
-          cookies[:contacts_sort] = 'verified'
-       end
        connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
        order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
        order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
+       @sort_state = params[:state] || cookies[:contacts_sort] || 'verified'
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page],params.fetch(:state , cookies[:contacts_sort]),per_page,order_by)
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by)
         end
+      cookies[:contacts_sort] = @sort_state
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
       end

@@ -43,6 +43,7 @@
 		}
 
 		this.$editor = CodeMirror.fromTextArea(element, this.options)
+		$(element).data('CodeMirrorInstance', this.$editor);
 		this.$editor.getScrollerElement().style.height = this.options['height'] || ""
 		this.$editor.refresh()
 		

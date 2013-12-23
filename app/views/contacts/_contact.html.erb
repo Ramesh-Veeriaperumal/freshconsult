@@ -46,7 +46,22 @@
 			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
       <% end %>
       <% if privilege?(:delete_contact) %>
-			   <%= link_to("<i class='icon-trash'></i>".html_safe, {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
+      			<% if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			   		<%= link_to("<i class='icon-trash'></i>".html_safe, {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :class => "btn btn-mini hide", :id => "user_id_"+contact.id.to_s)%>
+			 		<a href="#user-deletion-confirmation" 
+			 				rel="freshdialog"
+			 				class="btn btn-mini delete_user_btn" 
+			 				title="<%= t('contacts.delete_contact')%>" 
+			 				data-user="<%=contact.id%>"
+			 				data-submit-label="Confirm"
+			 				data-width="400px"
+			 				data-close-on-submit="true"
+			 				data-close-label="Cancel" 
+			 				data-destroy-on-close="true"
+			 				>
+			 			<i class='icon-trash'></i>
+			 		</a>
+		 		<% end %>
       <% end %>
 		</div>
 	</td>

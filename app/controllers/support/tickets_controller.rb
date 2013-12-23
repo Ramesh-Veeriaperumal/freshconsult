@@ -8,31 +8,48 @@ class Support::TicketsController < SupportController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
+
   before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
-  before_filter :load_item, :only =>[:show, :update, :close, :add_people]
+
+  # Ticket object loading
+  before_filter :build_tickets, :only => [:index, :filter]
+  before_filter :load_item, :only => [:show, :update, :close, :add_people]
 
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
     return access_denied unless can_access_support_ticket?
-    @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
 
+    @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
     @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }
     # @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
-    set_portal_page :ticket_view
+    respond_to do |format|
+      format.html { set_portal_page :ticket_view }
+      format.xml  { render :xml => @ticket.to_xml }
+      format.json { render :json => @ticket.to_json }
+    end
   end
   
   def index    
-    build_tickets
-    @page_title = t("helpdesk.tickets.views.#{@current_filter}")    
-    set_portal_page :ticket_list
+    @page_title = t("helpdesk.tickets.views.#{@current_filter}") 
+
     respond_to do |format|
-      format.html
+      format.html { set_portal_page :ticket_list }
       format.xml  { render :xml => @tickets.to_xml }
+      format.json { render :json => @tickets.to_json }
+    end
+  end
+
+  def filter
+    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
+
+    respond_to do |format|
+      format.html { render :partial => "ticket_list" }
+      format.js
     end
   end
 
@@ -45,22 +62,11 @@ class Support::TicketsController < SupportController
         }
       end
     end
-  end
-
-  def filter    
-    build_tickets
-    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
-    set_portal_page :ticket_list
-    respond_to do |format|
-      format.html { render :partial => "ticket_list" }
-      format.js
-    end
-  end
+  end  
 
   def configure_export
     @csv_headers = export_fields(true)
     render :layout => false
-    # render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
   end
   
   def export_csv
@@ -69,7 +75,7 @@ class Support::TicketsController < SupportController
     csv_hash = params[:export_fields]
     unless params[:a].blank?
       params[:id] = params[:i]
-    end 
+    end
     items = build_tickets
     respond_to do |format|
       format.csv { export_data items, csv_hash, true }
@@ -133,7 +139,6 @@ class Support::TicketsController < SupportController
     def many_employees_in_company?
       privilege?(:client_manager) && has_company? && customer.user > 1
     end
-
 
     # Used for scoping of filters
     def ticket_scope

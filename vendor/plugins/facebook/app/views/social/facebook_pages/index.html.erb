@@ -36,7 +36,7 @@ if(jQuery('#got_pages').length){
             <tr>
               <td>
                 <div class="preview_pic">
-                  <%= image_tag (page.page_img_url) if page.page_img_url %>
+                  <%= image_tag page.page_img_url, :alt => page.page_name if page.page_img_url %>
                 </div>
               </td>
               <td>

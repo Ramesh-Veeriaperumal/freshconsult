@@ -13,7 +13,9 @@ class Support::LoginController < SupportController
 		  	redirect_to current_account.sso_options[:login_url]
 		else
 		  	@user_session = current_account.user_sessions.new
-			set_portal_page :user_login
+		  	respond_to do |format|
+	      		format.html { set_portal_page :user_login }
+	      	end
 		end
 	end
 
