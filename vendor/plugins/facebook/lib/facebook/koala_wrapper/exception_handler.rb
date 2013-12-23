@@ -41,7 +41,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
                 Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed)
               end
             else
-              SocialErrorsMailer.deliver_facebook_exception(e)
+              SocialErrorsMailer.deliver_facebook_exception(e,@feed.feed) if @intial_feed
             end
           end
           newrelic_custom_params = {
