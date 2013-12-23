@@ -34,7 +34,6 @@ module ThemeControllerMethods
 		end
 
 		def theme_scss
-			puts "----> #{theme_settings}"
 			%( #{theme_settings}
 			   #{theme_template} )
 		end
