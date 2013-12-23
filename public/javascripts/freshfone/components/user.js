@@ -193,7 +193,7 @@ var FreshfoneUser;
 			});
 		},
 
-		publishLiveCall: function () {
+		publishLiveCall: function (dontUpdateCallCount) {
 			var self = this;
 			self.setStatus(userStatus.BUSY);
 			$.ajax({
@@ -202,7 +202,8 @@ var FreshfoneUser;
 				data: { 'From': this.freshfonecalls.tConn.parameters.From,
 								'To': this.freshfonecalls.tConn.parameters.To,
 								'CallSid': this.freshfonecalls.getCallSid(),
-								'outgoing': this.freshfonecalls.isOutgoing() },
+								'outgoing': this.freshfonecalls.isOutgoing(),
+								'dont_update_call_count' : dontUpdateCallCount },
 				success: function (data) {
 					if (!data.update_status) {
 						self.status = self.previous_status;
@@ -211,7 +212,7 @@ var FreshfoneUser;
 					} },
 				error: function (data) { self.status = self.previous_status; }
 			});
-		},
+		}
 	};
 	
 }(jQuery));

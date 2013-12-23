@@ -77,6 +77,7 @@
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get, 
                                                        :children => :get, :recent_calls => :get }
+    freshfone.resources :blacklist_number, :collection => {:create => :post}, :member => { :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post }
   end

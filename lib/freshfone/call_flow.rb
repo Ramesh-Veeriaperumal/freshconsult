@@ -10,9 +10,9 @@ class Freshfone::CallFlow
   delegate :record?, :non_business_hour_calls?, :ivr, :to => :current_number
   delegate :freshfone_users, :to => :current_account
 	delegate :read_welcome_message, :to => :ivr
-  delegate :connect_caller_to_agent, :add_caller_to_queue, :initiate_voicemail,
+  delegate :connect_caller_to_agent, :add_caller_to_queue, :initiate_voicemail, :block_incoming_call,
           :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers, :to => :call_initiator
-  delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call,
+  delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
            :to => :call_actions
 
   def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
@@ -28,25 +28,29 @@ class Freshfone::CallFlow
   def resolve_request
     return initiate_recording if params[:record]
     return trigger_ivr_flow if params[:preview]
-
-    outgoing? ? outgoing : incoming_or_ivr
+    outgoing if outgoing?
+    blacklisted? ? block_call : incoming_or_ivr
   end
 
   def incoming
     transfered ? register_call_transfer(outgoing_transfer) : register_incoming_call
-
     if available_agents.any?
       connect_caller_to_agent
     elsif all_agents_busy?
       add_caller_to_queue(hunt_options)
     else 
       initiate_voicemail('offline')
-    end
+    end  
   end
-
+  
   def outgoing
     register_outgoing_call
     return initiate_outgoing
+  end
+
+  def block_call
+    register_blocked_call
+    return block_incoming_call
   end
 
   def call_users_in_group(performer_id)
@@ -129,6 +133,12 @@ class Freshfone::CallFlow
 
     def outgoing?
       params[:To].blank?
+    end
+
+    def blacklisted?
+      # blacklist = current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
+      # blacklist.include? params[:From]
+      current_account.freshfone_blacklist_numbers.find_by_number(params[:From])
     end
 
     def find_user_with_id(performer_id, freshfone_user=nil)

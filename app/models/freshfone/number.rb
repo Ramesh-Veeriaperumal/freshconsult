@@ -111,7 +111,7 @@ class Freshfone::Number < ActiveRecord::Base
 
 	def renew
 		begin
-			if account.freshfone_credit.renew_number(rate)
+			if account.freshfone_credit.renew_number(rate, id)
 				update_attributes(:next_renewal_at => 
 								self.next_renewal_at.advance(:months => 1))
 			else

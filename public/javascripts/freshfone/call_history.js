@@ -4,6 +4,7 @@ var setLocationIfUnknown;
 	"use strict";
 	var $freshfoneCallHistory = $('.fresfone-call-history'),
 		$filterSortForm = $('#SortFilterCalls'),
+		$add_to_blacklist = $('.add_to_blacklist'),
 		$filterCondition = $filterSortForm.find('[rel=filter]'),
 		$callHistoryBody = $freshfoneCallHistory.find(".list-page-body"),
 		$currentPageNumber = $filterSortForm.find("input[name=page]"),
@@ -140,6 +141,15 @@ var setLocationIfUnknown;
 		freshfoneendcall.number = "+" + $(this).data("number");
 		freshfoneendcall.date = $(this).data("date");
 		freshfoneendcall.showEndCallForm();
+	});
+
+
+	$freshfoneCallHistory.on('click', '.add_to_blacklist', function (ev) {
+        $('#open-blacklist-confirmation').trigger('click');
+        $('#blacklist-confirmation .modal-title').text('Are you Sure to block ' + $(this).data('number') + '?');
+        $('#blacklist-confirmation .Blacklist_Number').text($(this).data('number'));
+        $('#blacklist_number_number').val($(this).data('number'));
+
 	});
 
 	

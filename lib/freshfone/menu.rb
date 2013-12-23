@@ -7,7 +7,7 @@ class Freshfone::Menu < Tree::TreeNode
 	@@blacklist_attributes = [:menu_options, :ivr, :options, :avatar, :attachments,
 														:children, :children_hash].map{|v| "@#{v}".to_sym }
 	delegate :account, :has_new_attachment?, :find_menu, :perform_call, :attachments,
-					 :voice_type, :to => :ivr
+					 :voice_type, :freshfone_number_id, :to => :ivr
 
 	# name is used as unique identifier by rubyTree and so name is set value of menu_id
   def initialize(menu)
@@ -73,7 +73,7 @@ class Freshfone::Menu < Tree::TreeNode
 			say_verb(r, "Please enter a valid option.") if options[:invalid]
 			preview_alert_message(r) if options[:preview_alert]
 			has_options? ? menu_gather(r) : ivr_message(r)
-			r.Redirect "#{status_url}?ivr_status=true&preview=#{preview?}", :method => "POST"
+			r.Redirect "#{status_url}?ivr_status=true&preview=#{preview?}&number_id=#{freshfone_number_id}", :method => "POST"
 		end
 		[:twiml, twiml.text]
 	end

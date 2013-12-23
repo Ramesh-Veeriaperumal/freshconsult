@@ -94,6 +94,28 @@
 		width:35px;
 		height:35px;
 	}
+	.freshfone_customer{
+		&:hover{
+			.add_to_blacklist{
+				display: block;
+			}
+		}
+	}
+	.add_to_blacklist{
+			position: absolute;
+			top: 6px;
+			left: 8px;
+			z-index: 3;
+			display: none;
+
+	}
+	.remove_blacklist{
+			position: absolute;
+			top: 6px;
+			left: 8px;
+			z-index: 3;
+			display: block;
+	}
 	.ff-user-location {
 		font-size: 12px;
 		margin-top: 4px;
