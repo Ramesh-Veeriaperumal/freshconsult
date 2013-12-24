@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
   
   skip_before_filter :check_privilege, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
@@ -67,7 +68,10 @@ class Solution::CategoriesController < ApplicationController
         format.json { render :json => @category, :status => :created, :location => @category }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Solution category creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @category.errors})
+        }
       end
     end
   end
@@ -82,7 +86,10 @@ class Solution::CategoriesController < ApplicationController
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Solution category update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @category.errors})
+        }
       end
     end
   end
@@ -145,5 +152,21 @@ class Solution::CategoriesController < ApplicationController
     
     def folder_scope
       :folders
+    end
+
+    def RecordNotFoundHandler
+      respond_to do |format|
+        format.html {
+          flash[:notice] = I18n.t(:'flash.category.page_not_found')
+          redirect_to solution_categories_path
+        }
+        if params[:error] == "new"
+          result = "Record Not Found"
+          http_code = Error::HttpErrorCode::HTTP_CODE[:not_found]
+          format.any(:xml, :json) {
+            api_responder({:message => result ,:http_code => http_code, :error_code => "Not found"})
+          }
+        end
+      end
     end
 end

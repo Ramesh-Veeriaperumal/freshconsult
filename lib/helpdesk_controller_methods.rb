@@ -44,7 +44,10 @@ module HelpdeskControllerMethods
   def create_error
     respond_to do |format|
       format.html { render :action => :new }
-      format.xml  { render :xml => @item.errors }
+      http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity]
+      format.any(:xml, :json) {
+        api_responder({:message => "Ticket creation failed" , :http_code => http_code, :error_code => "Unprocessable Entity", :errors => @item.errors})
+      }
       format.widget { 
         flash[:error] = "Error in creating the ticket. Try again later."
         render :action=>:create_ticket_status, :layout => "widgets/contacts"
