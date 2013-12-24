@@ -71,7 +71,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 			account.freshfone_other_charges.create(
 				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_purchase],
 				:debit_payment => freshfone_number.rate,
-				:freshfone_number => freshfone_number)
+				:freshfone_number_id => freshfone_number.id)
 		end
 		
 		def address_certification_request(freshfone_number, account)
