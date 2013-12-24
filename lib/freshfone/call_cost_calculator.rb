@@ -67,8 +67,10 @@ class Freshfone::CallCostCalculator
 			current_call.root.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
 			current_account.freshfone_credit.update_credit(total_charge) if total_charge > 0
 			#Otherbilling for preview & Message_records
-			current_account.freshfone_credit.other_charges(total_charge, 
-			args[:billing_type], args[:number_id]) unless args[:billing_type].blank? 
+			current_account.freshfone_other_charges.create(
+				:debit_payment => total_charge,
+				:action_type => args[:billing_type],
+				:freshfone_number_id => args[:number_id]) unless args[:billing_type].blank? 
 		end
 		
 		def call_sid
