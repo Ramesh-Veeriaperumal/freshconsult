@@ -2921,6 +2921,7 @@ en:
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
+    exporting: Exporting
     export_tickets: "Export Tickets"
     delete_btn: Delete
     status: Status
