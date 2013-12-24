@@ -278,8 +278,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     options[:include] = [:nested_ticket_fields]
     options[:except] = [:account_id]
     options[:methods] = [:choices]
-    p "choice type"
-    p field_type
     options[:methods] = [:nested_choices] if field_type = "nested_field"
     json_str = super options
     json_str
