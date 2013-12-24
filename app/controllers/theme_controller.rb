@@ -1,54 +1,72 @@
-class ThemeController < SupportController
+class ThemeController < ApplicationController
 
-	before_filter :theme_colors, :merged_scss
 	prepend_before_filter :set_http_cache_headers
+	caches_action :index, :cache_path => :cache_key
 
-	# Precautionary settings override
-	ALLOWED_THEME_OPTIONS = %w( bg_color header_color help_center_color footer_color 
-								tab_color tab_hover_color
-								btn_background btn_primary_background 
-								baseFont baseFontFamily textColor headingsFont headingsFontFamily headingsColor
-								linkColor linkColorHover inputFocusRingColor nonResponsive )
+	THEME_COMPASS_SETTINGS 	= { :syntax => :scss, 
+								:always_update => true, 
+								:style => :compressed }	
 
-	def index		
-		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compressed)
-		_options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
-
-		engine = Sass::Engine.new("#{@theme_colors} #{@default_custom_css}", _options)
-
-		@output_css = engine.render
-
+	def index
 		respond_to do |format|
-		  format.css  { render :text => @output_css, :content_type => "text/css" }
+		  	format.css  { render :text => compile_scss, :content_type => "text/css" }
 		end
 	end
 
 	private
 
-		def theme_colors			
-			@theme_colors = color_preferences.map{ |k, p| (p.present? && ALLOWED_THEME_OPTIONS.include?(k.to_s)) ? "$#{k}:#{p};" : "" }.join("")
-		end
-
-		def color_preferences
-			preferences = current_portal.template.preferences
-			preferences = current_portal.template.get_draft.preferences if preview? && current_portal.template.get_draft
-			preferences || []
-		end
-
-		def merged_scss	
-			@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
-			@default_custom_css = "#{@default_custom_css}\r\n #{custom_scss}"
-		end	    
-
-		def custom_scss
-			return "" unless feature?(:css_customization)
-			custom_css = current_portal.template.custom_css.to_s
-			custom_css = current_portal.template.get_draft.custom_css.to_s if preview? && current_portal.template.get_draft
-			custom_css || ""
+		def scoper_cache_key
+			[scoper.updated_at.to_i, scoper.id].join("/") if(scoper.respond_to?(:updated_at))
 		end
 
 		def set_http_cache_headers
 			expires_in 10.years, :public => true
 		end
 
+		def compile_scss(scss = scss_template)
+			_opts = Compass.configuration.to_sass_engine_options.merge(THEME_COMPASS_SETTINGS)
+
+			# Appending the theme load path as partial scss includes 
+			# will be from the root src dir when reading from a file
+			_opts[:load_paths] << theme_load_path
+
+			Sass::Engine.new(scss, _opts).render
+		end
+		
+	protected
+
+		def cache_key_url
+			"#{self.class::THEME_TIMESTAMP}/#{scoper_cache_key}#{request.request_uri}"
+		end
+
+		def theme_load_path
+			@theme_load_path ||= "#{RAILS_ROOT}/public/src"	
+		end
+
+		def scss_template
+			_output = []
+
+			# Getting settings from model pref
+			_output << theme_settings(scoper.preferences) if(scoper.respond_to?(:preferences))
+
+			# Appending Data from base css file 
+			_output << read_scss_file(self.class::THEME_URL) if(File.exists?(self.class::THEME_URL))
+
+			# Appending custom css if it is a portal theme
+			_output << scoper.custom_css if(feature?(:css_customization) && scoper.respond_to?(:custom_css))
+
+			_output.join("")
+		end	
+
+		def theme_settings(settings)
+			@theme_settings ||= self.class::THEME_ALLOWED_OPTS.map { |k|
+				settings[k].present? ? "$#{k}:#{settings[k]};" : ""
+			}
+		end
+
+		def read_scss_file(file_url)
+			@theme_template ||= render_to_string(:file => file_url)
+		end
+
+		
 end

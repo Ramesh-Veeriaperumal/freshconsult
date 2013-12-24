@@ -456,11 +456,9 @@
   end
   # Savage Beast route config entries ends from here
 
-  # Removing the home as it is redundant route to home - by venom  
-  # map.resources :home, :only => :index 
   # Theme for the support portal
-  map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
-  map.connect "/helpdesk/theme.:format", :controller => 'helpdesk_theme', :action => :index
+  map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
+  map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|
