@@ -1,5 +1,6 @@
 var setCallDuration;
-var setLocationIfUnknown;
+var setLocationIfUnknown,
+	blockNumber;
 (function ($) {
 	"use strict";
 	var $freshfoneCallHistory = $('.fresfone-call-history'),
@@ -24,6 +25,13 @@ var setLocationIfUnknown;
 			$(this).html(country);
 		});
 	};
+	
+	blockNumber = function (number) {
+		var $blockedNumbers = $freshfoneCallHistory.find('.blacklist[data-number="' + number + '"]')
+			.removeClass('blacklist')
+			.addClass('blacklisted');
+		$blockedNumbers.find('.blacklist-toggle').attr('title', freshfone.unblockNumberText);
+	}
 
 	function getFilterData() {
 		var condition, container, operator, values;
@@ -144,15 +152,33 @@ var setLocationIfUnknown;
 	});
 
 
-	$freshfoneCallHistory.on('click', '.add_to_blacklist', function (ev) {
-        $('#open-blacklist-confirmation').trigger('click');
-        $('#blacklist-confirmation .modal-title').text('Are you Sure to block ' + $(this).data('number') + '?');
-        $('#blacklist-confirmation .Blacklist_Number').text($(this).data('number'));
-        $('#blacklist_number_number').val($(this).data('number'));
-
+	$freshfoneCallHistory.on('click', '.blacklist', function (ev) {
+		$('#open-blacklist-confirmation').trigger('click');
+		$('#blacklist-confirmation .modal-title')
+			.text('Are you Sure to block ' + $(this).data('number') + '?');
+		$('#blacklist-confirmation .Blacklist_Number')
+			.text($(this).data('number'));
+		$('#blacklist_number_number').val($(this).data('number'));
 	});
 
-	
+	$freshfoneCallHistory.on('click', '.blacklisted', function (ev) {
+		var number = $(this).data('number');
+
+		$.ajax({
+			url: '/freshfone/blacklist_number/destroy/' + number,
+			method: 'POST',
+			async: true,
+			success: function (data) {
+				var $unblockedNumbers = $freshfoneCallHistory
+																.find('.blacklisted[data-number="+' + number + '"]')
+																.removeClass('blacklisted')
+																.addClass('blacklist');
+				$unblockedNumbers.find('.blacklist-toggle').attr('title', freshfone.blockNumberText);
+			}
+		});
+	});
+
+
 	$(document).ready(function () {
 		setCallDuration();
 		setLocationIfUnknown();

@@ -29,8 +29,6 @@ module Freshfone::CallHistoryHelper
 
 	def call_status_title(call)
 		case call.call_status
-		when Freshfone::Call::CALL_STATUS_HASH[:blocked]
-			t('freshfone.call_status.blocked')
 		when Freshfone::Call::CALL_STATUS_HASH[:'no-answer']
 			(call.incoming? ? t('freshfone.call_status.missedcall') : t('freshfone.call_status.noanswer'))
 		else
@@ -39,8 +37,8 @@ module Freshfone::CallHistoryHelper
 		end
 	end
 
-	def blocked_number(blacklist_array, number)
-		blacklist_array.include? number
+	def blocked_number?(number)
+		@blacklist_numbers.include? number
 	end
 
 	def country_name(country_code)

@@ -101,21 +101,17 @@
 			}
 		}
 	}
-	.add_to_blacklist{
-			position: absolute;
-			top: 6px;
-			left: 8px;
-			z-index: 3;
-			display: none;
-
+	.blacklist-toggle {
+		position: absolute;
+		top: 6px;
+		left: 8px;
+		z-index: 3;
+		display: block;
 	}
-	.remove_blacklist{
-			position: absolute;
-			top: 6px;
-			left: 8px;
-			z-index: 3;
-			display: block;
+	.blacklist .blacklist-toggle {
+		background:none;
 	}
+	
 	.ff-user-location {
 		font-size: 12px;
 		margin-top: 4px;

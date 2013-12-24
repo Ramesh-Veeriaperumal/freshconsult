@@ -14,12 +14,11 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 			params = freshfone_call.params || {}
 			freshfone_call.call_sid = params[:CallSid]
 
-			case freshfone_call.call_type
-         			when Freshfone::Call::CALL_TYPE_HASH[:blocked]
-         				blocked_customer_data(freshfone_call, params) 
-         			else
-								freshfone_call.incoming? ? incoming_customer_data(freshfone_call, params) : 
-																	outgoing_customer_data(freshfone_call, params)
+			if freshfone_call.blocked?
+				blocked_customer_data(freshfone_call, params) 
+			else
+				freshfone_call.incoming? ? incoming_customer_data(freshfone_call, params) : 
+				outgoing_customer_data(freshfone_call, params)
 			end
 		end
 
@@ -33,7 +32,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 			}
 		end
 
-			def blocked_customer_data(freshfone_call, params)
+		def blocked_customer_data(freshfone_call, params)
 			freshfone_call.customer_number = params[:From]
 			freshfone_call.call_status = Freshfone::Call::CALL_STATUS_HASH[:blocked]
 			freshfone_call.customer_data = {

@@ -3,6 +3,8 @@
 	if (typeof freshfone === "undefined") { freshfone = {}; }
 	freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH = '<%= custom_search_freshfone_call_history_path %>';
 	freshfone.CALL_HISTORY_CHILDREN_PATH = '<%= children_freshfone_call_history_path %>';
+	freshfone.blockNumberText = '<%= t('freshfone.call_history.block_number') %>';
+	freshfone.unblockNumberText = '<%= t('freshfone.call_history.unblock_number') %>';
 <% end %>
 
 <%= include_cloudfront_js :'360player' %>
