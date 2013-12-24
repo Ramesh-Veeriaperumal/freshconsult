@@ -27,9 +27,6 @@
 				ev.preventDefault(); 
 				alert("<%= t('account.same_language_alert')%>");
 				}
-		    if ((jQuery("#edit_form").valid()) && (jQuery('.portal_url').val() != "")) {
-		        totango.track("CNAME Updated", "Portal Customization");
-	      	}
     	});
 	}); 
 <% end %>
