@@ -4594,7 +4594,7 @@ en:
     call_status:
       default: ""
       completed: "Completed"
-      blocked: "BlackListed"
+      blocked: "Blacklisted"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4659,6 +4659,8 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      block_number: "Block"
+      unblock_number: "Unblock"
     ticket:
       recording: "Freshfone Recording"
       ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 

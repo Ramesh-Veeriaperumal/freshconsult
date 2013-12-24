@@ -68,8 +68,10 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 		def update_freshfone_credit(freshfone_number, account)
 			account.freshfone_credit.update_credit(freshfone_number.rate)
-			account.freshfone_credit.other_billing(freshfone_number.rate, 
-				Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_purchase], freshfone_number.id)
+			account.freshfone_other_charges.create(
+				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_purchase],
+				:debit_payment => freshfone_number.rate,
+				:freshfone_number_id => freshfone_number.id)
 		end
 		
 		def address_certification_request(freshfone_number, account)

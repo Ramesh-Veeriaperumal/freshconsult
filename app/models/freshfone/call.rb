@@ -34,7 +34,7 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :queued,	'queued',	6 ],
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
-		[ :blocked, 'Black listed', 9 ]
+		[ :blocked, 'blocked', 9 ]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -42,12 +42,8 @@ class Freshfone::Call < ActiveRecord::Base
 	CALL_STATUS_STR_HASH = Hash[*CALL_STATUS.map { |i| [i[0].to_s, i[2]] }.flatten]
 
 	CALL_TYPE = [
-		[ :default, 'default', 0 ],
 		[ :incoming,	'incoming',	1 ],
-		[ :outgoing,	'outgoing',	2 ],
-		[ :transfered,	'transfered',	3 ],
-		[ :conference,	'conference',	4 ],
-		[ :blocked, 'Black listed', 5 ]
+		[ :outgoing,	'outgoing',	2 ]
 	]
 
 	CALL_TYPE_HASH = Hash[*CALL_TYPE.map { |i| [i[0], i[2]] }.flatten]

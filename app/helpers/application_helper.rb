@@ -880,12 +880,12 @@ module ApplicationHelper
 	end
 	
 	def call_direction_class(call)
-		if call.incoming?
+		if call.blocked?
+			"blocked_call_icon"
+		elsif call.incoming?
 			call.completed? ? "incoming_call_icon" : "incoming_missed_call_icon"
 		elsif call.outgoing?
 			call.completed? ? "outgoing_call_icon" : "outgoing_missed_call_icon"
-		elsif call.blocked?
-			"blocked_call_icon"
 		end
 	end
 # helpers for fresfone callable links -- ends
