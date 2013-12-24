@@ -8302,53 +8302,6 @@ p.imp{
 	color: #fff !important;
 }
 
-#bulk_canned_response_holder{
-	overflow: hidden;
-	float: left;
-	width: 650px;
-	min-height: 100px;
-	margin-top: 10px;
-}
-
-#bulk-response-group{
-	overflow: hidden;
-	float: left;
-	width: 650px;
-}
-
-#content-bulk{
-	min-height: 30px;
-	overflow: hidden;
-}
-
-#bulktickets{
-	float: left;
-	width: 667px;
-	margin-right: 32px;
-}
-
-#bulkfull{
-width: 1375px;
-height: auto;
-}
-
-#bulkcontent{
-	overflow: hidden;
-}
-
-#canned_show{
-	z-index: 100;
-}
-
-#no-response{
-	z-index: 1000;
-	font-size: 13px;
-	font-weight: bold;
-	margin-left: 7px;
-	cursor: pointer;
-	text-decoration: none;
-}
-
 #search-list{
 	.small-list-right{
 		width: 100%;
@@ -9576,7 +9529,29 @@ height: auto;
 	select {
 		width: auto;
 	}
+	.ui-datepicker-trigger{
+		margin-left: -21px;
+		padding-top: 1px;
+	}
+	.tree_line{
+		border-left: 1px #ccc dotted;
+		position: relative;
+		left: 5px;
+		margin-bottom: 3px;
+		.level:last-child{
+			padding-bottom: 0px;
+		}
+	}
 }
+#export{
+	top: 2%;
+	margin-top: 0;
+
+	.modal-body{
+		max-height: 460px;
+	}
+}
+
 //overriding class check box in ticket show page sidebar 
 #TicketProperties{
 	.edit_helpdesk_ticket{
