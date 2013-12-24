@@ -137,7 +137,6 @@ javascripts:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
@@ -385,7 +384,6 @@ javascripts:
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/utils.js
     - public/javascripts/hackz.js

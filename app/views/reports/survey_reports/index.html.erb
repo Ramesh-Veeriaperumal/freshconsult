@@ -31,7 +31,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 						[current_account.survey.title("neutral").capitalize , :neutral], [current_account.survey.title("unhappy").capitalize , :unhappy]]
 					%>
 					<span style="font-weight:bold;">Sort By</span>
-					<%=select_tag :sort_filter , options_for_select(sort_by_arr, sort_option) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+					<%=select_tag :sort_filter , options_for_select(sort_by_arr, sort_option) ,{ :multiple => false, :class => "filter_item"}%>
 			</div>
 		</div>
 </div>

@@ -11,7 +11,12 @@ body {
 .request_details .details table{
     table-layout: fixed;
 }
-
+.select2{
+		width: 100%;
+		li {
+			width: auto !important;	
+		}
+	}
 /* PAGE AREA STYLE */ 
 
 .sp_border{
