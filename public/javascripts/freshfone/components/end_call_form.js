@@ -98,8 +98,6 @@ var FreshfoneEndCall;
 								(email || "New requester") + "</span>"; 
 			},
 			formatSelection: function (result) {
-				console.log('result');
-				console.log(result);
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
 				self.$requesterName.val(result.value);
@@ -118,7 +116,7 @@ var FreshfoneEndCall;
 
 		self.$endCallSaveTicketButton.bind('click', function (ev) {
 			ev.preventDefault();
-			
+
 			self.saveToExisting();
 		});
 
@@ -126,16 +124,16 @@ var FreshfoneEndCall;
 		self.$endCall.find('.end_call_cancel').click(function (ev) {
 			ev.preventDefault();
 
-			self.doNothing();
+			self.hideEndCallForm();
 		});
 
-		$('#end_call').on('hide', function (ev) {
-			self.doNothing(true);
+		$(document).on('hide', '#end_call', function (ev) {
+			self.resetDefaults();
 		});
 	};
 	
 	FreshfoneEndCall.prototype = {
-		init: function (dontHideModal) {
+		init: function () {
 			this.callSid = "";
 			this.callStartTime = "";
 			this.callerId = null;
@@ -144,24 +142,23 @@ var FreshfoneEndCall;
 			this.number = null;
 			this.date = null;
 			this.inCall = true;
-			if (!dontHideModal) { this.hideEndCallForm(); }
+			this.convertedToTicket = false;
 			this.resetForm();
 		},
 		saveNewTicket: function () {
 			this.saveTicket(false);
-			if (this.inCall) {
-				this.freshfoneuser.resetStatusAfterCall();
-				this.freshfoneuser.bridgeQueuedCalls();
-				this.freshfonewidget.resetToDefaultState();
-				this.freshfonecalls.init();
-				this.freshfoneuser.init();
-			}
-			this.init();
+			this.hideEndCallForm();
 		},
+		
 		saveToExisting: function () {
 			this.saveTicket(true);
+			this.hideEndCallForm();
+		},
+		resetDefaults: function () {
 			if (this.inCall) {
 				this.freshfoneuser.resetStatusAfterCall();
+				if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
+
 				this.freshfoneuser.bridgeQueuedCalls();
 				this.freshfonewidget.resetToDefaultState();
 				this.freshfonecalls.init();
@@ -169,19 +166,9 @@ var FreshfoneEndCall;
 			}
 			this.init();
 		},
-		doNothing: function (dontHideModal) {
-			if (this.inCall) {
-				this.freshfoneuser.resetStatusAfterCall();
-				this.freshfoneuser.updatePresence();
-				
-				this.freshfoneuser.bridgeQueuedCalls();
-				this.freshfonewidget.resetToDefaultState();
-				this.freshfonecalls.init();
-				this.freshfoneuser.init();
-			}
-			this.init(dontHideModal);
-		},
+		
 		saveTicket: function (is_ticket) {
+			this.convertedToTicket = true;
 			this.ticket_notes = this.$endCallNote.val();
 
 			if (this.inCall) { this.getParams(); }

@@ -1,6 +1,5 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
-	include Carmen
 	set_table_name :freshfone_calls
 
 	serialize :customer_data, Hash
@@ -123,7 +122,7 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def can_log_agent?
-		(incoming? || transfered?) && !noanswer?
+		incoming? && !noanswer?
 	end
 	
 	def ticket_notable?
@@ -193,13 +192,13 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def country_name(country_code)
-			if Country.coded(country_code).name === "United States"
+			if Carmen::Country.coded(country_code).name === "United States"
 				country_code
 			else
-		        country= Country.coded(country_code)
-		        country ? country.name : nil
-		    end
-    	end
+				country = Carmen::Country.coded(country_code)
+				country ? country.name : nil
+			end
+		end
 
 		def description_html
 			customer_temp = "<b>" + customer_name + "</b> (" + caller_number + ")" if valid_customer_name?

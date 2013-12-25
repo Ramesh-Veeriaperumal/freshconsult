@@ -4594,7 +4594,7 @@ en:
     call_status:
       default: ""
       completed: "Completed"
-      blocked: "Blacklisted"
+      blocked: "Blocked"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4640,7 +4640,7 @@ en:
       sort_by: "Sort by:"
       block_number: "Block"
       cancel: "Cancel"
-      blackList_comfirmation: "will be banned !"
+      blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
       received_date: "Date"

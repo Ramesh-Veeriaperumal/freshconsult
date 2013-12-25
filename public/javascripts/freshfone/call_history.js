@@ -154,26 +154,35 @@ var setLocationIfUnknown,
 
 	$freshfoneCallHistory.on('click', '.blacklist', function (ev) {
 		$('#open-blacklist-confirmation').trigger('click');
-		$('#blacklist-confirmation .modal-title')
-			.text('Are you Sure to block ' + $(this).data('number') + '?');
-		$('#blacklist-confirmation .Blacklist_Number')
-			.text($(this).data('number'));
+		$('#blacklist-confirmation .number')
+			.text('+' + $(this).data('number'));
 		$('#blacklist_number_number').val($(this).data('number'));
 	});
 
 	$freshfoneCallHistory.on('click', '.blacklisted', function (ev) {
 		var number = $(this).data('number');
-
+		$freshfoneCallHistory.find('.blacklisted[data-number="+' + number + '"]')
+			.removeClass('blacklisted')
+			.addClass('blacklist')
+			.find('.blacklist-toggle')
+			.addClass('sloading loading-tiny');
 		$.ajax({
 			url: '/freshfone/blacklist_number/destroy/' + number,
 			method: 'POST',
 			async: true,
 			success: function (data) {
-				var $unblockedNumbers = $freshfoneCallHistory
-																.find('.blacklisted[data-number="+' + number + '"]')
-																.removeClass('blacklisted')
-																.addClass('blacklist');
-				$unblockedNumbers.find('.blacklist-toggle').attr('title', freshfone.blockNumberText);
+				$freshfoneCallHistory
+					.find('.blacklist[data-number="+' + number + '"] .blacklist-toggle')
+					.removeClass('sloading loading-tiny')
+					.attr('title', freshfone.blockNumberText);
+			},
+			error: function (data) {
+				$freshfoneCallHistory
+					.find('.blacklist[data-number="+' + number + '"]')
+					.addClass('blacklisted')
+					.removeClass('blacklist')
+					.find('blacklist-toggle')
+					.removeClass('sloading loading-tiny');
 			}
 		});
 	});

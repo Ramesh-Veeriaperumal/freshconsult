@@ -80,7 +80,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 .outgoing_missed_call_icon { @include freshfone-sprite(call-history-outgoing-miss); }
 .incoming_call_icon { @include freshfone-sprite(call-history-incoming); }
 .incoming_missed_call_icon { @include freshfone-sprite(call-history-incoming-miss); }
-.blocked_call_icon { @include freshfone-sprite(recentcall-incomplete); }
+.blocked_call_icon { @include freshfone-sprite(call-history-incomplete); }
 .recent_call_entry {
 	.incoming_call_icon, .incoming_missed_call_icon {
 		@include freshfone-sprite(recentcall-incoming);

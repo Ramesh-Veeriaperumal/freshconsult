@@ -3,7 +3,8 @@
 		data-submit-label="<%= t('freshfone.call_history.block_number') %>"
 		data-close-label="<%= t('freshfone.call_history.cancel') %>"
 		data-target="#blacklist-confirmation"
-		data-width="400"></button>
+		data-title="Block number"
+		data-width="340"></button>
 
 <div id="blacklist-confirmation" class="hide">
 	<% form_remote_for :blacklist_number,
@@ -11,6 +12,7 @@
 							:method => 'post' do |f| %>
 		<%= f.hidden_field :number %>
 	<% end %>
+	<%= t('freshfone.call_history.blacklist_confirmation') %> <span class="number"></span>?
 </div>
 
 <% unless calls.blank? %>

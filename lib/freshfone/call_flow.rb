@@ -28,7 +28,7 @@ class Freshfone::CallFlow
   def resolve_request
     return initiate_recording if params[:record]
     return trigger_ivr_flow if params[:preview]
-    outgoing if outgoing?
+    return outgoing if outgoing?
     blacklisted? ? block_call : incoming_or_ivr
   end
 
