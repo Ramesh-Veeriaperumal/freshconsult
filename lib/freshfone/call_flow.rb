@@ -148,7 +148,7 @@ class Freshfone::CallFlow
     end
 
     def load_available_and_busy_agents
-      return load_users_from_group(current_number.group_id) if current_number.group_id.present? && (current_number.group_id != 0)
+      return load_users_from_group(current_number.group_id) if current_number.group.present?
       load_all_available_and_busy_agents
     end
 
