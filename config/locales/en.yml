@@ -4661,6 +4661,7 @@ en:
       helpdesk: Helpdesk
       block_number: "Block"
       unblock_number: "Unblock"
+      block_number_title: "Block number"
     ticket:
       recording: "Freshfone Recording"
       ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 

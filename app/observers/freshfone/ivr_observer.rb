@@ -88,8 +88,19 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 		end
 
 		def map_attachments(freshfone_ivr)
+			freshfone_ivr.simple_message? ? map_attachment_simple_message(freshfone_ivr) :
+																				map_attachments_ivr(freshfone_ivr)
+		end
+		
+		def map_attachment_simple_message(freshfone_ivr)
+			return if freshfone_ivr.welcome_message.blank?
+			attachment = (freshfone_ivr.attachments_hash || {})["welcome_message"]
+			freshfone_ivr.welcome_message.attachment_id = attachment.id if attachment.present?
+		end
+		
+		def map_attachments_ivr(freshfone_ivr)
 			(freshfone_ivr.attachments_hash || {}).each_pair do |menu_id, attachment|
-				freshfone_ivr.menus_hash[menu_id].attachment_id = attachment.id
+				freshfone_ivr.menus_hash[menu_id.to_i].attachment_id = attachment.id
 			end
 		end
 		
