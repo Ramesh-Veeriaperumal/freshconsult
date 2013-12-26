@@ -5765,6 +5765,11 @@ a.close{
 			padding: 0 15px;
 			color:#666;
 			font-size: 14px;
+            // To Overwrite Pattern css
+            border: 0;
+            line-height: inherit;
+            width: auto;
+            margin-bottom: 0;
 		}
 
 		.fields {
