@@ -1,16 +1,13 @@
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
-	
+
 	<td class="user_details width1">
-		<div class="freshfone_customer relative" align="left" data-number='<%= call.customer_number %>'>
-			<% if blocked_number(@blacklist_numbers, call.customer_number) %>
-				<%= link_to " ", destroy_freshfone_blacklist_number_path(call.customer_number), 
-							:class => "icon-ban-circle tooltip remove_blacklist",
-							"data-number"=> call.customer_number,
-							:title => "Unblock", :method => :post %>
-			<% else %>
-				<%= link_to " ", "#", :class => "icon-ban-circle tooltip add_to_blacklist", 
-							"data-number" => call.customer_number, :title => "Block" %>
-			<% end %>
+		<div class="freshfone_customer relative tooltip
+<%= blocked_number?(call.customer_number) ? "blacklisted" : "blacklist" %>"
+			align="left" data-number='<%= call.customer_number.gsub(/^\+/, '') %>'>
+				<%= content_tag :span, "", :class => "icon-ban-circle tooltip blacklist-toggle",
+					:"data-number" => call.customer_number,
+					:title => blocked_number?(call.customer_number) ? t('freshfone.call_history.unblock_number') :
+																														t('freshfone.call_history.block_number') %>
 	
 			<%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
 			

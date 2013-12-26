@@ -92,8 +92,9 @@ body#gcgadget {
 		.commentbox-blue {
 			background: #666;
 			border: 1px #fff solid;
-			@include text-shadow(-1px -1px 0px #093b73);
-			&:hover {
+			color:#fff;
+			@include text-shadow(none);
+			&:visited, &:hover {
 				color: #FFF;
 			}
 
@@ -121,11 +122,6 @@ body#gcgadget {
 
 		.conversation_thread .conversation {
 			margin : 0px;
-		}
-
-		.commentbox-blue {
-			background : #666;
-			border-color : #eee;
 		}
 
 		.avatar-wrap-collapse {

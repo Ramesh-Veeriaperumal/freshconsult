@@ -193,6 +193,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       Sharding.run_on_all_slaves do
         accounts << affiliate.subscriptions.filter_with_state(state)
       end
+      accounts.flatten.uniq{|x| x.account_id}
     end
 
     def activity_info(account_id)

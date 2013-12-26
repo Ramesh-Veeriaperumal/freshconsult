@@ -11,12 +11,16 @@ module Freshfone::NodeEvents
       node_uri = "#{FreshfoneConfig['node_url'][Rails.env]}/freshfone/#{channel}"
       options = {
         :body => message, 
-        :headers => { "X-Freshfone-Session" => freshfone_node_session }
+        :headers => { "X-Freshfone-Session" => freshfone_node_session },
+        :timeout => 15
       }
       HTTParty.post(node_uri, options)  
+    rescue Timeout::Error
+      Rails.logger.error "Timeout trying to publish freshfone event for #{node_uri}. \n#{options.inspect}"
+      NewRelic::Agent.notice_error(e, {:description => "Error publishing data to Freshfone node"})
     rescue Exception => e
       Rails.logger.error "Error publishing data to Freshfone Node. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      NewRelic::Agent.notice_error(e, {:description => "Error publishing data to Freshfone node"})
+      NewRelic::Agent.notice_error(e, {:description => "Timeout trying to publish freshfone event for #{node_uri}"})
     end
   end
 
@@ -36,12 +40,10 @@ module Freshfone::NodeEvents
   end
 
   def publish_online
-    add_to_set(agent_availability_key, @user.id)
     notify_socket(presence_channel("agent_available"), online_message)
   end
 
   def publish_offline
-    remove_value_from_set(agent_availability_key, @user.id)
     notify_socket(presence_channel("agent_unavailable"), offline_message)
   end
 
@@ -62,14 +64,14 @@ module Freshfone::NodeEvents
     end
     
     def online_message
-      { :members => integ_set_members(agent_availability_key).count,
+      { :members => @user.account.freshfone_users.raw_online_agents.count,
         :user => { :id => @user.id,
                    :name => @user.name, 
                    :avatar => user_avatar(@user)}}
     end
 
     def offline_message
-      { :members => integ_set_members(agent_availability_key).count,
+      { :members => @user.account.freshfone_users.raw_online_agents.count,
         :user => { :id => @user.id }}
     end
 

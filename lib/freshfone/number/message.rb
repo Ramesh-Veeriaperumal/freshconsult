@@ -32,7 +32,10 @@ class Freshfone::Number::Message
 	end
 	
 	def group
-		@group ||= account.groups.find_by_id(group_id)
+		@group ||= begin
+			return if group_id.blank? || group_id == 0
+			account.groups.find_by_id(group_id)
+		end
 	end
 	
 	def speak(xml_builder)

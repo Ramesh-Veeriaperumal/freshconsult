@@ -27,6 +27,7 @@ class Freshfone::User < ActiveRecord::Base
 		:message => "%{value} is not a valid incoming preference"
 
 	named_scope :online_agents, :conditions => { :presence => PRESENCE[:online] }, :include => :user
+	named_scope :raw_online_agents, :conditions => { :presence => PRESENCE[:online] }
 	named_scope :online_agents_with_avatar,
 							:conditions => { :presence => PRESENCE[:online] },
 							:include => [:user => [:avatar]]
