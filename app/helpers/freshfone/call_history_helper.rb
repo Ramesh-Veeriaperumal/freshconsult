@@ -38,7 +38,7 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def blocked_number?(number)
-		@blacklist_numbers.include? number
+		@blacklist_numbers.include? number.gsub(/^\+/, '')
 	end
 
 	def country_name(country_code)

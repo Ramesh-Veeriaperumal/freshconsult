@@ -161,7 +161,7 @@ var setLocationIfUnknown,
 
 	$freshfoneCallHistory.on('click', '.blacklisted', function (ev) {
 		var number = $(this).data('number');
-		$freshfoneCallHistory.find('.blacklisted[data-number="+' + number + '"]')
+		$freshfoneCallHistory.find('.blacklisted[data-number="' + number + '"]')
 			.removeClass('blacklisted')
 			.addClass('blacklist')
 			.find('.blacklist-toggle')
@@ -172,13 +172,13 @@ var setLocationIfUnknown,
 			async: true,
 			success: function (data) {
 				$freshfoneCallHistory
-					.find('.blacklist[data-number="+' + number + '"] .blacklist-toggle')
+					.find('.blacklist[data-number="' + number + '"] .blacklist-toggle')
 					.removeClass('sloading loading-tiny')
 					.attr('title', freshfone.blockNumberText);
 			},
 			error: function (data) {
 				$freshfoneCallHistory
-					.find('.blacklist[data-number="+' + number + '"]')
+					.find('.blacklist[data-number="' + number + '"]')
 					.addClass('blacklisted')
 					.removeClass('blacklist')
 					.find('blacklist-toggle')

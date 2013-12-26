@@ -138,7 +138,7 @@ class Freshfone::CallFlow
     def blacklisted?
       # blacklist = current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
       # blacklist.include? params[:From]
-      current_account.freshfone_blacklist_numbers.find_by_number(params[:From])
+      current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))
     end
 
     def find_user_with_id(performer_id, freshfone_user=nil)

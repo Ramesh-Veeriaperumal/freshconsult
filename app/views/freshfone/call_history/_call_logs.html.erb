@@ -3,7 +3,7 @@
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip
 <%= blocked_number?(call.customer_number) ? "blacklisted" : "blacklist" %>"
-			align="left" data-number='<%= call.customer_number %>'>
+			align="left" data-number='<%= call.customer_number.gsub(/^\+/, '') %>'>
 				<%= content_tag :span, "", :class => "icon-ban-circle tooltip blacklist-toggle",
 					:"data-number" => call.customer_number,
 					:title => blocked_number?(call.customer_number) ? t('freshfone.call_history.unblock_number') :
