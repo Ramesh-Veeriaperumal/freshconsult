@@ -1,7 +1,10 @@
-// var console, io, freshfone.current_account, freshfoneuser, freshfone.current_user;
 var FreshfoneSocket;
 (function ($) {
     "use strict";
+  var MAX_RECONNECT_ATTEMPTS = 10,
+    reconnectionAttempts = 1,
+    reconnectTimeout,
+    reconnectFailureDelay = 2*60*1000; // in milliseconds
   FreshfoneSocket = function (freshfonecalls) {
     this.className = "FreshfoneSocket";
     this.$dashboard = $('.freshfone_dashboard');
@@ -26,16 +29,20 @@ var FreshfoneSocket;
   };
   
   FreshfoneSocket.prototype = {
-    init: function () {
+    init: function (freshfoneuser) {
       var self = this;
+      this.freshfoneuser = freshfoneuser;
       this.connect();
-      this.freshfone_socket_channel.on('connect', function () {
-        console.log("Connecting to Freshfone");
-        // self.registerCallbacks();
-      });
       self.registerCallbacks();
-      this.freshfone_socket_channel.on('disconnect', function () {
-        console.log("DisConnecting from Freshfone");
+      this.freshfone_socket_channel.on('reconnect', function () {
+        clearTimeout(reconnectTimeout);
+        self.freshfoneuser.reset_presence_on_reconnect();
+      });
+      this.freshfone_socket_channel.on('reconnecting', function () {
+        if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
+          reconnectionAttempts = 1;
+          reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.socket.reconnect(); }, reconnectFailureDelay);
+        }
       });
     },
     $transferSearch: $('#transfer_call .search'),
@@ -50,7 +57,8 @@ var FreshfoneSocket;
     },
     connect: function () {
       this.freshfone_socket_channel = io.connect(this.freshfone_nodejs_url(), 
-                                            {'sync disconnect on unload': false});
+                                            {'sync disconnect on unload': false,
+                                            'max reconnection attempts': MAX_RECONNECT_ATTEMPTS});
     },
     freshfone_nodejs_url: function(){
       var query = freshfone.current_user+'&|&'+freshfone.current_account+'&|&'+$.cookie('helpdesk_node_session');

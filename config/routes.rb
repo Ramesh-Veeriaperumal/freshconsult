@@ -79,7 +79,7 @@
                                                        :children => :get, :recent_calls => :get }
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
-                           :refresh_token => :post, :in_call => :post }
+                           :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,

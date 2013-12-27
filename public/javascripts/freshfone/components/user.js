@@ -10,7 +10,7 @@ var FreshfoneUser;
 		this.availableOnPhone = freshfone.available_on_phone;
 
 		this.freshfonesocket = freshfonesocket;
-		this.freshfonesocket.init();
+		this.freshfonesocket.init(this);
 		this.cached = {};
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
@@ -48,7 +48,12 @@ var FreshfoneUser;
 		userPresenceDomChanges: function () {
 			this.online ? this.onlineUserPresenceDomChanges() : this.offlineUserPresenceDomChanges();
 		},
-		
+		reset_presence_on_reconnect: function () {
+			$.ajax({
+				type: "POST",
+				url: "/freshfone/users/reset_presence_on_reconnect"
+			});
+		},
 		onlineUserPresenceDomChanges: function () {
 			this.$userPresenceImage()
 				.addClass('header-icons-agent-ffone-on')

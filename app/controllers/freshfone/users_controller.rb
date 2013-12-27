@@ -20,6 +20,12 @@ class Freshfone::UsersController < ApplicationController
 		}
 	end
 
+	def reset_presence_on_reconnect
+		render :json => {
+			:status => @freshfone_user.busy? ? false : reset_presence
+		}
+	end
+
 	def availability_on_phone
 		@freshfone_user.available_on_phone = params[:available_on_phone]
 		respond_to do |format|
