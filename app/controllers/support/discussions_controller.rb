@@ -1,20 +1,20 @@
 class Support::DiscussionsController < SupportController
 	# before_filter :scoper
+	before_filter :load_category, :only => :show
 	before_filter { |c| c.requires_feature :forums }
 	before_filter { |c| c.check_portal_scope :open_forums }
 	before_filter :allow_monitor?, :only => [:user_monitored]
 
 	def index
 		respond_to do |format|
-	      format.html { set_portal_page :discussions_home }
+			format.html { set_portal_page :discussions_home }
 	    end
 	end
 
 	def show
-		# @category = current_portal.forum_categories.find_by_id(params[:id])
 		respond_to do |format|
-	      format.html { set_portal_page :discussions_home }
-	    end
+			format.html { set_portal_page :discussions_category }
+		end
 	end	
 
     def user_monitored
@@ -31,4 +31,14 @@ class Support::DiscussionsController < SupportController
 	    end
   	end
 
-end
+  	private
+		def load_category
+			if current_portal.main_portal
+				@category = current_portal.forum_categories.find_by_id(params[:id])
+				(raise ActiveRecord::RecordNotFound and return) if @category.blank? || params[:id] !~ /^[0-9]*$/
+			else
+				@category = current_portal.forum_category
+				(raise ActiveRecord::RecordNotFound and return) if @category[:id].to_s != params[:id].to_s
+			end
+		end
+end 

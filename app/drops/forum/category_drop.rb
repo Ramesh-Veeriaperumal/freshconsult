@@ -13,7 +13,7 @@ class Forum::CategoryDrop < BaseDrop
   end
   
   def url
-    support_discussions_path
+    support_discussion_path(@source)
   end
 
   def forums_count
