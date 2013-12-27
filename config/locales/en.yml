@@ -4594,7 +4594,7 @@ en:
     call_status:
       default: ""
       completed: "Completed"
-      blocked: "BlackListed"
+      blocked: "Blocked"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4640,7 +4640,7 @@ en:
       sort_by: "Sort by:"
       block_number: "Block"
       cancel: "Cancel"
-      blackList_comfirmation: "will be banned !"
+      blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
       received_date: "Date"
@@ -4659,6 +4659,9 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      block_number: "Block"
+      unblock_number: "Unblock"
+      block_number_title: "Block number"
     ticket:
       recording: "Freshfone Recording"
       ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 
@@ -4920,7 +4923,7 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Please wait"
+    fetching: "Fetching..."
     loading: "Loading..."
     last_7_days: "Last 7 days"
     last_30_days: "Last 30 days"

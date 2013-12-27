@@ -14,7 +14,9 @@ module SupportTicketControllerMethods
   end
 
   def new    
-    set_portal_page :submit_ticket
+    respond_to do |format|
+      format.html { set_portal_page :submit_ticket }
+    end
   end
   
   def create

@@ -28,7 +28,7 @@ class Freshfone::CallFlow
   def resolve_request
     return initiate_recording if params[:record]
     return trigger_ivr_flow if params[:preview]
-    outgoing if outgoing?
+    return outgoing if outgoing?
     blacklisted? ? block_call : incoming_or_ivr
   end
 
@@ -138,7 +138,7 @@ class Freshfone::CallFlow
     def blacklisted?
       # blacklist = current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
       # blacklist.include? params[:From]
-      current_account.freshfone_blacklist_numbers.find_by_number(params[:From])
+      current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))
     end
 
     def find_user_with_id(performer_id, freshfone_user=nil)
@@ -148,7 +148,7 @@ class Freshfone::CallFlow
     end
 
     def load_available_and_busy_agents
-      return load_users_from_group(current_number.group_id) if current_number.group_id.present? && (current_number.group_id != 0)
+      return load_users_from_group(current_number.group_id) if current_number.group.present?
       load_all_available_and_busy_agents
     end
 

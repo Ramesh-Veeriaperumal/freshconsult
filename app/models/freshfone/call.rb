@@ -1,6 +1,5 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
-	include Carmen
 	set_table_name :freshfone_calls
 
 	serialize :customer_data, Hash
@@ -34,7 +33,7 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :queued,	'queued',	6 ],
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
-		[ :blocked, 'Black listed', 9 ]
+		[ :blocked, 'blocked', 9 ]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -42,12 +41,8 @@ class Freshfone::Call < ActiveRecord::Base
 	CALL_STATUS_STR_HASH = Hash[*CALL_STATUS.map { |i| [i[0].to_s, i[2]] }.flatten]
 
 	CALL_TYPE = [
-		[ :default, 'default', 0 ],
 		[ :incoming,	'incoming',	1 ],
-		[ :outgoing,	'outgoing',	2 ],
-		[ :transfered,	'transfered',	3 ],
-		[ :conference,	'conference',	4 ],
-		[ :blocked, 'Black listed', 5 ]
+		[ :outgoing,	'outgoing',	2 ]
 	]
 
 	CALL_TYPE_HASH = Hash[*CALL_TYPE.map { |i| [i[0], i[2]] }.flatten]
@@ -127,7 +122,7 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def can_log_agent?
-		(incoming? || transfered?) && !noanswer?
+		incoming? && !noanswer?
 	end
 	
 	def ticket_notable?
@@ -197,13 +192,13 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def country_name(country_code)
-			if Country.coded(country_code).name === "United States"
+			if Carmen::Country.coded(country_code).name === "United States"
 				country_code
 			else
-		        country= Country.coded(country_code)
-		        country ? country.name : nil
-		    end
-    	end
+				country = Carmen::Country.coded(country_code)
+				country ? country.name : nil
+			end
+		end
 
 		def description_html
 			customer_temp = "<b>" + customer_name + "</b> (" + caller_number + ")" if valid_customer_name?

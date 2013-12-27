@@ -114,6 +114,8 @@ gem "xml-simple", "~> 1.1.2"
 gem "erubis", "2.7.0"
 gem "rails_xss", "0.4.0"
 
+gem "ey_config"
+
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 end

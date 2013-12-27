@@ -3,7 +3,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
-	before_filter :fetch_blacklist, :only => [:index, :custom_search]
+	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")

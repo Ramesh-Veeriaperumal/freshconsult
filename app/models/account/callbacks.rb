@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
 	before_create :set_default_values, :set_shard_mapping
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :update_crm, :backup_changes, :make_shard_mapping_inactive
+  before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain
@@ -55,10 +55,6 @@ class Account < ActiveRecord::Base
 
   	def add_to_billing
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
-    end
-
-    def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
     def create_shard_mapping
