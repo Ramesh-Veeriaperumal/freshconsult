@@ -47,6 +47,21 @@
 	</div>
 		<div class="row-fluid" id="list-page-subheader">
 			<%= render :partial => 'call_history_sub_header' %>
+			<button class="hide" id="open-blacklist-confirmation"
+				rel="freshdialog"
+				data-submit-label="<%= t('freshfone.call_history.block_number') %>"
+				data-close-label="<%= t('freshfone.call_history.cancel') %>"
+				data-target="#blacklist-confirmation"
+				data-title="<%= t('freshfone.call_history.block_number_title') %>"
+				data-width="340"></button>
+			<div id="blacklist-confirmation" class="hide">
+				<% form_remote_for :blacklist_number,
+										:url => url_for(:action => 'create', :controller => 'freshfone/blacklist_number'),
+										:method => 'post' do |f| %>
+					<%= f.hidden_field :number %>
+				<% end %>
+				<%= t('freshfone.call_history.blacklist_confirmation') %> <span class="number"></span>?
+			</div>
 		</div>
 	</div>
 	<div class="list-page-body">

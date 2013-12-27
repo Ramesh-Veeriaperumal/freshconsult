@@ -94,22 +94,24 @@
 		width:35px;
 		height:35px;
 	}
-	.freshfone_customer{
-		&:hover{
-			.add_to_blacklist{
+	.freshfone_customer {
+		&:hover {
+			.blacklist-toggle.blacklist{
 				display: block;
 			}
 		}
 	}
 	.blacklist-toggle {
 		position: absolute;
-		top: 6px;
+		top: 20px;
 		left: 8px;
 		z-index: 3;
+		width: 16px;
+		height: 16px;
 		display: block;
 	}
-	.blacklist .blacklist-toggle {
-		background:none;
+	.blacklist-toggle.blacklist {
+		display: none;
 	}
 	
 	.ff-user-location {

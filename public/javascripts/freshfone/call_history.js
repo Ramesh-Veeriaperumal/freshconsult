@@ -30,7 +30,7 @@ var setLocationIfUnknown,
 		var $blockedNumbers = $freshfoneCallHistory.find('.blacklist[data-number="' + number + '"]')
 			.removeClass('blacklist')
 			.addClass('blacklisted');
-		$blockedNumbers.find('.blacklist-toggle').attr('title', freshfone.unblockNumberText);
+		$blockedNumbers.attr('title', freshfone.unblockNumberText);
 	}
 
 	function getFilterData() {
@@ -163,17 +163,16 @@ var setLocationIfUnknown,
 		var number = $(this).data('number');
 		$freshfoneCallHistory.find('.blacklisted[data-number="' + number + '"]')
 			.removeClass('blacklisted')
-			.addClass('blacklist')
-			.find('.blacklist-toggle')
-			.addClass('sloading loading-tiny');
+			.addClass('blacklisting sloading loading-tiny');
 		$.ajax({
 			url: '/freshfone/blacklist_number/destroy/' + number,
 			method: 'POST',
 			async: true,
 			success: function (data) {
 				$freshfoneCallHistory
-					.find('.blacklist[data-number="' + number + '"] .blacklist-toggle')
-					.removeClass('sloading loading-tiny')
+					.find('.blacklist-toggle.blacklisting[data-number="' + number + '"]')
+					.addClass('blacklist')
+					.removeClass('sloading loading-tiny blacklisting')
 					.attr('title', freshfone.blockNumberText);
 			},
 			error: function (data) {
@@ -181,7 +180,6 @@ var setLocationIfUnknown,
 					.find('.blacklist[data-number="' + number + '"]')
 					.addClass('blacklisted')
 					.removeClass('blacklist')
-					.find('blacklist-toggle')
 					.removeClass('sloading loading-tiny');
 			}
 		});
