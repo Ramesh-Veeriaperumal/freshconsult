@@ -22,12 +22,16 @@ class Support::Solutions::ArticlesController < SupportController
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
 
+    render_404 and return unless @article.published?
+
     @page_title = @article.article_title
     @page_description = @article.article_description
     @page_keywords = @article.article_keywords
     @page_canonical = support_article_url(@article)
 
-    set_portal_page :article_view   
+    respond_to do |format|
+      format.html { set_portal_page :article_view }
+    end
   end
    
   def thumbs_up

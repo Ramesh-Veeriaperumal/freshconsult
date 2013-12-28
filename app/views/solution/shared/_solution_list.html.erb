@@ -32,7 +32,11 @@
 <% unless (folder.articles.size == 0) %>
 	<ol class="artical_list" id="article_list">
 		<% folder.articles.each do |article| %>
-			<li><%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %></li>
+			<li>
+				<% unless article.published? %>
+					<span class="label"><%= t('solutions.status.draft')%></span>
+				<% end %>
+				<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %></li>
 		<% end %>
 	</ol>
 <% else %>

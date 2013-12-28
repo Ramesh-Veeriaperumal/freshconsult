@@ -1,6 +1,6 @@
 <script type="text/javascript" charset="utf-8">
   function lookup(searchString, callback) { 
-    new Ajax.Request('<%= url %>?q='+searchString, 
+    new Ajax.Request('<%= url %>?q='+encodeURIComponent(searchString),
                         { parameters: {name: searchString, rand: (new Date()).getTime()},
                           onSuccess:  function(response) {
                                         var choices = $A();

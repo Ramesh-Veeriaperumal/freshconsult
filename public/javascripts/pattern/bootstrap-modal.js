@@ -32,6 +32,11 @@
     this.options = options
     this.$element = $(element)
       .delegate('[data-dismiss="modal"]', 'click.dismiss.modal', $.proxy(this.hide, this))
+    
+    if(this.$element.data("source")){
+      this.$source = this.$element.data("source");
+    }
+
     this.options.remote && this.$element.find('.modal-body').load(this.options.remote)
   }
 
@@ -86,6 +91,8 @@
       }
 
     , hide: function (e) {
+        if(this.options.destroyOnClose) this.destroy()
+
         e && e.preventDefault()
 
         var that = this
@@ -192,6 +199,18 @@
           callback()
         }
       }
+    
+    // Invokes a call to the freshdialog wrapper after hiding the model
+    , destroy: function(e){
+        if(this.$source){
+          this.$source.data("freshdialog").destroy();
+        }
+        this.$element
+            .off("dismiss.modal")
+            .removeData("model")
+            .removeData("source")
+            .remove();
+      }
   }
 
 
@@ -210,9 +229,10 @@
   }
 
   $.fn.modal.defaults = {
-      backdrop: true
-    , keyboard: true
-    , show: true
+      backdrop:         true
+    , keyboard:         true
+    , show:             true
+    , destroyOnClose:   false
   }
 
   $.fn.modal.Constructor = Modal

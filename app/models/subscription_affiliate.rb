@@ -25,6 +25,11 @@ class SubscriptionAffiliate < ActiveRecord::Base
       :commission => 0.20, 
       :merchant_id => 40631
     },
+
+    :freshdesk_partner => {
+      :name => "Freshdesk Partner",
+      :affiliate_param => "FDRES"
+    },
     
     :grasshopper => {
       :name => "Grasshopper",
@@ -52,7 +57,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
   }
   
   AFFILIATE_PARAMS = AFFILIATES.collect { |affiliate, details| details[:affiliate_param] }
-
+  
   
   class << self
 
@@ -91,6 +96,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
           find_by_token(AFFILIATES[:flexjobs][:token])
         when dpu_subscription?(affiliate_param)
           find_by_token(AFFILIATES[:dpu][:token])
+        when freshdesk_partner_subscription?(affiliate_param)
+          fetch_freshdesk_partner(account)
         else
           nil
       end
@@ -135,7 +142,17 @@ class SubscriptionAffiliate < ActiveRecord::Base
         create( :name => AFFILIATES[:shareasale][:name],
                 :rate => AFFILIATES[:shareasale][:commission],
                 :token => affiliate_id )
-      end      
+      end
+
+      def fetch_freshdesk_partner(account)
+        data = fetch_data_from_metrics(account.conversion_metric)
+        params = Rack::Utils.parse_query((URI.parse(data[:uri]).query))
+        shared_secret = AppConfig["reseller_portal"]["shared_secret"]
+        secret_key = Digest::SHA1.hexdigest(shared_secret+params["TIMESTAMP"])
+        token = Encryptor.decrypt(Base64.decode64(params["FDRES"]), :key => secret_key)
+        
+        find_by_token(token)
+      end
   end  
 
   def set_discounts

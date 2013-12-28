@@ -89,6 +89,11 @@ twilio:
   account_sid: "AC751e0912b032d91ae3935348844da32b"
   auth_token: "db923d6625f1dbc66ca53353cbf09458"
 
+reseller_portal:
+  user_name: "freshdesk"
+  password: "FDRP$6M"
+  shared_secret: "D7D5892B53FBB8DC4DB53D1DA6156"
+
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
 

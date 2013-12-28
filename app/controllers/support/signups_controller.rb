@@ -10,7 +10,9 @@ class Support::SignupsController < SupportController
   end
 
   def new
-    set_portal_page :user_signup
+    respond_to do |format|
+      format.html { set_portal_page :user_signup }
+    end
   end
   
   def create

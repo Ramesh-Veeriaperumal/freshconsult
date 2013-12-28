@@ -71,8 +71,6 @@ var FreshfoneWidget;
 				}
 			});
       $(window).on("unload", function () {
-      	var callerIdNumber = "value";
-		localStorage.setItem("callerIdNumber", callerIdNumber);
         self.freshfonecalls.hangup();
         self.freshfoneuser.resetStatusAfterCall();
         self.freshfoneuser.updatePresence(false);

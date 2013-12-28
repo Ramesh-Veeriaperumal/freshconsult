@@ -1,5 +1,5 @@
 class Freshfone::Filters::CallFilter < Wf::Filter
-	ALLOWED_ORDERING = [ 'created_at', 'call_duration', 'cost' ]
+	ALLOWED_ORDERING = [ 'created_at', 'call_duration', 'call_cost' ]
 	def results
 		@results ||= begin
 			handle_empty_filter! 

@@ -14,7 +14,7 @@ body, .feedback-wrapper{
 	}
 }
 .fw-thankyou-page{
-	.modal-header,.modal-footer{
+	.modal-header{
 		display: none;
 	}
 }
@@ -144,10 +144,16 @@ body, .feedback-wrapper{
 	.embedded-panel, .embedded-footer{
 		background-color: transparent;
 		box-shadow: none;
+		border: 0;
+		background: none;
 	}
 	.embedded-search-input {
 		margin-top: 50px;
 	}
+}
+.fw-thankyou-page .embedded-footer .copyright{
+	width: 100%;
+	text-align: center;
 }
 
 //Search Panel Style
@@ -304,10 +310,10 @@ body, .feedback-wrapper{
 }
 
 .attach-wrapper{
-	.attach-link{ 
-		padding-left: 18px; position: relative; 
+	.attach-link{
+		padding-left: 18px; position: relative;
 		cursor: pointer;
-		color: $linkColor; // for feedback widget screenr 
+		color: $linkColor; // for feedback widget screenr
 		&:hover{
 			color: $linkColorHover;
 		}

@@ -48,7 +48,7 @@
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
 				  <div class="list-item" id="TWEET_DIV_${id_str}" data-tweet-id="${id_str}">
 						<div class="preview-pic">
-							<img src="${user.profile_image_url}" />
+							<img src="${user.profile_image_url}" alt="${user.screen_name}" />
 						</div>
 						<a href="http://twitter.com/${user.screen_name}" target="_blank" class="username">${user.screen_name}</a>
 						<div class="primary-text autolink">${text}</div>

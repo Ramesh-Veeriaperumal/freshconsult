@@ -30,6 +30,7 @@
 	freshfone.IVR_TURN_OFF_MESSAGE = '<%= t('freshfone.admin.ivr.turn_off') %>';
 	freshfone.IVR_TURN_ON_MESSAGE = '<%= t('freshfone.admin.ivr.turn_on') %>';
 	freshfone.number_message_settings_json = <%= @number.to_json.html_safe %>;
+	freshfone.currentNumberId = <%= @number.id %>;
 	freshfone.ivr_prefix = {
 		name_prefix : "freshfone_ivr[ivr_data][${menuId}]",
 		id_prefix : "freshfone_ivr_ivr_data_${menuId}",

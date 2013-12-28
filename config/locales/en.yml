@@ -20,6 +20,7 @@ en:
   referral: "Referral credit"
   status_deleted: "Status deleted"
   success: "Success"
+  feedback_widget: Feedback Widget
   failure: "Error ..."
   amount: "Amount"
   paid_with: "Paid with"
@@ -1135,6 +1136,10 @@ en:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
         blank_message: "%{num_type} cannot be blank"
+        add_blacklist_success: "Number blocked successfully"
+        add_blacklist_failure: "Number could not be blocked"
+        remove_blacklist_success: "Number unblocked successfully"
+        remove_blacklist_failure: "Number could not be unblocked"
 
     profile: 
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
@@ -1934,10 +1939,13 @@ en:
   agent:
     full_time_agent: Full-Time Agent
     occasional_agent: Occasional Agent
+    deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
     type: Agent Type
+    delete_agent: Delete Agent
+    delete_agent_confirmation: The deleted agent will be available as a contact in the helpdesk. Are you sure you want to proceed?
     agent_restored: The agent has been restored
     status:
       active: Active
@@ -2018,7 +2026,7 @@ en:
     browse_community: Browse Community
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
-  zendesk_url_info: e.g:- http://acme.zendesk.com
+  zendesk_url_info: e.g:- http://acme.zendesk.com or https://acme.zendesk.com
   zendesk_url_expired: 'Note: Make sure that the url has not expired'
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
@@ -2050,6 +2058,9 @@ en:
   import_data: Date Imported
   contacts:
     confirm_delete: Are you sure you want to delete this user?
+    deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."
+    delete_confirmation: When you delete a contact, future communication from the contact will be marked as SPAM. Are you sure you want to proceed?
+    delete_contact: Delete Contact
     add_new_user: Add a new user
     search_by: Search by Name or Email or Tags...
     new: New Contact
@@ -2728,6 +2739,7 @@ en:
     next: "Next Ticket"
     previous: "Previous Ticket"
     expand: "Expand"
+    view_ticket: "View Ticket"
     insert: "Insert"
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -4582,6 +4594,7 @@ en:
     call_status:
       default: ""
       completed: "Completed"
+      blocked: "Blocked"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4625,9 +4638,12 @@ en:
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
+      block_number: "Block"
+      cancel: "Cancel"
+      blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
-      received_date: "Received Date"
+      received_date: "Date"
       duration: "Duration"
       cost: "Cost"
       asc: "Ascending"
@@ -4643,10 +4659,13 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      block_number: "Block"
+      unblock_number: "Unblock"
+      block_number_title: "Block number"
     ticket:
       recording: "Freshfone Recording"
-      desc: "Ticket created from Freshfone. Requester Location: %{location}. " 
-      agent: "Agent: %{agent}. <br/ >"
+      ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 
+      agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number: "Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"

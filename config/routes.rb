@@ -77,8 +77,9 @@
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get, 
                                                        :children => :get, :recent_calls => :get }
+    freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
-                           :refresh_token => :post, :in_call => :post }
+                           :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
@@ -460,6 +461,7 @@
   # map.resources :home, :only => :index 
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
+  map.connect "/helpdesk/theme.:format", :controller => 'helpdesk_theme', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|

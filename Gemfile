@@ -55,7 +55,8 @@ gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.gi
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-gem "newrelic_rpm","3.5.3.25"
+
+gem "newrelic_rpm","3.5.8.72"
 
 gem "faraday" , "0.8.7"
 gem "twitter" , "~> 4.6.2"
@@ -80,6 +81,8 @@ gem 'rforce'
 gem 'after_commit', "1.0.11"
 
 gem 'chargebee', "~> 1.1.7"
+
+gem 'encryptor', '1.1.3'
 
 gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
@@ -110,6 +113,8 @@ gem "xml-simple", "~> 1.1.2"
 
 gem "erubis", "2.7.0"
 gem "rails_xss", "0.4.0"
+
+gem "ey_config"
 
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git"

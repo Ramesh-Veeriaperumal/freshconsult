@@ -58,13 +58,19 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
-    set_portal_page :new_topic
+    respond_to do |format|
+      format.html { set_portal_page :new_topic }
+    end
   end
 
 
   def edit
-    set_portal_page :new_topic
-    render :new
+    respond_to do |format|
+      format.html { 
+        set_portal_page :new_topic 
+        render :new
+      }
+    end    
   end
   
   def create

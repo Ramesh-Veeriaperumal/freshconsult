@@ -33,12 +33,12 @@ class SocialErrorsMailer < ActionMailer::Base
   end
 
 
-  def facebook_exception(options)
+  def facebook_exception(options, params=nil)
     recipients RECIPIENTS
     from       "rachel@freshdesk.com"
     subject    "Critical Error - Facebook Exception"
     sent_on    Time.now
-    body(:error =>options)
+    body(:error =>options, :params => params)
     content_type "text/html"
   end
 end

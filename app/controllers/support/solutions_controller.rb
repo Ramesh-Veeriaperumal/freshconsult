@@ -18,7 +18,9 @@ class Support::SolutionsController < SupportController
 	end
 
 	def show
-		set_portal_page :solution_category
+		respond_to do |format|
+	      format.html { set_portal_page :solution_category }
+	    end
 	end
 
 	private

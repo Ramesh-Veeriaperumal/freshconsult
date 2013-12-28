@@ -114,7 +114,7 @@ class Freshfone::IvrsController < ApplicationController
 		
 		def build_attachments_hash
 			(params[nscname][:attachments] || {}).inject({}) do |hash, (k, v)|
-				hash[k.to_i] = @ivr.attachments.build(:content => v[:content],
+				hash[k] = @ivr.attachments.build(:content => v[:content],
 					:description => v[:description], :account => current_account) unless v[:content].blank?
 				hash
 			end

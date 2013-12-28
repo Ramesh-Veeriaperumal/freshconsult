@@ -9,14 +9,16 @@ module TicketConstants
   # DATE_RANGE_CSV = 31
 
   SOURCES = [
-    [ :email,      'email',            1 ],
-    [ :portal,     'portal_key',       2 ],
-    [ :phone,      'phone',            3 ],
-    [ :forum,      'forum_key',        4 ],
-    [ :twitter,    'twitter_source',   5 ],
-    [ :facebook,   'facebook_source',  6 ],
-    [ :chat,       'chat',             7 ],
-    [ :mobi_help,  'mobi_help',        8 ]
+    [ :email,            'email',            1 ],
+    [ :portal,           'portal_key',       2 ],
+    [ :phone,            'phone',            3 ],
+    [ :forum,            'forum_key',        4 ],
+    [ :twitter,          'twitter_source',   5 ],
+    [ :facebook,         'facebook_source',  6 ],
+    [ :chat,             'chat',             7 ],
+    [ :mobi_help,        'mobi_help',        8 ],
+    [ :feedback_widget,  'feedback_widget',  9 ]
+  
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }

@@ -35,6 +35,11 @@ module Admin::FreshfoneHelper
 		end
 	end
 
+	def self.country_name(country_code)
+		country= Country.coded(country_code)
+		country ? country.name : nil
+	end
+
 	def default_state_option
 		"<option value=''>All States</option>" 
 	end

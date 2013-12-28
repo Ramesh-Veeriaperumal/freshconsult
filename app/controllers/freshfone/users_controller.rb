@@ -8,13 +8,21 @@ class Freshfone::UsersController < ApplicationController
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
+	skip_before_filter :check_privilege, :if => :requested_from_node?
+	before_filter :validate_presence_from_node, :if => :requested_from_node?
 	before_filter :load_or_build_freshfone_user
 	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
 
 	def presence 
 		#Does not update presence when user is available on phone and disconnect is fired from node
 		render :json => { 
-			:update_status => params[:client_disconnect] ? reset_client_presence : reset_presence
+			:update_status => params[:node_user] ? reset_client_presence : reset_presence
+		}
+	end
+
+	def reset_presence_on_reconnect
+		render :json => {
+			:status => @freshfone_user.busy? ? false : reset_presence
 		}
 	end
 
@@ -50,6 +58,7 @@ class Freshfone::UsersController < ApplicationController
 	
 	private
 		def load_or_build_freshfone_user
+			return node_user if requested_from_node?
 			@freshfone_user = current_user.freshfone_user || build_freshfone_user
 		end
 
@@ -88,4 +97,19 @@ class Freshfone::UsersController < ApplicationController
 		def check_for_bridged_calls
 			bridge_queued_call
 		end
+
+		def requested_from_node?
+			params[:node_user].present?
+		end
+
+		def validate_presence_from_node
+			generated_hash = Digest::SHA512.hexdigest("#{FreshfoneConfig["secret_key"][Rails.env]}::#{params[:node_user]}")
+			valid_user = request.headers["HTTP_X_FRESHFONE_SESSION"] == generated_hash
+			head :forbidden unless valid_user
+		end
+
+		def node_user
+			@freshfone_user = current_account.freshfone_users.find_by_user_id(params[:node_user])
+		end
+
 end

@@ -74,9 +74,9 @@ minimizable ||= false
 														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
 			<div class="details" id='<%= notedetails %>'>
-				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? %>
+				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
-					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? %>			
+					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>			
 					<%= note.body_html.html_safe %>
 				</div>
 			</div>

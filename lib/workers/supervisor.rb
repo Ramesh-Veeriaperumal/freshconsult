@@ -48,6 +48,7 @@ class Workers::Supervisor
   end
 
   def self.run
+    total_tickets = 0
     begin
       path = log_file
       supervisor_logger = custom_logger(path)
@@ -75,6 +76,7 @@ class Workers::Supervisor
           rule.trigger_actions ticket
           ticket.save!
         end
+        total_tickets += tickets.length
         rule_end_time = Time.now.utc
         rule_total_time = (rule_end_time - rule_start_time )
         log_format=logging_format(account,tickets.length,rule,rule_total_time)
@@ -91,5 +93,15 @@ class Workers::Supervisor
       total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
     end
-  end  
+    set_stats(account.id, total_tickets)
+  end
+
+  def self.set_stats(account_id, total_tickets)
+    current_time = Time.now.utc
+    redis_key = "stats:rake_tkts:supervisor:#{current_time.day}:#{account_id}:#{current_time}"
+    $stats_redis.set(redis_key, total_tickets)
+    $stats_redis.expire(redis_key,144000)
+  end
+
+
 end  

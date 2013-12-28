@@ -39,7 +39,7 @@
 		var embeddedWidget = jQuery("#widgetTypeThanks").val();
 		if(embeddedWidget == "embedded") {
 			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
-
+			jQuery(".feedback-wrapper").addClass("embedded-wrapper");
 			jQuery(".modal-body").addClass("embedded-body");
 			jQuery(".modal-panel").addClass("embedded-panel");
 			jQuery(".modal-footer").addClass("embedded-footer");

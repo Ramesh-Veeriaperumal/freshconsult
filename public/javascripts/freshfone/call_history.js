@@ -1,9 +1,11 @@
 var setCallDuration;
-var setLocationIfUnknown;
+var setLocationIfUnknown,
+	blockNumber;
 (function ($) {
 	"use strict";
 	var $freshfoneCallHistory = $('.fresfone-call-history'),
 		$filterSortForm = $('#SortFilterCalls'),
+		$add_to_blacklist = $('.add_to_blacklist'),
 		$filterCondition = $filterSortForm.find('[rel=filter]'),
 		$callHistoryBody = $freshfoneCallHistory.find(".list-page-body"),
 		$currentPageNumber = $filterSortForm.find("input[name=page]"),
@@ -23,6 +25,13 @@ var setLocationIfUnknown;
 			$(this).html(country);
 		});
 	};
+	
+	blockNumber = function (number) {
+		var $blockedNumbers = $freshfoneCallHistory.find('.blacklist[data-number="' + number + '"]')
+			.removeClass('blacklist')
+			.addClass('blacklisted');
+		$blockedNumbers.attr('title', freshfone.unblockNumberText);
+	}
 
 	function getFilterData() {
 		var condition, container, operator, values;
@@ -142,7 +151,41 @@ var setLocationIfUnknown;
 		freshfoneendcall.showEndCallForm();
 	});
 
-	
+
+	$freshfoneCallHistory.on('click', '.blacklist', function (ev) {
+		$('#open-blacklist-confirmation').trigger('click');
+		$('#blacklist-confirmation .number')
+			.text('+' + $(this).data('number'));
+		$('#blacklist_number_number').val($(this).data('number'));
+	});
+
+	$freshfoneCallHistory.on('click', '.blacklisted', function (ev) {
+		var number = $(this).data('number');
+		$freshfoneCallHistory.find('.blacklisted[data-number="' + number + '"]')
+			.removeClass('blacklisted')
+			.addClass('blacklisting sloading loading-tiny');
+		$.ajax({
+			url: '/freshfone/blacklist_number/destroy/' + number,
+			method: 'POST',
+			async: true,
+			success: function (data) {
+				$freshfoneCallHistory
+					.find('.blacklist-toggle.blacklisting[data-number="' + number + '"]')
+					.addClass('blacklist')
+					.removeClass('sloading loading-tiny blacklisting')
+					.attr('title', freshfone.blockNumberText);
+			},
+			error: function (data) {
+				$freshfoneCallHistory
+					.find('.blacklist[data-number="' + number + '"]')
+					.addClass('blacklisted')
+					.removeClass('blacklist')
+					.removeClass('sloading loading-tiny');
+			}
+		});
+	});
+
+
 	$(document).ready(function () {
 		setCallDuration();
 		setLocationIfUnknown();

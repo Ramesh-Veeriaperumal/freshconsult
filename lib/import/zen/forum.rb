@@ -1,5 +1,7 @@
 module Import::Zen::Forum
    
+ URL_REGEX = /^http(?:s)?\:\/\//
+
  class CategoryProp < Import::FdSax 
    element :name 
    element :description
@@ -86,8 +88,11 @@ module Import::Zen::Forum
        topic = forum.topics.build(topic_hash)
        topic.account_id = @current_account.id
        if topic.save
-          post_hash = topic_prop.to_hash.delete_if{|k, v| [:title,:stamp_type].include? k }.merge({:forum_id =>forum.id ,:user_id =>user.id ,
-                                                                                                     :body_html =>topic_prop.body })                                                                                        
+          post_hash = topic_prop.to_hash.delete_if{|k, v| [:title,:stamp_type].include? k }.merge({
+                                                                                                  :forum_id =>forum.id,
+                                                                                                  :user_id =>user.id,
+                                                                                                  :body_html => convert_inline_images(topic_prop.body) 
+                                                                                                  })                                                                                        
           post = topic.posts.build(post_hash)
           post.account_id = @current_account.id
           post.save
@@ -116,7 +121,11 @@ module Import::Zen::Forum
     unless post
       user = @current_account.all_users.find_by_import_id(post_prop.user_id)
       return unless user
-      post_hash = post_prop.to_hash.tap { |hs| hs.delete(:entry_id) }.merge({:user_id =>user.id ,:forum_id => topic.forum_id, :body_html =>post_prop.body})
+      post_hash = post_prop.to_hash.tap { |hs| hs.delete(:entry_id) }.merge({
+                                                                            :user_id =>user.id,
+                                                                            :forum_id => topic.forum_id,
+                                                                            :body_html => convert_inline_images(post_prop.body) 
+                                                                            })
       post = topic.posts.build(post_hash)
       post.account_id = @current_account.id
       post.save
@@ -156,10 +165,12 @@ def save_solution_article topic_prop
     sol_folder = @current_account.folders.find_by_import_id(topic_prop.forum_id)
     user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
     return unless user
-    article_hash = topic_prop.to_hash.delete_if{|k, v| [:body,:stamp_type,:forum_id].include? k }.merge({:user_id =>user.id ,
-                                                                                               :description => topic_prop.body,
-                                                                                               :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
-                                                                                               :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]})
+    article_hash = topic_prop.to_hash.delete_if{|k, v| [:body,:stamp_type,:forum_id].include? k }.merge({
+                                                                                                :user_id =>user.id,
+                                                                                                :description => convert_inline_images(topic_prop.body),
+                                                                                                :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
+                                                                                                :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
+                                                                                                })
     article = sol_folder.articles.build(article_hash)
     article.account_id = @current_account.id 
     article.save
@@ -177,4 +188,27 @@ def save_solution_article topic_prop
     article.update_attribute(:import_id , topic_prop.import_id )
   end
 end
+
+  def convert_inline_images  body
+    desc_html = Nokogiri::HTML(CGI.unescapeHTML(body))
+    desc_html.search('img').each do |img_tag|
+      unless URL_REGEX.match img_tag['src']
+        attachment = @current_account.attachments.build(
+                                            :content => inline_file(img_tag['src']), 
+                                            :description => "public",
+                                            :attachable_type => "Image Upload", 
+                                            :account_id => @current_account.id
+                                            )
+        attachment.save!
+        img_tag['src'] = attachment.content.url
+      end
+    end
+    desc_html.to_s
+  end
+
+  def inline_file url
+    image_url = "#{params[:zendesk][:url]}#{url}"
+    RemoteFile.new(image_url, username, password)
+  end
+
 end

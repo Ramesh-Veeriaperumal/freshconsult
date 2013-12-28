@@ -3,7 +3,7 @@ class Helpdesk::Note < ActiveRecord::Base
 	before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states, :notify_ticket_monitor
+  after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :increment_notes_counter
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_update :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_destroy :remove_es_document
@@ -154,4 +154,15 @@ class Helpdesk::Note < ActiveRecord::Base
         @model_changes = {:note_type => NOTE_TYPE[private]}
       end
     end
+
+    def increment_notes_counter
+      time = Time.now.utc
+      value = $stats_redis.incr "stats:tickets:#{time.day}:notes:#{time.hour}:#{user.id}:#{account.id}"
+      if value == 1
+        $stats_redis.expire "stats:tickets:#{time.day}:notes:#{time.hour}:#{user.id}:#{account.id}", 144000
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+    end
+
 end

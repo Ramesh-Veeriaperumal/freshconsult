@@ -1,4 +1,4 @@
-<%= image_tag fav_icon_url(item) %>
+<%= image_tag fav_icon_url(item), :alt => t('logo') %>
   <div class="thumb-file-upload">
     <% fields_for "#{field_name}[fav_icon_attributes]", item.fav_icon do |fav_icon_form| %>
       <div class="file-upload-wrap">

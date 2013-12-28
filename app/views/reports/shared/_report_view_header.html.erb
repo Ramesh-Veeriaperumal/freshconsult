@@ -3,7 +3,7 @@
     <div class="span12 report-header-content">
       <div class="span7">
         <% unless defined?(is_pdf) %>
-          <img src="/images/reports/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
+          <img src="/images/reports/report-icon.png" alt="<%= t('adv_reports.report')%>" class="vertical-alignment report-header-icon"/>
         <%end%>
         <div class="vertical-alignment report-inner-heading">
           <h1 class="lead" id="report_header_title"><%=@report_title%></h1>
