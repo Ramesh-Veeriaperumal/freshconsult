@@ -179,7 +179,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       return [] if accounts.empty? or accounts.count < start_index
 
       accounts[start_index..end_index].collect do |subscription|
-        Sharding.select_shard_of(subscription.account_id)
+        Sharding.select_shard_of(subscription.account_id) do
           SUBSCRIPTION.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
         end
       end
