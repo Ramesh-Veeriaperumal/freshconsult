@@ -157,9 +157,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def increment_notes_counter
       time = Time.now.utc
-      value = $stats_redis.incr "stats:tickets:#{time.day}:notes:#{time.hour}:#{user.id}:#{account.id}"
+      value = $stats_redis.incr "stats:tickets:#{time.day}:notes:#{time.hour}:#{self.user_id}:#{self.account_id}"
       if value == 1
-        $stats_redis.expire "stats:tickets:#{time.day}:notes:#{time.hour}:#{user.id}:#{account.id}", 144000
+        $stats_redis.expire "stats:tickets:#{time.day}:notes:#{time.hour}:#{self.user_id}:#{self.account_id}", 144000
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
