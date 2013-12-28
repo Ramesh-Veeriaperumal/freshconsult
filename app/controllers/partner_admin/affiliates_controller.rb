@@ -179,7 +179,9 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       return [] if accounts.empty? or accounts.count < start_index
 
       accounts[start_index..end_index].collect do |subscription|
-        SUBSCRIPTION.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+        Sharding.select_shard_of(subscription.account_id)
+          SUBSCRIPTION.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+        end
       end
     end
 
@@ -190,8 +192,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 
     def affiliate_accounts(affiliate, state)
       accounts = []
-      Sharding.run_on_all_slaves do
-        accounts << affiliate.subscriptions.filter_with_state(state)
+      accounts = Sharding.run_on_all_slaves do
+        affiliate.subscriptions.filter_with_state(state).find(:all)
       end
       accounts.flatten.uniq{|x| x.account_id}
     end
