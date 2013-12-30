@@ -4932,7 +4932,7 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Fetching..."
+    fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"
     last_30_days: "Last 30 days"
