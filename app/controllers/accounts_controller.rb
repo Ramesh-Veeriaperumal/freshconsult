@@ -47,7 +47,8 @@ class AccountsController < ApplicationController
    if @signup.save
       add_to_crm
       render :json => { :success => true, 
-      :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain) }, 
+      :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain), 
+      :account_id => @signup.account.id  }, 
       :callback => params[:callback]
     else
       render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 

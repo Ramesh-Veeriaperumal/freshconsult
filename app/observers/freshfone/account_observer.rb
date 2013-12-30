@@ -16,7 +16,7 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 	private
 		def initialize_subaccount_details(freshfone_account, account)
-			sub_account = TwilioMaster.client.accounts.create({ :friendly_name => account.name })
+			sub_account = TwilioMaster.client.accounts.create({ :friendly_name => subaccount_name(account) })
 			application = sub_account.applications.create({
 											:friendly_name => account.name,
 											:voice_url => "#{freshfone_account.host}/freshfone/voice", 
@@ -38,6 +38,10 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 			elsif freshfone_account.active?
 				freshfone_account.expires_on = nil
 			end
+		end
+
+		def subaccount_name(account)
+			"#{account.name.parameterize.underscore}_#{account.id}"
 		end
 
 end

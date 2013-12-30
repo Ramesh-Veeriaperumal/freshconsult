@@ -12,7 +12,7 @@ class Facebook::Core::Feed
     begin
       @feed=JSON.parse(feed)
       #Send the fb realtime data to Splunk for debugging
-      Monitoring::RecordMetrics.register(@feed)
+      Monitoring::RecordMetrics.register(@feed) unless @feed["counter"]
       convert_to_object if @feed
     rescue Exception => e
       Rails.logger.error("Failed in parsing to json")
@@ -46,14 +46,14 @@ class Facebook::Core::Feed
   #returns a string containing add or remove
   def meta_method_and_class
     verb_data = @entry_change["value"]["verb"].downcase if @entry_change["value"]["verb"]
-    @method = verb_data if VERB_LIST.include?(verb_data)
+    @method = VERB_LIST.include?(verb_data) ? verb_data : nil
     meta_class if @method
   end
 
   #returns a string containing type of feed is either status,post,comment
   def meta_class
     item_data = @entry_change["value"]["item"].downcase if @entry_change["value"]["item"]
-    @clazz = item_data if ITEM_LIST.include?(item_data)
+    @clazz = ITEM_LIST.include?(item_data) ? item_data : nil
   end
 
   def is_feed?

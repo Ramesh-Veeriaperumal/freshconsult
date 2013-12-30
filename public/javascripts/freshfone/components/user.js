@@ -10,7 +10,7 @@ var FreshfoneUser;
 		this.availableOnPhone = freshfone.available_on_phone;
 
 		this.freshfonesocket = freshfonesocket;
-		this.freshfonesocket.init();
+		this.freshfonesocket.init(this);
 		this.cached = {};
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
@@ -48,7 +48,12 @@ var FreshfoneUser;
 		userPresenceDomChanges: function () {
 			this.online ? this.onlineUserPresenceDomChanges() : this.offlineUserPresenceDomChanges();
 		},
-		
+		reset_presence_on_reconnect: function () {
+			$.ajax({
+				type: "POST",
+				url: "/freshfone/users/reset_presence_on_reconnect"
+			});
+		},
 		onlineUserPresenceDomChanges: function () {
 			this.$userPresenceImage()
 				.addClass('header-icons-agent-ffone-on')
@@ -193,7 +198,7 @@ var FreshfoneUser;
 			});
 		},
 
-		publishLiveCall: function () {
+		publishLiveCall: function (dontUpdateCallCount) {
 			var self = this;
 			self.setStatus(userStatus.BUSY);
 			$.ajax({
@@ -202,7 +207,8 @@ var FreshfoneUser;
 				data: { 'From': this.freshfonecalls.tConn.parameters.From,
 								'To': this.freshfonecalls.tConn.parameters.To,
 								'CallSid': this.freshfonecalls.getCallSid(),
-								'outgoing': this.freshfonecalls.isOutgoing() },
+								'outgoing': this.freshfonecalls.isOutgoing(),
+								'dont_update_call_count' : dontUpdateCallCount },
 				success: function (data) {
 					if (!data.update_status) {
 						self.status = self.previous_status;
@@ -211,7 +217,7 @@ var FreshfoneUser;
 					} },
 				error: function (data) { self.status = self.previous_status; }
 			});
-		},
+		}
 	};
 	
 }(jQuery));

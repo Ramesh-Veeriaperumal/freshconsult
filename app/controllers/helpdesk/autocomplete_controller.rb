@@ -3,7 +3,7 @@ class Helpdesk::AutocompleteController < ApplicationController
 	def requester
 		requesters = { :results => results.map { |i| {
                       :details => i.name_details, 
-                      :id => i.id, :value => i.name 
+                      :id => i.id, :value => i.name, :phone => i.phone, :mobile => i.mobile, :email => i.email 
                   }}} 
 		requesters[:results].push({ 
                   :id => current_account.kbase_email, 
@@ -52,7 +52,7 @@ class Helpdesk::AutocompleteController < ApplicationController
   	end
 
   	def requester_conditions
-  		["name like ? or email like ? or phone like ?", "%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"]
+  		["name like ? or email like ? or phone like ? or mobile like ?", "%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
   	end
 
   	def customer_conditions

@@ -80,7 +80,8 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		def load_ivr
 			@ivr = @number.ivr
 			@agents = current_account.users.technicians.visible
-			@groups = current_account.groups.reject { |g| g.agents.empty? } 
+			@groups =  current_account.groups.find(:all, :joins => ("inner join agent_groups on agent_groups.group_id = groups.id and groups.account_id = #{current_account.id}
+				inner join users ON agent_groups.user_id = users.id and users.deleted = 0 and users.helpdesk_agent = 1 and users.account_id = #{current_account.id}"), :group => "agent_groups.group_id")
 		end
 
 		def set_business_calendar

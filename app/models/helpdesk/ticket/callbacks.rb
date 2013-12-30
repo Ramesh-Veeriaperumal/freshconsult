@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note
 
-  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules
+  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules, :increment_ticket_counter
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
@@ -392,6 +392,17 @@ private
     self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
     assign_ff_values custom_field
     @custom_field = nil
+  end
+
+  def increment_ticket_counter
+    time = Time.now.utc
+    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}"
+    if value == 1
+      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}", 144000
+    end
+
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
   end
 
 end

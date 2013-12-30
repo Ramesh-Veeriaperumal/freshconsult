@@ -1,20 +1,27 @@
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
+
 	<td class="user_details width1">
-		<div class="freshfone_customer" align="left"
-			 data-number='<%= call.customer_number %>'>
-			 <%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
-				 <div class="ellipsis">
-					 <b><%= call.customer.present? ? link_to_user(call.customer) : call.customer_number %></b>
-				</div>
-				<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
-							data-number='<%= call.customer_number %>'>
-					<%= call.location %>
-			 </div>
+		<div class="freshfone_customer relative tooltip">
+				<%= content_tag :span, "", :class => "tooltip blacklist-toggle "+(blocked_number?(call.customer_number) ? '	blacklisted' : 'blacklist').to_s,
+					:"data-number" => call.customer_number.gsub(/^\+/, ''),
+					:title => blocked_number?(call.customer_number) ? t('freshfone.call_history.unblock_number') :
+																														t('freshfone.call_history.block_number') %>
+	
+			<%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
+			
+			<div class="ellipsis">
+					<b><%= call.customer.present? ? link_to_user(call.customer) : call.customer_number %></b>
+			</div>
+			<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
+						data-number='<%= call.customer_number %>'>
+				<%= call.location %>
+			</div>
 		</div>
 	</td>
 	<td>
 		<div align="left">
-			<span class='<%= call_direction_class(call) %> call_direction tooltip' title='<%= call_status_title(call) %>'>
+			<span class='<%= call_direction_class(call) %> call_direction tooltip' 
+				title='<%= call_status_title(call) %>'>
 			</span>
 			<% if call.children_count > 0 %>
 				<span class="child_calls tooltip" data-id='<%= call.id %>'
@@ -48,7 +55,8 @@
 	</td>
 	<td class="width2">
 		<div class="time_in_words" align="left">
-			<abbr data-livestamp='<%= call.created_at.to_i %>'>
+			<abbr data-livestamp='<%= call.created_at.to_i %>' class="tooltip" 
+				title='<%= formated_date(call.created_at) %>'>
 				<%= formated_date(call.created_at) %>
 			</abbr>
 		</div>
@@ -84,8 +92,11 @@
 		</div>
 	</td>
 	<td class="width3">
-		<div align="left">
-			<% unless call.recording_url.blank? %>
+		<div class="center">
+			<% if call.recording_url.blank? %>
+				<span class="center"><%= call_duration_formatted(call.call_duration) if call.call_duration.present? %>
+				</span>
+			<% else %>
 				<div class="ui360">
 					<a href="<%= call.recording_url %>.mp3"
 						 class="call_duration"
@@ -98,5 +109,8 @@
 		<div class="call_user" align="left">
 				<%= can_make_calls(call.customer_number, "", call.freshfone_number_id) %>
 		</div>
+
 	</td>
 </tr>
+
+

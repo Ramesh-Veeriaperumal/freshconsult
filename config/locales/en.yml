@@ -1136,6 +1136,10 @@ en:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
         blank_message: "%{num_type} cannot be blank"
+        add_blacklist_success: "Number blocked successfully"
+        add_blacklist_failure: "Number could not be blocked"
+        remove_blacklist_success: "Number unblocked successfully"
+        remove_blacklist_failure: "Number could not be unblocked"
 
     profile: 
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
@@ -4598,6 +4602,7 @@ en:
     call_status:
       default: ""
       completed: "Completed"
+      blocked: "Blocked"
       busy: "Busy"
       missedcall: "Missed call"
       noanswer: "No answer"
@@ -4641,9 +4646,12 @@ en:
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
+      block_number: "Block"
+      cancel: "Cancel"
+      blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
-      received_date: "Received Date"
+      received_date: "Date"
       duration: "Duration"
       cost: "Cost"
       asc: "Ascending"
@@ -4659,10 +4667,13 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      block_number: "Block"
+      unblock_number: "Unblock"
+      block_number_title: "Block number"
     ticket:
       recording: "Freshfone Recording"
-      desc: "Ticket created from Freshfone. Requester Location: %{location}. " 
-      agent: "Agent: %{agent}. <br/ >"
+      ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 
+      agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number: "Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
@@ -4920,7 +4931,7 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Please wait"
+    fetching: "Fetching..."
     loading: "Loading..."
     last_7_days: "Last 7 days"
     last_30_days: "Last 30 days"

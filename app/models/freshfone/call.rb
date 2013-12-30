@@ -32,7 +32,8 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :canceled,	'call canceled',	5 ],
 		[ :queued,	'queued',	6 ],
 		[ :ringing,	'ringing',	7 ],
-		[ :'in-progress', 'in-progress', 8 ]
+		[ :'in-progress', 'in-progress', 8 ],
+		[ :blocked, 'blocked', 9 ]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -40,11 +41,8 @@ class Freshfone::Call < ActiveRecord::Base
 	CALL_STATUS_STR_HASH = Hash[*CALL_STATUS.map { |i| [i[0].to_s, i[2]] }.flatten]
 
 	CALL_TYPE = [
-		[ :default, 'default', 0 ],
 		[ :incoming,	'incoming',	1 ],
-		[ :outgoing,	'outgoing',	2 ],
-		[ :transfered,	'transfered',	3 ],
-		[ :conference,	'conference',	4 ]
+		[ :outgoing,	'outgoing',	2 ]
 	]
 
 	CALL_TYPE_HASH = Hash[*CALL_TYPE.map { |i| [i[0], i[2]] }.flatten]
@@ -120,11 +118,11 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 	
 	def location
-		[caller_city, caller_state, caller_country].reject(&:blank?).join(", ")
+		[caller_city, caller_state, country_name(caller_country)].reject(&:blank?).join(", ")
 	end
 
 	def can_log_agent?
-		(incoming? || transfered?) && !noanswer?
+		incoming? && !noanswer?
 	end
 	
 	def ticket_notable?
@@ -157,7 +155,8 @@ class Freshfone::Call < ActiveRecord::Base
 			:note_body_attributes => { :body_html => description_html },
 			:incoming => true,
 			:source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
-			:user => params[:agent]
+			:user => params[:agent],
+			:private => false
 		}
 		self.notable.build_note_and_sanitize
 		self
@@ -192,13 +191,27 @@ class Freshfone::Call < ActiveRecord::Base
 			customer_id || (params[:customer] || {})[:id]
 		end
 		
+		def country_name(country_code)
+			if Carmen::Country.coded(country_code).name === "United States"
+				country_code
+			else
+				country = Carmen::Country.coded(country_code)
+				country ? country.name : nil
+			end
+		end
+
 		def description_html
-			desc = I18n.t('freshfone.ticket.desc', {:location => location})
-			desc << I18n.t('freshfone.ticket.agent', 
-							{:agent => params[:agent].name}).html_safe unless voicemail? || ivr_direct_dial?
+			customer_temp = "<b>" + customer_name + "</b> (" + caller_number + ")" if valid_customer_name?
+			desc = I18n.t('freshfone.ticket.ticket_desc', {:customer=> customer_temp || caller_number, :location => location})
+			desc << I18n.t('freshfone.ticket.agent_detail', {:agent => params[:agent].name, :agent_number => freshfone_number.number}) unless voicemail? || ivr_direct_dial?
 			desc << I18n.t('freshfone.ticket.dial_a_number', 
 							{:direct_dial_number => params[:direct_dial_number]}) if ivr_direct_dial?
 			desc << "#{params[:call_log]} #{recording}"
+			desc.html_safe
+		end
+
+		def valid_customer_name?
+			customer_name.present? && (customer_name != caller_number)
 		end
 
 		def recording

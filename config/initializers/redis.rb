@@ -1,3 +1,10 @@
+begin
+	stats_config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'stats_redis.yml'))[RAILS_ENV]
+	stats_redis_conn = Redis.new(:host => stats_config["host"], :port => stats_config["port"])
+	$stats_redis = Redis::Namespace.new(stats_config["namespace"], :redis => stats_redis_conn) 
+rescue => e
+	puts "Error while loading stats redis configuration:#{e}"
+end
 
 config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis.yml'))[RAILS_ENV]
 

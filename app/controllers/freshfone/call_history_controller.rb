@@ -1,7 +1,9 @@
 class Freshfone::CallHistoryController < ApplicationController
+	before_filter :set_default_filter, :only => [:index]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
+	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")
@@ -28,12 +30,18 @@ class Freshfone::CallHistoryController < ApplicationController
 	private
 		def load_calls
 			params[:wf_per_page] = 30
-			@calls = current_number.freshfone_calls.roots.filter(:params => params, :filter => "Freshfone::Filters::CallFilter")
+			  if !params.has_key?('page')  && !cookies["fone_number_id"].nil? 
+			  	 params["number_id"] = cookies["fone_number_id"]
+			  else
+			  	cookies["fone_number_id"] = params["number_id"]
+			 end
+				@calls = current_number.freshfone_calls.roots.filter(:params => params, :filter => "Freshfone::Filters::CallFilter")
+			
 		end
 
 		def current_number
 			@current_number ||= params[:number_id].present? ? current_account.all_freshfone_numbers.find_by_id(params[:number_id])
-													: current_account.freshfone_numbers.first
+                           : current_account.freshfone_numbers.first
 		end
 	
 		def load_children
@@ -44,6 +52,14 @@ class Freshfone::CallHistoryController < ApplicationController
 
 		def fetch_recent_calls
 			@calls = current_user.freshfone_calls.roots.newest(5).include_customer if current_user.agent?
+		end
+
+		def fetch_blacklist
+			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
+		end
+		
+		def set_default_filter
+			params.merge!({ :wf_c0 => "created_at", :wf_o0 => "is_greater_than", :wf_v0_0 => "today" })
 		end
 
 end

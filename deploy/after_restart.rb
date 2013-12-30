@@ -26,9 +26,9 @@ else
   end
 
   #To restart delayed_job workers..
-  on_utilities(all_instances_of("freshdesk_utility")) do
-    run "sudo monit -g dj_helpkit restart all"
-  end
+  # on_utilities(all_instances_of("freshdesk_utility")) do
+  #   run "sudo monit -g dj_helpkit restart all"
+  # end
 
   on_utilities(all_instances_of('reports_app_')) do
     run "sudo /etc/init.d/nginx restart" 

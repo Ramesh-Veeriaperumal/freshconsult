@@ -101,11 +101,11 @@ module Reports::HelpdeskAnalysisReport
 
   def prepare_source_data_series(col_name,data_array)
     data_hash = { SOURCE_KEYS_BY_TOKEN[:email].to_s =>{:name=>I18n.t('email'),:type=>'line',:color=>'#98b954',:data=>[]},
-                 SOURCE_KEYS_BY_TOKEN[:portal_key].to_s=>{:name=>I18n.t('portal_key'),:type=>'line',:color=>'#1E1ECA',:data=>[]},
+                 SOURCE_KEYS_BY_TOKEN[:portal].to_s=>{:name=>I18n.t('portal_key'),:type=>'line',:color=>'#1E1ECA',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:phone].to_s=>{:name=>I18n.t('phone'),:type=>'line',:color=>'#be4b48',:data=>[]},
-                 SOURCE_KEYS_BY_TOKEN[:forum_key].to_s=>{:name=>I18n.t('forum_key'),:type=>'line',:color=>'#80699b',:data=>[]},
-                 SOURCE_KEYS_BY_TOKEN[:twitter_source].to_s=>{:name=>I18n.t('twitter_source'),:type=>'line',:color=>'#3ba4c1',:data=>[]},
-                 SOURCE_KEYS_BY_TOKEN[:facebook_source].to_s=>{:name=>I18n.t('facebook_source'),:type=>'line',:color=>'#225222',:data=>[]},
+                 SOURCE_KEYS_BY_TOKEN[:forum].to_s=>{:name=>I18n.t('forum_key'),:type=>'line',:color=>'#80699b',:data=>[]},
+                 SOURCE_KEYS_BY_TOKEN[:twitter].to_s=>{:name=>I18n.t('twitter_source'),:type=>'line',:color=>'#3ba4c1',:data=>[]},
+                 SOURCE_KEYS_BY_TOKEN[:facebook].to_s=>{:name=>I18n.t('facebook_source'),:type=>'line',:color=>'#225222',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:chat].to_s=>{:name=>I18n.t('chat'),:type=>'line',:color=>'#8E7722',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:mobi_help].to_s=>{:name=>I18n.t('mobi_help'),:type=>'line',:color=>'#EEA222',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:feedback_widget].to_s=>{:name=>I18n.t('feedback_widget'),:type=>'line',:color=>'#C46865',:data=>[]}

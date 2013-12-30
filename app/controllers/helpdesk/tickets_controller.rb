@@ -214,8 +214,8 @@ class Helpdesk::TicketsController < ApplicationController
       else
         if verify_permission
           @ticket_notes = @ticket.conversation
-          @ticket_notes.reverse!
           @ticket_notes = @ticket_notes.take(3) if @ticket_notes.size > 3
+          @ticket_notes.reverse!
           @ticket_notes_total = @ticket.conversation_count
           render :layout => "widgets/contacts"
         else

@@ -17,6 +17,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
 	delegate :voice_type, :to => :freshfone_number
 	delegate :group_id, :group, :to => :welcome_message, :allow_nil => true
+	delegate :attachment_id, :to => :welcome_message, :allow_nil => true, :prefix => true
 
 	attr_protected :account_id
   attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
@@ -81,7 +82,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 	end
 
 	def unused_attachments
-		inuse_attachment_ids = all_menus.collect(&:attachment_id).compact
+		inuse_attachment_ids = (all_menus.collect(&:attachment_id) << welcome_message_attachment_id ).compact
 		attachments.reject{ |a| inuse_attachment_ids.include? a.id }
 	end
 

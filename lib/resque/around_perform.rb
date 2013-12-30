@@ -17,15 +17,12 @@ end
 
  def around_perform_with_shard(*args)
   params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
-  job_waiting_time = Time.now - Time.parse(params_hash[:enqueued_at] || Time.now.to_s)
   
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     account.make_current if account
-    time_spent = Benchmark.realtime {yield}
-    Monitoring::RecordMetrics.performance_data({:class_name => self.name, :time_spent => time_spent, :account_id => account_id, 
-      :job_waiting_time => job_waiting_time})  
+    yield
   end
  end
 end

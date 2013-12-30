@@ -9,6 +9,8 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	CREDIT_LIMIT = {
 		:minimum => 0,
+		:calling_threshold => 0.50,
+		:safe_threshold => 1,
 		:threshold => 5
 	}
 	def purchase
@@ -48,8 +50,10 @@ class Freshfone::Credit < ActiveRecord::Base
 											self.available_credit - rate)
 	end
 
-	def renew_number(rate)
+	def renew_number(rate, freshfone_number_id)
 		if update_credit(rate)
+			other_charges(rate, Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew], 
+				freshfone_number_id)
 			self.available_credit >= CREDIT_LIMIT[:minimum]
 		else
 			false
@@ -63,6 +67,14 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	def zero_balance?
 		available_credit <= CREDIT_LIMIT[:minimum]
+	end
+	
+	def below_calling_threshold?
+		available_credit <= CREDIT_LIMIT[:calling_threshold]
+	end
+
+	def below_safe_threshold?
+		available_credit <= CREDIT_LIMIT[:safe_threshold]
 	end
 
 	private

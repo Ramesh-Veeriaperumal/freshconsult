@@ -32,6 +32,7 @@ class Workers::Sla
   end
 
   def self.run
+    total_tickets = 0
     begin
       path = log_file
       sla_logger = custom_logger(path)
@@ -59,6 +60,7 @@ class Workers::Sla
     end
     overdue_tickets_end_time=Time.now.utc
     overdue_tickets_time_taken=overdue_tickets_end_time - overdue_tickets_start_time
+    total_tickets += overdue_tickets.length
 
         froverdue_tickets = execute_on_db(db_name) {
                         account.tickets.updated_in(2.month.ago).visible.find(:all, 
@@ -80,6 +82,7 @@ class Workers::Sla
     end
     froverdue_tickets_end_time=Time.now.utc
     froverdue_tickets_time_taken=froverdue_tickets_end_time - froverdue_tickets_start_time
+    total_tickets += froverdue_tickets.length
 
 
     ##Tickets left unassigned in group
@@ -98,6 +101,7 @@ class Workers::Sla
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
+    set_stats(account.id, total_tickets)
     log_format=logging_format(account,overdue_tickets,overdue_tickets_time_taken,froverdue_tickets,froverdue_tickets_time_taken)
     sla_logger.info "#{log_format}" unless sla_logger.nil?
   end
@@ -106,6 +110,13 @@ class Workers::Sla
     Sharding.send(db_name.to_sym) do
       yield
     end
+  end
+
+  def self.set_stats(account_id, total_tickets)
+    current_time = Time.now.utc
+    redis_key = "stats:rake_tkts:sla:#{current_time.day}:#{account_id}:#{current_time}"
+    $stats_redis.set(redis_key, total_tickets)
+    $stats_redis.expire(redis_key,144000)
   end
 
 
