@@ -340,7 +340,7 @@
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put, :bulk_merge => :get }
+    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put }
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'

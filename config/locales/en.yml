@@ -3223,7 +3223,8 @@ en:
         remove_Articles: Remove articles associated with the tag
       tag_bulk_merge:
         bulk_merge: Merge
-        tags_selected: Merge tags lets you merge multiple tags. All references of merged tags will move into the tag selected as primary.
+        tags_selected:  tags selected (Associations from the merged tags will be associated with the primary tag)
+        tag_selected:  tag selected (Associations from the merged tags will be associated with the primary tag)
         mark_primary: Mark as primary
         remove: Remove this tag
         tag_uses: Tag usage count
@@ -4201,7 +4202,6 @@ en:
   select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
-  ticket_add_tags_multiple: Add/Select Tags
   agent_working_on_this_ticket: "Agent Working on This Ticket"
   email_commands_update_success: "Email Command Settings were successfully updated."
   email_commands_update_failed:  "Failed to update Email Command Settings."
