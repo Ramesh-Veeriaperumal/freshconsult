@@ -13,6 +13,8 @@ class Helpdesk::TagsController < ApplicationController
         :include => [:tag_uses],
         :per_page => 50)
 
+
+
     if params[:sort].present? and params[:page].blank?
       render :partial => "sort_results"
     end
@@ -21,31 +23,22 @@ class Helpdesk::TagsController < ApplicationController
 
   def rename_tags
     tag = Helpdesk::Tag.find(params[:tag_id])
-    primary_tag = 0
-    same_name_tags = Helpdesk::Tag.find_all_by_name( params[:tag_name], :conditions => ["id != ?", params[:tag_id]])
-      if same_name_tags.size > 0
+    same_name_tags = Helpdesk::Tag.count(:all, :conditions => ["name = ? and id != ?", params[:tag_name], params[:tag_id]])
+      if same_name_tags > 0
         stat = "existing_tag"
-        primary_tag = same_name_tags.first.id
       else
         stat = "success"
-        tag.update_attribute(:name, params[:tag_name].gsub(",",""))
+        tag.update_attribute(:name, params[:tag_name])
       end
-    render :json => {:status => stat, :name => tag.name, :primary_tag => primary_tag }
+    render :json => {:status => stat, :name => tag.name }
   end
 
   def merge_tags
-
-    primary_tag = Helpdesk::Tag.find(params[:primary_tag])
-    params[:tags_to_merge].delete(primary_tag.id)
-    tags_to_merge = params[:tags_to_merge].uniq
-    if !tags_to_merge.empty?
-    params[:tags_to_merge].each do |t|
-      tag = Helpdesk::Tag.find(t)
-      primary_tag.tag_uses << tag.tag_uses
-      tag.destroy
-    end
-    primary_tag.save
-    end
+    tag = Helpdesk::Tag.find(params[:tag_id])
+    tag_to_merge = Helpdesk::Tag.find_by_name( params[:tag_name], :conditions => ["id != ?", params[:tag_id]])
+    tag_to_merge.tag_uses << tag.tag_uses
+    tag_to_merge.save
+    tag.destroy
     render :nothing => true
   end
 
@@ -54,6 +47,7 @@ class Helpdesk::TagsController < ApplicationController
     tag_uses.each {|t| t.destroy}
     render :json => {:tag_uses_removed_count => tag_uses.size }
   end
+
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
     items = autocomplete_scoper.find(
@@ -68,11 +62,6 @@ class Helpdesk::TagsController < ApplicationController
     end
   end
 
-
-
-  def bulk_merge
-
-  end
 
   protected
   
