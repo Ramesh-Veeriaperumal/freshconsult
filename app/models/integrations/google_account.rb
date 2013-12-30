@@ -34,12 +34,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
   def self.find_all_installed_google_accounts(account=nil)
     goog_cnt_app = Integrations::Application.find(:first, :conditions => {:name => "google_contacts"})
-    conditions = ["installed_applications.application_id = ? and subscriptions.state != 'suspended'", goog_cnt_app]
+    conditions = ["installed_applications.application_id = ?", goog_cnt_app]
     unless account.blank?
-      conditions = ["installed_applications.application_id = ? and installed_applications.account_id=?  and subscriptions.state != 'suspended'", goog_cnt_app, account]
+      conditions = ["installed_applications.application_id = ? and installed_applications.account_id=?", goog_cnt_app, account]
     end
-    Integrations::GoogleAccount.find(:all,
-                  :joins => "INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id JOIN subscriptions on subscriptions.account_id=google_accounts.account_id",
+    Integrations::GoogleAccount.find(:all, 
+                  :joins => "INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id", 
                   :select => "google_accounts.*, installed_applications.configs", :conditions => conditions)
   end
 
