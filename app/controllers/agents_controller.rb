@@ -177,9 +177,13 @@ class AgentsController < ApplicationController
 
   def convert_to_contact
       user = @agent.user
-      user.make_customer
-      flash[:notice] = t(:'flash.agents.to_contact')
-      redirect_to contact_path(user)
+      if user.make_customer
+        flash[:notice] = t(:'flash.agents.to_contact')
+        redirect_to contact_path(user)
+      else
+        flash[:notice] = t(:'flash.agents.to_contact_failed')
+        redirect_to :back and return
+      end
   end
   
   def destroy    
