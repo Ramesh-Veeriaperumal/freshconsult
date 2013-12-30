@@ -366,6 +366,13 @@ class User < ActiveRecord::Base
   def has_ticket_permission? ticket
     (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
+
+  # For a customer we need to check if he is the requester of the ticket
+  # Or if he is allowed to view tickets from his company
+  def has_customer_ticket_permission?(ticket)
+    (self.id == ticket.requester_id) or 
+    (is_client_manager? && self.customer_id && ticket.requester.customer_id && (ticket.requester.customer_id == self.customer_id) )
+  end
   
   def restricted?
     !can_view_all_tickets?

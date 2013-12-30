@@ -1,2 +1,0 @@
-module Support::NotesHelper
-end

@@ -17,7 +17,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 				selected_option = :group if params[:category]== Survey::GROUP
 				selected_option = :company if params[:category]== Survey::OVERALL
 			%>
-			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "select2 filter_item"}%>
 			<%=hidden_field_tag :sort, sort_option %>
 		   </li>	
     	   <li class="inline-field">				

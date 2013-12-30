@@ -27,9 +27,10 @@ class ActivationsController < SupportController
   end
 
   def create
-    @user = current_account.users.find(params[:id])
- 
-    if @user.activate!(params)
+    unless params[:perishable_token].blank? 
+      @user = current_account.users.find_by_perishable_token(params[:perishable_token]) 
+    end
+    if @user && @user.activate!(params)
       flash[:notice] = t('users.activations.success')
       @current_user = @user
       redirect_to(root_url) if grant_day_pass

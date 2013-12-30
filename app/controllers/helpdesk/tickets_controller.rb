@@ -312,15 +312,12 @@ class Helpdesk::TicketsController < ApplicationController
     else
       respond_to do |format|
         format.html { edit_error }
-        format.json {
-          result = {:errors=>@item.errors.full_messages }
-          render :json => result.to_json
-        }
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
-        format.xml {
-          render :xml =>@item.errors
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity]
+        format.any(:xml, :json) {
+          api_responder({:message => "Ticket update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @item.errors})
         }
       end
     end

@@ -1,5 +1,5 @@
 <%
-date_range = params[:date_range].blank? ? "#{31.days.ago.strftime("%d %B %Y")} -#{1.days.ago.strftime("%d %B %Y")}" :  h(params[:date_range])
+date_range = params[:date_range].blank? ? "#{31.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  h(params[:date_range])
 %>
 <script src="/javascripts/report/date.js" type="text/javascript"></script>
 <script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>

@@ -129,7 +129,7 @@ class SupportController < ApplicationController
     def current_tab token    
       if [ :portal_home, :facebook_home ].include?(token)
         @current_tab ||= "home"
-      elsif [ :discussions_home, :topic_list, :topic_view, :new_topic, :my_topics ].include?(token)
+      elsif [ :discussions_home, :discussions_category, :topic_list, :topic_view, :new_topic, :my_topics ].include?(token)
         @current_tab ||= "forums"
       elsif [ :solution_home, :solution_category, :article_list, :article_view ].include?(token)
         @current_tab ||= "solutions"

@@ -14,8 +14,7 @@ class Support::TicketsController < SupportController
 
   # Ticket object loading
   before_filter :build_tickets, :only => [:index, :filter]
-  before_filter :load_item, :only => [:show, :update, :close, :add_people]
-
+  before_filter :load_item, :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
@@ -161,6 +160,10 @@ class Support::TicketsController < SupportController
       if current_user and current_user.agent? and session[:preview_button].blank?
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
+    end
+
+    def verify_ticket_permission
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_user.has_customer_ticket_permission?(@item)
     end
 
     def not_facebook?

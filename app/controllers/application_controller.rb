@@ -18,9 +18,14 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
 
+  rescue_from Exception, :with => :generic_error
+  rescue_from ArgumentError, :with => :handle_error
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from ActionController::MethodNotAllowed, :with => :MethodNotAllowed
+  rescue_from ActiveRecord::StatementInvalid, :with => :generic_error
   rescue_from DomainNotReady, :with => :render_404
+
   
   include AuthenticationSystem
   include HelpdeskSystem  
@@ -28,6 +33,7 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
+  include ErrorHandlingMethods
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -88,43 +94,6 @@ class ApplicationController < ActionController::Base
       User.current = current_user
     rescue ActiveRecord::RecordNotFound
     end    
-  end
-
-  def render_404
-     # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
-     #                                                              :referer => request.referer,
-     #                                                              :request_params => params})
-    render :file => "#{Rails.root}/public/404.html", :status => :not_found
-  end
-  
-  def record_not_found (exception)
-    Rails.logger.debug "Error  =>" + exception.message
-    respond_to do |format|
-      format.html {
-        unless @current_account
-          render("/errors/invalid_domain")
-        else
-          render_404
-        end
-      }
-      format.xml do 
-        result = {:error=>"Record Not Found"}
-        render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
-      end
-      format.json do 
-        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
-      end
-    end
-  end
-
-
-  def handle_error (error)
-    Rails.logger.debug "API::Error  =>" + error.message
-    result = {:error => error.message}
-    respond_to do | format|
-      format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
-      format.json { render :json => {:errors =>result}.to_json and return } 
-    end
   end
 
   def select_shard(&block)

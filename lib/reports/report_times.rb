@@ -4,13 +4,13 @@ module Reports
 	def start_date(zone = true)
     t = zone ? Time.zone : Time
     parse_from_date ? t.parse(parse_from_date).strftime('%Y-%m-%d %H:%M:%S') :
-      (t.now.ago 30.day).beginning_of_day.strftime('%Y-%m-%d %H:%M:%S')
+      (t.now.ago 31.day).beginning_of_day.strftime('%Y-%m-%d %H:%M:%S')
   end
   
   def end_date(zone = true)
     t = zone ? Time.zone : Time
     parse_to_date ? t.parse(parse_to_date).strftime('%Y-%m-%d %H:%M:%S') : 
-          t.now.beginning_of_day.strftime('%Y-%m-%d %H:%M:%S')
+          (t.now.ago 1.day).beginning_of_day.strftime('%Y-%m-%d %H:%M:%S')
   end
   
   def parse_from_date

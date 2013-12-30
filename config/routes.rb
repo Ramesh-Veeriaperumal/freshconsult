@@ -91,7 +91,7 @@
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
-  map.activate '/activate/:id', :controller => 'activations', :action => 'create'
+  map.activate '/activate/:perishable_token', :controller => 'activations', :action => 'create'
   map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
@@ -340,7 +340,7 @@
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put }
+    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put, :bulk_merge => :get }
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
@@ -349,7 +349,8 @@
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get, :summary => :get},  
+                                    :filter_options => :get, :full_paginate => :get, :summary => :get, 
+                                    :update_multiple_tickets => :get, :configure_export => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -457,11 +458,9 @@
   end
   # Savage Beast route config entries ends from here
 
-  # Removing the home as it is redundant route to home - by venom  
-  # map.resources :home, :only => :index 
   # Theme for the support portal
-  map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
-  map.connect "/helpdesk/theme.:format", :controller => 'helpdesk_theme', :action => :index
+  map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
+  map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|

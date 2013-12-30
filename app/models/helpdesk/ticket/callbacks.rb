@@ -396,9 +396,9 @@ private
 
   def increment_ticket_counter
     time = Time.now.utc
-    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{requester.id}:#{account.id}"
+    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}"
     if value == 1
-      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{requester.id}:#{account.id}", 144000
+      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}", 144000
     end
 
   rescue Exception => e

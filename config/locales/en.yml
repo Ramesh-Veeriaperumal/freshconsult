@@ -1322,6 +1322,12 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
+    category:
+      page_not_found: "This solution category could not be found. It might have been deleted or the URL mistyped."
+    folder:
+      page_not_found: "This solution folder could not be found. It might have been deleted or the URL mistyped."
+    article:
+      page_not_found: "This article could not be found. It might have been deleted or the URL mistyped."
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
@@ -1791,6 +1797,7 @@ en:
   activerecord:
     errors:
       messages:
+        contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
         greater_than_or_equal_to: must be greater than or equal to %{count}
         less_than_or_equal_to: must be less than or equal to %{count}
@@ -2919,6 +2926,7 @@ en:
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
+    exporting: Exporting
     export_tickets: "Export Tickets"
     delete_btn: Delete
     status: Status
@@ -3215,8 +3223,7 @@ en:
         remove_Articles: Remove articles associated with the tag
       tag_bulk_merge:
         bulk_merge: Merge
-        tags_selected:  tags selected (Associations from the merged tags will be associated with the primary tag)
-        tag_selected:  tag selected (Associations from the merged tags will be associated with the primary tag)
+        tags_selected: Merge tags lets you merge multiple tags. All references of merged tags will move into the tag selected as primary.
         mark_primary: Mark as primary
         remove: Remove this tag
         tag_uses: Tag usage count
@@ -4194,6 +4201,7 @@ en:
   select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
+  ticket_add_tags_multiple: Add/Select Tags
   agent_working_on_this_ticket: "Agent Working on This Ticket"
   email_commands_update_success: "Email Command Settings were successfully updated."
   email_commands_update_failed:  "Failed to update Email Command Settings."
