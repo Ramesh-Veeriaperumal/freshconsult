@@ -54,11 +54,14 @@ class GroupsController < Admin::AdminController
       end
      else
       respond_to do |format|
-        format.html { render :action => 'new' }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Groups creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @group.errors})
-        }
+          format.html { render :action => 'new' }
+          format.json {
+            result = {:errors=>@group.errors.full_messages }
+            render :json => result.to_json
+          }
+          format.xml {
+            render :xml =>@group.errors
+          }
       end
      end
   end
@@ -75,10 +78,10 @@ class GroupsController < Admin::AdminController
         format.json { head :ok }
       else
         format.html { render :action => "edit" }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Groups update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @group.errors})
-        }
+        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+        format.json { 
+          result = {:errors=>@group.errors.full_messages }
+          render :json => result.to_json }
       end
     end
     
