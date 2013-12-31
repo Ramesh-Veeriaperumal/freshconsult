@@ -51,7 +51,7 @@ test:
   # adapter: sqlite3
   # database: db/test.sqlite3
   # timeout: 5000
-  adapter: mysql
+  adapter: mysql2
   encoding: utf8
   database: helpkit_test
   username: root

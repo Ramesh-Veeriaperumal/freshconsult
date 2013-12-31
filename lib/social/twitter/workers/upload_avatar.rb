@@ -1,19 +1,19 @@
-class Social::UploadAvatarWorker
+class Social::Twitter::Workers::UploadAvatar
   extend Resque::AroundPerform
 
   @queue = 'upload_avatar_worker'
-  
-  
+
+
   def self.perform(args)
     @account = Account.current
     if args[:twitter_handle_id]
       upload_handle_avatar(args)
     elsif args[:twitter_user_id]
       upload_twitter_user_avatar(args)
-    end 
+    end
   end
-  
-  
+
+
   def self.upload_handle_avatar(args)
     avatar_sandbox do
       handle = @account.twitter_handles.find(args[:twitter_handle_id])
@@ -23,15 +23,15 @@ class Social::UploadAvatarWorker
       {:item => handle , :profile_image_url => prof_img_url}
     end
   end
-  
+
   def self.upload_twitter_user_avatar(args)
-    avatar_sandbox do 
+    avatar_sandbox do
       user = @account.users.find(args[:twitter_user_id])
       {:item => user, :profile_image_url => args[:prof_img_url]}
     end
   end
-  
-  
+
+
   def self.avatar_sandbox
     begin
       hash = yield
