@@ -41,18 +41,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
-      http_code = Error::HttpErrorCode::HTTP_CODE[:too_many_requests] 
-      error_msg={:message => "You have exceeded the limit of requests per hour" ,:http_code => http_code, :error_code => "Too Many Requests"}
-      if @content_type == "application/json"
-        @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/json'}, 
-                                      [{:error_details => error_msg}.to_json]]
-      elsif @content_type =="application/xml"
-        @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/xml'}, 
-                                      [error_msg.to_xml(:root => :error_details, :skip_instruct => true)]]  
-      else
-        @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'text/html'}, 
-                                        ["You have exceeded the limit of requests per hour"]]
-      end
+      @status, @headers,@response = [429, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
+                                      ["You have exceeded the limit of requests per hour"]]
     end
     
      [@status, @headers, @response]
