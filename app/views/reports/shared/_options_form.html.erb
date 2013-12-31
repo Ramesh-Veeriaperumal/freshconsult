@@ -1,6 +1,6 @@
 <div>
 	<label class="caption">Reports by</label>
-  <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "select2 filter_item" } %>		
+  <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "select2 input-xlarge filter_item" } %>		
 </div>    
 <div>
 	<label class="caption"><%= t('reports.select_time_period').html_safe%></label>

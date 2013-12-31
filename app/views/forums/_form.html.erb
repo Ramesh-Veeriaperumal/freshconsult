@@ -13,13 +13,13 @@
 	<div class="control-group" id="forum_name">
 		<label class="control-label"><%=t('title')%></label>
 		<div class="controls">
-			<%= form.text_field :name, :class => "primary" %>
+			<%= form.text_field :name, :class => "primary input-xxlarge" %>
 		</div>
 	</div>
 	<div class="control-group" id="forum_descripion">
 		<label class="control-label"><%=t('description')%></label>
 		<div class="controls">
-			<%= form.text_area :description, :rows => 7 %>
+			<%= form.text_area :description, :rows => 7, :class => "input-xxlarge" %>
 		</div>
 	</div>
 	<div class="control-group" id="forum_descripion">
@@ -35,7 +35,7 @@
 			<br/><br/>
 			<% form.fields_for :customer_forums_attributes do |cust| %>
     	    	<span id="company_forums">
-      			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "select2" , "data-placeholder" => 'Select company'}) %>
+      			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "select2 input-xxlarge" , "data-placeholder" => 'Select company'}) %>
       			</span>
       		<%end%> 
 		</div>
