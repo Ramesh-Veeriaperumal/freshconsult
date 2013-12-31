@@ -247,6 +247,8 @@ pl:
         sign_in_using_google: "Zarejestruj przez konto Google"
         help: Pomoc
     shared: 
+      attachment_form:
+          feedback_widgets_screenshot: Dodaj Zdjęcie Ekranu
       survey_form: 
         survey_title: "Proszę o poświęcenie minuty na ocenę naszego wsparcia"
         feedback_title: "Również Twoje dobre słowa i krytyka mogą nam pomóc ulepszać wsparcie w przyszłości"
@@ -1761,6 +1763,7 @@ pl:
       cookie_dialog_info2: "Możesz dowiedzieć się więcej na temat jakich rodzajów plików cookies używamy, dlaczego ich używamy i jak ich używamy ze strony %{privacy_link}. Jeżeli nienawidzisz ciasteczka albo jesteś po prostu na diecie, możesz je wyłączyć zupełnie. Pamiętaj tylko, że Freshdesk naprawdę uwielbia ciasteczka (szczególnie te z kawałami czekolady) i niektóre elementy Freshdesku mogą nie działać prawidłowo z wyłączonymi plikami cookies."
       cookie_dialog_info3: "Zakładamy także, że zgadzasz się ze sposobem w jaki korzystamy z plików cookies i z tym jak jest to zapisane w naszej %{privacy_link}, jeżeli nie wyłączasz ich zupełnie w swojej przeglądarce."
       privacy_policy: "Polityka Prywatności"
+    attach_file: "Dodaj <b>Plik</b>"
     no_topics_in_this_view: "~ Brak tematów w tym widoku ~"
     reported: zgłoszone
     said: "wystawił ocenę"
@@ -3284,6 +3287,12 @@ pl:
   widgets: 
     contact_widget: 
       description: "Wyświetl kontakt lub opcja dodawania kontaktu do aplikacji Capsule"
+    feedback_widgets:
+      new:
+        feedback_widgets_search: Szukaj
+        feedback_widgets_search_our: "Szukaj w "
+        feedback_widgets_knowledge_base: "Bazie Wiedzy "
+        feedback_widgets_help_articles: "lub Poszukaj w Odpowiedziach"
   reorder: Uporządkuj
   reports: 
     no_data: "Brak danych do wyświetlenia!"
