@@ -30,6 +30,7 @@ en:
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
+  sidebar_help: "Help"
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -68,7 +69,7 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
-  trial_expired_on: "<b>Urgent! Your trial has expired!</b>"
+  trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
   trail_expiry_during_trial: "Upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
@@ -2476,7 +2477,8 @@ en:
   agents: Agents
   header:
     welcome: Welcome
-    new_ticket: New Ticket
+    new_ticket: New
+    new_ticket_tip: New ticket
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
     guest: "Guest"
@@ -3277,7 +3279,7 @@ en:
         recent_item: Recent Items
     dashboard:
       index:
-        todo_title: To-Dos
+        todo_title: To-Do
       summary:
         title: Ticket summary
         overdue: Overdue

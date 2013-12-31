@@ -11,15 +11,15 @@
 
   <%= render :partial => '/freshfone/freshfone_dashboard' if current_account.freshfone_enabled? %>
 
-  <div class="side-panel" id="chat-dashboard" style="display:none">
+  <div class="sidepanel" id="chat-dashboard" style="display:none">
     <div class="sloading loading-small loading-block"></div>
   </div>
   
   <% if gamification_feature?(current_account) %>
-  	<%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "mini-leaderboard",
+  	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
 
-    <%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "quests-section-container",
+    <%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "quests-section-container",
                "data-remote-url" => active_helpdesk_quests_path() %>
   <% end %> 
 

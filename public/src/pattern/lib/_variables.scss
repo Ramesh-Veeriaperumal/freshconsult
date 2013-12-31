@@ -59,11 +59,10 @@ $headingsColor:         inherit !default; // empty to use BS default, $textColor
 
 // Tables
 // -------------------------
-$tableBackground:                   transparent !default; // overall background-color
+$tableBackground:                   transparent  !default; // overall background-color
 $tableBackgroundAccent:             #FBFBFB !default; // for striping
-$tableBackgroundHover:              #f5f5f5 !default; // for hover
+$tableBackgroundHover:              #FEFDEE !default; // for hover
 $tableBorder:                       #eee !default; // table and cell border
-
 // Buttons
 // -------------------------
 $btnBackground:                     $white !default;
@@ -289,7 +288,6 @@ $fluidGridGutterWidth768:      percentage($gridGutterWidth768/$gridRowWidth768) 
 //-----------------------------------------------------
 // Arrow mark in the breadcrum is based on this two variable
 
-$admin-breadcrum-padding : 12px;
-$admin-font-size : 1.4em;
+$admin-font-size : 1em;
 $admin-arrow-size: 23px;
-$admin-breadcrum-color:  #f9f9f9;
+$admin-breadcrum-color:  #fff;

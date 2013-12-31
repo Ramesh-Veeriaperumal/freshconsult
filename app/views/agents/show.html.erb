@@ -1,6 +1,6 @@
-<% content_for :sidebar do -%>
+<% content_for :helpcard do -%>
 	<%if gamification_feature?(current_account)%>
-	<div class="side-panel">
+	<div class="sidepanel">
 		<% unless @agent.level.blank? %>
 		<div class="level-progress" id="user-level">
 			<!-- Must give the width for the progressbar as an inline style !-->

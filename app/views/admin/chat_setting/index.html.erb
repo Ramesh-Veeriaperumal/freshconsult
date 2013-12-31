@@ -2,7 +2,12 @@
 <%= include_cloudfront_css :pattern %>
 <%= include_cloudfront_js :pattern %>
 <%= include_cloudfront_css :chat %>
+<<<<<<< HEAD
 <% content_for :sidebar do -%>
+=======
+<%= render :partial => "shared/colorpicker" %>
+<% content_for :helpcard do -%>
+>>>>>>> ed98d55... Layout Change and Side Bar Changes
 <%= render :partial => "helpnote" %>
 <%- end %>
 <div class="chat-header">

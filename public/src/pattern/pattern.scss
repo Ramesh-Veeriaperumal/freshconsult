@@ -1,13 +1,3 @@
-/*!
- * Bootstrap v2.1.1
- *
- * Copyright 2012 Twitter, Inc
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
- */
-
 @import "../app/lib/settings";
 @import "../app/lib/animations"; // Mixin for animation
 
@@ -32,20 +22,20 @@
 // Components: common
 @import "lib/sprites";
 @import "lib/dropdowns";
-//@import "lib/wells";
+@import "lib/wells";
 @import "lib/component-animations";
 //@import "lib/close";
 
 // Components: Buttons & Alerts
 @import "lib/buttons";
 @import "lib/button-groups";
-//@import "lib/alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
+@import "lib/alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
 
 // Components: Nav
 @import "lib/navs";
 @import "lib/navbar";
-//@import "lib/breadcrumbs";
-@import "lib/adminbreadcrumbs";
+@import "lib/breadcrumbs";
+//@import "lib/adminbreadcrumbs";
 @import "lib/pagination";
 //@import "lib/pager";
 
@@ -60,7 +50,7 @@
 //@import "lib/progress-bars";
 //@import "lib/accordion";
 //@import "lib/carousel";
-//@import "lib/hero-unit";
+@import "lib/hero-unit";
 
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary

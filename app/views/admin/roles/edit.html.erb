@@ -1,9 +1,9 @@
 <% if @role.default_role? %>
-  <div class="flash_info" rel="permanent">
+  <div class="alert" rel="permanent">
     <%= "#{t('admin.roles.default_role_edit', :go_back => link_to(t('go_back_small'), admin_roles_path ) )}".html_safe %>
   </div> 
 <% end %>
-<% content_for :sidebar do %>
+<% content_for :helpcard do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 <% form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>

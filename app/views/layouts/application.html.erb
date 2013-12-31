@@ -4,7 +4,7 @@
 %>
   <%= open_html_tag %>      
 	<%= render :partial => "layouts/shared/head" %>
-	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">            
+	<body class="<% unless(@content_for_sidebar || @content_for_helpcard) %>single<% end %> <%= yield :layoutType %>">
 		<div id="wrap">
 			<%= render(:partial => '/layouts/shared/header') %>
 			<%if @debug%>

@@ -551,7 +551,7 @@ window.xhrPool = [];
           }
         });
  
-      flash = $("div.flash_info").not('[rel=permanent]');
+      flash = $("div.alert").not('[rel=permanent]');
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }

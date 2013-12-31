@@ -19,6 +19,10 @@ $button-radius: 6px;
 	z-index:999999; //need to override chat button
 }
 
+.freshwidget-container{
+	z-index:999999; //need to override chat button
+}
+
 .fd-btn-left a{ left:-2px; }
 .fd-btn-left a:hover{ left:0px; }
 

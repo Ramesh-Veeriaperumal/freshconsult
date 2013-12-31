@@ -1,31 +1,41 @@
 <div class="wrapper">
-	<title><%= page_title.html_safe %></title>
-	<% 
-	body_class= yield :layoutType 
-	body_class = "single #{body_class}" unless @content_for_sidebar 
-	%>
-	<% javascript_tag do %>
-		jQuery('body').attr('class','<%=body_class%>');
-		jQuery('ul.header-tabs li.active').removeClass('active');
-		jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active')
-	<% end %>
-	<%= render(:partial => '/search/navsearch') %>
-	<div id="inner"> 
-		<% if @content_for_sidebar %>
-			<div class="sidebar" id="Sidebar"> 
-				<%= yield :sidebar %>					
+	<div class="wrapper-shadow">
+		<title><%= page_title.html_safe %></title>
+		<% 
+		body_class= yield :layoutType 
+		body_class = "single #{body_class}" unless(@content_for_sidebar || @content_for_helpcard)
+		%>
+		<% javascript_tag do %>
+			jQuery('body').attr('class','<%=body_class%>');
+			jQuery('ul.header-tabs li.active').removeClass('active');
+			jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active')
+		<% end %>
+		<%= render(:partial => '/search/navsearch') %>
+		<div id="inner"> 
+			<% if @content_for_sidebar %>
+				<div class="sidebar" id="Sidebar"> 
+					<%= yield :sidebar %>					
+				</div>
+			<% end %> 
+			<% if @content_for_helpcard %>
+				<div class="sidebar sidebar-help" id="Sidebar"> 
+					<div class="sidepanel">
+						<i class="common-icon-help"></i>
+						<%= yield :helpcard %> 
+					</div>
+				</div>
+			<% end %> 				
+			<div class="leftcontent">  
+				<%= show_announcements %>
+				<%= show_flash %>
+				<div class="alert notice" id="noticeajax" style="display:none;"></div>
+				<%= yield :pagetop %>
+				<div class="pagearea" id="Pagearea">
+					<%= yield %>
+				</div>
 			</div>
-		<% end %>  
-		<div class="leftcontent">  
-			<%= show_announcements %>
-			<%= show_flash %>
-			<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
-			<%= yield :pagetop %>
-			<div class="pagearea" id="Pagearea">
-				<%= yield %>
-			</div>
-		</div>
-	</div> 
+		</div> 
+	</div>
 </div>
 
 <%= yield :dialogs   %>

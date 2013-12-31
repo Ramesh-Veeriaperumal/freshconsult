@@ -1,18 +1,37 @@
-//
-// Breadcrumbs
-// --------------------------------------------------
-.admin-breadcrumb { 
-  margin: 0 0 $baseLineHeight;
-  padding: 0px $admin-breadcrum-padding / 2;
-  list-style: none;
+/*//
+//<div class="sticky-breadcrumb row-fluid">
+//  <div class="span7">
+//    <ul class="admin-breadcrumb">
+//      <li><a href="#">Home</a> <span>/</span></li>
+//      <li><a href="#">Library</a><span>/</span></li>
+//      <li class="active">Data</li>
+//    </ul>
+//  </div>
+//  <div class="span5 pull-right align-right">
+//    <a class="btn">test 1</a>
+//    <a class="btn">test 2</a>
+//  </div>
+//</div>*/
+// -------------------------------------------------------------------------------------------------
+//                                      Admin Sticky Breadcrumbs
+// -------------------------------------------------------------------------------------------------
+.sticky-breadcrumb{
   position:relative;
   background-color: $admin-breadcrum-color;
-  @include border-top-radius(4px);
   border:1px solid lighten($admin-breadcrum-color, 4%);
   border-bottom:1px solid darken($admin-breadcrum-color, 9%);
+  padding:7px ($common-padding - 1) 5px;
+  padding-right:($common-padding) - 2px;
+  margin: -$common-padding;
+  margin-bottom: $common-padding;
+  &.move{
+    @include box-shadow(0px 3px 4px -3px rgba(0,0,0,0.2));
+  }
+}
+.admin-breadcrumb { 
+  list-style: none;
+  margin-top:5px;
   li {
-    padding: $admin-breadcrum-padding;
-    padding-left:$admin-breadcrum-padding * 2 + 4;
     display: inline-block;
     position:relative;
     font-size: $admin-font-size;
@@ -23,8 +42,9 @@
         padding-left:0;
       }
     }
-    &:first-child{
-      padding: $admin-breadcrum-padding;
+    span{
+      margin: 0 5px;
+      font-size: $admin-font-size + 0.1;
     }
     a{
       color:$grayLight;
@@ -38,32 +58,11 @@
         color:$grayLighter;
       }
     }
-    &:after {
-      content: " ";
-      width: 0;
-      height: 0;
-      border-top: $admin-arrow-size solid transparent;
-      border-bottom: $admin-arrow-size solid transparent;
-      border-left: 11px solid  $admin-breadcrum-color;
-      position: absolute;
-      top:0;
-      left:-1px;
-    }
-    &:before {
-      content: " ";
-      width: 0;
-      height: 0;
-      border-top: $admin-arrow-size solid transparent;
-      border-bottom: $admin-arrow-size solid transparent;
-      border-left: 11px solid  darken($admin-breadcrum-color, 15%);
-      position: absolute;
-      top: 0;
-      left:0;
-    }
+    
   }
   .non-arrow{
       padding-left: 0px;
-      padding-right: $admin-breadcrum-padding / 2;
+      padding-right: $common-padding / 2;
       &:after{
         border:0;
       }
@@ -81,8 +80,8 @@
     }
   .btn{
     margin-top:-4px;
-    padding-top:$admin-breadcrum-padding / 2;
-    padding-bottom:$admin-breadcrum-padding / 2;
+    padding-top:$common-padding / 2;
+    padding-bottom:$common-padding / 2;
   }
 }
 
@@ -91,4 +90,11 @@
   border-bottom:0;
   @include border-bottom-radius(4px);
   border-top:1px solid darken($admin-breadcrum-color, 10%);
+}
+
+.admin-breadcrumb{
+  &.breadcum-footer{
+    margin-bottom: -$common-padding;
+    margin-top:20px;
+  }
 }
