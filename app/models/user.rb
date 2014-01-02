@@ -435,8 +435,7 @@ class User < ActiveRecord::Base
     to_json( 
               :root => "user",
               :tailored_json => true,
-              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted, :created_at, :updated_at ], 
+              :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
               :include => { :customer => { :only => [:name] } } 
            )
   end

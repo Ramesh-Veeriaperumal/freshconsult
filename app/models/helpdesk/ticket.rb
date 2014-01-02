@@ -622,8 +622,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :root => "helpdesk/ticket",
             :tailored_json => true,
             :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
-            :only => [ :display_id, :subject, :description, :account_id, :responder_id,
-                       :group_id, :requester_id, :status, :spam, :deleted, :created_at, :updated_at ], 
+            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
             :include => { :flexifield => { :only => es_flexifield_columns },
                           :attachments => { :only => [:content_file_name] }
                         }

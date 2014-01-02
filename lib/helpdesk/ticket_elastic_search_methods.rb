@@ -4,7 +4,7 @@ module Helpdesk::TicketElasticSearchMethods
     base.class_eval do
 
       def es_flexifield_columns
-        @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text|_int)/}
+        @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
       end
 
       def es_from
@@ -33,17 +33,13 @@ module Helpdesk::TicketElasticSearchMethods
       end
        
       def delete_from_es_notes
-        Resque.enqueue(Search::Notes::DeleteNotesIndex, { :ticket_id => id, :account_id => account_id }) if ES_ENABLED
         Resque.enqueue(Search::Notes::DeleteNotesIndex, { :ticket_id => id, 
-                                                          :account_id => account_id,
-                                                          :aws_cluster => true }) if ES_ENABLED
+                    :account_id => account_id}) if ES_ENABLED
       end
 
       def restore_es_notes
-        Resque.enqueue(Search::Notes::RestoreNotesIndex, { :ticket_id => id, :account_id => account_id }) if ES_ENABLED
         Resque.enqueue(Search::Notes::RestoreNotesIndex, { :ticket_id => id, 
-                                                           :account_id => account_id,
-                                                           :aws_cluster => true }) if ES_ENABLED
+                    :account_id => account_id}) if ES_ENABLED
       end
 
     end

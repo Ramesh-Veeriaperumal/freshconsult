@@ -6,18 +6,28 @@ class EsEnabledAccount < ActiveRecord::Base
   validates_presence_of :account_id
 
   after_commit_on_create :create_aliases
+  # after_commit_on_update :set_cache
   after_commit_on_destroy :clear_cache
 
+  # def self.all_es_indices
+  #   enabled_accounts = []
+  #   enabled_accounts = Sharding.run_on_all_shards do
+  #     all.inject({}) { |result, es_ea| result[es_ea.account_id] = es_ea.imported; result }
+  #   end
+  #   enabled_accounts.reduce({},:merge)
+  # end
+
   private
+    # def set_cache
+     # MemcacheKeys.cache(ES_ENABLED_ACCOUNTS, EsEnabledAccount.all_es_indices) 
+    # end
 
     def clear_cache
       Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id })
-      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id,
-                                                              :aws_cluster => true })
+      # MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
     end
 
     def create_aliases
       Search::EsIndexDefinition.create_aliases(self.account_id)
-      Search::EsIndexDefinition.create_aliases(self.account_id, true)
     end
 end

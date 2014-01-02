@@ -268,9 +268,8 @@ class Helpdesk::Note < ActiveRecord::Base
     to_json({
             :root => "helpdesk/note",
             :tailored_json => true,
-            :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id,
-                          :notable_deleted, :notable_spam, :notable_requester_id ],
-            :only => [ :notable_id, :deleted, :private, :body, :account_id, :created_at, :updated_at ], 
+            :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id, :notable_deleted, :notable_spam, :notable_requester_id ],
+            :only => [ :notable_id, :deleted, :private, :body, :account_id ], 
             :include => { 
                           :attachments => { :only => [:content_file_name] }
                         }
