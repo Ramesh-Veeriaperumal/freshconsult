@@ -186,7 +186,7 @@ class Topic < ActiveRecord::Base
     to_json( 
           :root => "topic",
           :tailored_json => true,
-          :only => [ :title, :user_id, :account_id ], 
+          :only => [ :title, :user_id, :account_id, :created_at, :updated_at ], 
           :include => { :posts => { :only => [:body],
                                     :include => { :attachments => { :only => [:content_file_name] } }
                                   }, 

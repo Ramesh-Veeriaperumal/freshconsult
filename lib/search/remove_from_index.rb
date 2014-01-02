@@ -9,8 +9,8 @@ class Search::RemoveFromIndex
       args.symbolize_keys!
       klass = args[:klass_name].constantize
       index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass), args[:account_id]).to_s
-      Search::EsIndexDefinition.es_cluster(args[:account_id])
-      Tire.index(index_alias).remove(klass.document_type, args[:id])
+      Search::EsIndexDefinition.es_cluster(args[:account_id], args[:aws_cluster])
+      Tire.index(index_alias).remove(klass.document_type, args[:id]) if Tire.index(index_alias).exists?
     end
   end
 
@@ -29,9 +29,9 @@ class Search::RemoveFromIndex
                 end
               end
       index_alias = Search::EsIndexDefinition.searchable_aliases([Topic], args[:account_id]).to_s
-      Search::EsIndexDefinition.es_cluster(args[:account_id])
+      Search::EsIndexDefinition.es_cluster(args[:account_id], args[:aws_cluster])
       index = Tire.index(index_alias)
-      Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
+      Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}" if Tire.index(index_alias).exists?
     end
   end
 
@@ -45,12 +45,12 @@ class Search::RemoveFromIndex
       end
       klasses = [ User, Helpdesk::Ticket, Solution::Article, Topic, Customer, Helpdesk::Note ]
       search_aliases = Search::EsIndexDefinition.searchable_aliases(klasses, args[:account_id])
-      Search::EsIndexDefinition.es_cluster(args[:account_id])
+      Search::EsIndexDefinition.es_cluster(args[:account_id], args[:aws_cluster])
       search_aliases.each do |index_alias|
         index = Tire.index(index_alias)
-        Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
+        Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}" if Tire.index(index_alias).exists?
       end
-      Search::EsIndexDefinition.remove_aliases(args[:account_id])
+      Search::EsIndexDefinition.remove_aliases(args[:account_id], args[:aws_cluster]) if Tire.index(search_aliases.first).exists?
     end
   end
 end

@@ -15,9 +15,9 @@ class Search::EsIndexDefinition
     Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
   end
 
-	def create_es_index(index_name = DEFAULT_CLUSTER)
+	def create_es_index(index_name = DEFAULT_CLUSTER, aws_cluster=false)
     index_hash(index_name).each do |key, value|
-      create_model_index(value,key)
+      create_model_index(value, key, aws_cluster)
     end
 	end
 
@@ -28,7 +28,9 @@ class Search::EsIndexDefinition
                   :name => { :type => :string, :boost => 10, :store => 'yes' },
                   :description => { :type => :string, :boost => 3 },
                   :note => { :type => :string, :boost => 4 },
-                  :account_id => { :type => :long, :include_in_all => false }
+                  :account_id => { :type => :long, :include_in_all => false },
+                  :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                  :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
             }
   		}
@@ -52,7 +54,9 @@ class Search::EsIndexDefinition
                   :twitter_id => { :type => :string },
                   :fb_profile_id => { :type => :string },
                   :account_id => { :type => :long, :include_in_all => false },
-                  :deleted => { :type => :boolean, :include_in_all => false }
+                  :deleted => { :type => :boolean, :include_in_all => false },
+                  :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                  :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
             }
   		}
@@ -81,7 +85,10 @@ class Search::EsIndexDefinition
                 :to_emails => { :type => :string },
                 :es_cc_emails => { :type => :string },
                 :es_fwd_emails => { :type => :string },
-                :company_id => { :type => :long, :null_value => 0, :include_in_all => false }
+                :company_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
+
               }
             }
   		}
@@ -106,7 +113,9 @@ class Search::EsIndexDefinition
                                     :content_file_name => { :type => :string } 
                                   }
                                 },
-                :notable_company_id => { :type => :long, :null_value => 0, :include_in_all => false }
+                :notable_company_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
             }
       }
@@ -141,7 +150,9 @@ class Search::EsIndexDefinition
                                   :properties => {
                                     :content_file_name => { :type => :string } 
                                   }
-                                }
+                                },
+                :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
             }
   		}
@@ -174,15 +185,17 @@ class Search::EsIndexDefinition
                                                        }
                                                      }
                               }
-                            }
+                            },
+                  :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
+                  :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
             }
   		}
 	end
 
-  def create_model_index(index_name,model_mapping)
+  def create_model_index(index_name, model_mapping, aws_cluster=false)
   	sandbox(0) {
-      Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
+      Search::EsIndexDefinition.es_cluster_by_prefix(index_name, aws_cluster)
       Tire.index(index_name) do
         create(
           :settings => {
@@ -221,9 +234,9 @@ class Search::EsIndexDefinition
     res_aliases
   end
   
-  def create_aliases(account_id)
+  def create_aliases(account_id, aws_cluster=false)
     sandbox(0) {
-      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
       actions = []
       index_hash(pre_fix).each do |model, index_name|
         operation = { :index => index_name, :alias => "#{model}_#{account_id}" }
@@ -238,25 +251,25 @@ class Search::EsIndexDefinition
     }
   end
 
-  def remove_aliases(account_id)
+  def remove_aliases(account_id, aws_cluster=false)
     sandbox(0) {
-      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
+      actions = []
       index_hash(pre_fix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
-        es_indices = a.indices
-        es_indices.each do |index_name|
-          a.indices.delete index_name
-        end
-        a = a.save
-        response  = JSON.parse(a.body)
-        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
+        operation = { :index => index_name, :alias => a.name }
+        actions.push( { :remove => operation } )
       end
+      add_actions = { :actions => actions }
+      response = Tire::Configuration.client.post "#{Tire::Configuration.url}/_aliases", add_actions.to_json
+      result = JSON.parse(response.body)
+      result["ok"] || NewRelic::Agent.notice_error(result["error"])
     }
   end
 
-  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER)
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER, aws_cluster=false)
     sandbox(0) {
-      Search::EsIndexDefinition.es_cluster(account_id)
+      Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
       old_index_hash = index_hash(old_index_prefix)
       index_hash(new_index_prefix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
@@ -270,15 +283,17 @@ class Search::EsIndexDefinition
     }
   end
 
-  def es_cluster(account_id)
+  def es_cluster(account_id, aws_cluster=false)
     index = (account_id <= 55000) ? 0 : 1
-    Tire.configure { url Es_urls[index] }
+    config_url = aws_cluster ? Es_aws_urls[index] : Es_urls[index]
+    Tire.configure { url config_url }
     CLUSTER_ARR[index]
   end
 
-  def es_cluster_by_prefix(index_prefix)
+  def es_cluster_by_prefix(index_prefix, aws_cluster=false)
     CLUSTER_ARR.each_with_index do |prefix,i|
-      return Tire.configure { url Es_urls[i] } if index_prefix.include? prefix
+      config_url = aws_cluster ? Es_aws_urls[i] : Es_urls[i]
+      return Tire.configure { url config_url } if index_prefix.include? prefix
     end
   end
 
