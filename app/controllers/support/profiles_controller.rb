@@ -40,8 +40,8 @@ class Support::ProfilesController < SupportController
 
   def clean_params
     if params[:user]
-      params.delete(params[:user][:helpdesk_agent])
-      params.delete(params[:user][:role_ids])
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
     end
   end
 end
