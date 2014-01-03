@@ -2141,6 +2141,7 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
+    sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
     human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
@@ -3572,6 +3573,11 @@ en:
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
       csv_body: Please find the CSV file attached.
       xls_body: Please find the Excel file attached.
+  sla:
+    minutes: Mins
+    hours: Hrs
+    days: Days
+    months: Mos
   date:
     ago: ago
     from: from now

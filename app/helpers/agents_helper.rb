@@ -64,22 +64,22 @@ module AgentsHelper
     
     [:active, :occasional, :deleted].map do |tab|  
       content_tag(:li, :class => "#{(state == tab.to_s) ? 'active' : '' }") do
-        link_to((t("agent_list.tab.#{tab}") + agent_count(tab)).html_safe,
+        link_to((t("agent_list.tab.#{tab}") + agent_count_dom(tab)).html_safe,
           "/agents/filter/#{tab}") 
       end.to_s.html_safe
     end.to_s.html_safe
     
   end
   
+  def agent_count_dom(state)
+    return "" if (:deleted.eql?(state))
+    count = agent_count(state)
+    "<span class='agent-list-count' data-agent-count='#{count}'> #{count} </span>".html_safe
+  end
+
   def agent_count(state)
-    unless(:deleted.eql?(state))
-      scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
-      ("<span class='agent-list-count'>" +
-        current_account.all_agents.send(scoper).size.to_s +
-      "</span>").html_safe
-    else
-      ""
-    end
+    scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
+    current_account.all_agents.send(scoper).size
   end
   
   def agent_list_sort

@@ -931,6 +931,9 @@ li.ui-state-active {
 
 .userHeader{
     border-bottom: 1px solid;
+    .icon-user{
+        line-height: 15px;
+    }
 }
 
 .copytext{
@@ -2058,6 +2061,7 @@ div.file_upload input {
     font-size: 200px;
     width: 100%;
     padding-top: 60px;
+    padding-bottom: 60px;
 }
 
 .empty-message h2{
@@ -2667,16 +2671,10 @@ div.color{
     position: relative;
     left: 7px;
     top: 5px;
-    /*-webkit-iteration-count: 4;
-       -moz-iteration-count: 4;
-            iteration-count: 4;*/
-     /*-webkit-animation: NotifyJump 1s linear 5;
-        -moz-animation: NotifyJump 1s linear 5;
-             animation: NotifyJump 1s linear 5;*/
     &.notify_jump{
-       -webkit-animation: NotifyJump 1s linear 5;
-          -moz-animation: NotifyJump 1s linear 5;
-               animation: NotifyJump 1s linear 5;
+       -webkit-animation: NotifyJump 1s linear 2;
+          -moz-animation: NotifyJump 1s linear 2;
+               animation: NotifyJump 1s linear 2;
     }
 
     .fc_notify_flip_front, .fc_notify_flip_back{

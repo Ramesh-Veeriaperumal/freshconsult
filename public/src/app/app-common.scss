@@ -13,12 +13,6 @@ body {
 .request_details .details table{
     table-layout: fixed;
 }
-.select2{
-		width: 100%;
-		li {
-			width: auto !important;	
-		}
-	}
 
 .set-width-99{
 	width: 99.1%;
@@ -9529,3 +9523,41 @@ label.last-label{ margin-bottom: 0px; }
 		color: #555;	
 	}
 }
+
+//------------------------------------------------------------------------------------
+//								sla policy page start
+//------------------------------------------------------------------------------------
+.table.sla-table{
+	th, td{
+		border:0;
+		&:first-child{padding-left:0;}
+	}
+	.sla-time-col{
+		position:relative;
+		width:145px;
+		padding-bottom: 0;
+		input{
+			padding-top: 5px;
+			padding-bottom: 5px;
+			width: 40px;
+			border: 1px solid darkgray;
+		}
+		.select2-container{
+			position: absolute;
+			top: 15px;
+			left: 65px;
+			min-width: 65px;
+		}
+		.select2-choice{
+			@include border-radius(0 3px 3px 0);
+		}
+	}
+	.sla-error {
+		background-color: #e00;
+		font-weight: bolder;
+		color: white;
+	}
+}
+//------------------------------------------------------------------------------------
+//								sla policy page end
+//------------------------------------------------------------------------------------

@@ -6,3 +6,4 @@ Disallow: /support/tickets/
 Disallow: /support/login/
 Disallow: /login/normal/
 Disallow: /helpdesk/
+Disallow: /public/tickets/

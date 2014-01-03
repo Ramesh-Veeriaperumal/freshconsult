@@ -1,23 +1,31 @@
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
-<ul class="ui-form dont-validate">
-  <li>
-		<%= f.label :name, t('name') %>
-   		<%= f.text_field :name, :class => "required", :autofocus => true %>
-		<%= f.hidden_field :id %>
-	</li>
-	<li>
-		<%= f.label :description, t('description') %>
-	    <%= f.text_area :description, :class => "smallpara" %>
-	</li>	 
-	<li class="seperator"></li>
-	<li>
-		<label class="large"><%=t('sla_policy.sla_targets')%></label>
-		<p><%= t('sla_policy.sla_targets_details') %></p>
-	</li>
-	<li>	 	 		
-	  <div class="grid sla_detail">
-		<table>
+<div class="dont-validate form-horizontal">
+  	<div class="control-group">
+		<%= f.label :name, t('name'), :class => "control-label" %>
+		<div class="controls">
+   			<%= f.text_field :name, :class => "required", :autofocus => true %>
+			<%= f.hidden_field :id %>
+		</div>
+	</div>
+	<div class="control-group">
+		<%= f.label :description, t('description'), :class => "control-label" %>
+		<div class="controls">
+	    	<%= f.text_area :description, :class => "smallpara" %>
+		</div>
+	</div>
+	<br/>
+	<div class="row-fluid">
+		<div class="control-group">
+			<label class="large"><%=t('sla_policy.sla_targets')%></label>
+			<p class="muted"><%= t('sla_policy.sla_targets_details') %></p>
+		</div>
+		<div class="alert aligncenter">
+			<%= t('sla_policy.sla_rule').html_safe %>
+		</div>
+	</div>
+	<div>	 	 		
+		<table class="table sla-table">
 	  		<tr>
 	    		<th><%= t('ticket.priority').html_safe %></th>
 	    		<th><%= t('sla_policy.respond_within').html_safe %></th>
@@ -36,19 +44,23 @@
 					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
 					<tr>
 						<td>
-							<%= sla.label :name , "<em>#{t(priority)}</em>".html_safe %> 
+							<%= sla.label :name , "#{t(priority)}".html_safe %> 
 							<%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
 							<%= sla.hidden_field :priority, { :value => (priority_id)} %>
 							<%= sla.hidden_field :id, { :value => slas.id} %>		
-						</td>	   
-						<td>
-							<%= sla.select :response_time , response_time_options %>
 						</td>
-						<td>
-						  	<%= sla.select :resolution_time, resolution_time_options %>
+						<td class="sla-time-col">
+							<%= text_field "text[#{index}]", :response_time, :value => get_value(slas.response_time) %>
+							<%= select "select[#{index}]",:response_time, options_for_select(sla_options, get_value(slas.response_time, true)),{},{:class =>'select2'} %>
+							<%= sla.text_field :response_time, {:class => 'only_digits sla_time', :style => 'display: none;'} %>
+						</td>
+						<td class="sla-time-col">
+					  		<%= text_field "text[#{index}]", :resolution_time, :value => get_value(slas.resolution_time) %>
+							<%= select "select[#{index}]",:resolution_time, options_for_select(sla_options, get_value(slas.resolution_time, true)),{},{:class =>'select2'} %>
+							<%= sla.text_field :resolution_time, {:class => 'only_digits sla_time', :style => 'display: none;'} %>
 						</td>
 						<% if feature?(:business_hours) %> <td><%= sla.select :override_bhrs, 
-							Helpdesk::SlaDetail::SLA_TIME_OPTIONS %></td> <% end %>
+							Helpdesk::SlaDetail::SLA_TIME_OPTIONS, {}, {:class =>'select2'} %></td> <% end %>
 						<td>
 							<%= sla.check_box :escalation_enabled, {:rel => "sla_checkbox"}, 1 , 0 %>
 						</td>
@@ -56,13 +68,13 @@
 		  		<% end %>
 			<% end %>
 		</table>
-	  </div>
-	</li>
+	</div>
+</div>
+<ul class="ui-form dont-validate">
 	<% unless @sla_policy.is_default %>
-	<li class="seperator"></li>
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.applicable_to').html_safe}:" , :class => "large" %>
-		<p><%= t('sla_policy.applicable_details').html_safe %></p>
+		<p class="muted"><%= t('sla_policy.applicable_details').html_safe %></p>
 		<label for="sla_policy_conditions" class="hide">
 			<%= t('sla_policy.applicable_error').html_safe %>
 		</label>
@@ -118,7 +130,6 @@
 	    <% end %>
 	</li>
 	<% end %>
-	<li class="seperator"></li>
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.escalate').html_safe}", :class => "large" %>
 		<div class="escalate_to">
@@ -195,7 +206,6 @@
 		  </div>
 		</div>
 	</li>
-	
 </ul>
 <div class="button-container">
 	<%= link_to t('cancel'), helpdesk_sla_policies_path, :class => "btn" %>
@@ -216,4 +226,25 @@
 	var is_default = <%= @sla_policy.is_default %>
 	var placeholder = { company: '<%= t('sla_policy.company_placeholder').html_safe %>', 
 											agent: '<%= t('sla_policy.agent_placeholder').html_safe %>'}
+
+	updateInSeconds = function(field) {
+		var value = jQuery("#text_"+field).val().replace(' ','');
+		var seconds_multiplier = jQuery("#select_"+field).val();
+		if(/^\d+$/.test(value)) {
+			value = value * seconds_multiplier;
+			jQuery("#SlaDetails_"+field).val(value).blur();
+		}
+		else {
+			jQuery("#SlaDetails_"+field).val("a").blur();	
+		}
+	}
+
+	jQuery(document).ready(function(){
+		jQuery('.sla-time-col a, .sla-time-col div input').prop('tabIndex','-1');
+
+		jQuery('[id^="text"][id$="_time"],[id^="select"][id$="_time"]').on("change",function(){
+			var field = jQuery(this).prop('id').match(/[0-9].+/);
+			updateInSeconds(field);
+		});
+	});
 <% end %>
