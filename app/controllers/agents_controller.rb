@@ -48,7 +48,7 @@ class AgentsController < ApplicationController
       #for using query string in api calls
       @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])).filter 
     else
-      @agents = scoper.filter(params[:state], current_agent_order, current_agent_order_type, params[:page])
+      @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
       format.html # index.html.erb
