@@ -21,7 +21,7 @@ class CleanupCorruptedUsers < ActiveRecord::Migration
   	count = 0
   	Agent.find_in_batches(:batch_size => 300, 
   		:joins => "inner join users on users.id = agents.user_id and users.account_id = agents.account_id", 
-  		:conditions => ["users.helpdesk_agent = ? ", false]) do |agent|
+  		:conditions => ["users.helpdesk_agent = ? ", false]) do |agents|
   		count = count + 1
   		agents.each do |agent|
   			puts "Id: #{agent.user_id}, Email: #{agent.user.email}, account: #{agent.account_id}"
