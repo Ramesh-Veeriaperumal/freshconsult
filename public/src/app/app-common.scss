@@ -1592,7 +1592,7 @@ a.page_title{
 	padding-left:100px;
 	z-index:9999999;
 	.results{
-		width:300px;
+		width:298px;
 		@include border-radius(0 0 6px 0);
 		background:#f6f6f6;
 		border-left:1px solid #dedede;
@@ -2594,9 +2594,8 @@ a.page_title{
 	color:#993333;	
 }
 
-
 .forum-group, .list-group{
-	margin:0px -$common-padding; 
+	margin:0px (-$common-padding); 
 }
 
 .sort{   
@@ -3613,6 +3612,7 @@ a.close{
 
 .page-list{
    margin: 0 (-$common-padding);
+   margin-right:-($common-padding + 2);
    .list-group{
       padding:0px;
       margin:0px 0px;
@@ -3949,13 +3949,9 @@ a.close{
 
 		.nav-trigger {
 			font-size: 16px;
-			color:#000;
+			color:$default_txt_color;
 			font-weight:bold;
 			@include text-shadow(#ffffff, 2px, 2px, 2px);
-
-			&.selected {
-				color: #FFF;
-			}
 			&.unsaved {
 				font-style:italic;
 			}
@@ -3973,6 +3969,7 @@ a.close{
 	}
 	#view_manage_links {
 		display: inline-block;
+		margin-left:5px;
 	}
 
 	&:hover{
@@ -4024,7 +4021,7 @@ a.close{
 	}
 }
 .toolbar{
-	background:#eee;
+	background:#f6f6f6;
 	padding:5px 8px 8px 0;
 	.btn{
 		border-color: #CCC;
@@ -5653,6 +5650,7 @@ margin:10px;
 		border:none;
 	}
 	#ticket-list-body {
+		margin-top:13px;
 		background: white;
 		border: #FFF solid 1px;
 		@include border-radius(4px);

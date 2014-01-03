@@ -4122,6 +4122,7 @@ en:
       scoreboard_title_nav: "Leaderboard"
       scoreboard_group_title: "Group Leaderboard"
       scoreboard_agent_title: "Agent Leaderboard"
+      reports_by: "Reports by"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
