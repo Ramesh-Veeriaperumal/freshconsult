@@ -2,6 +2,7 @@ class Support::ProfilesController < SupportController
   # need to add manage profile into system or check with shan
   before_filter :require_user 
   before_filter :set_profile
+  before_filter :clean_params, :only => [:update]
 
   def edit
     respond_to do |format|
@@ -37,4 +38,10 @@ class Support::ProfilesController < SupportController
   	@profile = current_user
   end
 
+  def clean_params
+    if params[:user]
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
+    end
+  end
 end

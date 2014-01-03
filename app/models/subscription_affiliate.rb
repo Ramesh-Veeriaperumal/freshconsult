@@ -53,7 +53,13 @@ class SubscriptionAffiliate < ActiveRecord::Base
       :name => "Digital Publisher University",
       :affiliate_param => "digitalpublisheruniversity.com/offers/freshdesk",
       :token => "dpu"
-    }    
+    },
+
+    :rewardli => {
+      :name => "Rewardli",
+      :affiliate_param => "rewardli.com/offers/1577-freshdesk-communications-mobile",
+      :token => "rewardli"
+    } 
   }
   
   AFFILIATE_PARAMS = AFFILIATES.collect { |affiliate, details| details[:affiliate_param] }
@@ -96,6 +102,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
           find_by_token(AFFILIATES[:flexjobs][:token])
         when dpu_subscription?(affiliate_param)
           find_by_token(AFFILIATES[:dpu][:token])
+        when rewardli_subscription?(affiliate_param)
+          find_by_token(AFFILIATES[:rewardli][:token])
         when freshdesk_partner_subscription?(affiliate_param)
           fetch_freshdesk_partner(account)
         else

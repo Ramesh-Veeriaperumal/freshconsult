@@ -1,0 +1,207 @@
+
+#bulk{
+    top: 2%;
+    margin-top: 0;
+    .modal-body{
+        max-height: 460px;
+    }
+}
+
+#update-fields{    
+    padding: 10px 0px 10px 10px;
+    max-height: 124px;
+    overflow: auto;
+    box-shadow: inset 0 1px 7px rgba(0,0,0,0.1);
+    .select2-container{
+         width: 208px;
+    }
+    .level_2, .level_3{
+        select2-container{
+            width: 196px;
+        }
+    }
+    .bulk_add_tags{
+        .select2-container{
+            width: 640px;
+        }
+    }
+}
+
+.bulktickets{
+    .update-check-for-fields{
+        margin: -2px 4px 0 0;
+    }
+    #reply-multiple_file{
+        line-height: 16px;
+    }
+    .small_curve{
+        @include border-radius(5px);
+    }
+    .top_spacing{
+        margin-top: 10px;
+    }
+    select{
+        width: 180px;
+    }
+    .fields{
+        float:left;
+        margin-left: 0px ;
+        width: 575px;
+    }
+    .inline-field{
+        width: 100%;
+    }
+    .field-item{
+        @include min-height(50px);
+    }
+    .label{
+        max-height: 18px;
+    }
+    #bulkreplycheck{
+        margin-bottom:0;
+    }
+    #bulkreplyform{
+        .ui-form{
+            min-height: 250px;
+        }
+    }
+
+    .bulk_add_tags{
+      width: 95%;
+      padding-bottom: 11px;
+    }
+
+    .request_panel .ui-form li.inline-field div.fields, 
+    .request_panel .ui-form fieldset div.fields { 
+        margin-left: 0px; 
+        padding-top: 4px; 
+        position: relative; 
+    }
+
+    .request_panel { 
+        padding: none; 
+        border-spacing: 0px 0px;
+    }
+
+    .attachment-options { clear: both;}    
+
+    .request_panel .ui-form .request_form_options .insert-canned-response {
+        position: relative;
+        z-index: 1001;
+    }
+    .canned-response-menu{
+        right: -1px;
+        z-index: 1000;
+        top: -24px;
+    }
+    .menu-item{
+        width: 350px;
+        a {
+            padding-left:20px;
+        }
+    }
+    #reply-multiple-cnt-reply-multiple-body{
+        height: 110px;
+    }
+    #replymultiple{
+        margin-bottom: 0px;
+    }
+}
+
+#cnt-reply-multiple{
+    .request_form_options { 
+        z-index:1000; 
+        top:-25px; 
+        right:0; 
+    }
+
+    .slim-button { z-index: 1001;}
+
+    .ui-form li{
+        padding-left:0;
+        padding-right:0;
+    }
+}
+
+#reply-fields{
+    padding: 10px 10px 0px;
+    background-color: #f1f1f1;
+    border-top: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
+    overflow-y: auto;
+    max-height: 303px;
+    .field-item{
+      min-height: 0px;
+    }
+}
+
+.field-item{
+    display:inline;
+    float:left;
+    width:33%;
+    margin-bottom:12px;
+    .level_2, .level_3, .nested-child{
+        border-left: 1px dotted #afafaf;
+        padding-left: 10px;
+        .select2-container{
+            width: 196px;
+        }
+    }
+    label{
+        font-size:13px;
+    }
+    label.active{
+        font-weight:bold;
+    }
+}
+
+#bulk_canned_response_holder{
+    overflow: hidden;
+    float: left;
+    width: 650px;
+    min-height: 100px;
+    margin-top: 10px;
+}
+
+#bulk-response-group{
+    overflow: hidden;
+    float: left;
+    width: 650px;
+}
+
+#content-bulk{
+    min-height: 30px;
+    overflow: hidden;
+}
+
+#bulktickets{
+    border: 1px solid #858585;
+    border-radius: 5px;
+    float: left;
+    width: 667px;
+    margin-right: 32px;
+}
+
+#bulkfull{
+    width: 1375px;
+    height: auto;
+}
+
+#bulkcontent{
+    overflow: hidden;
+}
+
+#canned_show{
+    z-index: 100;
+    top: 1px;
+    right: 14px;
+}
+
+#no-response{
+    z-index: 1000;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 7px;
+    cursor: pointer;
+    text-decoration: none;
+}

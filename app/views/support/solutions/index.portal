@@ -3,7 +3,9 @@
 	{% for category in portal.solution_categories %}
 		{% if category.folders_count > 0 %}
 		<div class="cs-s">
-			<h3 class="heading">{{ category.name | h }}</h3>
+			<h3 class="heading"> 
+				{{ category.name | link_to: category.url }} 
+			</h3>
 			<div class="cs-g-c">
 				{% for folder in category.folders %}
 					<section class="cs-g article-list">

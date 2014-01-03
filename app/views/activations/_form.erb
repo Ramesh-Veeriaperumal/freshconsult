@@ -1,4 +1,4 @@
-<% form_for @user, :url => activate_path(@user.id), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
+<% form_for @user, :url => activate_path(@user.perishable_token), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
 	<%= form.error_messages %>
 	<fieldset>
 	  	<div class="control-group">

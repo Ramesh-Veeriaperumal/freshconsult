@@ -7,7 +7,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   
   around_filter :select_account_shard, :only => :add_affiliate_transaction
   before_filter :authenticate_using_basic_auth, :ensure_right_parameters, :fetch_account, 
-                :ensure_right_affiliate, :only => :add_affiliate_transaction
+                :only => :add_affiliate_transaction
   
   #Reseller portal verifications
   before_filter :verify_timestamp, :verify_signature, :ssl_check, :authenticate_using_basic_auth,

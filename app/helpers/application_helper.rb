@@ -50,6 +50,11 @@ module ApplicationHelper
     "/helpdesk/theme.css?v=#{current_portal.updated_at.to_i}"
   end
 
+  def support_theme_url
+    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    "/support/theme.css?v=#{query_string}"
+  end
+
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
         portal.logo.nil? ? "/images/logo.png?721013" : 

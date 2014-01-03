@@ -706,11 +706,6 @@ HTML
 		  :preferences => portal_preferences }.to_json
 	end
 
-	def theme_url
-		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css?v=#{Time.now.to_i}" : 
-			"/theme/#{current_portal.template.id}.css?v=#{current_portal.template.updated_at.to_i}"
-	end
-
 	def portal_copyright portal
 		%( 	<div class="copyright">
 				<a href="http://www.freshdesk.com" target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
