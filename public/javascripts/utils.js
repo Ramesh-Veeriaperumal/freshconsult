@@ -943,3 +943,10 @@ function hashTabSelect(){
   }
 }
 
+function storeInLocalStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getFromLocalStorage(key_name) {
+  return JSON.parse(localStorage.getItem(key_name))
+}

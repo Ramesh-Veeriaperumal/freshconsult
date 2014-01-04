@@ -1,10 +1,26 @@
 page << "timesheet.editCompelete('add', true)"
+page << "if (jQuery('#timeentry_#{@time_entry.id}').length) {"
 page.replace "timeentry_#{@time_entry.id}", :partial => "time_entry", :object => @time_entry
+page << "}"
+
 clear_view_timers(page, @time_entry, @time_cleared)
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
 page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
+
+if(@time_entry.user_id == current_user.id)
+	if @time_entry.timer_running
+		# Replace the header with the current started timer	
+		page.replace("header_timer", :partial => "header_timer")		
+	else
+		page << 'jQuery("#header_timer").empty()'
+	end
+	page << "update_localstorage(#{@time_entry.id}, #{@time_entry.timer_running});"
+end
+
 if @time_entry.timer_running
-        page << "trigger_event('time_entry_started', #{@time_entry.to_json} );"
-else
-        page << "trigger_event('time_entry_stopped', #{@time_entry.to_json} );"
+	# Sending a view level trigger to indicate that timer has been started
+	page << "trigger_event('time_entry_started', #{@time_entry.to_json} );"
+else	
+	# Sending a view level trigger to indicate that timer has been stopped
+	page << "trigger_event('time_entry_stopped', #{@time_entry.to_json} );"
 end

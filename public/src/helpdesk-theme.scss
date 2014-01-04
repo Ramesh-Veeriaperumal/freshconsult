@@ -74,6 +74,19 @@ body { background: $background; }
 /* 										Tab color settings 										*/
 /* -------------------------------------------------------------------------------------------  */
 
+a.new_ticket, .nav_search div.search_bar { border-color:darken($tab_color, 8%); }
+
+/* Header Timer */
+.header-timer-wrap{ background-color:darken($header_color, 10%); }
+.header-timer .time{ color:$header_ctxt_color}
+.stopwatch{ 
+	@include box-shadow(inset 0px 0px 0px 1px $header_ctxt_color);
+	background-color:lighten($header_color,70%)
+}
+.stopwatch:before{ background-color: $header_ctxt_color; }
+.stopwatch:after{ background-color: darken($header_ctxt_color, 90%); }
+	 
+/* Tab color settings */
 .top_nav_bg { background: $tab_color; }
 
 .theme-tab, .title-highlight{ background-color: $tab_color; color: $tab_ctxt_color;  }
