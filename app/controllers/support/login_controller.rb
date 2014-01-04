@@ -32,7 +32,6 @@ class Support::LoginController < SupportController
 			redirect_back_or_default('/') if grant_day_pass 
 			#Unable to put 'grant_day_pass' in after_filter due to double render
 		else
-			set_error_for_deleted_user
 			note_failed_login
 			set_portal_page :user_login
 			render :action => :new
@@ -47,13 +46,6 @@ class Support::LoginController < SupportController
 
 	    def remove_old_filters
 	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
-	    end
-
-	    def set_error_for_deleted_user
-	    	if params[:user_session][:email].present? and params[:user_session][:password].present? and current_account.all_users.find_by_email(params[:user_session][:email]).deleted?
-				@user_session.errors.clear
-				@user_session.errors.add_to_base(I18n.t("activerecord.errors.messages.contact_admin"))
-			end
 	    end
 
       def check_request_referrer
