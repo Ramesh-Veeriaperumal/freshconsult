@@ -1116,6 +1116,7 @@ li.ui-state-active {
             position: relative;
             background-color: #fff;
             z-index: 1;
+            min-height: 50px;
             -webkit-transition: .2s linear;
                -moz-transition: .2s linear;
                     transition: .2s linear;
