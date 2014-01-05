@@ -17,14 +17,14 @@
 <div class="sidepanel">
   <h4 class="title"><%= t('reports.timesheet_reports.index.filter_report') %><h4>
   <% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
-    <ul class="ui-form">
+    <ul>
       <li>
         <label><%=t('helpdesk.time_sheets.customer')%></label>  
         <%= select_tag :customer_id, 
         				options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }, 
         								    @customer_id),
 						{ :multiple => true, 
-						  :class => "select2 input-xlarge auto", 
+						  :class => "select2 input-large auto", 
 						  			"data-placeholder".to_sym() => t('.select_customer') } %>
 	     
         <label><%=t('helpdesk.time_sheets.agent')%></label>	
@@ -32,25 +32,25 @@
 						options_for_select(current_account.users.technicians.collect{ |c| [c.name, c.id] },
 											 @user_id), 
 						{ :multiple => true,
-						  :class => "select2 input-xlarge auto", 
+						  :class => "select2 input-large auto", 
 									 "data-placeholder".to_sym() => t('.select_agent') } %>
         <label><%=t('helpdesk.time_sheets.group')%></label>	
 		<%= select_tag :group_id, 
 						options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
 											 @group_id), 
 						{ :multiple => true,
-						  :class => "select2 input-xlarge auto", 
+						  :class => "select2 input-large auto", 
 									 "data-placeholder".to_sym() => t('.select_group') } %>
         
 		<label><%=t('helpdesk.time_sheets.billing_type')%></label>
 		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options), 
 		 				{ :multiple => true, 
-		 				  :class => "select2 input-xlarge auto",
+		 				  :class => "select2 input-large auto",
 		 						    "data-placeholder".to_sym() => t('.select_billable')} %>
         
 		<label><%=t('helpdesk.time_sheets.group_by')%></label>
 		<%= select_tag :group_by , options_for_select(Helpdesk::TimeSheet.group_by_options),
-						{ :multiple => false, :class => "select2 input-xlarge auto"}%>
+						{ :multiple => false, :class => "select2 input-large auto"}%>
 			
 	  </li> 
 	  <li>

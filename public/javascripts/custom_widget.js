@@ -169,12 +169,18 @@ Freshdesk.Widget.prototype={
 		else if (evt.status == 500) {
 			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
 			if (this.app_name == "Harvest") {
-				var error = XmlUtil.extractEntities(evt.responseXML,"error");
-				if (error.length > 0) {
-					err_msg = XmlUtil.getNodeValueStr(error[0], "message");
-					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-					return;
+				try {
+					var error = XmlUtil.extractEntities(evt.responseXML,"error");
+					if (error.length > 0) {
+						err_msg = XmlUtil.getNodeValueStr(error[0], "message");
+						alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.	");
+						return;
+					}
 				}
+				catch(ex) {
+				}
+				alert("Harvest reported an unknown error processing your Request.\n\n Your Timesheet might be locked. ");
+				return;
 			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {

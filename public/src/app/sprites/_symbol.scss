@@ -202,7 +202,8 @@ span.fb_add { @include symbols-sprite(add); }
 .due-date-dialog .ui-datepicker-next .ui-icon{ @include symbols-sprite(calender-right); } 
 
 .nav_search .searchIcon{ @include symbols-sprite(search); }
-a.new_ticket span{ @include symbols-sprite(add); }
+.nav_search .search-icon-inactive{ @include symbols-sprite(search-white); }
+//a.new_ticket span{ @include symbols-sprite(add); }
 .nav-drop .nav-item-icon .item-options{ @include symbols-sprite(item-options); }
 .canned-response-menu span.bullet{ @include symbols-sprite(bullet-folder); }
 .close-img span{ @include symbols-sprite(draft-close); }

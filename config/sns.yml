@@ -1,0 +1,8 @@
+development:
+  social_notification_topic: social_notification_dev
+staging:
+  social_notification_topic: social_notification_staging
+production:
+  social_notification_topic: social_notification_production
+test:
+  social_notification_topic: social_notification_test

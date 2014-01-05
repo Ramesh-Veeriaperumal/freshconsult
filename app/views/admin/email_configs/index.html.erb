@@ -1,9 +1,9 @@
-<% content_for :sidebar do %> 
+<% content_for :helpcard do %> 
 	<%= render :partial => "helpnote" %>	
 <% end %>
 <div id="emailconfig-list" class="email-settings-header">
   <% if feature?(:multiple_emails) %>
-    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn"%>
+    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn btn-primary"%>
   <% else %>
     <%= link_to t('email_configs.new_support_email'), "#", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
     <% options =  ( current_user.privilege?(:manage_account) ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>

@@ -56,7 +56,7 @@
 						  <div class="floatr">
 						    <span class="item_actions">
                 <% if privilege?(:reply_ticket) %>
-						      <a href="#" data-user="${user.screen_name}" class="button reply_button">
+						      <a href="#" data-user="${user.screen_name}" data-id="${id_str}" class="button reply_button">
 						        <%= t('social.twitter_handles.index.reply') %>
 					        </a>
                 <% end %>
@@ -183,7 +183,8 @@
 	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
                                       title: "Reply to @" + user, resizable: false, draggable: false });
 
-	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");	  
+	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");
+      jQuery("#tweet_in_reply_to").val(this.getAttribute("data-id"));	  
 	    jQuery('#SendTweetCounter').html(140 - jQuery.trim($('tweet_text_area').value.length));
 	  });
 	 
@@ -241,6 +242,7 @@
 	      </td>
         <td>
 	        <%= text_area "tweet", :body, { :class => 'required tweet auto-height', :id => 'tweet_text_area', :rows => "3" } %>
+          <%= hidden_field "tweet", :in_reply_to %>
 	        <div class="info-data">
 	          <strong><%= t('social.twitter_handles.index.note_title') %></strong><%= t('social.twitter_handles.index.note') %>
           </div>

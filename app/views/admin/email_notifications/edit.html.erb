@@ -432,7 +432,7 @@ title="<%= t('email_notifications.unsaved_title')%>"
 
 </div>
 
-<% content_for :sidebar do %> 
+<% content_for :helpcard do %> 
 	<%= render :partial => "helpnote", :locals => {:type => notification_type.to_s, :category => @type } %>	
 <% end %>
 

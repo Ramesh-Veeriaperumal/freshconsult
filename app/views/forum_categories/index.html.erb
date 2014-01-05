@@ -1,12 +1,12 @@
 <% @monitoring = !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
-	<div class="floatr">
+	<div class="pull-right">
     <% if privilege?(:manage_forums) -%>  
-			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "uiButton") unless(@forum_categories.size <= 1)%>
-	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
+			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "btn btn-bold") unless(@forum_categories.size <= 1)%>
+	  		<%= link_to t('category.new'), new_category_path, :class => "btn btn-primary" %>
 		<% end %> 
 	</div>
-	<h3 class="title"><%= t('forum.title') %></h3>
+	<h3 class="lead"><%= t('forum.title') %></h3>
 </div>
 <div class="forum_list">
 	<div class="forum-group" id="forum_categories_list">
@@ -16,11 +16,11 @@
 		<% @forum_categories.each do |forum_category| %>
 			<div class="category-title">
 				<% if privilege?(:manage_forums) -%>
-					<div class="action_buttons">
+					<div class="action_buttons btn">
 				  		<%= link_to  t('forum.new'), new_category_forum_path(forum_category), :class => "last add_new icon" %>
 					</div>
 				<% end -%>
-				<%= link_to h(forum_category.name), category_path(forum_category), :class => "title" %>
+				<%= link_to h(forum_category.name), category_path(forum_category), :class => "sub-lead" %>
 			</div>
 			<%= render :partial => "forum_shared/category", :object => forum_category %>
 		<% end %>

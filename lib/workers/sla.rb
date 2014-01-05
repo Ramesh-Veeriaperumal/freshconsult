@@ -117,6 +117,8 @@ class Workers::Sla
     redis_key = "stats:rake_tkts:sla:#{current_time.day}:#{account_id}:#{current_time}"
     $stats_redis.set(redis_key, total_tickets)
     $stats_redis.expire(redis_key,144000)
+  rescue => e
+    puts "Error while recording SLA stats : #{e.message}"
   end
 
 

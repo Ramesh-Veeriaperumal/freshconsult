@@ -1,0 +1,26 @@
+Developer Notifications:
+------------------------
+How to Use:
+-----------
+1. Create a notification topic
+    We use SNS in the background for notifying all users. So add an entry for your topic in "config/sns.yml". Take a look at "db/migrate/20131117230610_create_social_notification_topic.rb" on how to create a new topic
+
+
+2. Notify users - Publish to a topic
+    Once the topic is created, call
+      DevNotification.publish(<name given in sns.yml file>, <Subject of the email>, <Email message>)
+    All the params are required to be Strings
+
+
+Technical Details:
+------------------
+SNS:
+  SNS is a push messaging service. We can configure multiple recepients for each SNS topic. Once a message is published to a topic, SNS makes sure it reaches all the recepients subcribed to the topic. Currently we are using only the "Email" endpoint. We can extend our class for other endpoints like SMS too.
+
+Once we subscribe a recepient(email) for a topic, they will get a confirmation email from Amazon. The recepients will need to confirm their subscription to start receiving the notification emails.
+
+When the 'publish' api call is made, we enqueue the message in Resque and the Resque worker makes the actual push to the SNS.
+
+Backup:
+  If backup is set to true while creating a notifiction topic, then we create a additional SQS queue to backup all notifications. The SQS is subscribed to receive notifications from the SNS topic.
+  SQS's provides a maximum message retention time of 14 days, so the notifications are deleted 14 days after being pushed into the queue. This is the limitation of SQS.

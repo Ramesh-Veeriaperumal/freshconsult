@@ -265,7 +265,7 @@ class Helpdesk::TicketsController < ApplicationController
         response = "{
         #{@item.to_mob_json(false,false)[1..-2]},
         #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
-                                                        :can_view_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
+                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
         #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},

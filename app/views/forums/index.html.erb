@@ -1,12 +1,12 @@
 <% content_for :layoutType do %>single<% end %>
 <% @monitoring = !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
-	<div class="floatr">
+	<div class="pull-right">
 		<% if privilege?(:manage_forums) %>
-	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
+	  		<%= link_to t('category.new'), new_category_path, :class => "btn btn-primary" %>
 		<% end %> 
 	</div>
-	<h3 class="title"><%= t('forum.title') %></h3>
+	<h3 class="lead"><%= t('forum.title') %></h3>
 </div>
 <div class="forum_list">
 	<div class="forum-group">

@@ -1,6 +1,6 @@
 <% @page_title = t('.title') %>
 <div class="list-page product-page" id="multi-product-index">
-	<div class="list-page-subheader">
+	<div class="list-page-header">
 		<div class="row-fluid">
 			<div class="span6">			
 				<%= content_tag :h3, @page_title, :class => "lead" %>
@@ -17,6 +17,6 @@
 	</div>
 </div>
 
-<% content_for :sidebar do -%>
+<% content_for :helpcard do -%>
   <%= render :partial => "helpnote" %>
 <%-end %>

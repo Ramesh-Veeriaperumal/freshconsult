@@ -13,7 +13,6 @@
   padding: 4px 14px;
   margin-top:0;
   margin-bottom: 0; // For input.btn
-  margin-right: 4px;
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   *line-height: $baseLineHeight;
@@ -73,6 +72,9 @@
   }
 }
 
+.btn-bold{
+  font-weight: bold;
+}
 // Button Sizes
 // --------------------------------------------------
 
@@ -95,6 +97,13 @@
 }
 .btn-small [class^="icon-"] {
   margin-top: 0px;
+}
+
+// slim
+.btn.slim{
+  padding: 2px 9px 3px;
+  font-size: 11px;
+  @include border-radius(10px);
 }
 
 // Mini

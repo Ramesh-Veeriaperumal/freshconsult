@@ -93,12 +93,15 @@
    del{ text-decoration:none; }
 }
 
+//-----------------------------------------------------------------------------
 // IE7 likes to collapse whitespace on either side of the inline-block elements.
 // Ems because we're attempting to match the width of a space character. Left
 // version is for form buttons, which typically come after other elements, and
 // right version is for icons, which come before. Applying both is ok, but it will
 // mean that space between those elements will be .6em (~2 space characters) in IE7,
 // instead of the 1 space in other browsers.
+//-----------------------------------------------------------------------------
+
 @mixin ie7-restore-left-whitespace() {
   *margin-left: .3em;
 
@@ -123,9 +126,11 @@
 }
 
 //// TRIANGLES ////
-
+//-----------------------------------------------------------------------------
 // Transforms the element into a triangle
 // You can modify border sizes to change the shape
+//-----------------------------------------------------------------------------
+
 @mixin triangle($direction: down, $color: black, $size: 6px) {
   @if $direction == left {
     border-bottom: $size solid transparent;
@@ -151,7 +156,10 @@
   width: 0;
 }
 
+//-----------------------------------------------------------------------------
 // Attaches a triangle to the element using a pseudo-element
+//-----------------------------------------------------------------------------
+
 @mixin triangle-after($direction: down, $color: black, $size: 6px) {
   position: relative;
   &:after {
@@ -164,7 +172,10 @@
 }
 
 
+//-----------------------------------------------------------------------------
 // Attaches a triangle to the element using a pseudo-element
+//-----------------------------------------------------------------------------
+
 @mixin triangle-before($direction: down, $color: black, $size: 6px) {
   position: relative;
   &:before {
@@ -176,7 +187,10 @@
   }
 }
 
+//-----------------------------------------------------------------------------
 // Convenience function to change the current element and it's triangle's color
+//-----------------------------------------------------------------------------
+
 @mixin triangle-color($color: black, $direction: down) {
   background: $color;
   &:after {
@@ -197,8 +211,10 @@
 
 
 //// BUBBLES ////
-
+//--------------------------------------------------
 // Turns element into a speech bubbles (used for numbers)
+//--------------------------------------------------
+
 @mixin bubble($background: none, $text: none) {
   @include border-radius(3px);
   position: relative;
@@ -226,7 +242,16 @@
   }
 }
 
+//--------------------------------------------------
 // Animation Mixins for cross browser compatibility
+//--------------------------------------------------
+@mixin animation($anim) {
+  -webkit-animation: $anim;
+  -moz-animation: $anim;
+  -o-animation: $anim;
+  animation: $anim;
+}
+
 @mixin animation-name($name) {
   -webkit-animation-name: $name;
   -moz-animation-name: $name;
@@ -270,6 +295,11 @@
   -o-animation-direction: $direction;
   animation-direction: $direction;
 }
+
+//-----------------------------------------------------------------------------
+// Select2 
+//-----------------------------------------------------------------------------
+
 @mixin select2_container_choice {
   @include border-radius(3px);
   @include background-clip(padding-box);
@@ -305,4 +335,21 @@
   width:100%;
   margin-top:-5px;
   @include border-radius(0 0 4px 4px);
+}
+
+@-webkit-keyframes timeRotation{
+    0%{-webkit-transform:rotate(0deg)}
+    100%{-webkit-transform:rotate(360deg)}
+}
+@-moz-keyframes timeRotation{
+    0%{-moz-transform:rotate(0deg)}
+    100%{-moz-transform:rotate(360deg)}
+}
+@-ms-keyframes timeRotation{
+    0%{-moz-transform:rotate(0deg)}
+    100%{-moz-transform:rotate(360deg)}
+}
+@keyframes timeRotation{
+    0%{transform:rotate(0deg)}
+    100%{transform:rotate(360deg)}
 }

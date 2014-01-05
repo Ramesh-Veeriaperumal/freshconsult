@@ -1,4 +1,10 @@
 /* Importing admin icons */
+
+/*Report tab icons */
+@import "cdn-ignored/sprites/common-icon/*.png";
+$common-icon-layout:horizontal;
+@include all-common-icon-sprites(true);
+
 @import "cdn-ignored/sprites/admin-icon/*.png";
 $admin-icon-layout:horizontal;
 @include all-admin-icon-sprites;

@@ -2,13 +2,22 @@ body{
   font-size:13px;
 }
 
-.lead {
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: 200;
-  line-height: 30px;
-  text-transform: capitalize;
+//-------------------------------------------------------------------
+//  Must have to remove after changing Product form.scss [width:99%] 
+//-------------------------------------------------------------------
+
+input[type=text], input[type=password], input[type=email], input[type=tel] select, input.text{
+ &.input-mini       { width: 60px; }
+ &.input-small      { width: 90px; }
+ &.input-medium     { width: 150px; }
+ &.input-large      { width: 245px; }
+ &.input-xlarge     { width: 290px; }
+ &.input-xxlarge    { width: 530px; }
 }
+//-------------------------------------------------------------------
+//                                    End
+//-------------------------------------------------------------------
+
 .lead-desc{
   margin-top:-14px;
   display:block;
@@ -31,7 +40,6 @@ h5{
   font-size: 20px;
   color:#aaa;
 }
-
 strong {
   font-weight: bold;
 }
@@ -75,10 +83,10 @@ small.input-information{
       padding: 15px;
 }
 .tabs{
-  margin-right: -20px;
-  margin-left: -20px;
-  padding-right: 20px;
-  padding-left:20px;
+  margin-right: -$common-padding;
+  margin-left: -$common-padding;
+  padding-right: $common-padding;
+  padding-left:$common-padding;
 }
 .vertical-alignment{
   display: inline-block;
@@ -146,14 +154,7 @@ small.input-information{
   display:inline-block;
   vertical-align: middle;
 }
-.admin-breadcrumb{
-  margin: -14px -20px;
-  margin-bottom: 20px;
-  &.breadcum-footer{
-    margin-bottom: -14px;
-    margin-top:20px;
-  }
-}
+
 /* After including type.scss in pattern this class have to removed*/
 .no-results{
  color: #ccc;
@@ -347,23 +348,13 @@ select{
   margin-left: 0px;
   margin-right: 0px;
 }
-h5{
-  &.lead{
-    font-size:18px;
-    line-height:20px;
-  }
-}
-.lead-sub{
-  line-height: 15px;
-  font-size: 20px;
-  color:#aaa;
-}
+
 /* have to remove after include type.scss from pattern */
 .lead {
   margin-bottom: $baseLineHeight;
   font-size: $baseFontSize * 1.5;;
   font-weight: 200;
-  line-height: $baseLineHeight * 1.9;
+  line-height: $baseLineHeight * 1.5;
 }
 .header-lead{
   margin-top: 15px;
@@ -490,95 +481,6 @@ ul.inline > li, ol.inline > li {
   .marginr10 {
     margin-right: 10px;
   }
-  .row {
-    zoom: 1;
-    margin-left: -20px;
-  }
-  .row:before, .row:after {
-    display: table;
-    content: "";
-    zoom: 1;
-  }
-  .row:after {
-    clear: both;
-  }
-  .row > [class*="span"] {
-    display: inline;
-    float: left;
-    margin-left: 20px;
-  }
-  .span1 {
-    width: 40px;
-  }
-  .span2 {
-    width: 100px;
-  }
-  .span3 {
-    width: 160px;
-  }
-  .span4 {
-    width: 220px;
-  }
-  .span5 {
-    width: 280px;
-  }
-  .span6 {
-    width: 340px;
-  }
-  .span7 {
-    width: 400px;
-  }
-  .span8 {
-    width: 460px;
-  }
-  .span9 {
-    width: 520px;
-  }
-  .span10 {
-    width: 580px;
-  }
-  .span11 {
-    width: 640px;
-  }
-  .span12 {
-    width: 700px;
-  }
-  .span13 {
-    width: 760px;
-  }
-  .span14 {
-    width: 820px;
-  }
-  .span15 {
-    width: 880px;
-  }
-  .span16 {
-    width: 940px;
-  }
-  .span17 {
-    width: 1000px;
-  }
-  .span18 {
-    width: 1060px;
-  }
-  .span19 {
-    width: 1120px;
-  }
-  .span20 {
-    width: 1180px;
-  }
-  .span21 {
-    width: 1240px;
-  }
-  .span22 {
-    width: 1300px;
-  }
-  .span23 {
-    width: 1360px;
-  }
-  .span24 {
-    width: 1420px;
-  }
 
   /* Classes copies from bootstrap */
   :-moz-placeholder { 
@@ -586,72 +488,6 @@ ul.inline > li, ol.inline > li {
   }
   ::-webkit-input-placeholder {
     color: #999999;
-  }
-  
-  .row-fluid {
-    width: 100%;
-    *zoom: 1;
-  }
-  .row-fluid:before,
-  .row-fluid:after {
-    display: table;
-    content: "";
-  }
-  .row-fluid:after {
-    clear: both;
-  }
-  .row-fluid > [class*="span"] {
-    float: left;
-    margin-left: 2.127659574%;
-  }
-  .row-fluid > [class*="span"]:first-child {
-    margin-left: 0;
-  }
-  .row-fluid > .span12 {
-    width: 99.99999998999999%;
-  }
-  .row-fluid > .span11 {
-    width: 91.489361693%;
-  }
-  .row-fluid > .span10 {
-    width: 82.97872339599999%;
-  }
-  .row-fluid > .span9 {
-    width: 74.468085099%;
-  }
-  .row-fluid > .span8 {
-    width: 65.95744680199999%;
-  }
-  .row-fluid > .span7 {
-    width: 57.446808505%;
-  }
-  .row-fluid > .span6 {
-    width: 48.93617020799999%;
-  }
-  .row-fluid > .span5 {
-    width: 40.425531911%;
-  }
-  .row-fluid > .span4 {
-    width: 31.914893614%;
-  }
-  .row-fluid > .span3 {
-    width: 23.404255317%;
-  }
-  .row-fluid > .span2 {
-    width: 14.89361702%;
-  }
-  .row-fluid > .span1 {
-    width: 6.382978723%;
-  }
-
-  .radio,
-  .checkbox {
-    padding-left: 18px;
-  }
-  .radio input[type="radio"],
-  .checkbox input[type="checkbox"] {
-    float: left;
-    margin-left: 0px;
   }
 }
 
@@ -691,3 +527,16 @@ ul.inline > li, ol.inline > li {
     margin-right:5px;
   }
 }
+//---------------------------------------------------------------------------------------------------
+//                                      Plugin Style changes
+//---------------------------------------------------------------------------------------------------
+.select2-container .select2-choice{
+  background: #fff;
+}
+.select2-container-active.select2-container .select2-choice{
+  @include box-shadow(0px 0px 3px #CCC);
+}
+//---------------------------------------------------------------------------------------------------
+//                                        Plugin style End
+//---------------------------------------------------------------------------------------------------
+

@@ -2,6 +2,6 @@
   <% form_remote_tag(:url => '/activity_reports/helpdesk/generate', :update => "report-container", 
 	                   :loading => "jQuery('#report-container').html('<div class=\"sloading loading-block loading-small\"></div>');  ") do %>
 	  <%= render :partial => "/reports/shared/options_form" %> 
-	<%= submit_tag t('reports.generate_button'), :class => "uiButton" %>
+	<%= submit_tag t('reports.generate_button'), :class => "btn" %>
 	<% end %>
 </div>

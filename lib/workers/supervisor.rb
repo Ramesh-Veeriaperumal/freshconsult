@@ -101,6 +101,8 @@ class Workers::Supervisor
     redis_key = "stats:rake_tkts:supervisor:#{current_time.day}:#{account_id}:#{current_time}"
     $stats_redis.set(redis_key, total_tickets)
     $stats_redis.expire(redis_key,144000)
+  rescue => e
+    puts "Error while recording Supervisor stats : #{e.message}"          
   end
 
 

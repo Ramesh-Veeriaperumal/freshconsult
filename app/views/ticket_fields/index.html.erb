@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <style> html {  height:auto; overflow-y:visible; } </style>
 <% end %>
-<% content_for :sidebar do %>
+<% content_for :helpcard do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-<%= content_tag(:h3, t(".title"), :class => "title") %> 
+<%= content_tag(:h3, t(".title"), :class => "lead") %> 
 
 <% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
   <div class="admin_form">
@@ -12,28 +12,28 @@
       <%= content_tag(:h4, t(".add_custom_field"), :class => "title") %>
         <div class="info-data"><%= t('.drag_drop_intro') %></div>
             <li data-type="text" data-field-type="custom_text" data-fresh="true"> 
-                <a href="javascript:void(0)" class="button"> <%= t(".single_line") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".single_line") %> </a>
             </li>
             <li data-type="number" data-field-type="custom_number" data-fresh="true">
-                <a href="javascript:void(0)" class="button"> <%= t(".number") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".number") %> </a>
             </li>
             <li data-type="paragraph" data-field-type="custom_paragraph" data-fresh="true">
-                <a href="javascript:void(0)" class="button"> <%= t(".paragraph") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".paragraph") %> </a>
             </li>
             <li data-type="checkbox" data-field-type="custom_checkbox" data-fresh="true">
-                <a href="javascript:void(0)" class="button"> <%= t(".checkbox") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".checkbox") %> </a>
             </li>
             <li data-type="dropdown" data-field-type="custom_dropdown" data-fresh="true">
-                <a href="javascript:void(0)" class="button"> <%= t(".dropdown") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".dropdown") %> </a>
             </li>
             <li data-type="dropdown" data-field-type="nested_field" data-fresh="true">
-                <a href="javascript:void(0)" class="button"> <%= t(".nestedfield") %> </a>
+                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".nestedfield") %> </a>
             </li>
         </ul> 
 
     <span class="seperator"></span> 
     <div class="custom_form_outer">
-      <%= content_tag(:h4, t(".customize_form"), :class => "title") %>
+      <%= content_tag(:h5, t(".customize_form"), :class => "lead") %>
       <input type="hidden" name="jsonData" id="field_values" value="" />
       <div class="ui-custom-form">
         <ul id="custom_form" class="ui-form"></ul>
@@ -41,8 +41,8 @@
     </div>
   </div> 
 	<div class="button-container" id="button_panel">
-		<%= link_to "&larr; #{ t('cancel_and_back') }".html_safe, "/admin/home", :class => "uiButton floatl" %>
-		<%= submit_tag t(".save"), :class => "uiButton special", :id => "SaveForm", "data-commit" => t('ticket_fields.saving_ticket') %>
+		<%= link_to "#{ t('cancel_and_back') }".html_safe, "/admin/home", :class => "btn" %>
+		<%= submit_tag t(".save"), :class => "btn btn-primary", :id => "SaveForm", "data-commit" => t('ticket_fields.saving_ticket') %>
 	</div>
 <%end%>
 <% content_for :dialogs do %>

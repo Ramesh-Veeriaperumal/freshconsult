@@ -1,18 +1,16 @@
-<ul class="ui-form gamesettings">
-    <li>
-      <div class="floatr"> 
-          <%= link_to t('.new_quest'), new_admin_quest_path, :class => "uiButton" %>
-      </div>
-      <div class="section-title">
-        <%= content_tag(:h3, t('.quest_title'))%>
-        <br />
-        <p class="help-text">
-          <%= t('.quest_description') %>
-        </p>
-        <br />
-      </div>
-      <div id="quests-container" class="admin-list">
-        <%= render :partial => "/admin/quests/quest", :collection => @quests %>
-      </div>
-    </li>    
-</ul>  
+<div class="list-page">
+  <div class="list-page-header">
+    <div class="pull-right"> 
+        <%= link_to t('.new_quest'), new_admin_quest_path, :class => "btn btn-primary" %>
+    </div>
+    <div>
+      <%= content_tag(:h3, t('.quest_title'), :class =>"sub-lead")%>
+      <p class="muted"> <%= t('.quest_description') %>  </p>
+    </div>
+  </div>
+  <div class="list-page-body" id="quests-container">
+    <table class="table table-striped admin-list">
+      <%= render :partial => "/admin/quests/quest", :collection => @quests %>
+    </table>
+  </div>
+</div>

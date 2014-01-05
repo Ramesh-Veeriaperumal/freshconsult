@@ -59,19 +59,19 @@ class Agent < ActiveRecord::Base
 
   # State => Fulltime, Occational or Deleted
   # 
-  def self.filter(state = "active", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
     order = "name" unless order
     order_type = "ASC" unless order_type
     paginate :per_page => per_page, 
              :page => page,
              :include => { :user => :avatar },
-             :conditions => filter_condition(state),
+             :conditions => filter_condition(state,letter),
              :order => "#{order} #{order_type}"
   end
 
-  def self.filter_condition(state)
+  def self.filter_condition(state,letter)
     unless "deleted".eql?(state)
-      return ["users.deleted = ? and agents.occasional = ?", false, "occasional".eql?(state)]
+      return ["users.deleted = ? and agents.occasional = ? and users.name like ?", false, "occasional".eql?(state),"#{letter}%"]
     else
       return ["users.deleted = ?", true]
     end

@@ -21,33 +21,43 @@
 
 // Adjust close link position
 .alert .close {
-  position: relative;
-  top: -2px;
-  right: -21px;
+  position: absolute;
+  top: 1px;
+  right: 0px;
   line-height: $baseLineHeight;
 }
-
+.alert, .alert-heading {
+  color: #82683c;
+}
+.alert .close-text {
+  position: absolute;
+  top: 2px;
+  right: 15px;
+  line-height: 18px;
+  font-weight:normal;
+}
 
 // Alternate styles
 // -------------------------
 
-.alert-success {
+.alert-success, .alert-heading {
   background-color: $successBackground;
   border-color: $successBorder;
   color: $successText;
 }
 .alert-danger,
-.alert-error {
+.alert-error,
+.alert-danger .alert-heading,
+.alert-error .alert-heading {
   background-color: $errorBackground;
   border-color: $errorBorder;
   color: $errorText;
 }
-.alert-info {
+.alert-info, .alert-info .alert-heading {
   background-color: $infoBackground;
   border-color: $infoBorder;
   color: $infoText;
 }
-
 
 // Block alerts
 // -------------------------
@@ -62,4 +72,12 @@
 }
 .alert-block p + p {
   margin-top: 5px;
+}
+.alert-solid{
+  @include border-radius(0);
+}
+.alert-assume-agent{
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
 }

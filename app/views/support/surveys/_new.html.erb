@@ -8,6 +8,7 @@
 <body>	
 	<div class="top-strip">
 		<div class="wrapper">
+		<div class="wrapper-shadow">
 			<div class="brand">
 		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
@@ -16,10 +17,12 @@
 		        <% end %>
 		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
 	    	</div>
+	    </div>
     	</div>
 	</div>
 	
 	<div class="wrapper">		
+	<div class="wrapper-shadow">
 		<div class="position">
 			<div class="pointer"></div>
 			<div class="highlighter">
@@ -59,7 +62,7 @@
 				<%end%>		
 			</div>
 		</div>
-
+	</div>
 	</div>	
 	<script> $("#survey_form").validate(); </script>
 </body>

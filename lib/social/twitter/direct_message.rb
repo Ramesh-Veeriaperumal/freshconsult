@@ -1,0 +1,57 @@
+class Social::Twitter::DirectMessage
+
+  attr_accessor :twitter, :twt_handle
+  include Social::Twitter::Util
+  include Social::Twitter::DynamoUtil
+
+  def initialize(twt_handle, options = {})
+    @account = options[:current_account]  || twt_handle.account
+    wrapper = TwitterWrapper.new twt_handle
+    self.twitter = wrapper.get_twitter
+    self.twt_handle = twt_handle
+  end
+
+  def process
+    tweets = twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
+    last_tweet_id = tweets[0].id unless tweets.blank?
+    tweets.each do |twt|
+      create_ticket(twt, twt_handle)
+    end
+    twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
+  end
+
+  def create_ticket(twt, twt_handle)
+    @sender = twt.sender
+    @account = twt_handle.account
+    @user = get_twitter_user(@sender.screen_name, @sender.profile_image_url)
+    previous_ticket = @user.tickets.twitter_dm_tickets.newest(1).first
+    unless previous_ticket.blank?
+      if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_twitter_comment.blank?)
+        last_reply =  previous_ticket.notes.latest_twitter_comment.first
+      else
+        last_reply =  previous_ticket
+      end
+    end
+    if last_reply && (Time.zone.now < (last_reply.created_at + twt_handle.dm_thread_time.seconds))
+      add_as_note twt , twt_handle , :dm , previous_ticket
+    else
+      add_as_ticket twt , twt_handle , :dm
+    end
+    
+    stream = twt_handle.default_stream
+    unless stream.nil?
+      stream_id = "#{@account.id}_#{stream.id}"
+
+      params = {
+        :id => twt.attrs[:id_str],
+        :user_id => twt.attrs[:sender_id_str],
+        :body => twt.attrs[:text],
+        :posted_at => twt.attrs[:created_at]
+      }
+
+      #update dynamoDB tables with this reply
+      update_dm(stream_id, params)
+    end
+  end
+
+end

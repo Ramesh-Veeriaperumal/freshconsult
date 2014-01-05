@@ -1,11 +1,11 @@
-<div class="floatr">
+<div class="pull-right">
 	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
 			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
 </div>
-<h3 class="title"><%=t('.title')%></h3>
+<h3 class="lead"><%=t('.title')%></h3>
 
 <div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
 	<ul data-tabs="tabs" class="tabs admin-tabs">
@@ -27,9 +27,11 @@
 	</div>
 </div>
 
-<div class="grey-background clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
+<div class="clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
 	<div class="aracde-content">
-		<%= image_tag '/images/helpimages/arcade-admin-page.png', :alt => "Helpdesk Arcade" %>
+		<div class="aligncenter">
+			<%= image_tag '/images/helpimages/arcade-admin-page.png', :alt => "Helpdesk Arcade"  %>
+		</div>
 		<h2><%= t('admin.gamification.fresh_arcade') %></h2>
 		<p>
 			<%= t('admin.gamification.index.info1') %>
@@ -41,7 +43,7 @@
 			<a href="http://www.youtube.com/watch?v=bi6Md5K2nsY" target="_blank"><%= t('admin.gamification.index.video') %>
 			</a>
 			<br />
-			<a id="enable-gamification-button" class="uiButton special floatr">
+			<a id="enable-gamification-button" class="btn btn-primary">
 				<%= t('admin.gamification.index.enable_arcade') %>
 			</a>
 		</p>
@@ -63,7 +65,7 @@
 });
 <% end %>
 
-<% content_for :sidebar do %>
+<% content_for :helpcard do %>
 	<%= render :partial => "help_text" %>
 <%end%>
 <% content_for :layoutType do %>antipattern<% end %>

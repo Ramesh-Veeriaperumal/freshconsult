@@ -148,6 +148,10 @@ class Subscription < ActiveRecord::Base
   def sprout?
     subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]
   end
+  
+  def sprout_classic?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_classic]
+  end
 
   def classic?
     subscription_plan.classic
@@ -166,17 +170,21 @@ class Subscription < ActiveRecord::Base
   end
 
   def update_gnip_subscription
-    return unless account.features?(:twitter)
-    account.twitter_handles.capture_mentions.each do |twt_handle|
-      if @old_subscription.state != "suspended" and state == "suspended"
-        twt_handle.unsubscribe_from_gnip
-      elsif @old_subscription.state == "suspended" and state != "suspended"
+    old_state = @old_subscription.state
+    account.twitter_handles.each do |twt_handle|
+      if (old_state != "suspended" && state == "suspended") || non_twitter_plans
+        twt_handle.cleanup
+      elsif (old_state == "suspended" && state != "suspended") || !non_twitter_plans
         twt_handle.subscribe_to_gnip
       end
     end
   end
 
   protected
+  
+    def non_twitter_plans
+      sprout? || sprout_classic? 
+    end
     
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at

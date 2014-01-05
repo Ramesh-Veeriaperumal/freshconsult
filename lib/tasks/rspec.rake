@@ -140,6 +140,14 @@ namespace :spec do
       end
     end
   end
+
+  namespace :social do
+    desc "Runs all twitter tests"
+    Spec::Rake::SpecTask.new(:twitter) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
+    end
+  end
 end
 
 end

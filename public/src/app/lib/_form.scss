@@ -530,10 +530,6 @@ a.addchoice:hover{
 						&.operator {
 							width: 150px;
 						}
-
-						.select2-choice {
-							background: #FFF;
-						}
 					}
 					div{
 						select{
@@ -952,12 +948,10 @@ input.time{
 }
 
 .sidepanel .ui-form{
-   margin:0px -16px;
    padding:4px 10px;
 }
 
 .report{ 
-   margin:0 -5px; 
    table{
       border:0;
 			td{ font-size:12px; border-top-color:#f3f3f3; }
@@ -1003,7 +997,7 @@ input.time{
 	@include clearfix;
 	background-color:#f3f3f3; 
 	padding:8px 20px 0 20px;
-	margin:0 -20px;
+	margin:0 (-$common-padding);
 	li{
 		position:relative;
 	}
@@ -1240,7 +1234,7 @@ input.search{
 	@include clearfix;
 	background-color:#f6f6f6;
 	border-top:1px solid #e2e2e2; 
-	padding:6px 30px 6px 20px; 
+	padding:6px $common-padding 6px $common-padding; 
 	margin-top:15px; 
 }
 
@@ -1699,93 +1693,6 @@ table.vmiddle {
 	.ui-form{
 		position: static;
 	}
-}
-
-.nav_search{
-	@include min-width(260px);
-	height:31px;
-	position:relative;
-	margin:0 11px 0 6px;
-	div.search_bar{ 
-		height:24px; 
-		@include border-radius(12px);
-		@include opacity(0.8);
-		background:#ffffff;
-		padding:0 25px 0 5px;
-		.searchIcon{
-		   position:absolute;
-		   right:0px;
-		   width:15px;
-		   height:15px;
-		   top:8px;
-		   right:5px;
-		   @include opacity(0.6);
-		}
-		label.overlabel, input{
-			top:4px;
-			left:2px;
-		}
-		label.overlabel{
-		 	padding:0;
-		 	margin:4px 6px;
-		 	font-size:13px;
-		 	color:#777777;
-		} 
-		input{		
-			border:0;
-			position:relative;
-			font-size:14px;
-			width:100%;
-			padding:0;
-			background:none;		
-		}
-		input:focus{ @include box-shadow(#ffffff 0 0 0); }		
-	}
-	div.search_bar.active{
-	   @include opacity(1);
-	   .searchIcon{
-	      @include opacity(1);
-	   }
-   }
-}
-
-.nav_right{
-	@include clearfix;
-	position:relative;
-	z-index:10; 
-	margin:1px 0 0 3px;
-	float:right; 
-}
-
-a.new_ticket, .nav_search{
-	float:left;
-}
-
-a.new_ticket, .nav_search div.search_bar{
-	border:1px solid darken($tab_color, 8%);
-	@include box-shadow(rgba(255, 255, 255, 0.4) 0px 1px 0px);
-	margin-top:2px;
-	@include border-radius(4px);
-} 
- 
-a.new_ticket{
- 	@include vertical-gradient(#fefefe, #dfdfdf);	
-	padding:5px 8px 4px 28px;
-	color:#333333; 
-	font-size:12px; 
-	text-decoration:none; font-weight:bold;
-	position:relative; 
-	@include inline-block;	
-	span{ 
-		position:absolute; left:4px; top:4px;		
-		width:16px; height:16px;
-	}	
-}
-
-a.new_ticket:hover{ 
-	@include vertical-gradient(#606c88, #3f4c6b);
-	border-color:#606c88;  
-	color:#ffffff;	 
 }
 
 .item-right-actions{

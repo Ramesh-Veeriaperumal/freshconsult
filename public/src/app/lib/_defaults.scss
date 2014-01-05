@@ -1,5 +1,8 @@
 // This import applies a global reset to any page that imports this stylesheet.
-body {	font:13px $blueprint-font-family; background-color: transparent; }
+body {	
+  font: $default-font-size $blueprint-font-family; 
+  background-color: $background; 
+}
  
 code {
   padding: 0 3px 2px;
@@ -9,10 +12,6 @@ code {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-}
-
-.font11{
-	font-size:11px;
 }
 
 a{ 
@@ -118,7 +117,7 @@ label.error{
   cursor: pointer;
 }
 
-.alert {
+/*.alert {
   padding: 8px 14px;
   margin-top:8px;
   margin-bottom: 5px;
@@ -181,7 +180,7 @@ label.error{
   font-size: 13px;
   margin: 0;
   text-align: center;
-}
+}*/
 
 .underline{
 	text-decoration:underline;
