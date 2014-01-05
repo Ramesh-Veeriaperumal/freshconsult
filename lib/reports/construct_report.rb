@@ -70,11 +70,11 @@ def end_date_db(zone = true)
 end
 
 def parse_start_date
-  (params[:date_range].split(" - ")[0]) || params[:date_range] unless params[:date_range].blank?
+  params[:date_range].blank? ? start_date : ( (params[:date_range].split(" - ")[0]) || params[:date_range])
 end
 
 def parse_end_date
-  (params[:date_range].split(" - ")[1]) || params[:date_range] unless params[:date_range].blank?
+  params[:date_range].blank? ? end_date : ((params[:date_range].split(" - ")[1]) || params[:date_range])
 end
   
 end
