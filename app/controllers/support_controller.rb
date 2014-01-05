@@ -11,6 +11,7 @@ class SupportController < ApplicationController
   :if => proc { |controller|
     controller_name = controller.controller_name
     controller.cache_enabled? && 
+    !controller_name.eql?('activations') &&
     !controller_name.eql?('search') &&
     !controller_name.eql?('login') &&
     !controller_name.eql?('feedback_widgets') &&

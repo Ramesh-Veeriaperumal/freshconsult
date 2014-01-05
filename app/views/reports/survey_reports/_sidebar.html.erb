@@ -22,7 +22,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 		   </li>	
     	   <li class="inline-field">				
 					<b><%=t('.view_report_date')%></b>
-					<%= text_field_tag :date_range, date_range, :class => "required"%>
+					<%= text_field_tag :date_range, date_range, :class => "required input-xlarge"%>
 			</li>
 			<li class="inline-field">
 				<div>

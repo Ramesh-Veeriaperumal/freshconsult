@@ -61,6 +61,9 @@ class ThirdCRM
         :Signup_Referrer => metrics.landing_url,
         :freshdesk_referrer => metrics.referrer,
         :freshdesk_first_referrer => metrics.first_referrer,
+        :signup_referrer__c => metrics.landing_url,
+        :freshdesk_referrer__c => metrics.referrer,
+        :freshdesk_first_referrer__c => metrics.first_referrer,
         :Signup_ID => @signup_id
       }
     end

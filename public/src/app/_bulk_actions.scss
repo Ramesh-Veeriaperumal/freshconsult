@@ -49,7 +49,7 @@
         width: 575px;
     }
     .inline-field{
-        width: 645px;
+        width: 100%;
     }
     .field-item{
         @include min-height(50px);
@@ -128,6 +128,8 @@
     background-color: #f1f1f1;
     border-top: 1px solid #ccc;
     border-radius: 0 0 5px 5px;
+    overflow-y: auto;
+    max-height: 303px;
     .field-item{
       min-height: 0px;
     }
