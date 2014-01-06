@@ -121,8 +121,8 @@ class PortalDrop < BaseDrop
   end
 
   def tabs
-    @tabs ||= load_tabs
-    (@tabs.size > 1) ? @tabs : [] 
+    tabs = load_tabs
+    @tabs ||= (tabs.size > 2) ? tabs : [] 
   end
 
   # Access to Discussions
