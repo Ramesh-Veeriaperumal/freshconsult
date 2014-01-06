@@ -17,10 +17,12 @@ save_draft = function(content) {
 			type: 'POST',
 			data: {draft_data: content},
 			success: function(response) {
-				$(".ticket_show #draft-save").text(TICKET_DETAILS_DATA['draft']['saved_text']);
+				$(".ticket_show #draft-save")
+					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
+					.attr('data-moment', new Date());
+
 				$(".ticket_show #clear-draft").show();
-				$(".ticket_show #reply-draft").removeClass('saving');
-				draftSavedTime = new Date();
+				$(".ticket_show #reply-draft").removeClass('saving');				
 				savingDraft = false;
 			}
 		})
@@ -238,13 +240,11 @@ $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 });
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
-	if(savingDraft != 0){
-	  jQuery(".ticket_show #draft-save").attr('title',humaneDate(draftSavedTime,new Date()));
+	var hasMoment = $(this).attr('data-moment');
+	// Checking if moment exists and if the draft has been saved for the current view.
+	if(hasMoment && moment){
+	  $(this).attr('title', moment(hasMoment).fromNow());
 	}
-});
-
-$("body").on("mouseout.ticket_details", ".ticket_show #draft-save",function(){
-  $(".ticket_show #draft-save").attr('title','');
 });
 
 // This has been moved as a on click event directly to the cancel button 

@@ -2,7 +2,11 @@ package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  yui         # (yui, closure)
+javascript_compressor:  uglifier
+compressor_options:
+  :output:
+    :comments:          :none
+css_compressor:         sass
 allow_debugging:        on
 
 stylesheets:
@@ -50,7 +54,7 @@ stylesheets:
 
   widget:
     - public/stylesheets/portal/widget.css
-    
+
   responsive_widget:
     - public/stylesheets/portal/responsive-widget.css
 
@@ -66,7 +70,7 @@ stylesheets:
 
   freshfone_call_history:
     - public/stylesheets/app/freshfone/call_history.css
-   
+
   freshfone_ivr:
     - public/stylesheets/app/freshfone/ivr/main.css
 
@@ -97,7 +101,7 @@ stylesheets:
     - public/stylesheets/app/sprites.css
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
-    - public/stylesheets/app/plugins.css
+    - public/stylesheets/plugins.css
     - public/stylesheets/app/ie.css
     - public/stylesheets/app/tkt_details.css
     - public/stylesheets/app/tkt_details_sprites.css
@@ -153,8 +157,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.gritter.js
     - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/frameworks/plugins/moment.js
-    - public/javascripts/frameworks/plugins/livestamp.js
+    - public/javascripts/moment/*
     - public/javascripts/frameworks/plugins/jquery.blockUI.js
     - public/javascripts/frameworks/underscore-min.js
     - public/javascripts/hackz.js
@@ -166,17 +169,12 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
-    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js    
-    - public/javascripts/chat/lib/tab.overflow.js
-    - public/javascripts/chat/lib/ui.tabs.closable.js
-    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js    
     - public/javascripts/chat/lib/tab.overflow.js
     - public/javascripts/chat/lib/localstore.js
     - public/javascripts/chat/lib/ticket_search.js
     - public/javascripts/chat/lib/ui.tabs.closable.js
-    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/app/ticket_details.js
-    - public/javascripts/sound/soundmanager2-jsmin.js
 
   # Code editor for portal cms
   codemirror:
@@ -210,7 +208,6 @@ javascripts:
     - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js
-    - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
@@ -237,17 +234,23 @@ javascripts:
     #- public/javascripts/pattern/bootstrap-tooltip.js
     # - public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
+
   timesheet:
     - public/javascripts/timesheet.js
+
   ticket_details:
     - public/javascripts/app/ticket_details.js
+
   freshwidget:
     - public/javascripts/freshwidget.js
+
   widget_config:
     - public/javascripts/freshwidget.js
     - public/javascripts/app/widget_config.js
+
   html2canvas:
     - public/javascripts/html2canvas.js
+
   fdwidget:
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
@@ -258,13 +261,12 @@ javascripts:
     - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    # - public/javascripts/lte-ie7/feeback-widget.js
     - public/javascripts/feedback_widget_form.js
     - public/javascripts/utils.js
 
   custom_widget:
     - public/javascripts/custom_widget.js
-  
+
   freshfone_ticket_search:
     - public/javascripts/freshfone/plugin/ticket_search.js
 
@@ -336,8 +338,7 @@ javascripts:
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/portal/jail.js
-    - public/javascripts/portal/moment.js
-    - public/javascripts/portal/livestamp.js
+    - public/javascripts/moment/*
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
@@ -350,7 +351,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/subscription/subscription_init.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
-    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
     - public/javascripts/frameworks/plugins/select2.js
 
   observer_event:
@@ -373,7 +374,6 @@ javascripts:
   redactor:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
-
 
   excanvas:
     - public/javascripts/excanvas.js
@@ -400,3 +400,21 @@ javascripts:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
 
+<% 
+  # Adding specific javascript assets to the package list
+  # Add new lang lib to /public/javascripts/lang/{framework name}/es.js etc.
+  # The supported language name should be with the corresponding I18n ruby locale key in lowercase
+  # When accessing from within a javascript pls. use the lang attr which may be obtained from the HTML tag
+  current_dir = File.expand_path(File.dirname(__FILE__))
+  i18n_locales = "#{current_dir}/config/locales/*.{rb,yml}"
+  locales = []
+  Dir[i18n_locales].each do |f|
+    if md = f.match(/([\w\-]+)\.(rb|yml)$/)
+      file_pattern = "public/javascripts/lang/**/#{md[1].downcase.gsub("-", "?")}.*"
+      unless md[1] == "en" || Dir["#{current_dir}/#{file_pattern}"].empty?
+        locales << "  lang_#{md[1].downcase}:\n    - #{file_pattern}"
+      end
+    end
+  end
+%>
+<%= locales.join("\n") %>

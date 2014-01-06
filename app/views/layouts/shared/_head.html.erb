@@ -58,6 +58,8 @@
 		<%= include_cloudfront_css :icomoon %>
 	<% end %>
 
+	<%= include_cloudfront_js_langs %>
+
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
      	window.scriptLoader = new ScriptLoader(JSON.parse('<%= Jammit.configuration[:javascripts].to_json =%>'.replace(/&quot;/g,'"')),JSON.parse('<%= Jammit.configuration[:stylesheets].to_json =%>'.replace(/&quot;/g,'"')));
