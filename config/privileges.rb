@@ -179,7 +179,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
                :contact_email, :edit, :update]
-    resource :customer, :only => [:new, :create, :edit, :update, :quick]
+    resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :contact_import
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]

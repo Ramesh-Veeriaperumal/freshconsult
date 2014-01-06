@@ -7,6 +7,7 @@ class CustomersController < ApplicationController
   include HelpdeskControllerMethods
 
   before_filter :set_selected_tab
+  before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
   
   def index
     per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
@@ -31,7 +32,6 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.xml
   def show
-    @customer = current_account.customers.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -53,7 +53,6 @@ class CustomersController < ApplicationController
 
   # GET /customers/1/edit
   def edit
-    @customer = current_account.customers.find(params[:id])
   end
   
   def quick
@@ -89,7 +88,6 @@ class CustomersController < ApplicationController
   # PUT /customers/1
   # PUT /customers/1.xml
   def update
-    @customer = current_account.customers.find(params[:id])
 
     respond_to do |format|
       if @customer.update_attributes(params[:customer])
@@ -102,6 +100,10 @@ class CustomersController < ApplicationController
         format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def sla_policies
+    render :layout => false
   end
   
   protected

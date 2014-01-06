@@ -202,6 +202,9 @@ window.xhrPool = [];
             
             if(!$this.data("loadUnique"))            
               $this.clone().prependTo('#remote_loaded_dom_elements');
+
+            if($this.data("extraLoadingClasses"))            
+              $(this).removeClass($this.data("extraLoadingClasses"));
           });
       }, loadDelay);
     });

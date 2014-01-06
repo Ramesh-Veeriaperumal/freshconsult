@@ -102,7 +102,7 @@ class Helpdesk::TicketsController < ApplicationController
           # Bad code need to rethink. Pratheep
           @show_options = show_options
         end
-        @current_view = @ticket_filter.id || @ticket_filter.name unless params[:requester_id]
+        @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
         @is_default_filter = (!is_num?(@template.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -173,7 +173,7 @@ class Helpdesk::TicketsController < ApplicationController
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @show_options = show_options
     @is_default_filter = (!is_num?(@template.current_filter))
-    @current_view = @ticket_filter.id || @ticket_filter.name
+    @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
     render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
   end
 
@@ -918,12 +918,15 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def custom_filter?
-      params[:filter_key].blank? and params[:filter_name].blank? and params[:requester_id].blank? and params[:tag_id].blank?
+      params[:filter_key].blank? and params[:filter_name].blank? and is_custom_filter_ticket?
+    end
+
+    def is_custom_filter_ticket?
+      params[:requester_id].blank? and params[:tag_id].blank? and params[:customer_id].blank?
     end
 
     def load_ticket_filter
       return if @cached_filter_data
-
       filter_name = @template.current_filter
       if !is_num?(filter_name)
         load_default_filter(filter_name)
@@ -931,7 +934,6 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
         return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-
         params.merge!(@ticket_filter.attributes["data"])
       end
     end
