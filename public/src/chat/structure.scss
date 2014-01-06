@@ -1019,7 +1019,7 @@ li.ui-state-active {
 
 .updateUser{
     border: 1px solid;
-    font-family:"Helvetica Neue", Arial, Helvetica, sans-serif !important;
+    font-family:"Helvetica Neue", Arial, Helvetica, sans-serif;
     border-radius:5px;
     left: 75px;
     position: absolute;
@@ -1053,6 +1053,10 @@ li.ui-state-active {
            -moz-text-overflow: ellipsis;
             -ms-text-overflow: ellipsis;
                 text-overflow: ellipsis;
+        span{
+            font-family:"Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
     }
     .icon-eye{
         padding-left: 9px !important;
