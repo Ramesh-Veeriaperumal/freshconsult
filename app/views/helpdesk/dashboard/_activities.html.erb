@@ -14,7 +14,6 @@
   activity_count = 0;
   previous_id = jQuery('#Pages li').first().prop('id');
     if(previous_id == undefined) previous_id = 0;
-  jQuery("#Pages div.activity_time").humaneDates(); 
   latest_activities_timer = new PeriodicalExecuter(function(pe) {
     jQuery.get(
       "/helpdesk/dashboard/latest_activities",
@@ -29,8 +28,7 @@
             previous_id = jQuery('#recent_activities li.activity').first().attr('id');
           if(previous_id == undefined) previous_id = 0;
             jQuery('#recent_activities_count').slideDown();
-          }                                                      
-          jQuery("div.activity_time").humaneDates();
+          }
     });
   }, 120);
 

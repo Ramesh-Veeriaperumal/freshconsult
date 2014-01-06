@@ -51,6 +51,7 @@ gem "riddle", "1.2.2"
 gem "delayed_job", "1.8.4"
 
 gem "jammit", "0.6.5"
+gem "uglifier", "~> 2.1.2"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
 gem "braintree","2.10.0"
@@ -143,7 +144,7 @@ end
 
 group :assets do
    gem "sass", "3.2.1"
-   gem "compass-rails"
+   gem "compass-rails", "1.0.3"
    gem "susy"  # Portal grid system is done using susy grids
    gem "oily_png" # To optimize sprite generation
 end

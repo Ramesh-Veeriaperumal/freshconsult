@@ -1,9 +1,10 @@
-<%- javascript_tag do -%>
-  // Partial Localizing for date elements
-	date_lang = <%= t("date").to_json.html_safe %>;
-	
+<%- javascript_tag do -%>	
 	jQuery(document).ready(function() {
 		<%= yield :onload_script -%>
+			
+		// Setting the locale for moment js
+		moment.lang('#{I18n.locale.to_s.downcase}');
+
 		<% if flash[:highlight] %>
 			var ele = jQuery("#<%= flash[:highlight] %>");
 			if(ele.is('tr'))
