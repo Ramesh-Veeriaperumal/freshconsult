@@ -1,6 +1,7 @@
 defaults: &defaults
   :hosts:
     - localhost:9200
+  :aws_hosts:
     - localhost:9201
 
 development:

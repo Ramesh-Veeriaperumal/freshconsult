@@ -114,7 +114,7 @@ class Solution::Article < ActiveRecord::Base
     to_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :status, :account_id ],
+            :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
                           :folder => { :only => [:category_id, :visibility], 
                                        :include => { :customer_folders => { :only => [:customer_id] } }

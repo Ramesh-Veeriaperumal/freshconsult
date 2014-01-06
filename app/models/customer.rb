@@ -79,7 +79,7 @@ class Customer < ActiveRecord::Base
     to_json( 
               :root => "customer",
               :tailored_json => true,
-              :only => [ :name, :note, :description, :account_id ] 
+              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ] 
            )
   end
   
