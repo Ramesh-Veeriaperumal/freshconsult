@@ -86,7 +86,7 @@ a.new_ticket, .nav_search div.search_bar { border-color:darken($tab_color, 8%); 
 
 /* Header Timer */
 .header-timer-wrap{ background-color:darken($header_color, 10%); }
-.header-timer .time{ color:$header_ctxt_color}
+.header-timer .time-text{ color:$header_ctxt_color}
 .stopwatch{ 
 	@include box-shadow(inset 0px 0px 0px 1px $header_ctxt_color);
 	background-color:lighten($header_color,70%)

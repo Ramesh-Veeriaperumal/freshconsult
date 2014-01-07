@@ -27,7 +27,7 @@
       <span class="tracked_time">
         <div class="stopwatch timer-icon hide"></div>
         <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
-                            :class => "time",
+                            :class => "time-text",
                             "data-running-time" => time_entry.running_time,
                             "data-timer-running" => time_entry.timer_running,
                             :id => "timeentry_timer_#{time_entry.id}" %>

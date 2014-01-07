@@ -1093,7 +1093,7 @@ a.pill.help{
 }
 
 
-.time{
+.time-text{
 	font-size:1.46em;
 	padding-left:10px;  
 	.small{
@@ -1102,7 +1102,7 @@ a.pill.help{
 	}
 }
 
-.time_running .time{
+.time_running .time-text{
 	color:#336600;
 	.small{
 		color: inherit;

@@ -6,7 +6,7 @@ page << "}"
 
 page.replace "header_timer", :partial => "header_timer"
 
-page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
+page << 'totalTime("#timesheetlist .time-text", "#timeentry_timer_total");'
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
 page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
 page << "trigger_event('time_entry_updated', #{@time_entry.to_json} );"

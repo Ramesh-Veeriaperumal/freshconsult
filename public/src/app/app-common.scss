@@ -9589,7 +9589,7 @@ label.last-label{ margin-bottom: 0px; }
 		.timer-text { width: 0; padding :0; }
 		.stopwatch:after{ @include animation(none); }
 	}
-	.time {
+	.time-text {
 		display:block;
 		font-size:13px;
 		font-weight: 600;
