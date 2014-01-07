@@ -444,7 +444,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.save
       @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
         { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
-
+      @va_rule_executed = va_rule
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',

@@ -324,6 +324,7 @@ var updatePagination = function() {
 			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
+			trigger_event("ticket_show_more",{})
 			
 		});
 	});
@@ -653,6 +654,7 @@ var scrollToError = function(){
 				$('#show_more').data('next-page',null);  //Resetting
 				if (updateShowMore()) updatePagination();
 				_toggle.removeClass('loading_activities disabled');
+				trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
 			}, 
 			error: function(response) {
 				$('#show_more').removeClass('hide');
@@ -1172,10 +1174,13 @@ var scrollToError = function(){
 					}
 					dontAjaxUpdate = false;
 				});
-      }
-    	});
+      	}
+			var event_name = (value == '#TicketProperties') ? 'ticket_properties' : 'time_sheets';      	
+			trigger_event("sidebar_loaded",{name: event_name, dom_id: value});
+    });
 	//}
 		})
+	trigger_event("ticket_view_loaded",{});
 };
 
 
@@ -1195,6 +1200,8 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
+
+    trigger_event("ticket_view_unloaded",{});
 
     MergeTicketsDestructor();
 

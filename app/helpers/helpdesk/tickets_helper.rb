@@ -385,3 +385,12 @@ module Helpdesk::TicketsHelper
     content
   end
 end
+
+def to_event_data_scenario(va_rule)
+  rule_info = {
+    name: va_rule.name,
+    description: va_rule.description,
+    id: va_rule.id,
+    activities: Va::Action.activities
+  }.to_json
+end
