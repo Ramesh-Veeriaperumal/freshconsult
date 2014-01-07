@@ -11,7 +11,7 @@
     $(document).ready(function(){
         var asset_url = JSON.parse('<%=asset%>');
         var url = asset_url.js;
-        if(window.location && window.location.protocol=='https'){
+        if(window.location && window.location.protocol=='https:'){
             url = asset_url.cloudfront;
         }
         $.getScript(url+"/js/chat.js", function(){
@@ -27,7 +27,7 @@
 })(jQuery);
 
 var CS_URL = "<%=comm_url%>";
-var WEB_ROOT = "http://<%=current_account.full_domain%>";
+var WEB_ROOT = "//<%=current_account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
 var USER_LIST = [];

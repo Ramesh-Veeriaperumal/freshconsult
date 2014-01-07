@@ -80,9 +80,14 @@ class Solution::Article < ActiveRecord::Base
   def self.suggest(ticket, search_by)
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     begin
-      Search::EsIndexDefinition.es_cluster(ticket.account.id)
+      # Search::EsIndexDefinition.es_cluster(ticket.account_id)
+      if ticket.account_id == 1010000169
+        Search::EsIndexDefinition.es_cluster(ticket.account_id, true)
+      else
+        Search::EsIndexDefinition.es_cluster(ticket.account_id)
+      end
       options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account_id), options do |search|
         search.query do |query|
           query.filtered do |f|
             f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
