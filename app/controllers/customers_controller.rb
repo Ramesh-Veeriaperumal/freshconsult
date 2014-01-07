@@ -74,8 +74,10 @@ class CustomersController < ApplicationController
         format.json  { render :json => @customer, :status => :created }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Customer creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @customer.errors})
+        }
       end
     end
   end
@@ -96,8 +98,10 @@ class CustomersController < ApplicationController
         format.json { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Customer update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity",:errors => @customer.errors})
+        }
       end
     end
   end
