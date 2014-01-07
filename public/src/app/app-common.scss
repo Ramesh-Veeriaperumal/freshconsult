@@ -9559,9 +9559,7 @@ label.last-label{ margin-bottom: 0px; }
 			border: 1px solid darkgray;
 		}
 		.select2-container{
-			position: absolute;
-			top: 15px;
-			left: 65px;
+			left: -7px;
 			min-width: 65px;
 		}
 		.select2-choice{
@@ -9655,3 +9653,9 @@ label.last-label{ margin-bottom: 0px; }
 //------------------------------------------------------------------------------------
 //								Header timeentry end
 //------------------------------------------------------------------------------------
+
+.quest-desc{
+	display: inline-block;
+	vertical-align:top;
+	width:90%;
+}

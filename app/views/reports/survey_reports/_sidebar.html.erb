@@ -10,7 +10,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
  	<% remote_form_for( survey_list_path, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
  			:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
  	<ul>
-    	   <li class="inline-field">
+    	   <li class="inline-field control-group">
 			<b><%=t('.filter_by')%></b>
 			<%
 				selected_option = :agent;
@@ -20,13 +20,13 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "select2 input-large filter_item"}%>
 			<%=hidden_field_tag :sort, sort_option %>
 		   </li>	
-    	   <li class="inline-field">				
+    	   <li class="inline-field control-group">				
 					<b><%=t('.view_report_date')%></b>
-					<%= text_field_tag :date_range, date_range, :class => "required input-xlarge"%>
+					<%= text_field_tag :date_range, date_range, :class => "required input-large"%>
 			</li>
 			<li class="inline-field">
 				<div>
-					<%= submit_tag t('reports.summary_report.show_report'), :class => "uiButton" %>
+					<%= submit_tag t('reports.summary_report.show_report'), :class => "btn" %>
 				</div>
 			</li>
 	</ul>
