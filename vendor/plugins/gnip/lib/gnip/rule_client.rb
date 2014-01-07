@@ -97,7 +97,7 @@ class Gnip::RuleClient
 
     #Update matching_rule with a new tag
     def update(matching_rule)
-      if matching_rule.tag.split(DELIMITER[:tags]).include?(@rule[:tag])
+      unless matching_rule.tag.split(DELIMITER[:tags]).include?(@rule[:tag])
         #First delete the old rule
         delete_response = delete_helper(matching_rule.value, matching_rule.tag)
         response = construct_response(RULE_ACTION[:delete], matching_rule.value, matching_rule.tag, delete_response)
