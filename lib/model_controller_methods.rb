@@ -35,7 +35,15 @@ module ModelControllerMethods
     end
     else
       create_error
-      render :action => 'new'
+      respond_to do |format|
+        format.html {
+          render :action => 'new'
+        }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "create request failed" , :http_code => http_code, :error_code => "Unprocessable Entity", :errors => @obj.errors})
+        }
+      end
     end
   end
 
@@ -54,8 +62,15 @@ module ModelControllerMethods
       
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
-      update_error
-      render :action => 'edit'
+      respond_to do |format|
+        format.html {
+          render :action => 'edit'
+        }
+          http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+          format.any(:xml, :json) { 
+            api_responder({:message => "Update request failed" , :http_code => http_code, :error_code => "Unprocessable Entity", :errors => @obj.errors})
+          }
+      end
     end
   end
   
