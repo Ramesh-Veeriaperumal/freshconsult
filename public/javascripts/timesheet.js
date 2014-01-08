@@ -8,14 +8,14 @@ TicketTimesheet.prototype = {
     this.editid  = null;     
      // Running the autoupdate for the timer when it is active.
      new PeriodicalExecuter(function(pe) {
-        jQuery(".time_running .time")
+        jQuery(".time_running .time-text")
          .each(function(){
             var seconds = jQuery(this).data('runningTime') + 1;
             jQuery(this)
                .html(time_in_hhmm(seconds))
                .data('runningTime', seconds);                	    
             });
-            totalTime("#timesheetlist .time", "#timeentry_timer_total");
+            totalTime("#timesheetlist .time-text", "#timeentry_timer_total");
          }, 1);
          
          jQuery("#timesheetlist div.timeentry")
@@ -87,7 +87,7 @@ TicketTimesheet.prototype = {
       jQuery("#TimesheetCount").html(count);
       jQuery("#TimesheetCount, #timesheettotal").toggle(count != 0)
       jQuery("#timesheetlist div.list-noinfo").hide();
-      totalTime("#timesheetlist .time", "#timeentry_timer_total");
+      totalTime("#timesheetlist .time-text", "#timeentry_timer_total");
   }
 };
 var timesheet = new TicketTimesheet();	
@@ -122,6 +122,7 @@ function change_time_sheet(id){
 function fill_hours(time, hideHeader){
   jQuery('.modal.in #time_entry_hhmm').val(time);
   jQuery('.modal.in #time_entry_hhmm').select();
+  jQuery('.header-timer').popover('hide');
   
   if (hideHeader) {
     jQuery('.header-timer').addClass('stop-timer');

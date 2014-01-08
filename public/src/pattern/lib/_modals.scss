@@ -5,10 +5,10 @@
 // Recalculate z-index where appropriate
 .modal-open {
   overflow:hidden;
-  .wrapper .wrapper-shadow, .modal-backdrop{
+  /*.wrapper .wrapper-shadow, .modal-backdrop{
     -webkit-animation: modalAnimation 500ms ease-out;
     -webkit-filter: blur(3px);
-  }
+  }*/
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
