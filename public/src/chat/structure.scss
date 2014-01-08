@@ -1085,7 +1085,7 @@ li.ui-state-active {
     }
     &#bar_recent_list{
         margin-left: 1px;
-         border-radius: 0px 4px 4px 0px;
+        border-radius: 0px 4px 4px 0px;
     }
 }
 
@@ -1120,18 +1120,10 @@ li.ui-state-active {
             width: 280px;
             position: relative;
             background-color: #fff;
-            z-index: 1;
             min-height: 50px;
         }
         &:last-child{
             border-bottom: none;
-        }
-
-        &:hover{
-            .notify-slide{
-                left: -36px;
-                box-shadow: 3px 0px 3px 0px rgba(0,0,0,0.1);
-            }
         }
     }
 }
@@ -1154,6 +1146,7 @@ li.ui-state-active {
     }
     .icon-ok{
         background: #d7ebd7;
+        font-size: 15px;
         padding-top: 40%;
         height: 60%;
         border-bottom: 1px #fff solid;
@@ -1182,11 +1175,11 @@ li.ui-state-active {
 }
 
 .fc_notify_text{
-    width: 240px;
+    width: 216px;
     padding-left: 10px;
     float: left;
     color: #333;
-    word-break: break-word;
+    word-break: break-all;
 
     .notify_chat_msg, .notify_chat_name, .notify_chat_location, .notify_chat_page{
         overflow: hidden;
@@ -1982,10 +1975,6 @@ li.ui-state-disabled{
     text-align: left;
     padding: 5px 10px;
     width: 140px;
-}
-
-.btn{
-    margin-right: 10px;
 }
 
 .form-control-group .photo{
