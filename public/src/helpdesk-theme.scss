@@ -15,9 +15,10 @@ $alternate_bg_color: 	if(lightness($background) > 50, #666, #AAA) !default;
 $filterTextShadow: 		if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
 		
 $lightness_val: lightness($tab_color);
-$tab_search_image: url('/images/cdn-ignored/sprites/symbols/search-white.png');
+$tab_search_image: '/cdn-ignored/sprites/symbols/search-white.png';
+
 @if $lightness_val > 50{
-	$tab_search_image: url('/images/cdn-ignored/sprites/symbols/search.png');
+	$tab_search_image: '/cdn-ignored/sprites/symbols/search.png';
 }
 
 $lightness_val: lightness($header_color);
@@ -106,10 +107,10 @@ input:focus, select:focus, textarea:focus{
 	  -webkit-box-shadow: $tab_color 0 0 3px;
 	  box-shadow: $tab_color 0 0 3px;
 }
-a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
+.nav_search div.search_bar input, a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
 .nav_search div.search_bar .search-icon-inactive{
-	background: $tab_search_image;
-	background-position: center;
+	background: inline-image($tab_search_image) no-repeat;
+	background-position: 0;
 }
 ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
 a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }

@@ -75,6 +75,7 @@ label.overlabel{
 		background:$content-color;
 		border-right:1px solid $sidebar-border;
 		padding-bottom:$common-padding;
+		@include box-sizing(border-box);
 
 	}
 	z-index:1;  	
@@ -82,7 +83,7 @@ label.overlabel{
 	padding-right:$sidebar-width;   
 	.sidebar{ 
 		background: transparent;
-		width:$sidebar-width - 1; //1px = Leftcontent border 
+		width:$sidebar-width;
 		float:right;
 		margin-right:-($sidebar-width);
 	}  

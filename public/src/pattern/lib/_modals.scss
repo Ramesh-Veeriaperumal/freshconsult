@@ -5,7 +5,7 @@
 // Recalculate z-index where appropriate
 .modal-open {
   overflow:hidden;
-  #wrap, .modal-backdrop{
+  .wrapper .wrapper-shadow, .modal-backdrop{
     -webkit-animation: modalAnimation 500ms ease-out;
     -webkit-filter: blur(3px);
   }
@@ -60,7 +60,7 @@
   background-image: inline-image("cdn-ignored/inline-images/dialog/popup-headpattern.png");
   background-repeat: repeat-x;
   @include border-radius(6px);
-  @include box-shadow(0 30px 140px -20px #000, $white 0 0 1px inset);
+  @include box-shadow(0 30px 140px -30px #000, white 0 0 1px inset);
   @include background-clip(padding-box);
 
   &.fade {

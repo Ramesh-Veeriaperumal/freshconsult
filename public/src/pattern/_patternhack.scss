@@ -536,6 +536,9 @@ ul.inline > li, ol.inline > li {
 .select2-container-active.select2-container .select2-choice{
   @include box-shadow(0px 0px 3px #CCC);
 }
+.CodeMirror .cm-fullscreen{
+  right: 20px;
+}
 //---------------------------------------------------------------------------------------------------
 //                                        Plugin style End
 //---------------------------------------------------------------------------------------------------
