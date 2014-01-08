@@ -51,7 +51,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest, :related_solutions, :search_solutions, :ticket_search]
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
-    resource :"theme/helpdesk", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
