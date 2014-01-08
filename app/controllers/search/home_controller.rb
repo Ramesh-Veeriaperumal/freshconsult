@@ -74,6 +74,7 @@ class Search::HomeController < ApplicationController
     end
     r = {:results => items.map{|i| {
         :display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),
+        :created => i.created_at.to_i,
         :searchKey => 
           (params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if TICKET_SEARCH_KEYS.include?(params[:key]) ),  
         :info => t("ticket.merge_ticket_list_status_created_at", 

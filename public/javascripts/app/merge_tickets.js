@@ -42,7 +42,7 @@ function MergeTicketsInitializer() {
   }
 
   jQuery('body').on('click.merge_tickets', '.primary-marker', function(){
-    mark_primary(jQuery(this));
+    mark_primary(jQuery(this).parents('.merge-cont'));
     jQuery('.twipsy').hide();
     jQuery('.primary-marker').attr('data-original-title','Mark as primary')
     jQuery(this).attr('data-original-title','Primary ticket').trigger('mouseover')
@@ -106,7 +106,7 @@ function MergeTicketsInitializer() {
   var ContactsSearch = new Template(
     '<li><div class="contactdiv" data-id="#{display_id}">'+
     '<span id="resp-icon"></span>'+
-    '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
+    '<div id="merge-ticket" class="merge_element" data-id="#{display_id}" data-created="#{created}">'+
     '<span class="item_info" title="#{title}">##{display_id} #{subject}</span>'+
     '<div class="info-data hideForList">'+
     '<span class="merge-ticket-info">#{info}</span>'+
@@ -181,6 +181,20 @@ function MergeTicketsInitializer() {
     var txt = count+(( count == 1 ) ? subtitle.data('defaultText') : subtitle.data('pluralizedText') )
     jQuery('.merge-sub-title').text(txt);
   }  
+
+  findOldestTicket = function(){
+    var oldestTicket = null,
+        earliestCreatedDate = null;
+    jQuery('.merge-cont .merge_element').each(function(index, ele){
+      var ele = jQuery(ele),
+          createdDate = ele.data('created');
+      if(earliestCreatedDate == null || earliestCreatedDate > createdDate){
+        earliestCreatedDate = createdDate;
+        oldestTicket = ele.parents('.merge-cont');
+      }
+    });
+    return oldestTicket;
+  }
 
 }
 
