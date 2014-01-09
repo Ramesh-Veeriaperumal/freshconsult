@@ -182,6 +182,7 @@
         // New Bind for Purchase button to submit the current link's form
         $('#purchase-confirmation').on('click.buy_numbers.freshfone', '[data-submit="modal"]', function(ev) {
             ev.preventDefault();
+            $(this).button("loading");
             $this.parents('form').submit();
         });
 

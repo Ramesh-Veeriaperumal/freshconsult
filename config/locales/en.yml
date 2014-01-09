@@ -4751,6 +4751,7 @@ en:
         purchase_number: "Purchase Number"
         buy: "Buy Number"
         purchase: "Purchase"
+        purchase_loading_text: "Purchasing..."
         purchase_alert: " will be deducted from your balance monthly."
         not_available: "No results returned. Please try a different search term"
         address_certification: "Due to local regulation, you must have a business or personal address within <span class='certification-country'></span>  to purchase this phone number."
