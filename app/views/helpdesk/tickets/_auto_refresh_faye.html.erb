@@ -1,0 +1,165 @@
+<script type="text/javascript" src="/javascripts/frameworks/faye.js"></script>
+<% javascript_tag do %>
+  var updated_tickets = [];
+  var new_ticket_ids = [];
+  var updated_ticket_ids = [];
+  var current_user_id = "<%=current_user.id%>";
+  var autoRefreshClient;
+
+
+  jQuery("#index_refresh_alert").bind("click", function(ev){
+    slide_up();
+    jQuery("#FilterOptions").trigger("change");
+    getFilterData();
+  });
+
+  jQuery(".filter_item").bind("change", function(){
+    slide_up();
+  });
+
+  jQuery("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").live("click", function(){
+    slide_up();
+  });
+
+  jQuery(document).ready(function() {
+    autoRefreshClient = new Faye.Client("<%= faye_host %>",{
+                            retry: 1
+                          });
+
+    jQuery(document).unbind('disconnectNode');
+    jQuery(document).bind('disconnectNode', function(ev){
+      autoRefreshClient.disconnect();
+    });
+
+    autoRefreshClient.addExtension({
+      outgoing: function(message, callback) {
+        message.ext = <%= auto_refresh_params %>;
+        callback(message);
+      }
+    });
+
+    var subscription = autoRefreshClient.subscribe("<%= auto_refresh_channel %>", function(message){
+      var filter_options = JSON.parse(jQuery("input[name=data_hash]").val());
+      var count = 0;
+
+      if (jQuery("[data-ticket="+message.ticket_id+"]").length != 0){
+        show_refresh_alert(message.ticket_id, message.type);
+      } 
+      else if (filter_options.length != 0)
+      {
+        for (var i=0; i<filter_options.length; i++) {
+
+          if ((filter_options[i].condition != "due_by") && 
+                (filter_options[i].condition != "created_at") && 
+                            (filter_options[i].ff_name == "default")) {
+            if (filter_options[i].condition == "responder_id"){
+              if ((filter_options[i].value.split(',')).indexOf('0') >= 0) {
+                filter_options[i].value += ","+current_user_id;
+              } 
+            }
+            if ((filter_options[i].value.split(',')).indexOf(message[filter_options[i].condition]+'') >= 0) {
+              count++;
+            }
+          } 
+          else if ((filter_options[i].ff_name != "default"))
+          {
+            if ((filter_options[i].value.split(',')).indexOf(message[filter_options[i].ff_name]+'') >= 0) {
+              count++;
+            }
+          }
+          else 
+          {
+            switch(filter_options[i].condition) {
+              case "due_by":
+                var time = message[filter_options[i].condition];
+                if((filter_options[i].value.split(',')).indexOf(get_due_by_value(time)) >= 0) {
+                  count++;
+                }
+                break;
+              case "created_at":
+                var created_at = Date.parse(message[filter_options[i].condition]);
+                var created_at_filter = filter_options[i].value;
+                var options = { 'today' : Date.parse("<%= Time.now.midnight %>"),
+                                'week' : Date.parse("<%= Time.now.monday %>"),
+                                'month' : Date.parse("<%= Time.now.beginning_of_month %>"),
+                                'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
+                                'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>") 
+                              };
+                if(!isNaN(created_at_filter)){
+                  if(((Date.now()-created_at)/60000) < ((filter_options[i].value)-'')){
+                    count++;
+                  }
+                } else {
+                  if(created_at_filter == "yesterday"){
+                    if((created_at < Date.today()) && ( created_at > Date.today().add({days : -1}) )){
+                      count++;
+                    }
+                  } else {
+                    if( created_at > options[created_at_filter]){
+                      count++;
+                    }
+                  }
+                }
+                break;
+            }
+          }
+        };
+
+        if(count == filter_options.length) {
+          show_refresh_alert(message.ticket_id, message.type);
+        }
+      } else {
+        show_refresh_alert(message.ticket_id, message.type);
+      }
+    });
+
+  });
+
+  function get_due_by_value(time){
+    switch(true){
+      case time<0:
+        return '1';
+      case time<24 && time>0:
+        return '2';
+      case time>24 && time<48:
+        return '3';
+      case time<8:
+        return '4';
+    }   
+  }
+
+  function slide_up(){
+    jQuery("#index_refresh_alert").slideUp(100);
+  }
+
+  function show_refresh_alert(ticket_id, type){
+    if(type == "new"){
+      new_ticket_ids.push(ticket_id);
+      update_counter("#new_ticket_message", new_ticket_ids.length);
+    }
+
+    if(type == "update"){
+      if(updated_ticket_ids.indexOf(ticket_id) < 0) updated_ticket_ids.push(ticket_id);
+      update_counter("#update_message", updated_ticket_ids.length);
+    }
+
+    jQuery("#index_refresh_alert").slideDown(100);
+    flash_ticket(ticket_id);
+  }
+
+  function update_counter(id, count){
+    $this = jQuery(id);
+    $this.text((count > 1) ? $this.data("textOther") : $this.data("textOne"))
+        .attr("data-count", count)
+        .show();
+  }
+
+  // To highlight a ticket present in the current list view
+  function flash_ticket(ticket_id){   
+    if(jQuery("[data-ticket="+ticket_id+"]")){
+      jQuery("[data-ticket="+ticket_id+"] .status-source").addClass('source-detailed-auto-refresh');
+      jQuery("[data-ticket="+ticket_id+"] .status-source").attr("title","<%= t('ticket.ticket_updated_icon') %>");
+      updated_tickets.push("[data-ticket="+ticket_id+"] td");
+    }
+  }
+<% end %>
