@@ -439,7 +439,8 @@ class User < ActiveRecord::Base
               :root => "user",
               :tailored_json => true,
               :only => [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted, :created_at, :updated_at ], 
+                         :twitter_id, :fb_profile_id, :account_id, :deleted,
+                         :helpdesk_agent, :created_at, :updated_at ], 
               :include => { :customer => { :only => [:name] } } 
            )
   end
@@ -472,7 +473,7 @@ class User < ActiveRecord::Base
   
     def search_fields_updated?
       all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                    :twitter_id, :fb_profile_id, :customer_id, :deleted]
+                    :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
       (@all_changes.keys & all_fields).any?
     end
 

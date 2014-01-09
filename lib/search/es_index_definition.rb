@@ -55,6 +55,7 @@ class Search::EsIndexDefinition
                   :fb_profile_id => { :type => :string },
                   :account_id => { :type => :long, :include_in_all => false },
                   :deleted => { :type => :boolean, :include_in_all => false },
+                  :helpdesk_agent => { :type => :boolean, :include_in_all => false },
                   :created_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
                   :updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false }
               }
