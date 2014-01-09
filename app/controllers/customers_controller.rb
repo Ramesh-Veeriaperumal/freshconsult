@@ -9,7 +9,7 @@ class CustomersController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+    per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
     @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
     respond_to do |format|
       format.html  do
