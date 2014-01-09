@@ -3,7 +3,7 @@ if node[:opsworks]
     run "sudo monit -g helpkit_dj restart all"
     run "sudo monit restart all -g helpkit_resque"
     run "sudo monit restart all -g helpkit_facebook_realtime"
-    run "sudo monit restart all -g helpkit_gnip_poll"
+    run "sudo monit restart all -g helpkit_twitter_realtime"
   elsif (node[:opsworks][:instance][:hostname]).include?("delayed-jobs")
     run "sudo monit -g helpkit_dj restart all"
   elsif (node[:opsworks][:instance][:hostname]).include?("resque")
@@ -11,7 +11,7 @@ if node[:opsworks]
   elsif (node[:opsworks][:instance][:hostname]).include?("facebook-utility")
     run "sudo monit restart all -g helpkit_facebook_realtime"
   elsif (node[:opsworks][:instance][:hostname]).include?("twitter-utility")
-    run "sudo monit restart all -g helpkit_gnip_poll"
+    run "sudo monit restart all -g helpkit_twitter_realtime"
   end
 else
   def all_instances_of(engine)
@@ -39,7 +39,7 @@ else
   # end
 
   # on_utilities(all_instances_of('twitter_utility')) do
-  #   run "sudo monit restart all -g helpkit_gnip_poll"
+  #   run "sudo monit restart all -g helpkit_twitter_realtime"
   # end
 
   # on_utilities(all_instances_of('facebook_utility')) do
@@ -62,7 +62,7 @@ else
     on_utilities(all_instances_of('workers')) do
       run "sudo monit -g dj_helpkit restart all"
       run "sudo monit restart all -g helpkit_resque" 
-      run "sudo monit restart all -g helpkit_gnip_poll"
+      run "sudo monit restart all -g helpkit_twitter_realtime"
       run "sudo monit restart all -g helpkit_facebook_realtime"
     end
   end
