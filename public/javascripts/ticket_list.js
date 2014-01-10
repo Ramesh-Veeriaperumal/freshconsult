@@ -1,9 +1,9 @@
 
 bulkActionButtonsDisabled = function () {
 	if (jQuery('#ticket-list .check .selector:checked').length > 0 ) {
-		jQuery('#ticket-toolbar .bulk_action_buttons .button').removeAttr('disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .btn').removeAttr('disabled');
 	} else {
-		jQuery('#ticket-toolbar .bulk_action_buttons .button').attr('disabled','disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .btn').attr('disabled','disabled');
 	}
 }
 ticksymbol = "<span class='icon ticksymbol'></span>";

@@ -5,10 +5,24 @@
 // Recalculate z-index where appropriate
 .modal-open {
   overflow:hidden;
+  /*.wrapper .wrapper-shadow, .modal-backdrop{
+    -webkit-animation: modalAnimation 500ms ease-out;
+    -webkit-filter: blur(3px);
+  }*/
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
   .tooltip       {  z-index: $zindexTooltip  + $zindexModal; }
+}
+
+@-webkit-keyframes modalAnimation {
+  0% {
+    -webkit-filter: blur(0px);
+  }
+  100% {
+    -webkit-filter: blur(3px);
+
+  }
 }
 
 // Background
@@ -20,7 +34,7 @@
   left: 0;
   z-index: $zindexModalBackdrop;
   background-color: #efefef;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(200,200,200,0.5);
   background-image: inline-image("cdn-ignored/inline-images/dialog/overlay.gif");
   background-repeat: repeat;
   // Fade for backdrop
@@ -42,25 +56,25 @@
   margin: 0;  
   z-index: $zindexModal;
   background-color: $white;
-  border-top: solid 1px #808080;
+  border: solid 1px #999;
   background-image: inline-image("cdn-ignored/inline-images/dialog/popup-headpattern.png");
   background-repeat: repeat-x;
   @include border-radius(6px);
-  @include box-shadow(0 10px 40px rgba(0,0,0,0.5), $white 0 0 1px inset);
+  @include box-shadow(0 30px 140px -30px #000, white 0 0 1px inset);
   @include background-clip(padding-box);
 
   &.fade {
-    @include transition(#{opacity .3s linear, top .3s ease-out});
-    top: 60%;
+    @include transition(#{opacity .1s ease-out, top .1s ease-out});
+    top: 41%;
   }
-  &.fade.in { top: 10px; }
+  &.fade.in { top: 40%; }
 }
 .modal-header {
-  padding: 10px 40px 0 15px;
+  padding: 15px 40px 0 15px;
   border-bottom: 1px solid #eee;
   h3{
     font-size: 1.5em;
-    line-height: 1.6em;
+    line-height: 40px;
   }
   .close {
     position: absolute;
@@ -113,36 +127,37 @@
     left: 50%;
     width: 710px;
     margin: -250px 0 0 -355px;
-    &.fade.in { top: 50%; }
+    &.fade.in { top: 40%; }
   }
-  .modal-header{ padding: 10px 20px 0; }
+  .modal-header{ padding: 15px 20px 0; }
   .modal-header .close {
-    height: 32px;
-    width: 28px;
-    border: solid 2px rgba(255,255,255,0.8);
-    border-right: none;
-    padding: 8px;
+    height: 35px;
+    width: 35px;
+    left: -35px;
+    top: 18px;
+    border: solid 1px #fff;
+    border-right: solid 1px #000;
+    padding: 10px;
     text-align:center;
-    left:-29px;
-    top:15px;
-    @include background-image(linear-gradient(#4f4f4f, #646464));
+    background-color: #333;
     @include border-radius(5px 0 0 5px);
-    @include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+    @include box-shadow(-8px 0px 32px rgba(0,0,0,0.2));
     /*@include hide-text();*/
     &:focus, &:hover {
-      @include background-image(linear-gradient(#646464, #4b4b4b));
-      left: -31px;
-      width: 30px;
+      background-color: #000;
+      left: -35px;
+      width: 35px;
     }
     &:before {
-      content: "x";
-      text-indent: 100%;
+      content: "\00d7";
+      //text-indent: 100%;
       white-space: nowrap;
       overflow: hidden;
-      background: inline-image("cdn-ignored/inline-images/dialog/icon-close.gif") no-repeat;
+      //background: inline-image("cdn-ignored/inline-images/dialog/icon-close.gif") no-repeat;
       display:inline-block;
-      width:11px;
-      height:11px;
+      font-size: 22px;
+      margin-top: -3px;
+      color: #fff;
     }
   }
 }

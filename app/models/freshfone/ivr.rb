@@ -67,7 +67,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 	end
 
 	def has_new_attachment?(menu_id)
-		attachments_hash.has_key?(menu_id)
+		attachments_hash.has_key?(menu_id.to_s)
 	end
 	
 	def find_menu(menu_id)

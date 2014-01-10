@@ -31,7 +31,39 @@
      return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
   }, 'Please enter a valid hours.');
   $.validator.addClassRules("hours", { hours: true });
-  
+
+  //Sla Validator
+  $.validator.addMethod("only_digits", function(value, element) {
+    if (/[0-9]+/.test(value)){
+      jQuery('#text_'+element.id.match(/[0-9].+/)).removeClass('sla-error');
+      return true;
+    }
+    else {
+      jQuery('#text_'+element.id.match(/[0-9].+/)).addClass('sla-error');
+      return false;
+    }
+  }, '');
+  $.validator.addMethod("sla_min_time", function(value, element) {
+    if (value>=900){
+      jQuery('#text_'+element.id.match(/[0-9].+/)).removeClass('sla-error');
+      return true;
+    }
+    else {
+      jQuery('#text_'+element.id.match(/[0-9].+/)).addClass('sla-error');
+      return false;
+    }
+  }, '');
+  $.validator.addMethod("sla_max_time", function(value, element) {
+    if (value<=31536000){
+      jQuery('#text_'+element.id.match(/[0-9].+/)).removeClass('sla-error');
+      return true;
+    }
+    else {
+      jQuery('#text_'+element.id.match(/[0-9].+/)).addClass('sla-error');
+      return false;
+    }
+  }, '');
+  $.validator.addClassRules("sla_time", { only_digits:true, sla_min_time: true, sla_max_time: true });
 
   //Domain Name Validator 
   $.validator.addMethod("domain_validator", function(value, element) {

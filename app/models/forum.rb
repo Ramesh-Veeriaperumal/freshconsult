@@ -222,6 +222,9 @@ class Forum < ActiveRecord::Base
 
   def remove_topics_from_es
     Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids })
+    Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id,
+                                                           :deleted_topics => @deleted_topic_ids,
+                                                           :aws_cluster => true })
   end
 
   def backup_forum_topic_ids

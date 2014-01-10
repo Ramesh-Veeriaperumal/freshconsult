@@ -5,7 +5,7 @@
       <span class="disabled next_page"><span></span></span>
     </div>
     <% unless @items.total_entries == 0 %>
-    <div class="offset">
+    <div class="offset ticketlist-total-count">
       <%= t('showing') %> 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
         <%= t('of') %>

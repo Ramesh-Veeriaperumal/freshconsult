@@ -3,74 +3,76 @@
 <h3 class="lead">
   <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
 </h3>
-<div>
-  <ul data-tabs="tabs" class="tabs" id="portal-tabs">
-    <li class="active">      
-      <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header").html_safe%></a>
-    </li>
-    <%if feature?(:css_customization)%>
-    <li>
-        <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
-          <%=t("portalcss.css_header").html_safe%>
-        </a>
-    </li>
-    <%end%>
-    <%if feature?(:layout_customization)%>
-    <li>
-        <a id="layout-tab" href="#layout" data-toggle="tab" 
-            data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">
-          <%=t("portalcss.layout_and_pages_header").html_safe%>
-        </a>
-    </li>
-    <%end%>
-  </ul>        
-  
-    <div class="tab-content">
-      <div class="tab-pane active" id="preferences">
-        <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
-      </div>
-      <%if feature?(:css_customization)%>
-      	<div class="tab-pane" id="custom_css">		
-          <%= render :partial => "custom_css", :object => @portal_template %>
-      	</div>
-      <%end%>
-      <%if feature?(:layout_customization)%>
-        <div class="tab-pane" id="layout">
-          <ul data-tabs="tabs" class="pills">
-            <li class="active">
-              <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
-                <%=t("portalcss.layout_pages.subheader_layout")%>
-              </a>
-            </li>
-            <li>
-              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
-            </li>
-          </ul>
 
-          <div class="tab-content">
-            <div class="tab-pane active" id="template">
-              <%= render :partial => "layout" %>
+<ul data-tabs="tabs" class="tabs" id="portal-tabs">
+  <li class="active">      
+    <a href="#preferences" data-toggle="tab" id="preferences-tab">
+      <%=t("portalcss.color_and_font_header").html_safe%>
+    </a>
+  </li>
+  <% if feature?(:css_customization) %>
+  <li>
+      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
+        <%=t("portalcss.css_header").html_safe%>
+      </a>
+  </li>
+  <% end %>
+  <% if feature?(:layout_customization) %>
+  <li>
+      <a id="layout-tab" href="#layout" data-toggle="tab" 
+          data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">
+        <%=t("portalcss.layout_and_pages_header").html_safe%>
+      </a>
+  </li>
+  <% end %>
+</ul>
+  
+<div class="tab-content">
+  <div class="tab-pane active" id="preferences">
+    <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
+  </div>
+  <%if feature?(:css_customization)%>
+  	<div class="tab-pane" id="custom_css">		
+      <%= render :partial => "custom_css", :object => @portal_template %>
+  	</div>
+  <%end%>
+  <%if feature?(:layout_customization)%>
+    <div class="tab-pane" id="layout">
+      <ul data-tabs="tabs" class="pills">
+        <li class="active">
+          <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
+            <%=t("portalcss.layout_pages.subheader_layout")%>
+          </a>
+        </li>
+        <li>
+          <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active" id="template">
+          <%= render :partial => "layout" %>
+        </div>
+        <div class="tab-pane" id="pages">
+          <div>
+            <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
+            <p class="help-text">
+              <%=t("portalcss.layout_pages.pages_help_message")%>
+            </p>
+          </div>
+          <br />
+          <div class="row-fluid">
+            <div class="span2">
+              <%= render :partial => "portal_pages"%>
             </div>
-            <div class="tab-pane" id="pages">
-              <div>
-                <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
-                <p class="help-text">
-                  <%=t("portalcss.layout_pages.pages_help_message")%>
-                </p>
-              </div>
-              <br />
-              <div class="row-fluid">
-                <div class="span2">
-                  <%= render :partial => "portal_pages"%>
-                </div>
-                <div class="span10 omega">
-                  <div id="Customizepage"></div>
-                </div>
-              </div>
+            <div class="span10 omega">
+              <div id="Customizepage"></div>
             </div>
           </div>
         </div>
-      <%end%>
+      </div>
+    </div>
+  <%end%>
 </div> 
 
 <% content_for :pagefixed do %>
@@ -200,8 +202,7 @@
   }
 <% end %>
 
-<% content_for :sidebar do %>
-  <div class="sidepanel">
+<% content_for :helpcard do %>
     <h3 class="title">Shortcut for editor</h3>
     <p>
       <b>Shift+cmd+s</b>  <br />
@@ -248,5 +249,4 @@
       </p>
     </div>
 
-  </div>
 <% end %>

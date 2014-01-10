@@ -119,6 +119,7 @@ module FreshdeskCore::Model
     }            
 
   def perform_destroy(account)
+    delete_gnip_twitter_rules(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
@@ -128,6 +129,13 @@ module FreshdeskCore::Model
   end
 
   private
+  
+    def delete_gnip_twitter_rules(account)
+      account.twitter_handles.each do |twt_handle|
+        twt_handle.cleanup
+      end
+    end
+    
     def jira_enabled?(account)
       app_id = Integrations::Application.find_by_name('jira').id
       account.installed_applications.find_by_application_id(app_id)

@@ -19,7 +19,6 @@ $animation_timing: .2s;
 /*Admin page common css end */
 .admin {
 	padding:0px 0px 5px 0px;
-	margin:0px 8px 0px 10px;
 	h3{
 		&.title{
 			margin-bottom:16px;
@@ -108,7 +107,6 @@ $animation_timing: .2s;
 			}
 		}
 		h3.title{
-			margin-top:15px;
 			border-color: $helpdesk_color;
 			span{
 				border-color:$helpdesk_color;

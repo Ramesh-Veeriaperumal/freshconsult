@@ -1,6 +1,10 @@
 /* !PATTERN box-sizing to be included later and tweeked in all pages */
 /*@include border-box-sizing;*/
 
+// -------------------------------------------------------------------------------------------- 
+// 											Layout common styles 									
+// -------------------------------------------------------------------------------------------- 
+
 @include at-breakpoint($break-tablet){
 	// Generic Grid classes
 	.srow-fluid{ @include pie-clearfix; }
@@ -14,29 +18,45 @@
 .wrapper{
 	@include container;
 	@include pie-clearfix;
-	overflow:visible;
-	position: relative;
+	overflow: visible;
 	text-align: left;
+	.wrapper-shadow{
+		width:100%;
+		position:relative;
+		float:left;
+		&:before{
+			content:"";
+			// needs latest Compass, add '@import "compass"' to your scss
+			@include filter-gradient(#330000, #000000, horizontal); // IE6-9
+			@include background-image(linear-gradient(left,  rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0) 100%));
+			width: 8px;
+			border-left: 1px solid rgba(0, 0, 0, 0.4);
+			height: 100%;
+			position: absolute;
+			right: -9px;
+			top:0;
+			opacity: 0.4;
+		}
+		&:after{
+			content:"";
+			// needs latest Compass, add '@import "compass"' to your scss
+			@include filter-gradient(#000000, #300000, horizontal); // IE6-9
+			@include background-image(linear-gradient(left,  rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0) 30%,rgba(0, 0, 0, 0.1) 70%,rgba(0,0,0,0.2) 100%));
+			position: absolute;
+			width: 8px;
+			border-right: 1px solid rgba(0, 0, 0, 0.4);
+			left: -9px;
+			top:0;
+			height: 100%;
+			opacity: 0.4;
+		}
+	}
+}     
+.containerFull{
+  	@include pie-clearfix;
+	margin:-$common-padding;
+	padding:0px;
 }
-  
-.top_links a{
-	text-decoration:none;
-	font-weight:bold;
-	padding:0px 8px;
-	margin:0px;
-	border-right:1px solid #afafaf;
-	border-left:1px solid #efefef;
-	@include link-colors(#527EAA, #888888, #527EAA, #527EAA);
-}
-
-.fixedWidth{
-	max-width:680px;
-}                   
-
-#minwidthfix{
-	width:950px;
-}
-
 label.overlabel{
 	color:#888888;
 	position:absolute; 
@@ -45,26 +65,61 @@ label.overlabel{
 	z-index:5;
 	margin:8px;
 }
-
 #inner {
+	background:$sidebar-bg;
 	@include pie-clearfix;
 	position:relative;
 	.leftcontent{
 		float:left;
 		width:100%;
+		background:$content-color;
+		border-right:1px solid $sidebar-border;
+		padding-bottom:$common-padding;
+		@include box-sizing(border-box);
+
 	}
 	z-index:1;  	
-	margin:12px 0px 0px 0px;	
-	padding-right:$sidebar-width+8;   
+	margin:0;	
+	padding-right:$sidebar-width;   
 	.sidebar{ 
+		background: transparent;
 		width:$sidebar-width;
 		float:right;
 		margin-right:-($sidebar-width);
 	}  
 }
+.index-page-content{
+	@include min-height(1100px);
+	background: #fff;
+}
+.sp_border{
+	border:1px solid darken($background, 15%);
+}
 
+.pagearea, .no-helpdesk{
+	background-color:$content-color;	
+}
+
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .common-padding{  
+	padding:$common-padding; 
+	margin:0;
+}
+.pagearea{
+	@include min-height(480px);
+	position:relative;
+}
+
+.alert{
+	margin: $common-padding;
+}
+// -------------------------------------------------------------------------------------------- 
+// 											Layout without sidebar styles 									
+// -------------------------------------------------------------------------------------------- 
 .single #inner{
 	padding-right:0px;	
+	.pagearea{
+		border:0;
+	}
 	.sidebar{
 		display:none;
 	}	
@@ -73,85 +128,30 @@ label.overlabel{
 		border-right:0px;
 	}	
 }
-  
-.invert #inner{
-	padding-right:0px;
-	padding-left: $invert-side-width; /* The width of the rail */	
-	.sidebar, .leftcontent{
-		float:right; 
-	}
-	.sidebar{
-		margin-right:0px;
-		width:$invert-side-width;
-		margin-left: -$invert-side-width; 
-	}	
-}
-  
-
-div.bg_white{
-	background-color:#ffffff;
-}
-
-div.bg_pulp{
-	background-color:#F3F1EC;
-}
-
-.twoCol_ltSidebar #inner{
-	padding-right:0px;
-	padding-left:$sidebar-width; /* The width of the rail */
-	.sidebar{
-		margin-right:0px;
-		margin-left:-$sidebar-width;
-	} 
-	.leftcontent{
-		margin-right:0px;
-		border-right:0px;
-		border-left:$sidebar-width solid #f2f8fc; /* The width and color of the rail */
-		margin-left:-$sidebar-width; /* Hat tip to Ryan Brill */
-		float:right;			
-	}
-}
-
-.breadcrumb{
-	padding:4px 0px;
-	margin:8px 10px 3px 10px;
-	@include clearfix;
-	color:#ffffff;
-	font-size:12px;
-	a{
-		@include link-colors(#ffffff, #ffffff, #ffffff, #ffffff, #ffffff);
-		text-decoration:none;
-		padding:3px 10px;
-		@include border-radius(6px);
-		background-color:#afafaf;
-		text-decoration:none;
-	}
-} 
-
-/* Header styles */
-
+// -------------------------------------------------------------------------------------------- 
+// 											Header styles 										
+// -------------------------------------------------------------------------------------------- 
 .header {  
 	@include pie-clearfix;
 	position:relative;
-	padding:5px 0px 0px 0px;
 	background:$header_color;	
 }
-.header-link-wrapper *{
-	vertical-align: middle;
-}
+.header-link-wrapper *{ vertical-align: middle; }
 .header-link-wrapper{
 	border: 1px solid #000;
 	border: 1px solid #999999;
     -webkit-background-clip: padding-box; /* for Safari */
     background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
 	float:right;
-	margin: 2px 12px;
-    margin-bottom:8px;
+	margin: 10px ($common-padding);
+	margin-left:0;
 	height:35px;
 	overflow:hidden;
 	@include border-radius(3px);
 	a{
 		float:left;
+		background-color:#000;
+		background-color:rgba(#000, 0.2);
 		img{
 			height:35px;
 			background-color: rgba(#eaeaea, 0.5);
@@ -175,20 +175,20 @@ div.bg_pulp{
 .brand{
 	@include pie-clearfix;
 	position:absolute;
-	left:0px;       
-	top:-3px;
-	margin-left:0px;
+	left:10px;       
+	top:5px;
 	text-decoration:none;
 	a{ text-decoration:none; }
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo-image{ height: 50px; }
 	.logo_text{
-	   	font-size:1.6em;
 	   	border-left:1px solid rgba(#ffffff, 0.3);
      	color:#ffffff;
-     	padding:0px 0 0px 12px;
      	margin-left:10px;
-     	margin-top:13px;
+		font-size: 20px;
+     	padding: 0 0 0 15px;
+     	margin-top: 12px;
+     	font-weight: 200;
    }
 }
 
@@ -230,60 +230,257 @@ div.bg_pulp{
 	}
 } 
 
-/* Header Tab styles */
+.profile_info{     
+	visibility:hidden;
+	right:8px;     
+	margin-top:55px;     
+	position:absolute;
+  	font-size:13px;
+  	background:#ffffff;
+	padding:0;     
+  	z-index:999;
+	width:300px;
+	border-bottom: 7px solid #eee;
+	@include border-radius(5px);
+	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
+	&:after{           
+		content:"";
+		position:absolute;
+		border:6px solid transparent;
+		border-bottom-color:#eee;
+		width:1px;        
+		top:-12px; right:24px;
+	}
+	&:before{           
+		content:"";
+		position:absolute;
+		border:8px solid transparent;
+		border-bottom-color: #AAA;
+		width: 1px;
+		top: -16px;
+		right: 22px;
+	}
+	.seperator{
+		border-color:#e0e0e0;
+		padding:0;
+		margin:0;
+		height:0;
+	}                  
+	.link, h5, .user{          
+		font-size:14px;
+	} 
+	.header-arrow-right {
+			display:inline-block;
+			width: 0; 
+			height: 0; 
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 5px solid #909090;
+			margin-right:10px;
+			margin-left:-5px;
+	}
+	.user{
+		margin:0; 
+		background:#eee;  
+		@include border-radius(5px);
+		span{
+			position:relative;
+		 	top:7px; 
+			color:#888;
+			font-weight: 300;
+			font-size: 18px;
+			text-shadow: 1px 1px 0 #FFF;
+		}
+	}               
+	h5{ padding-bottom:6px; }
+	a.link{
+		display:block;
+		padding:10px 12px 10px 24px;
+		color:$default_txt_color;
+		text-decoration:none;
+	}
+	a.link:hover{
+		background: #999;
+		color:#ffffff; 
+		.header-arrow-right {
+			border-left-color:#fff;
+		}   
+	}
+	.info{
+		padding:4px 24px;
+	}            
+	.user{
+		padding:2px 18px 18px;
+	}
+	.preview_pic img{     
+		width:30px;height:30px;  
+		@include box-shadow( rgba(0, 0, 0, 0.8) 0px 1px 5px inset );
+		@include border-radius(50px);
+	}  
+	.top-margin{
+		margin-top:8px;
 
-.top_nav_bg{
-	background:$tab_color; 
-	@include box-shadow(rgba(0, 0, 0, 0.2) 0 -1px 1px inset);
+	}                         
+	.select2-container .select2-choice{
+		color:$default_txt_color;
+		font-size: 14px;
+		border-color:rgba(#000, 0.1);
+		background-image:none;
+		background-color: transparent;
+		padding-left:5px;
+	}
+	.header-agent-select{
+	 width:235px;
+	}
 }
-
+// -------------------------------------------------------------------------------------------- 
+// 											Header Tab styles 									
+// -------------------------------------------------------------------------------------------- 
+.top_nav_bg{
+	position: relative;
+	background:$tab_color; 
+} 
 ul.header-tabs{
 	list-style:none;
 	li{
 		float:left; 
-		position:relative;
-		span{
-			background:none;
-			height:1px;
-			display:block; 
-			font-size:0px;
-			position:relative;
-			z-index:1;
-			margin-bottom:-2px;
-		}		 
+		position:relative;	
+		padding-top:1px; 
 		a{
 			position:relative;
 			z-index:5;
 			text-decoration:none;
 			color:#ffffff;
-			padding:9px 16px 8px 16px;
-			font-size:13px;
-			font-weight:bold;
 			text-align:center;
 			display:block;                          
-			@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
+			padding: 8px 20px;
+			font-size: $default-font-size;
+			font-weight: 500;
 		}
 		a:hover{
 			background:lighten($tab_color, 10%);
-			@include box-shadow(rgba(0, 0, 0, 0.1) 0 -2px 1px inset); 
-			color:#ffffff;
 		} 
 	}  
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
-		background:$background;
-		padding-top:7px;
-		top:2px;                                                 
+		background:$content-color;
 		color:#000000; 
-		@include box-shadow(none); 
 	} 
 } 
-
-/* Footer styles */
-.footerContent{
-	padding:4px 20px 20px; 
+a.new_ticket, .nav_search{
+	float:left;
+}
+a.new_ticket{
+	@include text-shadow(rgba(0, 0, 0, 0.1) 1px 1px 1px);
+	padding: 8px 20px;
+	font-size: $default-font-size;
+	font-weight: 500;
+	text-decoration:none; 
+	color:#fff;
+	position:relative; 
+	margin-right:80px;
+	span{ 
+		background:none;
+		&:before{
+			content:"+";
+			position:absolute; 
+			left:0; 
+			font-size:22px;
+			top:1px;
+			font-weight:bold;		
+		}
+	}	
+	&:hover{ 
+		border-color:#606c88;  
+		color:#ffffff;	 
+	}
+}
+.nav_search{
+	height:33px;
+	position:relative;
+	margin:0 0 0 6px;
+	div.search_bar{ 
+		height:100%;
+		width:90px;
+		background:none;
+		padding:0;
+		position:absolute;
+		top:0;
+		right:0;
+		@include transition(width ease-out 200ms, background ease-in 200ms);
+		.searchIcon, .search-icon-inactive{
+		   position:absolute;
+		   right:0;
+		   width:15px;
+		   height:15px;
+		   top:9px;
+		   left:3px;
+		}
+		.searchIcon{display: none}
+		label.overlabel{
+			margin:0;
+		 	font-size: $default-font-size;
+		 	color:#fff;
+		 	padding:9px;
+		 	padding-left:25px;
+		 	font-weight:500;
+		} 
+		input{		
+			border:0;
+			position:relative;
+			font-size:14px;
+			color:#fff;
+			width:100%;
+			padding:16px 10px;
+			padding-left:25px;
+			background:none;
+			float:right;	
+			@include box-sizing(border-box);
+		}
+		input:focus{ @include box-shadow(#ffffff 0 0 0); }		
+	}
+	div.search_bar{
+		&:hover,&.active{
+			box-shadow: inset 0 0 1px 0px #000;
+			input{	
+				color:#333;
+			}
+			label.overlabel{
+				color:#999;
+			}
+			width: $sidebar-width;
+			background:#fff;
+			font-weight:500;
+			.search-icon-inactive{ display: none }
+			.searchIcon{display: block; left:8px;}
+	   	}
+	}
 }
 
+.nav_right{
+	position:relative;
+	z-index:10; 
+	float:right; 
+}
+// -------------------------------------------------------------------------------------------- 
+// 												Footer styles 									
+// -------------------------------------------------------------------------------------------- 
+
+/*#footer.wrapper{
+	@include box-shadow(0px -5px 5px 0px rgba(0, 0, 0, 0.5), 0px 70px+$footer-padding 5px 0px rgba(0, 0, 0, 0.5));
+}*/
+.footer-content{
+	padding:20px 0; 
+	text-align: center;
+	padding-bottom: 80px;
+	background-color:$footer-bg;
+	border-top: 1px solid $footer-border;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	@include box-shadow(inset 0px 1px 0px #FFF, 0 4px 10px -4px rgba(0,0,0,0.2));
+}
+// -------------------------------------------------------------------------------------------- 
+// 												Page Loading styles 									
+// -------------------------------------------------------------------------------------------- 
 .top-loading-wrapper {
 	position:fixed;
 	top:0;

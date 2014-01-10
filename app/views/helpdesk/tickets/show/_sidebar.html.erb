@@ -13,11 +13,11 @@
 			<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
 			<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>
 		</div>
-		<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
+		<div class="widget time-tracked inactive" id="TimesheetTab">
 			<h3>
 				<%= t('helpdesk.time_sheets.sidebar_title') %>
 				<div class="tracked_time">
-					<span class="time" id="timeentry_timer_total" data-static-total="true"><%= get_time_in_hours(@ticket.time_tracked) %></span>
+					<span class="time-text" id="timeentry_timer_total" data-static-total="true"><%= get_time_in_hours(@ticket.time_tracked) %></span>
 					<span class="time_unit">Hrs </span>
 				</div>
 			</h3>

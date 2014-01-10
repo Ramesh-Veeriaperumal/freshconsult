@@ -1524,6 +1524,34 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
 
+  create_table "social_streams", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "social_id",   :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.text     "includes"
+    t.text     "excludes"
+    t.text     "filter"
+    t.text     "data"
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "social_streams", ["account_id", "social_id"], :name => "index_social_streams_on_account_id_and_social_id"
+
+  create_table "social_ticket_rules", :force => true do |t|
+    t.integer  "rule_type"
+    t.integer  "stream_id",   :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.text     "filter_data"
+    t.text     "action_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "social_ticket_rules", ["account_id", "stream_id"], :name => "index_social_ticket_rules_on_account_id_and_stream_id"
+
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",          :limit => 8
     t.integer  "tweetable_id",      :limit => 8
@@ -1533,8 +1561,10 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
     t.integer  "account_id",        :limit => 8
     t.string   "tweet_type",                     :default => "mention"
     t.integer  "twitter_handle_id", :limit => 8
+    t.integer  "stream_id",         :limit => 8
   end
 
+  add_index "social_tweets", ["account_id", "stream_id"], :name => "index_social_tweets_on_stream_id"
   add_index "social_tweets", ["account_id", "tweet_id"], :name => "index_social_tweets_on_tweet_id"
   add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"account_id"=>nil, "tweetable_id"=>nil, "tweetable_type"=>15}
 

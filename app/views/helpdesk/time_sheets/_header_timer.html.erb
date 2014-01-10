@@ -1,0 +1,36 @@
+<% return if @time_entry.blank? %>
+<div id="header_timer" class="header-timer-wrapper">
+    <textarea id="widget-ticket-text" class="hide">
+        <div class="header_popover ellipsis input-large">
+            <%= link_to @time_entry.workable, url_for(@time_entry.workable), {
+                :class => "header-ticket-title"
+            }%>
+        </div>
+    </textarea>
+    <a href="<%= edit_helpdesk_ticket_helpdesk_time_sheet_path(@time_entry.workable,
+        @time_entry, :from_header => true) %>" 
+        rel="freshdialog"
+        id="header_active_timeentry"
+        data-timeentry-id="<%= @time_entry.id %>"
+        data-target="#edit_timeentry_<%= @time_entry.id %>" 
+        data-classes="persistent_modal header-model" data-width="450" 
+        data-submit-label="Stop" data-submit-loading="<%= t('saving')%>"
+        title="Stop Timer">
+            <span class="header-timer time_running" id="header-timer-task-<%= @time_entry.id %>" 
+                data-placement="belowLeft" rel='hover-popover' data-widget-container="widget-ticket-text">
+                <%= content_tag :span, get_time_in_hours(@time_entry.running_time), 
+                    :class => "header-timer-wrap time-text",
+                    "data-running-time" => @time_entry.running_time,
+                    "data-timer-running" => @time_entry.timer_running,
+                    :id => "timeentry_timer_#{@time_entry.id}" %>
+                <span class="header-timer-wrap"> 
+                    <i class="stopwatch"></i>
+                </span>
+            </span>
+    </a>
+    <script type="text/javascript">
+        if(getFromLocalStorage('timeRunning') == null){
+        	update_localstorage(<%= @time_entry.id %>,<%= @time_entry.timer_running %>);
+        }
+    </script>
+</div>

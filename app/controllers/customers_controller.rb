@@ -9,7 +9,7 @@ class CustomersController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+    per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
     @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
     respond_to do |format|
       format.html  do
@@ -75,8 +75,10 @@ class CustomersController < ApplicationController
         format.json  { render :json => @customer, :status => :created }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Customer creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @customer.errors})
+        }
       end
     end
   end
@@ -98,8 +100,10 @@ class CustomersController < ApplicationController
         format.json { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "Customer update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity",:errors => @customer.errors})
+        }
       end
     end
   end

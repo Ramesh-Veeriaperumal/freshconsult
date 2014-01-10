@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
   after_update :drop_authorization , :if => :email_changed?
   after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?] #for user email delta
   after_update :update_verified, :if => [:active_changed?, :has_email?, :user_emails_migrated?] #for user email delta
+  before_update :make_inactive, :if => :email_changed?
+  after_commit_on_update :send_activation_email, :if => :email_updated?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -79,6 +81,15 @@ class User < ActiveRecord::Base
    authorizations.each do |auth|
      auth.destroy
    end 
+ end
+
+  def make_inactive
+    self.active = false
+    true
+  end
+
+  def send_activation_email
+    self.deliver_activation_instructions!(account.main_portal,false)
   end
 
   def update_user_email

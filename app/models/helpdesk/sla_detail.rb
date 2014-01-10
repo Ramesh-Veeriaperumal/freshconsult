@@ -4,6 +4,9 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
   before_create :set_account_id
+
+  before_save :check_sla_time
+
   RESPONSETIME = [
     [ :half,    I18n.t('half'),  1800 ], 
     [ :one,      I18n.t('one'),      3600 ], 
@@ -38,6 +41,21 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :sixmonth, I18n.t('sixmonth'),   15811200 ],
     [ :oneyear, I18n.t('oneyear'),   31536000 ]
   ]
+
+  SLA_OPTIONS = [
+    [:minutes, 'sla.minutes', 60],
+    [:hours, 'sla.hours', 3600],
+    [:days, 'sla.days', 86400],
+    [:months, 'sla.months', 2592000]
+  ]
+
+  SECONDS = [
+    [:min_seconds, 900],
+    [:max_seconds_by_days, 31536000],
+    [:max_seconds_by_months, 31104000]
+  ]
+
+  SECONDS_RANGE = Hash[*SECONDS.map { |i| [i[0], i[1]] }.flatten]
 
   RESOLUTIONTIME_OPTIONS = RESOLUTIONTIME.map { |i| [i[1], i[2]] }
   RESOLUTIONTIME_NAMES_BY_KEY = Hash[*RESOLUTIONTIME.map { |i| [i[2], i[1]] }.flatten]
@@ -89,6 +107,10 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       on_status_change_bhrs(ticket, ticket.frDueBy)
   end
 
+  def self.sla_options
+    SLA_OPTIONS.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
   private
 
     def business_time(sla_time, created_time)
@@ -121,6 +143,11 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
     def set_account_id
       self.account_id = sla_policy.account_id
+    end
+
+    def check_sla_time
+      self.response_time = response_time >= SECONDS_RANGE[:min_seconds] ? (response_time <= SECONDS_RANGE[:max_seconds_by_days] ? response_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
+      self.resolution_time = resolution_time >= SECONDS_RANGE[:min_seconds] ? (resolution_time <= SECONDS_RANGE[:max_seconds_by_days] ? resolution_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
     end
     
 end

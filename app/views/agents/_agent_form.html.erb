@@ -6,7 +6,7 @@
 
 <div>
   <% if @agent.user.deleted? %>
-	  <div class="flash_info">
+	  <div class="alert">
 	    <%= "#{t('agent.info1')}" %>
       <% if privilege?(:manage_users) %>
 		    <%= link_to(t('agent.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) %>
@@ -34,29 +34,25 @@
    		<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
    	</div>
    	<div class="span9">
-   		<ul class="unstyled">
-        <li>
-				  <%= label(:agent, :signature_html, t('agent.type'), :class => "span2") %>
-				  <div class="span10">
-						<div class="span6">
-						  <div class="span1">
-						    <%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> 
-						  </div>
-						  <div class="span11 <%= 'muted' if @agent.new_record? && !agents_available? %>">
-							  <strong><%= t('agent.full_time') %></strong>
+   		<ul class="unstyled form-horizontal">
+        <li class="control-group">
+				  <%= label(:agent, :signature_html, t('agent.type'), :class => "control-label") %>
+				  <div class="controls">
+						<div class="radio inline">
+						  <%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> 
+						  <span class="<%= 'muted' if @agent.new_record? && !agents_available? %>">
+							  <strong><%= t('agent.full_time') %></strong><br />
                 <% if !@current_account.subscription.trial? && (@agent.new_record? || @agent.occasional?) %>
-                  <br /> <%= agents_available? ? t('agent.available_seats', :count => available_agents ) : t('agent.no_seats') %>
+                  <%= agents_available? ? t('agent.available_seats', :count => available_agents ) : t('agent.no_seats') %>
                 <% end %>
-						  </div>
+                &nbsp;
+						  </span>
 					  </div>
-					  <div class="span6">
-						  <div class="span1">
-							  <%= radio_button 'agent', 'occasional', 'true', :checked => agents_exceeded?(@agent) %> 
-						  </div>
-						  <div class="span11">
-							  <strong><%= t('agent.occasional') %></strong><br />
-							  <%= passes_available? ? t('agent.day_pass_available', :count => available_passes ) : t('agent.no_day_pass') %>
-						  </div>
+					  <div class="radio inline">
+						  <%= radio_button 'agent', 'occasional', 'true', :checked => agents_exceeded?(@agent) %> 
+						  <strong><%= t('agent.occasional') %></strong><br />
+						  <%= passes_available? ? t('agent.day_pass_available', :count => available_passes ) : t('agent.no_day_pass') %>
+              &nbsp;
 					  </div>
 				  </div>
 			  </li>
@@ -67,71 +63,65 @@
      					 <%= t('agent_info_title') %>
 					  </h5>
      			 </li>
-     			<li class="row-fluid">
-					  <%= label(:user, :name, t('user.full_name'), :class => "control-label span2" ) %>
-					  <div class="span10">
-						  <%= text_field(:user, :name, :class => "text required span10", 
+     			<li class="control-group">
+					  <%= label(:user, :name, t('user.full_name'), :class => "control-label" ) %>
+					  <div class="controls">
+						  <%= text_field(:user, :name, :class => "text required input-xlarge", 
                     :value => @agent.user.name, :placeholder => t('user.name'))  %>
 					  </div>
 				  </li>	
-  				<li class="row-fluid">
-  					<%= label(:user, :email, t('user.email'), :class => "control-label span2" ) %>
-  					<div class="span10">
-  						<%= text_field(:user, :email, :class => "text required email span8", 
+  				<li class="control-group">
+  					<%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
+  					<div class="controls">
+  						<%= text_field(:user, :email, :class => "text required email input-xlarge", 
                     :value => @agent.user.email, :placeholder => t('user.email')) %>
   					</div>
   				</li>	
-  				<li class="row-fluid">
-  					<%= label(:user, :job_title, t('user.title'), :class => "control-label span2" ) %>
-  					<div class="span10">
-  						<%= text_field(:user, :job_title, :class => "text span8", 
+  				<li class="control-group">
+  					<%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
+  					<div class="controls">
+  						<%= text_field(:user, :job_title, :class => "text input-xlarge", 
                   :value => @agent.user.job_title, :placeholder => t('user.title')) %>
   					</div>
   				</li>
-  				<li class="row-fluid">
-  					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label span2" ) %>
-  				  <div class="span10">
-  					 <%= text_field(:user, :phone, :class => "text span7", 
+  				<li class="control-group">
+  					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label" ) %>
+  				  <div class="controls">
+  					  <%= text_field(:user, :phone, :class => "text input-medium margin-bottom", 
                  :value => @agent.user.phone, :placeholder => t('user.work') ) %> 
+              <%= text_field(:user, :mobile, :class => "text input-medium ", 
+                    :value => @agent.user.mobile, :placeholder => t('user.mobile')) %>
             </div>
   				</li>
-  				<li class="row-fluid">
-  					<div class="span10 offset2">
-  						<%= text_field(:user, :mobile, :class => "text span7", 
-                    :value => @agent.user.mobile, :placeholder => t('user.mobile')) %>
-  					</div>
-  				</li>
     			<% if gamification_feature?(current_account) %>
-    				<li class="row-fluid">
-    					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "control-label span2")%>
-    					<div class="span10 margin-bottom">
+    				<li class="control-group">
+    					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "control-label")%>
+    					<div class="controls margin-bottom">
     						<%= select(:agent, :scoreboard_level_id, 
-    							options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1") ,{},{:class => "select2"}) %>
+    							options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1") ,{},{:class => "select2 input-xlarge"}) %>
     					</div>
     				</li>
     			<% end %>
     			<% if feature?(:multi_timezone) %>
-    				<li class="row-fluid">
-    					<%= label(:user , :time_zone, t('account.time_zone'), :class => "control-label span2") %>			
-    					<div class="span10  margin-bottom">
-                <%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, {:default => @agent.user.time_zone}, {:class => "select2"}) %>
+    				<li class="control-group">
+    					<%= label(:user , :time_zone, t('account.time_zone'), :class => "control-label") %>			
+    					<div class="controls margin-bottom">
+                <%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, {:default => @agent.user.time_zone}, {:class => "select2 input-xlarge"}) %>
     					</div>
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
-  					<li class="row-fluid">
-  						<%= label(:user, :language, t('account.language'), :class => "control-label span2") %>
-  						<div class="span10  margin-bottom">
-  							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "span7 select2"})%>
+  					<li class="control-group">
+  						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
+  						<div class="controls  margin-bottom">
+  							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
   						</div>
   					</li>
   	     	<% end %>
-  				<li class="row-fluid">
-  					<div class="span2">
-  						<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label span2") %>
-  					</div>
-  					<div class="span10">
-  					  <%= text_area(:agent, :signature_html , :class => "text span11", :cols => "40", :rows => "5", :id => "user_binfo" ) %>			
+  				<li class="control-group">
+  					<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>
+  					<div class="controls">
+  					  <%= text_area(:agent, :signature_html , :class => "text ", :cols => "40", :rows => "5", :id => "user_binfo" ) %>			
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
   					</div>
   				</li>
@@ -142,9 +132,9 @@
             </h5>
   				</li>
           <% if(@agent.user != current_user) %>
-          <li class="row-fluid" id="agent_ticket_permission">
-            <label class="span2"><%=t('agent.ticket_scope')%></label>
-            <ul class="span10">
+          <li class="control-group" id="agent_ticket_permission">
+            <label class="control-label"><%=t('agent.ticket_scope')%></label>
+            <ul class="controls">
               <li>
                 <label class="radio">
                   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets", :class=>"radio"}) %> 
@@ -171,9 +161,9 @@
               </li>
             </ul>
           </li>
-  				<li class="agent-role row-fluid">
-  					<%= label(:agent, :roles, t('agent.role'), :class => "span2") %>
-  					<div class="span10" id="selected-roles">
+  				<li class="agent-role control-group">
+  					<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
+  					<div class="controls" id="selected-roles">
               <input type="hidden" value="" name="roleValidate" class="at_least_one_item" 
                 data-selector="#selected-roles ul li" />
   						<ul class="unstyled">
@@ -198,9 +188,9 @@
      		</ul>
     <% else %>
     <%= content_tag( :span, t('agent.cannot_edit_roles'), :class => "muted lead-desc" ) %>
-    <li class="row-fluid" id="agent_ticket_permission">
-      <label class="span2"><%=t('agent.ticket_scope')%></label>
-      <ul class="span10 disc-styled">
+    <li class="control-group" id="agent_ticket_permission">
+      <label class="control-label"><%=t('agent.ticket_scope')%></label>
+      <ul class="controls disc-styled">
         <li>
           <% ticket_scope = ticket_permission(Agent::PERMISSION_TOKENS_BY_KEY[@agent.ticket_permission]) %>
           <b><%= t(ticket_scope) %></b>
@@ -208,9 +198,9 @@
         </li>
       </ul>
     </li>
-		<li class="agent-role row-fluid">
-			<%= label(:agent, :roles, t('agent.role'), :class => "span2") %>
-				<ul class="span10 disc-styled">
+		<li class="agent-role control-group">
+			<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
+				<ul class="controls disc-styled">
           <% @agent.user.roles.each do |role| %>
     				<li> 
               <b><%= role.name %></b>

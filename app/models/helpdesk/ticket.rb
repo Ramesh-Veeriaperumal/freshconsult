@@ -622,9 +622,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :root => "helpdesk/ticket",
             :tailored_json => true,
             :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
-            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
+            :only => [ :display_id, :subject, :description, :account_id, :responder_id,
+                       :group_id, :requester_id, :status, :spam, :deleted, :source, :priority, :due_by,
+                       :created_at, :updated_at ],
             :include => { :flexifield => { :only => es_flexifield_columns },
-                          :attachments => { :only => [:content_file_name] }
+                          :attachments => { :only => [:content_file_name] },
+                          :ticket_states => { :only => [ :resolved_at, :closed_at, :agent_responded_at,
+                                                         :requester_responded_at, :status_updated_at ] }
                         }
             },
             false)
@@ -670,7 +674,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def search_fields_updated?
       attribute_fields = [:subject, :description, :responder_id, :group_id, :requester_id,
-                         :status, :spam, :deleted, :source, :to_emails, :cc_email]
+                         :status, :spam, :deleted, :source, :priority, :due_by, :to_emails, :cc_email]
       include_fields = es_flexifield_columns.map(&:to_sym)
       all_fields = attribute_fields | include_fields
       (@model_changes.keys & all_fields).any?

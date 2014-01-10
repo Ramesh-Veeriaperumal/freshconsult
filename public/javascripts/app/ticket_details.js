@@ -17,10 +17,12 @@ save_draft = function(content) {
 			type: 'POST',
 			data: {draft_data: content},
 			success: function(response) {
-				$(".ticket_show #draft-save").text(TICKET_DETAILS_DATA['draft']['saved_text']);
+				$(".ticket_show #draft-save")
+					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
+					.attr('data-moment', new Date());
+
 				$(".ticket_show #clear-draft").show();
-				$(".ticket_show #reply-draft").removeClass('saving');
-				draftSavedTime = new Date();
+				$(".ticket_show #reply-draft").removeClass('saving');				
 				savingDraft = false;
 			}
 		})
@@ -238,13 +240,11 @@ $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 });
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
-	if(savingDraft != 0){
-	  jQuery(".ticket_show #draft-save").attr('title',humaneDate(draftSavedTime,new Date()));
+	var hasMoment = $(this).attr('data-moment');
+	// Checking if moment exists and if the draft has been saved for the current view.
+	if(hasMoment && moment){
+	  $(this).attr('title', moment(hasMoment).fromNow());
 	}
-});
-
-$("body").on("mouseout.ticket_details", ".ticket_show #draft-save",function(){
-  $(".ticket_show #draft-save").attr('title','');
 });
 
 // This has been moved as a on click event directly to the cancel button 
@@ -1153,26 +1153,29 @@ var scrollToError = function(){
 
 	setTimeout(findWhereToScroll, 200);
 
-	(function(){
-		var tkt_prop = $('#TicketProperties .content');
-		tkt_prop.append("<div class='sloading loading-small loading-block'></div>");
-        tkt_prop.load(tkt_prop.data('remoteUrl'), function(){
-            tkt_prop.data('remoteUrl', false);
+  var load_by_default = ['#TicketProperties', '#TimesheetTab'];
+  	$.each(load_by_default,function(index,value){
+	// for (var i in load_by_default) {
+		var to_be_loaded = $(value + ' .content');
+		to_be_loaded.append("<div class='sloading loading-small loading-block'></div>");
+    to_be_loaded.load(to_be_loaded.data('remoteUrl'), function(){
+    to_be_loaded.data('remoteUrl', false);
 
-			$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
-				
-				if (!dontAjaxUpdate) 
-				{
-					TICKET_DETAILS_DATA['updating_properties'] = true;
-					$(ev.target).data('updated', true);
-					$('#custom_ticket_form').data('updated', true);
-				}
-				dontAjaxUpdate = false;
-			} );
-
-        });	
-	})()
-
+      if (value == '#TicketProperties') {
+      	//This event should be handled only after ticket properties has been loaded.
+				$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {					
+					if (!dontAjaxUpdate) 
+					{
+						TICKET_DETAILS_DATA['updating_properties'] = true;
+						$(ev.target).data('updated', true);
+						$('#custom_ticket_form').data('updated', true);
+					}
+					dontAjaxUpdate = false;
+				});
+      }
+    	});
+	//}
+		})
 };
 
 

@@ -125,7 +125,7 @@ input[type="color"],
     border-color: rgba(82,168,236,.8);
     outline: 0;
     outline: thin dotted \9; /* IE6-9 */
-    @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
+    @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(82,168,236,.3)});
   }
 }
 
@@ -259,8 +259,8 @@ textarea {
 .input-mini       { width: 60px; }
 .input-small      { width: 90px; }
 .input-medium     { width: 150px; }
-.input-large      { width: 210px; }
-.input-xlarge     { width: 270px; }
+.input-large      { width: 245px; } //Changed because of Side bar width
+.input-xlarge     { width: 290px; }
 .input-xxlarge    { width: 530px; }
 
 // Grid style input sizes

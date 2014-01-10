@@ -79,7 +79,7 @@ class ContactsController < ApplicationController
                                         }.to_json }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-:phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+            :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
         format.widget { render :action => :show, :layout => "widgets/contacts"}
         format.js
@@ -88,11 +88,13 @@ class ContactsController < ApplicationController
       check_email_exist
       respond_to do |format|
         format.html { render :action => :new}
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
         format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
-        format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity]
+        format.any(:xml, :json) { 
+          api_responder({:message => "User creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @user.errors})
+        }
       end
     end
   end
@@ -190,8 +192,10 @@ class ContactsController < ApplicationController
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
-        format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
+        format.any(:xml, :json) { 
+          api_responder({:message => "User update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @user.errors})
+        }
       end
     end
   end

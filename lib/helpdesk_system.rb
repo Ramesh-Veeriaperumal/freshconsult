@@ -10,12 +10,18 @@ module HelpdeskSystem
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
       }
-      format.json { 
-        render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 
         render :update do |page| 
           page.redirect_to :url => send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
+      }
+      access_error = "Access denied"
+      login_error = "Authentication failure"
+      access_http_code = Error::HttpErrorCode::HTTP_CODE[:forbidden]
+      login_http_code = Error::HttpErrorCode::HTTP_CODE[:authorization_required]
+      format.any(:xml, :json) { 
+        current_user ? api_responder({:message => access_error , :http_code => access_http_code, :error_code => "Forbidden"}) : 
+                       api_responder({:message => login_error , :http_code => login_http_code, :error_code => "Unauthorized"})
       }
     end
  end 

@@ -1,10 +1,14 @@
-<div>
-	<label class="caption">Reports by</label>
-  <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "select2 input-xlarge filter_item" } %>		
+<div class="control-group">
+	<label class="control-label"><%= t('reports.reports_by').html_safe%></label>
+	<div class="controls">
+  		<%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "select2 input-large filter_item" } %>		
+  	</div>
 </div>    
-<div>
-	<label class="caption"><%= t('reports.select_time_period').html_safe%></label>
-	<%= text_field_tag :date_range, "", :class => "required" %>
+<div class="control-group">
+	<label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
+	<div class="controls">
+		<%= text_field_tag :date_range, "", :class => "required input-large" %>
+	</div>
 </div>
 
 <% javascript_tag do %>

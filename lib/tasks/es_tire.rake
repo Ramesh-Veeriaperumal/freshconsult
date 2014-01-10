@@ -1,7 +1,4 @@
 require 'tire/tasks'
-# require 'lib/memcache_keys.rb'
-require File.expand_path('../../memcache_keys.rb', __FILE__)
-include MemcacheKeys
 
 namespace :freshdesk_tire do
 
@@ -21,7 +18,7 @@ namespace :freshdesk_tire do
       * Minimum number of account ids to be specified = 1
       * If you want the task to be run for multiple accounts specify account ids seperated by a ','
         in the ACCOUNT_ID variable
-        $ rake freshdesk_tire:create_index ACCOUNT_ID='Id/Ids' CLASS='Article'
+        $ rake freshdesk_tire:create_index ACCOUNT_ID='Id/Ids'
   DESC
 
   class_import_comment = <<-DESC
@@ -36,27 +33,30 @@ namespace :freshdesk_tire do
         $ rake freshdesk_tire:class_import ACCOUNT_ID='Id/Ids' CLASS='Article'
   DESC
 
-  delete_indices_comment = <<-DESC
-    - Delete indices task aborted!!!
-      * Delete indices passed in the INDICES environment variable; separate multiple indices by comma.
-      * Pass names of single/multiple indices to drop in the INDICES environmnet variable:
-        $ rake freshdesk_tire:delete_indices INDICES=articles-2011-01,articles-2011-02
-  DESC
-
-  reindex_comment = <<-DESC
-    - Reindex task aborted!!!
-      * Minimum number of account ids to be specified = 1
-      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
-        in the ACCOUNT_ID variable
-        $ rake freshdesk_tire:reindex ACCOUNT_ID='Id/Ids'
-  DESC
-
   partial_reindex_comment = <<-DESC
     - partial_reindex task aborted!!!
       * Minimum number of account ids to be specified = 1
       * If you want the task to be run for multiple accounts specify account ids seperated by a ','
         in the ACCOUNT_ID variable
         $ rake freshdesk_tire:partial_reindex ACCOUNT_ID='Id/Ids'
+  DESC
+
+  multi_class_import_comment = <<-DESC
+    - Multi class import aborted!!!
+
+      * Minimum number of account ids to be specified = 1
+      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
+        in the ACCOUNT_ID variable
+        $ rake freshdesk_tire:multi_class_import ACCOUNT_ID='Id/Ids' CLASS='Article'
+  DESC
+
+  aws_migration_comment = <<-DESC
+    - Aws migration task aborted!!!
+
+      * Minimum number of account ids to be specified = 1
+      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
+        in the ACCOUNT_ID variable
+        $ rake freshdesk_tire:aws_migration ACCOUNT_ID='Id/Ids'
   DESC
 
   desc 'Create elasticsearch index and import data to index'
@@ -71,12 +71,6 @@ namespace :freshdesk_tire do
     end
   end
 
-  task :create_index_predefined => :environment do
-    puts generic_comment
-    es_account_ids = EsEnabledAccount.all.collect {|p| p.account_id}
-    init_reindex(es_account_ids)
-  end
-
   task :multi_class_import => :environment do
     Sharding.select_shard_of(ENV['ACCOUNT_ID']) do
       account = Account.find_by_id(ENV['ACCOUNT_ID'])
@@ -85,7 +79,9 @@ namespace :freshdesk_tire do
       Sharding.run_on_slave do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
-          Search::EsIndexDefinition.es_cluster(account.id)
+          aws_cluster = true if ENV['AWS_CLUSTER'] == 'true'
+          aws_cluster ||= false
+          Search::EsIndexDefinition.es_cluster(account.id, aws_cluster)
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
@@ -100,12 +96,11 @@ namespace :freshdesk_tire do
   task :class_import  => :environment do
     begin
       klasses = ENV['CLASS']
-      if ENV['CLASS'].blank?
-        puts '='*100, ' '*45+'USAGE', '='*100, class_import_comment, ""
-        exit(1)
-      end
       es_account_ids = ENV['ACCOUNT_ID'].split(',')
       es_account_ids.each do |account_id|
+        if ENV['CLASS'].blank?
+          puts '='*100, ' '*20+'All class import with default condition will be performed!!!', '='*100, ""
+        end
         ENV['CLASS'] = import_classes(account_id, klasses)
         ENV['ACCOUNT_ID'] = account_id.to_s
         Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
@@ -115,21 +110,23 @@ namespace :freshdesk_tire do
     end
   end
 
-  task :delete_indices => :environment do
-    if ENV['INDICES'].blank?
-      puts '='*100, ' '*45+'USAGE', '='*100, delete_indices_comment, ""
-      exit(1)
-    end
-    Rake::Task["tire:index:drop"].execute("INDICES=#{ENV['INDICES']}")
-  end
-
   task :partial_reindex => :environment do
     if ENV['ACCOUNT_ID'].blank?
-      puts '='*100, ' '*45+'USAGE', '='*100, reindex_comment, ""
+      puts '='*100, ' '*45+'USAGE', '='*100, partial_reindex_comment, ""
       exit(1)
     end
     es_account_ids = ENV['ACCOUNT_ID'].split(',')
     init_partial_reindex(es_account_ids)
+  end
+
+  task :aws_migration => :environment do
+    begin
+      puts generic_comment
+      es_account_ids = ENV['ACCOUNT_ID'].split(',')
+      init_aws_migration(es_account_ids)
+    rescue
+      puts '='*100, ' '*45+'USAGE', '='*100, aws_migration_comment, ""
+    end
   end
 end
 
@@ -142,7 +139,6 @@ def init_es_indexing(es_account_ids)
     next if account.nil?
     account.make_current
     if account.es_enabled_account.nil?
-      # account.enable_elastic_search
       Search::CreateAlias.perform({ :account_id => account.id, :sign_up => false })
       ENV['CLASS'] = import_classes(account_id, klasses)
       ENV['ACCOUNT_ID'] = account_id.to_s
@@ -158,10 +154,6 @@ def init_es_indexing(es_account_ids)
 end
 
 def init_partial_reindex(es_account_ids)
-  if es_account_ids.blank?
-    puts '='*100, ' '*45+'No predefined es-accounts available.', '='*100, ""
-    exit(1)
-  end
   es_account_ids.each do |account_id|
     Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
@@ -171,7 +163,6 @@ def init_partial_reindex(es_account_ids)
     unless account.es_enabled_account.nil?
       if account.es_enabled_account.imported
         Search::RemoveFromIndex::AllDocuments.perform({ :account_id => account.id })
-        # MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
         account.es_enabled_account.delete
         ENV['CLASS'] = ''
         Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
@@ -184,6 +175,30 @@ def init_partial_reindex(es_account_ids)
     Account.reset_current_account
   end
   end
+end
+
+def init_aws_migration(es_account_ids)
+  klasses = ENV['CLASS']
+  existing_accounts = Array.new
+  es_account_ids.each do |account_id|
+    Sharding.select_shard_of(account_id) do
+    account = Account.find_by_id(account_id)
+    next if account.nil? or account.es_enabled_account.nil?
+    account.make_current
+    if account.es_enabled_account.imported
+      Search::EsIndexDefinition.create_aliases(account_id.to_i, true)
+      ENV['CLASS'] = import_classes(account_id, klasses)
+      ENV['ACCOUNT_ID'] = account_id.to_s
+      ENV['AWS_CLUSTER'] = 'true'
+      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']} AWS_CLUSTER=#{ENV['AWS_CLUSTER']}")
+    else
+      puts '='*100, ' '*10+"Import already running for Account ID: #{account_id}. Cancelled aws_migration for Account: #{account_id}", '='*100, ""
+      existing_accounts.push(account_id)
+    end
+    Account.reset_current_account
+   end
+  end
+  puts '='*100, ' '*10+"Import already running for following accounts: #{existing_accounts.inspect}. Please check for any running instance of import for this account", '='*100, "" unless existing_accounts.blank?
 end
 
 def import_classes(id, klasses)

@@ -81,7 +81,7 @@
 	min-height: 120px;
 }
 .freshfone_dashboard_cells {
-	width: 136px;
+	width: 128px;
 	height: 51px;
 	@include box-sizing(border-box);
 	float: left;
@@ -98,7 +98,7 @@
 	display: inline-block;
 	@include box-sizing(border-box);
 	height: 30px;
-	width: 272px;
+	width: 256px;
 	padding: 7px 9px;
 
 	background-color: #E7E7E7;
@@ -109,7 +109,7 @@
 		content:"";
 		@include triangle(right, $dashboard-right-arrow, 4px);
 		display: inline-block;
-		margin-top: 3px;
+		margin-top: 4px;
 		margin-right: 10px;
 		float: right;
 	};

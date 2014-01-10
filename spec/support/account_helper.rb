@@ -12,7 +12,7 @@ module AccountHelper
     end
     @email_config = Factory.build(:primary_email_config)
     @portal = Factory.build(:main_portal)
-    
+
     @acc = Factory.build(:account, :primary_email_config => @email_config, :main_portal => @portal,
                          :name => name, :full_domain => domain)
     sub = Factory.build(:subscription, :subscription_plan => @acc.plan, :account => @acc)

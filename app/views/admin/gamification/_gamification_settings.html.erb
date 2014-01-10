@@ -1,79 +1,72 @@
-<ul class="ui-form">
-    <li>
-    <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate" do %>
-    <div class="section-title">
-        <h3><%= t('admin.gamification.gamification_settings.award_points') %></h3>
-    </div>
-    <div class="row">
-        <div class="span3">
-            <strong>
+<div>
+    <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate", :class => "form-horizontal" do %>
+        <h5 class="lead"><%= t('admin.gamification.gamification_settings.award_points') %></h5>
+        <div class="control-group">
+            <label class="control-label">
                 <%= t('admin.gamification.gamification_settings.agent_resolves_ticket').html_safe %>
-            </strong>
-        </div>        
-        <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
-            <%if scoreboard.resolution_speed < 100 %>
-                <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                    <div class="span3">
-                        <label class="label-title"> <%= t(".#{h(scoreboard.resolution_name)}").html_safe %> </label>
-                        <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                        <span class="info_data">Pts</span>
-                        <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
-                        <%= sb.hidden_field :id, :value => scoreboard.id %>
-                    </div>
-                <% end %>
-            <% end %>
-        <% end %>
-    </div>
-    <br />
-    <br />
-    <br />
-    <div class="row">
-        <div class="span3">
-            <strong>
-                <%= t('admin.gamification.gamification_settings.bonus_points_for') %>
-            </strong>
-        </div>
-        <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
-            <%if scoreboard.resolution_speed > 100 %>
-                <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                    <div class="span3"> 
-                        <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
-                        <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                        <span class="info_data">Pts</span>
-                        <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
-                        <%= sb.hidden_field :id, :value => scoreboard.id %>
-                    </div>
-                <% end %>
-            <% end %>
-        <% end %>
-    </div>
-    <br />
-    <br />
-    <div class="section-title">
-        <h3><%= t('.title_levels')%></h3>
-        <p class="help-text"><%= t('.info_levels') %></p>
-    </div>
-    <div class="row">
-        <% @scoreboard_levels.each_with_index do |level , index| %>
-            <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
-            <div class="span2">
-                <label class="label-title"><%= level.name %></label>
-                <%= sl.text_field :points, :value => level.points, :maxlength => "9", 
-                        :class => "number points required #{ 'level' if (index > 0) }" %></td>
-                <%= sl.hidden_field :id, :value => level.id %>
+            </label>
+            <div class="controls">
+                <div class="row-fluid">
+                    <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+                        <%if scoreboard.resolution_speed < 100 %>
+                            <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                                <div class="span3">
+                                    <label class="label-title"> <%= t(".#{h(scoreboard.resolution_name)}").html_safe %> </label>
+                                    <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                                    <span class="info_data">Pts</span>
+                                    <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                                    <%= sb.hidden_field :id, :value => scoreboard.id %>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </div>
             </div>
-            <% end %>
-        <% end %>        
-    </div>
-    <br /><br />
-    <span class="seperator"></span>
-    <div class="button-container">        
-        <a class="uiButton" href="/admin/home"><%= t('cancel') %></a>
-        <%= submit_tag t('account.save'), :class => 'uiButton special' %>
-    </div>
+        </div>
+        <br/>
+        <div class="control-group">
+            <label class="control-label">
+                <%= t('admin.gamification.gamification_settings.bonus_points_for') %>
+            </label>
+            <div class="controls">
+                <div class="row-fluid">
+                    <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+                        <%if scoreboard.resolution_speed > 100 %>
+                            <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                                <div class="span3"> 
+                                    <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
+                                    <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                                    <span class="info_data">Pts</span>
+                                    <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                                    <%= sb.hidden_field :id, :value => scoreboard.id %>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+        <h5 class="lead"><%= t('.title_levels')%></h5>
+        <p class="lead-desc muted"><%= t('.info_levels') %></p>
+        <div class="row-fluid">
+            <% @scoreboard_levels.each_with_index do |level , index| %>
+                <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
+                <div class="span2">
+                    <label class="label-title"><%= level.name %></label>
+                    <%= sl.text_field :points, :value => level.points, :maxlength => "9", 
+                            :class => "number points required #{ 'level' if (index > 0) }" %></td>
+                    <%= sl.hidden_field :id, :value => level.id %>
+                </div>
+                <% end %>
+            <% end %>        
+        </div>
+        <br/>
+        <div class="button-container">        
+            <a class="btn" href="/admin/home"><%= t('cancel') %></a>
+            <%= submit_tag t('account.save'), :class => 'btn btn-primary' %>
+        </div>
     <% end %>
-    </li>
-</ul>
+</div>
 
 <% content_for :onload_script do %>
     jQuery.validator.addMethod("level", function(value, element, param) {

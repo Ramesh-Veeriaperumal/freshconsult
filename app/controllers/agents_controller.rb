@@ -48,7 +48,7 @@ class AgentsController < ApplicationController
       #for using query string in api calls
       @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])).filter 
     else
-      @agents = scoper.filter(params[:state], current_agent_order, current_agent_order_type, params[:page])
+      @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
       format.html # index.html.erb
@@ -177,9 +177,13 @@ class AgentsController < ApplicationController
 
   def convert_to_contact
       user = @agent.user
-      user.make_customer
-      flash[:notice] = t(:'flash.agents.to_contact')
-      redirect_to contact_path(user)
+      if user.make_customer
+        flash[:notice] = t(:'flash.agents.to_contact')
+        redirect_to contact_path(user)
+      else
+        flash[:notice] = t(:'flash.agents.to_contact_failed')
+        redirect_to :back and return
+      end
   end
   
   def destroy    
@@ -215,17 +219,14 @@ class AgentsController < ApplicationController
   end
 
   def info_for_node
-    key = %{#{NodeConfig["secret_key"]}#{current_account.id}#{params[:user_id]}}
+    key = %{#{NodeConfig["rest_secret_key"]}#{current_account.id}#{params[:user_id]}}
     hash = Digest::MD5.hexdigest(key)
-    
+      
     if hash == params[:hash]
       agent = current_account.agents.find_by_user_id(params[:user_id])
       agent_detail = { :ticket_permission => agent.ticket_permission, 
                        :group_ids => agent.agent_groups.map(&:group_id) }
-      key = AUTO_REFRESH_AGENT_DETAILS % { :account_id => current_account.id, 
-                                           :user_id => params[:user_id] }
-      MemcacheKeys.cache(key, agent_detail.to_json, 86400*15, true)
-      render :json => agent_detail
+       render :json => agent_detail
     else 
       render :json => {
         :error => "Access denied!"

@@ -265,7 +265,7 @@ class Helpdesk::TicketsController < ApplicationController
         response = "{
         #{@item.to_mob_json(false,false)[1..-2]},
         #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
-                                                        :can_view_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
+                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
         #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
@@ -312,15 +312,12 @@ class Helpdesk::TicketsController < ApplicationController
     else
       respond_to do |format|
         format.html { edit_error }
-        format.json {
-          result = {:errors=>@item.errors.full_messages }
-          render :json => result.to_json
-        }
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
-        format.xml {
-          render :xml =>@item.errors
+        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity]
+        format.any(:xml, :json) {
+          api_responder({:message => "Ticket update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @item.errors})
         }
       end
     end

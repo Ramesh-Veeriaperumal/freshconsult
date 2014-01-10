@@ -6,6 +6,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   # Attributes for populating data into monthly stats tables
   STATS_ATTRIBUTES = [:resolved_at,:first_assigned_at,:assigned_at,:opened_at]
+  TICKET_STATE_SEARCH_FIELDS = [ :resolved_at, :closed_at, :agent_responded_at,
+                                 :requester_responded_at, :status_updated_at ]
 
   belongs_to_account
   set_table_name "helpdesk_ticket_states"
@@ -16,6 +18,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   before_update :update_ticket_state_changes
   after_commit_on_create :create_ticket_stats, :if => :ent_reports_enabled?
   after_commit_on_update :update_ticket_stats, :if => :ent_reports_enabled?
+  after_commit_on_update :update_search_index
   
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
@@ -105,6 +108,10 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     self.outbound_count = tkt_values.outbounds
     self.avg_response_time = tkt_values.avg_resp_time
     self.avg_response_time_by_bhrs = tkt_values.avg_resp_time_bhrs
+  end
+
+  def update_search_index
+    tickets.update_es_index if (@ticket_state_changes.keys & TICKET_STATE_SEARCH_FIELDS).any?
   end
 
 private

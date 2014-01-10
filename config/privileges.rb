@@ -51,7 +51,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest, :related_solutions, :search_solutions, :ticket_search]
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
-    resource :"theme/helpdesk", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
@@ -91,7 +90,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
+    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer ,:show , :header_timer ]
   end
 
   edit_time_entries do

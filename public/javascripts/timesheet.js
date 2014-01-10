@@ -8,16 +8,15 @@ TicketTimesheet.prototype = {
     this.editid  = null;     
      // Running the autoupdate for the timer when it is active.
      new PeriodicalExecuter(function(pe) {
-        jQuery("div.time_running .time")
+        jQuery(".time_running .time-text")
          .each(function(){
-            seconds = jQuery(this).data('runningTime');
-            timeout = 10 - seconds % 10;
+            var seconds = jQuery(this).data('runningTime') + 1;
             jQuery(this)
                .html(time_in_hhmm(seconds))
-               .data('runningTime', seconds+timeout);                	    
+               .data('runningTime', seconds);                	    
             });
-            totalTime("#timesheetlist .time", "#timeentry_timer_total");
-         }, 10);
+            totalTime("#timesheetlist .time-text", "#timeentry_timer_total");
+         }, 1);
          
          jQuery("#timesheetlist div.timeentry")
               .livequery( this.timeCount, this.timeCount );
@@ -84,11 +83,11 @@ TicketTimesheet.prototype = {
   },
   
   timeCount: function(){
-      count = jQuery("#timesheetlist div.timeentry").size();  
+      var count = jQuery("#timesheetlist div.timeentry").size();  
       jQuery("#TimesheetCount").html(count);
       jQuery("#TimesheetCount, #timesheettotal").toggle(count != 0)
       jQuery("#timesheetlist div.list-noinfo").hide();
-      totalTime("#timesheetlist .time", "#timeentry_timer_total");
+      totalTime("#timesheetlist .time-text", "#timeentry_timer_total");
   }
 };
 var timesheet = new TicketTimesheet();	
@@ -99,3 +98,41 @@ jQuery("#time_integration .app-logo").live('click',function(ev) {
     checkbox.prop('checked', !checkbox.prop('checked'));
   }
 });
+
+jQuery(document).on('localstorage_changed_timeRunning', function(ev, data) {
+  var new_value = JSON.parse(data.newValue), 
+      old_id = parseInt(jQuery('#header_active_timeentry').data('timeentryId'));
+
+  if(!new_value.isRunning || (new_value.id != old_id && new_value.isRunning)){
+    jQuery("#header_timer").empty();
+    change_time_sheet(old_id);
+  }
+
+});
+
+function change_time_sheet(id){
+  if(jQuery("#TimesheetTab").length > 0){ 
+    var timer_dom = jQuery("#timeentry_"+id+" .toggle_timer");
+    jQuery("#timeentry_"+id).removeClass('time_running');    
+    timer_dom.html(timer_dom.data('startText'));
+    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').css("display", "inline");
+  }
+}
+
+function fill_hours(time, hideHeader){
+  jQuery('.modal.in #time_entry_hhmm').val(time);
+  jQuery('.modal.in #time_entry_hhmm').select();
+  jQuery('.header-timer').popover('hide');
+  
+  if (hideHeader) {
+    jQuery('.header-timer').addClass('stop-timer');
+  }
+}
+
+function update_localstorage(id, timer_running){
+  var hash_data = {
+      id : id,
+      isRunning : timer_running,
+  }
+  storeInLocalStorage('timeRunning', hash_data);
+}

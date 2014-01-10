@@ -30,6 +30,7 @@ en:
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
+  sidebar_help: "Help"
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -68,7 +69,7 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
-  trial_expired_on: "<b>Urgent! Your trial has expired!</b>"
+  trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
   trail_expiry_during_trial: "Upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
@@ -1168,6 +1169,7 @@ en:
         success: Your account details have been updated.
     agents:
       to_contact: The agent has been successfully converted to a Contact
+      to_contact_failed: The agent could not be converted to a Contact
       delete:
         not_allowed: You don't have access to delete it!
       create:
@@ -1323,6 +1325,12 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
+    category:
+      page_not_found: "This solution category could not be found. It might have been deleted or the URL mistyped."
+    folder:
+      page_not_found: "This solution folder could not be found. It might have been deleted or the URL mistyped."
+    article:
+      page_not_found: "This article could not be found. It might have been deleted or the URL mistyped."
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
@@ -2132,6 +2140,7 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
+    sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
     human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
@@ -2468,7 +2477,8 @@ en:
   agents: Agents
   header:
     welcome: Welcome
-    new_ticket: New Ticket
+    new_ticket: New
+    new_ticket_tip: New ticket
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
     guest: "Guest"
@@ -3165,7 +3175,7 @@ en:
       executed_at: Date
       hours: Hours
       agent: Agent
-      note: Note
+      note: Notes
       billing_type: Billing Type
       group_by: Group By
       report:
@@ -3177,7 +3187,7 @@ en:
         agent: Agent
         hours: Hours
         billing_hours: Billable
-        note: Note
+        note: Notes
         on: on
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       note: Notes
@@ -3269,7 +3279,7 @@ en:
         recent_item: Recent Items
     dashboard:
       index:
-        todo_title: To-Dos
+        todo_title: To-Do
       summary:
         title: Ticket summary
         overdue: Overdue
@@ -3562,6 +3572,11 @@ en:
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
       csv_body: Please find the CSV file attached.
       xls_body: Please find the Excel file attached.
+  sla:
+    minutes: Mins
+    hours: Hrs
+    days: Days
+    months: Mos
   date:
     ago: ago
     from: from now
@@ -4112,6 +4127,7 @@ en:
       scoreboard_title_nav: "Leaderboard"
       scoreboard_group_title: "Group Leaderboard"
       scoreboard_agent_title: "Agent Leaderboard"
+      reports_by: "Reports by"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
@@ -4735,6 +4751,7 @@ en:
         purchase_number: "Purchase Number"
         buy: "Buy Number"
         purchase: "Purchase"
+        purchase_loading_text: "Purchasing..."
         purchase_alert: " will be deducted from your balance monthly."
         not_available: "No results returned. Please try a different search term"
         address_certification: "Due to local regulation, you must have a business or personal address within <span class='certification-country'></span>  to purchase this phone number."
@@ -4925,7 +4942,7 @@ en:
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "You are offline now <br> Click to go online"
     click_to_go_offline: "You are online now <br> Click to go offline"
-    fetching: "Fetching..."
+    fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"
     last_30_days: "Last 30 days"

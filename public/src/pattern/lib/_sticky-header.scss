@@ -1,14 +1,16 @@
 #sticky_header {
 	border-bottom: solid 1px #DADADA;
-	margin: -14px -20px 10px;
-	padding: 10px 20px;
+	margin: -$common-padding;
+	margin-top: -$common-padding;
+	margin-bottom: 10px;
+	padding: $common-padding;
+	padding-bottom:10px;
 	background: #FFF;
-	border-radius: 5px 5px 0 0;
 }
 #sticky_header.stuck {
-	border-radius: 0;
-	margin:0px 11px 0 1px;
-	box-shadow:0 2px 4px rgba(63, 63, 63, 0.1);
+	@include border-radius(0);
+	margin:0 0 0 1px;
+	@include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
 }
 
 #scroll-to-top {
@@ -17,7 +19,7 @@
 	position: fixed;
 	right: 20px;
 	bottom: -40px;
-	opacity: 0.2;
+	@include opacity(0.2);
 	@include border-radius(50%);
 	border: solid 1px #bbb;
 	cursor: pointer;
@@ -25,11 +27,11 @@
 
 	&.visible {
 		display: block;
-		opacity: 0.6;
+		@include opacity(0.6);
 		bottom: 50px;
 		
 		&:hover {
-			opacity: 1;
+			@include opacity(1);
 		}
 
 	}
@@ -48,8 +50,8 @@
 	}
 
 	#sticky_header.stuck {
-		border-radius: 5px 5px 0 0;
+		@include border-radius(5px 5px 0 0);
 		margin: -14px -20px 10px;
-		box-shadow:none;
+		@include box-shadow(none);
 	}
 }

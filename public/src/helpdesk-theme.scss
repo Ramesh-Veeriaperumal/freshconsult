@@ -1,3 +1,5 @@
+@import "compass";
+
 $bg_color: 				#efefef !default;
 $header_color: 			#252525 !default;
 $tab_color:				#006063 !default;
@@ -11,6 +13,13 @@ $subtxt_hover_color: 	if(lightness($background) > 50, #000, #FFF) !default;
 $alternate_txt_color: 	if(lightness($background) > 50, white, black) !default;
 $alternate_bg_color: 	if(lightness($background) > 50, #666, #AAA) !default;
 $filterTextShadow: 		if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
+		
+$lightness_val: lightness($tab_color);
+$tab_search_image: '/cdn-ignored/sprites/symbols/search-white.png';
+
+@if $lightness_val > 50{
+	$tab_search_image: '/cdn-ignored/sprites/symbols/search.png';
+}
 
 $lightness_val: lightness($header_color);
 $loading_color: rgba(60,60,60,0.2);
@@ -36,12 +45,26 @@ $loading_color: rgba(60,60,60,0.2);
 $filterTextShadow: if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
 
 body { background: $background; }
-.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
-.reminders:before { border-color:$background $background #734e3d #734e3d; }
-	
-/* Header color */
+
+.sp_border, #errorExplanation { 
+	border-color: darken($background, 15%); 
+}
+
+/* ------------------------------------------------------------------------------------------- */
+/* 										 Footer Styles 										   */
+/* ------------------------------------------------------------------------------------------- 
+
+.footer{
+	color:$bg_ctxt_color;
+}
+/* ------------------------------------------------------------------------------------------- 	*/
+/* 											Header color 										*/
+/* ------------------------------------------------------------------------------------------- 	*/	
+
 .header { background-color: $header_color; }
-.brand .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { color: $header_ctxt_color; }
+.brand .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { 
+	color: $header_ctxt_color; 
+}
 .header_links a.nav-trigger:before { border-top-color: $header_ctxt_color; }
 .header-link-wrapper{
 	border-color: $header_ctxt_color;
@@ -54,7 +77,23 @@ body { background: $background; }
     background-repeat: no-repeat;
 }
 .brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+.nav_search div.search_bar { border-color:darken($tab_color, 8%); } 
+
+/* -------------------------------------------------------------------------------------------  */
+/* 										Tab color settings 										*/
+/* -------------------------------------------------------------------------------------------  */
+
 a.new_ticket, .nav_search div.search_bar { border-color:darken($tab_color, 8%); }
+
+/* Header Timer */
+.header-timer-wrap{ background-color:darken($header_color, 10%); }
+.header-timer .time-text{ color:$header_ctxt_color}
+.stopwatch{ 
+	@include box-shadow(inset 0px 0px 0px 1px $header_ctxt_color);
+	background-color:lighten($header_color,70%)
+}
+.stopwatch:before{ background-color: $header_ctxt_color; }
+.stopwatch:after{ background-color: darken($header_ctxt_color, 90%); }
 	 
 /* Tab color settings */
 .top_nav_bg { background: $tab_color; }
@@ -68,31 +107,25 @@ input:focus, select:focus, textarea:focus{
 	  -webkit-box-shadow: $tab_color 0 0 3px;
 	  box-shadow: $tab_color 0 0 3px;
 }
-	
-ul.header-tabs li.active a, ul.header-tabs li.active a:hover { background: $background; color: $bg_ctxt_color; }
-ul.header-tabs li a  { color: $tab_ctxt_color; }
+.nav_search div.search_bar input, a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
+.nav_search div.search_bar .search-icon-inactive{
+	background: inline-image($tab_search_image) no-repeat;
+	background-position: 0;
+}
 ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
-	
+a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }
+/* -------------------------------------------------------------------------------------------  */
+/* 										Common settings 										*/
+/* -------------------------------------------------------------------------------------------  */
+
 .uiButton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, 
 .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .special.uiButton:hover  {
 	 background-color:$tab_color; 
 	 border-color: darken($tab_color, 20%);  
 	 color:$tab_ctxt_color; 
-}
-
-.special.uiButton, .uiButton.disabled, .uiButton.disabled:hover{ 
-   background-color:darken($tab_color, 6%); 
-   border-color: darken($tab_color, 13%); 
-   color:$tab_ctxt_color;  
-}      
-.footer{
-	color:$bg_ctxt_color;
-}
-.footerContent, .footerContent a{ color:$bg_ctxt_color; border-color:$bg_ctxt_color;  }
-.footerContent a:hover{ color:$bg_ctxt_color; }
-
-.ticket_list .pagearea {
-	text-shadow: $filterTextShadow;
+}  /*    
+.reminders:before { 
+	border-color:$background $background #734e3d #734e3d; 
 }
 .ticket-leftcol h3.title, .ticket-leftcol h4.title,  .view_filters .link-item .nav-trigger {
 	color:$bg_ctxt_color;
@@ -116,40 +149,52 @@ ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ct
 }
 .sort-bar {
 	color:$subtxt_color;	
-}
+}*/
 
 #view_manage_links a, #save_filter {
-color: invert($background);
+	color: invert($background);
 }
+/* ------------------------------------------------------------------------------------------- */
+/* 										Button settings 									   */
+/* ------------------------------------------------------------------------------------------- */
 
+.special.uiButton, .uiButton.disabled, .uiButton.disabled:hover{ 
+   background-color:darken($tab_color, 6%); 
+   border-color: darken($tab_color, 13%); 
+   color:$tab_ctxt_color;  
+}
 .iphone-inactive.uiButton{
 	background-color:#e7e7e7;
 	color:#7f7f7f;
 	border-color:#a4a4a4;
 	text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
+/* ------------------------------------------------------------------------------------------- */
+/* 										 Page Loader Styles 								   */
+/* ------------------------------------------------------------------------------------------- */
+
 .top-loading-wrapper {
 	background-color:$header_color;
 	border-bottom:1px solid rgba($loading-color,0.6);
 }
 .top-loading-wrapper .top-loading-strip {
 
-background-image: -webkit-linear-gradient(-45deg, $loading-color 26%, transparent 26%, transparent 51%, $loading-color 51%, $loading-color 76%, transparent 76%, transparent);
+	background-image: -webkit-linear-gradient(-45deg, $loading-color 26%, transparent 26%, transparent 51%, $loading-color 51%, $loading-color 76%, transparent 76%, transparent);
 
-background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, $loading-color), color-stop(.26, transparent), color-stop(.51, transparent), color-stop(.51, $loading-color), color-stop(.76, $loading-color), color-stop(.76, transparent), to(transparent) );
+	background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, $loading-color), color-stop(.26, transparent), color-stop(.51, transparent), color-stop(.51, $loading-color), color-stop(.76, $loading-color), color-stop(.76, transparent), to(transparent) );
 
 
-background-image: -moz-linear-gradient(-45deg, $loading-color 25%, transparent 25%, transparent 50%, $loading-color 50%, $loading-color 75%, transparent 75%, transparent);
+	background-image: -moz-linear-gradient(-45deg, $loading-color 25%, transparent 25%, transparent 50%, $loading-color 50%, $loading-color 75%, transparent 75%, transparent);
 
--webkit-background-size: 19px 19px;
--webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+	-webkit-background-size: 19px 19px;
+	-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
--moz-background-size: 19px 19px;
--moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+	-moz-background-size: 19px 19px;
+	-moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
- 
-background-size: 19px 19px;
-animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
+	 
+	background-size: 19px 19px;
+	animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
 }
 
 .top-loading-wrapper .top-loading-strip-opera-12 {
@@ -158,7 +203,7 @@ animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
 	
 	-o-background-size: 19px 19px;
 	-o-animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
-}
+	}
 .top-loading-strip-opera+.loadingmsg{
 	color: $header_ctxt_color;
 }

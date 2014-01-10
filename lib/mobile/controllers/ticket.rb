@@ -16,6 +16,9 @@ module Mobile::Controllers::Ticket
           end
           field_value.merge!({:category_val => item.send(field.field_name)})
         end
+        if field.field_type == "default_agent"
+          field[:agent_groups] = agent_group_map
+        end
         field[:nested_choices] = field.nested_choices
         field[:nested_levels] = field.nested_levels
         field[:field_value] = field_value
@@ -79,4 +82,13 @@ module Mobile::Controllers::Ticket
     twitter_handle = current_account.twitter_handles.map { |handle| {:id => handle.id, :name => handle.formatted_handle}}
   end
 
+  def agent_group_map
+    result = []
+    current_account.agents_from_cache.each { |c| 
+      result.push( 
+        :agent_id => c.user.id,
+        :group_ids => c.agent_groups.collect { |grp| grp.group_id})
+    }
+    return result
+  end
 end

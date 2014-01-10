@@ -3,10 +3,10 @@
 
 @import "cdn-ignored/sprites/icons/*.png";
 
+
 /* %% more styles set for this class in some other file */
 
 /* %% app-common */ 
-
 .results{ 
 	.ticket_icon	span.icon{ @include icons-sprite(page-white); }
 	.contact_icon	span.icon{ @include icons-sprite(user); }

@@ -128,10 +128,13 @@ class Helpdesk::BulkReplyTickets
     end
 
     def facebook_reply ticket, note
-      if ticket.is_fb_message?
-        Facebook::Core::Message.send(ticket, note)
-      else
-        Facebook::Core::Comment.send(ticket, note)
+      fb_page = ticket.fb_post.facebook_page
+      if fb_page
+        if ticket.is_fb_message?
+          Facebook::Core::Message.new(fb_page).send_reply(ticket, note)
+        else
+          Facebook::Core::Comment.new(fb_page).send_reply(ticket, note)
+        end
       end
     end
     

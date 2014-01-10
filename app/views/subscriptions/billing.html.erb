@@ -1,6 +1,5 @@
-<% content_for :sidebar do -%>
+<% content_for :helpcard do -%>
 	<% if @subscription.state == 'trial' %>
-		<div class="sidepanel">
 			<h3 class="title"><%= t("accounts.billing.billing").html_safe %></h3>
 			<p>
 			  <strong><%= t('accounts.billing.begin_subscription').html_safe %></strong> <%= t("accounts.billing.begin_subscription_info").html_safe %>
@@ -8,7 +7,6 @@
 			<p>
 			  <strong><%= t('accounts.billing.save_billing_information').html_safe %></strong> <%= t("accounts.billing.save_billing_information_info").html_safe %>
 			</p>
-		</div>
 	<% end %>
 <%- end %>
 <h3 class= "title"><%= @page_title = t('plans_billing').html_safe %></h3>

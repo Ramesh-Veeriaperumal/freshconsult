@@ -1,6 +1,7 @@
 <%if(current_user && current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
+    asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
 %>
 <div id="freshchat_layout"></div>
   <!-- Chat related contents starts -->
@@ -8,7 +9,12 @@
 <script language="javascript">
 (function($){
     $(document).ready(function(){
-        $.getScript("<%=comm_url%>/js/chat.js", function(){
+        var asset_url = JSON.parse('<%=asset%>');
+        var url = asset_url.js;
+        if(window.location && window.location.protocol=='https:'){
+            url = asset_url.cloudfront;
+        }
+        $.getScript(url+"/js/chat.js", function(){
             window.playSound = !($.cookie('fd::'+SITE_ID));
             if(window.playSound){
                 $.cookie('fd::'+SITE_ID,true);
@@ -21,7 +27,7 @@
 })(jQuery);
 
 var CS_URL = "<%=comm_url%>";
-var WEB_ROOT = "http://<%=current_account.full_domain%>";
+var WEB_ROOT = "//<%=current_account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
 var USER_LIST = [];

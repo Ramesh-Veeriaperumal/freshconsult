@@ -412,12 +412,15 @@ class User < ActiveRecord::Base
   end
   
   def make_customer
-    return if customer?
-    update_attributes({:helpdesk_agent => false, :deleted => false})
-    subscriptions.destroy_all
-    agent.destroy
-    freshfone_user.destroy if freshfone_user
-    email_notification_agents.destroy_all
+    return true if customer?
+    if update_attributes({:helpdesk_agent => false, :deleted => false})
+      subscriptions.destroy_all
+      agent.destroy
+      freshfone_user.destroy if freshfone_user
+      email_notification_agents.destroy_all
+      return true
+    end 
+    return false
   end
   
   def make_agent(args = {})
@@ -435,7 +438,9 @@ class User < ActiveRecord::Base
     to_json( 
               :root => "user",
               :tailored_json => true,
-              :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
+              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
+                         :twitter_id, :fb_profile_id, :account_id, :deleted,
+                         :helpdesk_agent, :created_at, :updated_at ], 
               :include => { :customer => { :only => [:name] } } 
            )
   end
@@ -468,7 +473,7 @@ class User < ActiveRecord::Base
   
     def search_fields_updated?
       all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                          :twitter_id, :fb_profile_id, :customer_id, :deleted]
+                    :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
       (@all_changes.keys & all_fields).any?
     end
 
@@ -488,6 +493,10 @@ class User < ActiveRecord::Base
 
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
+    end
+
+    def email_updated?
+       @all_changes.has_key?(:email)
     end
     
     def customer_id_updated?

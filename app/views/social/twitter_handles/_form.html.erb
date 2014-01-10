@@ -1,64 +1,75 @@
-<ul class="ui-form">
-  <li class="inline-field">
-    <label class="caption">
-      <div class="preview_pic">
+<div class="row-fluid">
+  <div class="span2 circle-profile">
+    <div class="row-fluid align-center">
+      <div class="preview_pic align-center">
         <%= image_tag(twitter_avatar(twitter_handle), :alt => twitter_handle.screen_name) %>
         <span class="tweet_pic"></span>
       </div>
-      <%= content_tag(:h4, "@#{twitter_handle.screen_name}", :class => "title") %>
-    </label>
-    <div class="fields">
-      <label><%=t('.search_keywords')%></label>
-      <% content_for :onload_script do -%> 
-        function lookup(searchString, callback) { }; 
-        search_keys = $("social_twitter_handle_search_keys").value;
+    </div>
+    <div class="row-fluid align-center">
+      <%= content_tag(:h5, "@#{twitter_handle.screen_name}", :title =>"@#{twitter_handle.screen_name}", :class => " ellipsis tooltip") %>
+    </div>
+  </div>
+  <div class="span10 form-horizontal">
+    <div class="control-group">
+      <label class="control-label"><%=t('.search_keywords')%></label>
+      <div class="controls">
+        <% content_for :onload_script do -%> 
+          function lookup(searchString, callback) { }; 
+          search_keys = $("social_twitter_handle_search_keys").value;
 
-        if(search_keys == "") search_keys = [];
-      	else search_keys = search_keys.split(",");
+          if(search_keys == "") search_keys = [];
+          else search_keys = search_keys.split(",");
 
-        var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10}),
-            cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+          var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10}),
+              cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
-        new Autocompleter.MultiValue("social_twitter_handle_search_keys", cachedLookup, search_keys, { frequency: 0.1, acceptNewValues: true, allowSpaces: true });
-        jQuery("li.search_field_item input").autoGrowInput();
-      <%- end %>
-      <div>
-        <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+          new Autocompleter.MultiValue("social_twitter_handle_search_keys", cachedLookup, search_keys, { frequency: 0.1, acceptNewValues: true, allowSpaces: true });
+          jQuery("li.search_field_item input").autoGrowInput();
+        <%- end %>
+        <div>
+          <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+        </div>
+        <div class="muted"> <%=t('.info_data').html_safe%> </div>  
+        <br/>
       </div>
-      <div class="info-data"> <%=t('.info_data').html_safe%> </div>
-      <span class="seperator"></span>
-      <label class="checkbox">
-        <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %> 	
-        <%= t('.capture_mentions_msg').html_safe %>
-      </label>
-      <div class="info-data tabbed">
-        <%= t('.capture_mentions_info').html_safe %>
-      </div>				
-      <span class="seperator"></span>
-      <label class="checkbox">
-        <%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => twitter_handle.capture_dm_as_ticket } %> 
-        <%= t('.capture_dm_msg').html_safe %>
-      </label>
-      <div class="info-data tabbed">
-        <%= t('.capture_dm_info').html_safe %>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label class="checkbox">
+           <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %>   
+           <%= t('.capture_mentions_msg').html_safe %>
+           <p class="muted">
+            <%= t('.capture_mentions_info').html_safe %>
+          </p>  
+        </label>
       </div>
-	  <!-- another one... -->
-	  <span class="seperator"></span>
-	  <label class="caption"><%=t('.dm_time_msg').html_safe%></label>
-      <div class="fields">
-      	<%= select(:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label class="checkbox">
+          <%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => twitter_handle.capture_dm_as_ticket } %> 
+          <%= t('.capture_dm_msg').html_safe %>
+          <div class="muted">
+            <%= t('.capture_dm_info').html_safe %>
+          </div>
+        </label>
       </div>
-      <div class="info-data tabbed">
-        <%=t('.dm_time_info').html_safe%>
-      </div>	 	
-	  <!-- --> 
-      <% if current_account.products %>
-        <span class="seperator"></span>
-        <label class="caption"><%= t('.product').html_safe %></label>
-        <div class="fields">
-    	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
-    	  </div>   
-      <% end %>   
-    </div> 
-  </li>
-</ul>
+    </div>
+    <div class="control-group">
+      <label class="control-label"><%=t('.dm_time_msg').html_safe%></label>
+      <div class="controls">
+        <%= select(:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time},{ :class => "select2 span6"}) %>
+        <div class="muted span12 clear-left-margin"><%=t('.dm_time_info').html_safe%></div>
+      </div>
+    </div>
+    <% if current_account.products %>
+      <div class="control-group">
+        <label class="control-label"><%= t('.product').html_safe %></label>
+        <div class="controls">
+          <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id },{ :class => "select2 span6"})%>
+        </div>
+      </div>      
+    <% end %>  
+  </div>
+</div>

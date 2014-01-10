@@ -1,0 +1,42 @@
+development:
+  feeds:
+    suffix: dev
+    read_capacity: 10
+    write_capacity: 5
+  conversations:
+    suffix: dev
+    read_capacity: 10
+    write_capacity: 5
+
+
+staging:
+  feeds:
+    suffix: staging
+    read_capacity: 10
+    write_capacity: 5
+  conversations:
+    suffix: staging
+    read_capacity: 10
+    write_capacity: 5
+
+
+production:
+  feeds:
+    suffix: production
+    read_capacity: 10
+    write_capacity: 20
+  conversations:
+    suffix: production
+    read_capacity: 10
+    write_capacity: 20
+
+
+test:
+  feeds:
+    suffix: test
+    read_capacity: 10
+    write_capacity: 5
+  conversations:
+    suffix: test
+    read_capacity: 10
+    write_capacity: 5

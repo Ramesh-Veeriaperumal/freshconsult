@@ -1,13 +1,15 @@
-<div class="source-badge-wrap">
-  <div href="#"
-    class='source
-      <%= "priority_color_#{@ticket.priority}
-      status_#{@ticket.status} " +
-      ("spam" if @ticket.spam).to_s +
-      ("deleted" if @ticket.deleted).to_s %>' >
-    <span class="source_<%= @ticket.source %>"></span>
+<div class="clearfix">
+  <div class="source-badge-wrap">
+    <div href="#"
+      class='source
+        <%= "priority_color_#{@ticket.priority}
+        status_#{@ticket.status} " +
+        ("spam" if @ticket.spam).to_s +
+        ("deleted" if @ticket.deleted).to_s %>' >
+      <span class="source_<%= @ticket.source %>"></span>
+    </div>
   </div>
-</div>
-<div class="" id="ticket_status_box">
-  <%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+  <div class="" id="ticket_status_box">
+    <%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+  </div>
 </div>

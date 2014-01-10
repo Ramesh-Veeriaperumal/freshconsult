@@ -47,7 +47,7 @@ class Helpdesk::NoteDrop < BaseDrop
 	end
 
 	def attachments
-	    @source.attachments
+	    @source.all_attachments
 	end
 
 	def dropboxes
