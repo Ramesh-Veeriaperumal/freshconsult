@@ -5,6 +5,7 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
+   before_filter :clean_params, :only => [:update]
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -296,6 +297,13 @@ protected
     flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
+  end
+
+  def clean_params
+    if params[:user]
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
+    end
   end
 
   private
