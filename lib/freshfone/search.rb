@@ -5,12 +5,7 @@ module Freshfone::Search
 	end
 
 	def self.search_user_using_es(phone_number)
-		# Search::EsIndexDefinition.es_cluster(Account.current.id)
-		if Account.current.id == 1010000169
-      Search::EsIndexDefinition.es_cluster(Account.current.id, true)
-    else
-      Search::EsIndexDefinition.es_cluster(Account.current.id)
-    end
+		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([User], Account.current.id)
 		Tire.search(index_name, { :load => { :include => :avatar } }) do |search|
 			search.query { |q| q.string(phone_number, :fields => ['phone', 'mobile']) }
