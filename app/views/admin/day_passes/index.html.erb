@@ -66,7 +66,7 @@
   <% end %> -->	                     
 
 <% content_for :helpcard do -%>
-	<% if !current_account.has_credit_card? %>      
+	<% if current_account.has_credit_card? %>      
     <div class="actions">
       <%= on_off_button(@day_pass_config.auto_recharge, toggle_auto_recharge_admin_day_pass_path(@day_pass_config) ) %>
     </div>
