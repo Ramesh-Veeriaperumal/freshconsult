@@ -6380,7 +6380,7 @@ div.watchers_tooltip{
 	right: 3px;
 	&:before{
 		content: attr(data-count);
-		color: transparent;
+		color: #fff;
 		background: #888;
 		border-radius: 9px;
 		font-weight: bold;
