@@ -87,10 +87,8 @@ class TopicsController < ApplicationController
 	 else
       respond_to do |format|  
   			format.html { render :action => "new" }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Topic creation failed" , :http_code => http_code, :error_code => "Unprocessable Entity", :errors => @post.errors})
-        }
+        format.xml  { render  :xml => @topic.errors }
+        format.json  { render  :json => @topic.errors }
       end
 		end
   end
@@ -117,10 +115,6 @@ class TopicsController < ApplicationController
     else
       respond_to do |format|  
        format.html { render :action => "edit" }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Topic update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @post.errors})
-        }
      end  
     end
   end
@@ -243,17 +237,8 @@ class TopicsController < ApplicationController
     end
 
     def RecordNotFoundHandler
-      respond_to do |format|
-        format.html {
-          flash[:notice] = I18n.t(:'flash.topic.page_not_found')
-          redirect_to categories_path
-        }
-        result = "Record Not Found"
-        http_code = Error::HttpErrorCode::HTTP_CODE[:not_found]
-        format.any(:xml, :json) {
-          api_responder({:message => result , :http_code => http_code, :error_code => "Not found"})
-        }
-      end
+      flash[:notice] = I18n.t(:'flash.topic.page_not_found')
+      redirect_to categories_path
     end
     
     private
