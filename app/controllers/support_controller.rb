@@ -15,7 +15,7 @@ class SupportController < ApplicationController
     !controller_name.eql?('search') &&
     !controller_name.eql?('login') &&
     !controller_name.eql?('feedback_widgets') &&
-    (controller_name.eql?("theme") || !controller.send(:current_user)) && 
+    !controller.send(:current_user) && 
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 

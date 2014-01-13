@@ -28,7 +28,7 @@ class Import::Attachment
      begin
         file = RemoteFile.new(attach_url, username, password)
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
-        attachment.save!
+        @item.update_es_index if attachment.save!
       rescue => e
         puts "#{e.message}\n#{e.backtrace.join("\n")}"
         puts "Attachment exceed the limit!"

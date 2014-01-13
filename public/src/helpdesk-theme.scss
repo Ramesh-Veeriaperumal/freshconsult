@@ -13,6 +13,13 @@ $subtxt_hover_color: 	if(lightness($background) > 50, #000, #FFF) !default;
 $alternate_txt_color: 	if(lightness($background) > 50, white, black) !default;
 $alternate_bg_color: 	if(lightness($background) > 50, #666, #AAA) !default;
 $filterTextShadow: 		if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
+		
+$lightness_val: lightness($tab_color);
+$tab_search_image: '/cdn-ignored/sprites/symbols/search-white.png';
+
+@if $lightness_val > 50{
+	$tab_search_image: '/cdn-ignored/sprites/symbols/search.png';
+}
 
 $lightness_val: lightness($header_color);
 $loading_color: rgba(60,60,60,0.2);
@@ -80,7 +87,7 @@ a.new_ticket, .nav_search div.search_bar { border-color:darken($tab_color, 8%); 
 
 /* Header Timer */
 .header-timer-wrap{ background-color:darken($header_color, 10%); }
-.header-timer .time{ color:$header_ctxt_color}
+.header-timer .time-text{ color:$header_ctxt_color}
 .stopwatch{ 
 	@include box-shadow(inset 0px 0px 0px 1px $header_ctxt_color);
 	background-color:lighten($header_color,70%)
@@ -100,7 +107,11 @@ input:focus, select:focus, textarea:focus{
 	  -webkit-box-shadow: $tab_color 0 0 3px;
 	  box-shadow: $tab_color 0 0 3px;
 }
-a.new_ticket, ul.header-tabs li a  { color: $tab_ctxt_color; }
+.nav_search div.search_bar input, a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
+.nav_search div.search_bar .search-icon-inactive{
+	background: inline-image($tab_search_image) no-repeat;
+	background-position: 0;
+}
 ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
 a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }
 /* -------------------------------------------------------------------------------------------  */

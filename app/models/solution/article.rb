@@ -80,9 +80,9 @@ class Solution::Article < ActiveRecord::Base
   def self.suggest(ticket, search_by)
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     begin
-      Search::EsIndexDefinition.es_cluster(ticket.account.id)
+      Search::EsIndexDefinition.es_cluster(ticket.account_id)
       options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account_id), options do |search|
         search.query do |query|
           query.filtered do |f|
             f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
@@ -114,7 +114,7 @@ class Solution::Article < ActiveRecord::Base
     to_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :status, :account_id ],
+            :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
                           :folder => { :only => [:category_id, :visibility], 
                                        :include => { :customer_folders => { :only => [:customer_id] } }

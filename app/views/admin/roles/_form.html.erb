@@ -37,16 +37,12 @@
   
   <%= hidden_field_tag "role[privilege_list][]"%>
 </div>
-<ul class="admin-breadcrumb breadcum-footer clearfix">
+<div class="button-container pull-right clearfix">
   <% unless @role.default_role? %>
-    <li class="non-arrow pull-right">
-      <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>
-    </li>
-    <li class="non-arrow pull-right">
-      <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
-    </li>
+    <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+    <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>  
   <% end %>    
-</ul>
+</div>
 
 <% javascript_tag do %>
   /* Scroll functionality */

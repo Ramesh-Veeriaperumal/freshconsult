@@ -21,8 +21,10 @@ $sqs_facebook = AwsWrapper::Sqs.new(SQS[:facebook_realtime_queue])
 # Initializing global variable polling the tweets from sqs
 $sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
 
+# ticket auto refresh sqs queue
+$sqs_autorefresh = AwsWrapper::Sqs.new(SQS[:auto_refresh_realtime_queue])
+
 $social_dynamoDb = AWS::DynamoDB::ClientV2.new()
 
 #Configuration for dynamoDB tables
 DYNAMO_DB_CONFIG = (YAML::load_file dynamodb_config)[Rails.env]
-

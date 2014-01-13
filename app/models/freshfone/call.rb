@@ -192,12 +192,9 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def country_name(country_code)
-			if Carmen::Country.coded(country_code).name === "United States"
-				country_code
-			else
-				country = Carmen::Country.coded(country_code)
-				country ? country.name : nil
-			end
+			return country_code if ["US", "USA"].include?(country_code)
+      country = Carmen::Country.coded(country_code)
+      country ? country.name : nil
 		end
 
 		def description_html

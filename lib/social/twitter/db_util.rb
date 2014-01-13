@@ -12,6 +12,7 @@ module Social::Twitter::DbUtil
     include Social::Util
 
     def update_db(env, action, params)
+      @replay = env.eql?(STREAM[:replay])
       tag_array = params[:rule_tag].split(DELIMITER[:tags])
       tag_array.each do |gnip_tag|
         tag = Gnip::RuleTag.new(gnip_tag)

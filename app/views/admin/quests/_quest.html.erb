@@ -6,15 +6,14 @@
                             :method => :put ) %>
   </td>
   <td class="<%= quest.active ? 'active' : 'inactive' %>">
-    <div class="row-fluid">
-        <div class="span1 aligncenter">
-            <div class="badges center <%=quest.badge[:classname]%>">
-              <%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
-            </div>            
-        </div>
-        <div class="span9">      
-          <strong> <%= link_to(h(quest.name), edit_admin_quest_path(quest), :class => "item_info") %> </strong>
-          <%= content_tag :div, truncate(quest.description, :length => 180), :title => (quest.description)  %>
+        <div>
+          <span class="badges center <%=quest.badge[:classname]%>">
+            <%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
+          </span>            
+          <div class="quest-desc">      
+            <strong> <%= link_to(h(quest.name), edit_admin_quest_path(quest), :class => "item_info") %> </strong>
+            <%= content_tag :div, truncate(quest.description, :length => 180), :title => (quest.description)  %>
+          </div>
         </div>
       </div>
   </td>

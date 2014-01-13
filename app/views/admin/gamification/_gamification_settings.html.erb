@@ -6,7 +6,7 @@
                 <%= t('admin.gamification.gamification_settings.agent_resolves_ticket').html_safe %>
             </label>
             <div class="controls">
-                <div class="row">
+                <div class="row-fluid">
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed < 100 %>
                             <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
@@ -29,7 +29,7 @@
                 <%= t('admin.gamification.gamification_settings.bonus_points_for') %>
             </label>
             <div class="controls">
-                <div class="row">
+                <div class="row-fluid">
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed > 100 %>
                             <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
@@ -48,7 +48,7 @@
         </div>
         <h5 class="lead"><%= t('.title_levels')%></h5>
         <p class="lead-desc muted"><%= t('.info_levels') %></p>
-        <div class="row">
+        <div class="row-fluid">
             <% @scoreboard_levels.each_with_index do |level , index| %>
                 <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
                 <div class="span2">
@@ -60,6 +60,7 @@
                 <% end %>
             <% end %>        
         </div>
+        <br/>
         <div class="button-container">        
             <a class="btn" href="/admin/home"><%= t('cancel') %></a>
             <%= submit_tag t('account.save'), :class => 'btn btn-primary' %>

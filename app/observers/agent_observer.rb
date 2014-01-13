@@ -17,7 +17,7 @@ class AgentObserver < ActiveRecord::Observer
   end
 
   def after_commit_on_update(agent)
-    clear_cache(agent)
+    clear_auto_refresh_cache(agent)
   end
 
   protected
@@ -48,8 +48,14 @@ class AgentObserver < ActiveRecord::Observer
       AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
     end
 
-    def clear_cache(agent)
-      key = auto_refresh_key(agent)
-      MemcacheKeys.delete_from_cache key
+    def clear_auto_refresh_cache(agent)
+
+      body = {
+        "cacheKey"    => "AUTO_REFRESH_DETAILS:#{agent.account_id}:#{agent.user_id}",
+        "messageType" => "clearCache"
+      }.to_json
+
+      $sqs_autorefresh.send_message(body)
     end
+      
 end

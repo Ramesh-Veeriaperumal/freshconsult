@@ -5,10 +5,10 @@
 // Recalculate z-index where appropriate
 .modal-open {
   overflow:hidden;
-  #wrap, .modal-backdrop{
+  /*.wrapper .wrapper-shadow, .modal-backdrop{
     -webkit-animation: modalAnimation 500ms ease-out;
     -webkit-filter: blur(3px);
-  }
+  }*/
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
@@ -60,7 +60,7 @@
   background-image: inline-image("cdn-ignored/inline-images/dialog/popup-headpattern.png");
   background-repeat: repeat-x;
   @include border-radius(6px);
-  @include box-shadow(0 30px 140px -20px #000, $white 0 0 1px inset);
+  @include box-shadow(0 30px 140px -30px #000, white 0 0 1px inset);
   @include background-clip(padding-box);
 
   &.fade {
@@ -70,11 +70,11 @@
   &.fade.in { top: 40%; }
 }
 .modal-header {
-  padding: 10px 40px 0 15px;
+  padding: 15px 40px 0 15px;
   border-bottom: 1px solid #eee;
   h3{
     font-size: 1.5em;
-    line-height: 1.6em;
+    line-height: 40px;
   }
   .close {
     position: absolute;
@@ -129,12 +129,12 @@
     margin: -250px 0 0 -355px;
     &.fade.in { top: 40%; }
   }
-  .modal-header{ padding: 10px 20px 0; }
+  .modal-header{ padding: 15px 20px 0; }
   .modal-header .close {
     height: 35px;
     width: 35px;
     left: -35px;
-    top: 20px;
+    top: 18px;
     border: solid 1px #fff;
     border-right: solid 1px #000;
     padding: 10px;

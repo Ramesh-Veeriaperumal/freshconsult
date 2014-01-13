@@ -119,14 +119,10 @@
   					</li>
   	     	<% end %>
   				<li class="control-group">
-  					<div class="span2">
-  						<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>
-  					</div>
+  					<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>
   					<div class="controls">
-              <div class="input-xxlarge">
   					  <%= text_area(:agent, :signature_html , :class => "text ", :cols => "40", :rows => "5", :id => "user_binfo" ) %>			
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
-              </div>
   					</div>
   				</li>
   				<li class="seperator"></li>

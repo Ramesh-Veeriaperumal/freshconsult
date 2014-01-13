@@ -1038,7 +1038,7 @@ h4.list_title{
 	border:1px solid #cfcfcf;
 	border-width:1px 0px;
 	padding:2px 20px 10px 20px;
-	margin:0px -$common-padding;	
+	margin:0px (-$common-padding);	
 }
 
 .sort-list{
@@ -6380,7 +6380,7 @@ div.watchers_tooltip{
 	right: 3px;
 	&:before{
 		content: attr(data-count);
-		color: transparent;
+		color: #fff;
 		background: #888;
 		border-radius: 9px;
 		font-weight: bold;
@@ -9559,9 +9559,7 @@ label.last-label{ margin-bottom: 0px; }
 			border: 1px solid darkgray;
 		}
 		.select2-container{
-			position: absolute;
-			top: 15px;
-			left: 65px;
+			left: -7px;
 			min-width: 65px;
 		}
 		.select2-choice{
@@ -9587,11 +9585,7 @@ label.last-label{ margin-bottom: 0px; }
 	float: right;
 	margin-top:17px;	
 	margin-right: 5px;
-	&.stop-timer{
-		.timer-text { width: 0; padding :0; }
-		.stopwatch:after{ @include animation(none); }
-	}
-	.time {
+	.time-text {
 		display:block;
 		font-size:13px;
 		font-weight: 600;
@@ -9600,6 +9594,10 @@ label.last-label{ margin-bottom: 0px; }
 		width: 50px;		
 		overflow:hidden;
 		@include transition(width .3s ease-in-out);
+	}	
+	&.stop-timer{
+		.time-text { width: 0; padding :0; }
+		.stopwatch:after{ @include animation(none); }
 	}
 }
 
@@ -9655,3 +9653,9 @@ label.last-label{ margin-bottom: 0px; }
 //------------------------------------------------------------------------------------
 //								Header timeentry end
 //------------------------------------------------------------------------------------
+
+.quest-desc{
+	display: inline-block;
+	vertical-align:top;
+	width:90%;
+}

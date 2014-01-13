@@ -24,11 +24,11 @@ production:
   feeds:
     suffix: production
     read_capacity: 10
-    write_capacity: 5
+    write_capacity: 20
   conversations:
     suffix: production
     read_capacity: 10
-    write_capacity: 5
+    write_capacity: 20
 
 
 test:

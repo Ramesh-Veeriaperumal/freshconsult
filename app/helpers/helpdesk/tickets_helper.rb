@@ -10,6 +10,7 @@ module Helpdesk::TicketsHelper
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
   include MetaHelperMethods
+  include Faye::Token
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -384,6 +385,25 @@ module Helpdesk::TicketsHelper
     content << "</div>" if full_pagination
     content
   end
+
+  def auto_refresh_params
+    @data = @data || {
+      :userId      => current_user.id,
+      :accountId   => current_account.id,
+      :domainName  => current_account.full_domain,
+      :auth        => generate_hmac_token(current_user),
+      :secure      => current_account.ssl_enabled? 
+    }.to_json.html_safe
+  end
+
+  def auto_refresh_channel
+    Faye::AutoRefresh.channel(current_account)
+  end
+
+  def faye_host
+    "#{request.protocol}#{NodeConfig["faye_host"]}"
+  end
+
 end
 
 def to_event_data_scenario(va_rule)

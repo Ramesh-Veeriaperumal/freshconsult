@@ -14,14 +14,20 @@ class Theme::SupportController < ThemeController
 
 	private
 
-		def scoper
-			# Compile using draft based on preview param
-			(params[:preview].present? && current_portal.template.get_draft) ?
-				current_portal.template.get_draft : current_portal.template
+		def scoper			
+			template = current_portal.template
+			# Compile draft based on preview param
+			template = current_portal.template.get_draft if(params[:preview].present? && current_portal.template.get_draft)
+			template
 		end
 
 		def theme_load_path
 			@theme_load_path ||= "#{RAILS_ROOT}/public/src/portal"	
+		end
+
+		# Don't cache the preview as it may be different for various people
+		def render_from_cache?
+			params[:preview].blank?
 		end
 
 end
