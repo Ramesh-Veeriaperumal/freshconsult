@@ -23,7 +23,7 @@
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
-  map.resources :customers ,:member => {:quick => :post} do |customer|
+  map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
@@ -395,6 +395,7 @@
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
+    helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
 
 

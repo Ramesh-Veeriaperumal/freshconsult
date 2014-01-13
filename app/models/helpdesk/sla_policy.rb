@@ -128,6 +128,14 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     !(conditions.blank? || is_default)
   end
 
+  def self.customer_policies(customer)
+    sla = customer.account.sla_policies.rule_based.active.select do |policy| 
+      policy.conditions["company_id"].present? and 
+        policy.conditions["company_id"].include?(customer.id)
+    end
+    sla.empty? ? customer.account.sla_policies.default : sla 
+  end
+
   private
 
     def va_conditions

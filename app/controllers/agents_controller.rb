@@ -17,7 +17,8 @@ class AgentsController < ApplicationController
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
     :convert_to_contact, :reset_password ]
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
-  before_filter :check_agent_limit, :only =>  :restore
+  before_filter :check_agent_limit, :only =>  [:restore, :create]
+  before_filter :check_agent_limit_on_update, :only => :update
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
   
@@ -255,9 +256,17 @@ class AgentsController < ApplicationController
   end
   
   def check_agent_limit
-    if current_account.reached_agent_limit? and !@agent.occasional?
-      flash[:notice] = t('maximum_agents_msg')
-      redirect_to :back 
+    if current_account.reached_agent_limit? 
+      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != "true")
+        flash[:notice] = t('maximum_agents_msg')
+        redirect_to :back 
+      end
+    end
+  end
+
+  def check_agent_limit_on_update
+    if current_account.reached_agent_limit? && @agent.occasional? && params[:agent] 
+      params[:agent][:occasional] = true 
     end
   end
 

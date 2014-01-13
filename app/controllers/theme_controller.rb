@@ -1,7 +1,7 @@
 class ThemeController < ApplicationController
 
 	prepend_before_filter :set_http_cache_headers
-	caches_action :index, :cache_path => :cache_key
+	caches_action :index, :cache_path => :cache_key, :if => :render_from_cache?
 
 	THEME_COMPASS_SETTINGS 	= { :syntax => :scss, 
 								:always_update => true, 
@@ -16,7 +16,7 @@ class ThemeController < ApplicationController
 	private
 
 		def scoper_cache_key
-			[scoper.updated_at.to_i, scoper.id].join("/") if(scoper.respond_to?(:updated_at))
+			[self.class::THEME_TIMESTAMP, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 		end
 
 		def set_http_cache_headers
@@ -36,11 +36,15 @@ class ThemeController < ApplicationController
 	protected
 
 		def cache_key_url
-			"#{self.class::THEME_TIMESTAMP}/#{scoper_cache_key}#{request.request_uri}"
+			"#{scoper_cache_key}#{request.request_uri}"
 		end
 
 		def theme_load_path
 			@theme_load_path ||= "#{RAILS_ROOT}/public/src"	
+		end
+
+		def render_from_cache?
+			true
 		end
 
 		def scss_template

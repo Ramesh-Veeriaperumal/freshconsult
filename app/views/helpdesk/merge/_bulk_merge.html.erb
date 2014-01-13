@@ -15,7 +15,7 @@
             </div>
               <div id="contact-area">
     		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
-    		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
+    		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %> data-created=<%= (ticket.created_at.to_i) %>>
                     <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
                     :class =>"item_info", :target=>"_blank" ) %>
     			          <div class="info-data hideForList">
@@ -63,7 +63,8 @@
   </div>   
 </div>
 <script type="text/javascript">
-  var primary_ticket = jQuery('.merge-cont').first();
+  var primary_ticket = findOldestTicket();
+  primary_ticket.parent().prepend(primary_ticket);
   primary_ticket.addClass('cont-primary');
   primary_ticket.find('.primary-marker').attr('title','Primary ticket');
   enable_continue();

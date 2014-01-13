@@ -6,10 +6,15 @@ class Widgets::FeedbackWidgetsController < SupportController
   include SupportTicketControllerMethods 
 
   def new
-    @widget_form = true
+    respond_to do |format|
+      format.html{
+            @widget_form = true
 
-    @ticket_fields = current_portal.customer_editable_ticket_fields
-    @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
+            @ticket_fields = current_portal.customer_editable_ticket_fields
+            @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
+      }
+      format.json{ render :json => {:fd_status => current_account.subscription.paid_account?}}
+    end
   end
   
   def thanks
