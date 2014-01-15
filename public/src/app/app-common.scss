@@ -9585,6 +9585,10 @@ label.last-label{ margin-bottom: 0px; }
 	float: right;
 	margin-top:17px;	
 	margin-right: 5px;
+	&.stop-timer{
+		.timer-text { width: 0; padding :0; }
+		.stopwatch:after{ @include animation(none); }
+	}
 	.time-text {
 		display:block;
 		font-size:13px;
@@ -9594,10 +9598,6 @@ label.last-label{ margin-bottom: 0px; }
 		width: 50px;		
 		overflow:hidden;
 		@include transition(width .3s ease-in-out);
-	}	
-	&.stop-timer{
-		.time-text { width: 0; padding :0; }
-		.stopwatch:after{ @include animation(none); }
 	}
 }
 
