@@ -15,7 +15,7 @@ class TwitterWrapper
     @tokens = YAML::load_file @config
     @callback_url = "#{options[:callback_url]}"
     @callback_url = "#{@callback_url}?product_id=#{@product.id}" if @product
-    @consumer ||= OAuth::Consumer.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env], {:site => "http://api.twitter.com"}
+    @consumer ||= OAuth::Consumer.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env], {:site => "https://api.twitter.com"}
     @twitter_handle = twitter_handle
     Twitter.configure do |config|
       config.consumer_key = @tokens['consumer_token'][Rails.env]
