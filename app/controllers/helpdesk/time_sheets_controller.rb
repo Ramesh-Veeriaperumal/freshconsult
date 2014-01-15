@@ -88,7 +88,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
   def update  
     hours_spent = params[:time_entry][:hhmm]
     params[:time_entry].delete(:hhmm)
-    time_entry = params[:time_entry].merge!({ :timer_running => false, :time_spent => convert_duration(hours_spent)})
+    time_entry = params[:time_entry].merge!({:time_spent => convert_duration(hours_spent)})
+
     unless params[:time_entry][:user_id].blank?
       raise ActiveRecord::RecordNotFound if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank? 
     end
@@ -108,16 +109,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
      sync_installed_apps
      respond_to_format @time_entry
   end
-
-  def header_timer
-    @time_entry = current_user.time_sheets.timer_active.no_order.first
-    if @time_entry.present?
-      render :partial => "helpdesk/time_sheets/header_timer" 
-    else
-      render :nothing => true
-    end
-  end
-
+  
   def time_sheets_for_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:id])
     @time_sheets = @ticket.time_sheets.group_by(&:group_by_day_criteria) || []

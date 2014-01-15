@@ -3179,7 +3179,7 @@ en:
       executed_at: Date
       hours: Hours
       agent: Agent
-      note: Notes
+      note: Note
       billing_type: Billing Type
       group_by: Group By
       report:
@@ -3191,7 +3191,7 @@ en:
         agent: Agent
         hours: Hours
         billing_hours: Billable
-        note: Notes
+        note: Note
         on: on
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       note: Notes

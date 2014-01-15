@@ -388,7 +388,7 @@
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }, :collection => {:header_timer => :get}
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'

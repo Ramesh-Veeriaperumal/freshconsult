@@ -1,9 +1,8 @@
 <% form_remote_for :time_entry, @time_entry, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
-  <%= render :partial => "form", :object => f, :locals => {:edit => @time_entry, :type =>:edit} %>
+  <%= render :partial => "form", :object => f, :locals => {:edit => @time_entry, :type =>"edit"} %>
 <% end %>
 
 <% javascript_tag do -%>
-	var time = jQuery("#timeentry_timer_<%= @time_entry.id %>").text();
-	fill_hours(time,<%= @time_entry.timer_running %>);
+	jQuery('.modal.in #time_entry_hhmm').focus();
 	<%= modifyTimesheetApps(@time_entry) %>
 <% end %>

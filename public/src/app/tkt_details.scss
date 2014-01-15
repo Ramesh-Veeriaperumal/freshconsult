@@ -1692,6 +1692,7 @@ ol, ul, li{
 		.time-tracked-details{
 			display: inline-block;
 			margin:10px 0;
+
 		}
 
 		.details {
@@ -1739,7 +1740,6 @@ ol, ul, li{
 				font-size: 13px;
 			}
 			.tracked_time{
-				position: relative;
 				float: right;
 				text-align: right;
 			}
@@ -1753,39 +1753,15 @@ ol, ul, li{
 			.time {
 				font-size: 15px;
 				font-weight: bold;
+
 			}
 
 			.timer_box {
 				position: relative;
 				left: -70px;
 				top: -6px;
+
 				@include opacity(0.3);
-			}
-
-			.timer-icon {
-				position: absolute;
-				left: -15px;
-				top: 4px;
-			}
-			.stopwatch {
-				@include box-shadow(inset 0px 0px 0px 1px rgba(0, 0, 0, 0.78));
-				background-color: rgb(255, 255, 255);
-			}
-			.stopwatch:before { 
-				background-color: rgb(19, 19, 19);
-			}
-			.stopwatch:after { 
-				background-color: rgb(3, 3, 3);
-			}
-
-		}
-
-		.time_running{
-			.edit_timer{
-				display: none;
-			}
-			.timer-icon{
-				display: block;
 			}
 		}
 
