@@ -19,7 +19,7 @@
             <span class="header-timer time_running" id="header-timer-task-<%= @time_entry.id %>" 
                 data-placement="belowLeft" rel='hover-popover' data-widget-container="widget-ticket-text">
                 <%= content_tag :span, get_time_in_hours(@time_entry.running_time), 
-                    :class => "header-timer-wrap time-text",
+                    :class => "header-timer-wrap time",
                     "data-running-time" => @time_entry.running_time,
                     "data-timer-running" => @time_entry.timer_running,
                     :id => "timeentry_timer_#{@time_entry.id}" %>
