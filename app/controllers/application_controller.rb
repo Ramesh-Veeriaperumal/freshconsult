@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
   before_filter :logging_details 
 
   rescue_from Exception, :with => :generic_error
-  rescue_from ArgumentError, :with => :handle_error
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ActionController::MethodNotAllowed, :with => :MethodNotAllowed
