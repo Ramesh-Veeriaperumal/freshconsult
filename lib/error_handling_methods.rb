@@ -72,7 +72,7 @@ module ErrorHandlingMethods
   	def api_responder(error_hash)
  		respond_to do |format|
  			format.xml {
- 				if params[:error] == "new" or params[:error_flag].present?
+ 				if params[:error] == "new" or error_hash[:error_flag].present?
  					render :xml => error_hash.to_xml(:root => :error_details, :skip_instruct => true, :dasherize => false),:status => error_hash[:http_code] and return
  				elsif error_hash[:message] == "Record Not Found"
  					render :xml =>{:error=> error_hash[:message]}.to_xml(:indent =>2,:root=> :errors),:status =>error_hash[:http_code] and return
@@ -81,10 +81,10 @@ module ErrorHandlingMethods
  				end
  			}
  			format.json {
- 				if params[:error] == "new" or params[:error_flag].present?
+ 				if params[:error] == "new" or error_hash[:error_flag].present?
  					render :json => {:error_details => error_hash}, :status => error_hash[:http_code] and return
  				elsif error_hash[:message] == "Record Not Found"
- 					render :json => {:errors =>{:error => error_hash[:message]}}.to_json,:status => :not_found
+ 					render :json => {:errors =>{:error => error_hash[:message]}}.to_json,:status => error_hash[:http_code] and return
  				else	
  					render :json =>  error_hash[:errors], :status => error_hash[:http_code] and return
  				end
