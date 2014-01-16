@@ -1,8 +1,12 @@
+//Following code is used in Zapier.com and not in helpkit . 
+//This is a backup of the version hosted on Zapier.com
+//-- Hrishikesh 
+
 var Zap = {
     
     /* Priority in the API is an integer . It is not user Friendly 
     so writing this hack to make it a String for user to use String in Zap and 
-    convert to integer when making a call to the API. -- Hrishikesh
+    convert to integer when making a call to the API. 
     */
     create_ticket_action_pre_write: function(bundle) {
         var priority=3; // Default to medium 
@@ -27,7 +31,6 @@ var Zap = {
     add_notes_to_ticket_action_pre_write: function(bundle) {
         // hard code source to 2 to indicate it is a add note. 
         // API documentation recommends this .. but it works even without this .. 
-        // This will be a sample to show hard code things for the API - Hrishikesh 
         
         var data = JSON.parse(bundle.request.data);
         data.helpdesk_note.source = 2 ;
@@ -39,8 +42,8 @@ var Zap = {
         // This function extracts the array from the API response . 
         var output = [];
         try {
-        var responseObj = JSON.parse(bundle.response.content);
-        output = responseObj.forum_category.forums;
+            var responseObj = JSON.parse(bundle.response.content);
+            output = responseObj.forum_category.forums;
         } 
         catch(e){
             output= []; // lets not break it :)
@@ -129,6 +132,14 @@ var Zap = {
             name = "ticket_action" ; 
             value = "update";
         }
+        if ( event_name == "new_user" ) {
+            name = "user_action" ; 
+            value = "create";
+        }
+        if ( event_name == "update_user" ) {
+            name = "user_action" ; 
+            value = "update";
+        }
         if( event_name == "customer_feedback" ) { 
             name = "customer_feedback" ; 
             value = "--";
@@ -174,12 +185,13 @@ var Zap = {
         return bundle.request;
     }, 
     new_ticket_trigger_catch_hook: function(bundle){
-        var data = JSON.parse(bundle.request.content);
-        return data.freshdesk_webhook;
+        return this.get_ticket_data(bundle);
+    },
+    new_user_trigger_catch_hook: function(bundle){
+        return this.get_user_data(bundle);
     },
     ticket_updated_trigger_catch_hook: function(bundle){
-        var data = JSON.parse(bundle.request.content);
-        return data.freshdesk_webhook;
+        return get_ticket_data(bundle);
     },
     ticket_note_added_trigger_catch_hook:function(bundle){
         var ticket_note_type = bundle.trigger_fields.ticket_note_type ; 
@@ -195,5 +207,25 @@ var Zap = {
             fields = "user" ;
         }
         return fields;
+    }, 
+    get_ticket_data: function(bundle){
+        var data = JSON.parse(bundle.request.content);
+        return this.beautify(data.freshdesk_webhook, 'ticket_');
+    },
+    get_user_data: function(bundle){
+        var data = JSON.parse(bundle.request.content);
+        return this.beautify(data.freshdesk_webhook, 'user_');
+    },
+    beautify:function(input, name_str){
+        var output = {};
+        var replace_str = '';
+        for(var attr in input){
+            var oattr = attr;
+            if( attr.search(name_str) ===  0) {
+                oattr = attr.replace(name_str, replace_str);
+            }
+            output[oattr] = input[attr];
+        }
+        return output;
     }
 };
