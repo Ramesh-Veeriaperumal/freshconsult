@@ -2470,8 +2470,8 @@ en:
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   chatwidget_help_content:
     title: Freshchat
-    info1: Freshchat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site.
-    info2: Each chat session will also capture meta information about where visitors are chatting with you from, their device, and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript.
+    info1: Freshchat lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
+    info2: Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript.
     info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using Freshchat inside Freshdesk</a>
   low: Low
   agents: Agents
@@ -4830,8 +4830,8 @@ en:
     showform: "Show Pre-chat form"
     enable_proactive: "Enable proactive chat"
     proactive_note: "Note: Pre-chat form will be skipped for Proactive chats."
-    proactive_time: "Greet visitor when they spend more than %{seconds} seconds on a page"
-    procative_info: "Automatically initiate chat conversations."
+    proactive_time: "Greet visitors when they spend more than %{seconds} seconds on a page"
+    procative_info: "Automatically initiate chat conversations"
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -4845,7 +4845,7 @@ en:
     align_to: "Align to"
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
-    integrate_msg: "Copy & paste the code above the last </body> tag on your website or app"
+    integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
     integrate_freshchat_title: "Integrate Freshchat into your website and applications"
     custom_chat_window: "Customize your chat window"
     text_placeholder: "Your Message"
