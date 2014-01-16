@@ -4327,7 +4327,7 @@ a.close{
 
 		}
 	}
-	.contact-fields, .lead-fields{
+	.contact-fields, .lead-fields, .account-fields {
 		display:inline-block;
 		width:100%;
 		width:46%;
@@ -9263,7 +9263,6 @@ label.last-label{ margin-bottom: 0px; }
 
 	.sales-title{
 		font-weight: bold;
-		color: inherit;
 	}
 	.search-back{
 		display: inline-block;
@@ -9279,6 +9278,19 @@ label.last-label{ margin-bottom: 0px; }
 		&.hide{
 			display: none;
 		}
+	}
+	.contact-search-result-type {
+		@include border-radius(16px);
+		font-size:9px;
+		padding:3px 8px;
+		line-height: 100%;
+		font-weight: bold;
+		text-transform: uppercase;
+		display:inline-block;
+		white-space:nowrap;
+		@include box-shadow(1px 1px 0 white);
+		background: #eee;
+		color:#333;
 	}
 }
 .salesforce-widget{

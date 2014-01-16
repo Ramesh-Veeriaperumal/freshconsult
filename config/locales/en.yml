@@ -3932,6 +3932,7 @@ en:
         select: "Select an option"
         contact: "Contact Fields"
         lead: "Lead Fields"
+        account: "Account Fields"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."

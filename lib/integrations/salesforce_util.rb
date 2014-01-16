@@ -3,9 +3,12 @@ module Integrations::SalesforceUtil
       get_object_metadata(:Contact, oauth_token, instance_url)
     end
 
-  
     def fetch_sf_lead_fields(oauth_token, instance_url)
       get_object_metadata(:Lead, oauth_token, instance_url)
+    end
+
+    def fetch_sf_account_fields(oauth_token, instance_url)
+      get_object_metadata(:Account, oauth_token, instance_url)
     end
 
   private  
