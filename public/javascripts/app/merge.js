@@ -13,6 +13,7 @@ function MergeInitializer() {
   	element.removeClass('cont-primary present-contact');
     element.find('.merge_element').replaceWith(entity.children('.merge_element').clone());
     element.appendTo(jQuery('.merge_entity'));
+    mark_primary(findOldestTicket());
     entity.children('#resp-icon').addClass('clicked');
   }
 
@@ -22,7 +23,11 @@ function MergeInitializer() {
 
   mark_primary = function(entity){
     jQuery('.merge-cont').removeClass('cont-primary');
-    entity.parent().addClass('cont-primary');
+    entity.addClass('cont-primary');
+  }
+
+  created_date = function(element){
+    return element.find('.merge_element').data('created');
   }
 }
 

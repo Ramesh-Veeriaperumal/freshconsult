@@ -8070,7 +8070,7 @@ p.imp{
 	}
 	.merge-cont{
 		height: 53px;
-		width: 335px;
+		width: 325px;
 		text-overflow: ellipsis;
 	}
 	.merge_results{
@@ -9576,86 +9576,3 @@ label.last-label{ margin-bottom: 0px; }
 //								sla policy page end
 //------------------------------------------------------------------------------------
 
-
-
-//------------------------------------------------------------------------------------
-//								Header timeentry 
-//------------------------------------------------------------------------------------
-.header-timer {
-	float: right;
-	margin-top:17px;	
-	margin-right: 5px;
-	.time-text {
-		display:block;
-		font-size:13px;
-		font-weight: 600;
-		padding-left: 0;
-		color: #fff;
-		width: 50px;		
-		overflow:hidden;
-		@include transition(width .3s ease-in-out);
-	}	
-	&.stop-timer{
-		.time-text { width: 0; padding :0; }
-		.stopwatch:after{ @include animation(none); }
-	}
-}
-
-.header-timer-wrap{
-	float: left;
-	background-color: #000;
-	text-align: center;
-	@include border-radius(2px);
-	margin-left: 1px;
-	height: 24px;
-	line-height: 1.86;
-	img {
-		vertical-align: middle;
-		position: relative;
-		top: 1px;
-	}
-}
-
-.header-model .alert{
-	margin: -5px 0 15px;
-} 
-
-.stopwatch{
-    width: 12px;
-    height: 12px;
-    @include border-radius(50%);
-    position: relative;
-    display: block;
-    top: 7px;
-    margin: 0 8px;
-    &:after, &:before{
-    	content:"";
-    	position: absolute;     	
-    }
-    &:after{
-	    width: 5px;
-	    height: 2px;
-	    @include border-radius(50%);
-	    top: 5px;
-	    left: 5px;
-	    @include transform-origin(1px, 1px);
-	    @include animation(timeRotation 2s linear infinite);
-    }
-    &:before{
-    	width: 4px;
-	    height: 2px;	    
-	    @include border-radius(2px 2px 0 0);
-	    left:4px;
-	    top: -3px;
-    }
- }
-
-//------------------------------------------------------------------------------------
-//								Header timeentry end
-//------------------------------------------------------------------------------------
-
-.quest-desc{
-	display: inline-block;
-	vertical-align:top;
-	width:90%;
-}

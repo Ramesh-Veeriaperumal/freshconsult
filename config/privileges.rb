@@ -90,7 +90,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer ,:show , :header_timer ]
+    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
   end
 
   edit_time_entries do
@@ -178,7 +178,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
                :contact_email, :edit, :update]
-    resource :customer, :only => [:new, :create, :edit, :update, :quick]
+    resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :contact_import
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]

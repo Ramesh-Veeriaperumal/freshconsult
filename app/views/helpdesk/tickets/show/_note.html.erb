@@ -8,7 +8,7 @@ minimizable ||= false
 
 %>
 
-<div id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
+<div id="<%= note_view_id %>" data-timestamp="<%= note.created_at.to_i%>" class="conversation <%= 'minimized minimizable' if minimizable %>">
 	<% if note.user %>
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
 	<% end %>

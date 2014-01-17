@@ -263,7 +263,7 @@ module Helpdesk::TicketsHelper
     default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
 
     if(!forward)
-      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(current_user)
+      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket,'helpdesk_name' => ticket.account.portal_name)
         default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
@@ -404,4 +404,13 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["faye_host"]}"
   end
 
+end
+
+def to_event_data_scenario(va_rule)
+  rule_info = {
+    name: va_rule.name,
+    description: va_rule.description,
+    id: va_rule.id,
+    activities: Va::Action.activities
+  }.to_json
 end

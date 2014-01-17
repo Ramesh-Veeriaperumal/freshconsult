@@ -74,4 +74,8 @@ class Account < ActiveRecord::Base
     :personalized_email_replies => false, :auto_refresh => false, :chat => false, :cascade_dispatchr => false,
     :whitelisted_ips => false, :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false }
 
+  # This list below is for customer portal features list only to prevent from adding addition features
+  ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
+                            :open_forums, :google_signin, :twitter_signin, :facebook_signin,
+                            :signup_link, :captcha]
 end

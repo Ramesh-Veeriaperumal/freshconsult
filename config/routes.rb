@@ -23,7 +23,7 @@
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
-  map.resources :customers ,:member => {:quick => :post} do |customer|
+  map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
@@ -388,13 +388,14 @@
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }, :collection => {:header_timer => :get}
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
+    helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
 
 

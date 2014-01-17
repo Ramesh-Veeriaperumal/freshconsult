@@ -5,6 +5,7 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
+   before_filter :clean_params, :only => [:update]
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -79,7 +80,7 @@ class ContactsController < ApplicationController
                                         }.to_json }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-:phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+            :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
         format.widget { render :action => :show, :layout => "widgets/contacts"}
         format.js
@@ -91,6 +92,7 @@ class ContactsController < ApplicationController
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
         format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
         format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
+        format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
         format.widget { render :action => :show}
         format.js
       end
@@ -292,6 +294,13 @@ protected
     flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
+  end
+
+  def clean_params
+    if params[:user]
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
+    end
   end
 
   private

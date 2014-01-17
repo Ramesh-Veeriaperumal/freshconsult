@@ -45,7 +45,7 @@ class Search::HomeController < ApplicationController
   def ticket_search
     items = []
     if params[:search_method] == 'with_subject'
-      Search::EsIndexDefinition.es_cluster(current_account.id)
+      Search::EsIndexDefinition.es_cluster(current_account.id, true)
           options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
           es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
             search.query do |query|
@@ -74,6 +74,7 @@ class Search::HomeController < ApplicationController
     end
     r = {:results => items.map{|i| {
         :display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),
+        :created => i.created_at.to_i,
         :searchKey => 
           (params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if TICKET_SEARCH_KEYS.include?(params[:key]) ),  
         :info => t("ticket.merge_ticket_list_status_created_at", 
@@ -99,7 +100,7 @@ class Search::HomeController < ApplicationController
     begin
       @total_results = 0
       if privilege?(:manage_tickets)
-        Search::EsIndexDefinition.es_cluster(current_account.id)
+        Search::EsIndexDefinition.es_cluster(current_account.id, true)
         options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
         @items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|

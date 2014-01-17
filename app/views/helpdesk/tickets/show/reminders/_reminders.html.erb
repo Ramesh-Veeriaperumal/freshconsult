@@ -14,3 +14,6 @@
     <%= render :partial => "/helpdesk/tickets/show/reminders/reminder", :object => r %>
   <% end %>
 </ul>
+<script type="text/javascript">
+  trigger_event("sidebar_loaded",{name: 'to_do', dom_id: '#ToDoList'});
+</script>

@@ -324,6 +324,7 @@ var updatePagination = function() {
 			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
+			trigger_event("ticket_show_more",{})
 			
 		});
 	});
@@ -653,6 +654,7 @@ var scrollToError = function(){
 				$('#show_more').data('next-page',null);  //Resetting
 				if (updateShowMore()) updatePagination();
 				_toggle.removeClass('loading_activities disabled');
+				trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
 			}, 
 			error: function(response) {
 				$('#show_more').removeClass('hide');
@@ -1153,29 +1155,27 @@ var scrollToError = function(){
 
 	setTimeout(findWhereToScroll, 200);
 
-  var load_by_default = ['#TicketProperties', '#TimesheetTab'];
-  	$.each(load_by_default,function(index,value){
-	// for (var i in load_by_default) {
-		var to_be_loaded = $(value + ' .content');
-		to_be_loaded.append("<div class='sloading loading-small loading-block'></div>");
-    to_be_loaded.load(to_be_loaded.data('remoteUrl'), function(){
-    to_be_loaded.data('remoteUrl', false);
+	(function(){
+		var tkt_prop = $('#TicketProperties .content');
+		tkt_prop.append("<div class='sloading loading-small loading-block'></div>");
+        tkt_prop.load(tkt_prop.data('remoteUrl'), function(){
+            tkt_prop.data('remoteUrl', false);
 
-      if (value == '#TicketProperties') {
-      	//This event should be handled only after ticket properties has been loaded.
-				$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {					
-					if (!dontAjaxUpdate) 
-					{
-						TICKET_DETAILS_DATA['updating_properties'] = true;
-						$(ev.target).data('updated', true);
-						$('#custom_ticket_form').data('updated', true);
-					}
-					dontAjaxUpdate = false;
-				});
-      }
-    	});
-	//}
-		})
+			$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
+				
+				if (!dontAjaxUpdate) 
+				{
+					TICKET_DETAILS_DATA['updating_properties'] = true;
+					$(ev.target).data('updated', true);
+					$('#custom_ticket_form').data('updated', true);
+				}
+				dontAjaxUpdate = false;
+			} );
+
+        });	
+	})()
+	
+	trigger_event("ticket_view_loaded",{});
 };
 
 
@@ -1195,6 +1195,8 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
+
+    trigger_event("ticket_view_unloaded",{});
 
     MergeTicketsDestructor();
 

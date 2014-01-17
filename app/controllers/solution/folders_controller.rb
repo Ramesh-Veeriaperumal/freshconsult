@@ -153,5 +153,4 @@ class Solution::FoldersController < ApplicationController
         access_denied
       end
     end
-
 end

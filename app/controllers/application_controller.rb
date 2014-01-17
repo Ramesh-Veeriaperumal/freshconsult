@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
+
   
   include AuthenticationSystem
   include HelpdeskSystem  
@@ -116,8 +117,8 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-
+ 
+ 
   def handle_error (error)
     Rails.logger.debug "API::Error  =>" + error.message
     result = {:error => error.message}
@@ -126,6 +127,7 @@ class ApplicationController < ActionController::Base
       format.json { render :json => {:errors =>result}.to_json and return } 
     end
   end
+ 
 
   def select_shard(&block)
     Sharding.select_shard_of(request.host) do 

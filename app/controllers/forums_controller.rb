@@ -62,7 +62,6 @@ class ForumsController < ApplicationController
         format.html {  render :action => 'new' }
         format.xml  {  render :xml => @forum.errors ,:status => 500}
       end
-     
     end
   end
 

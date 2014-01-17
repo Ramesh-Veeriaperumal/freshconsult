@@ -54,14 +54,14 @@ class GroupsController < Admin::AdminController
       end
      else
       respond_to do |format|
-          format.html { render :action => 'new' }
-          format.json {
-            result = {:errors=>@group.errors.full_messages }
-            render :json => result.to_json
-          }
-          format.xml {
-            render :xml =>@group.errors
-          }
+        format.html { render :action => 'new' }
+        format.json {
+          result = {:errors=>@group.errors.full_messages }
+          render :json => result.to_json
+        }
+        format.xml {
+          render :xml =>@group.errors
+        }
       end
      end
   end

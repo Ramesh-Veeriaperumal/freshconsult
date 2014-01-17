@@ -4,7 +4,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 <% if note.present? %>
 	<%= render :partial => '/helpdesk/tickets/show/note', :object => note, :locals => { :minimizable => true} %>
 <% else %>
-<div class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
+<div class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>" data-timestamp="<%= activity[:time].to_i%>"> 
 	<% if activity[:user] %>
 	<div class="avatar-wrap">
 		<%= user_avatar(activity[:user]) %>

@@ -115,7 +115,7 @@ class TopicsController < ApplicationController
     else
       respond_to do |format|  
        format.html { render :action => "edit" }
-     end  
+      end  
     end
   end
   

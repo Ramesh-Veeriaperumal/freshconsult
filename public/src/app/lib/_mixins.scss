@@ -245,12 +245,6 @@
 //--------------------------------------------------
 // Animation Mixins for cross browser compatibility
 //--------------------------------------------------
-@mixin animation($anim) {
-  -webkit-animation: $anim;
-  -moz-animation: $anim;
-  -o-animation: $anim;
-  animation: $anim;
-}
 
 @mixin animation-name($name) {
   -webkit-animation-name: $name;
@@ -335,21 +329,4 @@
   width:100%;
   margin-top:-5px;
   @include border-radius(0 0 4px 4px);
-}
-
-@-webkit-keyframes timeRotation{
-    0%{-webkit-transform:rotate(0deg)}
-    100%{-webkit-transform:rotate(360deg)}
-}
-@-moz-keyframes timeRotation{
-    0%{-moz-transform:rotate(0deg)}
-    100%{-moz-transform:rotate(360deg)}
-}
-@-ms-keyframes timeRotation{
-    0%{-moz-transform:rotate(0deg)}
-    100%{-moz-transform:rotate(360deg)}
-}
-@keyframes timeRotation{
-    0%{transform:rotate(0deg)}
-    100%{transform:rotate(360deg)}
 }

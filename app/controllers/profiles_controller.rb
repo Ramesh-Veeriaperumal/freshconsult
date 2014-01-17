@@ -2,6 +2,7 @@ class ProfilesController < ApplicationController
   
    before_filter :require_user 
    before_filter :load_user, :only => [:edit, :change_password]
+   before_filter :clean_params, :only => [:update]
    skip_before_filter :check_privilege
    include ModelControllerMethods  
 
@@ -110,5 +111,16 @@ protected
       @cname ='user'
  end
  
+ def clean_params
+  if params[:user]
+    params[:user].delete(:helpdesk_agent)
+    params[:user].delete(:role_ids)
+  end
+  if params[:agent]
+    params[:agent].delete(:user_id)
+    params[:agent].delete(:occasional)
+    params[:agent].delete(:ticket_permission)
+  end
+ end
 
 end

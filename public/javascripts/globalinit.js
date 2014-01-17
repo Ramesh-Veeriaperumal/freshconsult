@@ -6,7 +6,6 @@ is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers 
       || !!('onmsgesturechange' in window); // works on ie10
 };
-
 window.xhrPool = [];
 (function($){
     // IE 11
@@ -50,8 +49,8 @@ window.xhrPool = [];
       window.xhrPool.push(xhr);
       return xhr;
     }
+  
   }
-
   $(document).ready(function() {
     var widgetPopup = null;
     var hoverPopup =  false;
@@ -62,12 +61,6 @@ window.xhrPool = [];
     if (is_touch_device()) {
       $('html').addClass('touch');
     }
-
-    /* -- localstorage event -- */
-
-      jQuery(window).bind("storage", function (ev) {
-        trigger_event('localstorage_changed_' + ev.originalEvent.key, ev.originalEvent);
-      });
 
     //IE10
     if ($.browser.msie && parseInt($.browser.version) == 10) {
@@ -193,17 +186,19 @@ window.xhrPool = [];
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-      var $this = jQuery(this), loadDelay = parseInt($(this).data("loadDelay") || 0);
-      
-      setTimeout(function(){
-        $this.load($this.data("url"), function(){
-            $this.attr("rel", "");
-            $this.removeClass("sloading loading-small loading-block");
-            
-            if(!$this.data("loadUnique"))            
-              $this.clone().prependTo('#remote_loaded_dom_elements');
-          });
-      }, loadDelay);
+      var $this = jQuery(this)
+
+      $(this)
+        .load($(this).data("url"), function(){
+          $(this).attr("rel", "");
+          $(this).removeClass("sloading loading-small loading-block");
+          
+          if(!$this.data("loadUnique"))            
+            $(this).clone().prependTo('#remote_loaded_dom_elements');
+
+          if($this.data("extraLoadingClasses"))            
+            $(this).removeClass($this.data("extraLoadingClasses"));
+        });
     });
 
     $("input.datepicker_popover").livequery(function() {
