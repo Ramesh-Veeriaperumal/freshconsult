@@ -99,7 +99,6 @@ class Helpdesk::NotesController < ApplicationController
   
     else
       create_error
-      end
     end
   ensure
     Thread.current[:notifications] = nil
