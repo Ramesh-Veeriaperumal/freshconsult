@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
-  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
   skip_before_filter :check_privilege, :only => :show
   before_filter :portal_check, :only => :show
@@ -67,10 +66,7 @@ class Solution::FoldersController < ApplicationController
         format.json  { render :json => @folder, :status => :created }     
       else
         format.html { render :action => "new" }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Solution folder creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @folder.errors})
-        }
+        format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end
     
@@ -89,10 +85,7 @@ class Solution::FoldersController < ApplicationController
         format.json  { render :json => @folder, :status => :ok }     
       else
         format.html { render :action => "edit" }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity] 
-        format.any(:xml, :json) { 
-          api_responder({:message => "Solution folder update failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @folder.errors})
-        }
+        format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -160,19 +153,4 @@ class Solution::FoldersController < ApplicationController
         access_denied
       end
     end
-
-    def RecordNotFoundHandler
-      respond_to do |format|
-        format.html {
-          flash[:notice] = I18n.t(:'flash.folder.page_not_found')
-          redirect_to solution_categories_path
-        }
-        result = "Record Not Found"
-        http_code = Error::HttpErrorCode::HTTP_CODE[:not_found]
-        format.any(:xml, :json) {
-          api_responder({:message => result ,:http_code => http_code, :error_code => "Not found"})
-        }
-      end
-    end
-
 end

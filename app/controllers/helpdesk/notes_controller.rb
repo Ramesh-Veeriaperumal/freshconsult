@@ -98,12 +98,7 @@ class Helpdesk::NotesController < ApplicationController
       post_persist
   
     else
-      respond_to do |format|
-        format.html { redirect_to @parent }
-        http_code = Error::HttpErrorCode::HTTP_CODE[:unprocessable_entity]
-        format.any(:xml, :json) {
-          api_responder({:message => "Note Creation failed" ,:http_code => http_code, :error_code => "Unprocessable Entity", :errors => @item.errors})
-      }
+      create_error
       end
     end
   ensure
@@ -189,6 +184,10 @@ class Helpdesk::NotesController < ApplicationController
     
     def tweet?
       (!@parent.tweet.nil?) and (!params[:tweet].blank?)  and (params[:tweet].eql?("true")) 
+    end
+
+    def create_error
+      redirect_to @parent
     end
     
     def facebook?

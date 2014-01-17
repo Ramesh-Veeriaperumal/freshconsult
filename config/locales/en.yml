@@ -1325,12 +1325,7 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
-    category:
-      page_not_found: "This solution category could not be found. It might have been deleted or the URL mistyped."
-    folder:
-      page_not_found: "This solution folder could not be found. It might have been deleted or the URL mistyped."
-    article:
-      page_not_found: "This article could not be found. It might have been deleted or the URL mistyped."
+      
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
