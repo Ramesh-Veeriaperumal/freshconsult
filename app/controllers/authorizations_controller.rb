@@ -188,7 +188,11 @@ class AuthorizationsController < ApplicationController
   def create_session
     @user_session = @current_user.account.user_sessions.new(@current_user)
     if @user_session.save
-      redirect_back_or_default('/') if grant_day_pass
+      if grant_day_pass
+        #cookie set for sso login via native mobile apps
+        cookies["auth_token"] = @current_user.single_access_token
+        redirect_back_or_default('/') 
+      end
     else
       flash[:notice] = t(:'flash.g_app.authentication_failed')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
