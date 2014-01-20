@@ -41,9 +41,9 @@ class Account < ActiveRecord::Base
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
   has_many :flexifield_def_entries
   
-  has_one :data_export
-  
-  
+  has_many :data_exports
+
+  has_one :account_additional_settings
 
   has_one :account_configuration
 

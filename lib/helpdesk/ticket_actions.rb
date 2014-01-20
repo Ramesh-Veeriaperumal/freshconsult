@@ -88,7 +88,7 @@ module Helpdesk::TicketActions
     # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
       # params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
-      flash[:notice] = t("export_data.mail.info")
+      flash[:notice] = t("export_data.ticket_export.info")
       redirect_to helpdesk_tickets_path
     # else
     #   csv_tickets_string = Helpdesk::TicketsExport.perform(params)

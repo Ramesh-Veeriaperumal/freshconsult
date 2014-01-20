@@ -1329,6 +1329,8 @@ en:
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
+  export_data_running: Currently one data export is running. Please try again later!
+  export_file_not_available: The content you are looking for is, not available!
   import_topics: Topics
   assigned_to: Assigned to
   change: Change
@@ -3566,11 +3568,13 @@ en:
     closed_at: Closed time
     from: From
     to: To
-    mail:
+    data_backup:
+      body: Your data export is ready for download.
+    no_tickets_mail:
+      body: Seems like there are no tickets in the provided date range.
+    ticket_export:
       info: Your Ticket data will be sent to your email shortly!
-      subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
-      csv_body: Please find the CSV file attached.
-      xls_body: Please find the Excel file attached.
+      body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"  
   sla:
     minutes: Mins
     hours: Hrs
