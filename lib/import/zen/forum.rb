@@ -193,14 +193,16 @@ end
     desc_html = Nokogiri::HTML(CGI.unescapeHTML(body))
     desc_html.search('img').each do |img_tag|
       unless URL_REGEX.match img_tag['src']
-        attachment = @current_account.attachments.build(
-                                            :content => inline_file(img_tag['src']), 
-                                            :description => "public",
-                                            :attachable_type => "Image Upload", 
-                                            :account_id => @current_account.id
-                                            )
-        attachment.save!
-        img_tag['src'] = attachment.content.url
+        if img_tag['src'].start_with?("/attachments")
+          attachment = @current_account.attachments.build(
+                                              :content => inline_file(img_tag['src']), 
+                                              :description => "public",
+                                              :attachable_type => "Image Upload", 
+                                              :account_id => @current_account.id
+                                              )
+          attachment.save!
+          img_tag['src'] = attachment.content.url
+        end
       end
     end
     desc_html.to_s
