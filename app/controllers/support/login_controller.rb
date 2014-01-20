@@ -33,6 +33,7 @@ class Support::LoginController < SupportController
 			#Unable to put 'grant_day_pass' in after_filter due to double render
 		else
 			note_failed_login
+			handle_deleted_user_login
 			set_portal_page :user_login
 			render :action => :new
 		end
@@ -42,6 +43,16 @@ class Support::LoginController < SupportController
 		def note_failed_login
 			user_info = params[:user_session][:email] if params[:user_session]
 			logger.warn "Failed login for '#{user_info.to_s}' from #{request.remote_ip} at #{Time.now.utc}"
+	    end
+
+	    def handle_deleted_user_login
+	    	unless params[:user_session] && (params[:user_session][:email].blank? || params[:user_session][:password].blank?)
+	    		login_user = current_account.all_users.find_by_email(params[:user_session][:email])
+	    		if !login_user.nil? && login_user.deleted?
+		    		@user_session.errors.clear
+					@user_session.errors.add_to_base(I18n.t("activerecord.errors.messages.contact_admin"))
+				end
+	    	end
 	    end
 
 	    def remove_old_filters
