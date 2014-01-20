@@ -93,7 +93,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
-        return true if privilege?(:manage_account)
+        return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
       end         
 
     end

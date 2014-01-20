@@ -90,4 +90,5 @@ class User < ActiveRecord::Base
   delegate :available_on_phone?, :to => :freshfone_user, :allow_nil => true
 
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
+  has_many :data_exports
 end

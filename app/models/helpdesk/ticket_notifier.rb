@@ -108,40 +108,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
   end
 
-  def export(params, string_csv, recipient)
-    subject       formatted_export_subject(params).to_s + " -- " + Account.current.full_domain.to_s
-    recipients    recipient.email
-    body          :user => recipient
-    from          AppConfig['from_email']
-    #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
-    bcc           "reports@freshdesk.com"
-    sent_on       Time.now
-    content_type  "multipart/alternative"
-
-    attachment    :content_type => 'text/csv; charset=utf-8; header=present', 
-                  :body => string_csv, 
-                  :filename => 'tickets.csv'
-
-    content_type  "text/html"
-  end
-
-  def export_xls(params, xls_string, recipient)
-    subject       formatted_export_subject(params).to_s + " -- " + Account.current.full_domain.to_s
-    recipients    recipient.email
-    body          :user => recipient
-    from          AppConfig['from_email']
-    #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
-    bcc           "reports@freshdesk.com"
-    sent_on       Time.now
-    content_type  "multipart/alternative"
-
-    attachment    :content_type => 'text/xls; charset=utf-8; header=present', 
-                  :body => xls_string, 
-                  :filename => 'tickets.xls'
-
-    content_type  "text/html"
-  end
- 
   def reply(ticket, note , options={})
 
     options = {} unless options.is_a?(Hash) 
