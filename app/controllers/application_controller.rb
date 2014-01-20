@@ -18,7 +18,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
 
-  rescue_from Exception, :with => :generic_error
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
