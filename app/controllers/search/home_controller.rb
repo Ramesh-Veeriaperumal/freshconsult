@@ -137,6 +137,7 @@ class Search::HomeController < ApplicationController
         end
       end
       @search_results = @items.results
+      params[:search_key].gsub!(/\\/,'')
       process_results unless is_native_mobile?
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
@@ -158,7 +159,7 @@ class Search::HomeController < ApplicationController
     @searched_topics    = results['Topic']
     @searched_notes     = results['Helpdesk::Note']
     
-    @search_key = params[:search_key].gsub(/\\/,'')
+    @search_key = params[:search_key]
     @total_results = @items.results.size
 
     rescue Exception => e
