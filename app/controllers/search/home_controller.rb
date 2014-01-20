@@ -45,7 +45,7 @@ class Search::HomeController < ApplicationController
   def ticket_search
     items = []
     if params[:search_method] == 'with_subject'
-      Search::EsIndexDefinition.es_cluster(current_account.id)
+      Search::EsIndexDefinition.es_cluster(current_account.id, true)
           options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
           es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
             search.query do |query|
@@ -100,7 +100,7 @@ class Search::HomeController < ApplicationController
     begin
       @total_results = 0
       if privilege?(:manage_tickets)
-        Search::EsIndexDefinition.es_cluster(current_account.id)
+        Search::EsIndexDefinition.es_cluster(current_account.id, true)
         options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
         @items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|

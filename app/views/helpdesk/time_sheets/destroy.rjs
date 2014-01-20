@@ -1,20 +1,9 @@
 page << pushToIntegratedAppsWithoutLoading(@time_entry, :delete)
 page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){ 
-			jQuery(this).remove(); totalTime('#timesheetlist .time-text', '#timeentry_timer_total'); 
-			jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();
-			jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
-		});"
-
+                        jQuery(this).remove(); totalTime('#timesheetlist .time', '#timeentry_timer_total'); 
+                        jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();
+                        jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
+                });"
+page << "trigger_event('time_entry_deleted', #{@time_entry.attributes.to_json})" 
 # to_json function CANNOT be called directly here because the time_entry has been "destroy"ed already, 
 # the variable is nothing but a frozen hash.
-page << "trigger_event('time_entry_deleted', #{@time_entry.attributes.to_json})" 
-
-clear_view_timers(page, @time_entry, @time_cleared)
-
-if @time_entry.user_id == current_user.id
-	page << "if(getFromLocalStorage('timeRunning').id == #{@time_entry.id}){
-				update_localstorage(#{@time_entry.id}, false);
-				jQuery('#header_timer').empty();
-			}"
-end
-

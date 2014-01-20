@@ -72,14 +72,6 @@
 				<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}".html_safe, logout_path, :class => "link" %>
 			</div>                                                             
 		<% end %>
-		<% if feature?(:timesheets) and privilege?(:view_time_entries) %>
-		<%= include_cloudfront_js :timesheet %>
-			<div id="header_timer" rel="remote-load" 
-				 data-url="/helpdesk/time_sheets/header_timer" 
-				 data-load-delay="1000"
-				 data-load-unique="true">
-			</div>
-		<% end %>
 	</div>
   </div>
 	<div class="top_nav_bg"> 
