@@ -14,8 +14,8 @@ class Search::Notes::DeleteNotesIndex
     end
    end
    index_alias = Search::EsIndexDefinition.searchable_aliases([Helpdesk::Note], Account.current.id).to_s
-   Search::EsIndexDefinition.es_cluster(args[:account_id], args[:aws_cluster])
+   Search::EsIndexDefinition.es_cluster(args[:account_id])
    index = Tire.index(index_alias)
-   Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}" if Tire.index(index_alias).exists?
+   Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
   end
 end
