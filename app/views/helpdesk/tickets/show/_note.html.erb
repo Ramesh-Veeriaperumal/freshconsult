@@ -85,7 +85,7 @@ minimizable ||= false
 				<div class="attachments-wrap clearfix">
 					<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 					<ul class="attachment_list">
-                      <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
+                      <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item],:note_id => note.id } %>
 
 					    <%note.dropboxes.each do |dropbox| %> 
 							<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@item] } %>

@@ -411,7 +411,7 @@
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :attachments
+    helpdesk.resources :attachments, :member => { :unlink_shared => :delete }
     helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
