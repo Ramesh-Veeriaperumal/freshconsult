@@ -47,8 +47,10 @@ def delete_zip_file
   end
   def import_files_from_zendesk base_dir      
     file_arr = Array.new       
-    file_arr.push("categories.xml")
+    # file_arr.push("categories.xml")
     file_arr.push("ticket_fields.xml")  
+    # This is still using API v1, which has been deprecated on Nov 2012
+    # We have to CHANGE this.
     import_file base_dir,file_arr     
   end
 
@@ -73,7 +75,8 @@ def import_file base_dir, file_arr
     when Net::HTTPSuccess, Net::HTTPRedirection
        File.open(file_path, 'w') {|f| f.write(res.body) }      
     else 
-      raise ArgumentError, "Unable to connect zendesk" 
+      NewRelic::Agent.notice_error("#{res.body}")
+      raise ArgumentError, "Unable to connect zendesk :: #{res.body}" 
     end
   end
   
