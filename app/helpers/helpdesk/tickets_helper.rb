@@ -404,6 +404,11 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["faye_host"]}"
   end
 
+  def attachment_unlink_path(attachment, note_id = nil)
+    (attachment.attachable_type != "Account" or note_id.blank?) ?
+            helpdesk_attachment_path(attachment) : 
+            unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
+  end
 end
 
 def to_event_data_scenario(va_rule)
