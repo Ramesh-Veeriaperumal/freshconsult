@@ -449,14 +449,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       #Sanitizing the original msg   
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
-        remove_identifier_span(sanitized_org_msg)
-        original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
+        unless sanitized_org_msg.blank?
+          remove_identifier_span(sanitized_org_msg)
+          original_msg = sanitized_org_msg.inner_html
+        end
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        remove_identifier_span(sanitized_old_msg)
-        old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
+        unless sanitized_old_msg.blank? 
+          remove_identifier_span(sanitized_old_msg)
+          old_msg = sanitized_old_msg.inner_html 
+        end
       end
         
       full_text = original_msg
