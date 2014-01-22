@@ -19,7 +19,7 @@
 				<ul class="dropdown-menu" role="menu" id="ca_new_menu" aria-labelledby="CaLabel">
 					<% @ca_res_folders.each do |folds| %>
 					<li>
-						<a id="folder<%= folds.id %>" href= "<%= admin_canned_responses_folders_path %>/<%= folds.id %>" data-folder="<%= folds.id %>" data-pjax="#responses"
+						<a id="folder<%= folds.id %>" href= "<%= admin_canned_responses_folders_path %>/<%= folds.id %>" data-folder="<%= folds.id %>" data-pjax="#body-container"
 						data-name="<%= folds.name %>"
 						class="catch js-pjax <%= "default-folder" unless !folds.is_default %>"><%= folds.name %> (<%= current_account.canned_responses.count(:conditions => {:folder_id => folds.id}) %>)</a>
 					</li>
