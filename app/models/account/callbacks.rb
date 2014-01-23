@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
   after_destroy :remove_shard_mapping
 
   after_commit_on_create :add_to_billing, :enable_elastic_search
-  after_commit_on_update :clear_cache
+  after_commit_on_update :clear_cache, :clear_api_limit_cache
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
 
 

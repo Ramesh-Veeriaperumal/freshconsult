@@ -4,6 +4,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include MemcacheKeys
   
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser"] 
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
@@ -17,10 +18,17 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   def allowed?
     begin
-      return true if by_pass_throttle?
-      remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
-      @count = get_others_redis_key(key).to_i
-      return max_per_hour > @count
+      Sharding.select_shard_of(@account_id) do 
+        current_account = Account.find(@account_id)
+        key = API_LIMIT% {:account_id => @account_id}
+        api_limit = MemcacheKeys.fetch(key) do
+          current_account.api_limit.to_i
+        end
+        return true if by_pass_throttle?
+        remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
+        @count = get_others_redis_key(key).to_i
+        return api_limit > @count
+      end
     rescue Exception => e
       true
     end
@@ -31,7 +39,9 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
     @sub_domain = @host.split(".")[0]
-
+    domain = DomainMapping.find_by_domain(env["HTTP_HOST"])
+    return [@status, @headers, @response] if domain.nil? && !Rails.env.development?
+    @account_id =  Rails.env.development? ? Account.first.id : domain.account_id  
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?

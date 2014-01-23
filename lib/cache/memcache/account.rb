@@ -21,6 +21,11 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
   end
 
+  def clear_api_limit_cache
+    key = API_LIMIT % {:account_id => self.id }
+    MemcacheKeys.delete_from_cache key
+  end
+
   def main_portal_from_cache
     key = ACCOUNT_MAIN_PORTAL % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.main_portal }

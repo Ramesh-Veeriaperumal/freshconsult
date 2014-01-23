@@ -185,7 +185,8 @@ class Account < ActiveRecord::Base
 
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
-  delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
+  delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, 
+           :pass_through_enabled, :api_limit, :to => :account_additional_settings
 
   has_many :subscription_events 
 

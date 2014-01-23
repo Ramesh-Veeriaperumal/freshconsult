@@ -69,6 +69,8 @@ module MemcacheKeys
   ACCOUNT_AGENT_NAMES = "AGENT_NAMES:%{account_id}"
 
   GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
+
+  API_LIMIT = "v1/API_LIMIT:%{account_id}"
   
   class << self
 
