@@ -98,19 +98,17 @@
 <div id="tickets-expanded" class="contact_tickets row-fluid">
 	<div class="detailed_view">
 		<h4 class="title"><%=t('contacts.info4',:nick_name => h(@customer.name)).html_safe%></h4>
-		<% if (@customer.tickets.blank?) %>
+		<% if (@customer_tickets.blank?) %>
 		<%= "#{t('company.info7')}" %>
 		<% else %>
 		<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
 		<table class="tickets" id="tickets_view" width="100%">	
 			<tbody id="view_tickets">
-				
-				<% @customer.tickets.visible.newest(5).each do |ticket| %>
-				<%= render :partial => "/helpdesk/shared/expanded/ticket.html", :object => ticket, :inline => true, :locals => { :user_page => false } %>
-				<% end %>
+				<%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @customer_tickets, :inline => true, 
+				    :locals => { :user_page => false } %>
 			</tbody>
 		</table>
-		<% if @customer.tickets.visible.size > 5 %>
+		<% if @total_customer_tickets.size > 5 %>
 		<div class="more_results">
 			<%= link_to t('contacts.show_more',:nick_name => h(@customer.name)).html_safe, helpdesk_customer_filter_path(:customer_id => @customer.id) , :id => "show_more" %>
 		</div>

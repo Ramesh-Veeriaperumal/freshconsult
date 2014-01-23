@@ -32,9 +32,11 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.xml
   def show
-
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { 
+        @total_customer_tickets = current_account.tickets.permissible(current_user).all_company_tickets(@customer.id).visible
+        @customer_tickets = @total_customer_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+      }
       format.xml  { render :xml => @customer }
       format.json {render :json=> @customer.to_json}
     end
