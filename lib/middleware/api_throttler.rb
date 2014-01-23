@@ -20,8 +20,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     begin
       Sharding.select_shard_of(@account_id) do 
         current_account = Account.find(@account_id)
-        key = API_LIMIT% {:account_id => @account_id}
-        api_limit = MemcacheKeys.fetch(key) do
+        api_key = API_LIMIT% {:account_id => @account_id}
+        api_limit = MemcacheKeys.fetch(api_key) do
           current_account.api_limit.to_i
         end
         return true if by_pass_throttle?
