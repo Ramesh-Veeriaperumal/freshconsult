@@ -3,6 +3,8 @@ class Agent < ActiveRecord::Base
   belongs_to_account
   include Cache::Memcache::Agent
 
+  before_destroy :remove_escalation
+
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
   accepts_nested_attributes_for :user
@@ -100,6 +102,15 @@ class Agent < ActiveRecord::Base
   def next_level
     return unless points?
     user.account.scoreboard_levels.next_level_for_points(points).first
+  end
+
+  def remove_escalation                                        
+    Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
+    clear_group_cache
+end
+
+  def clear_group_cache
+    MemcacheKeys.delete_from_cache(ACCOUNT_GROUPS % { :account_id =>self.account_id })
   end
 
   def as_json(options={})
