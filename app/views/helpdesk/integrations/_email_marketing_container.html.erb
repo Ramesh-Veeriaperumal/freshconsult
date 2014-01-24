@@ -35,7 +35,7 @@
 
 <% javascript_tag do %>
 	displayAsModal = function(app) {
-		var contact_title = cw.title[app.toLowerCase()] || "<%= contact.name %>";
+		var contact_title = "<%= contact.name %>";
 		jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');
 	  jQuery('#' + app.toLowerCase() + '_widget').dialog({ 
       show: "slide",

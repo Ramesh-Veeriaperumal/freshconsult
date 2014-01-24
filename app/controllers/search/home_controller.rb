@@ -45,7 +45,7 @@ class Search::HomeController < ApplicationController
   def ticket_search
     items = []
     if params[:search_method] == 'with_subject'
-      Search::EsIndexDefinition.es_cluster(current_account.id, true)
+      Search::EsIndexDefinition.es_cluster(current_account.id)
           options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
           es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
             search.query do |query|
@@ -100,7 +100,7 @@ class Search::HomeController < ApplicationController
     begin
       @total_results = 0
       if privilege?(:manage_tickets)
-        Search::EsIndexDefinition.es_cluster(current_account.id, true)
+        Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
         @items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|
@@ -137,6 +137,7 @@ class Search::HomeController < ApplicationController
         end
       end
       @search_results = @items.results
+      params[:search_key].gsub!(/\\/,'')
       process_results unless is_native_mobile?
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
@@ -158,7 +159,7 @@ class Search::HomeController < ApplicationController
     @searched_topics    = results['Topic']
     @searched_notes     = results['Helpdesk::Note']
     
-    @search_key = params[:search_key].gsub(/\\/,'')
+    @search_key = params[:search_key]
     @total_results = @items.results.size
 
     rescue Exception => e

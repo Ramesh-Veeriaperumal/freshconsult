@@ -15,12 +15,8 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
     @ca_responses = @ca_res_folder.canned_responses
     respond_to do |format|
       format.html { 
-        if request.headers['X-PJAX']
-          render :partial => 'show'
-        else
-          @ca_res_folders = scoper.all
-          render :index
-        end 
+        @ca_res_folders = scoper.all
+        render :index
       }
       format.js
     end

@@ -37,12 +37,15 @@ class Integrations::ApplicationsController < Admin::AdminController
             @salesforce_config=Hash.new
             @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
             @salesforce_config['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            render :partial => "integrations/applications/salesforce_fields",:layout=>"application" and return
+            @salesforce_config['account_fields'] = fetch_sf_account_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            render :partial => "integrations/applications/salesforce_fields",:layout=> ( request.headers['X-PJAX'] ? 'maincontent' : 'application' ) and return
           else
             config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
             config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
+            config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
             config_hash['contact_labels'] = params['contact_labels']
             config_hash['lead_labels'] = params['lead_labels']
+            config_hash['account_labels'] = params['account_labels']
           end
         end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)

@@ -58,7 +58,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
-    id ? "#{id}-#{title.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
+    id ? "#{id}-#{title[0..100].rpartition(" ").first.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
   end
 
   def nickname
@@ -80,7 +80,7 @@ class Solution::Article < ActiveRecord::Base
   def self.suggest(ticket, search_by)
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     begin
-      Search::EsIndexDefinition.es_cluster(ticket.account_id, true)
+      Search::EsIndexDefinition.es_cluster(ticket.account_id)
       options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
       item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account_id), options do |search|
         search.query do |query|

@@ -29,13 +29,21 @@ namespace :sla do
           accounts_queued += 1
         end
       end
-      redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-      $stats_redis.set(redis_key, accounts_queued)
-      $stats_redis.expire(redis_key, 144000)
+      begin
+        redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
+        $stats_redis.set(redis_key, accounts_queued)
+        $stats_redis.expire(redis_key, 144000)
+      rescue => e
+        puts "Error while recording SLA stats : #{e.message}"          
+      end
     else
-      redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-      $stats_redis.set(redis_key, "skipped")
-      $stats_redis.expire(redis_key, 144000)
+      begin
+        redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
+        $stats_redis.set(redis_key, "skipped")
+        $stats_redis.expire(redis_key, 144000)
+      rescue => e
+        puts "Error while recording SLA stats : #{e.message}"          
+      end
     end
     puts "SLA rule check finished at #{Time.zone.now}."
   end

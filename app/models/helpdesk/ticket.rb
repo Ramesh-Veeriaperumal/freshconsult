@@ -305,7 +305,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def time_tracked_hours
-    seconds = time_tracked
+    hhmm(time_tracked)
+  end
+
+  def first_res_time_bhrs
+    hhmm(self.first_resp_time_by_bhrs)
+  end
+
+  def resolution_time_bhrs
+    hhmm(self.resolution_time_by_bhrs)
+  end
+
+  def hhmm(seconds)
+    seconds = 0 if seconds.nil?
     hh = (seconds/3600).to_i
     mm = ((seconds % 3600) / 60).to_i
     "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}"

@@ -65,6 +65,7 @@
   
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
   
+  map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
 
@@ -410,7 +411,7 @@
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :attachments
+    helpdesk.resources :attachments, :member => { :unlink_shared => :delete }
     helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end

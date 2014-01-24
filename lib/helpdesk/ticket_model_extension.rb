@@ -19,7 +19,12 @@ module Helpdesk::TicketModelExtension
       {:label => "Closed Time", :value => "closed_at", :selected => false},
       {:label => "Last Updated Time", :value => "updated_at", :selected => false},
       {:label => "Initial Response Time", :value => "first_response_time", :selected => false},
-      {:label => "Time Tracked", :value => "time_tracked_hours", :selected => false}
+      {:label => "Time Tracked", :value => "time_tracked_hours", :selected => false},
+      {:label => "First Response Time (in Hrs)", :value => "first_res_time_bhrs", :selected => false},
+      {:label => "Resolution Time (in Hrs)", :value => "resolution_time_bhrs", :selected => false},
+      {:label => "Agent interactions", :value => "outbound_count", :selected => false},
+      {:label => "Customer interactions", :value => "inbound_count", :selected => false}
+
      ]
    end
 

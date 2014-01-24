@@ -6,9 +6,9 @@ class Search::Notes::RestoreNotesIndex
   def self.perform(args)
     tickets = Account.current.tickets.find(args[:ticket_id])
     tickets.notes.exclude_source('meta').each do |note|
-      Search::EsIndexDefinition.es_cluster(note.account_id, args[:aws_cluster])
+      Search::EsIndexDefinition.es_cluster(note.account_id)
       note.class.index_name note.search_alias_name
-      note.tire.update_index_es if Tire.index(note.search_alias_name).exists?
+      note.tire.update_index_es
     end
   end
 end

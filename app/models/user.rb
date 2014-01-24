@@ -503,6 +503,14 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:customer_id)
     end
 
+    def privileges_updated?
+      @all_changes.has_key?(:privileges)
+    end
+
+    def company_info_updated?
+      customer_id_updated? or privileges_updated?
+    end
+
     def clear_redis_for_agent
       return unless deleted_changed? || agent?
       self.agent_groups.each do |ag|

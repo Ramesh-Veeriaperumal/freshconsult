@@ -15,9 +15,9 @@ class Search::EsIndexDefinition
     Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
   end
 
-	def create_es_index(index_name = DEFAULT_CLUSTER, aws_cluster=false)
+	def create_es_index(index_name = DEFAULT_CLUSTER)
     index_hash(index_name).each do |key, value|
-      create_model_index(value, key, aws_cluster)
+      create_model_index(value, key)
     end
 	end
 
@@ -208,9 +208,9 @@ class Search::EsIndexDefinition
   		}
 	end
 
-  def create_model_index(index_name, model_mapping, aws_cluster=false)
+  def create_model_index(index_name, model_mapping)
   	sandbox(0) {
-      Search::EsIndexDefinition.es_cluster_by_prefix(index_name, aws_cluster)
+      Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
       Tire.index(index_name) do
         create(
           :settings => {
@@ -249,9 +249,9 @@ class Search::EsIndexDefinition
     res_aliases
   end
   
-  def create_aliases(account_id, aws_cluster=false)
+  def create_aliases(account_id)
     sandbox(0) {
-      pre_fix = Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
       actions = []
       index_hash(pre_fix).each do |model, index_name|
         operation = { :index => index_name, :alias => "#{model}_#{account_id}" }
@@ -266,9 +266,9 @@ class Search::EsIndexDefinition
     }
   end
 
-  def remove_aliases(account_id, aws_cluster=false)
+  def remove_aliases(account_id)
     sandbox(0) {
-      pre_fix = Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
       actions = []
       index_hash(pre_fix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
@@ -282,9 +282,9 @@ class Search::EsIndexDefinition
     }
   end
 
-  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER, aws_cluster=false)
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER)
     sandbox(0) {
-      Search::EsIndexDefinition.es_cluster(account_id, aws_cluster)
+      Search::EsIndexDefinition.es_cluster(account_id)
       old_index_hash = index_hash(old_index_prefix)
       index_hash(new_index_prefix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
@@ -298,17 +298,15 @@ class Search::EsIndexDefinition
     }
   end
 
-  def es_cluster(account_id, aws_cluster=false)
+  def es_cluster(account_id)
     index = (account_id <= 55000) ? 0 : 1
-    config_url = aws_cluster ? Es_aws_urls[index] : Es_urls[index]
-    Tire.configure { url config_url }
+    Tire.configure { url Es_aws_urls[index] }
     CLUSTER_ARR[index]
   end
 
-  def es_cluster_by_prefix(index_prefix, aws_cluster=false)
+  def es_cluster_by_prefix(index_prefix)
     CLUSTER_ARR.each_with_index do |prefix,i|
-      config_url = aws_cluster ? Es_aws_urls[i] : Es_urls[i]
-      return Tire.configure { url config_url } if index_prefix.include? prefix
+      return Tire.configure { url Es_aws_urls[i] } if index_prefix.include? prefix
     end
   end
 

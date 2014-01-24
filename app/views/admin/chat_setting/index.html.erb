@@ -53,7 +53,7 @@
 					<li class="inline-field">
 					  	<label class="caption"><%=t('freshchat.window_offset')%></label> 
 						<div class="fields">
-							<label><input type="text" placeholder="10" name="window_offset" id="window_offset" value="<%=(@chat.preferences != nil)? @chat.preferences['window_offset'] : "40"%>"><span class="sublabel">px</span>
+							<label><input type="text" placeholder="40" name="window_offset" id="window_offset" value="<%=(@chat.preferences != nil)? @chat.preferences['window_offset'] : "40"%>"><span class="sublabel">px</span>
 							</label>
 							<label id="window_offset_error_msg" class="error" style="display:none;"><%=t('freshchat.window_offset_error_msg')%></label>
 						</div>

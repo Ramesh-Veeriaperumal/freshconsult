@@ -50,15 +50,6 @@ namespace :freshdesk_tire do
         $ rake freshdesk_tire:multi_class_import ACCOUNT_ID='Id/Ids' CLASS='Article'
   DESC
 
-  aws_migration_comment = <<-DESC
-    - Aws migration task aborted!!!
-
-      * Minimum number of account ids to be specified = 1
-      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
-        in the ACCOUNT_ID variable
-        $ rake freshdesk_tire:aws_migration ACCOUNT_ID='Id/Ids'
-  DESC
-
   desc 'Create elasticsearch index and import data to index'
 
   task :create_index  => :environment do
@@ -79,9 +70,7 @@ namespace :freshdesk_tire do
       Sharding.run_on_slave do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
-          aws_cluster = true if ENV['AWS_CLUSTER'] == 'true'
-          aws_cluster ||= false
-          Search::EsIndexDefinition.es_cluster(account.id, aws_cluster)
+          Search::EsIndexDefinition.es_cluster(account.id)
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
@@ -117,16 +106,6 @@ namespace :freshdesk_tire do
     end
     es_account_ids = ENV['ACCOUNT_ID'].split(',')
     init_partial_reindex(es_account_ids)
-  end
-
-  task :aws_migration => :environment do
-    begin
-      puts generic_comment
-      es_account_ids = ENV['ACCOUNT_ID'].split(',')
-      init_aws_migration(es_account_ids)
-    rescue
-      puts '='*100, ' '*45+'USAGE', '='*100, aws_migration_comment, ""
-    end
   end
 end
 
@@ -175,30 +154,6 @@ def init_partial_reindex(es_account_ids)
     Account.reset_current_account
   end
   end
-end
-
-def init_aws_migration(es_account_ids)
-  klasses = ENV['CLASS']
-  existing_accounts = Array.new
-  es_account_ids.each do |account_id|
-    Sharding.select_shard_of(account_id) do
-    account = Account.find_by_id(account_id)
-    next if account.nil? or account.es_enabled_account.nil?
-    account.make_current
-    if account.es_enabled_account.imported
-      Search::EsIndexDefinition.create_aliases(account_id.to_i, true)
-      ENV['CLASS'] = import_classes(account_id, klasses)
-      ENV['ACCOUNT_ID'] = account_id.to_s
-      ENV['AWS_CLUSTER'] = 'true'
-      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']} AWS_CLUSTER=#{ENV['AWS_CLUSTER']}")
-    else
-      puts '='*100, ' '*10+"Import already running for Account ID: #{account_id}. Cancelled aws_migration for Account: #{account_id}", '='*100, ""
-      existing_accounts.push(account_id)
-    end
-    Account.reset_current_account
-   end
-  end
-  puts '='*100, ' '*10+"Import already running for following accounts: #{existing_accounts.inspect}. Please check for any running instance of import for this account", '='*100, "" unless existing_accounts.blank?
 end
 
 def import_classes(id, klasses)

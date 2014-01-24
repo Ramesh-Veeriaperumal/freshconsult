@@ -6,6 +6,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   before_filter :check_download_permission, :only => [:show]  
   before_filter :check_destroy_permission, :only => [:destroy]
   before_filter :set_native_mobile, :only => [:show]
+  before_filter :load_shared, :only => [:unlink_shared]
   def show
     style = params[:style] || "original"
     redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
@@ -32,8 +33,15 @@ class Helpdesk::AttachmentsController < ApplicationController
 
     @item || raise(ActiveRecord::RecordNotFound)
   end
-  
-  
+
+  def unlink_shared
+    if can_unlink?
+      @item.destroy
+      flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
+    else
+      access_denied
+    end
+  end
 
   protected
   
@@ -64,6 +72,13 @@ class Helpdesk::AttachmentsController < ApplicationController
      
    end
    
+    def load_shared
+      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:note_id], :conditions=>["attachment_id=?", params[:id]])
+    end
+
+    def can_unlink?
+      privilege?(:manage_tickets) and ['Helpdesk::Note'].include? @item.shared_attachable_type
+    end
 
     def check_download_permission      
       access_denied unless can_download?      
@@ -93,7 +108,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
-        return true if privilege?(:manage_account)
+        return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
       end         
 
     end

@@ -8,15 +8,6 @@ module Helpdesk::NotifierFormattingMethods
     "Fwd: #{encoded_ticket_id(ticket)} #{ticket.subject}"
   end
 
-  def formatted_export_subject(params)
-    filter = "export_data.#{params[:ticket_state_filter]}"
-    filter = I18n.t(filter)
-    I18n.t('export_data.mail.subject',
-            :filter => filter,
-            :start_date => params[:start_date].to_date, 
-            :end_date => params[:end_date].to_date)
-  end
-
   def generate_body_html(html, inline_attachments, account)
     html_part = Nokogiri::HTML(html)
     if html_part.at_css('img.inline-image')

@@ -193,22 +193,26 @@ end
     desc_html = Nokogiri::HTML(CGI.unescapeHTML(body))
     desc_html.search('img').each do |img_tag|
       unless URL_REGEX.match img_tag['src']
-        attachment = @current_account.attachments.build(
-                                            :content => inline_file(img_tag['src']), 
-                                            :description => "public",
-                                            :attachable_type => "Image Upload", 
-                                            :account_id => @current_account.id
-                                            )
-        attachment.save!
-        img_tag['src'] = attachment.content.url
+        if img_tag['src'].start_with?("/attachments")
+          image_url = "#{params[:zendesk][:url]}#{img_tag['src']}"
+          begin
+            file = RemoteFile.new(image_url, username, password)
+            attachment = @current_account.attachments.build(
+                                                          :content => file, 
+                                                          :description => "public",
+                                                          :attachable_type => "Image Upload", 
+                                                          :account_id => @current_account.id
+                                                          )
+            attachment.save!
+            img_tag['src'] = attachment.content.url
+          rescue => e
+            puts "Attachment exceed the limit!"
+            NewRelic::Agent.notice_error(e)
+          end
+        end
       end
     end
     desc_html.to_s
-  end
-
-  def inline_file url
-    image_url = "#{params[:zendesk][:url]}#{url}"
-    RemoteFile.new(image_url, username, password)
   end
 
 end

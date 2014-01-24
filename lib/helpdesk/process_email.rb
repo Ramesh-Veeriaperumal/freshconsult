@@ -209,6 +209,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_email_body(account)
       return ticket if can_be_added_to_ticket?(ticket, user)
+      ticket = ticket_from_id_span(account)
+      return ticket if can_be_added_to_ticket?(ticket, user)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)            
@@ -289,6 +291,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
       unless display_span.blank?
         display_id = display_span.last.inner_html
+        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
+    end
+
+    def ticket_from_id_span(account)
+      parsed_html = Nokogiri::HTML(params[:html])
+      display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        display_span.last.remove
+        params[:html] = parsed_html.inner_html
         return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
       end
     end
@@ -436,14 +449,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       #Sanitizing the original msg   
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
-        remove_identifier_span(sanitized_org_msg)
-        original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
+        unless sanitized_org_msg.blank?
+          remove_identifier_span(sanitized_org_msg)
+          original_msg = sanitized_org_msg.inner_html
+        end
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        remove_identifier_span(sanitized_old_msg)
-        old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
+        unless sanitized_old_msg.blank? 
+          remove_identifier_span(sanitized_old_msg)
+          old_msg = sanitized_old_msg.inner_html 
+        end
       end
         
       full_text = original_msg
