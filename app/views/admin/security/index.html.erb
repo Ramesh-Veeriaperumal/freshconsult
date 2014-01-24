@@ -2,145 +2,186 @@
 	<%= render :partial => "helpnote" %>
 <% end %>
 <%= content_tag(:h3, t(".security_title"), :class => "lead") %>
+<% if @account.sso_enabled?
+    sso_type = @account.sso_options.key?(:sso_type) ? @account.sso_options[:sso_type].to_s.to_sym : :simple  # default to simple for sso_enabled cases ( case for sso enabled accounts in prod )
+  else
+    sso_type = :none
+  end%>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
-	<%= f.error_messages %>
-	<ul class="security-form">
-		<li class="inline-field">
-		  <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%=t(".enable_sso")%> </span>
-		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data extra_tabbed" ) %>
-			<div class="info-data extra_tabbed"  id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">				
-				<ul class="ui-form-inline">
-					<li>
-						<%= f.label :shared_secret, t('.shared_secret') %>
-						<%= content_tag( :div, t(".shared_secret_info"), :class => "info-data" ) %>
-						<%= content_tag( :div, @account.shared_secret, :class => "highlight-textbox-info" ) %>
-						<%= f.hidden_field :shared_secret, :value => @account.shared_secret, :class => "text", :disabled => true %>						
-					</li>
-					<% f.fields_for :sso_options, @account.sso_options do |p| %>
-						<li>
-							<%= p.label :login_url, t('.remote_login_url') %>
-							<%= content_tag( :div, t(".remote_login_url_info"), :class => "info-data" ) %>
-							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text" %>
-						</li>
-						<li>
-							<%= p.label :logout_url, t('.remote_logout_url') %>
-							<%= content_tag( :div, t(".remote_logout_url_info"), :class => "info-data" ) %>
-							<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :size => 50, :class => "text" %>
-						</li>
-					<% end %>
-				</ul>
-			</div>
-		</li>
-		<li>
-			<%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%= t('.enable_SSL') %> </span>
-			<% content_tag( :div, :class => "info-data extra_tabbed" ) do %>
-				<p>
-					<%= t(".enable_SSL_anon") %>
-				</p>
-				<span class="warning">
-				<% if current_account.ssl_enabled? %>
-					<% if current_portal.main_portal? && !(current_account.main_portal.portal_url.blank?) && !(feature?(:custom_ssl)) %>
-						<%= t(".customer_portal_ssl_warning") + current_account.full_domain + " to avoid SSL errors" %>
-					<%end%> 
-					<%if !current_portal.main_portal?%>
-						<%= t(".multiple_product_ssl_warning") %>
-					<%end%>
-				<%end%>
-				</span>
-			<% end %>
-		</li>
-		<span>
-			<% if current_portal.main_portal && feature?(:custom_ssl) %>
-				<% if @custom_ssl_requested == 0 && !@portal.elb_dns_name? %>
-					<div class="extra_tabbed">
-						<%= link_to_function t(".request_custom_ssl"), :id => "custom_ssl_link" %>
-						<div class="custom_ssl_form hide">
-							<p class="muted"><%= t(".ssl_info").html_safe %> </p>
-							<div class="row-fluid">
-								<label class="span2 helpdesk_url">
-									<%= t(".helpdesk_url") %>
-								</label>
-								<div class="span10">
-									<span class="span9">
-									<%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required" } %></span>
-									<span class="span3"><%= link_to_function t(".submit_request"), :class => "btn submit_request", "data-loading-text" => "Submitting..." %></span>
-								</div>
-							</div>
-						</div>
-					</div>
-				<% elsif !@portal.elb_dns_name? %>
-					<div class="extra_tabbed">
-						<div class="custom_ssl_form" class="faded_text"> <%= t(".success_message")%> </div>
-					</div>
-				<% else %>
-					<div class="extra_tabbed ssl_options" style="display:<%= current_account.ssl_enabled ? "block": "none" %>;">
-						<br/>
-						<label class="radio"> 
-							<%= radio_button_tag "ssl_type", 0, !@portal.ssl_enabled?, { :class => "align" } %> 
-							<%= t(".default_ssl") %> 
-						</label>
-						<label class="radio"> 
-							<%= radio_button_tag "ssl_type", 1, @portal.ssl_enabled?, { :class => "align" } %> 
-							<%= t(".custom_ssl") %> 
-						</label>
-						<div class="custom_ssl_form ssl_enabled_info">
-							<%= t(".dns_name", :url => @portal.portal_url).html_safe %>
-							<br/>
-							<span class="elb_name"> <%= @portal.elb_dns_name %> </span>
-						</div>
-					</div>
-				<% end %>
-			<% end %>
-		</span>
+  <%= f.error_messages %>
+  <ul class="security-form">
+    <li class="inline-field">
+      <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%=t(".enable_sso")%> </span>
+      <div class="extra_tabbed lead" id="sso_enabled_content" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
+        <!-- SSO BEGIN -->
+        <ul>
+          <li>
+            <%= radio_button_tag("account[sso_options][sso_type]", "saml", (sso_type == :saml)) %>
+            <span class="enable_heading"> <%=t(".enable_saml")%> </span>
+        <%= content_tag( :div, t(".enable_saml_info"), :class => "info-data extra_tabbed" ) %>
+            <div class="info-data extra_tabbed"  id="saml_sso_form" style="display:<%= sso_type == :saml ? "block": "none" %>;">
+              <ul class="ui-form-inline">
+                <% f.fields_for :sso_options, @account.sso_options do |p| %>
+                  <li>
+                    <%= p.label :login_url, t('.saml_login_url') %>
+                    <%= content_tag( :div, t(".saml_login_url_info"), :class => "info-data" ) %>
+                    <%= p.text_field :saml_login_url, :value => @account[:sso_options].default(:saml_login_url), :size => 50, :class => "text" %>
+                  </li>
+                  <li>
+                    <%= p.label :logout_url, t('.saml_logout_url') %>
+                    <%= content_tag( :div, t(".saml_logout_url_info"), :class => "info-data" ) %>
+                    <%= p.text_field :saml_logout_url, :value => @account[:sso_options].default(:saml_logout_url), :size => 50, :class => "text" %>
+                  </li>
+                  <li>
+                    <%= p.label :saml_cert, t('.saml_cert_fingerprint') %>
+                    <%= content_tag( :div, t(".saml_cert_fingerprint_info"), :class => "info-data" ) %>
+                    <%= p.text_field :saml_cert_fingerprint, :value => @account[:sso_options].default(:saml_cert_fingerprint), :size => 50, :class => "text" %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <%= radio_button_tag("account[sso_options][sso_type]", "simple", (sso_type == :simple)) %>
+            <span class="enable_heading"> <%=t(".enable_simple_sso")%> </span>
+            <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data extra_tabbed" ) %>
+            <div class="info-data extra_tabbed"  id="simple_sso_form" style="display:<%= sso_type == :simple ? "block": "none" %>;">
+              <ul class="ui-form-inline">
+                <li>
+                  <%= f.label :shared_secret, t('.shared_secret') %>
+                  <%= content_tag( :div, t(".shared_secret_info"), :class => "info-data" ) %>
+                  <%= content_tag( :div, @account.shared_secret, :class => "highlight-textbox-info" ) %>
+                  <%= f.hidden_field :shared_secret, :value => @account.shared_secret, :class => "text", :disabled => true %>
+                </li>
+                <% f.fields_for :sso_options, @account.sso_options do |p| %>
+                  <li>
+                    <%= p.label :login_url, t('.remote_login_url') %>
+                    <%= content_tag( :div, t(".remote_login_url_info"), :class => "info-data" ) %>
+                    <%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text" %>
+                  </li>
+                  <li>
+                    <%= p.label :logout_url, t('.remote_logout_url') %>
+                    <%= content_tag( :div, t(".remote_logout_url_info"), :class => "info-data" ) %>
+                    <%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :size => 50, :class => "text" %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </li>
+        </ul>
+        <!-- SSO END -->
+      </div>
+    </li>
+    <li>
+      <%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%= t('.enable_SSL') %> </span>
+      <% content_tag( :div, :class => "info-data extra_tabbed" ) do %>
+        <p>
+          <%= t(".enable_SSL_anon") %>
+        </p>
+        <span class="warning">
+        <% if current_account.ssl_enabled? %>
+          <% if current_portal.main_portal? && !(current_account.main_portal.portal_url.blank?) && !(feature?(:custom_ssl)) %>
+            <%= t(".customer_portal_ssl_warning") + current_account.full_domain + " to avoid SSL errors" %>
+          <%end%>
+          <%if !current_portal.main_portal?%>
+            <%= t(".multiple_product_ssl_warning") %>
+          <%end%>
+        <%end%>
+        </span>
+      <% end %>
+    </li>
+    <span>
+      <% if current_portal.main_portal && feature?(:custom_ssl) %>
+        <% if @custom_ssl_requested == 0 && !@portal.elb_dns_name? %>
+          <div class="extra_tabbed">
+            <%= link_to_function t(".request_custom_ssl"), :id => "custom_ssl_link" %>
+            <div class="custom_ssl_form hide">
+              <p class="muted"><%= t(".ssl_info").html_safe %> </p>
+              <div class="row-fluid">
+                <label class="span2 helpdesk_url">
+                  <%= t(".helpdesk_url") %>
+                </label>
+                <div class="span10">
+                  <span class="span9">
+                  <%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required" } %></span>
+                  <span class="span3"><%= link_to_function t(".submit_request"), :class => "btn submit_request", "data-loading-text" => "Submitting..." %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% elsif !@portal.elb_dns_name? %>
+          <div class="extra_tabbed">
+            <div class="custom_ssl_form" class="faded_text"> <%= t(".success_message")%> </div>
+          </div>
+        <% else %>
+          <div class="extra_tabbed ssl_options" style="display:<%= current_account.ssl_enabled ? "block": "none" %>;">
+            <br/>
+            <label class="radio">
+              <%= radio_button_tag "ssl_type", 0, !@portal.ssl_enabled?, { :class => "align" } %>
+              <%= t(".default_ssl") %>
+            </label>
+            <label class="radio">
+              <%= radio_button_tag "ssl_type", 1, @portal.ssl_enabled?, { :class => "align" } %>
+              <%= t(".custom_ssl") %>
+            </label>
+            <div class="custom_ssl_form ssl_enabled_info">
+              <%= t(".dns_name", :url => @portal.portal_url).html_safe %>
+              <br/>
+              <span class="elb_name"> <%= @portal.elb_dns_name %> </span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </span>
 
-		<% if current_account.features_included?(:whitelisted_ips) %>
-		<li class="inline-field">
-		  <%= check_box('account[whitelisted_ip_attributes]', 'enabled', options = { :checked => @whitelisted_ips.enabled}, checked_value = "1", unchecked_value = "0") %> 
-		  <span class="enable_heading">
-		  	<%=t(".whitelisted_ips_enabled")%>
-		  </span>
-		  <%= content_tag( :div, t(".whitelisted_ips_enabled_info"), :class => "info-data extra_tabbed" ) %>
-			<div class="info-data extra_tabbed"  id="ip-form" style="display:<%= feature?(:whitelisted_ips) ? "block": "none" %>;">	
-				<% f.fields_for :whitelisted_ip_attributes, @whitelisted_ips do |p| %>
-				<%#= p.error_messages %>
-				<%= p.hidden_field :id unless @whitelisted_ips.new_record? %>
-				<%= content_tag( :div, t('.current_ip_info', :current_ip => request.env['CLIENT_IP'] ).html_safe, :class => "info-data" ) %>
-				<br/><div class="row-fluid">
-					<div class="span2">
-							<label><%= t(".applies_to") %> :</label>
-					</div>
-					<div class="span10">
-						<label class="radio-label">
-							<input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "agents" value= "1" checked> 
-							<%= t(".only_agents") %>
-						</label>
-						<label class="radio-label">
-							<input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "both" value= "0" > 
-							<%= t(".agents_customers") %>	
-						</label>
-					</div>
-				</div>
-				<br/>
-				<div class="row-fluid">
-					<div class="span2"><%= p.label :ip_range, t('.ip_range') %></div>
-					<div class="span10">
-						<div id="security-ip-range-container"></div>
-					</div>
-				</div>
-				<div class="row-fluid">
-					<div class="span2"></div>
-					<div class="span10">
-						<a href="#" id="ip-range-btn">
-         				<span class=""><img alt="Add New" class="add pull-left" src="/images/add.png" /> </span>
-         				<span class="span8 app-omega">&nbsp&nbsp<%= t('.add_new') %></span>
-    				</a>
-    			</div>
-				</div>
-				<% end %>
-			</div>
-		</li>	
-		<% end %>
-	</ul>
+    <% if current_account.features_included?(:whitelisted_ips) %>
+    <li class="inline-field">
+      <%= check_box('account[whitelisted_ip_attributes]', 'enabled', options = { :checked => @whitelisted_ips.enabled}, checked_value = "1", unchecked_value = "0") %>
+      <span class="enable_heading">
+        <%=t(".whitelisted_ips_enabled")%>
+      </span>
+      <%= content_tag( :div, t(".whitelisted_ips_enabled_info"), :class => "info-data extra_tabbed" ) %>
+      <div class="info-data extra_tabbed"  id="ip-form" style="display:<%= feature?(:whitelisted_ips) ? "block": "none" %>;">
+        <% f.fields_for :whitelisted_ip_attributes, @whitelisted_ips do |p| %>
+        <%#= p.error_messages %>
+        <%= p.hidden_field :id unless @whitelisted_ips.new_record? %>
+        <%= content_tag( :div, t('.current_ip_info', :current_ip => request.env['CLIENT_IP'] ).html_safe, :class => "info-data" ) %>
+        <br/><div class="row-fluid">
+          <div class="span2">
+              <label><%= t(".applies_to") %> :</label>
+          </div>
+          <div class="span10">
+            <label class="radio-label">
+              <input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "agents" value= "1" checked>
+              <%= t(".only_agents") %>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "both" value= "0" >
+              <%= t(".agents_customers") %>
+            </label>
+          </div>
+        </div>
+        <br/>
+        <div class="row-fluid">
+          <div class="span2"><%= p.label :ip_range, t('.ip_range') %></div>
+          <div class="span10">
+            <div id="security-ip-range-container"></div>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span2"></div>
+          <div class="span10">
+            <a href="#" id="ip-range-btn">
+                 <span class=""><img alt="Add New" class="add pull-left" src="/images/add.png" /> </span>
+                 <span class="span8 app-omega">&nbsp&nbsp<%= t('.add_new') %></span>
+            </a>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </li>
+    <% end %>
+  </ul>
 
 	<script id="security-ip-range-template" type="text/x-jquery-tmpl">
 		<div class="row-fluid">
@@ -153,71 +194,99 @@
 		</div>
 	</script>
 
-	<div class="button-container">
-		<%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
-		<%= f.submit t('save'), :class => "btn btn-primary" %>
-	</div>	
+  <div class="button-container">
+    <%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
+    <%= f.submit t('save'), :class => "btn btn-primary" %>
+  </div>
 <% end %>
 
 <% javascript_tag do %>
-	(function($){
+  (function($){
 
-		$('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
+    $('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
 
-		$("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle();
+    $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle();
 
-		$("#account_sso_enabled").bind("change", function(e){
-			$('#sso-form').slideToggle(this.checked);
-		});
+    $("#account_sso_enabled").bind("change",function(e){
+      $("#sso_enabled_content").slideToggle(this.checked);
+      $("#sso_enabled_content").find(":text").not(":disabled").val("")
+    });
 
-		$("#account_ssl_enabled").bind("change", function(){
-			$(".ssl_options").slideToggle(this.checked);
-			if(!(this.checked)) $("#ssl_type_1").val("0");
-		});
+    function slide($slideObj, condition){
+      if(condition) 
+        $slideObj.slideDown();
+      else
+        $slideObj.slideUp();
+    }
 
-		$("#custom_ssl_link").click(function() {
-			$(".custom_ssl_form").slideToggle();
-		});
-
-		$("#account_whitelisted_ip_attributes_enabled").bind("change", function(e){
-			$('#ip-form').slideToggle(this.checked);
-		});
-
-		$(".submit_request").click(function(){
-			if(jQuery("#sso_form").valid()){
-				$(".submit_request").button('loading');
-				var domain_name = $(".domain_field").val();
-				$.ajax({   
-					type: 'POST',
-	                url: '/admin/security/request_custom_ssl/?domain_name='+domain_name,
-	                success: function(data){    
-		                				$("#custom_ssl_link").hide();
-	                          $(".custom_ssl_form").html("<%= t(".thanks_message").html_safe%> <%= t(".success_message").html_safe%>");
-                                    }
-	            });
-			}
-		});
-
-		<% if current_account.features_included?(:whitelisted_ips) %>
-			
-
-			_ip_template = $("#security-ip-range-template").template();
+    function ssoFormSlideHandler(){
+      slide($('#simple_sso_form'), $('#account_sso_options_sso_type_simple').is(':checked'));
+      slide($('#saml_sso_form'), $('#account_sso_options_sso_type_saml').is(':checked'));
+      resetSSOFields();
+    }
     
-    	$("#ip-range-btn").bind("click", function(ev){
-      	ev.preventDefault();
-				$.tmpl( _ip_template, { start_ip : "", end_ip : "" } ).appendTo( "#security-ip-range-container" );  
-  		})
+    function resetSSOFields(){
+      if( !$('#account_sso_options_sso_type_simple').is(':checked')) {
+        $('#account_sso_options_login_url').val("");
+        $('#account_sso_options_logout_url').val("");
+      }
+      if( !$('#account_sso_options_sso_type_saml').is(':checked')) {
+        $('#account_sso_options_saml_login_url').val("");
+        $('#account_sso_options_saml_logout_url').val("");
+        $('#account_sso_options_saml_cert_fingerprint').val("");
+      }
+    }
 
-    	$(".delete-row").live("click", function(ev){
-    		ev.preventDefault();
-    		if($(this).parent().parent().children().size() > 1)
-    			$(this).parent().remove()
-    	})
+    $("#account_sso_options_sso_type_saml, #account_sso_options_sso_type_simple").bind("change", ssoFormSlideHandler );
 
-			<% unless @whitelisted_ips.enabled.present? %>
-				$("#ip-form").hide();
-			<% end %>
-			
+    $("#account_ssl_enabled").bind("change", function(){
+      $(".ssl_options").slideToggle(this.checked);
+      if(!(this.checked)) $("#ssl_type_1").val("0");
+    });
+
+    $("#custom_ssl_link").click(function() {
+      $(".custom_ssl_form").slideToggle();
+    });
+
+    $("#account_whitelisted_ip_attributes_enabled").bind("change", function(e){
+      $('#ip-form').slideToggle(this.checked);
+    });
+
+    $(".submit_request").click(function(){
+      if(jQuery("#sso_form").valid()){
+        $(".submit_request").button('loading');
+        var domain_name = $(".domain_field").val();
+        $.ajax({
+          type: 'POST',
+                  url: '/admin/security/request_custom_ssl/?domain_name='+domain_name,
+                  success: function(data){
+                            $("#custom_ssl_link").hide();
+                            $(".custom_ssl_form").html("<%= t(".thanks_message").html_safe%> <%= t(".success_message").html_safe%>");
+                                    }
+              });
+      }
+    });
+
+    <% if current_account.features_included?(:whitelisted_ips) %>
+
+
+      _ip_template = $("#security-ip-range-template").template();
+
+      $("#ip-range-btn").bind("click", function(ev){
+        ev.preventDefault();
+        $.tmpl( _ip_template, { start_ip : "", end_ip : "" } ).appendTo( "#security-ip-range-container" );
+      })
+
+      $(".delete-row").live("click", function(ev){
+        ev.preventDefault();
+        if($(this).parent().parent().children().size() > 1)
+          $(this).parent().remove()
+      })
+
+      <% unless @whitelisted_ips.enabled.present? %>
+        $("#ip-form").hide();
+      <% end %>
+
       <% if @whitelisted_ips.ip_ranges.present? %>
         _data = <%= @whitelisted_ips.ip_ranges.to_json.html_safe %>
         _data.each(function(item){
@@ -226,34 +295,34 @@
 
         <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").attr("checked","checked") : $("#both").attr("checked","checked")
         <%= @whitelisted_ips.enabled %> ? $("#ip-form").show() : $("#ip-form").hide()
-    	<% else %>
-    		$.tmpl( _ip_template, { start_ip : "<%= request.env['CLIENT_IP'] %>", end_ip : "<%= request.env['CLIENT_IP'] %>" } )
-    			.appendTo( "#security-ip-range-container" );
-    	<% end %>
+      <% else %>
+        $.tmpl( _ip_template, { start_ip : "<%= request.env['CLIENT_IP'] %>", end_ip : "<%= request.env['CLIENT_IP'] %>" } )
+          .appendTo( "#security-ip-range-container" );
+      <% end %>
 
-    	$('#sso_form').submit(function(){
-    		$('input[name="account[whitelisted_ip_attributes][ip_ranges][][start_ip]"]').each(function(){
-    			start_ip = $(this);
-    			end_ip = $(this).siblings('input[name="account[whitelisted_ip_attributes][ip_ranges][][end_ip]"]');
-    			if((start_ip.val() == "") && (end_ip.val() == ""))
-    			{
-    				$(this).siblings('.delete-row').trigger('click');
-    			}
+      $('#sso_form').submit(function(){
+        $('input[name="account[whitelisted_ip_attributes][ip_ranges][][start_ip]"]').each(function(){
+          start_ip = $(this);
+          end_ip = $(this).siblings('input[name="account[whitelisted_ip_attributes][ip_ranges][][end_ip]"]');
+          if((start_ip.val() == "") && (end_ip.val() == ""))
+          {
+            $(this).siblings('.delete-row').trigger('click');
+          }
 
-    			if((start_ip.val() != "") && (end_ip.val() == ""))
-    			{
-    				end_ip.val(start_ip.val());
-    			}
+          if((start_ip.val() != "") && (end_ip.val() == ""))
+          {
+            end_ip.val(start_ip.val());
+          }
 
-    			if((start_ip.val() == "") && (end_ip.val() != ""))
-    			{
-    				start_ip.val(end_ip.val());
-    			}
+          if((start_ip.val() == "") && (end_ip.val() != ""))
+          {
+            start_ip.val(end_ip.val());
+          }
 
-    		});
-    	})
-    	
-		<% end %>
+        });
+      })
 
-	})(jQuery)
+    <% end %>
+
+  })(jQuery)
 <% end %>

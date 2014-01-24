@@ -258,6 +258,31 @@ class Account < ActiveRecord::Base
     !google_domain.blank?
   end
   
+  def is_saml_sso?
+    self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SAML;
+  end
+
+  def sso_login_url
+    if self.is_saml_sso?
+      self.sso_options[:saml_login_url]
+    else
+      self.sso_options[:login_url]
+    end
+  end
+
+  #Simplified login and logout url helper methods for saml and simple SSO.
+  def sso_logout_url
+    if self.is_saml_sso?
+      self.sso_options[:saml_logout_url]
+    else
+      self.sso_options[:logout_url]
+    end
+  end
+
+  def reset_sso_options
+    self.sso_options = set_sso_options_hash
+  end
+
   protected
   
     def external_url_is_valid?(url) 
@@ -277,7 +302,7 @@ class Account < ActiveRecord::Base
     end
     
     def set_sso_options_hash
-      HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
+      HashWithIndifferentAccess.new({:login_url => "",:logout_url => "", :sso_type => ""})
     end
 
     def subscription_next_renewal_at
