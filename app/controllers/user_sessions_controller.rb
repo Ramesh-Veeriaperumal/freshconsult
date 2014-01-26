@@ -1,8 +1,6 @@
 require "digest"
 class UserSessionsController < ApplicationController
 
-  SSO_ALLOWED_IN_SECS = 1800
-  
 require 'gapps_openid'
 require 'rack/openid'
 require 'uri'
@@ -14,6 +12,7 @@ require 'openssl'
 
 include Redis::RedisKeys
 include Redis::TicketsRedis
+include SsoUtil
 
   skip_before_filter :check_privilege  
   skip_before_filter :require_user, :except => :destroy
@@ -30,14 +29,25 @@ include Redis::TicketsRedis
     if request.request_uri == "/login/normal"
       @user_session = current_account.user_sessions.new
     elsif current_account.sso_enabled?
-      # Redirect to customer login is sso is enabled
-      return redirect_to current_account.sso_options[:login_url]
+      sso_login_page_redirect
     else
-      # Redirect to portal login by default 
+      #Redirect to portal login by default
       return redirect_to support_login_path
     end
   end
- 
+
+  # Handles response from SAML provider
+  def saml_login
+    saml_response = validate_saml_response(current_account, params[:SAMLResponse]);
+
+    if saml_response.valid?
+      handle_sso_response(saml_response.email , saml_response.user_name )
+    else
+      flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
+      redirect_to login_normal_url
+    end
+  end
+
   def sso_login
     if params[:hash] == gen_hash_from_params_hash
       @current_user = current_account.all_users.find_by_email(params[:email])
@@ -191,8 +201,8 @@ include Redis::TicketsRedis
     flash.clear if mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
-    if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
-      return redirect_to current_account.sso_options[:logout_url]
+    if current_account.sso_enabled? and !current_account.sso_logout_url.blank?
+      return redirect_to current_account.sso_logout_url
     end
     
     respond_to do |format|

@@ -2,6 +2,7 @@ class Support::LoginController < SupportController
 
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
+	include SsoUtil
 
 	SUB_DOMAIN = "freshdesk.com"
 	
@@ -10,7 +11,7 @@ class Support::LoginController < SupportController
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
-		  	redirect_to current_account.sso_options[:login_url]
+		  sso_login_page_redirect #TODO : change this to allow different sign on for customer and agent
 		else
 		  	@user_session = current_account.user_sessions.new
 		  	respond_to do |format|
@@ -68,5 +69,21 @@ class Support::LoginController < SupportController
      		cookies[:helpdesk_url] = { :value => current_portal.host, :domain => SUB_DOMAIN }
      	end
     end      
+
+    def decide_smart_sso_login_page
+      # If the user logged as an agent then assume redirection to SSO  - TODO use a cookie may
+      # if customer portal has any other login option enabled then customer need to be able to login
+      # If not redirect customer to SSO portal .
+      allow_non_saml_cust_login = ( current_account.features?(:google_signin) or current_account.features?(:facebook_signin) or
+                                    current_account.features?(:twitter_signin) or current_account.features?(:signup_link) );
+      if allow_non_saml_cust_login
+        # show login page
+        set_portal_page :user_login
+      else
+        #redirect to SSO login page
+        sso_login_page_redirect
+      end
+    end
+
 end
 

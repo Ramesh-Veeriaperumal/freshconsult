@@ -80,7 +80,7 @@
 							:inline => true, :locals => { :user_page => true } %>
 				    </tbody>
 			  	</table>
-			  	<% if @user.tickets.visible.size > 5 %>
+			  	<% if @total_user_tickets.size > 5 %>
 				  	<div class="more_results">
 				  		<%= link_to t('contacts.show_more',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
 				  	</div>
