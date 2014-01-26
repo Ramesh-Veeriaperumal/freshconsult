@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   after_commit :clear_agent_name_cache
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
-  after_commit_on_update :update_search_index, :if => :customer_id_updated?
+  after_commit_on_update :update_search_index, :if => :company_info_updated?
 
   def downcase_email
     self.email = email.downcase if email

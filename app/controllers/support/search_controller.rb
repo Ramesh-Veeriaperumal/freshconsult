@@ -77,7 +77,7 @@ class Support::SearchController < SupportController
 
     def es_search_portal(search_in)
       begin
-        Search::EsIndexDefinition.es_cluster(current_account.id, true)
+        Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
         @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|

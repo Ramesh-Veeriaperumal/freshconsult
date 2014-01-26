@@ -2188,9 +2188,10 @@ ru-RU:
     sticky: Прикрепить
     locked: Заблокировано
     answered: "Есть ответ"
-  activerecord:
-    errors:
-      messages:
+  activerecord: 
+    errors: 
+      messages: 
+        contact_admin: "Невозможно выполнить вход под вашей учетной записью. Пожалуйста, свяжитесь с администратором"
         record_invalid: "Ошибка подтверждения: %{errors}"
         greater_than_or_equal_to: "должно быть большим или равным %{count}"
         less_than_or_equal_to: "должно быть меньшим или равным %{count}"

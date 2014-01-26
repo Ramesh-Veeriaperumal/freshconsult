@@ -24,11 +24,7 @@ class AgentsController < ApplicationController
   
   def list
     respond_to do |format|
-        agents = Array.new
-        current_account.all_agents.each do |agent|
-          agents.push agent.user
-        end
-        format.json {render :json => agents.to_json({:only=>[:id,:name,:email,:deleted]})}
+      format.json {render :json => current_account.users.technicians.to_json({:only=>[:id,:name,:email,:deleted]})}
     end
   end
 

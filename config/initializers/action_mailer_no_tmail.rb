@@ -48,17 +48,8 @@ module ActionMailer
         end
 
         @parts.each do |p|
-          # if content_disposition is inline attachment and plain or html 
-          # add the actionmailer part to Mail::Message
-          
-          if ((p.content_disposition != "attachment") || (p.headers && p.headers["Content-Disposition"] =~ /inline/))
-            part = (Mail::Part === p ? p : p.to_mail(self))
-            m.add_part(part)  
-          # in case of attachments
-          else
-            m.attachments[p.filename] = p.body 
-          end
-
+          part = (Mail::Part === p ? p : p.to_mail(self))
+          m.add_part(part)
         end
 
         if ctype =~ /multipart/
@@ -76,8 +67,16 @@ module ActionMailer
     end
 
     def perform_delivery_smtp(mail)
+      destinations = mail.destinations
       mail.ready_to_send!
-      mail.deliver!
+      sender = (mail['return-path'] && mail['return-path'].address) || Array(mail.from).first
+
+      smtp = Net::SMTP.new(smtp_settings[:address], smtp_settings[:port])
+      smtp.enable_starttls_auto if smtp_settings[:enable_starttls_auto] && smtp.respond_to?(:enable_starttls_auto)
+      smtp.start(smtp_settings[:domain], smtp_settings[:user_name], smtp_settings[:password],
+                 smtp_settings[:authentication]) do |smtp|
+        smtp.sendmail(mail.encoded, sender, destinations)
+      end
     end
   end
 

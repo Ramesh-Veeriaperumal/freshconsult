@@ -69,15 +69,23 @@ def execute_supevisor(task_name)
         end
       end
     end
-    current_time = Time.now.utc
-    redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-    $stats_redis.set(redis_key, accounts_queued)
-    $stats_redis.expire(redis_key, 144000)
+    begin
+      current_time = Time.now.utc
+      redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
+      $stats_redis.set(redis_key, accounts_queued)
+      $stats_redis.expire(redis_key, 144000)
+    rescue => e
+      puts "Error while recording Supervisor stats : #{e.message}"          
+    end
   else
-    current_time = Time.now.utc
-    redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-    $stats_redis.set(redis_key,"skipped")
-    $stats_redis.expire(redis_key, 144000)
+    begin
+      current_time = Time.now.utc
+      redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
+      $stats_redis.set(redis_key,"skipped")
+      $stats_redis.expire(redis_key, 144000)
+    rescue => e
+      puts "Error while recording Supervisor stats : #{e.message}"          
+    end
   end
 end
 

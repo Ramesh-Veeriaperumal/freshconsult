@@ -8,20 +8,12 @@ module Search::ElasticSearchIndex
         Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name,
                                                     :id => self.id,
                                                     :account_id => self.account_id }) if ES_ENABLED and !queued?
-        Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name,
-                                                    :id => self.id,
-                                                    :account_id => self.account_id,
-                                                    :aws_cluster => true }) if ES_ENABLED
       end
 
       def remove_es_document
         Resque.enqueue(Search::RemoveFromIndex::Document, { :klass_name => self.class.name,
                                                             :id => self.id,
                                                             :account_id => self.account_id }) if ES_ENABLED
-        Resque.enqueue(Search::RemoveFromIndex::Document, { :klass_name => self.class.name,
-                                                            :id => self.id,
-                                                            :account_id => self.account_id,
-                                                            :aws_cluster => true }) if ES_ENABLED
       end
 
       def search_alias_name
