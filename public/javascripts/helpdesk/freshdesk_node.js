@@ -1,4 +1,4 @@
-(function($) {
+!function ($) {
 
   var fayeClient,
     CLIENT_DEFAULT_OPTIONS = {
@@ -203,4 +203,5 @@
       });
     };
     window.TicketRefresh || (window.TicketRefresh = new TicketRefresh());
-}(jQuery))
+
+}(window.jQuery);
