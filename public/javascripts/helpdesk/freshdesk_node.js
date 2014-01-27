@@ -7,6 +7,13 @@
     },
     FreshdeskNode = function(){
       console.log('Loading freshdesk node')
+    },
+    bindUnloadEvnts = function(){
+      jQuery(document).unbind('disconnectNode');
+      jQuery(document).bind('disconnectNode', function(ev){
+        console.log('disconnecting...')
+        fayeClient.disconnect();
+      });
     };
 
   FreshdeskNode.prototype.loadClientJS = function(callback){
@@ -16,10 +23,9 @@
         console.log('initializing ticket refresh')
         self.initClient();
         if(self.opts.addAuthExtParams){
-          console.log('addAuthExtParams...', self.opts.addAuthExtParams)
           self.addAuthExt(self.opts.addAuthExtParams)
         }
-        callback()
+        callback();
       }
       catch(e){
         console.error('Freshdesk node script error');
@@ -39,17 +45,18 @@
   FreshdeskNode.prototype.initClient = function(){
     opts = $.extend({},CLIENT_DEFAULT_OPTIONS,this.opts.clientOpts)
     fayeClient = new Faye.Client(this.host,opts);
+    bindUnloadEvnts();
   };
 
   FreshdeskNode.prototype.init = function(host,opts,callback){
-    if(this.initialized) {
-      console.log('FreshdeskNode already initialized');
-      callback();
-      return
-    }
+    // if(this.initialized) {
+    //   console.log('FreshdeskNode already initialized');
+    //   callback();
+    //   return
+    // }
     this.host = host;
     this.opts = opts;
-    this.loadClientJS(callback)
+    this.loadClientJS(callback);
     this.initialized = true;
   };
 
@@ -192,7 +199,7 @@
     TicketRefresh.prototype.init = function(host,opts){
       window.FreshdeskNode.init(host,opts,function(){
         window.FreshdeskNode.subscribe(opts.channel,refreshCallBack)
-      })
+      });
     };
     window.TicketRefresh || (window.TicketRefresh = new TicketRefresh());
 }(jQuery))
