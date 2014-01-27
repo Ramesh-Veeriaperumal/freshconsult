@@ -1009,8 +1009,9 @@ easing_function = "easeInOutCubic"
 
 jQuery(document).ready(function(){
 
+	jQuery('#google_calendar_add_event_modal').remove();
+
 	var gcal = new GoogleCalendar(google_calendar_options);
-	
 
 	add_edit_event_modal_html = gcal.ADD_EDIT_EVENT_TEMPLATE.evaluate({
 															 calendarOptions: (gcal.calendarOptions || 														
