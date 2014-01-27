@@ -193,13 +193,14 @@
         }
       },
       TicketRefresh = function(){
-        bindTktrefreshEvnts();
+        
       };
 
     TicketRefresh.prototype.init = function(host,opts){
       currentUserId = opts.current_user_id;
       window.FreshdeskNode.init(host,opts,function(){
-        window.FreshdeskNode.subscribe(opts.channel,refreshCallBack)
+        window.FreshdeskNode.subscribe(opts.channel,refreshCallBack);
+        bindTktrefreshEvnts();
       });
     };
     window.TicketRefresh || (window.TicketRefresh = new TicketRefresh());
