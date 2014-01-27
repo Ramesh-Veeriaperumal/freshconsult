@@ -58,7 +58,7 @@ class Customer < ActiveRecord::Base
   end
   
   def self.es_filter(account_id,letter,page,field_name,sort_order)
-    Search::EsIndexDefinition.es_cluster(account_id, true)
+    Search::EsIndexDefinition.es_cluster(account_id)
     index_name = Search::EsIndexDefinition.searchable_aliases([Customer], account_id)
     options = {:load => true, :page => page, :size => 50, :preference => :_primary_first }
     items = Tire.search(index_name, options) do |search|
