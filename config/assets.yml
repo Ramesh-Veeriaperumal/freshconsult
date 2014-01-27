@@ -19,14 +19,6 @@ stylesheets:
   plugins:
     - public/stylesheets/plugins.css
 
-  chat:
-    - public/stylesheets/chat/chat.css
-    - public/stylesheets/chat/structure.css
-    - public/stylesheets/chat/grey-theme.css
-    - public/stylesheets/chat/base.css
-    - public/stylesheets/chat/clean.css
-    - public/stylesheets/chat/sprites.css
-
   non_pattern:
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
