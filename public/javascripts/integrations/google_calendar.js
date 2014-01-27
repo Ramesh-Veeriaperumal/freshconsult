@@ -107,7 +107,7 @@ GoogleCalendar.prototype = {
 	NO_FUTURE_EVENT_FOR_TICKET_MSG: new Template('<div class="error">No upcoming events for this ticket.</div>'),
 	
 	OTHER_TICKET_EVENTS_DIV : new Template('	<div id="gcal-other-tickets-events-pane"> \
-													<div id="gcal-other-events-link-container"><span class="arrow-right" id="gcal-other-tickets-arrow"></span><span class="label notice">#{n}</span><a href="#other_events" id="gcal-other-events-link">Other event<span>#{pluralization}</span> today</a></div> \
+													<div id="gcal-other-events-link-container"><span class="#{arrow_class}" id="gcal-other-tickets-arrow"></span><span class="label notice">#{n}</span><a href="#other_events" id="gcal-other-events-link">Other event<span>#{pluralization}</span> today</a></div> \
 														<div id="gcal-other-tickets-events-container" class="#{container_class}"> '),
 
 	OPTION_TAG : 			new Template('<option value="#{value}" #{selected_attrib}>#{html}</option>'),
@@ -567,7 +567,7 @@ GoogleCalendar.prototype = {
 
 			}
 			if(ev.isOfOtherTicket && !otherTicketEventsDivOpen){
-				cal_html += this.OTHER_TICKET_EVENTS_DIV.evaluate({n: this.otherTicketEvents.length, pluralization:  this.otherTicketEvents.length>1?'s':'', container_class: otherTicketEventsDisplayed?"":"hide"});
+				cal_html += this.OTHER_TICKET_EVENTS_DIV.evaluate({n: this.otherTicketEvents.length, pluralization:  this.otherTicketEvents.length>1?'s':'', container_class: otherTicketEventsDisplayed?"":"hide", arrow_class: otherTicketEventsDisplayed?'arrow-down':'arrow-right'});
 				otherTicketEventsDivOpen = true;
 			}
 
