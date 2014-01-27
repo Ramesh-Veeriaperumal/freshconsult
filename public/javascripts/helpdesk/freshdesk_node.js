@@ -140,7 +140,7 @@
                               (filter_options[i].ff_name == "default")) {
               if (filter_options[i].condition == "responder_id"){
                 if ((filter_options[i].value.split(',')).indexOf('0') >= 0) {
-                  filter_options[i].value += ","+current_user_id;
+                  filter_options[i].value += ","+currentUserId;
                 } 
               }
               if ((filter_options[i].value.split(',')).indexOf(message[filter_options[i].condition]+'') >= 0) {
@@ -197,6 +197,7 @@
       };
 
     TicketRefresh.prototype.init = function(host,opts){
+      currentUserId = opts.current_user_id;
       window.FreshdeskNode.init(host,opts,function(){
         window.FreshdeskNode.subscribe(opts.channel,refreshCallBack)
       });
