@@ -4,10 +4,16 @@
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
 %>
 <div id="freshchat_layout"></div>
-  <!-- Chat related contents starts -->
-<%= include_cloudfront_css :chat %>
 <script language="javascript">
 (function($){
+    var asset_url = JSON.parse('<%=asset%>');
+    var css_url = asset_url.css;
+    var fc_CSS=document.createElement('link');
+    fc_CSS.setAttribute('rel','stylesheet');
+    fc_CSS.setAttribute('type','text/css');
+    fc_CSS.setAttribute('href', css_url+'/css/chat.css');
+    document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+
     $(document).ready(function(){
         var asset_url = JSON.parse('<%=asset%>');
         var url = asset_url.js;
