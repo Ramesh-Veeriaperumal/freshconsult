@@ -37,6 +37,7 @@ class Social::Twitter::Feed
   end
 
   def process
+    return if @tweet_obj.nil?
     unless @matching_rules.blank? or @matching_rules.nil?
       @matching_rules.each do |rule|
         tag_array = rule["tag"].to_s.split(DELIMITER[:tags])
