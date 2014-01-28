@@ -18,7 +18,10 @@ class SsoController < ApplicationController
           user_session = curr_user.account.user_sessions.new(curr_user) 
           kv_store.remove_key
           facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
-          redirect_back_or_default(facebook_redirect || '/') if user_session.save
+          if user_session.save
+            cookies["auth_token"] = curr_user.single_access_token
+            redirect_back_or_default(facebook_redirect || '/') 
+          end
           return
         end 
       end
