@@ -6,12 +6,10 @@
       timeout: 120
     },
     FreshdeskNode = function(){
-      console.log('Loading freshdesk node')
     },
     bindUnloadEvnts = function(){
       jQuery(document).unbind('disconnectNode');
       jQuery(document).bind('disconnectNode', function(ev){
-        console.log('disconnecting...')
         fayeClient.disconnect();
       });
     };
@@ -20,7 +18,6 @@
     var self = this;
     AsyncJSLoader(this.host+'/client.js',function(){
       try {
-        console.log('initializing ticket refresh')
         self.initClient();
         if(self.opts.addAuthExtParams){
           self.addAuthExt(self.opts.addAuthExtParams)
@@ -28,7 +25,7 @@
         callback();
       }
       catch(e){
-        console.error('Freshdesk node script error');
+        // console.error('Freshdesk node script error');
       }
     });
   };
