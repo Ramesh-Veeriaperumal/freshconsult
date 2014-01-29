@@ -812,10 +812,10 @@ id:
     forum_mand: "Silahkan mengisi jumlah Forum."
     badge_mand: "Silakan pilih lencana."
     name_mand: "Harap memberikan nama Quest."
-    js_ticket_txt: "Putuskan tiket $ $ $ $ questvalue dalam rentang $ $ $ $ questtime dan mencocokkan kondisi ini."
-    js_solution_txt: "Buat questvalue $ $ $ $ pengetahuan dasar artikel dalam rentang $ $ $ $ questtime dan mencocokkan kondisi ini."
-    js_forum_txt: "$ $ $ $ $ questmode $ $ $ questvalue forum posting dalam rentang $ $ $ $ questtime dan mencocokkan kondisi ini."
-    js_quest_txt: "Berhasil menyelesaikan pencarian Anda dapat membuka $ $ $ $ badgename lencana dan $ $ $ $ questpoints poin bonus."
+    js_ticket_txt: "Putuskan tiket $$questvalue$$ dalam rentang $$questtime$$ dan mencocokkan kondisi ini."
+    js_solution_txt: "Buat $$questvalue$$ pengetahuan dasar artikel dalam rentang $$questtime$$ dan mencocokkan kondisi ini."
+    js_forum_txt: "$$questmode$$ $$questvalue$$ forum posting dalam rentang $$questtime$$ dan mencocokkan kondisi ini."
+    js_quest_txt: "Berhasil menyelesaikan pencarian Anda dapat membuka $$badgename$$ lencana dan $$questpoints$$ poin bonus."
   none: "Tidak ada satu pun"
   any_val:
     any: Apapun
@@ -1168,7 +1168,7 @@ id:
         ssl_info: "Untuk mengatur SSL kustom, Anda harus mengkonfigurasi domain dengan DNS record yang unik yang disediakan oleh Freshdesk. <br /> Silakan masukkan Helpdesk URL dan mengirimkan permintaan Anda di bawah ini. Sertifikasi biasanya memakan waktu 5-6 hari kerja. <br /><br />"
         helpdesk_url: "URL Helpdesk"
         submit_request: "Mengirimkan permintaan"
-        thanks_message: "<span class=\\\\\"thanks_message\\\\\"> Terima kasih untuk meminta sertifikat Custom SSL.</span> <br />"
+        thanks_message: "<span class='thanks_message'> Terima kasih untuk meminta sertifikat Custom SSL.</span> <br />"
         success_message: "Permintaan untuk sertifikat Custom SSL telah dimulai dan akan diproses segera. Anda akan menerima email konfirmasi dari kami penyedia sebelum persetujuan. Silakan cek inbox Anda untuk mengupdate."
         default_ssl: "SSL Standar"
         custom_ssl: "Custom SSL"
