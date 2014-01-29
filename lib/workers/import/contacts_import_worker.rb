@@ -35,7 +35,8 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
           company_name = @params_hash[:user][:company].to_s.strip
           @params_hash[:user][:client_manager] = @params_hash[:user][:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
-          user = current_account.users.find_by_email(@params_hash[:user][:email])   
+          search_options = {:email => @params_hash[:user][:email], :twitter_id => @params_hash[:user][:twitter_id]}
+          user = current_account.users.find_by_an_unique_id(search_options) 
           unless user.nil?
             @params_hash[:user][:deleted] = false #To make already deleted user active
             updated+=1 if user.update_attributes(@params_hash[:user])
