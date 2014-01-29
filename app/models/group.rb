@@ -5,9 +5,7 @@ class Group < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  after_commit_on_create :clear_cache
-  after_commit_on_destroy :clear_cache
-  after_commit_on_update :clear_cache
+  after_commit :clear_cache
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
