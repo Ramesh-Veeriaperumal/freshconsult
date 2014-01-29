@@ -100,11 +100,7 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
       @holiday_data = ActiveSupport::JSON.decode params[:business_calenders][:holiday_data]
       weekdays = ActiveSupport::JSON.decode params[:business_calenders][:weekdays]
       working_hours = params[:business_time_data]["working_hours"]
-      if params[:time_zone].blank?
-        @time_zone = current_account.time_zone
-      else
-        @time_zone = params[:time_zone].to_s.split(' ',2)[1]
-      end
+      @time_zone = params[:business_calenders][:time_zone] || current_account.time_zone
       
       @name = params[:business_calenders]["name"] if params[:business_calenders]
       @description = params[:business_calenders]["description"] if params[:business_calenders]
