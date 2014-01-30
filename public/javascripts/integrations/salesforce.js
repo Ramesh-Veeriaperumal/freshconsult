@@ -89,9 +89,10 @@ SalesforceWidget.prototype= {
 		var sosl_contact = "FIND {" + custEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + contactfields + "), Lead(" + leadfields + ")";
 
 		requestUrls.push( { rest_url: "services/data/v20.0/search?q="+sosl_contact } )
-			var custCompany = this.salesforceBundle.reqCompany;
+		var custCompany = this.salesforceBundle.reqCompany;
 		if( this.salesforceBundle.accountFields && this.salesforceBundle.accountFields.length > 0 ) { //accountFields is configured
 			if ( custCompany  && custCompany.length > 0 ) { // make sure company is present 
+				custCompany = custCompany.replace(/\W/g,' ').replace(/\s+/g, ' ');
 				var sosl_account = "FIND {" + custCompany + "} IN NAME FIELDS RETURNING Account(" + accountfields + ")";
 				requestUrls.push( { rest_url: "services/data/v20.0/search?q="+sosl_account } )
 			}
