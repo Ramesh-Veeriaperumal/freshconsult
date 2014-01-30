@@ -39,9 +39,12 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
     @sub_domain = @host.split(".")[0]
+    if SKIPPED_SUBDOMAINS.include?(@sub_domain)
+      @status, @headers, @response = @app.call(env)
+      return [@status, @headers, @response]
+    end
     domain = DomainMapping.find_by_domain(env["HTTP_HOST"])
-    return [@status, @headers, @response] if domain.nil? && !Rails.env.development?
-    @account_id =  Rails.env.development? ? Account.first.id : domain.account_id  
+    @account_id = domain.account_id if domain
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
