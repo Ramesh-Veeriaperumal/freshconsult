@@ -3575,9 +3575,9 @@ en:
     twenty_four: "From yesterday"
     custom_filter: "Set date"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
-    created_at: Created time
-    resolved_at: Resolved time
-    closed_at: Closed time
+    created_at: created 
+    resolved_at: resolved 
+    closed_at: closed 
     from: From
     to: To
     data_backup:
@@ -3586,6 +3586,7 @@ en:
       body: Seems like there are no tickets in the provided date range.
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
+      subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"  
   sla:
     minutes: Mins
