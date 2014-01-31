@@ -15,7 +15,7 @@ class Social::Twitter::Feed
       @tweet_obj = JSON.parse(tweet).symbolize_keys!
       @queue = queue
       unless @tweet_obj.nil?
-        Monitoring::RecordMetrics.register(@tweet_obj)
+        #Monitoring::RecordMetrics.register(@tweet_obj)
 
         @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
         if @tweet_obj[:actor]
