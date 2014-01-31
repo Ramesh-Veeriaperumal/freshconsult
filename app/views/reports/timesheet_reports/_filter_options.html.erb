@@ -1,0 +1,81 @@
+
+<% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
+<ul class="unstyled">
+
+<li>
+  <h3 class="lead"><%= t('reports.timesheet_reports.index.filter_report') %>
+    <span class="muted report-close pull-right" id="filter-close-icon">×</span>
+  </h3>
+  </li>
+    <li>
+     <%
+			date_range = @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date
+			%>
+			
+  		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
+      <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
+      <%= select_tag :customer_id, 
+      		options_for_select(current_account.customers.collect{ |c| [c.name,c.id] },@customer_id.map(&:to_i)),
+					{ :multiple => true, 
+					  	:class => "select2 filter_item",
+					  	"data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_customer')
+					  } %>
+     
+      <label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>	
+			<%= select_tag :user_id, 
+							options_for_select(current_account.users.technicians.collect{ |c| [c.name, c.id] },
+												 @user_id.map(&:to_i)), 
+							{ :multiple => true,
+							  :class => "select2 filter_item", 
+										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_agent') } %>
+			<label class="control-label"><%=t('helpdesk.time_sheets.billing_type')%></label>
+			<%@billable = [] if @billable.length == 2 %>
+			<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options,@billable), 
+			 				{ :multiple => true, 
+			 				  :class => "select2 filter_item",
+			 						    "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_billable')} %>
+
+		      <label class="control-label"><%=t('helpdesk.time_sheets.group')%></label>	
+			<%= select_tag :group_id, 
+							options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
+												 @group_id.map(&:to_i)), 
+							{ :multiple => true,
+							  :class => "select2 filter_item", 
+										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_group') } %>
+
+			
+			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
+			<%= select_tag :group_by , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
+							{ :multiple => false, :class => "select2 filter_item hide"}%>
+			
+			<label class="control-label"><%=t('helpdesk.time_sheets.product')%></label>
+			<%= select_tag :products_id, options_for_select(current_account.products.collect{|c| [c.name, c.id]}, @products_id.map(&:to_i) ), 
+			 				{ :multiple => true, 
+			 				  :class => "select2 filter_item",
+			 						    "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_product')} %>
+		      
+		  <label class="control-label"><%=t('reports.timesheet_reports.index.ticket_type')%></label>
+			<%= select_tag :ticket_type, options_for_select(current_account.ticket_types_from_cache.collect { |tt| [tt.value, tt.value] },@ticket_type), 
+			 				{ :multiple => true, 
+			 				  :class => "select2 filter_item",
+			 						    "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_type')} %>
+
+			<label class="control-label"><%=t('helpdesk.time_sheets.ticket_priority')%></label>	
+			<%= select_tag :priority, 
+							options_for_select(TicketConstants.priority_names,
+												 @priority.map(&:to_i)), 
+							{ :multiple => true,
+							  :class => "select2 filter_item", 
+										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_priority') } %>
+  	</li> 
+	  <li>
+		  <br/>
+	  	<a class="btn btn-primary" id="submit" href="javascript:void(0)">Generate</a>
+	  	<a class="btn" id="cancel" href="javascript:void(0)">Close</a>
+	  	<%= submit_tag "Generate PDF", :class => "hide", :id => "generate-pdf" %>
+		</li>
+  </ul>
+<% end %>
+	
+
+		
