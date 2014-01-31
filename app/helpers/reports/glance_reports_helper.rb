@@ -15,7 +15,10 @@ module Reports::GlanceReportsHelper
 		:num_of_reopens           => [DOWN_GREEN,UP_RED],
 		:num_of_reassigns         => [DOWN_GREEN,UP_RED],
 		:sla_tickets              => [DOWN_RED,UP_GREEN],
-		:fcr_tickets              => [DOWN_RED,UP_GREEN]
+		:fcr_tickets              => [DOWN_RED,UP_GREEN],
+		:hours_tracked            => [DOWN_RED,UP_GREEN],
+		:billable_hours           => [DOWN_RED,UP_GREEN],
+		:non_billable_hours       => [DOWN_GREEN,UP_RED]
 	}
 
 	def percentage_change(old_val, new_val, metric_label)

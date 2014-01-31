@@ -3167,6 +3167,8 @@ en:
       product: Product
       group: Group
       group_by: Group By
+      priority: Priority
+      status: Status
       report:
         no_timeentry: "No data available"
         total: Total
@@ -3191,6 +3193,7 @@ en:
       note: Note
       billing_type: Billing Type
       group_by: Group By
+      ticket_priority: Ticket Priority
       report:
         no_timeentry: "No data available"
         total: Total
@@ -4152,6 +4155,13 @@ en:
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
       satisfaction_title: "Satisfaction Report"
+      time_sheets:
+        billable: "Billable Hours"
+        non_billable: "Non-Billable Hours"
+        total_time: "Hours Tracked"
+        billable_vs_non_billable: "Billable vs Non-billable"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -4187,10 +4197,14 @@ en:
           select_agent: Select Agent
           select_group: Select Group
           select_billable: Select Billable/Non-Billable
+          select_priority: "Select Priority"
+          select_product: Select Product
+          select_type: Select Type
           view_between: View report between
           from: From
           to: To
-          filter_report: Filter report by
+          filter_report: Edit Filter
+          ticket_type: Ticket Type
       scoreboard_reports:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters

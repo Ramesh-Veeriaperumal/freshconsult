@@ -75,6 +75,9 @@ module ApplicationHelper
     end
   end
 
+  def ticket_status_hash
+    Hash[Helpdesk::TicketStatus.status_names(current_account)]
+  end
 
   def timediff_in_words(interval)
     secs  = interval.to_i
@@ -514,7 +517,7 @@ module ApplicationHelper
  
  def get_time_in_hours seconds
   hh = (seconds/3600).to_i
-  mm = ((seconds % 3600) / 60).to_i
+  mm = ((seconds % 3600)/60.to_f).round
 
   hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
  end

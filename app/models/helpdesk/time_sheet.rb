@@ -61,6 +61,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       } unless contact_email.blank?
   }
 
+  named_scope :for_products, lambda { |products|
+    { 
+      :select => "DISTINCT helpdesk_time_sheets.*",
+      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
+                "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
+      :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
+     } unless products.blank?
+  } 
+
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true, 
       I18n.t('helpdesk.time_sheets.non_billable') => false}
@@ -68,17 +77,19 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def self.group_by_options
     [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name], 
-      [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
       [I18n.t('helpdesk.time_sheets.agent') , :agent_name], 
-      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria],
+      [I18n.t('helpdesk.time_sheets.group') , :group_name],
       [I18n.t('helpdesk.time_sheets.product') , :product_name], 
-      [I18n.t('helpdesk.time_sheets.group') , :group_name] ]
+      [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
+      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ]
   end                                                                                                                                               
 
   def self.report_list
     { :ticket => I18n.t('helpdesk.time_sheets.ticket'),
       :customer_name => I18n.t('helpdesk.time_sheets.customer'), 
       :agent_name =>  I18n.t('helpdesk.time_sheets.agent'), 
+      :priority_name => I18n.t('helpdesk.time_sheets.priority'),
+      :status_name => I18n.t('helpdesk.time_sheets.status'),
       :note =>  I18n.t('helpdesk.time_sheets.note'),
       :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'), 
       :hours => I18n.t('helpdesk.time_sheets.hours') ,
@@ -125,6 +136,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   
   def customer_name
     workable.requester.customer ? workable.requester.customer.name : workable.requester.name
+  end
+
+  def priority_name
+    workable.priority_name
+  end
+
+  def status_name
+    workable.status_name
   end
   
   def group_by_day_criteria

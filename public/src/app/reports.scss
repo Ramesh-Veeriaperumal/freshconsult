@@ -110,7 +110,42 @@ $single_stackbar_chart_height: 120px;
 .report-unit.timeline-chart {
 	height:$timeline_chart_height + 50; 
 } 
-
+#timesheet_single_stacked_bar_chart{
+	position: relative;
+	top: 20px;
+	width: 200px;
+	height: 60px;
+}
+.time-sheet-summary{
+	.report-summary .report-summary-wrapper{
+		.report-summary-data, .report-summary-header, .report-summary-footer{
+			ul li{
+				width:22.73415%
+			}
+		}
+	}
+	.hours span{
+		height: 10px;
+		width: 10px;
+		margin-right: 10px;
+		display: inline-block;
+		margin-top:1px;
+		-webkit-border-radius: 2px;
+		-moz-border-radius: 2px;
+		-ms-border-radius: 2px;
+		-o-border-radius: 2px;
+		border-radius: 2px;
+	}
+	.billable-block{
+			background-color: #7ebf00
+		}
+	.non-billable-block{
+			background-color: #bbb;
+		}
+}
+.time-sheet-top-margin{
+	margin-top: 10px;
+}
 .sidepanel h4.title {
 	padding: 5px 0;
 	margin:0;
@@ -366,7 +401,7 @@ $single_stackbar_chart_height: 120px;
 	.report-filter-details{ width: 60%; }
 }
 .report-content-wrapper{
-	padding: 10px 2px 10px 0px;
+	padding: 10px 2px 10px 2px;
 }
 .report-left-filter{
 	.control-label{
