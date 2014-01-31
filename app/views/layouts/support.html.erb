@@ -46,13 +46,12 @@
 
 		<%= @layout %>
 				
-		<%= render :partial => "layouts/shared/scripts" %> 	
-
 		<!-- Including default portal based script at the bottom -->
 		<%= include_cloudfront_js :portal_bottom %>
 		<%= include_cloudfront_js :redactor %>
-		<%= include_cloudfront_js :"lang_#{I18n.locale.to_s}" unless(I18n.locale == :en) %>
-	
+		<%= include_cloudfront_js_langs %>
+		<%= render :partial => "layouts/shared/scripts" %> 	
+		
 		<%= cookie_law %>
 	</body>
 </html>

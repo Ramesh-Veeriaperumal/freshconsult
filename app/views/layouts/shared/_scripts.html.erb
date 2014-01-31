@@ -3,7 +3,7 @@
 		<%= yield :onload_script -%>
 			
 		// Setting the locale for moment js
-		moment.lang('#{I18n.locale.to_s.downcase}');
+		moment.lang('<%=I18n.locale.to_s.downcase%>');
 
 		<% if flash[:highlight] %>
 			var ele = jQuery("#<%= flash[:highlight] %>");
