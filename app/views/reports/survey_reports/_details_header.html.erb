@@ -3,7 +3,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 %>
 
 <div class="request-well">          
-    <ul data-tabs="tabs" class="tabs">
+    <ul data-tabs="tabs" class="tabs nav-tabs">
         <li class="first min-width">            
             <% user = User.find_by_id(params[:entity_id])%>
             <%if content[:category].blank? || content[:category]=="agent" %>

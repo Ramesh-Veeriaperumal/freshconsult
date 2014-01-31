@@ -1,54 +1,53 @@
-<%= include_cloudfront_js :portaltemplate %>
+<%#= include_cloudfront_js :portaltemplate %>
 <% content_for :sidebar do %><% end %> 
 <h3 class="lead">
   <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
 </h3>
-
-<ul data-tabs="tabs" class="tabs" id="portal-tabs">
-  <li class="active">      
-    <a href="#preferences" data-toggle="tab" id="preferences-tab">
-      <%=t("portalcss.color_and_font_header").html_safe%>
-    </a>
-  </li>
-  <% if feature?(:css_customization) %>
-  <li>
-      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
-        <%=t("portalcss.css_header").html_safe%>
+<div>
+  <ul data-tabs="tabs" class="tabs nav-tabs" id="portal-tabs">
+    <li class="active">      
+      <a href="#preferences" data-toggle="tab" id="preferences-tab">
+        <%=t("portalcss.color_and_font_header").html_safe%>
       </a>
-  </li>
-  <% end %>
-  <% if feature?(:layout_customization) %>
-  <li>
-      <a id="layout-tab" href="#layout" data-toggle="tab" 
-          data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">
-        <%=t("portalcss.layout_and_pages_header").html_safe%>
-      </a>
-  </li>
-  <% end %>
-</ul>
+    </li>
+    <% if feature?(:css_customization) %>
+    <li>
+        <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
+          <%=t("portalcss.css_header").html_safe%>
+        </a>
+    </li>
+    <% end %>
+    <% if feature?(:layout_customization) %>
+    <li>
+        <a id="layout-tab" href="#layout" data-toggle="tab" 
+            data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">
+          <%=t("portalcss.layout_and_pages_header").html_safe%>
+        </a>
+    </li>
+    <% end %>
+  </ul>
   
-<div class="tab-content">
-  <div class="tab-pane active" id="preferences">
-    <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
-  </div>
-  <%if feature?(:css_customization)%>
-  	<div class="tab-pane" id="custom_css">		
-      <%= render :partial => "custom_css", :object => @portal_template %>
-  	</div>
-  <%end%>
-  <%if feature?(:layout_customization)%>
-    <div class="tab-pane" id="layout">
-      <ul data-tabs="tabs" class="pills">
-        <li class="active">
-          <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
-            <%=t("portalcss.layout_pages.subheader_layout")%>
-          </a>
-        </li>
-        <li>
-          <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
-        </li>
-      </ul>
-
+  <div class="tab-content">
+    <div class="tab-pane active" id="preferences">
+      <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
+    </div>
+    <%if feature?(:css_customization)%>
+    	<div class="tab-pane" id="custom_css">		
+        <%= render :partial => "custom_css", :object => @portal_template %>
+    	</div>
+    <%end%>
+    <%if feature?(:layout_customization)%>
+      <div class="tab-pane" id="layout">
+        <ul data-tabs="tabs" class="pills nav-pills portal-pills">
+          <li class="active">
+            <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
+              <%=t("portalcss.layout_pages.subheader_layout")%>
+            </a>
+          </li>
+          <li>
+            <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
+          </li>
+        </ul>
       <div class="tab-content">
         <div class="tab-pane active" id="template">
           <%= render :partial => "layout" %>
@@ -190,36 +189,43 @@
   })
 
   if(window.Mousetrap){
-    Mousetrap.bind(['command+s', 'ctrl+s'],function(e){
+    Mousetrap.bind('mod+shift+s', function (e) {
       jQuery('input[name="save_button"]:visible')[0].click();
       return false;
     });
 
-    Mousetrap.bind(['command+shift+p', 'ctrl+shift+p'],function(e){
+    Mousetrap.bind('mod+shift+p', function (e) {
       jQuery('input[name="preview_button"]:visible')[0].click();
       return false;
     });
   }
+
 <% end %>
 
 <% content_for :helpcard do %>
-    <h3 class="title">Shortcut for editor</h3>
-    <p>
-      <b>Shift+cmd+s</b>  <br />
-      Save current changes<br />
-
-      <b>Shift+cmd+p</b> <br /> 
-      Preview current changes<br />
-      
-      <b>Shift+cmd+f</b> <br />
-      Show current working editor in fullscreen mode<br />
-      
-      <b>Esc</b> <br />
-      Exit fullscreen<br />
-    </p> 
+  
+    <div class="help-chart mt0 shorcuts-info">
+      <h5 class="lead">Editor Shortcuts</h5>
+      <span class="row-fluid">
+        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> s</span>
+        <span class="span6 description">Save changes</span>
+      </span>
+      <span class="row-fluid">
+        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> p</span>
+        <span class="span6 description">Preview changes</span>
+      </span>
+      <span class="row-fluid">
+        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> f</span>
+        <span class="span6 description">Editor in fullscreen</span>
+      </span>
+      <span class="row-fluid">
+        <span class="span6 shortcut-key">Esc</span>
+        <span class="span6 description">Exit fullscreen</span>
+      </span>
+    </div>
     
     <div id="preferences-tab-helpcard" rel="helpcard">
-      <h3 class="title">Advanced rebranding & customization</h3>
+      <h5 class="lead">Advanced rebranding & customization</h5>
       <p>
         Apart from the basic coloring changes you have made to your portal, you can also customize the look and feel of select aspects of the page to further match your brand. 
 
@@ -230,7 +236,7 @@
     </div>
 
     <div id="custom_css-tab-helpcard" class="hide" rel="helpcard">
-      <h3 class="title">Using Custom Stylesheets</h3>
+      <h5 class="lead">Using Custom Stylesheets</h5>
       <p>
         You can use your own CSS to override existing styles in your customer portal. For example, you can provide your own style definitions for the header tabs, paragraphs and body of your portal. 
 
@@ -239,7 +245,7 @@
     </div>
 
     <div id="layout-tab-helpcard" class="hide" rel="helpcard">
-      <h3 class="title">Page level customizations</h3>
+      <h5 class="lead">Page level customizations</h5>
       <p>
         You can customize the layout of each page in your Freshdesk portal. You will need to design your layout using the Freshdesk Portal Placeholders and the Liquid templating framework. 
 

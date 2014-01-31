@@ -35,7 +35,8 @@
   
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , 
+  map.resources :agents, :member => { :delete_avatar => :delete ,
+                                      :toggle_shortcuts => :put, 
                                       :restore => :put, 
                                       :convert_to_user => :get, 
                                       :reset_password=> :put }, 

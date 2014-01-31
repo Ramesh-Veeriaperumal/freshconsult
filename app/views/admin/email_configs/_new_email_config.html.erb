@@ -6,14 +6,14 @@
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.name').html_safe%></label>
 			<div class="controls">
-				<%= f.text_field :name, :class => "text span8" %>
+				<%= f.text_field :name, :class => "text input-xxlarge" %>
 				<div class="muted"><%= t('email_configs.name_info_msg').html_safe %> </div>
 			</div>
 	</li>
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.reply_email').html_safe%><span class="required_star">*</span></label>
 			<div class="controls">
-				<%= f.text_field :reply_email, :class => "required email text span8", :id => "reply_to_id" %>
+				<%= f.text_field :reply_email, :class => "required email text input-xxlarge", :id => "reply_to_id" %>
 				<div class="muted"><%= t('email_configs.info7').html_safe %> </div>
 			</div>
 	</li>
@@ -21,22 +21,22 @@
 			<label class="control-label" ><%=t('email_configs.info8').html_safe%></label>
 			<div class="controls">
 				<%= f.hidden_field :to_email, :id => "hidden_reply_to"%>
-				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info span8 clear-left-margin" )  %>
+				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info input-xxlarge" )  %>
 			</div>
 	</li>
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.info9').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2 span5") %>
-				<div class="muted span8 clear-left-margin"><%=t('email_configs.info10').html_safe%> </div>
+				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2 input-xlarge") %>
+				<div class="muted input-xxlarge"><%=t('email_configs.info10').html_safe%> </div>
 			</div>
 	</li> 
 	<% if feature?(:multi_product) && !@products.empty? %> 
 		<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.assign_to_product_msg').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." },:class =>"select2 span5") %>
-				<div class="muted span8 clear-left-margin"><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path).html_safe%></div> 
+				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." },:class =>"select2 input-xlarge") %>
+				<div class="muted input-xxlarge"><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path).html_safe%></div> 
 			</div>
 		</li> 
 	<% end %>	

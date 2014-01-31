@@ -864,8 +864,8 @@ en:
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal customization
-        customize_portal: "Customize portal >"
-        save_and_customize: "Save & Customize portal >"
+        customize_portal: "Customize portal"
+        save_and_customize: "Save & Customize portal"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
         helpdesk_phone: Helpdesk Phone
         ago: ago
@@ -2499,6 +2499,7 @@ en:
     check_ticket_status: "Check ticket status"
     user_available: "New tickets will be <br>auto-assigned to you."
     user_not_available: "New tickets will NOT be <br>auto-assigned to you."
+    toggle_shortcuts: "Keyboard Shortcuts"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -3340,6 +3341,7 @@ en:
         no_watcher_text: No agent is watching this ticket
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
+        toggle_watch: Toggle Watch
         pick_agents: Add agents
         add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
@@ -4233,7 +4235,7 @@ en:
           to: To
           filter_by: Satisfaction Views
           view_report_date: View reports during
-          helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p style='margin-left:15px;'>1.Filter the report results with respect to Agents, Group or Company<br>2.View reports for a particular timeframe</p></p>"
+          helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
@@ -5028,3 +5030,39 @@ en:
   ticket_creating_agent: "Ticket Creating Agent"
   ticket_cc: "Ticket CC"
   select_watchers: "Select Watchers"
+  shortcuts:
+    title: "Keyboard shortcuts"
+    goto_tab:
+      title: "Goto Tab"
+      dashboard: "Dashboard"
+      tickets: "Tickets"
+      social: "Social"
+      solutions: "Solutions"
+      forums: "Forums"
+      customers: "Customers"
+      reports: "Reports"
+      admin: "Admin"
+    ticket_detail_list_common:
+      title: "Common shortcuts for ticket list and view"
+      prev_next: "Navigate between ticket list view pages"
+      delete_ticket: "Delete ticket"
+      pickup: "Pickup ticket"
+      spam: "Mark ticket as spam"
+      close: "Close ticket ( alt + ~ to skip notification )"
+      search: "Search"
+    ticket_list:
+      title: "Ticket List"
+      move_cursor: "Jump cursor to next / previous ticket"
+      hovercard: "Show ticket hovercard"
+      view: "View the active ticket"
+      mark: "Select a ticket, (Hold shift + x to select all)"
+    ticket_view:
+      title: "Ticket View"
+      reply: "Reply"
+      forward: "Forward"
+      add_note: "Add note"
+      save: "Save / Send"
+      watch: "watch / unwatch ticket"
+      expand: "Expand conversations"
+      toggle_activity: "Toggle Activity"
+      add_time: "Add time on ticket"

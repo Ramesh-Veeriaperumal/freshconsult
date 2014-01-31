@@ -12,4 +12,7 @@
 			ele.addClass('record_highlight');
 		<% end %>
 	});
+
+	// Shortcuts variables
+	var Shortcuts = <%= Shortcut::KEY_BINDINGS.to_json.html_safe %>;
 <%- end -%>

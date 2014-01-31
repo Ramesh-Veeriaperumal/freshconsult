@@ -1,0 +1,66 @@
+// Here is where you can define your constants for your application and to configure the blueprint framework.
+// Feel free to delete these if you want keep the defaults:
+//-------------------------------------------------------------------------------------------------------------
+
+//----------------------------------
+// Theme Colors and layout Defaults 
+//----------------------------------
+$header_color:							#252525 				!default;
+$tab_color:								#006063 				!default;
+$background:							#efefef 				!default;
+$content-color: 						#fff 					!default;
+$sidebar-color:							#fafafa;
+
+$sidebar-width:							300px;
+$sidebar-bg:							#fcfcfc;
+$sidebar-border:      					#eee;
+$footer-border:        					#ccc;
+$footer-bg:								#fff;
+$header_height:							54px;
+$use-mozilla-ellipsis-binding:			true;
+$common-border-color:					#ccc;
+$common-padding:						20px; 		// Page left, right, top and bottom padding
+
+//-------------------------- 
+// Typography Configuration
+//--------------------------
+$baseFontFamily: 						"Helvetica Neue", Helvetica, Arial, sans-serif;
+$default_txt_color:						#333;
+$default-font-size: 					$baseFontSize;
+
+@import "blueprint/buttons";
+
+//----------------------
+// Priority Color Codes
+//----------------------
+
+$COL_PRI_HIGH: 							#ffb613;		
+$COL_PRI_MEDIUM: 						#008ff9;		
+$COL_PRI_LOW: 							#7ebf00;		
+$COL_PRI_URGENT: 						#de0000;
+$COL_RESOLVED_CLOSED: 					#e5e5e5;
+$COL_SPAM: 								#555;
+$COL_DELETED: 							#D00;
+$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 	6px;
+$priority_gradient:						url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==);
+$priority_gradient_shadow: linear-gradient(left, rgba(0,58,5,0) 0%,rgba(0,0,0,0.2) 100%);
+
+$priority-default-alpha:				1;
+$priority-hover-alpha: 					1;
+
+// --------------------------------------------------
+// GRID SYSTEM FOR SUSY
+// --------------------------------------------------
+
+$total-columns: 						4;
+$column-width: 							60px;
+$gutter-width: 							10px;
+$grid-padding: 							10px;
+
+$container-style: 						magic;
+
+$media-mobile: 							0 30em;
+$break-tablet:							45em 12;
+$break-desktop:							60em 12;
+$break-large:							75em 16;
+$container-width: 						1140px;

@@ -1,0 +1,105 @@
+// Icon sprite creation
+// --------------------------------------------------
+
+@import "cdn-ignored/sprites/icons/*.png";
+
+
+/* %% more styles set for this class in some other file */
+
+/* %% app-common */ 
+.results{ 
+	.ticket_icon	span.icon{ @include icons-sprite(page-white); }
+	.contact_icon	span.icon{ @include icons-sprite(user); }
+	.company_icon	span.icon{ @include icons-sprite(building); }
+	.solution_icon	span.icon{ @include icons-sprite(solutions); }
+	.forum_icon		span.icon{ @include icons-sprite(comments); }
+}
+
+.sort .sort_order{	
+	.ASC{  @include icons-sprite(sort-asc); }
+	.DESC{ @include icons-sprite(sort-desc); }
+}
+
+.forum_list .base-set{
+	.forum_type_howto{ 		@include icons-sprite(forum_howto); }
+	.forum_type_ideas{ 		@include icons-sprite(forum_ideas); }
+	.forum_type_problem{ 	@include icons-sprite(forum_problem); }
+	.forum_type_announce{ 	@include icons-sprite(forum_announce); }
+}
+
+.ui-form .inline-field .google_contacts_sync {
+	li.freshdesk{ 	@include icons-sprite(freshdesk); }
+	li.google{ 		@include icons-sprite(google); }
+}
+
+.solution-list li:before{
+	@include icons-sprite(article-list);
+}
+
+.meta-os { @include icons-sprite('os-generic'); }
+@each $os in mac, windows, android, linux {
+  .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
+}
+.meta-browser { @include icons-sprite('browser-generic'); }
+@each $browser in chrome, firefox, internet-explorer, opera, safari {
+  .meta-browser.browser-#{$browser} { @include icons-sprite('browser-#{$browser}'); }
+}
+
+.meta-referrer { @include icons-sprite(meta-referrer); }
+
+/* Importing chat availability icon */
+@import "cdn-ignored/sprites/chat/*.png";
+$chat-layout:horizontal;
+.agent-fchat-on { @include chat-sprite(status-on); }
+
+.agent-fchat-off { @include chat-sprite(status-off); }
+
+.icon-eye{
+	display: inline-block;
+	width: 22px;
+	height: 12px;
+	margin-top: 1px;
+	vertical-align: text-top;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-image: url("/images/eye.png");
+}
+.icon-crosseye{
+	display: inline-block;
+	width: 22px;
+	height: 12px;
+	margin-top: 1px;
+	vertical-align: text-top;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/images/crosseye.png");
+}
+
+.icon_remove{
+  cursor:pointer;
+	width: 15px;
+	height: 15px;
+	position: relative;
+	border: 1px solid #aaa;
+	background: #CCC;
+	@include border-radius(50%);
+	display: inline;
+	float: left;
+	margin: 8px;
+	margin-left: 0;
+  	margin-top: 0;
+	span {
+		background-color: white;
+		height: 2px;
+		width: 10px;
+		margin: 0 auto;
+		position: absolute;
+		top: 7px;
+		left: 2px;
+		@include box-shadow(0px -1px 0px 0px #aaa);
+	}
+	&:hover{
+		border-color: #d30000;
+		background: #d30000;
+	}
+}

@@ -27,7 +27,7 @@
 	.element{
 		padding:4px 16px 16px 16px;
 		margin:0 -20px; 
-		font-size:13px;
+		font-size:$default-font-size;
 		h4{
 			border-bottom:1px solid #f1f1f1;
 			padding-bottom:1px;
@@ -89,7 +89,7 @@
 	.trial-background {
 		padding: 8px 12px 8px;
 		border: 1px solid rgba(0, 0, 0, 0.2);
-		border-radius: 5px;
+		@include border-radius(5px);
 		margin-bottom: 11px;
 		background: rgba(0,0,0, 0.7);
 		cursor:pointer;
@@ -100,7 +100,7 @@
 			display: block;
 			height: 100%;
 			.arrow-right{
-				border-left-color:#aaa;
+				border-left-color:#ccc;
 				font-size:8px;
 				float: right;
 				margin-top: 4px;
@@ -112,7 +112,7 @@
 				font-weight: bold;
 			}
 			.arrow-right{
-				border-left-color: #333;
+				border-left-color: #fff;
 			}
 		}
 	}
@@ -145,7 +145,6 @@
 	h3.title{
 	   padding:1px 0 5px 0;
 	}
-	.panel_area{ padding-top:0; }
 }
 
 #compeleted_reminders li:last-child{
@@ -170,7 +169,7 @@
 			   position:absolute;
 			}
 			label{
-				font-size:13px;
+				font-size: $default-font-size;
 				font-weight:normal;
 				margin-left:5px;
 				line-height:18px;	
@@ -248,5 +247,5 @@ div.addReminder{
 .common-icon-help{
 	position:absolute;
 	right:0;
-	top:$common-padding;
+	top:$common-padding / 2;
 }

@@ -3,3 +3,4 @@ page.replace_html 'ticket-sub-toolbar', :partial => '/helpdesk/shared/ticket_sor
 page << "bulkActionButtonsDisabled();"
 page << "jQuery.getScript('/helpdesk/tickets/full_paginate?total_entries=#{params["total_entries"]}&page=#{params["page"]}');"
 page << "handle_agent_collision();" if feature?(:agent_collision)
+page << "if(window.shortcuts || window.shortcuts != null) shortcuts.setListItemCursor('table.tickets tbody tr');"

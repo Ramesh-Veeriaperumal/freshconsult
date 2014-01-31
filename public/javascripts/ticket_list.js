@@ -11,6 +11,11 @@ priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 TicketListEvents = function() {
 MergeTicketsInitializer();
+
+Fjax.beforeNextPage = function() {
+	jQuery('#ticket_pagination').html('<span class="disabled prev_page"><span></span></span><span class="disabled next_page"><span></span></span>');
+	// Disabling Prev/Next pagination buttons when switching views or going to next page.
+}
 jQuery('body').append('<div id="agent_collision_container" class="hide"></div>');
 
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
@@ -259,14 +264,19 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	});
 	
 
-if (getCookie('ticket_list_updated') == "true") {
-	if (supports_html5_storage()) {
-		
-		eval(window.localStorage['updated_ticket_list']);
-		if (window.localStorage['is_unsaved_view']) {
-			jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
+	if (getCookie('ticket_list_updated') == "true") {
+		if (supports_html5_storage()) {
+			
+			eval(window.localStorage['updated_ticket_list']);
+			if (window.localStorage['is_unsaved_view']) {
+				jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
+			}
+			setCookie('ticket_list_updated',true);
 		}
-		setCookie('ticket_list_updated',true);
 	}
-}
+
+	// Uncheck select all checkbox before navigate to next & prev page (in pagination)
+	jQuery('body').on('click.ticket_list', '.next_page, .prev_page', function () {
+		jQuery('#helpdesk-select-all').removeAttr('checked');
+	});
 }

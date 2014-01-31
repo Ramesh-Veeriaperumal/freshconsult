@@ -1,0 +1,129 @@
+
+.search_results_bar{
+	@include border-bottom-radius(6px);
+	@include box-shadow(#aaa 0 3px 10px);
+	border:1px solid #afafaf;
+	display:none;
+	position:absolute;
+	background:#ffffff;
+	right:0;
+	top:-1px;
+	border-top:1px solid #dddede;
+	padding-left:100px;
+	z-index:9999999;
+	.results{
+		width:300px;
+		@include border-radius(0 0 6px 0);
+		background:#f6f6f6;
+		border-left:1px solid #dedede;
+		li{
+			padding:6px 0 0 0;			
+			border-bottom:1px solid #efefef;
+			a:hover, a.active{
+				background-color:#333333;
+				color:#ffffff;
+			} 
+			border-bottom:1px solid #efefef;
+		}
+	}
+}
+
+#search_results{
+	display:block; 
+}
+
+.results{ 
+	padding-bottom:8px;
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }	
+	
+	li{
+		list-style:none;
+		position:relative;
+		padding:6px 0 8px 0;
+		span.icon{ 
+			position:absolute;
+			width:16px;
+			height:16px;
+			margin-left:4px;
+			margin-top:5px;
+		}
+		a{
+			display:block;
+			text-decoration:none;
+			line-height:16px;
+			background-position:5px 4px;
+			background-repeat:no-repeat;
+			@include link-colors($default_txt_color, #ffffff, $default_txt_color, $default_txt_color);
+			span.info{
+				float:right;
+				font-size:10px;
+				color:#888888;
+			}
+		}
+		
+		a.user{
+			@include link-colors(#006699, #126d9b, #006699, #006699);
+			font-weight:bold;
+		}
+		a.big{
+			font-size:13px;
+			position:relative;
+			left:-25px;
+			@include link-colors(#006699, #126d9b, #006699, #006699);
+		}
+		a.big:hover{
+			text-decoration:underline;
+		}
+		
+		h4{
+			position:absolute;
+			left:0;
+			top:9px;
+			margin-left:-100px;
+			width:90px;
+			color:#888888;
+			font-size:12px;
+			text-align:right;
+		}
+		div, a{
+			padding:4px 8px 4px 25px;
+		}
+		div.title{
+			background:#efefef;
+			color:#666666;
+		}
+		strong.title{
+			font-weight:bold;
+			font-size:13px;
+		}
+		div.group{
+			@include clearfix;
+			border-bottom:1px solid #f1f1f1;
+			padding-top:6px;
+			padding-bottom:6px;
+			.preview_pic{
+				padding:0;
+				margin:0;
+				position:relative;
+				margin-left:-28px;
+				img{
+					border:0;
+					padding:6px;
+				}
+			}
+			span{
+				padding:0 0 4px 0; 
+			}
+			span.small{
+				font-size:11px;
+			}
+			span.light{
+				color:#888888;
+			}
+			span.icon{ 
+				padding:0;
+				margin-left:-5px;
+			}
+		}
+	}
+}

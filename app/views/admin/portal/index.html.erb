@@ -1,5 +1,4 @@
 <% @enable_pattern = true %>
-<% content_for :helpcard do -%><%- end %> 
 
 <%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "lead" ) %>
 <% form_for(:account, :url => admin_portal_path(@account), :html => { :method => :put }) do |f| %>

@@ -2,6 +2,7 @@ class Agent < ActiveRecord::Base
   
   belongs_to_account
   include Cache::Memcache::Agent
+  include Agents::Preferences
 
   before_destroy :remove_escalation
 
@@ -11,8 +12,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional, :available
-  
+  attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
   
   has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
           :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
@@ -122,6 +122,5 @@ end
     json_str = super options
     return json_str
   end
-
 
 end

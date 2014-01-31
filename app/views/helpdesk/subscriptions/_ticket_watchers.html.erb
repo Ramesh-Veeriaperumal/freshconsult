@@ -142,6 +142,7 @@
                       jQuery(".watcher_count").remove();
                       jQuery("#watcherlist").remove();
                     }
+                    jQuery('#watcher_toggle').data('watching', false);
           }
       });
   });
@@ -163,6 +164,9 @@
                     jQuery(".watcher_input").bind('change', add_watcher);
                     setTimeout("clone.remove()",2000);
                     update_watcher_count();
+                    },
+          success: function(){
+                      jQuery('#watcher_toggle').data('watching', true);
                     }
     });
 

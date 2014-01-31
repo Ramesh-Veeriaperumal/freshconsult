@@ -5,7 +5,7 @@
   <% if @agents && @agents.size > 1%>
     <div class="span4">
       <div class="dropdown">
-         <%= t('agent_list.sort.sorted_by')%>: <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">
+         <%= t('agent_list.sort.sorted_by')%>: <a role="button" class="dropdown-toggle" id="sorting_dropdown" data-toggle="dropdown" href="#">
           <b><%= t("agent_list.sort.#{current_agent_order}") %></b><b class="caret"></b></a>
           <%= agent_list_sort %>
       </div>

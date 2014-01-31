@@ -85,7 +85,12 @@
 // Common styles
 .nav-tabs,
 .nav-pills {
-  @include clearfix();
+  &:after{clear:both;}
+  &:before, &:after{
+    display: table;
+    line-height: 0;
+    content: "";
+  }
 }
 .nav-tabs > li,
 .nav-pills > li {
@@ -97,6 +102,7 @@
   padding-left: 20px;
   margin-right: 2px;
   line-height: 14px; // keeps the overall height an even number
+  display: block; // from App-bootstrap have to check later
 }
 
 // TABS

@@ -145,12 +145,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container"} : {}
+    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container", :"data-keybinding" => shortcut("app_nav.#{strip_tags(title).downcase}")} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
- 
   end
   
   def show_ajax_flash(page)
@@ -766,7 +765,7 @@ module ApplicationHelper
   def assumed_identity_message
     _output = []
     if current_user && is_assumed_user?
-      _output << %( <div class="alert alert-assume-agent alert-solid"> )
+      _output << %( <div class="alert-assume-agent alert-solid"> )
       _output << %( #{t('header.assumed_text')} <b> #{current_user.name}</b> - )
       _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
       _output << %( </div> )
@@ -912,4 +911,24 @@ module ApplicationHelper
     
     location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
   end
+
+  def shortcut(key)
+    Shortcut.get(key)
+  end
+
+  def shortcuts_enabled?
+    current_user.agent.shortcuts_enabled?
+  end
+
+  def current_platform
+    os = UserAgent.parse(request.user_agent).os
+    ['windows', 'mac', 'linux', 'android'].each do |v|
+      return v if os.downcase.include?(v)
+    end
+  end
+
+  def modifier(key)
+    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym].html_safe
+  end
+
 end

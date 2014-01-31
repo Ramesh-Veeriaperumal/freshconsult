@@ -38,7 +38,7 @@
 											   :id => "edit_form", :class => "form-horizontal", :rel=> "validate"  } do |f| %>
 
 	<%= link_to t("admin.products.portal.customize_portal"), admin_portal_template_path( @account.main_portal ), 
-					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
+					:rel => "customize-portal", :class => "btn btn-bold btn-primary pull-right" %>
 	<h1 class="lead"><%=t('account.rebrand')%></h1>
 
 	<%= f.error_messages %>
@@ -197,7 +197,7 @@
 	<hr>
 	<div class="row-fluid">
   		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
-		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "btn floatl" %>
+		<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", :class => "btn floatl" %>
 		<%= submit_tag t('account.save'), :class => 'btn btn-primary pull-right', :id => 'account_submit' %>
 	</div>
 	

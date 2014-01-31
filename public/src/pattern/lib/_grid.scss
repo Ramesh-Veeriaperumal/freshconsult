@@ -19,3 +19,11 @@
 .row-fluid [class*="span"].pull-right {
   float: right;
 }
+.row-fluid:before, .row-fluid:after {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+.row-fluid:after {
+	clear: both;
+}

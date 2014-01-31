@@ -1,7 +1,5 @@
-
-	<label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
-	<%= text_field_tag :date_range, date_range, :class => "required" %>
-
+<label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
+<%= text_field_tag :date_range, date_range, :class => "required input-large" %>
 
 <% javascript_tag do %>
 jQuery(document).ready(function() {

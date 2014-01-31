@@ -3,6 +3,7 @@
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
+  	<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
   	<input class="selector" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
 

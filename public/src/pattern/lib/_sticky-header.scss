@@ -44,7 +44,7 @@
 	z-index: 99;
 }
 
-@media (max-width: $blueprint-liquid-container-min-width) {
+@media (max-width: $container-width) {
 	.fixed_wrap  {
 		position: static;
 	}

@@ -20,7 +20,7 @@
 				</div>
 				<div class="conversation_thread hide" id="show_more">
 					<div class="conversation">
-						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
+						<a href="" class="avatar-wrap avatar-wrap-collapse" data-keybinding="<%= shortcut('ticket_detail.expand') %>"><p>
 							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
 							<span class='count_number loading_only'>...</span>
 							<span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
@@ -43,6 +43,7 @@
 !function(){
 	"use strict";
 	Fjax.bodyClass = 'ticket_details';
+	Fjax.current_page = 'ticket_detail';
 	TICKET_DETAILS_DOMREADY();
 	Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
 	<% if @ticket.is_twitter? %>

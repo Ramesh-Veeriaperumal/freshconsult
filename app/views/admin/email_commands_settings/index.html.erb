@@ -2,46 +2,42 @@
 	<%= render :partial => "helpnote" %>
 <% end %>
 
-<%= content_tag( :h3, t('email_command_settings_heading'), :class => "title") %>
-<%= content_tag( :div, t('email_command_settings_info'), :class => "intro") %>
+<%= content_tag( :h3, t('email_command_settings_heading'), :class => "lead") %>
+<%= content_tag( :div, t('email_command_settings_info'), :class => "lead-desc muted") %>
 
 <% form_for :account_additional_settings, @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
 	<%= f.error_messages %>
-	<ul class="ui-form">
-		<li>
-			<label><%=t('email_command_delimeter_label')%></label>
+	<div class="control-group">
+		<label class="control-label"><%=t('email_command_delimeter_label')%></label>
+		<div class="controls">
 			<%= f.text_field :email_cmds_delimeter, :class => "text" , :id => "email_cmds_delimeter"%>
-			<div class="info-data"><%= t('email_command_del_info_data') %> </div>
-		</li>
-		<li>
-		</li>
-	</ul>
-	<br></br>
-	<div>
-	<label>Preview</label>
-		<ul class="ui-form">
-			<li class = "inline-field">
-				<label class="caption"><%= t('email_command_preview_to_email').html_safe%></>:</label>
-				<div class="fields">
-					<input type="text" class = "text" value="<%= t('email_command_preview_to_email_value')%>" disabled="true"></input>
-				</div>
-			</li>
-			<li class = "inline-field">
-				<label class="caption"><%= t('email_command_preview_subject').html_safe%>:</label>
-				<div class="fields">
-					<input type="text" class = "text" value = "<%= t('email_command_preview_subject_value')%>"  disabled="true"></input>
-				</div>
-			</li>
-			<li class = "inline-field">
-				<div class="fields">
-					<textarea id="email_content" disabled="true" style="height:200px;"><%= @content%></textarea>
-				</div>
-			</li>
-		</ul>
+			<div class="muted"><%= t('email_command_del_info_data') %> </div>
+		</div>
+	</div>
+	<h5 class="sub-lead mt20">Preview</h5>
+	<div class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label"><%= t('email_command_preview_to_email').html_safe%></>:</label>
+			<div class="controls">
+				<input type="text" class = "text" value="<%= t('email_command_preview_to_email_value')%>" disabled="true"></input>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label"><%= t('email_command_preview_subject').html_safe%>:</label>
+			<div class="controls">
+				<input type="text" class = "text" value = "<%= t('email_command_preview_subject_value')%>"  disabled="true"></input>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label"></label>
+			<div class="controls">
+				<textarea id="email_content" disabled="true" style="height:200px;"><%= @content%></textarea>
+			</div>
+		</div>
 	</div>	
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "uiButton floatl" %>
-		<%= f.submit t('save'), :class => "uiButton" %>
+		<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", :class => "btn" %>
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>
 <% end %>
 

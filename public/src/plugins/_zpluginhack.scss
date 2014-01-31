@@ -1,0 +1,34 @@
+// select2 Hack
+//-----------------
+
+.select2_list_detail { color: #888; }
+.select2-highlighted .select2_list_detail { color: #fff; }
+.select2-dropdown-open a.select2-choice, .select2-container .select2-choice { 
+	background: #fff; 
+}
+.select2-container-active.select2-container .select2-choice { 
+	@include box-shadow(0 0 3px #cccccc);
+	@include tab-focus(); 
+}
+.select2-drop, .select2-container .select2-choice, .select2-drop.select2-drop-above { 
+	border-color: #c6c6c6; 
+}
+.select2-container.select2-drop-above .select2-choice { 
+	background: #FFF; border-top: 0; 
+}
+.select2-fields { width: 95%; }
+.autocomplete_filter .select2-choices { @include border-radius(5px); }
+.autocomplete_filter .select2-search-field { height: 27px; }
+.autocomplete_filter .select2-container, .ff_item .select2 { width: 190px; }
+.ff_item.level_2 .select2, .ff_item.level_3 .select2 { width: 179px; }
+.align_options .select2-results ul.select2-result-sub > li .select2-result-label { 
+	padding-left: 7px; 
+}
+
+// Code Mirror Hack
+//-----------------
+.CodeMirror .cm-fullscreen { right: 20px; }
+
+.redactor_btns_box .btn{
+	margin-right:5px;
+}

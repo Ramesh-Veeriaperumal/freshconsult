@@ -42,6 +42,8 @@ FreshdeskPjax.prototype = {
       $(settings.target).data('twipsy','');
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
+      Fjax.current_page = '';
+      $('[data-keybinding]').expire();
     },
 
     callAfterReceive: function() {

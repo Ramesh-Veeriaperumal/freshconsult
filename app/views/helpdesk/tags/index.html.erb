@@ -6,19 +6,12 @@
     };
 </script>
 <script type="text/javascript" src="/javascripts/app/tags.js"></script>
-<% content_for :sidebar do %>
-    <div class="sidepanel">
-      <h3 class="title">
-      <%= t('.helpcard_title') %>
-      </h3>
-      <br>
-      <p>
-        <%= t('.helpcard1') %>
-      </p>
-      <p>
-        <%= t('.helpcard2') %>
-      </p>
-    </div>
+<% content_for :helpcard do %>
+      <h5 class="lead">
+        <%= t('.helpcard_title') %>
+      </h5>
+      <p><%= t('.helpcard1') %></p>
+      <p><%= t('.helpcard2') %></p>
 <% end %>
 
 <div class="list-page tag-list">

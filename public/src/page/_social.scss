@@ -1,0 +1,148 @@
+.page-list{
+   	margin: 0 (-$common-padding + 2);
+	.list-group{
+		padding:0;
+		margin:0 0;
+		border:1px solid #dfdfdf;
+		border-width:1px 0;
+		.list-item{
+			@include clearfix;
+			border-bottom:1px dotted #eaeaea;
+			padding:14px 25px 6px 70px;
+			position:relative;
+			.primary-text{  
+				font-size:13px; 
+				line-height: 19px;
+				padding: 2px 0 6px;
+				color:#444;
+			}
+			.info-text{
+				padding:6px 0 4px 0;
+				font-size:12px;
+				color:#888888;
+			}
+			.preview-pic{
+				border-color:#d2d2d2;
+				position:absolute;
+				left:20px;
+				top:16px;
+				img{ width:36px; height:36px; padding:0; border:0; }
+			}
+			.username{ 
+				padding:0 0 3px 0;
+				font-weight:bold;
+				font-size:13px;
+			}
+			.item_actions{
+				visibility:hidden;
+			}
+		}
+		.list-item:hover{
+			background-color:#e6f3f9;
+			border-bottom:1px solid #dfdfdf;
+			background-repeat:repeat-x;
+			.item_actions{
+				visibility:visible;
+			}
+		}
+	}
+}
+
+.goto_ticket{ display:none; }
+
+.tweet_converted{
+	background-color:#ffffee;
+	.convert_as_ticket{ display:none; }
+	.goto_ticket{ display:inline-block; }
+}
+
+.tweet_converted:hover {
+	background-color:#ffffdd !important;   
+}
+
+.results-info{
+	font-style:italic;
+	font-size:13px;
+	padding:6px 18px;
+	color:#999999;
+	background:#f8f8f8;
+}
+
+#tweet_noresults{
+	height:200px;
+}
+
+.left-panel{
+	width:150px;
+	padding:6px 20px;
+	background-color:#f8f8f8;
+	background-image:url(/images/overlay-right-shadow.png);
+	background-position:top right;
+	background-repeat:repeat-y;
+}
+
+.tweet-table{
+   border:1px solid #eaeaea;
+   border-width:1px 0;
+   width:100%;
+}
+
+.search-keys{
+	margin:0 0 8px 0;
+	li{
+		padding:3px 8px 5px 18px;
+		position:relative;
+		.icon{		   
+			position:absolute;
+			left:0;
+			width:15px; height:15px;
+		}
+		a{
+			font-weight:bold;
+		}
+		a.selected{ 
+			color:#3399CC;
+			text-decoration:none;
+		}
+	}
+}
+
+.more_results{
+	padding:8px 12px;
+	background-color:#f4f4f4;
+}
+
+.info-results{
+	font-size:1.26em;
+	padding:10px 20px;
+	color:#666666;
+	background-color:#f6f6f6;
+	border-top:1px solid #f0f0f0;
+}
+
+
+.tweet-counter{
+	font-size:16px; 
+	position:relative;
+	top:3px;
+	right:5px;
+	color:$default_txt_color;
+}
+
+.tweet-counter.error{
+   	color:#FF0000;
+}
+.more-tweets{
+	text-align:center;
+	cursor:pointer;
+	text-transform:lowercase;
+	color:$default_txt_color;
+	margin-bottom:10px;
+	@include border-radius(3px);
+	@include text-shadow( 0 1px 0 white );
+	display:none;
+}
+
+.more-tweets:hover{
+	background-color:darken(#fffbee, 10%);
+}

@@ -14,6 +14,7 @@
 		</div> 
 	</div>
 </div>
+<%= render :partial => 'shared/shortcuts_help_chart' %>
 <% if current_user && current_user.agent? && current_account.freshfone_enabled? %>
 	<script type="text/javascript" src="https://static.twilio.com/libs/twiliojs/1.1/twilio.js">
 	</script>

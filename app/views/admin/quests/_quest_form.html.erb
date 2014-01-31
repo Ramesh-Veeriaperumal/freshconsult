@@ -85,15 +85,15 @@
 </div>
 <div class="button-container">
 	<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
-	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "uiButton floatl" %>
-	<div class="hide" id="save-button">
-		<input type="submit" class="uiButton special" value="<%= t('admin.quests.quest_form.save').html_safe %>" />
+	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "btn" %>
+	<div class="hide pull-right ml5" id="save-button">
+		<input type="submit" class="btn btn-primary" value="<%= t('admin.quests.quest_form.save').html_safe %>" />
 	</div>
 </div>
 
 <% content_for :helpcard do %>
 	<div class="helpcard">
-		<h4><%= t('admin.gamification.help_text.quest').html_safe %> </h4>
+		<h5 class="lead"><%= t('admin.gamification.help_text.quest').html_safe %> </h4>
 		<p><%= t('admin.gamification.help_text.quest_form_info1').html_safe %> </p>
 		<p><%= t('admin.gamification.help_text.quest_form_info2').html_safe %> </p>
 		<p><%= t('admin.gamification.help_text.quest_form_info3').html_safe %> </p>

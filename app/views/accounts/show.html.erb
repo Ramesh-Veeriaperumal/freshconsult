@@ -16,14 +16,14 @@
 <% content_for :sidebar do -%>
 	
 	<div class="sidepanel">
-		<h3 class="title"><%= current_account.name %></h3> 
+		<h5 class="lead"><%= current_account.name %></h5> 
 		<% unless (del_customer = DeletedCustomers.find_by_account_id(current_account.id)) %>
 			<p>			
 				<strong><%=t('account.active_since')%></strong>
 				<br />
 				<%= formated_date(current_account.created_at) %>			
 			</p>
-			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
+			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "btn") %>
 		<% else %>
 			<p>
 				<%= t(".restore_account", :delete_at => 14.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')).html_safe %>
@@ -32,9 +32,9 @@
 	</div>
 
 	<div class="sidepanel">
-		<h3 class="title"><%= t(".export_data") %></h3> 
+		<h5 class="lead"><%= t(".export_data") %></h5> 
 		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "button" %>
+		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "btn" %>
 	</div>
 
 <%- end %>

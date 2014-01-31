@@ -38,8 +38,8 @@
 </ul>
 
 <div class="button-container">
-	<input type="submit" class="uiButton" value="<%=t('save')%>" />
-	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
+	<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+	<input type="submit" class="btn btn-primary" value="<%=t('save')%>" />
 </div>
 
 <% content_for :pagefixed do %>

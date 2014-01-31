@@ -1,3 +1,7 @@
+<%# controllerName = @controller.controller_name.to_sym %>
+<%#= controllerName %>
+<%#= include_cloudfront_css controllerName unless Jammit.configuration[:stylesheets][controllerName].blank? %>
+
 <div class="wrapper">
 	<div class="wrapper-shadow">
 		<title><%= page_title.html_safe %></title>
@@ -5,8 +9,10 @@
 		body_class= yield :layoutType 
 		body_class = "single #{body_class}" unless(@content_for_sidebar || @content_for_helpcard)
 		%>
-		<% javascript_tag do %>
-			jQuery('body').attr('class','<%=body_class%>');
+		<% javascript_tag do %>			
+			jQuery('body').removeClass(prev_body_classes || "").addClass('<%=body_class%>');			
+			var prev_body_classes = "<%= body_class %>";
+
 			jQuery('ul.header-tabs li.active').removeClass('active');
 			jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active')
 		<% end %>

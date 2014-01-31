@@ -94,6 +94,12 @@ class AgentsController < ApplicationController
     @agent.save
     render :nothing => true
   end
+
+  def toggle_shortcuts
+    @agent = scoper.find(params[:id])
+    @agent.update_attribute(:shortcuts_enabled, !@agent.shortcuts_enabled?)
+    render :json => { :shortcuts_enabled => @agent.shortcuts_enabled? }
+  end  
   
   def delete_avatar
     @user = current_account.all_users.find(params[:id])
