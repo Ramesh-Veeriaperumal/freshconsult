@@ -40,6 +40,8 @@ gem "ruby-openid-apps-discovery", "1.2.0"
 gem "twilio-ruby"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
+gem "ruby-saml", "0.7.2"
+
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
 

@@ -790,7 +790,8 @@ en:
         remote_logout_url_info: This is the URL to which Freshdesk will redirect users when they click on the Logout link in Freshdesk.
         remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
-        enable_sso: Single Sign On
+        enable_sso: Single Sign On (SSO)
+        enable_simple_sso: Simple SSO
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -799,6 +800,14 @@ en:
         multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."
         enabled: Enabled
         disabled: Disabled
+        enable_saml: "SAML SSO"
+        enable_saml_info: "SAML is a standard for identity management and SSO for typically used by large Enterprises"
+        saml_login_url: "SAML Login URL"
+        saml_login_url_info: "Freshdesk will redirect users to this URL to login. You can get this from your SAML Identity Provider."
+        saml_logout_url: "Logout URL"
+        saml_logout_url_info: "Optional logout URL to which users will be sent to when they logout of freshdesk."
+        saml_cert_fingerprint: "Security Certificate Fingerprint"
+        saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
@@ -806,7 +815,7 @@ en:
         ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
         helpdesk_url: Helpdesk URL
         submit_request: Submit Request
-        thanks_message: <span class=\"thanks_message\"> Thank you for requesting a Custom SSL certificate.</span> <br />
+        thanks_message: "<span class='thanks_message'> Thank you for requesting a Custom SSL certificate.</span> <br />"
         success_message: Your request for a Custom SSL certificate has been initiated and will be processed shortly. You will be receiving a confirmation email from our provider before approval. Please check your inbox for updates.
         default_ssl: Default SSL
         custom_ssl: Custom SSL
@@ -4936,7 +4945,7 @@ en:
     chat_with_archive: "<b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
     ticket_subject: "Chat with $1 on $2"
-    ticket_description: "Chat transcript created via Freshchat. Conversation was between <b>$1</b>$2and <b>$3</b>."
+    ticket_description: "Created via Chat. Conversation between <b>$1</b>$2and <b>$3</b>."
     ticket_title: "Ticket Title"
     requester_name: "Requester Name"
     requester_email: "Requester E-mail"

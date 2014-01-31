@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
     error_list << errors.collect do |e, m|
       "<li>#{e.humanize unless e == "base"} #{m}</li>"
     end.to_s << '</ul>'
-    error_list
+    error_list.html_safe
   end
   
   def wrong_portal

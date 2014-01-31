@@ -63,7 +63,7 @@ class ContactsController < ApplicationController
         flash[:notice] = t(:'flash.contacts.create.success')
     else  
         check_email_exist
-        flash[:notice] =  activerecord_error_list(@user.errors).html_safe      
+        flash[:notice] =  activerecord_error_list(@user.errors)      
     end
     customer = current_account.customers.find(params[:customer_id])
     redirect_to(customer_url(customer))
@@ -154,11 +154,11 @@ class ContactsController < ApplicationController
     @user = current_account.all_users.find_by_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
-    @user_tickets = current_account.tickets.requester_active(@user).visible.newest(5).find(:all, 
-      :include => [ :ticket_states,:ticket_status,:responder,:requester ])
-    
     respond_to do |format|
-      format.html { }
+      format.html { 
+        @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible
+        @user_tickets = @total_user_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester]) 
+      }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,

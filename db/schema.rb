@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
     t.boolean  "pass_through_enabled",              :default => true
     t.string   "bcc_email"
     t.text     "supported_languages"
+    t.integer  "api_limit",           :default => 1000
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"

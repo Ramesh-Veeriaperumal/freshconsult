@@ -10,20 +10,20 @@ class CustomersController < ApplicationController
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
   
   def index
-    per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
-    @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
+    per_page = (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
     respond_to do |format|
       format.html  do
-        @customers
+        @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
       end
      format.xml  do
-        render :xml => @customers.to_xml
+        render :xml => es_scoper
       end
       format.json do
-        render :json => @customers.to_json
+        render :json => es_scoper
       end
       
       format.atom do
+        @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
         @customers = @customers.newest(20)
       end
     end
@@ -32,9 +32,11 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.xml
   def show
-
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { 
+        @total_customer_tickets = current_account.tickets.permissible(current_user).all_company_tickets(@customer.id).visible
+        @customer_tickets = @total_customer_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+      }
       format.xml  { render :xml => @customer }
       format.json {render :json=> @customer.to_json}
     end
@@ -110,6 +112,12 @@ class CustomersController < ApplicationController
 
     def scoper
       current_account.customers
+    end
+
+    def es_scoper
+      order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
+      order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
+      Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type)
     end
 
     def set_selected_tab

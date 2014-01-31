@@ -56,6 +56,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
+  map.saml_login '/login/saml', :controller => 'user_sessions', :action => 'saml_login'
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 

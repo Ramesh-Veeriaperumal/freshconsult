@@ -31,7 +31,8 @@ module Gnip::RuleHelper
           :environment => Rails.env,
           :description => "Exception while " + action.to_s + " rules in " + replay_or_prod ,
           :rule_tag => rule.tag,
-          :rule_value => rule.value
+          :rule_value => rule.value,
+          :error => error.inspect
         }
         topic = SNS["social_notification_topic"]
         DevNotification.publish(topic, "Exception in gnip rule send action", error_params.to_json)

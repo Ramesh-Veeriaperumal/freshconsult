@@ -19,14 +19,6 @@ stylesheets:
   plugins:
     - public/stylesheets/plugins.css
 
-  chat:
-    - public/stylesheets/chat/chat.css
-    - public/stylesheets/chat/structure.css
-    - public/stylesheets/chat/grey-theme.css
-    - public/stylesheets/chat/base.css
-    - public/stylesheets/chat/clean.css
-    - public/stylesheets/chat/sprites.css
-
   non_pattern:
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
@@ -140,6 +132,7 @@ javascripts:
   frameworks:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/jquery.pjax.js
+    - public/javascripts/utils.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
     - public/javascripts/frameworks/plugins/jquery.form.js
@@ -165,7 +158,7 @@ javascripts:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io.js
-    - public/javascripts/frameworks/faye.js
+    - public/javascripts/helpdesk/freshdesk_node.js
     - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
@@ -206,8 +199,7 @@ javascripts:
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
-    - public/javascripts/dyn_menu.js
-    - public/javascripts/utils.js
+    - public/javascripts/dyn_menu.js    
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
@@ -255,6 +247,7 @@ javascripts:
   fdwidget:
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/utils.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
@@ -262,8 +255,7 @@ javascripts:
     - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/feedback_widget_form.js
-    - public/javascripts/utils.js
+    - public/javascripts/feedback_widget_form.js    
 
   custom_widget:
     - public/javascripts/custom_widget.js
@@ -386,7 +378,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
-    - public/javascripts/utils.js
     - public/javascripts/hackz.js
     - public/javascripts/mColorPicker.js
     - public/javascripts/getting_started.js
