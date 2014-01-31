@@ -202,7 +202,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def hash_url
     url_for(
             :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
-            :host => Account.current.full_domain, 
+            :host => Account.current.host, 
             :protocol => 'https'
             )
   end
