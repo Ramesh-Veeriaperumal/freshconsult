@@ -19,7 +19,7 @@ class SsoController < ApplicationController
           kv_store.remove_key
           facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
           if user_session.save
-            cookies["auth_token"] = curr_user.single_access_token
+            cookies["mobile_access_token"] = { :value => curr_user.single_access_token, :http_only => true } if is_native_mobile?
             redirect_back_or_default(facebook_redirect || '/') 
           end
           return
