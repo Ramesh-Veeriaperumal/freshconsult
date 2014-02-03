@@ -3,10 +3,8 @@
 	background-position: center 40%;
 }
 label{
-   display: block; 
    color: #323232;
    padding:0 0 6px 0;
-   font-size:15px;
 }                
 
 .help-text{
@@ -16,17 +14,12 @@ label{
   padding:0 0 5px 0;
 }
 input[type=text], input[type=password], select, input.text { 
-   width: 99%;
    margin:0 0 3px 0;
    color:#3f3f3f;
-   padding:3px;
-   font-size:13px;
 }
 
 select {
    padding:1px;
-   font-size:13px; 
-   font-weight:normal;
    width:auto;
    max-width: 100%;
 }
@@ -44,7 +37,6 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
-
   &:hover {
 	  background-color: #f5f5f5;
 	  border-color: #ddd;
@@ -54,14 +46,8 @@ textarea[readonly] {
 
 textarea {
    height: 100px;
-   width: 99%;   
    overflow:auto;
-   font-size:13px;
-   line-height:18px;
    resize:none;
-   padding:3px;
-   font-family:$blueprint-font-family;
-
    &#application_script {
    	height:300px;
    }
@@ -84,7 +70,6 @@ input.text, input[type=text], input[type=password], textarea{
 	font-weight:400;
 	padding:5px;
 	@include border-radius(5px);
-	@include box-shadow(#dfdfdf 1px 1px 2px inset);
 }
 
 .search_bar input[type=text] {
@@ -147,7 +132,6 @@ form table {
 
 .auto_bcc_email{
 	padding-left: 10px !important;
-
 	input.text{
 		width: 94%;
 	}	
@@ -212,7 +196,8 @@ a.addchoice:hover{
 			font-size:11px;
 		}
 		.sort_handle{
-			left:-6px;
+			left:-1px;
+			top:8px;
 		}
 		.dropchoice, .tags{
 			@include pie-clearfix;
@@ -485,7 +470,7 @@ a.addchoice:hover{
 				}
 				padding: 8px 0 8px 4px;
 				border-bottom: 1px solid #DDD;
-				border-radius: 0px;
+				@include border-radius(0px);
 				@include border-radius(0 0 5px 5px);
 			}
 
@@ -576,7 +561,8 @@ a.addchoice:hover{
 					.username{height:18px;}
 					.params_div{
 						width: 90.5%; height: 158px; border-color: lightgray;
-						background-color: white; overflow-y: auto; border-radius: 3px;
+						background-color: white; overflow-y: auto; 
+						@include border-radius(3px);
 						border-width: 1px; border-style: solid;
 						margin-left: 3.5px; margin-top: 1.5px;
 						.highlighted{background-color: rgba(#ff0,0.3);}
@@ -646,14 +632,6 @@ li.nested_field{
 		label{ font-weight:normal; }
 	}
 } 
-
-.threecol-form .item{
-	float:left;
-	width:33%;
-	.level{
-		margin-left: 11px;
-	}
-}
 
 .heading{
 	font-size: 18px;
@@ -838,7 +816,7 @@ li.nested_field{
 	margin-top :5px;
 }
 .outline{
-	border-radius: 4px;
+	@include border-radius(4px);
 	background-color: #FDD;
 	border: 1px solid #F99
 }
@@ -859,9 +837,6 @@ input.time{
 }
 
  
-#time_sheet_report .grid table{
-	table-layout:fixed;
-}
 .grid{
 	border:1px solid #cfcfcf;
 	padding:0;
@@ -1014,22 +989,6 @@ input.time{
 	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0; 
-	margin:-2px;
-}
-
-.email-notif-button-container{
-	@include clearfix;
-	text-align:right;
-	padding:20px 0px 15px 0px; 
-	background:#ffffff;	
-	margin:-2px;
-}
-
-.email-notif-button-container{
-	@include clearfix;
-	text-align:right;
-	padding:20px 0px 15px 0px; 
-	background:#ffffff;	
 	margin:-2px;
 }
 
@@ -1209,7 +1168,7 @@ input.search{
 .live_search{
     text-align:left;
     padding:0 0 0 0;
-    margin:8px 0;
+    margin:8px 0 0;
     .loading{
         background-position:right !important;
     }
@@ -1280,10 +1239,6 @@ input.search{
 	@include box-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
     @include border-radius(4px);
     text-align:left;
-    label{
-    	padding:5px 0;
-   		font-size:1.4em;
-    }
 }
 
 .border-top{
@@ -1527,6 +1482,7 @@ table.summary-report{
 
 .highlight-textbox-info{
 	font-size:16px;
+	@include border-radius(3px);
 	color:#0078BD;
 	width:96%;
 	font-weight:400;
@@ -1775,118 +1731,6 @@ table.vmiddle {
       a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); font-weight:normal; }
    }
 }
-
-#MergeTable{
-   td{
-      padding: 3px 6px;
-   }
-   .left-area, .right-area{
-      width:50%;
-   }
-    .right-area{
-       padding-left:30px;
-    }
-   .or{
-      margin:0 0 0 0;
-      border-left:1px solid #dfdfdf;
-      span{
-         font-size:1em;
-         color:#ffffff;
-         text-transform:uppercase;
-         font-style: italic;
-         background:#afafaf;
-         @include border-radius(18px);
-         padding:5px 7px 5px 5px;
-         border:3px solid #f1f1f1;
-         position:absolute;
-         margin-left:-25px;
-         margin-top:10px;
-      }
-   }
-}
-
-
-
-.ticket-simple-list{
-   font-size:13px;
-   width:100%;
-   li{
-      @include clearfix;
-      padding:0 4px 5px 40px;
-      position:relative;
-      .title{
-         font-size:13px;
-         padding:0 0 2px 0; 
-         font-weight:bold;
-         display:block;
-      }
-      .ticket-id{
-         font-weight:bold;
-         float:left;
-         padding-right:4px;
-         color:#666666;
-         margin-left:-40px;
-      }
-      a{
-         @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-         text-decoration:none;
-      }
-      textarea{
-         font-size:12px;
-      }
-   }   
-}
-
-.canned-response-menu{
-   border:2px #4b4b4b solid;
-   background-color:#ffffff;
-   @include box-shadow( #999 0 10px 20px);
-   @include border-radius(5px);
-   padding:0;
-   width:654px;
-   min-height:334px;
-   text-align: left;
-   margin-left: 47px;
-   margin-top: 10px;
-   margin-bottom: 20px;
-   z-index:1000;
-   text-align: left;
-   
-   ul{
-      position:relative;
-      padding:12px 0 0 0;
-      margin:6px 0 0 0;      
-      @include clearfix;
-      max-height:300px;
-      overflow:auto;
-   }
-   span.divider{
-      position:absolute;
-      height:100%;
-      border-left:1px solid #efefef;
-      left:49%;
-      width:1px;
-   }
-   li{       
-      padding: 3px 4px 2px 7px;
-      margin-left:6px;
-      position:relative;
-      a{
-         font-size:13px;
-         text-decoration:none;
-      }
-      span.bullet{
-    	position: relative;
-    	display: inline-block;
-    	padding: 2px 0px;
-    	margin-top: 6px;
-    	width: 17px;
-    	height: 13px;
-
-      }
-   }
-}
-
 textarea.tweet{
    font-size:14px;
    line-height:22px;
@@ -2281,10 +2125,7 @@ input[type="text"].number{
 	@include border-radius(3px);
 	cursor: pointer;
 	font-size: 12px;
-	-webkit-box-shadow: inset 0px 0px 4px #ccc;
-	   -moz-box-shadow: inset 0px 0px 4px #ccc;
-	    -ms-box-shadow: inset 0px 0px 4px #ccc;
-	        box-shadow: inset 0px 0px 4px #ccc;
+	@include box-shadow(inset 0 0 4px #ccc);
 }
 #takescreen-btn:hover{
 	background-color: #fafafa;
@@ -2444,7 +2285,7 @@ input[type="text"].number{
 			}
 			
 			label.error{
-				border-radius: 4px;
+				@include border-radius(4px);
 				margin: 2px 250px 0px 1px;
 			}
 		}
@@ -2480,7 +2321,7 @@ input[type="text"].number{
 		}
 
 		.select2-choices{
-			border-radius: 5px;
+			@include border-radius(5px);
 		}
 
 		.select2-search-field{
@@ -2544,9 +2385,10 @@ div.db-chooser{
 	    height: 26px;
 	    padding-left:90px;
 	    border:1px solid #d6d6d6;
-	    border-radius:4px;
+	    @include border-radius(4px);
 		cursor:pointer;
-		text-shadow: 1px 1px 0px #fff;
+		@include text-shadow(1px 1px 0px #fff);
+		padding-right: 5px;
 	    &:hover{
 			background-color:darken(#f2f2f2, 5%);
 		}
@@ -2611,6 +2453,4 @@ label.label-choice{ cursor: pointer; }
 	label{ font-weight: bold; }
 	.reason-followup{ display: block; }
 }	
-
-
 /* end */

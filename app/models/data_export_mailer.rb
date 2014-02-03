@@ -12,7 +12,7 @@ class DataExportMailer < ActionMailer::Base
   end 
 
   def ticket_export(options={})
-    subject       "Ticket Exports for #{options[:domain]}"
+    subject       formatted_export_subject(options)
     recipients    options[:user][:email]
     body          :user => options[:user], :url => options[:url]
     from          "support@freshdesk.com"
@@ -33,5 +33,14 @@ class DataExportMailer < ActionMailer::Base
     content_type  "text/html"
   end
  
+  private
+    def formatted_export_subject(options)
+      filter = I18n.t("export_data.#{options[:export_params][:ticket_state_filter]}")
+      I18n.t('export_data.ticket_export.subject',
+            :filter => filter,
+            :start_date => options[:export_params][:start_date].to_date, 
+            :end_date => options[:export_params][:end_date].to_date,
+            :domain => options[:domain])
+    end
 
 end

@@ -227,6 +227,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                       :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+    resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]

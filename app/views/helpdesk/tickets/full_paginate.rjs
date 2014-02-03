@@ -13,10 +13,10 @@ if no_of_pages > 1
 	options[:previous_label] = '<span></span>'
 	options[:next_label] = '<span></span>'
 	paginate_content = ticket_pagination_html(options)
-	page << "jQuery('#ticket_pagination').show()"
+	page << "jQuery('#ticket_pagination').show();"
 	page.replace_html 'ticket_pagination', paginate_content
 	page.replace_html 'ticket-toolbar-bottom', full_paginate_content
 	# page << "jQuery('#ticket_pagination').show()"
 end
-page << "jQuery('#ticket_list_count').removeClass('fetching').html(#{@ticket_count}).data('url',false)"
+page << "jQuery('#ticket_list_count').removeClass('fetching').html(#{@ticket_count}).data('url',false);"
 page << "jQuery('.page_info').hide();" if @ticket_count == 0

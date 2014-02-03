@@ -1,0 +1,420 @@
+
+// ------------------------------------------------------------------------------------------------------------
+// 														SLA policy reorder 
+// ------------------------------------------------------------------------------------------------------------
+#va_rules_sort, #sla_policies_sort {
+	@include box-shadow(#EEE 0 0 20px);
+	@include border-radius(4px);
+	margin: 20px 5px 0 2px;
+	border: 1px solid #CCC;
+	padding: 20px 20px 5px;
+	@include no-bullets;
+	background:transparent;
+	li{	
+		@include pie-clearfix;
+		background: #FAFAFA;
+		border-bottom:1px solid #efefef; 
+		color:#656565;
+		padding: 11px 0;
+		margin: 1px 16px 2px;
+		font-size: 1em;
+		&.disabled {
+			background:#EEE;
+			cursor:default;
+			color: #BBB;
+			text-shadow: 1px 1px 0 white;
+			span {
+				@include opacity(0.4);
+			}
+		}
+	}
+	
+}
+/* end of SLA policy reorder */
+
+// ------------------------------------------------------------------------------------------------------------
+// 														SLA policy 
+// ------------------------------------------------------------------------------------------------------------
+.sla_policy_form{
+	.ui-form > li > textarea, .ui-form > li >  input[type=text] {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.ui-form > li >  input[type=text] {
+		height: 25px;
+	}
+	select {
+		width:auto;
+		height: 25px;
+		line-height: 25px;
+	}
+	label {
+		&.large {
+			font-size: 18px;
+			font-weight: 300;
+		}
+		&.inline_text {
+			display:inline-block;
+			padding-top:6px;
+			padding-right: 6px;
+			vertical-align:top;
+			font-weight: normal;
+		}
+	}
+	// Adding upward arrow buttons to Dropdown menus
+
+	.open > .dropdown-menu:before {
+		@include triangle(up, rgba(0, 0, 0, 0.35), 6px);
+		position:absolute;
+		z-index:2;
+		content:"";
+		top: -6px;
+		left: 25px;
+	}
+
+	.open > .dropdown-menu:after {
+		@include triangle(up, #FFF, 5px);
+		position:absolute;
+		z-index:3;
+		content:"";
+		top: -5px;
+		left: 26px;
+	}
+
+	.ui-form li.seperator {
+		padding: 2px 1px;
+		border: 0;
+	}
+	.delete, .delete_conditions {
+		cursor: pointer;
+	}
+	.ui-form {
+		background-color: white;
+	}
+	.escalate_to {
+		padding: 4px 8px 10px;
+		border: 1px solid #CCC;
+		margin-right: 3px;
+		@include border-radius(4px);
+		margin-top: 10px;
+		background: #F6F6F6;
+		.grid:first-of-type {
+			margin-bottom: 20px;
+		}
+		.grid {
+			border: 1px solid #DFDFDF;
+			background: rgba(255, 255, 255, 0.3);
+		}
+	}
+	.grid {
+		@include border-radius(4px);
+		&.sla_detail {
+			padding: 10px 10px 5px;
+			label {
+				padding-top: 3px;
+			}
+			table {
+				width:60%;
+				th {
+					white-space: nowrap;
+				}
+			}
+		}
+		table {
+			border-bottom: 0;
+			td {
+				border: 0;
+				background: none;
+				.toggle-button {
+					margin-left: 0;
+				}
+			}
+			th {
+				padding: 5px 5px 5px 10px;
+				background: none;
+				font-weight: normal;	
+			}
+			&.sla_policies {
+				tr.add_next_level td {
+					@include border-radius(4px);
+					background-color:white;
+					color: #369;
+					padding: 10px 0;
+					&:first-child {
+						padding-left: 4px;
+					}
+
+					&:hover {
+						color: #333;
+					}
+					.symbols-add {
+						top: -2px;
+					}
+				}
+				tr.escalations {
+					td {
+						@include border-radius(4px);
+						padding:8px 4px 0;
+
+						.select2-container {
+							width: 99%;
+						}
+						&.level-holder{
+							width:30px;
+						}
+						&.delete-button-holder{
+							width:16px;	
+						}
+						&.escalations-time-holder {
+							width:210px;
+						}
+						ul {
+							@include border-radius(4px);
+						}
+					}
+					&.response {
+						td:first-child {
+							padding-left: 10px;
+						}
+					}
+					.escalation-level {
+						display:inline-block;
+						position:relative;
+						left:0px;
+						top:3px;
+						padding: 10px 8px;
+						margin-left: 6px;
+						margin-top: 2px;
+						background-color: #999;
+						color: white;
+						font-size: 11px;
+					}
+					select[rel=resolution_time], select[rel=response_time]{
+						margin-top: 2px;
+					}
+					.delete {
+						@include opacity(0.7);
+						margin-top:7px;
+						padding-left: 4px;
+						padding-right: 4px;						
+						width: 16px;
+						height: 16px;
+						position: absolute;
+					}
+				}
+			}
+		}
+	}
+
+	li.select2-search-choice, li.select2-search-field {
+		width: auto !important;
+	}
+	ul.multi_value_field li.search_field_item input {
+		padding-left:8px !important;
+		min-width: 140px;
+	}
+	li.search_field_item input {
+		&:focus {
+			@include box-shadow(none);
+		}
+	}
+	.condition {
+		ul {
+			@include border-radius(6px);
+			width: auto;
+			padding:0;
+			&.multi_value_field {
+				background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #EEE), color-stop(15%, white));
+				background-image: -webkit-linear-gradient(top, #EEE 1%, white 15%);
+				background-image: -moz-linear-gradient(top, #EEE 1%, white 15%);
+				background-image: -o-linear-gradient(top, #EEE 1%, white 15%);
+				background-image: -ms-linear-gradient(top, #EEE 1%, white 15%);
+				background-image: linear-gradient(top, #EEE 1%, white 15%);
+			}
+		}
+	}
+	.add_next {
+		position:relative;
+		display:inline-block;
+		width: auto;
+		height: 10px;
+		cursor: pointer;
+		.level {
+			position: static;
+		}
+	}
+	.sla_policy_conditions_container {
+		border:1px solid #CFCFCF;
+		margin-right: 3px;
+		margin-top: 15px;
+		@include border-radius(4px);
+		.condition {
+			background-color:#F6F6F6;
+			padding:5px 10px;
+			@include border-bottom-radius(4px);
+			.delete_conditions {
+				@include opacity(0.7);
+				margin-top:7px;
+				width: 16px;
+				height: 16px;
+				position: absolute;
+			}
+			.condition_autocompleter {
+				display:inline-block;
+				vertical-align:top;
+				width:86%;
+				.select2-container {
+					width: 100%;
+				}
+			}
+			label.inline_text {
+				width: 55px;
+				margin-left: 20px;
+			}
+			&.first-child {
+				@include border-top-radius(4px);
+			}
+			&.last-child {
+				border-bottom: 1px solid #CFCFCF;
+				@include border-bottom-radius(0);
+			}
+		}
+
+		.add_new_condition {
+			padding: 2px 0;
+			li {
+				width:auto;
+				float:none;
+				padding:0px;
+			}
+			.btn {
+				background:none;
+				border:none;
+				margin-left: 7px;
+				color: #369;
+				&:hover {
+					color: #333;
+				}
+				&:active {
+					@include box-shadow(none);
+				}
+				.icon-detail {
+					padding: 0;
+					width: 7px;
+				}
+			}
+			.btn-group:active {
+				@include box-shadow(none);
+			}
+			.btn-group.open a.btn{
+				background: none;
+				@include box-shadow(none);
+			}
+		}
+	}
+	li .fast_autocomplete {
+		li.choice {
+			@include select2_container_choice;
+			padding: 3px 3px 3px 8px;
+			a {
+				float:right;
+				@include hide-text();
+				padding: 2px 3px 2px 7px !important;
+				background: image-url("select2/select2.png") right top no-repeat !important;
+				width: 12px;
+				height: 8px;
+				left: -2px;
+				&:hover {
+					background-position: right -11px;
+				}
+			}
+			&:hover {
+				border: 1px solid #AAA;
+			}
+		}
+		.autocomplete {
+			ul{
+				@include select2-drop;
+				margin-top: -4px;
+				padding: 3px;
+				overflow: hidden;
+				width: 98%;
+				li {
+					background:none;
+					border:none;
+					margin:2px !important;
+					font-size: 12px;
+					&.selected {
+						background: #3875D7;
+						color: white;
+					}
+				}
+			}
+		}
+	}
+}
+.sla_policy_disabled form{
+	@include opacity(0.3);
+}
+.sla-policy-tooltip {
+	.ui-tooltip-content{
+		@include box-shadow(rgba(0, 0, 0, 0.1) 0 0 6px);
+		@include border-radius(4px);
+		background-color: #FCFAE7;
+		border-color: #E2E2E2;
+		padding: 11px;
+	}
+}
+.sla-policy-index-tooltip {
+	&.ui-tooltip, &.qtip {
+		max-width: 310px;
+	}
+	&.ui-tooltip-shadow {
+		@include box-shadow(rgba(0, 0, 0, 0.1) 0 0 4px);
+	}
+	.ui-tooltip-content{
+		@include box-shadow(none);
+		@include border-radius(4px);
+		background-color: #FCFAE7;
+		border-color: #E2E2E2;
+		padding: 11px 14px;
+	}
+}
+/* end of SLA policy */
+
+
+//------------------------------------------------------------------------------------
+//								sla policy page start
+//------------------------------------------------------------------------------------
+.table.sla-table{
+	th, td{
+		border:0;
+		&:first-child{padding-left:0;}
+	}
+	.sla-time-col{
+		position:relative;
+		width:145px;
+		padding-bottom: 0;
+		input{
+			padding-top: 5px;
+			padding-bottom: 5px;
+			width: 40px;
+			border: 1px solid darkgray;
+		}
+		.select2-container{
+			left: -7px;
+			min-width: 65px;
+		}
+		.select2-choice{
+			@include border-radius(0 3px 3px 0);
+		}
+	}
+	.sla-error {
+		background-color: #e00;
+		font-weight: bolder;
+		color: white;
+	}
+}
+//------------------------------------------------------------------------------------
+//								sla policy page end
+//------------------------------------------------------------------------------------

@@ -17,15 +17,47 @@ module Reports::TimesheetReport
   def csv_hash
     {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, 
                                  "Product"=>:product_name , "Group"=>:group_name , "Note"=>:note,
-                                 "Customer" => :customer_name ,"Billable/Non-Billable" => :billable_type}
+                                 "Customer" => :customer_name ,"Billable/Non-Billable" => :billable_type,
+                                 "Priority"=>:priority_name, "Status"=>:status_name}
   end
   
   def list_view_items
-   [:workable , :customer_name , :note , :group_by_day_criteria , :agent_name, :product_name ,
+   [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name, :product_name ,
                                                                              :group_name , :hours]
   end
+
+  def billable_vs_non_billable(time_sheets)
+    total_time = 0.0
+    billable_data = 0.0
+    time_sheets.each do |group,time_entries|
+      time_entries.each do |time_entry|
+        total_time+=time_entry.running_time
+        billable_data += time_entry.running_time if time_entry.billable
+      end
+    end
+    { :total_time => total_time, :billable => billable_data, :non_billable => (total_time - billable_data) }
+  end
   
+  def scoper(start_date,end_date)
+    Account.current.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(@products_id)
+  end
+
+  def filter_with_groupby(start_date,end_date)
+    filter(start_date,end_date).group_by(&group_by_caluse)
+  end 
+
+  def filter(start_date,end_date)
+      scoper(start_date,end_date).find(:all,:conditions => select_conditions)
+  end
+
   private
+
+  def select_conditions
+    conditions = {}
+    conditions = {:helpdesk_tickets => { :ticket_type =>   @ticket_type }} unless @ticket_type.empty? 
+    conditions.merge!({:helpdesk_tickets=>{:priority => @priority}}) unless @priority.empty? 
+  end
+
   def set_selected_tab
     @selected_tab = :reports
   end
@@ -38,6 +70,9 @@ module Reports::TimesheetReport
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }
     @billable = billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool]
     @group_id = params[:group_id] || []
+    @ticket_type = params[:ticket_type] || []
+    @products_id = params[:products_id] || []
+    @priority = params[:priority] || []
 
 end
 

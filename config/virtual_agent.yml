@@ -31,6 +31,7 @@ fields:
         requester_responded_at: date_time
         agent_responded_at: date_time
         first_response_time: date_time
+        frDueBy: date_time
         due_by: date_time
 
         inbound_count: numeric

@@ -1,6 +1,6 @@
 <% form_for [@parent, @item], 
 			:html => { 
-				:id => "edit_@item.id}",
+				:id => "edit_#{@item.id}",
 				:rel => 'edit_note_form', 
 				"data-panel" => "edit-#{@item.id}",
 				"data-show-pseudo-reply" => 'false',

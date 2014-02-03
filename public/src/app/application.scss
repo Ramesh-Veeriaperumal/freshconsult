@@ -1,20 +1,12 @@
 // Base settings for app
-@import "lib/settings";
-@import "lib/mixins";
+@import "../settings/settings";
 
 // Satisfaction survey
-@import "lib/satisfaction";
-@import "lib/survey";
+@import "../page/satisfaction";
+@import "../page/survey";
 
 // Gamification
-@import "lib/gamification";
+@import "../module/gamification";
 
-// Animation
-@import "lib/animate-custom";
-
-// Admin
-@import "lib/admin";
-
-// Bulk action styles
-@import "bulk_actions.scss";
-
+// Shortcut chart styles
+@import "shortcuts-chart";

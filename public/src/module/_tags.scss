@@ -1,0 +1,165 @@
+
+// ------------------------------------------------------------------------------------------------
+//												Tags Page
+// ------------------------------------------------------------------------------------------------
+.square-box-wrap{
+	border: 1px solid #a3a3a3;
+	position: relative;
+	@include border-radius(4px);
+	min-height:25px;
+	display: inline-table;
+	vertical-align: middle;
+	margin:0 5px 5px 0;
+	&.non-primary-tag{
+		@include opacity(0.4);
+	}
+}
+.tags-marker-wrapper, .tags-content-wrapper{
+	display: table-cell;
+	vertical-align: middle;
+	height: 100%;
+	padding:4px 8px;
+	color: $default_txt_color;
+	.merge_element{
+		display: table-cell;
+	}
+	a{
+		font-weight: bold;
+		color:$default_txt_color;
+	}
+}
+.tags-marker-wrapper{
+	@include border-radius(4px 0 0 4px);
+	background-color: #a3a3a3;
+}
+.row-fluid [class*="span"].tags-search-content{ min-height: 110px; } // for higher Priority
+.tags-search-content{
+	position: relative;
+	min-height: 110px;
+	.connecting-image{
+		position: absolute;
+		left:0px;
+		top:0px;
+	}
+}
+
+#tag-remove-confirm, #tag-dialog-confirm, #tag-delete-confirm {
+	p { padding: 10px;}
+
+	.ui-icon {
+      display: inline-block;
+	  float: left;
+	  margin: 0 7px 20px 0;
+	}
+}
+
+.tag-list{
+	.removetag, .edittag { display:none; }
+	.count:hover .removetag, .name:hover .edittag { display: inline-block; } 
+	#tags-merge-confirm-content input.sloading {
+	  padding: initial;
+	  padding-left: 6px;
+	}
+	.tags-merge{
+	  .merge-cont{
+	    width: 166px;
+	    height: 35px;
+	  }
+	  .primary-marker{
+	    height: 24px;
+	    padding-top: 12px;
+	    width: 45px;
+	  }
+	  #contact-area{
+	    height: 30px;
+	    width: 165px;
+	  }
+	}
+  .list-page-table-header .bulk-action{
+    left: 3px;
+    top: -2px;
+    position: relative;
+  }
+  .tags-checkbox-label{
+    left: 3px;
+    top: 2px;
+    position: relative;
+  }
+  .removetag, .edittag{
+    position: relative;
+    left: 10px;
+    top:8px;
+    i{
+      width: 26px;
+      height: 25px;
+      display: inline-block;
+      margin-top: -15px;
+    }
+  }
+  .edittag{
+    left:5px;
+  }
+  .tags-total-counter{
+    padding: 0 8px;
+    background: #eee;
+    font-size: 90%;
+    font-weight: 500;
+    color: #333;
+    display: inline-block;
+    @include border-radius(9px);
+    @include text-shadow(1px 1px 0 rgba(#fff, 0.5));
+  }
+  .tag_name{
+    padding :3px;
+  }
+  .tag-label{
+    display:inline-block;
+    padding: 3px 10px;
+    border: 1px solid #aaa;
+    background: #fff;
+    @include border-radius(20px);
+    margin-right: -10px;
+    position: relative;
+    padding-right: 50px;
+    min-width:63px;
+    >span{
+      background: #888;
+      padding: 0 8px;
+      right: 3px;
+      position: absolute;
+      font-size: 90%;
+      font-weight: 500;
+      top: 3px;
+      color: #fff;
+      @include border-radius(9px);
+      @include text-shadow(-1px -1px 0 #888);
+    }
+  }
+  .disabled{
+    .tag-label{
+      @include opacity(0.3);
+    }
+  }
+}
+.tag-search-results{
+  background:#fff;
+  @include border-radius(0 0 5px 5px);
+}
+
+#tags-merge-confirm-content input.sloading {
+  padding: initial;
+  padding-left: 6px;
+}
+.clear-text-wrap{
+  position:relative;
+    .input-padding{
+      padding-right:35px;
+    }
+  .clear-text{
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    margin-top: -7px;
+    margin-right:5px;
+  }
+}

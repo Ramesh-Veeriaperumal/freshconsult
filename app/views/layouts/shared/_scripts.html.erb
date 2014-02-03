@@ -3,7 +3,7 @@
 		<%= yield :onload_script -%>
 			
 		// Setting the locale for moment js
-		moment.lang('#{I18n.locale.to_s.downcase}');
+		moment.lang('<%=I18n.locale.to_s.downcase%>');
 
 		<% if flash[:highlight] %>
 			var ele = jQuery("#<%= flash[:highlight] %>");
@@ -12,4 +12,7 @@
 			ele.addClass('record_highlight');
 		<% end %>
 	});
+
+	// Shortcuts variables
+	var Shortcuts = <%= Shortcut::KEY_BINDINGS.to_json.html_safe %>;
 <%- end -%>

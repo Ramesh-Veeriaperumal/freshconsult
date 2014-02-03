@@ -16,6 +16,8 @@ class Customer < ActiveRecord::Base
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
   has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name
+
+  has_many :all_tickets ,:class_name => 'Helpdesk::Ticket', :through => :all_users , :source => :tickets
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
 

@@ -80,37 +80,37 @@
 		<li class="control-group">
 			<%= label(:user, :name, t('user.full_name'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field(:user, :name, :class => "text required" )  %>
+				<%= text_field(:user, :name, :class => "text required input-xlarge" )  %>
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :job_title, t('user.title'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field(:user, :job_title, :class => "text" ) %>
+				<%= text_field(:user, :job_title, :class => "text input-xlarge" ) %>
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :email, t('user.email'), :class => "control-label") %> 
 			<div class="controls">
-				<%= text_field(:user, :email, :id => "email_primary", :class => "email") %> 
+				<%= text_field(:user, :email, :id => "email_primary", :class => "email input-xlarge") %> 
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :phone, "#{t('user.work_phone')}.",:class => "control-label" ) %>
 			<div class="controls">
-				<%= text_field(:user, :phone, :class => "text", :id => "phone_work" , :placeholder => t('user.work') ) %>
+				<%= text_field(:user, :phone, :class => "text input-xlarge", :id => "phone_work" , :placeholder => t('user.work') ) %>
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :phone, "#{t('user.mobile_phone')}.",:class => "control-label" ) %>
 			<div class="controls">
-				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" , :placeholder => t('user.mobile') ) %>
+				<%= text_field(:user, :mobile, :class => "text input-xlarge", :id => "phone_mobile" , :placeholder => t('user.mobile') ) %>
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :twitter_id, t('user.twitter_id'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field(:user, :twitter_id, :class => "text" ) %>
+				<%= text_field(:user, :twitter_id, :class => "text input-xlarge" ) %>
 			</div>
 		</li>
 		<li class="control-group">
@@ -132,7 +132,7 @@
 			%>
 			<%= label(:user, :customer, t('user.company'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer") %>
+				<%= text_field(:user, :customer, :class => "text input-xlarge" , :value => company_name, :id => "contact_customer") %>
 			</div>
 		</li>
 		<li class="control-group">	
@@ -145,7 +145,7 @@
 		<li class="control-group">
 			<%= label(:user, :address, t('user.address'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_area(:user, :address, :class => "text", :rows => 5 ) %>
+				<%= text_area(:user, :address, :class => "text input-xlarge", :rows => 5 ) %>
 			</div>
 		</li>		
 		
@@ -153,7 +153,7 @@
 			<li class="control-group">
 				<%= label(:user, :time_zone, t('account.time_zone'), :class => "control-label") %>
 				<div class="controls">
-					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , {:default => @user.time_zone} , {:class => 'select2'} %>
+					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , {:default => @user.time_zone} , {:class => 'select2 input-large'} %>
 				</div>
 			</li>
 		<% end %>
@@ -162,20 +162,20 @@
 			<li class="control-group">
 				<%= label(:user, :language, t('account.language'), :class => "control-label") %>
 				<div class="controls">
-					<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()} , :class => "select2"%>
+					<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()} , :class => "select2 input-medium"%>
 				</div>
 			</li>
 		<% end %>
 		<li class="control-group">
 			<%= label(:user, :tags, t('tag.title'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
+				<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2  input-xxlarge"%>
 			</div>
 		</li>
 		<li class="control-group">
 			<%= label(:user, :description, t('user.back_info'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_area(:user, :description, :class => "text", :id => "user_binfo", :rows => 5, 
+				<%= text_area(:user, :description, :class => "text input-xxlarge", :id => "user_binfo", :rows => 5, 
 					:placeholder => "example - LA Lakers fan etc." ) %>
 			</div>
 		</li>		

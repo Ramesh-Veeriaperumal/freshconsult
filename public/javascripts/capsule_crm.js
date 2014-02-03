@@ -230,7 +230,7 @@ CapsuleWidget = {
             var notFoundText = '<div class="info-data">No matching contacts found.</div>';
                 notFoundText += '<span class="seperator"></span>';
             if (typeof(capsuleBundle)!='undefined' && capsuleBundle.reqEmail && capsuleBundle.reqEmail != '') {
-                notFoundText += '<div  class="highlight">Add this contact to Capsule CRM?</div>';
+                notFoundText += '<h5  class="lead">Add this contact to Capsule CRM?</h5>';
                 notFoundText += '<form id="cap-person" onsubmit="CapsuleWidget.addContact(this,capsuleResource);return false;">';
                 notFoundText += '<label for="name"><h5>Name</h5></label><input type="text" id="name" name="name" value="' + capsuleBundle.reqName.escapeHTML() + '">';
                 notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" id="org" name="org" value="' + capsuleBundle.reqOrg.escapeHTML() + '">';
@@ -238,7 +238,7 @@ CapsuleWidget = {
                 notFoundText += '<label>Email</label>';
                 notFoundText += '<input type="text" name="email" value="' + capsuleBundle.reqEmail.escapeHTML() + '" />';
                 notFoundText += '<span class="seperator"></span>';
-                notFoundText += '<input class="uiButton" type="submit" id="submit" value="Add contact">';
+                notFoundText += '<input class="btn btn-primary" type="submit" id="submit" value="Add contact">';
                 notFoundText += '</form>'
             } else {
                 notFoundText += '</p>';
@@ -348,7 +348,7 @@ capsuleResourceOptions = {
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_html: function() {
-		var content = '<div class="negtive-margin"><h3 id="capsule-title" class="title sloading loading-small loading-right">';
+		var content = '<div class="negtive-margin"><h5 id="capsule-title" class="lead sloading loading-small loading-right">';
 		content += '<span class="searchicon" onclick="$(\'cap-search\').toggle()"></span>';
 		content += $('capsule_widget').getAttribute('title').escapeHTML() + '</h3>';
 	   content += '<div id="capsule-content" class="content">';

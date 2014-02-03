@@ -1,0 +1,240 @@
+// ------------------------------------------------------------------------------------------------------------
+//												 Add Watcher Start 
+// ------------------------------------------------------------------------------------------------------------
+
+div.monitor_div{
+	display: inline-block;
+	zoom: 1;
+	*display: block;
+	*float: left;
+	*width: 43px;
+}
+
+div.watchers_tooltip{
+    position: absolute;
+    border: 1px solid #aaa;
+    margin: 6px 0 0 -9px;
+    @include min-height(84px);
+    height: auto;
+    width: 275px;
+    padding:10px;
+    font-size:13px;
+    background-color: white;
+    @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 -2px 0 rgba(0, 0, 0, 0.4));
+    @include border-radius(5px);
+    z-index: 10000;
+    .watcher-close{
+    	position: absolute;
+		right: 11px;
+		@include border-radius(20px);
+		background: #666;
+		width: 17px;
+		height: 16px;
+		color: #fff;
+		font-weight: bold;
+		font-size:16px;
+		line-height: 11px;
+		text-align: center;
+		padding-top: 1px;
+		cursor: pointer;
+    }
+    .watcher_label{
+        font-size: 16px;
+        font-weight: 300;
+    }
+    .add-icon-green{
+	    width: 18px;
+		height: 18px;
+		display: inline-block;
+		position: absolute;
+		margin-top: 16px;
+		z-index: 9999999;
+		margin-left: 5px;
+	}
+    #watcherlist{
+    	clear: both;
+    	border: 1px solid #CCC;
+		@include border-radius(4px);
+		padding: 3px 6px 1px;
+		height: auto;
+		margin-top: -4px;
+
+    	.agent_name{
+	    	max-width: 157px;
+			white-space: nowrap;
+			overflow: hidden;
+			display: inline-block;
+			-webkit-text-overflow: ellipsis;
+			-moz-text-overflow: ellipsis;
+			-ms-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+    	}
+	    	ul{
+	    		width: 100%;
+	    	}
+
+	    	 li{
+		    	width: 100%;
+		    }
+    }
+
+    ul{
+    	max-height: 223px;
+    	overflow-x: hidden;
+    	overflow-y: auto;
+    }
+
+    li{
+    	display: block;
+    	padding: 5px 0;
+    	overflow: hidden;
+    }
+
+    .add_watcher_text, .view_watcher_text{
+        a{
+        	color: #369;
+        }
+    }
+    .changing-link{
+	    &.add_watcher_text,&.view_watcher_text{
+			position: absolute;
+			top: 23px;
+			right: -2px;
+			margin-top: -14px;
+	        margin-right: 16px;
+	        float: right;
+	        text-align: right;
+	        font-size: 13px;
+	        width: 100px;
+		}
+	}
+
+    .link_disabled{
+    	opacity: .4;
+		color: #3F3F3F;
+		cursor: default;
+		font-weight: normal;
+    }
+
+    .no_watcher_text{
+        font-size: 13px;
+        padding-top: 18px;
+        text-align: center;
+        color: #777;
+    }
+
+    .watcher_text{
+    	color: #888;
+    	font-size:13px;
+    	margin-top: 2px;
+    }
+
+    .watcher_list{
+    	float: left;
+        padding-top: 4px;
+        font-size: 13px;
+
+        b{
+        	float: left;
+        }
+    }
+
+    .user_image{
+    	float: left;
+	    .preview_pic{
+	       	border: 2px solid #CCC;
+	        @include border-radius(100%);
+	        width: 20px;
+	        height: 20px;
+	        margin-right: 6px;
+
+	       img{
+	           width: 20px;
+	           height: 20px;  
+	           @include border-radius(100%);     
+	        }
+	    }
+	}
+
+	.unwatch{
+		float: left;
+		margin-top: 5px;
+		margin-right: 5px;
+		cursor: pointer;
+		img{
+			height: 16px;
+			width: 16px;
+		}
+	}
+
+	.arrow-top{
+		position: absolute;
+		left: 22px;
+		top: -12px;
+		border-bottom-color: #999;
+		border-bottom: 10px solid #999;
+		border-width: 10px;
+		&:before{
+			border-left: 9px solid transparent;
+			border-bottom: 9px solid #999;
+			border-right: 9px solid transparent;
+			height: 0;
+			width: 0;
+			content: " ";
+			position: absolute;
+			top: 1px;
+			left: -9px;
+		}
+	}
+
+	.select_agents{
+		clear: both;
+	}
+
+    .watcher_input{
+    	margin: 10px 0 0 0;
+		width: 100%;
+    	.select2-choices{
+    		padding-left:20px;
+    	}
+	}
+
+	div.chzn-container{
+		margin: 9px 16px;
+	}
+
+	div.ids_chzn{
+		width: 245px;
+	}
+
+	.add_cancel_buttons{
+		float: right;
+		margin-right: -4px;
+	}
+
+	.submit_watcher{
+		margin-left: 2px;
+	}
+}
+
+
+.watcher_highlight {
+  @include animation(watcher_blink 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_blink) {
+  0% { background: rgba(#ff0,.8);}
+  100% { background: rgba(#ff0,0);}
+}
+
+.watcher_remove {
+  @include animation(watcher_rem 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_rem) {
+  0% { background: rgba(#ff0000,.2);}
+  100% { background: rgba(#ff0000,0);}
+}
+
+// ------------------------------------------------------------------------------------------------------------
+//												  Add Watcher End 

@@ -16,11 +16,17 @@ module Helpdesk::TicketsHelper
     unless(view[:id] == -1)
       parallel_url = "/helpdesk/tickets/filter_options"
       query_str = view[:default] ? "?filter_name=#{view[:id]}" : "?filter_key=#{view[:id]}"
+      html_options = {
+        :class => ( selected ? "active #{cls}": "#{cls}"),
+        :"data-pjax" => "#body-container",
+        :"data-parallel-url" => "#{parallel_url}#{query_str}",
+        :"data-parallel-placeholder" => "#ticket-leftFilter"
+      }
+      html_options[:rel] = "default_filter" if view[:default]
+      # html_options[:"data-toggle-view"] = true if ["new_my_open", "all_tickets", "monitored_by"].include?(view[:id])
+      
       link_to( ((content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name])).html_safe, 
-        (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , 
-        :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), 
-        :"data-pjax" => "#body-container", :"data-parallel-url" => "#{parallel_url}#{query_str}", 
-        :"data-parallel-placeholder" => "#ticket-leftFilter")
+        (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , html_options)
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -31,7 +37,9 @@ module Helpdesk::TicketsHelper
     extra_class = "unsaved" if unsaved_view
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
+        content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", 
+          :menuid => "##{menuid}", :id => "active_filter" } ), 
+          :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
     end
     more_menu_drop.html_safe
@@ -354,18 +362,28 @@ module Helpdesk::TicketsHelper
     visible
   end
 
+  def shortcut_options(key)
+    key = 'pagination.'+key
+    options = "data-keybinding='#{shortcut(key)}' data-highlight='true'"
+    options
+  end
+
   def ticket_pagination_html(options,full_pagination=false)
     prev = 0
     current_page = options[:current_page]
     per_page = params[:per_page]
     no_of_pages = options[:total_pages]
     visible_pages = full_pagination ? visible_page_numbers(options,current_page,no_of_pages) : []
+    tooltip = 'tooltip' if !full_pagination
+
     content = ""
     content << "<div class='toolbar_pagination_full'>" if full_pagination
     if current_page == 1
       content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
     else
-      content << "<a class='prev_page' href='/helpdesk/tickets?page=#{(current_page-1)}' title='Previous'>#{options[:previous_label]}</a>"
+      content << "<a class='prev_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page-1)}' 
+                      title='Previous' 
+                      #{shortcut_options('previous') unless full_pagination} >#{options[:previous_label]}</a>"
     end
     visible_pages.each do |index|
       # detect gaps:
@@ -380,7 +398,9 @@ module Helpdesk::TicketsHelper
     if current_page == no_of_pages
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
-      content << "<a href='/helpdesk/tickets?page=#{(current_page+1)}' class='next_page' rel='next' title='Next'>#{options[:next_label]}</a>"
+      content << "<a class='next_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page+1)}' 
+                      rel='next' title='Next' 
+                      #{shortcut_options('next') unless full_pagination} >#{options[:next_label]}</a>"
     end
     content << "</div>" if full_pagination
     content

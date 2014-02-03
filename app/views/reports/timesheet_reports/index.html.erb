@@ -1,68 +1,30 @@
+<% content_for :layoutType do -%>reports_page<%- end %>
 <script src="/javascripts/report/date.js" type="text/javascript"></script>
 <script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
-  <span class="floatr">
-    <%= submit_tag t('export_to_CSV'),{ :class => "slim-button" , :id =>'export_as_csv' }%>
-  	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}".html_safe, reports_url, :class => "slim-button") %>
-  </span>
-  <h3 class="title">
-    <%=t('.title')%>
-  </h3>
-  <div id="time_sheet_report">
-  	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets} %> 
-  </div>
+<%= include_cloudfront_css :reports %>
+<%= include_cloudfront_js :reports  %>
+	<div id="loading-box">
+	 <div class="loading reports-loading">Generating Report...</div> 
+	 </div>
+<!--report header-->
+<div class="row-fluid">
+	<div class="span12 report-breadcrum-wrapper">
+		<ul class="breadcrumb">
+		  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
+		  <li><%=t('adv_reports.glance.report_view')%></li>
+		</ul>
+	</div>
+</div>
+ <!--end report header-->
+<!-- report content -->
+<div class="row-fluid" id="time_sheet_report">
+			<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets} %> 
+	</div>
+<!--end report content-->
 
 
-<% content_for :sidebar do -%>
-<div class="sidepanel">
-  <h4 class="title"><%= t('reports.timesheet_reports.index.filter_report') %><h4>
-  <% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
-    <ul>
-      <li>
-        <label><%=t('helpdesk.time_sheets.customer')%></label>  
-        <%= select_tag :customer_id, 
-        				options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }, 
-        								    @customer_id),
-						{ :multiple => true, 
-						  :class => "select2 input-large auto", 
-						  			"data-placeholder".to_sym() => t('.select_customer') } %>
-	     
-        <label><%=t('helpdesk.time_sheets.agent')%></label>	
-		<%= select_tag :user_id, 
-						options_for_select(current_account.users.technicians.collect{ |c| [c.name, c.id] },
-											 @user_id), 
-						{ :multiple => true,
-						  :class => "select2 input-large auto", 
-									 "data-placeholder".to_sym() => t('.select_agent') } %>
-        <label><%=t('helpdesk.time_sheets.group')%></label>	
-		<%= select_tag :group_id, 
-						options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
-											 @group_id), 
-						{ :multiple => true,
-						  :class => "select2 input-large auto", 
-									 "data-placeholder".to_sym() => t('.select_group') } %>
-        
-		<label><%=t('helpdesk.time_sheets.billing_type')%></label>
-		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options), 
-		 				{ :multiple => true, 
-		 				  :class => "select2 input-large auto",
-		 						    "data-placeholder".to_sym() => t('.select_billable')} %>
-        
-		<label><%=t('helpdesk.time_sheets.group_by')%></label>
-		<%= select_tag :group_by , options_for_select(Helpdesk::TimeSheet.group_by_options),
-						{ :multiple => false, :class => "select2 input-large auto"}%>
-			
-	  </li> 
-	  <li>
-	  	<%= render :partial => "/reports/shared/daterange_picker" %> 
-	  </li>
-	  </ul>
-    
-   	     
-  <% end %>
-</div> 
-<% end %>
-
+</div>
 <% javascript_tag do %> 
 	jQuery(document).ready(function() {
 		var date_today = new Date();
@@ -86,21 +48,5 @@
 					jQuery("#report_filters").trigger("change");
 				}
 			}); 
-	
-	    jQuery("#report_filters").change(function(){
-    	jQuery("#time_sheet_report").html("<div class='sloading loading-small loading-block'></div>"); 
-    	jQuery.ajax({
-        url: '<%=report_filter_timesheet_reports_url%>',
-        type: "POST",
-        data: jQuery(this).serializeArray(),
-        success: function(data){ 
-		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
-        	}
-			});
-      	});
-		
-		jQuery("#export_as_csv").click(function(){
-       		jQuery("#report_filters").submit();
-  		}); 	
 	});
 <%end%>

@@ -1,5 +1,4 @@
 @import "compass/css3/pie";
-@import "itoggle";
 
 .ui-datepicker{
    background:#ffffff;
@@ -117,7 +116,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .stylised.iphone {
-  border-radius: 5px;
+  @include border-radius(5px);
   background-color: #004244;
   border:1px solid #002021;
   cursor:pointer;
@@ -253,7 +252,7 @@ div.action_buttons:hover{
   overflow: hidden;
   padding: 4px 8px;
   margin: 2px;    
-  font-family: $blueprint-font-family;
+  font-family: $baseFontFamily;
 	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
   @include border-radius(4px);
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0  1px 0, rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
@@ -292,7 +291,7 @@ div.action_buttons:hover{
 
 .button:hover {
     background: #eee;
-    font-family: $blueprint-font-family;
+    font-family: $baseFontFamily;
 }
 
 .button.selected {
@@ -414,6 +413,13 @@ div.action_buttons:hover{
 
 }
 
+.itoggle-disable {
+  width: 100%;
+  height: 22px;
+  position: relative;
+  top: -22px;
+  margin-bottom: -22px;
+}
 .toggle-button{
   @include pie;
   text-transform:uppercase;    

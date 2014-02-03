@@ -36,17 +36,16 @@
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/common.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/sprites.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/app-common.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/app-bootstrap.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/plugins.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/ie.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/tkt_details.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/tkt_details_sprites.css?20131211">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/gadget.css?20131211">
-
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/redactor.css?20131211">
+    <link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/common.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/sprites.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/app-common.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/plugins.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/ie.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/page/tkt_details/tkt_details.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/page/tkt_details/tkt_details_sprites.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/page/gadget.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/plugins/redactor.css?20131212">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/plugins/zpluginhack.css?20131212">
 
 	<script type='text/javascript' src='https://asset.freshpo.com/javascripts/frameworks/jquery.js?20131211'></script>
     <script src="https://asset.freshpo.com/javascripts/redactor/redactor.js?20131211" type="text/javascript"></script>

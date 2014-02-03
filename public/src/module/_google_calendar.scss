@@ -1,0 +1,373 @@
+
+// ------------------------------------------------------------------------------------------------------------
+// 													Google Calendar Styles 
+// ------------------------------------------------------------------------------------------------------------
+
+#google_calendar_widget div.title{
+	padding-left: 30px;
+	background-image: inline-image('cdn-ignored/inline-images/google-small.png');
+	background-position: 0 2px;
+	background-repeat: no-repeat;
+	padding-top: 0;
+	min-height: 30px;
+	height: 40px;
+	width: 223px;
+	display: block;
+
+	a{
+		font-weight: normal;
+	}
+
+	span:first-child{
+		font-size: 12pt;
+		vertical-align: baseline;
+		position: relative;
+		top: -2px; 
+	}
+
+	.error{
+	    display: block;
+	    color: #999999;
+	    font-weight: normal;
+	    margin-left: -35px;
+	    margin-top: -5px;
+	    a{font-weight: bold;}
+	}
+
+}
+
+#gcal-email-container{
+	font-weight: normal;	
+	color: #999999;
+	font-size: 11px;
+	position: relative;
+	top: -3px;
+}
+
+#gcal-change-account-link{
+	font-size: 11px;
+	position: relative;
+	top: -6px;
+}
+
+.gcal-content-body{
+	max-height: 400px;
+	overflow-y: auto;
+	overflow: -moz-scrollbars-vertical; 
+}
+
+.date-section{
+	color: #666;
+	border-top: #e5e5e5 solid 1px;
+	margin:10px 0;
+	padding-top:5px;
+	.lead{
+		margin-bottom: 0;
+		margin-top: -3px;
+		font-size: 28px;
+	}
+	div.day-month-year{
+		font-size: 11px;
+		margin-left: -2px;
+	}
+	.date-closeness{
+		font-size: 16px;
+		font-weight: lighter;
+		margin-top: -1px;
+	}
+}
+.event{
+	margin-bottom:10px;
+	.time-container{
+		color: #333;
+	}
+	.event-summary{
+		margin-bottom: 2px;
+		a{font-size: 14px; font-weight: 500;}	
+		a:hover{font-size: 14px; font-weight: 500;}	
+	}
+	.event-description{
+		color: #666;
+	}
+}
+div.past-event{
+	div.event-description, div > span.time-container{
+		color: #AAA;
+	}	
+	div.event-summary a{color:#AAA;}
+}
+
+#gcal-older-events-link-container{
+	.arrow-right{
+		top: -2px;
+	}
+	#gcal-older-events-link{
+		display: inline-block;
+		margin: 5px;
+	}
+}
+#gcal-other-events-link-container{
+	margin:10px 0;
+	.label.notice{
+		margin-right:5px;
+		margin-left: 5px;
+		background-color: #336699;
+	}
+}
+#gcal-old-events{
+	display: none;
+}
+	
+div#google_calendar_add_event_modal{
+
+	margin-top: 10px;
+	
+	.field-label{
+		position: relative;
+		top: 4px;
+		left: 8px;
+	}
+
+	input.hasDatepicker[readonly]{
+		background-color: white;
+		cursor: default;
+	}
+
+	.hyphen-container{
+		position: relative;
+		top: -4px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	textarea{
+
+	}
+
+	div.gcal-validation-errors, div.gcal-custom-errors{
+		/*margin-top: 10px;*/
+	}
+	
+	.date-time-selection-container{
+		padding-bottom: 5px;
+		overflow: hidden;
+
+		div{
+			width: 50%; float:left;
+			div{
+				float: left;
+				width: 100%;
+			}
+			div:first-child{
+				padding-right: 10px;
+			}
+
+			#gcal-start-date-field, #end_date_field{ cursor: default!important; }
+			#gcal-start-date, #end_date {float: left;}
+		}
+	}
+
+	.typeahead{
+		z-index: 1100;
+		max-height: 150px;
+		overflow: 'scroll';
+	}
+
+	#gcal-event-duration{
+		margin-left: 0;
+		position: relative;
+		top: -5px;
+		color: #666666;
+	}
+
+	#gcal-end-time-field, #gcal-start-time-field{
+		z-index: 1001;
+	}
+	.g-time{
+		width:18%;
+	}
+	span.add-on-meridian {
+		padding-top: 5px;
+		padding-bottom: 7px;
+		display: none;
+	}
+
+	#gcal-add-update-modal-cancel-button{
+		margin-right: 10px;
+	}
+
+	.gcal-form-contents{
+		margin-top: 10px;
+	}
+}
+
+
+div.gcal-confirm-modal-content{ width: 100%; }
+.confirm-modal-yes-button{ margin-right: 10px; } 
+.confirm-modal-no-button{ margin-left: 7px !important;	 }
+
+/* Google Calendar Styles end */
+
+// --------------------------------------------------------------------------------------------------
+//								Google Analytics and Accounts Intagration styles
+// --------------------------------------------------------------------------------------------------
+
+
+.google_accounts, .google_analytics {
+
+	.buttons {
+		text-align:right;
+		padding:0 35px 20px;
+	}
+	h4.title {
+		font-size:14px;
+		margin:10px 55px 25px;
+	}
+	table {
+		margin:15px 0 25px;
+	}
+	tr {
+		color:#666;
+
+		span {
+			color:#000;
+		}
+
+		&.headings {
+			border-bottom: solid 1px #CCC;
+			th {
+				padding:5px 0 10px;
+				color:#666;
+				font-size:11px;
+			}
+		}
+
+		td {
+			padding: 15px 0 15px;
+		}
+		border-bottom: solid 1px #EEE;
+	}
+
+	fieldset{
+		@include pie-clearfix;
+		border: solid 1px #EEE;
+		@include border-radius(10px);
+		margin:15px;
+		padding:25px;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+			
+			// To Overwrite Pattern css
+            border: 0;
+            line-height: inherit;
+            width: auto;
+            margin-bottom: 0;
+		}
+
+		.fields {
+			padding: 0 20px;
+			.checkwrapper {
+				margin:5px 10px 5px 0;
+				padding:0 5px 0 0;
+				float:left;
+				width:200px;
+
+				input[type=checkbox] {
+					margin-right: 10px;
+				}
+			}
+			input.mini {
+				width:50%;
+			}
+
+			.caption {
+				font-weight: bold;
+			}
+		}
+
+		.special-notice {
+			background-color: #FDFDE5;
+			color: $default_txt_color;
+			font-size: 12px;
+			line-height: 18px;
+			margin:15px 0 15px 25px;
+			padding: 10px 20px;
+		}
+	}
+}
+
+.ui-form .inline-field .fields .google_analytics {
+	fieldset{
+		border:none;
+		margin:0;
+		padding:0;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+		}
+
+		.fields {
+			margin: 0 0 10px 0;
+			label.inline {
+				display: inline;
+				font-size:1em;
+			}
+		}
+	}
+}
+
+.ui-form .inline-field .google_contacts_sync {
+ 	label.caption{ font-size: 1em; }
+
+	div.fields {
+		ul.sync_status.freshdesk{ color: #00868f; }
+		ul.sync_status.google { color: #0078BD; }
+
+		ul.sync_status {
+			display: block;
+			margin: 0 0 10px;
+			li {
+				text-align:right;
+				display: inline;
+				width: 100px;
+				padding:0 5px;
+				span {
+					color: #FFF;
+					@include border-radius(3px);
+					padding: 3px 5px;
+					font-size: 0.75em;
+					text-transform: uppercase;
+					margin: 3px;
+				}
+			}
+			li.freshdesk, li.google {
+				width: 35px;
+				height:24px;
+			}		
+			
+			li.added {
+				color:#00868f;
+				width: 100px;
+				span{ background: #00868f; }
+			}
+			li.modified {
+				color:#3c7ed3;
+				span{ background: #3c7ed3; }
+			}	
+			li.deleted {
+				color:#fe552e;
+				span{ background: #fe552e; }
+			}	
+		}
+
+		label{
+			font-size: 1em;
+			font-weight:bold;
+		}
+	}
+}

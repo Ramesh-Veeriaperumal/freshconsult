@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
+  include Users::Preferences
   include Authority::Rails::ModelHelpers
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
@@ -37,6 +38,11 @@ class User < ActiveRecord::Base
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
 
+  # Using text_uc01 column as the preferences hash for storing user based settings
+  serialize :text_uc01, Hash
+  alias_attribute :preferences, :text_uc01  
+  alias_method_chain :preferences, :defaults
+    
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }

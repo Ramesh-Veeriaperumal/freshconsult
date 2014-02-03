@@ -1,9 +1,11 @@
 class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
+  include Reports::ReportTimes
+  include ReadsToSlave
   
   before_filter :check_permission, :set_selected_tab
-  before_filter :build_item ,  :only => [:index,:export_csv,:report_filter]
+  before_filter :build_item ,  :only => [:index,:export_csv,:report_filter,:time_sheet_list]
   before_filter :time_sheet_list, :only => [:index,:report_filter]
   before_filter :time_sheet_for_export, :only => [:export_csv]
 
@@ -29,18 +31,34 @@ class Reports::TimesheetReportsController < ApplicationController
             :disposition => "attachment; filename=time_sheet.csv"
   end
   
-   def time_sheet_list
-     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(@start_date,@end_date).hour_billable(@billable).group_by(&group_by_caluse)
-   end
+  def time_sheet_list
+    @report_date = params[:date_range]
+    @time_sheets = filter_with_groupby(@start_date,@end_date)    
+    @time_sheet_data = billable_vs_non_billable(@time_sheets)
+    stacked_chart_data
+    previous_range_time_sheet #Fetching the previous time range data.
+  end
+
+  def previous_range_time_sheet
+    #set the time (start/end) to previous range for comparison summary.
+    set_time_range(true)
+    old_time_sheets = filter_with_groupby(@start_time,@end_time)
+    @old_time_sheet_data= billable_vs_non_billable(old_time_sheets)
+  end
   
   def time_sheet_for_export
-     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(@start_date,@end_date).hour_billable(@billable)
+    @time_sheets = filter(@start_date,@end_date)
   end
 
   private
   
     def check_permission
       access_denied unless privilege?(:view_time_entries)
+    end
+
+    def stacked_chart_data
+      barchart_data = [{:name=>"non_billable",:data=>[@time_sheet_data[:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@time_sheet_data[:billable]],:color=>'#679d46'}]
+      @activity_data_hash={'barchart_data'=>barchart_data}
     end
 
 end

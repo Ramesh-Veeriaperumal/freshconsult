@@ -1,0 +1,64 @@
+
+ <div class="floatl">
+    <%label = "time_sheet"%>
+    <div class="report-summary-header">
+      <ul class="inline">
+        <li><h1><%=sprintf("%0.02f",(@time_sheet_data[:total_time])/3600) %></h1></li>
+        <li><h1><%=sprintf("%0.02f",@time_sheet_data[:billable]/3600) %></h1></li>        
+        <li><h1><%=sprintf("%0.02f",@time_sheet_data[:non_billable]/3600)%></h1></li>
+       <li class="">
+       <div id="bar_chart_noinfo" class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
+       <div id="timesheet_single_stacked_bar_chart" class="example"></div>
+       </li>
+      </ul>
+    </div>  
+    <div class="report-summary-data">
+      <ul class="inline">
+        <li> 
+        <small>
+        <% metric_obj = percentage_change((@old_time_sheet_data[:total_time])/3600,(@time_sheet_data[:total_time])/3600,:hours_tracked)%>
+          <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+        </small> 
+        </li>
+        <li>
+          <small>
+          <% metric_obj = percentage_change(@old_time_sheet_data[:billable]/3600,@time_sheet_data[:billable]/3600,:billable_hours)%>
+          <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+          </small> 
+        </li>
+        <li>
+        <small>
+        <% metric_obj = percentage_change(@old_time_sheet_data[:non_billable]/3600,@time_sheet_data[:non_billable]/3600,:non_billable_hours)%>
+        <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+        </small> 
+        </li>
+        <li>
+          &nbsp;
+        </li>
+      </ul>
+    </div>
+    <div class="report-summary-footer">
+      <ul class="inline">
+        <li> <label><%=t('reports.time_sheets.total_time')%></label> </li>
+        <li> <label><%=t('reports.time_sheets.billable')%></label> </li>
+        <li> <label><%=t('reports.time_sheets.non_billable')%></label> </li>
+        <li> <label><%=t('reports.time_sheets.billable_vs_non_billable')%></label> </li>
+      </ul>
+    </div>
+  </div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    <%unless @time_sheet_data[:total_time] == 0%>
+      jQuery('#bar_chart_noinfo').hide();
+      var singleStakedBar = new single_stacked_bar_chart(
+        {renderTo: 'timesheet_single_stacked_bar_chart',isCustom: true, chartData:<%=@activity_data_hash['barchart_data'].to_json.html_safe%>}
+      );
+      if(<%=@activity_data_hash['barchart_data'].to_json.html_safe%>.length > 0) {
+        singleStakedBar.single_stacked_bar_chart_Graph();
+      }
+    <%else%>
+      jQuery('#timesheet_single_stacked_bar_chart').hide();
+    <%end%>
+  });
+</script>
+  

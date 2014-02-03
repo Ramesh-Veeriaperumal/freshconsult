@@ -1,0 +1,247 @@
+// ------------------------------------------------------------------------------------------------------------
+// customers page CSS start 
+// ------------------------------------------------------------------------------------------------------------
+
+#customers-toolbar [disabled] {
+		@include opacity(0.4);
+		cursor: default;
+		@include box-shadow(none);
+		background: #F5F5F5;
+		border-color: #DDD;
+		color: #3F3F3F;
+		&:hover {
+			background: #F5F5F5;
+			color: #3F3F3F;
+		}
+}
+
+.table-striped tbody tr.diffColor td{ 
+	background-color: #fefdee !important; 
+}
+.agent-list-page {
+  &.deleted-list{
+    tr td
+    {
+    	width:26%; 
+      &:nth-child(4){
+          width:12%;
+      }
+	    &:last-child{
+	        width:10%;
+	    }
+	  } 
+  }
+}
+.agent-list-count{
+  padding: 1px 8px;
+  margin-left: 10px;
+  color: #888;
+  font-size: 0.9em;
+  background-color:#f1f1f1;
+  font-weight: bold;
+  @include border-radius(10px);
+  @include text-shadow(1px 1px 2px #fff);
+  @include box-shadow(1px 1px 2px #fff);
+  &.bg-dark{
+    color:#fff;
+    @include text-shadow(1px 1px 2px #aaa);
+    background-color:#888;
+  }
+  &.bg-red{
+    color:#fff;
+    @include text-shadow(1px 1px 2px #aaa);
+    background-color:#990303;
+  }
+}
+
+.agent-count-message{
+  margin-right:20px;
+}
+.table-striped-body{
+	table td{
+		width:75%;
+		&:last-child{
+			width:25%;
+		}
+	}
+}
+
+
+.agent-roles-list{
+   table tr td{
+     width:85%;
+     &:last-child{
+       width:15%;
+     }
+   }
+}
+.agent_edit{
+	label{
+		font-weight: bold;
+		margin-bottom: 0;
+		font-size: 13px;
+	}
+	.info_data, .info-data {
+		display: block;
+		margin-top: 1px;
+    font-weight:normal;
+	}
+	.avatar-controls{
+		color:#999;
+		text-align: center;
+		margin-top:10px;
+		margin-bottom:5px;
+	}
+	.profile_pic{
+		img{
+			width:160px;
+		}
+	}
+	.seperator{
+		padding-top:40px;
+		margin-left:0;
+		@include box-shadow(0px 1px 0 #fff);
+		width:100%;
+		clear:both;
+	}
+}
+.agent-role{
+	margin-top:30px;
+	margin-bottom:30px;
+	li{	margin-bottom:10px; }
+	input[type="radio"]{
+		float: left;
+		margin-right: 10px;
+		margin-top: 8px;	
+	}
+}
+.agent-role-modal {
+  ul {
+     border:1px solid #eee;
+     @include border-radius(6px);
+     overflow-y: auto;
+     max-height: 360px;
+    li{
+      padding: 10px 15px 0;
+      border-bottom: 1px solid #eee;
+      &.selected_to_yellow {
+        background-color:#fffad8;
+         &:nth-child(odd){
+           background-color:#fffad8;
+         }
+      }
+      &:first-child{
+         @include border-top-left-radius(6px);
+         @include border-top-right-radius(6px);         
+      }
+      &:last-child{
+        border:0;
+      }
+      &:nth-child(odd){
+        background-color: #fbfbfb;
+      }
+      .checkbox input[type="checkbox"]{
+        margin-top: 2px;
+      }
+      label {
+        cursor: pointer;
+      }
+    }
+    
+  }
+}
+
+#contacts-page {
+	.small{
+		font-size: 75%;
+		a{
+			font-size: 95%;
+		}
+	}
+	#contacts-table{
+		tr td{
+				width: 32%;
+		    	vertical-align: middle;
+		    	word-wrap:break-word;
+			    &:first-child{
+			        width:5%;
+				}
+				&:last-child{
+					width: 31%;
+				}
+		}
+		.customers_selector{
+	    	margin-left: 5px;
+	    }
+	    .sent-text{
+	    	margin-left: 7px;
+			top: 2px;
+			position: relative;
+		}
+	}
+	.info_data{
+		padding-bottom: 0;
+	}
+	.dropdown{
+		top: 7px;
+	}
+	.muted{
+		a{
+			color: #999;
+		}
+		a:hover{
+			color: #369;
+		}
+	}
+	.email{
+		a{
+			color: $default_txt_color;
+		}
+		a:hover{
+			color: #369;
+		}	
+	}
+}
+#cust-list{
+	.tabs{
+		margin-bottom: 0;
+	}
+	.contacts_sub_header{
+		border-bottom: 0;
+	}
+	.customers-toolbar{
+		padding: 7px 0 0 0;
+	}
+	#customers-select-all{
+		margin-left: 17px;
+		margin-top: 0;
+	}
+	.bulk-action{
+		padding: 8px;
+		margin-top: -24px;
+		margin-left: 9px;
+	}
+}
+#customers-page{
+	#companies{
+		table-layout: fixed;
+		tr td{
+				width: 71%;
+		    	vertical-align: middle;
+			    &:first-child{
+			        width:7%;
+				}
+			    &:last-child{
+			    	min-width: 22%;
+			    }
+		}
+		.customers_selector{
+	    	margin-left: 5px;
+	    }
+	}
+}
+.contacts_sub_header{
+	@include clearfix;
+	border-bottom:1px solid #dedede;	
+	padding: 8px 0;
+}
