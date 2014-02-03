@@ -23,8 +23,8 @@
 				<%= t('business_hours.time_zone') %>
 			</div>
 			<div class="span9">
-				 <input type="hidden" id="time_zone" name="time_zone" class="span7 required"
-            		data-placeholder = "<%= t("business_hours.select_time_zone") %>"/>
+				<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all ,{:default => @business_calendar.time_zone, :include_blank => false }, {:class => 'select2'}  %>
+
 			</div>
 		</li>
 		<% end %>
@@ -143,49 +143,14 @@
 		<%= link_to "#{t('account.cancel')}".html_safe, "/admin/business_calendars", :class => "btn floatl" %>
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>
-
 <script type="text/javascript">
-
 jQuery(document).ready(function() {
-	<%
-		time_zone_data = []
-		if @business_calendar.is_default
-			selected_zone_name = current_account.time_zone
-		else
-			selected_zone_name = @business_calendar.time_zone || current_account.time_zone
-		end
-
-		ActiveSupport::TimeZone.all.each do |req|
-			if req.name == selected_zone_name
-				selected_zone_name = escape_javascript(req.to_s)					
-			end
-
-			time_zone_data << "{id: '#{escape_javascript(req.to_s)}',
-                  value: '#{escape_javascript(req.to_s)}',
-                  text: '#{escape_javascript(req.to_s)}'}"
-		end
-	%>
-
-	jQuery('#time_zone').select2({
-	multiple: false,
-	data: [<%=time_zone_data.join(",").html_safe%>],
-	initSelection : function (element, callback) {
-        var data = {id: "<%=selected_zone_name%>", text: '<%=selected_zone_name%>'};
-        callback(data);
-    }
-});
-
-jQuery("#time_zone").select2("val",[]);
-
 <% if @business_calendar.is_default? %>
-  	jQuery("#time_zone").prev().attr("style","display: none;");
-  	var time_zone_element = "<p><b>" + jQuery("#time_zone").parent().find("span").text() + "</b></p>";
-  	time_zone_element += "<p class='muted'> <%= t('business_hours.change_time_zone').html_safe %></p>";
-  	jQuery("#time_zone").parent().append(time_zone_element);
-<% else %>
- 	jQuery("#time_zone").select2("enable", "");
+	jQuery("#business_calenders_time_zone").data("select2").container.hide();
+	var time_zone_element = "<p><b>" + "<%=@business_calendar.time_zone %>" + "</b></p>";
+	time_zone_element += "<p class='muted'> <%= t('business_hours.change_time_zone').html_safe %></p>";
+	jQuery("#business_calenders_time_zone").parent().append(time_zone_element);
 <% end %>
-
 });
 
 </script>

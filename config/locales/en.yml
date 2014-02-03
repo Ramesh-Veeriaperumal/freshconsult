@@ -815,7 +815,7 @@ en:
         ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
         helpdesk_url: Helpdesk URL
         submit_request: Submit Request
-        thanks_message: <span class=\"thanks_message\"> Thank you for requesting a Custom SSL certificate.</span> <br />
+        thanks_message: "<span class='thanks_message'> Thank you for requesting a Custom SSL certificate.</span> <br />"
         success_message: Your request for a Custom SSL certificate has been initiated and will be processed shortly. You will be receiving a confirmation email from our provider before approval. Please check your inbox for updates.
         default_ssl: Default SSL
         custom_ssl: Custom SSL

@@ -330,13 +330,13 @@ es:
     index:
       number: Número
       add_custom_field: "Agregar campo personalizado"
-      customize_form: "Personalizar su formulario de &quot;Nuevo ticket&quot;"
+      customize_form: Personalizar el formulario de "Nuevo Ticket"
       single_line: "Línea de texto sencilla"
       title: "Campos del ticket"
       paragraph: "Párrafo de texto"
       checkbox: "Caja de verificación"
       save: "Guardar los campos del ticket"
-      drag_drop_intro: "Para añadir un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de &quot;Nuevo ticket&quot; de abajo"
+      drag_drop_intro: Para añadir un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de "Nuevo ticket" de abajo
       dropdown: "Menú desplegable"
       nestedfield: "Campo dependiente"
     formfield_props:
@@ -2015,7 +2015,7 @@ es:
       select_company: "Selecciona Compañias"
   password_reset_email: "Correo de restablecimiento de contraseña"
   default_reply_template: "Plantilla de respuesta de agente"
-  import_user_org: "Usuarios &amp;amp; Organizaciones"
+  import_user_org: "Usuarios & Organizaciones"
   to_do: Tareas
   does_not_contain: "No contiene"
   flash:
@@ -2510,7 +2510,6 @@ es:
     cancel:
       cancel_account: "Cancelar la cuenta de Freshdesk"
       info_text: "Por favor tomese un momento para decirnos por qué desea cancelar su cuenta. Tal vez aún podríamos ayudarlo ..."
-      goback: "&#x2190; Regresar a la configuración de la cuenta"
       delete_my_account: "Eliminar mi cuenta"
       deleting_account: Cancelando
       confirm_and_cancel_my_account: "Confirmo que quiero cancelar mi cuenta y eliminar todos mis datos..."
@@ -3872,7 +3871,7 @@ es:
   your_trial_account: "Su cuenta de prueba"
   reply_comment: "Agregar comentarios"
   import_step2_info: "Vincule los campos de su fichero CSV con los campos de contacto."
-  feedbackwidget_defaulttitle: "Ayuda &amp;amp; Soporte"
+  feedbackwidget_defaulttitle: "Ayuda & Soporte"
   two: "2 Horas"
   set_status_as: "Cambiar estado a"
   trigger_webhook: "Disparador Webhook"

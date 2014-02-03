@@ -1591,7 +1591,7 @@ ru-RU:
       select_company: "Выбрать компании"
   password_reset_email: "Письмо со сбросом пароля"
   default_reply_template: "Шаблон ответа агенту"
-  import_user_org: "Пользователи &amp;amp; Организации"
+  import_user_org: "Пользователи & Организации"
   does_not_contain: "Не содержит"
   flash:
     gmail_gadgets:
@@ -1998,7 +1998,6 @@ ru-RU:
       info2: "При желании можно обеспечить своим клиентам доступ к порталу поддержки с собственного домена. Можно сменить URL вашей службы поддержки с моякомпания.freshdesk.com на ваш домен, например: support.моякомпания.com."
     cancel:
       cancel_account: "Приостановить аккаунт Freshdesk"
-      goback: "&#x2190; Назад к настройкам аккаунта"
       delete_my_account: "Удалить аккаунт"
       confirm_and_cancel_my_account: "Я подтверждаю, что я хочу отменить свой аккаунт и удалить все данные в нем..."
       you_must_confirm: "Вы должны подтвердить отмену аккаунта"
@@ -3192,7 +3191,7 @@ ru-RU:
   your_trial_account: "Ваш пробный аккаунт"
   reply_comment: "Добавить комментарий"
   import_step2_info: "Сопоставьте поля CSV с полями базы данных и импортируйте."
-  feedbackwidget_defaulttitle: "Справка &amp;amp; Поддержка"
+  feedbackwidget_defaulttitle: "Справка & Поддержка"
   two: "2 часа"
   set_status_as: "Установить статус как"
   selected: Выбранные

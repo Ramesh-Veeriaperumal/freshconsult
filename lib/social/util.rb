@@ -30,7 +30,8 @@ module Social::Util
         :rule => {
           :value => rule_value,
           :tag => gnip_tag
-        }
+        },
+        :action => RULE_ACTION[:add]
       }
       Resque.enqueue_at(5.minutes.from_now, resque_class, args)
     end
