@@ -45,8 +45,7 @@
 
 			
 			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
-			<%= select_tag :group_by , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
-							{ :multiple => false, :class => "select2 filter_item hide"}%>
+			<%= hidden_field_tag "group_by", grp_data %>
 			
 			<label class="control-label"><%=t('helpdesk.time_sheets.product')%></label>
 			<%= select_tag :products_id, options_for_select(current_account.products.collect{|c| [c.name, c.id]}, @products_id.map(&:to_i) ), 
