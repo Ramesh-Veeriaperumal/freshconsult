@@ -54,7 +54,7 @@
 }
 .sc-item-selected .sc-item-cursor{
 	width: 0;
-	height: 75px;
+	height: 68px;
 	position: absolute;
 	margin-top: -8px;
 	margin-left: -10px;
@@ -97,11 +97,11 @@
 //					Ticket list item selector animation
 // =============================================================================
 .sc-item-selected .sc-item-cursor{
-	@include animation(fadeIn 250ms);
+	@include animation(fadeIn 200ms);
 	width:12px;
 }
 .fade-out .sc-item-cursor{
-	@include animation(fadeOut 250ms);
+	@include animation(fadeOut 200ms);
 	width:0;
 }
 @include keyframes(fadeIn){

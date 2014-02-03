@@ -2,7 +2,9 @@
 // ------------------------------------------------------------------------------------------------------------
 // 													Google Calendar Styles 
 // ------------------------------------------------------------------------------------------------------------
-
+#google_calendar_widget .content{
+	padding-left:0
+}
 #google_calendar_widget div.title{
 	padding-left: 30px;
 	background-image: inline-image('cdn-ignored/inline-images/google-small.png');
@@ -11,9 +13,8 @@
 	padding-top: 0;
 	min-height: 30px;
 	height: 40px;
-	width: 223px;
 	display: block;
-
+	margin-top:10px;
 	a{
 		font-weight: normal;
 	}
