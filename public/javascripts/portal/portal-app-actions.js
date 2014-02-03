@@ -197,8 +197,10 @@
 				$("body").delegate(".btn-quoted", "click.show.quoted_text", function(){
 					$(this).parent().find(".freshdesk_quote").toggle();
 				})
+			case 'article_view':
+				highlight_code();				
 			break;
-	    }	    
+	    }
 	})
 
 }(window.jQuery);

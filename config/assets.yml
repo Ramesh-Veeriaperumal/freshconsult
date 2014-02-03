@@ -171,6 +171,7 @@ javascripts:
     - public/javascripts/chat/lib/ticket_search.js
     - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/app/ticket_details.js
+    - public/javascripts/frameworks/plugins/jquery.tabby.js
 
   # Code editor for portal cms
   codemirror:
@@ -367,6 +368,23 @@ javascripts:
   redactor:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
+
+  syntaxhighlighter:
+    - public/javascripts/syntaxhighlighter/shCore.js
+    - public/javascripts/syntaxhighlighter/shBrushCss.js
+    - public/javascripts/syntaxhighlighter/shBrushJava.js
+    - public/javascripts/syntaxhighlighter/shBrushJScript.js
+    - public/javascripts/syntaxhighlighter/shBrushPhp.js
+    - public/javascripts/syntaxhighlighter/shBrushRuby.js
+    - public/javascripts/syntaxhighlighter/shBrushSass.js
+    - public/javascripts/syntaxhighlighter/shBrushSql.js
+    - public/javascripts/syntaxhighlighter/shBrushXml.js
+    - public/javascripts/syntaxhighlighter/shBrushCpp.js
+    - public/javascripts/syntaxhighlighter/shBrushCSharp.js
+    - public/javascripts/syntaxhighlighter/shBrushPerl.js
+    - public/javascripts/syntaxhighlighter/shBrushPlain.js
+    - public/javascripts/syntaxhighlighter/shBrushPython.js
+    - public/javascripts/syntaxhighlighter/shBrushVb.js
 
   excanvas:
     - public/javascripts/excanvas.js

@@ -38,6 +38,9 @@
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
+		<!-- Including syntexhighliter for portal -->
+		<%= include_cloudfront_js :syntaxhighlighter %>
+
 		<!-- Access variables for portal -->
 		<%= portal_access_varibles %>
 	</head>

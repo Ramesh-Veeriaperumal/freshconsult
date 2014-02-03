@@ -50,7 +50,7 @@
 	 <div class="solutions_text clearfix">
 		<%= @article.description.html_safe %>
 	 </div>
-	 <ul class="attachment_list">
+	 <ul class="attachment_list"> 
 	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
      </ul>
 	 <span class="seperator"></span> 
@@ -63,4 +63,7 @@
 <% javascript_tag do -%>
   if(jQuery("#folder-section").height() > jQuery("#article-section").height())
     jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+
+  highlight_code();
 <%- end %>
+

@@ -76,3 +76,21 @@ function layoutResize(layoutClass1, layoutClass2){
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
     }
 }
+
+window.highlight_code = function() {
+    jQuery('[rel="highlighter"]').each(function(i,element){
+        var brush, 
+            attr = jQuery(element).data('codeBrush');
+
+        if(attr == 'html'){
+            brush = 'js ; html-script: true';
+        } else if (attr == 'xml'){
+            brush = attr +' ; html-script: true';
+        } else {
+            brush = attr;
+        }
+        jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
+    })
+
+    SyntaxHighlighter.all();
+}
