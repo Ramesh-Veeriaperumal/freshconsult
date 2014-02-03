@@ -1123,6 +1123,27 @@ ol, ul, li{
     	}
     }
 }
+.commentbox {
+	#ticket_original_request, .helpdesk_note .details {
+		div.attach-error-wrap {
+			position: relative;
+			padding: 5px;
+			left:50%;
+			width:70%;
+			margin-top: 10px;
+			div.attach-error {
+				position: relative;
+				left: -50%;
+				width: 100%;
+				text-align: center;
+				padding: 5px;
+			}
+			.alert { border: 1px solid #efefef; }
+			.close { display: none; }
+		}
+	}
+	.overlapping { margin-top: -20px; }
+}
 
 
 /*Comment-box*/
@@ -2276,7 +2297,8 @@ ol, ul, li{
 }
 
 .attachments-wrap{
-
+	padding-top:15px;
+	color: #333333;
 	.attachments-container {
 		display: inline;
 	}
@@ -2289,8 +2311,6 @@ ol, ul, li{
 	.attachment_list {
 		display: inline;
 	}
-
-	color: #333333;
 	span{
 		margin-right: 0;
 		b{
@@ -2336,6 +2356,7 @@ ol, ul, li{
 		height:auto !important;
 		width: auto;
 		min-width: 100px;
+		margin-left:0;
 		span{
 			color: #999999;
 		}
