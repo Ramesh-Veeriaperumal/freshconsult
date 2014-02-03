@@ -928,7 +928,7 @@ module ApplicationHelper
   end
 
   def modifier(key)
-    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym].html_safe
+    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym]
   end
 
 end
