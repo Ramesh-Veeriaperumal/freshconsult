@@ -85,7 +85,7 @@
 	margin: 4px 0 0; 
 	padding: 5px 0;
 	position: absolute;
-	right:36px;
+	right:12px;
 	display: inline-block;
 }
 #ticket_view_choices {
@@ -331,8 +331,8 @@
 	//													Priority Border 
 	// ------------------------------------------------------------------------------------------------------------
 
-	$priority_gradient:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==);
-	$priority_gradient_shadow: linear-gradient(left, rgba(0,58,5,0) 0%,rgba(0,0,0,0.2) 100%);
+	//$priority_gradient:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==);
+	//$priority_gradient_shadow: linear-gradient(left, rgba(0,58,5,0) 0%,rgba(0,0,0,0.2) 100%);
 	tr, tr.active {
 		width:100%;
 		td {
@@ -341,16 +341,16 @@
 				width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
 			}
 			&.priority-high {
-				background: #ffb613; // Old browsers
+				background: $COL_PRI_HIGH; // Old browsers
 			}
 			&.priority-low {
-				background: #89ce00; /* Old browsers */
+				background: $COL_PRI_LOW; /* Old browsers */
 			}
 			&.priority-medium {
-				background: #008ff9;
+				background: $COL_PRI_MEDIUM;
 			}
 			&.priority-urgent {
-				background: #de0000; /* Old browsers */
+				background: $COL_PRI_URGENT; /* Old browsers */
 			}
 
 			.status-source {
@@ -385,7 +385,7 @@
 			}
 
 			td.priority-border {
-				background-color: #e5e5e5; // Old browsers
+				background-color: $COL_RESOLVED_CLOSED; // Old browsers
 			}
 
 			.info-data {
@@ -480,7 +480,7 @@
 		width: 100%;
 		overflow: hidden;
 		word-break: break-all;
-
+		font-size:16px;
 		.ticket_id {
 			color:#888;
 		}
