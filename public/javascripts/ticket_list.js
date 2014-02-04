@@ -259,21 +259,6 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
 	});
-	jQuery('#leftViewMenu a').click(function(ev) {
-		filter_opts_sisyphus.manuallyReleaseData();
-	});
-	
-
-	if (getCookie('ticket_list_updated') == "true") {
-		if (supports_html5_storage()) {
-			
-			eval(window.localStorage['updated_ticket_list']);
-			if (window.localStorage['is_unsaved_view']) {
-				jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
-			}
-			setCookie('ticket_list_updated',true);
-		}
-	}
 
 	// Uncheck select all checkbox before navigate to next & prev page (in pagination)
 	jQuery('body').on('click.ticket_list', '.next_page, .prev_page', function () {

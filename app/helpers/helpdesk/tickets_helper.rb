@@ -10,40 +10,8 @@ module Helpdesk::TicketsHelper
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
   include MetaHelperMethods
+  include Helpdesk::TicketFilterMethods
   include Faye::Token
-
-  def view_menu_links( view, cls = "", selected = false )
-    unless(view[:id] == -1)
-      parallel_url = "/helpdesk/tickets/filter_options"
-      query_str = view[:default] ? "?filter_name=#{view[:id]}" : "?filter_key=#{view[:id]}"
-      html_options = {
-        :class => ( selected ? "active #{cls}": "#{cls}"),
-        :"data-pjax" => "#body-container",
-        :"data-parallel-url" => "#{parallel_url}#{query_str}",
-        :"data-parallel-placeholder" => "#ticket-leftFilter"
-      }
-      html_options[:rel] = "default_filter" if view[:default]
-      # html_options[:"data-toggle-view"] = true if ["new_my_open", "all_tickets", "monitored_by"].include?(view[:id])
-      
-      link_to( ((content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name])).html_safe, 
-        (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , html_options)
-    else
-      content_tag(:span, "", :class => "seperator")
-    end  
-  end
-  
-  def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu", unsaved_view=false)
-    extra_class = ""
-    extra_class = "unsaved" if unsaved_view
-    unless viewlist.empty?
-      more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", 
-          :menuid => "##{menuid}", :id => "active_filter" } ), 
-          :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
-    end
-    more_menu_drop.html_safe
-  end
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
@@ -94,57 +62,6 @@ module Helpdesk::TicketsHelper
     @ticket.time_sheets.size
   end
   
-  def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
-    unless dynamic_view.empty?
-      dynamic_view.concat([{ :id => -1 }])
-    end
-    
-    default_views = [
-      { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open").html_safe,     :default => true },
-      { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets").html_safe,     :default => true },      
-      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by").html_safe,    :default => true },
-      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam").html_safe,            :default => true },
-      { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted").html_safe,         :default => true }
-    ]
-    top_views_array = [].concat(dynamic_view).concat(default_views)
-    top_index = top_views_array.index{|v| v[:id] == selected} || 0
-
-    cannot_delete = false
-    selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
-    unless selected_item.blank?
-      selected_item_name = selected_item[:name]
-    else
-      if selected.blank?
-        selected_item_name = t("tickets_filter.unsaved_view")
-      else
-        selected_from_default = SELECTORS.select { |v| v.first == selected.to_sym }
-        selected_item_name =  (selected_from_default.blank? ? default_views.first[:name] : selected_from_default.first[1]).to_s
-      end
-      cannot_delete = true
-    end
-
-    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s + 
-      (!(cannot_delete or selected_item[:default]) ? (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", 
-        :id => selected_item[:id]}, 
-        {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), 
-        :id => "view_manage_links") : "")
-  end
-  
-  def filter_select( prompt = t('helpdesk.tickets.views.select'))    
-    selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
-              {:prompt => prompt}, { :class => "customSelect" })        
-  end
-
-  def filter(selector = nil)
-    selector ||= current_selector
-  end
-  
-  def filter_count(selector=nil)
-    Sharding.run_on_slave do
-     TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
-    end
-  end
-  
   def sort_by_text(sort_key, order)
     help_text = [
       [ :due_by     ,   'Showing Latest Due by time'  ],
@@ -154,12 +71,6 @@ module Helpdesk::TicketsHelper
       [ :status,        'Status',      ],
     ]
   end
-  
-
-  def current_filter
-    stored_key = params[:filter_key] || params[:filter_name]
-    cookies[:filter_name] = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_my_open" )
-  end
    
   def current_sort
     cookies[:sort] = (params[:sort] ? params[:sort] : ( (!cookies[:sort].blank?) ? cookies[:sort] : DEFAULT_SORT )).to_sym 
@@ -168,32 +79,9 @@ module Helpdesk::TicketsHelper
   def current_sort_order 
     cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
   end
-  
-  def current_wf_order
-    return @cached_filter_data[:wf_order].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order].blank?
-    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
-  end
-
-  def current_wf_order_type 
-    return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
-    # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
-    cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
-  end
 
   def cookie_sort 
      "#{current_sort} #{current_sort_order}"
-  end
- 
-  def current_selector
-    current_filter#.reject { |f| CONTEXTS.include? f }
-  end
-
-  def filter_title(selector)
-    SELECTOR_NAMES[selector]
-  end
-
-  def current_filter_title
-    filter_title(current_selector)
   end
 
   def current_selector_name
@@ -302,20 +190,6 @@ module Helpdesk::TicketsHelper
     else
      return ""
     end
-  end
-  
-  def get_ticket_show_params(params, ticket_display_id)
-    filters = {:filters => params.clone}
-    
-    if filters[:filters].blank?
-      show_params = {:id=>ticket_display_id}
-    else  
-      filters[:filters].delete("action")
-      filters[:filters].delete("controller")
-      filters[:filters].delete("page")
-      show_params = filters.merge!({:id=>ticket_display_id})
-    end
-    show_params
   end
 
   def multiple_emails_container(emails, label = "To: ")

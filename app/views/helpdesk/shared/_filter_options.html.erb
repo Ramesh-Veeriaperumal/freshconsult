@@ -1,9 +1,7 @@
 <div id="all-views-tmpl" class="hide">
     <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
-
-    <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %>
 </div>
-  <script type="text/javascript">
+<script type="text/javascript">
   function getFilterData(){
     query_hash = $A(); 
     jQuery("div.ff_item").map(function () {
@@ -44,19 +42,38 @@
     jQuery("#FilterOptions input[name=page]").val(1);
   }
 
-  function refresh_tickets(){
-    jQuery("#save_filter").show();
-    jQuery("#delete_filter").hide();
-    if (!jQuery("#active_filter").hasClass('unsaved')) {
-      jQuery("#active_filter").text("<%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+  function refresh_tickets() {
+    if(jQuery("#active_filter").hasClass('unsaved')){
+      showSave();
+      jQuery('#flag_unsaved_view').prop('disabled', false).val('true');
     }
-    jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
-    jQuery("#FilterOptions input[name=filter_name]").val("");
-    jQuery(".view_filters .active").removeClass("active");
+    else
+      showEditAndDelete();
+    setDivider();
     getFilterData();
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
   }
-  </script>
+
+  function showSave() {
+    jQuery('.view_filters').addClass('disable-hover');
+    jQuery("#save_as_filter,#cancel_filter,#save_filter,span.hide").switchClass('hide','vertical-alignment');
+    jQuery('#edit_filter,#delete_filter').switchClass('vertical-alignment','hide');
+  }
+
+  function showEditAndDelete() {
+    jQuery('.view_filters').removeClass('disable-hover');
+    jQuery("#save_as_filter,#cancel_filter,#save_filter,span.hide").switchClass('vertical-alignment','hide');
+    jQuery('#edit_filter,#delete_filter').switchClass('hide','vertical-alignment');
+  }
+
+  function setDivider() {
+    jQuery(document).ready(function(){
+      jQuery("#view_manage_links a").removeClass("left-border right-border");
+      jQuery("#view_manage_links a:visible:eq(0)").addClass("left-border");
+      jQuery("#view_manage_links a:visible:eq(1)").addClass("right-border");
+    });
+  }
+</script>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h5 class="lead"><%= t("tickets_filter.title") %></h5>
     <form id="FilterOptions" action="#">
@@ -66,6 +83,9 @@
       <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
   		<input type="hidden" name="page" value="1" />
       <input type="hidden" name="total_entries" value="0">
+      <input type="hidden" name="total_entries" value="0">
+
+      <input type="hidden" name="unsaved_view" id="flag_unsaved_view" <%= "disabled" unless params[:unsaved_view] %> value="true" />
     </form>
       <% @show_options.each_with_index do |c_hash, i| %> 
         <%
@@ -87,7 +107,7 @@
                                 :operator    => c_hash[:operator],
                                 :ff_name     => c_hash[:ff_name],
                                 :container   => container } do %>
-            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe : c_hash[:name].html_safe %></h4>
+            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe.capitalize : c_hash[:name].html_safe.capitalize %></h4>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end 
@@ -96,31 +116,43 @@
 	var query_hash  = $A();
   
 	jQuery(document).ready(function(){
-    
-    filter_opts_sisyphus = jQuery('#FilterOptions').sisyphus({
-      name:'ticket_list_filters',
-      autoRelease: false
-    });
-    
-    if (getCookie('ticket_list_updated') != "true") {
-      filter_opts_sisyphus.manuallyReleaseData();
-      window.localStorage['is_unsaved_view'] = false;
-      window.localStorage['updated_ticket_list'] = "";
-    }
-		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
 
+    setDivider();
+
+    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
 
     getFilterData();
     <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());'.html_safe unless special_case_views.include?(@current_view) %>
 
     jQuery(".filter_item").bind("change", function(){
+      jQuery("#active_filter").addClass('unsaved');
       refresh_tickets();
-    });	 
+    });
 
     if (jQuery("#active_filter").hasClass('unsaved')) {
-      jQuery("#save_filter").show();
-      jQuery("#delete_filter").hide();
+      showSave();
     }
+
+    jQuery('#save_filter').live("click",function(e){
+      preventDefault(e);
+      jQuery(this).addClass('tkt-filter-loading');
+      // switchClass if used here is not working in IE8!
+      jQuery('.ticket-view-save').removeClass('ticket-view-save').addClass('sloading loading-tiny');
+      jQuery.ajax({
+        url: "/wf/filter/update_filter",
+        type: "POST",
+        data: {
+          data_hash: query_hash.toJSON(),
+          filter_name: jQuery('#active_filter').text(),
+          wf_model: "Helpdesk::Ticket",
+          wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
+          wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
+          visibility: ""
+        },
+        success: function(msg){}
+      });
+    });
+
     jQuery(".wf_order_type, .wf_order").die();
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
@@ -146,9 +178,6 @@
   
   jQuery("#FilterOptions").change(function(){
     jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
-    if (supports_html5_storage()) {
-      window.localStorage['is_unsaved_view'] = false;
-    } 
     jQuery.ajax({
       url: "/helpdesk/tickets/custom_search",
       type: "POST",
@@ -156,11 +185,6 @@
       data: jQuery(this).serializeArray(),
       success: function(script){ 
         jQuery("#FilterOptions input[name=total_entries]").val(0);
-        if (supports_html5_storage()) {
-          window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
-          window.localStorage['updated_ticket_list'] = script;
-          setCookie('ticket_list_updated',true);
-        }
 
         if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
           jQuery('#export_tickets').hide();
@@ -180,5 +204,4 @@
       }
     }); 
   });
-
 </script>

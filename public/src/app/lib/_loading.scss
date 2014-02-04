@@ -200,6 +200,11 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	margin:3px 8px;
 }
 
+.leftFilter .tkt-filter-loading{
+	padding: 7px 10px 8px 18px;
+	.spinner{top:0 !important;} //To resolve problem in mozila spinner top
+}
+
 /*
 .report-page .loading-center{
 	padding-top:50%;
