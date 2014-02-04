@@ -60,9 +60,7 @@
 					<span class="pull-right">
 						<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
 					</span>
-					<div class="shorcuts-info description">
-						Press <span class="color-orange">?</span> to view Keyboard hints
-					</div>
+					<%= link_to t('header.shortcuts_info').html_safe, "#", :class => "shorcuts-info description", :id => "shortcuts_info" %>
 				</div>
 
 				<% if is_assumed_user? %>
@@ -166,12 +164,17 @@
 						jQuery(document).trigger("shortcuts:invoke")
 					}else{
         				scriptLoader.load('shortcut');
-					}					
+					}
 				} else {
 					jQuery(document).trigger("shortcuts:destroy")
 				}
 			}
 		});
+	});
+
+	jQuery('#shortcuts_info').bind('click', function(ev){
+		ev.preventDefault();
+		jQuery('#shortcut_help_chart').trigger('click');
 	});
 
 });

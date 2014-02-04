@@ -51,26 +51,26 @@ class Shortcut
 			:show_activities_toggle	=> "}",
 			:properties			=> "p",
 			:expand				=> "]",
-			:undo				=> "z"
+			:undo				=> "z",
+			:expand 			=> "]"
 		}
 	}
 
 	MODIFIER_KEYS = {
 		:ctrl 		=> {
 			:mac 		=> "&#8984;",
-			:windows 	=> "Ctrl"
+			:windows 	=> "Ctrl",
+			:linux 		=> "Ctrl"
 		},
 		:shift 		=> {
 			:mac 		=> "&#8679;",
-			:windows 	=> "Shift"
+			:windows 	=> "Shift",
+			:linux	 	=> "Shift"
 		},
 		:alt 		=> {
 			:mac 		=> "&#8997;",
-			:windows 	=> "Alt"
-		},
-		:capslock 	=> {
-			:mac 		=> "&#8682;",
-			:windows 	=> "Caps Lock"
+			:windows 	=> "Alt",
+			:linux 		=> "Alt"
 		}
 	}
 

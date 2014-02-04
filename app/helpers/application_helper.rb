@@ -922,13 +922,13 @@ module ApplicationHelper
 
   def current_platform
     os = UserAgent.parse(request.user_agent).os
-    ['windows', 'mac', 'linux', 'android'].each do |v|
+    ['windows', 'mac', 'linux'].each do |v|
       return v if os.downcase.include?(v)
     end
   end
 
   def modifier(key)
-    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym]
+    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym].html_safe
   end
 
 end
