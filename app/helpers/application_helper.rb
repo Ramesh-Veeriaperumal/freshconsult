@@ -925,10 +925,13 @@ module ApplicationHelper
     ['windows', 'mac', 'linux'].each do |v|
       return v if os.downcase.include?(v)
     end
+
+    return nil
   end
 
   def modifier(key)
-    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym].html_safe
+    platform = current_platform || "windows"
+    Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
   end
 
 end

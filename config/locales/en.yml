@@ -2501,7 +2501,7 @@ en:
     user_available: "New tickets will be <br>auto-assigned to you."
     user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     toggle_shortcuts: "Keyboard Shortcuts"
-    shortcuts_info: "Press <span class='color-orange'>?</span> to view Keyboard hints"
+    shortcuts_info: "Press <span class='color-orange'>?</span> to view <a id='shortcuts_info' href='#'>Keyboard hints</a>"
     tabs:
       reports: Reports
       dashboard: Dashboard
