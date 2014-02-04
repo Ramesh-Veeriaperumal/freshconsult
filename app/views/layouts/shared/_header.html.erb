@@ -60,7 +60,9 @@
 					<span class="pull-right">
 						<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
 					</span>
-					<%= link_to t('header.shortcuts_info').html_safe, "#", :class => "shorcuts-info description", :id => "shortcuts_info" %>
+					<span class="shorcuts-info description">
+						<%= t('header.shortcuts_info').html_safe %>
+					</span>
 				</div>
 
 				<% if is_assumed_user? %>

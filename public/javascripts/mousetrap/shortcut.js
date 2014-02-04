@@ -72,6 +72,10 @@
         // -----------  Global Shortcuts  ----------------
         shortcutHelp = function (ev) {
             _preventDefault(ev);
+            // close qtip if any opened on viewing help chart
+            // work around need to fix properly
+            $('.qtip:visible').qtip('hide');
+
             var isVisible = $('#help_chart').is(':visible'),
                 _selector = isVisible ? '#help_chart button.close' : '#shortcut_help_chart';
 
@@ -116,7 +120,7 @@
         selectTicket = function () {
             $('tr.' + _selectedListItemClass + ' input.selector').trigger('click').trigger('change');
         },
-        initScrollToSelected = function (el) {
+        initScrollTo = function (el) {
             $.scrollTo(el);
         },
         autoScroll = function (el, percentToScroll) {
@@ -124,10 +128,11 @@
                 itemSltrTop = el.offset().top,
                 itemSltrBotm = itemSltrTop + el.height(),
                 frame = $(window).height() + docTop,
-                scrollTo = $(window).height() * percentToScroll / 100;
+                percent = percentToScroll || 50,
+                scrollTo = Math.floor($(window).height() * percent / 100);
 
             if (itemSltrBotm <= docTop || itemSltrTop >= frame) {
-                initScrollToSelected(el);
+                initScrollTo(el);
             } else if (itemSltrBotm >= frame) {
                 $('html').animate({scrollTop : (docTop + scrollTo) + 'px'}, 500, 'easeOutQuad');
             } else if (itemSltrTop <= docTop) {
@@ -256,7 +261,6 @@
         KeyboardShortcuts.prototype = {
             constructor: KeyboardShortcuts,
             reset: function(){
-                console.log('Shortcuts reset');
                 // Reset existing shortcuts
                 Mousetrap.reset();
 
@@ -271,7 +275,6 @@
                 this.setListItemCursor("table.tickets tbody tr");
             },
             destroy: function(){
-                console.log('shortcuts destroyed')
                 Mousetrap.reset();
 
                 $('[data-keybinding]').expire();
@@ -286,7 +289,6 @@
                 this.resetShortcutTooltip();
             },
             setListItemCursor: function(class_name) {
-                console.log("SET LIST")
                 if(!$('.' + _selectedListItemClass).get(0))
                     $(class_name).first().addClass(_selectedListItemClass);
             },
@@ -300,7 +302,6 @@
 
     $(document)
         .on("shortcuts:invoke", function(ev){
-            console.log('shortcuts : invoked')
             // Pass params through ev when invoking from any page
             ev.shortcuts_data = ev.shortcuts_data || {};
 
