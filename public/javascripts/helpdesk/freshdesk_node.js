@@ -14,22 +14,6 @@
       });
     };
 
-  FreshdeskNode.prototype.loadClientJS = function(callback){
-    var self = this;
-    AsyncJSLoader(this.host+'/client.js',function(){
-      try {
-        self.initClient();
-        if(self.opts.addAuthExtParams){
-          self.addAuthExt(self.opts.addAuthExtParams)
-        }
-        callback();
-      }
-      catch(e){
-        // console.error('Freshdesk node script error');
-      }
-    });
-  };
-
   FreshdeskNode.prototype.addAuthExt = function(params){
     fayeClient.addExtension({
       outgoing: function(message, callback) {
@@ -39,21 +23,20 @@
     });
   };
 
-  FreshdeskNode.prototype.initClient = function(){
+  FreshdeskNode.prototype.initClient = function(callback){
     opts = $.extend({},CLIENT_DEFAULT_OPTIONS,this.opts.clientOpts)
     fayeClient = new Faye.Client(this.host,opts);
+    if(this.opts.addAuthExtParams){
+      this.addAuthExt(this.opts.addAuthExtParams)
+    }
     bindUnloadEvnts();
+    callback()
   };
 
   FreshdeskNode.prototype.init = function(host,opts,callback){
-    // if(this.initialized) {
-    //   console.log('FreshdeskNode already initialized');
-    //   callback();
-    //   return
-    // }
     this.host = host;
     this.opts = opts;
-    this.loadClientJS(callback);
+    this.initClient(callback);
     this.initialized = true;
   };
 
