@@ -33,10 +33,7 @@ class Admin::DataExportController < Admin::AdminController
 
   def download
     attachment = @item.attachment
-    file_url = helpdesk_attachment_url(attachment,
-                                      :host => current_account.host, 
-                                      :protocol => 'https'
-                                      )
+    file_url = helpdesk_attachment_path(attachment)
     redirect_to file_url  
   end
 

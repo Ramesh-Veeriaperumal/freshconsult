@@ -14,7 +14,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       else
         build_file(file_string) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
-                                                :domain => Account.current.full_domain, 
+                                                :domain => export_params[:portal_url] || Account.current.host, 
                                                 :url => hash_url,
                                                 :export_params => export_params})
       end
