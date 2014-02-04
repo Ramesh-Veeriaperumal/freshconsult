@@ -10,16 +10,16 @@ class CustomersController < ApplicationController
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
   
   def index
-    per_page = (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+    per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
     respond_to do |format|
       format.html  do
         @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
       end
      format.xml  do
-        render :xml => es_scoper
+        render :xml => es_scoper(per_page)
       end
       format.json do
-        render :json => es_scoper
+        render :json => es_scoper(per_page)
       end
       
       format.atom do
@@ -114,10 +114,10 @@ class CustomersController < ApplicationController
       current_account.customers
     end
 
-    def es_scoper
+    def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
-      Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type)
+      Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type, per_page)
     end
 
     def set_selected_tab
