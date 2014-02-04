@@ -425,8 +425,9 @@ var scrollToError = function(){
 		}else{
 			$("#calender-buttons").show();
 			$("#calender-info").hide();
-		}               
-		return moment(_date_time).unix();
+		}      
+		var engMoment = moment(_date_time);
+		return engMoment.lang("en").format("ddd MMM DD YYYY HH:mm:ss") +" GMT"+engMoment.lang("en").format("Z").replace(":","");         
 	}
 	
 	$("#DueDateForm").submit(function(){  
