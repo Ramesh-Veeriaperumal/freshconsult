@@ -1137,9 +1137,9 @@ ol, ul, li{
 				width: 100%;
 				text-align: center;
 				padding: 5px;
+				border: 1px solid #efefef;
+				.close { display: none; }
 			}
-			.alert { border: 1px solid #efefef; }
-			.close { display: none; }
 		}
 	}
 	.overlapping { margin-top: -20px; }
