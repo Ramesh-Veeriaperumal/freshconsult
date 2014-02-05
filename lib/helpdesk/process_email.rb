@@ -418,9 +418,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def add_notification_text item
       message = I18n.t('attachment_failed_message').html_safe
       notification_text = "\n" << message
-      notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, 
-                                                        content_tag(:div, message, :class => "attach-error"),
-                                                        :class => "attach-error-wrap"))
+      notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)
         item.description << notification_text
         item.description_html << notification_text_html

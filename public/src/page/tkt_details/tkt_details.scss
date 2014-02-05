@@ -1123,28 +1123,21 @@ ol, ul, li{
     	}
     }
 }
+
 .commentbox {
 	#ticket_original_request, .helpdesk_note .details {
-		div.attach-error-wrap {
-			position: relative;
+		div.attach-error {
+			margin:10px auto 0;
+			width: 65%;
+			text-align: center;
 			padding: 5px;
-			left:50%;
-			width:70%;
-			margin-top: 10px;
-			div.attach-error {
-				position: relative;
-				left: -50%;
-				width: 100%;
-				text-align: center;
-				padding: 5px;
-				border: 1px solid #efefef;
-				.close { display: none; }
-			}
+			position: relative;
+			border: 1px solid #efefef;
+			.close { display: none; }
 		}
 	}
-	.overlapping { margin-top: -20px; }
+	.overlapping { margin-top: -15px; }
 }
-
 
 /*Comment-box*/
 .commentbox{

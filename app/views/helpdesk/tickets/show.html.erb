@@ -42,7 +42,7 @@
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
 <script type="text/javascript">
 jQuery(document).ready(function(){
-	jQuery('div.attach-error-wrap').parents('.commentbox').find('.seperator').addClass('overlapping');
+	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
 });
 !function(){
 	"use strict";
