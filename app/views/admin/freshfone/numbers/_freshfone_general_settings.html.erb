@@ -1,22 +1,5 @@
 <div class="fields">
 	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_business_hours') %></label>
-		<div class="controls freshfone-controls">
-			<%= check_box_tag :non_business_hour_calls, 1, number.non_business_hour_calls?, :class => 'non_business_hour_calls' %>
-			<div class="multi_business_hours ">
-				<% if multiple_hours_enabled? %>
-					<%= label_tag :business_calendar, t('freshfone.admin.number_settings.business_calendar'),
-					:class => "menu-label business_calendar_label" %>
-					<%= select_tag :business_calendar, 
-										options_from_collection_for_select(current_account.business_calendar, 
-											:id, :name, number.business_calendar_id), 
-										:class => 'select2 business_calendar_select2' %>
-					
-				<% end %>
-			</div>
-		</div>
-	</div>
-	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.record_calls') %></label>
 		<div class="controls ">
 			<div class="radio inline">
@@ -50,6 +33,64 @@
 	</div>
 
 	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
+		<div class="controls">
+			<div class="freshfone-controls non_availability_message"></div>
+		</div>
+	</div>
+
+
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.max_queue_calls') %></label>
+		<div class="controls freshfone-controls">
+			<%= f.select :max_queue_length, max_queue_length_options, {},
+					{:class => "select2 max_queue_length_select2"} %>
+			<div class="queue_setting_div queue_wait_time">
+				<div class="queue_wait_time_options">
+					<label> <%= t('freshfone.admin.number_settings.call_wait_time') %> </label>
+					<%= f.select :queue_wait_time, queue_wait_time_options, 
+							{}, {:class => "select2 queue_wait_time_select2"} %>
+					<label> <%= t('freshfone.admin.number_settings.call_wait_time_suffix') %></label>
+				</div>
+			</div>
+			<div class="queue_setting_div togglable_message">
+				<label><%#= t('freshfone.admin.number_settings.wait_message') %></label>
+				<div class="freshfone-controls on_hold_message"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_business_hours') %></label>
+		<div class="controls freshfone-controls">
+			<%#= check_box_tag :non_business_hour_calls, 1, number.non_business_hour_calls?, :class => 'non_business_hour_calls' %>
+			<div class="radio inline">
+				<%= radio_button_tag :non_business_hour_calls, false, true, :class => "radio" %> 
+				<%#= f.label :non_business_hour_calls, "Business Hours", :class => "radiolabel", :value => true %>
+				<label> Business Hours </label>
+			</div>
+			<div class="radio inline">
+				<%= radio_button_tag :non_business_hour_calls, true, false, :class => "radio" %> 
+				<%#= f.label :non_business_hour_calls, "24/7 Anytime", :class => "radiolabel", :value => false %>
+				<label>24/7 Anytime</label>
+			</div>
+			<div class="non_business_hours_message_container togglable_message">
+				<div class="multi_business_hours ">
+					<% if multiple_hours_enabled? %>
+						<%= select_tag :business_calendar, 
+											options_from_collection_for_select(current_account.business_calendar, 
+												:id, :name, number.business_calendar_id), 
+											:class => 'select2 business_calendar_select2' %>
+						
+					<% end %>
+				</div>
+				<label><%#= t('freshfone.admin.number_settings.non_business_hours_message') %></label>
+				<div class="freshfone-controls non_business_hours_message"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.voicemail') %></label>
 		<div class="controls">
 			<div class="radio inline">
@@ -60,63 +101,27 @@
 				<%= f.radio_button :voicemail_active, false, :class => "radio voicemail_off_state" %> 
 				<%= f.label :voicemail_active, t('freshfone.admin.number_settings.voicemail_off'), :class => "radiolabel", :value => false %>
 			</div>
-		</div>
-		
-	</div>
-	<div class="control-group voicmail_message_div ">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.voicemail_message') %></label>
-		<div class="controls">
-			<div class="freshfone-controls voicemail_message"></div>
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.max_queue_calls') %></label>
-		<div class="controls freshfone-controls">
-			<%= f.select :max_queue_length, max_queue_length_options, {},
-					{:class => "select2 span2 max_queue_length_select2"} %>
-		</div>
-	</div>
-	<div class="queue_setting_div hide">
-		<div class="control-group">
-			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.call_wait_time') %></label>
-			<div class="controls freshfone-controls">
-				<%= f.select :queue_wait_time, queue_wait_time_options, 
-						{}, {:class => "select2 span2"} %>
+			<div class="voicmail_message_div togglable_message">
+				<label><%#= t('freshfone.admin.number_settings.voicemail_message') %></label>
+				<div class="freshfone-controls voicemail_message"></div>
 			</div>
-		</div>
-
-		<div class="control-group">
-			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.wait_message') %></label>
-			<div class="controls">
-				<div class="freshfone-controls on_hold_message"></div>
-			</div>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
-		<div class="controls">
-			<div class="freshfone-controls non_availability_message"></div>
 		</div>
 	</div>
 	
 	
 </div>
 <script type="text/javascript">
-	(function($){
+	(function($){		
 		var non_business_hour_calls = "<%= number.non_business_hour_calls? %>";
 		if(non_business_hour_calls == "true"){
 			$('.multi_business_hours').hide();
-		}else
+			$('.non_business_hours_message_container').hide();
+			$('#non_business_hour_calls_true').prop('checked',true);
+		}else{
 			$('.multi_business_hours').show();
-		$('.non_business_hour_calls').itoggle({
-			checkedLabel: 'Yes',
-			uncheckedLabel: 'No'
-		}).change(function() {
-			$('.multi_business_hours').toggle();
-		});
-		
-		
+			$('.non_business_hours_message_container').show();
+			$('#non_business_hour_calls_false').prop('checked',true);
+		}
 	})(jQuery)
 
 </script>

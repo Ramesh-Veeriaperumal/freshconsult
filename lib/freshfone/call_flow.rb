@@ -2,7 +2,8 @@ class Freshfone::CallFlow
   include FreshfoneHelper
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
-
+	BEYOND_THRESHOLD_PARALLEL_INCOMING = 3 # parallel incomings allowed beyond safe_threshold
+	BEYOND_THRESHOLD_PARALLEL_OUTGOING = 1 # parallel incomings allowed beyond safe_threshold
   
   attr_accessor :available_agents, :busy_agents, :params, :current_account, :current_number,
                 :current_user, :welcome_menu, :call_initiator, :transfered,
@@ -10,8 +11,9 @@ class Freshfone::CallFlow
   delegate :record?, :non_business_hour_calls?, :ivr, :to => :current_number
   delegate :freshfone_users, :to => :current_account
 	delegate :read_welcome_message, :to => :ivr
-  delegate :connect_caller_to_agent, :add_caller_to_queue, :initiate_voicemail, :block_incoming_call,
-          :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers, :to => :call_initiator
+  delegate :connect_caller_to_agent, :add_caller_to_queue, :block_incoming_call,
+          :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers,
+          :return_non_availability, :return_non_business_hour_call, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
            :to => :call_actions
 
@@ -26,6 +28,7 @@ class Freshfone::CallFlow
   end
 
   def resolve_request
+    return reject_twiml if cannot_connect_call?
     return initiate_recording if params[:record]
     return trigger_ivr_flow if params[:preview]
     return outgoing if outgoing?
@@ -33,26 +36,15 @@ class Freshfone::CallFlow
   end
 
   def incoming
-    transfered ? register_call_transfer(outgoing_transfer) : register_incoming_call
     if available_agents.any?
       connect_caller_to_agent
     elsif all_agents_busy?
       add_caller_to_queue(hunt_options)
     else 
-      initiate_voicemail('offline')
+      return_non_availability
     end  
   end
   
-  def outgoing
-    register_outgoing_call
-    return initiate_outgoing
-  end
-
-  def block_call
-    register_blocked_call
-    return block_incoming_call
-  end
-
   def call_users_in_group(performer_id)
     load_users_from_group(performer_id)
     incoming
@@ -66,7 +58,6 @@ class Freshfone::CallFlow
   
   def call_user_with_number(number)
     self.numbers = [number]
-    register_incoming_call
     connect_caller_to_numbers
   end
   
@@ -77,6 +68,7 @@ class Freshfone::CallFlow
   def transfer(agent, outgoing=false)
     self.outgoing_transfer = outgoing
     self.transfered = true
+    register_call_transfer(outgoing_transfer)
     call_user_with_id(params[:id], agent.freshfone_user)
   end
   
@@ -86,10 +78,32 @@ class Freshfone::CallFlow
     else
       load_available_and_busy_agents
     end
+    self.call_initiator.queued = true
     connect_caller_to_agent
   end
 
   private
+
+    def outgoing
+      register_outgoing_call
+      initiate_outgoing
+    end
+
+    def block_call
+      register_blocked_call
+      block_incoming_call
+    end
+
+    def incoming_or_ivr
+      register_incoming_call
+      return return_non_business_hour_call unless working_hours?
+      ivr.ivr_message? ? trigger_ivr_flow : regular_incoming
+    end
+
+    def regular_incoming
+      load_available_and_busy_agents
+      incoming
+    end
 
     def set_hunt_options(type, performer)
       self.hunt_options = {
@@ -116,28 +130,11 @@ class Freshfone::CallFlow
       TimeZone.set_time_zone
     end
 
-    def incoming_or_ivr
-      return non_business_hour_call unless working_hours?
-      ivr.ivr_message? ? trigger_ivr_flow : regular_incoming
-    end
-    
-    def regular_incoming
-      load_available_and_busy_agents
-      incoming
-    end
-
-    def non_business_hour_call
-      register_incoming_call
-      initiate_voicemail('non_business_hours')
-    end
-
     def outgoing?
       params[:To].blank?
     end
 
     def blacklisted?
-      # blacklist = current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
-      # blacklist.include? params[:From]
       current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))
     end
 
@@ -163,4 +160,23 @@ class Freshfone::CallFlow
       self.busy_agents = freshfone_users.busy_agents
     end
 
+    def cannot_connect_call?
+      return false unless current_account.freshfone_credit.below_safe_threshold?
+      outgoing? ? outgoing_limit_reached? : incoming_limit_reached?
+    end
+
+    def calls_count
+      @calls_count ||= begin
+        key = FRESHFONE_CALLS_BEYOND_THRESHOLD % { :account_id => current_account.id }
+        get_key(key).to_i
+      end
+    end
+
+    def outgoing_limit_reached?
+      (calls_count & 15) >= BEYOND_THRESHOLD_PARALLEL_OUTGOING
+    end
+
+    def incoming_limit_reached?
+      (calls_count >> 4) >= BEYOND_THRESHOLD_PARALLEL_INCOMING
+    end
 end

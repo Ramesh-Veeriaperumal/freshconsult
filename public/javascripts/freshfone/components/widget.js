@@ -1,9 +1,7 @@
 var FreshfoneWidget;
 (function ($) {
     "use strict";
-	FreshfoneWidget = function (freshfonecalls, freshfoneuser) {
-		this.freshfoneuser = freshfoneuser;
-		this.freshfonecalls = freshfonecalls;
+	FreshfoneWidget = function () {
 		this.isWidgetUninitialized = true;
 		this.widget = $('.freshfone_widget');
 		this.$sidebarTabsContainer = $('.grey_widget_background');
@@ -23,9 +21,17 @@ var FreshfoneWidget;
 			this.callNote = $('#call_notes');
 			this.$number = $('#number');
 			this.$dialpadButton = this.outgoingCallWidget.find(".showDialpad");
+			this.freshfone_dashboard = $('.freshfone_dashboard');
+			this.$freshfone_realtime = this.freshfone_dashboard.find('.freshfone_realtime');
+			this.$freshfone_alert = this.freshfone_dashboard.find('.freshfone_alert');
 			this.isWidgetUninitialized = false;
 			this.isPageCloseBinded = false;
 			this.noteType = false;
+			this.force_disable_widget = false;
+		},
+		loadDependencies: function (freshfonecalls, freshfoneuser) {
+			this.freshfoneuser = freshfoneuser;
+			this.freshfonecalls = freshfonecalls;
 		},
 		handleWidgets: function (type) {
 			if (this.isWidgetUninitialized) { this.initializeWidgets(); }
@@ -58,6 +64,36 @@ var FreshfoneWidget;
 			this.hideAllWidgets();
 			this.outgoingCallWidget.show();
 		},
+		disableFreshfoneWidget: function () {
+			if (freshfonewidget.ongoingCallWidget.is(':visible')){
+				this.force_disable_widget = true;
+			}else{
+				this.outgoingCallWidget.addClass("disabled");
+				this.widget
+							.addClass('tooltip inactive')
+							.attr('title', freshfone.widget_inactive)
+							.data('offset', 10)
+							.popupbox('hidePopupContents');
+				this.displayAlert();
+			}
+		},
+		enableFreshfoneWidget: function () {
+			this.force_disable_widget = false;
+			this.outgoingCallWidget.removeClass("disabled");
+			this.widget
+						.removeClass('tooltip inactive')
+						.removeAttr('title')
+						.removeData('offset');
+			this.hideAlert();
+		},
+		displayAlert: function () {
+			this.$freshfone_alert.removeClass('hide');
+			this.$freshfone_realtime.addClass('hide');
+		},
+		hideAlert: function () {
+			this.$freshfone_alert.addClass('hide');
+			this.$freshfone_realtime.removeClass('hide');
+		},
 		hideAllWidgets: function () {
 			if (this.isWidgetUninitialized) { this.initializeWidgets(); }
 			this.outgoingCallWidget.hide();
@@ -86,6 +122,9 @@ var FreshfoneWidget;
 		},
 		resetToDefaultState: function () {
 			freshfonewidget.handleWidgets('outgoing');
+			if (this.force_disable_widget) {
+				this.disableFreshfoneWidget();
+			};
 			this.resetForm();
 		},
 		hideTransfer: function () {
@@ -98,6 +137,7 @@ var FreshfoneWidget;
 			var $ivrPreview = $('#ivr_preview');
 			if ($ivrPreview) {
 				$ivrPreview.button('reset');
+				$('#ivr_submit').button('reset');
 			}
 		},
 		enablePreviewMode: function () {

@@ -868,6 +868,10 @@ module ApplicationHelper
     feature?(:freshfone) or current_account.freshfone_numbers.any?
   end
 
+  def freshfone_below_threshold?
+    current_account.freshfone_credit.below_calling_threshold?
+  end
+
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
 		can_make_calls(number, 'phone-icons', freshfone_number_id)

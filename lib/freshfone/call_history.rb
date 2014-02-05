@@ -2,7 +2,11 @@ module Freshfone::CallHistory
 
 	def update_call
 		return if current_call.blank?
-		current_call.update_status(params.merge({ :called_agent => called_agent })).save
+		current_call.update_call_details(params.merge({ :called_agent => called_agent })).save
+	end
+
+	def update_call_status
+		current_call.update_status(params).save unless current_call.blank?
 	end
 	
 	def current_call

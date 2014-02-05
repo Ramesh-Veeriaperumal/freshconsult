@@ -1,11 +1,10 @@
 // Global settings
-@import "lib/settings";
-@import "lib/mixins";
+@import "../settings/settings";
 
 // Freshfone styles
-@import "freshfone/variables";
-@import "freshfone/client/sprites";
-@import "freshfone/client/client_main";
-@import "freshfone/client/ongoing";
-@import "freshfone/client/outgoing";
-@import "freshfone/client/notification";
+@import "variables";
+@import "client/sprites";
+@import "client/client_main";
+@import "client/ongoing";
+@import "client/outgoing";
+@import "client/notification";

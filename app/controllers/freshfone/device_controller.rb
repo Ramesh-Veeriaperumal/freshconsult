@@ -9,7 +9,7 @@ class Freshfone::DeviceController < FreshfoneBaseController
 	
 	def record
 		twiml = Twilio::TwiML::Response.new do |r|
-			r.Say "Preparing your recorded message. Make sure to save upon completion.", 
+			r.Say "Preparing your recorded message. Make sure you save the settings upon completion.", 
 				:voice => current_number.voice_type
 		end
 		render :xml => twiml.text

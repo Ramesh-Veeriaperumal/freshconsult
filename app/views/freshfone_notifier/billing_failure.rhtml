@@ -1,7 +1,7 @@
 <div>
-Hi,<div><br></div>
-	Error occured in account <%=@account.full_domain%> while calculating the Call charge for <%=@call_sid%> 
-<div><br></div>
-<div>Support&nbsp;</div>
-<div><%= AppConfig['from_email'] %></div>
+  Error occured in account <%= @account.id %> :: <%= @account.full_domain %> while calculating the call charge for <%= @call_sid %>.
+  <div><br></div>
+  The exception is <%= @exception.message %> : 
+  <div><br></div>
+  <%= @exception.backtrace.first(5).join(":::") %>
 </div>

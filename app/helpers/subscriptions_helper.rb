@@ -1,5 +1,5 @@
 module SubscriptionsHelper 
-	def get_payment_string(period,amount)
+  def get_payment_string(period,amount)
 		if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
     		return t('billed_amount_annually', :amount => amount ).html_safe 
 		end
@@ -32,20 +32,12 @@ module SubscriptionsHelper
   end
 
   #Options to be re-written before release
-  def auto_recharge_options
-  	[
-  		["$25", 25], 
-  		["$50", 50], 
-  		["$100", 100]
-  	]
-  end
-
   def recharge_options
-  	[
-  		["$25", 25], 
-  		["$50", 50], 
-  		["$100", 100]
-  	]
+    cost_options = []
+    (Freshfone::Credit::RECHARGE_OPTIONS).step(Freshfone::Credit::STEP){ |cost|
+      cost_options << [ number_to_currency(cost, :precision => 0), cost ]
+    }
+    cost_options
   end
 
  end

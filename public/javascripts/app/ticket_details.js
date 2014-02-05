@@ -331,11 +331,22 @@ var updatePagination = function() {
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			trigger_event("ticket_show_more",{})
-			
+			freshfoneAudioDomSetting();
 		});
 	});
 }
 
+var freshfoneAudioDomSetting = function (){
+			soundManager.reboot();
+			$('.call_duration').each(function () {
+				if ($(this).data("time") === undefined) { return; }
+					$(this).html($(this).data("time").toTime());
+			});
+}
+$('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
+		ev.preventDefault();
+		window.location.reload(true);
+});
 // ----- END FOR REVERSE PAGINATION ------ //
 
 changeStatusTo = function(status) {

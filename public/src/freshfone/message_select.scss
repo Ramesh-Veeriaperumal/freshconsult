@@ -10,8 +10,10 @@
 	}
 	.message-input {
 		padding: 5px;
-		height:30px;
-		@include box-sizing(border-box);
+		height:18px;
+		max-height: 80px;
+		width:470px;
+		@include box-sizing(border-box);		
 		display: block;
 	}
 	.message-file input {

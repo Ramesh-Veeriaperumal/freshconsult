@@ -182,6 +182,10 @@ window.xhrPool = [];
         }); 
       });
 
+    $("textarea.autosize").livequery(function(){
+      $(this).autosize();
+    });
+
     $("[rel=remote-load]").livequery(function(){ 
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");

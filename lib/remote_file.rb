@@ -8,8 +8,8 @@ class RemoteFile < ::Tempfile
 
    attr_accessor :open_uri_path, :username, :password
 
-  def initialize(path, username = nil, password = nil, tmpdir = Dir::tmpdir)
-    @original_filename  = File.basename(path).split('=')[1] || File.basename(path)
+  def initialize(path, username = nil, password = nil, file_name = nil, tmpdir = Dir::tmpdir)
+    @original_filename  = file_name || File.basename(path).split('=')[1] || File.basename(path)
     @remote_path        = path
     self.username = username
     self.password = password

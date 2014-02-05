@@ -40,6 +40,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/user"
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
+    resource :"freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]

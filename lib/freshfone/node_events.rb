@@ -17,7 +17,7 @@ module Freshfone::NodeEvents
       HTTParty.post(node_uri, options)  
     rescue Timeout::Error
       Rails.logger.error "Timeout trying to publish freshfone event for #{node_uri}. \n#{options.inspect}"
-      NewRelic::Agent.notice_error(e, {:description => "Error publishing data to Freshfone node"})
+      NewRelic::Agent.notice_error(StandardError.new("Error publishing data to Freshfone node. Timed out."))
     rescue Exception => e
       Rails.logger.error "Error publishing data to Freshfone Node. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       NewRelic::Agent.notice_error(e, {:description => "Timeout trying to publish freshfone event for #{node_uri}"})
@@ -36,7 +36,16 @@ module Freshfone::NodeEvents
 
   def publish_freshfone_presence(user, deleted=false)
     @user = user
-    (!deleted and user.freshfone_user_online?) ? publish_online : publish_offline
+    (!deleted and user.freshfone_user_online?) ? publish_online : check_user_offline(user)
+  end
+
+  def publish_capability_token(user, token = nil)
+    @user = user
+    notify_socket(capability_token_channel, token_message(token))
+  end
+
+  def check_user_offline(user)
+    (user.freshfone_user_offline?) ? publish_offline : publish_busy
   end
 
   def publish_online
@@ -47,14 +56,18 @@ module Freshfone::NodeEvents
     notify_socket(presence_channel("agent_unavailable"), offline_message)
   end
 
+  def publish_busy
+    notify_socket(presence_channel("agent_busy"), offline_message)
+  end
+
+  def publish_freshfone_widget_state(account, status)
+    @account = account
+    notify_socket(credits_channel(status), "")
+  end
+
   def add_active_call_params_to_redis(params, message=nil)
     agent = (current_user.blank?) ? current_account.users.find(params[:agent]) : current_user
-    active_call_message = message || {
-                                        :agent => agent.id, 
-                                        :requester => params[:From],
-                                        :call_sid => params[:CallSid], 
-                                        :original_status => agent.freshfone_user_presence
-                                      }
+    active_call_message = message || { :agent => agent.id }
     set_key(active_calls_key, active_call_message.to_json)
   end
 
@@ -73,6 +86,12 @@ module Freshfone::NodeEvents
     def offline_message
       { :members => @user.account.freshfone_users.raw_online_agents.count,
         :user => { :id => @user.id }}
+    end
+
+    def token_message(token)
+      { :token => token,
+        :user => { :id => @user.id }
+      }
     end
 
     def call_completed_message
@@ -95,7 +114,7 @@ module Freshfone::NodeEvents
     end
 
     def active_calls_key
-      ACTIVE_CALL % { :call_sid => params[:CallSid] }
+      ACTIVE_CALL % {  :account_id => current_account.id, :call_sid => params[:CallSid] }
     end
     
     def presence_channel(status)
@@ -106,8 +125,17 @@ module Freshfone::NodeEvents
       "#{current_account.id}/calls/#{status}"
     end
 
+    def capability_token_channel
+      "#{@user.account_id}/token/#{@user.id}"
+    end
+    
+    def credits_channel(status)
+      "#{@account.id}/credits/#{status}"
+    end
+
     def freshfone_node_session
-      account = @user ? @user.account : current_account
+      account = @account || 
+                (@user ? @user.account : current_account)
       Digest::SHA512.hexdigest("#{FreshfoneConfig['secret_key'][Rails.env]}::#{account.id}")
     end
     

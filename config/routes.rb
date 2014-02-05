@@ -74,15 +74,16 @@
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
     freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
-    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :bridge => :post, :hangup => :post}  
+    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}  
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
     freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get, 
                                                        :children => :get, :recent_calls => :get }
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
-    freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
+    freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
+    freshfone.resources :autocomplete, :collection => { :requester_search => :get }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,

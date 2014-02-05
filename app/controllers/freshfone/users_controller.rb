@@ -8,15 +8,21 @@ class Freshfone::UsersController < ApplicationController
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
-	skip_before_filter :check_privilege, :if => :requested_from_node?
-	before_filter :validate_presence_from_node, :if => :requested_from_node?
+	skip_before_filter :check_privilege, :only => [:node_presence]
+	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
 
-	def presence 
+	def presence
+		render :json => { 
+			:update_status => reset_presence
+		}
+	end
+
+	def node_presence
 		#Does not update presence when user is available on phone and disconnect is fired from node
 		render :json => { 
-			:update_status => params[:node_user] ? reset_client_presence : reset_presence
+			:update_status => reset_client_presence
 		}
 	end
 
@@ -73,7 +79,9 @@ class Freshfone::UsersController < ApplicationController
 			if params[:status].to_i == Freshfone::User::PRESENCE[:online]
 				capability.allow_client_incoming default_client
 			end
-			return capability.generate(expires=43200)
+			capability_token = capability.generate(expires=43200)
+			publish_capability_token(current_user, capability_token)
+			return capability_token
 		end
 
 		def reset_client_presence

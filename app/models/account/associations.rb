@@ -193,6 +193,7 @@ class Account < ActiveRecord::Base
   has_many :portal_templates,  :class_name=> 'Portal::Template'
   has_many :portal_pages,  :class_name=> 'Portal::Page'
 
+  delegate :active_groups_in_account, :to => :groups, :allow_nil => true
   #Freshfone
   has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
   has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"

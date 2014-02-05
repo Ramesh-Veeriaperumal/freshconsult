@@ -1,16 +1,19 @@
 class Freshfone::CallInitiator
 	include FreshfoneHelper
+	include Freshfone::NumberMethods
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
 
 	VOICEMAIL_TRIGGERS = ['no-answer', 'busy', 'failed']
 	BATCH_SIZE = 10
-	TIME_LIMIT = 900
 
-	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_process
+	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_call,
+								:below_safe_threshold, :queued
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
-					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :to => :call_flow, :allow_nil => true
-	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :voice_type, :to => :current_number
+					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered,
+					 :calls_count, :outgoing?, :non_business_hour_calls?, :to => :call_flow, :allow_nil => true
+	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :read_non_business_hours_message, 
+					 :read_non_availability_message,	:voice_type, :to => :current_number
 	
 	def initialize(params={}, current_account=nil, current_number=nil, call_flow=nil)
 		self.params = params
@@ -21,22 +24,23 @@ class Freshfone::CallInitiator
 	
 	# agent class -> Freshfone::User
 	def connect_caller_to_agent(agents=nil)
+		set_calls_beyond_threshold
 		twiml_response do |r|
-			read_welcome_message(r) if !transfered
-			# welcome_menu.ivr_message(r) if welcome_menu
+			read_welcome_message(r) unless primary_leg? 
 			agents_to_be_called = process_in_batch(agents || available_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url,
-						 :timeLimit => timeLimit do |d|
+						 :timeLimit => time_limit do |d|
 				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent)) }
 			end
+			r.Redirect force_termination_url, :method => "POST"
 		end
 	end
 
 	def connect_caller_to_numbers
 		twiml_response do |r|
 			numbers.each do |number|
-				r.Dial :callerId => params[:From], :record => record?,
+				r.Dial :callerId => params[:From], :record => record?, :timeLimit => time_limit,
 							 :action => direct_dial_url(number) do |d|
 					d.Number number, :url => direct_dial_success(number)
 				end
@@ -45,9 +49,10 @@ class Freshfone::CallInitiator
 	end
 
 	def initiate_outgoing
+		set_calls_beyond_threshold
 		twiml_response do |r|
 			r.Dial :callerId => number, :record => record?,
-						 :action => outgoing_url, :timeLimit => timeLimit do |d|
+						 :action => outgoing_url, :timeLimit => time_limit do |d|
 				d.Number params[:PhoneNumber]
 			end
 		end
@@ -55,41 +60,63 @@ class Freshfone::CallInitiator
 
 	def initiate_recording
 		twiml_response do |r|
-			r.Say 'Record your message after the tone.', 
-				:voice => voice_type
+			r.Say 'Record your message after the tone.', :voice => voice_type
 			r.Record :action => record_message_url, :finishOnKey => "#", :maxLength => 300
+			r.Redirect "#{force_termination_url}?record=true", :method => "POST"
 		end
 	end
 
 	def add_caller_to_queue(hunt_options)
+		return non_availability if queue_overloaded? or queue_disabled?
 		@hunt = hunt_options
 		twiml_response do |r|
-			# welcome_menu.ivr_message(r) if welcome_menu
-
-			read_queue_message(r) if (current_number.max_queue_length>0)
+			read_welcome_message(r)
 			r.Enqueue current_account.name, :waitUrl => enqueue_url, :action => quit_queue_url
+			r.Redirect force_termination_url, :method => "POST"
 		end
 	end
 
 	def initiate_voicemail(type = "default")
-		if current_number.voicemail_active or type == "non_business_hours"
+		if current_number.voicemail_active
 			twiml_response do |r|
-				#skipping IVR on reaching non-responsive office
-				# welcome_menu.ivr_message(r) if welcome_menu
 				read_voicemail_message(r, type)
 				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
 				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
-
 			end
-		 else
- 		      Twilio::TwiML::Response.new.text
+	 	else
+		  Twilio::TwiML::Response.new.text
 		end
 	end
+	
 	def block_incoming_call
 		twiml_response do |r|
 			r.Reject :reason => "busy"
 		end
 	end
+
+	def return_non_business_hour_call
+		twiml_response do |r|
+			read_non_business_hours_message(r)
+			if current_number.voicemail_active
+				read_voicemail_message(r, "default")
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+			end
+			r.Redirect "#{status_url}?force_termination=true", :method => "POST"			
+		end
+	end
+
+	def return_non_availability
+		twiml_response do |r|
+			read_welcome_message(r) unless primary_leg?
+			read_non_availability_message(r)
+			if current_number.voicemail_active
+				read_voicemail_message(r, "default")
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+			end
+			r.Redirect "#{status_url}?force_termination=true", :method => "POST"			
+		end
+	end
+	alias_method :non_availability, :return_non_availability
 
 	private
 		def twiml_response
@@ -99,12 +126,25 @@ class Freshfone::CallInitiator
 			twiml.text
 		end
 
+		def queue_overloaded?
+			queue_sid = current_account.freshfone_account.queue
+      queue = current_account.freshfone_subaccount.queues.get(queue_sid)
+      queue.present? and (queue.current_size > max_queue_size)
+		end
+
 		def outgoing_url
 			"#{status_url}?agent=#{params[:agent]}"
 		end
 
 		def status_url
-			batch_process ? "#{host}/freshfone/call/status?batch_call=true" : "#{host}/freshfone/call/status"
+			params = [:batch_call, :below_safe_threshold].inject({}) do |params, condition_sym|
+				send(condition_sym) ? params.merge({ condition_sym => true }) : params
+			end
+			params.blank? ? "#{host}/freshfone/call/status" : "#{host}/freshfone/call/status?#{params.to_query}"
+		end
+
+		def force_termination_url
+			"#{host}/freshfone/call/status?force_termination=true"
 		end
 		
 		def direct_dial_url(number)
@@ -144,7 +184,7 @@ class Freshfone::CallInitiator
 			if agents.present?
 				Rails.logger.debug "Batch Call started for call_sid ==> #{params[:CallSid]} ::
 account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + BATCH_SIZE}" if params[:batch_call].blank?
-				self.batch_process = true
+				self.batch_call = true
 				key = FRESHFONE_AGENTS_BATCH % { :account_id => current_account.id, :call_sid => params[:CallSid] }
 				agent_ids = agents.collect(&:id).to_json
 				set_key(key, agent_ids, 600)
@@ -152,7 +192,31 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 			current_batch_agents
 		end
 
-		def timeLimit
-			TIME_LIMIT if current_account.freshfone_credit.below_safe_threshold?
+		def time_limit
+			# 15 minutes on throttled and 4 hours by default
+			current_account.freshfone_credit.below_safe_threshold? ? 900 : 14400
+		end
+
+		def set_calls_beyond_threshold
+			return unless current_account.freshfone_credit.below_safe_threshold?
+			key = FRESHFONE_CALLS_BEYOND_THRESHOLD % { :account_id => current_account.id }
+			set_key(key, calculate_calls_count)
+			self.below_safe_threshold = true
+		end
+
+		def primary_leg?
+			transfered or queued or params[:batch_call]
+		end
+		
+		def calculate_calls_count
+			# First four bits for outgoing(0b0000xxxx), next four bits for incoming(0bxxxx0000)
+			incoming = calls_count >> 4
+			outgoing = calls_count & 15
+			if outgoing?
+				outgoing += 1
+			else
+				incoming += 1
+			end
+			(incoming << 4) + outgoing
 		end
 end

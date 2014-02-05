@@ -73,6 +73,10 @@
 	};
 }
 .freshfone_dashboard{
+	.freshfone_alert{
+		margin: 8px 0;
+		padding: 10px;
+	}
 	&.loading-center{
 		.freshfone_dash{
 			visibility:hidden;

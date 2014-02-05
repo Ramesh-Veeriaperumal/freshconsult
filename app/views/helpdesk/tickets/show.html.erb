@@ -1,3 +1,4 @@
+<%= include_cloudfront_js :'360player' %>
 <%= include_cloudfront_css :tkt_details_print, :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/sticky.html.erb" %>
@@ -54,6 +55,10 @@ jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
+	jQuery(".call_duration").each(function () {
+			if (jQuery(this).data("time") === undefined) { return; }
+			jQuery(this).html(jQuery(this).data("time").toTime());
+		});
 	<% unless @draft.nil? %>
 		swapEmailNote('cnt-reply', null);
 		TICKET_DETAILS_DATA['draft']['hasChanged'] = false;

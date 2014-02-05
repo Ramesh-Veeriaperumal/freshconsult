@@ -6,3 +6,17 @@ secret_key:
   development: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
   staging: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
   production: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
+
+twilio:
+  production:
+    account_sid: "AC751e0912b032d91ae3935348844da32b"
+    auth_token: "db923d6625f1dbc66ca53353cbf09458"
+  staging:
+    account_sid: "AC369004863456a98511d7af236ecc1bfb"
+    auth_token: "e439d43561d2e48ad0c1927dac31e8b7"
+  development:
+    account_sid: "AC369004863456a98511d7af236ecc1bfb"
+    auth_token: "e439d43561d2e48ad0c1927dac31e8b7"
+
+
+billing_error_email: ["sunil@freshdesk.com", "sathappan@freshdesk.com"]

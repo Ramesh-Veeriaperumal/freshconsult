@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131220111455) do
+ActiveRecord::Schema.define(:version => 20140130010210) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -632,6 +632,7 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id"], :name => "index_freshfone_calls_on_account_id_and_freshfone_number_id"
+  add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
 
@@ -685,6 +686,7 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "voicemail_active",                                                      :default => false
+    t.text     "non_business_hours_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
