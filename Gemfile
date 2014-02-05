@@ -83,7 +83,7 @@ gem 'rforce'
 
 gem 'after_commit', "1.0.11"
 
-gem 'chargebee', "~> 1.1.7"
+gem 'chargebee', "~> 1.2.9"
 
 gem 'encryptor', '1.1.3'
 

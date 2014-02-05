@@ -1,0 +1,22 @@
+Agent Collision: 
+  - :agent_collision
+Custom Roles: 
+  - :custom_roles
+Custom Ssl: 
+  - :custom_domain
+  - :custom_ssl
+Gamification:
+  - :forums
+  - :gamification
+  - :gamification_enable
+  - :surveys
+  - :survey_links
+Multiple Business Hours: 
+  - :multiple_business_hours
+Layout Customization:
+  - :forums
+  - :layout_customization
+  - :surveys
+  - :survey_links
+Round Robin:
+  - :round_robin

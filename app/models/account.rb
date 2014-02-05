@@ -225,6 +225,14 @@ class Account < ActiveRecord::Base
       p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
   end
+
+  def add_features(feature_list)
+    features.build(*feature_list)
+  end
+
+  def remove_feature(feature)
+    features.send(feature).destroy
+  end
   
   def ticket_type_values
     ticket_fields.type_field.first.picklist_values

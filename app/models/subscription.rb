@@ -9,6 +9,10 @@ class Subscription < ActiveRecord::Base
                               :free_agents => :free_agents, :renewal_period => :renewal_period, 
                               :subscription_discount_id => :subscription_discount_id }
 
+  ADDRESS_INFO = { :first_name => :first_name, :last_name => :last_name, :address1 => :billing_addr1,
+                  :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
+                  :country => :billing_country, :zip => :billing_zip  }
+
   
   ACTIVE = "active"
   TRIAL = "trial"
@@ -18,8 +22,16 @@ class Subscription < ActiveRecord::Base
   belongs_to :subscription_plan
   has_many :subscription_payments
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
-  
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
+
+  has_many :subscription_addon_mappings, 
+    :class_name=> "Subscription::AddonMapping"
+  has_many :addons,
+    :class_name => "Subscription::Addon",
+    :through => :subscription_addon_mappings,
+    :source => :subscription_addon,
+    :foreign_key => :subscription_addon_id
+
 
   before_create :set_renewal_at
   before_save :update_amount
@@ -166,6 +178,7 @@ class Subscription < ActiveRecord::Base
     self.agent_limit = AGENTS_FOR_FREE_PLAN
     self.renewal_period = 1
     self.day_pass_amount = subscription_plan.day_pass_amount
+    self.free_agents = subscription_plan.free_agents
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
 
@@ -179,6 +192,15 @@ class Subscription < ActiveRecord::Base
       end
     end
   end
+
+  def offline_subscription?
+    Billing::Subscription.new.offline_subscription?(account_id)
+  end
+
+  def applicable_addons(addons, plan)
+    addons.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
+  end
+
 
   protected
   
@@ -194,7 +216,7 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      total_amount
+      total_amount(self.addons)
     end
     
     def paid_account?
@@ -202,27 +224,20 @@ class Subscription < ActiveRecord::Base
     end
     alias :is_paid_account :paid_account?
     
-    def total_amount
+    def total_amount(addons)
       if self.amount.blank?
         self.amount = subscription_plan.amount
       else
-        response = Billing::Subscription.new.calculate_estimate(self)
+        response = Billing::Subscription.new.calculate_estimate(self, addons)
         self.amount = (response.estimate.amount/100.0).round.to_f
       end
     end
-    
-    # def chk_change_billing_cycle
-    #   if renewal_period and (account.subscription.renewal_period > renewal_period) and paid_account? and (trial_days > 30)
-    #     errors.add_to_base("You can't downgrade to lower billing cycle")
-    #   end
-    # end
     
     def cache_old_model
       @old_subscription = Subscription.find id
     end
     
     def validate_on_update
-      # chk_change_billing_cycle
       chk_change_agents unless trial?
     end
 
@@ -246,12 +261,6 @@ class Subscription < ActiveRecord::Base
       non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
       (non_free_agents > 0) ? non_free_agents : 0
     end
- 
-    # def send_invoice
-    #   unless @trans_id.blank?
-    #     subscription_payments.create(:account => account, :amount => amount, :transaction_id => @trans_id) 
-    #   end
-    # end
 
     def finished_trial?
       next_renewal_at < Time.zone.now
@@ -265,16 +274,39 @@ class Subscription < ActiveRecord::Base
       return if subscription_plan_id == @old_subscription.subscription_plan_id
       SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
+
+    def set_next_renewal_at(billing_subscription)
+      self.next_renewal_at = if (renewal_date = billing_subscription.current_term_end)
+        Time.at(renewal_date).to_datetime.utc
+      else
+        Time.at(billing_subscription.trial_end).to_datetime.utc
+      end
+    end
+
+    def set_billing_info(card)
+      self.card_number = card.masked_number
+      self.card_expiration = "%02d-%d" % [card.expiry_month, card.expiry_year]
+      self.update_billing_address(card)
+    end
+
+    def update_billing_address(card)
+      billing_address = self.billing_address
+      return billing_address.update_attributes(address(card)) if billing_address
+      
+      billing_address = self.build_billing_address(address(card))
+      billing_address.account = account
+      billing_address.save
+    end
+
+    def address(card)
+      ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
+    end
     
     def clear_billing_info
       self.card_number = nil
       self.card_expiration = nil
       self.billing_id = nil
     end
-    
-    # def card_storage
-    #   self.store_card(@creditcard, :billing_address => @address.to_activemerchant) if @creditcard && @address && card_number.blank?
-    # end
     
     def config_from_file(file)
       YAML.load_file(File.join(RAILS_ROOT, 'config', file))[RAILS_ENV].symbolize_keys
@@ -284,7 +316,6 @@ class Subscription < ActiveRecord::Base
       self.agent_limit = AppConfig['free_plan_agts'] if free_plan?
     end
    
-
 
   private
 
