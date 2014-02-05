@@ -28,7 +28,7 @@ class Subscription < ActiveRecord::Base
   # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
-  after_commit_on_update :update_gnip_subscription
+  after_commit_on_update :update_social_subscription
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -169,26 +169,40 @@ class Subscription < ActiveRecord::Base
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
 
-  def update_gnip_subscription
+  def update_social_subscription
     old_state = @old_subscription.state
-    account.twitter_handles.each do |twt_handle|
-      if (old_state != "suspended" && state == "suspended") || non_twitter_plans
-        twt_handle.cleanup
-      elsif (old_state == "suspended" && state != "suspended") || !non_twitter_plans
-        twt_handle.subscribe_to_gnip
-      end
+    if (old_state != "suspended" && state == "suspended") || non_social_plans
+      facebook_callback = "cleanup"
+      twitter_callback = "cleanup"
+    elsif (old_state == "suspended" && state != "suspended") || !non_social_plans
+      facebook_callback =  "subscribe_realtime"
+      twitter_callback = "subscribe_to_gnip"
     end
+    update_gnip_subscription(twitter_callback) if twitter_callback
+    update_facebook_subscription(facebook_callback) if facebook_callback
   end
 
   protected
   
-    def non_twitter_plans
+    def non_social_plans
       sprout? || sprout_classic? 
     end
     
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at
       self.next_renewal_at = Time.now.advance(:months => self.renewal_period)
+    end
+
+    def update_gnip_subscription(twitter_method_name)
+      account.twitter_handles.each do |twt_handle|
+        twt_handle.send(twitter_method_name)
+      end
+    end
+
+    def update_facebook_subscription(facebook_method_name)
+      account.facebook_pages.each do |fb_page|
+        fb_page.send(facebook_method_name)
+      end
     end
     
     # If the discount is changed, set the amount to the discounted

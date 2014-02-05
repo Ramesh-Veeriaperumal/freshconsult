@@ -120,6 +120,7 @@ module FreshdeskCore::Model
 
   def perform_destroy(account)
     delete_gnip_twitter_rules(account)
+    delete_facebook_subscription(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
@@ -133,6 +134,12 @@ module FreshdeskCore::Model
     def delete_gnip_twitter_rules(account)
       account.twitter_handles.each do |twt_handle|
         twt_handle.cleanup
+      end
+    end
+
+    def delete_facebook_subscription(account)
+      account.facebook_pages.each do |fb_page|
+        fb_page.cleanup
       end
     end
     

@@ -15,6 +15,8 @@ class Facebook::Core::Parser
         account_id = mapping.account_id if mapping
 
         Sharding.select_shard_of(account_id) do
+          account = Account.find_by_id(account_id)
+          return unless account && account.active?
           @feed.entry_changes.each do |entry_change|
             @feed.entry_change = entry_change
 
@@ -28,7 +30,7 @@ class Facebook::Core::Parser
                 end
 
                 if  @fan_page.company_or_visitor?
-                  @fan_page.account.make_current
+                  account.make_current
                   ("facebook/core/"+"#{@feed.clazz}").camelize.constantize.new(@fan_page).send(@feed.method, @feed)
                 end
               end

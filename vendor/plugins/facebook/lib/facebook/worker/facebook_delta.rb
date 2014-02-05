@@ -6,11 +6,11 @@ class Facebook::Worker::FacebookDelta
 
   def self.perform(args)
     account = Account.current
-    add_feeds_to_sqs(args[:page_id])
+    add_feeds_to_sqs(args[:page_id],args[:discard_feed])
   end
 
   #sort and push to sqs need to figure it out
-  def self.add_feeds_to_sqs(page_id)
+  def self.add_feeds_to_sqs(page_id, discard_feed)
     begin
       dynamo_db_facebook = AwsWrapper::DynamoDb.new(SQS[:facebook_realtime_queue])
       query_options = {
@@ -29,7 +29,7 @@ class Facebook::Worker::FacebookDelta
       while true
         response = dynamo_db_facebook.query(query_options)
         response[:member].each do |data|
-          $sqs_facebook.send_message(data["feed"][:s])
+          $sqs_facebook.send_message(data["feed"][:s]) unless discard_feed
           dynamo_db_facebook.query_delete_facebook(data["page_id"][:n],data["timestamp"][:n])
         end
         break unless response[:last_evaluated_key]

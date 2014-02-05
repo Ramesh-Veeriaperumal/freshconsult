@@ -40,7 +40,11 @@ class Facebook::Core::Feed
   end
 
   def parent_id
-    return @entry_change["value"]["parent_id"].to_s if @entry_change["value"]["parent_id"]
+    if @entry_change["value"]["comment_id"]
+      return @entry_change["value"]["comment_id"].to_s.split("_")[0] 
+    elsif @entry_change["value"]["parent_id"]
+      return @entry_change["value"]["parent_id"].to_s
+    end
   end
 
   #returns a string containing add or remove
