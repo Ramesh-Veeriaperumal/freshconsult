@@ -24,7 +24,8 @@
 		<div class="requester-details">
 			<%= render :partial => "contacts/hover_card", :locals => { 
 					:user => user, 
-					:show_recent_tickets => :dialog
+					:show_recent_tickets => :dialog,
+					:ticket => @ticket
 				} %>
 		</div>
 	</div>
