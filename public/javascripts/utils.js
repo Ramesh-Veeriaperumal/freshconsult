@@ -967,3 +967,10 @@ function highlight_code() {
     SyntaxHighlighter.all();
 }
 
+function preventDefault(event) {
+  if(event.preventDefault())
+    event.preventDefault();
+  else
+    event.returnValue = false;
+}
+

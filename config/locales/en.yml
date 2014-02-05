@@ -3363,8 +3363,8 @@ en:
           stop_emails: "Stop watching this ticket"
       customview:
         new:
-          give_a_name: Give a name for this view
-          visible_to: This view is visible to
+          view_name: View name
+          view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
@@ -3435,7 +3435,6 @@ en:
         on_hold: Tickets On Hold
         new: New Tickets
         my_resolved: My Resolved Tickets
-        new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
         all: All Tickets
@@ -3528,6 +3527,12 @@ en:
     customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
+    copy_of: Copy of
+    save_tooltip: Save
+    saveas_tooltip: Save as
+    cancel_tooltip: Discard
+    edit_tooltip: Edit
+    delete_tooltip: Delete
     sort_fields:
       due_by: Due by time
       date_created: Date Created

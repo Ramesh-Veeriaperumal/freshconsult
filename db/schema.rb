@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131220111455) do
+ActiveRecord::Schema.define(:version => 20140122124411) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1654,6 +1654,21 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
 
+  create_table "subscription_addon_mappings", :force => true do |t|
+    t.integer "subscription_addon_id", :limit => 8
+    t.integer "account_id",            :limit => 8
+    t.integer "subscription_id",       :limit => 8
+  end
+
+  create_table "subscription_addons", :force => true do |t|
+    t.string   "name"
+    t.decimal  "amount",         :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "renewal_period"
+    t.integer  "addon_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
     t.decimal  "rate",       :precision => 6, :scale => 4, :default => 0.0
@@ -1721,6 +1736,11 @@ ActiveRecord::Schema.define(:version => 20131220111455) do
 
   add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"
   add_index "subscription_payments", ["subscription_id"], :name => "index_subscription_payments_on_subscription_id"
+
+  create_table "subscription_plan_addons", :force => true do |t|
+    t.integer "subscription_addon_id", :limit => 8
+    t.integer "subscription_plan_id",  :limit => 8
+  end
 
   create_table "subscription_plans", :force => true do |t|
     t.string   "name"

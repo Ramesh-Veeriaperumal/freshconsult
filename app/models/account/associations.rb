@@ -171,6 +171,8 @@ class Account < ActiveRecord::Base
   has_one :day_pass_config
   has_many :day_pass_usages
   has_many :day_pass_purchases, :order => "created_at desc"
+
+  delegate :addons, :to => :subscription
   
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
  

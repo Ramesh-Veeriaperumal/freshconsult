@@ -576,7 +576,7 @@
               break;
             }      
             if(sourceData.field_type == 'default_ticket_type' || sourceData.field_type ==  'default_status'){
-               $('[name="agentrequired"]').attr("disabled",true );
+               $('[name="agentrequired"]').attr("disabled",false);
              }
              else
              {

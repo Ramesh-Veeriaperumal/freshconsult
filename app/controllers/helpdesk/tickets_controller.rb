@@ -85,7 +85,6 @@ class Helpdesk::TicketsController < ApplicationController
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
-    cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)  
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?  
     respond_to do |format|  
@@ -96,7 +95,7 @@ class Helpdesk::TicketsController < ApplicationController
           params[:page] = '1'  
           @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         end
-        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
         unless request.headers['X-PJAX']
           # Bad code need to rethink. Pratheep
@@ -170,7 +169,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def filter_options
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
     @show_options = show_options
     @is_default_filter = (!is_num?(@template.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
@@ -227,7 +226,16 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def custom_view_save
-     render :partial => "helpdesk/tickets/customview/new"
+    filter = current_account.user_accesses(current_user.id).find_by_accessible_id(@template.current_filter)
+    # Edit
+    if params[:operation] and (params[:operation] == "edit") and !filter.nil?
+      filter = filter.accessible
+      render :partial => "helpdesk/tickets/customview/new",
+             :locals => { :filter_name => filter.name, :visible_to => filter.accessible }
+    # New
+    else
+      render :partial => "helpdesk/tickets/customview/new"
+    end
   end
   
   def custom_search
@@ -907,6 +915,7 @@ class Helpdesk::TicketsController < ApplicationController
 
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
+          handle_unsaved_view
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
           @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
           @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
@@ -914,6 +923,13 @@ class Helpdesk::TicketsController < ApplicationController
         end
       else 
         remove_tickets_redis_key(redis_key)
+      end
+    end
+
+    def handle_unsaved_view
+      unless @cached_filter_data[:unsaved_view].blank?
+        params[:unsaved_view] = true
+        @cached_filter_data.delete(:unsaved_view)
       end
     end
 
@@ -1006,7 +1022,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_default_filter
     params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_my_open
+    # When there is no data hash sent selecting all_tickets instead of new_and_my_open
   end
 
   def draft_key
