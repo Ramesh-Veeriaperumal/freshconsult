@@ -5074,7 +5074,7 @@ en:
       move_cursor: "Jump cursor to next / previous ticket"
       hovercard: "Show ticket hovercard"
       view: "View the active ticket"
-      mark: "Select a ticket, ( <span class='shortcut-key'>⇧ <span>+</span> x </span>to select all )"
+      mark: "Select a ticket, ( <span class='shortcut-key'>%{modifier_key} <span>+</span> x </span>to select all )"
     ticket_view:
       title: "Ticket View"
       reply: "Reply"

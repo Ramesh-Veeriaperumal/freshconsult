@@ -157,7 +157,7 @@
 		jQuery.ajax({
 			type: "PUT",
 			dataType:"json",
-			url: "<%= toggle_shortcuts_agent_path(current_user.agent) %>",
+			url: "<%= toggle_shortcuts_agent_path(current_user.agent) if logged_in? %>",
 			success: function (response) {
 				console.log(that);
 				jQuery(that).removeAttr('disabled');

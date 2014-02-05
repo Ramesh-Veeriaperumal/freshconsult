@@ -921,7 +921,7 @@ module ApplicationHelper
   end
 
   def shortcuts_enabled?
-    current_user.agent.shortcuts_enabled?
+    logged_in? and current_user.agent.shortcuts_enabled?
   end
 
   def current_platform
