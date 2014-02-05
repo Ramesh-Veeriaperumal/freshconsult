@@ -12,21 +12,17 @@ body {
 
 //Used in Announcement
 .alert-message {
-	position: relative;
-	padding: 7px;
-	margin-bottom: 8px;
-	color: #333;
-	background-color: #FFFDCE;
-	&.block-message {
-		background-image: none;
-		background-color: #FFFBEE;
-		padding: 14px;
-	}
-	&.announcement {
-		font-size: 14px;
-		line-height: 22px;
-		padding: 13px 24px;
-		background-color: #FCFEC7;
+	line-height: 22px;
+	padding: 20px;
+	background-color: #fcfec7;
+	margin-top: $common-padding;
+	font-size: 14px;
+	font-weight: 400;
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	&.warning{
+		background-color: #FFE7E7;
+		color: #900;
 	}
 }
 .request_details .details table{
