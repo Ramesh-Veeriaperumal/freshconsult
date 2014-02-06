@@ -42,6 +42,8 @@
 
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/app-common.css?20131212">
 
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/app-bootstrap.css?20131212">
+
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/plugins.css?20131212">
 
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/ie.css?20131212">
