@@ -222,7 +222,7 @@ module SupportHelper
 	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
 		if User.current
 			_monitoring = !Monitorship.count(:id, 
-							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
+							:conditions => ['user_id = ? and monitorable_type = "Topic" and monitorable_id = ? and active = ?', 
 							User.current.id, topic['id'], true]).zero?
 
 			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 

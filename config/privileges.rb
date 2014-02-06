@@ -137,7 +137,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
     # review code for monitorship?
-    resource :monitorship
     resource :"search/home", :only => [:topics]
     resource :forums_uploaded_image, :only => [:create]
   end

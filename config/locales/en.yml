@@ -1083,7 +1083,7 @@ en:
     new: New Forum
     edit: Edit Forum
     title: Forums
-    start_topic: Start a Topic
+    start_topic: Start Topic
     forum_created: The forum has been created.
     visibility:
       anyone: Anyone
@@ -1617,6 +1617,7 @@ en:
 
   forum_key: Forum
   topics:
+    edit_title: Edit
     show:
       mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
@@ -1795,9 +1796,9 @@ en:
     name: Topic Name
     new: Post a new topic
     edit: Edit topic
-    open: Re-open this Discussion
+    open: Re-open this Topic
     edit: Edit Topic
-    close: Close this Discussion
+    close: Close Topic
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -1846,6 +1847,7 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    edit_title: Edit
     topic_vote:
       unlike: Unlike
       ideas:
@@ -2981,6 +2983,11 @@ en:
   tkt_assigned_to_agent: Ticket Assigned to Agent
   is: Is
   helpdesk_title: Helpdesk
+  monitorships:
+    monitor_flash: You are now following this %{type}
+    non_monitor_flash: You have stopped following this %{type}
+    follow_title: Follow
+    unfollow_title: Unfollow
   forums:
     search_all:
       placeholder: Search All Topics

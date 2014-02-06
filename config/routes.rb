@@ -456,10 +456,11 @@
     forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put } 
-      topic.resource :monitorship, :controller => :monitorships
       end
     end
   end
+
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', :action => 'toggle', :method => :post
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal

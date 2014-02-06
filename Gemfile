@@ -119,6 +119,7 @@ gem "rails_xss", "0.4.0"
 
 gem "ey_config"
 gem "therubyracer"
+gem "premailer", "~> 1.8.0"
 
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git"

@@ -20,6 +20,25 @@ module HelpdeskSystem
     end
  end 
 
+  def unprocessable_entity
+    respond_to do |format|
+      format.html {
+        unless request.headers['X-PJAX']
+          render :file => "#{Rails.root}/public/422.html", :status => :unprocessable_entity
+        else
+          render :text => "abort", :status => :unprocessable_entity
+        end
+      }
+      format.json { 
+        render :json => {:unprocessable_entity => true}}
+      format.js { 
+        render :update do |page| 
+          page.redirect_to "/422.html"
+        end
+      }
+    end
+  end
+
  protected
   
   #Method to check permission for dropbox destroy. [todo attachments]

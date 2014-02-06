@@ -1298,12 +1298,14 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
   add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
 
   create_table "monitorships", :force => true do |t|
-    t.integer "topic_id",   :limit => 8
-    t.integer "user_id",    :limit => 8
-    t.boolean "active",                  :default => true
-    t.integer "account_id", :limit => 8
+    t.integer "monitorable_id",   :limit => 8
+    t.integer "user_id",          :limit => 8
+    t.boolean "active",                        :default => true
+    t.integer "account_id",       :limit => 8
+    t.string  "monitorable_type"
   end
 
+  add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
 
   create_table "password_resets", :force => true do |t|

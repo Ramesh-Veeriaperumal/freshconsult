@@ -16,8 +16,8 @@
 	  </li>
 	  	<% end %>
 		<li class="alignright">
-	    <%= submit_tag t('topic.post_comment'), :class => "uiButton", :id => "post-submit-button"  %> 
-		  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "uiButton" %>
+		  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "btn" %>
+		  <%= submit_tag t('topic.post_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 
 		</li>
 	  </ul>
 	  <% end -%>
