@@ -15,9 +15,6 @@ end
 
 if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
   ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
-  Mail.defaults do
-		delivery_method :smtp, ActionMailer::Base.smtp_settings
-	end
 end
 
 #For sending exception notifications 

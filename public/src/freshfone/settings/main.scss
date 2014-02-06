@@ -12,6 +12,10 @@
 .togglable_message{
 	margin-top: 15px;
 }
+.togglable_options_title{
+	font-weight: 500;
+	color: #666;
+}
 .number-settings {
 	.menu-label {
 		margin-top: 8px;
@@ -57,6 +61,7 @@
 
 .max_queue_length_select2{
 	display: inline-block;
+	width: 50px;
 }
 
 .queue_wait_time{

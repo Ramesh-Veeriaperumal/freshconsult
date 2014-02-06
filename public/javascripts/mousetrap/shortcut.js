@@ -121,7 +121,8 @@
             $('tr.' + _selectedListItemClass + ' input.selector').trigger('click').trigger('change');
         },
         initScrollTo = function (el) {
-            $.scrollTo(el);
+            $('html').scrollTop(el.offset().top);
+            //$.scrollTo(el).scrollTo.window().queue([]).stop();
         },
         autoScroll = function (el, percentToScroll) {
             var docTop = $(document).scrollTop(),
@@ -134,9 +135,9 @@
             if (itemSltrBotm <= docTop || itemSltrTop >= frame) {
                 initScrollTo(el);
             } else if (itemSltrBotm >= frame) {
-                $('html').animate({scrollTop : (docTop + scrollTo) + 'px'}, 500, 'easeOutQuad');
+                $('html').scrollTop((docTop + scrollTo));
             } else if (itemSltrTop <= docTop) {
-                $('html').animate({scrollTop : (docTop - scrollTo) + 'px'}, 500, 'easeOutQuad');
+                $('html').scrollTop((docTop - scrollTo));
             }
         },
         moveItemSelector = function (ev, key) {
