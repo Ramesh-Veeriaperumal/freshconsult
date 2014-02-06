@@ -179,15 +179,15 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+    to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email] }).sort
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
 
   #Helpdesk hack starts here
   def reply_personalize_emails(user_name)
-    to_ret = (email_configs.collect { |ec| ec.friendly_email_personalize(user_name) }).sort
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+    to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email_personalize(user_name)] }).sort
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
   

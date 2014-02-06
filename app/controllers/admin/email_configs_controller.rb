@@ -1,7 +1,10 @@
 require "httparty"
+require 'net/smtp'
+require 'net/imap'
 
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
+  include MailboxValidator
 
   before_filter :only => [:new] do |c|
     c.requires_feature :multiple_emails
@@ -24,6 +27,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def new
+    @mailbox = @email_config.build_mailbox
     @products = current_account.products
     @groups = current_account.groups
   end
@@ -31,8 +35,24 @@ class Admin::EmailConfigsController < Admin::AdminController
   def edit
     @products = current_account.products
     @groups = current_account.groups
+    @mailbox = (@email_config.mailbox || @email_config.build_mailbox)
   end
   
+  def update    
+    if @email_config.update_attributes(params[:email_config])
+      respond_to do |format|        
+        format.html  do
+          flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
+          redirect_back_or_default redirect_url
+        end
+        format.js 
+      end
+    else
+      update_error
+      redirect_to :action => 'edit'
+    end
+  end
+
   def test_email
     @email_config = current_account.primary_email_config
     emailObj = EmailConfigNotifier.deliver_test_email(current_account.primary_email_config)

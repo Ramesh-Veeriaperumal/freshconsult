@@ -6,6 +6,12 @@ class EmailConfig < ActiveRecord::Base
 
   attr_protected :account_id, :active
   
+  has_one :mailbox, :dependent => :destroy
+  has_one :imap_mailbox, :class_name => 'Mailbox', :conditions => { :imap_enabled => true }
+  has_one :smtp_mailbox, :class_name => 'Mailbox', :conditions => { :smtp_enabled => true }
+
+  accepts_nested_attributes_for :mailbox, :allow_destroy => true
+
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
