@@ -75,9 +75,12 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		end
 
 		def check_active_account
-			if current_account.freshfone_account.suspended?
-				flash[:notice] = t('freshfone.general.suspended_account')
+			if current_account.freshfone_credit.zero_balance?
+				flash[:notice] = t('freshfone.general.suspended_on_low_balance')
 				redirect_to admin_freshfone_numbers_path 
+			elsif current_account.freshfone_account.suspended?
+				flash[:notice] = t('freshfone.general.suspended_account')
+				redirect_to admin_freshfone_numbers_path 	
 			end
 		end
 

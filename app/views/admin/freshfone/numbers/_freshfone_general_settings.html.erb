@@ -54,7 +54,7 @@
 				</div>
 			</div>
 			<div class="queue_setting_div togglable_message">
-				<label><%#= t('freshfone.admin.number_settings.wait_message') %></label>
+				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.wait_message') %></label>
 				<div class="freshfone-controls on_hold_message"></div>
 			</div>
 		</div>
@@ -64,19 +64,19 @@
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_business_hours') %></label>
 		<div class="controls freshfone-controls">
 			<%#= check_box_tag :non_business_hour_calls, 1, number.non_business_hour_calls?, :class => 'non_business_hour_calls' %>
-			<div class="radio inline">
+			<label class="radio inline label-choice">
 				<%= radio_button_tag :non_business_hour_calls, false, true, :class => "radio" %> 
-				<%#= f.label :non_business_hour_calls, "Business Hours", :class => "radiolabel", :value => true %>
-				<label> Business Hours </label>
-			</div>
-			<div class="radio inline">
+				<%= t('freshfone.admin.number_settings.business_hours') %>
+			</label>
+			<label class="radio inline label-choice">
 				<%= radio_button_tag :non_business_hour_calls, true, false, :class => "radio" %> 
-				<%#= f.label :non_business_hour_calls, "24/7 Anytime", :class => "radiolabel", :value => false %>
-				<label>24/7 Anytime</label>
-			</div>
+				<%= t('freshfone.admin.number_settings.anytime') %>
+			</label>
+			
 			<div class="non_business_hours_message_container togglable_message">
 				<div class="multi_business_hours ">
 					<% if multiple_hours_enabled? %>
+					<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.business_calendar') %></label>
 						<%= select_tag :business_calendar, 
 											options_from_collection_for_select(current_account.business_calendar, 
 												:id, :name, number.business_calendar_id), 
@@ -84,7 +84,7 @@
 						
 					<% end %>
 				</div>
-				<label><%#= t('freshfone.admin.number_settings.non_business_hours_message') %></label>
+				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.non_business_hours_message') %></label>
 				<div class="freshfone-controls non_business_hours_message"></div>
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 				<%= f.label :voicemail_active, t('freshfone.admin.number_settings.voicemail_off'), :class => "radiolabel", :value => false %>
 			</div>
 			<div class="voicmail_message_div togglable_message">
-				<label><%#= t('freshfone.admin.number_settings.voicemail_message') %></label>
+				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.voicemail_message') %></label>
 				<div class="freshfone-controls voicemail_message"></div>
 			</div>
 		</div>
