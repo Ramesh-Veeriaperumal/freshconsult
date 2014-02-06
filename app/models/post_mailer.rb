@@ -3,7 +3,6 @@ class PostMailer < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
 	
   def monitor_email(emailcoll,post,user)
-    self.class.set_mailbox user.account.primary_email_config.smtp_mailbox
     recipients    emailcoll
     from          user.account.default_friendly_email
     subject       "[New Reply] #{post.topic.title}"

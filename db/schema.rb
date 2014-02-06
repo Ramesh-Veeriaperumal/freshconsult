@@ -1292,32 +1292,6 @@ ActiveRecord::Schema.define(:version => 20140130010210) do
     t.integer  "account_id",               :limit => 8
   end
 
-  create_table "mailboxes", :force => true do |t|
-    t.integer  "email_config_id",         :limit => 8
-    t.integer  "account_id",              :limit => 8
-    t.string   "imap_server_name"
-    t.string   "imap_user_name"
-    t.text     "imap_password"
-    t.integer  "imap_port"
-    t.string   "imap_authentication"
-    t.boolean  "imap_use_ssl"
-    t.string   "imap_folder"
-    t.boolean  "imap_delete_from_server"
-    t.string   "smtp_server_name"
-    t.string   "smtp_user_name"
-    t.text     "smtp_password"
-    t.integer  "smtp_port"
-    t.string   "smtp_authentication"
-    t.boolean  "smtp_use_ssl"
-    t.boolean  "imap_enabled",                         :default => true
-    t.boolean  "smtp_enabled",                         :default => true
-    t.integer  "imap_timeout"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
-
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8

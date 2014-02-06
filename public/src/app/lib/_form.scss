@@ -37,6 +37,11 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
+  &:hover {
+	  background-color: #f5f5f5;
+	  border-color: #ddd;
+	  @include box-shadow(none);
+	}
 }     
 
 textarea {

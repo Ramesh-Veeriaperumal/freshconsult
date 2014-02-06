@@ -62,17 +62,7 @@
           <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@to_cc_emails.blank? ? "" : "checked" %>  />              
           <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
           
-          <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
-          <select id="reply_email_id" name="reply_email[id]" class="select2 responder_field">
-            <% @reply_emails.each do |re| %>
-              <% if re[1].downcase == @selected_reply_email.downcase %>
-                <% @selected_email_config_id = re[0]%>
-                <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1]%></option>
-              <% else %>
-                <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1]%></option>
-              <% end %>  
-            <%end%>
-          </select>
+          <%= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
       </li>
       <li class="inline-field field <%=@to_cc_emails.blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
         <label for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>
@@ -131,7 +121,6 @@
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
       <%= f.hidden_field :to_emails , :value =>  @ticket.requester.email %>
       <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
-      <%= f.hidden_field :email_config_id, :value => @selected_email_config_id %>
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
       <%= hidden_field_tag(:ticket_status , '', :id=> "reply_ticket_status_#{cntid}"  )%>
       <div class="clearfix zeroh" ></div>
@@ -247,8 +236,6 @@
           form = e.target.form,
           fromEmail = selectObj.val();
           form['helpdesk_note[from_email]'].value = fromEmail;
-          email_config_id = jQuery(selectObj).find(":selected").data().emailConfigId;
-          form['helpdesk_note[email_config_id]'].value = email_config_id;
     })
 
   <% end %>

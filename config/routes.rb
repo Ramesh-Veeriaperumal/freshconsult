@@ -168,7 +168,6 @@
       freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
     end
     admin.resources :roles
-    admin.resources :mailboxes
   end
 
   map.namespace :search do |search|
