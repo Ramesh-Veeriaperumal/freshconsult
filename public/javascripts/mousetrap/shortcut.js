@@ -134,9 +134,9 @@
             if (itemSltrBotm <= docTop || itemSltrTop >= frame) {
                 initScrollTo(el);
             } else if (itemSltrBotm >= frame) {
-                $('html').animate({scrollTop : (docTop + scrollTo) + 'px'}, 500, 'easeOutQuad');
+                $('html').stop().animate({scrollTop : (docTop + scrollTo) + 'px'}, 500);
             } else if (itemSltrTop <= docTop) {
-                $('html').animate({scrollTop : (docTop - scrollTo) + 'px'}, 500, 'easeOutQuad');
+                $('html').stop().animate({scrollTop : (docTop - scrollTo) + 'px'}, 500);
             }
         },
         moveItemSelector = function (ev, key) {
