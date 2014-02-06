@@ -22,7 +22,7 @@ module Helpdesk::TicketFilterMethods
       selected_item = default_views.select { |v| v[:name].to_s == selected_item_name.to_s }.first
     end
 
-    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s + 
+    top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s + 
       controls_on_privilege(selected_item, (selected_item[:default]))
   end
 
@@ -54,12 +54,12 @@ module Helpdesk::TicketFilterMethods
     extra_class = "unsaved" if unsaved_view
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item).html_safe, helpdesk_tickets_path, { 
+        content_tag(:div, (link_to strip_tags(selected_item[:name]).html_safe, helpdesk_tickets_path, { 
                                 :class => "drop-right nav-trigger #{extra_class}", 
                                 :menuid => "##{menuid}", 
                                 :id => "active_filter" 
                             } ), :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
+        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:id].to_s == selected_item[:id].to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
     end
     more_menu_drop.html_safe
   end

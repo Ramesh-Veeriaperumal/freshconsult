@@ -134,8 +134,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @html_format = params[:html_format] || false
     
     
-    self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
-    self.name =  params[:filter_name]     unless params[:filter_name].blank?
+    self.id   =  params[:wf_id].to_i            unless params[:wf_id].blank?
+    self.name =  params[:filter_name].strip     unless params[:filter_name].blank?
 
     @fields = []
     unless params[:wf_export_fields].blank?
