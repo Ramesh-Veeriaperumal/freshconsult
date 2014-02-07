@@ -5,7 +5,7 @@ body {
 	color: #333; 
 	font:12px $baseFontFamily; background-color: transparent;
 	background:$background; 
-	min-width:$container-width+20; 
+	min-width:$container-width; 
 	-webkit-font-smoothing: antialiased;
 }
 

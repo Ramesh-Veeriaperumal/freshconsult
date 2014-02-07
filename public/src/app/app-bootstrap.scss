@@ -4,7 +4,10 @@
 /* Patterns.less
  * Repeatable UI elements outside the base styles provided from the scaffolding
  * ---------------------------------------------------------------------------- */
- 
+ input[type=text], input[type=password], select, input.text { 
+    width:99%;
+    font-size:13px;
+ }
 .topbar {
   height: 40px;
   position: fixed;

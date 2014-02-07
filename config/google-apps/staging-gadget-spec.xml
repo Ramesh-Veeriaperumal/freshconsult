@@ -37,6 +37,8 @@
   <Content type="html" view="card">
     <![CDATA[
     <link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/common.css?20131212">
+    <link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/pages.css?20130323">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/module.css?20130323">
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/sprites.css?20131212">
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/app-common.css?20131212">
 	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/app/app-bootstrap.css?20131212">
