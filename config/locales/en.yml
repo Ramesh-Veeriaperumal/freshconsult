@@ -4725,7 +4725,7 @@ en:
       unblock_number: "Unblock"
       block_number_title: "Block number"
     ticket:
-      recording: "Freshfone Recording"
+      recording: "Play message"
       ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
       voicemail_ticket_desc: "Voicemail from %{customer} from %{location}" 
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
