@@ -13,7 +13,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       else
         build_file(file_string) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
-                                                :domain => Account.current.full_domain, 
+                                                :domain => export_params[:portal_url],
                                                 :url => hash_url})
       end
     rescue => e
@@ -196,7 +196,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def hash_url
     url_for(
             :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
-            :host => Account.current.full_domain, 
+            :host => export_params[:portal_url], 
             :protocol => 'https'
             )
   end
@@ -204,7 +204,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def send_no_ticket_email
     DataExportMailer.deliver_no_tickets({
                                           :user => User.current,
-                                          :domain => Account.current.full_domain
+                                          :domain => export_params[:portal_url]
                                         })
     @item.destroy
   end

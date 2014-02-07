@@ -87,6 +87,7 @@ module Helpdesk::TicketActions
     #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
     # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
       # params[:later] = true
+      params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.ticket_export.info")
       redirect_to helpdesk_tickets_path
