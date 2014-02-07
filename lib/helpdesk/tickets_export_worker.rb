@@ -14,7 +14,8 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
         build_file(file_string) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
                                                 :domain => export_params[:portal_url],
-                                                :url => hash_url})
+                                                :url => hash_url,
+                                                :export_params => export_params})
       end
     rescue => e
       NewRelic::Agent.notice_error(e)
