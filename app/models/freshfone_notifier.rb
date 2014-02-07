@@ -36,12 +36,30 @@ class FreshfoneNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "text/html"
   end
- 
-  def billing_failure(account, call_sid,dial_call_sid)
-    subject       "Freshfone account Credit Calculation Error for  #{account.id} :: call sid :#{call_sid}"
-    recipients    AppConfig['freshfone_billing_error_email']
+
+  def recharge_success(account, recharge_amount, balance)
+    subject       "Your Freshfone credit has been recharged!"
+    recipients    account.admin_email
     from          AppConfig['billing_email']
-    body          :account => account, :call_sid => call_sid
+    body          :recharge_amount => recharge_amount, :balance => balance
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+
+  def low_balance(account, balance)
+    subject       "Your Freshfone credit is running low!"
+    recipients    account.admin_email
+    from          AppConfig['billing_email']
+    body          :account => account, :balance => balance
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+ 
+  def billing_failure(account, call_sid, exception)
+    subject       "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{call_sid}"
+    recipients    FreshfoneConfig['billing_error_email']
+    from          AppConfig['billing_email']
+    body          :account => account, :call_sid => call_sid, :exception => exception
     sent_on       Time.now
     content_type  "text/html"
   end

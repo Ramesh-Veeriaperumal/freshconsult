@@ -111,6 +111,7 @@ class User < ActiveRecord::Base
       return self.find_by_email(options[:email]) if options.key?(:email)
       return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
       return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
+      return self.find_by_phone(options[:phone]) if options.key?(:phone)
     end 
 
     def update_posts_count

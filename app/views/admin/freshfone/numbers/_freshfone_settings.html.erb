@@ -1,6 +1,6 @@
-<div class="message-container-template hide">
+<script id="message-select-template" type="text/x-jquery-tmpl">
 	<%= render :partial => "/admin/freshfone/numbers/message_select" %>
-</div>
+</script>
 
 <% form_for :admin_freshfone_number, @number,
 			:url => admin_freshfone_number_path(@number),
@@ -8,7 +8,6 @@
 				:multipart => true,
 				:method => :put }  do |f| %>
 	<%= f.error_messages %>
-	<%= content_tag :label, t('freshfone.admin.settings'), :class => "caption freshfone-title" %>
 	<div class="general-settings">
 		<%= render :partial => "/admin/freshfone/numbers/freshfone_general_settings",
 							 :locals => {:f => f, :number => @number} %>
@@ -23,7 +22,8 @@
 <% end %>
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title"><%=t('freshfone.admin.number_settings.title')%></h3>
+		<i class="common-icon-help"></i>
+		<h3 class="lead"><%=t('freshfone.admin.number_settings.title')%></h3>
 		<p><%= t('freshfone.admin.number_settings.info').html_safe %></p>
 	</div>
 <% end %>

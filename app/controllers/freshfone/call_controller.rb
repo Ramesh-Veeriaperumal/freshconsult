@@ -10,10 +10,10 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :force_termination, :only => [ :status ]
 	before_filter :clear_client_calls, :only => [:status]
-	before_filter :prepare_message_for_publish,  :only => [:forward]
 	before_filter :handle_batch_calls, :only => [ :status ]
 	before_filter :handle_missed_calls, :only => [:status]
 	after_filter  :check_for_bridged_calls, :only => [:status]
+	before_filter :prepare_message_for_publish,  :only => [:forward]
 	
 	def forward
     update_presence_and_publish_call(params, @message)
@@ -27,7 +27,6 @@ class Freshfone::CallController < FreshfoneBaseController
 
 	def status
 		begin
-			return ivr_call_end if ivr?
 			call_forwarded? ? handle_forwarded_calls : normal_end_call
 		rescue Exception => e
 			notify_error({:ErrorUrl => e.message})
@@ -37,16 +36,10 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 	end
 
-	def handle_missed_calls
-		update_call
-		render :xml =>  call_initiator.initiate_voicemail if missed_call?
-	end
-
 	def inspect_call
 		key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
-		status = integ_set_members(key).include?(params[:call_sid])
-		add_to_set(key, params[:call_sid]) unless status
-		render :json => { :can_accept => status }
+		status = add_to_set(key, params[:call_sid])
+		render :json => { :can_accept => (status) ? 1 : 0 }
 	end
 
 	private
@@ -59,18 +52,29 @@ class Freshfone::CallController < FreshfoneBaseController
 			update_user_presence if params[:direct_dial_number].blank?
 		end
 
+		def normal_end_call
+			params[:agent] ||= called_agent_id
+			update_call
+			unpublish_live_call(params)
+			empty_twiml
+		end
+
 		def handle_batch_calls
 			return (render :xml => call_initiator.connect_caller_to_agent(@available_agents)) if batch_call?
 			clear_batch_key if params[:batch_call]
 		end
 
+		def handle_missed_calls
+			update_call
+			render :xml =>  call_initiator.non_availability if missed_call?
+		end
+
 		def check_for_bridged_calls
-			bridge_queued_call(params[:agent]) if 
-							call_forwarded? and params[:direct_dial_number].blank?
+			bridge_queued_call(params[:agent]) if call_forwarded? and params[:direct_dial_number].blank?
 		end
 
 		def populate_call_details
-			key = ACTIVE_CALL % {:call_sid => params[:DialCallSid]}
+			key = ACTIVE_CALL % { :account_id => current_account.id, :call_sid => params[:DialCallSid]}
 			@call_options = {}
 			call_options = get_key key
 			unless call_options.blank?
@@ -88,8 +92,9 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 		
 		def force_termination
-			unless params[:force_termination].blank?
+			if params[:force_termination]
 				add_cost_job
+				update_call_status unless preview?
 				return empty_twiml
 			end
 		end
@@ -105,13 +110,12 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def clear_client_calls
 			key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
-			remove_from_set(key, params[:DialCallSid]) if integ_set_members(key).include?(params[:DialCallSid])
+			remove_from_set(key, params[:DialCallSid]) if params[:DialCallSid]
 		end
 
 		def add_cost_job
 			Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params) 
-			Rails.logger.debug "Added FreshfoneJob for call sid::::: #{params[:CallSid]} :: transferred : #{call_transferred?}
-				::#{params[:DialCallSid]} :: ivr: #{ivr?} :: call_forwarded: #{call_forwarded?} :: call: #{(current_call || {})[:id]}"
+			Rails.logger.debug "FreshfoneJob for sid : #{params[:CallSid]} :: dsid : #{params[:DialCallSid]}"
 		end
 
 		def add_transfer_cost_job
@@ -132,33 +136,17 @@ class Freshfone::CallController < FreshfoneBaseController
       @message = {:agent => params[:agent], :answered_on_mobile => true}
     end
 		
-		def normal_end_call
-			params[:agent] ||= called_agent_id
-			update_call
-			unpublish_live_call(params)
-			empty_twiml
-		end
-
 		def cost_params
 			{ :account_id => current_account.id, 
 				:call_sid => params[:CallSid], 
 				:dial_call_sid => params[:DialCallSid],
 				:call => (current_call || {})[:id],
 				:call_forwarded => call_forwarded?,
-				:ivr => ivr?,
-				:billing_type => params[:preview] ? Freshfone::OtherCharge::ACTION_TYPE_HASH[:ivr_preview] : nil,
+				:billing_type => preview? ? Freshfone::OtherCharge::ACTION_TYPE_HASH[:ivr_preview] : nil,
 				:transfer => call_transferred?,
-				:number_id => params[:number_id]
+				:number_id => params[:number_id],
+				:below_safe_threshold => params[:below_safe_threshold]
 			}
-		end
-
-		def ivr?
-			params[:ivr_status] || false
-		end
-
-		def ivr_call_end
-			set_current_call(call_action.register_incoming_call) if params[:preview].blank?
-			empty_twiml
 		end
 
 		def scoper_for_calls
@@ -175,11 +163,6 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def call_action
 			@call_action ||= Freshfone::CallActions.new(params, current_account, current_number)
-		end
-
-		def validate_twilio_request
-			@callback_params = params.except(*[:agent, :direct_dial_number, :ivr_status, :preview, :batch_call, :force_termination, :number_id])
-			super
 		end
 
 		def batch_call?
@@ -202,5 +185,15 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def batch_agents_online
 			@available_agents = current_account.freshfone_users.online_agents.find_all_by_id(batch_agents_ids)
+		end
+
+		def preview?
+			(params[:preview] && params[:preview] == 'true') || false
+		end
+
+		def validate_twilio_request
+			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
+							:batch_call, :force_termination, :number_id, :below_safe_threshold])
+			super
 		end
 end

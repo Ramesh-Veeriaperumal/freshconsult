@@ -80,6 +80,7 @@ minimizable ||= false
 					<%= note.body_html.html_safe %>
 				</div>
 			</div>
+			<%= freshfone_audio_dom(note) %>
 			<% unless note.all_attachments.empty? and note.dropboxes.empty? %>
 				<span class="seperator"></span>
 				<div class="attachments-wrap clearfix">

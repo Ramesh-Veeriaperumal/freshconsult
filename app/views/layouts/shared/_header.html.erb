@@ -60,9 +60,9 @@
 					<span class="pull-right">
 						<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
 					</span>
-					<div class="shorcuts-info description">
-						Press <span class="color-orange">?</span> to view Keyboard hints
-					</div>
+					<span class="shorcuts-info description">
+						<%= t('header.shortcuts_info').html_safe %>
+					</span>
 				</div>
 
 				<% if is_assumed_user? %>
@@ -157,7 +157,7 @@
 		jQuery.ajax({
 			type: "PUT",
 			dataType:"json",
-			url: "<%= toggle_shortcuts_agent_path(current_user.agent) %>",
+			url: "<%= toggle_shortcuts_agent_path(current_user.agent) if logged_in? %>",
 			success: function (response) {
 				console.log(that);
 				jQuery(that).removeAttr('disabled');
@@ -166,12 +166,17 @@
 						jQuery(document).trigger("shortcuts:invoke")
 					}else{
         				scriptLoader.load('shortcut');
-					}					
+					}
 				} else {
 					jQuery(document).trigger("shortcuts:destroy")
 				}
 			}
 		});
+	});
+
+	jQuery('#shortcuts_info').bind('click', function(ev){
+		ev.preventDefault();
+		jQuery('#shortcut_help_chart').trigger('click');
 	});
 
 });

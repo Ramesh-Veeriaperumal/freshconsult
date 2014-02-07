@@ -10,6 +10,21 @@ body {
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; }
 
+//Used in Announcement
+.alert-message {
+	line-height: 22px;
+	padding: 20px;
+	background-color: #fcfec7;
+	margin-top: $common-padding;
+	font-size: 14px;
+	font-weight: 400;
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	&.warning{
+		background-color: #FFE7E7;
+		color: #900;
+	}
+}
 .request_details .details table{
     table-layout: fixed;
 }

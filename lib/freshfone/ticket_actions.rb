@@ -24,7 +24,7 @@ module Freshfone::TicketActions
 	end
 
 	def create_ticket
-		if build_ticket.save
+		if build_ticket(params.merge!({ :agent => agent })).save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.ticket.human_name'),
 					:link => @template.link_to(t(:'freshfone.ticket.view'),
@@ -41,10 +41,14 @@ module Freshfone::TicketActions
 		update_user_presence unless call_history?
 	end
 
+	def voicmail_ticket(args)
+		build_ticket(args).save
+	end
+
 	private
-		def build_ticket
-			current_call.notable = current_account.tickets.build
-			current_call.initialize_ticket(params.merge({ :agent => agent }))
+		def build_ticket(args)
+			current_call.notable = Account.current.tickets.build
+			current_call.initialize_ticket(args)
 		end
 
 		def build_note

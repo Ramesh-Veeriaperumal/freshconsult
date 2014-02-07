@@ -13,19 +13,18 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 	def purchase
 		begin
-			number = current_account.freshfone_numbers.create( 
-															:number => params[:phone_number], 
-															:display_number => params[:formatted_number], 
-															:number_type => number_type,
-															:region => params[:region], 
-															:country => params[:country], 
-															:address_required => params[:address_required])
+		if purchase_number.save
 			flash[:notice] = t('flash.freshfone.number.success')
-			redirect_to edit_admin_freshfone_number_path(number)
+			redirect_to edit_admin_freshfone_number_path(@purchased_number)
+		else
+			flash[:notice] = (@purchased_number.errors.any?) ? 
+												@purchased_number.errors.full_messages.to_sentence :
+												t('flash.freshfone.number.error')
+			redirect_to :action => :index
+		end
 		rescue Exception => e
 			flash[:notice] = t('flash.freshfone.number.error')
-			Rails.logger.debug "Error purchasing number for account#{current_account.id}.
-\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+			Rails.logger.debug "Error purchasing number for account#{current_account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			redirect_to :action => :index
 		end
 	end
@@ -65,10 +64,23 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	end
 
 	private
+		def purchase_number
+			@purchased_number = current_account.freshfone_numbers.new( 
+				:number => params[:phone_number], 
+				:display_number => params[:formatted_number], 
+				:number_type => number_type,
+				:region => params[:region], 
+				:country => params[:country], 
+				:address_required => params[:address_required])
+		end
+
 		def check_active_account
-			if current_account.freshfone_account.suspended?
-				flash[:notice] = t('freshfone.general.suspended_account')
+			if current_account.freshfone_credit.zero_balance?
+				flash[:notice] = t('freshfone.general.suspended_on_low_balance')
 				redirect_to admin_freshfone_numbers_path 
+			elsif current_account.freshfone_account.suspended?
+				flash[:notice] = t('freshfone.general.suspended_account')
+				redirect_to admin_freshfone_numbers_path 	
 			end
 		end
 
@@ -80,12 +92,11 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		def load_ivr
 			@ivr = @number.ivr
 			@agents = current_account.users.technicians.visible
-			@groups =  current_account.groups.find(:all, :joins => ("inner join agent_groups on agent_groups.group_id = groups.id and groups.account_id = #{current_account.id}
-				inner join users ON agent_groups.user_id = users.id and users.deleted = 0 and users.helpdesk_agent = 1 and users.account_id = #{current_account.id}"), :group => "agent_groups.group_id")
+			@groups =  current_account.active_groups
 		end
 
 		def set_business_calendar
-			if params[:non_business_hour_calls].present?
+			if params[:non_business_hour_calls].to_bool
 				@number.business_calendar = nil
 			else
 				@number.business_calendar = business_calendar

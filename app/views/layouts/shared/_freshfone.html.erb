@@ -19,15 +19,19 @@
 	freshfone.user_phone = "<%= current_user.available_number %>";
 	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
 												Freshfone::User::PRESENCE[:offline] %>";
+	freshfone.below_threshold = <%= freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_path %>";
 	freshfone.available_on_phone_text = "<%= t('freshfone.widget.on_phone') %>";
 	freshfone.available_on_browser_text = "<%= t('freshfone.widget.on_browser') %>";
 	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
 	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
+	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
+	freshfone.widget_inactive = "<%= t('freshfone.widget.inactive') %>";
+	freshfone.new_requester = "<%= t('freshfone.widget.new_requester') %>";
 	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'][Rails.env] %>";
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.host %>';
 	freshfone.numbersHash = JSON.parse('<%= Hash[*current_account_freshfone_numbers.collect(&:reverse).flatten].to_json.html_safe %>');
-	freshfone.requester_autocomplete_path = '<%= requester_helpdesk_autocomplete_path %>';
+	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_path %>';
 <% end %>
 <%= include_cloudfront_js :freshfone_client %>

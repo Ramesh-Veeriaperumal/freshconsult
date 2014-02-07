@@ -95,9 +95,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
-        return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-          (privilege?(:client_manager)  && ticket.requester.customer == current_user.customer))) || 
-          (params[:access_token] && ticket.access_token == params[:access_token])
+        return ticket_access? ticket
   
       # Is the attachment on a solution  If so, it's always downloadable.
 
@@ -106,11 +104,27 @@ class Helpdesk::AttachmentsController < ApplicationController
       elsif ['Post'].include? @attachment.attachable_type      
         return @attachment.attachable.forum.visible?(current_user)     
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
-        return  true     
+        return  true
+      elsif ['Freshfone::Call'].include? @attachment.attachable_type
+        return true if(current_user && current_user.agent?)
+        return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
       end         
 
+    end
+
+    def ticket_access?(ticket)
+      return false if ticket.blank?
+      (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
+        (privilege?(:client_manager)  && ticket.requester.customer == current_user.customer))) || 
+        (params[:access_token] && ticket.access_token == params[:access_token])
+    end
+
+    def call_record_ticket
+      return nil unless @attachment.attachable.respond_to?(:notable)
+      @attachment.attachable.notable.respond_to?(:notable) ?
+        @attachment.attachable.notable.notable : @attachment.attachable.notable
     end
   
 end

@@ -868,6 +868,10 @@ module ApplicationHelper
     feature?(:freshfone) or current_account.freshfone_numbers.any?
   end
 
+  def freshfone_below_threshold?
+    current_account.freshfone_credit.below_calling_threshold?
+  end
+
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
 		can_make_calls(number, 'phone-icons', freshfone_number_id)
@@ -917,18 +921,21 @@ module ApplicationHelper
   end
 
   def shortcuts_enabled?
-    current_user.agent.shortcuts_enabled?
+    logged_in? and current_user.agent.shortcuts_enabled?
   end
 
   def current_platform
     os = UserAgent.parse(request.user_agent).os
-    ['windows', 'mac', 'linux', 'android'].each do |v|
+    ['windows', 'mac', 'linux'].each do |v|
       return v if os.downcase.include?(v)
     end
+
+    return nil
   end
 
   def modifier(key)
-    Shortcut::MODIFIER_KEYS[key.to_sym][current_platform.to_sym]
+    platform = current_platform || "windows"
+    Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
   end
 
 end

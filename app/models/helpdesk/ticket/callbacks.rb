@@ -283,7 +283,8 @@ private
     self.requester = account.all_users.find_by_an_unique_id({ 
       :email => self.email, 
       :twitter_id => twitter_id,
-      :external_id => external_id })
+      :external_id => external_id,
+      :phone => phone })
     
     create_requester unless requester
   end

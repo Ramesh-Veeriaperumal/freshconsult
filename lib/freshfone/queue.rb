@@ -6,8 +6,8 @@ module Freshfone::Queue
 
 	def enqueue_caller
     twiml = Twilio::TwiML::Response.new do |r|
+      current_number.read_queue_message(r)
       r.Gather :action => "#{host}/freshfone/queue/quit_queue_on_voicemail", :numDigits => '1' do |g|
-         g.Say "To leave a message, Press * and wait for the tone.", :voice => current_number.voice_type
         g.Play "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
       end
     end

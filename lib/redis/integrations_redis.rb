@@ -42,16 +42,19 @@ module Redis::IntegrationsRedis
 	end
 	
 	def add_to_set(key, values, expires = 86400)
+		result = false
  		newrelic_begin_rescue do
  			if values.respond_to?(:each)
+				result = true
  				values.each do |val|
- 					$redis_integrations.sadd(key, val)
+ 					result &= $redis_integrations.sadd(key, val)
  				end
  			else
- 				$redis_integrations.sadd(key, values)
+ 				result = $redis_integrations.sadd(key, values)
  			end
  			# $redis.expire(key,expires) if expires
  	  end
+ 	  result
  	end
 
  	def integ_set_members(key)

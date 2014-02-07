@@ -1144,6 +1144,7 @@ en:
       credits:
         success: "Successfully purchased Freshfone Credits"
         error: "Error purchasing Freshfone Credits"
+        invalid_recharge_amount: "Enter a valid recharge amount"
       number:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
@@ -2501,6 +2502,7 @@ en:
     user_available: "New tickets will be <br>auto-assigned to you."
     user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     toggle_shortcuts: "Keyboard Shortcuts"
+    shortcuts_info: "Press <span class='color-orange'>?</span> to view <a id='shortcuts_info' href='#'>Keyboard hints</a>"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -3342,7 +3344,7 @@ en:
         no_watcher_text: No agent is watching this ticket
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
-        toggle_watch: Toggle Watch
+        toggle_watch: Watch
         pick_agents: Add agents
         add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
@@ -4637,12 +4639,14 @@ en:
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date      
   freshfone:
+    recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     number: "Freshfone Number"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"
+      already_in_call: "Simultaneous outgoing call restricted"
     call_status:
       default: ""
       completed: "Completed"
@@ -4653,10 +4657,13 @@ en:
       canceled: "Canceled"
       failed: "Failed"
     general:
-      suspended_account: "Your Freshfone account is currently suspended. Please recharge to activate your account"
+      suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
+      suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"
     dashboard:
       in_conversation: "In-conversation"
       available_agents: "Available Agents"
+      freshfone_recharge_alert: Freshfone is currently unavailable. To make and receive calls please contact your account administrator.
+      admin_freshfone_recharge_alert: Freshfone is currently unavailable due to low balance. <a href='/subscription'> Recharge </a> immediately to make and receive calls.
     widget:
       ignore: "Ignore"
       accept: "Accept"
@@ -4687,6 +4694,9 @@ en:
       requester_email: "Requester Email"
       save: "Save"
       notes: "Notes"
+      new_requester: "New requester"
+      inactive: "Freshfone unavailable"
+      forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
@@ -4716,9 +4726,10 @@ en:
       block_number_title: "Block number"
     ticket:
       recording: "Freshfone Recording"
-      ticket_desc: "Created via Freshfone. Conversation with %{customer} from %{location} " 
+      ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}" 
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
-      dial_a_number: "Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"
@@ -4729,6 +4740,11 @@ en:
     create:
       success:
         with_link: "The %{human_name} has been created  %{link}"
+    message:
+        on_hold_message: "All agents are busy attending to other customers. Please hold the line or press * at any point to leave a voicemail"
+        non_availability_message: "Our agents are currently unavailable to take your call right now"
+        voicemail_message: "Please leave a message at the tone"
+        non_business_hours_message: "You have reached us outside of our hours of operation"
     admin:
       important: "Important"
       general: "General"
@@ -4745,8 +4761,8 @@ en:
       number_settings:
         title: "Managing your call center with Freshfone"
         info: "You can configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><b>Assigning phone calls to agents and groups</b><br/>You could also use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature."
-        non_business_hours: "Accept calls during Non-Business hours"
-        business_calendar: "Business Hour"
+        non_business_hours: "Accept Calls during…"
+        business_calendar: "Select Business Hour"
         transcript_voice: "Transcript Voice"
         text_to_speech: "Text to speech"
         record_calls: "Record Calls"
@@ -4756,11 +4772,13 @@ en:
         record_all: "Record all calls"
         record_none: "Do not record calls"
         record_alert: "The call recording guidelines require notifying customers on the call being recorded and the purpose for recording. Please configure the greetings message accordingly."
-        max_queue_calls: "Max Calls in Queue"
-        call_wait_time: "Queue wait time"
+        max_queue_calls: "Maximum Calls in Queue"
+        call_wait_time: "with maximum wait time of" 
+        call_wait_time_suffix: " per call"
         wait_message: "Wait Message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
+        non_business_hours_message: "Non-Business hours message"
         welcome_message_alert: "Welcome message not play when IVR is enabled"
         welcome_message: "Welcome Message"
         record_voice: "Record your voice"
@@ -4779,6 +4797,8 @@ en:
         group: "Play message and call agents in "
         call_hunting_group: "Group"
         all_groups: "All Groups"
+        business_hours: Business Hours
+        anytime: 24/7 Anytime
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 19 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -4793,6 +4813,7 @@ en:
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
         cannot_purchase: "Unable to purchase number for your Freshfone account"
+        insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
         setup:
           title: "Setting up Freshfone"
           info: "In order to get started with Freshfone, you will first need to purchase a call-in number to offer your customers. You can purchase a Local number in any of 28* countries that Freshfone currently supports. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple Freshfone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk.<br/><br/> Once you have purchased a Freshfone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
@@ -5049,14 +5070,14 @@ en:
       delete_ticket: "Delete ticket"
       pickup: "Pickup ticket"
       spam: "Mark ticket as spam"
-      close: "Close ticket ( alt + ~ to skip notification )"
+      close: "Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to skip notification )"
       search: "Search"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
       hovercard: "Show ticket hovercard"
       view: "View the active ticket"
-      mark: "Select a ticket, (Hold shift + x to select all)"
+      mark: "Select a ticket, ( <span class='shortcut-key'>%{modifier_key} <span>+</span> x </span>to select all )"
     ticket_view:
       title: "Ticket View"
       reply: "Reply"

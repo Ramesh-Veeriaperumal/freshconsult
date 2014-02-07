@@ -1,5 +1,7 @@
 class Freshfone::CallHistoryController < ApplicationController
 	before_filter :set_default_filter, :only => [:index]
+	before_filter :set_cookies_for_filter, :only => [:custom_search]
+	before_filter :get_cookies_for_filter, :only => [:index]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
@@ -30,13 +32,8 @@ class Freshfone::CallHistoryController < ApplicationController
 	private
 		def load_calls
 			params[:wf_per_page] = 30
-			  if !params.has_key?('page')  && !cookies["fone_number_id"].nil? 
-			  	 params["number_id"] = cookies["fone_number_id"]
-			  else
-			  	cookies["fone_number_id"] = params["number_id"]
-			 end
-				@calls = current_number.freshfone_calls.roots.filter(:params => params, :filter => "Freshfone::Filters::CallFilter")
-			
+			@calls = current_number.freshfone_calls.roots.filter(:params => params,
+																		:filter => "Freshfone::Filters::CallFilter")
 		end
 
 		def current_number
@@ -60,6 +57,14 @@ class Freshfone::CallHistoryController < ApplicationController
 		
 		def set_default_filter
 			params.merge!({ :wf_c0 => "created_at", :wf_o0 => "is_greater_than", :wf_v0_0 => "today" })
+		end
+
+		def get_cookies_for_filter
+			params["number_id"] = cookies["fone_number_id"]
+		end
+
+		def set_cookies_for_filter
+			cookies["fone_number_id"] = params["number_id"]
 		end
 
 end

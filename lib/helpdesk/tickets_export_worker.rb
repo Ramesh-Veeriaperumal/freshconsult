@@ -1,7 +1,6 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ActionController::UrlWriter
-  DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   def perform
     begin
@@ -14,7 +13,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       else
         build_file(file_string) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
-                                                :domain => export_params[:portal_url] || Account.current.host, 
+                                                :domain => export_params[:portal_url], 
                                                 :url => hash_url,
                                                 :export_params => export_params})
       end
@@ -105,16 +104,12 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       record = []
       headers.each do |val|
         data = item.send(val)
-        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
         record << escape_html(data)
       end
       @records << record
     end
   end
 
-  def parse_date(date_time)
-    date_time.strftime("%F %T")
-  end
 
   def sql_conditions
     @sql_conditions ||= begin
@@ -202,7 +197,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def hash_url
     url_for(
             :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
-            :host => Account.current.host, 
+            :host => export_params[:portal_url], 
             :protocol => 'https'
             )
   end
@@ -210,7 +205,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def send_no_ticket_email
     DataExportMailer.deliver_no_tickets({
                                           :user => User.current,
-                                          :domain => Account.current.full_domain
+                                          :domain => export_params[:portal_url]
                                         })
     @item.destroy
   end

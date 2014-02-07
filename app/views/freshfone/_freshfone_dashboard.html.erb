@@ -1,13 +1,23 @@
 <div class="sidepanel freshfone_dashboard">
 	<h3 class="title">Freshfone</h3>
-
-	<div class="freshfone_dashboard_cells">
-		<h4> <span class="live-calls">0</span></h4>
-		<span class="dash-lbl"><%= t('freshfone.dashboard.in_conversation') %></span>
+	
+	<div class="freshfone_alert alert hide" rel="permanent">
+	<% if current_user.privilege?(:manage_account) %>
+		<%= t('freshfone.dashboard.admin_freshfone_recharge_alert').html_safe %>
+	<% else %>
+		<%= t('freshfone.dashboard.freshfone_recharge_alert') %>
+	<% end %>
 	</div>
-	<div class="freshfone_dashboard_cells">
-		<h4> <span class="live-available-agents">0</span></h4>
-		<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %></span>
+	
+	<div class="freshfone_realtime">
+		<div class="freshfone_dashboard_cells">
+			<h4> <span class="live-calls">0</span></h4>
+			<span class="dash-lbl"><%= t('freshfone.dashboard.in_conversation') %></span>
+		</div>
+		<div class="freshfone_dashboard_cells">
+			<h4> <span class="live-available-agents">0</span></h4>
+			<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %></span>
+		</div>
 	</div>
 	<!-- <div class="freshfone_dashboard_cells">
 		<h4 class="daily-burn"> $18.75 </h4>

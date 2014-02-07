@@ -2340,6 +2340,10 @@ INCOMING:
   :standard: 0.015
   :usca_tollfree: 0.04
   :uk_tollfree: 0.078
+VOICEMAIL:
+  :standard: 0.0125
+  :usca_tollfree: 0.037
+  :uk_tollfree: 0.075
 YE: 
   :max_digits: 5
   :country: Yemen

@@ -4,6 +4,7 @@ class Freshfone::Number < ActiveRecord::Base
 
 	serialize :on_hold_message
 	serialize :non_availability_message
+	serialize :non_business_hours_message
 	serialize :voicemail_message
 
 	belongs_to_account
@@ -20,7 +21,7 @@ class Freshfone::Number < ActiveRecord::Base
 	attr_accessor :attachments_hash, :address_required
 	attr_protected :account_id
 
-	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message]
+	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]
 	STATE = { :active => 1, :expired => 2 }
 	STATE_BY_VALUE = STATE.invert
 
@@ -95,6 +96,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def non_business_hour_calls?
     business_calendar.blank?
   end
+  alias_method :non_business_hour_calls, :non_business_hour_calls?
 	
 	def has_new_attachment?(type)
 		attachments_hash.has_key?(type)
@@ -130,15 +132,24 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 	
 	def read_voicemail_message(xml_builder, type)
-		current_message(type).speak(xml_builder) unless current_message(type).blank?
+		voicemail_message.speak(xml_builder) unless voicemail_message.blank?
 	end
 	
 	def read_queue_message(xml_builder)
 		on_hold_message.speak(xml_builder) unless on_hold_message.blank?
 	end
+
+	def read_non_availability_message(xml_builder)
+		non_availability_message.speak(xml_builder) unless non_availability_message.blank?
+	end
+
+	def read_non_business_hours_message(xml_builder)
+		non_business_hours_message.speak(xml_builder) unless non_business_hours_message.blank?
+	end
 	
 	def message_changed?
-		on_hold_message_changed? || non_availability_message_changed? || voicemail_message_changed? 
+		on_hold_message_changed? || non_availability_message_changed? || 
+		voicemail_message_changed? || non_business_hours_message_changed?
 	end
 
 	def unused_attachments
@@ -151,12 +162,16 @@ class Freshfone::Number < ActiveRecord::Base
 			self.next_renewal_at = 1.month.from_now
 		end
 
-		def valid_credit_and_country?
+		def invalid_credit_and_country
 			number_country = Freshfone::Cost::NUMBERS[country]
 			credit = account.freshfone_credit
-			type = TYPE_STR_REVERSE_HASH[number_type]
-			return false if credit.blank? or number_country.blank?
-			credit.available_credit >= number_country[type]
+			@available_credit = credit.available_credit
+			@number_rate = (number_country || {})[ TYPE_STR_REVERSE_HASH[number_type] ]
+			credit.blank? or number_country.blank?
+		end
+
+		def sufficient_credits?
+			@available_credit >= @number_rate
 		end
 
 		def validate_settings
@@ -166,9 +181,11 @@ class Freshfone::Number < ActiveRecord::Base
 
 				case message
 					when :voicemail_message
-						self[message].validate unless !voicemail_active
+						self[message].validate if voicemail_active
 					when :on_hold_message
 						self[message].validate unless max_queue_length===0
+					when :non_business_hours_message
+						self[message].validate unless business_calendar.blank?
 					else
 						self[message].validate
 				end
@@ -183,17 +200,15 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 
 		def validate_purchase
-			return if valid_credit_and_country?
-			errors.add_to_base(I18n.t('freshfone.admin.numbers.cannot_purchase'))
+			if invalid_credit_and_country
+				errors.add_to_base(I18n.t('freshfone.admin.numbers.cannot_purchase'))
+				return false
+			end
+			errors.add_to_base(I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
 		end
 
 		def assign_number_to_message
 			MESSAGE_FIELDS.each {|type| self[type].parent = self unless self[type].blank? }
-		end
-		
-		def current_message(type)
-			["offline", "non_business_hours"].include?(type) ? non_availability_message :
-																													voicemail_message
 		end
 
 		def inuse_attachment_ids

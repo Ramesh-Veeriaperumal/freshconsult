@@ -34,8 +34,13 @@ var setLocationIfUnknown,
 	}
 
 	function getFilterData() {
+		setFilterData();
+		$currentPageNumber.val(1);
+		$filterSortForm.trigger('change');
+	}
+  
+  function setFilterData() {
 		var condition, container, operator, values;
-
 		$filterCondition.empty();
 		$filterContainer.map(function (index, ele) {
 			condition = this.getAttribute("condition");
@@ -48,9 +53,7 @@ var setLocationIfUnknown,
 			setPostParam($filterCondition, ('wf_o' + index), operator);
 			setPostParam($filterCondition, ('wf_v' + index + '_' + index), values.toString());
 		});
-		$currentPageNumber.val(1);
-		$filterSortForm.trigger('change');
-	}
+  }
 
 	function setDropdownValue(obj) {
 		$(obj)
@@ -190,6 +193,7 @@ var setLocationIfUnknown,
 		setCallDuration();
 		setLocationIfUnknown();
 		threeSixtyPlayer.init();
+		setFilterData();
 	});
 
 }(jQuery));

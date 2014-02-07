@@ -4,7 +4,7 @@
 		"data-template-footer" => "", "data-classes" => 'persistent_modal',
 		:title => t("shortcuts.title"), "data-width" => "1000px" ) %>
 <div id="help_chart" class="hide help-chart">
-	<a class="view_detail" href='#'>View in detail</a>
+	<a class="view_detail" href='https://support.freshdesk.com/support/solutions/articles/186758'>View in detail</a>
 	<div class="row-fluid">
 		<div class="span6">
 			<span>
@@ -64,7 +64,7 @@
 				</span>
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">&#126;</span>
-					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.close") %></span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.close").html_safe %></span>
 				</span>
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">&#47;</span>
@@ -90,7 +90,7 @@
 				</span>
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">x</span>
-					<span class="span8 description"><%= t("shortcuts.ticket_list.mark") %></span>
+					<span class="span8 description"><%= t("shortcuts.ticket_list.mark", :modifier_key => modifier("shift")).html_safe %></span>
 				</span>
 			</span>
 			<span>

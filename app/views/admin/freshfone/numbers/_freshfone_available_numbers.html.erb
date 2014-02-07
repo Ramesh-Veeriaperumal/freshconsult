@@ -20,7 +20,7 @@
 					<%= hidden_field_tag "country", number[:iso_country] %>
 					<%= hidden_field_tag "type", number[:type] %>
 					<%= hidden_field_tag("address_required", address_required) if address_required %>
-					<%= link_to t('freshfone.admin.numbers.purchase_number'), "#", :class => "purchase_number button",
+					<%= link_to t('freshfone.admin.numbers.purchase_number'), "#", :class => "purchase_number btn",
 											:'data-address-required' => address_required,
 											:'data-rate' => number_to_currency(rate),
 											"title" => number[:phone_number_formatted]

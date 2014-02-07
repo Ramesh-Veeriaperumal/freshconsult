@@ -22,9 +22,9 @@
 						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
 
 			<%= f.label :recharge_quantity, "Auto Recharge Amount", :class => "credits_lbl" %>
-			<%= f.select :recharge_quantity, auto_recharge_options,
+			<%= f.select :recharge_quantity, recharge_options,
 										{}, {:class => 'select2'} %>
-			<%= submit_tag "Enable", :class => "button" %>
+			<%= submit_tag "Enable", :class => "btn" %>
 			<%= link_to "Cancel", "#", :class => "cancel_edit_auto_recharge" %>
 		<% end %>
 	</div>

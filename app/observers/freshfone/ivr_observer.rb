@@ -2,7 +2,7 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 	observe Freshfone::Ivr
 
 	def before_validation_on_update(freshfone_ivr)
-		if freshfone_ivr.ivr_message?
+		if freshfone_ivr.ivr_message? || freshfone_ivr.preview_mode
 			build_menus_and_relations(freshfone_ivr) if freshfone_ivr.any_ivr_data_changed?
 		else
 			build_welcome_message(freshfone_ivr) if freshfone_ivr.welcome_message_changed?
@@ -112,7 +112,8 @@ class Freshfone::IvrObserver < ActiveRecord::Observer
 				:message_type => message["message_type"].to_i,
 				:recording_url => message["recording_url"],
 				:type => :welcome_message,
-				:group_id => message["group_id"].to_i
+				:group_id => message["group_id"].to_i,
+				:parent => freshfone_ivr
 			})
 		end
 		

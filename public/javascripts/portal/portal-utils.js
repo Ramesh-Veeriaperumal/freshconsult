@@ -76,3 +76,10 @@ function layoutResize(layoutClass1, layoutClass2){
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
     }
 }
+
+Number.prototype.toTime = function(format) {
+  return (new Date())
+          .clearTime()
+          .addSeconds(this)
+          .toString(format || "mm:ss");
+}

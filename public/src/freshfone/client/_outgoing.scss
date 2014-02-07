@@ -14,9 +14,17 @@
 	}
 }
 
-
+.popupbox-content.freshfone_content_container{
+	line-height: normal;
+}
 
 .popupbox-content {
+	.recent_calls_container{
+		p {
+			margin-bottom: 0;
+		}
+	}
+	
 	#freshfone_dialpad, #recent_calls {
 		width: 260px;
 		max-height: 340px;
@@ -30,7 +38,7 @@
 		border: none;
 		@include box-shadow(none);
 	}
-	.invalid_phone_text, .info_message {
+	.invalid_phone_text, .info_message, .already_in_call_text {
 		position: absolute;
 		top: 65px;
 		color: $info-text;

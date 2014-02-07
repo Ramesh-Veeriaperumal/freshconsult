@@ -10,12 +10,20 @@ var freshfonetimer,
 	"use strict";
 	freshfonetimer = new FreshfoneTimer();
 	freshfoneUserInfo = new FreshfoneUserInfo();
-	freshfonecalls = new FreshfoneCalls(freshfonetimer, freshfoneUserInfo);
-	freshfonesocket = new FreshfoneSocket(freshfonecalls);
-	freshfoneuser = new FreshfoneUser(freshfonecalls, freshfonesocket);
-	freshfonewidget = new FreshfoneWidget(freshfonecalls, freshfoneuser);
-	freshfoneendcall = new FreshfoneEndCall(freshfonecalls, freshfoneuser, freshfonewidget);
-	freshfoneNotification = new FreshfoneNotification(freshfonecalls, freshfoneUserInfo);
+	freshfonesocket = new FreshfoneSocket();
+	freshfoneuser = new FreshfoneUser();
+	freshfonecalls = new FreshfoneCalls();
+	freshfonewidget = new FreshfoneWidget();
+	freshfoneendcall = new FreshfoneEndCall();
+	freshfoneNotification = new FreshfoneNotification();
+
+	freshfonesocket.loadDependencies(freshfonecalls);
+	freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket);
+	freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo);
+	freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser);
+	freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
+	freshfoneNotification.loadDependencies(freshfonecalls, freshfoneUserInfo);
+	
 	// End ongoing call
 	$(document).on('click', '.end_call', function (e) {
 		e.preventDefault();

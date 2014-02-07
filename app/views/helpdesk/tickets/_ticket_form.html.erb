@@ -21,7 +21,7 @@
 <% end %>
 <% content_for :onload_script do -%> 
 
-jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').redactor({ focus: false, autoresize:false, imageUpload: "/tickets_uploaded_images", buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
+  invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'cnt-fwd');
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')
