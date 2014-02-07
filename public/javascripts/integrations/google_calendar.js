@@ -820,6 +820,7 @@ DEFAULT_EVENT_DURATION = 60; // Minutes;
 			am_or_pm = "pm";
 			if ( hrs > 12 ) hrs -= 12;
 		} else { am_or_pm = "am"; }
+		if (hrs == 0) hrs = 12;
 		s =  (hrs<10?'0':'') + hrs + ":" + (mins<10?'0':'') + mins + ' ' + am_or_pm;
 
 		if(end){
@@ -830,6 +831,7 @@ DEFAULT_EVENT_DURATION = 60; // Minutes;
 				am_or_pm = "pm";
 				if ( hrs > 12 ) hrs -= 12;
 			} else { am_or_pm = "am"; }
+			if (hrs == 0) hrs = 12;
 			s += " - " + (hrs<10?'0':'') + hrs + ":" + (mins<10?'0':'') + mins + ' ' + am_or_pm;
 		}
 		return s;
