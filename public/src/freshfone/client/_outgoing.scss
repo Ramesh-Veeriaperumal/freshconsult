@@ -19,6 +19,12 @@
 }
 
 .popupbox-content {
+	.recent_calls_container{
+		p {
+			margin-bottom: 0;
+		}
+	}
+	
 	#freshfone_dialpad, #recent_calls {
 		width: 260px;
 		max-height: 340px;

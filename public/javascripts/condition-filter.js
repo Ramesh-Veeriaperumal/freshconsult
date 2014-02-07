@@ -149,9 +149,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
 				if(setting.delete_last){
-					var selected_quest = jQuery("input[name=quest[category]]:checked").val();
+					var selected_quest = jQuery("input[name='quest[category]']:checked").val();
 					//var criteria_list = quest_criteria_types[selected_quest];
-					filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
+					filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]) || [];
 				} else {
 					filterList = filter_data;
 				}
