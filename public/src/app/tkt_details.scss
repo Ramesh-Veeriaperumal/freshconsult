@@ -2923,3 +2923,23 @@ $collision_delay: 1s;
 		padding: 5px 0 10px 30px;
 	}
 }
+
+// ATTACHMENT DROP IN EMAIL - CSS
+.commentbox {
+	#ticket_original_request, .helpdesk_note .details {
+		div.attach-error {
+			margin:10px auto 0;
+			width: 65%;
+			text-align: center;
+			padding: 5px;
+			position: relative;
+			border: 1px solid #efefef;
+			.close { display: none; }
+		}
+	}
+	.overlapping { margin-top: -15px; }
+}
+
+// ATTACHMENT DROP IN EMAIL - CSS - END
+
+
