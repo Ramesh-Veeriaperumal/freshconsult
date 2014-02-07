@@ -398,6 +398,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             :account_id => ticket.account_id,:description => description)
             created_attachment = create_attachment_from_params(created_attachment,
                                     attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
+        rescue HelpdeskExceptions::AttachmentLimitException => ex
+          Rails.logger.error("ERROR ::: #{ex.message}")
+          add_notification_text item
+          break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
@@ -409,6 +413,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
+    end
+
+    def add_notification_text item
+      message = I18n.t('attachment_failed_message').html_safe
+      notification_text = "\n" << message
+      notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, 
+                                                        content_tag(:div, message, :class => "attach-error alert"),
+                                                        :class => "attach-error-wrap"))
+      if item.is_a?(Helpdesk::Ticket)
+        item.description << notification_text
+        item.description_html << notification_text_html
+      elsif item.is_a?(Helpdesk::Note)
+        item.body << notification_text
+        item.body_html << notification_text_html
+      end
     end
       
     def get_content_ids
