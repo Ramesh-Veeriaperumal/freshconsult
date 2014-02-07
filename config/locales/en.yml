@@ -4948,6 +4948,7 @@ en:
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
     select_ticket: "Select Ticket"
     do_not_convert_tkt: "Do not convert to ticket"
+    do_not_convert_tkt_info: "Your transcript will still be available in Chat Archives"
     go_back: "Go Back"
     id: "Id"
     subject: "Subject"
