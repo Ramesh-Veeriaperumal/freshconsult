@@ -1,46 +1,56 @@
 <% form_tag({:action => :custom_search}, { :method => :post, :id => 'freshFilter' }) do %>
   <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
   <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
-  <ul class="ui-form">
-    <li class="inline-field">
-      <label><%= t(".give_a_name") %></label> 
-      <div class="inline-radio">
-        <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
+  <div class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label"><%= t(".view_name") %>:</label> 
+      <div class="controls">
+        <%= text_field_tag( :filter_name, (local_assigns.has_key? :filter_name) ? filter_name : "", :class => "input-xlarge required text", :size => 30) %>
       </div>
-    </li>
+    </div>
     <% if privilege?(:manage_users) %>
-    <li class="inline-field">
-      <label><%= t('.visible_to') %>:</label>
-      <div class="inline-radio">
-  	    <label class="inline-radio">
-  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], true, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
-  		    <%= t('admin.canned_responses.responses.form.me_only') %>
-  	    </label>
-  	    <label class="inline-radio">
-  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], false, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
-  		    <%= t('admin.canned_responses.responses.form.all_agents') %>
-  	    </label>
-  	    <label class="inline-radio">
-  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], false,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
-  		    <%= t('admin.canned_responses.responses.form.groups') %>
-  	    </label>
-  		    <div style="display:none;" class="tabbed" id="accessible_group">
-            <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name) %>
+      <div class="control-group">
+        <label class="control-label"><%= t('.view_visibility') %>:</label>
+        <div class="controls">
+          <div class="radio inline">
+            <label>
+              <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.only_me? : true, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
+              <%= t('admin.canned_responses.responses.form.me_only') %>
+            </label>
           </div>
+          <div class="inline radio">
+            <label>
+              <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.all_agents? : false, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
+              <%= t('admin.canned_responses.responses.form.all_agents') %>
+            </label>
+          </div>
+          <div class="inline radio">
+            <label>
+              <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.group_agents_visibility? : false,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
+              <%= t('admin.canned_responses.responses.form.groups') %>
+            </label>
+          </div>
+        </div>
       </div>
-    </li>
+      <div class="control-group">
+        <div class="controls hide" id="accessible_group">
+          <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name, ((local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.group_id : "")), :class => 'select2 input-medium' %>
+        </div>
+      </div>
     <% end %>
-  </ul>
-  <div class="button-container">
-    <%= submit_tag t("save"), :class => "uiButton", :id => "freshFilterSave" %>
   </div>
 <% end %>
 <% javascript_tag do %>
+jQuery(document).ready(function(){
+  if(jQuery('#filter_name').val().empty()){
+    jQuery('#filter_name').val('<%= t('tickets_filter.copy_of') %> ' + jQuery("#active_filter").text())
+  }
+  jQuery('#filter_name').focus();
+  jQuery('#freshFilter').data('url',"<%= (local_assigns.count == 4) ? 'update_filter' : 'save_filter' %>");
   jQuery("#freshFilter").validate({
-    submitHandler: function(){
-	 		jQuery("#freshFilterSave").prop('disabled', 'disabled').switchClass("uiButton", "sloading", 0);
+    submitHandler: function(form){
       jQuery.ajax({
-        url: "/wf/filter/save_filter",
+        url: "/wf/filter/"+jQuery(form).data("url"),
         type: "POST",
         data: {
           data_hash: query_hash.toJSON(),
@@ -57,15 +67,22 @@
       return false;
     }
   });
-  function toggleGroup(access_id){	
-		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')		{
-			jQuery('#accessible_group').show();
-			jQuery('#visibility_group_id').removeAttr('disabled');
-		}
-		else
-		{
-			jQuery('#accessible_group').hide();	
-			jQuery('#visibility_group_id').prop('disabled','disabled');
-		}
+
+  if(jQuery('[name=visibility]:checked').val() == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>'){
+    jQuery('#accessible_group').show();
+    jQuery('#visibility_group_id').removeAttr('disabled');
+  }
+});
+
+function toggleGroup(access_id){	
+	if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')		{
+		jQuery('#accessible_group').show();
+		jQuery('#visibility_group_id').removeAttr('disabled');
 	}
+	else
+	{
+		jQuery('#accessible_group').hide();	
+		jQuery('#visibility_group_id').prop('disabled','disabled');
+	}
+}
 <% end %>

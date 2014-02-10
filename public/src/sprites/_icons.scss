@@ -32,6 +32,12 @@
 	li.google{ 		@include icons-sprite(google); }
 }
 
+.icons-edit-forum{ @include icons-sprite(edit-forum); }
+
+.forum_follow_icon{ @include icons-sprite(follow-forum); }
+
+.forum_follow_icon.active{ @include icons-sprite(following-forum); }
+
 .solution-list li:before{
 	@include icons-sprite(article-list);
 }

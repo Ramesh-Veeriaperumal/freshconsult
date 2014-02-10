@@ -1,3 +1,4 @@
 <div class="view_filters"> 
-  <%= top_views(selected, custom_filters) %>
+	<%= content_tag :span, "*", :class => "hide unsaved_star" %>
+	<%= top_views(selected, custom_filters) %>
 </div>

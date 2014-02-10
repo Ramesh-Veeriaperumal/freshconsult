@@ -19,14 +19,18 @@
               <td><%= content_tag(:label, t('subscription.billing').html_safe, :class => "caption" ) %> </td>
               <td>
                 <%= content_tag(:label, "<strong> #{ SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] } </strong>".html_safe) %>
+                <% unless @subscription.offline_subscription? %>
                   <a href="#" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
+                <% end %>
               </td>
             </tr>
             <tr>
               <td><%= content_tag(:label, t('subscription.agents').html_safe, :class => "caption" ) %> </td>
               <td>
                 <%= content_tag(:label, "<strong> #{ @subscription.agent_limit } </strong>".html_safe) %>
+                <% unless @subscription.offline_subscription? %>
                   <a href="#" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
+                <% end %>
               </td>
             </tr>
             <tr>
@@ -58,10 +62,12 @@
   </li> 
 </ul>
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
-<div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
-<%= t('downgrade_plan') %>
-<div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
 
+<% unless @subscription.offline_subscription? %>
+  <div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
+  <%= t('downgrade_plan') %>
+  <div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
+<% end %>
 
 <script type="text/javascript">
   (function($){

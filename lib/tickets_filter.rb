@@ -100,6 +100,16 @@ module TicketsFilter
   SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets monitored_by spam deleted )
+
+  def self.default_views
+    DEFAULT_VISIBLE_FILTERS.map { |i| {
+        :id       =>  i, 
+        :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
+        :default  =>  true 
+      } }
+  end
+
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
     

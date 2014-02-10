@@ -13,7 +13,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       else
         build_file(file_string) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
-                                                :domain => export_params[:portal_url], 
+                                                :domain => export_params[:portal_url],
                                                 :url => hash_url,
                                                 :export_params => export_params})
       end
@@ -109,7 +109,6 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       @records << record
     end
   end
-
 
   def sql_conditions
     @sql_conditions ||= begin

@@ -42,7 +42,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
                       "new" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1"},spam_condition(false),deleted_condition(false)],
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
-                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
+                      "new_and_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                       "all_tickets" => [spam_condition(false),deleted_condition(false)]
                    }
                    
@@ -50,8 +50,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   after_create :create_accesible
   after_update :save_accessible
 
-  after_commit_on_create :clear_cache
-  after_commit_on_destroy :clear_cache
+  after_commit :clear_cache
    
   def create_accesible     
     self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )
@@ -59,7 +58,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def save_accessible
-    self.accessible.update_attributes(self.visibility)    
+    self.accessible.update_attributes(self.visibility) unless self.visibility.blank?
   end
   
   def has_permission?(user)
@@ -102,7 +101,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def default_filter(filter_name, from_export = false)
-     default_value = from_export ? "all_tickets" : "new_my_open"
+     default_value = from_export ? "all_tickets" : "new_and_my_open"
      self.name = filter_name.blank? ? default_value : filter_name
 
      if "on_hold".eql?filter_name
@@ -135,8 +134,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @html_format = params[:html_format] || false
     
     
-    self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
-    self.name =  params[:filter_name]     unless params[:filter_name].blank?
+    self.id   =  params[:wf_id].to_i            unless params[:wf_id].blank?
+    self.name =  params[:filter_name].strip     unless params[:filter_name].blank?
 
     @fields = []
     unless params[:wf_export_fields].blank?

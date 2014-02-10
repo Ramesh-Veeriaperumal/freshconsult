@@ -82,4 +82,21 @@ Number.prototype.toTime = function(format) {
           .clearTime()
           .addSeconds(this)
           .toString(format || "mm:ss");
+
+window.highlight_code = function() {
+    jQuery('[rel="highlighter"]').each(function(i,element){
+        var brush, 
+            attr = jQuery(element).data('codeBrush');
+
+        if(attr == 'html'){
+            brush = 'js ; html-script: true';
+        } else if (attr == 'xml'){
+            brush = attr +' ; html-script: true';
+        } else {
+            brush = attr;
+        }
+        jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
+    })
+
+    SyntaxHighlighter.all();
 }

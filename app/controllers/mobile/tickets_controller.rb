@@ -92,7 +92,6 @@ class Mobile::TicketsController < ApplicationController
       count = filter_count(view_name)
       name = t("helpdesk.tickets.views.#{view_name}")
       view_name = :all_tickets if view_name.eql?(:all)
-      view_name = :new_my_open if view_name.eql?(:new_and_my_open)
       view_list.push( :id => view_name, :name => name, 
         :type => :filter, :count => count )
     } 

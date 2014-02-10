@@ -46,9 +46,18 @@ class Wf::FilterController < ApplicationController
   end
   
   def update_filter
-    @wf_filter.name = params[:filter_name]
-    @wf_filter.visibility = params[:visibility]
-    @wf_filter.save
+    wf_filter = current_account.user_accesses(current_user.id).find_by_accessible_id(cookies[:filter_name])
+    unless wf_filter.nil?
+      wf_filter = wf_filter.accessible
+      wf_filter.deserialize_from_params params
+      wf_filter.visibility = params[:visibility]
+      wf_filter.save
+      flash[:notice] = t(:'flash.filter.save_success')
+    else
+      flash[:error] = t('admin.getting_started.index.problem_updating')
+    end
+    wf_filter.key = wf_filter.id.to_s 
+    render :partial => "save_filter",  :locals => { :redirect_path => helpdesk_filter_view_custom_path(wf_filter.key) }
   end
   
   def save_filter
@@ -82,7 +91,7 @@ class Wf::FilterController < ApplicationController
        @wf_filter.destroy
        flash[:notice] = t("flash.filter.delete_success")
      end
-    redirect_to :back
+    redirect_to helpdesk_tickets_path
   end
   
   protected

@@ -19,10 +19,10 @@
 	  <%  view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name unless @is_default_filter.nil? or !@cached_filter_data.nil? %>
 	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
 
-    <% unless @current_view == "new_my_open" %>
+    <% unless @current_view == "new_and_my_open" %>
       <span class="small"><%= t('wf.messages.no_tickets_subtext', 
-                              :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open'), :"data-pjax" => "#body-container", 
-                                :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=new_my_open", 
+                              :view_1 => link_to(t("helpdesk.tickets.views.new_and_my_open"), helpdesk_filter_view_default_path('new_and_my_open'), :"data-pjax" => "#body-container", 
+                                :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=new_and_my_open", 
                                 :"data-parallel-placeholder" => "#ticket-leftFilter"), 
                               :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'), :"data-pjax" => "#body-container",
                                 :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=all_tickets", 

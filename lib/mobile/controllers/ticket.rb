@@ -1,5 +1,8 @@
 # encoding: utf-8
 module Mobile::Controllers::Ticket
+
+  include TicketsFilter
+
   def ticket_props
     is_new =  params[:id].nil?
     item = current_account.tickets.find_by_display_id(params[:id]) unless params[:id].nil?
@@ -39,15 +42,8 @@ module Mobile::Controllers::Ticket
 
   def top_view
       dynamic_views = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
-      default_views = [
-        { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
-        { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },
-        { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
-        { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
-        { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
-      ]
-      top_views_array = [].concat(default_views).concat(dynamic_views)
-      top_views_array;
+      default_views = TicketsFilter.default_views
+      [].concat(default_views).concat(dynamic_views)
   end
     
   def get_summary_count

@@ -13,6 +13,7 @@ class ForumsController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :find_or_initialize_forum, :except => :index
   before_filter :set_selected_tab
+  before_filter :fetch_monitorship, :only => :show
 
   def index
    redirect_to categories_url
@@ -108,7 +109,11 @@ class ForumsController < ApplicationController
     def reorder_scoper
       scoper.find(params[:category_id]).forums
     end
-    
+
+    def fetch_monitorship
+      @monitorship = @forum.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+    end
+
     def reorder_redirect_url
       category_path(params[:category_id])  
     end

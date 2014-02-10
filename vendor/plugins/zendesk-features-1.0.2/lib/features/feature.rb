@@ -116,10 +116,11 @@ module Features
       belongs_to @feature_owner_sym
       validates_presence_of @feature_owner_sym
       validates_uniqueness_of :type, :scope => feature_owner_key
-      if owner_class.table_exists? && owner_class.column_names.include?('updated_at')
-        before_create :update_owner_timestamp
-        before_destroy :update_owner_timestamp
-      end
+      # Commented out to avoid account model update for every feature addition/deletion.
+      # if owner_class.table_exists? && owner_class.column_names.include?('updated_at')
+      #   before_create :update_owner_timestamp
+      #   before_destroy :update_owner_timestamp
+      # end
     end
     
     def self.feature_owner

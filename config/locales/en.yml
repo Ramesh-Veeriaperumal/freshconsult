@@ -1083,7 +1083,7 @@ en:
     new: New Forum
     edit: Edit Forum
     title: Forums
-    start_topic: Start a Topic
+    start_topic: Start Topic
     forum_created: The forum has been created.
     visibility:
       anyone: Anyone
@@ -1618,6 +1618,7 @@ en:
 
   forum_key: Forum
   topics:
+    edit_title: Edit
     show:
       mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
@@ -1796,9 +1797,9 @@ en:
     name: Topic Name
     new: Post a new topic
     edit: Edit topic
-    open: Re-open this Discussion
+    open: Re-open this Topic
     edit: Edit Topic
-    close: Close this Discussion
+    close: Close Topic
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -1847,6 +1848,7 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    edit_title: Edit
     topic_vote:
       unlike: Unlike
       ideas:
@@ -2983,6 +2985,11 @@ en:
   tkt_assigned_to_agent: Ticket Assigned to Agent
   is: Is
   helpdesk_title: Helpdesk
+  monitorships:
+    monitor_flash: You are now following this %{type}
+    non_monitor_flash: You have stopped following this %{type}
+    follow_title: Follow
+    unfollow_title: Unfollow
   forums:
     search_all:
       placeholder: Search All Topics
@@ -3365,8 +3372,8 @@ en:
           stop_emails: "Stop watching this ticket"
       customview:
         new:
-          give_a_name: Give a name for this view
-          visible_to: This view is visible to
+          view_name: View name
+          view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
@@ -3437,7 +3444,6 @@ en:
         on_hold: Tickets On Hold
         new: New Tickets
         my_resolved: My Resolved Tickets
-        new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
         all: All Tickets
@@ -3530,6 +3536,12 @@ en:
     customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
+    copy_of: Copy of
+    save_tooltip: Save
+    saveas_tooltip: Save as
+    cancel_tooltip: Discard
+    edit_tooltip: Edit
+    delete_tooltip: Delete
     sort_fields:
       due_by: Due by time
       date_created: Date Created
@@ -4957,6 +4969,7 @@ en:
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
     select_ticket: "Select Ticket"
     do_not_convert_tkt: "Do not convert to ticket"
+    do_not_convert_tkt_info: "Your transcript will still be available in Chat Archives"
     go_back: "Go Back"
     id: "Id"
     subject: "Subject"

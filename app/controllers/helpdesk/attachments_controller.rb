@@ -102,7 +102,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       elsif ['Solution::Article'].include? @attachment.attachable_type
         return @attachment.attachable.folder.visible?(current_user) 
       elsif ['Post'].include? @attachment.attachable_type      
-        return @attachment.attachable.forum.visible?(current_user)     
+        return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)     
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true
       elsif ['Freshfone::Call'].include? @attachment.attachable_type

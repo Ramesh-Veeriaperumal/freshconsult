@@ -354,7 +354,7 @@
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
                                     :filter_options => :get, :full_paginate => :get, :summary => :get, 
-                                    :update_multiple_tickets => :get, :configure_export => :get },  
+                                    :update_multiple_tickets => :get, :configure_export => :get, :custom_view_save => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -457,10 +457,11 @@
     forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put } 
-      topic.resource :monitorship, :controller => :monitorships
       end
     end
   end
+
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', :action => 'toggle', :method => :post
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal
