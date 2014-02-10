@@ -8,7 +8,7 @@ class Billing::BillingController < ApplicationController
                       :check_day_pass_usage, :redirect_to_mobile_url
 
   before_filter :ensure_right_parameters, :retrieve_account, 
-                :load_subscription_info, :if => :event_monitored?
+                :load_subscription_info, :if => :monitored_event_not_from_api?
  
   
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
@@ -80,6 +80,10 @@ class Billing::BillingController < ApplicationController
     def not_api_source?
       params[:source] != EVENT_SOURCES[:api]
     end
+
+    def monitored_event_not_from_api?
+      event_monitored? and not_api_source?   
+    end    
 
     def ensure_right_parameters
       if ((params[:event_type].blank?) or (params[:content].blank?) or params[:content][:customer].blank?)

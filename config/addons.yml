@@ -14,6 +14,7 @@ Gamification:
 Multiple Business Hours: 
   - :multiple_business_hours
 Layout Customization:
+  - :css_customization
   - :forums
   - :layout_customization
   - :surveys

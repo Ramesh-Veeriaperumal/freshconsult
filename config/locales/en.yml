@@ -1357,7 +1357,7 @@ en:
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
-  suspended_plan_info: Your account has been suspended. Please select a plan to continue using Freshdesk
+  suspended_plan_info: Your account has been suspended.
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
