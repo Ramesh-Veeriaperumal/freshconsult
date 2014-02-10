@@ -82,6 +82,7 @@ Number.prototype.toTime = function(format) {
           .clearTime()
           .addSeconds(this)
           .toString(format || "mm:ss");
+}
 
 window.highlight_code = function() {
     jQuery('[rel="highlighter"]').each(function(i,element){
