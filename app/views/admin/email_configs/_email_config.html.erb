@@ -25,12 +25,22 @@
     <% end %>
   </td>
 
-  <td><div class="muted">Forwarded to: </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %> </td>
+  <td>
+    <% unless email_config.mailbox %>
+      <div class="muted">Forwarded to: </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %>
+    <% else %>
+      <%= content_tag :span, t('email_configs.using_custom_mailbox').html_safe, :class => "wrap ellipses" %>
+    <% end %>
+  </td>
   <td><div class="muted">Group: </div><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "ellipses" %> </td>
    <td class="text-right">
     <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) , :class => 'btn btn-mini'%>
     <% unless email_config.primary_role %>
       <%= link_to "<i class='icon-trash'></i>".html_safe, admin_email_config_path(email_config), :confirm => "#{t('email_configs.delete_confirm')}", :method => :delete, :class => "btn btn-mini"%>
+    <% else %>
+      <span title ="<%= t('email_configs.primary_email_delete_alert') %>" class="btn btn-mini tooltip disabled"%>
+        <i class='icon-trash'></i>
+      </span>
     <% end %>
   </td>
 </tr>

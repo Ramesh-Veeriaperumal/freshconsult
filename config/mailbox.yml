@@ -1,0 +1,11 @@
+defaults: &defaults
+  secret_key: "192527E52B3494ACA8EF454DAF169"
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+slave:
+  <<: *defaults

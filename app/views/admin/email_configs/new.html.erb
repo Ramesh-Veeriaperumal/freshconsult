@@ -2,4 +2,8 @@
 	<%= render :partial => "helpnote_without_tour" %>	
 <% end %>
 
-<%= render :partial => 'new_email_config' %>
+<% if feature?(:mailbox) %> 
+	<%= render :partial => 'new_mailbox_config' %>
+<%else%>	
+	<%= render :partial => 'new_email_config' %>
+<%end%>

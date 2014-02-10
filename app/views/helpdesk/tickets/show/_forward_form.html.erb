@@ -43,7 +43,17 @@
 <ul class="ui-form dont-validate">
   <li class="inline-field field" >
       <%= f.label(:reply_email, t('ticket.from') ) %>
-      <%= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email), {}, {:class => 'select2 responder_field'} %>
+      <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email), {}, {:class => 'select2 responder_field'} %>
+      <select id="reply_email_id" name="reply_email[id]" class="select2 responder_field">
+        <% @reply_emails.each do |re| %>
+          <% if re[1].downcase == @selected_reply_email.downcase %>
+            <% @selected_email_config_id = re[0]%>
+            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1]%></option>
+          <% else %>
+            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1]%></option>
+          <% end %>  
+        <%end%>
+      </select>
   </li>
 
   <li class="inline-field field cc_fields">
@@ -127,6 +137,7 @@
     <%= f.hidden_field :private , :value => true %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] %>
     <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value => @selected_reply_email %>
+    <%= f.hidden_field :email_config_id, :value => @selected_email_config_id %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 
 
@@ -169,6 +180,8 @@
         form = e.target.form,
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
+        email_config_id = jQuery(selectObj).find(":selected").data().emailConfigId;
+        form['helpdesk_note[email_config_id]'].value = email_config_id;
   })
   </script>
 <% end %>
