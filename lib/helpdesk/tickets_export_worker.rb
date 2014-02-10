@@ -1,6 +1,7 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ActionController::UrlWriter
+  DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   def perform
     begin
@@ -104,10 +105,15 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       record = []
       headers.each do |val|
         data = item.send(val)
+        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
         record << escape_html(data)
       end
       @records << record
     end
+  end
+
+  def parse_date(date_time)
+    date_time.strftime("%F %T")
   end
 
   def sql_conditions
