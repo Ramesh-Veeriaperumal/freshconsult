@@ -15,6 +15,7 @@ class Workers::ClearAccountData
 			begin
 				perform_destroy(account)
 			rescue Exception => error
+				Rails.logger.debug "Account deletion Error - #{error}"
 				NewRelic::Agent.notice_error(error)				
 				return update_status(deleted_customer, STATUS[:failed])
 			end

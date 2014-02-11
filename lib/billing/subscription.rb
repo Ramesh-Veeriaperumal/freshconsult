@@ -171,9 +171,8 @@ class Billing::Subscription
     end
 
     def addon_billing_params(subscription, addon)
-      account = subscription.account
       data = { :id => addon.billing_addon_id }
-      data.merge!(:quantity => addon.billing_quantity(account)) if addon.billing_quantity(account)
+      data.merge!(:quantity => addon.billing_quantity(subscription)) if addon.billing_quantity(subscription)
       data
     end
 

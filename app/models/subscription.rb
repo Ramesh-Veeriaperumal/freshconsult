@@ -40,7 +40,7 @@ class Subscription < ActiveRecord::Base
   # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
-  after_commit_on_update :update_social_subscription
+  after_commit_on_update :update_social_subscription, :add_free_freshfone_credit
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -203,6 +203,15 @@ class Subscription < ActiveRecord::Base
     addons.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
   end
 
+  def add_free_freshfone_credit
+    if((@old_subscription.free? or @old_subscription.trial?) and self.active?)
+      if account.freshfone_credit.blank?
+        account.create_freshfone_credit(:available_credit => 5)
+        account.freshfone_payments.create(:status_message => "promotional", 
+                                          :purchased_credit => 5, :status => true)
+      end
+    end
+  end
 
   protected
   

@@ -34,12 +34,12 @@ class Subscription::Addon < ActiveRecord::Base
 		name.tr(' ', '_').downcase.to_sym
 	end
 
-	def billing_quantity(account)
+	def billing_quantity(subscription)
 		case addon_type
 		when ADDON_TYPES[:agent_quantity]
-			account.subscription.agent_limit
+			subscription.agent_limit
 		when ADDON_TYPES[:portal_quantity]
-			account.portals.count
+			subscription.account.portals.count
 		end
 	end
 
