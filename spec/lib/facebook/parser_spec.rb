@@ -23,6 +23,7 @@ describe Facebook::Core::Parser do
     # Social::FacebookPosts.any_instance.stubs(:fetch).returns({})
     # Social::FacebookPage.destroy_all
     Social::FacebookPage.destroy_all
+    FacebookPageMapping.destroy_all
     User.destroy_all
     UserEmail.destroy_all
   end

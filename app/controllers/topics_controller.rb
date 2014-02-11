@@ -4,6 +4,7 @@ class TopicsController < ApplicationController
   skip_before_filter :check_privilege, :only => :show
   before_filter :find_forum_and_topic, :except => :index 
   before_filter :portal_check, :only => :show
+  before_filter :fetch_monitorship, :only => :show
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -218,6 +219,10 @@ class TopicsController < ApplicationController
 
     def scoper
       current_account.forum_categories
+    end
+
+    def fetch_monitorship
+      @monitorship = @topic.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
     end
     
     def set_selected_tab

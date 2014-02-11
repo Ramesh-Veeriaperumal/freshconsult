@@ -179,15 +179,15 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+    to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email] }).sort
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
 
   #Helpdesk hack starts here
   def reply_personalize_emails(user_name)
-    to_ret = (email_configs.collect { |ec| ec.friendly_email_personalize(user_name) }).sort
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+    to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email_personalize(user_name)] }).sort
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
   
@@ -228,6 +228,14 @@ class Account < ActiveRecord::Base
       features.send(s_plan).destroy
       p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
+  end
+
+  def add_features(feature_list)
+    features.build(*feature_list)
+  end
+
+  def remove_feature(feature)
+    features.send(feature).destroy
   end
   
   def ticket_type_values

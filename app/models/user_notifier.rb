@@ -1,10 +1,15 @@
 class UserNotifier < ActionMailer::Base
-  def user_activation(user, params)
+  
+  def user_activation(user, params, reply_email_config)
+    self.class.set_mailbox reply_email_config.smtp_mailbox
+
     subject       params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])
   end
   
-  def password_reset_instructions(user, params)
+  def password_reset_instructions(user, params, reply_email_config)
+    self.class.set_mailbox reply_email_config.smtp_mailbox
+    
     subject       params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])
   end

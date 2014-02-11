@@ -141,7 +141,7 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def toggle_monitor
-    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(current_user.id, params[:id])
+    @monitorship = @topic.monitorships.find_or_initialize_by_user_id(current_user.id)
     if @monitorship.new_record?
       @monitorship.save
     else
@@ -153,7 +153,7 @@ class Support::Discussions::TopicsController < SupportController
 
   #method to fetch the monitored status of the topic given the user_id
   def check_monitor
-    @monitorship = Monitorship.find_by_user_id_and_topic_id(params[:user_id], params[:id]) 
+    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic") 
     @monitorship = [] if @monitorship.nil? || !@monitorship.active
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
@@ -163,7 +163,7 @@ class Support::Discussions::TopicsController < SupportController
 
   #method to set the monitored status of the topic given the user_id and monitor status
   def monitor
-    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(params[:user_id], params[:id])
+    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic") 
     @monitorship.update_attribute(:active,params[:status]) unless params[:status].blank?
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }

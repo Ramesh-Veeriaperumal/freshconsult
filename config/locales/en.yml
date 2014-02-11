@@ -1083,7 +1083,7 @@ en:
     new: New Forum
     edit: Edit Forum
     title: Forums
-    start_topic: Start a Topic
+    start_topic: Start Topic
     forum_created: The forum has been created.
     visibility:
       anyone: Anyone
@@ -1357,7 +1357,7 @@ en:
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
-  suspended_plan_info: Your account has been suspended. Please select a plan to continue using Freshdesk
+  suspended_plan_info: Your account has been suspended.
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
@@ -1618,6 +1618,7 @@ en:
 
   forum_key: Forum
   topics:
+    edit_title: Edit
     show:
       mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
@@ -1796,9 +1797,9 @@ en:
     name: Topic Name
     new: Post a new topic
     edit: Edit topic
-    open: Re-open this Discussion
+    open: Re-open this Topic
     edit: Edit Topic
-    close: Close this Discussion
+    close: Close Topic
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -1847,6 +1848,7 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    edit_title: Edit
     topic_vote:
       unlike: Unlike
       ideas:
@@ -2666,16 +2668,18 @@ en:
       info19: You can configure your Freshdesk account to use a support email in your own domain,
                       like support@mycompany.com by forwarding emails from this address to
                       <a class='break-all' target="_blank" href="https://{{solution_url}}">
-                        {{solution_url}}</a>.
-                        To create a new support email box, click “Edit” under global email
-                      settings.
+                        {{solution_url}}</a>. 
+      edit_info: To create a new support email box, click “Edit” under global email settings.
       info20: Using Multiple Mailboxes
       info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com,
                       sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
                        automatically assign emails from each mailbox to a specific group.
+      info22: Custom Mailboxes
+      info23: If you are on the estate plan you can choose to send and receive support emails from your own email servers. You will need to provide a username and password for authentication of the mailbox.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
+    solution_link: How to convert your emails into Freshdesk tickets?
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
@@ -2706,6 +2710,8 @@ en:
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
+    primary_email_delete_alert: "Can't delete primary email"
+    using_custom_mailbox: "Using custom mail server"
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -2983,6 +2989,11 @@ en:
   tkt_assigned_to_agent: Ticket Assigned to Agent
   is: Is
   helpdesk_title: Helpdesk
+  monitorships:
+    monitor_flash: You are now following this %{type}
+    non_monitor_flash: You have stopped following this %{type}
+    follow_title: Follow
+    unfollow_title: Unfollow
   forums:
     search_all:
       placeholder: Search All Topics
@@ -3365,8 +3376,8 @@ en:
           stop_emails: "Stop watching this ticket"
       customview:
         new:
-          give_a_name: Give a name for this view
-          visible_to: This view is visible to
+          view_name: View name
+          view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
@@ -3437,7 +3448,6 @@ en:
         on_hold: Tickets On Hold
         new: New Tickets
         my_resolved: My Resolved Tickets
-        new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
         all: All Tickets
@@ -3530,6 +3540,12 @@ en:
     customers_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
+    copy_of: Copy of
+    save_tooltip: Save
+    saveas_tooltip: Save as
+    cancel_tooltip: Discard
+    edit_tooltip: Edit
+    delete_tooltip: Delete
     sort_fields:
       due_by: Due by time
       date_created: Date Created
@@ -4725,7 +4741,7 @@ en:
       unblock_number: "Unblock"
       block_number_title: "Block number"
     ticket:
-      recording: "Freshfone Recording"
+      recording: "Play message"
       ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
       voicemail_ticket_desc: "Voicemail from %{customer} from %{location}" 
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -4957,6 +4973,7 @@ en:
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
     select_ticket: "Select Ticket"
     do_not_convert_tkt: "Do not convert to ticket"
+    do_not_convert_tkt_info: "Your transcript will still be available in Chat Archives"
     go_back: "Go Back"
     id: "Id"
     subject: "Subject"
@@ -5088,3 +5105,38 @@ en:
       expand: "Expand conversations"
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
+  mailbox:
+    mail_server: "Mail Server:"
+    use_default: "Default (Freshdesk)"
+    use_your_own: "Use your own mail server"
+    email_system: "Email System:"
+    incoming_mail_settings: "Incoming Mail Settings"
+    incoming_mail_server: "Incoming Mail server:"
+    imap_server_name: "IMAP Server Name"
+    imap_port: "Port"
+    use_ssl: "Use SSL"
+    use_ssl_tls: "Use SSL/TLS"
+    imap_server_info: "IMAP server name to fetch the emails"
+    smtp_server_info: "SMTP server name to send emails"
+    delete_from_server: "Delete emails from server after fetching?"
+    authentication: "Authentication:"
+    user_name: "User Name"
+    password: "Password"
+    change_password: "Change Password"
+    outgoing_mail_settings: "Outgoing Mail Settings"
+    outgoing_mail_server: "Outgoing Mail Server:"
+    smtp_server_name: "SMTP Server Name"
+    smtp_port: "Port"
+    idle_not_supported: "Specified IMAP mail server is not supported. Please use a different one"
+    imap_connection_error: "Could not connect to the imap server. Please verify server name, port and credentials"
+    imap_error: "Error while verifying the mailbox imap details. Please verify server name, port and credentials"
+    imap_user_name_tooltip: "Incoming email address is your support email"
+    authetication_success: "Sucessfully authenticated"
+    smtp_timed_out: "Timed out while authenticating the smtp server. Please verify server name, port and credentials"
+    smtp_socket_error: "Could not connect to the smtp server. Please verify server name, port and credentials"
+    invalid_credentials: "Error while authenticating the smtp server. Please make sure your user name and password are correct"
+    smtp_error: "Error while verifying the mailbox smtp details - %{error}"
+    verifying_mailbox_input: "Verifying..."
+    smtp_alert_gmail: 'Gmail limits the number of emails sent per day. 200 for trial users and 500 for paid users.<a target="_blank" href="https://support.google.com/a/answer/166852?hl=en">Learn more</a>'
+    smtp_alert_aol: "AOL allows no more than 100 recipients per message or 500 recipients per connection."
+    smtp_alert_other: "Generally the number of outgoing emails per day have a specific limit. Please contact your email provider for more info."

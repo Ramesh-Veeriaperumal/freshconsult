@@ -8,12 +8,6 @@ class Support::SolutionsController < SupportController
 	      	@page_canonical = support_solutions_url
 	      	set_portal_page :solution_home 
 	      }
-	      format.xml {
-	      	load_customer_categories
-	       render :xml => @categories.to_xml(:include=>:public_folders)}
-	      format.json { 
-	      	load_customer_categories
-	      	render :json => @categories.to_json(:include=>:public_folders)}
 	    end
 	end
 
@@ -31,8 +25,4 @@ class Support::SolutionsController < SupportController
 			(raise ActiveRecord::RecordNotFound and return) if @category.nil?
 		end
 		
-		def load_customer_categories
-			@categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
-		end
-
 end

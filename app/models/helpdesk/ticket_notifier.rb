@@ -72,6 +72,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
    
   def email_notification(params)
+    self.class.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
+    
     subject       params[:subject]
     recipients    params[:receips]
     from          params[:ticket].friendly_reply_email
@@ -109,6 +111,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def reply(ticket, note , options={})
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
 
     options = {} unless options.is_a?(Hash) 
     
@@ -152,6 +156,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def forward(ticket, note, options={})
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
+    
     subject       fwd_formatted_subject(ticket)
     recipients    note.to_emails
     cc            note.cc_emails
@@ -186,6 +193,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
    def send_cc_email(ticket,options={})
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       formatted_subject(ticket)
     recipients    options[:cc_emails] unless options[:cc_emails].blank?
     from          ticket.friendly_reply_email
@@ -220,6 +229,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def notify_comment(ticket, note , reply_email, options={})
     inline_attachments = []
 
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
+
     subject       formatted_subject(ticket)
     recipients    options[:notify_emails]     
     from          reply_email
@@ -242,6 +254,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
@@ -264,6 +278,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def internal_email(ticket, receips, content, sub=nil)
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email

@@ -44,7 +44,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @type = params[:type]
     url_check = (notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE and params[:type] == "reply_template") ? 
                                         "requester_template" : params[:type]
-    if @email_notification.send(url_check).blank?
+    if @email_notification.send(url_check).nil?
       flash[:error] = "This notification does not exist"
       redirect_to admin_email_notifications_path
     end

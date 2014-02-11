@@ -1,11 +1,16 @@
 class Monitorship < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :topic
+
   belongs_to_account
-  validates_uniqueness_of :user_id, :scope => :topic_id
+  belongs_to :monitorable, :polymorphic => true
+  belongs_to :user
+  validates_presence_of :monitorable_type, :monitorable_id
+  validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
 
   named_scope :active_monitors, :conditions => { :active => true }
+
+  ALLOWED_TYPES = [:forum, :topic]
+  ACTIONS = [:follow, :unfollow]
 
   before_create :set_account_id
 

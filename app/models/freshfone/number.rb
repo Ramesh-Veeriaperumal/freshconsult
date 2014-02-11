@@ -113,17 +113,25 @@ class Freshfone::Number < ActiveRecord::Base
 
 	def renew
 		begin
+			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
 			if account.freshfone_credit.renew_number(rate, id)
-				update_attributes(:next_renewal_at => 
-								self.next_renewal_at.advance(:months => 1))
+				update_attributes(:next_renewal_at => next_renewal)
 			else
-				update_attributes(:state => STATE[:expired],
-					:next_renewal_at => self.next_renewal_at.advance(:months => 1))
-				FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+				handle_number_renewal_failure(next_renewal)
 			end
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
 			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+		end
+	end
+
+	def handle_number_renewal_failure(next_renewal)
+		if account.subscription.active?
+			update_attributes(:state => STATE[:expired], 
+												:next_renewal_at => next_renewal)
+			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+		else
+			update_attributes(:deleted => true)
 		end
 	end
 

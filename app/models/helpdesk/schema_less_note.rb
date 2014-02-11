@@ -6,6 +6,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	alias_attribute :category, :int_nc01
 	alias_attribute :response_time_in_seconds, :int_nc02
 	alias_attribute :response_time_by_bhrs, :int_nc03
+	alias_attribute :email_config_id, :long_nc01
 
 	serialize :to_emails
 	serialize :cc_emails

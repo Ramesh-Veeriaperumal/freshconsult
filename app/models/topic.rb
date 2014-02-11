@@ -14,7 +14,7 @@ class Topic < ActiveRecord::Base
   before_create :set_locked
   before_save :set_sticky
 
-  has_many :monitorships,:dependent => :destroy
+  has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
   has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all

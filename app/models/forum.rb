@@ -5,6 +5,8 @@ class Forum < ActiveRecord::Base
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
+
+  has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
   
   belongs_to_account
 

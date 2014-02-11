@@ -1,6 +1,11 @@
 .view_filters{
 	display:inline-block;
-
+	span.unsaved_star {
+		vertical-align: baseline;
+		font-size: 18px;
+		font-weight: bold;
+		line-height: 0;
+	}
 	.link-item.active, a.link-item:hover{
 		margin:0px -5px;
 		padding-left:13px;
@@ -26,6 +31,7 @@
 		text-decoration:none;
 		width: auto;
 		position:relative;
+		padding-right: 15px;
 		.nav-trigger {
 			font-size: 16px;
 			color:$default_txt_color;
@@ -36,24 +42,44 @@
 			}
 
 		}
+	}
+	&:hover,&.disable-hover{
+		#view_manage_links {
+			visibility: visible;
+			@include opacity(1);
+		}
 	}   
 }
+
+.ticket-view-delete,.ticket-view-cancel,.ticket-view-edit,.ticket-view-save,.ticket-view-saveas{
+	display: inline-block;
+	vertical-align: bottom;
+	width: 36px;
+	height: 16px;
+	opacity: 0.3;
+}
+
 .leftFilter {
 	min-height: 20px;
 	>.lead{
 		margin-bottom:10px;
 	}
-	#save_filter, #view_manage_links {
-		visibility: hidden;
-	}
 	#view_manage_links {
+		visibility: hidden;
 		display: inline-block;
 		margin-left:5px;
-	}
-
-	&:hover{
-		#save_filter, #view_manage_links {
-			visibility: visible;
+		@include transition(opacity 0.28s linear);
+		@include opacity(0);
+		a {
+			&.left-border {
+				border-left: 1px solid #e1e1e1;
+			}
+			&.right-border {
+				border-right: 1px solid #e1e1e1;
+			}
+			>*:hover {
+				opacity: 1;
+			}
 		}
 	}
 }
@@ -615,13 +641,6 @@
 	   	.checkboxSet{
 	   		margin-bottom:10px;
 	   	}
-
-	   	#save_filter{
-			position:relative;
-			top:4px;
-			left:2px;
-			display:none;
-      	}
 	   	.ff_item{
 	   		@include pie-clearfix;
 			margin:0 6px 0 0;

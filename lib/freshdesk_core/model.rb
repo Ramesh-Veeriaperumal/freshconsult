@@ -108,7 +108,8 @@ module FreshdeskCore::Model
                         "whitelisted_ips",
                         "helpdesk_ticket_fields",
                         "helpdesk_nested_ticket_fields", 
-                        "helpdesk_shared_attachments"
+                        "helpdesk_shared_attachments",
+                        "subscription_addon_mappings"
                     ]
 
   STATUS = {
@@ -120,8 +121,10 @@ module FreshdeskCore::Model
 
   def perform_destroy(account)
     delete_gnip_twitter_rules(account)
+    delete_facebook_subscription(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
+    remove_card_info(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
@@ -133,6 +136,12 @@ module FreshdeskCore::Model
     def delete_gnip_twitter_rules(account)
       account.twitter_handles.each do |twt_handle|
         twt_handle.cleanup
+      end
+    end
+
+    def delete_facebook_subscription(account)
+      account.facebook_pages.each do |fb_page|
+        fb_page.cleanup
       end
     end
     
@@ -169,6 +178,12 @@ module FreshdeskCore::Model
     def delete_info_from_table(account_id)
       delete_query = "DELETE FROM helpdesk_attachments WHERE account_id = #{account_id}" 
       execute_sql(delete_query) unless account_id.blank?
+    end
+
+    def remove_card_info(account)
+      if account.subscription.card_number.present?
+        Billing::Subscription.new.remove_credit_card(account.id)
+      end
     end
 
 

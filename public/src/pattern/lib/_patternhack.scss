@@ -277,6 +277,14 @@ ul.inline > li, ol.inline > li {
 .modal-header h3.title{
   padding:0;
 }
+
+.tooltip.disabled{ 
+  pointer-events:auto;
+  cursor: not-allowed;
+ }
+ a,button,label{
+   &.tooltip.disabled{ pointer-events: none; }
+ }
 //---------------------------------------------------------------------------------------------------
 //                                      Portal Custom pills styles
 //---------------------------------------------------------------------------------------------------
@@ -301,6 +309,10 @@ ul.inline > li, ol.inline > li {
 //                                        Plugin style End
 //---------------------------------------------------------------------------------------------------
 
+// ATTACHMENT DROP IN EMAIL - CSS 
+ 
 .attach-error{
-  @extend .alert;
+ @extend .alert;
 }
+ 
+// ATTACHMENT DROP IN EMAIL - CSS - END
