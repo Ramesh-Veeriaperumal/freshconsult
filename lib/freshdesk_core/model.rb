@@ -108,8 +108,7 @@ module FreshdeskCore::Model
                         "whitelisted_ips",
                         "helpdesk_ticket_fields",
                         "helpdesk_nested_ticket_fields", 
-                        "helpdesk_shared_attachments",
-                        "subscription_addon_mappings"
+                        "helpdesk_shared_attachments"
                     ]
 
   STATUS = {
