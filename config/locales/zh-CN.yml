@@ -1682,7 +1682,7 @@ zh-CN:
         update_jira_status: 同时更新JIRA状态。
         username: 用户名
         widget_title: 小工具标题
-      helptext: "<h4> JIRA 整合帮助 </h4><p><br/> 要和 Freshdesk 整合 JIRA, 输入您的 JIRA 管理员用户名称和密码.  整合帮助支援在需求上和提及的变数, 从 JIRA 4.2 一直到最新版本 - JIRA 5. <br/><br/>   要在 Freshdesk 创建一个议题或链接到现有的议题, 导航到个案页面, 再点击 <img src='/images/ticket-icon/jira.png'/><br/><br/>  要在 JIRA 检阅链接到 Freshdesk 个案的细节, 相反的, 要在 Freshdesk 检阅 JIRA 议题细节, JIRA 管理员建议创建一个自由文字自义栏位给姓名 &quot; Freshdesk 个案&quot; 如以下叙述的. <br/><br/> 登录到您 JIRA 的帐户, 点击 <b> 管理 </b>, 导航到 <b> 议题 </b> -> <b> 栏位 </b> 再点击 <b> 添加自义栏位 </b>. 在 <b> 创键自义栏位 </b> 画面, 选择 <b> 自由文字栏位 </b> 再点击 <b> 下一步 </b>. 在姓名栏位输入 <b> &quot;Freshdesk 个案&quot;</b> 再点击完成.  在 <b> 相关栏位到画面</b> 页面, 勾选所有选择框再点击'更新'. <br/><br/>"
+      helptext: "<h4> JIRA 整合帮助 </h4><p><br/> 要和 Freshdesk 整合 JIRA, 输入您的 JIRA 管理员用户名称和密码.  整合帮助支援在需求上和提及的变数, 从 JIRA 4.2 一直到最新版本 - JIRA 5. <br/><br/>   要在 Freshdesk 创建一个议题或链接到现有的议题, 导航到个案页面, 再点击 <i class='jira-icon'></i><br/><br/>  要在 JIRA 检阅链接到 Freshdesk 个案的细节, 相反的, 要在 Freshdesk 检阅 JIRA 议题细节, JIRA 管理员建议创建一个自由文字自义栏位给姓名 &quot; Freshdesk 个案&quot; 如以下叙述的. <br/><br/> 登录到您 JIRA 的帐户, 点击 <b> 管理 </b>, 导航到 <b> 议题 </b> -> <b> 栏位 </b> 再点击 <b> 添加自义栏位 </b>. 在 <b> 创键自义栏位 </b> 画面, 选择 <b> 自由文字栏位 </b> 再点击 <b> 下一步 </b>. 在姓名栏位输入 <b> &quot;Freshdesk 个案&quot;</b> 再点击完成.  在 <b> 相关栏位到画面</b> 页面, 勾选所有选择框再点击'更新'. <br/><br/>"
       label: "Alassian JIRA"
     jira_settings: 
       add_comment_in_jira: 在JIRA上增加评论。

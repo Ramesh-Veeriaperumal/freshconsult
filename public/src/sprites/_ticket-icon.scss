@@ -39,6 +39,13 @@
 
 .jira img{ @include ticket-icon-sprite(jira); }
 .jira_active img{ @include ticket-icon-sprite(jira_active); } 
+.jira-icon{
+	@include ticket-icon-sprite(jira);
+	width: 25px;
+	height: 23px;
+	display:inline-block;
+	vertical-align: middle;
+}
 
 .conversation-sprite{	
 	.email-reply{ @include ticket-icon-sprite(email-reply); }
