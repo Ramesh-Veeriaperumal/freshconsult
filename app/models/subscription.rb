@@ -204,7 +204,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def add_free_freshfone_credit
-    if((@old_subscription.free? or @old_subscription.trial?) and self.active?)
+    if((@old_subscription.free? or @old_subscription.trial?) and self.paying_account?)
       if account.freshfone_credit.blank?
         account.create_freshfone_credit(:available_credit => 5)
         account.freshfone_payments.create(:status_message => "promotional", 
@@ -337,6 +337,10 @@ class Subscription < ActiveRecord::Base
     
     def set_free_plan_agnt_limit
       self.agent_limit = AppConfig['free_plan_agts'] if free_plan?
+    end
+
+    def paying_account?
+      state == 'active' and amount > 0
     end
    
 
