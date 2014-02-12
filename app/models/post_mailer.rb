@@ -18,7 +18,7 @@ class PostMailer < ActionMailer::Base
       end
       alt.part "text/html" do |html|
         html.body   Premailer.new(render_message("mailer/post/monitor_email.text.html.erb",:post => post, 
-                                    :body_html => generate_body_html( post.body_html, inline_attachments, post.account ), :user => user), with_html_string: true).to_inline_css
+                                    :body_html => generate_body_html( post.body_html, inline_attachments, post.account ), :user => user), with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
       end
     end
 

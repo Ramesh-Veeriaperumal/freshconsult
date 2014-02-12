@@ -4,7 +4,7 @@
 </style>
 <div class="body">
 	<div class="mail_content">
-		<b>New Reply</b> - <%= @post.topic.posts_count %> replies in topic 
+		<b>New Reply</b> - <%= @post.topic.posts_count-1 %> replies in topic 
 		<%= link_to @post.topic.title, 
 					category_forum_topic_url(@post.topic.forum.forum_category.id, @post.topic.forum.id, @post.topic.id, :host => @user.account.host)%>
 	</div>
