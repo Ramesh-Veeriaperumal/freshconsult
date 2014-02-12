@@ -953,11 +953,9 @@ function getFromLocalStorage(key_name) {
 
 function highlight_code() {
     jQuery('[rel="highlighter"]').each(function(i,element){
-        var brush, attr = jQuery(element).data('codeBrush');
+        var brush, attr = jQuery(element).attr('code-brush');
         if(attr == 'html'){
             brush = 'js ; html-script: true';
-        } else if (attr == 'xml'){
-            brush = attr +' ; html-script: true';
         } else {
             brush = attr;
         }

@@ -368,7 +368,7 @@ var Redactor = function(element, options)
 					'</span>' +
 				'</div>',
 		modal_codeEditor: String() + 
-			'<form id="redactorInsertCodeForm" class="redactorInsertCode">' +
+			'<form id="redactorInsertCodeForm" class="redactorInsertCode" data-overlay-event=false >' +
 				'<label for="redactor_insert_text_area">' + RLANG.codeEditor_html + '</label>' +
 				'<div class="redactorInsertCode_dropdown pull-right">' +
 				'<span>'+ RLANG.label_lang + '</span>'  + RLANG.lang_selector + 
@@ -379,7 +379,7 @@ var Redactor = function(element, options)
 				'<a href="javascript:void(null);" class="btn" id="redactor_code_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
 				'<span class="redactor_btns_box">' +
 					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>  ' +
-					'<input type="button" class="btn-primary" id="redactor_insert_code_btn" value="' + RLANG.save + '" />' +
+					'<input type="button" class="btn btn-primary" id="redactor_insert_code_btn" value="' + RLANG.save + '" />' +
 				'</span>' + 
 			'</div>',
 		toolbar: {
@@ -1505,8 +1505,8 @@ Redactor.prototype = {
             {
             	document.execCommand(cmd, false, param);    
             	if(cmd == "redo"){  
-            	   	if($('code').length > 0){ 
-            			$('code').attr("contenteditable",false);
+            	   	if($('pre[rel="highlighter"]').length > 0){ 
+            			$('pre[rel="highlighter"]').attr("contenteditable",false);
             		}
             	}
             }
@@ -3052,10 +3052,17 @@ Redactor.prototype = {
 			{
 				$('#redactor_insert_code_btn').click($.proxy(this.insertCode, this));
 
-				if($(ev.target)[0].tagName == 'CODE'){
+				if($(ev.target)[0].tagName == 'PRE'){
+					$("#redactorInsertCode_selector").find("option").each(function (i,e) {
+
+					    if ($(this).val() == $(ev.target).attr('code-brush')) {
+					        $(this).prop("selected", "selected");
+					    }
+					});
+
 					$('#redactor_code_delete_btn').removeClass('hide');
 					$('#redactor_code_delete_btn').click($.proxy(function() { this.deleteElement($(ev.target)); }, this));
-				}else{
+				} else {
 					$('#redactor_code_delete_btn').addClass('hide');
 				}
 
@@ -3065,14 +3072,8 @@ Redactor.prototype = {
 					} else {
 						$('#redactor_insert_text_area').focus()
 					}
-					
 				}, 200);
-
-				$("#redactorInsertCode_selector").find("option").each(function (i,e) {
-				    if ($(this).val() == $(ev.target).data('codeBrush')) {
-				        $(this).prop("selected", "selected");
-				    }
-				});
+					
 			}, this)
 
 		);
@@ -3081,42 +3082,52 @@ Redactor.prototype = {
 	{
 		this.restoreSelection();
 		var data = $('#redactor_insert_text_area').val();
+		var lines = data.split(/\r|\r\n|\n/);
+		var codeClass = '';
+
+		if(lines.length > 10){
+			codeClass = 'code-large';	
+		}	
 
 		if ( $.browser.msie && (parseInt($.browser.version, 10) < 9 ||  parseInt($.browser.version, 10) > 10) ) {
 			var selectedTarget = $(this.selectedEvent.target);
 
-			if(selectedTarget.is('code')){ 
-				selectedTarget.text(data);
-			} else {
-				this.appendCodeTag(data);
-			}	
+			if(selectedTarget.is('pre')){ 
+				selectedTarget.attr('code-brush',$('#redactorInsertCode_selector').val())
+				.text(data);
+				selectedTarget.toggleClass('code-large',(codeClass != '' && codeClass != null));
 
+			} else {
+				this.appendCodeTag(data,codeClass);
+			}	
 		} else { 
 			var domElement = $(this.getSelection().anchorNode).parent();
 
-			if(domElement.is('code')){ 
+			if(domElement.is('pre')){ 
 		        var temp_range = document.createRange();
 			 	temp_range.selectNode(domElement[0]);	
 			 	this.getSelection().removeAllRanges();
 			 	this.getSelection().addRange(temp_range);
-				this.appendCodeTag(data);
+				this.appendCodeTag(data,codeClass);
 			} else {
-				this.appendCodeTag(data);
+				this.appendCodeTag(data,codeClass);
 			}
-
 		}
+
 		this.observeCode();
 		this.modalClose();
 	},
 	observeCode: function(){
-		this.$editor.find('code').each($.proxy(function(i,el)
+		this.$editor.find('pre').each($.proxy(function(i,el)
 		{
 			$(el).attr('contenteditable',false);
 			
 			$(el).off('click');
 			$(el).on('click',$.proxy(function(ev){
 				this.showCodeEditor(ev); 
-				$('#redactor_insert_text_area').val($(el).text());
+				$('#redactor_insert_text_area').val($(el).html()
+												.replace(/&lt;/g,'<')
+												.replace(/&gt;/g,'>'));
 			},this));
 
 		}, this));
@@ -3132,16 +3143,14 @@ Redactor.prototype = {
 		selectOption += '</select>'; 
 		RLANG['lang_selector'] = selectOption;
 	},
-	appendCodeTag: function(data){
-		var lines = data.split(/\r|\r\n|\n/);
-		var codeClass = '';
-		var tmp_div = $('<div />')
+	appendCodeTag: function(data,codeClass){
+		var tmp_div = $('<div />') 
 		tmp_div.append($('<p />').html('&nbsp;'))
-
-		if(lines.length > 10){
-			codeClass = 'largeCode';
-		} 
-		tmp_div.append($('<code />').attr('rel', 'highlighter').attr('data-code-brush',$('#redactorInsertCode_selector').val()).addClass(codeClass).text(data));
+		tmp_div.append($('<pre />')
+			.attr('rel', 'highlighter')
+			.attr('code-brush',$('#redactorInsertCode_selector').val())
+			.addClass(codeClass)
+			.text(data));
 		tmp_div.append($('<p />').html('&nbsp;'));
 
 		this.execCommand('inserthtml', tmp_div.html());
@@ -3381,6 +3390,7 @@ Redactor.prototype = {
 						});
 					}
 				}
+
 				// ajax upload
 				this.uploadInit('redactor_file', { auto: true, url: this.opts.imageUpload, success: $.proxy(this.imageUploadCallback, this)  });
 			}
@@ -3734,12 +3744,6 @@ Redactor.prototype = {
 			$('body').prepend(this.overlay);
 		}
 
-		if (this.opts.overlay)
-		{
-			$('#redactor_modal_overlay').show();
-			$('#redactor_modal_overlay').click($.proxy(this.modalClose, this));
-		}
-
 		if ($('#redactor_modal').size() === 0)
 		{
 			this.modal = $('<div id="redactor_modal" style="display: none;"><div id="redactor_modal_close">&times;</div><div id="redactor_modal_header"></div><div id="redactor_modal_inner"></div></div>');
@@ -3755,6 +3759,14 @@ Redactor.prototype = {
 
 		$('#redactor_modal_inner').html(this.opts['modal_' + url]);
 		$('#redactor_modal_header').html(title);
+
+		if (this.opts.overlay)
+		{
+			$('#redactor_modal_overlay').show();
+			if($('#redactor_modal form').data('overlayEvent') != false){
+				$('#redactor_modal_overlay').click($.proxy(this.modalClose, this));
+			}
+		}
 		
 		// tabs
 		if ($('#redactor_tabs').size() !== 0)

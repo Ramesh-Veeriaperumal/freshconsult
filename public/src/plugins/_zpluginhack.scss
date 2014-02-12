@@ -35,15 +35,13 @@
 
 // Redactor Hack
 //-----------------
-.redactor_editor code{
+.redactor_editor pre{
 	background-color: #f0f0f0;
 	padding: 10px 20px 2px;
 	display: block;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	font-family:  monospace;
+	font-family: monospace;
 
-	&.largeCode {
+	&.code-large {
 	max-height: 175px;
 	overflow: hidden;
 	position: relative;
