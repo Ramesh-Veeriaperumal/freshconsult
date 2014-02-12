@@ -335,6 +335,7 @@ javascripts:
     - public/javascripts/portal/jail.js
     - public/javascripts/moment/*
     - public/javascripts/portal/portal.js
+    - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
 

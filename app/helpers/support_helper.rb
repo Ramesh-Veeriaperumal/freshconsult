@@ -528,7 +528,7 @@ HTML
 
 	    case dom_type
 	      when "requester" then
-	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
+	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "text", "number" then
@@ -550,12 +550,12 @@ HTML
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
 	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
-                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
+                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value.to_s.to_bool }) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
 	      		_output << %( #{ ff.text_area(field_name, 
-	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      			{ :class => "element_class" + " span12" + " required_redactor", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
@@ -743,6 +743,19 @@ HTML
 	# A fallback for portal... as attachment & screenshot is being used in both feedback widget & portal 
 	def widget_option type
 		true
+	end
+
+	def helpdesk_ticket_values(field_name,params = {})
+		unless params.blank?
+			params = params[:helpdesk_ticket]
+			if params[:ticket_body_attributes][field_name]
+				params[:ticket_body_attributes][field_name]
+			elsif params[:custom_field][field_name]
+				params[:custom_field][field_name]
+			else
+				params[field_name] 
+			end
+	    end
 	end
 
 	private

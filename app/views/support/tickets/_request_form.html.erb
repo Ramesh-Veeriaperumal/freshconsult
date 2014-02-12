@@ -6,7 +6,7 @@
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
-      <%= ticket_field_container f,:helpdesk_ticket, field %>
+      <%= ticket_field_container f,:helpdesk_ticket, field, helpdesk_ticket_values(field.field_name,@params) %>
     </div>
   <% end %>
 
