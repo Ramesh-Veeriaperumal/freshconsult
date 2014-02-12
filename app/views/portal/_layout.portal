@@ -16,7 +16,7 @@
 		</section>
 	{% endif %}
 
-	<!-- Notifocation Messages for the page  -->
+	<!-- Notification Messages -->
 	{{ page_message }}
 
 	<div class="c-wrapper">		
