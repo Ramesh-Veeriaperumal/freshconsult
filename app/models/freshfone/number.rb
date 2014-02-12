@@ -107,7 +107,7 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 
 	def self.find_due(renew_at = Time.now)
-		find(:all, :conditions => { :state => STATE[:active], 
+		find(:all, :conditions => { :state => STATE[:active], :deleted => false,
 											 :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
 	end
 

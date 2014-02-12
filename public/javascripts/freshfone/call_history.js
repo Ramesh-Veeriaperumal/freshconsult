@@ -104,7 +104,7 @@ var setLocationIfUnknown,
 	});
 
 	$filterSortForm.change(function () {
-		$callHistoryBody.html("<div class='loading-box'></div>");
+		$callHistoryBody.html("<div class='loading-box sloading loading-tiny'></div>");
 		$.ajax({
 			url: freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH,
 			dataType: "script",
@@ -118,7 +118,7 @@ var setLocationIfUnknown,
 		if ($(this).data('fetch') === undefined) {
 			$(this).data('fetch', true);
 			parent
-				.after("<tr rel='loadingtr'><td colspan='8'><div class='loading-box'></div></td></tr>")
+				.after("<tr rel='loadingtr'><td colspan='8'><div class='loading-box sloading loading-tiny'></div></td></tr>")
 				.addClass('transfer_call');
 			$.ajax({
 				url: freshfone.CALL_HISTORY_CHILDREN_PATH,
