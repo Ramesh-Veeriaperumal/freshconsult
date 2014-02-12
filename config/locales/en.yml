@@ -802,7 +802,7 @@ en:
         enabled: Enabled
         disabled: Disabled
         enable_saml: "SAML SSO"
-        enable_saml_info: "SAML is a standard for identity management and SSO for typically used by large Enterprises"
+        enable_saml_info: "SAML is an XML standard used for communicating identities between two web applications. You can use it to let large teams access your support portal easily using Single Sign On."
         saml_login_url: "SAML Login URL"
         saml_login_url_info: "Freshdesk will redirect users to this URL to login. You can get this from your SAML Identity Provider."
         saml_logout_url: "Logout URL"
