@@ -123,6 +123,7 @@ module FreshdeskCore::Model
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
+    remove_addon_mapping(account)
     remove_card_info(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
     
@@ -183,6 +184,10 @@ module FreshdeskCore::Model
       if account.subscription.card_number.present?
         Billing::Subscription.new.remove_credit_card(account.id)
       end
+    end
+
+    def remove_addon_mapping(account)
+      Subscription::AddonMapping.destroy_all(:account_id => account.id)
     end
 
 
