@@ -19,6 +19,8 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :threeday, I18n.t('threeday'),     259200 ]
   ]
 
+  ONE_DAY_IN_SECONDS = 86400
+
   RESPONSETIME_OPTIONS = RESPONSETIME.map { |i| [i[1], i[2]] }
   RESPONSETIME_NAMES_BY_KEY = Hash[*RESPONSETIME.map { |i| [i[2], i[1]] }.flatten]
   RESPONSETIME_KEYS_BY_TOKEN = Hash[*RESPONSETIME.map { |i| [i[0], i[2]] }.flatten]
@@ -114,9 +116,10 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   private
 
     def business_time(sla_time, created_time)
-      fact = sla_time.div(86400)
-      if (fact > 0)
-         fact.business_days.after(created_time)
+      fact = sla_time.div(ONE_DAY_IN_SECONDS)
+      
+      if sla_time.modulo(ONE_DAY_IN_SECONDS).zero?
+        fact.business_days.after(created_time)
       else
          sla_time.div(60).business_minute.after(created_time)
       end
