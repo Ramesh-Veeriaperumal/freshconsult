@@ -18,7 +18,8 @@ module Reports::TimesheetReport
     {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, 
                                  "Product"=>:product_name , "Group"=>:group_name , "Note"=>:note,
                                  "Customer" => :customer_name ,"Billable/Non-Billable" => :billable_type,
-                                 "Priority"=>:priority_name, "Status"=>:status_name}
+                                 "Priority"=>:priority_name, "Status"=>:status_name,
+                                  "Created at" => :created_at}
   end
   
   def list_view_items
