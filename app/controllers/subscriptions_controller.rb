@@ -21,6 +21,7 @@ class SubscriptionsController < ApplicationController
 
   CARD_UPDATE_REQUEST_LIMIT = 5
   NO_PRORATION_PERIOD_CYCLES = [ 1 ]
+  ACTIVE = "active"
 
 
   def calculate_amount    
@@ -48,6 +49,7 @@ class SubscriptionsController < ApplicationController
 
   def billing
     if request.post? and add_card_to_billing
+      scoper.state = ACTIVE
       if activate_subscription
         flash[:notice] = t('billing_info_update')
         flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
@@ -152,7 +154,6 @@ class SubscriptionsController < ApplicationController
       begin
         result = billing_subscription.activate_subscription(scoper)
         scoper.set_next_renewal_at(result.subscription)
-        scoper.state = "active"
         scoper.save!
       rescue Exception => e
         handle_error(e, t('error_in_update'))
