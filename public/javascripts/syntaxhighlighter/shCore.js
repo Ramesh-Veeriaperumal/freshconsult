@@ -539,7 +539,7 @@ if (typeof SyntaxHighlighter == "undefined") var SyntaxHighlighter = function ()
             useScriptTags: !0,
             bloggerMode: !1,
             stripBrs: !1,
-            tagName: "code",
+            tagName: "pre",
             strings: {
                 expandSource: "expand source",
                 help: "?",

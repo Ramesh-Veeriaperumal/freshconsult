@@ -87,12 +87,10 @@ Number.prototype.toTime = function(format) {
 window.highlight_code = function() {
     jQuery('[rel="highlighter"]').each(function(i,element){
         var brush, 
-            attr = jQuery(element).data('codeBrush');
+            attr = jQuery(element).attr('code-brush');
 
         if(attr == 'html'){
             brush = 'js ; html-script: true';
-        } else if (attr == 'xml'){
-            brush = attr +' ; html-script: true';
         } else {
             brush = attr;
         }
