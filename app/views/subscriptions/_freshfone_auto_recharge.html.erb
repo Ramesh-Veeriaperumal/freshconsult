@@ -23,7 +23,7 @@
 
 			<%= f.label :recharge_quantity, "Auto Recharge Amount", :class => "credits_lbl" %>
 			<%= f.select :recharge_quantity, recharge_options,
-										{}, {:class => 'select2'} %>
+										{}, {:class => 'select2', :'data-minimum-results-for-search' => '30'} %>
 			<%= submit_tag "Enable", :class => "btn" %>
 			<%= link_to "Cancel", "#", :class => "cancel_edit_auto_recharge" %>
 		<% end %>

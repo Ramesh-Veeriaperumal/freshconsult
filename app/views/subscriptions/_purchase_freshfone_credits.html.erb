@@ -4,7 +4,7 @@
 	<div class="row-fluid">
 		<div class="recharge-now-text">Refill your balance with a one-time payment</div>
 		<%= f.select "credit", recharge_options, {}, 
-					:class => 'select2' %>
+					:class => 'select2', :'data-minimum-results-for-search' => '30' %>
 		<%= submit_tag "Purchase Credits", :class => "btn" %>
 	</div>
 <% end %>
