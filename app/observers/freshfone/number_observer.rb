@@ -107,7 +107,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 			Freshfone::Number::MESSAGE_FIELDS.each do |msg_type|
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => nil,
-					:message => I18n.t("freshfone.message.#{msg_type}"),
+					:message => Freshfone::Number::Message::DEFAULT_MESSAGE[msg_type],
 					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[:transcript],
 					:recording_url => "",
 					:type => msg_type
