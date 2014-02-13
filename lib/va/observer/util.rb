@@ -1,6 +1,7 @@
 module Va::Observer::Util
 
 	include Va::Observer::Constants
+	include Va::Util
 
 	private
 
@@ -9,14 +10,6 @@ module Va::Observer::Util
 																														!zendesk_import? && !freshdesk_webhook?
 			Rails.logger.debug "INSIDE user_present? for object: #{self.inspect} observer_condition: #{observer_condition}"
 			return observer_condition
-		end
-
-		def zendesk_import?
-			Thread.current["zenimport_#{account_id}"]
-		end
-
-		def freshdesk_webhook?
-			Thread.current[:http_user_agent] == 'Freshdesk'
 		end
 
 		def filter_observer_events

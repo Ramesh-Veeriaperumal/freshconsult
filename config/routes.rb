@@ -431,6 +431,8 @@
     helpdesk.resources :commons 
     
   end
+
+  map.resources :api_webhooks, :as => 'webhooks/subscription'
   
   map.namespace :solution do |solution|     
     solution.resources :categories, :collection => {:reorder => :put}  do |category|   

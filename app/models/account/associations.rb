@@ -108,6 +108,9 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
   has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
+
+  has_many :api_webhook_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"

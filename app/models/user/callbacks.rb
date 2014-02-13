@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user, :if => :deleted?
-  before_save :set_contact_name, :check_email_value
+  before_save :set_contact_name, :check_email_value, :update_user_related_changes
   after_create :update_user_email, :if => [:has_email?, :user_emails_migrated?] #for user email delta
   after_update :drop_authorization , :if => :email_changed?
   after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?] #for user email delta
@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   after_commit :clear_agent_name_cache
+  after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
+  after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :company_info_updated?
@@ -67,6 +69,11 @@ class User < ActiveRecord::Base
     if self.name.blank? && email
       self.name = (self.email.split("@")[0]).capitalize
     end
+  end
+
+  def update_user_related_changes
+    @model_changes = self.changes.clone
+    @model_changes.symbolize_keys!
   end
 
   def set_company_name

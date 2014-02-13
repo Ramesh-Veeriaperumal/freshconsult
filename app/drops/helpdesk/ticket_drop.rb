@@ -3,7 +3,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	include ActionController::UrlWriter
 	include TicketConstants
 
-	liquid_attributes << :requester << :group << :ticket_type
+	liquid_attributes << :requester << :group << :ticket_type << :deleted	
 
 	def initialize(source)
 		super source

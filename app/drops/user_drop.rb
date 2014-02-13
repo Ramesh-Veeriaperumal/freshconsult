@@ -4,7 +4,8 @@ class UserDrop < BaseDrop
 	include Integrations::AppsUtil
 
 	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
-						:job_title  << :time_zone << :twitter_id << :external_id << :language  	
+						:job_title  << :time_zone << :twitter_id << :external_id << :language << :address << 
+						:description << :active
 
 	def initialize(source)
 		super source

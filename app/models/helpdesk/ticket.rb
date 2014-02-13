@@ -11,6 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Search::ElasticSearchIndex
   include Va::Observer::Util
+  include ApiWebhooks::Methods
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::ReportsRedis

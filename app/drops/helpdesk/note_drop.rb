@@ -20,6 +20,10 @@ class Helpdesk::NoteDrop < BaseDrop
 		@source.user
 	end
 
+	def note_ticket
+		@source.notable
+	end
+
 	def description
 	 	@source.body_html
 	end
