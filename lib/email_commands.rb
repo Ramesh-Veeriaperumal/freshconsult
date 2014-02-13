@@ -1,8 +1,8 @@
 # encoding: utf-8
 module EmailCommands 
 
-  def process_email_commands(ticket, user, email_config, note = nil)
-    content = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html] )
+  def process_email_commands(ticket, user, email_config, email_param, note = nil)
+    content = email_param[:text] || Helpdesk::HTMLSanitizer.plain(email_param[:html])
     begin
       email_cmds_regex = get_email_cmd_regex(ticket.account)
       if email_cmds_regex && (content =~ email_cmds_regex)

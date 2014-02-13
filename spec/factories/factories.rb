@@ -5,13 +5,12 @@ if ENV["RAILS_ENV"] == "test"
   end
 
   Factory.define :ticket, :class => Helpdesk::Ticket do |t|
-    t.description "test ticket"
     t.status 2
     t.urgent 0
     t.deleted 0
     t.to_email "test@testind.com"
     t.ticket_type "Question"
-    t.description_html "<div>This is a sample ticket, feel free to delete it.</div>"
+    t.ticket_body { Factory.next :ticket_body }
     t.display_id 1
     t.trained 0
     t.isescalated 0
@@ -26,6 +25,13 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :portal_template, :class => Portal::Template do |p|
     p.preferences "something"
+  end
+
+  Factory.sequence :ticket_body do |tb|
+    Helpdesk::TicketBody.new({
+      :description => "Ticket body sample ##{tb}. Feel free to delete this.",
+      :description_html => "<div>Ticket body <strong>sample</strong> ##{tb}.  <br /> Feel free to delete this.</div>"
+    })
   end
 
   def create_subscriptions

@@ -1,0 +1,13 @@
+defaults: &defaults
+
+ api_key: "key-8vp3k7-dpde8r4vmg15l4hekdesgbga8"
+
+
+development:
+  api_key: "key-8vp3k7-dpde8r4vmg15l4hekdesgbga8"
+
+
+slave:
+ <<: *defaults
+test:
+ <<: *defaults

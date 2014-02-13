@@ -1,6 +1,15 @@
 require 'rubygems'
 require 'spork'
 
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/'
+  add_filter '/config/'
+  add_filter '/vendor/'
+  add_group 'email', 'lib/helpdesk/email'
+end
+
+
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
@@ -34,6 +43,7 @@ Spork.prefork do
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
     config.include AccountHelper
     config.include AgentHelper
+    config.include EmailHelper
     config.include TicketHelper
     config.include GroupHelper
     config.include TwitterHelper
