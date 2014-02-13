@@ -97,7 +97,7 @@ SalesforceWidget.prototype= {
 				requestUrls.push( { rest_url: "services/data/v20.0/search?q="+sosl_account } )
 			}
 			else{
-				var soql_account = "SELECT " + accountfields +"  FROM Account WHERE Id IN ( SELECT AccountId FROM Contact WHERE Email = '" + custEmail.replace(/\-/g,'\\-') +"' ) ";
+				var soql_account = "SELECT " + accountfields +"  FROM Account WHERE Id IN ( SELECT AccountId FROM Contact WHERE Email = '" + custEmail +"' ) ";
 				requestUrls.push( { rest_url: "services/data/v20.0/query?q="+soql_account } )
 			}
 		}
