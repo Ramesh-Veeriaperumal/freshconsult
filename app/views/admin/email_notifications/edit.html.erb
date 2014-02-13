@@ -61,7 +61,7 @@
 			var previous_message_reset = jQuery("#reset_template_"+previous_language).data('html');
 			var previous_subject = jQuery("#subject_"+previous_language).val();
 			var previous_subject_reset = jQuery("#reset_template_"+previous_language).data('subject');
-		if((jQuery(previous_message).text()) != (jQuery(previous_message_reset).text()) || (previous_subject) != (previous_subject_reset) ){
+		if((jQuery(previous_message).text().trim()) != (jQuery(previous_message_reset).text().trim()) || (previous_subject) != (previous_subject_reset) ){
 			jQuery('#confirmation-link').click();
 			
 			var footer = jQuery('#toggle-confirm').children('.modal-footer');
