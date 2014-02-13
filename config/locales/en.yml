@@ -1554,6 +1554,8 @@ en:
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
+  disable: Disable
+  enable: Enable
   accounts:
     helpcard:
       title: Rebranding your support portal
@@ -4659,6 +4661,14 @@ en:
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     number: "Freshfone Number"
+    subscription:
+      auto_recharge_text: "We'll only charge your account when the balance falls below $5"
+      current_balance: "Your current balance"
+      purchase: "Purchase Freshfone Credits"
+      setup_auto_recharge: "Setup Auto Recharge"
+      no_credit_card: "Enter payment information to purchase Freshfone credits"
+      recharge_now_text: "Refill your balance with a one-time payment"
+      auto_recharge_amt: "Auto Recharge Amount"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"

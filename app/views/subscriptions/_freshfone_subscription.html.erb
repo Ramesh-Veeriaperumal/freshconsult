@@ -4,17 +4,17 @@
 		<h3 class= "title">Freshfone</h3>
 		<ul class="ui-form">
 			<li class="current-balance">
-				<p class="current-balance-text">Your current balance</p>
+				<p class="current-balance-text"><%= t('freshfone.subscription.current_balance') %></p>
 				<div class="current-balance-amt"><%= current_freshfone_balance(@freshfone_credit) %></div>
 			</li>
 		  <li class="recharge-now">
 		  	<% if current_account.subscription.active? %>
 		  		<% if @freshfone_credit.present? %>
-			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> Purchase Freshfone Credits </a></div>
+			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> <%= t('freshfone.subscription.purchase') %> </a></div>
 			  		<div class="show-freshfone-credits" style="display:none;" >
 			  			<%= render :partial => "purchase_freshfone_credits" %>
 			  		</div>
-				  	<div class="choose-plan-title"><a class="auto-recharge" href="#"> Setup Auto Recharge </a></div>
+				  	<div class="choose-plan-title"><a class="auto-recharge" href="#"> <%= t('freshfone.subscription.setup_auto_recharge') %> </a></div>
 				  	<div class="show-freshfone-auto-recharge" style="display:none;" >
 			  			<%= render :partial => "freshfone_auto_recharge" %>
 			  		</div>
@@ -23,7 +23,7 @@
 			  	<% end %>
 				<% else %>
 			  	<p class="alert alert-error">
-						<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= "Enter payment information to purchase Freshfone credits" %>
+						<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= t('freshfone.subscription.no_credit_card') %>
 						<br />                
 						<br />                                               
 						<%= link_to( t('admin.day_passes.index.add_payment_info'), billing_subscription_url, :class => "btn" ) %> 
