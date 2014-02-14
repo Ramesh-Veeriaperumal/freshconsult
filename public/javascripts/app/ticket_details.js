@@ -1210,6 +1210,29 @@ TICKET_DETAILS_CLEANUP = function() {
 
     trigger_event("ticket_view_unloaded",{});
 
+	var custom_events = [
+		"time_entry_deleted",
+		"time_entry_created",
+		"time_entry_started",
+		"time_entry_stopped",
+		"time_entry_updated",
+		"todo_created",
+		"todo_completed",
+		"note_created",
+		"note_updated",
+		"ticket_fields_updated",
+		"scenario_executed",
+		"ticket_show_more",
+		"activities_toggle",
+		"ticket_view_loaded",
+		"ticket_view_unloaded",
+		"sidebar_loaded",
+	];
+
+	for(var i=0; i<custom_events.length ; i++){
+		jQuery(document).off(custom_events[i]);
+	}
+
     MergeTicketsDestructor();
 
 };
