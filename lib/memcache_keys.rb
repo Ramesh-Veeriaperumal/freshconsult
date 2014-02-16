@@ -58,9 +58,9 @@ module MemcacheKeys
 
   FEATURES_LIST = "v2/FEATURES_LIST:%{account_id}"
   
-  SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v2/SHARD_BY_DOMAIN:%{domain}"
  
-  SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v2/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
