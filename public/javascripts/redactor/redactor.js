@@ -3125,9 +3125,13 @@ Redactor.prototype = {
 			$(el).off('click');
 			$(el).on('click',$.proxy(function(ev){
 				this.showCodeEditor(ev); 
-				$('#redactor_insert_text_area').val($(el).html()
-												.replace(/&lt;/g,'<')
-												.replace(/&gt;/g,'>'));
+			if ( $.browser.msie && parseInt($.browser.version, 10) < 9 ){
+					$('#redactor_insert_text_area').val($(el).html()
+											.replace(/&lt;/g,'<')
+											.replace(/&gt;/g,'>'));
+			} else {
+				$('#redactor_insert_text_area').val($(el).text());
+			} 
 			},this));
 
 		}, this));
