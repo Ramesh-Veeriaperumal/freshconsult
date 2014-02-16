@@ -10,6 +10,7 @@ class Facebook::Core::Parser
 
   def parse
     sandbox do
+      Account.reset_current_account
       if @feed.entry_changes
         mapping = Social::FacebookPageMapping.find_by_facebook_page_id(@feed.page_id)
         account_id = mapping.account_id if mapping
@@ -17,6 +18,7 @@ class Facebook::Core::Parser
         Sharding.select_shard_of(account_id) do
           account = Account.find_by_id(account_id)
           return unless account && account.active?
+          account.make_current
           @feed.entry_changes.each do |entry_change|
             @feed.entry_change = entry_change
 
@@ -29,8 +31,7 @@ class Facebook::Core::Parser
                   return Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, range_key, @intial_feed)
                 end
 
-                if  @fan_page.company_or_visitor?
-                  account.make_current
+                if  @fan_page.company_or_visitor?                  
                   ("facebook/core/"+"#{@feed.clazz}").camelize.constantize.new(@fan_page).send(@feed.method, @feed)
                 end
               end
