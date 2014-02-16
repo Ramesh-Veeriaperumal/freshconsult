@@ -77,13 +77,6 @@ function layoutResize(layoutClass1, layoutClass2){
     }
 }
 
-Number.prototype.toTime = function(format) {
-  return (new Date())
-          .clearTime()
-          .addSeconds(this)
-          .toString(format || "mm:ss");
-}
-
 window.highlight_code = function() {
     jQuery('[rel="highlighter"]').each(function(i,element){
         var brush, 
