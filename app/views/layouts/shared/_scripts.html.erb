@@ -11,7 +11,11 @@
 				ele = ele.find('td');
 			ele.addClass('record_highlight');
 		<% end %>
-		
+
+		jQuery(".call_duration").each(function () {
+			if (jQuery(this).data("time") === undefined) { return; }
+			jQuery(this).html(jQuery(this).data("time").toTime());
+		});
 	});
 
 	// Shortcuts variables
