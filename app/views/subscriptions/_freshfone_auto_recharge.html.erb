@@ -1,18 +1,18 @@
 <% if @freshfone_credit.present? %> 
 	<div class="row-fluid auto_recharge_quantity">
 		<div class="recharge-now-text">
-			We'll only charge your account when the balance falls below $5
+			<%= t('freshfone.subscription.auto_recharge_text') %>
 		</div>
 		<% if @freshfone_credit.auto_recharge? %>
 			<div class="enabled-auto-recharge">
-				<span class="recharge-amt-lbl">Recharge Amount</span>
+				<span class="recharge-amt-lbl"><%= t('freshfone.subscription.auto_recharge_amt') %></span>
 				<span class="recharge-amt"><%= number_to_currency(@freshfone_credit.recharge_quantity, :unit => "$") %></span>	
 				<div class="action-links">
 					<% form_tag(disable_auto_recharge_admin_freshfone_credits_path, 
 											:method => :put, 
 											:class => "disable_auto_recharge_form") do %>
-						<%= link_to "Edit", "#", :class => "edit_auto_recharge" %> | 
-						<%= link_to "Disable", "#", :class => "disable_auto_recharge" %>
+						<%= link_to t('edit'), "#", :class => "edit_auto_recharge" %> | 
+						<%= link_to t('disable'), "#", :class => "disable_auto_recharge" %>
 					<% end %>
 				</div>
 			</div>
@@ -21,11 +21,11 @@
 						:url => {:action => "enable_auto_recharge", :controller => "admin/freshfone/credits"}, 
 						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
 
-			<%= f.label :recharge_quantity, "Auto Recharge Amount", :class => "credits_lbl" %>
-			<%= f.select :recharge_quantity, auto_recharge_options,
-										{}, {:class => 'select2'} %>
-			<%= submit_tag "Enable", :class => "button" %>
-			<%= link_to "Cancel", "#", :class => "cancel_edit_auto_recharge" %>
+			<%= f.label :recharge_quantity, t('freshfone.subscription.auto_recharge_amt'), :class => "credits_lbl" %>
+			<%= f.select :recharge_quantity, recharge_options,
+										{}, {:class => 'select2', :'data-minimum-results-for-search' => '30'} %>
+			<%= submit_tag t('enable'), :class => "btn" %>
+			<%= link_to t('cancel'), "#", :class => "cancel_edit_auto_recharge" %>
 		<% end %>
 	</div>
 	<script type="text/javascript">

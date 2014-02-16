@@ -3,6 +3,7 @@ class ThirdCRM
   COOKIE_NAME = "_mkto_trk"
 
   API_KEYS = AppConfig['marketo'][RAILS_ENV]
+  PRODUCT_NAME = "Freshdesk"
   
   def initialize
     @client = Marketo::Client.new_marketo_client(
@@ -50,7 +51,8 @@ class ThirdCRM
         :Customer_Status__c => subscription.state,
         :Customer_Status__c_contact => subscription.state,
         :Account_Created_Date__c => subscription.created_at.to_s(:db),
-        :Account_Renewal_Date__c => subscription.next_renewal_at.to_s(:db)
+        :Account_Renewal_Date__c => subscription.next_renewal_at.to_s(:db),
+        :Product__c => PRODUCT_NAME
       }
     end
 

@@ -1,50 +1,37 @@
 class SAAS::SubscriptionActions
-  def change_plan(account, old_subscription)
-    update_features(account, old_subscription)
-    case account.plan_name
-    when :sprout
-      drop_custom_sla(account)
-      update_timezone_to_users(account)
-      drop_products(account)
-      drop_facebook_pages(account)
-      drop_twitter_handles(account)
-      drop_custom_domain(account)
-      drop_multiple_emails(account)
-      drop_css_customization(account)
-      drop_custom_roles(account)
-      update_users_language(account)
-    when :blossom
-      drop_custom_sla(account)
-      update_timezone_to_users(account)
-      drop_products(account)
-      drop_css_customization(account)
-      drop_custom_roles(account)
-      update_users_language(account)
-    when :garden
-      drop_layout_customization(account)
-      drop_custom_roles(account)
-    end
+
+  FEATURES = [ :customer_slas, :business_hours, :multi_product, :facebook, :twitter, 
+                :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
+                :dynamic_content ]
+
+  def change_plan(account, old_subscription, existing_addons)
+    update_features(account, old_subscription, existing_addons)
+    drop_feature_data(account)
   end
   
-  def change_to_free(account, old_subscription)
-    free_subscription_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:free])
-    old_subscription.subscription_plan = free_subscription_plan
-    old_subscription.save!
+  def drop_feature_data(account)
+    FEATURES.each do |feature_id|
+      send(%(drop_#{feature_id}_data), account) unless account.features?(feature_id)
+    end
   end
   
   private
-    def update_users_language(account)
-      account.all_users.update_all(:language => account.language) 
-      account.account_additional_settings.update_attributes(:supported_languages => [])
-    end
-        
-    def update_features(account, old_subscription)
+    def update_features(account, old_subscription, existing_addons)
+      new_addons = account.addons
+      #Remove all features
       account.remove_features_of old_subscription.subscription_plan.canon_name
+      existing_addons.each do |addon|
+        addon.features.collect{ |feature| account.remove_feature(feature) }
+      end
+
       account.reload
+      #Add appropriate features      
       account.add_features_of account.plan_name
+      features = new_addons.collect{ |addon| addon.features }.flatten
+      account.add_features(features)
     end
     
-    def drop_custom_sla(account)
+    def drop_customer_slas_data(account)
       #account.sla_policies.destroy_all(:is_default => false) #wasn't working..
       Helpdesk::SlaPolicy.destroy_all(:account_id => account.id, :is_default => false)
       account.customers.update_all(:sla_policy_id => account.sla_policies.find_by_is_default(true).id)
@@ -52,52 +39,49 @@ class SAAS::SubscriptionActions
       account.sla_policies.find_by_is_default(true).sla_details.update_all(:override_bhrs => true)
     end
 
-    def update_timezone_to_users(account)
+    def drop_business_hours_data(account)
       account.all_users.update_all(:time_zone => account.time_zone)
     end
 
-    def drop_products(account)
+    def drop_multi_product_data(account)
       account.products.destroy_all
 
       #We are not updating the email_config_id or product_id in Tickets model knowingly.
       #Tested, haven't faced any problem with stale email config ids or product ids.
-  end
+    end
   
-   def drop_facebook_pages(account)
+   def drop_facebook_data(account)
      account.facebook_pages.destroy_all
    end
    
-   def drop_twitter_handles(account)
-
+   def drop_twitter_data(account)
     account.twitter_handles.each do |twt_handle| 
       twt_handle.cleanup
     end
-    
-     account.twitter_handles.destroy_all
    end
 
-   def drop_custom_domain(account)
+   def drop_custom_domain_data(account)
      account.main_portal.portal_url = nil
      account.save!
    end
 
-   def drop_multiple_emails(account)
+   def drop_multiple_emails_data(account)
     account.global_email_configs.find(:all, :conditions => {:primary_role => false}).each{|gec| gec.destroy}
    end
 
-   def drop_layout_customization(account)
+   def drop_layout_customization_data(account)
     account.portal_pages.destroy_all
     account.portal_templates.each do |template|
       template.update_attributes( :header => nil, :footer => nil, :layout => nil)
     end
    end
 
-   def drop_css_customization(account)
+   def drop_css_customization_data(account)
     account.portal_templates.update_all( :custom_css => nil, :updated_at => Time.now)
-    drop_layout_customization(account)
+    drop_layout_customization_data(account)
    end
    
-   def drop_custom_roles(account)
+   def drop_custom_roles_data(account)
      account.technicians.each do |agent|
        if agent.privilege?(:manage_account)
          new_roles = [account.roles.find_by_name("Account Administrator")]
@@ -112,5 +96,10 @@ class SAAS::SubscriptionActions
      
      Role.destroy_all(:account_id => account.id, :default_role => false )
    end
+
+    def drop_dynamic_content_data(account)
+      account.all_users.update_all(:language => account.language) 
+      account.account_additional_settings.update_attributes(:supported_languages => [])
+    end
  
 end

@@ -28,6 +28,10 @@ module FreshfoneHelper
     twiml = Twilio::TwiML::Response.new
     render :xml => twiml.text
   end
+  
+  def reject_twiml
+    Twilio::TwiML::Response.new { |r| r.Reject }.text
+  end
 
 
   def notify_error(params)

@@ -76,3 +76,26 @@ function layoutResize(layoutClass1, layoutClass2){
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
     }
 }
+
+Number.prototype.toTime = function(format) {
+  return (new Date())
+          .clearTime()
+          .addSeconds(this)
+          .toString(format || "mm:ss");
+}
+
+window.highlight_code = function() {
+    jQuery('[rel="highlighter"]').each(function(i,element){
+        var brush, 
+            attr = jQuery(element).attr('code-brush');
+
+        if(attr == 'html'){
+            brush = 'js ; html-script: true';
+        } else {
+            brush = attr;
+        }
+        jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
+    })
+
+    SyntaxHighlighter.all();
+}

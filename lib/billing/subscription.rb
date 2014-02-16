@@ -14,8 +14,8 @@ class Billing::Subscription
 
   TRIAL_END = "0"
 
-
-  PLANS = SubscriptionPlan.find(:all).map { |plan| plan.canon_name }
+  PLANS = [ :sprout, :blossom, :garden, :estate, :sprout_classic, :blossom_classic, :garden_classic,
+            :estate_classic, :basic, :pro, :premium ]
 
   BILLING_PERIOD  = { 1 => "monthly", 3 => "quarterly", 6 => "half_yearly", 12 => "annual" }
 
@@ -56,30 +56,36 @@ class Billing::Subscription
     end
   end
 
-  def calculate_estimate(subscription)
+  def calculate_estimate(subscription, addons)
     data = subscription_data(subscription).merge(:id => subscription.account_id) 
+    merge_addon_data(data, subscription, addons)
     attributes = subscription.suspended? ? { :subscription => data } : 
                                 { :subscription => data, :end_of_term => true }
+    attributes.merge!(:replace_addon_list => true)
 
-    ChargeBee::Estimate.update_subscription(attributes)
+    Rails.logger.debug ":::ChargeBee - Calculate Estimate - Params sent:::"
+    Rails.logger.debug attributes.inspect
+    ChargeBee::Estimate.update_subscription(attributes)    
   end
 
-  def update_subscription(subscription, prorate)
+  def update_subscription(subscription, prorate, addons)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
     merge_trial_end(data, subscription)
-    
+    merge_addon_data(data, subscription, addons)
+    data.merge!(:replace_addon_list => true)
+
+    Rails.logger.debug ":::ChargeBee - Update Subscription - Params sent:::"
+    Rails.logger.debug data.inspect
     ChargeBee::Subscription.update(subscription.account_id, data)
   end
 
   def store_card(card, address, subscription)
     card_info = card_info(card).merge(billing_address(address))
-
     ChargeBee::Card.update_card_for_customer(subscription.account.id, card_info)
   end 
 
   def activate_subscription(subscription)
     data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
-
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
@@ -88,11 +94,15 @@ class Billing::Subscription
   end
 
   def buy_day_passes(account, quantity)
-    ChargeBee::Invoice.charge_addon( add_on_data(account, quantity) )
+    ChargeBee::Invoice.charge_addon( day_pass_data(account, quantity) )  
   end
 
   def purchase_freshfone_credits(account, quantity)
-    ChargeBee::Invoice.charge_addon( freshfone_addon(account, quantity) )
+    ChargeBee::Invoice.charge_addon( freshfone_addon(account, quantity) )                                         
+  end
+
+  def remove_credit_card(account_id)
+    ChargeBee::Card.delete_card_for_customer(account_id)
   end
 
   def cancel_subscription(account)
@@ -105,6 +115,10 @@ class Billing::Subscription
 
   def add_discount(account, discount_code)
     ChargeBee::Subscription.update(account.id, :coupon => discount_code)
+  end
+
+  def offline_subscription?(account_id)
+    retrieve_subscription(account_id).customer.auto_collection.eql?("off")
   end
   
   private
@@ -140,7 +154,7 @@ class Billing::Subscription
        ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = address.send(v); h }
     end
 
-    def add_on_data(account, quantity)
+    def day_pass_data(account, quantity)
       { 
         :subscription_id => account.id,
         :addon_id => account.plan_name.to_s, 
@@ -156,6 +170,17 @@ class Billing::Subscription
       }
     end
 
+    def addon_billing_params(subscription, addon)
+      data = { :id => addon.billing_addon_id }
+      data.merge!(:quantity => addon.billing_quantity(subscription)) if addon.billing_quantity(subscription)
+      data
+    end
+
+    def merge_addon_data(data, subscription, addons)
+      addon_list = addons.inject([]) { |a, addon| a << addon_billing_params(subscription, addon) }
+      data.merge!(:addons => addon_list)
+    end
+
     def merge_trial_end(data, subscription)
       extend_trial(subscription) ? data.merge!(:trial_end => extend_trial(subscription)) : data
     end
@@ -163,7 +188,7 @@ class Billing::Subscription
     def extend_trial(subscription)
       return subscription.next_renewal_at.to_i if subscription.trial? and subscription.next_renewal_at > Time.now
         
-      1.hour.from_now.to_i if subscription.suspended?
+      1.hour.from_now.to_i if subscription.suspended? and subscription.card_number.blank?
     end
 
 end

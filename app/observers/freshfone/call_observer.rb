@@ -54,7 +54,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 
 		def set_customer_on_ticket_creation(freshfone_call)
-			return unless (freshfone_call.notable_id_changed? && freshfone_call.ticket_notable?)
-			freshfone_call.customer = freshfone_call.notable.requester
+			return unless freshfone_call.notable_id_changed?
+			notable_item = freshfone_call.notable
+			freshfone_call.customer = (freshfone_call.ticket_notable?) ? 
+																 notable_item.requester : 
+																 notable_item.notable.requester
 		end
 end

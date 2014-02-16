@@ -1,21 +1,22 @@
-@import "../app/lib/settings";
-@import "../app/lib/animations"; // Mixin for animation
-
+/*
 // Core variables and mixins
 @import "lib/variables"; // Modify this for custom colors, font-sizes, etc
 @import "lib/mixins";
 
 // CSS Reset
 //@import "lib/reset";
+*/
+// Core variables and mixin
+@import "../settings/settings";
 
 // Grid system and page structure
-//@import "lib/scaffolding";
+@import "lib/scaffolding";
 @import "lib/grid";
 @import "lib/layouts";
 
 // Base CSS
-//@import "lib/type";
-//@import "lib/code";
+@import "lib/type";
+/*//@import "lib/code";*/
 @import "lib/forms";
 @import "lib/tables";
 
@@ -23,6 +24,7 @@
 @import "lib/sprites";
 @import "lib/dropdowns";
 @import "lib/wells";
+@import "lib/ellipsis";
 @import "lib/component-animations";
 //@import "lib/close";
 
@@ -35,27 +37,27 @@
 @import "lib/navs";
 @import "lib/navbar";
 @import "lib/breadcrumbs";
-//@import "lib/adminbreadcrumbs";
+@import "lib/adminbreadcrumbs";
 @import "lib/pagination";
 //@import "lib/pager";
 
 // Components: Popovers
 @import "lib/modals";
-//@import "lib/tooltip";
-//@import "lib/popovers";
+@import "lib/tooltip";
+@import "lib/popovers";
 
 // Components: Misc
-//@import "lib/thumbnails";
 @import "lib/labels-badges";
+@import "lib/hero-unit";/*
+//@import "lib/thumbnails";
 //@import "lib/progress-bars";
 //@import "lib/accordion";
 //@import "lib/carousel";
-@import "lib/hero-unit";
-
+*/
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary
 
 //# !PATTERN TODO
-@import "patternhack";
 @import "lib/list-page-theme";
 @import "lib/sticky-header";
+@import "lib/patternhack";

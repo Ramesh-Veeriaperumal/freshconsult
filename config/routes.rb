@@ -35,7 +35,8 @@
   
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , 
+  map.resources :agents, :member => { :delete_avatar => :delete ,
+                                      :toggle_shortcuts => :put, 
                                       :restore => :put, 
                                       :convert_to_user => :get, 
                                       :reset_password=> :put }, 
@@ -73,15 +74,16 @@
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
     freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
-    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :bridge => :post, :hangup => :post}  
+    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}  
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
     freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get, 
                                                        :children => :get, :recent_calls => :get }
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
-    freshfone.resources :users,:collection => { :presence => :post, :availability_on_phone => :post,
+    freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
+    freshfone.resources :autocomplete, :collection => { :requester_search => :get }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
@@ -166,6 +168,7 @@
       freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
     end
     admin.resources :roles
+    admin.resources :mailboxes
   end
 
   map.namespace :search do |search|
@@ -352,7 +355,7 @@
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
                                     :filter_options => :get, :full_paginate => :get, :summary => :get, 
-                                    :update_multiple_tickets => :get, :configure_export => :get },  
+                                    :update_multiple_tickets => :get, :configure_export => :get, :custom_view_save => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -455,10 +458,11 @@
     forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put } 
-      topic.resource :monitorship, :controller => :monitorships
       end
     end
   end
+
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', :action => 'toggle', :method => :post
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal

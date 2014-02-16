@@ -87,7 +87,7 @@
 .modal-body {
   overflow-y: auto;
   max-height: 400px;
-  padding: 10px 20px;
+  padding: 10px 20px 20px;
 
   form {
     margin:0;
@@ -141,7 +141,7 @@
     text-align:center;
     background-color: #333;
     @include border-radius(5px 0 0 5px);
-    @include box-shadow(-8px 0px 32px rgba(0,0,0,0.2));
+    @include box-shadow(-8px 0 32px rgba(0,0,0,0.2));
     /*@include hide-text();*/
     &:focus, &:hover {
       background-color: #000;

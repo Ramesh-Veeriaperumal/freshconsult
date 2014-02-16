@@ -23,7 +23,19 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
   def after_create(topic)
+    monitor_topic(topic)
     create_activity(topic, 'new_topic')
+  end
+
+  def monitor_topic topic
+    send_later(:send_monitorship_emails, topic)
+  end
+
+  def send_monitorship_emails topic
+    topic.forum.monitorships.active_monitors.each do |monitor|
+      monitorship_email = monitor.user.email
+      TopicMailer.deliver_monitor_email!(monitorship_email,topic,topic.user) unless monitorship_email.blank? or (topic.user_id == monitor.user_id)
+    end
   end
 
 	def after_destroy(topic)

@@ -4,7 +4,10 @@
 
 // Plugins for portal 
 // Redactor rich text editor
-@import "../plugins-lib/redactor";
+@import "../plugins/redactor";
+
+// Redactor rich text editor
+@import "../plugins/shcore_default";
 
 // IE based fixes
 @import "lib/ie";

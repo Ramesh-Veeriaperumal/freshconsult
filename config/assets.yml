@@ -10,36 +10,82 @@ css_compressor:         sass
 allow_debugging:        on
 
 stylesheets:
-  common:
-    - public/stylesheets/app/common.css
+  pattern:
+    - public/stylesheets/pattern/pattern.css
 
-  app:
-    - public/stylesheets/app/application.css
+  common:
+    - public/stylesheets/common.css
+    - public/stylesheets/pages.css
 
   plugins:
     - public/stylesheets/plugins.css
 
+  app:
+    - public/stylesheets/app/application.css
+    - public/stylesheets/module.css
+
   non_pattern:
     - public/stylesheets/app/app-common.css
-    - public/stylesheets/app/app-bootstrap.css
 
   sprites:
-    - public/stylesheets/app/sprites.css
+    - public/stylesheets/sprites.css
 
   ie_hacks:
     - public/stylesheets/app/ie.css
 
-  pattern:
-    - public/stylesheets/pattern/pattern.css
-
   tour_my_app:
-    - public/stylesheets/app/tourmyapp.css
+    - public/stylesheets/plugins/tourmyapp.css
 
   codemirror:
-    - public/stylesheets/codemirror.css
+    - public/stylesheets/plugins/codemirror.css
+
+  360player:
+    - public/stylesheets/freshfone/360player.css
+
+  freshwidget:
+    - public/stylesheets/freshwidget.css
+
+  tkt_details:
+    - public/stylesheets/page/tkt_details/tkt_details.css
+    - public/stylesheets/page/tkt_details/tkt_details_sprites.css
+
+  tkt_details_print:
+    - public/stylesheets/page/tkt_details/tkt_details_print.css
+
+  survey:
+    - public/stylesheets/support/rating.css
+
+  gadget:
+    - public/stylesheets/common.css
+    - public/stylesheets/pages.css
+    - public/stylesheets/sprites.css
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/plugins.css
+    - public/stylesheets/app/ie.css
+    - public/stylesheets/page/tkt_details/tkt_details.css
+    - public/stylesheets/page/tkt_details/tkt_details_sprites.css
+    - public/stylesheets/page/gadget.css
+
+  reports:
+    - public/stylesheets/page/reports.css
+
+  print:
+    - public/stylesheets/print/print.css
+
+  report_print:
+    - public/stylesheets/print/report-print.css
+
+  getting_started:
+    - public/stylesheets/page/getting_started.css
+
+  subscription:
+    - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/plugins.css
 
   portal_utils:
     - public/stylesheets/portal/portal_utils.css
+    - public/stylesheets/freshfone/record_playback.css
+    - public/stylesheets/freshfone/360player.css
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -50,76 +96,36 @@ stylesheets:
   responsive_widget:
     - public/stylesheets/portal/responsive-widget.css
 
-  freshwidget:
-    - public/stylesheets/freshwidget.css
-
-  icomoon:
-    - public/stylesheets/chat/icomoon.css
-
-  freshfone:
-    - public/stylesheets/app/freshfone.css
-    - public/stylesheets/jquery.keypad.css
-
-  freshfone_call_history:
-    - public/stylesheets/app/freshfone/call_history.css
-
-  freshfone_ivr:
-    - public/stylesheets/app/freshfone/ivr/main.css
-
-  freshfone_settings:
-    - public/stylesheets/app/freshfone/settings/main.css
-
-  freshfone_admin:
-    - public/stylesheets/app/freshfone/admin.css
-
-  freshfone_message_select:
-    - public/stylesheets/app/freshfone/message_select.css
-
-  360player:
-    - public/stylesheets/360player.css
-
-  tkt_details:
-    - public/stylesheets/app/tkt_details.css
-    - public/stylesheets/app/tkt_details_sprites.css
-
-  tkt_details_print:
-    - public/stylesheets/app/tkt_details_print.css
-
-  survey:
-    - public/stylesheets/support/rating.css
-
-  gadget:
-    - public/stylesheets/app/common.css
-    - public/stylesheets/app/sprites.css
-    - public/stylesheets/app/app-common.css
-    - public/stylesheets/app/app-bootstrap.css
-    - public/stylesheets/plugins.css
-    - public/stylesheets/app/ie.css
-    - public/stylesheets/app/tkt_details.css
-    - public/stylesheets/app/tkt_details_sprites.css
-    - public/stylesheets/app/gadget.css
-
-  subscription:
-    - public/stylesheets/subscription/subscription.css
-    - public/stylesheets/plugins.css
-
-  reports:
-    - public/stylesheets/app/reports.css
-
-  print:
-    - public/stylesheets/print/print.css
-
-  report_print:
-    - public/stylesheets/print/report-print.css
-
-  getting_started:
-    - public/stylesheets/app/getting_started.css
-
   facebook:
     - public/stylesheets/portal/facebook.css
 
   rating:
     - public/stylesheets/portal/rating.css
+
+  icomoon:
+    - public/stylesheets/chat/icomoon.css
+
+  freshfone:
+    - public/stylesheets/freshfone/freshfone.css
+    - public/stylesheets/freshfone/jquery.keypad.css
+
+  freshfone_call_history:
+    - public/stylesheets/freshfone/call_history.css
+
+  freshfone_ivr:
+    - public/stylesheets/freshfone/ivr/main.css
+
+  freshfone_settings:
+    - public/stylesheets/freshfone/settings/main.css
+
+  freshfone_admin:
+    - public/stylesheets/freshfone/admin.css
+
+  freshfone_message_select:
+    - public/stylesheets/freshfone/message_select.css
+
+  freshfone_recording_playback:
+    - public/stylesheets/freshfone/record_playback.css
 
 
 javascripts:
@@ -130,10 +136,11 @@ javascripts:
     - public/javascripts/controls.js
 
   frameworks:
-    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery-1.7.2.js
     - public/javascripts/jquery.pjax.js
     - public/javascripts/utils.js
     - public/javascripts/frameworks/sprintf.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
@@ -160,7 +167,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/helpdesk/freshdesk_node.js
-    - public/javascripts/sisyphus.js
+    # - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
@@ -170,6 +177,7 @@ javascripts:
     - public/javascripts/chat/lib/ticket_search.js
     - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/app/ticket_details.js
+    - public/javascripts/frameworks/plugins/jquery.tabby.js
 
   # Code editor for portal cms
   codemirror:
@@ -187,8 +195,6 @@ javascripts:
   colorpicker:
     - public/javascripts/mColorPicker.js
 
-  portaltemplate:
-    - public/javascripts/mousetrap.js
   visitor:
     - public/javascripts/frameworks/session.js
 
@@ -336,6 +342,11 @@ javascripts:
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
+    - public/javascripts/sound/soundmanager2-jsmin.js
+    - public/javascripts/soundmanager2/berniecode-animator.js
+    - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
+    - public/javascripts/report/date.js
 
   subscription:
     - public/javascripts/prototype.js
@@ -369,6 +380,23 @@ javascripts:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
 
+  syntaxhighlighter:
+    - public/javascripts/syntaxhighlighter/shCore.js
+    - public/javascripts/syntaxhighlighter/shBrushCss.js
+    - public/javascripts/syntaxhighlighter/shBrushJava.js
+    - public/javascripts/syntaxhighlighter/shBrushJScript.js
+    - public/javascripts/syntaxhighlighter/shBrushPhp.js
+    - public/javascripts/syntaxhighlighter/shBrushRuby.js
+    - public/javascripts/syntaxhighlighter/shBrushSass.js
+    - public/javascripts/syntaxhighlighter/shBrushSql.js
+    - public/javascripts/syntaxhighlighter/shBrushXml.js
+    - public/javascripts/syntaxhighlighter/shBrushCpp.js
+    - public/javascripts/syntaxhighlighter/shBrushCSharp.js
+    - public/javascripts/syntaxhighlighter/shBrushPerl.js
+    - public/javascripts/syntaxhighlighter/shBrushPlain.js
+    - public/javascripts/syntaxhighlighter/shBrushPython.js
+    - public/javascripts/syntaxhighlighter/shBrushVb.js
+
   excanvas:
     - public/javascripts/excanvas.js
 
@@ -378,6 +406,7 @@ javascripts:
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
     - public/javascripts/mColorPicker.js
@@ -392,6 +421,14 @@ javascripts:
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
+
+  shortcut:
+    - public/javascripts/mousetrap/mousetrap.js
+    # - public/javascripts/mousetrap/dictionary.js
+    - public/javascripts/mousetrap/global.js
+    - public/javascripts/mousetrap/pause.js
+    # - public/javascripts/mousetrap/record.js
+    - public/javascripts/mousetrap/shortcut.js
 
 <% 
   # Adding specific javascript assets to the package list

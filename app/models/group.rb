@@ -5,9 +5,7 @@ class Group < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  after_commit_on_create :clear_cache
-  after_commit_on_destroy :clear_cache
-  after_commit_on_update :clear_cache
+  after_commit :clear_cache
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
@@ -25,6 +23,14 @@ class Group < ActiveRecord::Base
                    :ticket_assign_type, :business_calendar_id
    
    accepts_nested_attributes_for :agent_groups
+   named_scope :active_groups_in_account, lambda { |account_id|
+     { :joins => "inner join agent_groups on agent_groups.account_id = #{account_id} and
+                   agent_groups.group_id = groups.id and groups.account_id = #{account_id}
+                   inner join users ON agent_groups.account_id = #{account_id} and
+                   agent_groups.user_id = users.id and users.account_id = #{account_id}
+                   and users.helpdesk_agent = 1 and users.deleted = 0",
+       :group => "agent_groups.group_id" }
+    }
    liquid_methods :name
     
   ASSIGNTIME = [

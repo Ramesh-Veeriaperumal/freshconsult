@@ -702,6 +702,7 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id"], :name => "index_freshfone_calls_on_account_id_and_freshfone_number_id"
+  add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
 
@@ -755,6 +756,7 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "voicemail_active",                                                      :default => false
+    t.text     "non_business_hours_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1360,6 +1362,32 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.integer  "account_id",               :limit => 8
   end
 
+  create_table "mailboxes", :force => true do |t|
+    t.integer  "email_config_id",         :limit => 8
+    t.integer  "account_id",              :limit => 8
+    t.string   "imap_server_name"
+    t.string   "imap_user_name"
+    t.text     "imap_password"
+    t.integer  "imap_port"
+    t.string   "imap_authentication"
+    t.boolean  "imap_use_ssl"
+    t.string   "imap_folder"
+    t.boolean  "imap_delete_from_server"
+    t.string   "smtp_server_name"
+    t.string   "smtp_user_name"
+    t.text     "smtp_password"
+    t.integer  "smtp_port"
+    t.string   "smtp_authentication"
+    t.boolean  "smtp_use_ssl"
+    t.boolean  "imap_enabled",                         :default => true
+    t.boolean  "smtp_enabled",                         :default => true
+    t.integer  "imap_timeout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -1368,12 +1396,14 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
 
   create_table "monitorships", :force => true do |t|
-    t.integer "topic_id",   :limit => 8
-    t.integer "user_id",    :limit => 8
-    t.boolean "active",                  :default => true
-    t.integer "account_id", :limit => 8
+    t.integer "monitorable_id",   :limit => 8
+    t.integer "user_id",          :limit => 8
+    t.boolean "active",                        :default => true
+    t.integer "account_id",       :limit => 8
+    t.string  "monitorable_type"
   end
 
+  add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
 
   create_table "password_resets", :force => true do |t|
@@ -1724,6 +1754,21 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
 
+  create_table "subscription_addon_mappings", :force => true do |t|
+    t.integer "subscription_addon_id", :limit => 8
+    t.integer "account_id",            :limit => 8
+    t.integer "subscription_id",       :limit => 8
+  end
+
+  create_table "subscription_addons", :force => true do |t|
+    t.string   "name"
+    t.decimal  "amount",         :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "renewal_period"
+    t.integer  "addon_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
     t.decimal  "rate",       :precision => 6, :scale => 4, :default => 0.0
@@ -1791,6 +1836,11 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
 
   add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"
   add_index "subscription_payments", ["subscription_id"], :name => "index_subscription_payments_on_subscription_id"
+
+  create_table "subscription_plan_addons", :force => true do |t|
+    t.integer "subscription_addon_id", :limit => 8
+    t.integer "subscription_plan_id",  :limit => 8
+  end
 
   create_table "subscription_plans", :force => true do |t|
     t.string   "name"

@@ -17,6 +17,8 @@
 
 .wrapper{
 	@include container;
+	min-width: $container-min-width;
+	_width: $container-min-width;
 	@include pie-clearfix;
 	overflow: visible;
 	text-align: left;
@@ -182,22 +184,12 @@ label.overlabel{
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo-image{ height: 50px; }
 	.logo_text{
-	   	border-left:1px solid rgba(#ffffff, 0.3);
      	color:#ffffff;
-     	margin-left:10px;
 		font-size: 20px;
      	padding: 0 0 0 15px;
      	margin-top: 12px;
      	font-weight: 200;
    }
-}
-
-.vertical-align {
-    display: table-cell;
-    vertical-align: middle;
-}
-.vertical-align * {
-    vertical-align: middle;
 }
 
 .header_links{
@@ -229,11 +221,10 @@ label.overlabel{
 		right:9px;
 	}
 } 
-
 .profile_info{     
 	visibility:hidden;
-	right:8px;     
-	margin-top:55px;     
+	right:0;     
+	margin-top:45px;     
 	position:absolute;
   	font-size:13px;
   	background:#ffffff;
@@ -249,7 +240,8 @@ label.overlabel{
 		border:6px solid transparent;
 		border-bottom-color:#eee;
 		width:1px;        
-		top:-12px; right:24px;
+		top:-12px; 
+		right:32px;
 	}
 	&:before{           
 		content:"";
@@ -258,7 +250,7 @@ label.overlabel{
 		border-bottom-color: #AAA;
 		width: 1px;
 		top: -16px;
-		right: 22px;
+		right: 30px;
 	}
 	.seperator{
 		border-color:#e0e0e0;
@@ -319,7 +311,6 @@ label.overlabel{
 	}  
 	.top-margin{
 		margin-top:8px;
-
 	}                         
 	.select2-container .select2-choice{
 		color:$default_txt_color;
@@ -331,6 +322,20 @@ label.overlabel{
 	}
 	.header-agent-select{
 	 width:235px;
+	}
+}
+.header-select2-dropdown{
+	&.select2-drop{
+		padding-top: 5px;
+		border-color:rgba(#000, 0.1);
+		@include box-shadow(none);
+		.select2-search input, .select2-search input[type="text"]{
+			border-color:rgba(#000, 0.1);
+		}
+		.select2-results .select2-highlighted{
+			background: #999;
+			padding: 3px 0;
+		}
 	}
 }
 // -------------------------------------------------------------------------------------------- 
@@ -386,7 +391,7 @@ a.new_ticket{
 			position:absolute; 
 			left:0; 
 			font-size:22px;
-			top:1px;
+			top:6px;
 			font-weight:bold;		
 		}
 	}	
@@ -479,6 +484,69 @@ a.new_ticket{
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 	@include box-shadow(inset 0px 1px 0px #FFF, 0 4px 10px -4px rgba(0,0,0,0.2));
 }
+
+// -------------------------------------------------------------------------------------------- 
+// 										Header icons loading 									
+// -------------------------------------------------------------------------------------------- 
+.header-link-wrapper a img{
+	&.header-spinner{
+	    position: relative;
+	    border-radius: 50%;
+	    width: 21px;
+		height: 21px;
+		margin: 7px 7px 8px 7px;
+	    background: #FF4F72;
+	    background-repeat: no-repeat;
+	    @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
+	    @include opacity(0.6);
+	    animation: rota 3s infinite alternate;
+	    -webkit-animation: rota 3s infinite alternate;
+	    -o-animation: rota 3s infinite alternate;
+	    -ms-animation: rota 3s infinite alternate;
+	    -moz-animation: rota 3s infinite alternate;
+	    &:after {
+		    content: "";
+		    width: 50%;
+		    height: 50%;
+		    position: absolute;
+		    top: 25%;
+		    left: 25%;
+		    border: .12em solid rgba(255,255,255,0.3);
+		    border-radius: inherit;
+		}
+	}
+}
+@keyframes rota {
+    25%  { transform: rotate(270deg); }
+    50%  { transform: rotate( 90deg); }
+    75%  { transform: rotate(360deg); }
+    100% { transform: rotate(180deg); }
+}
+@-webkit-keyframes rota {
+    25%  { -webkit-transform: rotate(270deg); }
+    50%  { -webkit-transform: rotate( 90deg); }
+    75%  { -webkit-transform: rotate(360deg); }
+    100% { -webkit-transform: rotate(180deg); }
+}
+@-ms-keyframes rota {
+    25%  { -ms-transform: rotate(270deg); }
+    50%  { -ms-transform: rotate( 90deg); }
+    75%  { -ms-transform: rotate(360deg); }
+    100% { -ms-transform: rotate(180deg); }
+}
+@-o-keyframes rota {
+    25%  { -o-transform: rotate(270deg); }
+    50%  { -o-transform: rotate( 90deg); }
+    75%  { -o-transform: rotate(360deg); }
+    100% { -o-transform: rotate(180deg); }
+}
+@-moz-keyframes rota {
+    25%  { -moz-transform: rotate(270deg); }
+    50%  { -moz-transform: rotate( 90deg); }
+    75%  { -moz-transform: rotate(360deg); }
+    100% { -moz-transform: rotate(180deg); }
+}
+
 // -------------------------------------------------------------------------------------------- 
 // 												Page Loading styles 									
 // -------------------------------------------------------------------------------------------- 

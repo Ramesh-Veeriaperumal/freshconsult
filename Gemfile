@@ -83,7 +83,7 @@ gem 'rforce'
 
 gem 'after_commit', "1.0.11"
 
-gem 'chargebee', "~> 1.1.7"
+gem 'chargebee', "~> 1.2.9"
 
 gem 'encryptor', '1.1.3'
 
@@ -119,6 +119,7 @@ gem "rails_xss", "0.4.0"
 
 gem "ey_config"
 gem "therubyracer"
+gem "premailer", "~> 1.8.0"
 
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git"

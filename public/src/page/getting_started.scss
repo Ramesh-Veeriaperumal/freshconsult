@@ -1,0 +1,15 @@
+// Getting started styles
+@import "../settings/settings";
+
+// Defaults
+@import "../app/lib/reset";
+@import "getting_started/utilities";
+
+// Page styles
+@import "getting_started/screen";
+
+// Autocomplete
+@import "../plugins/autocomplete";
+
+// IE Hacks
+@import "getting_started/ie";

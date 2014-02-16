@@ -132,7 +132,13 @@ swapEmailNote = function(formid, link){
 	} else {
 		//For all other reply forms using redactor.
 		invokeRedactor(formid+"-body",formid);
-		$('#'+formid+"-body").getEditor().focus();
+		
+		if (link.getAttribute('data-note-type') === 'fwd') {
+			$('.forward_email input').trigger('focus');
+		} else {
+			$('#'+formid+"-body").getEditor().focus();
+		}
+
 		if($.browser.mozilla){
 			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 		}
@@ -325,11 +331,22 @@ var updatePagination = function() {
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			trigger_event("ticket_show_more",{})
-			
+			freshfoneAudioDomSetting();
 		});
 	});
 }
 
+var freshfoneAudioDomSetting = function (){
+			soundManager.reboot();
+			$('.call_duration').each(function () {
+				if ($(this).data("time") === undefined) { return; }
+					$(this).html($(this).data("time").toTime());
+			});
+}
+$('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
+		ev.preventDefault();
+		window.location.reload(true);
+});
 // ----- END FOR REVERSE PAGINATION ------ //
 
 changeStatusTo = function(status) {
@@ -419,8 +436,9 @@ var scrollToError = function(){
 		}else{
 			$("#calender-buttons").show();
 			$("#calender-info").hide();
-		}               
-		return moment(_date_time).format("ddd MMM DD YYYY HH:mm:ss")+" GMT"+moment().format("Z").replace(":","");
+		}  
+		var engMoment = moment(_date_time);
+		return engMoment.lang("en").format("ddd MMM DD YYYY HH:mm:ss") +" GMT"+engMoment.lang("en").format("Z").replace(":","");         
 	}
 	
 	$("#DueDateForm").submit(function(){  
@@ -742,7 +760,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', true);
 
 			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
+			if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
@@ -844,7 +862,7 @@ var scrollToError = function(){
 					if(statusChangeField.length) {
 						if(statusChangeField.val() != '') {
 							refreshStatusBox();
-							if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
+							if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
 								$('[rel=link_ticket_list]').click();
 							}
 							statusChangeField.val('')
@@ -1010,6 +1028,21 @@ var scrollToError = function(){
 		}
 	}
 
+	window.closeCurrentTicket = function (ev) {
+		changeStatusTo(TICKET_CONSTANTS.statuses.closed);
+		if($('#custom_ticket_form').valid())
+		{
+			var action_attr = $('#custom_ticket_form').attr("action"),
+				isSilentClose = ev.shiftKey || false,
+				disable_notification = isSilentClose ? "?disable_notification=" + isSilentClose + "&redirect=true" : "?redirect=true";
+
+			$('#custom_ticket_form').attr("action", action_attr + disable_notification);
+			$('#custom_ticket_form').submit();
+		} else {
+			scrollToError();
+		}
+	}
+
 	$('body').on('click.ticket_details', '[rel=TicketReplyPlaceholder]', function(ev) {
 		ev.preventDefault();
 		$(this).hide();
@@ -1042,17 +1075,8 @@ var scrollToError = function(){
 		}
 	});
 
-	$('body').on('click.ticket_details', '#close_ticket_btn', function(ev){
-		changeStatusTo(5);
-		if($('#custom_ticket_form').valid())
-		{
-			var action_attr = $('#custom_ticket_form').attr("action");
-			$('#custom_ticket_form').attr("action", action_attr +"?disable_notification=" + ev.shiftKey + "&redirect=true" );
-			$('#custom_ticket_form').submit();
-		}
-		else
-			scrollToError();
-
+	$('body').on('click.ticket_details', '[rel=close_ticket_btn]', function(ev){
+		closeCurrentTicket(ev);
 		return false;
 	});
 
@@ -1089,7 +1113,7 @@ var scrollToError = function(){
 			ev.stopPropagation();
 		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
-	})
+	});
 	//ScrollTo the latest conversation
 
 	if (updateShowMore()) updatePagination();

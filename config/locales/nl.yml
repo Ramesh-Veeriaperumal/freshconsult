@@ -131,7 +131,7 @@ nl:
     jira: 
       label: "Atlassian JIRA"
       desc: "Vorm tickets om naar issues die getracked kunnen worden in JIRA."
-      helptext: "<h4>Hulp bij JIRA-integratie</h4><p><br/>Voer om JIRA te integreren met Freshdesk uw JIRA-beheerder gebruikersnaam en wachtwoord in. De integratie ondersteunt zowel on-demand en on-premise varianten, van JIRA 4.2 tot de laatste versie - JIRA 5.<br/><br/>Om een issue aan te maken, of te linken naar een bestaande issue van Freshdesk, ga naar de ticketspagina en klik op <img src='/images/ticket-icon/jira.png'/><br/><br/>Om de gegevens van uw verbonden Freshdesk-tickets binnen JIRA te bekijken, en omgekeerd om de JIRA-issue gegevens binnen Freshdesk te bekijken, is het aan te raden voor de JIRA-beheerder om een aangepast 'Free text'-veld aan te maken met de naam \"Freshdesk\" zoals hieronder staat weergegeven.<br/><br/>Log in bij uw JIRA-account, klik op <b>Administratie</b>, ga naar <b>Issues</b> -> <b>Velden</b> en klik op <b>Voeg aangepast veld toe</b>. Op het <b>Maak aangepast veld</b>-scherm, selecteer <b>Free Text Field</b> en klik op <b>Volgende</b>. Vul <b>\"Freshdesk-tickets\"</b> in bij veldnaam en klik op afronden. Op de <b>Associate fiels to Screens</b>-pagina, selecteer alle vakjes en klik op 'Bijwerken'.<br/><br/>"
+      helptext: "<h4>Hulp bij JIRA-integratie</h4><p><br/>Voer om JIRA te integreren met Freshdesk uw JIRA-beheerder gebruikersnaam en wachtwoord in. De integratie ondersteunt zowel on-demand en on-premise varianten, van JIRA 4.2 tot de laatste versie - JIRA 5.<br/><br/>Om een issue aan te maken, of te linken naar een bestaande issue van Freshdesk, ga naar de ticketspagina en klik op <i class='jira-icon'></i><br/><br/>Om de gegevens van uw verbonden Freshdesk-tickets binnen JIRA te bekijken, en omgekeerd om de JIRA-issue gegevens binnen Freshdesk te bekijken, is het aan te raden voor de JIRA-beheerder om een aangepast 'Free text'-veld aan te maken met de naam \"Freshdesk\" zoals hieronder staat weergegeven.<br/><br/>Log in bij uw JIRA-account, klik op <b>Administratie</b>, ga naar <b>Issues</b> -> <b>Velden</b> en klik op <b>Voeg aangepast veld toe</b>. Op het <b>Maak aangepast veld</b>-scherm, selecteer <b>Free Text Field</b> en klik op <b>Volgende</b>. Vul <b>\"Freshdesk-tickets\"</b> in bij veldnaam en klik op afronden. Op de <b>Associate fiels to Screens</b>-pagina, selecteer alle vakjes en klik op 'Bijwerken'.<br/><br/>"
       form: 
         domain: Domein
         domain_info: "Voer uw complete JIRA account URL in met https/http. Bijv. https://example.atlassian.net. <br /><span class='italics'> NB: De on-premise variang van JIRA moet beschikbaar zijn via het internet.</span>"
@@ -2418,6 +2418,7 @@ nl:
     reported: ingediend
     said: zei
     solutions_home: "Oplossingen startpagina"
+    attach_file: "Een <b>bestand bijvoegen</b>"
     header: 
       preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>Klik hier</a> om terug te gaan."
     new_support_ticket: "Nieuw support ticket"

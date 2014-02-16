@@ -1,14 +1,14 @@
 <head>
 	<% if @debuging%>
-	<script type="text/javascript">
-    var t_pagestart=new Date().getTime();
-  </script>
-  <%end%>
-  <meta charset="utf-8">
+		<script type="text/javascript">
+	    	var t_pagestart=new Date().getTime();
+	  	</script>
+  	<%end%>
+  	<meta charset="utf-8">
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 	     Remove this if you use the .htaccess -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
-  <title><%= page_title.html_safe %></title>
+  	<title><%= page_title.html_safe %></title>
 	<meta name="description" content="<%= page_description %>">
 	<meta name="author" content="">                            
 	<meta name="keywords" content="<%= page_keywords %>">
@@ -20,14 +20,17 @@
 	<% end %>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
 	<%= include_cloudfront_css :common %>
+	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
 	<%= include_cloudfront_css :plugins  %>
 	<%= include_cloudfront_css :sprites  %>
 	<%= include_cloudfront_css :app %>
 	<%= include_cloudfront_css :non_pattern %>
 	<%= include_cloudfront_css :tour_my_app %>
 	<%= include_cloudfront_css :ie_hacks %>
+	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
+	<%= include_cloudfront_css :'360player' %>
+	<%= include_cloudfront_css :'freshfone_recording_playback' %>
 	<%#= render :partial => "shared/theme.css"  %>
-	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 
 	<script type="text/javascript">
 		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
@@ -41,12 +44,12 @@
 	<%= include_cloudfront_js :defaults  %>
 	<%= include_cloudfront_js :frameworks %>
 	<%= include_cloudfront_js :workspace %>
-	<%= include_cloudfront_js :redactor  %>
+	<%= include_cloudfront_js :redactor %>
+	<%= include_cloudfront_js :shortcut if shortcuts_enabled? %>
+	<%= include_cloudfront_js :syntaxhighlighter %>
 
 
-	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
 	<%= include_cloudfront_js :pattern  %>
-	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
 	<%= include_cloudfront_js :merge  %>
 	<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 
@@ -55,6 +58,7 @@
 	<% if current_account.freshfone_enabled? ||
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
+		<%= include_cloudfront_js :'360player' %>
 		<%= include_cloudfront_css :icomoon %>
 	<% end %>
 
@@ -66,6 +70,9 @@
 	</script>
 
 	<%= yield :head %>
+
+	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
+
 </head>
 
 <%if @debuging %>

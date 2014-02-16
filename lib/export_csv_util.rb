@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'csv'
 module ExportCsvUtil
+DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
@@ -104,11 +105,16 @@ module ExportCsvUtil
       record = []
       headers.each do |val|
         data = item.send(val)
+        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
         record << unescape_html(data)
       end
       records << record
     end
     records
+  end
+
+  def parse_date(date_time)
+    date_time.strftime("%F %T")
   end
 
   def unescape_html(data)

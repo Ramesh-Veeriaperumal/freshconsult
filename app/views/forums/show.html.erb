@@ -1,28 +1,52 @@
 
 	<% @page_title = @forum.name %>
-	<div class="clearfix">
-		<div class="pull-right">
-			<% if privilege?(:create_topic) %>
-			  <%= link_to(t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => "btn btn-primary") %>
-			<% end %>
+	<% @monitor = @monitorship.zero? %>
+	<div class="request_details bottom_fix">
+		<div class="breadcrumbs">
+			<h5 class="">	
+			 	<%= link_to(t('forum.title'), categories_path) %> &rarr;
+				<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %>
+			</h5>
 		</div>
-		<h5 class="">
-		 	<%= link_to(t('forum.title'), categories_path) %> &rarr;
-			<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
-			<%= @forum.name %> 
-		</h5>	 
 	</div>
-	<br>
+
+	<div class="row-fluid">
+		<div class="vertical-alignment span10">
+			<span class="vertical-alignment monitor_link_holder position_forum_title" id="monitorship_link">
+				<%= link_to_remote "", :url => toggle_monitorship_path("forum", @forum.id, (@monitor ? "follow" : "unfollow")), 
+						:method => :post, 
+						:before => "jQuery('#toggle_monitorship_status').hide();jQuery('#monitorship_link').addClass('sloading loading-small');",
+						:html => {
+									:class => "forum_follow_icon tooltip #{@monitor ? '' : 'active'}", 
+									:"data-placement" => 'below',
+									:id => "toggle_monitorship_status",
+									:title => t((@monitor ? 'monitorships.follow_title' : 'monitorships.unfollow_title'))
+								} 
+				%>
+			</span>
+
+			<% if privilege?(:manage_forums) -%>
+			<span class="vertical-alignment action_icons position_forum_title">
+				<%= link_to("", edit_category_forum_path(@forum_category, @forum), 
+							:method => :get, 
+							:class => "icons-edit-forum tooltip",
+							:"data-placement" => 'below', 
+							:title => t('forum_shared.edit_title') ) 
+				%>
+			</span>
+			<% end %>
+
+			<span class="vertical-alignment">
+				<h3 class="lead position_forum_title"><%= @page_title %></h3>
+			</span>
+		</div>
+		<% if privilege?(:create_topic) %>
+			<span class="pull-right span2 position_forum_title"><%= link_to(t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => "btn pull-right btn-primary") %></span>
+		<% end %>
+	</div>
+
 	<div class="forum-group">
 		<div class="search-grey-box">
-			<% if privilege?(:manage_forums) -%>
-				<div class="pull-right">
-				
-					<br/>
-					<%= link_to t("forum.edit"), edit_category_forum_path(@forum_category, @forum), :class => "btn"  %>
-				</div>
-
-			<% end %>
 			<div class="" style="display:none;">
 				<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %>
 				<%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>,
@@ -44,4 +68,3 @@
 	</div>
   <%= will_paginate @topics %>	
 	 
-	

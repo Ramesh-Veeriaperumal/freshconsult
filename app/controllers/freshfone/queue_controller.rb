@@ -9,21 +9,22 @@ class Freshfone::QueueController < FreshfoneBaseController
   
   before_filter :add_caller_to_redis_queue, :only => [:enqueue]
   before_filter :cleanup_redis_on_queue_complete, 
-              :only => [:hangup, :trigger_voicemail, :quit_queue_on_voicemail, :dequeue]
+              :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
   before_filter :remove_wait_job,
               :only => [:hangup, :quit_queue_on_voicemail, :dequeue]
   
   def enqueue
-    if params[:CurrentQueueSize].to_i > max_queue_size
-      redirect_call_to_voicemail
-    else
-      enqueue_caller
-      trigger_queue_wait
-    end  
+    enqueue_caller
+    trigger_queue_wait
   end
 
   def trigger_voicemail
-    render :xml => call_initiator.initiate_voicemail('quit_queue')
+    render :xml => call_initiator.initiate_voicemail
+  end
+
+  def trigger_non_availability
+    call_initiator.queued = true
+    render :xml => call_initiator.return_non_availability
   end
 
   def bridge
@@ -53,26 +54,13 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def quit_queue_on_voicemail
-    if params[:Digits] == '*'
-      queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
-      queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
-      render :text => 'Dequeued Call #{params[:CallSid]} from #{queue_sid}'
-    else
-      twiml = Twilio::TwiML::Response.new do |r|
-        r.Say 'To leave a message, Press * and wait for the tone.',
-                :voice => current_number.voice_type
-      end
-      render :xml => twiml.text
-    end
+    return empty_twiml unless params[:Digits] == '*'
+    queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
+    queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
+    render :text => 'Dequeued Call #{params[:CallSid]} from #{queue_sid}'
   end
 
   private
-    def redirect_call_to_voicemail
-      queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
-      queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
-      render :nothing => true
-    end
-
     def trigger_queue_wait
       unless get_key(resque_queue_wait_key)
         set_key(resque_queue_wait_key, true)

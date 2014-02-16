@@ -15,6 +15,7 @@ class Account < ActiveRecord::Base
   has_many :email_configs, :conditions => { :active => true }
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
+  has_many :mailboxes
   has_many :products, :order => "name"
   has_many :roles, :dependent => :delete_all, :order => "default_role desc"
   has_many :portals, :dependent => :destroy
@@ -171,6 +172,8 @@ class Account < ActiveRecord::Base
   has_one :day_pass_config
   has_many :day_pass_usages
   has_many :day_pass_purchases, :order => "created_at desc"
+
+  delegate :addons, :to => :subscription
   
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
  
@@ -193,6 +196,7 @@ class Account < ActiveRecord::Base
   has_many :portal_templates,  :class_name=> 'Portal::Template'
   has_many :portal_pages,  :class_name=> 'Portal::Page'
 
+  delegate :active_groups_in_account, :to => :groups, :allow_nil => true
   #Freshfone
   has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
   has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"

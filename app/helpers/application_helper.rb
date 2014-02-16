@@ -75,6 +75,9 @@ module ApplicationHelper
     end
   end
 
+  def ticket_status_hash
+    Hash[Helpdesk::TicketStatus.status_names(current_account)]
+  end
 
   def timediff_in_words(interval)
     secs  = interval.to_i
@@ -142,12 +145,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container"} : {}
+    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container", :"data-keybinding" => shortcut("app_nav.#{strip_tags(title).downcase}")} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
- 
   end
   
   def show_ajax_flash(page)
@@ -514,7 +516,7 @@ module ApplicationHelper
  
  def get_time_in_hours seconds
   hh = (seconds/3600).to_i
-  mm = ((seconds % 3600) / 60).to_i
+  mm = ((seconds % 3600)/60.to_f).round
 
   hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
  end
@@ -763,7 +765,7 @@ module ApplicationHelper
   def assumed_identity_message
     _output = []
     if current_user && is_assumed_user?
-      _output << %( <div class="alert alert-assume-agent alert-solid"> )
+      _output << %( <div class="alert-assume-agent alert-solid"> )
       _output << %( #{t('header.assumed_text')} <b> #{current_user.name}</b> - )
       _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
       _output << %( </div> )
@@ -866,6 +868,10 @@ module ApplicationHelper
     feature?(:freshfone) or current_account.freshfone_numbers.any?
   end
 
+  def freshfone_below_threshold?
+    current_account.freshfone_credit.below_calling_threshold?
+  end
+
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
 		can_make_calls(number, 'phone-icons', freshfone_number_id)
@@ -909,4 +915,27 @@ module ApplicationHelper
     
     location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
   end
+
+  def shortcut(key)
+    Shortcut.get(key)
+  end
+
+  def shortcuts_enabled?
+    logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
+  end
+
+  def current_platform
+    os = UserAgent.parse(request.user_agent).os
+    ['windows', 'mac', 'linux'].each do |v|
+      return v if os.downcase.include?(v)
+    end
+
+    return nil
+  end
+
+  def modifier(key)
+    platform = current_platform || "windows"
+    Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
+  end
+
 end

@@ -121,6 +121,7 @@ module Import::CustomField
   end
 
   def field_name(label,account=current_account)
-    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}"
+    label = "cf_"+label.gsub(/[^ _0-9a-zA-Z]+/,"") unless /^[a-z](?:_?[ a-z0-9]+)*$/i.match(label)
+    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}".squeeze("_")
   end
 end

@@ -1,5 +1,8 @@
 class Freshfone::CallCostCalculator
+	include Redis::RedisKeys
+	include Redis::IntegrationsRedis
 	attr_accessor :args, :current_account, :first_leg_call, :total_charge, :current_call
+	delegate :outgoing?, :to => :current_call, :allow_nil => true
 	DEFAULT_CALL_COST = -1.0
 
 	def initialize(args, current_account)
@@ -8,17 +11,16 @@ class Freshfone::CallCostCalculator
 		self.total_charge = DEFAULT_CALL_COST
 	end
 	
-	
 	def perform
 		begin
 			calculate_cost
 		rescue => exp
-			Freshfone::PulseRate.send_failure_notification(Account.current, args[:call_sid],
-				 																																args[:dial_call_sid])
 			puts "Freshfone ERROR: TOTAL Call Cost :#{total_charge}:  #{exp} : \n #{exp.backtrace}"
+			FreshfoneNotifier.deliver_billing_failure(Account.current, args[:call_sid], exp)
 		ensure
 			puts "Freshfone INFO ::Credit Updated >>> USD:  #{total_charge} :: isrecord :#{args[:record].present?}"
 			update_call_cost
+			update_calls_beyond_threshold_count
 		end
 	end
 	
@@ -32,9 +34,13 @@ class Freshfone::CallCostCalculator
 	
 	private
 		def get_first_leg_cost
-			#twilio returned call charge is always negative hence .abs
 			puts "Call cost for the first leg of #{args[:call_sid]} : #{first_leg_call.price}"
-			self.total_charge = first_leg_call.price.to_f.abs 
+			if current_call.present?
+				pulse_rate = Freshfone::PulseRate.new(current_call, false)
+				self.total_charge = pulse_rate.one_legged_call_cost	
+			else
+				self.total_charge = first_leg_call.price.to_f.abs
+			end	
 		end
 	
 		def calculate_second_leg_cost
@@ -73,6 +79,31 @@ class Freshfone::CallCostCalculator
 				:freshfone_number_id => args[:number_id]) unless args[:billing_type].blank? 
 		end
 		
+		def update_calls_beyond_threshold_count
+			return if args[:below_safe_threshold].blank?
+			key = FRESHFONE_CALLS_BEYOND_THRESHOLD % { :account_id => current_account.id }
+			set_key(key, calculate_calls_count)
+		end
+
+		def beyond_threshold_calls_count
+			@beyond_threshold_calls_count ||= begin
+				key = FRESHFONE_CALLS_BEYOND_THRESHOLD % { :account_id => current_account.id }
+				get_key(key).to_i
+			end
+		end
+		
+		def calculate_calls_count
+			# First four bits for outgoing(0b0000xxxx), next four bits for incoming(0bxxxx0000)
+			incoming = beyond_threshold_calls_count >> 4
+			outgoing = beyond_threshold_calls_count & 15
+			if outgoing?
+				outgoing = (outgoing > 0) ? (outgoing - 1) : 0
+			else
+				incoming = (incoming > 0) ? (incoming - 1) : 0
+			end
+			(incoming << 4) + outgoing
+		end
+
 		def call_sid
 			args[:call_sid]
 		end

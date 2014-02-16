@@ -1,0 +1,135 @@
+<%= link_to( "", "#",
+		:id => "shortcut_help_chart",
+		:rel => 'freshdialog', "data-target" => "#help_chart", 
+		"data-template-footer" => "", "data-classes" => 'persistent_modal',
+		:title => t("shortcuts.title"), "data-width" => "1000px" ) %>
+<div id="help_chart" class="hide help-chart">
+	<a class="view_detail" href='https://support.freshdesk.com/support/solutions/articles/186758' target="_blank">View in detail</a>
+	<div class="row-fluid">
+		<div class="span6">
+			<span>
+				<hr>
+				<h3 class="sub-lead"><%= t("shortcuts.goto_tab.title") %></h3>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> d</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.dashboard") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> t</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.tickets") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> e</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.social") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> s</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.solutions") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> f</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.forums") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> c</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.customers") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> r</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.reports") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">g <span>then</span> a</span>
+					<span class="span8 description"><%= t("shortcuts.goto_tab.admin") %></span>
+				</span>
+			</span>
+			<span>
+				<hr>
+				<h3 class="sub-lead"><%= t("shortcuts.ticket_detail_list_common.title") %></h3>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">Alt <span>&#43;</span> Left <span>&#47;</span> Right</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.prev_next") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#35;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.delete_ticket") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#64;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.pickup") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#33;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.spam") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#126;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.close").html_safe %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#47;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.search") %></span>
+				</span>
+			</span>
+		</div>
+		<div class="span6">
+			<span>
+				<hr>
+				<h3 class="sub-lead"><%= t("shortcuts.ticket_list.title") %></h3>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">j <span>&#47;</span> k <span>or</span> up <span>&#47;</span> down</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_list.move_cursor") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">space</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_list.hovercard") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">return</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_list.view") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">x</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_list.mark", :modifier_key => modifier("shift")).html_safe %></span>
+				</span>
+			</span>
+			<span>
+				<hr>
+				<h3 class="sub-lead"><%= t("shortcuts.ticket_view.title") %></h3>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">r</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.reply") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">f</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.forward") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">n</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.add_note") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> enter</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.save") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">w</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.watch") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#93;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.expand") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">&#125;</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.toggle_activity") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">m</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.add_time") %></span>
+				</span>
+			</span>
+		</div>
+	</div>
+</div>
+

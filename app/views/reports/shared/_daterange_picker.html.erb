@@ -1,7 +1,5 @@
-
-	<label class="caption"><%= t('reports.select_time_period').html_safe%></label>
-	<%= text_field_tag :date_range, "", :class => "required" %>
-
+<label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
+<%= text_field_tag :date_range, date_range, :class => "required input-large" %>
 
 <% javascript_tag do %>
 jQuery(document).ready(function() {
@@ -22,7 +20,6 @@ jQuery(document).ready(function() {
 			jQuery('#date_range').trigger('change');
 		}
 	});
-	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');   
 
 	jQuery('#date_range').bind('keypress keyup keydown', function(ev) {
 		ev.preventDefault();

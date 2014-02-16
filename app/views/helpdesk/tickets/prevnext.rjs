@@ -1,6 +1,6 @@
 
 next_link = 'javascript:void(0)'
-next_class = 'pagi-btn next_page'
+next_class = 'page-btn next_page'
 if !@next_ticket.blank? &&  @next_ticket.to_s != '-1'
 	next_link = "/helpdesk/tickets/#{@next_ticket}"
 else
@@ -8,7 +8,7 @@ else
 end
 
 previous_link = 'javascript:void(0)'
-previous_class = 'pagi-btn prev_page'
+previous_class = 'page-btn prev_page'
 if !@previous_ticket.blank? &&  @previous_ticket.to_s != '-1'
 	previous_link = "/helpdesk/tickets/#{@previous_ticket}"
 else
@@ -20,13 +20,18 @@ content = '<ul><li>'
 content << link_to("<span class='arrow-next'></span>".html_safe, next_link, 
 						"data-pjax" => "#body-container", 
 						:class => "#{next_class} btn tooltip" , :rel => 'next', 
-						:title => t('ticket.next'), "data-placement" => 'below')
+						:title => "#{t('ticket.next')}", 
+						"data-placement" => 'below',
+						"data-keybinding" => shortcut('pagination.next'),
+						"data-highlight" => "true")
 content << '</li><li>'
 content << link_to(" <span class='arrow-previous'></span>".html_safe,  previous_link,
 						"data-pjax" => "#body-container",  
-						:class => "#{previous_class} btn tooltip" , :rel => 'previous', 
-
-						:title => t('ticket.previous'), "data-placement" => 'below')
+						:class => "#{previous_class} btn tooltip" , :rel => 'previous',
+						:title => "#{t('ticket.previous')}",
+						"data-placement" => 'below',
+						"data-keybinding" => shortcut('pagination.previous'),
+						"data-highlight" => "true")
 content << '</li></ul>'
 
 page.replace_html 'adjacents', content

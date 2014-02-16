@@ -8,8 +8,8 @@
 	</li>
 </ul>
 <div class="button-container">
-	<%= submit_tag t('save'), :class => "uiButton", :role => "button disabled", :id => "save_here", "disabled" => "disabled" %>	      	
-	<%= link_to(t('cancel'), "#", :class => "uiButton", :id => "new_cancel" ) %>
+	<%= link_to(t('cancel'), "#", :class => "btn", :id => "new_cancel" ) %>
+	<%= submit_tag t('save'), :class => "btn btn-primary", :role => "button disabled", :id => "save_here", "disabled" => "disabled" %>	      	
 </div>
 
 <% javascript_tag  do -%>

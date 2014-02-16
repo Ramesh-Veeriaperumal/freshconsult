@@ -16,6 +16,8 @@ class Customer < ActiveRecord::Base
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
   has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name
+
+  has_many :all_tickets ,:class_name => 'Helpdesk::Ticket', :through => :all_users , :source => :tickets
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
 
@@ -57,7 +59,7 @@ class Customer < ActiveRecord::Base
            :order => 'name'
   end
   
-  def self.es_filter(account_id, letter,page, field_name, sort_order, per_page)
+  def self.es_filter(account_id, letter, page, field_name, sort_order, per_page)
     Search::EsIndexDefinition.es_cluster(account_id)
     index_name = Search::EsIndexDefinition.searchable_aliases([Customer], account_id)
     options = {:load => true, :page => page, :size => per_page, :preference => :_primary_first }

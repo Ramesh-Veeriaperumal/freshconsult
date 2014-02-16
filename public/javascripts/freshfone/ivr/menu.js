@@ -52,12 +52,12 @@ var globalmenus = {},
 			globalmenus[this.menuId] = this.menusList[this.menuId] = this;
 		},
 		buildFromTemplate: function () {
-			var template = $('#menuTemplate').clone(true, true);
+			var template = $('#menu-template');
 			template.find('div.select2-container').remove();
 			var prefix = replacePrefix(freshfone.ivr_prefix, 'menuId',
 																									this.menuId);
 			var templateOptions = $.extend({}, (this.jsonMenu || this), prefix);
-			this.template = template.tmpl(templateOptions);
+			this.template = $.tmpl(template, templateOptions);
 			this.template.find('.attached_file').hide();
 			this.template.find('.recorded-message').hide();
 		},
@@ -190,7 +190,7 @@ var globalmenus = {},
 		deleteObject: function () {
 			if (!this.menuId) { return false; }
 			this.removeDependantOptions();
-			this.ivr.removeMenuFromList(this.menuId);
+			this.removeMenuFromList(this.menuId);
 			this.removeRelations();
 			this.hideAndDeleteMenu();
 			delete globalmenus[this.menuId];

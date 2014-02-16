@@ -5,37 +5,38 @@
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.name').html_safe%></label>
 			<div class="controls">
-				<%= f.text_field :name, :class => "text span8" %>
+				<%= f.text_field :name, :class => "text input-xxlarge" %>
 				<div class="muted"><%= t('email_configs.name_info_msg').html_safe %> </div>
 			</div>
 	</li>
 	<li class="control-group">	
 			<label class="control-label" ><%=(t('email_configs.reply_email') + " *").html_safe%></label>
 			<div class="controls">
-				<%= f.text_field :reply_email, :class => "required email text span8", :id => "reply_to_id" %>
+				<%= f.text_field :reply_email, :class => "required email muted text input-xxlarge", :id => "reply_to_id" %>
 				<div class="muted"><%= t('email_configs.info7').html_safe %> </div>
 			</div>
 	</li>
 	<li class="control-group">	
 			<label class="control-label" ><%=t('email_configs.info8').html_safe%></label>
 			<div class="controls">
+				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info input-xxlarge")  %>
 				<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
-				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info muted span8  clear-left-margin" )  %>
+				<a target="_blank" title="Learn how to configure your support email" href="https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets"><%= t(:'email_configs.solution_link').html_safe %></a>
 			</div>
 	</li>
 	<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.info9').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2")
+				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2 input-xlarge")
 				 %>
-				<div class="muted"><%=t('email_configs.info10').html_safe%> </div>
+				<div class="muted input-xxlarge"><%=t('email_configs.info10').html_safe%> </div>
 			</div>
 	</li> 
 	<% if feature?(:multi_product)  && !@products.empty?  && !@email_config.primary_role %> 
 		<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.assign_to_product_msg').html_safe%></label>
 			<div class="controls">
-				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..."},:class =>"select2") %>
+				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..."},:class =>"select2 input-xlarge") %>
 				<div class="muted"><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path).html_safe%></div> 
 			</div>
 		</li> 

@@ -47,9 +47,9 @@
 		<label><%= f.radio_button :send_while, Survey::SPECIFIC_EMAIL_RESPONSE %> <%=t('.send_while_option4')%></label>
 	</li>
 	<li><span class="seperator"></span></li>
-	<li>
+	<li class="button-container">
 		<a class="btn" href="/admin/home">Cancel</a>
-		<%= submit_tag t('account.save'), :class => 'btn primary pull-right' %>	
+		<%= submit_tag t('account.save'), :class => 'btn btn-primary' %>	
 	</li>
 </ul>
 <%end%>

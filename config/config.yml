@@ -76,6 +76,10 @@ chargebee:
   production:
     site: "freshdesk"
     api_key: "0jYcdSmNzhSfiBdPue1cudI0JOOaFtHMSf"
+  test:
+    site: "freshpo-test"
+    api_key: "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"
+
 
 
 integrations_url:
@@ -84,10 +88,6 @@ integrations_url:
     staging: "https://login.freshpo.com"
     # staging: "https://login.freshitil.com"
     #staging: "https://login.freshpo.com"
-
-twilio:
-  account_sid: "AC751e0912b032d91ae3935348844da32b"
-  auth_token: "db923d6625f1dbc66ca53353cbf09458"
 
 reseller_portal:
   user_name: "freshdesk"

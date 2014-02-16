@@ -119,7 +119,7 @@ var Ivr;
 		},
 		failureInResponse: function(data, $submitButton, $form) {
 			$form.find('#errorExplanation').remove();
-			$(data.error_message).insertAfter('[rel=menu_relations]');
+			$form.prepend($(data.error_message));
 			$submitButton.button('reset');
 		}
 	};

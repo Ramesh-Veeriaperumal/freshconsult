@@ -7,14 +7,13 @@ class Billing::BillingController < ApplicationController
                       :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
-  before_filter :ensure_right_parameters, :retrieve_account, :if => :event_monitored?
-
-  before_filter :load_subscription_info, :if => :subscription_info_available?
+  before_filter :ensure_right_parameters, :retrieve_account, 
+                :load_subscription_info, :if => :monitored_event_not_from_api?
  
   
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
               "subscription_cancelled", "subscription_reactivated", "card_added", 
-              "card_updated", "payment_succeeded", "payment_refunded" ]          
+              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
 
   INVOICE_TYPES = { 
     :recurring => "0", 
@@ -22,7 +21,7 @@ class Billing::BillingController < ApplicationController
   }
 
   EVENT_SOURCES = {
-    :api => "API"
+    :api => "api"
   }
 
   META_INFO = { :plan => :subscription_plan_id, :renewal_period => :renewal_period, 
@@ -44,7 +43,9 @@ class Billing::BillingController < ApplicationController
 
   
   def trigger
-    send(params[:event_type], params[:content]) if event_monitored?
+    if event_monitored? and not_api_source?
+      send(params[:event_type], params[:content])
+    end
 
     respond_to do |format|
       format.xml { head 200 }
@@ -59,7 +60,6 @@ class Billing::BillingController < ApplicationController
   end
 
   private
-
     #Authentication
     def login_from_basic_auth
       authenticate_or_request_with_http_basic do |username, password|
@@ -77,9 +77,13 @@ class Billing::BillingController < ApplicationController
       EVENTS.include?(params[:event_type])
     end
 
-    def subscription_info_available? 
-      params[:content][:subscription]
-    end 
+    def not_api_source?
+      params[:source] != EVENT_SOURCES[:api]
+    end
+
+    def monitored_event_not_from_api?
+      event_monitored? and not_api_source?   
+    end    
 
     def ensure_right_parameters
       if ((params[:event_type].blank?) or (params[:content].blank?) or params[:content][:customer].blank?)
@@ -88,20 +92,22 @@ class Billing::BillingController < ApplicationController
     end
 
     def retrieve_account
-      @account = Account.find_by_id(params[:content][:customer][:id])
+      @account = Account.find_by_id(params[:content][:customer][:id])      
       return render :json => ActiveRecord::RecordNotFound, :status => 404 unless @account
     end
 
     #Subscription info
-    def load_subscription_info
-      @subscription_data = subscription_info(
-        params[:content][:subscription], params[:content][:customer])
+    def load_subscription_info      
+      @billing_data = Billing::Subscription.new.retrieve_subscription(@account.id)
+      Rails.logger.debug @billing_data
+      @subscription_data = subscription_info(@billing_data.subscription, @billing_data.customer)
+      Rails.logger.debug @subscription_data.inspect
     end
 
     def subscription_info(subscription, customer)
       {
-        :renewal_period => billing_period(subscription[:plan_id]),
-        :agent_limit => subscription[:plan_quantity],
+        :renewal_period => billing_period(subscription.plan_id),
+        :agent_limit => subscription.plan_quantity,
         :state => subscription_state(subscription, customer),
         :next_renewal_at => next_billing(subscription)
       }
@@ -112,14 +118,14 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_state(subscription, customer)
-      status =  subscription[:status]
+      status =  subscription.status
       
       case
-        when (customer[:auto_collection].eql?(OFFLINE) and status.eql?(ACTIVE))
+        when (customer.auto_collection.eql?(OFFLINE) and status.eql?(ACTIVE))
           ACTIVE
         when status.eql?(IN_TRIAL)
           TRIAL
-        when (status.eql?(ACTIVE) and customer[:card_status].eql?(NO_CARD))
+        when (status.eql?(ACTIVE) and customer.card_status.eql?(NO_CARD))
           FREE
         when status.eql?(ACTIVE)
           ACTIVE
@@ -129,20 +135,22 @@ class Billing::BillingController < ApplicationController
     end
 
     def next_billing(subscription)
-      if (renewal_date = subscription[:current_term_end])
+      if (renewal_date = subscription.current_term_end)
         Time.at(renewal_date).to_datetime.utc
       else
-        Time.at(subscription[:trial_end]).to_datetime.utc
+        Time.at(subscription.trial_end).to_datetime.utc
       end
     end
 
     #Events
     def subscription_changed(content)
-      @account.subscription.update_attributes(@subscription_data)
+      plan = subscription_plan(@billing_data.subscription.plan_id)      
+      @old_subscription = @account.subscription.clone
+      @existing_addons = @account.addons.clone
       
-      if params[:source] != EVENT_SOURCES[:api]
-        Resque.enqueue(Billing::ChangeSubscription, { :account_id => @account.id })
-      end
+      @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
+      update_addons(@account.subscription, @billing_data.subscription)
+      update_features if update_features?
     end
 
     def subscription_activated(content)
@@ -165,10 +173,15 @@ class Billing::BillingController < ApplicationController
     end
 
     def card_added(content)
-      @account.subscription.update_attributes(card_info(content[:card]))
-      update_billing_address(content[:card], @account.subscription)
+      @account.subscription.set_billing_info(@billing_data.card)
+      @account.subscription.save
     end
     alias :card_updated :card_added
+
+    def card_deleted(content)
+      @account.subscription.clear_billing_info
+      @account.subscription.save
+    end
 
     def payment_succeeded(content)
       @account.subscription.subscription_payments.create(payment_info(content))
@@ -179,15 +192,46 @@ class Billing::BillingController < ApplicationController
               :account => @account, :amount => -(content[:transaction][:amount]/100))
     end
 
+    #Plans, addons & features
+    def subscription_plan(plan_code)
+      plan_id = Billing::Subscription.helpkit_plan[plan_code].to_sym
+      plan_name = SubscriptionPlan::SUBSCRIPTION_PLANS[plan_id]
+      SubscriptionPlan.find_by_name(plan_name)
+    end
 
-    #Card and Payment info
-    def card_info(card)
+    def plan_info(plan)
       {
-        :card_number => card[:masked_number],
-        :card_expiration => "%02d-%d" % [card[:expiry_month], card[:expiry_year]]
+        :subscription_plan => plan,
+        :day_pass_amount => plan.day_pass_amount,
+        :free_agents => plan.free_agents
       }
     end
 
+    def update_addons(subscription, billing_subscription)
+      addons = billing_subscription.addons.to_a.collect{ |addon| 
+        Subscription::Addon.fetch_addon(addon.id) 
+      }
+      
+      plan = subscription_plan(billing_subscription.plan_id)
+      subscription.addons = subscription.applicable_addons(addons, plan)
+      subscription.save #to update amount in subscription
+    end
+
+    def update_features
+      SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
+    end
+
+    def update_features?            
+      @old_subscription.subscription_plan_id != @account.subscription.subscription_plan_id or 
+        addons_changed?
+    end
+
+    def addons_changed?
+      !(@existing_addons & @account.addons == @existing_addons and 
+            @account.addons & @existing_addons == @account.addons)
+    end
+
+    #Card and Payment info
     def payment_info(content)
       {
         :account => @account,
@@ -205,21 +249,6 @@ class Billing::BillingController < ApplicationController
     def build_meta_info(invoice)
       meta_info = META_INFO.inject({}) { |h, (k, v)| h[k] = @account.subscription.send(v); h }
       meta_info.merge({ :description => invoice[:line_items][0][:description] })
-    end
-
-    #Billing Address
-    def update_billing_address(card, subscription)
-      billing_address = subscription.billing_address
-
-      return billing_address.update_attributes(address(card)) if billing_address
-
-      billing_address = subscription.build_billing_address(address(card))
-      billing_address.account = @account
-      billing_address.save
-    end
-
-    def address(card)
-      ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card[v]; h }
     end
 
 end

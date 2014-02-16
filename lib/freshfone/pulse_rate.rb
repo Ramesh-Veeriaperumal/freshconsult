@@ -26,11 +26,13 @@ class Freshfone::PulseRate
 		return outgoing_cost if outgoing?
 		forwarded ? forwarded_cost : incoming_cost
 	end
-	
-	def self.send_failure_notification(account, call_sid, dial_call_sid)
-		puts "FRESHFONE ERROR :: FAILURE ON CREDIT CALCULATION for account #{account} #{call_sid}::#{dial_call_sid} "
-		# FreshfoneNotifier.billing_failure(account, call_sid, dial_call_sid)//TODO Enable before deploying for mail notification
+
+	def one_legged_call_cost
+		self.country = call.freshfone_number.country
+		self.number = call.freshfone_number.number
+		return FRESHFONE_CHARGES['VOICEMAIL'][forwarded_call_type].to_f		
 	end
+
 
 	private
 
@@ -38,7 +40,6 @@ class Freshfone::PulseRate
 			self.country = caller_country
 			self.number = customer_number
 
-			puts "INSIDE OUTGOING...#{country} : #{number}"
 			calculate(:outgoing)
 		end
 
@@ -46,7 +47,6 @@ class Freshfone::PulseRate
 			self.country = call.freshfone_number.country
 			self.number = call.freshfone_number.number
 
-			puts "INSIDE INCOMING....#{country} : #{number}.."
 			return FRESHFONE_CHARGES['INCOMING'][forwarded_call_type].to_f #incoming direct fetch 
 		end
 
@@ -54,7 +54,6 @@ class Freshfone::PulseRate
 			self.number = call.direct_dial_number || call.agent.available_number
 			self.country =  GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(number).blank?
 
-			puts "INSIDE FWD....#{country} : #{number}.."
 			calculate(forwarded_call_type)
 		end
 
@@ -65,9 +64,7 @@ class Freshfone::PulseRate
 		def calculate(call_type)
 			return credit if country_invalid?
 
-			puts "Freshfone INFO CallType:: #{call_type}"
 			get_matching_country_cost(call_type)
-			Rails.logger.info "Freshfone CallCost:::#{credit}"
 			return credit
 		end
 

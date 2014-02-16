@@ -3,24 +3,25 @@
 <%= include_cloudfront_css :freshfone_ivr %>
 <%= include_cloudfront_css :'360player' %>
 
-<ul data-tabs="tabs" class="tabs admin-tabs">
+<ul data-tabs="tabs" class="tabs nav-tabs">
 	<div class="lead">
 		<%= "#{t('freshfone.admin.numbers.manage')} #{@number.display_number}" %>
 	</div>
 	<li class="active first">
-		<a id="settings-tab" href="#settings"><%= t('freshfone.admin.general') %></a>
+		<a id="welcome_messages-tab" href="#welcome_messages"><%= t('freshfone.admin.greetings') %></a>
 	</li>
 	<li>
-		<a id="welcome_messages-tab" href="#welcome_messages"><%= t('freshfone.admin.greetings') %></a>
+		<a id="settings-tab" href="#settings"><%= t('freshfone.admin.settings') %></a>
 	</li>
 </ul>
 <div class="tab-content">
-	<div id="settings" class="tab-pane active">
-		<%= render :partial => "/admin/freshfone/numbers/freshfone_settings" %>
-	</div>
-	<div id="welcome_messages" class="tab-pane freshfone-ivr">
+	<div id="welcome_messages" class="tab-pane active freshfone-ivr">
 		<%= render :partial => '/admin/freshfone/freshfone_admin_ivr' %>
 	</div>
+	<div id="settings" class="tab-pane">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_settings" %>
+	</div>
+	
 </div>
 		
 

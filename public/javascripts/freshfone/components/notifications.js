@@ -6,13 +6,11 @@ var FreshfoneNotification;
 		onholdNotifications = [],
 		MAX_PARALLEL_NOTIFICATIONS = 3;
 
-	FreshfoneNotification = function (freshfonecalls, freshfoneUserInfo) {
+	FreshfoneNotification = function () {
 		this.init();
 		this.originalJsonStringify = JSON.stringify;
 		this.isChrome = ($.browser.webkit && navigator.userAgent.indexOf('Chrome') >= -1);
 		this.isOriginal = true;
-		this.freshfonecalls = freshfonecalls;
-		this.freshfoneUserInfo = freshfoneUserInfo;
 		this.bindPjaxTitleChange();
 		this.alertTitle="Incoming Call..";
 		this.originalTitle = document.title;
@@ -22,7 +20,10 @@ var FreshfoneNotification;
 		init: function () { 
 			this.notifyTabsFlag=false;
 		},
-
+		loadDependencies: function (freshfonecalls, freshfoneUserInfo) {
+			this.freshfonecalls = freshfonecalls;
+			this.freshfoneUserInfo = freshfoneUserInfo;
+		},
 		anyAvailableConnections: function (connection) {
 			var freshfoneConnection = new FreshfoneConnection(connection, this);
 			incomingConnections[connection.parameters.CallSid] = freshfoneConnection;
@@ -37,7 +38,7 @@ var FreshfoneNotification;
 			this.freshfonecalls.setDirectionIncoming();
 		},
 
-		closeConnetions: function (connection) {
+		closeConnections: function (connection) {
 			if (ongoingNotifications[connection.parameters.CallSid]) {
 				this.popOngoingNotification(connection);
 			} else {

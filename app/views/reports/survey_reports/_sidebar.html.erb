@@ -6,32 +6,32 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <div class="sidepanel">
- <div >
  	<% remote_form_for( survey_list_path, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
  			:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
- 	<ul>
-    	   <li class="inline-field control-group">
-			<b><%=t('.filter_by')%></b>
-			<%
-				selected_option = :agent;
-				selected_option = :group if params[:category]== Survey::GROUP
-				selected_option = :company if params[:category]== Survey::OVERALL
-			%>
-			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "select2 input-large filter_item"}%>
-			<%=hidden_field_tag :sort, sort_option %>
-		   </li>	
-    	   <li class="inline-field control-group">				
-					<b><%=t('.view_report_date')%></b>
-					<%= text_field_tag :date_range, date_range, :class => "required input-large"%>
-			</li>
-			<li class="inline-field">
-				<div>
-					<%= submit_tag t('reports.summary_report.show_report'), :class => "btn" %>
+ 		<ul>
+    	   <li class="control-group">
+				<label class="control-label"><%=t('.filter_by')%></label>
+				<div class="controls">
+					<%
+						selected_option = :agent;
+						selected_option = :group if params[:category]== Survey::GROUP
+						selected_option = :company if params[:category]== Survey::OVERALL
+					%>
+					<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "select2 input-large filter_item"}%>
+					<%=hidden_field_tag :sort, sort_option %>
 				</div>
+		   </li>	
+    	   <li class="control-group">
+					<label class="control-label"><%=t('.view_report_date')%></label>
+					<div class="controls">
+						<%= text_field_tag :date_range, date_range, :class => "required input-large"%>
+					</div>
 			</li>
-	</ul>
+			<li class="control-group">
+				<%= submit_tag t('reports.summary_report.show_report'), :class => "btn" %>
+			</li>
+		</ul>
 	<%end%>
- </div>		
 </div>
 
 <div class="sidepanel helpcard">

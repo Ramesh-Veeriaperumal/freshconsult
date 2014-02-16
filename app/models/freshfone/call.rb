@@ -16,6 +16,12 @@ class Freshfone::Call < ActiveRecord::Base
 
 	has_ancestry :orphan_strategy => :destroy
 
+	before_save   :update_call_changes
+	after_commit_on_update :recording_attachment_job, :if => :trigger_recording_job?
+
+	has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
+
+
 	delegate :number, :to => :freshfone_number
 	delegate :name, :to => :agent, :allow_nil => true, :prefix => true
 	delegate :name, :to => :customer, :allow_nil => true, :prefix => true
@@ -106,14 +112,23 @@ class Freshfone::Call < ActiveRecord::Base
 		(customer_data || {})[:direct_dial_number]
 	end
 	
-	def update_status(params)
+	def update_call_details(params)
 		self.params = params 
 		self.dial_call_sid = params[:DialCallSid]
-		self.call_status = CALL_STATUS_STR_HASH[params[:DialCallStatus]] if params[:DialCallStatus]
 		self.agent = params[:called_agent] if agent.blank?
 		self.recording_url = params[:RecordingUrl] if recording_url.blank?
 		self.call_duration = params[:DialCallDuration] || params[:RecordingDuration] if call_duration.blank?
 		self.customer_data[:direct_dial_number] = params[:direct_dial_number] if ivr_direct_dial?
+
+		update_status(params)
+	end
+
+	def update_status(params)
+		if params[:DialCallStatus]
+			self.call_status = CALL_STATUS_STR_HASH[params[:DialCallStatus]]
+		elsif default? and params[:force_termination]
+			self.call_status = CALL_STATUS_HASH[:'no-answer']
+		end
 		self
 	end
 	
@@ -185,6 +200,19 @@ class Freshfone::Call < ActiveRecord::Base
 		# if notable is_a? 'Helpdesk::Note', notable.notable will return the ticket of that note
 		ticket_notable? ? ticket : note.notable
 	end
+
+	def self.find_failed_calls(range)
+		find(:all, :conditions => { :call_cost => nil, :updated_at => range })
+	end
+
+	def calculate_cost
+		calculator = Freshfone::CallCostCalculator.new({
+			:call => id, 
+			:call_sid => call_sid,
+			:dial_call_sid => dial_call_sid 
+		}, account)
+		calculator.perform
+	end
 	
 	private
 		def child_call_customer_id(params)
@@ -199,28 +227,24 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def description_html
 			customer_temp = "<b>" + customer_name + "</b> (" + caller_number + ")" if valid_customer_name?
-			desc = I18n.t('freshfone.ticket.ticket_desc', {:customer=> customer_temp || caller_number, :location => location})
-			desc << I18n.t('freshfone.ticket.agent_detail', {:agent => params[:agent].name, :agent_number => freshfone_number.number}) unless voicemail? || ivr_direct_dial?
-			desc << I18n.t('freshfone.ticket.dial_a_number', 
-							{:direct_dial_number => params[:direct_dial_number]}) if ivr_direct_dial?
-			desc << "#{params[:call_log]} #{recording}"
+			if voicemail?
+				desc = I18n.t('freshfone.ticket.voicemail_ticket_desc', 
+					{:customer=> customer_temp || caller_number, :location => location})
+			elsif ivr_direct_dial?
+				desc = I18n.t('freshfone.ticket.dial_a_number', 
+					{:customer=> customer_temp || caller_number, :location => location, 
+						:direct_dial_number => params[:direct_dial_number]})
+			else
+				desc = I18n.t('freshfone.ticket.ticket_desc', 
+					{:customer=> customer_temp || caller_number, :location => location, :agent => params[:agent].name, 
+						:agent_number => freshfone_number.number})
+			end
+			desc << "#{params[:call_log]}"
 			desc.html_safe
 		end
 
 		def valid_customer_name?
 			customer_name.present? && (customer_name != caller_number)
-		end
-
-		def recording
-			self.recording_url = recording_url || params[:RecordingUrl]
-			return "" if recording_url.blank?
-			"<br /><br /><b><a target=\"_blank\" href=\"#{recording_url}\">
-			#{I18n.t('freshfone.ticket.recording')}</a></b><br />
-			<audio controls height='100' width='100'>
-				<source src=\"#{recording_url}\" type='audio/ogg'>
-				<source src=\"#{recording_url}\" type='audio/wav'>
-				<source src=\"#{recording_url}.mp3\"> 
-			</audio>"
 		end
 
 		def requester_name
@@ -257,5 +281,25 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def included_notable
 			ticket_notable? ? ticket : note
+		end
+
+		def update_call_changes
+			@call_model_changes = self.changes.clone
+			@call_model_changes.symbolize_keys!
+		end
+
+		def trigger_recording_job?
+			@call_model_changes.key?(:recording_url) && self.recording_audio.blank?
+		end
+		
+		def recording_attachment_job
+			record_params = {
+				:account_id => account_id, 
+				:call_sid => call_sid,
+				:call_id => id,
+				:call_duration => call_duration
+			}
+			record_params.merge!({:voicemail => true}) if (call_status === CALL_STATUS_HASH[:'no-answer'] )
+			Resque::enqueue(Freshfone::Jobs::CallRecordingAttachment, record_params) if recording_url
 		end
 end

@@ -1,0 +1,631 @@
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: ($common-padding) (-$common-padding) 0;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+		padding: 2px 9px 0 20px
+	}
+
+	.new_custom_app {
+		margin-right:10px;
+	}
+}
+//-------------------------------------------------------------------------------------------
+//										Jira styles
+//-------------------------------------------------------------------------------------------
+#jira_sync_settings {
+	td {
+		vertical-align:middle
+	}
+
+	select {
+		margin: 0
+	}
+}
+#jira_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:14px;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:12px;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+		div.field {
+			float:left;
+			margin:5px 0;
+
+			width:100%;
+
+			&.half_width {
+				width:45%;
+				padding: 0 5% 0 0;
+
+				&.right {
+					padding: 0 0 0 5%;
+				}
+			}
+
+		}
+
+		.uiButton[type=submit] {
+			margin:15px 0 10px;
+			display: block;
+		}
+	}
+
+	.jira_issue_details {
+		font-size:13px;
+
+		#jira-link {
+			overflow:hidden;
+		border-bottom: dotted 1px #CCC;
+			#jira-view {
+				float:right;
+				font-size:10px;
+				text-align:right;
+				width:100px;
+			}
+		}
+
+		#jira-issue-id {
+			font-weight:bold;
+		}
+
+		li {
+			margin:20px 0;
+
+			label {
+				font-size:11px;
+				color:#666;
+				float:left;
+				padding:0;
+				width: 100px;
+
+				&#jira-link-label {
+					margin-bottom:10px;
+					width:100%;
+				}
+			}
+		}
+	}
+
+}
+
+//-------------------------------------------------------------------------------------------
+//									Integration Widget
+//-------------------------------------------------------------------------------------------
+
+.integration_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:14px;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:12px;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	div.field {
+		float:left;
+		margin:5px 0;
+		line-height:18px;
+
+		width:100%;
+
+		&.half_width {
+			width:45%;
+			padding: 0 5% 0 0;
+
+			&.right {
+				padding: 0 0 0 5%;
+			}
+		}
+	}
+
+	.uiButton[type=submit] {
+		margin:15px 0 10px;
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+	}
+
+	.external_link {
+		clear: both;
+	}
+
+	div.bottom_div{ 
+	  height: 1px; 
+	  border-bottom: 1px solid #e5e5e5; 
+	}
+
+}
+
+//-------------------------------------------------------------------------------------------
+//									CRM Contact Widget
+//-------------------------------------------------------------------------------------------
+.crm_contact_widget {
+	.content { width:auto;
+		div.field{
+			margin: 2px 0;
+		}
+	}
+
+	.title {
+		overflow: hidden;
+		padding: 0;
+		margin: 0;
+		border-bottom: #e5e5e5 solid 1px;
+
+		&.contact-na {
+			border-bottom: none;
+		}
+		
+		.name{
+			padding: 7px 0 10px 0;  
+			width: 218px;
+			min-height:30px;
+		}
+	
+		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+		background-repeat: no-repeat;
+	}
+
+	/* div. added for higher specificity */
+	div.salesforce_widget_bg {
+		background-image: url(/images/integrations/salesforce_icon.png);
+ 	}
+
+ 	div.batchbook_widget_bg {
+		background-image: url(/images/integrations/batchbook_icon.png);
+  	}
+
+ 	div.highrise_widget_bg {
+		background-image: url(/images/integrations/highrise_icon.png);
+  	}
+
+ 	div.zohocrm_widget_bg {
+		background-image: url(/images/integrations/zohocrm_icon.png);
+		background-position: 210px -6px;
+  	}
+
+ 	div.nimble_widget_bg {
+		background-image: url(/images/integrations/nimble_icon.png);
+  	}
+	
+
+ 	.error {
+		&.name, &.salesforce-name {
+		color: #F00;
+		}
+ 	}
+
+	#multiple-contacts {
+		width: 55px;
+		float:right;
+	}
+	#contact-name {
+		color: #000;
+		font-size: 14px;
+	}
+	
+	div.contact-name{
+	  width: 210px;
+	}
+	
+	.contact-name > a{
+	  width: inherit;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+	  -o-text-overflow: ellipsis;
+	  -moz-text-overflow: ellipsis;
+	  -webkit-text-overflow: ellipsis;
+	  white-space: nowrap;
+	  display: inline-block;
+	}
+
+	.contact-location{ 
+	  font-size: 8pt; 
+	  margin-left: 5px; 
+	  color: #888; 
+	  font-weight: 300; 
+	} 
+	
+	
+	#contact-desig {
+		font-size: 11px;
+		font-weight: normal;
+	}
+
+	div.field {
+		label {
+			float: left;
+			height: inherit;
+			width: 65px;
+			font-size: 100%;
+			font-weight: bold; 
+			color: $default_txt_color;
+			padding: 0 0;
+		}
+		div > span {
+			float: left;
+			width: 193px;
+
+			#contact-address{
+				display: table;
+			}
+		}
+	}
+
+	#crm-view {
+		float:right;
+		width: auto;
+	}
+
+	.contact-type{
+		font-size:9px;
+		color:#fff;
+		text-transform:uppercase; 
+		text-align:center;
+		padding:8px 3px 0;
+		line-height:0;
+		height:9px;      
+		background-color: #0C8AAE;          
+		position:absolute;
+	  	@include right-pointer-title(#0C8AAE,8px);	      
+		@include min-width(48px); 
+		right:-4px;	
+		top:3px;
+	}
+
+	#contact-na {
+		padding-top:6px;
+		font-weight: normal;
+		color:#CCC;
+
+		&.salesforce-name {
+			padding-top: 10px;
+		}
+	}
+}
+//-------------------------------------------------------------------------------------------
+//										Capsule
+//-------------------------------------------------------------------------------------------
+
+#capsule-title{
+	padding-right:33px;
+	position:relative;
+	margin-bottom:5px;
+	.searchicon{
+		top:5px;
+	}
+}
+#capsule-note-text{
+	height:40px;
+  box-sizing: border-box;
+}
+
+// --------------------------------------------------------------------------------------------------
+//												Screenr
+// --------------------------------------------------------------------------------------------------
+.screenr-table{
+	td{
+		padding: 10px 0 0 0;
+	}
+}
+
+#screenr-loading{
+	display:none;
+}
+
+.screenr_button_loader{
+	width: 137px;
+	height: 22px;
+	display: inline-block !important;
+}
+
+// --------------------------------------------------------------------------------------------------
+//												Custom Widget
+// --------------------------------------------------------------------------------------------------
+
+.campaign-details{
+	margin: 8px 0 8px 0;
+	.activity{
+		padding-left: 10px;
+		margin: 8px 0 8px 0;
+		.action{
+			background-color: #DDD;
+			font-weight: bold;
+			@include border-radius(6px);
+			padding: 3px 7px;
+			margin-right: 5px;
+			text-transform: capitalize;
+		}
+	}
+	.action_type{
+		display: inline-block;
+		width: 95px;
+	}
+
+	.action-url{
+		display: block;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		-moz-text-overflow: ellipsis;
+		-webkit-text-overflow: ellipsis;
+		margin: 5px 95px;
+		background: url(/images/integrations/campaign-link.png) left -2px no-repeat;
+		padding-left: 20px;
+	}
+	
+}
+
+.custom_app_preview_link {
+	margin-top:8px;
+	width: 300px;
+	float: right;
+	text-align: right;
+
+	.toggle_preview {
+		background: #FFF;
+		border: solid 1px #c9c9c9;
+		@include box-shadow(#c2c2c2 0 0 2px);
+		@include border-radius(5px);
+		padding: 5px 10px 7px;
+		color: $default_txt_color;
+		display: inline-block;
+		margin-bottom:5px;
+
+		&.active {
+			background: url(/images/integrations/custom_app_preview_title_bar.gif);
+		}
+
+		&:after {
+			content: ">";
+			font-size:1.2em;
+			font-weight:bold;
+			display:inline-block;
+			margin-left: 10px;
+		}
+	}
+
+	span {
+		color:#AAA;
+	}
+}
+
+#sample_preview {
+	background:#FFF;
+	border: solid 1px #c9c9c9;
+	@include box-shadow(#c2c2c2 0 0 6px);
+	margin: 0 10px 10px 0;
+	.titlebar {
+		font-weight:bold;
+		background: url(/images/integrations/custom_app_preview_title_bar.gif);
+		padding: 10px 5px 10px 15px;
+		border-bottom: solid 1px #c9c9c9;
+		font-size:13px;
+		.preview_link {
+			float:right;
+			width:60px;
+			background: url(/images/integrations/refresh_preview.png) right no-repeat;
+			padding: 10px 30px 10px 5px;
+			text-align:right;
+			color:#AAA;
+			margin-top:-10px;
+			font-weight:normal;
+		}
+	}
+
+	#preview {
+		padding:5px;
+
+		.sidepanel {
+			border: none;
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------
+//												Logmein
+// --------------------------------------------------------------------------------------------------
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		@include border-radius(4px);
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right 8px no-repeat;
+}
+#logmein_widget .error{
+	color: red;
+}
+// --------------------------------------------------------------------------------------------------
+//												Email Campaign
+// --------------------------------------------------------------------------------------------------
+.email-apps .fd-menu{
+	margin: 5px -150px;
+	li{
+		padding: 3px;
+	}
+}
+
+.email_marketing_apps{
+	float: right;
+	margin: 10px;
+}
+
+.email_marketing{
+	.cust-added{
+		color: #676767;
+		font-size: 11px;
+		line-height: 3px;
+	}
+	.contact_title{
+		width: 550px;
+	}
+}
+
+.ui-dialog.email_marketing_widget {
+	padding: 8px 20px;
+}
+
+.emailCampaigns{
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+.emailCampaigns, .emailLists{
+	clear: both;
+	margin-top: -15px;
+	min-height: 90px;
+	
+	.empty-response{
+		color: #A5A5A5;
+		font-size: 20px;
+		text-align: center;
+		font-weight: 200;
+		padding-top: 30px;
+	}
+}
+.campaigns{
+	padding-top: 10px;
+	.campaigns-list{
+		border: 1px solid #DDD;
+		@include border-radius(4px);
+		.loading-fb{
+			background-position: center;
+		}
+	}
+	.campaign-image {
+		background: url(/images/integrations/campaign-image.png) 10px no-repeat;
+	}
+
+	.campaign-activity{
+		padding-left: 35px;
+		font-weight: bold;
+		border-bottom: 1px solid #DDD;
+		background-color: #EEE;
+		height: 24px;
+		padding-top: 7px;
+		.activity-toggle{
+			color: black;
+			font-weight: bold;
+			padding-right: 8px;
+			text-decoration: none;
+		}
+		&:hover{
+			background-color: #DDD;
+			cursor: pointer
+		}
+	}
+}
+.constantcontact-modal-logo {
+		background: url(/images/application-logo/constantcontact.png) right 1px no-repeat;
+		background-size: 80px 30px;
+		height: 30px;
+}
+.campaignmonitor-modal-logo {
+		background: url(/images/application-logo/campaignmonitor.png) right 1px no-repeat;
+		height: 30px;
+}
+.icontact-modal-logo {
+		background: url(/images/application-logo/icontact.png) right 1px no-repeat;
+		background-size: 65px 24px;
+		height: 30px;
+}
+.mailchimp-modal-logo {
+		background: url(/images/application-logo/mailchimp.png) right 1px no-repeat;
+		background-size: 80px 25px;
+		height: 30px;
+}
+.constantcontact-logo {
+		background: url(/images/integrations/constantcontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.campaignmonitor-logo {
+		background: url(/images/integrations/campaignmonitor-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.icontact-logo {
+		background: url(/images/integrations/icontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.mailchimp-logo {
+		background: url(/images/integrations/mailchimp-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}

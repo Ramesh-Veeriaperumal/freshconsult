@@ -30,7 +30,8 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 	private
 		def delete_from_twilio(freshfone_number, account)
-			account.freshfone_subaccount.incoming_phone_numbers.get(freshfone_number.number_sid).delete if freshfone_number.deleted
+			twilio_account = account.freshfone_account.twilio_subaccount
+			twilio_account.incoming_phone_numbers.get(freshfone_number.number_sid).delete if freshfone_number.deleted
 		end
 
 		def handle_attachments(freshfone_number)
@@ -63,7 +64,8 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 			number_type = Freshfone::Number::TYPE_STR_REVERSE_HASH[freshfone_number.number_type]
 			freshfone_number.rate = Freshfone::Cost::NUMBERS[freshfone_number.country][number_type]
 			freshfone_number.business_calendar = account.business_calendar.default.first
-			freshfone_number.next_renewal_at = 1.month.from_now
+			freshfone_number.next_renewal_at = 1.month.from_now - 1.day
+			construct_default_message(freshfone_number)
 		end
 
 		def update_freshfone_credit(freshfone_number, account)
@@ -96,6 +98,18 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 					:message => CGI::escapeHTML(message["message"]),
 					:message_type => message["message_type"].to_i,
 					:recording_url => message["recording_url"],
+					:type => msg_type
+				})
+			end
+		end
+
+		def construct_default_message(freshfone_number)
+			Freshfone::Number::MESSAGE_FIELDS.each do |msg_type|
+				freshfone_number[msg_type] = Freshfone::Number::Message.new({
+					:attachment_id => nil,
+					:message => Freshfone::Number::Message::DEFAULT_MESSAGE[msg_type],
+					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[:transcript],
+					:recording_url => "",
 					:type => msg_type
 				})
 			end

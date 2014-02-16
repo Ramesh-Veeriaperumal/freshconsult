@@ -1,4 +1,17 @@
 namespace :freshfone do
+
+	desc "Calculate costs for failed freshfone calls in the last 4 hours"
+	task :failed_costs => :environment do
+		Sharding.execute_on_all_shards do
+			Account.active_accounts.each do |account| 
+				if account.features?(:freshfone)
+					account.freshfone_calls.find_failed_calls(9.hours.ago .. 3.hours.ago).each do |call|
+						call.calculate_cost
+					end
+				end
+			end
+		end
+	end
 	
 	desc "Freshfone account suspension reminder: 15 days to go"
 	task :suspension_reminder_15days => :environment do
@@ -41,7 +54,7 @@ namespace :freshfone do
 
 	#Cleanup Accounts if they are left suspended for 2 months. 
   #Two months because the released numbers are kept in recycling state by Twilio only for 
-  #two months after which they are released completely.
+  #two months after which they are released permanently.
   desc "Freshfone abandoned accounts cleanup "
 	task :close_accounts => :environment do
 		Sharding.execute_on_all_shards do

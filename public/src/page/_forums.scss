@@ -1,0 +1,381 @@
+
+//Used in solution Page
+.crumbs,.breadcrumbs{ 
+  	background-color: transparent;
+    border-bottom: 1px solid #E8E8E8;
+    color:#999999;
+    font-size: 12px;
+    @include border-radius(0 6px 0 0);
+    margin: (-$common-padding) (-$common-padding) 10px;
+    padding: 15px $common-padding $common-padding;
+    a{  
+      @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none;
+    }
+    span, a{
+      padding:0px 5px;
+    }
+}
+//Used in Forum pages
+.breadcrumbs{
+  margin: 0;
+}                 
+
+//Forums and solution page Styles
+.forum-title{
+  font-size:16px;
+  margin:10px 20px 2px; 
+}
+.forums{
+	border:1px solid #efefef;
+	td{
+		border:1px solid #f0f0f0;
+		text-align:left;
+	}
+	td.c1{
+		background:#efefef;
+	}
+}
+
+.forum-group, .list-group{
+	margin:0 (-$common-padding); 
+}
+.forum_list{
+	margin:0;
+	a{ text-decoration:none; }
+	a.title{ @include link-colors(#545454, #527EAA, #545454, #545454); }
+	.item_actions{
+		float:right;
+		font-size:10px;
+		background-color:#F3F1EC;
+		@include border-radius(6px);
+		border:1px solid #cfcfcf;
+		color:#afafaf;
+		padding:2px 8px;
+		a.highlight{
+			background-color:#ffffcc;
+			padding:1px 3px;
+		}
+	}
+	.subcounter{ 
+		color:#afafaf;
+	}
+	ul.base-set{
+		@include no-bullets;
+		@include clearfix;
+		margin:0; 
+		padding:5px $common-padding;
+		li{
+			float:left;
+			width:44%;
+			padding:0;
+			margin:0 3% 0 0;
+			h4.forum_title{
+				margin:8px 0 0 0;
+				padding:6px 0 8px 33px; 
+				font-size:16px;
+				a{
+					font-weight:normal;
+				}
+				position:relative;
+			}
+			span.icon{
+	            position:absolute;
+	            left:-3px; top:-1px;
+	            width:32px; height:32px;
+			} 
+			.topic-list{ 
+				padding:6px 0 12px;
+				margin-left:$common-padding+10px;
+				margin-bottom:8px;
+				border-top:1px solid #efefef;
+				a.topic{
+					display:block;
+					padding:5px 0;
+					font-size:13px;
+				}
+				a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); }
+			}
+		}
+		li.odd{
+			clear:left;
+		}
+		li.even{
+			margin-right:0;
+			width:46%;
+		}
+	}	
+}
+.topics_list{
+	ul.base_set{
+		padding-top:16px;
+		li{
+			width:100%;
+			margin-bottom:10px;
+			border-bottom:1px solid #efefef;
+			overflow: hidden;
+		}
+		li{  
+			.topic_icon{
+			 	@include float-left; 
+			 	margin-right:10px;
+			}
+			img{
+				width: 36px;
+				height: 36px;
+			}
+
+		}
+		h4.topic_title{
+			margin:0px;		
+			font-weight:bold;
+			a{
+				color:#1A6690;
+			}
+		}
+		a{
+			text-decoration:none;
+			color:#1A6690;
+		}
+	} 
+}
+.topic-list-view{ 
+		padding:0;
+		margin:0;
+		border:1px solid #f1f1f1;
+		border-width:1px 0; 
+		li{
+			@include clearfix;
+			border-bottom:1px dotted #eaeaea;
+			padding:14px 25px 10px 70px;
+			position:relative;
+			a{ 
+				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
+				text-decoration:none;  
+			}
+			a.topic-title{  
+				font-size:14px; 
+				font-weight:500;
+			}
+			.info_data{
+				padding:6px 0 4px 0;
+				font-size:12px;
+				color:#888888;
+			}
+			.preview_pic{
+				border-color:#d2d2d2;
+				position:absolute;
+				left:20px;
+				top:16px;
+				img{ width:36px; height:36px; padding:0; border:0; }
+			}
+		}
+		li:hover{
+			background:#f4f4f4;
+		}
+}
+.mark_action{ 
+	a, .stamp{
+		padding:2px 6px; 
+		margin:0 0 6px 0;
+		@include border-radius(4px);
+		@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
+		text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+		font-size:12px;
+		text-decoration:none;
+		font-weight:bold;
+	}
+	a{
+		background: #666666;
+		color:#ffffff;
+		display: inline-block;
+	}
+	
+	.stamp{
+		margin:0 8px;
+		@include min-width(80px);
+		text-align:center;
+	}
+	
+	a.hover, a.active{
+		@include box-shadow(#000000 0 1px 2px inset);				
+	}
+	
+	.stamp.stamp_type_1{
+		background: #5077b3;
+	} 		
+	.stamp.stamp_type_2{
+		background: #cf8e00;
+	} 	
+	.stamp.stamp_type_3{
+		background: #a23330;
+	}
+	.stamp.stamp_type_4{
+		background: #597300;
+	}
+	.stamp.stamp_type_5{
+		background: #735000;
+	}
+}
+
+.stamp_answer{
+	background-color:#336600;
+	color:#ffffff;
+	padding:3px 12px;
+	@include border-radius(4px);
+	margin:2px 5px;
+	position:relative;
+	top:-6px;
+}
+
+.action_icons{
+	img{
+		background-color:none;
+		width:24px;
+		height:24px;
+
+		display: inline-block;
+	}	
+	.spam, .spam_active {
+		/*For compatibility with new tkt details !V2 */
+		span{ display: none; }
+	}
+}
+.search_box{
+	input{
+		display:inline-block; 
+		border:1px solid #afafaf;
+		padding:3px 2px;
+		@include border-radius(6px);
+		width:300px;
+	}
+	
+}
+.folder_section{
+	float:left;
+	width:200px;
+	padding:10px 10px 10px 20px;
+	margin-left: -20px;
+	overflow: hidden;
+	h3.lead{
+		border-bottom:1px dotted #DCDCDC;
+		word-break: break-all;
+	}
+	.active{
+	   a{ 
+	      @include link-colors($default_txt_color, $default_txt_color, $default_txt_color, $default_txt_color); }
+	}
+	.sortable{
+		margin:0 -10px 0 -20px;
+		padding:5px 20px;
+	}
+	.sort-list li{
+		font-size:1em;
+	}
+}
+.artical_section{
+	margin-left:210px;
+	border-left:1px solid darken(#E2E2E2, 5%);
+	@include min-height(450px); 
+	padding: $common-padding;
+	margin-top:-$common-padding;
+	margin-right:-$common-padding;
+	text-align: left;
+	.info_data{ margin-top:-10px; padding:0; } 
+	.search-grey-box{ 
+	   margin:-10px (-$common-padding) 12px (-$common-padding); 
+	   border-bottom:1px solid #E2E2E2; border-top:0;
+	}
+}
+.artical_list{
+	font-size: 14px;
+	font-weight: 400;
+    line-height: 1.7em;
+    margin-top:12px;
+    margin-bottom: 20px;
+    margin-left: 37px; 
+    text-align: left; 
+    li{
+    	margin-top:4px; 
+    	a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);   }
+    }
+}
+
+.solutions_text{
+	padding-top:8px;
+	@include text-formatting;
+}
+
+// ------------------------------------------------------------------------------------------------------------
+// 										solution page seo addition 
+// ------------------------------------------------------------------------------------------------------------
+
+#solution-seo-container {
+    margin-bottom: 25px;
+    .solution-seo-message {
+	    color: #666;
+	}
+	.solution-seo-description {
+	    height: 48px;   
+	}
+	.solution-seo-show {
+	    font-size:7px;
+	    &.arrow-right{
+	    	margin-top: -3px;
+	    }
+	}
+	.solution-seo-title {
+	    cursor: pointer;
+	    border-top: 1px solid #CCC;
+		padding-top: 6px;
+	    a{
+		    font-size: 13px;
+		    font-weight: bold;
+		    &:hover{
+		    	color: #333;
+		    }
+		}
+	}
+	#solution-seo li {
+	    padding: 8px 0;
+	}
+}
+//solution page seo addition  End
+
+.solution-list .odd, .solution-list .even{
+	@include pie-clearfix;
+	margin:5px 0; 
+	padding:10px 0;
+	float:left;
+	width:49%;
+	h4 a{ color: #333; }
+	li{ 
+		line-height:22px;
+		padding-top:5px;
+		&:before{
+			content:"";
+			@include inline-block;
+			width: 20px;
+			height: 20px;
+			margin-top: -3px;
+			margin-right: 3px;
+		}
+	} 
+}
+.solution-list .odd{
+	margin-right:2%;
+}
+
+.solution_title{
+	position:relative;
+	.topic_icon{
+		position:absolute;
+		left:20px;
+		top:10px;
+		text-align:center;
+		.locked{
+			position:absolute;
+			top:13px;
+			left:10px;
+		}
+	}
+}

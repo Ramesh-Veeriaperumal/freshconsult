@@ -2,7 +2,7 @@
 			<% if type.eql?("user") %>
 		<div class="span3">
 			<div class="dropdown">
-                <%=t('contacts.showing')%><a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= t("contacts.status.#{@sort_state}")  %></b><b class="caret"></b></a>
+                <%=t('contacts.showing')%><a role="button" class="dropdown-toggle" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= t("contacts.status.#{@sort_state}")  %></b><b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
                 	<li><%= link_to t("contacts.status.verified"), {:state => "verified", :letter => params[:letter]}, :title => t("contacts.status_title.verified") %></li>
                 	<li><%= link_to t("contacts.status.unverified"), {:state => "unverified", :letter => params[:letter]}, :title => t("contacts.status_title.unverified") %></li>

@@ -123,9 +123,8 @@ class Support::TicketsController < SupportController
       @requested_by = current_requested_by
 
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
-          ticket_scope.tickets : 
-          ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
-
+          ticket_scope : 
+          ticket_scope.created_at_inside(params[:start_date], params[:end_date])
       @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
       per_page = params[:wf_per_page] || 10
       current_order = visible_fields.include?(current_wf_order.to_s) ? "#{current_wf_order} #{current_wf_order_type}" :
@@ -143,12 +142,14 @@ class Support::TicketsController < SupportController
     def ticket_scope
       if privilege?(:client_manager)
         if @requested_by.to_i == 0
-          current_user.customer || current_user
+          current_user.customer.all_tickets || current_user.tickets
         else
           @requested_item = current_account.users.find_by_id(@requested_by)
+          @requested_item.tickets
         end
       else
         @requested_item = current_user
+        @requested_item.tickets
       end
     end
    

@@ -26,7 +26,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	nav{ text-align: right; }
 }
 
-.banner-title .heading{ color: inherit; }
+.banner-title .heading{ color: inherit;}
 
 .banner-nav{
 	font-size: 0.929em;
@@ -120,7 +120,6 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 			text-align:center;
             display: table;
             width: 100%;
-            
             .banner-wrapper{
                 height: 143px; 
                 display: table-cell;
@@ -130,6 +129,10 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
             .banner-title, .banner-nav{ 
             	@include reset-columns; 
             	text-align:center;
+            }
+            .banner-title .heading{ 
+                max-width:275px;
+                margin:0 auto;
             }
             .banner-nav {
             	margin-top: 11px;
@@ -196,7 +199,6 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
             float:none;
             margin: 0 auto; 
             text-align:center;
-            margin-bottom:10px;
         }
 
         .footer{ 

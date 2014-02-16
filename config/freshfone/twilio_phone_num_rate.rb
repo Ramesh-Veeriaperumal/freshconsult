@@ -16,8 +16,8 @@ class TwiliPhoneNumberRate
 		  exit(1)
 		end
 		lines = CSV.open(ARGV[0],'r').map()
-		keys = lines.delete lines.first
-		 
+		keys = lines.first
+		 # lines.first.reject
 			File.open(ARGV[1], 'w') do |f|
 			  data = lines.map do |values|
 			    Hash[keys.zip(values)]
@@ -51,6 +51,10 @@ class TwiliPhoneNumberRate
 						result_data.merge!(new_data)
 					end
 					yaml_data[tempdata['ISO']] = result_data[tempdata['ISO']]
+					yaml_keys = yaml_data[tempdata['ISO']].keys
+					unless yaml_keys.include?('local')
+							yaml_data[tempdata['ISO']]['local'] = yaml_data[tempdata['ISO']]['national'] if yaml_keys.include?('national')
+					end
 				end
 			 puts "\n #{yaml_data} \n"
 

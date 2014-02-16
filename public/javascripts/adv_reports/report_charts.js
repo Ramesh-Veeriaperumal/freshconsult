@@ -33,6 +33,12 @@ adv_grid_report.prototype = {
 	pie_tooltip_formatter : function() {
     return "<strong>" + this.point.name + "</strong>: " +  (this.percentage).toFixed(1) + "% ("+this.point.count+" tickets)";
   },
+  stacked_bar_timesheet_tooltip : function() {
+    return "<strong>" + this.series.name + "</strong>:<br />" +  (this.percentage).toFixed(1) + "%";
+  },
+  stacked_bar_timesheet_label_formatter: function() {
+   if(this.percentage > 20) return (this.percentage).toFixed(0) + '<span style=\"font-size:11px\">%</span>' ;
+  },
   pie_legend_formatter : function() {
     return this.name ;
   },
@@ -174,11 +180,11 @@ function single_stacked_bar_chart(opts){
         renderTo: opts['renderTo'],
         type: 'bar',
         borderColor: 'rgba(0,0,0,0)',
-        margin:[10,5,10,5]
+        margin: opts['isCustom'] ? [0,5,0,0] :[10,5,10,5]
     },
 
     xAxis: {
-    	categories: ['Tickets'],
+    	categories:  opts['isCustom'] ? '' : ['Tickets'],
     	gridLineColor: '#FFFFFF',
     	gridLineWidth: 0,
     	minorGridLineWidth: 0,
@@ -203,6 +209,7 @@ function single_stacked_bar_chart(opts){
 
     plotOptions: {
     	series: {
+        marginTop: 50,
     		stacking: 'normal'
     	},
     	bar: {
@@ -210,7 +217,7 @@ function single_stacked_bar_chart(opts){
     		shadow: false,
     		dataLabels: {
     			enabled: true,
-    			formatter: this.pie_label_formatter,
+    			formatter: opts['isCustom'] ? this.stacked_bar_timesheet_label_formatter : this.pie_label_formatter,
     			color: '#fefefe',
     			align: 'center',
     			y: 0,
@@ -219,7 +226,7 @@ function single_stacked_bar_chart(opts){
             fontWeight:'bold'
           }
     		},
-    		showInLegend : true,
+    		showInLegend : opts['isCustom'] ? false : true,
         animation: opts['isPDF'] ? false : true
     	}
     },
@@ -246,7 +253,8 @@ function single_stacked_bar_chart(opts){
     },
 
     tooltip: {
-    	formatter: this.stack_bar_single_tooltip_formatter
+    	formatter: opts['isCustom'] ? this.stacked_bar_timesheet_tooltip : this.stack_bar_single_tooltip_formatter,
+      style: opts['isCustom'] ? { padding: 2 } : {}
     },
 
     series: opts['chartData']

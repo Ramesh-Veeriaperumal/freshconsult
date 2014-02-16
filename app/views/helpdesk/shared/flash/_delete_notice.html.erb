@@ -3,4 +3,5 @@
 <% else %>
 	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were")%> deleted
 <% end %>
-<%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put ) if @restorable %>
+<%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put, 
+	"data-keybinding" => shortcut('ticket_detail.undo') ) if @restorable %>

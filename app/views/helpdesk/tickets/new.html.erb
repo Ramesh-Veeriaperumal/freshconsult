@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag(:h3, t("ticket.submit_ticket_title"), :class => "title") %>
+<%= content_tag(:h3, t("ticket.submit_ticket_title"), :class => "lead") %>
 <% form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
   <ul class="ui-form">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false, :f => f } %>
@@ -13,10 +13,11 @@
     <% end %>
   </ul>
   <div class="button-container">
-    <%= f.submit t('save'), :class => "uiButton" %>
-    <%= submit_tag t('save_and_new'), :name => "save_and_create", :class => "uiButton" %>
-	<%= submit_tag t('save_and_close'), :name => "save_and_close", :class => "uiButton", :id => "save_and_close" %>
-    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
+    <%= submit_tag t('save_and_close'), :name => "save_and_close", :class => "btn", :id => "save_and_close" %>
+    <%= submit_tag t('save_and_new'), :name => "save_and_create", :class => "btn" %>
+    <%= f.submit t('save'), :class => "btn btn-primary" %>
+    
   </div>
 <% end %>
 <% javascript_tag do %>

@@ -1,22 +1,31 @@
 class Freshfone::Credit < ActiveRecord::Base
+	include ActionView::Helpers::NumberHelper
+	
 	belongs_to_account
 	set_table_name :freshfone_credits
 	alias_attribute :credit, :last_purchased_credit
-	
-	attr_accessor :selected_credit
-	#validates_inclusion_of :selected_credit, :in => [25, 50, 100] 
-	attr_protected :account_id
 
 	CREDIT_LIMIT = {
 		:minimum => 0,
 		:calling_threshold => 0.50,
 		:safe_threshold => 1,
-		:threshold => 5
+		:auto_recharge_threshold => 5,
+		:recharge_alert => 7
 	}
+
+	RECHARGE_THRESHOLD = 25
+	RECHARGE_OPTIONS = (25..500) #Temp Credit Range for recharge.
+	STEP = 25
+
+	attr_accessor :selected_credit
+	validates_numericality_of :recharge_quantity, :if => :auto_recharge? , :greater_than_or_equal_to => RECHARGE_THRESHOLD
+	attr_protected :account_id
+
 	def purchase
 		begin
 			response = Billing::Subscription.new.purchase_freshfone_credits(account, selected_credit)
     rescue Exception => e
+    	Rails.logger.error "Error purchasing freshfone credits. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       failed_purchase(selected_credit, e)
     end
 
@@ -29,6 +38,7 @@ class Freshfone::Credit < ActiveRecord::Base
         :status => true,
         :purchased_credit => selected_credit
       )
+      FreshfoneNotifier.deliver_recharge_success(account, selected_credit, available_credit)
     end
     response
 	end
@@ -52,8 +62,10 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	def renew_number(rate, freshfone_number_id)
 		if update_credit(rate)
-			other_charges(rate, Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew], 
-				freshfone_number_id)
+			account.freshfone_other_charges.create(
+				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew],
+				:debit_payment => rate,
+				:freshfone_number_id => freshfone_number_id)
 			self.available_credit >= CREDIT_LIMIT[:minimum]
 		else
 			false
@@ -75,6 +87,18 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	def below_safe_threshold?
 		available_credit <= CREDIT_LIMIT[:safe_threshold]
+	end
+
+	def auto_recharge_threshold_reached?
+		available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+	end
+
+	def recharge_alert?
+		available_credit <= CREDIT_LIMIT[:recharge_alert]
+	end
+
+	def valid_recharge_amount?
+		selected_credit >= RECHARGE_THRESHOLD
 	end
 
 	private

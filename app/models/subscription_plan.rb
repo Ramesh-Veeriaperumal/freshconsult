@@ -1,7 +1,15 @@
 class SubscriptionPlan < ActiveRecord::Base
+  not_sharded
+  
   include ActionView::Helpers::NumberHelper
   
   has_many :subscriptions
+  
+  has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon"
+  has_many :addons,
+    :class_name => "Subscription::Addon",
+    :through => :subscription_plan_addons,
+    :source => :subscription_addon
   
   # renewal_period is the number of months to bill at a time
   # default is 1

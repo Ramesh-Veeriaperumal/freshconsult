@@ -74,7 +74,7 @@ body { background: $background; }
     background-size: 53% 101%;
     background-repeat: no-repeat;
 }
-.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+//.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
 .nav_search div.search_bar { border-color:darken($tab_color, 8%); } 
 
 /* -------------------------------------------------------------------------------------------  */
@@ -136,9 +136,6 @@ a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }
 	color:$subtxt_color;	
 }*/
 
-#view_manage_links a, #save_filter {
-	color: invert($background);
-}
 /* ------------------------------------------------------------------------------------------- */
 /* 										Button settings 									   */
 /* ------------------------------------------------------------------------------------------- */

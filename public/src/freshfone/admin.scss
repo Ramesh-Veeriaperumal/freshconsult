@@ -1,0 +1,284 @@
+@import "variables";
+#local-numbers{
+  width: 250px;
+  height: 20px;
+  margin: 8px;
+}
+
+#number-search, #toll-free-search{
+  padding: 15px;
+}
+
+#number-search{
+  .freshfone-number-search{
+    display: inline-block;
+    .search-lbl{
+      display: inline-block;
+      margin-right: 5px;
+      margin-left: 10px;
+    }
+  }
+}
+
+.new_search{ text-align: center; }
+
+.buy-new{
+  text-align: right;
+}
+
+.toll-free-list{
+  display: none;
+}
+
+#toll-free-search{
+  .search-toll-free{
+    margin-top: 15px;
+  }
+  .toll-free-prefixes{
+    float: left;
+  }
+}
+
+.select-country{
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.instruct{
+  display: block;
+  font-size: 11px;
+  color: $fa-instruct-text;
+}
+
+.search-inputs-number, .search-inputs-location{
+  clear: both;
+  .area-code-search{
+    display: inline-block;
+    margin-top: 13px;
+    width: 50px;
+  }
+}
+
+.search-phrase{
+  width: 250px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.search-inputs-location{
+  display: none;
+  .search-phrase{ 
+    margin: 13px 0 0 0; 
+  }
+}
+
+.twilio-countries{
+  display: inline;
+  #s2id_supported_countries, #s2id_toll_free_supported_countries{
+    width: 125px;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
+}
+
+.phone-search-results{
+  .search-caption{  
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .search-term{
+    font-weight: bold;
+  }
+}
+
+#local_search_results, #toll_free_search_results{
+  .result_available_number{
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 3px;
+  }
+  .buy_available_number{
+    display: inline-block;
+    float: right;
+  }
+  .purchase_number{
+    display: none;
+  }
+  .available_number{
+    border: 1px solid $fa-available-number-background;
+    border-top: none;
+    padding: 11px;
+    height: 30px;
+
+    &:hover {
+      background: $fa-active-tab-background;
+
+      .purchase_number {
+        display: inline;
+      }
+    }
+  }
+  .active{
+    background: $fa-active-tab-background;
+  }
+  .phone_location{
+    font-size: 11px;
+    font-weight: normal;
+    display: inline;
+    margin-left: 70px;
+    text-transform: uppercase;
+    color: $fa-phone-location-text;
+  }
+  .no-numbers-available{
+    text-align: center;
+    font-size: 16px;
+    color: $fa-no-number-available-text;
+  }
+}
+
+.region{
+  font-size: 11px;
+}
+
+
+.search-number{
+  text-align: right;
+}
+
+.nested_ivrs {
+  margin-left: 20px;
+  margin-top: 15px;
+  list-style-type: decimal-leading-zero;
+  .nested_ivrs .nested_ivrs .nested_ivrs {
+    margin-left: 0;
+  }
+}
+
+//NEW
+
+.phone-search-bar{
+  background: $fa-phone-search-background;
+  -webkit-border-radius: 5px 5px 0px 0px;
+  -moz-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  border: 1px solid $fa-phone-search-border;
+  padding: 10px 20px 10px 9px;
+	min-height: 40px;
+  #search_input{
+    height: 28px;
+  }
+  .search-input-sec{
+    width: 250px;
+    float:right;
+    position: relative;
+    #search_input{
+      margin-bottom: 0;
+    }
+    .searchicon{
+      top: 11px;
+      right: 0;
+    }
+  }
+  .search-primary{
+    float: left;
+  }
+  .search-bar-country, .search-bar-state, .search-bar-prefix{
+    display: inline-block;
+    margin-right: 5px;
+		.select2-container {
+			width: 120px;
+		}
+  }
+  .select2-choice{
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    height: 31px;
+    padding-top: 5px;
+    div b{
+      position: relative;
+      top: 5px;
+    }
+  }
+}
+
+.default-results-view{
+  margin-top: 25px;
+}
+
+.freshfone_subscription{
+  .credits_lbl{
+    display: inline-block;
+    margin-top: 6px;
+  }
+  #s2id_freshfone_credits_credit, #s2id_freshfone_credits_recharge_quantity{
+    width: 80px;
+  }
+  .row-fluid{
+    margin: 6px;
+    line-height: 2;
+  }
+}
+.ui-form li.current-balance{
+  width: 30%;
+  text-align: center;
+}
+.current-balance-text{
+  color: black;
+}
+.current-balance-amt{
+  font-size: 24px;
+  margin-top: 16px;
+  font-weight: bold;
+}
+.ui-form li.recharge-now{
+  width: 50%;
+  position: relative;
+  top: 3px;
+  border-left: 1px solid $fa-recharge-now-border;
+}
+.enabled-auto-recharge{
+  .recharge-amt-lbl{
+    color: black;
+  }
+  .recharge-amt{
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 10px;
+  }
+  .action-links{
+    display: inline-block;
+    margin-left: 15px;
+  }
+}
+.cancel_edit_auto_recharge{
+  display: none;
+}
+.freshfone-confirmation{
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
+  border-radius:6px;
+  .ui-dialog-title{
+    font-size: 24px;
+  }
+  
+}
+#purchase-confirmation{
+    margin: 8px;
+    .number-message{
+      display: inline-block;
+      margin-left: 15px;
+      .address-required-alert{
+        margin-top: 9px;
+      }
+      .label-important{
+        margin-right: 8px;
+      }
+
+    }
+    .purchase-actions{
+      margin-top: 30px;
+      text-align: right;
+    }
+  }

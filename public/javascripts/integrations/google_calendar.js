@@ -816,14 +816,22 @@ DEFAULT_EVENT_DURATION = 60; // Minutes;
 		start_d = new Date(); start_d.setTime(Date.parseISO8601(start.dateTime));
 		hrs = start_d.getHours();
 		mins = start_d.getMinutes();
-		if(hrs > 12){ am_or_pm = "pm"; hrs -= 12; } else { am_or_pm = "am"; }
+		if(hrs >= 12){
+			am_or_pm = "pm";
+			if ( hrs > 12 ) hrs -= 12;
+		} else { am_or_pm = "am"; }
+		if (hrs == 0) hrs = 12;
 		s =  (hrs<10?'0':'') + hrs + ":" + (mins<10?'0':'') + mins + ' ' + am_or_pm;
 
 		if(end){
 			end_d = new Date(); end_d.setTime(Date.parseISO8601(end.dateTime));
 			hrs = end_d.getHours();
 			mins = end_d.getMinutes();
-			if(hrs>12){am_or_pm = "pm"; hrs-=12;} else { am_or_pm = "am"; }
+			if(hrs >= 12){
+				am_or_pm = "pm";
+				if ( hrs > 12 ) hrs -= 12;
+			} else { am_or_pm = "am"; }
+			if (hrs == 0) hrs = 12;
 			s += " - " + (hrs<10?'0':'') + hrs + ":" + (mins<10?'0':'') + mins + ' ' + am_or_pm;
 		}
 		return s;
@@ -1010,6 +1018,7 @@ easing_function = "easeInOutCubic"
 jQuery(document).ready(function(){
 
 	jQuery('#google_calendar_add_event_modal').remove();
+	jQuery('#gcal-confirm-modal').remove();
 
 	var gcal = new GoogleCalendar(google_calendar_options);
 

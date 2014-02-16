@@ -1,30 +1,36 @@
-//
-// Utility classes
 // --------------------------------------------------
-
+//                    Utility classes
+// --------------------------------------------------
+.clearfix{
+  @include pie-clearfix;
+}
 
 // Quick floats
+
 .pull-right {
   float: right;
 }
 .pull-left {
   float: left;
 }
-
-// Toggling content
+// --------------------------------------------------
+//                    Toggling content
+// --------------------------------------------------
 .hide {
   display: none;
 }
 .show {
   display: block;
 }
-
-// Visibility
+// --------------------------------------------------
+//                      Visibility
+// --------------------------------------------------
 .invisible {
   visibility: hidden;
 }
-
-// Alignment options
+// --------------------------------------------------
+//                  Alignment options
+// --------------------------------------------------
 .align-right{
   text-align:right;
 }
@@ -36,30 +42,164 @@
 .align-top{
   vertical-align:top;
 }
-
-// For Affix plugin
+// --------------------------------------------------
+//                  Word Break all
+// --------------------------------------------------
+.break-all{
+  word-break: break-word;
+}
+// --------------------------------------------------
+//                  For Affix plugin
+// --------------------------------------------------
 .affix {
   position: fixed;
 }
 
-// Clearing floats
+// --------------------------------------------------
+//                  Clearing floats
+// --------------------------------------------------
 .clearfix {
   @include clearfix();
 }
+.clearBoth{ clear:both; }            
+.clearLeft{ clear:left; }            
+.clearRight{ clear:right; }    
 
-// Accessible yet invisible text
+// --------------------------------------------------
+//          Accessible yet invisible text
+// --------------------------------------------------
 .hide-text {
   @include hide-text();
 }
 
-// Uses box-sizing mixin, so must be defined here
+// --------------------------------------------------
+//  Uses box-sizing mixin, so must be defined here
+// --------------------------------------------------
 .input-block-level {
   @include input-block-level();
 }
 
 .alert-text{ color:#e84444; }
 
-// Ellipsis
+// --------------------------------------------------
+//                      Ellipsis
+// --------------------------------------------------
 .ellipsis{
 	@include ellipsis;
+}
+
+// --------------------------------------------------
+//                      Vertical-alignment
+// --------------------------------------------------
+
+.vertical-alignment{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+.vertical-align {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.vertical-align * {
+    vertical-align: middle;
+}
+
+// --------------------------------------------------
+//                Margin and padding
+// --------------------------------------------------
+@for $i from 0 through 20 {
+  
+  .m#{$i}{margin:#{$i}px;}            //Margin
+  .mt#{$i}{margin-top:#{$i}px;}       //Margin-top
+  .mb#{$i}{margin-bottom:#{$i}px;}    //Margin-bottom
+  .mr#{$i}{margin-right:#{$i}px;}     //Margin-right
+  .ml#{$i}{margin-left:#{$i}px;}      //Margin-left
+
+  .p#{$i}{padding:#{$i}px;}           //padding
+  .pt#{$i}{padding-top:#{$i}px;}      //padding-top
+  .pb#{$i}{padding-bottom:#{$i}px;}   //padding-bottom
+  .pr#{$i}{padding-right:#{$i}px;}    //padding-right
+  .pl#{$i}{padding-left:#{$i}px;}     //padding-left
+}
+
+// --------------------------------------------------
+//                border radius 0 to 15px
+// --------------------------------------------------
+@for $i from 0 through 15 {
+  .br#{$i}{
+    @include border-radius(#{$i}px);
+  }
+  .brtl#{$i}{
+    @include border-top-left-radius(#{$i}px);
+  }
+  .brtr#{$i}{
+    @include border-top-right-radius(#{$i}px);
+  }
+  .brbl#{$i}{
+    @include border-bottom-left-radius(#{$i}px);
+  }
+  .brbr#{$i}{
+    @include border-bottom-right-radius(#{$i}px);
+  }
+}
+
+// --------------------------------------------------
+//                      Arrow
+// --------------------------------------------------
+
+.arrow-right,
+.arrow-left,
+.arrow-up,
+.arrow-down {
+  /*
+   * In Internet Explorer, The"border-style: dashed" will never be
+   * rendered unless "(width * 5) >= border-width" is true.
+   * Since "width" is set to "0", the "dashed-border" remains
+   * invisible to the user, which renders the border just like how
+   * "border-color: transparent" renders.
+   */
+  border-style: dashed;
+  padding:0;
+  border-color: transparent;
+  border-width: 0.7em;
+  display: -moz-inline-box;
+  display: inline-block;
+  /* Use font-size to control the size of the arrow. */
+  font-size:9px;
+  height: 0;
+  line-height: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 0;
+}
+
+.arrow-up {
+  border-bottom-width: 1em;
+  border-bottom-style: solid;
+  border-bottom-color: #666;
+  bottom: 0.25em;
+}
+
+.arrow-right {
+  border-left-width: 1em;
+  border-left-style: solid;
+  border-left-color: #666;
+  left: 0.35em;
+}
+                    
+.arrow-down {
+  border-top-width: 1em;
+  border-top-style: solid;
+  border-top-color: #666;
+  top: 0.25em;
+}
+
+.arrow-left {
+  border-right-width: 1em;
+  border-right-style: solid;
+  border-right-color: #666;
+  right: 0.35em;
 }

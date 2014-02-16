@@ -1,0 +1,490 @@
+@mixin pointer-title($bg: #afafaf, $ht: 9px){
+  @include border-left-radius(3px);
+  height: $ht;
+  &:before {
+     content:"";
+     position:absolute;
+     top:0px;
+     right:-($ht*2);
+     display:block; width:0; /* Firefox 3.0 damage limitation */
+     border:$ht solid transparent;   
+     height:0px;
+     font-size:0px;
+  }
+}
+
+@mixin right-pointer-title($bg: #afafaf, $ht: 9px){
+  @include border-right-radius(3px);
+  height: $ht;
+  &:before {
+     content:"";
+     position:absolute;
+     top:0px;
+     left:-($ht*2);
+     display:block; width:0; /* Firefox 3.0 damage limitation */
+     border:$ht solid transparent;   
+     border-right-color: $bg;
+     height:0px;
+     font-size:0px;
+  }
+}
+
+@mixin vertical-gradient($start: black, $end: #cccccc) {
+  @include filter-gradient($start, $end);
+  /* Fallback: */
+  background: $start;
+  /* CSS 3 plus vendor prefixes: */
+  @include background-image(linear-gradient($start, $end));
+}
+
+@mixin wrap(){
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+@mixin widget-rotate($degree: -90deg, $location: bottom left) {
+  transform: rotate($degree);
+  transform-origin: $location;
+  -moz-transform:rotate($degree); 
+  -moz-transform-origin: $location;
+  -webkit-transform: rotate($degree);
+  -webkit-transform-origin: $location;
+  -o-transform: rotate($degree);
+  -o-transform-origin: $location;
+}
+
+@mixin text-formatting(){
+   p , li, div{ 
+      font-size: 13px;
+      line-height: 1.3;
+      margin:0;
+   }
+   code, pre, p, li, div{ 
+    word-break: normal;
+    word-wrap: break-word;
+   }              
+   pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+   }
+   h1 {font-size: 2em}
+   h2 {font-size: 1.5em}
+   h3 {font-size: 1.17em}
+   h4 {font-size: 1em}
+   h5 {font-size: .83em}
+   h6 {font-size: .75em}
+   img{ height:auto; }
+   img, iframe { border:0; max-width: 100%; }
+   table {cursor:default; border:1px solid #afafaf; } 
+   table td, table th {cursor:text; font-size: inherit; font-size: 13px; border:1px solid #afafaf; padding: 4px; }
+   em{ font-style:italic; }
+   ins {border-bottom:1px solid green; text-decoration: none; color:green}
+   cite {border-bottom:1px dashed blue}
+   acronym {border-bottom:1px dotted #CCC; cursor:help}
+   abbr {border-bottom:1px dashed #CCC; cursor:help}
+   ol, ul{ margin: 8px 0px 4px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+   ul{ list-style:disc outside;  }
+   blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; border-left: 1px dotted #999; padding:6px 6px 1px 1em; }
+   del{ text-decoration:none; }
+}
+
+//-----------------------------------------------------------------------------
+// IE7 likes to collapse whitespace on either side of the inline-block elements.
+// Ems because we're attempting to match the width of a space character. Left
+// version is for form buttons, which typically come after other elements, and
+// right version is for icons, which come before. Applying both is ok, but it will
+// mean that space between those elements will be .6em (~2 space characters) in IE7,
+// instead of the 1 space in other browsers.
+//-----------------------------------------------------------------------------
+
+@mixin ie7-restore-left-whitespace() {
+  *margin-left: .3em;
+
+  &:first-child {
+    *margin-left: 0;
+  }
+}
+
+@mixin ie7-restore-right-whitespace() {
+  *margin-right: .3em;
+
+  &:last-child {
+    *margin-left: 0;
+  }
+}
+
+
+@mixin hide-text() {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+//// TRIANGLES ////
+//-----------------------------------------------------------------------------
+// Transforms the element into a triangle
+// You can modify border sizes to change the shape
+//-----------------------------------------------------------------------------
+
+@mixin triangle($direction: down, $color: black, $size: 6px) {
+  @if $direction == left {
+    border-bottom: $size solid transparent;
+    border-right: $size solid $color;
+    border-top: $size solid transparent;
+  }
+  @else if $direction == right {
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+    border-top: $size solid transparent;
+  }
+  @else if $direction == up {
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+  }
+  @else if $direction == down {
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+    border-top: $size solid $color;
+  }
+  height: 0;
+  width: 0;
+}
+
+//-----------------------------------------------------------------------------
+// Attaches a triangle to the element using a pseudo-element
+//-----------------------------------------------------------------------------
+
+@mixin triangle-after($direction: down, $color: black, $size: 6px) {
+  position: relative;
+  &:after {
+    @include triangle($direction, $color, $size);
+    content: "";
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+// Attaches a triangle to the element using a pseudo-element
+//-----------------------------------------------------------------------------
+
+@mixin triangle-before($direction: down, $color: black, $size: 6px) {
+  position: relative;
+  &:before {
+    @include triangle($direction, $color, $size);
+    content: "";
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Convenience function to change the current element and it's triangle's color
+//-----------------------------------------------------------------------------
+
+@mixin triangle-color($color: black, $direction: down) {
+  background: $color;
+  &:after {
+    @if $direction == left {
+      border-right-color: $color;
+    }
+    @else if $direction == right {
+      border-left-color: $color;
+    }
+    @else if $direction == up {
+      border-bottom-color: $color;
+    }
+    @else if $direction == down {
+      border-top-color: $color;
+    }
+  }
+}
+
+
+//// BUBBLES ////
+//--------------------------------------------------
+// Turns element into a speech bubbles (used for numbers)
+//--------------------------------------------------
+
+@mixin bubble($background: none, $text: none) {
+  @include border-radius(3px);
+  position: relative;
+  font-size: 13px;
+  padding: 3px 5px;
+  @if $text != none {
+    color: $text;
+  }
+  @if $background != none {
+    background: $background;
+  }
+  &:after {
+    border-color: transparent;
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 4px;
+    height: 0;
+    width: 0;
+    bottom: -4px;
+    left: 5px;
+    @if $background != none {
+      border-left-color: $background;
+    }
+  }
+}
+
+//--------------------------------------------------
+// Animation Mixins for cross browser compatibility
+//--------------------------------------------------
+
+@mixin animation-name($name) {
+  -webkit-animation-name: $name;
+  -moz-animation-name: $name;
+  -o-animation-name: $name;
+  animation-name: $name;
+}
+
+@mixin animation-duration($interval) {
+  -moz-animation-duration: $interval;
+  -webkit-animation-duration: $interval;
+  -o-animation-duration: $interval;
+  animation-duration: $interval;
+}
+
+@mixin animation-timing-function($func) {
+  -moz-animation-timing-function: $func;
+  -webkit-animation-timing-function: $func;
+  -o-animation-timing-function: $func;
+  animation-timing-function: $func;
+}
+
+@mixin animation-delay($delay:0) {
+  -moz-animation-delay: $delay;
+  -webkit-animation-delay: $delay;
+  -o-animation-delay: $delay;
+  animation-delay: $delay;
+
+}
+
+@mixin animation-iteration-count($count:infinite) {
+  -moz-animation-iteration-count: $count;
+  -webkit-animation-iteration-count: $count;
+  -o-animation-iteration-count: $count;
+  animation-iteration-count: $count;
+
+}
+
+@mixin animation-direction($direction) {
+  -moz-animation-direction: $direction;
+  -webkit-animation-direction: $direction;
+  -o-animation-direction: $direction;
+  animation-direction: $direction;
+}
+
+//-----------------------------------------------------------------------------
+// Select2 
+//-----------------------------------------------------------------------------
+
+@mixin select2_container_choice {
+  @include border-radius(3px);
+  @include background-clip(padding-box);
+  background-color: #e4e4e4;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#eeeeee', GradientType=0 );
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
+  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -o-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -ms-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  @include box-shadow(0 0 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05));
+  color: #333;
+  border: 1px solid #aaaaaa;
+  line-height: 13px;
+  padding: 3px 5px 3px 8px;
+  margin: 3px 5px 3px 5px;
+  position: relative;
+  cursor: default;
+  div {
+    float: left;
+  }
+}
+@mixin select2-drop {
+  background: #fff;
+  color: #333;
+  border: 1px solid #aaa;
+  border-top: 0;
+  position: absolute;
+  top: 100%;
+  @include box-shadow(rgba(0, 0, 0, .15) 0 4px 5px);
+  z-index: 9999;
+  width:100%;
+  margin-top:-5px;
+  @include border-radius(0 0 4px 4px);
+}
+
+// Based on http://www.w3.org/TR/css3-animations/
+
+$default-animation-name: none;
+$default-animation-duration: 0;
+$default-animation-timing-function: ease;
+$default-animation-iteration-count: 1;
+$default-animation-direction: normal;
+$default-animation-play-state: running;
+$default-animation-delay: 0;
+$default-animation-fill-mode: none;
+
+@mixin animation-name(
+  $name-1: $default-animation-name,
+  $name-2: false,
+  $name-3: false,
+  $name-4: false,
+  $name-5: false,
+  $name-6: false,
+  $name-7: false,
+  $name-8: false,
+  $name-9: false,
+  $name-10: false
+) {
+  $name: compact($name-1, $name-2, $name-3, $name-4, $name-5, $name-6, $name-7, $name-8, $name-9, $name-10);
+  @include experimental(animation-name, $name);
+}
+
+@mixin animation-duration(
+  $duration-1: $default-animation-duration,
+  $duration-2: false,
+  $duration-3: false,
+  $duration-4: false,
+  $duration-5: false,
+  $duration-6: false,
+  $duration-7: false,
+  $duration-8: false,
+  $duration-9: false,
+  $duration-10: false
+) {
+  $duration: compact($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10);
+  @include experimental(animation-duration, $duration);
+}
+
+@mixin animation-timing-function(
+  $timing-function-1: $default-animation-timing-function,
+  $timing-function-2: false,
+  $timing-function-3: false,
+  $timing-function-4: false,
+  $timing-function-5: false,
+  $timing-function-6: false,
+  $timing-function-7: false,
+  $timing-function-8: false,
+  $timing-function-9: false,
+  $timing-function-10: false
+) {
+  $timing-function: compact($timing-function-1, $timing-function-2, $timing-function-3, $timing-function-4, $timing-function-5, $timing-function-6, $timing-function-7, $timing-function-8, $timing-function-9, $timing-function-10);
+  @include experimental(animation-timing-function, $timing-function);
+}
+
+@mixin animation-iteration-count(
+  $iteration-count-1: $default-animation-count,
+  $iteration-count-2: false,
+  $iteration-count-3: false,
+  $iteration-count-4: false,
+  $iteration-count-5: false,
+  $iteration-count-6: false,
+  $iteration-count-7: false,
+  $iteration-count-8: false,
+  $iteration-count-9: false,
+  $iteration-count-10: false
+) {
+  $iteration-count: compact($iteration-count-1, $iteration-count-2, $iteration-count-3, $iteration-count-4, $iteration-count-5, $iteration-count-6, $iteration-count-7, $iteration-count-8, $iteration-count-9, $iteration-count-10);
+  @include experimental(animation-iteration-count, $iteration-count);
+}
+
+@mixin animation-direction(
+  $direction-1: $default-animation-direction,
+  $direction-2: false,
+  $direction-3: false,
+  $direction-4: false,
+  $direction-5: false,
+  $direction-6: false,
+  $direction-7: false,
+  $direction-8: false,
+  $direction-9: false,
+  $direction-10: false
+) {
+  $direction: compact($direction-1, $direction-2, $direction-3, $direction-4, $direction-5, $direction-6, $direction-7, $direction-8, $direction-9, $direction-10);
+  @include experimental(animation-direction, $direction);
+}
+
+@mixin animation-play-state(
+  $play-state-1: $default-animation-play-state,
+  $play-state-2: false,
+  $play-state-3: false,
+  $play-state-4: false,
+  $play-state-5: false,
+  $play-state-6: false,
+  $play-state-7: false,
+  $play-state-8: false,
+  $play-state-9: false,
+  $play-state-10: false
+) {
+  $play-state: compact($play-state-1, $play-state-2, $play-state-3, $play-state-4, $play-state-5, $play-state-6, $play-state-7, $play-state-8, $play-state-9, $play-state-10);
+  @include experimental(animation-play-state, $play-state);
+}
+
+@mixin animation-delay(
+  $delay-1: $default-animation-delay,
+  $delay-2: false,
+  $delay-3: false,
+  $delay-4: false,
+  $delay-5: false,
+  $delay-6: false,
+  $delay-7: false,
+  $delay-8: false,
+  $delay-9: false,
+  $delay-10: false
+) {
+  $delay: compact($delay-1, $delay-2, $delay-3, $delay-4, $delay-5, $delay-6, $delay-7, $delay-8, $delay-9, $delay-10);
+  @include experimental(animation-delay, $delay);
+}
+
+@mixin animation(
+  $animation-1: default,
+  $animation-2: false,
+  $animation-3: false,
+  $animation-4: false,
+  $animation-5: false,
+  $animation-6: false,
+  $animation-7: false,
+  $animation-8: false,
+  $animation-9: false,
+  $animation-10: false
+) {
+  @if $animation-1 == default {
+    $animation-1: -compass-space-list(compact($default-animation-name, $default-animation-duration, $default-animation-timing-function, $default-animation-delay, $default-animation-iteration-count, $default-animation-direction, $default-animation-fill-mode))
+  }
+
+  $animation: compact($animation-1, $animation-2, $animation-3, $animation-4, $animation-5, $animation-6, $animation-7, $animation-8, $animation-9, $animation-10);
+  @include experimental(animation, $animation);
+}
+
+// Simple animation with named arguments
+@mixin animation-simple(
+  $name: $default-animation-name,
+  $duration: $default-animation-duration,
+  $timing-function: $default-animation-timing-function,
+  $delay: $default-animation-delay,
+  $iteration-count: $default-animation-iteration-count,
+  $direction: $default-animation-direction
+) {
+  @include experimental(animation, $name $duration $timing-function $delay $iteration-count $direction);
+}
+
+// This one is from https://developer.mozilla.org/en/CSS/animation-fill-mode
+@mixin animation-fill-mode($fill-mode) {
+  @include experimental(animation-fill-mode, $fill-mode);
+}

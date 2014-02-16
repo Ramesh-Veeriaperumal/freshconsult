@@ -943,3 +943,32 @@ function hashTabSelect(){
   }
 }
 
+function storeInLocalStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getFromLocalStorage(key_name) {
+  return JSON.parse(localStorage.getItem(key_name))
+}
+
+function highlight_code() {
+    jQuery('[rel="highlighter"]').each(function(i,element){
+        var brush, attr = jQuery(element).attr('code-brush');
+        if(attr == 'html'){
+            brush = 'js ; html-script: true';
+        } else {
+            brush = attr;
+        }
+        jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
+    })
+
+    SyntaxHighlighter.all();
+}
+
+function preventDefault(event) {
+  if(event.preventDefault())
+    event.preventDefault();
+  else
+    event.returnValue = false;
+}
+

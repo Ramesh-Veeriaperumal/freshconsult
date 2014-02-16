@@ -40,6 +40,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/user"
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
+    resource :"freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
@@ -137,7 +138,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
     # review code for monitorship?
-    resource :monitorship
     resource :"search/home", :only => [:topics]
     resource :forums_uploaded_image, :only => [:create]
   end
@@ -227,6 +227,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                       :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+    resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]

@@ -1,6 +1,5 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
-
   include Helpdesk::NotifierFormattingMethods
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
@@ -73,6 +72,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
    
   def email_notification(params)
+    self.class.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
+    
     subject       params[:subject]
     recipients    params[:receips]
     from          params[:ticket].friendly_reply_email
@@ -100,15 +101,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
-
-    params[:attachments].each do |a|
-      attachment  :content_type => a.content_content_type,
-                  :body => File.read(a.content.to_file.path),
-                  :filename => a.content_file_name
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      params[:attachments].each do |a|
+        attachment  :content_type => a.content_content_type,
+                    :body => File.read(a.content.to_file.path, :mode => "rb"),
+                    :filename => a.content_file_name
+      end
     end
   end
 
   def reply(ticket, note , options={})
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
 
     options = {} unless options.is_a?(Hash) 
     
@@ -142,15 +146,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
-
-    note.all_attachments.each do |a|
-      attachment  :content_type => a.content_content_type, 
-                  :body => File.read(a.content.to_file.path), 
-                  :filename => a.content_file_name
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      note.all_attachments.each do |a|
+        attachment  :content_type => a.content_content_type, 
+                    :body => File.read(a.content.to_file.path, :mode => "rb"), 
+                    :filename => a.content_file_name
+      end
     end
   end
   
   def forward(ticket, note, options={})
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
+    
     subject       fwd_formatted_subject(ticket)
     recipients    note.to_emails
     cc            note.cc_emails
@@ -175,15 +183,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
-
-    note.all_attachments.each do |a|
-      attachment  :content_type => a.content_content_type, 
-                  :body => File.read(a.content.to_file.path), 
-                  :filename => a.content_file_name
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      note.all_attachments.each do |a|
+        attachment  :content_type => a.content_content_type, 
+                    :body => File.read(a.content.to_file.path, :mode => "rb"), 
+                    :filename => a.content_file_name
+      end
     end
   end
 
    def send_cc_email(ticket,options={})
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       formatted_subject(ticket)
     recipients    options[:cc_emails] unless options[:cc_emails].blank?
     from          ticket.friendly_reply_email
@@ -206,15 +217,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
     
-    ticket.attachments.each do |a|
-      attachment  :content_type => a.content_content_type, 
-                  :body => File.read(a.content.to_file.path), 
-                  :filename => a.content_file_name
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      ticket.attachments.each do |a|
+        attachment  :content_type => a.content_content_type, 
+                    :body => File.read(a.content.to_file.path, :mode => "rb"), 
+                    :filename => a.content_file_name
+      end
     end
   end
   
   def notify_comment(ticket, note , reply_email, options={})
     inline_attachments = []
+
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    self.class.set_mailbox email_config.smtp_mailbox
 
     subject       formatted_subject(ticket)
     recipients    options[:notify_emails]     
@@ -238,6 +254,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
@@ -260,6 +278,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def internal_email(ticket, receips, content, sub=nil)
+    self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email

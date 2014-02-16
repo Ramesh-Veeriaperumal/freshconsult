@@ -12,7 +12,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 						:dependent => :destroy
 	
 	validates_presence_of :account_id
-	validate :validate_menus, :validate_attachments
+	validate :validate_menus, :validate_attachments, :validate_welcome_message
 	belongs_to_account
 	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
 	delegate :voice_type, :to => :freshfone_number
@@ -20,7 +20,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 	delegate :attachment_id, :to => :welcome_message, :allow_nil => true, :prefix => true
 
 	attr_protected :account_id
-  attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
+	attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
 
 	# Format: [symbol, twilio_type, display_name, value_for_select_tag]
 
@@ -100,8 +100,12 @@ class Freshfone::Ivr < ActiveRecord::Base
 
 	private
 
-		def validate_menus
-			menus.each { |menu| menu.ivr = self; menu.validate }
+		def validate_menus 
+			menus.each { |menu| menu.ivr = self; menu.validate } if ivr_message? || preview_mode
+		end
+		
+		def validate_welcome_message
+			welcome_message.validate if welcome_message? && !preview_mode
 		end
 		
 		def validate_attachments

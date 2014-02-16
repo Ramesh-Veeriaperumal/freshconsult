@@ -4,6 +4,13 @@ class Freshfone::Number::Message
 								:parent, :group_id
 	delegate :account, :has_new_attachment?, :attachments, :voice_type, :to => :parent
 
+	DEFAULT_MESSAGE = {
+		:on_hold_message => "All agents are busy attending to other customers. Please hold the line or press * at any point to leave a voicemail",
+		:non_availability_message => "Our agents are unavailable to take your call right now",
+		:voicemail_message => "Please leave a message at the tone",
+		:non_business_hours_message => "You have reached us outside of our hours of operation"
+	}
+
 	def initialize(message)
 		message.each_pair do |k,v|
 			instance_variable_set('@' + k.to_s, v)

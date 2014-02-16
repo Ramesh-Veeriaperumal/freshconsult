@@ -1,0 +1,120 @@
+
+// ------------------------------------------------------------------------------------------------------------
+//														 Virtual Agent 
+// ------------------------------------------------------------------------------------------------------------
+.ui-form.observer{	
+	.select2{
+		width: 332px;
+		li {
+			width: auto !important;	
+		}
+	}
+
+	.doer{
+		background-color: #f7f7f7;
+		border:1px solid #cac6c6;
+		@include border-radius(5px);
+		padding:10px;
+		margin-top:5px;
+
+		> *{ margin-left: 5px; }
+
+		.choicelist input[type=radio]{margin-left: 1%;}
+		.performer_data_members_container{
+			margin-top: 10px;
+			.select2{
+				width:339px;
+				ul{	@include border-radius(4px);	}
+			}
+		}
+	}
+
+	.select2-container a{
+		margin-left: 0;
+		margin-right: 0;
+		span{ color: #444; padding-right: 12px;} /* Hack for setting the placeholder color as normal one 
+														since  its considering option with value null as placeholders*/
+	}
+
+	
+	#filterDOM, #actionDOM{
+		.select2-container{width:150px;}
+		.dependent .select2-container{ margin-left: 3px; }
+	}
+
+	>li{
+		width:100%;
+		margin-bottom:0px;
+		padding-left:0;
+		h3 label{	margin-bottom: 10px;	}
+	}
+
+	.addchoice{font-weight: normal;}
+
+	.conditionset{margin:0px;}
+
+	.conditionset fieldset {
+
+		padding-left: 0;
+
+		&.addchoice img{left:9px;}
+
+		.controls {
+			margin-left: 25px;
+      float: none;
+      display: inline-block;
+      width: 93%;
+
+      .select2-container{width:303px;}
+
+      .dependent{ 	
+				input[type="text"].number{
+					width:70px;
+					height:18px;	
+					margin:2px 4px;
+				}
+				.select2-container{
+					margin-left: 3px;
+		    	width:150px;
+		    }
+		    	.select2-container-multi{
+		    		.select2-choices .select2-search-choice{
+		    			float: left;
+		    		}
+		    		.select2-search-choice-close{
+						float: left;
+						margin: 0 0 0 8px;	
+					}
+		    	}
+			}
+
+      .nested_field{
+      	min-width: 400px;
+      	.select2-container{margin-right:0px;}
+      }
+
+			.event_nested_field{
+
+				width: 153px;
+
+				>div{
+					&:first-child{
+						padding-left:0;
+						border:0;
+						width:150px;
+					}
+					padding-left:5px;
+					margin-left:10px;
+					border-left:1px dotted #ccc;
+	      	.select2-container{width:134px;}
+	      }
+			}
+
+			.fromto_text{
+			 	margin-left: 8px;
+			 	padding-top: 4px;
+			 	width: 35px;
+			}
+		}
+	}	
+}

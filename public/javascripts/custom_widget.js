@@ -831,7 +831,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 							'<div class="email_title"></div>'+
 								'<div class="parent-tmpl">'+
 									'<div class="modal-tabs">'+
-										'<ul class="tabs parent-tabs">'+
+										'<ul class="tabs nav-tabs">'+
 											'<li class="active campaign-tab"><a href="#">Campaigns</a></li>'+
 											'<li class="list-tab"><a href="#">MailingLists</a></li>'+
 										'</ul>'+

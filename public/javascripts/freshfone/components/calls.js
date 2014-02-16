@@ -4,13 +4,11 @@ var FreshfoneCalls;
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
 		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
 		numbersHash = freshfone.numbersHash;
-	FreshfoneCalls = function (timer, freshfoneUserInfo) {
+	FreshfoneCalls = function () {
 		this.init();
-		this.timer = timer;
 		this.currentUser = freshfone.current_user;
 		this.ALLOWED_DIGITS = 15;
 		this.cached = {};
-		this.freshfoneUserInfo = freshfoneUserInfo;
 	};
 
 	FreshfoneCalls.prototype = {
@@ -30,9 +28,18 @@ var FreshfoneCalls;
 			$('#transfer_call .transfering_call').hide();
 		},
 		$container: $('.freshfone_content_container'),
+		loadDependencies: function (freshfoneuser, timer, freshfoneUserInfo) {
+			this.freshfoneuser = freshfoneuser;
+			this.freshfoneUserInfo = freshfoneUserInfo;
+			this.timer = timer;
+		},
 		$invalidNumberText: function () {
 			return this.cached.$invalidNumberText = this.cached.$invalidNumberText ||
 																							this.$container.find('.invalid_phone_text');
+		},
+		$alreadyInCallText: function () {
+			return this.cached.$alreadyInCallText = this.cached.$alreadyInCallText ||
+																							this.$container.find('.already_in_call_text');
 		},
 		$infoText: function () {
 			return this.cached.$infoText = this.cached.$infoText ||
@@ -142,6 +149,7 @@ var FreshfoneCalls;
 			}
 		},
 		makeOutgoing: function () {
+			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 			this.number = formatE164(this.callerLocation(), this.number);
 			
@@ -156,7 +164,7 @@ var FreshfoneCalls;
 
 			this.$infoText().hide();
 			this.toggleInvalidNumberText(false);
-
+			this.toggleAlreadyInCallText(false);
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
@@ -164,8 +172,11 @@ var FreshfoneCalls;
 
 		toggleInvalidNumberText: function (show) {
 			this.$invalidNumberText().toggle(show || false);
+			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
 		},
-
+		toggleAlreadyInCallText: function(show) {
+			this.$alreadyInCallText().toggle(show || false);
+		},
 		canDialNumber: function () {
 			return (this.number !== this.outgoingNumber()) && isValidNumber(this.number);
 		},

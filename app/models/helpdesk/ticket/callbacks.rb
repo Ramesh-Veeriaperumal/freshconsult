@@ -27,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type = account.ticket_types_from_cache.first.value if self.ticket_type.blank? 
+    self.ticket_type = nil if self.ticket_type.blank?
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
@@ -283,7 +283,8 @@ private
     self.requester = account.all_users.find_by_an_unique_id({ 
       :email => self.email, 
       :twitter_id => twitter_id,
-      :external_id => external_id })
+      :external_id => external_id,
+      :phone => phone })
     
     create_requester unless requester
   end
