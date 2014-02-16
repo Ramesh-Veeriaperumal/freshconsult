@@ -342,6 +342,8 @@ javascripts:
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
+
+  freshfone_portal:
     - public/javascripts/sound/soundmanager2-jsmin.js
     - public/javascripts/soundmanager2/berniecode-animator.js
     - public/javascripts/soundmanager2/360player.js

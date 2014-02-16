@@ -1,5 +1,6 @@
 (function ($) {
     "use strict";
+    
     var search_freshfone,
         current_toll_free_country = "US",
         current_toll_free_prefix = "",
