@@ -203,7 +203,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     url_for(
             :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
             :host => export_params[:portal_url], 
-            :protocol => 'https'
+            :protocol => Account.current.ssl_enabled? ? 'https' : 'http'
             )
   end
 

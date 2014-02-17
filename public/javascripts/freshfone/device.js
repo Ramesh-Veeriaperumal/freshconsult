@@ -80,7 +80,7 @@
 		Twilio.Device.cancel(function (conn) {
 			$("#log").text("Ready");
 			// freshfonecalls.enableCallButton();
-			freshfoneNotification.closeConnetions(conn);
+			freshfoneNotification.closeConnections(conn);
 		});
 
 		Twilio.Device.incoming(function (conn) {

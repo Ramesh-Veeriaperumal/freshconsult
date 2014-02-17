@@ -48,8 +48,22 @@ module ActionMailer
         end
 
         @parts.each do |p|
-          part = (Mail::Part === p ? p : p.to_mail(self))
-          m.add_part(part)
+          # if content_disposition is inline attachment and plain or html 
+          # add the actionmailer part to Mail::Message
+          
+          if ((p.content_disposition != "attachment") || (p.headers && p.headers["Content-Disposition"] =~ /inline/))
+            part = (Mail::Part === p ? p : p.to_mail(self))
+            m.add_part(part)  
+          # in case of attachments
+          else
+            attachment_data = {
+                                :content => p.body,
+                                :content_transfer_encoding => :binary
+                              }
+            attachment_data.merge!({:mime_type => p.content_type}) if p.content_type
+            m.attachments[p.filename] = attachment_data
+          end
+
         end
 
         if ctype =~ /multipart/

@@ -7,7 +7,6 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
   before_filter :add_additional_params
   
   def quit_voicemail
-    build_ticket
     update_call
 
     empty_twiml

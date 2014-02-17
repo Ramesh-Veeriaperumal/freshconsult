@@ -22,7 +22,7 @@
               $("#quest_description").val("");
           });
 
-          base.onQuestChange(selectListArr[$("input[name=quest[category]]:checked").val()]);
+          base.onQuestChange(selectListArr[$("input[name='quest[category]']:checked").val()]);
 
           if(sub_category){
             questinput[0][0].mode = sub_category;
@@ -59,7 +59,7 @@
               _mand_check_fails = false;
               if(jQuery("#"+index).val() == ""){
                 var txt = (index == 'quest_data_value') ? 
-                           value[jQuery("input[name=quest[category]]:checked").val()] : value
+                           value[jQuery("input[name='quest[category]']:checked").val()] : value
                 jQuery("#noticeajax").text(txt);
                 jQuery("#noticeajax").show();
                 closeableFlash('#noticeajax');
@@ -205,7 +205,7 @@
 <% content_for :onload_script do %>
   var manipulateFilterData = function(_filter_data){
     var filterList = [];
-    if(jQuery("input[name=quest[category]]:checked").val() == 3 && jQuery("#quest_data_mode").val() == 2 ){
+    if(jQuery("input[name='quest[category]']:checked").val() == 3 && jQuery("#quest_data_mode").val() == 2 ){
       jQuery.each(_filter_data, function(index,value){
         if(value.name != "user_votes"){
           filterList.push(value);
@@ -288,7 +288,7 @@ var getFilterDef = function(name,quest_type){
         quentity = +jQuery('#quest_data_value').val(),
         timeframe = +jQuery('#quest_data_date').val(),
         quest_data_mode_value = +jQuery('#quest_data_mode').val(),
-        questtype = jQuery("input[name=quest[category]]:checked").val();
+        questtype = jQuery("input[name='quest[category]']:checked").val();
         cridefs = <%= @criteria_defs.html_safe if @criteria_defs %>,
         activeCriteria = cridefs[selectListArr[questtype]],
         display_name_tpl = stringTemplates[selectListArr[questtype]],

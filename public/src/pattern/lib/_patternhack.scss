@@ -277,6 +277,14 @@ ul.inline > li, ol.inline > li {
 .modal-header h3.title{
   padding:0;
 }
+
+.tooltip.disabled{ 
+  pointer-events:auto;
+  cursor: not-allowed;
+ }
+ a,button,label{
+   &.tooltip.disabled{ pointer-events: none; }
+ }
 //---------------------------------------------------------------------------------------------------
 //                                      Portal Custom pills styles
 //---------------------------------------------------------------------------------------------------

@@ -17,6 +17,8 @@
 
 .wrapper{
 	@include container;
+	min-width: $container-min-width;
+	_width: $container-min-width;
 	@include pie-clearfix;
 	overflow: visible;
 	text-align: left;

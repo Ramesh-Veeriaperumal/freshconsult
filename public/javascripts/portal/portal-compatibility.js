@@ -23,10 +23,4 @@ jQuery.noConflict()
 
 	});
 
-	$(function () {
-
-		"use strict"	
-		
-	})
-
-}(window.jQuery)
+}(window.jQuery);

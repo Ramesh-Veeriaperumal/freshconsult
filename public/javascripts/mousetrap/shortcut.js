@@ -3,8 +3,7 @@
 /*jslint nomen: true */
 
 /*global Mousetrap, Fjax, TICKET_DETAILS_DATA, closeCurrentTicket, Shortcuts,
-        add_watcher, jQuery, isMacintosh, helpdesk_submit, _preventDefault,
-        listItemSelector:true */
+        add_watcher, jQuery, helpdesk_submit, _preventDefault*/
 
 (function ($) {
     'use strict';
@@ -71,13 +70,19 @@
             });
         },
         // -----------  Global Shortcuts  ----------------
-        shortcutHelp = function () {
+        shortcutHelp = function (ev) {
+            _preventDefault(ev);
+            // close qtip if any opened on viewing help chart
+            // work around need to fix properly
+            $('.qtip:visible').qtip('hide');
+
             var isVisible = $('#help_chart').is(':visible'),
                 _selector = isVisible ? '#help_chart button.close' : '#shortcut_help_chart';
 
             $(_selector).trigger('click');
         },
-        save = function () {
+        save = function (ev) {
+            _preventDefault(ev);
             var currentActiveForm = $('body').data('current-active-form');
 
             if (currentActiveForm) {
@@ -94,36 +99,64 @@
             $('.qtip:visible').qtip('hide');
             $('.twipsy:visible').trigger('hide');
             $('.cancel_btn:visible').trigger('click');
-            $('#help_chart button.close:visible').trigger('click');
+            $('#help_chart').modal('hide');
             Mousetrap.unpause();
         },
         // ------------  Ticket List  ----------------------
-        showSelectedTicket = function () {
+        showSelectedTicket = function (ev) {
+            _preventDefault(ev);
             var el = $('.' + _selectedListItemClass + ' .ticket_subject a').get(0).click();
         },
-        toggleTicketDescription = function () {
+        toggleTicketDescription = function (ev) {
+            _preventDefault(ev);
             if ($('#ui-tooltip-' + $('.' + _selectedListItemClass).data('ticket')).is(':visible')) {
                 $('.' + _selectedListItemClass + ' .ticket_subject').find('.ticket-description-tip').qtip('hide');
             } else {
                 $('.' + _selectedListItemClass + ' .ticket_subject').find('a').first().trigger('mouseover');
             }
+
+            autoScroll($('.' + _selectedListItemClass));
         },
         selectTicket = function () {
             $('tr.' + _selectedListItemClass + ' input.selector').trigger('click').trigger('change');
         },
-        moveItemSelector = function (key) {
+        initScrollTo = function (el) {
+            $('html').scrollTop(el.offset().top);
+            //$.scrollTo(el).scrollTo.window().queue([]).stop();
+        },
+        autoScroll = function (el, percentToScroll) {
+            var docTop = $(document).scrollTop(),
+                itemSltrTop = el.offset().top,
+                itemSltrBotm = itemSltrTop + el.height(),
+                frame = $(window).height() + docTop,
+                percent = percentToScroll || 50,
+                scrollTo = Math.floor($(window).height() * percent / 100);
+
+            if (itemSltrBotm <= docTop || itemSltrTop >= frame) {
+                initScrollTo(el);
+            } else if (itemSltrBotm >= frame) {
+                $('html').scrollTop((docTop + scrollTo));
+            } else if (itemSltrTop <= docTop) {
+                $('html').scrollTop((docTop - scrollTo));
+            }
+        },
+        moveItemSelector = function (ev, key) {
             var $el = $("tr." + _selectedListItemClass),
                 _method = (key === "go_to_previous") ? 'prev' : 'next';
 
             if ($el && $el[_method]().length !== 0) {
+                _preventDefault(ev);
                 var $other_el = $el[_method]();
                 $other_el.addClass(_selectedListItemClass);
                 $el.removeClass(_selectedListItemClass).addClass('fade-out');
                 setTimeout(function(){ $el.removeClass('fade-out'); }, 250);
+                
+                autoScroll($other_el, 50);  // params : (movable element to trace, percent to scroll)
             }
         },
         // ----------  Ticket Detail view  -------------
-        toggleWatcher = function () {
+        toggleWatcher = function (ev) {
+            _preventDefault(ev);
             var $el = $('#watcher_toggle'),
                 watching = $el.data('watching'),
                 ticket_id = TICKET_DETAILS_DATA.displayId,
@@ -141,7 +174,8 @@
         ticketProperties = function () {
             $('#TicketPropertiesFields select:first').data('select2').container.find('a').trigger('focus');
         },
-        closeTicket = function (key) {
+        closeTicket = function (ev, key) {
+            _preventDefault(ev);
             var closeBtn = document.getElementById('close_ticket_btn'),
                 silent_close = (key === 'silent_close');
 
@@ -155,6 +189,9 @@
             } else if (Fjax.current_page === 'ticket_detail' && closeBtn) {
                 closeCurrentTicket({shiftKey: silent_close});
             }
+        },
+        expand = function () {
+            $('#show_more:visible').trigger('click');
         },
         KB = {
             global        : {
@@ -175,7 +212,8 @@
                 toggle_watcher      : toggleWatcher,
                 properties          : ticketProperties,
                 close               : closeTicket,
-                silent_close        : closeTicket
+                silent_close        : closeTicket,
+                expand              : expand
             }
         },
         // Take care of binding all namespaced callback functions of KB object
@@ -184,7 +222,7 @@
             $.each(KB[namespace], function (key) {
                 var _method = (isGlobal && key !== 'help') ? 'bindGlobal' : 'bind';
 
-                Mousetrap[_method](Shortcuts[namespace][key], function (e) { _preventDefault(e); KB[namespace][key](key); });
+                Mousetrap[_method](Shortcuts[namespace][key], function (ev) { KB[namespace][key](ev, key); });
             });
         },
         dispatcher = function () {
@@ -224,7 +262,6 @@
         KeyboardShortcuts.prototype = {
             constructor: KeyboardShortcuts,
             reset: function(){
-                console.log('Shortcuts reset');
                 // Reset existing shortcuts
                 Mousetrap.reset();
 
@@ -239,7 +276,6 @@
                 this.setListItemCursor("table.tickets tbody tr");
             },
             destroy: function(){
-                console.log('shortcuts destroyed')
                 Mousetrap.reset();
 
                 $('[data-keybinding]').expire();
@@ -254,7 +290,6 @@
                 this.resetShortcutTooltip();
             },
             setListItemCursor: function(class_name) {
-                console.log("SET LIST")
                 if(!$('.' + _selectedListItemClass).get(0))
                     $(class_name).first().addClass(_selectedListItemClass);
             },
@@ -268,7 +303,6 @@
 
     $(document)
         .on("shortcuts:invoke", function(ev){
-            console.log('shortcuts : invoked')
             // Pass params through ev when invoking from any page
             ev.shortcuts_data = ev.shortcuts_data || {};
 

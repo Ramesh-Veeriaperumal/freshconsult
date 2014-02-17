@@ -1,5 +1,5 @@
 <% user ||= @user %>
-<% show_recent_tickets ||= :link %>
+<% show_recent_tickets ||= :filter %>
 
 <div class="contact_hover circle-profile">
     <%= user_avatar(user) %>
@@ -46,12 +46,12 @@
               <% case show_recent_tickets %>                
                 <% when :dialog then %>
                   <%= link_to t('ticket.recent_tickets'), 
-                        "/helpdesk/tickets/component/#{user.id}?component=requester_tickets", 
+                        "/helpdesk/tickets/component/#{ticket.id}?component=requester_tickets", 
                         :rel => 'freshdialog', 
                         "data-target" => "#requester_tickets",
                         "data-template-footer" => "",
-                        :title => t('contacts.info4', :nick_name => h(user.display_name)) %>
-                <% else %>
+                        :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+                <% when :filter then %>
                   <%= link_to t('ticket.recent_tickets'), 
                         helpdesk_requester_filter_path(:requester_id => user.id),
                         :title => t('contacts.info4', :nick_name => h(user.display_name)) %>

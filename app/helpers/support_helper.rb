@@ -155,6 +155,22 @@ module SupportHelper
 		output.join("").html_safe
 	end
 
+	#freshfone audio dom
+	def freshfone_audio_dom(notable)
+      notable = notable
+      call = notable.freshfone_call
+      dom = []
+      if call.present? && call.recording_url
+        dom << %(<br> <span> <b> #{I18n.t('freshfone.ticket.recording') }</b> </span>)
+        if call.recording_audio
+        	dom << %(<div class='freshfoneAudio'> <div class='ui360'> <a href=/helpdesk/attachments/#{call.recording_audio.id} type='audio/mp3' class='call_duration' data-time=#{call.call_duration} ></a>)
+        else
+          dom << %(<br> <div class='freshfoneAudio_text'>#{I18n.t('freshfone.recording_on_process')}</div>)
+        end
+      end
+		dom.join("").html_safe
+  end
+
 	# No content information for forums
 	def filler_for_forums portal		
 		%( <div class='no-results'> #{I18n.t('portal.no_forums_info_1')} </div>

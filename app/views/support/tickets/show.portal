@@ -41,6 +41,7 @@
 			<div class="p-content">
 				<div class="p-desc">
 					{{ ticket.description_html }}
+					{{ ticket | freshfone_audio_dom }}
 				</div>
 				{% if ticket.attachments.size > 0 %}
 				<hr />
@@ -108,6 +109,7 @@
 					<div class="p-content">						
 						<div class="p-desc">
 							{{ comment.description }}
+							{{ comment | freshfone_audio_dom }}
 						</div>
 						{% if comment.attachments.size > 0 %}
 						<hr />

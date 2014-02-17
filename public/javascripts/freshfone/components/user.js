@@ -1,17 +1,15 @@
-var FreshfoneUser;
+var FreshfoneUser,
+	userStatus = { OFFLINE : 0, ONLINE : 1, BUSY : 2};
+
 (function ($) {
     "use strict";
-	var userStatus = { OFFLINE : 0, ONLINE : 1, BUSY : 2},
-		socket_init_params;
-	FreshfoneUser = function (freshfonecalls, freshfonesocket) {
-		this.freshfonecalls = freshfonecalls;
+		var socket_init_params;
+	FreshfoneUser = function () {
 		this.setStatus(freshfone.current_status);
 		this.online = (this.status === userStatus.ONLINE);
 		this.availableOnPhone = freshfone.available_on_phone;
-
-		this.freshfonesocket = freshfonesocket;
-		this.freshfonesocket.init(this);
 		this.cached = {};
+		this.newTokenGenerated = false;
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
 	};
@@ -28,9 +26,16 @@ var FreshfoneUser;
 			return this.cached.$userPresenceImage = this.cached.$userPresenceImage ||
 																							this.$userPresence.find("img");
 		},
-
+		loadDependencies: function (freshfonecalls,freshfonesocket) {
+			this.freshfonesocket = freshfonesocket;
+			this.freshfonecalls = freshfonecalls;
+			this.freshfonesocket.init(this);
+		},
 		isOnline : function () {
 			return this.status === userStatus.ONLINE;
+		},
+		isBusy : function(){
+			return this.status === userStatus.BUSY;
 		},
 		toggleUserPresence: function () {
 			this.online = !this.online;
@@ -94,7 +99,7 @@ var FreshfoneUser;
 			} else {
 				this.availableOnPhone = false;
 				this.toggleAvailabilityOnPhoneClass();
-				if (!skip_alert) { alert('Please update your phone number to forward calls to phone'); }
+				if (!skip_alert) { alert(freshfone.forward_number_alert); }
 			}
 		},
 		
@@ -127,7 +132,7 @@ var FreshfoneUser;
 		getCapabilityToken: function ($loading_element) {
 			/* Create the Client with a Capability Token */
 			var self = this;
-			
+			this.newTokenGenerated = true;
 			if ($loading_element) { $loading_element.addClass('header-spinner'); }
 			$.ajax({
 				type: 'POST',
@@ -166,12 +171,12 @@ var FreshfoneUser;
 			this.setupDevice();
 		},
 
-		setupDevice: function () {
+		setupDevice: function (token) {
+			var CapabilityToken = token || getCookie('freshfone');
 			try {
-				Twilio.Device.setup(getCookie('freshfone'), {debug: true});
+				Twilio.Device.setup(getCookie('freshfone'));
 			} catch (e) {
-				console.log(e);
-			//	alert('No internet connection. Freshfone is offline now');
+				//console.log(e);
 			}
 		},
 

@@ -7,7 +7,7 @@ module TwilioMaster
 		:call => [:forward, :status, :direct_dial_success],
 		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call],
 		:device => [:record],
-		:queue => [:enqueue, :dequeue, :trigger_voicemail, :hangup, :quit_queue_on_voicemail],
+		:queue => [:enqueue, :dequeue, :trigger_voicemail, :trigger_non_availability, :hangup, :quit_queue_on_voicemail],
 		:voicemail => [:quit_voicemail]
 	}
 	
@@ -17,8 +17,8 @@ module TwilioMaster
 	}
 
 	def self.client
-		account_sid = AppConfig['twilio']['account_sid']
-    auth_token = AppConfig['twilio']['auth_token']
+		account_sid = FreshfoneConfig['twilio'][RAILS_ENV]['account_sid']
+    auth_token = FreshfoneConfig['twilio'][RAILS_ENV]['auth_token']
     Twilio::REST::Client.new(account_sid, auth_token)
 	end
 

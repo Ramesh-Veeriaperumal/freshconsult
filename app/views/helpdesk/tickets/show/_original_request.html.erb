@@ -55,6 +55,9 @@
 	<div id="ticket_original_request" class="request_mail">
     	<%= @ticket.description_html.html_safe %>
 	</div>
+
+	<%= freshfone_audio_dom %>
+
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>

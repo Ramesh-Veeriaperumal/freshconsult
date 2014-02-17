@@ -14,12 +14,11 @@ module Helpdesk::TicketFilterMethods
     top_views_array = [].concat(split_and_arrange_views(dynamic_view)).concat(default_views)
     selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
 
-    unless selected_item.blank?
-      selected_item_name = selected_item[:name]
-    else
+    if selected_item.blank?
       selected_from_default = (selected.blank? ? nil : SELECTORS.select { |v| v.first == selected.to_sym })
-      selected_item_name =  (selected_from_default.blank? ? default_views.first[:name] : selected_from_default.first[1]).to_s
-      selected_item = default_views.select { |v| v[:name].to_s == selected_item_name.to_s }.first
+      selected_item = selected_from_default.blank? ? 
+                      (default_views.first) :
+                      (selected_from_default.map { |i| { :id => i[0], :name => i[1], :default  =>  true} }.first)
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s + 

@@ -76,7 +76,7 @@ class TopicsController < ApplicationController
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       build_attachments  
       topic_saved = @topic.save if @post.valid?
-      post_saved = @post.save 
+      post_saved = @post.save if topic_saved
     end
 		
 		if topic_saved && post_saved

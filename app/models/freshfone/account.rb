@@ -66,10 +66,10 @@ class Freshfone::Account < ActiveRecord::Base
 	def process_subscription
 		if suspended?
 			begin
-				account.freshfone_subaccount.incoming_phone_numbers.list.each do |number|
+				twilio_subaccount.incoming_phone_numbers.list.each do |number|
 					number.delete
 				end
-				account.freshfone_numbers.delete_all
+				account.freshfone_numbers.destroy_all
 			rescue Exception => e
 				desc = "Unable to release all numbers for account #{account.id}."
 				puts "#{desc} : #{e}"
@@ -94,11 +94,11 @@ class Freshfone::Account < ActiveRecord::Base
 		"#{account.url_protocol}://#{account.host}"
 	end
 
-	private
-		def twilio_subaccount
-			TwilioMaster.client.accounts.get(self.twilio_subaccount_id)
-		end
+	def twilio_subaccount
+		TwilioMaster.client.accounts.get(self.twilio_subaccount_id)
+	end
 
+	private
 		def freshfone_application
 			@app ||= freshfone_subaccount.applications.get(app_id)
 		end

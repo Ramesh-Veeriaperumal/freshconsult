@@ -20,8 +20,7 @@ class FreshfoneBaseController < ApplicationController
 		
 		def reject_call
 			if current_account.freshfone_credit.below_calling_threshold?
-				Rails.logger.debug "current_account :: #{current_account}, account_sid :: #{params[:AccountSid]},
-call_sid :: #{params[:CallSid]}"
+				Rails.logger.debug "current_account :: #{current_account}, account_sid :: #{params[:AccountSid]}, call_sid :: #{params[:CallSid]}"
 				render :xml => Twilio::TwiML::Response.new { |r| r.Reject }.text
 			end
 		end

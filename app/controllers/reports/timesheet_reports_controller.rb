@@ -15,13 +15,18 @@ class Reports::TimesheetReportsController < ApplicationController
   end
   
   def export_csv
+    date_fields = ["Created at","Date"]
     csv_string = CSVBridge.generate do |csv|
       headers = csv_hash.keys.sort
       csv << headers
        @time_sheets.each do |record|
         csv_data = []
         headers.each do |val|
-          csv_data << record.send(csv_hash[val])
+          if date_fields.include?(val)
+            csv_data << parse_date(record.send(csv_hash[val]))
+          else
+            csv_data << record.send(csv_hash[val])
+          end
         end
         csv << csv_data
       end
@@ -59,6 +64,10 @@ class Reports::TimesheetReportsController < ApplicationController
     def stacked_chart_data
       barchart_data = [{:name=>"non_billable",:data=>[@time_sheet_data[:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@time_sheet_data[:billable]],:color=>'#679d46'}]
       @activity_data_hash={'barchart_data'=>barchart_data}
+    end
+
+    def parse_date(date_time)
+      date_time.strftime("%Y-%m-%d %H:%M:%S")
     end
 
 end

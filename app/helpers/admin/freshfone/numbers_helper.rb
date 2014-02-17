@@ -13,9 +13,9 @@ module Admin::Freshfone::NumbersHelper
 	def max_queue_length_options
 		[
 			["None", 0],
-			["3 Calls", 3],
-			["5 Calls", 5],
-			["10 Calls", 10]
+			["3", 3],
+			["5", 5],
+			["10", 10]
 		]
 	end
 

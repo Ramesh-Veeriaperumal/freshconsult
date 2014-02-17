@@ -1,7 +1,7 @@
 var FreshfoneEndCall;
 (function ($) {
 	"use strict";
-	FreshfoneEndCall = function (freshfonecalls, freshfoneuser, freshfonewidget) {
+	FreshfoneEndCall = function () {
 		this.$widget = $('.freshfone_widget');
 		this.$contentContainer = $('.freshfone_content_container');
 		this.$endCall = this.$contentContainer.find('#end_call');
@@ -34,9 +34,6 @@ var FreshfoneEndCall;
 			width: "480px",
 			classes: 'persistent_modal'
 		};
-		this.freshfonecalls = freshfonecalls;
-		this.freshfoneuser = freshfoneuser;
-		this.freshfonewidget = freshfonewidget;
 		this.init();
 		var self = this;
 		
@@ -90,12 +87,12 @@ var FreshfoneEndCall;
 				}
 			},
 			formatResult: function (result) {
-				var email = result.email || result.mobile || result.phone;
-				if(email && $(email).trim != "") {
-					email = "  (" + email + ")";
+				var userDetails = result.email || result.mobile || result.phone;
+				if(userDetails && $(userDetails).trim != "") {
+					userDetails = "(" + userDetails + ")";
 				}
 				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
-								(email || "New requester") + "</span>"; 
+								(userDetails || freshfone.new_requester) + "</span>"; 
 			},
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
@@ -144,6 +141,11 @@ var FreshfoneEndCall;
 			this.inCall = true;
 			this.convertedToTicket = false;
 			this.resetForm();
+		},
+		loadDependencies: function (freshfonecalls, freshfoneuser, freshfonewidget) {
+			this.freshfonecalls = freshfonecalls;
+			this.freshfoneuser = freshfoneuser;
+			this.freshfonewidget = freshfonewidget;
 		},
 		saveNewTicket: function () {
 			this.saveTicket(false);
@@ -237,7 +239,7 @@ var FreshfoneEndCall;
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('show');
 			
-			if (this.inCall) { this.copyCallNotes(); }
+			if (this.inCall) { this.$endCallNote.focus(); this.copyCallNotes(); }
 			var callerId = (this.inCall) ? this.freshfonecalls.callerId : this.callerId;
 			this.number = this.number || this.freshfonecalls.number;
 			this.callerName = this.callerName || this.freshfonecalls.callerName;

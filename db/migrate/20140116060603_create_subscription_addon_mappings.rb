@@ -1,5 +1,5 @@
 class CreateSubscriptionAddonMappings < ActiveRecord::Migration
-  shard :all
+  shard :shard_1
   
   def self.up
     create_table :subscription_addon_mappings do |t|

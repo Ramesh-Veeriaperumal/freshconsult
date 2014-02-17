@@ -84,6 +84,8 @@ stylesheets:
 
   portal_utils:
     - public/stylesheets/portal/portal_utils.css
+    - public/stylesheets/freshfone/record_playback.css
+    - public/stylesheets/freshfone/360player.css
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -121,6 +123,9 @@ stylesheets:
 
   freshfone_message_select:
     - public/stylesheets/freshfone/message_select.css
+
+  freshfone_recording_playback:
+    - public/stylesheets/freshfone/record_playback.css
 
 
 javascripts:
@@ -338,6 +343,11 @@ javascripts:
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
+    - public/javascripts/sound/soundmanager2-jsmin.js
+    - public/javascripts/soundmanager2/berniecode-animator.js
+    - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
+    - public/javascripts/report/date.js
 
   subscription:
     - public/javascripts/prototype.js

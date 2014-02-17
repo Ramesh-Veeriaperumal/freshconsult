@@ -30,6 +30,10 @@ module Freshfone::NumberMethods
   	current_number.record?
   end
 
+  def queue_disabled?
+    max_queue_size == 0
+  end
+
 	private
 		def is_outgoing_call?
 			params[:To].blank? || params[:action] == "transfer_outgoing_call"

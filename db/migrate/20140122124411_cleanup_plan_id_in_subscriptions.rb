@@ -3,16 +3,16 @@ class CleanupPlanIdInSubscriptions < ActiveRecord::Migration
   
   def self.up
   	execute <<-SQL
-			UPDATE subscriptions SET subscription_plan_id = 13 where subscription_plan_id = 4;
+			UPDATE subscriptions SET subscription_plan_id = 12 where subscription_plan_id = 4;
 		SQL
 		execute <<-SQL
-			UPDATE subscriptions SET subscription_plan_id = 12 where subscription_plan_id = 3;
+			UPDATE subscriptions SET subscription_plan_id = 11 where subscription_plan_id = 3;
 		SQL
 		execute <<-SQL
-			UPDATE subscriptions SET subscription_plan_id = 11 where subscription_plan_id = 2;
+			UPDATE subscriptions SET subscription_plan_id = 10 where subscription_plan_id = 2;
 		SQL
 		execute <<-SQL
-			UPDATE subscriptions SET subscription_plan_id = 10 where subscription_plan_id = 1;
+			UPDATE subscriptions SET subscription_plan_id = 9 where subscription_plan_id = 1;
 		SQL
   end
 

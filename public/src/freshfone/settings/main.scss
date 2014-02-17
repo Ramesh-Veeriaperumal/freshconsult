@@ -9,7 +9,13 @@
 .general-settings .row-fluid{
 	margin-bottom: 12px;
 }
-
+.togglable_message{
+	margin-top: 15px;
+}
+.togglable_options_title{
+	font-weight: 500;
+	color: #666;
+}
 .number-settings {
 	.menu-label {
 		margin-top: 8px;
@@ -25,9 +31,6 @@
 		display: inline-block;
 		padding-top: 0;
 		margin-left: 5px;
-	}
-	.message-input {
-		width: 99%;
 	}
 	.recording-alert{
 		padding: 6px 0;
@@ -56,18 +59,29 @@
 	display: inline-block;
 }
 
+.max_queue_length_select2{
+	display: inline-block;
+	width: 50px;
+}
+
+.queue_wait_time{
+	display: inline-block;
+	.queue_wait_time_options{
+		.queue_wait_time_select2{
+			display: inline-block;
+		}
+		 label{
+			display:inline-block;
+			vertical-align: bottom;
+		}	
+	}
+}
 
 .multi_business_hours {
-	display: inline-block;
-	vertical-align: top;
-	margin-left: 25px;
-	.business_calendar_label{
-		display: inline-block;
-		margin-right: 7px;
-	}
+	margin-top: 15px;
+	margin-bottom: 15px;
 	.business_calendar_select2{
 		width: 150px;
-		
 	}
 }
 .freshfone_welcome_message_alert{

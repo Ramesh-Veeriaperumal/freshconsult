@@ -34,8 +34,13 @@ var setLocationIfUnknown,
 	}
 
 	function getFilterData() {
+		setFilterData();
+		$currentPageNumber.val(1);
+		$filterSortForm.trigger('change');
+	}
+  
+  function setFilterData() {
 		var condition, container, operator, values;
-
 		$filterCondition.empty();
 		$filterContainer.map(function (index, ele) {
 			condition = this.getAttribute("condition");
@@ -48,9 +53,7 @@ var setLocationIfUnknown,
 			setPostParam($filterCondition, ('wf_o' + index), operator);
 			setPostParam($filterCondition, ('wf_v' + index + '_' + index), values.toString());
 		});
-		$currentPageNumber.val(1);
-		$filterSortForm.trigger('change');
-	}
+  }
 
 	function setDropdownValue(obj) {
 		$(obj)
@@ -101,7 +104,7 @@ var setLocationIfUnknown,
 	});
 
 	$filterSortForm.change(function () {
-		$callHistoryBody.html("<div class='loading-box'></div>");
+		$callHistoryBody.html("<div class='loading-box sloading loading-tiny'></div>");
 		$.ajax({
 			url: freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH,
 			dataType: "script",
@@ -115,7 +118,7 @@ var setLocationIfUnknown,
 		if ($(this).data('fetch') === undefined) {
 			$(this).data('fetch', true);
 			parent
-				.after("<tr rel='loadingtr'><td colspan='8'><div class='loading-box'></div></td></tr>")
+				.after("<tr rel='loadingtr'><td colspan='8'><div class='loading-box sloading loading-tiny'></div></td></tr>")
 				.addClass('transfer_call');
 			$.ajax({
 				url: freshfone.CALL_HISTORY_CHILDREN_PATH,
@@ -190,6 +193,7 @@ var setLocationIfUnknown,
 		setCallDuration();
 		setLocationIfUnknown();
 		threeSixtyPlayer.init();
+		setFilterData();
 	});
 
 }(jQuery));

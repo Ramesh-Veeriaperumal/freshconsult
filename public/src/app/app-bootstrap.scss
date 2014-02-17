@@ -4,7 +4,10 @@
 /* Patterns.less
  * Repeatable UI elements outside the base styles provided from the scaffolding
  * ---------------------------------------------------------------------------- */
- /*
+ input[type=text], input[type=password], select, input.text { 
+    width:99%;
+    font-size:13px;
+ }
 .topbar {
   height: 40px;
   position: fixed;
@@ -836,7 +839,6 @@ $popover-radius: 3px;
   opacity: 1;
 }
 
-/*
 .popover.topRight, .popover.belowLeft {
   .arrow.dbl_left {
     border-top: 8px solid transparent;
@@ -945,4 +947,3 @@ $popover-radius: 3px;
   -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
-*/

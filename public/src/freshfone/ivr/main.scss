@@ -75,6 +75,9 @@
 		background-color: $ivr-add-keypress-background;
 		@include border-bottom-radius(6px);
 	}
+	.ivr-menu {
+		margin-bottom: 5px;
+	}
 	.delete-symbol {
 		@include opacity(0.3);
 		width: 16px;

@@ -34,6 +34,11 @@ var globalconn;
 
 		freshfonewidget.showOutgoing();
 
+		if (freshfone.below_threshold) {
+			freshfonewidget.disableFreshfoneWidget();
+		}
+
+
 		$('body').on('click', '.can-make-calls', function (ev) {
 			ev.preventDefault();
 			if ($(this).data('phoneNumber') !== undefined) {

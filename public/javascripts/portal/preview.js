@@ -47,4 +47,4 @@ jQuery.noConflict()
 
     })
 
-}(window.jQuery)
+}(window.jQuery);

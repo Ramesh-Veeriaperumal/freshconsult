@@ -331,11 +331,22 @@ var updatePagination = function() {
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			trigger_event("ticket_show_more",{})
-			
+			freshfoneAudioDomSetting();
 		});
 	});
 }
 
+var freshfoneAudioDomSetting = function (){
+			soundManager.reboot();
+			$('.call_duration').each(function () {
+				if ($(this).data("time") === undefined) { return; }
+					$(this).html($(this).data("time").toTime());
+			});
+}
+$('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
+		ev.preventDefault();
+		window.location.reload(true);
+});
 // ----- END FOR REVERSE PAGINATION ------ //
 
 changeStatusTo = function(status) {
@@ -425,8 +436,9 @@ var scrollToError = function(){
 		}else{
 			$("#calender-buttons").show();
 			$("#calender-info").hide();
-		}               
-		return moment(_date_time).format("ddd MMM DD YYYY HH:mm:ss")+" GMT"+moment().format("Z").replace(":","");
+		}  
+		var engMoment = moment(_date_time);
+		return engMoment.lang("en").format("ddd MMM DD YYYY HH:mm:ss") +" GMT"+engMoment.lang("en").format("Z").replace(":","");         
 	}
 	
 	$("#DueDateForm").submit(function(){  

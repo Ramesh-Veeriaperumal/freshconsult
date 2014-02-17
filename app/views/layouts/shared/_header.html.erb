@@ -52,25 +52,23 @@
 				<div class="info user clearfix">
 					<span><%= truncate(h(current_user.name), :length => 30) %></span>
 				</div>
-				<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}".html_safe, edit_profile_path(current_user), :class => "link" %>
+				<%= link_to t('profile_settings').html_safe, edit_profile_path(current_user), :class => "link" %>
 				<span class="seperator"></span>
 				<div class="link custom">
-					<i class='header-arrow-right'></i>
 					<span><%= t('header.toggle_shortcuts').html_safe %></span>
 					<span class="pull-right">
 						<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
 					</span>
-					<div class="shorcuts-info description">
-						Press <span class="color-orange">?</span> to view Keyboard hints
-					</div>
+					<span class="shorcuts-info description">
+						<%= t('header.shortcuts_info').html_safe %>
+					</span>
 				</div>
 
 				<% if is_assumed_user? %>
 					<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
 				<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
 					<span class="seperator"></span>
-					<div class="info">   	
-						<i class='header-arrow-right  top-margin'></i>				
+					<div class="info">
 						<input type="hidden" id="assumed_select_id" class="header-agent-select"
 						data-placeholder = "<%= t("swith_agent_msg") %>" onchange="assume_identity_url()"/>
 						<% javascript_tag do%>
@@ -81,7 +79,7 @@
 					</div>
 				<% end %>                    
 				<span class="seperator"></span>			
-				<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}".html_safe, logout_path, :class => "link" %>
+				<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
 			</div>                                                             
 		<% end %>
 	</div>
@@ -153,25 +151,33 @@
 
 	jQuery('#toggle_shortcut').bind('change', function(){
 		var that = this;
-		jQuery(this).attr('disabled', 'disabled');
+		jQuery(this)
+			.attr('disabled', 'disabled')
+			.parent().addClass('sloading');
 		jQuery.ajax({
 			type: "PUT",
 			dataType:"json",
-			url: "<%= toggle_shortcuts_agent_path(current_user.agent) %>",
+			url: "<%= toggle_shortcuts_agent_path(current_user.agent) if logged_in? and current_user.agent? %>",
 			success: function (response) {
-				console.log(that);
-				jQuery(that).removeAttr('disabled');
-				if(response.shortcuts_enabled) {
+				jQuery(that)
+					.removeAttr('disabled')
+					.parent().removeClass('sloading');
+				if (response.shortcuts_enabled) {
 					if(window.shortcuts !== undefined){
 						jQuery(document).trigger("shortcuts:invoke")
-					}else{
+					} else {
         				scriptLoader.load('shortcut');
-					}					
+					}
 				} else {
 					jQuery(document).trigger("shortcuts:destroy")
 				}
 			}
 		});
+	});
+
+	jQuery('#shortcuts_info').bind('click', function(ev){
+		ev.preventDefault();
+		jQuery('#shortcut_help_chart').trigger('click');
 	});
 
 });

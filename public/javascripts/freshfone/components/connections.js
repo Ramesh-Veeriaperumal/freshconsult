@@ -65,7 +65,7 @@ var FreshfoneConnection;
 				url: '/freshfone/call/inspect_call',
 				data: { "call_sid": this.callSid() },
 				success: function (data) { 
-					if(data.can_accept == false) {
+					if(data.can_accept) {
 						self.freshfoneNotification.setDirectionIncoming();
 						self.connection.accept();
 					}else{

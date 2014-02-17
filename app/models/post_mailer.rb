@@ -3,6 +3,7 @@ class PostMailer < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
 	
   def monitor_email(emailcoll,post,user)
+    self.class.set_mailbox user.account.primary_email_config.smtp_mailbox
     recipients    emailcoll
     from          user.account.default_friendly_email
     subject       "[New Reply] in #{post.topic.title}"
@@ -17,7 +18,7 @@ class PostMailer < ActionMailer::Base
       end
       alt.part "text/html" do |html|
         html.body   Premailer.new(render_message("mailer/post/monitor_email.text.html.erb",:post => post, 
-                                    :body_html => generate_body_html( post.body_html, inline_attachments, post.account ), :user => user), with_html_string: true).to_inline_css
+                                    :body_html => generate_body_html( post.body_html, inline_attachments, post.account ), :user => user), with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
       end
     end
 

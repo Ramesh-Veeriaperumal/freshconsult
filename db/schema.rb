@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140122124411) do
+ActiveRecord::Schema.define(:version => 20140214010211) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -510,16 +510,16 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
     t.text     "ff_text08"
     t.text     "ff_text09"
     t.text     "ff_text10"
-    t.integer  "ff_int01"
-    t.integer  "ff_int02"
-    t.integer  "ff_int03"
-    t.integer  "ff_int04"
-    t.integer  "ff_int05"
-    t.integer  "ff_int06"
-    t.integer  "ff_int07"
-    t.integer  "ff_int08"
-    t.integer  "ff_int09"
-    t.integer  "ff_int10"
+    t.integer  "ff_int01",            :limit => 8
+    t.integer  "ff_int02",            :limit => 8
+    t.integer  "ff_int03",            :limit => 8
+    t.integer  "ff_int04",            :limit => 8
+    t.integer  "ff_int05",            :limit => 8
+    t.integer  "ff_int06",            :limit => 8
+    t.integer  "ff_int07",            :limit => 8
+    t.integer  "ff_int08",            :limit => 8
+    t.integer  "ff_int09",            :limit => 8
+    t.integer  "ff_int10",            :limit => 8
     t.datetime "ff_date01"
     t.datetime "ff_date02"
     t.datetime "ff_date03"
@@ -541,6 +541,76 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
     t.boolean  "ff_boolean09"
     t.boolean  "ff_boolean10"
     t.integer  "account_id",          :limit => 8
+    t.integer  "ff_int11",            :limit => 8
+    t.integer  "ff_int12",            :limit => 8
+    t.integer  "ff_int13",            :limit => 8
+    t.integer  "ff_int14",            :limit => 8
+    t.integer  "ff_int15",            :limit => 8
+    t.integer  "ff_int16",            :limit => 8
+    t.integer  "ff_int17",            :limit => 8
+    t.integer  "ff_int18",            :limit => 8
+    t.integer  "ff_int19",            :limit => 8
+    t.integer  "ff_int20",            :limit => 8
+    t.string   "ffs_31"
+    t.string   "ffs_32"
+    t.string   "ffs_33"
+    t.string   "ffs_34"
+    t.string   "ffs_35"
+    t.string   "ffs_36"
+    t.string   "ffs_37"
+    t.string   "ffs_38"
+    t.string   "ffs_39"
+    t.string   "ffs_40"
+    t.string   "ffs_41"
+    t.string   "ffs_42"
+    t.string   "ffs_43"
+    t.string   "ffs_44"
+    t.string   "ffs_45"
+    t.string   "ffs_46"
+    t.string   "ffs_47"
+    t.string   "ffs_48"
+    t.string   "ffs_49"
+    t.string   "ffs_50"
+    t.string   "ffs_51"
+    t.string   "ffs_52"
+    t.string   "ffs_53"
+    t.string   "ffs_54"
+    t.string   "ffs_55"
+    t.string   "ffs_56"
+    t.string   "ffs_57"
+    t.string   "ffs_58"
+    t.string   "ffs_59"
+    t.string   "ffs_60"
+    t.string   "ffs_61"
+    t.string   "ffs_62"
+    t.string   "ffs_63"
+    t.string   "ffs_64"
+    t.string   "ffs_65"
+    t.string   "ffs_66"
+    t.string   "ffs_67"
+    t.string   "ffs_68"
+    t.string   "ffs_69"
+    t.string   "ffs_70"
+    t.string   "ffs_71"
+    t.string   "ffs_72"
+    t.string   "ffs_73"
+    t.string   "ffs_74"
+    t.string   "ffs_75"
+    t.string   "ffs_76"
+    t.string   "ffs_77"
+    t.string   "ffs_78"
+    t.string   "ffs_79"
+    t.string   "ffs_80"
+    t.decimal  "ff_decimal01",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal02",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal03",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal04",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal05",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal06",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal07",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal08",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal09",                     :precision => 10, :scale => 2
+    t.decimal  "ff_decimal10",                     :precision => 10, :scale => 2
   end
 
   add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
@@ -632,6 +702,7 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id"], :name => "index_freshfone_calls_on_account_id_and_freshfone_number_id"
+  add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
 
@@ -685,6 +756,7 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "voicemail_active",                                                      :default => false
+    t.text     "non_business_hours_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1289,6 +1361,32 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  create_table "mailboxes", :force => true do |t|
+    t.integer  "email_config_id",         :limit => 8
+    t.integer  "account_id",              :limit => 8
+    t.string   "imap_server_name"
+    t.string   "imap_user_name"
+    t.text     "imap_password"
+    t.integer  "imap_port"
+    t.string   "imap_authentication"
+    t.boolean  "imap_use_ssl"
+    t.string   "imap_folder"
+    t.boolean  "imap_delete_from_server"
+    t.string   "smtp_server_name"
+    t.string   "smtp_user_name"
+    t.text     "smtp_password"
+    t.integer  "smtp_port"
+    t.string   "smtp_authentication"
+    t.boolean  "smtp_use_ssl"
+    t.boolean  "imap_enabled",                         :default => true
+    t.boolean  "smtp_enabled",                         :default => true
+    t.integer  "imap_timeout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -2182,8 +2280,12 @@ ActiveRecord::Schema.define(:version => 20140122124411) do
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>20}
+  add_index "users", ["account_id", "fb_profile_id"], :name => "index_users_on_account_id_fb_profile_id"
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "users", ["account_id", "mobile"], :name => "index_users_on_account_id_mobile"
   add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
+  add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
+  add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
