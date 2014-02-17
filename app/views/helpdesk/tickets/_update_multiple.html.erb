@@ -70,6 +70,10 @@
       <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )".html_safe %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').addClass("sloading loading-small loading-align");
+      
+      if(!($('addbulkreply') && $('addbulkreply').checked)) {
+        jQuery("#reply-multiple-cnt-reply-multiple-body").val("");
+     }
     }
   }
   jQuery('#no-response').die('click');
@@ -112,7 +116,7 @@
       if(jQuery(this).attr('for')=="addbulkreply")
       {
         jQuery("#bulkreplyform").show();
-        jQuery("#bulkreplyform textarea").addClass('required');
+        jQuery("#bulkreplyform textarea").addClass('required_redactor');
         jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus();
       }
     }
@@ -124,7 +128,7 @@
       {
         jQuery("#bulkreplyform").hide();
         jQuery("#bulkreplyform textarea").val("");
-        jQuery("#bulkreplyform textarea").removeClass('required');
+        jQuery("#bulkreplyform textarea").removeClass('required_redactor');
       }
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
       }
