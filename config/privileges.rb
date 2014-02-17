@@ -288,6 +288,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/page"
     resource :"support/preview"
     resource :"admin/chat_setting"
+    resource :"api_webhook", :only => [:create, :destroy]
   end
 
   manage_account do

@@ -198,4 +198,4 @@
 
 	})
 
-}(window.jQuery)
+}(window.jQuery);

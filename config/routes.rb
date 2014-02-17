@@ -100,6 +100,7 @@
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
+  map.resources :mailgun, :only => :create
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.resource :account_configuration
@@ -433,6 +434,8 @@
     helpdesk.resources :commons 
     
   end
+
+  map.resources :api_webhooks, :as => 'webhooks/subscription'
   
   map.namespace :solution do |solution|     
     solution.resources :categories, :collection => {:reorder => :put}  do |category|   

@@ -23,6 +23,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
+  after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
+  after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
 
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))

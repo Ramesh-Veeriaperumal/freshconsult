@@ -59,7 +59,7 @@ class VARule < ActiveRecord::Base
   end
   
   def filter_data
-    observer_rule? ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
+    (observer_rule? || api_webhook_rule?) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
   end
 
   def performer
@@ -166,7 +166,7 @@ class VARule < ActiveRecord::Base
   end
 
   def hide_password!
-    return unless dispatchr_rule? || observer_rule?
+    return unless dispatchr_rule? || observer_rule? || api_webhook_rule?
 
     action_data.each do |action_data|
       action_data.symbolize_keys!
@@ -177,7 +177,7 @@ class VARule < ActiveRecord::Base
   end
 
   def set_encrypted_password
-    return unless dispatchr_rule? || observer_rule?
+    return unless dispatchr_rule? || observer_rule? || api_webhook_rule?
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
     
@@ -209,6 +209,10 @@ class VARule < ActiveRecord::Base
     rule_type == VAConfig::OBSERVER_RULE
   end
 
+  def api_webhook_rule?
+    rule_type == VAConfig::API_WEBHOOK_RULE
+  end
+
   def supervisor_rule?
     rule_type == VAConfig::SUPERVISOR_RULE
   end
@@ -227,7 +231,7 @@ class VARule < ActiveRecord::Base
 
   private
     def has_events?
-      return unless observer_rule?
+      return unless observer_rule? || api_webhook_rule?
       errors.add_to_base(I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
     
@@ -241,7 +245,7 @@ class VARule < ActiveRecord::Base
     end
 
     def filter_array
-      observer_rule? ? filter_data[:conditions] : filter_data
+      (observer_rule? || api_webhook_rule?) ? filter_data[:conditions] : filter_data
     end
 
     def encrypt data

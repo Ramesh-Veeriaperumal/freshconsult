@@ -17,6 +17,28 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/
     { :email => email, :name => name }
   end 
 
+  def get_emails emails
+    email_array = emails.split(",") if emails
+    parsed_email_array = []
+    (email_array || []).each_with_index do |email, index|
+      parsed_email = parse_email_text(email)
+      if (parsed_email[:email] =~ EMAIL_REGEX)
+        parsed_email_array << parsed_email
+      else
+        email_array[index+1] = "#{email} #{email_array[index+1]}" if email_array[index+1]
+      end
+    end
+    parsed_email_array.uniq
+  end
+
+  def get_email_array emails
+    plain_emails = []
+    get_emails(emails).each do |e|
+      plain_emails << e[:email].downcase.strip
+    end
+    plain_emails
+  end
+
 	def parse_email_text(email_text)
 		if email_text =~ /"?(.+?)"?\s+<(.+?)>/
     	{:name => $1.tr('"',''), :email => $2}
@@ -26,6 +48,17 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/
    		{:name => "", :email => email_text}	
   	end
 	end
+
+  def parse_email_with_domain(email_text)
+    parsed_email = parse_email_text(email_text)   
+    name = parsed_email[:name] || ""
+    email = parsed_email[:email]
+    if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
+      email = $1 
+    end
+    domain = (/@(.+)/).match(email).to_a[1]
+    {:name => name, :email => email, :domain => domain}
+  end
   
   def parse_to_comma_sep_emails(emails)
     emails.map { |email| parse_email_text(email)[:email] }.join(", ") 

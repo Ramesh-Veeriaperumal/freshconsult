@@ -30,6 +30,8 @@ class Portal < ActiveRecord::Base
   
   has_one :template, :class_name => 'Portal::Template'
 
+  has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
+
   belongs_to :account
   belongs_to :product
   

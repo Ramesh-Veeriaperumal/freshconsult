@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :topics
   has_many :monitorships
-  has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :topic
+  has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :monitorable, :source_type => "Topic"
   has_many :freshfone_calls, :class_name => 'Freshfone::Call'
   has_one  :freshfone_user, :class_name => "Freshfone::User", :inverse_of => :user, :dependent => :destroy
   delegate :online?, :offline?, :presence, :incoming_preference, :number,

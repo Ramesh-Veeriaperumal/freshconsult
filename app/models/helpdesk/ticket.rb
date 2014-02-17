@@ -11,6 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Search::ElasticSearchIndex
   include Va::Observer::Util
+  include ApiWebhooks::Methods
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::ReportsRedis
@@ -347,7 +348,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def included_in_cc?(from_email)
     (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or 
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }))
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
+                     included_in_to_emails?(from_email))
+  end
+
+  def included_in_to_emails?(from_email)
+    (self.to_emails || []).include?(from_email.downcase)
   end
 
   def ticket_id_delimiter

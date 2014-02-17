@@ -117,7 +117,7 @@ var FreshfoneSocket;
 
 				this.freshfone_socket_channel.on('token', function (data) {
 					data = JSON.parse(data) || {};
-					self.updataTwilioDevice(data.token);
+					//self.updataTwilioDevice(data.token);
 				});
 
 				this.freshfone_socket_channel.on('get_calls_agents_status', function () {
@@ -220,7 +220,7 @@ var FreshfoneSocket;
 			else{
 				freshfoneuser.setStatus(status); 
 				freshfoneuser.online = freshfoneuser.isOnline();
-				freshfoneuser.userPresenceDomChanges();
+				//freshfoneuser.userPresenceDomChanges();
 			}
 		},
 		updataTwilioDevice: function (token) {

@@ -109,6 +109,9 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
   has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
+
+  has_many :api_webhook_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
@@ -141,7 +144,7 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc, name'
 
   has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
   

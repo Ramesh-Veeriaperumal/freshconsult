@@ -1,8 +1,8 @@
 class Admin::UserAccess < ActiveRecord::Base
   set_table_name "admin_user_accesses"  
   
+  belongs_to_account
   belongs_to :accessible, :polymorphic => true  
-  belongs_to :account
   belongs_to :user
   belongs_to :group
   
