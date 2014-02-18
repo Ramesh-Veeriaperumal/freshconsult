@@ -5,6 +5,10 @@
 
 !function( $ ) {
 
+	if (!!navigator.userAgent.match(/^(?=.*\bTrident\b)(?=.*\brv\b).*$/)){
+	  $.browser = { msie: true, version: "11" };
+	}
+
 	if($.browser.msie) $("body").addClass("ie")
 
 	$(function () {

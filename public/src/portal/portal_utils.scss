@@ -6,8 +6,9 @@
 // Redactor rich text editor
 @import "../plugins/redactor";
 
-// Redactor rich text editor
+// Syntax Highlighting for portal 
 @import "../plugins/shcore_default";
+@import "../plugins/zpluginhack";
 
 // IE based fixes
 @import "lib/ie";
