@@ -17,7 +17,8 @@
 		<div id="topic_forum_id" class="control-group">
 	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
 	  		<div class="controls">
-	  			<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
+	  			<%= form.select :forum_id, grouped_options_for_select(forum_options, @topic.forum_id), {},
+	  							{:class => "select2 input-xlarge"} %>
 	  		</div>
 		</div>
 	<% end %>
