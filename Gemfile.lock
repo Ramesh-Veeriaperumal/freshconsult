@@ -61,12 +61,6 @@ GIT
   specs:
     carmen (1.0.0.beta2)
 
-GIT
-  remote: git://github.com/mperham/memcache-client.git
-  revision: a014dc272d7cb79306961c0806e2da09acb6d002
-  specs:
-    memcache-client (1.8.5)
-
 PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:
@@ -145,6 +139,7 @@ GEM
       addressable
     curb (0.8.4)
     daemons (1.0.10)
+    dalli (2.7.0)
     debugger (1.6.3)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -448,6 +443,7 @@ DEPENDENCIES
   cloudfront_asset_host!
   compass-rails (= 1.0.3)
   curb (~> 0.8.4)
+  dalli
   deadlock_retry!
   debugger (= 1.6.3)
   delayed_job (= 1.8.4)
@@ -476,7 +472,6 @@ DEPENDENCIES
   mail
   map-fields (= 1.0.0)
   marketo!
-  memcache-client (= 1.8.5)!
   mocha (~> 0.12.8)
   mongrel (>= 1.2.0.pre2)
   mysql2 (~> 0.2.7)
