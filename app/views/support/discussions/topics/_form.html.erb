@@ -81,8 +81,10 @@
 		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />
 		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>
 		<% unless @topic.new_record? %>
-			<%= link_to t('delete'), support_discussions_topic_path(@topic), :confirm => "#{t('delete_topic_msg')}?", 
-				:class => "btn btn-danger pull-right", "data-method" => "delete" %>
+			<%= link_to t('delete'), support_discussions_topic_path(@topic), 
+				:class => "btn btn-danger pull-right", 
+				"data-method" => "delete",
+				"data-confirm" => "#{t('delete_topic_msg')}?" %>
 		<% end %>
 	</div>
 	<% end %>

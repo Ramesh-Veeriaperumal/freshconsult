@@ -20,10 +20,14 @@ class Post < ActiveRecord::Base
         :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ] 
       }
   }
+  before_update :unmark_another_answer, :if => :questions? && :topic_has_answer?
+  after_update :toggle_answered_stamp, :if => :questions?
+  after_destroy :mark_as_unanswered, :if => :answer
   
   has_many_attachments
 
   delegate :update_es_index, :to => :topic, :allow_nil => true
+  delegate :questions?, :problems?, :to => :forum 
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]  
   #format_attribute :body
   
@@ -64,6 +68,34 @@ class Post < ActiveRecord::Base
   def monitor_topic
     monitorship = topic.monitorships.find_by_user_id(user.id)
     topic.monitorships.create(:user_id => user.id, :active => true) unless monitorship
+  end
+
+  def toggle_answer
+    update_attributes( :answer => !answer ) if questions?
+  end
+
+  def topic_has_answer?
+    topic.answered?
+  end
+  
+  def unmark_another_answer
+    return unless answer_changed?
+    topic.answer.toggle_answer if answer
+  end
+
+  def toggle_answered_stamp
+    return unless answer_changed?
+    topic.reload
+    topic.update_attributes(:stamp_type => (answer ? 
+                                          Topic::QUESTIONS_STAMPS_BY_TOKEN[:answered] : Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]))
+  end
+
+  def mark_as_unanswered
+    topic.update_attributes( :stamp_type => Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered] )
+  end
+
+  def can_mark_as_answer?(current_user)
+    (topic.forum.questions?) and (current_user == topic.user) and (current_user != user)
   end
 
   # Added for portal customisation drop

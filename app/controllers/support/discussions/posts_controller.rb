@@ -80,6 +80,21 @@ class Support::Discussions::PostsController < SupportController
 	    end
 	end
 
+	def toggle_answer
+		@post.toggle_answer
+		respond_to do |format|
+	      format.html do
+	        redirect_to support_discussions_topic_path(params[:topic_id])
+	      end
+	      format.xml { head 200 }
+	    end
+	end
+
+	def best_answer
+		@answer = @topic.answer
+		render :layout => false
+	end
+
 private
 	def load_topic
 		@topic = scoper.find_by_id(params[:topic_id])

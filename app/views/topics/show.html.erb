@@ -17,6 +17,17 @@
 						<%end%>
 					<% end %>
 			    </div>
+			<% elsif @forum.problems? %>
+				<%= content_tag(:h4, t(".mark_this_problem_as"), :class => "title") %>
+				<div class="mark_action">
+				 	<%unless @topic.solved? %>
+				 		<% class_name = "stamp_type_#{Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]}" %>
+						<%= link_to(t('topic.problems.solved') , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]),  :method=>:put, :class => class_name )   %>
+					<%else%>
+						<% class_name = "stamp_type_#{Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]}" %>
+						<%= link_to( t('topic.problems.unsolved'), update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]), :method=>:put , :class => class_name + " active")   %>
+					<%end%>
+			    </div>
 			<% end %>
 			<div>
 				<%= link_to((t('connect_ticket') + " &raquo;").html_safe, new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "btn full-width") if @topic.ticket_topic.nil?  %>
@@ -79,11 +90,20 @@
             			<%=t('posted_by')%> <%= link_to_user( @topic.user) %>
             			<div class="info">
 						  <%= formated_date(@topic.created_at) %>
-						  <% if @forum.ideas? %>
+						  <% if @forum.stamps?%>
     		    		<span class="mark_action">
     							<% if @topic.stamp_type %>
     								<% class_name = "stamp_type_#{@topic.stamp_type}" %>
-    								<span class="<%=class_name%> stamp"><%= h(@topic.stamp_name) %></span>
+    								<span class="<%=class_name%> stamp">
+    									<%= 
+    									if @forum.ideas? 
+    										h(@topic.stamp_name) 
+    									elsif @forum.questions? && @topic.answered? 
+    										t('topic.questions.answered') 
+    									elsif @forum.problems? && @topic.solved?
+    										t('topic.problems.solved') 
+    									end %>
+    								</span>
     							<% end %>
     					  </span>
     				  <% end %>

@@ -13,6 +13,8 @@ class Topic < ActiveRecord::Base
 
   before_create :set_locked
   before_save :set_sticky
+  before_create :set_unanswered_stamp, :if => :questions?
+  before_create :set_unsolved_stamp, :if => :problems?
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
@@ -31,6 +33,8 @@ class Topic < ActiveRecord::Base
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
+
+  delegate :problems?, :questions?, :to => :forum
 
   named_scope :newest, :order => 'replied_at DESC'
 
@@ -104,8 +108,42 @@ class Topic < ActiveRecord::Base
   IDEAS_STAMPS_OPTIONS = IDEAS_STAMPS.map { |i| [i[1], i[2]] }
   IDEAS_STAMPS_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
   IDEAS_STAMPS_BY_TOKEN = Hash[*IDEAS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
+  IDEAS_STAMPS_NAMES_BY_TOKEN = Hash[*IDEAS_STAMPS.map { |i| [i[0], i[1]] }.flatten]
   IDEAS_STAMPS_TOKEN_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[0]] }.flatten]
   IDEAS_TOKENS = IDEAS_STAMPS.map { |i| i[0] }
+
+  QUESTIONS_STAMPS = [
+    [ :answered,     I18n.t("topic.questions.answered"),      6 ], 
+    [ :unanswered,   I18n.t("topic.questions.unanswered"),    7 ]
+  ]
+
+  QUESTIONS_STAMPS_OPTIONS = QUESTIONS_STAMPS.map { |i| [i[1], i[2]] }
+  QUESTIONS_STAMPS_BY_KEY = Hash[*QUESTIONS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
+  QUESTIONS_STAMPS_BY_TOKEN = Hash[*QUESTIONS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
+  QUESTIONS_STAMPS_NAMES_BY_TOKEN = Hash[*QUESTIONS_STAMPS.map { |i| [i[0], i[1]] }.flatten]
+  QUESTIONS_STAMPS_TOKEN_BY_KEY = Hash[*QUESTIONS_STAMPS.map { |i| [i[2], i[0]] }.flatten]
+  QUESTIONS_TOKENS = QUESTIONS_STAMPS.map { |i| i[0] }
+
+  PROBLEMS_STAMPS = [
+    [ :solved,     I18n.t("topic.problems.solved"),      8 ], 
+    [ :unsolved,   I18n.t("topic.problems.unsolved"),    9 ]
+  ]
+
+  PROBLEMS_STAMPS_OPTIONS = PROBLEMS_STAMPS.map { |i| [i[1], i[2]] }
+  PROBLEMS_STAMPS_BY_KEY = Hash[*PROBLEMS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
+  PROBLEMS_STAMPS_BY_TOKEN = Hash[*PROBLEMS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
+  PROBLEMS_STAMPS_NAMES_BY_TOKEN = Hash[*PROBLEMS_STAMPS.map { |i| [i[0], i[1]] }.flatten]
+  PROBLEMS_STAMPS_TOKEN_BY_KEY = Hash[*PROBLEMS_STAMPS.map { |i| [i[2], i[0]] }.flatten]
+  PROBLEMS_TOKENS = PROBLEMS_STAMPS.map { |i| i[0] }
+
+  ALL_TOKENS = {
+    Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_TOKENS,
+    Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_TOKENS,
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_TOKENS,
+    Forum::TYPE_KEYS_BY_TOKEN[:announce] => [],
+  }
+  STAMPS_BY_KEY = IDEAS_STAMPS_BY_TOKEN.merge(QUESTIONS_STAMPS_BY_TOKEN).merge(PROBLEMS_STAMPS_BY_TOKEN)
+  NAMES_BY_KEY = IDEAS_STAMPS_NAMES_BY_TOKEN.merge(QUESTIONS_STAMPS_NAMES_BY_TOKEN).merge(PROBLEMS_STAMPS_NAMES_BY_TOKEN)
   
   def monitorship_emails
     user_emails = Array.new
@@ -140,6 +178,14 @@ class Topic < ActiveRecord::Base
   def set_sticky
     self.sticky = 0 if self.sticky.nil?
   end
+
+  def set_unanswered_stamp
+    self.stamp_type = Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
+  end
+
+  def set_unsolved_stamp
+    self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+  end
   
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
@@ -156,10 +202,22 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def answered?
-    posts.answered_posts.count > 0
+  STAMPS_BY_KEY.keys.each do |method|
+    define_method "#{method}?" do
+      stamp_type == STAMPS_BY_KEY[method]
+    end
+  end
+
+  def answer
+    posts.answered_posts.first
   end
   
+  def toggle_solved_stamp
+    return unless problems?
+    update_attributes(:stamp_type => (solved? ? 
+                    Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved] : Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]))
+  end
+
   def users_who_voted
     users = User.find(:all,
       :joins => [:votes],

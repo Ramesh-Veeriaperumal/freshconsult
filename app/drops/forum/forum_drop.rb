@@ -36,10 +36,7 @@ class Forum::ForumDrop < BaseDrop
   end
 
   def allowed_filters
-    def_list = [:recent, :popular]
-    def_list.concat(Topic::IDEAS_TOKENS) if source.ideas?
-
-    @allowed_filters ||= def_list.map{ |f| { 
+    @allowed_filters ||= filter_list.map{ |f| { 
               :name => f, 
               :url  => support_discussions_filter_topics_path(source, :filter_topics_by => f.to_s)
             }}
@@ -49,8 +46,16 @@ class Forum::ForumDrop < BaseDrop
   #   source.forum_visibility
   # end
 
+  def filter_list
+    [:recent, :popular].concat(Topic::ALL_TOKENS[source.forum_type])
+  end
+
   def forum_category
     source.forum_category
+  end
+ 
+  def problems?
+    source.problems?
   end
 
   def topics
@@ -84,14 +89,32 @@ class Forum::ForumDrop < BaseDrop
     @deferred ||= filter_topics(:deferred)
   end
 
+  def answered
+    @answered ||= filter_topics(:answered)
+  end
+
+  def unanswered
+    @unanswered ||= filter_topics(:unanswered)
+  end
+
+  def solved
+    @solved ||= filter_topics(:solved)
+  end
+
+  def unsolved
+    @unsolved ||= filter_topics(:unsolved)
+  end
+
   private
     def filter_topics filter = self.current_topic_filter
       case filter
         when :popular
           @source.topics.popular(3.months.ago).filter(@per_page, @page)
 
-        when :planned, :implemented, :nottaken, :deferred, :inprogress
-          _stamp = Topic::IDEAS_STAMPS_BY_TOKEN[filter.to_sym]
+        when :planned, :implemented, :nottaken, :deferred, :inprogress,
+            :answered, :unanswered, :solved, :unsolved
+            
+          _stamp = Topic::STAMPS_BY_KEY[filter.to_sym]
           @source.topics.newest.by_stamp(_stamp).filter(@per_page, @page)
           
         else

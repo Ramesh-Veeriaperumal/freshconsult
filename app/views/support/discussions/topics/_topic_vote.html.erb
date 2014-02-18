@@ -13,9 +13,9 @@
 		end
 	%> 	
 	<div id="vote-toolbar">
-		<%= (t_likes > 0 || current_user && current_user.id != @topic.user_id) ? '<hr />'.html_safe : '' %>
+		<%= (t_likes > 0 || current_user && current_user.id != @topic.user_id && !@topic.answered? && !@topic.solved?) ? '<hr />'.html_safe : '' %>
 		<% if(t_likes > 0) %>		
-			<span class="lead-small" id="topic-voted-information">
+			<span id="topic-voted-information">
 				<%= t_prefix %> 
 					<% if t_middle.present? %>
 						<% if current_user %>
@@ -30,7 +30,7 @@
 				<%= t_suffix %>
 			</span>
 		<% end %>
-		<% if current_user && current_user.id != @topic.user_id %>
+		<% if current_user && current_user.id != @topic.user_id && !@topic.answered? && !@topic.solved? %>
 			<% unless(@topic.voted_by_user? current_user) %>
 				<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_button"),
 						like_support_discussions_topic_path(@topic), 

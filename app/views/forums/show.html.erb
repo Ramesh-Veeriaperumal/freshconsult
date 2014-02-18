@@ -53,16 +53,16 @@
 				<%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>	
 			</div>
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => h(@forum_category.name)), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
-	   </div>
-	   <div class="list-bar"> 
-		   <%= link_to(t("forums_order.popular"), category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
-		   <%= link_to(t("forums_order.overview"), category_forum_path( @forum_category, @forum), :class => "first #{ (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' }" ) unless @forum.ideas? %>
-		   <%= link_to t("forums_order.recent"), category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => ((!params[:order].blank? && params[:order] == 'replied_at desc')  ? "active" : "") %>
-		   <% if @forum.ideas? %>
-		   		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 
-		   			<%= link_to k, category_forum_path( @forum_category, @forum, :stamp_type  => v ), :class => ((params[:stamp_type] == v.to_s)? "active":"") %>
-		   		<% end %>
-		   <% end %>
+	  </div>
+	  <div class="list-bar"> 
+		  <%= link_to(t("forums_order.popular"), category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
+		  <%= link_to(t("forums_order.overview"), category_forum_path( @forum_category, @forum), :class => "first #{ (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' }" ) unless @forum.ideas? %>
+		  <%= link_to t("forums_order.recent"), category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => ((!params[:order].blank? && params[:order] == 'replied_at desc')  ? "active" : "") %>
+		  <% if @forum.stamps? %>
+	   		<% Topic::ALL_TOKENS[@forum.forum_type].each do |k| %> 
+	   			<%= link_to Topic::NAMES_BY_KEY[k], category_forum_path( @forum_category, @forum, :stamp_type  => Topic::STAMPS_BY_KEY[k] ), :class => ((params[:stamp_type] == Topic::STAMPS_BY_KEY[k].to_s)? "active":"") %>
+	   		<% end %>
+	   	<% end %>
 	   </div>
 	   <%= render :partial => "forum_shared/topics", :object => @topics, :locals => { :category => @forum_category, :forum => @forum } %>
 	</div>

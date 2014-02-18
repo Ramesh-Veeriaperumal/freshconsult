@@ -27,18 +27,44 @@
 
 <!-- Need to check visiblity is shown to the people or not -->
 
-<span class="seperator"></span>
 
 <% unless (folder.articles.size == 0) %>
-	<ol class="artical_list" id="article_list">
+	<div class="artical-list row-fluid" id="article_list">
 		<% folder.articles.each do |article| %>
-			<li>
-				<% unless article.published? %>
-					<span class="label"><%= t('solutions.status.draft')%></span>
-				<% end %>
-				<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %></li>
+			<div class="article-item span12 pull-right">
+				<div class="article-title span7">
+					<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(category, folder, article), :title => "Edit", :class=>'pull-left mr6 tooltip') if privilege?(:manage_solutions) %>
+					<div class='article-desc'>
+						<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %>
+						<div class="muted">
+							<%= t('solution.user_details', :user => article.user.name, :time => formated_date(article.created_at) ).html_safe %>
+						</div>
+					</div>
+				</div>
+				<div class="span5 mt12 clear-left-margin">
+					<div class='span7 text-center article-info'>
+						<span class="label <%= 'draft' unless article.published? %>">
+						<% unless article.published? %>
+							<%= t('solutions.status.draft')%>
+						<% else %>
+							<%= t("#{article.type_name}")%>
+						<% end %> 
+						</span>
+					</div>
+					<div class='muted article-likes span5 text-right'>
+						<span class="text-left">
+							<i class="icons-like <%= 'null-value' if article.thumbs_up.eql?(0) %>" ></i>
+							<%= article.thumbs_up %>
+						</span>
+						<span>
+							<i class="icons-dislike <%= 'null-value' if article.thumbs_down.eql?(0) %>"></i>
+							<span class="<%= 'highlight' if (article.thumbs_down >= article.thumbs_up) && (article.thumbs_down != 0) %>"><%= article.thumbs_down %> </span>
+						</span>
+					</div>
+				</div>
+			</div>
 		<% end %>
-	</ol>
+	</div>
 <% else %>
 	<div class="big-info">
 		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  

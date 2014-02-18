@@ -22,6 +22,11 @@ class TopicObserver < ActiveRecord::Observer
 		update_forum_counter_cache(topic)
 	end
 
+  def after_update(topic)
+    return unless topic.stamp_type_changed? or topic.stamp_type.nil?
+    create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
+  end
+
   def after_create(topic)
     monitor_topic(topic)
     create_activity(topic, 'new_topic')
@@ -80,12 +85,12 @@ private
       @voices = topic.voices.to_a
   end
 
-  def create_activity(topic, type)
+  def create_activity(topic, type, user = topic.user)
     topic.activities.create(
       :description => "activities.forums.#{type}.long",
       :short_descr => "activities.forums.#{type}.short",
       :account       => topic.account,
-      :user          => topic.user,
+      :user          => user,
       :activity_data => { 
                           :path        => category_forum_topic_path(topic.forum.forum_category_id,
                                           topic.forum_id, topic.id),

@@ -48,6 +48,7 @@ Spork.prefork do
     config.include GroupHelper
     config.include TwitterHelper
     config.include SubscriptionHelper
+    config.include ForumHelper
 
     #Clearing data after the test suite gets over.
     config.after(:suite) do
