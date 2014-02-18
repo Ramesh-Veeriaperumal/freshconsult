@@ -580,10 +580,10 @@ HTML
 	      when "dropdown" then	        
           	select(object_name, field_name, 
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices, 
-          			{:selected => field_value}, {:class => element_class})
+          			{ :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
 	        select(object_name, field_name, field.html_unescaped_choices, 
-	        		{ :include_blank => "...", :selected => field_value }, {:class => element_class})
+	        		{ :include_blank => "...", :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field, 
 	        	{:include_blank => "...", :selected => field_value}, 
@@ -787,17 +787,31 @@ HTML
 		true
 	end
 
-	def helpdesk_ticket_values(field_name,params = {})
+	def helpdesk_ticket_values(field,params = {})
 		unless params.blank?
 			params = params[:helpdesk_ticket]
-			if params[:ticket_body_attributes][field_name]
-				params[:ticket_body_attributes][field_name]
-			elsif params[:custom_field][field_name]
-				params[:custom_field][field_name]
+			if params[:ticket_body_attributes] and params[:ticket_body_attributes][field.field_name]
+				params[:ticket_body_attributes][field.field_name]
+			elsif params[:custom_field] and params[:custom_field][field.field_name]
+				if field.field_type == "nested_field"
+					field_value = { :category_val => "#{params[:custom_field][field.field_name]}", 
+					                :subcategory_val => "#{params[:custom_field][field.nested_ticket_fields.first.field_name]}", 
+					                :item_val => "#{params[:custom_field][field.nested_ticket_fields.last.field_name]}" }
+				else
+					params[:custom_field][field.field_name]
+			    end 
 			else
-				params[field_name] 
+				params[field.field_name] 
 			end
 	    end
+	end
+
+	def is_num?(str)
+		Integer(str || "")
+	rescue ArgumentError
+		false
+	else
+		true
 	end
 
 	private
