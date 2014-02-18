@@ -6,13 +6,14 @@
 	<div class="wrapper-shadow">
 		<title><%= page_title.html_safe %></title>
 		<% 
-		body_class= yield :layoutType 
-		body_class = "single #{body_class}" unless(@content_for_sidebar || @content_for_helpcard)
+			body_class = []
+			body_class << (yield :layoutType)
+			body_class << "single" unless(@content_for_sidebar || @content_for_helpcard)
+			body_class << "shortcuts-active" if(shortcuts_enabled?)
 		%>
 		<% javascript_tag do %>			
-			jQuery('body').removeClass(prev_body_classes || "").addClass('<%=body_class%>');			
-			var prev_body_classes = "<%= body_class %>";
-
+			jQuery('body').attr("class", '<%= body_class.join(" ") %>');
+			
 			jQuery('ul.header-tabs li.active').removeClass('active');
 			jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active')
 		<% end %>
