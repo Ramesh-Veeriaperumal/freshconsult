@@ -104,7 +104,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
    def search(search)
     results = []
-    domain_mappings = DomainMapping.find(:all, :conditions => ['domain LIKE ?', "%#{search}%"])
+    domain_mappings = DomainMapping.find(:all, :conditions => ['domain LIKE ? and portal IS ?', "%#{search}%", nil])
     
     unless search.blank?
       domain_mappings.each do |domain|
