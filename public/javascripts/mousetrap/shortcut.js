@@ -17,14 +17,17 @@
             // for IE 8 & below
             ev.returnValue = false;
         },
-        _overrideMozQuickSearch = function () {
-            $(document).bind('keypress.moz', function (ev) {
-                if (ev.which === 0) { // Dont prevent (up,down,left,right) keys default
-                    return;
-                } else if (!ev.metaKey) { // Dont prevent mozilla default Shortcuts
-                    ev.preventDefault();
-                }
-            });
+        overrideMozQuickSearch = function (ev) {
+            var tagName = document.activeElement.tagName,
+                isContentEditable = document.activeElement.isContentEditable,
+                editableElm = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+            if (ev.which === 0 || editableElm.indexOf(tagName) != -1 || isContentEditable) {
+                // Dont prevent (up,down,left,right) keys default
+                return;
+            } else if (!ev.metaKey) { // Dont prevent mozilla default Shortcuts
+                ev.preventDefault();
+            }
         },
         // Prevent key action from multiple times firing with interval of 1 second
         //@return Boolean
@@ -269,9 +272,9 @@
                 .on('pjax:complete.keyboard_shortcuts', function() { $self.reset(); })
             
             // To prevent Mozilla's "search for text when i start typing" pref option
-            if ($.browser.mozilla) {
-                _overrideMozQuickSearch();
-            }
+            // if ($.browser.mozilla) {
+            //     $('body').on('keypress.moz', overrideMozQuickSearch)
+            // }
         }
 
         KeyboardShortcuts.prototype = {
@@ -300,8 +303,7 @@
                     .removeClass('shortcuts-active');
 
                 $(document)
-                    .off('pjax:complete.keyboard_shortcuts')
-                    .unbind('.moz');
+                    .off('pjax:complete.keyboard_shortcuts');
 
                 //Remove all shortcut key hint from tooltip
                 this.resetShortcutTooltip();
