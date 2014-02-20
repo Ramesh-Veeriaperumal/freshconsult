@@ -10,6 +10,7 @@ class Account < ActiveRecord::Base
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
   has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
   has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote', :dependent => :delete_all
+  has_many :user_emails, :class_name =>'UserEmail', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
@@ -71,6 +72,7 @@ class Account < ActiveRecord::Base
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
+  has_many :email_users, :class_name => 'User', :conditions => ["email IS NOT null"], :order => :id #To be removed
   
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
