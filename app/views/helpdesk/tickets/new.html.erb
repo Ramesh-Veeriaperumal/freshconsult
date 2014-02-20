@@ -14,10 +14,9 @@
   </ul>
   <div class="button-container">
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
+    <%= f.submit t('save'), :class => "btn btn-primary pull-right ml3" %>
     <%= submit_tag t('save_and_close'), :name => "save_and_close", :class => "btn", :id => "save_and_close" %>
     <%= submit_tag t('save_and_new'), :name => "save_and_create", :class => "btn" %>
-    <%= f.submit t('save'), :class => "btn btn-primary" %>
-    
   </div>
 <% end %>
 <% javascript_tag do %>
