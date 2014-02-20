@@ -68,15 +68,15 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
   end
 )
 
-ticket_fields_arr = account.ticket_fields
-TicketFormField.seed_many(:account_id, :form_id,:ticket_field_id,
-  ticket_fields_arr.each_with_index.map do |f, i|
-  {
-    :form_id => ticket_form.id,
-    :ticket_field_id => f[:id],
-    :account_id => account.id,
-    :field_alias => f[:name],
-    :position => f[:position]
-  }
-  end
-)
+# ticket_fields_arr = account.ticket_fields
+# TicketFormField.seed_many(:account_id, :form_id,:ticket_field_id,
+#   ticket_fields_arr.each_with_index.map do |f, i|
+#   {
+#     :form_id => ticket_form.id,
+#     :ticket_field_id => f[:id],
+#     :account_id => account.id,
+#     :field_alias => f[:name],
+#     :position => f[:position]
+#   }
+#   end
+# )
