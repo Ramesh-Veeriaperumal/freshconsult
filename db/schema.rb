@@ -446,11 +446,13 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
 
   create_table "flexifield_defs", :force => true do |t|
-    t.string   "name",                    :null => false
-    t.integer  "account_id", :limit => 8
+    t.string   "name",                                               :null => false
+    t.integer  "account_id",          :limit => 8
     t.string   "module"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "product_id",          :limit => 8
+    t.boolean  "active",                           :default => true
   end
 
   add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
@@ -1213,6 +1215,11 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "field_options"
+    t.boolean  "default",                              :default => false
+    t.integer  "level",                   :limit => 8
+    t.integer  "parent_id",               :limit => 8
+    t.string   "prefered_ff_col"
+    t.integer  "import_id",               :limit => 8
   end
 
   add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
@@ -1769,6 +1776,18 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.datetime "updated_at"
   end
 
+
+  create_table "sub_section_fields", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_value_id", :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.integer  "position",              :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_section_fields", ["account_id", "ticket_field_value_id"], :name => "index_sub_section_fields_on_account_id_and_ticket_field_value_id"
+
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
     t.decimal  "rate",       :precision => 6, :scale => 4, :default => 0.0
@@ -1949,6 +1968,31 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
+
+  create_table "ticket_field_values", :force => true do |t|
+    t.integer  "account_id",      :limit => 8
+    t.integer  "form_id",         :limit => 8
+    t.integer  "ticket_field_id", :limit => 8
+    t.string   "value"
+    t.integer  "position",        :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "ticket_form_fields", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "form_id",           :limit => 8
+    t.integer  "ticket_field_id",   :limit => 8
+    t.string   "ff_col_name"
+    t.string   "field_alias"
+    t.integer  "position",          :limit => 8
+    t.boolean  "sub_section_field"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ticket_form_fields", ["account_id", "form_id", "ticket_field_id"], :name => "index_form_tkt_fields_on_acc_id_and_form_id_and_field_id", :unique => true
+  add_index "ticket_form_fields", ["account_id", "form_id"], :name => "index_ticket_form_fields_on_account_id_and_form_id"
 
   create_table "ticket_stats_2013_1", :id => false, :force => true do |t|
     t.integer  "account_id",       :limit => 8
