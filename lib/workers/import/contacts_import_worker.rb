@@ -10,11 +10,8 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
 	  created = updated = 0
     disable_user_activation(current_account)
     for i in 0...fields.size
-      if fields["#{i}"] !=""
-        fields["#{i}"] = fields["#{i}"].to_i
-      else
-        fields["#{i}"] = 999 #to_i of blank was converting to 0. To avoid it, value of 999 is used.
-      end
+      fields["#{i}"] = (fields["#{i}"].blank? ? 999 : fields["#{i}"].to_i)
+      #to_i of blank was converting to 0. To avoid it, value of 999 is used.
     end
 
 		mapped_fields.each do |row|
