@@ -144,7 +144,9 @@
     },
 
      setNestedRule : function( nested_rules, subcategory_name, subcategory, item_name, item ){
-        item_val = ', { "name" : "'+item_name+'", "value" : "'+(item||'')+'" }' ;
+        item_val = "";
+        if (item_name)
+          item_val = ', { "name" : "'+item_name+'", "value" : "'+(item||'')+'" }' ;
         nested_rules.val('[{ "name" : "'+subcategory_name+'", "value" : "'+(subcategory||'')+'" }'+item_val+']');
      }
   };
