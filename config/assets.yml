@@ -260,6 +260,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/portal/multifile.js
+    - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/feedback_widget_form.js    
