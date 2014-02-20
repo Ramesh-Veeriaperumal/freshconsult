@@ -12,9 +12,14 @@
   background: -ms-linear-gradient(left,  rgba(151,255,251,0) 0%,rgba(76,221,217,1) 50%,rgba(1,187,182,1) 100%); /* IE10+ */
   background: linear-gradient(to right,  rgba(151,255,251,0) 0%,rgba(76,221,217,1) 50%,rgba(1,187,182,1) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0097fffb', endColorstr='#01bbb6',GradientType=1 ); /* IE6-9 */
-
   position: fixed; z-index: 100; top: 0; left: 0; right: 0; width: 100.5%; height: 4px;
-  border-right: 2px solid #fff
+  border-right: 3px solid #fff;
+  -webkit-border-top-right-radius: 2px;
+  -moz-border-top-right-radius: 2px;
+  border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+  -moz-border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 /* Fancy blur effect */
