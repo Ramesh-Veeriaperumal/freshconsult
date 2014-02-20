@@ -25,8 +25,7 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => AwsWrapper::S3Object.url_for(@image.content.path,@image.content.bucket_name, :secure => true),
-        :fileid => @image.id, :uniquekey => params["_uniquekey"] }
+      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
     end
 
     def error_response
