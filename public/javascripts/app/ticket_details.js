@@ -1195,7 +1195,7 @@ var scrollToError = function(){
 				}
 				dontAjaxUpdate = false;
 			} );
-
+			trigger_event("sidebar_loaded",{name: "ticket_properties", dom_id: "#TicketProperties"});
         });	
 	})()
 	
@@ -1239,6 +1239,8 @@ TICKET_DETAILS_CLEANUP = function() {
 		"ticket_view_loaded",
 		"ticket_view_unloaded",
 		"sidebar_loaded",
+		"watcher_added",
+		"watcher_removed"
 	];
 
 	for(var i=0; i<custom_events.length ; i++){

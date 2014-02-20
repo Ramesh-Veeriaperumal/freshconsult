@@ -11,6 +11,7 @@
    jQuery('#timeentry_timer_total').data('staticTotal', false);
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
+   trigger_event("sidebar_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
 <% end %>
 <%= include_cloudfront_js :timesheet %>
 <div id="timeentry_apps_add" class="ui-form hide">   
