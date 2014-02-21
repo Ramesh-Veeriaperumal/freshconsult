@@ -67,7 +67,7 @@ module SsoUtil
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
-    if saved and @user_session.save
+    if @user_session.save
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
       redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass
