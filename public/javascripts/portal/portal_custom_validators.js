@@ -3,7 +3,7 @@
  */
 (function($){
 
-// Redactor validator
+// Redactor validators
 $.validator.addMethod("required_redactor", function(value, element, param) {
   return $(element).data('redactor').isEmpty();
 }, "This field is required.")
