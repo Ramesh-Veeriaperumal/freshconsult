@@ -14,8 +14,11 @@
 	<hr />
 	<div>
 		<%= submit_tag t('topic.update_comment'), :class => "btn btn-primary" %> 
-		<a href="#" data-hide-dom="#post-<%= @post.id %>-edit" data-show-dom="#post-<%= @post.id %>-description" class="btn">
+		<a href="#" data-hide-dom="#post-<%= @post.id %>-edit" data-show-dom="#post-<%= @post.id %>-description,#post-actions-<%= @post.id %>" class="btn" id="post-<%= @post.id %>-cancel">
 			<%= t('cancel') %>
 		</a>
 	</div>
 <% end -%>
+<% javascript_tag do %>
+	jQuery('#post-actions-<%=@post.id%>').hide();
+<% end %>

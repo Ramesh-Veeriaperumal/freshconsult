@@ -24,3 +24,5 @@ config/elasticsearch.yml
 public/stylesheets/*
 public/images/sprites/
 dump.rdb
+coverage/*
+coverage/**/*

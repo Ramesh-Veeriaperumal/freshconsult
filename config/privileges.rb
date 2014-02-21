@@ -136,7 +136,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
-    resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
+    resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :forums_uploaded_image, :only => [:create]
@@ -288,6 +288,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/page"
     resource :"support/preview"
     resource :"admin/chat_setting"
+    resource :"api_webhook", :only => [:create, :destroy]
   end
 
   manage_account do

@@ -285,6 +285,9 @@ ul.inline > li, ol.inline > li {
  a,button,label{
    &.tooltip.disabled{ pointer-events: none; }
  }
+ .input-prepend,.input-append{
+  label.error{display:block; margin-top:3px;}
+ }
 //---------------------------------------------------------------------------------------------------
 //                                      Portal Custom pills styles
 //---------------------------------------------------------------------------------------------------

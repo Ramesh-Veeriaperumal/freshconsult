@@ -58,7 +58,9 @@
 								this.options.closeLabel + '</a>')
 			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary">' +
 								this.options.submitLabel + '</a>')
-
+			if(this.options.submitLoading != "") {
+				this.$submitBtn.data('loadingText',this.options.submitLoading )
+			}
 			this.$footer = $(this.options.templateFooter)
 							.append(this.$closeBtn).append(this.$submitBtn)
 							.appendTo(this.$dynamicTarget)
@@ -77,7 +79,12 @@
 
 			var form = this.$dynamicTarget.find('form:first')
 
-			if(form.get(0)) form.submit()
+			if(form.get(0)) {
+				if(this.options.submitLoading != "") {
+					this.$submitBtn.button('loading')
+				}
+				form.submit()
+			}
 		}
 	}
 

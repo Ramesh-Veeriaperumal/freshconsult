@@ -33,6 +33,7 @@ module SupportTicketControllerMethods
       end
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
+      @params = params
       set_portal_page :submit_ticket
       render :action => :new
     end

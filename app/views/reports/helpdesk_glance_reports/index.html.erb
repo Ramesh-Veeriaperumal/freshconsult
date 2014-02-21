@@ -32,7 +32,7 @@
 jQuery(document).ready(function(){
 	Helpkit.GlanceReport.init({
 		report_type: 'helpdesk',
-		title:"<%=t('adv_reports.helpdesk_at_a_glance')%>",
+		title:"<%=t('adv_reports.helpdesk_at_a_glance').html_safe %>",
 		date_range: jQuery("#date_range").val(),
 		_url:'<%=reports_helpdesk_glance_reports_url%>'
 	});

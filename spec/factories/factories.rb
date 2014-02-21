@@ -5,13 +5,12 @@ if ENV["RAILS_ENV"] == "test"
   end
 
   Factory.define :ticket, :class => Helpdesk::Ticket do |t|
-    t.description "test ticket"
     t.status 2
     t.urgent 0
     t.deleted 0
     t.to_email "test@testind.com"
     t.ticket_type "Question"
-    t.description_html "<div>This is a sample ticket, feel free to delete it.</div>"
+    t.ticket_body { Factory.next :ticket_body }
     t.display_id 1
     t.trained 0
     t.isescalated 0
@@ -26,6 +25,13 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :portal_template, :class => Portal::Template do |p|
     p.preferences "something"
+  end
+
+  Factory.sequence :ticket_body do |tb|
+    Helpdesk::TicketBody.new({
+      :description => "Ticket body sample ##{tb}. Feel free to delete this.",
+      :description_html => "<div>Ticket body <strong>sample</strong> ##{tb}.  <br /> Feel free to delete this.</div>"
+    })
   end
 
   def create_subscriptions
@@ -123,5 +129,29 @@ if ENV["RAILS_ENV"] == "test"
     t.capture_dm_as_ticket true
     t.capture_mention_as_ticket true
     t.search_keys ["freshdesk", "@freshdesk"]
+  end
+
+
+  Factory.define :forum_category  do |c|
+    c.sequence(:name) { |n| "Test Category #{n}"}
+    c.sequence(:description) { |n| "This is a test category #{n}."}
+  end
+
+
+  Factory.define :forum do |f|
+    f.sequence(:name) { |n| "Test Forum #{n}"}
+    f.sequence(:description) { |n| "This is a test forum #{n}."}
+    f.forum_visibility  1
+  end
+
+
+  Factory.define :topic do |t|
+    t.sequence(:title) { |n| "Test Topic #{n}"}
+    t.sequence(:body_html) { |n| "<p>This is a new topic #{n}.</p>"}
+  end
+
+
+  Factory.define :post do |p|
+    p.sequence(:body_html) { |n| "<p>This is a new post #{n}.</p>"}
   end
 end

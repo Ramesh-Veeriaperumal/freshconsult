@@ -14,12 +14,29 @@
   						              :url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
   						              :href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) ) %>
   					</li>
-  					<li class="menu-item">
-  						<%if post != @posts.first and @forum.questions? %> 
-  									<%= link_to(t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
-  									<%= link_to(t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
-  						<%end%>
-  					</li>
+            <% if @forum.questions?%>
+              <li class="menu-item">
+                <% unless post == @posts.first
+                  _label = post.answer? ? t(".unmark_answer") : t(".mark_answer") %>
+                  <% unless @topic.answered? and !post.answer? %> 
+  								  <%= link_to(
+                                _label, 
+                                toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), 
+                                :method=>:put
+                                ) %>
+                  <% else %>
+                    <a 
+                      href="<%= category_forum_topic_best_answer_path(@forum_category,@forum,@topic,post) %>"
+                      rel="freshdialog"  class="padding6" title='<%= _label %>' 
+                      data-submit-label="<%= _label %>" data-close-label="<%= t('cancel') %>"
+                      data-target="#best_answer" data-width="700px"
+                      data-submit-loading="<%= t('ticket.updating')%>...">
+                      <%= _label %>
+                    </a>
+                  <% end%>
+                <%end%>
+              </li>
+            <% end %>
   					<li class="menu-item">
   							<%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
   					</li>

@@ -1,6 +1,7 @@
 class Support::Discussions::TopicsController < SupportController
   
-  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, :users_voted, :destroy]
+  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, 
+                                      :users_voted, :destroy, :toggle_solution]
   before_filter :require_user, :except => [:index, :show]
   
   before_filter { |c| c.requires_feature :forums }
@@ -137,6 +138,14 @@ class Support::Discussions::TopicsController < SupportController
     flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, h(@topic.title)].html_safe
     respond_to do |format|
       format.html { redirect_to support_discussions_path }
+    end
+  end
+
+  def toggle_solution
+    @topic.toggle_solved_stamp
+    respond_to do |format|
+      format.html { redirect_to support_discussions_topic_path(@topic) }
+      format.xml  { head 200 }
     end
   end
 

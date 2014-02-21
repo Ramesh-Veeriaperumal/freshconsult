@@ -10,7 +10,7 @@ module FreshfoneHelper
 	end
 
 	def host
-		current_account.url_protocol + "://" + current_account.host
+		current_account.url_protocol + "://" + current_account.full_domain
 	end
 
 	def validate_freshfone_request

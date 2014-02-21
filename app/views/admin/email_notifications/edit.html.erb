@@ -258,7 +258,7 @@
 					<label><b><%= t('message') %></b><span class="required_star">*</span></label> 
 				<%end%>	
 				<%= f.rich_editor description_field,
-				{'editor-type' => :email_notification, :id => 'description_default', :class =>"desc_info #{notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? 'required_redactor' : ''} ", :height => "200px"}  %>
+				{'editor-type' => :email_notification, :id => 'description_default', :class =>'desc_info #{notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? "required_redactor" : ""} ', :height => "300px"}  %>
 			</div>
 			<% if notification_type == EmailNotification::NEW_TICKET and @type == 'agent_template' %>
 				<div class="email-notification-footer row-fluid">
@@ -300,7 +300,7 @@
 					<%end%>	
 					</div>
 					<div class="pull-left" id="add_more_lang" style="display:none"s>
-						<p><%= t('support_multi_languge') %></p>
+						<span><%= t('support_multi_languge') %></span>
 						<p><%= link_to t('add_more_lang'), "/account/edit"%></p>
 					</div>
 					<div class="text-right span5 pull-right ">

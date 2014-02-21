@@ -1,0 +1,13 @@
+<% form_for @post, :url => toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,@post) do |f| %>
+<% end %>
+<%= t('forum_shared.best_answer.answer_confirm') %>
+<div class="answer_previous">
+		<%= user_avatar(@answer.user) if @answer.user %>
+	<div class="user_details">
+		<strong><%= @answer.user%></strong> <%=formated_date(@answer.created_at)%>
+		<%= content_tag(:div, t("forum_shared.post.answer"), :class => "stamp_answer floatr", :title => t("forum_shared.post.post_accepted_as_a_good_answer")) %>
+	</div>
+	<div class="details">
+		<%= truncate( @answer.body, :length => 400 )%>
+	</div>
+<div>

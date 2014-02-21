@@ -8,7 +8,7 @@
 				<div class="current-balance-amt"><%= current_freshfone_balance(@freshfone_credit) %></div>
 			</li>
 		  <li class="recharge-now">
-		  	<% if current_account.subscription.active? %>
+		  	<% if current_account.subscription.active? and current_account.has_credit_card? %>
 		  		<% if @freshfone_credit.present? %>
 			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> <%= t('freshfone.subscription.purchase') %> </a></div>
 			  		<div class="show-freshfone-credits" style="display:none;" >

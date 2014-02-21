@@ -10,7 +10,8 @@ class EmailController < ApplicationController
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url
   skip_before_filter :check_account_state, :except => [:show,:index]
   skip_before_filter :set_time_zone, :check_day_pass_usage 
-  skip_before_filter :set_locale, :force_utf8_params, :logging_details
+  skip_before_filter :set_locale, :force_utf8_params
+  skip_before_filter :logging_details, :only => :new
   
   def new
     render :layout => false
@@ -22,4 +23,13 @@ class EmailController < ApplicationController
     render :layout => 'email'
   end
 
+  private
+
+    def log_file
+      @log_file_path = "#{Rails.root}/log/incoming_email.log"      
+    end
+
+    def logging_format
+      @log_file_format = %(from_email : #{params[:from]}, to_emails : #{params[:to]}, envelope : #{params[:envelope]})
+    end
 end

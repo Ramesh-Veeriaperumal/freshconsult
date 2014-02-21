@@ -56,13 +56,13 @@
 
   function showSave() {
     jQuery('.view_filters').addClass('disable-hover');
-    jQuery("#save_as_filter,#cancel_filter,#save_filter,span.hide").switchClass('hide','vertical-alignment');
+    jQuery("#save_as_filter,#cancel_filter,#save_filter,.unsaved_star").switchClass('hide','vertical-alignment');
     jQuery('#edit_filter,#delete_filter').switchClass('vertical-alignment','hide');
   }
 
   function showEditAndDelete() {
     jQuery('.view_filters').removeClass('disable-hover');
-    jQuery("#save_as_filter,#cancel_filter,#save_filter,span.hide").switchClass('vertical-alignment','hide');
+    jQuery("#save_as_filter,#cancel_filter,#save_filter,.unsaved_star").switchClass('vertical-alignment','hide');
     jQuery('#edit_filter,#delete_filter').switchClass('hide','vertical-alignment');
   }
 

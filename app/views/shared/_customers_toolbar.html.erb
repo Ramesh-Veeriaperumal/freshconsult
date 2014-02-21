@@ -61,11 +61,11 @@
 	}
 <% end %>
 <div class="customers-toolbar" id="customers-toolbar">
-  <% if (params[:state].eql?("unverified") && privilege?(:manage_users)) ||
+  <% if (params[:state].eql?("unverified") && privilege?(:view_contacts)) ||
       privilege?(:delete_contact) %>
   	<input type="checkbox" id="customers-select-all" />
   	<div class="bulk-action">
-      <% if privilege?(:manage_users) %>
+      <% if privilege?(:view_contacts) %>
   		  <%= button_to_function(t('contacts.send_activation'), "bulk_send_activation()",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
       <% end %>    
       <% if params[:state].eql?("deleted") && privilege?(:delete_contact) %>

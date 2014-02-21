@@ -14,7 +14,7 @@
     background: rgba($popoverStroke, 0.8);
     padding: 4px 1px 1px;
     overflow: hidden;
-    @include min-width(230px);
+    @include min-width(350px);
     @include border-radius($popover-radius);
     @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4));
   }
@@ -150,7 +150,7 @@
   }
   &.topRight{
     .arrow {
-      top: 30px;
+      top: 37px;
       left: -2px;
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;

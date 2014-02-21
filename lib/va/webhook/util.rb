@@ -1,6 +1,7 @@
 module Va::Webhook::Util
 
   include Va::Webhook::Constants
+  include Va::Util
   
 	private
 
@@ -39,8 +40,8 @@ module Va::Webhook::Util
     def substitute_placeholders_in_format act_on, content_key, content_type = nil
       event_hash  = get_matched_event_hash(triggered_event)
       content     = act_hash[content_key]
-      contexts    = { 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 
-                      'triggered_event' => j(event_hash.to_json) }
+      contexts    = { map_class(act_on.class.name) => act_on, 'helpdesk_name' => act_on.account.portal_name, 
+        'triggered_event' => j(event_hash.to_json) }
       filters     = { :filters => [Va::Webhook::HelperMethods] }
       case content
       when String

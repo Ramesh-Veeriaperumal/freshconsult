@@ -47,7 +47,7 @@ class Support::LoginController < SupportController
 	    end
 
 	    def handle_deleted_user_login
-	    	unless params[:user_session] && (params[:user_session][:email].blank? || params[:user_session][:password].blank?)
+	    	if params[:user_session] && !(params[:user_session][:email].blank? || params[:user_session][:password].blank?)
 	    		login_user = current_account.all_users.find_by_email(params[:user_session][:email])
 	    		if !login_user.nil? && login_user.deleted?
 		    		@user_session.errors.clear

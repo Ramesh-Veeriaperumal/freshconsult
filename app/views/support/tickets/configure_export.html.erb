@@ -66,6 +66,12 @@
 
 			"use strict"
 
+			$('#export-modal form').on('submit', function(){
+				setInterval( function(){
+					$('#export-modal a[data-submit]').button('reset')
+				}, 3000);
+			})
+
 			$(".nested-parent").on("change", function(ev){
 				var _condition = $(this).children("input").prop("checked")
 	  			$(this).siblings(".nested-child").children("input").prop({ "checked": _condition })

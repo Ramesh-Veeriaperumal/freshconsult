@@ -1,7 +1,10 @@
 <% unless user.job_title.blank? %>
-   <%= h user.job_title %>
+	<div class="ellipsis user-job-title" title="<%= h user.job_title %>">
+   		<%= h user.job_title %>
+   	</div>
 <% end %>
 <% unless user.customer.blank? %>
-	<%= "<br >".html_safe unless user.job_title.blank? %>
-	<%= link_to(h(user.customer.name), user.customer)  %>
+	<div class="ellipsis user-company-name" title="<%= h user.customer.name %>">
+		<%= link_to(h(user.customer.name), user.customer)  %>
+	</div>
 <% end %>

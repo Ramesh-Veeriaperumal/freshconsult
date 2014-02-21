@@ -38,6 +38,10 @@
 
 .forum_follow_icon.active{ @include icons-sprite(following-forum); }
 
+.icons-like{ @include icons-sprite(like); }
+
+.icons-dislike{ @include icons-sprite(dislike); }
+
 .solution-list li:before{
 	@include icons-sprite(article-list);
 }

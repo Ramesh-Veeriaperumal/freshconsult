@@ -10,12 +10,24 @@
     
     var _selectedListItemClass = 'sc-item-selected',
         // Prevent Browser Default Behaviour
-        _preventDefault = function (e) {
-            if (e.preventDefault) {
-                e.preventDefault();
+        _preventDefault = function (ev) {
+            if (ev.preventDefault) {
+                ev.preventDefault();
             }
             // for IE 8 & below
-            e.returnValue = false;
+            ev.returnValue = false;
+        },
+        overrideMozQuickSearch = function (ev) {
+            var tagName = document.activeElement.tagName,
+                isContentEditable = document.activeElement.isContentEditable,
+                editableElm = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+            if (ev.which === 0 || editableElm.indexOf(tagName) != -1 || isContentEditable) {
+                // Dont prevent (up,down,left,right) keys default
+                return;
+            } else if (!ev.metaKey) { // Dont prevent mozilla default Shortcuts
+                ev.preventDefault();
+            }
         },
         // Prevent key action from multiple times firing with interval of 1 second
         //@return Boolean
@@ -256,7 +268,13 @@
                 });
             
             // Binding keyboard reset for pjax
-            $(document).on('pjax:complete.keyboard_shortcuts', function() { $self.reset(); })
+            $(document)
+                .on('pjax:complete.keyboard_shortcuts', function() { $self.reset(); })
+            
+            // To prevent Mozilla's "search for text when i start typing" pref option
+            // if ($.browser.mozilla) {
+            //     $('body').on('keypress.moz', overrideMozQuickSearch)
+            // }
         }
 
         KeyboardShortcuts.prototype = {
@@ -284,7 +302,8 @@
                     .off('.keyboard_shortcuts')
                     .removeClass('shortcuts-active');
 
-                $(document).off('pjax:complete.keyboard_shortcuts')
+                $(document)
+                    .off('pjax:complete.keyboard_shortcuts');
 
                 //Remove all shortcut key hint from tooltip
                 this.resetShortcutTooltip();

@@ -96,6 +96,9 @@ window.highlight_code = function() {
         }
         jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
     })
-
+    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled 
+    if( jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 11){
+        SyntaxHighlighter.defaults['quick-code'] = false;
+    }
     SyntaxHighlighter.all();
 }

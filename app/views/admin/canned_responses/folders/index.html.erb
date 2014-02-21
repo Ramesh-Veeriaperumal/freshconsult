@@ -26,7 +26,7 @@
 					<% end %>
 				</ul>
 				<div id="folder-controls">
-				<%= link_to( (t('canned_folders.create')+ "&nbsp;").html_safe, "/admin/canned_responses/folders/new", "data-ajax-dialog" => true, "data-width" => "500", :id => "create-folder", :title => "Create new Folder" ) %>
+				<%= link_to( (t('canned_folders.create')+ "&nbsp;").html_safe, "/admin/canned_responses/folders/new", "data-ajax-dialog" => true, "data-width" => "500", :id => "create-folder", :title => t('canned_folders.create') ) %>
 				<span id="edit-ca-folder" class="hide"><b> &middot; &nbsp;</b><%= t('canned_folders.edit') %>&nbsp;</span>
 				<%= link_to((' <b>&middot;</b> &nbsp;'+t('canned_folders.delete')).html_safe, 
 					admin_canned_responses_folder_path(@ca_res_folder), 

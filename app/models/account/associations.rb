@@ -10,6 +10,7 @@ class Account < ActiveRecord::Base
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
   has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
   has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote', :dependent => :delete_all
+  has_many :user_emails, :class_name =>'UserEmail', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
@@ -71,6 +72,7 @@ class Account < ActiveRecord::Base
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
+  has_many :email_users, :class_name => 'User', :conditions => ["email IS NOT null"], :order => :id #To be removed
   
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
@@ -109,6 +111,9 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
   has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
+
+  has_many :api_webhook_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
@@ -141,7 +146,7 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc, name'
 
   has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
   

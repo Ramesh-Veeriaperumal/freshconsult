@@ -69,6 +69,7 @@ include SsoUtil
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
+        flash.discard
         remove_old_filters  if @current_user.agent?
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else

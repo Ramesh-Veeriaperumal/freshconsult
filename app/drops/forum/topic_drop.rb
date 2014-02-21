@@ -96,6 +96,10 @@ class Forum::TopicDrop < BaseDrop
     source.posts.first.attachments
   end
 
+  def toggle_solution_url
+    toggle_solution_support_discussions_topic_path(source)
+  end
+
   # To check if this is a new topic page of edit page
   def exits?
     source.new_record?
@@ -112,6 +116,16 @@ class Forum::TopicDrop < BaseDrop
   def answered?
     source.answered?
   end
+
+  def solved?
+    source.solved?
+  end
+
+  # This will return a post object
+  def best_answer
+    source.answer
+  end
+
   # !PORTALCSS CHECK need to check with shan 
   # if we can keep excerpts for individual model objects
   def excerpt_title

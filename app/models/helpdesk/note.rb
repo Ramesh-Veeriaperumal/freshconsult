@@ -6,6 +6,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include Mobile::Actions::Note
   include Helpdesk::Services::Note
+  include ApiWebhooks::Methods
 
   set_table_name "helpdesk_notes"
 

@@ -14,6 +14,7 @@ module VAConfig
   OBSERVER_RULE = 4
   APP_BUSINESS_RULE = 11
   INSTALLED_APP_BUSINESS_RULE = 12
+  API_WEBHOOK_RULE = 13
 
   CREATED_DURING_VALUES = [
     [ :business_hours, I18n.t('ticket.created_during.business_hours'), "business_hours"],

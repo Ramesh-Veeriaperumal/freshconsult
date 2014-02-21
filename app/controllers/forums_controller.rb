@@ -23,7 +23,7 @@ class ForumsController < ApplicationController
    (session[:forums] ||= {})[@forum.id] = Time.now.utc
    (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
 
-    if @forum.ideas? and params[:order].blank?
+    if @forum.stamps? and params[:order].blank?
       conditions =  {:stamp_type => params[:stamp_type]} unless params[:stamp_type].blank?
       @topics = @forum.topics.find(:all, :include => :votes, :conditions => conditions).sort_by { |u| [-u.sticky,-u.votes.size] }
     else

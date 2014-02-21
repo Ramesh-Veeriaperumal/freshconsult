@@ -43,5 +43,17 @@ class Forum::PostDrop < BaseDrop
   def delete_url
     support_discussions_topic_post_path(source.topic, source.id)
   end
+
+  def toggle_answer_url
+    toggle_answer_support_discussions_topic_post_path(source.topic, source.id)
+  end
+
+  def user_can_mark_as_answer?
+    source.can_mark_as_answer?(portal_user)
+  end
+
+  def best_answer_url
+    support_discussions_topic_best_answer_path(source.topic, source.id)
+  end
   
 end

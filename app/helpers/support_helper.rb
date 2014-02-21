@@ -394,7 +394,9 @@ HTML
 		output << %(<span class="label label-sticky">
 				#{t('topic.sticky')}</span>) if topic['sticky?']
 		output << %(<span class="label label-answered">
-				#{t('topic.answered')}</span>) if topic['answered?']
+				#{t('topic.questions.answered')}</span>) if topic['answered?']
+		output << %(<span class="label label-solved">
+				#{t('topic.problems.solved')}</span>) if topic['solved?']
 		output << %(<span class="label label-#{topic['stamp']}">
 				#{t('topic.ideas_stamps.'+topic['stamp'])}</span>) if topic['stamp'].present?
 		output << %(</div>)
@@ -429,6 +431,14 @@ HTML
 		end
 	end	
 
+	def link_to_mark_as_solved topic, solve_label = I18n.t("forum_shared.post.mark_as_solved"), unsolve_label = I18n.t("forum_shared.post.mark_as_unsolved")
+		if User.current == topic.user && topic.forum.problems?
+			link_to topic['solved?'] ? unsolve_label : solve_label, topic['toggle_solution_url'],
+						"data-method" => :put, 
+						:class => "btn btn-small"
+		end
+	end		
+
 	def link_to_see_all_topics forum
 		label = I18n.t('portal.topic.see_all_topics', :count => forum['topics_count'])
 		link_to label, forum['url'], :title => label, :class => "see-more"
@@ -440,31 +450,47 @@ HTML
 	end
 
 	def post_actions post
+		output = []
 		if User.current == post.user
-			output = <<HTML
-				<span class="dropdown pull-right">
-					<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-						<li>
-						<a href="#{ post["edit_url"] }" data-remote data-type="GET" data-loadonce
+		output << %(<span class="pull-right post-actions" id="post-actions-#{post["id"]}">
+
+						<a href="#{ post["edit_url"] }" data-remote="true" data-type="GET" data-loadonce
 								 	data-update="#post-#{post["id"]}-edit" data-show-dom="#post-#{post["id"]}-edit"
 								    data-hide-dom="#post-#{post["id"]}-description">
-									#{t("edit")}
+									<i class="icon-edit-post"></i>
 						</a>
-						</li>
-						<li>
-				     		<a href="#{ post["delete_url"] }" data-method="delete"
+						<a href="#{ post["delete_url"] }" data-method="delete"
 				     			data-confirm="This post will be delete permanently. Are you sure?">
-				     			#{t("delete")}
+				     			<i class="icon-delete-post"></i>
 				     		</a>
-			     		</li>
-			     	</ul>
-				    <a href="#" class="dropdown-toggle btn btn-icon post-actions" data-toggle="dropdown">
-						<i class="icon-cog-drop-dark"></i>
-					</a>
-				</span>
-HTML
-			output.html_safe
+			     		
+					</span>)
+		elsif post.user_can_mark_as_answer?
+			label = post.answer? ? t('forum_shared.post.unmark_answer') : t('forum_shared.post.mark_answer')
+			unless post.topic.answered? and !post.answer?
+				output << %(<div class="pull-right post-actions">
+								<a 	href="#{post['toggle_answer_url']}" 
+									data-method="put"
+									class="tooltip"
+									title="#{label}"
+									><i class="icon-#{post.answer? ? 'unmark' : 'mark'}-answer"></i></a>
+							</div>)
+			else
+                output << %(<div class="pull-right post-actions">
+			                	<a 	href="#{post.best_answer_url}" 
+			                		data-target="#best_answer"  rel="freshdialog"  
+			                		title="#{label}" 
+			                		data-submit-label="#{label}" data-close-label="#{t('cancel')}"
+			                		data-submit-loading="#{t('ticket.updating')}..." 
+			                		data-width="700px"
+			                		class="tooltip"
+									title="#{label}"
+			                		><i class="icon-mark-answer"></i></a>
+			                </div>)
+            end
 		end
+
+		output.join('')
 	end
 
 	# Ticket specific helpers
@@ -544,7 +570,7 @@ HTML
 
 	    case dom_type
 	      when "requester" then
-	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
+	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "text", "number" then
@@ -554,10 +580,10 @@ HTML
 	      when "dropdown" then	        
           	select(object_name, field_name, 
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices, 
-          			{:selected => field_value}, {:class => element_class})
+          			{ :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
 	        select(object_name, field_name, field.html_unescaped_choices, 
-	        		{ :include_blank => "...", :selected => field_value }, {:class => element_class})
+	        		{ :include_blank => "...", :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field, 
 	        	{:include_blank => "...", :selected => field_value}, 
@@ -566,12 +592,12 @@ HTML
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
 	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
-                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
+                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value.to_s.to_bool }) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
 	      		_output << %( #{ ff.text_area(field_name, 
-	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      			{ :class => "element_class" + " span12" + " required_redactor", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
@@ -758,6 +784,33 @@ HTML
 
 	# A fallback for portal... as attachment & screenshot is being used in both feedback widget & portal 
 	def widget_option type
+		true
+	end
+
+	def helpdesk_ticket_values(field,params = {})
+		unless params.blank?
+			params = params[:helpdesk_ticket]
+			if params[:ticket_body_attributes] and params[:ticket_body_attributes][field.field_name]
+				params[:ticket_body_attributes][field.field_name]
+			elsif params[:custom_field] and params[:custom_field][field.field_name]
+				if field.field_type == "nested_field"
+					field_value = { :category_val => "#{params[:custom_field][field.field_name]}", 
+					                :subcategory_val => "#{params[:custom_field][field.nested_ticket_fields.first.field_name]}", 
+					                :item_val => "#{params[:custom_field][field.nested_ticket_fields.last.field_name]}" }
+				else
+					params[:custom_field][field.field_name]
+			    end 
+			else
+				params[field.field_name] 
+			end
+	    end
+	end
+
+	def is_num?(str)
+		Integer(str || "")
+	rescue ArgumentError
+		false
+	else
 		true
 	end
 

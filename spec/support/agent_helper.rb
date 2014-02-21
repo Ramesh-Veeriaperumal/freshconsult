@@ -9,10 +9,10 @@ def add_agent_to_account(account, options={})
 
   new_user = Factory.build(:user, :account => account,
                     :name => options[:name], :email => options[:email],
-                    :time_zone => "Chennai", :single_access_token => options[:token],
+                    :time_zone => "Chennai", :single_access_token => options[:token], :helpdesk_agent => true, 
                     :active => options[:active], :user_role => options[:role], :delta => 1, :language => "en") 
   new_user.agent = new_agent
-
+  new_user.roles = [account.roles.second]
   new_user.save(false)
   
   if options[:group_id]

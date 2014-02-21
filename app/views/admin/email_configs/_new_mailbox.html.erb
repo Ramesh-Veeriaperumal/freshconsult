@@ -38,13 +38,13 @@
       <%= content_tag(:label, t('mailbox.authentication'), :class => "control-label") %>
       <div class="controls">
         <%= select_tag("email_config[mailbox_attributes][imap_authentication]", options_for_select(Mailbox::AUTHENTICATION_OPTIONS), :class => "select2 input-large") %>
-        <div class="form-inline mt15">
-          <div class="input-prepend tooltip disabled" title="<%= t('mailbox.imap_user_name_tooltip')%>" >
+        <div class="form-inline mt15 row-fluid">
+          <div class="input-prepend tooltip disabled span6" title="<%= t('mailbox.imap_user_name_tooltip')%>" >
             <span class="add-on"><i class="mailbox-username"></i></span>
             <%= text_field_tag "imap_user_name", "", :class => "text credentials input-large", :autocomplete => "off", :placeholder => t('mailbox.user_name'), :rel=> "username", :disabled => true %>
           </div>
           <%= mailbox.hidden_field :imap_user_name, :id => "hidden_imap_user_name" %>
-          <div class="input-prepend ml5">
+          <div class="input-prepend ml5 span6">
             <span class="add-on"><i class="mailbox-password"></i></span>
             <%= mailbox.password_field :imap_password, :class => "credentials input-large", :placeholder => t('mailbox.password') %>
           </div>
@@ -76,12 +76,12 @@
       <%= content_tag(:label, t('mailbox.authentication'), :class => "control-label") %>
       <div class="controls">
         <%= select_tag("email_config[mailbox_attributes][smtp_authentication]", options_for_select(Mailbox::AUTHENTICATION_OPTIONS[0..1]), :class => "select2 input-large") %>
-        <div class="form-inline mt15">
-          <div class="input-prepend">
+        <div class="form-inline mt15 row-fluid">
+          <div class="input-prepend span6">
             <span class="add-on"><i class="mailbox-username"></i></span>
             <%= mailbox.text_field :smtp_user_name, :class => "email-icon text credentials input-large", :autocomplete => "off", :placeholder => t('mailbox.user_name'), :rel=> "username" %>
           </div>
-          <div class="input-prepend ml5">
+          <div class="input-prepend ml5 span6">
             <span class="add-on"><i class="mailbox-password"></i></span>
             <%= mailbox.password_field :smtp_password, :class => "password-icon text credentials input-large", :placeholder => t('mailbox.password')%>
           </div>

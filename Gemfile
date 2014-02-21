@@ -86,8 +86,8 @@ gem 'after_commit', "1.0.11"
 gem 'chargebee', "~> 1.2.9"
 
 gem 'encryptor', '1.1.3'
-
-gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
+gem "dalli"
+#gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
@@ -139,11 +139,13 @@ group :test do
   gem "rspec-rails", "1.3.3"
   gem "spork", "~> 0.8.0"
   gem "mocha", "~> 0.12.8"
-  gem "rr","1.1.1"
+  gem "rr", "1.1.1"
   gem "ZenTest", "4.4.1"
   gem "autotest-fsevent", "0.1.1"
   gem "autotest-growl", "0.2.0"
   gem "autotest-rails", "4.1.0"
+  gem "faker", "~> 1.0.1"
+  gem "simplecov", "~> 0.7.1"
 end
 
 group :assets do
