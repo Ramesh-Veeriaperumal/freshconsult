@@ -41,7 +41,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
-    
+
+  has_one :parent, :through => :schema_less_ticket
+
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
 

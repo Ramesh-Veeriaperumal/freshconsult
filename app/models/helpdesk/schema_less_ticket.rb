@@ -6,6 +6,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	belongs_to :product
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
+	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
 
 	belongs_to_account
 
@@ -20,6 +21,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :escalation_level, :int_tc02
 	alias_attribute :sla_policy_id, :long_tc01
 	alias_attribute :manual_dueby, :boolean_tc03
+	alias_attribute :parent_ticket, :long_tc02
 
 	serialize :to_emails
 	serialize :text_tc01, Hash
