@@ -5,6 +5,7 @@ var RLANG = {
 	table: 'Tabelle',
 	link: 'Link',
 	link_insert: 'Link einfügen ...',
+	link_new_tab: 'Link in neuem Tab öffnen',
 	unlink: 'Link entfernen',
 	styles: 'Styles',
 	paragraph: 'Absatz',

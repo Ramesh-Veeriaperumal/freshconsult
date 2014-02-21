@@ -116,6 +116,8 @@ var RLANG = {
 	label_lang: 'Language : '
 };
 
+var DEFAULT_LANG = jQuery.extend({}, RLANG);
+
 var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
@@ -159,6 +161,8 @@ var Redactor = function(element, options)
 		RLANG = RELANG[options.lang];
 	}		
 
+	RLANG = $.extend(DEFAULT_LANG, RLANG ); //Defaulting to english for a few strings
+	
 	// Options
 	this.opts = $.extend({
 
