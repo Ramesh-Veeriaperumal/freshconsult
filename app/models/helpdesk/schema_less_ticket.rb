@@ -23,6 +23,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :manual_dueby, :boolean_tc03
 	alias_attribute :parent_ticket, :long_tc02
 
+	# Attributes used in Freshservice
+	alias_attribute :department_id, :long_tc10
+
 	serialize :to_emails
 	serialize :text_tc01, Hash
 
