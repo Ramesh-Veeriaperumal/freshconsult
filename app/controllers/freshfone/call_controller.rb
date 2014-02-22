@@ -114,7 +114,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def add_cost_job
-			Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params) 
+			Resque::enqueue(Freshfone::Jobs::CallBilling, cost_params) 
 			Rails.logger.debug "FreshfoneJob for sid : #{params[:CallSid]} :: dsid : #{params[:DialCallSid]}"
 		end
 
