@@ -9,18 +9,18 @@ module ApiWebhooks::Methods
 	end
 
 	def subscribe_event_create 
-		event_changes = MAP_CREATE_ACTION[self.class.name]
-		send_subscribe_events(event_changes) unless event_changes.blank?
+		# event_changes = MAP_CREATE_ACTION[self.class.name]
+		# send_subscribe_events(event_changes) unless event_changes.blank?
 	end
 
 	def subscribe_event_update
-		event_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
-																		filter_subscribe_event filtered, change_key, change_value  end
+		# event_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
+		# 																filter_subscribe_event filtered, change_key, change_value  end
 
-		unless event_changes.blank?																	
-			event_changes.merge! MAP_UPDATE_ACTION[self.class.name] 
-			send_subscribe_events event_changes 
-		end
+		# unless event_changes.blank?																	
+		# 	event_changes.merge! MAP_UPDATE_ACTION[self.class.name] 
+		# 	send_subscribe_events event_changes 
+		# end
 	end
 
 	def filter_subscribe_event filtered, change_key, change_value
