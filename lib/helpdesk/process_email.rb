@@ -239,7 +239,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       begin
         if (user.agent? && !user.deleted?)
-          process_email_commands(ticket, user, email_config) if user.privilege?(:edit_ticket_properties)
+          process_email_commands(ticket, user, email_config, params) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
           ticket.ticket_body.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
