@@ -390,13 +390,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
      
       attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
-        if content_ids["attachment#{i+1}"]
-          description = "content_id"
-        end
+      description = content_ids["attachment#{i+1}"] ? "content_id" : ""
         begin
-          created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
-            :account_id => ticket.account_id,:description => description)
-            created_attachment = create_attachment_from_params(created_attachment,
+          created_attachment = {:content => params["attachment#{i+1}"], 
+            :account_id => ticket.account_id,:description => description}
+            created_attachment = create_attachment_from_params(item, created_attachment,
                                     attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
