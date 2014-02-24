@@ -91,16 +91,15 @@ class Freshfone::Account < ActiveRecord::Base
 	end
 
 	def host
-		"#{account.url_protocol}://#{account.host}"
+		"#{account.url_protocol}://#{account.full_domain}"
 	end
 
 	def twilio_subaccount
 		TwilioMaster.client.accounts.get(self.twilio_subaccount_id)
 	end
 
-	private
-		def freshfone_application
-			@app ||= freshfone_subaccount.applications.get(app_id)
-		end
+	def freshfone_application
+		@app ||= freshfone_subaccount.applications.get(app_id)
+	end
 
 end

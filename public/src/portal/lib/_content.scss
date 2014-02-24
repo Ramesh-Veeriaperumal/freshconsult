@@ -31,6 +31,57 @@
 	}	
 }
 
+.user-thumb-image{
+	@include border-radius(5px);
+	float: left;
+	overflow: hidden;
+	border: none;
+	img{
+		width: 25px;
+		border-radius: 5px;
+	}	
+}
+
+.best-answer-info{
+	margin: -11px -14px -11px -14px;
+	padding: 11px 14px 1px 14px;
+	background: #fffffa;
+	@include border-radius(0px 0px 5px 5px);
+	.answer-comment{
+		border-left: 1px solid #E2E2E2;
+		margin-left: 34px;
+		padding-left: 12px;
+		.user-info .user-details{
+			margin-left: 34px;
+			margin-top: 5px;
+		}
+		.answer-desc hr{
+			margin: 10px 0px;
+		}
+	}
+}
+
+.best-answer-tick{
+	background: #0B8500;
+	width: 23px;
+	height: 23px;
+	border-radius: 50px;
+	.icon-best-answer{
+		margin: 1px 3px 3px 4px;
+	}
+}
+
+.best-badge{
+	background: #FEFFDA;
+	display: inline-block;
+	padding: 0px 8px 0px 8px;
+	border: 1px solid #F1F0D4;
+	border-radius: 14px;
+	margin-bottom: 10px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
 .article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
@@ -329,10 +380,18 @@ hr.content-divider{
 
 /* Post edit and delete dropdown styles */
 .post-actions{
-	margin-top: 15px;
-	@include opacity(0.4);
+	@include opacity(0);
+	.icon-delete, .icon-edit{
+	 	width: 34px;
+	}
 }
-.user-comment:hover .post-actions{ @include opacity(1); }
+.user-comment:hover .post-actions{
+		@include opacity(1); 
+		a{
+			text-decoration: none;
+			vertical-align: bottom;
+		}
+	}
 
 /* Topic label styles in forum list view */
 .topic-list .topic-labels .label{ @extend .label-small; }
@@ -465,5 +524,19 @@ hr.content-divider{
 		.delete{
 			display:block;
 		}
+	}
+}
+
+// Forum answer styles
+.answer_previous{ 
+	border: solid 1px #dddddd;
+	padding: 10px;
+	border-radius: 5px;
+	background: #fafafa;
+	max-height: 210px;
+	overflow: hidden;
+	margin-top: 15px;
+	.user-details{
+		margin-left: 10px;
 	}
 }

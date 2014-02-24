@@ -25,7 +25,7 @@ class Workers::Mailbox
   def self.delete_mailbox_thread mailbox_id
     request_delete = Net::HTTP::Delete.new("/imap_mailboxes/#{mailbox_id}", initheader = {'Content-Type' =>'application/json'})    
     timestamp = Time.now.to_i
-    request_delete.body = {"timestamp" => timestamp}.to_json
+    request_delete.body = {"timestamp" => timestamp, "imap_mailboxes" => { "account_id" => Account.current.id }}.to_json
     request_delete.basic_auth "freshdesk", password_hash(timestamp)
     request = Rails.env.development? ? Net::HTTP.new("localhost", "3001") : Net::HTTP.new("mailbox.#{AppConfig['base_domain'][Rails.env]}")
     response = request.start {|http| http.request(request_delete) }    

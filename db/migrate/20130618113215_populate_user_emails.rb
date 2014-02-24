@@ -1,14 +1,18 @@
 class PopulateUserEmails < ActiveRecord::Migration
-  shard :none
+  shard :all
   def self.up
-  	Account.find_in_batches do |accounts|
-  		accounts.each do |account|
-  			execute(%(INSERT INTO user_emails (account_id, user_id, email, primary_role, verified, 
-      		created_at, updated_at) SELECT account_id, id, email, true, active, now(), now() FROM 
-      		users WHERE account_id = #{account.id} and email IS NOT NULL))
+    Account.find_in_batches do |accounts|
+      accounts.each do |account|
+        account.email_users.find_in_batches do |users|
+          account.user_emails.create(users.collect{|x| {:user_id => x.id, 
+                                                        :email => x.email, 
+                                                        :primary_role => true, 
+                                                        :verified => x.active}
+                                                  })
+        end
         $redis_others.sadd('user_email_migrated', account.id)
-  		end
-  	end
+      end
+    end
   end
 
   def self.down

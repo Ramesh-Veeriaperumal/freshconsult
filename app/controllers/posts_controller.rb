@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
-  before_filter :find_forum_topic, :only => :create
+  before_filter :find_forum_topic, :only => [:create, :best_answer]
   before_filter :find_post,      :except =>  [:monitored, :create]
   
   before_filter { |c| c.requires_feature :forums }
@@ -127,12 +127,16 @@ class PostsController < ApplicationController
   end
   
   def toggle_answer
-    @post.answer = !@post.answer
-    @post.save
+    @post.toggle_answer
     respond_to do |format| 
         format.html { redirect_to category_forum_topic_path(params[:category_id],params[:forum_id], params[:topic_id]) }
         format.xml  { head :created, :location => topic_url(:forum_id => @forum, :id => @topic, :format => :xml) }
       end
+  end
+
+  def best_answer
+    @answer = @topic.answer
+    render :partial => "forum_shared/best_answer"
   end
 
   protected

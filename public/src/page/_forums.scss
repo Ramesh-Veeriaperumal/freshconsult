@@ -215,16 +215,23 @@
 	.stamp.stamp_type_5{
 		background: #735000;
 	}
+	.stamp.stamp_type_6{
+		background: #597300;
+	}
+	.stamp.stamp_type_8{
+		background: #597300;
+	}
 }
 
 .stamp_answer{
 	background-color:#336600;
 	color:#ffffff;
-	padding:3px 12px;
+	padding:1px 10px;
 	@include border-radius(4px);
 	margin:2px 5px;
 	position:relative;
 	top:-6px;
+	font-size: 12px;
 }
 
 .action_icons{
@@ -286,24 +293,132 @@
 	   border-bottom:1px solid #E2E2E2; border-top:0;
 	}
 }
-.artical_list{
-	font-size: 14px;
-	font-weight: 400;
+
+.icons-like{
+	display: inline-block;
+	height: 16px;
+	width: 20px;
+}
+
+.icons-dislike{
+	display: inline-block;
+	height: 16px;
+	width: 20px;
+	position: relative;
+	top: 8px;
+}
+ 
+.artical-list{
     line-height: 1.7em;
-    margin-top:12px;
-    margin-bottom: 20px;
-    margin-left: 37px; 
-    text-align: left; 
-    li{
-    	margin-top:4px; 
-    	a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);   }
-    }
+}
+ 
+.article-item{
+	padding: 10px 0;
+	border-bottom: 1px solid #E4E4E4;
+	a{ font-size: 14px;}
+}
+ 
+.article-desc{
+	margin-left: 33px;
+	.article-user{
+		color: #444;
+	}
+}
+.article-info .draft{
+	background-color: #fdbd04;
+}
+ 
+.article-likes{
+	> span{
+		min-width: 50px;
+		display: inline-block;
+	}
+	.highlight{
+		color: #E00000;
+	}
+	.null-value{
+		opacity: 0.3;
+	}
 }
 
 .solutions_text{
 	padding-top:8px;
 	@include text-formatting;
 }
+
+
+.list-badge{
+	float:right;
+	position:relative;
+	right:0;
+	top:-5px;
+	@include clearfix;
+	.stamp{
+		padding:4px 8px;
+		margin:0;
+		font-size:12px; 
+		font-weight:bold;
+		float:left;
+		@include border-radius(6px);
+	}
+	
+	
+	.leftflat{
+		@include border-radius(0 6px 6px 0);
+	}
+	.stamp{	  
+		@include min-width(80px);
+		text-align:center; 
+		color:#ffffff;
+		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
+		text-decoration:none;
+		border-right-width:0;  
+		position:relative;
+	} 
+	.stamp.stamp_type_1{
+		background: #5077b3;
+	} 		
+	.stamp.stamp_type_2{
+		background: #cf8e00;
+	} 	
+	.stamp.stamp_type_3{
+		background: #a23330;
+	}
+	.stamp.stamp_type_4{
+		background: #597300;
+	}
+	.stamp.stamp_type_5{
+		background: #735000;
+	}
+	.stamp.stamp_type_6{
+		background: #597300;
+	}
+	.stamp.stamp_type_8{
+		background: #597300;
+	}
+	
+}
+
+.answer_previous{ 
+	border: solid 1px #DADADA;
+	padding: 10px;
+	border-radius: 5px;
+	background: #F8F8F8;
+	max-height: 210px;
+	overflow: hidden;
+	margin-top: 15px;
+	.preview_pic img{
+		width: 25px;
+		height: 25px;
+	}
+	.details{
+		margin-top: 15px;
+	}
+	.user_details{
+		margin-top: 5px;
+	}
+}
+
 
 // ------------------------------------------------------------------------------------------------------------
 // 										solution page seo addition 

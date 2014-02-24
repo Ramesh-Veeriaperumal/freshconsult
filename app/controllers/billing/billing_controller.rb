@@ -15,6 +15,8 @@ class Billing::BillingController < ApplicationController
               "subscription_cancelled", "subscription_reactivated", "card_added", 
               "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
 
+  PAYMENT_EVENTS = [ "payment_succeeded", "payment_refunded" ]
+
   INVOICE_TYPES = { 
     :recurring => "0", 
     :non_recurring => "1" 
@@ -43,7 +45,7 @@ class Billing::BillingController < ApplicationController
 
   
   def trigger
-    if event_monitored? and not_api_source?
+    if event_monitored? and not_api_source? or payment_events?
       send(params[:event_type], params[:content])
     end
 
@@ -81,8 +83,12 @@ class Billing::BillingController < ApplicationController
       params[:source] != EVENT_SOURCES[:api]
     end
 
+    def payment_events?
+      PAYMENT_EVENTS.include?(params[:event_type])
+    end
+
     def monitored_event_not_from_api?
-      event_monitored? and not_api_source?   
+      event_monitored? and not_api_source? or payment_events?  
     end    
 
     def ensure_right_parameters

@@ -142,6 +142,14 @@ class Forum < ActiveRecord::Base
   def questions?()
     self.forum_type == TYPE_KEYS_BY_TOKEN[:howto]
   end
+
+  def problems?
+    self.forum_type == TYPE_KEYS_BY_TOKEN[:problem]
+  end
+
+  def stamps?
+    ideas? or questions? or problems?
+  end
   
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})

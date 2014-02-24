@@ -10,9 +10,19 @@
 					<%= user_avatar( topic.user ) %>
 				<% end %>
 				<span class="list-badge">
+				<% 
+				if topic.stamp_type?
+					if @forum.ideas? %>
 					<span class="stamp stamp_type_<%=topic.stamp_type%>"> 
 						<%=h(topic.stamp_name)%>
 					</span>
+					<%elsif @forum.questions? && topic.answered? %>
+						<span class="pull-right stamp stamp_type_<%=topic.stamp_type%>"><%= t('topic.questions.answered') %></span>
+					<%elsif @forum.problems? && topic.solved? %>
+						<span class="pull-right stamp stamp_type_<%=topic.stamp_type%>"><%= t('topic.problems.solved') %></span>
+					<% end
+				end 
+				%>
 				</span>
 				
 				<%= content_tag(:b, "STICKY") if (topic.sticky?) %>
@@ -45,9 +55,6 @@
 							</span> 
 						<%end%>
 					</div>
-					<%if @forum.questions? && topic.answered? %>
-						<%= t('answered') %>
-					<%end%>
 			</li>
 		<% end %>
 	</ul>

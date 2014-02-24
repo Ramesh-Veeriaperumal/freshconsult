@@ -86,8 +86,8 @@ gem 'after_commit', "1.0.11"
 gem 'chargebee', "~> 1.2.9"
 
 gem 'encryptor', '1.1.3'
-
-gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
+gem "dalli"
+#gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"

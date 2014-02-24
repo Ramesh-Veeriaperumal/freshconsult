@@ -1654,25 +1654,7 @@ ol, ul, li{
 			margin-top: 3px;
 			border: 1px #bbb solid;
 		}
-	}
-	.requester-details{
-		display: inline-block !important;
-		float: left;
-		width: 97%;
-		font-size: 13px;
-		padding-left: 10px;
-		line-height: 18px;
-		h4{
-			font-weight: bold;
-		}
-
-		p{
-			color: #6e6e6e;
-			span{
-				font-size: 11px;
-			}
-		}
-	}
+	}	
 	.jira-wrap{
 		background: #f5f5f5;
 		@include border-radius(5px);
@@ -2103,18 +2085,6 @@ ol, ul, li{
 					@include border-radius(3px);
 					width: 42px;
 					height: 42px;
-				}
-			}
-
-			.requester-details{
-				display: inline-block !important;
-				float: left;
-				font-size: 13px;
-				padding-left: 10px;
-				line-height: 16px;
-
-				.more_details {
-					margin-top: 10px;
 				}
 			}
 		}

@@ -11,7 +11,7 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
 
     empty_twiml
   ensure
-    Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, { 
+    Resque::enqueue(Freshfone::Jobs::CallBilling, { 
                           :account_id => current_account.id,
                           :call => current_call.id,
                           :call_sid => params[:CallSid]})

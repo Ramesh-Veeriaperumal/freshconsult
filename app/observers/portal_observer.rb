@@ -17,7 +17,6 @@ class PortalObserver < ActiveRecord::Observer
 
     def after_update(portal)
       update_shard_mapping(portal)
-      update_freshfone_voice_url(portal)
     end
      
     def after_destroy(portal)
@@ -80,14 +79,6 @@ class PortalObserver < ActiveRecord::Observer
     def remove_domain_mapping(portal)
       domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
       domain_mapping.destroy if domain_mapping
-    end
-
-    def update_freshfone_voice_url(portal)
-      account = portal.account
-      if account.freshfone_enabled? and 
-          (@all_changes.has_key?(:portal_url) or @all_changes.has_key?(:ssl_enabled))
-        account.freshfone_account.update_voice_url
-      end
     end
 	
 end

@@ -461,6 +461,7 @@
     forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put } 
+      topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
       end
     end
   end
@@ -506,7 +507,7 @@
         :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
-          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get }, 
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put }, 
           :collection => {:my_topics => :get} do |topic|
         discussion.connect "/topics/my_topics/page/:page", :controller => :topics, 
           :action => :my_topics
@@ -514,6 +515,7 @@
           :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 
           :member => { :toggle_answer => :put }
+        topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
       end
     end
 

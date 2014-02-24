@@ -6,7 +6,7 @@ module Helpdesk::Email::NoteMethods
   end
 
   def set_note_source
-    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or !user.customer?) ? "note" : "email"]
+    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or user.agent?) ? "note" : "email"]
   end
 
   def note_params
@@ -26,7 +26,7 @@ module Helpdesk::Email::NoteMethods
     @from_fwd_emails ||= begin
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
-        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+        cc_email_hash_value[:fwd_emails].any? {|f_email| f_email.include?(email[:from][:email]) }
       else
         false
       end

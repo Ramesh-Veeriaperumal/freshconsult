@@ -250,6 +250,10 @@ en:
     nottaken: Not Taken
     deferred: Deferred
     inprogress: In Progress
+    answered: Answered
+    unanswered: Unanswered
+    solved: Solved
+    unsolved: Unsolved
   payment_info: Payment information
   billing_address: Billing Address
   support:
@@ -1437,6 +1441,33 @@ en:
       delete_post:
         short: "{{user_path}} deleted a new post"
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
+      topic_stamp_1:
+        short: "{{user_path}} has marked the forum topic as 'Planned'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Planned'"
+      topic_stamp_2:
+        short: "{{user_path}} has marked the forum topic as 'Implemented'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Implemented'"
+      topic_stamp_3:
+        short: "{{user_path}} has marked the forum topic as 'Not Taken'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Not Taken'"
+      topic_stamp_4:
+        short: "{{user_path}} has marked the forum topic as 'In Progress'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'In Progress'"
+      topic_stamp_5:
+        short: "{{user_path}} has marked the forum topic as 'Deferred'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Deferred'"
+      topic_stamp_6:
+        short: "{{user_path}} has marked the forum topic as 'Answered'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Answered'"
+      topic_stamp_7:
+        short: "{{user_path}} has marked the forum topic as 'Unanswered'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Unanswered'"
+      topic_stamp_8:
+        short: "{{user_path}} has marked the forum topic as 'Solved'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Solved'"
+      topic_stamp_9:
+        short: "{{user_path}} has marked the forum topic as 'Unsolved'"
+        long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Unsolved'"
     tickets:
       assigned_to_nobody:
         short: Assigned to 'None' by {{user_path}}
@@ -1623,6 +1654,7 @@ en:
     edit_title: Edit
     show:
       mark_this_idea_as: Mark this idea as
+      mark_this_problem_as: Mark this problem as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
   non_covered_feature_error: This feature is currently locked
@@ -1796,6 +1828,12 @@ en:
       nottaken: Not Taken
       deferred: Deferred
       inprogress: In Progress
+    questions:
+      answered: Answered
+      unanswered: Unanswered
+    problems:
+      solved: Solved
+      unsolved: Unsolved
     name: Topic Name
     new: Post a new topic
     edit: Edit topic
@@ -1877,12 +1915,16 @@ en:
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_comment: Edit Comment
-      unmark_answer: Unmark this as the answer
+      unmark_answer: Unmark as answer
       post_accepted_as_a_good_answer: This post is accepted as a good answer to this topic
-      mark_answer: Mark this as the answer
+      mark_answer: Mark as answer
+      mark_as_solved: Mark as solved
+      mark_as_unsolved: Mark as Unsolved
       delete_comment_confirm: Delete this comment?  Are you sure?
       delete_comment: Delete Comment
       answer: Answer
+    best_answer:
+      answer_confirm: "Looks like this topic has got an answer already. Please confirm before you proceed"
   half: 30 Minutes
   premium_sla_times:
     five_minutes: 5 Minutes
@@ -2303,6 +2345,7 @@ en:
       my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
       last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
+      best_answer: Best Answer
     topic_vote:
       you:
         one: "You"
@@ -2404,6 +2447,7 @@ en:
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
+    user_details: "By <span class='article-user'>%{user}</span>, %{time}" 
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
@@ -3031,7 +3075,7 @@ en:
     info8: More info regarding this company like address, phone number, website etc
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
-  no_topics_text: No topics in this forum
+  no_topics_text: No topics
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   enter_message: Enter your message here

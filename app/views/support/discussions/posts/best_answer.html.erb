@@ -1,0 +1,18 @@
+<% form_for @post, :url =>toggle_answer_support_discussions_topic_post_path(@post.topic, @post.id) do |f| %>
+<% end %>
+<%= t('forum_shared.best_answer.answer_confirm') %>
+<div class="answer_previous">
+	<div class="best-badge"><%= t('portal.topic.best_answer') %></div>
+	<div class="user-info">
+		<%= profile_image( @answer.user,'user-thumb-image', '25px', '25px' ) %>
+		<div class="user-details">
+			<strong><%= h(@answer.user.name) %></strong>
+			<%= t('portal.said')%><%= time_ago(@answer.created_at) %>
+		</div>
+	</div>
+	<div class="answer-desc">
+		<div class="p-desc">
+			<%= truncate(@answer.body, :length => 400) %>
+		</div>
+	</div>
+</div>
