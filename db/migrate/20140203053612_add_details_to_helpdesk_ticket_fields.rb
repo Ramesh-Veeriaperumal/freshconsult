@@ -3,10 +3,10 @@ class AddDetailsToHelpdeskTicketFields < ActiveRecord::Migration
   def self.up
     Lhm.change_table :helpdesk_ticket_fields, :atomic_switch => true do |m|
       m.add_column :default, "tinyint(1) DEFAULT '0'"
-      m.add_column :level, "int(8) DEFAULT NULL"
-      m.add_column :parent_id, "int(8) DEFAULT NULL"
+      m.add_column :level, "bigint(20) DEFAULT NULL"
+      m.add_column :parent_id, "bigint(20) DEFAULT NULL"
       m.add_column :prefered_ff_col, "varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL"
-      m.add_column :import_id, "int(8) DEFAULT NULL"
+      m.add_column :import_id, "bigint(20) DEFAULT NULL"
     end
   end
 
