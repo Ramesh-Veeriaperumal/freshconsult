@@ -70,13 +70,18 @@ class Freshfone::CallCostCalculator
 		def update_call_cost
 			# update call cost /special ignore update case if it is for record message,
 			# we don't store call data for record twiml but twilio charge needs to be deducted
-			current_call.root.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
-			current_account.freshfone_credit.update_credit(total_charge) if total_charge > 0
-			#Otherbilling for preview & Message_records
-			current_account.freshfone_other_charges.create(
-				:debit_payment => total_charge,
-				:action_type => args[:billing_type],
-				:freshfone_number_id => args[:number_id]) unless args[:billing_type].blank? 
+			if total_charge > 0
+				current_call.root.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
+				current_account.freshfone_credit.update_credit(total_charge)
+				#Otherbilling for preview & Message_records
+				current_account.freshfone_other_charges.create(
+					:debit_payment => total_charge,
+					:action_type => args[:billing_type],
+					:freshfone_number_id => args[:number_id]) unless args[:billing_type].blank? 
+			else
+				Rails.logger.debug "Total charge is zero for call :: #{args[:call_sid]} :: transferred? #{transferred?} 
+				:: dial_call_sid #{dial_call_sid} :: current_call #{current_call.blank?} :: no_call_duration #{no_call_duration} :: total_charge #{total_charge}"
+			end
 		end
 		
 		def update_calls_beyond_threshold_count
