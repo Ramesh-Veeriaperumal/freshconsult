@@ -75,8 +75,7 @@ end
   
 def change_password    
     @check_session = current_account.user_sessions.new(:email => current_user.email, :password => params[:user][:current_password], :remember_me => false)
-    if @check_session.save      
-      reset_password 
+    if @check_session.save && reset_password 
       flash[:notice] = t(:'flash.profile.change_password.success')
       @check_session.destroy
       current_user_session.destroy
@@ -92,6 +91,7 @@ def change_password
 end
 
 def reset_password
+    return false if params[:user][:password] != params[:user][:password_confirmation]
     @user = current_user
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
