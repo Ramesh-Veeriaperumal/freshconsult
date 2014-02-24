@@ -14,7 +14,7 @@ class Freshfone::DeviceController < FreshfoneBaseController
 		end
 		render :xml => twiml.text
 	ensure
-		Resque::enqueue(Freshfone::Jobs::CallBilling, 
+		Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, 
 											{ :account_id => current_account.id, 
 												:call_sid => params[:CallSid],
 												:billing_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:message_record],
