@@ -125,6 +125,7 @@
                     jQuery("#watcherlist").removeClass("sloading");
                     jQuery(".construct").append(jQuery("#watcherlist .unwatch"));
                     jQuery("#monitor a").addClass("monitor").removeClass("monitor_active");
+                    trigger_event("watcher_removed",{});
 
                     if(jQuery.inArray("<%= current_user.id %>", jQuery("select.watcher_input").val()) == -1){
                       jQuery("select.watcher_input")
@@ -167,6 +168,7 @@
                     },
           success: function(){
                       jQuery('#watcher_toggle').data('watching', true);
+                      trigger_event("watcher_added",{});
                     }
     });
 

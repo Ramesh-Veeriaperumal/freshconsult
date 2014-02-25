@@ -24,7 +24,7 @@
 						<%end%>
 			 		</td>
 		 		<%else%>
-		  		<% if(content.match(/^No +/) || content.blank?)
+		  		<% if( content.blank? || content.match(/^No +/) )
 			 			content = "-"
 				 	end%>
 	 				<%= content_tag(:td,h(content),:class => item) %>

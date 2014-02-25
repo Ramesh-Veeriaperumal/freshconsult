@@ -47,7 +47,7 @@ module MapFields
         csv_file = AwsWrapper::S3Object.find(session[:map_fields][:file], S3_CONFIG[:bucket])
         @mapped_fields = []
         begin
-          CSVBridge.parse(csv_file.read) do |row|
+          CSVBridge.parse(content_of(csv_file)) do |row|
              @mapped_fields << row
           end
         rescue CSVBridge::MalformedCSVError => e
@@ -60,7 +60,7 @@ module MapFields
       @rows = []
       begin
         csv_file = AwsWrapper::S3Object.find(session[:map_fields][:file], S3_CONFIG[:bucket])
-        CSVBridge.parse(csv_file.read) do |row|
+        CSVBridge.parse(content_of(csv_file)) do |row|
            @rows << row
            break if @rows.size == 2
         end
@@ -77,6 +77,10 @@ module MapFields
         @parameters += ParamsParser.parse(params, param)
       end
     end
+  end
+
+  def content_of csv_file
+    csv_file.read.encode!('utf-8', :undef => :replace, :invalid => :replace, :replace => '')
   end
 
   def mapped_fields

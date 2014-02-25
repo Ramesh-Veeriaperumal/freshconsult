@@ -4,7 +4,7 @@ module SsoUtil
   SAML="saml"
   SAML_NAME_ID_FORMAT="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
   SSO_ALLOWED_IN_SECS = 1800
-  SAML_CLOCK_DRIFT = 10 # No of secs the response time can be before the server time .. Keep this very low for security
+  SAML_CLOCK_DRIFT = 1 # No of secs the response time can be before the server time .. Keep this very low for security
   FIRST_NAME_STRS = [ "FirstName", "User.FirstName", "username" ].map &:to_sym  # username will always return something
   LAST_NAME_STRS = [ "LastName", "User.LastName" ].map &:to_sym 
 

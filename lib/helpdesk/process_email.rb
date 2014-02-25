@@ -44,6 +44,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           ticket = fetch_ticket(account, from_email, user)
           if ticket
             return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+            ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
             add_email_to_ticket(ticket, from_email, user)
           else
             create_ticket(account, from_email, to_email, user, email_config)
@@ -239,7 +240,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       begin
         if (user.agent? && !user.deleted?)
-          process_email_commands(ticket, user, email_config) if user.privilege?(:edit_ticket_properties)
+          process_email_commands(ticket, user, email_config, params) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
           ticket.ticket_body.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
@@ -390,13 +391,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
      
       attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
-        if content_ids["attachment#{i+1}"]
-          description = "content_id"
-        end
+      description = content_ids["attachment#{i+1}"] ? "content_id" : ""
         begin
-          created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
-            :account_id => ticket.account_id,:description => description)
-            created_attachment = create_attachment_from_params(created_attachment,
+          created_attachment = {:content => params["attachment#{i+1}"], 
+            :account_id => ticket.account_id,:description => description}
+            created_attachment = create_attachment_from_params(item, created_attachment,
                                     attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")

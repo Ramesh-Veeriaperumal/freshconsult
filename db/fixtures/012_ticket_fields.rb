@@ -4,6 +4,7 @@ FlexifieldDef.seed(:account_id, :module) do |s|
   s.account_id = account.id
   s.module = "Ticket"
   s.name = "Ticket_#{account.id}"
+  s.active = true
 end
 
 def self.ticket_fields_data
@@ -61,7 +62,8 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :required_in_portal => f[:required_in_portal] || false,
       :required_for_closure => f[:required_for_closure] || false,
       :choices => f[:choices] || [],
-      :field_options => f[:field_options] 
+      :field_options => f[:field_options],
+      :default => true
     }
   end
 )

@@ -233,6 +233,15 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def forum_options
+    _forum_options = []
+    current_account.forum_categories.each do |c| 
+      _forums = c.forums.map{ |f| [f.name, f.id] }
+      _forum_options << [ c.name, _forums ] if _forums.present?
+    end
+    _forum_options
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !privilege?(:manage_tickets) ],

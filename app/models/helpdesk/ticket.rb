@@ -25,7 +25,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "parent_ticket"]
   OBSERVER_ATTR = []
 
   set_table_name "helpdesk_tickets"

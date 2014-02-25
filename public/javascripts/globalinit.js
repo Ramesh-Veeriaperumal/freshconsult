@@ -563,10 +563,6 @@ window.xhrPool = [];
          try{ closeableFlash(flash); } catch(e){}
       }
 
-      if(jQuery.browser.opera){
-        jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
-      }
-
       $('body').on('click.freshdesk', '#scroll-to-top', function(ev) {
         $.scrollTo('body');
       })
