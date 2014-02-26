@@ -85,7 +85,7 @@ module Helpdesk::MergeTicketActions
 
 		def close_source_ticket source_ticket
 		  disable_notification
-		  source_ticket.parent_ticket = @target_ticket.display_id
+		  source_ticket.parent_ticket = @target_ticket.id
 		  source_ticket.update_attribute(:status , CLOSED)
 		  enable_notification
 		end
