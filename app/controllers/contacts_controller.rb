@@ -175,11 +175,8 @@ class ContactsController < ApplicationController
   end
   
   def update    
-    company_name = params[:user][:customer]
-    unless company_name.blank?     
-      @item.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
-    else
-      @item.customer_id = nil
+    if params[:user].key? :customer 
+      @item.customer_id = current_account.customers.find_or_create_by_name(params[:user][:customer]).id
     end
     @item.update_tag_names(params[:user][:tags]) # update tags in the user object
     if @item.update_attributes(params[cname])
