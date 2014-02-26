@@ -141,11 +141,8 @@ class Account < ActiveRecord::Base
   has_many :published_articles, :through => :public_folders,
               :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
    
-  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
+  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
-
-  # added below mapping for multiform phase1 only
-  has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
