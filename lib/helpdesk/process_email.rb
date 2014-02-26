@@ -342,7 +342,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
-          process_email_commands(ticket, user, ticket.email_config, note) if 
+          process_email_commands(ticket, user, ticket.email_config, params, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
           note.note_body.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
@@ -396,7 +396,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           created_attachment = {:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description}
             created_attachment = create_attachment_from_params(item, created_attachment,
-                                    attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
+                                    (attachment_info.present? ? attachment_info["attachment#{i+1}"] : nil),"attachment#{i+1}")
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
           add_notification_text item
