@@ -466,7 +466,7 @@
     end
   end
 
-  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', :action => 'toggle', :method => :post
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :method => :post
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal
