@@ -858,13 +858,13 @@ en:
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a solution category...
-        top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         top_level_forum_info: You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
         top_level_forum: Top level forum category
         portal_url: Portal URL
-        top_level_solution: Top level solutions category
+        solution_categories: Solution Categories
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal

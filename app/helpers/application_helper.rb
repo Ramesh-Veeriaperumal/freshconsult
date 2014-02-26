@@ -791,11 +791,8 @@ module ApplicationHelper
    
   private
     def solutions_tab
-      if current_portal.main_portal?
+      if !current_portal.solution_categories.empty?
         ['/solution/categories', :solutions, solutions_visibility?]
-      elsif current_portal.solution_category
-        [solution_category_path(current_portal.solution_category), :solutions, 
-              solutions_visibility?]
       else
         ['#', :solutions, false]
       end

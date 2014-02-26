@@ -1432,6 +1432,15 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
 
   add_index "portal_pages", ["account_id", "template_id", "page_type"], :name => "index_portals_on_account_id_and_template_id_page_type"
 
+  create_table "portal_solution_categories", :force => true do |t|
+    t.integer "portal_id",            :limit => 8
+    t.integer "solution_category_id", :limit => 8
+    t.integer "account_id",           :limit => 8
+    t.integer "position"
+  end
+
+  add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
+
   create_table "portal_templates", :force => true do |t|
     t.integer  "account_id",  :limit => 8,        :null => false
     t.integer  "portal_id",   :limit => 8,        :null => false

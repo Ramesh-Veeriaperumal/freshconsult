@@ -12,20 +12,27 @@ class Solution::Category < ActiveRecord::Base
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
   
-  belongs_to :account
+  belongs_to_account
 
   has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
   has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 
           :conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
   has_many :published_articles, :through => :public_folders
+  has_many :portal_solution_categories, 
+    :class_name => 'PortalSolutionCategory', 
+    :foreign_key => :solution_category_id, 
+    :dependent => :delete_all
 
+  has_many :portals, :through => :portal_solution_categories
   has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
+  after_create :assign_portal
+
   acts_as_list :scope => :account
 
-  attr_accessible :name,:description,:import_id, :is_default
+  attr_accessible :name, :description, :import_id, :is_default, :portal_ids
 
   named_scope :customer_categories, {:conditions => {:is_default=>false}}
 
@@ -54,6 +61,12 @@ class Solution::Category < ActiveRecord::Base
   
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
+  end
+
+  def assign_portal
+    portal_solution_category = self.portal_solution_categories.build
+    portal_solution_category.portal_id = account.main_portal.id
+    portal_solution_category.save
   end
    
 end

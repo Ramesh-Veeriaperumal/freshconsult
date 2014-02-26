@@ -54,11 +54,13 @@
       </div>
       
       <div class="control-group">
-        <label class="control-label"><%= t(".top_level_solution").html_safe %></label>
+        <label class="control-label"><%= t(".solution_categories").html_safe %></label>
         <div class="controls">
-          <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
-                    :id, :name, {:include_blank => t(".select_solution_category").html_safe} , :class => "select2"%>
-          <%= content_tag(:div, t('.top_level_solution_info').html_safe, :class => "info-data") %>
+          <input type="hidden" name="product[portal_attributes][solution_category_ids][]" value="" />
+          <%= portal.collection_select :solution_category_ids, @solution_categories.reject(&:is_default?), 
+                    :id, :name, {} , :class => "select2 input-xlarge", :multiple => true, 
+                    :placeholder => t(".select_solution_category").html_safe %>
+          <%= content_tag(:div, t('.solution_categories_info').html_safe, :class => "info-data") %>
         </div>
       </div>
     </div>

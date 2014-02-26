@@ -45,6 +45,14 @@ class Solution::Article < ActiveRecord::Base
       { :conditions => ["user_id = ?", user.id ] }
   }
 
+  named_scope :articles_for_portal, lambda { |portal|
+    {
+      :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
+          portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+      :joins => :folder
+    }
+  }
+
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
   end

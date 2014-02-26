@@ -23,9 +23,7 @@ class Support::SolutionsController < SupportController
 
 	private
 		def load_category
-			@category = current_portal.main_portal ? current_portal.solution_categories.find_by_id(params[:id]) : 
-				current_portal.solution_category
-
+			@category = current_portal.solution_categories.find_by_id(params[:id])
 			(raise ActiveRecord::RecordNotFound and return) if @category.nil?
 		end
 
