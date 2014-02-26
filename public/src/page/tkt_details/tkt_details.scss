@@ -597,7 +597,7 @@ ol, ul, li{
     	.sav {
     		background: transparent;
     		border: solid 1px #999;
-    		@include border-radius(0 4px 4px 0);
+    		@include border-radius(4px);
     		color: #333;
     		float:left;
     		margin:0;

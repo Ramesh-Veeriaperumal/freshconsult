@@ -1,6 +1,6 @@
 (function($) {
 
-var activeForm, savingDraft, draftFirstFlag, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
+var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
 
 // ----- SAVING REPLIES AS DRAFTS -------- //
 save_draft = function(content) {
@@ -9,8 +9,6 @@ save_draft = function(content) {
 		$(".ticket_show #reply-draft").parent().addClass('draft_saved');
 
 		$(".ticket_show #draft-save").text(TICKET_DETAILS_DATA['draft']['saving_text']);
-		$(".ticket_show #clear-draft").hide();
-
 		savingDraft = true;
 		$.ajax({
 			url: TICKET_DETAILS_DATA['draft']['save_path'],
@@ -20,10 +18,9 @@ save_draft = function(content) {
 				$(".ticket_show #draft-save")
 					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
 					.attr('data-moment', new Date());
-
-				$(".ticket_show #clear-draft").show();
 				$(".ticket_show #reply-draft").removeClass('saving');				
 				savingDraft = false;
+				TICKET_DETAILS_DATA['draft']['saved'] = true;
 			}
 		})
 	}
@@ -63,6 +60,7 @@ clearSavedDraft = function(){
 	TICKET_DETAILS_DATA['draft']['clearingDraft'] = true;
 	$('#cnt-reply-body').setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+	TICKET_DETAILS_DATA['draft']['saved'] = false;
 	_clearDraftDom();
 }
 
@@ -155,12 +153,11 @@ swapEmailNote = function(formid, link){
 	//Draft Saving for Reply form
 	if (formid == 'cnt-reply') {
 		dontSaveDraft = false;
-		if (!savingDraft && draftFirstFlag != 1){
+		if (!savingDraft){
 			TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 			triggerDraftSaving();
 			if (!draftClearedFlag) {
 				$("#draft-save").text(TICKET_DETAILS_DATA['draft']['saved_text']);
-				$("#clear-draft").show();
 				$("#reply-draft").show();
 				$(".ticket_show #reply-draft").parent().addClass('draft_saved');
 			}else{
@@ -168,7 +165,6 @@ swapEmailNote = function(formid, link){
 				$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
 			}
 		}
-		draftFirstFlag = 1;
 	} else {
 		stopDraftSaving();
 	}
@@ -224,8 +220,7 @@ showHideToEmailContainer = function(){
 
 TICKET_DETAILS_DOMREADY = function() {
 
-activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
-
+activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 $('#ticket_original_request *').css({position: ''}); //Resetting the Position
 $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 	$('#TicketProperties .default_agent')
@@ -255,11 +250,6 @@ $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() 
 
 // This has been moved as a on click event directly to the cancel button 
 // jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
-
-$("body").on("click.ticket_details", ".ticket_show #clear-draft", function(){
-  if (confirm(TICKET_DETAILS_DATA['draft']['clear_text']))
-  	clearSavedDraft();
-});
 
 // Functions for Select2
 var formatPriority = function(item) {
@@ -699,6 +689,9 @@ var scrollToError = function(){
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
 		var btn = $(this);
+		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
+			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])) return false; 
+        }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		if (btn.data('showPseudoReply')) 
@@ -901,6 +894,7 @@ var scrollToError = function(){
 					try {
 						if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
 							stopDraftSaving();
+							$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 							_clearDraftDom();
 						}	
 					} catch(e) {}
