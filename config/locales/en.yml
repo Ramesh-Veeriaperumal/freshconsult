@@ -3589,7 +3589,7 @@ en:
     copy_of: Copy of
     save_tooltip: Save
     saveas_tooltip: Save as
-    cancel_tooltip: Discard
+    cancel_tooltip: Discard changes
     edit_tooltip: Edit
     delete_tooltip: Delete
     sort_fields:
