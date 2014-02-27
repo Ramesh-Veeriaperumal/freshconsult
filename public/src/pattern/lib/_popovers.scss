@@ -14,7 +14,7 @@
     background: rgba($popoverStroke, 0.8);
     padding: 4px 1px 1px;
     overflow: hidden;
-    @include min-width(350px);
+    @include min-width(220px);
     @include border-radius($popover-radius);
     @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4));
   }
