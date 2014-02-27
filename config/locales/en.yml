@@ -4936,7 +4936,7 @@ en:
     welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
     minimized_title: "Let's talk!"
-    maximized_title: "This chat is so on!"
+    maximized_title: "Chat in progress"
     welcome_message: "Hi! How can we help you today?"
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
@@ -5019,7 +5019,7 @@ en:
     recent_messages: "Recent Messages"
     agents: "Agents"
     convert_to_ticket: "Convert to Ticket"
-    create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
+    create_ticket_tip: "Save your chat transcript as a new ticket or add as a note to an existing one"
     note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error
@@ -5080,6 +5080,11 @@ en:
     connecting_msg: "Waiting for an agent"
     ignore_msg: "Looks like all our agents are tied up right now :( Sorry about that, but please <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>leave us a message</a> and we'll get right back."
     date_invalid: Invalid date
+    installation: "Installation"
+    intro_title: "Why Freshchat?"
+    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, your agents can not only chat with each other without leaving Freshdesk (finally!), they can also provide instant answers to your prospective customers. It’s another feather in your quiver, a channel designed to bring you closer to your users and visitors."
+    enable_chat: "Enable freshchat"
+    learn_freshchat: "Learn more about freshchat"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
