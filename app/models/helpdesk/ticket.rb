@@ -272,9 +272,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def requester_info
     requester.get_info if requester
   end
+
+  def editable?
+    requester and (requester_has_email? or requester_has_phone?)
+  end
   
   def requester_has_email?
     (requester) and (!requester.email.blank?)
+  end
+
+  def requester_has_phone?
+    requester.phone.present?
   end
 
   def encode_display_id
