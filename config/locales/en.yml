@@ -631,7 +631,7 @@ en:
     day_passes:
       helpnote:
         title: Day Pass
-        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they gets used up.
+        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they get used up.
       index:
         no_credit_card: No credit card on file.
         payment_info: Enter payment information to add more day passes
