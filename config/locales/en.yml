@@ -4713,6 +4713,7 @@ en:
       no_credit_card: "Enter payment information to purchase Freshfone credits"
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
+      see_detailed_pricing: "See Detailed Pricing"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"

@@ -1,7 +1,10 @@
 <% if feature?(:freshfone) %>
 	<%= include_cloudfront_css :freshfone_admin %>
 	<div class="freshfone_subscription">
-		<h3 class= "title">Freshfone</h3>
+		<div class="freshfone_subscription_header row-fluid">
+      <h3 class= "title span8">Freshfone</h3>
+      <a href="http://freshdesk.com/freshfone/pricing" target="_blank" class="pull-right mt10"><%= t('freshfone.subscription.see_detailed_pricing') %></a>
+    </div>
 		<ul class="ui-form">
 			<li class="current-balance">
 				<p class="current-balance-text"><%= t('freshfone.subscription.current_balance') %></p>
