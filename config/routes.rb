@@ -123,7 +123,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :chat_setting
+    admin.resources :chat_setting, :collection => { :toggle => :post }
     admin.resources :automations, :collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 

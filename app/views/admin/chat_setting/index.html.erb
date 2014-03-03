@@ -5,12 +5,22 @@
 <%= render :partial => "helpnote" %>
 <%- end %>
 <div class="chat-header">
-	<%= content_tag(:h3, t('chatwidget_title'), :class => "title" ) %> 
+	<h3 class = "title"> <%=t('chatwidget_title')%>
+		<div class="pull-right">
+			<%= check_box_tag :chat_enable, 1, feature?(:chat_enable), 
+				:rel => "toggle", 
+				"data-checked-label" => "enabled", 
+				"data-unchecked-label" => "disabled",
+				:onchange => remote_function( :url => toggle_admin_chat_setting_path, 
+											  :complete => "jQuery('#chat_setting').toggle();jQuery('#chat_intro').toggle();") 
+			%>
+		</div>
+	</h3>
 </div>
-<div class="tabbable">
+<div id = "chat_setting" class="tabbable" <% unless feature?(:chat_enable) %>style="display:none"<%end%>>
   <ul class="nav nav-tabs">
    <li class="active"><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
-   <li id="chat_settings_install"><a href="#install" data-toggle="tab">Installation</a></li>
+   <li id="chat_settings_install"><a href="#install" data-toggle="tab"><%=t('freshchat.installation')%></a></li>
   </ul>
 
   <div class="tab-content" id="chat_settings_tab">
@@ -247,13 +257,6 @@
       </div>
    </div>
 </div>
-<% javascript_tag do %>
-(function($){
-	$(window).load(function (){
-		
-		behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : "Bottom Right"%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:'//<%=@current_account.full_domain%>',nodeurl:'<%=ChatConfig['communication_url'][Rails.env]%>',fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:'<%=ChatConfig['chat_debug'][Rails.env]%>','text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>','asset':<%=ChatConfig['asset_url'][Rails.env].to_json.html_safe%>});
-
-		
-	});
-})(jQuery)
-<%end%>
+<div id="chat_intro" <% if feature?(:chat_enable) %>style="display:none"<%end%>>
+	<%= render :partial => "intro" %>
+</div>
