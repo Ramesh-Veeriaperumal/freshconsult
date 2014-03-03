@@ -111,6 +111,12 @@ class Freshfone::Number < ActiveRecord::Base
 											 :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
 	end
 
+	def self.find_trial_account_due(renew_at = Time.now)
+		Freshfone::Number.all(:include => {:account => :subscription}, 
+			:conditions => ['freshfone_numbers.state = ? AND freshfone_numbers.deleted = ? AND freshfone_numbers.next_renewal_at BETWEEN ? and ? AND subscriptions.state = ?',
+											STATE[:active], false, renew_at.beginning_of_day, renew_at.end_of_day, 'trial'])
+	end
+
 	def renew
 		begin
 			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
@@ -123,6 +129,11 @@ class Freshfone::Number < ActiveRecord::Base
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
 			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
 		end
+	end
+
+	def insufficient_renewal_amount?
+		credit = account.freshfone_credit
+		credit.available_credit < rate
 	end
 
 	def handle_number_renewal_failure(next_renewal)

@@ -4770,6 +4770,11 @@ en:
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
+      singular_active_number: "Active Number"
+      none_active_number: "- none -"
+      active_number: "Active Numbers"
+      singular_deleted_number: "Deleted Number"
+      deleted_number: "Deleted Numbers"
       block_number: "Block"
       cancel: "Cancel"
       blacklist_confirmation: "Are you sure to block"

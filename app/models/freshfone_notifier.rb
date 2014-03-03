@@ -54,6 +54,15 @@ class FreshfoneNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "text/html"
   end
+
+  def trial_number_expiring(account, number, trial_days = nil)
+    subject       "Your Freshfone number #{number} will expire in #{trial_days}"
+    recipients    account.admin_email
+    from          AppConfig['billing_email']
+    body          :account => account, :number => number, :trial_days => trial_days
+    sent_on       Time.now
+    content_type  "text/html"
+  end 
  
   def billing_failure(account, call_sid, exception)
     subject       "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{call_sid}"
