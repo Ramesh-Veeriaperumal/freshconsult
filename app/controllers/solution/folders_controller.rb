@@ -4,22 +4,18 @@ class Solution::FoldersController < ApplicationController
 
   skip_before_filter :check_privilege, :only => :show
   before_filter :portal_check, :only => :show
-  
-  before_filter { |c| c.check_portal_scope :open_solutions }
-  before_filter :portal_category?
-  before_filter :set_selected_tab       
-  before_filter :page_title
+  before_filter :set_selected_tab, :page_title
+  before_filter :load_category, :only => [:show, :edit, :update, :destroy]
   
   def index
     redirect_to solution_category_path(params[:category_id])
   end
 
   def show    
-    current_category = current_account.solution_categories.find(params[:category_id])
-    @item = current_category.folders.find(params[:id], :include => :articles)
+    @item = @category.folders.find(params[:id], :include => :articles)
     
     respond_to do |format|
-      format.html { @page_canonical = solution_category_folder_url(current_category, @item) }
+      format.html { @page_canonical = solution_category_folder_url(@category, @item) }
       format.xml  { render :xml => @item.to_xml(:include => articles_scope) }
       format.json { render :json => @item.as_json(:include => articles_scope) }
     end
@@ -36,8 +32,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    current_category = current_account.solution_categories.find(params[:category_id])
-    @folder = current_category.folders.find(params[:id])      
+    @folder = @category.folders.find(params[:id])      
     respond_to do |format|
       if @folder.is_default?
         flash[:notice] = I18n.t('folder_edit_not_allowed')
@@ -73,8 +68,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
-    current_category = current_account.solution_categories.find(params[:category_id])     
-    @folder = current_category.folders.find(params[:id])
+    @folder = @category.folders.find(params[:id])
     
     redirect_to_url = solution_category_url(params[:category_id])
     
@@ -91,8 +85,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def destroy
-    current_category = current_account.solution_categories.find(params[:category_id])     
-    @folder = current_category.folders.find(params[:id])
+    @folder = @category.folders.find(params[:id])
     
     @folder.destroy unless @folder.is_default?
     
@@ -135,11 +128,6 @@ class Solution::FoldersController < ApplicationController
     @selected_tab = :solutions
   end
   
-  def portal_category?
-    wrong_portal unless(main_portal? || 
-          (params[:category_id].to_i == current_portal.solution_category_id)) #Duplicate..
-  end
-  
   def articles_scope
     :articles
   end
@@ -153,4 +141,13 @@ class Solution::FoldersController < ApplicationController
         access_denied
       end
     end
+
+    def portal_scoper
+      current_portal.solution_categories
+    end
+
+    def load_category
+      @category = portal_scoper.find_by_id!(params[:category_id])
+    end
+
 end

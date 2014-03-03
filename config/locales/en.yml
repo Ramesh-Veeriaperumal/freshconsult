@@ -858,13 +858,13 @@ en:
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a solution category...
-        top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         top_level_forum_info: You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
         top_level_forum: Top level forum category
         portal_url: Portal URL
-        top_level_solution: Top level solutions category
+        solution_categories: Solution Categories
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
@@ -3333,6 +3333,7 @@ en:
     shared:
       addcc: "Add cc"
       cc: "cc"
+      bcc: "bcc"
       reply_form:
         title: Reply to %{email}
         cc: Cc
@@ -4417,7 +4418,6 @@ en:
   conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
-  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
   clear: "Clear"
   saved_draft: "Saved"
   saving_draft: "Saving..."
@@ -4936,7 +4936,7 @@ en:
     welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
     minimized_title: "Let's talk!"
-    maximized_title: "This chat is so on!"
+    maximized_title: "Chat in progress"
     welcome_message: "Hi! How can we help you today?"
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
@@ -4944,10 +4944,11 @@ en:
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note:Pre-chat form will not be shown when Proactive chat is ON"
-    proactive_time: "Visitors time spend %{seconds} on a page"
+    proactive_time: "Visitors time spend %{seconds} on same page"
     procative_info: "Proactive chat lets you automatically initiate chat conversations if a visitor spends more than a certain amount of time in a page"
     texton: "On"
     textoff: "Off"
+    form_details: "Form details"
     copy_to_clipboard: "Copy to Clipboard"
     copied: "Copied!!"
     show: "Show"
@@ -5018,7 +5019,7 @@ en:
     recent_messages: "Recent Messages"
     agents: "Agents"
     convert_to_ticket: "Convert to Ticket"
-    create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
+    create_ticket_tip: "Save your chat transcript as a new ticket or add as a note to an existing one"
     note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error
@@ -5079,6 +5080,11 @@ en:
     connecting_msg: "Waiting for an agent"
     ignore_msg: "Looks like all our agents are tied up right now :( Sorry about that, but please <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>leave us a message</a> and we'll get right back."
     date_invalid: Invalid date
+    installation: "Installation"
+    intro_title: "Why Freshchat?"
+    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, your agents can not only chat with each other without leaving Freshdesk (finally!), they can also provide instant answers to your prospective customers. It’s another feather in your quiver, a channel designed to bring you closer to your users and visitors."
+    enable_chat: "Enable freshchat"
+    learn_freshchat: "Learn more about freshchat"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

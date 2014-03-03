@@ -2227,22 +2227,25 @@ a.submit_link:hover{
 
 .email-details{
 	max-height: 200px;
+	max-width: 400px;
+	word-wrap: break-word;
 	overflow: auto;
 	margin: 0 -14px;
 	padding: 0 10px;
-	ul {
-		li {
-			margin-left: 48px;
-			color: $default_txt_color;
-			padding-bottom: 10px;
-			&.left{
+	dl {
+		margin-bottom: 0;
+		dt{
 				float:left;
 				margin-left: 0;
 				color: #AAA;
-				padding-right: 5px;
-				min-width: 40px;
+				padding-right: 0 5px 10px 0;
+				min-width: 60px;
 				text-align: right;
-			}
+				font-weight: normal;
+		}
+		dd {
+			margin-left: 65px;
+			padding-bottom: 10px;
 		}
 	}
 }

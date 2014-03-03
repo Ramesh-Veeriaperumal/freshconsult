@@ -336,7 +336,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :from_email => from_email[:email],
         :to_emails => parse_to_emails,
         :cc_emails => parsed_cc_emails
-      )       
+      )  
+      note.subject = params[:subject]     
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
       
       begin
@@ -396,7 +397,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           created_attachment = {:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description}
             created_attachment = create_attachment_from_params(item, created_attachment,
-                                    attachment_info["attachment#{i+1}"],"attachment#{i+1}") if attachment_info
+                                    (attachment_info.present? ? attachment_info["attachment#{i+1}"] : nil),"attachment#{i+1}")
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
           add_notification_text item

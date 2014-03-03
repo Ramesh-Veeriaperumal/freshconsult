@@ -21,11 +21,20 @@ module Helpdesk::NoteActions
 
   def conversation_popover_details(note)
     return "" if (note.schema_less_note.nil? or note.to_emails.blank?)
-    conv_details = t("conv_contacts_info_pop", :conv_type_msg => t("to"), 
-      :to_emails => parse_to_comma_sep_emails(note.to_emails).split(",").join(",<br />"),
-      :cc_emails_key => note.cc_emails.blank? ? "" : t("cc_emails_key_pop", :cc_emails => parse_to_comma_sep_emails(note.cc_emails).split(",").join(",<br />")),
-      :bcc_emails_key => note.bcc_emails.blank? ? "" : t("bcc_emails_key_pop", :bcc_emails => parse_to_comma_sep_emails(note.bcc_emails).split(",").join(",<br />")))
-    content_tag :div, conv_details, :class => "email-details"
+    content_tag :div, (content_tag :dl, conv_details(note)), :class => "email-details"
+  end
+
+  def conv_details note
+    conv_array = []
+    conv_array << [t('Subject'), note.subject] if note.subject
+    conv_array << [t('to'), generate_email_strings(note.to_emails)]
+    conv_array << [t('helpdesk.shared.cc'), generate_email_strings(note.cc_emails)] unless note.cc_emails.blank?
+    conv_array << [t('helpdesk.shared.bcc'), generate_email_strings(note.bcc_emails)] unless note.bcc_emails.blank?
+    conv_array.map{|c| "<dt>#{c.first} : </dt><dd>#{c.last}</dd>"}.join("")
+  end
+
+  def generate_email_strings arr
+    parse_to_comma_sep_emails(arr).split(",").join(",<br />")
   end
 
   def to_event_data(item)

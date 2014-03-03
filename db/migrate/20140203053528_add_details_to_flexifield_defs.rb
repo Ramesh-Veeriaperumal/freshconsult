@@ -2,7 +2,7 @@ class AddDetailsToFlexifieldDefs < ActiveRecord::Migration
   shard :all
   def self.up
   	Lhm.change_table :flexifield_defs, :atomic_switch => true do |m|
-  		m.add_column :product_id, "int(8) DEFAULT NULL"
+  		m.add_column :product_id, "bigint(20) DEFAULT NULL"
   		m.add_column :active,"tinyint(1) DEFAULT '1'"
   	end
   end

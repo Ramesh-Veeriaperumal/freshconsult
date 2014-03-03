@@ -2226,6 +2226,18 @@ input[type="text"].number{
     }
 }
 
+.freshchat-content{	
+    padding: 0px;
+    h2{ font-size: 24px; font-weight: bold;}
+    p{
+    	font-size: 13px;
+    	line-height: 18px;
+    	margin-bottom: 18px;
+    	color:#666666;	
+    }
+    #enable-chat-button{ margin-right: 30px;}
+}
+
 // for Integrations
 .field.custom_app_preview {
 	margin-top: -14px;

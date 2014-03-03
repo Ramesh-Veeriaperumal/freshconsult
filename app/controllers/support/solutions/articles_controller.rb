@@ -20,7 +20,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   def show
     wrong_portal and return unless(main_portal? || 
-        (@article.folder.category_id == current_portal.solution_category_id))
+        (current_portal.has_solution_category?(@article.folder.category_id)))
 
     render_404 and return unless @article.published?
 

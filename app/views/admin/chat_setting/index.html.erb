@@ -5,12 +5,22 @@
 <%= render :partial => "helpnote" %>
 <%- end %>
 <div class="chat-header">
-	<%= content_tag(:h3, t('chatwidget_title'), :class => "title" ) %> 
+	<h3 class = "lead"> <%=t('chatwidget_title')%>
+		<div class="pull-right">
+			<%= check_box_tag :chat_enable, 1, feature?(:chat_enable), 
+				:rel => "toggle", 
+				"data-checked-label" => "enabled", 
+				"data-unchecked-label" => "disabled",
+				:onchange => remote_function( :url => toggle_admin_chat_setting_path, 
+											  :complete => "jQuery('#chat_setting').toggle();jQuery('#chat_intro').toggle();") 
+			%>
+		</div>
+	</h3>
 </div>
-<div class="tabbable">
+<div id = "chat_setting" class="tabbable" <% unless feature?(:chat_enable) %>style="display:none"<%end%>>
   <ul class="nav nav-tabs">
    <li class="active"><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
-   <li id="chat_settings_install"><a href="#install" data-toggle="tab">Installation</a></li>
+   <li id="chat_settings_install"><a href="#install" data-toggle="tab"><%=t('freshchat.installation')%></a></li>
   </ul>
 
   <div class="tab-content" id="chat_settings_tab">
@@ -139,58 +149,65 @@
 				  </li>
 
 				  <li class="inline-field prechat_form">
+				  	<label class="caption form_divider"><%=t('freshchat.form_details')%></label>
+				  	<div class="fields">
+					  	<ul>
+					  		<li class="inline-field">
+								 <label class="caption"><%=t('freshchat.name')%></label>
+								 <div class="fields">
+								 	<div class="ff_item">
+										  <label class="item"> 
+										    <input class="filter_item" type="checkbox" checked disabled value=""> 
+										    <span><%=t('freshchat.show')%></span>
+										  </label>
+										  <label class="item"> 
+										    <input class="filter_item" type="checkbox" checked disabled value=""> 
+										    <span><%=t('freshchat.required')%></span>
+										  </label>
+									 </div>
+								 </div>
+							  </li>
+
+							  <li class="inline-field">
+								 <label class="caption"><%=t('freshchat.phone')%></label>
+								 <div class="fields">
+								 	<div class="ff_item">
+										  <label class="item"> 
+										    <input class="filter_item" id="prechat_phone" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
+										    <span><%=t('freshchat.show')%></span>
+										  </label>
+										  <label class="item">
+										    <input class="filter_item" id="prechat_phone_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
+										    <span><%=t('freshchat.required')%></span>
+										  </label>
+									 </div>
+								 </div>
+							  </li>
+
+							  <li class="inline-field">
+								 <label class="caption"><%=t('freshchat.mail')%></label>
+								 <div class="fields">
+								 	<div class="ff_item">
+										  <label class="item"> 
+										    <input class="filter_item" id="prechat_mail" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
+										    <span><%=t('freshchat.show')%></span>
+										  </label>
+										  <label class="item"> 
+										    <input class="filter_item" id="prechat_mail_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
+										    <span><%=t('freshchat.required')%></span>
+										  </label>
+									 </div>
+								 </div>
+							  </li>
+					  	</ul>
+				  </div>
+				  </li>
+
+				   <li class="inline-field prechat_form">
 					 <label class="caption"><%=t('freshchat.prechat_msg')%></label>
-					 <div class="fields marginleftnone">
+					 <div class="fields">
 					 	<input type="text" class="text" size="18" id="prechat_message" name="prechat_message" value="<%=(@chat.prechat_message != nil)? @chat.prechat_message : t('freshchat.prechat_message')%>" placeholder="<%=t('freshchat.prechat_message')%>">
 					 	<div class="info-data"><%=t('freshchat.welcome_tip')%></div>
-					 </div>
-				  </li>
-
-				  <li class="inline-field prechat_form">
-					 <label class="caption"><%=t('freshchat.name')%></label>
-					 <div class="fields">
-					 	<div class="ff_item">
-							  <label class="item"> 
-							    <input class="filter_item" type="checkbox" checked disabled value=""> 
-							    <span><%=t('freshchat.show')%></span>
-							  </label>
-							  <label class="item"> 
-							    <input class="filter_item" type="checkbox" checked disabled value=""> 
-							    <span><%=t('freshchat.required')%></span>
-							  </label>
-						 </div>
-					 </div>
-				  </li>
-
-				  <li class="inline-field prechat_form">
-					 <label class="caption"><%=t('freshchat.mail')%></label>
-					 <div class="fields">
-					 	<div class="ff_item">
-							  <label class="item"> 
-							    <input class="filter_item" id="prechat_mail" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
-							    <span><%=t('freshchat.show')%></span>
-							  </label>
-							  <label class="item"> 
-							    <input class="filter_item" id="prechat_mail_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
-							    <span><%=t('freshchat.required')%></span>
-							  </label>
-						 </div>
-					 </div>
-				  </li>
-
-				  <li class="inline-field prechat_form">
-					 <label class="caption"><%=t('freshchat.phone')%></label>
-					 <div class="fields">
-					 	<div class="ff_item">
-							  <label class="item"> 
-							    <input class="filter_item" id="prechat_phone" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
-							    <span><%=t('freshchat.show')%></span>
-							  </label>
-							  <label class="item">
-							    <input class="filter_item" id="prechat_phone_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
-							    <span><%=t('freshchat.required')%></span>
-							  </label>
-						 </div>
 					 </div>
 				  </li>
 
@@ -202,11 +219,12 @@
 							     <div class="fc_title_info"><%=t('freshchat.procative_info')%></div>
 							     <div class="info-data"><%=t('freshchat.proactive_note')%></div>
 							  </label>
-							  <span class="proactive_chat">
+							  <span class="proactive_chat range_slider">
 								<%=t('freshchat.proactive_time',:seconds => "<span class='btn-group'>
 									  <button type='button' class='btn btn-default dropdown-toggle proactive_time_display' data-toggle='dropdown'></button>	 
 									      <ul class='dropdown-menu' role='menu'>
 									      <input id='proactive_time' name='proactive_time' type='range' min='15' max='180' step='15' value='' />
+									      <span class='range_time_from'>15sec</span> <span class='range_time_to'>3min</span>
 									      </ul>
 									</span>").html_safe%>
 							   </span>
@@ -239,13 +257,6 @@
       </div>
    </div>
 </div>
-<% javascript_tag do %>
-(function($){
-	$(window).load(function (){
-		
-		behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : "Bottom Right"%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:'//<%=@current_account.full_domain%>',nodeurl:'<%=ChatConfig['communication_url'][Rails.env]%>',fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:'<%=ChatConfig['chat_debug'][Rails.env]%>','text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>','asset':<%=ChatConfig['asset_url'][Rails.env].to_json.html_safe%>});
-
-		
-	});
-})(jQuery)
-<%end%>
+<div id="chat_intro" <% if feature?(:chat_enable) %>style="display:none"<%end%>>
+	<%= render :partial => "intro" %>
+</div>
