@@ -9,18 +9,18 @@ module ApiWebhooks::Methods
 	end
 
 	def subscribe_event_create 
-		# event_changes = MAP_CREATE_ACTION[self.class.name]
-		# send_subscribe_events(event_changes) unless event_changes.blank?
+		event_changes = MAP_CREATE_ACTION[self.class.name]
+		send_subscribe_events(event_changes) if rule_exists?(MAP_CREATE_ACTION[self.class.name])
 	end
 
 	def subscribe_event_update
-		# event_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
-		# 																filter_subscribe_event filtered, change_key, change_value  end
+		event_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
+																		filter_subscribe_event filtered, change_key, change_value  end
 
-		# unless event_changes.blank?																	
-		# 	event_changes.merge! MAP_UPDATE_ACTION[self.class.name] 
-		# 	send_subscribe_events event_changes 
-		# end
+		unless event_changes.blank?																	
+			event_changes.merge! MAP_UPDATE_ACTION[self.class.name] 
+			send_subscribe_events(event_changes) if rule_exists?(MAP_UPDATE_ACTION[self.class.name])
+		end
 	end
 
 	def filter_subscribe_event filtered, change_key, change_value
@@ -35,12 +35,21 @@ module ApiWebhooks::Methods
     attr_map[class_name]
   end
 
-	def send_subscribe_events event_changes
+	def send_subscribe_events(event_changes)
 		evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-
 		Resque.enqueue(Workers::Subscriber,
 						{ :event_id => evaluate_on_id, :current_events => event_changes, 
 							:association => map_class(self.class.name)})
-					
+	end
+
+	def rule_exists?(constant_rule)
+		rule_flag = false
+		account.api_webhooks_rules_from_cache.each do |va|
+			va.filter_data[:events].each do |e|
+				e.symbolize_keys
+				return rule_flag = true if(constant_rule[e[:name].to_sym] == e[:value].to_sym)
+			end
+		end
+		rule_flag
 	end
 end
