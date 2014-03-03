@@ -198,7 +198,8 @@
 					$(this).parent().find(".freshdesk_quote").toggle();
 				})
 			case 'article_view':
-				highlight_code();				
+			case 'topic_view':
+				highlight_code();
 			break;
 	    }
 	})

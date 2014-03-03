@@ -25,8 +25,14 @@ body {
 		color: #900;
 	}
 }
-.request_details .details table{
-    table-layout: fixed;
+.request_details .details{
+	table{
+	    table-layout: fixed;
+	}
+	//required in forums, as line numbers of syntax highlighter were hidden
+	.syntaxhighlighter table{
+		table-layout: auto;
+	}
 }
 .set-width-99{
 	width: 99.1%;

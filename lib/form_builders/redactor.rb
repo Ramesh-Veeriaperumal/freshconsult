@@ -8,9 +8,9 @@ module FormBuilders::Redactor
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
-        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span"],
+        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span","pre"],
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
-                      '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
+                      '|','fontcolor', 'backcolor', '|' ,'link','image', 'video','codeEditor']
       }
 
       REDACTOR_SOLUTION_EDITOR = {
