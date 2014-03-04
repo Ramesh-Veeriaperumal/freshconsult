@@ -185,6 +185,10 @@ var FreshfoneNotification;
 
 		setRequestObject: function(freshfoneConnection) {
 			this.freshfoneUserInfo.setRequestObject(freshfoneConnection);
+		},
+
+		canAllowUserPresenceChange: function () {
+			if (Object.keys(ongoingNotifications).length > 0){ return true; }
 		}
 };
 

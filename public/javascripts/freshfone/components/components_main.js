@@ -19,7 +19,7 @@ var freshfonetimer,
 		freshfoneNotification = new FreshfoneNotification();
 
 		freshfonesocket.loadDependencies(freshfonecalls);
-		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket);
+		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket,freshfoneNotification);
 		freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo);
 		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser);
 		freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
