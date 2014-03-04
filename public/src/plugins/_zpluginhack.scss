@@ -104,3 +104,7 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 .syntaxhighlighter .gutter {
 	color: #eee !important;
 }
+
+.syntaxhighlighter code, .syntaxhighlighter pre {
+	display: initial;
+}
