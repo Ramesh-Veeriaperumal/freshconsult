@@ -18,8 +18,8 @@
           <li>
             <%= radio_button_tag("account[sso_options][sso_type]", "saml", (sso_type == :saml)) %>
             <span class="enable_heading"> <%=t(".enable_saml")%> </span>
-        <%= content_tag( :div, t(".enable_saml_info"), :class => "info-data extra_tabbed" ) %>
-            <div class="info-data extra_tabbed"  id="saml_sso_form" style="display:<%= sso_type == :saml ? "block": "none" %>;">
+            <%= content_tag( :div, t(".enable_saml_info"), :class => "info-data mt5" ) %>
+            <div class="info-data"  id="saml_sso_form" style="display:<%= sso_type == :saml ? "block": "none" %>;">
               <ul class="ui-form-inline">
                 <% f.fields_for :sso_options, @account.sso_options do |p| %>
                   <li>
@@ -44,8 +44,8 @@
           <li>
             <%= radio_button_tag("account[sso_options][sso_type]", "simple", (sso_type == :simple)) %>
             <span class="enable_heading"> <%=t(".enable_simple_sso")%> </span>
-            <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data extra_tabbed" ) %>
-            <div class="info-data extra_tabbed"  id="simple_sso_form" style="display:<%= sso_type == :simple ? "block": "none" %>;">
+            <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data mt5" ) %>
+            <div class="info-data"  id="simple_sso_form" style="display:<%= sso_type == :simple ? "block": "none" %>;">
               <ul class="ui-form-inline">
                 <li>
                   <%= f.label :shared_secret, t('.shared_secret') %>
