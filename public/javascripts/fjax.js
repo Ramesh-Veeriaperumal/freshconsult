@@ -44,7 +44,9 @@ FreshdeskPjax.prototype = {
     	this._prevAfterNextPage = null;
       Fjax.current_page = '';
       $('[data-keybinding]').expire();
-      soundManager.stopAll();
+      if (typeof soundManager != "undefined"){
+        soundManager.stopAll();
+      }
     },
 
     callAfterReceive: function() {
