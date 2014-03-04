@@ -38,7 +38,7 @@ class Freshfone::CallHistoryController < ApplicationController
 
 		def current_number
 			@current_number ||= params[:number_id].present? ? current_account.all_freshfone_numbers.find_by_id(params[:number_id])
-                           : current_account.freshfone_numbers.first
+                           : current_account.freshfone_numbers.first || current_account.all_freshfone_numbers.first 
 		end
 	
 		def load_children

@@ -1176,7 +1176,7 @@ var CustomWidget =  {
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}
 };
-CustomWidget.include_js("/javascripts/base64.js");
+
 CustomWidget.include_js("/javascripts/strftime-min.js");
 
 var XmlUtil = {

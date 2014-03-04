@@ -174,7 +174,7 @@ var FreshfoneUser,
 		setupDevice: function (token) {
 			var CapabilityToken = token || getCookie('freshfone');
 			try {
-				Twilio.Device.setup(getCookie('freshfone'));
+				Twilio.Device.setup(CapabilityToken);
 			} catch (e) {
 				//console.log(e);
 			}

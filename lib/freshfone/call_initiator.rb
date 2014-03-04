@@ -31,7 +31,7 @@ class Freshfone::CallInitiator
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url,
 						 :timeLimit => time_limit do |d|
-				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent)) }
+				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent), current_number) }
 			end
 			r.Redirect force_termination_url, :method => "POST"
 		end
