@@ -126,27 +126,6 @@
 }
 
 // --------------------------------------------------
-//                border radius 0 to 15px
-// --------------------------------------------------
-@for $i from 0 through 15 {
-  .br#{$i}{
-    @include border-radius(#{$i}px);
-  }
-  .brtl#{$i}{
-    @include border-top-left-radius(#{$i}px);
-  }
-  .brtr#{$i}{
-    @include border-top-right-radius(#{$i}px);
-  }
-  .brbl#{$i}{
-    @include border-bottom-left-radius(#{$i}px);
-  }
-  .brbr#{$i}{
-    @include border-bottom-right-radius(#{$i}px);
-  }
-}
-
-// --------------------------------------------------
 //                      Arrow
 // --------------------------------------------------
 

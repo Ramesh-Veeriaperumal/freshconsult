@@ -8,6 +8,8 @@
 }
 .select2-container-active.select2-container .select2-choice { 
 	@include box-shadow(0 0 3px #cccccc);
+}
+#TicketProperties .select2-container-active.select2-container .select2-choice { 
 	@include tab-focus(); 
 }
 .select2-drop, .select2-container .select2-choice, .select2-drop.select2-drop-above { 
@@ -17,7 +19,7 @@
 	background: #FFF; border-top: 0; 
 }
 .select2-fields { width: 95%; }
-.autocomplete_filter .select2-choices { @include border-radius(5px); }
+.autocomplete_filter .select2-choices { border-radius: 5px; }
 .autocomplete_filter .select2-search-field { height: 27px; }
 .autocomplete_filter .select2-container, .ff_item .select2 { width: 190px; }
 .ff_item.level_2 .select2, .ff_item.level_3 .select2 { width: 179px; }
