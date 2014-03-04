@@ -8,91 +8,9 @@ jQuery("#new_resp").bind('click', function(ev){
 	window.location = '/admin/canned_responses/folders/'+folder_id+'/responses/new';
 })
 
-
-function edit_setting(){
-	jQuery('#folder_edit_form').toggleClass('shown');
-	jQuery('#editing').dialog({
-		position : "top", 
-		title : "Rename Folder", 
-		draggable : false, 
-		modal : true, 
-		width : 510,
-		resizable : false,
-		close: function(ev,ui){
-			jQuery('#folder_edit_form').toggleClass('shown');
-		}
-	});
-}
-
-jQuery('#edit-ca-folder').bind('click', function(){
-	edit_setting();
-});
-
-jQuery('#edit-cancel').bind('click', function(ev){
-	ev.preventDefault();
-	jQuery('#editing').dialog('close');
-});
-
-jQuery('#save_edit').bind('click', function(ev){
-	if(jQuery.browser.opera || jQuery.browser.msie)
-	{
-		jQuery('#folder_edit_form').submit();
-	}
-});
-
-jQuery('#save_edit').bind('click', function(ev){
-	if(jQuery.browser.opera || jQuery.browser.msie)
-	{
-		jQuery('#folder_edit_form').submit();
-	}
-});
-
 jQuery("#responses-select-all").live("change", function(ev){
 	jQuery("#responses").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked")).trigger('change');
 	jQuery("#responses").trigger('click');
-});
-
-
-jQuery("#move").bind('click', function(ev){
-	ev.preventDefault();
-	jQuery("#moves").dialog({
-		position : "top", 
-		title : "Move to folder", 
-		draggable : false, 
-		modal : true, 
-		resizable : false
-		});
-});
-
-jQuery('#cancel-move').bind('click', function(){
-	jQuery('#moves').dialog('close');
-});
-
-jQuery('#del').live('click', function(ev)
-{
-	ev.preventDefault();
-	jQuery('#folder-delete').dialog({
-		position : "top", 
-		title : "Delete folder", 
-		draggable : false, 
-		modal : true, 
-		resizable : false,
-		width : 510
-	});
-	jQuery('#confirm-delete').bind('click', function(){
-		jQuery('#confirm-delete').attr('disabled','disabled').text("Deleting...");
-		jQuery.ajax({
-			type: 'POST',
-			dataType: 'script',
-			data:{"_method" : "delete"},
-			url: jQuery('#del').attr('href'),
-			success: function(data){window.location = '/admin/canned_responses/folders/';}
-		});
-	});
-	jQuery('#delete-cancel').bind('click', function(){
-		jQuery('#folder-delete').dialog('close');
-	});
-
 });
 
 jQuery("#responses").click(function() {
@@ -123,7 +41,6 @@ jQuery("[data-folder]").live('click', function(){
 
 var makeFolderActive = function(folder_id) {
 	url = ca_path+folder_id;
-	jQuery('#del').attr('href', url);
 	if(!jQuery('[data-folder='+folder_id+']').hasClass('default-folder'))
 		jQuery('#edit-ca-folder, #del').show();
 	jQuery('#move, #admin_canned_response_submit').attr('disabled', 'disabled');
@@ -141,14 +58,5 @@ var makeFolderActive = function(folder_id) {
 jQuery(".default-folder").live('click', function(){
 	jQuery('#edit-ca-folder, #del').hide();
 });
-
-jQuery('#folder_edit_form').bind('keyup', function(){
-	if(jQuery('#folder_edit_form #name').val() != "")
-		jQuery('#save_edit').removeAttr('disabled');
-	else
-		jQuery('#save_edit').attr('disabled', 'disabled');
-});
-
-
 
 makeFolderActive(folder_id);

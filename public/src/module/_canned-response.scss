@@ -112,8 +112,35 @@
 	}
 }
 
-#create-folder{
-	margin-left: 10px;
+.spacing_right{
+	padding-right: 10px;
+	border-right: 1px solid #ccc;
+}
+
+.spacing_left{
+    margin-left: 10px;
+	border-left: 1px solid #ccc;
+}
+
+.create_new_folder{
+	text-decoration:none; 
+	position:relative; 
+	span{ 
+		background:none;
+		&:before{
+			content:"+";
+			padding-right: 3px;
+			font-size:22px;
+			font-weight:bold;		
+			line-height:0;
+			position:relative;
+			top:1px;
+		}
+	}	
+}
+
+#folder-controls a{
+	padding-left: 10px;
 }
 
 #create-folder, #edit-ca-folder, #del{
@@ -145,7 +172,6 @@
 
 #folder_edit_form{
 	display: none;
-	padding-right: 20px;
 
 	&.shown {
 		display: inline-block;
@@ -155,13 +181,7 @@
 #folders-panel {
 	#folder-controls {
 		display: inline-block;
-		visibility:hidden;
-	}
-
-	&:hover {
-		#folder-controls{
-			visibility:visible;
-		}
+		@include opacity(0.8);
 	}
 }
 

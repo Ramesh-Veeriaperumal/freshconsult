@@ -4430,9 +4430,9 @@ en:
   canned_folders:
     insert_placeholder: Insert Placeholder
     important: "Important: "
-    delete_folder_warning: Deleting the folder will also delete all the canned responses contained in it.
     delete_canned_response: Are you sure you want to delete the selected Canned Responses?
-    delete_folder: Are you sure you want to delete folder and all its contents?
+    delete_folder: "Deleting the folder will also delete all the canned responses contained in it.\n\nAre you sure you want to proceed?"
+    delete_empty_folder: Are you sure you want to delete the folder?
     new: "Folder name"
     move: "Move"
     title: "Canned Response Folders"
@@ -4443,6 +4443,9 @@ en:
     create: "Create Folder"
     edit: " Rename"
     delete: " Delete"
+    rename_folder: "Rename Folder"
+    Move_to_folder: "Move to folder"
+    create_folder: "Create"
     delete_confirmation: "Delete folder with all its contents ??"
     move: "Move"
     del: "Delete"

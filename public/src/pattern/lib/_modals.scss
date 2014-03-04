@@ -67,7 +67,7 @@
     @include transition(#{opacity .1s ease-out, top .1s ease-out});
     top: 41%;
   }
-  &.fade.in { top: 40%; }
+  &.fade.in { top: 45%; }
 }
 .modal-header {
   padding: 15px 40px 0 15px;
@@ -127,7 +127,7 @@
     left: 50%;
     width: 710px;
     margin: -250px 0 0 -355px;
-    &.fade.in { top: 40%; }
+    &.fade.in { top: 45%; }
   }
   .modal-header{ padding: 15px 20px 0; }
   .modal-header .close {

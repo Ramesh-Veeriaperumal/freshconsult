@@ -26,25 +26,55 @@
 					<% end %>
 				</ul>
 				<div id="folder-controls">
-				<%= link_to( (t('canned_folders.create')+ "&nbsp;").html_safe, "/admin/canned_responses/folders/new", "data-ajax-dialog" => true, "data-width" => "500", :id => "create-folder", :title => t('canned_folders.create') ) %>
-				<span id="edit-ca-folder" class="hide"><b> &middot; &nbsp;</b><%= t('canned_folders.edit') %>&nbsp;</span>
-				<%= link_to((' <b>&middot;</b> &nbsp;'+t('canned_folders.delete')).html_safe, 
-					admin_canned_responses_folder_path(@ca_res_folder), 
-					:id => "del",
-					:class => "hide") %>
-			</div>
+
+					<%= link_to( content_tag(:i, "", 
+						            :class => "icon-edit tooltip ", 
+						            :title => t('canned_folders.edit'), 
+						            :"data-placement" => 'below'
+						    ), "#folder_edit_form", 
+						    :"data-width" => "400", 
+						    :"data-submit-label" => t('save'), 
+						    :"data-close-label" => t('cancel'), 
+						    :rel => 'freshdialog', 
+						    :id => "edit-ca-folder",
+						    :class => "hide spacing_left", 
+						    :"data-title" => t('canned_folders.rename_folder') )%>
+					<%= link_to( content_tag(:i, "", 
+						           :class => "icon-trash tooltip ", 
+						           :title => t('canned_folders.delete'), 
+						           :"data-placement" => 'below'
+						    ), admin_canned_responses_folder_path(@ca_res_folder), 
+						    :id => "del",
+						    :class => "hide spacing_right",
+						    :method => :delete,
+						    :confirm => @ca_responses.present? ? t('canned_folders.delete_folder').html_safe : t('canned_folders.delete_empty_folder')) %>
+					<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create_folder')}".html_safe, 
+									:class => "create_new_folder tooltip ", 
+									:title => t('canned_folders.create'),
+									:"data-placement" => 'below'
+							), "#create_folder",
+                	    	:"data-width" => "400", 
+                	    	:"data-submit-label" => t('save'), 
+                	    	:"data-close-label" => t('cancel'),
+	                	    :id => "create-folder",
+	                	    :"data-title" => t('canned_folders.create'),
+	                        :rel => 'freshdialog' )%>
+
+			    </div>
 			</div>
 			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
+	        <div class="hide" id="create_folder">
+                <% form_for @new_ca_res_folder do |f| %>
+					<%= render :partial => "folder_form", :locals => { :f => f } %>
+			    <% end %>
+            </div> 
+
 			<div id="editing" class="hide">
 				<div id="edit_form" class="center">
 					<% form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
-					<div class="dialog-special">
+					<div class="form-horizontal">
 						<%= f.error_messages :object_name => 'canned_response_folder' %>
 						<%= f.text_field :name, :class => "text required" %>
-					</div>
-					<div class="button-container">
-						<%= submit_tag t('save'), :class => "uiButton", :id => "save_edit" %>
-						<%= link_to t('cancel'), '#', :class => "uiButton", :id => "edit-cancel" %>
 					</div>
 					<% end %>
 				</div>
@@ -62,27 +92,24 @@
 				<div class="list-page-table-header">
 					<input type="checkbox" id="responses-select-all" class="adjust-margin" />
 					<%= f.submit t('canned_folders.del') , :class => "btn", :disabled => "disabled",
-					:onclick => "return confirm(t('canned_folders.delete_canned_response'))" %>
-					<button id="move" class="btn", disabled="disabled"><%= t('canned_folders.move') %></button>
+					:confirm => t('canned_folders.delete_canned_response') %>
+			        <button id="move" class="btn", disabled="disabled"
+					  rel="freshdialog"
+				      data-target="#moves"
+				      data-title="<%= t('canned_folders.Move_to_folder') %>"
+				      data-width="400"
+				      data-submit-label = "<%= t('canned_folders.move') %>" data-close-label = "<%= t('cancel') %>"><%= t('canned_folders.move') %>
+				    </button>
 				</div>
 				<div id="responses" class="load"><%= render :partial => 'show' %></div>
 			</div>
 
-			<div id="moves" class="hide">
-				<%= render :partial => 'move', :locals => {:f => f} %>
-			</div>
+		    <div id="moves" class="hide">
+		    	<div class="row-fluid ui-dialog-titlebar">
+		    		<%= select_tag "move_folder_id", content_tag(:option,"",:value=>"")+options_from_collection_for_select(@ca_res_folders, 'id', 'name'), :class =>"select2 span8", :placeholder => t("canned_folders.select_folder")%>
+                </div>
+		    </div>
 		<% end %>
-		<div id="folder-delete" class="hide">
-			<div class="dialog-special">
-				<p class="imp"> <%= t('canned_folders.important') %> </p> 
-				<p><%= t('canned_folders.delete_folder_warning') %><br /><br /> 
-				<%= t('canned_folders.delete_folder') %></p>
-			</div>
-			<div class="button-container">
-				<button id="delete-cancel" class="uiButton"> <%= t('cancel') %> </button>
-				<button id="confirm-delete" class="uiButton"> <%= t('delete') %> </button>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -90,6 +117,11 @@
 	var folder_id = <%= @ca_res_folder.id %>;
 	var new_ca_path = "<%= new_admin_canned_responses_folder_path %>";
 	var ca_path = "<%= admin_canned_responses_folders_path %>/";
+
+	jQuery('body').on('click',"#moves-submit",function(){
+	    canned_response_submit("<%= update_folder_admin_canned_responses_folder_responses_path(@ca_res_folder)%>", 
+                          'put', ['move_folder_id']);
+});
 <% end %>
 
 <script src="/javascripts/app/ca_admin_view.js" type="text/javascript"></script>
