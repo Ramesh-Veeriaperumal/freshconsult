@@ -34,6 +34,7 @@ class ApiWebhooksController < ApplicationController
   private
 
     def initialize_subscribe
+      check_rule_type_exists?
       @va_rule = current_account.va_rules.new
       va_rule.action_data = action_data_builder
       va_rule.filter_data = filter_data_builder
@@ -46,6 +47,14 @@ class ApiWebhooksController < ApplicationController
 
     def subscribe_scoper
       current_account.api_webhook_rules
+    end
+
+    def check_rule_type_exists?
+      current_account.api_webhooks_rules_from_cache.each do |va|
+        throw_error(va["id"]) if va.action_data.first[:url] == params["url"] && 
+                                va.filter_data[:events].first["name"] == params["event_data"].first["name"] && 
+                                va.filter_data[:events].first["value"] == params["event_data"].first["value"]
+      end
     end
 
     def action_data_builder
@@ -115,8 +124,8 @@ class ApiWebhooksController < ApplicationController
       end
     end
 
-    def error_handler
-      result = {:message=> "invalid argument", :http_code => 422, :error_code => "Unprocessable Entity"}
+    def error_handler(exception)
+      result = {:message=> exception.message, :http_code => 422, :error_code => "Unprocessable Entity"}
       respond_to do |format|
         format.xml {
           render :xml => result.to_xml(:root => :error_details, :skip_instruct => true, 
@@ -128,7 +137,8 @@ class ApiWebhooksController < ApplicationController
       end
     end
 
-    def throw_error
+    def throw_error(id=nil)
+      raise ArgumentError, "Similar webhooks with id #{id} already exists for this url" unless id.nil?
       raise ArgumentError, "Invalid argument"
     end
 end
