@@ -4,6 +4,10 @@ class Support::Solutions::ArticlesController < SupportController
   
   before_filter :load_and_check_permission
 
+  before_filter :render_404, :unless => :article_visible?, :only => :show
+
+  before_filter :load_agent_actions, :only => :show
+
   before_filter { |c| c.check_portal_scope :open_solutions }
 
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
@@ -21,8 +25,6 @@ class Support::Solutions::ArticlesController < SupportController
   def show
     wrong_portal and return unless(main_portal? || 
         (current_portal.has_solution_category?(@article.folder.category_id)))
-
-    render_404 and return unless @article.published?
 
     @page_title = @article.article_title
     @page_description = @article.article_description
@@ -77,5 +79,20 @@ class Support::Solutions::ArticlesController < SupportController
           redirect_to support_solutions_path and return
         end
       end
+    end
+
+    def article_visible?
+      (current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?
+    end
+    
+    def load_agent_actions
+      @agent_actions = []
+      @agent_actions <<   { :url => edit_solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+                            :label => t('portal.preview.edit_article'),
+                            :icon => "edit" } if privilege?(:manage_solutions)
+      @agent_actions <<   { :url => solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+                            :label => t('portal.preview.view_on_helpdesk'),
+                            :icon => "preview" } if privilege?(:view_solutions)
+      @agent_actions
     end
 end

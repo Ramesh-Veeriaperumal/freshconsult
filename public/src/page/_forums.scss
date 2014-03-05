@@ -292,6 +292,17 @@
 	   margin:-10px (-$common-padding) 12px (-$common-padding); 
 	   border-bottom:1px solid #E2E2E2; border-top:0;
 	}
+	.agent-preview{
+		top: 2px;
+	}
+}
+
+.agent-preview{ 
+	display: inline-block;	
+	width: 25px;
+	height: 25px;
+	top: -1px;
+	position: relative;
 }
 
 .icons-like{
