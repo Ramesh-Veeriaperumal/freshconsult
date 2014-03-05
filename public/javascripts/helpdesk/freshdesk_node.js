@@ -25,7 +25,8 @@
 
   FreshdeskNode.prototype.initClient = function(callback){
     opts = $.extend({},CLIENT_DEFAULT_OPTIONS,this.opts.clientOpts)
-    window.fayeClient = new Faye.Client(this.host,opts);
+    if(!window.fayeClient)
+        window.fayeClient = new Faye.Client(this.host,opts);
     if(this.opts.addAuthExtParams){
       this.addAuthExt(this.opts.addAuthExtParams)
     }
