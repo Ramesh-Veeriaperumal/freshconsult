@@ -40,6 +40,7 @@
 
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
+<%= render :partial => "helpdesk/tickets/show/agent_collision_show.html.erb", :locals => { :ticket => @ticket } if feature?(:collision) %>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');

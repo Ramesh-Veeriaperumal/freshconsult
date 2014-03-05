@@ -1,0 +1,39 @@
+  <% javascript_tag do %>
+ 
+    /********************************** node.js and faye implementation ****************************************/ 
+   
+    jQuery(document).ready(function() {
+       window.FayeClient.init("<%= faye_host %>",{
+                              retry: 10
+                            });
+
+      window.AgentCollision.setChannels( {
+          'collision_channel' : "<%= agent_collision_index_channel %>" 
+        }).setChannelCallbacks({
+          'collision_channel' : function(message){
+            this.utils.messageHandler.call(this,message);
+          }
+        } ).setExtensions([{
+        outgoing: function(message, callback) {
+          message.ext = <%= faye_auth_params %>;
+          message.ext['channel'] = "<%= agent_collision_index_channel %>";
+          callback(message);
+        }
+        }]).init({agent_names : <%= raw current_account.agent_names_from_cache.to_json %>, 
+      current_user : "<%= escape_javascript(current_user.name) %>",current_user_id : "<%= current_user.id %>"});
+
+       jQuery(window).unload(function( event ) {
+          if(window.fayeClient)
+          {
+            for(var i=0;i < window.faye_subscriptions;i++)
+            { 
+              window.faye_subscriptions[i].cancel();
+            }
+          }
+          window.fayeClient.disconnect();
+          event.preventDefault();
+        });
+      });
+   
+    
+<% end %>

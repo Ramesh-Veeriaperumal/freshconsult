@@ -177,6 +177,10 @@
     });
   
   jQuery("#FilterOptions").change(function(){
+    for(var i=0;i<window.faye_subscriptions.length;i++)
+    {
+      window.faye_subscriptions[i].cancel();
+    }
     jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
     jQuery.ajax({
       url: "/helpdesk/tickets/custom_search",
@@ -201,6 +205,7 @@
           updated_ticket_ids = [];
           jQuery("#update_message, #new_ticket_message").hide();
         }
+        window.AgentCollision.subscriptions(window.AgentCollision.channels,window.AgentCollision.channelCallbacks);
       }
     }); 
   });
