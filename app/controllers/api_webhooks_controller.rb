@@ -99,8 +99,8 @@ class ApiWebhooksController < ApplicationController
 
     def map_fields
       event_action = params[:event_data]
-      throw_error if event_action.blank? && !["create","update"].include?(event_action[0]["value"])
-      case event_action[0]["name"].to_sym
+      throw_error if event_action.blank? || !["create","update"].include?(event_action.first["value"])
+      case event_action.first["name"].to_sym
         when :ticket_action
           ticket_placeholder
         when :note_action
