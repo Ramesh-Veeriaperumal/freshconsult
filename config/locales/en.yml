@@ -1848,6 +1848,7 @@ en:
     sticky: Sticky
     locked: Locked
     answered: Answered
+    view_on_portal: "View on Portal"
   activerecord:
     errors:
       messages:
@@ -2301,6 +2302,9 @@ en:
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
     to_post_topic: " to post a topic"
+    preview:
+      view_on_helpdesk: "View on Helpdesk"
+      edit_article: "Edit Article"
     search:
       filters:
         all: "All"
@@ -2422,6 +2426,7 @@ en:
       error_message: "There is an error %{error_msg}"
     info9: Public (Will be published in self service)
     edit: Edit Solution
+    view_on_portal: "View on Portal"
     add: Add Solution
     info10: Private (Visible to Agents only)
     add_new_solution: Add solution

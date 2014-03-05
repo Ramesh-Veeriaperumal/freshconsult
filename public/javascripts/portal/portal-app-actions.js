@@ -202,6 +202,11 @@
 				highlight_code();
 			break;
 	    }
+
+	    $("div.agent_view, div.agent_actions").on('hover',function(ev){
+	    	ev.preventDefault();
+	    	$(".agent_actions").toggle();
+	    })
 	})
 
 }(window.jQuery);

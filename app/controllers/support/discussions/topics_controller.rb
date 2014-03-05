@@ -3,6 +3,8 @@ class Support::Discussions::TopicsController < SupportController
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, 
                                       :users_voted, :destroy, :toggle_solution]
   before_filter :require_user, :except => [:index, :show]
+
+  before_filter :load_agent_actions, :only => :show
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -265,6 +267,14 @@ class Support::Discussions::TopicsController < SupportController
       param =  params[:topic].symbolize_keys
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
+    end
+
+    def load_agent_actions
+      @agent_actions = []
+      @agent_actions <<   { :url => category_forum_topic_path(@forum_category,@forum,@topic),
+                            :label => t('portal.preview.view_on_helpdesk'),
+                            :icon => "preview" } if privilege?(:view_forums)
+      @agent_actions
     end
 	
 end

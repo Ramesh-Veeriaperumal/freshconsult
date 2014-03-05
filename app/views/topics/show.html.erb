@@ -73,6 +73,9 @@
 						</span>
 						<% end %>
 						<span class="vertical-alignment"><h3 class="position_forum_title lead"><%= @page_title  %></h3></span>
+						<span class="vertical-alignment tooltip" title='<%= t('topic.view_on_portal')%>'> 
+							<%= link_to '<i class="agent-preview"></i>'.html_safe, support_discussions_topic_path(@topic.id) %>
+						</span>
 					</div>
 					<% if privilege?(:edit_topic, @topic) -%>
 					<div class="pull-right span2 position_forum_title">
