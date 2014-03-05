@@ -11,7 +11,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
         render :partial => "helpdesk/subscriptions/ticket_watchers"
       end
       format.nmobile do
-         render :json => @ticket.subscriptions
+         render :json => @ticket.subscriptions.map(&:user_id)
       end
     end 
   end
