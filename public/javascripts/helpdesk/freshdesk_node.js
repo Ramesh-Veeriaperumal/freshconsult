@@ -43,6 +43,7 @@
 
   FreshdeskNode.prototype.subscribe = function(channel,callback){
    var subscription =  window.fayeClient.subscribe(channel, callback)
+   subscriptions.then(function(){console.log('successfull subscribe to refresh');},function(err){console.log('There was an error');});
    window.faye_subscriptions.push(subscription);
    return subscription;
   };
