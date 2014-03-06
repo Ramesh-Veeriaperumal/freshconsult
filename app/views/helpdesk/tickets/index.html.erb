@@ -22,7 +22,6 @@
 <% content_for :pagefixed do %>
   <%= render :partial => "collision_index" if feature?(:agent_collision) %>
   <%= render :partial => "auto_refresh_faye" if @is_auto_refresh_feature %>
-  <%= render :partial => "agent_collision_index" if feature?(:collision) %>
 <% end %>  
 
 <% content_for :layoutType do -%>ticket_list<%- end %>

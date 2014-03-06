@@ -280,10 +280,9 @@ module Helpdesk::TicketsHelper
     content
   end
 
-  def faye_auth_params
+  def auto_refresh_params
     @data = @data || {
       :userId      => current_user.id,
-      :name       => current_user.name,
       :accountId   => current_account.id,
       :domainName  => current_account.full_domain,
       :auth        => generate_hmac_token(current_user),
@@ -294,23 +293,6 @@ module Helpdesk::TicketsHelper
   def auto_refresh_channel
     Faye::AutoRefresh.channel(current_account)
   end
-
-  def agent_collision_index_channel
-    Faye::AgentCollision.channel(current_account);
-  end
-
-  def agent_collision_ticket_view_channel(ticket_id)
-    Faye::AgentCollision.ticket_view_channel(current_account,ticket_id)
-  end
-
-  def agent_collision_ticket_reply_channel(ticket_id)
-    Faye::AgentCollision.ticket_replying_channel(current_account,ticket_id)
-  end
-
-  def agent_collision_ticket_channel(ticket_id)
-    Faye::AgentCollision.ticket_channel(current_account,ticket_id)
-  end
-
 
   def faye_host
     "#{request.protocol}#{NodeConfig["faye_host"]}"
