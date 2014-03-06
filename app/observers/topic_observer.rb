@@ -45,7 +45,7 @@ class TopicObserver < ActiveRecord::Observer
 
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic')
+    create_activity(topic, 'delete_topic', User.current)
 	end
 
 private
