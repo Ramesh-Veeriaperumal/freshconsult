@@ -43,7 +43,6 @@
 
   FreshdeskNode.prototype.subscribe = function(channel,callback){
    var subscription =  window.fayeClient.subscribe(channel, callback);
-   window.faye_subscriptions.push(subscription);
    return subscription;
   };
 
@@ -216,12 +215,7 @@
       },
       subscribe : function(channel,callback)
       {
-
         var subscription = this.client.subscribe(channel,callback);
-        subscription.then(function(){
-        },
-          function(err){
-          });
         window.faye_subscriptions.push(subscription);
         return subscription;
       },
