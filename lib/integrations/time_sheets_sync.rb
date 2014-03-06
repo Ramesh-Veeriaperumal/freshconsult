@@ -4,11 +4,11 @@ class Integrations::TimeSheetsSync
     [Integrations::Constants::APP_NAMES[:freshbooks], Integrations::Constants::APP_NAMES[:workflow_max], Integrations::Constants::APP_NAMES[:harvest]]
   end
 
-  def self.update(time_entry)
+  def self.update(time_entry, user)
     applications.each do |app_key|
       installed_app = Account.current.installed_applications.with_name(app_key)
       next if installed_app.blank?  
-      Integrations::TimeSheetsSync.send(app_key,installed_app.first,time_entry) unless time_entry.blank?
+      Integrations::TimeSheetsSync.send(app_key, installed_app.first, time_entry, user) unless time_entry.blank?
     end
   end
 
