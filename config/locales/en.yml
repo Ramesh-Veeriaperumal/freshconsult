@@ -4766,7 +4766,7 @@ en:
       save: "Save"
       notes: "Notes"
       new_requester: "New requester"
-      inactive: "Freshfone unavailable"
+      inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
     call_history:
       title: "Call History"
