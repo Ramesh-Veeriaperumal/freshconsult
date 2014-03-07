@@ -93,6 +93,10 @@ reseller_portal:
   user_name: "freshdesk"
   password: "FDRP$6M"
   shared_secret: "D7D5892B53FBB8DC4DB53D1DA6156"
+  portal_url:
+    development: "localhost:3005/freshdesk_webhooks"
+    staging: "partners.freshpo.com/freshdesk_webhooks"
+    production: "partners.freshdesk.com/freshdesk_webhooks"
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
