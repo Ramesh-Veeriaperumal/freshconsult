@@ -4,6 +4,7 @@ class HttpRequestProxyController < ApplicationController
   skip_before_filter :check_privilege
   before_filter :authenticated_agent_check 
   before_filter :populate_server_password
+  before_filter :populate_additional_headers
 
   def fetch
     httpRequestProxy = HttpRequestProxy.new
@@ -39,5 +40,17 @@ class HttpRequestProxyController < ApplicationController
 
     def authenticated_agent_check
       render :status => 401 if current_user.blank? || current_user.agent.blank?
+    end
+
+    def populate_additional_headers
+      return if params["additional_custom_header"].nil?
+      begin
+        custom_headers = JSON.parse(params["additional_custom_header"]) 
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error setting custom headers"}}) 
+      end
+      unless custom_headers.nil?
+        params[:custom_auth_header] = (params[:custom_auth_header] || {}).merge(custom_headers)
+      end
     end
 end

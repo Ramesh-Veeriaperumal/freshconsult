@@ -33,6 +33,18 @@ namespace :freshfone do
 		end
 	end
 
+	desc "Trial account number deletion reminder on insufficient balance"
+	task :trial_account_renewal_reminder => :environment do
+		Sharding.execute_on_all_shards do
+			Freshfone::Number.find_trial_account_due(3.days.from_now).each do |trial_number|
+				if trial_number.insufficient_renewal_amount?
+					account = trial_number.account
+					FreshfoneNotifier.deliver_trial_number_expiring(account, trial_number.number, "3 days")	
+				end
+			end
+		end
+	end
+
 	desc "Freshfone account suspension"
 	task :suspend => :environment do
 		Sharding.execute_on_all_shards do

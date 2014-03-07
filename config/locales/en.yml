@@ -631,7 +631,7 @@ en:
     day_passes:
       helpnote:
         title: Day Pass
-        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they gets used up.
+        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they get used up.
       index:
         no_credit_card: No credit card on file.
         payment_info: Enter payment information to add more day passes
@@ -3589,7 +3589,7 @@ en:
     copy_of: Copy of
     save_tooltip: Save
     saveas_tooltip: Save as
-    cancel_tooltip: Discard
+    cancel_tooltip: Discard changes
     edit_tooltip: Edit
     delete_tooltip: Delete
     sort_fields:
@@ -4713,6 +4713,7 @@ en:
       no_credit_card: "Enter payment information to purchase Freshfone credits"
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
+      see_detailed_pricing: "See Detailed Pricing"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"
@@ -4765,11 +4766,16 @@ en:
       save: "Save"
       notes: "Notes"
       new_requester: "New requester"
-      inactive: "Freshfone unavailable"
+      inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
+      singular_active_number: "Active Number"
+      none_active_number: "- none -"
+      active_number: "Active Numbers"
+      singular_deleted_number: "Deleted Number"
+      deleted_number: "Deleted Numbers"
       block_number: "Block"
       cancel: "Cancel"
       blacklist_confirmation: "Are you sure to block"
@@ -4931,22 +4937,26 @@ en:
     wait_title: "Wait/On hold Message"
     is_typing_header: "When agent/visitor <br> starts typing"
     prechat_title: "Pre-Chat Form"
-    prechat_desc: "Visitors need to share additional information before the chat"
+    prechat_desc: "With Pre Chat form you can collect little more detail about your customer,like name phone number and email. When Pre-Chat form is on, All visitors should first fill the form to begin chat."
     prechat_msg: "Pre-Chat Message"
     welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
     minimized_title: "Let's talk!"
-    maximized_title: "This chat is so on!"
+    maximized_title: "Chat in progress"
     welcome_message: "Hi! How can we help you today?"
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
     typing_message: "is typing..."
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
-    enable_proactive: "Enable proactive chat"
-    proactive_note: "Note: Pre-chat form will be skipped for Proactive chats."
-    proactive_time: "Greet visitors when they spend more than %{seconds} seconds on a page"
-    procative_info: "Automatically initiate chat conversations"
+    proactive_note: "Note:Pre-chat form will not be shown when Proactive chat is ON"
+    proactive_time: "Visitors time spend %{seconds} on same page"
+    procative_info: "Proactive chat lets you automatically initiate chat conversations if a visitor spends more than a certain amount of time in a page"
+    texton: "On"
+    textoff: "Off"
+    form_details: "Form details"
+    copy_to_clipboard: "Copy to Clipboard"
+    copied: "Copied!!"
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -5015,7 +5025,7 @@ en:
     recent_messages: "Recent Messages"
     agents: "Agents"
     convert_to_ticket: "Convert to Ticket"
-    create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
+    create_ticket_tip: "Save your chat transcript as a new ticket or add as a note to an existing one"
     note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error
@@ -5076,6 +5086,11 @@ en:
     connecting_msg: "Waiting for an agent"
     ignore_msg: "Looks like all our agents are tied up right now :( Sorry about that, but please <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>leave us a message</a> and we'll get right back."
     date_invalid: Invalid date
+    installation: "Installation"
+    intro_title: "Why Freshchat?"
+    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, your agents can not only chat with each other without leaving Freshdesk (finally!), they can also provide instant answers to your prospective customers. It’s another feather in your quiver, a channel designed to bring you closer to your users and visitors."
+    enable_chat: "Enable freshchat"
+    learn_freshchat: "Learn more about freshchat"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

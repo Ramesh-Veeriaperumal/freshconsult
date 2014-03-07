@@ -155,7 +155,8 @@ input[type="text"].loading, .ui-autocomplete-loading{
 */
 #ticket_list_count{
 	@include inline-block;
-	height:16px;	
+	height:16px;
+	vertical-align:top;	
 	&.fetching { 
 		width:18px;
 		background-repeat: no-repeat;

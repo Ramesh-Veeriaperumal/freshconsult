@@ -80,7 +80,7 @@ class Freshfone::CallCostCalculator
 					:freshfone_number_id => args[:number_id]) unless args[:billing_type].blank? 
 			else
 				Rails.logger.debug "Total charge is zero for call :: #{args[:call_sid]} :: transferred? #{transferred?} 
-				:: dial_call_sid #{dial_call_sid} :: current_call #{current_call.blank?} :: no_call_duration #{no_call_duration} :: total_charge #{total_charge}"
+				:: dial_call_sid #{dial_call_sid} :: current_call #{current_call.blank?} :: no_call_duration #{no_call_duration?} :: total_charge #{total_charge}"
 			end
 		end
 		

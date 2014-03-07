@@ -182,4 +182,16 @@
 		display: inline-block;
 		margin-top: 3px;
 	}
+	.number_select_label{
+		padding: 3px 24px;
+		font-size: 14px;
+		color: #888;
+		font-style: italic;
+	}
+	.empty_active_numbers{
+		padding: 3px 24px;
+		font-size: 14px;
+		color: #bbb;
+		min-height: 4px;
+	}
 }

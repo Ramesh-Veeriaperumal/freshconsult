@@ -43,6 +43,11 @@ class User < ActiveRecord::Base
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
   alias_method_chain :preferences, :defaults
+
+  # Attributes used in Freshservice
+  # alias_attribute :last_name, :string_uc02 # string_uc02 is used in Freshservice to store last name
+  alias_attribute :user_type, :user_role # Used for "System User"
+  alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
     
   acts_as_authentic do |c|    
     c.validations_scope = :account_id

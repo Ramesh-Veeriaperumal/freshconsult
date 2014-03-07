@@ -26,10 +26,11 @@ var FreshfoneUser,
 			return this.cached.$userPresenceImage = this.cached.$userPresenceImage ||
 																							this.$userPresence.find("img");
 		},
-		loadDependencies: function (freshfonecalls,freshfonesocket) {
+		loadDependencies: function (freshfonecalls,freshfonesocket,freshfoneNotification) {
 			this.freshfonesocket = freshfonesocket;
 			this.freshfonecalls = freshfonecalls;
 			this.freshfonesocket.init(this);
+			this.freshfoneNotification = freshfoneNotification;
 		},
 		isOnline : function () {
 			return this.status === userStatus.ONLINE;
@@ -38,6 +39,9 @@ var FreshfoneUser,
 			return this.status === userStatus.BUSY;
 		},
 		toggleUserPresence: function () {
+			if(this.online  && this.freshfoneNotification.canAllowUserPresenceChange()) {
+				return;
+			}
 			this.online = !this.online;
 			if (!this.updateUserPresence()) { this.online = !this.online; }
 		},
@@ -174,7 +178,7 @@ var FreshfoneUser,
 		setupDevice: function (token) {
 			var CapabilityToken = token || getCookie('freshfone');
 			try {
-				Twilio.Device.setup(getCookie('freshfone'));
+				Twilio.Device.setup(CapabilityToken);
 			} catch (e) {
 				//console.log(e);
 			}

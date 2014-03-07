@@ -1,7 +1,7 @@
 <% @monitoring = !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
 	<div class="pull-right">
-    <% if privilege?(:manage_forums) -%>  
+    <% if privilege?(:manage_forums) and main_portal? -%>  
 			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "btn btn-bold") unless(@forum_categories.size <= 1)%>
 	  		<%= link_to t('category.new'), new_category_path, :class => "btn btn-primary" %>
 		<% end %> 

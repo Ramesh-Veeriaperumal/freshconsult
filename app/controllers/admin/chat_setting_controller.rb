@@ -12,6 +12,20 @@ class Admin::ChatSettingController < Admin::AdminController
     end
   end
 
+  def toggle
+    if feature?(:chat_enable)
+      current_account.features.chat_enable.destroy
+    else
+      current_account.features.chat_enable.create
+    end
+    current_account.reload
+    respond_to do |format|
+      format.js { 
+        render :partial => '/admin/chat_setting/toggle.rjs'
+      }
+    end
+  end
+
   def update
     @chat = current_account.chat_setting || ChatSetting.new
 

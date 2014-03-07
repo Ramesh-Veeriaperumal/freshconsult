@@ -7,6 +7,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   def belongs_to_ticket
     IDENTIFICATION_METHODS.each do |fn|
       send(fn)
+      check_parent if ticket and ticket_parent
       return ticket if can_be_added_to_ticket?
     end
     nil
@@ -36,20 +37,28 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
     @parsed ||= Nokogiri::HTML(email[:html])
   end
 
+  def check_parent
+    self.ticket = ticket_parent if valid_ticket_contact(ticket_parent)
+  end
+
+  def ticket_parent
+    @par ||= ticket.parent
+  end
+
   def can_be_added_to_ticket?
-  	ticket and (valid_user or valid_ticket_contact)
+  	ticket and (valid_user or valid_ticket_contact(ticket))
   end
 
   def valid_user
     (user.agent? and !user.deleted?) or belongs_to_same_company?
   end
 
-  def valid_ticket_contact
-    (ticket.requester.email and in_requester_email?) or (ticket.included_in_cc?(user.email))
+  def valid_ticket_contact given_ticket
+    (given_ticket.requester.email and in_requester_email?(given_ticket)) or (given_ticket.included_in_cc?(user.email))
   end
 
-  def in_requester_email?
-    ticket.requester.email.include?(user.email)
+  def in_requester_email? given_ticket
+    given_ticket.requester.email.include?(user.email)
   end
 
   def ticket_from_span span

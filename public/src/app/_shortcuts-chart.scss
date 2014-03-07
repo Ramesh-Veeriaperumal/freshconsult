@@ -57,7 +57,7 @@
 	height: 68px;
 	position: absolute;
 	margin-top: -8px;
-	margin-left: -10px;
+	margin-left: -($TKT_LIST_VIEW_PRIORITY_BORDER_SIZE * 2);
 	&.priority-high {
 		background: $COL_PRI_HIGH; // Old browsers
 	}
@@ -99,7 +99,7 @@
 // =============================================================================
 .sc-item-selected .sc-item-cursor{
 	@include animation(fadeIn 100ms);
-	width:12px;
+	width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE * 2;
 }
 .fade-out .sc-item-cursor{
 	@include animation(fadeOut 100ms);

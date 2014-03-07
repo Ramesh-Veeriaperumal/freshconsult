@@ -1,10 +1,16 @@
-<%if(current_user && current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?))
+<%if(current_user && current_account.features?(:chat) && current_account.features?(:chat_enable) && current_account.chat_setting && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
+    @chat = current_account.chat_setting
 %>
 <div id="freshchat_layout"></div>
 <script language="javascript">
+
+var CS_URL = "<%=comm_url%>";
+var WEB_ROOT = "//<%=current_account.full_domain%>";
+var CHAT_DEBUG = "<%=chat_debug%>";
+
 (function($){
     $(document).ready(function(){
         var asset_url = JSON.parse('<%=asset%>');
@@ -17,22 +23,24 @@
         fc_CSS.setAttribute('rel','stylesheet');
         fc_CSS.setAttribute('type','text/css');
         fc_CSS.setAttribute('href', css_url+'/css/chat.css');
-    document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-        $.getScript(url+"/js/chat.js", function(){
-            window.playSound = !($.cookie('fd::'+SITE_ID));
-            if(window.playSound){
-                $.cookie('fd::'+SITE_ID,true);
-                $(window).unload(function(){
-                    jQuery.cookie('fd::'+SITE_ID,null);
-                });
-            }
-        });
-    });    
+        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+            $.getScript(url+"/js/chat.js", function(){
+                window.playSound = !($.cookie('fd::'+SITE_ID));
+                if(window.playSound){
+                    $.cookie('fd::'+SITE_ID,true);
+                    $(window).unload(function(){
+                        jQuery.cookie('fd::'+SITE_ID,null);
+                    });
+                }
+                var path = window.location.pathname.split('/')
+                if(path[path.length - 1] == "chat_setting"){
+                    if(window.behaviour){
+                        behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : 'Bottom Right'%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:WEB_ROOT,nodeurl:CS_URL,fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:CHAT_DEBUG,'text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>','asset':asset_url});
+                    }
+                }
+            });
+        });    
 })(jQuery);
-
-var CS_URL = "<%=comm_url%>";
-var WEB_ROOT = "//<%=current_account.full_domain%>";
-var CHAT_DEBUG = "<%=chat_debug%>";
 
 var USER_LIST = [];
 var CURRENT_USER = {
@@ -164,7 +172,11 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             agent_left_msg: "<%= t('freshchat.agent_left_msg') %>",
             connecting_msg: "<%= t('freshchat.connecting_msg') %>",
             ignore_msg: "<%= t('freshchat.ignore_msg').html_safe %>",
-            me: "<%= t('freshchat.me') %>"
+            me: "<%= t('freshchat.me') %>",
+            on: "<%= t('freshchat.texton') %>",
+            off: "<%= t('freshchat.textoff') %>",
+            copy_to_clipboard: "<%= t('freshchat.copy_to_clipboard') %>",
+            copied: "<%= t('freshchat.copied') %>"
         }
 </script>
     <!-- Chat related contents ends -->

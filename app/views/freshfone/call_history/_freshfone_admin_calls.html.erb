@@ -21,21 +21,33 @@
 							aria-labelledby="sorting_dropdown_list">
 						<% all_freshfone_numbers_deleted = @all_freshfone_numbers.select{ |n| n.deleted? } %>
 						<% all_freshfone_numbers_active = @all_freshfone_numbers.reject{ |n| n.deleted? } %>
-						<% all_freshfone_numbers_active.each do |n| %>
-							<li><a class="number_id" href="#" number_id="<%= n.id %>" >
-								<% if @current_number.number == n.number %>
-									<span class="icon ticksymbol"></span>
-								<% end %>
-								<%= n.number %>
-							</a></li>
-						<% end %>
+
+						<li class="number_select_label">
+						 <%= all_freshfone_numbers_active.many? ? 
+						 		t('freshfone.call_history.active_number') : t('freshfone.call_history.singular_active_number')%>  </li>
 						
+						<% if all_freshfone_numbers_active.blank? %>
+						 <li class="empty_active_numbers"><%= t('freshfone.call_history.none_active_number')%></li>
+						<% else %>
+							<% all_freshfone_numbers_active.each do |n| %>
+								<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+									<% if @current_number.number == n.number %>
+										<span class="icon ticksymbol"></span>
+									<% end %>
+									<%= n.number %>
+								</a></li>
+							<% end %>
+						<% end %>
 						<% if all_freshfone_numbers_deleted.present? %>
+							<span class="seperator"></span>
 							<a class="show_delete_number" href="#"><%= t('freshfone.call_history.show_deleted') %></a>
 							<div class="hide deleted_numbers">
-								<span class="seperator"></span>
+								<li class="number_select_label"> <%= all_freshfone_numbers_deleted.many? ? t('freshfone.call_history.deleted_number') : t('freshfone.call_history.singular_deleted_number') %>  </li>
 								<% all_freshfone_numbers_deleted.each do |n| %>
 									<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+										<% if @current_number.number == n.number %>
+											<span class="icon ticksymbol"></span>
+										<% end %>
 										<%= n.number %>
 									</a></li>
 								<% end %>

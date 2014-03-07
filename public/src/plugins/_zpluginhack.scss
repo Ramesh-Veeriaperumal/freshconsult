@@ -38,6 +38,9 @@
 
 // Redactor Hack
 //-----------------
+.form-widget .redactor_editor{ //Mozilla fix for hidden feedback widget
+	min-height:120px;
+}
 .redactor_editor pre{
 	background-color: #f0f0f0;
 	padding: 10px 20px 2px;
@@ -100,4 +103,8 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 //------------------
 .syntaxhighlighter .gutter {
 	color: #eee !important;
+}
+
+.syntaxhighlighter code, .syntaxhighlighter pre {
+	display: initial;
 }

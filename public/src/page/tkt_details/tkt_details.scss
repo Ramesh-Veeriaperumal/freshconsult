@@ -1123,42 +1123,6 @@ ol, ul, li{
     	}
     }
 }
-.commentbox {
-	#ticket_original_request, .helpdesk_note .details {
-		div.attach-error-wrap {
-			position: relative;
-			padding: 5px;
-			left:50%;
-			width:70%;
-			margin-top: 10px;
-			div.attach-error {
-				position: relative;
-				left: -50%;
-				width: 100%;
-				text-align: center;
-				padding: 5px;
-			}
-			.alert { border: 1px solid #efefef; }
-			.close { display: none; }
-		}
-	}
-	.overlapping { margin-top: -20px; }
-}
-
-.commentbox {
-	#ticket_original_request, .helpdesk_note .details {
-		div.attach-error {
-			margin:10px auto 0;
-			width: 65%;
-			text-align: center;
-			padding: 5px;
-			position: relative;
-			border: 1px solid #efefef;
-			.close { display: none; }
-		}
-	}
-	.overlapping { margin-top: -15px; }
-}
 
 /*Comment-box*/
 .commentbox{
@@ -2932,4 +2896,87 @@ $collision_delay: 1s;
 
 // ATTACHMENT DROP IN EMAIL - CSS - END
 
-
+// Chat conversation ticket CSS
+ 
+.conversation_wrap{
+    border: 1px #f1f1f1 solid;
+    border-top: 1px transparent solid;
+}
+ 
+.conversation_wrap{
+    margin-top: 10px;
+   .rsltmsg{
+       border-top: 1px #eee solid;
+       padding: 11px 0px 9px 8px;
+	   display: block;
+   }
+}
+ 
+.fc_guest_expanded{
+    background-color: #fefef0;
+    .rsltset{
+        background-color: transparent;
+    }
+}
+.fc_self_expanded{
+    background-color: #fff;
+}
+ 
+.fc_guest_expanded, .fc_self_expanded{
+    .rsltdata{
+        width: 95%;
+        padding-left: 9px;
+    }
+    .rsltavatar{
+        width: 30px;
+    }
+    .rslttime{
+        visibility: hidden;
+        float: right;
+    }
+    &:hover{
+        .rslttime{
+            visibility: visible;
+        }
+        
+    }
+}
+ 
+.rsltavatar{
+    float: left;
+    width: 100px;
+    border-radius: 4px;
+    height: 31px;
+    img{
+        border-radius: 4px;
+        width: 26px;
+        float: left;
+        border: 1px #eaeaea solid;
+    }
+    .icon-arrow-left, .icon-arrow-right{
+        background: none;
+        float: left;
+        margin: 0px 10px;
+        position: relative;
+        line-height: 27px;
+        font-size: 10px;
+        color: #ccc;
+    }
+    .icon-arrow-left{
+        color: #999;
+    }
+}
+ 
+.chat_tkt_details{
+    .rsltmsg_wrap{
+        width: 90%;
+        font-size: 10px;
+        color: #555;
+    }
+    .time{
+        font-size: 10px;
+        float: right;
+    }
+}
+ 
+// Chat conversation ticket CSS - END

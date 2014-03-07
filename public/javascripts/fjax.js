@@ -44,6 +44,9 @@ FreshdeskPjax.prototype = {
     	this._prevAfterNextPage = null;
       Fjax.current_page = '';
       $('[data-keybinding]').expire();
+      if (typeof soundManager != "undefined"){
+        soundManager.stopAll();
+      }
     },
 
     callAfterReceive: function() {
@@ -65,9 +68,7 @@ FreshdeskPjax.prototype = {
     },
 
     _setLoading: function() {
-      $('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
-        $('.top-loading-wrapper').removeClass('hide');
-      });
+      NProgress.start();
     },
 
     _triggerUnload: function() {
@@ -82,8 +83,8 @@ FreshdeskPjax.prototype = {
     },
 
     _removeLoading: function() {
-      $('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
-      $('.top-loading-wrapper').addClass('hide','slow');
+      NProgress.done();
+      setTimeout(NProgress.remove, 500);
     },
 
     _beforeSendExtras: function(evnt,xhr,settings,options) {

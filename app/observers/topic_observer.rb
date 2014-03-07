@@ -23,7 +23,7 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
   def after_update(topic)
-    return unless topic.stamp_type_changed? or topic.stamp_type.nil?
+    return if !topic.stamp_type_changed? or topic.stamp_type.blank?
     create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
   end
 
@@ -45,7 +45,7 @@ class TopicObserver < ActiveRecord::Observer
 
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic')
+    create_activity(topic, 'delete_topic', User.current)
 	end
 
 private

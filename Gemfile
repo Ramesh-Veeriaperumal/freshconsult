@@ -73,7 +73,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
-gem "redis","2.2.2"
+gem "redis","3.0.7"
 gem "resque","1.22.0"
 gem "resque-status", "0.4.1"
 gem 'resque-scheduler', :require => 'resque_scheduler'

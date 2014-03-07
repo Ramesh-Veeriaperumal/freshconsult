@@ -13,3 +13,4 @@ run "ln -nfs #{shared_path}/config/stats_redis.yml #{rel_path}/config/stats_redi
 run "ln -nfs #{shared_path}/config/newrelic.yml #{rel_path}/config/newrelic.yml"
 run "ln -nfs #{shared_path}/config/mailgun.yml #{rel_path}/config/mailgun.yml"
 run "ln -nfs #{shared_path}/config/mailbox.yml #{rel_path}/config/mailbox.yml"
+run "ln -nfs #{shared_path}/config/freshfone.yml #{rel_path}/config/freshfone.yml"

@@ -446,8 +446,8 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
 
   create_table "flexifield_defs", :force => true do |t|
-    t.string   "name",                    :null => false
-    t.integer  "account_id", :limit => 8
+    t.string   "name",                                               :null => false
+    t.integer  "account_id",          :limit => 8
     t.string   "module"
     t.datetime "created_at"
     t.datetime "updated_at"

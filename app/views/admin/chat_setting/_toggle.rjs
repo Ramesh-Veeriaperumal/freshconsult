@@ -1,0 +1,15 @@
+page << "var freshchatLayout = jQuery('#freshchat_layout,#chat_available_icon');
+		if(#{feature?(:chat_enable)}){
+			if(jQuery('#freshchat_layout') && window.chat_socket){
+				freshchatLayout.show();
+				chat_socket.socket.reconnect();
+			}else{
+				jQuery('body').append('#{escape_javascript(render :partial => 'layouts/chat') }');
+			}
+		}else{
+			freshchatLayout.hide();
+			if(window.chat_socket){
+				chat_socket.socket.disconnect();
+			}
+		}"
+

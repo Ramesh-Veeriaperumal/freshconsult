@@ -3049,6 +3049,7 @@ a.pill.help{
 
   [rel=view_collision].view_collision ,[rel=reply_collision].reply_collision {
     display: inline-block;
+    top:2px;
   }
   
   .view_collision, .reply_collision  {
@@ -3056,10 +3057,10 @@ a.pill.help{
     width: 18px;
     position: relative;
     padding-left: 25px;
-
     span{
       position: relative;
-      top: 4px;
+      top: 2px;
+      font-size:12px;
     }
   }
 }

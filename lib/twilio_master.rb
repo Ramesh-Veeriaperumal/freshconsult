@@ -17,8 +17,8 @@ module TwilioMaster
 	}
 
 	def self.client
-		account_sid = FreshfoneConfig['twilio'][RAILS_ENV]['account_sid']
-    auth_token = FreshfoneConfig['twilio'][RAILS_ENV]['auth_token']
+		account_sid = FreshfoneConfig['twilio']['account_sid']
+    auth_token = FreshfoneConfig['twilio']['auth_token']
     Twilio::REST::Client.new(account_sid, auth_token)
 	end
 

@@ -49,7 +49,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    end
    
    def fetch_signups_per_month
-     @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
+     @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
                                        :order => "created_at desc") })
    end
   

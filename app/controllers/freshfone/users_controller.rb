@@ -111,7 +111,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def validate_presence_from_node
-			generated_hash = Digest::SHA512.hexdigest("#{FreshfoneConfig["secret_key"][Rails.env]}::#{params[:node_user]}")
+			generated_hash = Digest::SHA512.hexdigest("#{FreshfoneConfig["secret_key"]}::#{params[:node_user]}")
 			valid_user = request.headers["HTTP_X_FRESHFONE_SESSION"] == generated_hash
 			head :forbidden unless valid_user
 		end
