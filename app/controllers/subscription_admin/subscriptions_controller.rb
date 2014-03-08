@@ -50,8 +50,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    
    def fetch_signups_per_month
      @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
-                                       :order => "created_at desc") })
-     @signups_by_month = @signups_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }.reverse
+                                       :order => "created_at desc", :conditions => "created_at is not null") })
+     @signups_by_month = @signups_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i  }.reverse
    end
   
   def fetch_customers_per_month
