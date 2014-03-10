@@ -49,6 +49,10 @@
 
 		<%= @layout %>
 				
+		<% if chat_enabled? %>
+			<%= render :partial => "layouts/shared/chat/chat" %>
+		<% end %>
+	
 		<!-- Including default portal based script at the bottom -->
 		<%= include_cloudfront_js :portal_bottom %>
 		<%= include_cloudfront_js :redactor %>

@@ -138,6 +138,35 @@
 				  </li>
 
 				  <li class="inline-field">
+				  	<h3 class="title space_top"><%=t('freshchat.support_portal')%><span class='show_on_portal_checkbox'><%= check_box_tag :show_on_portal, 1, :class => 'filter_item' %></span></h3> 
+					 <div class="fields marginleftnone">
+					 	<div class="ff_item">
+							  <label class="item-large"> 
+							    <span><%=t('freshchat.portal_desc')%></span>							     
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+ 
+				  <li class="inline-field chat_portal_enable_form">
+				  	<label class="caption form_divider"><%=t('freshchat.portal_option_info')%></label>
+				  		<div class="fields">
+				  			<ul>
+				  				<li class="inline-field">
+									<label class="item"> 
+						  			<input type="radio" id="show_on_portal_all" name = "show_on_portal" value="everyOne" checked><span><%=t('freshchat.everyone')%></span>
+									</label>
+						  		</li>
+						  		<li class="inline-field">
+									<label class="item"> 
+									<input type="radio" id="portal_login_required" name = "show_on_portal" value="onlyLoggedIn"><span><%=t('freshchat.logged_in_users')%></span>
+									</label>
+								</li>
+							</ul>
+						</div>
+				  </li>
+
+				  <li class="inline-field">
 				  	<h3 class="title space_top"><%=t('freshchat.prechat_title')%><span class='prechat_form_checkbox'><%= check_box_tag :prechat_form, 1, :class => 'filter_item', :id => 'prechat_form' %></span></h3> 
 					 <div class="fields marginleftnone">
 					 	<div class="ff_item">
@@ -145,6 +174,13 @@
 							    <span><%=t('freshchat.prechat_desc')%></span>							     
 							  </label>
 						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field prechat_form">
+					 <label class="caption"><%=t('freshchat.prechat_msg')%></label>
+					 <div class="fields">
+					 	<input type="text" class="text" size="18" id="prechat_message" name="prechat_message" value="<%=(@chat.prechat_message != nil)? @chat.prechat_message : t('freshchat.prechat_message')%>" placeholder="<%=t('freshchat.prechat_message')%>">
 					 </div>
 				  </li>
 
@@ -201,14 +237,6 @@
 							  </li>
 					  	</ul>
 				  </div>
-				  </li>
-
-				   <li class="inline-field prechat_form">
-					 <label class="caption"><%=t('freshchat.prechat_msg')%></label>
-					 <div class="fields">
-					 	<input type="text" class="text" size="18" id="prechat_message" name="prechat_message" value="<%=(@chat.prechat_message != nil)? @chat.prechat_message : t('freshchat.prechat_message')%>" placeholder="<%=t('freshchat.prechat_message')%>">
-					 	<div class="info-data"><%=t('freshchat.welcome_tip')%></div>
-					 </div>
 				  </li>
 
 				  <li class="inline-field">
