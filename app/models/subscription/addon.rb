@@ -37,9 +37,7 @@ class Subscription::Addon < ActiveRecord::Base
 	def billing_quantity(subscription)
 		case addon_type
 		when ADDON_TYPES[:agent_quantity]
-			subscription.agent_limit
-		when ADDON_TYPES[:portal_quantity]
-			subscription.account.portals.count
+			subscription.agent_limit		
 		end
 	end
 

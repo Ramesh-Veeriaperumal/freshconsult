@@ -22,6 +22,7 @@ class SubscriptionsController < ApplicationController
   CARD_UPDATE_REQUEST_LIMIT = 5
   NO_PRORATION_PERIOD_CYCLES = [ 1 ]
   ACTIVE = "active"
+  FREE = "free"
 
 
   def calculate_amount    
@@ -38,6 +39,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def convert_subscription_to_free
+    scoper.state = FREE
     if activate_subscription
       update_features
       flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.name )

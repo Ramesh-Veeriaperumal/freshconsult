@@ -126,7 +126,7 @@ class Support::SearchController < SupportController
               unless main_portal?
                 if search_in.include?(Solution::Article)
                   f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                                { :term => { 'folder.category_id' => current_portal.solution_category_id || 0 } }
+                                { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
                 end
                 if search_in.include?(Topic)
                   f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },

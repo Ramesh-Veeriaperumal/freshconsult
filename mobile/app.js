@@ -26,7 +26,7 @@ Ext.application({
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
                     'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
                     'FacebookForm','TicketFacebookForm','MultiSelect','Timer','TicketTimer','TimerContainer','TimerForm'],
-    stores      :['Init','Filters','Tickets','Contacts','AutoTechnician','Timers'],
+    stores      :['Init','InitReplyEmails','Filters','Tickets','Contacts','AutoTechnician','Timers'],
     models      :['Portal','Filter','Ticket','Contact','AutoSuggestion','Timer'],
 
     icon: {
@@ -108,6 +108,11 @@ Ext.application({
             }
             document.title = FD.current_portal && FD.current_portal.name+' : Helpdesk';
             Ext.fly('appLoadingIndicator').destroy();
+        }});
+
+
+        Ext.getStore('InitReplyEmails').load({callback:function(data, operation, success){
+            FD.reply_emails = data;
         }});
 
         //adding listners to ajax for showing the loading mask .. global.

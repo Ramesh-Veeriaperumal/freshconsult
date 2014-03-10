@@ -3,6 +3,8 @@ class Support::Discussions::TopicsController < SupportController
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, 
                                       :users_voted, :destroy, :toggle_solution]
   before_filter :require_user, :except => [:index, :show]
+
+  before_filter :load_agent_actions, :only => :show
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -79,20 +81,25 @@ class Support::Discussions::TopicsController < SupportController
     @forum = forum_scoper.find(params[:topic][:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      @topic  = @forum.topics.build(topic_param)
-      assign_protected
-      @post       = @topic.posts.build(post_param)
-      @post.topic = @topic
-      @post.user  = current_user
-      @post.account_id = current_account.id
-      # only save topic if post is valid so in the view topic will be a new record if there was an error
-      @topic.body_html = @post.body_html # incase save fails and we go back to the form
-      build_attachments
-      topic_saved = @topic.save if @post.valid?
-      post_saved = @post.save
+      if verify_recaptcha(:model => @topic)
+        @topic  = @forum.topics.build(topic_param)
+        assign_protected
+        @post       = @topic.posts.build(post_param)
+        @post.topic = @topic
+        @post.user  = current_user
+        @post.account_id = current_account.id
+        # only save topic if post is valid so in the view topic will be a new record if there was an error
+        @topic.body_html = @post.body_html # incase save fails and we go back to the form
+        build_attachments
+        topic_saved = @topic.save if @post.valid?
+        post_saved = @post.save
+      else
+        flash[:error] = "Captcha verification failed, try again!"
+      end
     end
     
     if topic_saved && post_saved
+      flash[:notice] = "Topic created successfully"
       respond_to do |format| 
         format.html { redirect_to support_discussions_topic_path(:id => @topic) }
         format.xml  { render :xml => @topic }
@@ -265,6 +272,14 @@ class Support::Discussions::TopicsController < SupportController
       param =  params[:topic].symbolize_keys
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
+    end
+
+    def load_agent_actions
+      @agent_actions = []
+      @agent_actions <<   { :url => category_forum_topic_path(@forum_category,@forum,@topic),
+                            :label => t('portal.preview.view_on_helpdesk'),
+                            :icon => "preview" } if privilege?(:view_forums)
+      @agent_actions
     end
 	
 end

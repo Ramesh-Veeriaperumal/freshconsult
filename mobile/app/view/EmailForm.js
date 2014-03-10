@@ -53,7 +53,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                         label: 'From :',
                         listeners: {
                             change: function(selObj,newVal,oldVal,eOpts){
-                                this.parent.items.items[12].setValue(newVal);
+                                this.parent.items.items[12].setValue(newVal.replace("(","<").replace(")",">"));
                             }
                         }
                     },

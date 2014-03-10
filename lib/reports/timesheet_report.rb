@@ -48,15 +48,16 @@ module Reports::TimesheetReport
   end 
 
   def filter(start_date,end_date)
-      scoper(start_date,end_date).find(:all,:conditions => select_conditions)
+      scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}))
   end
 
   private
 
   def select_conditions
     conditions = {}
-    conditions = {:helpdesk_tickets => { :ticket_type =>   @ticket_type }} unless @ticket_type.empty? 
-    conditions.merge!({:helpdesk_tickets=>{:priority => @priority}}) unless @priority.empty? 
+    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty? 
+    conditions[:priority] = @priority unless @priority.empty?
+    {:helpdesk_tickets => conditions} unless conditions.blank?
   end
 
   def set_selected_tab

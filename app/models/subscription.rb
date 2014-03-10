@@ -40,6 +40,7 @@ class Subscription < ActiveRecord::Base
   # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
+  after_update :update_reseller_subscription
   after_commit_on_update :update_social_subscription, :add_free_freshfone_credit
 
   attr_accessor :creditcard, :address, :billing_cycle
@@ -357,6 +358,13 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+    end
+
+    def update_reseller_subscription 
+      if state_changed? or (active? and amount_changed?)
+        Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
+          :event_type => :subscription_updated })
+      end
     end
 
  end

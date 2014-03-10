@@ -61,7 +61,7 @@
     cursor: default;
     background-color: darken($white, 10%);
     background-image: none;
-    @include opacity(65);
+    @include opacity(.4);
     @include box-shadow(none);
   }
 

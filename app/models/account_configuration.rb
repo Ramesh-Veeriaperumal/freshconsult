@@ -7,7 +7,7 @@ class AccountConfiguration < ActiveRecord::Base
 
   validate :ensure_values
 
-  after_update :update_crm, :update_billing
+  after_update :update_crm, :update_billing, :update_reseller_subscription
 
   
   def admin_first_name
@@ -46,5 +46,10 @@ class AccountConfiguration < ActiveRecord::Base
   	def update_billing
   		Billing::Subscription.new.update_admin(self)
   	end
+
+    def update_reseller_subscription
+      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
+        :event_type => :contact_updated })
+    end
 
 end

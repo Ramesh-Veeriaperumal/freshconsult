@@ -7,7 +7,7 @@
 	    	case 'cnt-reply':
 	         	jQuery('#'+element_id).redactor({
 					focus: true, convertDivs: false, autoresize:false, observeImages:true, imageUpload:"/tickets_uploaded_images",
-					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image'],
+					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image','removeFormat'],
 					execCommandCallback: function(obj, command) { 
 						if (typeof(TICKET_DETAILS_DATA) != 'undefined') {
 							if (typeof(TICKET_DETAILS_DATA['draft']['clearingDraft']) == 'undefined' || !TICKET_DETAILS_DATA['draft']['clearingDraft']) {

@@ -336,7 +336,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :from_email => from_email[:email],
         :to_emails => parse_to_emails,
         :cc_emails => parsed_cc_emails
-      )       
+      )  
+      note.subject = params[:subject]     
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
       
       begin

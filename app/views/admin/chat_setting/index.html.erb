@@ -5,7 +5,7 @@
 <%= render :partial => "helpnote" %>
 <%- end %>
 <div class="chat-header">
-	<h3 class = "title"> <%=t('chatwidget_title')%>
+	<h3 class = "lead"> <%=t('chatwidget_title')%>
 		<div class="pull-right">
 			<%= check_box_tag :chat_enable, 1, feature?(:chat_enable), 
 				:rel => "toggle", 
@@ -233,9 +233,10 @@
 				  </li>
 				</ul>
     	</div>
-    	<div class="button-container">
-			<input class="uiButton special pull-right" id="chat_setting_save" name="commit" type="button" value="<%=t('freshchat.save')%>">
-			<a href="/admin/home" class="uiButton floatl pull-right"><%=t('freshchat.cancel')%></a>	
+    	<hr>
+    	<div class="row-fluid text-right">
+    		<a href="/admin/home" class="btn"><%=t('freshchat.cancel')%></a>	
+			<input class="btn btn-primary" id="chat_setting_save" name="commit" type="button" value="<%=t('freshchat.save')%>">
 		</div>
 		<% end %>
   	  </div>

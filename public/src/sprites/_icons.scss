@@ -42,6 +42,8 @@
 
 .icons-dislike{ @include icons-sprite(dislike); }
 
+.agent-preview{ @include icons-sprite(agent-preview); }
+
 .solution-list li:before{
 	@include icons-sprite(article-list);
 }

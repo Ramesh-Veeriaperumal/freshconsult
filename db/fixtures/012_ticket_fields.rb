@@ -17,7 +17,7 @@ def self.ticket_fields_data
       :required_in_portal => true },
        
     { :name => "ticket_type", :label => "Type", :description => "Ticket type",
-      :required => true, :choices => [["Question"],["Incident"],["Problem"],["Feature Request"],["Lead"] ]
+      :required => false, :choices => [["Question"],["Incident"],["Problem"],["Feature Request"],["Lead"] ]
     },
       
     { :name => "source", :label => "Source", :description => "Ticket source" },

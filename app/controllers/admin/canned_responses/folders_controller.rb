@@ -3,6 +3,7 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
 
   before_filter :load_object, :only => [:update, :edit, :show, :destroy]
   before_filter :check_default, :only => [:edit, :destroy, :update]
+  before_filter :new_ca_res_folder, :only => [:index, :show]
 
   def index
     @ca_res_folders = scoper.all
@@ -98,6 +99,10 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
 
     def scoper
     	current_account.canned_response_folders
+    end
+
+    def new_ca_res_folder
+        @new_ca_res_folder = scoper.new
     end
 
     def cname
