@@ -39,37 +39,54 @@ module Freshfone::Jobs
 			@data = nil
 			begin
 				fetch_details(args)
-				if @call.recording_audio.blank?
-					download_data
-					build_recording_audio
-					create_voicemail_ticket(args) if args[:voicemail] && @call.recording_audio
-					release_data
-				else
+				if @call.recording_audio.present?
 					Rails.logger.debug "Duplicate job for freshfone record attachment  for 
 					account => #{@account.id} call sid => #{@call.call_sid}"
+					return
+				end
+				fetch_twilio_recording
+				#Ignoring recordings of duration less than 5 seconds
+				if @recording_duration.to_i < 5
+				 	@call.recording_url = nil
+				 	@call.save
+				else
+					download_data 
+					build_recording_audio
 				end
 			rescue Exception => e
-				Rails.logger.debug "Error in processing queued freshfone call 
-						recording :: \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 				NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
-					failed call_sid => #{@call.call_sid} :: account => #{@account.id} "})
+					failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
+					recording_sid => #{@recording_sid} :: attempt #{args[:attempt]|| 0 }"})
+				if args[:attempt].present?
+					raise e
+				end			
+				args.merge!({:attempt => 1})	
+				Resque::enqueue_at(15.minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, args)
+			ensure
 				release_data
 			end
+			create_voicemail_ticket(args) if args[:voicemail] && @call.recording_audio
 		end
 
 		private
 
 			def self.fetch_details(args)
-					@account = Account.current
-					@call = @account.freshfone_calls.find_by_id(args[:call_id])
-					@file_url = @call.recording_url + ".mp3"
-					@file_name = args[:call_sid]
+				@account = Account.current
+				@call = @account.freshfone_calls.find_by_id(args[:call_id])
+				@file_url = @call.recording_url + ".mp3"
+				@file_name = args[:call_sid]
+			end
+
+			def self.fetch_twilio_recording
+				@recording_sid = File.basename(@call.recording_url)
+				@recording = @call.account.freshfone_subaccount.recordings.get(File.basename(@recording_sid))
+				@recording_duration = @recording.duration
 			end
 
 			def self.download_data
 				@data = RemoteFile.new(@file_url,'','',@file_name)
 				NewRelic::Agent.notice_error( 
-							StandardError.new("Freshfone Call Recording Attachment size => #{ @data.size} exceeds 40MB 
+						StandardError.new("Freshfone Call Recording Attachment size => #{ @data.size} exceeds 40MB 
 								: account => #{@account.id} : call sid => #{call.call_sid} ")) if @data.size > 40.megabyte
 			end
 
@@ -78,14 +95,20 @@ module Freshfone::Jobs
 			end
 
 			def self.create_voicemail_ticket(args)
-					set_current_call(@call)
-					voicmail_ticket(args)
+				set_current_call(@call)
+				voicmail_ticket(args)
 			end
 
 			def self.release_data
 				return unless @data
-				@data.unlink_open_uri
-				@data.unlink
+
+				begin
+					@data.unlink_open_uri
+					@data.unlink
+				rescue
+					Rails.logger.debug "Error in freshfone record attachment  for 
+					account => #{@account.id} call sid => #{@call.call_sid} raise from release_data"
+				end
 			end
 	end
 end

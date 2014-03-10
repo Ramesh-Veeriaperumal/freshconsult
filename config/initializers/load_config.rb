@@ -2,7 +2,7 @@ AppConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'config.yml'))
 
 NodeConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'node_js.yml'))[RAILS_ENV]
 
-FreshfoneConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'freshfone.yml'))
+FreshfoneConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'freshfone.yml'))[RAILS_ENV]
 
 MailgunConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailgun.yml'))[RAILS_ENV]
 

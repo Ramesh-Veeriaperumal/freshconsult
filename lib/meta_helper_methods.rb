@@ -52,7 +52,6 @@ module MetaHelperMethods
           <span class="meta-os os-#{os_shorthand(user_agent.os)}">OS</span>
           <label>#{user_agent.os} </label>
         </div>
-        <div class="clearfix"></div>
       )
   end
 
@@ -67,12 +66,11 @@ module MetaHelperMethods
     %(<div>
         <span class="meta-referrer tooltip" title="Referring page">Referring Page</span>
         <label>
-          <a href="#{referrer}" target="_blank" class="tooltip" title="#{referrer}">
+          <a href="#{referrer}" target="_blank" title="#{referrer}">
             #{short_referrer(referrer)}
           </a>
         </label>
       </div>
-      <div class="clearfix"></div>
     )
   end
 

@@ -631,7 +631,7 @@ en:
     day_passes:
       helpnote:
         title: Day Pass
-        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they gets used up.
+        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they get used up.
       index:
         no_credit_card: No credit card on file.
         payment_info: Enter payment information to add more day passes
@@ -3595,7 +3595,7 @@ en:
     copy_of: Copy of
     save_tooltip: Save
     saveas_tooltip: Save as
-    cancel_tooltip: Discard
+    cancel_tooltip: Discard changes
     edit_tooltip: Edit
     delete_tooltip: Delete
     sort_fields:
@@ -4721,6 +4721,7 @@ en:
       no_credit_card: "Enter payment information to purchase Freshfone credits"
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
+      see_detailed_pricing: "See Detailed Pricing"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"
@@ -4773,11 +4774,16 @@ en:
       save: "Save"
       notes: "Notes"
       new_requester: "New requester"
-      inactive: "Freshfone unavailable"
+      inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
+      singular_active_number: "Active Number"
+      none_active_number: "- none -"
+      active_number: "Active Numbers"
+      singular_deleted_number: "Deleted Number"
+      deleted_number: "Deleted Numbers"
       block_number: "Block"
       cancel: "Cancel"
       blacklist_confirmation: "Are you sure to block"

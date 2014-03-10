@@ -119,10 +119,12 @@ class User < ActiveRecord::Base
 
   def update_verified
     #for user email delta
-    if active?
-      user_email.update_attributes({:verified => true})
-    else
-      user_email.update_attributes({:verified => false})
+    if user_email
+      if active?
+        user_email.update_attributes({:verified => true})
+      else
+        user_email.update_attributes({:verified => false})
+      end
     end
   end
 

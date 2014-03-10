@@ -8,7 +8,7 @@ module Freshfone::NodeEvents
 
   def notify_socket(channel, message)
     begin
-      node_uri = "#{FreshfoneConfig['node_url'][Rails.env]}/freshfone/#{channel}"
+      node_uri = "#{FreshfoneConfig['node_url']}/freshfone/#{channel}"
       options = {
         :body => message, 
         :headers => { "X-Freshfone-Session" => freshfone_node_session },
@@ -136,7 +136,7 @@ module Freshfone::NodeEvents
     def freshfone_node_session
       account = @account || 
                 (@user ? @user.account : current_account)
-      Digest::SHA512.hexdigest("#{FreshfoneConfig['secret_key'][Rails.env]}::#{account.id}")
+      Digest::SHA512.hexdigest("#{FreshfoneConfig['secret_key']}::#{account.id}")
     end
     
 end

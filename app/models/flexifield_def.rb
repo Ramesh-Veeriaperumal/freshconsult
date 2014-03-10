@@ -9,8 +9,6 @@ class FlexifieldDef < ActiveRecord::Base
     :reject_if => proc { |attrs| attrs['flexifield_alias'].blank? }
     
   has_many :flexifield_picklist_vals, :class_name => 'FlexifieldPicklistVal',:through =>:flexifield_def_entries
-
-  named_scope :default_form, :conditions => ["product_id is NULL and module='Ticket'"]
   
   validates_presence_of :name
   

@@ -49,8 +49,9 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    end
    
    def fetch_signups_per_month
-     @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
-                                       :order => "created_at desc") })
+     @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
+                                       :order => "created_at desc", :conditions => "created_at is not null") })
+     @signups_by_month = @signups_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i  }.reverse
    end
   
   def fetch_customers_per_month
@@ -61,7 +62,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
       @customers_by_month.store(date.strftime("%b, %Y"),count+1)
     end
     end
-   @customers_by_month =  @customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
+   @customers_by_month =  @customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }.reverse
  end
    
    def converted_customers_per_month
@@ -69,7 +70,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
                                                  :group => "DATE_FORMAT(accounts.created_at,'%b %Y')") }
 
     @conv_customers_by_month = merge_array_of_hashes(results)
-    @conv_customers_by_month =  @conv_customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
+    @conv_customers_by_month =  @conv_customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }.reverse
   end
   
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"

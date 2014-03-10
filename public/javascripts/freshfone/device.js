@@ -1,5 +1,7 @@
 (function ($) {
     "use strict";
+	$(document).ready(function() {
+
 	freshfoneuser.initializeDevice();
 	// private methods
 	function previewMode() { return (freshfonecalls.tConn.message || {}).preview; }
@@ -92,4 +94,5 @@
 		Twilio.Device.presence(function (pres) {
 		});
 	}
+	});
 }(jQuery));

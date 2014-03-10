@@ -76,11 +76,11 @@ class Freshfone::User < ActiveRecord::Base
 	end
 	
 	def number
-		available_number
+		@number ||= available_number
 	end
-	
-	def call_agent_twiml(xml_builder, forward_call_url)
-		available_on_phone? ? call_agent_on_phone(xml_builder, forward_call_url) :
+
+	def call_agent_twiml(xml_builder, forward_call_url, current_number)
+		available_on_phone? && vaild_phone_number?(current_number) ? call_agent_on_phone(xml_builder, forward_call_url) :
 													call_agent_on_browser(xml_builder)
 	end
 	
@@ -94,5 +94,14 @@ class Freshfone::User < ActiveRecord::Base
 			xml_builder.Client user_id
 		end
 		
+		def vaild_phone_number?(current_number)
+			@current_number = current_number.number
+			@agent_number = GlobalPhone.parse(number)
+			@agent_number && @agent_number.valid? && can_dial_agent_number?
+		end
+
+		def can_dial_agent_number?
+			@agent_number.national_string != GlobalPhone.parse(@current_number).national_string
+		end
 
 end
