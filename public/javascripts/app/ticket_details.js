@@ -371,7 +371,7 @@ var scrollToError = function(){
 		changeYear: true,
 		onSelect: function(dateText, inst) {
 			selectedDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
-			$("#due-date-value").html( selectedDate.toDateString() );
+			$("#due-date-value").html( moment(selectedDate).format(getDateFormat('moment_date_with_week')) );
 			CalcSelectedDateTime();
 		}
 	});

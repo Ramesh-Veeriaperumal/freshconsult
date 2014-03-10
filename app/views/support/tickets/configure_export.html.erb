@@ -59,7 +59,7 @@
 	</fieldset>
 <%end%>
 
-<script type="text/javascript">
+<% javascript_tag do %>
 	!function( $ ) {
 
 		$(function () {
@@ -88,6 +88,7 @@
 				changeYear: true,
 				numberOfMonths: 1,
 				maxDate: "today",
+				dateFormat: getDateFormat('datepicker'),
 				onSelect: function( selectedDate ) {
 					var option = this.id == "start_date" ? "minDate" : "maxDate",
 						instance = $( this ).data( "datepicker" ),
@@ -100,8 +101,8 @@
 				}
 			})
 
-			$("#start_date").val((date_today.getMonth()) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
-			$("#end_date").val((date_today.getMonth()+1) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
+			$("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
+			$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
 		})
 
 	}(window.jQuery)
@@ -109,4 +110,4 @@
    	ev.preventDefault();
    	return false;
   });
-</script>
+<% end %>

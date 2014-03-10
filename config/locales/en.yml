@@ -1,6 +1,65 @@
 en:
   meta:
    language_name: 'English'
+  date:
+    ago: ago
+    from: from now
+    now: just now
+    second: second
+    seconds: seconds
+    minute: minute
+    minutes: minutes
+    hour: hour
+    hours: hours
+    day: day
+    days: days
+    week: week
+    weeks: weeks
+    month: month
+    months: months
+    year: year
+    years: years
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    order: [ :year, :month, :day ]
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "about 1 hour"
+        other: "about %{count} hours"
+      about_x_months:
+        one: "about 1 month"
+        other: "about %{count} months"
+      about_x_years:
+        one: "about 1 year"
+        other: "about %{count} years"
+      almost_x_years:
+        one: "almost 1 year"
+        other: "almost %{count} years"
+      half_a_minute: "half a minute"
+      less_than_x_minutes:
+        one: "less than a minute"
+        other: "less than %{count} minutes"
+      less_than_x_seconds:
+        one: "less than 1 second"
+        other: "less than %{count} seconds"
+      over_x_years:
+        one: "over 1 year"
+        other: "over %{count} years"
+      x_days:
+        one: "1 day"
+        other: "%{count} days"
+      x_minutes:
+        one: "1 minute"
+        other: "%{count} minutes"
+      x_months:
+        one: "1 month"
+        other: "%{count} months"
+      x_seconds:
+        one: "1 second"
+        other: "%{count} seconds"
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
@@ -3129,6 +3188,9 @@ en:
     info6: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
     save: Save
     time_zone: Time Zone
+    date_format: Date Format
+    non_us: DATE-MONTH-YEAR
+    us: MONTH-DATE-YEAR
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
@@ -3669,24 +3731,6 @@ en:
     hours: Hrs
     days: Days
     months: Mos
-  date:
-    ago: ago
-    from: from now
-    now: just now
-    second: second
-    seconds: seconds
-    minute: minute
-    minutes: minutes
-    hour: hour
-    hours: hours
-    day: day
-    days: days
-    week: week
-    weeks: weeks
-    month: month
-    months: months
-    year: year
-    years: years
   go_back_admin: Go back to Admin
   social:
     facebook_pages:

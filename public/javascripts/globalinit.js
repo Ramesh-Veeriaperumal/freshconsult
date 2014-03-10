@@ -284,7 +284,7 @@ window.xhrPool = [];
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
-      $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
+      $("input.datepicker").livequery(function(){ $(this).datepicker( $.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker') }  )) });
 
       $('.contact_tickets .detailed_view .quick-action').removeClass('dynamic-menu quick-action').attr('title','');
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});

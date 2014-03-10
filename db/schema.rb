@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140214010211) do
+ActiveRecord::Schema.define(:version => 20140228064418) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.string   "bcc_email"
     t.text     "supported_languages"
     t.integer  "api_limit",           :default => 1000
+    t.integer  "date_format",                       :default => 1
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"

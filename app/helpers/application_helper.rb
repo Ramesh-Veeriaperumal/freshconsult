@@ -2,6 +2,7 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include ForumHelperMethods
+  include AccountConstants
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
@@ -21,10 +22,11 @@ module ApplicationHelper
                         ["(gt IE 10)|!(IE)", "", true]]
     language = current_portal.language
     language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
+    date_format = DATEFORMATS[current_account.account_additional_settings.date_format]
     html_conditions.map { |h|
       %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-          language }">#{h[2] ? '<!--' : ''}<![endif]-->)
+          language }" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
     }.to_s.html_safe
   end
 
@@ -503,11 +505,29 @@ module ApplicationHelper
       content_tag(:strong, h(user.display_name), options)
     end
   end
-  
-  # Date and time format that is mostly used in our product
-  def formated_date(date_time, format = "%a, %b %e, %Y at %l:%M %p")
-    format = format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
-    date_time.strftime(format)
+
+  def formated_date(date_time, options={})
+    default_options = {
+      :format => :short_day_with_time,
+      :include_year => false,
+      :translation => true
+    }
+    options = default_options.merge(options)
+    time_format = current_account.date_type(options[:format])
+    unless options[:include_year]
+      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+    end
+    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
+  end
+
+  def date_range_val(start_date,end_date,additional_options={})
+    options = {
+      :format => :short_day_separated,
+      :include_year => true,
+      :translate => false
+    }
+    options = options.merge(additional_options)
+    params[:date_range].blank? ? "#{formated_date(start_date,options)} - #{formated_date(end_date,options)}" :  h(params[:date_range])
   end
   
   # Get Pref color for individual portal

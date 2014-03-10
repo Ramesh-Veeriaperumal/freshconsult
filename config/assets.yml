@@ -214,6 +214,7 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
+    - public/javascripts/dates.js
     - public/javascripts/globalinit.js
     - public/javascripts/fjax.js
     - public/javascripts/loader.js
@@ -347,6 +348,7 @@ javascripts:
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
+    - public/javascripts/dates.js
 
   freshfone_portal:
     - public/javascripts/sound/soundmanager2-jsmin.js
