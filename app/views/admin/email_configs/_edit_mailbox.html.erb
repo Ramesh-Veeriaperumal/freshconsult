@@ -113,7 +113,6 @@
         });
 
         if (<%= @mailbox.id.nil? %>) jQuery('#email_system').val('Gmail').trigger('change');
-        jQuery("input[rel=username]").val(jQuery('#reply_to_id').val());
     });
 
     function disable_ssl_checkbox(){
