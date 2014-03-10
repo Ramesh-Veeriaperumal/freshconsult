@@ -3305,3 +3305,9 @@ a.pill.help{
 //								Forum by prashanth end
 //------------------------------------------------------------------------------------
 
+
+ /*lazy loader */
+.image-lazy-load img{
+  opacity: .5;
+  transition: all .8s ease-in;
+}

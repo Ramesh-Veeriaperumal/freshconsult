@@ -178,8 +178,8 @@ javascripts:
     - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/app/ticket_details.js
     - public/javascripts/frameworks/plugins/jquery.tabby.js
-    - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/nprogress.js
+    - public/javascripts/frameworks/plugins/jquery.unveil.js
     - public/javascripts/base64.js
 
   # Code editor for portal cms
@@ -349,6 +349,7 @@ javascripts:
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
     - public/javascripts/dates.js
+    - public/javascripts/frameworks/plugins/jquery.unveil.js
 
   freshfone_portal:
     - public/javascripts/sound/soundmanager2-jsmin.js

@@ -358,7 +358,14 @@ window.xhrPool = [];
         focusInvalid: false,
         ignore:"select.nested_field:empty, .portal_url:not(:visible)" 
       });
-      
+
+      $(".image-lazy-load img").livequery(function(ev){
+          $(this).unveil(200, function() {
+            $(this).load(function() {
+              this.style.opacity = 1;
+            });
+          });
+      })
       $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate();
       })

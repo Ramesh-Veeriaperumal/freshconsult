@@ -147,7 +147,7 @@ module SupportHelper
 	# User image page
 	def profile_image user, more_classes = "", width = "50px", height = "50px" 
 		output = []
-		output << %( 	<div class="user-pic-thumb #{more_classes}">
+		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
 							<img src="/images/fillers/profile_blank_thumb.gif" )
 		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
 		output << %(			width="#{width}" height="#{height}" />
