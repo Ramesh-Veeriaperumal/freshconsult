@@ -19,7 +19,7 @@ class Support::DiscussionsController < SupportController
 
     def user_monitored
     	options={}
-    	options[:joins]= "inner join #{Monitorship.table_name} on #{Topic.table_name}.id = #{Monitorship.table_name}.topic_id and #{Topic.table_name}.account_id = #{Monitorship.table_name}.account_id"
+    	options[:joins]= "inner join #{Monitorship.table_name} on #{Topic.table_name}.id = #{Monitorship.table_name}.monitorable_id and #{Monitorship.table_name}.monitorable_type = 'Topic' and #{Topic.table_name}.account_id = #{Monitorship.table_name}.account_id"
     	options[:conditions] = ["#{Monitorship.table_name}.active=? and #{Monitorship.table_name}.user_id = ?",true,params[:user_id]]
     	options[:page] = params[:page]
     	# setting it to 10 as default count or if count mentioned >30.Never allow >30
