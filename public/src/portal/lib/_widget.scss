@@ -121,7 +121,6 @@ body, .feedback-wrapper{
 .custom_dropdown{
 	overflow-y: hidden;
 }
-
 /* Embedded Widget styles */
 .embedded-wrapper{
 	#feedback-suggest input.special {
@@ -132,6 +131,12 @@ body, .feedback-wrapper{
 	}
 	.embedded-body {
 		max-height: 90%;
+		//Mozilla fix for hidden Embedded widget
+		.redactor_editor, .redactor_editor:focus{ 
+			min-height: 100px;
+			height:auto !important;
+			height: 100px;
+		}
 	}
 	.embedded-footer {
 		padding-top:0;
