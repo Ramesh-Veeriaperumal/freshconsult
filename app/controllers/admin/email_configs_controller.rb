@@ -49,7 +49,7 @@ class Admin::EmailConfigsController < Admin::AdminController
       end
     else
       update_error
-      redirect_to :action => 'edit'
+      render :action => 'edit'
     end
   end
 
