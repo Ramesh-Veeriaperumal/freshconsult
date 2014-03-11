@@ -80,21 +80,19 @@ class Support::Discussions::TopicsController < SupportController
     topic_saved, post_saved = false, false
     @forum = forum_scoper.find(params[:topic][:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
-    Topic.transaction do
-      if verify_recaptcha(:model => @topic)
-        @topic  = @forum.topics.build(topic_param)
-        assign_protected
-        @post       = @topic.posts.build(post_param)
-        @post.topic = @topic
-        @post.user  = current_user
-        @post.account_id = current_account.id
-        # only save topic if post is valid so in the view topic will be a new record if there was an error
-        @topic.body_html = @post.body_html # incase save fails and we go back to the form
-        build_attachments
+    Topic.transaction do      
+      @topic  = @forum.topics.build(topic_param)
+      assign_protected
+      @post       = @topic.posts.build(post_param)
+      @post.topic = @topic
+      @post.user  = current_user
+      @post.account_id = current_account.id
+      # only save topic if post is valid so in the view topic will be a new record if there was an error
+      @topic.body_html = @post.body_html # incase save fails and we go back to the form
+      build_attachments
+      if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
         topic_saved = @topic.save if @post.valid?
         post_saved = @post.save
-      else
-        flash[:error] = "Captcha verification failed, try again!"
       end
     end
     
