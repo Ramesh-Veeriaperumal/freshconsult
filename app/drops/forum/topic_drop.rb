@@ -6,7 +6,7 @@ class Forum::TopicDrop < BaseDrop
   liquid_attributes << :title << :posts_count
 
   def context=(current_context)    
-    current_context['paginate_url'] = support_discussions_topic_path(source)
+    current_context['paginate_url'] = support_discussions_topic_path(source) unless source.new_record?
 
     super
   end
