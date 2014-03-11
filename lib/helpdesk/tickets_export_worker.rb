@@ -195,7 +195,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def file_name
-    "ticket_export.#{export_params[:format]}"
+    "ticket_export_#{Account.current.id}.#{export_params[:format]}"
   end
 
   def escape_html(val)
@@ -203,7 +203,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
   
   def remove_export_file(file_path)
-    # FileUtils.rm_f(file_path)
+    FileUtils.rm_f(file_path)
     @item.completed!
   end
 
