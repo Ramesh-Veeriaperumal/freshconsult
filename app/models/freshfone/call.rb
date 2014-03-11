@@ -21,7 +21,6 @@ class Freshfone::Call < ActiveRecord::Base
 
 	has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
 
-
 	delegate :number, :to => :freshfone_number
 	delegate :name, :to => :agent, :allow_nil => true, :prefix => true
 	delegate :name, :to => :customer, :allow_nil => true, :prefix => true
@@ -206,12 +205,14 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def calculate_cost
-		calculator = Freshfone::CallCostCalculator.new({
-			:call => id, 
-			:call_sid => call_sid,
-			:dial_call_sid => dial_call_sid 
-		}, account)
-		calculator.perform
+		if parent.blank?
+			calculator = Freshfone::CallCostCalculator.new({
+				:call => id, 
+				:call_sid => call_sid,
+				:dial_call_sid => dial_call_sid 
+			}, account)
+			calculator.perform
+		end
 	end
 	
 	private
