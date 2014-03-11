@@ -32,8 +32,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
   
+  text_datastore_callbacks :class => "ticket"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone

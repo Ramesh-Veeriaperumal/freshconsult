@@ -20,8 +20,9 @@ module Helpdesk
 
       def build_note_and_sanitize
         build_note_body unless note_body
+        update_content_ids if note_body.body_html
         if note_body
-          note_body.load_full_text
+          self.load_full_text
           sanitize_body_and_unhtml_it(note_body,"body","full_text")
         end
       end

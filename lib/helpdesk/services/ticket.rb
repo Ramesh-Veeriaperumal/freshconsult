@@ -20,6 +20,7 @@ module Helpdesk
 
       def build_ticket_and_sanitize
         build_ticket_body unless ticket_body
+        update_content_ids if ticket_body.description_html
         sanitize_body_and_unhtml_it(ticket_body,"description") if ticket_body
       end
     end

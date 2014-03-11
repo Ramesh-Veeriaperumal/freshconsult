@@ -46,6 +46,7 @@ gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
+gem "riak-client", "1.4.2"
 
 gem "http_accept_language", "1.0.1"
 

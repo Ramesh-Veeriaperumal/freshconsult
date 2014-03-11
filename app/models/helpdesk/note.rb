@@ -10,8 +10,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   set_table_name "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks
-
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
+  text_datastore_callbacks :class => "note"
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
   attr_protected :attachments, :notable_id
 
@@ -159,33 +159,6 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::NoteDrop.new self
   end
   
-  def body
-    body
-  end
-
-  def body_html
-    body_html
-  end
-
-  def full_text
-    note_body ? note_body.full_text : read_attribute(:body)
-  end
-
-  def full_text_html
-    note_body ? note_body.full_text_html : read_attribute(:body_html)
-  end
- 
-  def body_with_note_body
-    note_body ? note_body.body : read_attribute(:body)
-  end
-  alias_method_chain :body, :note_body
-
-  def body_html_with_note_body
-    note_body ? note_body.body_html : read_attribute(:body_html)
-  end
-  alias_method_chain :body_html, :note_body
-
-
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])

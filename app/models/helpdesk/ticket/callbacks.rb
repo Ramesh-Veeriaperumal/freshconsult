@@ -16,7 +16,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note
 
-  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules, :increment_ticket_counter
+  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules, :increment_ticket_counter
+
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
@@ -26,6 +27,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
 
+  def construct_ticket_old_body_hash
+    {
+      :description => self.ticket_body_content.description,
+      :description_html => self.ticket_body_content.description_html,
+      :raw_text => self.ticket_body_content.raw_text,
+      :raw_html => self.ticket_body_content.raw_html,
+      :meta_info => self.ticket_body_content.meta_info,
+      :version => self.ticket_body_content.version,
+      :account_id => self.account_id,
+      :ticket_id => self.id
+    } 
+  end
+  
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
@@ -318,11 +332,7 @@ private
     attachments.each do |attach| 
       content_id = header[:content_ids][attach.content_file_name]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
-      description_updated = true
     end
-
-    ticket_body.update_attribute(:description_html,self.ticket_body.description_html) if description_updated
-
     # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
     #Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
        # if description_updated

@@ -8,8 +8,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_dropboxes
 
-  has_description_body :table_name => 'helpdesk_ticket_bodies'
-
+  has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
+                            :dependent => :destroy, :autosave => false
+                            
 	has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
