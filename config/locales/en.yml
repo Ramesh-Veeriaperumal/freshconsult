@@ -817,7 +817,7 @@ en:
         click_to_disable: Click to disable SSL
         security_title: Security
         request_custom_ssl: Want to use Custom SSL for your support portal?
-        ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
+        ssl_info_new: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 15-20 days. <br /> <br />
         helpdesk_url: Helpdesk URL
         submit_request: Submit Request
         thanks_message: "<span class='thanks_message'> Thank you for requesting a Custom SSL certificate.</span> <br />"
