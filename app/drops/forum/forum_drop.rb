@@ -109,16 +109,16 @@ class Forum::ForumDrop < BaseDrop
     def filter_topics filter = self.current_topic_filter
       case filter
         when :popular
-          @source.topics.popular(3.months.ago).filter(@per_page, @page)
+          @source.topics.published.popular(3.months.ago).filter(@per_page, @page)
 
         when :planned, :implemented, :nottaken, :deferred, :inprogress,
             :answered, :unanswered, :solved, :unsolved
             
           _stamp = Topic::STAMPS_BY_KEY[filter.to_sym]
-          @source.topics.newest.by_stamp(_stamp).filter(@per_page, @page)
+          @source.topics.published.newest.by_stamp(_stamp).filter(@per_page, @page)
           
         else
-          @source.recent_topics.filter(@per_page, @page)
+          @source.recent_topics.published.filter(@per_page, @page)
       end
     end
 

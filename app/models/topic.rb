@@ -3,7 +3,7 @@ class Topic < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include ActionController::UrlWriter
   include Mobile::Actions::Topic
-  acts_as_voteable 
+  acts_as_voteable
   validates_presence_of :forum, :user, :title
 
   belongs_to_account
@@ -23,15 +23,15 @@ class Topic < ActiveRecord::Base
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
-  has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
-  
+  has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
+
   has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
-  
+
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
-  has_many :activities, 
-    :class_name => 'Helpdesk::Activity', 
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
   delegate :problems?, :questions?, :to => :forum
@@ -42,8 +42,9 @@ class Topic < ActiveRecord::Base
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
+  named_scope :published, :conditions => { :published => true }
   named_scope :find_by_forum_category_id, lambda { |forum_category_id|
-    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND 
+    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
         forums.account_id = topics.account_id),
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
     }
@@ -54,16 +55,18 @@ class Topic < ActiveRecord::Base
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  named_scope :popular, lambda { |days_before| 
-    { :conditions => ["replied_at >= ?", days_before], 
-      :order => 'hits DESC, user_votes DESC, replied_at DESC', 
-      :include => :last_post } 
+  named_scope :popular, lambda { |days_before|
+    { :conditions => ["replied_at >= ?", days_before],
+      :order => 'hits DESC, user_votes DESC, replied_at DESC',
+      :include => :last_post }
   }
 
-  # The below named scopes are used in fetching topics with a specific stamp used for portal topic list  
-  named_scope :by_stamp, lambda { |stamp_type| 
+  # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
+  named_scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
   }
+
+  attr_accessor :trash
 
   def self.visiblity_options(user)
     if user
@@ -76,29 +79,29 @@ class Topic < ActiveRecord::Base
           }
        end
     else
-      { 
-        :include =>[:forum],:conditions => ["forums.forum_visibility = ?" , Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]] 
-      } 
+      {
+        :include =>[:forum],:conditions => ["forums.forum_visibility = ?" , Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+      }
     end
   end
 
   named_scope :for_forum, lambda { |forum|
-    { :conditions => ["forum_id = ? ", forum] 
+    { :conditions => ["forum_id = ? ", forum]
     }
   }
-  named_scope :limit, lambda { |num| { :limit => num } }  
+  named_scope :limit, lambda { |num| { :limit => num } }
   named_scope :freshest, lambda { |account|
-    { :conditions => ["account_id = ? ", account], 
+    { :conditions => ["account_id = ? ", account],
       :order => "topics.replied_at DESC"
     }
   }
-  
+
   attr_protected :forum_id , :account_id
   # to help with the create form
   attr_accessor :body_html, :highlight_title
-  
+
   IDEAS_STAMPS = [
-    [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ], 
+    [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ],
     [ :inprogress,   I18n.t("topic.ideas_stamps.inprogress"),    4 ],
     [ :deferred,     I18n.t("topic.ideas_stamps.deferred"),      5 ],
     [ :implemented,  I18n.t("topic.ideas_stamps.implemented"),   2 ],
@@ -113,7 +116,7 @@ class Topic < ActiveRecord::Base
   IDEAS_TOKENS = IDEAS_STAMPS.map { |i| i[0] }
 
   QUESTIONS_STAMPS = [
-    [ :answered,     I18n.t("topic.questions.answered"),      6 ], 
+    [ :answered,     I18n.t("topic.questions.answered"),      6 ],
     [ :unanswered,   I18n.t("topic.questions.unanswered"),    7 ]
   ]
 
@@ -125,7 +128,7 @@ class Topic < ActiveRecord::Base
   QUESTIONS_TOKENS = QUESTIONS_STAMPS.map { |i| i[0] }
 
   PROBLEMS_STAMPS = [
-    [ :solved,     I18n.t("topic.problems.solved"),      8 ], 
+    [ :solved,     I18n.t("topic.problems.solved"),      8 ],
     [ :unsolved,   I18n.t("topic.problems.unsolved"),    9 ]
   ]
 
@@ -144,7 +147,7 @@ class Topic < ActiveRecord::Base
   }
   STAMPS_BY_KEY = IDEAS_STAMPS_BY_TOKEN.merge(QUESTIONS_STAMPS_BY_TOKEN).merge(PROBLEMS_STAMPS_BY_TOKEN)
   NAMES_BY_KEY = IDEAS_STAMPS_NAMES_BY_TOKEN.merge(QUESTIONS_STAMPS_NAMES_BY_TOKEN).merge(PROBLEMS_STAMPS_NAMES_BY_TOKEN)
-  
+
   def monitorship_emails
     user_emails = Array.new
     for monitorship in self.monitorships.active_monitors
@@ -152,10 +155,14 @@ class Topic < ActiveRecord::Base
     end
     return user_emails.compact
   end
-   
+
+  def new?
+    posts_count < 2
+  end
+
   def stamp_name
     IDEAS_STAMPS_BY_KEY[stamp_type]
-  end  
+  end
 
   def stamp_key
     IDEAS_STAMPS_TOKEN_BY_KEY[stamp_type].to_s
@@ -186,17 +193,18 @@ class Topic < ActiveRecord::Base
   def set_unsolved_stamp
     self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   end
-  
+
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
   end
-  
+
   def update_cached_post_fields(post)
     # these fields are not accessible to mass assignment
-    remaining_post = post.frozen? ? recent_post : post
-    if remaining_post
-      self.class.update_all(['replied_at = ?, replied_by = ?, last_post_id = ?, posts_count = ?', 
-        remaining_post.created_at, remaining_post.user_id, remaining_post.id, posts.count], ['id = ?', id])
+    # remaining_post = post.frozen? ? recent_post : post
+    # ASK WHY WE ARE CHECKING THIS
+    if recent_post
+      self.class.update_all(['replied_at = ?, replied_by = ?, last_post_id = ?, posts_count = ?',
+        recent_post.created_at, recent_post.user_id, recent_post.id, posts.published.count], ['id = ?', id])
     # else
       # self.destroy
     end
@@ -211,10 +219,10 @@ class Topic < ActiveRecord::Base
   def answer
     posts.answered_posts.first
   end
-  
+
   def toggle_solved_stamp
     return unless problems?
-    update_attributes(:stamp_type => (solved? ? 
+    update_attributes(:stamp_type => (solved? ?
                     Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved] : Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]))
   end
 
@@ -226,7 +234,7 @@ class Topic < ActiveRecord::Base
     )
     users
   end
-  
+
   def last_post_url
     if self.last_post_id.present?
       support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
@@ -237,24 +245,24 @@ class Topic < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end
 
   def to_indexed_json
-    to_json( 
+    to_json(
           :root => "topic",
           :tailored_json => true,
-          :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ], 
+          :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ],
           :include => { :posts => { :only => [:body],
                                     :include => { :attachments => { :only => [:content_file_name] } }
-                                  }, 
+                                  },
                         :forum => { :only => [:forum_category_id, :forum_visibility],
-                                    :include => { :customer_forums => { :only => [:customer_id] } } 
-                                  } 
-                      } 
+                                    :include => { :customer_forums => { :only => [:customer_id] } }
+                                  }
+                      }
        )
   end
-  
+
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)
     paginate :per_page => _per_page, :page => _page
@@ -272,7 +280,7 @@ class Topic < ActiveRecord::Base
   def topic_changes
     @topic_changes ||= self.changes.clone
   end
-  
+
   def topic_desc
     truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
   end

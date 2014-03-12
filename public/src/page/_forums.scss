@@ -172,6 +172,12 @@
 		li:hover{
 			background:#f4f4f4;
 		}
+
+		.spam_action {
+			width: 26px;
+			height: 26px;
+			display: block;
+		}
 }
 .mark_action{ 
 	a, .stamp{
@@ -505,3 +511,65 @@
 		}
 	}
 }
+
+
+
+// ---------------------------------------------------------------- //
+// ------------------------  SPAM FOLDER -------------------------- //
+// ---------------------------------------------------------------- //
+
+.topic-list-view.spam {
+
+	li {
+		padding-right: 70px;
+
+		&:hover {
+			background: #FCFCFC;
+		}
+	}
+	a, a:visited {
+		color: #1272de;
+	}
+
+	.label {
+		&.reply {
+			background-color: #a378a6;
+		}
+		&.new_topic {
+			background-color: #68b5b5;
+		}
+	}
+	.actions {
+		width: 30px;
+		margin-right: -55px;
+	}
+
+	.content {
+		border-right: dotted 1px #888;
+	}
+
+	.post-info {
+		color: #888;
+
+		a {
+			opacity: 0.5;
+		}
+	}
+
+	.post-content {
+		color: #000;
+		a {
+			font-weight: bold;
+		}
+	}
+
+	blockquote {
+		border-left: dotted 1px #888;
+	}
+
+}
+
+
+
+
+// ------------------------ END OF SPAM --------------------------- //

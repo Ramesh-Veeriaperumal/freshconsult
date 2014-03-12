@@ -1,0 +1,2 @@
+page << "jQuery(jQuery('##{dom_id(@post)} .tooltip').data('twipsy').$tip).remove();"
+page << "jQuery('##{dom_id(@post)}').fadeOut(500, function(){ jQuery(this).remove() });"

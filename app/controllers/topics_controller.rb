@@ -43,7 +43,7 @@ class TopicsController < ApplicationController
         # authors of topics don't get counted towards total hits
         @topic.hit! unless @topic.user == current_user
         
-        @posts = @topic.posts.paginate :page => params[:page]
+        @posts = @topic.posts.published.paginate :page => params[:page]
         @post  = Post.new
       end
       format.xml do
@@ -53,7 +53,7 @@ class TopicsController < ApplicationController
         render :json => @topic.to_json(:include => :posts)
       end
       format.rss do
-        @posts = @topic.posts.find(:all, :order => 'created_at desc', :limit => 25)
+        @posts = @topic.posts.published.find(:all, :order => 'created_at desc', :limit => 25)
         render :action => 'show', :layout => false
       end
     end

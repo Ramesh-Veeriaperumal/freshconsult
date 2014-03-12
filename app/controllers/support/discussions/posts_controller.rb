@@ -6,8 +6,10 @@ class Support::Discussions::PostsController < SupportController
  	before_filter :find_post, :except => :create
 
 	def create
+		params[:post].merge!(post_request_params)
+
 		@post = @topic.posts.new(params[:post])
-		if @topic.locked?
+		if @topic.locked? and !@topic.published?
 			respond_to do |format|
 				format.html do
 					flash[:notice] = 'This topic is locked.'[:locked_topic]
@@ -114,5 +116,15 @@ private
 
 	def scoper
 	    current_account.portal_topics
+	end
+
+	def post_request_params
+		{
+			:request_params => {
+				:user_ip => request.env['CLIENT_IP'],
+				:referrer => request.referrer,
+				:user_agent => request.env['HTTP_USER_AGENT']
+			}
+		}
 	end
 end

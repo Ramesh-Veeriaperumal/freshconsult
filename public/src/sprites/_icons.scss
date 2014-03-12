@@ -66,6 +66,11 @@ $chat-layout:horizontal;
 
 .agent-fchat-off { @include chat-sprite(status-off); }
 
+.topic-list-view {
+	.spam_action { @include icons-sprite(is-spam); }
+	.spam_action:hover { @include icons-sprite(not-spam); }
+}
+
 .icon-eye{
 	display: inline-block;
 	width: 22px;
@@ -115,4 +120,3 @@ $chat-layout:horizontal;
 		background: #d30000;
 	}
 }
-

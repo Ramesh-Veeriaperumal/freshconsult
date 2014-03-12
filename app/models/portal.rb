@@ -78,8 +78,8 @@ class Portal < ActiveRecord::Base
   end
 
   def recent_popular_topics( user, days_before = (DateTime.now - 30.days) )
-    main_portal ? account.portal_topics.visible(user).popular(days_before).limit(10) :
-        forum_category ? forum_category.portal_topics.visible(user).popular(days_before).limit(10) : []
+    main_portal ? account.portal_topics.visible(user).published.popular(days_before).limit(10) :
+        forum_category ? forum_category.portal_topics.visible(user).published.popular(days_before).limit(10) : []
   end
 
   def recent_articles
@@ -93,13 +93,13 @@ class Portal < ActiveRecord::Base
   end
 
   def my_topics(user, per_page, page)
-    main_portal ? user.monitored_topics.filter(per_page, page) :
-       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
+    main_portal ? user.monitored_topics.published.filter(per_page, page) :
+       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
   end
 
   def my_topics_count(user)
-    main_portal ? user.monitored_topics.count :
-       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).count : 0
+    main_portal ? user.monitored_topics.published.count :
+       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).count : 0
   end
 
   #Yeah.. It is ugly.

@@ -7,6 +7,12 @@ GIT
       savon_model
 
 GIT
+  remote: git://github.com/freshdesk/akismetor.git
+  revision: 12a4150c3ecc7f00817b5646686f8d3e3ad9653e
+  specs:
+    akismetor (1.1)
+
+GIT
   remote: git://github.com/freshdesk/cloudfront_asset_host.git
   revision: 9599ba40fc453ab5e69e17b60fa9d3eb5de77877
   specs:
@@ -439,6 +445,7 @@ DEPENDENCIES
   active_presenter (= 1.4.0)
   active_record_shards (= 2.7.0)
   after_commit (= 1.0.11)
+  akismetor!
   ancestry (= 1.3)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
