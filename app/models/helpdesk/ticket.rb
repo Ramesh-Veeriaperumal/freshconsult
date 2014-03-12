@@ -704,6 +704,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   # flexifield - custom_field syncing code ends here
 
+  def resolution_status
+    return "" unless [RESOLVED, CLOSED].include?(status)
+    resolved_at.nil? ? "" : ((resolved_at < due_by)  ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
+
+  def first_response_status
+    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
+
   protected
 
     def search_fields_updated?

@@ -3699,6 +3699,8 @@ en:
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
   export_data:
+    in_sla: Within SLA
+    out_of_sla: SLA Violated
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select fields to export"
