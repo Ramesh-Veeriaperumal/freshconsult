@@ -58,6 +58,7 @@ class SAAS::SubscriptionActions
     account.twitter_handles.each do |twt_handle| 
       twt_handle.cleanup
     end
+    account.twitter_handles.destroy_all
    end
 
    def drop_custom_domain_data(account)
