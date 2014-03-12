@@ -2822,6 +2822,8 @@ en:
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
+    id_less_tickets: Include Ticket ID in requester email subject line?
+    id_less_tickets_info: "If YES then the Ticket ID will be included in subject line for all agent replies.<br/>To manually include Ticket ID, <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/191769'>read more</a>."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
