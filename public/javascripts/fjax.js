@@ -68,7 +68,6 @@ FreshdeskPjax.prototype = {
     },
 
     _setLoading: function() {
-      //NProgress.start();
       NProgress.set(0);
       NProgress.set(0.4);
       NProgress.set(0.5);
