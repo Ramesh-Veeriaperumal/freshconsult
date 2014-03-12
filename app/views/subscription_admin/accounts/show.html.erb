@@ -48,6 +48,11 @@
         <td><%= @account.day_pass_config.available_passes %></td>
       </tr>
       <tr>
+        <th>Freshfone Credits</th>
+        <% credit = @account.freshfone_credit %>
+        <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
+      </tr>
+      <tr>
         <th>State</th>
         <td><%= @account.subscription.state %></td>
       </tr>
