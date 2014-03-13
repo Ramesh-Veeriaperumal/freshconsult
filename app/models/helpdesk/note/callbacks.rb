@@ -3,7 +3,7 @@ class Helpdesk::Note < ActiveRecord::Base
 	before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create  :update_parent, :add_activity, :fire_create_event               
+  after_create  :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :increment_notes_counter
 
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?

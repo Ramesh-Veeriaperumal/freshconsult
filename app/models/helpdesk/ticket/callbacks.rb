@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  after_create :refresh_display_id, :create_meta_note
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
   after_commit_on_create :create_initial_activity, :pass_thro_biz_rules, :increment_ticket_counter
 
