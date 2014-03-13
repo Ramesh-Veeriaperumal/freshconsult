@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140310074821) do
+ActiveRecord::Schema.define(:version => 20140220092916) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -224,8 +224,6 @@ ActiveRecord::Schema.define(:version => 20140310074821) do
     t.integer  "proactive_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_on_portal", :default => true
-    t.boolean  "portal_login_required", :default => false
   end
 
   create_table "conversion_metrics", :force => true do |t|

@@ -5,7 +5,6 @@ module ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
-  include ChatHelper
 
   include MemcacheKeys
 
