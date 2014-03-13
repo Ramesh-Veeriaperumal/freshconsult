@@ -134,7 +134,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|timer| 
         timer.stop_timer 
-        Integrations::TimeSheetsSync.update(timer, current_user)
+        Integrations::TimeSheetsSync.update(timer, User.current)
        }
     end
    end
