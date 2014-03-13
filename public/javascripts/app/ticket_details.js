@@ -327,7 +327,9 @@ var updatePagination = function() {
 }
 
 var freshfoneAudioDomSetting = function (){
-			soundManager.reboot();
+	  if(threeSixtyPlayer){
+			threeSixtyPlayer.init();	  	
+	  }
 			$('.call_duration').each(function () {
 				if ($(this).data("time") === undefined) { return; }
 					$(this).html($(this).data("time").toTime());
