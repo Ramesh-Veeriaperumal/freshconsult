@@ -1,5 +1,5 @@
 <%
-	new_topic = spam.topic.new?
+	new_topic = spam.topic.last_post_id.blank? or spam.id == spam.topic.last_post_id
 	new_topic_str =  new_topic ? 'new_topic' : 'reply'
 %>
 <li id="<%= dom_id(spam) %>" class="pb0">
