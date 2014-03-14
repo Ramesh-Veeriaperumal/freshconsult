@@ -1,5 +1,6 @@
 <% responsive = widget_option(:responsive) %>
 <% disable_requester = widget_option(:disable_requester) || false%>
+<% disable_options = params[:disable]%>
 
 <% if(responsive != "no") %>
 	 <%= include_cloudfront_css :responsive_widget %>
@@ -261,11 +262,26 @@
 	});
 
 	jQuery(document).ready(function () {
-		if(<%= disable_requester%> == true){
-			if(jQuery("#helpdesk_ticket_email").val() != ""){
-				jQuery("#helpdesk_ticket_email").prop("disabled","true");
+
+		var disabled_options=<%= disable_options.to_json.html_safe%>
+		jQuery.each(disabled_options,function(key,value){
+			if(key=="custom_field")
+			{
+				jQuery.each(value,function(custom_key,custom_value){
+					if(jQuery("#helpdesk_ticket_custom_field_"+custom_key) && custom_value == "true"){
+						jQuery("#helpdesk_ticket_custom_field_"+custom_key).attr("readonly","readonly");
+					}
+				});
+			}else{
+				if(key == "requester" && value=="true"){
+					jQuery("#helpdesk_ticket_email").attr("readonly","readonly");
+				}
+				else if(jQuery("#helpdesk_ticket_"+key) && value == "true"){
+					jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
+				}
 			}
-		}
+		});
+
 		var embeddedWidget = jQuery("#widgetType").val();
 		if(embeddedWidget == "embedded") {
 			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
