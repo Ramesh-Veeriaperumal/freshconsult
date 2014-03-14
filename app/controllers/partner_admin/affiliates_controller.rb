@@ -72,9 +72,30 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     render_json_object(activity)
   end
 
-  def add_subscription_to_reseller
+  def add_subscriptions_to_reseller
     params = ActiveSupport::JSON.decode request.body.read
-    associate_subscription(params["token"], params["domain"])
+    associate_subscription(params["token"], params["domains"])
+  end
+
+  def fetch_reseller_account_info
+    params = decode_params(request)
+    info = {}
+    Sharding.select_shard_of(params["account_id"]) do
+      Sharding.run_on_slave do
+        account = Account.find_by_id(params["account_id"])
+        info = account ? account_info(account) : {}
+      end
+    end
+    render_json_object(info)
+  end
+
+  def remove_reseller_subscription
+    params = ActiveSupport::JSON.decode request.body.read    
+    Sharding.select_shard_of(params["account_id"]) do
+      subscription = Subscription.find_by_account_id(params["account_id"])
+      subscription.update_attributes(:subscription_affiliate_id => nil)
+    end
+    render_json_object({:success => true})
   end
 
   protected
@@ -156,19 +177,27 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       summary
     end
 
-    def associate_subscription(reseller_token, domain)
-      affiliate = SubscriptionAffiliate.find_by_token(reseller_token)
-      domain_mapping = DomainMapping.find_by_domain(domain)
+    def associate_subscription(reseller_token, domains)
+      affiliate = SubscriptionAffiliate.find_by_token(reseller_token)      
+      render :json => { :success => false } if affiliate.nil?
 
-      if affiliate and domain_mapping
-        Sharding.select_shard_of(domain) do 
-          account = Account.find_by_full_domain(domain)
-          SubscriptionAffiliate.add_affiliate(account, affiliate.token)
-          render :json => { :success => true, :account_id => account.id }
+      mapped_accounts = []
+      unmapped_accounts = []
+      domains.each do |domain|
+        domain_mapping = DomainMapping.find_by_domain(domain)
+        if domain_mapping
+          Sharding.select_shard_of(domain) do 
+            account = Account.find_by_full_domain(domain)
+            SubscriptionAffiliate.add_affiliate(account, affiliate.token)
+            mapped_accounts << account_info(account)
+          end
+        else          
+          unmapped_accounts << domain
         end
-      else
-        render :json => { :success => false }
       end
+      
+      render :json => { :success => true, :mapped_accounts => mapped_accounts, 
+                        :unmapped_accounts => unmapped_accounts }
     end
 
     #To be moved to ChargeBee. Temporarily fetching affiliate accounts with state & page.
@@ -211,6 +240,16 @@ class PartnerAdmin::AffiliatesController < ApplicationController
           }
         end
       end
+    end
+
+    def account_info(account)
+      {
+        :account_id => account.id,        
+        :email => account.admin_email,
+        :state => account.subscription.state,
+        :cmrr => account.subscription.cmrr,
+        :conversion_metric => account.conversion_metric ? account.conversion_metric.session_json : {}
+      }
     end
 
     def portal_credentials

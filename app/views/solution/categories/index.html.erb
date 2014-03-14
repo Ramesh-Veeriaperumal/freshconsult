@@ -8,7 +8,7 @@
 	<%- end %>
 <% if privilege?(:manage_solutions) -%>
 	<div class="pull-right align-right">
-	    <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
+	   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
 		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary" %>
 	</div>
 <%- end %>
@@ -46,6 +46,6 @@
 	<%end%>
 </div>
 <% if privilege?(:manage_solutions) -%>	
-	<%= render :partial => "/shared/reorder_list", :locals => { :items => @categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_solution_categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
 <% end %>
    

@@ -269,6 +269,10 @@ class Account < ActiveRecord::Base
   def google_account?
     !google_domain.blank?
   end
+
+  def default_form
+    flexi_field_defs.default_form.first
+  end
   
   def is_saml_sso?
     self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SAML;

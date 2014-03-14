@@ -14,12 +14,9 @@ development:
       host: 127.0.0.1
       database: helpkit1
       not_a_shard: false
-      slave:
-        host: 127.0.0.1
-        database: helpkit2
- 
 
-      
+
+
 # development:
 #   adapter: mysql
 #   encoding: utf8
@@ -56,6 +53,15 @@ test:
   database: helpkit_test
   username: root
   password:
+  shards:
+    shard_2:
+      host: 127.0.0.1
+      database: helpkit_test
+      not_a_shard: false
+    shard_1:
+      host: 127.0.0.1
+      database: helpkit_test
+      not_a_shard: false
 
 production:
   adapter: sqlite3

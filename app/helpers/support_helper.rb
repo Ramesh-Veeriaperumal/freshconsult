@@ -814,6 +814,23 @@ HTML
 		true
 	end
 
+	def back_to_agent_view
+    _output = []
+    if @agent_actions.present? && current_user && current_user.agent?
+      _output << %( <div class="helpdesk_view">)
+      _output << %( <div class="agent_view"> <i class='icon-agent-actions'></i> </div> )
+      _output << %( <div class="agent_actions hide">)
+      _output << %( <div class="action_title">Agent Actions</div>)
+      @agent_actions.each do |action|
+        _output << %( <a class="agent_options" href="#{action[:url]}">
+                        <i class='icon-agent-#{action[:icon]}'></i> #{action[:label]}
+                    </a>)
+      end 
+      _output << %( </div></div>)  
+    end 
+    _output.join("").html_safe
+  end
+
 	private
 
 		def portal_preferences

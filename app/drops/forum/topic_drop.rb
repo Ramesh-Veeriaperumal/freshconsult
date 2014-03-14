@@ -6,7 +6,7 @@ class Forum::TopicDrop < BaseDrop
   liquid_attributes << :title << :posts_count
 
   def context=(current_context)    
-    current_context['paginate_url'] = support_discussions_topic_path(source)
+    current_context['paginate_url'] = support_discussions_topic_path(source) unless source.new_record?
 
     super
   end
@@ -37,7 +37,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def first_post
-    source.posts.first
+    published_posts.first
   end
   
   def last_post
@@ -48,15 +48,15 @@ class Forum::TopicDrop < BaseDrop
   def last_post_url
     "#{support_discussions_topic_path(source)}/page/last#post-#{source.last_post_id}"
   end
-    
+
   def posts
     unless @per_page.blank?
       # If the page id is last then calculate the number of pages in the topic
       @page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max if @page == "last"
-      source.posts.filter(@per_page, @page)
+      published_posts.filter(@per_page, @page)
     else
       # If the collection is not paginated then fetch all posts
-      source.posts.all
+      published_posts.all
     end
   end
 
@@ -93,7 +93,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def attachments
-    source.posts.first.attachments
+    published_posts.first.attachments
   end
 
   def toggle_solution_url
@@ -114,6 +114,7 @@ class Forum::TopicDrop < BaseDrop
   end
   
   def answered?
+    RAILS_DEFAULT_LOGGER.debug "Checking for answered?"
     source.answered?
   end
 
@@ -133,7 +134,17 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def excerpt_description
-    source.posts.first.body.gsub(/<\/?[^>]*>/, "")
+    published_posts.first.body.gsub(/<\/?[^>]*>/, "")
   end
+
+  private
+
+    def published_posts
+      if portal_user
+        source.posts.published_and_mine(portal_user)
+      else
+        source.posts.published
+      end
+    end
 
 end

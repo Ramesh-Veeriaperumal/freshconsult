@@ -15,7 +15,8 @@ class EmailConfig < ActiveRecord::Base
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
-  validates_format_of :reply_email, :with => ParserUtil::VALID_EMAIL_REGEX
+  validates_format_of :reply_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
+  validates_format_of :to_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
   
   def active?
     active

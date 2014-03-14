@@ -3,6 +3,7 @@ module Helpdesk::Email::NoteMethods
   def build_note_object
     self.note = ticket.notes.build(note_params)     
     set_note_source
+    note.subject = Helpdesk::HTMLSanitizer.clean(email[:subject])
   end
 
   def set_note_source

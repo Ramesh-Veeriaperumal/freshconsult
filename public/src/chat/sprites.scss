@@ -1,8 +1,0 @@
-/* Importing admin icons */
-@import "cdn-ignored/sprites/chat/*.png";
-$chat-layout:horizontal;
-/*@include all-chat-sprites;*/
-
-.agent-fchat-on { @include chat-sprite(status-on); }
-
-.agent-fchat-off { @include chat-sprite(status-off); }

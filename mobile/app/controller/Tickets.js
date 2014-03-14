@@ -304,14 +304,14 @@ Ext.define('Freshdesk.controller.Tickets', {
             location.href="#tickets/show/"+id;
             return;
         }
-
+        for(var i = 0; i< FD.reply_emails.length ; i++){
         //setting from mails if the reply_emails are more else hide the from..
-        FD.current_account.reply_emails.forEach(function(value,key){
-            reply_emails.push({text:value,value:value});
-        })
+            var array_obj = FD.reply_emails[i];
+            reply_emails.push({text: array_obj.raw[1].replace("<","(").replace(">",")"), value: array_obj.raw[1]});
+        }
         fieldSetObj.items.items[0].setOptions(reply_emails).show();
-        fieldSetObj.items.items[0].setValue(this.ticket.selected_reply_email);
-        fieldSetObj.items.items[12].setValue(this.ticket.selected_reply_email);
+        fieldSetObj.items.items[0].setValue(FD.reply_emails[0].raw[1]);
+        fieldSetObj.items.items[12].setValue(FD.reply_emails[0].raw[1]);
         if(reply_emails.length === 1) 
             fieldSetObj.items.items[0].setHidden(true);
 

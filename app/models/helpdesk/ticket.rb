@@ -32,8 +32,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
   
+  text_datastore_callbacks :class => "ticket"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone
@@ -272,9 +273,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def requester_info
     requester.get_info if requester
   end
+
+  def not_editable?
+    requester and !requester_has_email? and !requester_has_phone?
+  end
   
   def requester_has_email?
-    (requester) and (!requester.email.blank?)
+    (requester) and (requester.email.present?)
+  end
+
+  def requester_has_phone?
+    requester and requester.phone.present?
+  end
+
+  def requester_has_phone?
+    requester.phone.present?
   end
 
   def encode_display_id
@@ -582,7 +595,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def solution_article_host article
-    (self.product && !self.product.portal_url.blank? && (self.product.solution_category_id == article.folder.category_id)) ? self.product.portal_url : account.host
+    (self.product && !self.product.portal_url.blank? && (self.product.portal.has_solution_category?(article.folder.category_id))) ? self.product.portal_url : account.host
   end
   
   def portal_name

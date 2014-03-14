@@ -13,7 +13,12 @@
   		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
     <% end %>
 	</div>	
-	<h2 class="title"><%= h(@article.title) %></h2> 
+	<h2 class="title">
+		<%= h(@article.title) %>
+		<span class="tooltip" title="<%= t('solution.view_on_portal') %>">
+			<%= link_to '<i class="agent-preview"></i>'.html_safe, support_solutions_article_path(@article.id) %>
+		</span> 
+	</h2>
 	<div class="help-text">
 		By <b> <%= @article.user.name %></b>, <%= @article.updated_at.to_s(:long_day_with_time) %> 
 		

@@ -49,7 +49,8 @@ class Sanitize
         'div'        => ['class'],
         'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
         'source'     => ['src', 'type'],
-        'audio'      => ['controls', 'width', 'height']
+        'audio'      => ['controls', 'width', 'height'],
+        'pre'        => ['rel','code-brush']
       },
 
       :protocols => {

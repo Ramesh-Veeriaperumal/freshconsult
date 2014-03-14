@@ -59,6 +59,10 @@
         <th>Tickets</th>
         <td><%= @account.tickets.count %></td>
       </tr>
+       <tr>
+        <th>Chat</th>
+        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.features?(:chat_enable) %></td>
+      </tr>
       <tr>
         <th>Multi product</th>
         <td><%= @account.portals.count > 1 %></td>

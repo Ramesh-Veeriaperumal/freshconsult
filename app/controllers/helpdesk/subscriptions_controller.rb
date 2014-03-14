@@ -3,10 +3,17 @@ class Helpdesk::SubscriptionsController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :load_parent_ticket , :except => :unwatch_multiple
-  before_filter :set_native_mobile, :only => [:create_watchers, :unwatch]
+  before_filter :set_native_mobile, :only => [:create_watchers, :unwatch,:index]
   def index
     @ticket = @parent
-    render :partial => "helpdesk/subscriptions/ticket_watchers"
+    respond_to do |format|
+      format.html do
+        render :partial => "helpdesk/subscriptions/ticket_watchers"
+      end
+      format.nmobile do
+         render :json => @ticket.subscriptions.map(&:user_id)
+      end
+    end 
   end
 
   def create_watchers

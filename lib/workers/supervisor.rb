@@ -74,7 +74,7 @@ class Workers::Supervisor
         tickets = Sharding.run_on_slave { account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
         tickets.each do |ticket|
           rule.trigger_actions ticket
-          ticket.save!
+          ticket.save_ticket!
         end
         total_tickets += tickets.length
         rule_end_time = Time.now.utc

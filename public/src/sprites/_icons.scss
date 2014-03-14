@@ -42,6 +42,8 @@
 
 .icons-dislike{ @include icons-sprite(dislike); }
 
+.agent-preview{ @include icons-sprite(agent-preview); }
+
 .solution-list li:before{
 	@include icons-sprite(article-list);
 }
@@ -63,6 +65,11 @@ $chat-layout:horizontal;
 .agent-fchat-on { @include chat-sprite(status-on); }
 
 .agent-fchat-off { @include chat-sprite(status-off); }
+
+.topic-list-view {
+	.spam_action { @include icons-sprite(is-spam); }
+	.spam_action:hover { @include icons-sprite(not-spam); }
+}
 
 .icon-eye{
 	display: inline-block;
@@ -113,4 +120,3 @@ $chat-layout:horizontal;
 		background: #d30000;
 	}
 }
-

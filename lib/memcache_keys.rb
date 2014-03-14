@@ -71,6 +71,8 @@ module MemcacheKeys
   GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
 
   API_LIMIT = "v1/API_LIMIT:%{account_id}"
+
+  ACCOUNT_API_WEBHOOKS_RULES = "v1/ACCOUNT_API_WEBHOOKS_RULES:%{account_id}"
   
   class << self
 

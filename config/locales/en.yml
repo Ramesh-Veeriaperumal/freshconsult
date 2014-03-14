@@ -125,9 +125,9 @@ en:
   after_oneweek: After 1 Week
   after_twoweek: After 2 Weeks
   after_onemonth: After 1 Month
-  add_more_lang: Add supported languages to your helpdesk. 
+  add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
-  user: 
+  user:
     company: Company
     photo: Photo
     title: Title
@@ -817,7 +817,7 @@ en:
         click_to_disable: Click to disable SSL
         security_title: Security
         request_custom_ssl: Want to use Custom SSL for your support portal?
-        ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
+        ssl_info_new: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 15-20 days. <br /> <br />
         helpdesk_url: Helpdesk URL
         submit_request: Submit Request
         thanks_message: "<span class='thanks_message'> Thank you for requesting a Custom SSL certificate.</span> <br />"
@@ -858,13 +858,13 @@ en:
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a solution category...
-        top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         top_level_forum_info: You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
         top_level_forum: Top level forum category
         portal_url: Portal URL
-        top_level_solution: Top level solutions category
+        solution_categories: Solution Categories
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
@@ -1134,6 +1134,9 @@ en:
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
     portal:
+      discussions:
+        topics:
+          spam_check: "We're checking your topic for spam. It will appear once it has been approved."
       tickets:
         create:
           success: Your ticket has been created and a copy has been sent to you via email.
@@ -1142,7 +1145,7 @@ en:
       authentication_failed: Authentication Failed
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
-      page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information. 
+      page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
 
     freshfone:
       credits:
@@ -1158,7 +1161,7 @@ en:
         remove_blacklist_success: "Number unblocked successfully"
         remove_blacklist_failure: "Number could not be unblocked"
 
-    profile: 
+    profile:
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
 
     profile:
@@ -1233,7 +1236,7 @@ en:
           invalid_email: You are not authorized to add a note
           failure: There was a problem adding the note to your ticket. Please try again.
           success: The note has been added to your ticket.
-        remove_attachment: 
+        remove_attachment:
           success: 1 attachment was deleted.
       empty_spam:
         success: All tickets in the spam folder were deleted.
@@ -1299,16 +1302,16 @@ en:
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
-      sso: 
+      sso:
         expected_params: "Expected params are name, email and hash, which are not present "
         invalid_time_entry: "Inavlid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
-    email_notifications: 
-      update: 
+    email_notifications:
+      update:
         success: Email notification has been updated.
-    general: 
+    general:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
@@ -1342,7 +1345,7 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
-      
+
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
@@ -1426,9 +1429,15 @@ en:
       new_topic:
         short: "{{user_path}} created a new topic"
         long: "{{user_path}} created a new topic '{{notable_path}}' in '{{forum_name}}'"
+      published_topic:
+        short: "{{user_path}}'s topic '{{notable_path}}' has been published"
+        long: "{{user_path}}'s new topic '{{notable_path}}' in '{{forum_name}}' has been published"
       new_post:
         short: "{{user_path}} created a new post"
         long: "{{user_path}} posted in '{{notable_path}}'"
+      published_post:
+        short: "{{user_path}}'s post has been published"
+        long: "{{user_path}}'s post in '{{notable_path}}' has been published"
       delete_forum_category:
         short: "{{user_path}} deleted a forum category"
         long: "{{user_path}} deleted the forum category '{{notable_path}}'"
@@ -1658,7 +1667,7 @@ en:
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
   non_covered_feature_error: This feature is currently locked
-  unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.  
+  unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
   requester_replies: Requester Replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
@@ -1848,6 +1857,8 @@ en:
     sticky: Sticky
     locked: Locked
     answered: Answered
+    view_on_portal: "View on Portal"
+    spam: Spam
   activerecord:
     errors:
       messages:
@@ -2301,6 +2312,9 @@ en:
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
     to_post_topic: " to post a topic"
+    preview:
+      view_on_helpdesk: "View on Helpdesk"
+      edit_article: "Edit Article"
     search:
       filters:
         all: "All"
@@ -2422,6 +2436,7 @@ en:
       error_message: "There is an error %{error_msg}"
     info9: Public (Will be published in self service)
     edit: Edit Solution
+    view_on_portal: "View on Portal"
     add: Add Solution
     info10: Private (Visible to Agents only)
     add_new_solution: Add solution
@@ -2447,7 +2462,7 @@ en:
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
-    user_details: "By <span class='article-user'>%{user}</span>, %{time}" 
+    user_details: "By <span class='article-user'>%{user}</span>, %{time}"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
@@ -2468,7 +2483,7 @@ en:
     tags: Tags
     sample_data: Sample data
     can_see_all_tickets_of_the_company: Can view all company tickets ?
-    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company. 
+    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
     can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
@@ -2581,14 +2596,14 @@ en:
     notification_template: Reply Templates
     title: Email Notifications
     singular_title: Notification
-    index_outdated: Some translations are outdated 
+    index_outdated: Some translations are outdated
     show_default: Show original content
     hide_default: Hide original content
-    last_saved: Last saved 
+    last_saved: Last saved
     mark_outdated: Mark all translations as outdated
     mark_uptodate: Mark this translation as up-to-date
     reset_last_saved: Reset to last saved content
-    notify_agents: Notify Agents  
+    notify_agents: Notify Agents
     edit: Edit
     add: Add
     no_agents: Add agents
@@ -2625,7 +2640,7 @@ en:
         info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_6:
         topic: Requestor Replies to the Ticket
-        info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."          
+        info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_12:
         topic: First Response SLA Violation
         info1: "This notification is sent out to an agent when he has not responded to the ticket within the first response due time of the ticket. This email could contain the ticket URL and the due by time of the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -2649,10 +2664,10 @@ en:
         info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_8:
         topic: Agent Closes the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."         
+        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       reply_template_15:
         topic: Agent Reply Template
-        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."     
+        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -2714,7 +2729,7 @@ en:
       info19: You can configure your Freshdesk account to use a support email in your own domain,
                       like support@mycompany.com by forwarding emails from this address to
                       <a class='break-all' target="_blank" href="https://{{solution_url}}">
-                        {{solution_url}}</a>. 
+                        {{solution_url}}</a>.
       edit_info: To create a new support email box, click “Edit” under global email settings.
       info20: Using Multiple Mailboxes
       info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com,
@@ -2771,7 +2786,7 @@ en:
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
-    usr_not_thr: User is not there.    
+    usr_not_thr: User is not there.
     duplicate_status: Tweet is a duplicate. Reply with some other text
   facebook:
     add_page: Add Facebook Page
@@ -3333,6 +3348,7 @@ en:
     shared:
       addcc: "Add cc"
       cc: "cc"
+      bcc: "bcc"
       reply_form:
         title: Reply to %{email}
         cc: Cc
@@ -3645,9 +3661,9 @@ en:
     twenty_four: "From yesterday"
     custom_filter: "Set date"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
-    created_at: created 
-    resolved_at: resolved 
-    closed_at: closed 
+    created_at: created
+    resolved_at: resolved
+    closed_at: closed
     from: From
     to: To
     data_backup:
@@ -3657,7 +3673,7 @@ en:
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
-      body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"  
+      body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
   sla:
     minutes: Mins
     hours: Hrs
@@ -4417,7 +4433,6 @@ en:
   conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
-  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
   clear: "Clear"
   saved_draft: "Saved"
   saving_draft: "Saving..."
@@ -4430,9 +4445,9 @@ en:
   canned_folders:
     insert_placeholder: Insert Placeholder
     important: "Important: "
-    delete_folder_warning: Deleting the folder will also delete all the canned responses contained in it.
     delete_canned_response: Are you sure you want to delete the selected Canned Responses?
-    delete_folder: Are you sure you want to delete folder and all its contents?
+    delete_folder: "Deleting the folder will also delete all the canned responses contained in it.\n\nAre you sure you want to proceed?"
+    delete_empty_folder: Are you sure you want to delete the folder?
     new: "Folder name"
     move: "Move"
     title: "Canned Response Folders"
@@ -4443,6 +4458,9 @@ en:
     create: "Create Folder"
     edit: " Rename"
     delete: " Delete"
+    rename_folder: "Rename Folder"
+    Move_to_folder: "Move to folder"
+    create_folder: "Create"
     delete_confirmation: "Delete folder with all its contents ??"
     move: "Move"
     del: "Delete"
@@ -4699,7 +4717,7 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
-  date_invalid: Invalid date      
+  date_invalid: Invalid date
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -4803,7 +4821,7 @@ en:
     ticket:
       recording: "Play message"
       ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}" 
+      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
@@ -4844,7 +4862,7 @@ en:
         record_none: "Do not record calls"
         record_alert: "The call recording guidelines require notifying customers on the call being recorded and the purpose for recording. Please configure the greetings message accordingly."
         max_queue_calls: "Maximum Calls in Queue"
-        call_wait_time: "with maximum wait time of" 
+        call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
         wait_message: "Wait Message"
         non_availability_message: "Non-Availability Message"
@@ -4856,7 +4874,7 @@ en:
         upload_voice: "Upload audio files"
         read_message: "Text to speech"
         start_recording: "Start recording"
-        stop_recording: "<span></span>Stop Recording" 
+        stop_recording: "<span></span>Stop Recording"
         preparing_recording: "Preparing your message..."
         recorded_voice: "Recorded Voice"
         audio_upload: "Select file to upload"
@@ -5204,3 +5222,20 @@ en:
     smtp_alert_gmail: 'Gmail limits the number of emails sent per day. 200 for trial users and 500 for paid users.<a target="_blank" href="https://support.google.com/a/answer/166852?hl=en">Learn more</a>'
     smtp_alert_aol: "AOL allows no more than 100 recipients per message or 500 recipients per connection."
     smtp_alert_other: "Generally the number of outgoing emails per day have a specific limit. Please contact your email provider for more info."
+  discussions:
+    moderation:
+      spam_folder: Spam Folder
+      flash:
+        empty_folder: "All the posts in your spam folder have been removed."
+      index:
+        title: Spam
+        empty_folder: "Empty Folder"
+        no_spam: "There's no spam here. We swear!"
+      spam:
+        approve: "Approve and Publish"
+        new_topic:
+          title: "New Topic"
+          posted: "posted a new topic"
+        reply:
+          title: Reply
+          posted: "replied to"

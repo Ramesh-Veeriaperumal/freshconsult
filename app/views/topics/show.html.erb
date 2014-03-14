@@ -4,7 +4,9 @@
 
 <% content_for :sidebar do -%>
 	<div class="rtCnt sidepanel">
+		<% if @topic.published? %>
 		<div class="rtDetails_forum">
+
 			<% if @forum.ideas? %>
 				<%= content_tag(:h4, t(".mark_this_idea_as"), :class => "title") %>
 				<div class="mark_action">
@@ -32,49 +34,57 @@
 			<div>
 				<%= link_to((t('connect_ticket') + " &raquo;").html_safe, new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "btn full-width") if @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
-			</div> 
+			</div>
 		</div>
+		<% end %>
 	</div>
-<% end %>    
-		<div class="request_details">   
+<% end %>
+		<div class="request_details">
 	  		<div class="breadcrumbs">
 	  			<%= link_to(t('forum.title'), categories_path) %> &rarr;
 	  			<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
-	  			<%= link_to( "#{(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
+	  			<%= link_to( "#{(@forum.name)}", category_forum_path(@forum_category, @forum)) %>
 	  		</div>
 	    	<div class="requestCnt request-cnt-first">
 	    	<div class="topic_head">
 		    	<div class="row-fluid">
 						<div class="vertical-alignment span10">
 							<span class="vertical-alignment monitor_link_holder position_forum_title" id="monitorship_link">
-								<%= 
-										link_to_remote "", 
-										:url => toggle_monitorship_path("topic", @topic, (@monitoring ? "unfollow" : "follow")), 
-										:method => :post, 
+								<%=
+										link_to_remote "",
+										:url => toggle_monitorship_path("topic", @topic, (@monitoring ? "unfollow" : "follow")),
+										:method => :post,
 										:before => "jQuery('#toggle_monitorship_status').hide();jQuery('#monitorship_link').addClass('sloading loading-small');",
 										:html => {
-															:class => "forum_follow_icon tooltip #{@monitoring ? 'active' : ''}", 
+															:class => "forum_follow_icon tooltip #{@monitoring ? 'active' : ''}",
 															"data-placement" => 'below',
 															:id => "toggle_monitorship_status",
 															:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title'))
-															}	 
+															} if @topic.published?
 								%>
 							</span>
 						<% if privilege?(:edit_topic, @topic) -%>
 						<span class="vertical-alignment action_icons position_forum_title">
-							<%= 
-								link_to("", 
-								edit_category_forum_topic_path(@forum_category,@forum, @topic), 
-								:method => :get, 
-								:class => "icons-edit-forum tooltip", 
+							<%=
+								link_to("",
+								edit_category_forum_topic_path(@forum_category,@forum, @topic),
+								:method => :get,
+								:class => "icons-edit-forum tooltip",
 								"data-placement" => 'below',
-								:title => t('topics.edit_title') ) 
+								:title => t('topics.edit_title') )
 							%>
 						</span>
 						<% end %>
 						<span class="vertical-alignment"><h3 class="position_forum_title lead"><%= @page_title  %></h3></span>
+						<% if @topic.published %>
+							<span class="vertical-alignment tooltip" title='<%= t('topic.view_on_portal')%>'>
+								<%= link_to '<i class="agent-preview"></i>'.html_safe, support_discussions_topic_path(@topic.id) %>
+							</span>
+						<% else %>
+							<span class="label ml20"><%= t('topic.spam') %></span>
+						<% end %>
 					</div>
-					<% if privilege?(:edit_topic, @topic) -%>
+					<% if privilege?(:edit_topic, @topic) and @topic.published? %>
 					<div class="pull-right span2 position_forum_title">
 							<%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
 				              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
@@ -95,13 +105,13 @@
     							<% if @topic.stamp_type %>
     								<% class_name = "stamp_type_#{@topic.stamp_type}" %>
     								<span class="<%=class_name%> stamp">
-    									<%= 
-    									if @forum.ideas? 
-    										h(@topic.stamp_name) 
-    									elsif @forum.questions? && @topic.answered? 
-    										t('topic.questions.answered') 
+    									<%=
+    									if @forum.ideas?
+    										h(@topic.stamp_name)
+    									elsif @forum.questions? && @topic.answered?
+    										t('topic.questions.answered')
     									elsif @forum.problems? && @topic.solved?
-    										t('topic.problems.solved') 
+    										t('topic.problems.solved')
     									end %>
     								</span>
     							<% end %>
@@ -109,45 +119,45 @@
     				  <% end %>
 				</div>
           </div>
-		      <div class="request-wrapper">    	 
-					  <div class="details min_height">    
+		      <div class="request-wrapper">
+					  <div class="details min_height">
 					    <span class="seperator"></span>
-						  <%= first_post.body_html.html_safe %>     
-							<span class="seperator"></span>  
+						  <%= first_post.body_html.html_safe %>
+							<span class="seperator"></span>
 						</div>
 					<% unless first_post.attachments.empty? %>
   					<span class="seperator"></span>
-					  <h4><%= first_post.attachments.size %> attachment(s)</h4>
+					  <strong><%= first_post.attachments.size %> attachment(s)</strong>
 					  <ul class="attachment_list">
-              <%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, 
+              <%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments,
                 :locals => { :url => [first_post], :show_delete => privilege?(:edit_topic, @topic) } %>
  					  </ul>
  					<% end %>
-					<% unless @topic.forum.announcement? %>   
-						<div class="status" id="voting_container"> 
-							<%= render(:partial => "/forum_shared/topic_vote", :object => @topic) %> 
+					<% if @topic.published? and  !@topic.forum.announcement? %>
+						<div class="status" id="voting_container">
+							<%= render(:partial => "/forum_shared/topic_vote", :object => @topic) %>
 						</div>
-					<% end %>             
+					<% end %>
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to_function(t('reply_comment'), "jQuery('#reply').toggle();jQuery('#post_body_html').getEditor().focus();", :class => "btn btn-primary", :id => "reply-to-post") if !@topic.locked? %>
+           <%= link_to_function(t('reply_comment'), "jQuery('#reply').toggle();jQuery('#post_body_html').getEditor().focus();", :class => "btn btn-primary", :id => "reply-to-post") if !@topic.locked? and @topic.published? %>
           </div>
-					</div>   
+					</div>
         </div>
       </div>
       <div class="seperator-shadow"></div>
         <%= render :partial => "reply_to_post" %>
       <% if (@posts.size > 1 or (params[:page] and params[:page].to_i > 1)) %>
         <div class="requestCnt request-conversation">
-        <h3 class="forum-title"><%=t('comments')%></h3>          
+        <h3 class="forum-title"><%=t('comments')%></h3>
         <% last_post = @posts.last %>
           <% @posts.each do |post| %>
             <% unless (post == first_post) %>
-              <%= render :partial => "forum_shared/post", :object => post %>							
+              <%= render :partial => "forum_shared/post", :object => post %>
             <% end %>
-          <% end %> 
+          <% end %>
           <%= will_paginate @posts %>
-        </div>  
+        </div>
       <% end %>
       <div id="edit"></div>
     </div>
@@ -164,4 +174,5 @@
 				}
 			});
 		})(jQuery)
+		highlight_code();
     <% end %>

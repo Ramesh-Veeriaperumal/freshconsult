@@ -180,6 +180,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/nprogress.js
+    - public/javascripts/base64.js
 
   # Code editor for portal cms
   codemirror:

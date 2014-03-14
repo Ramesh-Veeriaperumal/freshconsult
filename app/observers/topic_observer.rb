@@ -1,9 +1,11 @@
 class TopicObserver < ActiveRecord::Observer
 
   include ActionController::UrlWriter
-  
+
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
+    topic.posts_count = 1 #Default count
+    topic.published = topic.user.agent? #Agent Topics are approved by default.
 	end
 
 	def before_update(topic)
@@ -20,6 +22,7 @@ class TopicObserver < ActiveRecord::Observer
 
 	def after_save(topic)
 		update_forum_counter_cache(topic)
+    create_activity(topic, 'published_topic') if topic.published_changed? and topic.published?
 	end
 
   def after_update(topic)
@@ -29,7 +32,7 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_create(topic)
     monitor_topic(topic)
-    create_activity(topic, 'new_topic')
+    create_activity(topic, 'new_topic') if topic.published?
   end
 
   def monitor_topic topic
@@ -45,7 +48,7 @@ class TopicObserver < ActiveRecord::Observer
 
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic', User.current)
+    create_activity(topic, 'delete_topic', User.current) unless topic.trash
 	end
 
 private
@@ -62,18 +65,18 @@ private
   end
 
   def update_forum_counter_cache(topic)
-      forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id})]
+      forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
       # if the topic moved forums
       if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
         Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
-        Forum.update_all ['topics_count = ?, posts_count = ?', 
-          Topic.count(:id, :conditions => {:forum_id => @old_forum_id}),
-          Post.count(:id,  :conditions => {:forum_id => @old_forum_id})], ['id = ?', @old_forum_id]
+        Forum.update_all ['topics_count = ?, posts_count = ?',
+          Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
+          Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
       end
       # if the topic moved forums or was deleted
       if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
         forum_conditions.first << ", posts_count = ?"
-        forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id})
+        forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
       end
       # User doesn't have update_posts_count method in SB2, as reported by Ryan
       # @voices.each &:update_posts_count if @voices
@@ -91,13 +94,13 @@ private
       :short_descr => "activities.forums.#{type}.short",
       :account       => topic.account,
       :user          => user,
-      :activity_data => { 
+      :activity_data => {
                           :path        => category_forum_topic_path(topic.forum.forum_category_id,
                                           topic.forum_id, topic.id),
                           'forum_name' => h(topic.forum.to_s),
-                          :url_params  => { 
-                                            :category_id => topic.forum.forum_category_id, 
-                                            :forum_id => topic.forum_id, 
+                          :url_params  => {
+                                            :category_id => topic.forum.forum_category_id,
+                                            :forum_id => topic.forum_id,
                                             :topic_id => topic.id,
                                             :path_generator => 'category_forum_topic_path'
                                           },
@@ -106,6 +109,5 @@ private
                         }
     )
   end
-  
-end
 
+end

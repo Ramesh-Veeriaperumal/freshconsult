@@ -1,0 +1,37 @@
+defaults: &defaults
+ node1:
+  pb_port: 10017
+  http_port: 10018
+  host: 127.0.0.1
+ 
+ node2:
+  pb_port: 10027
+  http_port: 10028
+  host: 127.0.0.1
+ 
+ node3:
+  pb_port: 10037
+  http_port: 10038
+  host: 127.0.0.1
+ 
+ node4:
+  pb_port: 10047
+  http_port: 10048
+  host: 127.0.0.1
+ 
+ node5:
+  pb_port: 10057
+  http_port: 10058
+  host: 127.0.0.1
+
+development:
+ <<: *defaults
+  
+test:
+ <<: *defaults
+
+staging:
+ <<: *defaults
+
+production:
+ <<: *defaults

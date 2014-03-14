@@ -356,8 +356,8 @@ var Redactor = function(element, options)
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" id="redactor_insert_video_btn" value="' + RLANG.insert + '" />' +
+					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn btn-primary" id="redactor_insert_video_btn" value="' + RLANG.insert + '" />' +
 				'</span>' + 
 			'</div>',
 		modal_table: String() + 
@@ -367,8 +367,8 @@ var Redactor = function(element, options)
 				'<input size="5" value="3" id="redactor_table_columns" />' +
 				'<div id="redactor_modal_footer">' +
 					'<span class="redactor_btns_box">' +
-						'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-						'<input type="button" class="uiButton" name="upload" id="redactor_insert_table_btn" value="' + RLANG.insert + '" />' +
+						'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+						'<input type="button" class="btn btn-primary" name="upload" id="redactor_insert_table_btn" value="' + RLANG.insert + '" />' +
 					'</span>' +
 				'</div>',
 		modal_codeEditor: String() + 
@@ -3123,24 +3123,26 @@ Redactor.prototype = {
 		this.modalClose();
 	},
 	observeCode: function(){
-		this.$editor.find('pre').each($.proxy(function(i,el)
-		{
-			$(el).attr('contenteditable',false);
-			
-			$(el).off('click');
-			$(el).on('click',$.proxy(function(ev){
-				this.showCodeEditor(ev); 
-			if ( $.browser.msie && parseInt($.browser.version, 10) < 9 ){
-					$('#redactor_insert_text_area').val($(el).html()
-											.replace(/&lt;/g,'<')
-											.replace(/&gt;/g,'>'));
-			} else {
-				$('#redactor_insert_text_area').val($(el).text());
-			} 
-			},this));
+		if(this.getBtn('codeEditor').get(0)){ 
+			this.$editor.find('pre').each($.proxy(function(i,el)
+			{
+				$(el).attr('contenteditable',false);
+				
+				$(el).off('click');
+				$(el).on('click',$.proxy(function(ev){
+					this.showCodeEditor(ev); 
+				if ( $.browser.msie && parseInt($.browser.version, 10) < 9 ){
+						$('#redactor_insert_text_area').val($(el).html()
+												.replace(/&lt;/g,'<')
+												.replace(/&gt;/g,'>'));
+				} else {
+					$('#redactor_insert_text_area').val($(el).text());
+				} 
+				},this));
 
-		}, this));
-		this.syncCode();
+			}, this));
+			this.syncCode();
+		}
 	},
 	buildLangSelector: function(){
 		var selectOption ='<select id="redactorInsertCode_selector" name="highlight-brush-type" data-minimum-results-for-search="100" class="select2 input-medium">'

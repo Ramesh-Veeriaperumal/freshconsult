@@ -540,3 +540,77 @@ hr.content-divider{
 		margin-left: 10px;
 	}
 }
+
+.helpdesk_view{
+	.agent_view{
+		position: fixed;
+		top: 250px;
+		background: #FAFAFA;
+		border: 1px solid #CCC;
+		border-left: none;
+		border-radius: 0px 5px 5px 0px;
+		padding: 3px 10px;
+		cursor: pointer;
+		z-index: 10;
+	}
+	.agent_actions {
+		border: 1px solid #b5b5b5;
+		min-width: 170px;
+		min-height: 60px;
+		position: fixed;
+		background: #fff;
+		top: 250px;
+		left: 47px;
+		z-index: 10;
+		border-radius: 5px;
+		padding: 10px 15px 8px 15px;
+		font-weight: 200;
+		box-shadow: -1px 2px 10px rgba(0, 0, 0, 0.1);
+		.action_title{
+			color: #CCC;
+		}
+		.agent_options{
+			margin: 3px -15px 0 -15px;
+			padding: 5px 15px 0 15px;
+			display: block;
+			color: #000;
+			text-decoration: none;
+			.icon-agent-edit, .icon-agent-preview{
+				margin: -8px 0px 0px -8px;;
+			}
+
+			&:hover {
+				background: #EEE;
+			}
+		}
+	}
+	.agent_actions:after, .agent_actions:before {
+		right: 100%;
+		top: 20px;
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+	}
+
+	.agent_actions:after {
+		border-color: rgba(243, 243, 243, 0);
+		border-right-color: #fff;
+		border-width: 8px;
+		margin-top: -8px;
+	}
+	.agent_actions:before {
+		border-color: rgba(153, 153, 153, 0);
+		border-right-color: #999;
+		border-width: 9px;
+		margin-top: -9px;
+	}
+}
+
+@include at-breakpoint($media-mobile-tablet){
+	.helpdesk_view {
+		display: none;
+	}
+}

@@ -101,7 +101,7 @@ function totalTime(listClass, updateId){
 }
 
 function time_in_hhmm(seconds) {
-  var hh = parseInt(seconds/3600), mm = parseInt((seconds % 3600) / 60), ss = seconds % 60;
+  var hh = parseInt(seconds/3600), mm = Math.round((seconds % 3600) / 60), ss = seconds % 60;
   return pad2(hh) + ":" + pad2(mm); 
 }
 

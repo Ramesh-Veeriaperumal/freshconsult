@@ -78,8 +78,7 @@ class Account < ActiveRecord::Base
   
   has_one :subscription
   has_many :subscription_payments
-  has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
-  has_many :portal_solution_categories, :class_name =>'Solution::Category', :order => "position"
+  has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "position"
   has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
@@ -141,8 +140,11 @@ class Account < ActiveRecord::Base
   has_many :published_articles, :through => :public_folders,
               :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
    
-  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
+  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
+
+  # added below mapping for multiform phase1 only
+  has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   

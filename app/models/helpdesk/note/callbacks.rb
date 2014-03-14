@@ -2,12 +2,38 @@ class Helpdesk::Note < ActiveRecord::Base
 
 	before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
+
+  after_create  :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :increment_notes_counter
+
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_create :subscribe_event_create, :if => :api_webhook_note_check  
   after_commit_on_update :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_destroy :remove_es_document
+
+  def construct_note_old_body_hash
+    {
+      :body => self.note_body_content.body,
+      :body_html => self.note_body_content.body_html, 
+      :full_text => self.note_body_content.full_text,
+      :full_text_html => self.note_body_content.full_text_html,
+      :raw_text => self.note_body_content.raw_text,
+      :raw_html => self.note_body_content.raw_html,
+      :meta_info => self.note_body_content.meta_info,
+      :version => self.note_body_content.version,
+      :account_id => self.account_id,
+      :note_id => self.id
+    }
+  end
+
+  def load_full_text
+    self.note_body.full_text ||= note_body.body unless note_body.body.blank? 
+    self.note_body.full_text_html ||= note_body.body_html unless note_body.body_html.blank?
+    if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
+      self.note_body.full_text = note_body.body unless note_body.body.blank?
+      self.note_body.full_text_html = note_body.body_html unless note_body.body_html.blank?
+    end
+  end
 
   protected
 
@@ -36,7 +62,7 @@ class Helpdesk::Note < ActiveRecord::Base
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
       end
       
-      note_body.update_attribute(:body_html,self.note_body.body_html)
+      # note_body.update_attribute(:body_html,self.note_body.body_html)
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
       #Helpdesk::Note.update_all("note_body.body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
     end

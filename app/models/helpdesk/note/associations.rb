@@ -22,7 +22,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
-  has_one :note_body, :class_name => 'Helpdesk::NoteBody', :dependent => :destroy
+  has_one :note_old_body, :class_name => 'Helpdesk::NoteOldBody', :dependent => :destroy, :autosave => false
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
@@ -31,7 +31,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   delegate :deleted, :company_id, :responder_id, :group_id, :spam, :requester_id, :to => :notable, :allow_nil => true, :prefix => true
 
-  accepts_nested_attributes_for :tweet , :fb_post, :note_body
+  accepts_nested_attributes_for :tweet , :fb_post
 
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
 

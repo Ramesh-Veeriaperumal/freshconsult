@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
     end
     
     def update_posts_count(id)
-      User.update_all ['posts_count = ?', Post.count(:id, :conditions => {:user_id => id})],   ['id = ?', id]
+      User.update_all ['posts_count = ?', Post.count(:id, :conditions => {:user_id => id, :published => true})],   ['id = ?', id]
     end
 
     def reset_current_user

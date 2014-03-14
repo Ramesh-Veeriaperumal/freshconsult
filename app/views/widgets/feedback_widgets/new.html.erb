@@ -1,4 +1,5 @@
 <% responsive = widget_option(:responsive) %>
+<% disable_requester = widget_option(:disable_requester) || false%>
 
 <% if(responsive != "no") %>
 	 <%= include_cloudfront_css :responsive_widget %>
@@ -250,7 +251,7 @@
 </iframe>
 
 
-<script type="text/javascript">
+<% javascript_tag do %>
 	jQuery('.modal-body').scroll(function() {
 		if(this.scrollTop > 8){
 			jQuery(this).parent().addClass("modal-scroll");
@@ -260,6 +261,11 @@
 	});
 
 	jQuery(document).ready(function () {
+		if(<%= disable_requester%> == true){
+			if(jQuery("#helpdesk_ticket_email").val() != ""){
+				jQuery("#helpdesk_ticket_email").prop("disabled","true");
+			}
+		}
 		var embeddedWidget = jQuery("#widgetType").val();
 		if(embeddedWidget == "embedded") {
 			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
@@ -271,4 +277,4 @@
 		}
 
 	});
-</script>
+<% end %>

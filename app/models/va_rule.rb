@@ -17,6 +17,7 @@ class VARule < ActiveRecord::Base
   
   before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
+  after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
 
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event

@@ -4,12 +4,10 @@ class Solution::CategoriesController < ApplicationController
   
   skip_before_filter :check_privilege, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
-  
-  before_filter { |c| c.check_portal_scope :open_solutions }
-  before_filter :portal_category?, :except => :index
-  before_filter :set_selected_tab     
-  before_filter :page_title
-  
+  before_filter :set_selected_tab, :page_title
+  before_filter :load_category, :only => [:edit, :update, :destroy]
+  before_filter :load_category_with_folders, :only => [:show]
+
   def index
     @categories = current_portal.solution_categories
 
@@ -22,8 +20,6 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def show
-    @item = current_account.solution_categories.find(params[:id], :include => :folders)
-    
     respond_to do |format|
       format.html { @page_canonical = solution_category_url(@item) }# index.html.erb
       format.xml {  render :xml => @item.to_xml(:include => folder_scope) }
@@ -42,7 +38,6 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def edit
-    @category = current_account.solution_categories.find(params[:id])      
     respond_to do |format|
       if @category.is_default?
         flash[:notice] = I18n.t('category_edit_not_allowed')
@@ -73,8 +68,6 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
-    @category = current_account.solution_categories.find(params[:id]) 
-    
     respond_to do |format| 
       if @category.update_attributes(params[nscname])       
         format.html { redirect_to :action =>"index" }
@@ -88,7 +81,6 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def destroy
-    @category = current_account.solution_categories.find(params[:id])
     @category.destroy unless @category.is_default?
 
     respond_to do |format|
@@ -109,7 +101,7 @@ class Solution::CategoriesController < ApplicationController
     end
     
     def reorder_scoper
-      current_account.solution_categories
+      current_portal.portal_solution_categories
     end
     
     def reorder_redirect_url
@@ -138,12 +130,19 @@ class Solution::CategoriesController < ApplicationController
       @selected_tab = :solutions
     end
     
-    def portal_category?
-      wrong_portal unless(main_portal? || 
-            (params[:id] && params[:id].to_i == current_portal.solution_category_id))
-    end
-    
     def folder_scope
       :folders
+    end
+
+    def portal_scoper
+      current_portal.solution_categories
+    end
+
+    def load_category
+      @category = portal_scoper.find_by_id!(params[:id])
+    end
+
+    def load_category_with_folders
+      @item = portal_scoper.find_by_id!(params[:id], :include => :folders)
     end
 end
