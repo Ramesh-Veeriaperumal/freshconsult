@@ -194,7 +194,7 @@
 
       <div class="btn-toolbar">
         <span>
-          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn reply_agent_collision", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
         </span>
 
         <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
@@ -214,7 +214,7 @@
             %>
             <% ticket_statuses.each do |status| %>
             <li>
-              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' class="reply_agent_collision" >
                 <%= t('ticket.reply_form.send_and_set_as', 
                       { :status => (status.is_default ? t(status.name.downcase) : status.name) }).html_safe %>
                 </a>

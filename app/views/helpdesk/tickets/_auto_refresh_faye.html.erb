@@ -7,11 +7,11 @@
       'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
       'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>") 
     };
-    window.ticketUpdateTitle = "<%= t('ticket.ticket_updated_icon') %>"
+    window.ticketUpdateTitle = "<%= t('ticket.ticket_updated_icon') %>";
     TicketRefresh.init("<%= faye_host %>",{
       current_user_id : "<%=current_user.id%>",
       channel : "<%= auto_refresh_channel %>",
-      addAuthExtParams: <%= auto_refresh_params %>
+      addAuthExtParams: <%= faye_auth_params %>
     })
   });
 </script>
