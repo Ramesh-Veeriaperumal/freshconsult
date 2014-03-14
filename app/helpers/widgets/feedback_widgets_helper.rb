@@ -15,8 +15,7 @@ module Widgets::FeedbackWidgetsHelper
             :widgetView => params[:widgetView].blank?,
             :formHeight => params[:formHeight],
             :responsive => params[:responsive],
-            :widgetType => params[:widgetType],
-            :disable_requester => params[:disable_requester]
+            :widgetType => params[:widgetType]
     	}
     end
 end
