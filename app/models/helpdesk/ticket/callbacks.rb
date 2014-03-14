@@ -22,6 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
+  after_commit_on_update :update_group_escalation, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
@@ -416,6 +417,13 @@ private
 
   rescue Exception => e
     NewRelic::Agent.notice_error(e)
+  end
+
+  def update_group_escalation
+    if @model_changes.key?(:group_id)
+      ticket_states.group_escalated = false
+      ticket_states.save if ticket_states.changed?
+    end
   end
 
 end
