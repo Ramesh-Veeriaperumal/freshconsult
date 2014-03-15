@@ -216,7 +216,17 @@ if (!$.browser.msie) {
   }).bind('pjax:success',function(evnt,xhr,settings){
      Fjax.success();
    });
-
 }
+
+var PJAX_DEFAULTS = {timeout: -1,
+                  push : true,
+                  maxCacheLength: 0,
+                  replace: false,
+                  container: '#body-container'}
+
+window.pjaxify = function(url) {
+  $.pjax($.extend({}, PJAX_DEFAULTS, {url : url} ));
+}
+
 }(window.jQuery);
 Fjax = new FreshdeskPjax();

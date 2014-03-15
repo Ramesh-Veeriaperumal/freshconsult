@@ -275,6 +275,10 @@ class Account < ActiveRecord::Base
     DATEFORMATS_TYPES[DATEFORMATS[self.account_additional_settings.date_format]][format]
   end
   
+  def default_form
+    flexi_field_defs.default_form.first
+  end
+  
   def is_saml_sso?
     self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SAML;
   end

@@ -1,0 +1,29 @@
+<% content_for :layoutType do %>single<% end %>
+
+<div class="clearfix">
+	<div class="pull-right">
+		<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' %>
+	</div>
+	<h3 class="lead"><%= t('.title') %></h3>
+</div>
+
+<div class="forum-group">
+	<div class="search-grey-box"></div>
+	<% if (@posts.size > 0) %>
+
+		<ul class="topic-list-view spam">
+			<%= render(:partial => "spam", :collection => @posts) %>
+		</ul>
+
+  	<% else %>
+
+		<div class="big-info">
+			<div class="no-info-text mt20 mb20"><%= t('.no_spam')%></div>
+		</div>
+
+	<% end %>
+</div>
+<%= will_paginate @posts, :renderer => BootstrapPaginationRenderer,
+							        				:previous_label => "<b class='arrow-left'></b>",
+							        				:next_label => "<b class='arrow-right'></b>",
+							        				:class => "pagination pagination-centered" %>

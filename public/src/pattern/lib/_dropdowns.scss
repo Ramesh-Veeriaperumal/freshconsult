@@ -7,6 +7,9 @@
 .dropup,
 .dropdown {
   position: relative;
+  a, a:hover{
+    color:$default_txt_color;
+  }
 }
 .dropdown-toggle {
   // The caret makes the toggle a bit too tall in IE7

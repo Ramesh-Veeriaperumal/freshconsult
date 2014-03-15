@@ -1,18 +1,17 @@
 class Support::Discussions::TopicsController < SupportController
-  
-  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, 
+
+  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
                                       :users_voted, :destroy, :toggle_solution]
   before_filter :require_user, :except => [:index, :show]
 
   before_filter :load_agent_actions, :only => :show
-  
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission, :only => [:edit, :update] 
-  
+  before_filter :check_user_permission, :only => [:edit, :update]
+
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
-  # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
+  # sure what analogous place to put it in this plugin.  It don't work in the init.rb
   #caches_formatted_page :rss, :show
   # cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
@@ -22,7 +21,7 @@ class Support::Discussions::TopicsController < SupportController
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
-    
+
   def index
     respond_to do |format|
       format.html { redirect_to forum_path(params[:forum_id]) }
@@ -32,7 +31,7 @@ class Support::Discussions::TopicsController < SupportController
       end
     end
   end
-  
+
   def show
     respond_to do |format|
       format.html do
@@ -69,46 +68,46 @@ class Support::Discussions::TopicsController < SupportController
 
   def edit
     respond_to do |format|
-      format.html { 
-        set_portal_page :new_topic 
+      format.html {
+        set_portal_page :new_topic
         render :new
       }
-    end    
+    end
   end
-  
+
   def create
     topic_saved, post_saved = false, false
     @forum = forum_scoper.find(params[:topic][:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      if verify_recaptcha(:model => @topic)
-        @topic  = @forum.topics.build(topic_param)
-        assign_protected
-        @post       = @topic.posts.build(post_param)
-        @post.topic = @topic
-        @post.user  = current_user
-        @post.account_id = current_account.id
-        # only save topic if post is valid so in the view topic will be a new record if there was an error
-        @topic.body_html = @post.body_html # incase save fails and we go back to the form
-        build_attachments
+      @topic  = @forum.topics.build(topic_param)
+      assign_protected
+      @post       = @topic.posts.build(post_param.merge(post_request_params))
+      @post.topic = @topic
+      @post.user  = current_user
+      @post.account_id = current_account.id
+      # only save topic if post is valid so in the view topic will be a new record if there was an error
+      @topic.body_html = @post.body_html # incase save fails and we go back to the form
+      build_attachments
+      if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
         topic_saved = @topic.save if @post.valid?
         post_saved = @post.save
-      else
-        flash[:error] = "Captcha verification failed, try again!"
       end
     end
-    
+
     if topic_saved && post_saved
-      flash[:notice] = "Topic created successfully"
-      respond_to do |format| 
-        format.html { redirect_to support_discussions_topic_path(:id => @topic) }
+      respond_to do |format|
+        format.html {
+          flash[:notice] = t('.flash.portal.discussions.topics.spam_check')
+          redirect_to support_discussions_path
+        }
         format.xml  { render :xml => @topic }
       end
     else
-      respond_to do |format|  
-        format.html { 
+      respond_to do |format|
+        format.html {
           set_portal_page :new_topic
-          render :new 
+          render :new
         }
         format.xml  { render :xml => @topic.errors }
       end
@@ -117,12 +116,12 @@ class Support::Discussions::TopicsController < SupportController
 
   def update
     topic_saved, post_saved = false, false
-    Topic.transaction do    
+    Topic.transaction do
       @topic.attributes = topic_param
       assign_protected
       @post = @topic.posts.first
       @post.attributes = post_param
-      @topic.body_html = @post.body_html 
+      @topic.body_html = @post.body_html
       build_attachments
       topic_saved = @topic.save
       post_saved = @post.save
@@ -133,13 +132,13 @@ class Support::Discussions::TopicsController < SupportController
         format.xml  { head 200 }
       end
     else
-     respond_to do |format|  
+     respond_to do |format|
        format.html { render :action => "edit" }
      end
-      
+
     end
   end
-  
+
   def destroy
     @topic.destroy
     flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, h(@topic.title)].html_safe
@@ -163,13 +162,13 @@ class Support::Discussions::TopicsController < SupportController
     else
       @monitorship.update_attribute(:active, !@monitorship.active)
     end
-    
+
     render :nothing => true
-  end 
+  end
 
   #method to fetch the monitored status of the topic given the user_id
   def check_monitor
-    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic") 
+    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic")
     @monitorship = [] if @monitorship.nil? || !@monitorship.active
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
@@ -179,7 +178,7 @@ class Support::Discussions::TopicsController < SupportController
 
   #method to set the monitored status of the topic given the user_id and monitor status
   def monitor
-    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic") 
+    @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic")
     @monitorship.update_attribute(:active,params[:status]) unless params[:status].blank?
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
@@ -190,20 +189,20 @@ class Support::Discussions::TopicsController < SupportController
 
   def like
     unless @topic.voted_by_user?(current_user)
-      @vote = Vote.new(:vote => params[:vote] == "for")  
-      @vote.user_id = current_user.id  
+      @vote = Vote.new(:vote => params[:vote] == "for")
+      @vote.user_id = current_user.id
       @topic.votes << @vote
     end
     load_topic
     render :partial => "topic_vote", :object => @topic
-  end 
+  end
 
   def unlike
      @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
      @votes.first.destroy
      load_topic
      render :partial => "topic_vote", :object => @topic
-  end  
+  end
 
   def my_topics
     set_portal_page :my_topics
@@ -223,27 +222,27 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def build_attachments
-    return unless @post.respond_to?(:attachments) 
+    return unless @post.respond_to?(:attachments)
       unless params[:post].nil?
       (params[:post][:attachments] || []).each do |a|
         @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
       end
     end
   end
- 
-  
+
+
   protected
     def assign_protected
       @topic.user     = current_user if @topic.new_record?
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
       return unless privilege?(:manage_users) or current_user.moderator_of?(@topic.forum)
-      @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked] 
+      @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked]
       # only admins can move
       return unless privilege?(:manage_users)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
-    
+
     def load_topic
       @topic = scoper.find(params[:id])
       @forum = @topic.forum
@@ -255,19 +254,19 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def scoper
-      current_account.portal_topics
+      current_account.portal_topics.published
     end
 
     def forum_scoper
       current_portal.portal_forums
     end
-  
-    def topic_param 
+
+    def topic_param
       param = params[:topic].symbolize_keys
       param.delete_if{|k, v| [:body_html].include? k }
       return param
     end
-  
+
     def post_param
       param =  params[:topic].symbolize_keys
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
@@ -281,5 +280,15 @@ class Support::Discussions::TopicsController < SupportController
                             :icon => "preview" } if privilege?(:view_forums)
       @agent_actions
     end
-	
+
+    def post_request_params
+      {
+        :request_params => {
+          :user_ip => request.env['CLIENT_IP'],
+          :referrer => request.referrer,
+          :user_agent => request.env['HTTP_USER_AGENT']
+        }
+      }
+    end
+
 end

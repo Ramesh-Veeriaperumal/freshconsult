@@ -131,7 +131,7 @@ swapEmailNote = function(formid, link){
 		//For all other reply forms using redactor.
 		invokeRedactor(formid+"-body",formid);
 		
-		if (link.getAttribute('data-note-type') === 'fwd') {
+		if (link && $(link).data('noteType') === 'fwd') {
 			$('.forward_email input').trigger('focus');
 		} else {
 			$('#'+formid+"-body").getEditor().focus();
@@ -719,6 +719,10 @@ var scrollToError = function(){
 
 			//Removing the Dropbox attachments
 			_form.find('.dropbox_div input[filelist]:not(.original_input)').remove();
+		}
+
+		if (btn.data('cntId') == "cnt-reply") {
+			$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 		}
 
 		if (_form.attr('rel') == 'forward_form')  {

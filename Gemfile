@@ -46,6 +46,7 @@ gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
+gem "riak-client", "1.4.2"
 
 gem "http_accept_language", "1.0.1"
 
@@ -121,8 +122,10 @@ gem "ey_config"
 gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
+gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
+
 group :production,:test,:staging do
-  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+  gem 'tire', :git => "git://github.com/arvinthj/tire.git"
 end
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"

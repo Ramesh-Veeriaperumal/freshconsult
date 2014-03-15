@@ -1,0 +1,16 @@
+defaults: &defaults
+ ticket_body: t_b
+ note_body: n_b
+
+development:
+ <<: *defaults
+  
+test:
+ ticket_body: t_b_test
+ note_body: n_b_test
+
+staging:
+ <<: *defaults
+
+production:
+ <<: *defaults

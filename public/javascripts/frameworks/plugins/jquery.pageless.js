@@ -66,6 +66,7 @@
                  , params: {}
                  , url: location.href
                  , loaderImage: "/images/animated/ajax-loader.gif"
+                 , dataType: "html"
                  }
     , container
     , $container;
@@ -172,20 +173,23 @@
       $.extend( settings.params
               , { page: settings.currentPage });
       // finally ajax query
-      $.get( settings.url
-           , settings.params
-           , function (data) {
-               $.isFunction(settings.scrape) ? settings.scrape(data) : data;
+      $.ajax({
+          url: settings.url,
+          data: settings.params,
+          success: function (data) {
+            $.isFunction(settings.scrape) ? settings.scrape(data) : data;
                loader ? loader.before(data) : element.append(data);
                loading(FALSE);
                // if there is a complete callback we call it
-               if (settings.complete){
-			   	   if(typeof settings.complete == "string")
-					      eval(settings.complete);
-				      else
-			  		      settings.complete.call();
-			      } 
-           });
+            if (settings.complete){
+              if(typeof settings.complete == "string")
+                eval(settings.complete);
+              else
+                settings.complete.call();
+            }
+          },
+          dataType: settings.dataType
+      });
     }
   };
 })(jQuery);

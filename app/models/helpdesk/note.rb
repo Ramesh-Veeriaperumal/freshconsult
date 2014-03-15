@@ -8,10 +8,13 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
 
+  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 
+                            'category', 'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id']
+
   set_table_name "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks
-
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
+  text_datastore_callbacks :class => "note"
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
   attr_protected :attachments, :notable_id
 
@@ -159,33 +162,6 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::NoteDrop.new self
   end
   
-  def body
-    body
-  end
-
-  def body_html
-    body_html
-  end
-
-  def full_text
-    note_body ? note_body.full_text : read_attribute(:body)
-  end
-
-  def full_text_html
-    note_body ? note_body.full_text_html : read_attribute(:body_html)
-  end
- 
-  def body_with_note_body
-    note_body ? note_body.body : read_attribute(:body)
-  end
-  alias_method_chain :body, :note_body
-
-  def body_html_with_note_body
-    note_body ? note_body.body_html : read_attribute(:body_html)
-  end
-  alias_method_chain :body_html, :note_body
-
-
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -206,9 +182,9 @@ class Helpdesk::Note < ActiveRecord::Base
             'activities.tickets.conversation.out_email.private.short')  
   end
 
-  def respond_to?(attribute)
+  def respond_to?(attribute, include_private=false)
     return false if [:to_ary].include? attribute.to_sym
-    super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
+    super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def save_response_time

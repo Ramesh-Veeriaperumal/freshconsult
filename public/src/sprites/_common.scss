@@ -35,9 +35,13 @@ $ticket-view-layout:smart;
 @import "cdn-ignored/sprites/file-types/*.png";
 @include all-file-types-sprites;
 
-@import "cdn-ignored/sprites/common-icons/*.png";
+@import "cdn-ignored/sprites/common-icon/*.png";
 $reports-icon-layout:horizontal;
-@include all-common-icons-sprites(true);
+@include all-common-icon-sprites(true);
+
+/*Search page icons */
+@import "cdn-ignored/sprites/search/*.png";
+@include all-search-sprites(true);
 
 @import "cdn-ignored/sprites/mailbox/*.png";
 @include all-mailbox-sprites(true);

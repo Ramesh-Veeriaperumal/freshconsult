@@ -1,6 +1,8 @@
 class ThemeController < ApplicationController
 
 	prepend_before_filter :set_http_cache_headers
+
+	skip_before_filter :set_cache_buster
 	caches_action :index, :cache_path => :cache_key, :if => :render_from_cache?
 
 	THEME_COMPASS_SETTINGS 	= { :syntax => :scss, 

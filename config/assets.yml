@@ -8,6 +8,7 @@ compressor_options:
     :comments:          :none
 css_compressor:         sass
 allow_debugging:        on
+template_function:      _.template
 
 stylesheets:
   pattern:
@@ -140,7 +141,6 @@ javascripts:
     - public/javascripts/jquery.pjax.js
     - public/javascripts/utils.js
     - public/javascripts/frameworks/sprintf.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
@@ -148,6 +148,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.autosize.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/loadmore.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
@@ -220,6 +221,7 @@ javascripts:
     - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
+    - app/views/shared/spotlight_result.jst
     - public/javascripts/report/date.js
     - public/javascripts/freshfone/global.js
 
@@ -238,6 +240,10 @@ javascripts:
     #- public/javascripts/pattern/bootstrap-tooltip.js
     # - public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
+
+  search:
+    - public/javascripts/app/search.js
+    - app/views/search/template/*.jst
 
   timesheet:
     - public/javascripts/timesheet.js
@@ -416,7 +422,6 @@ javascripts:
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
     - public/javascripts/mColorPicker.js

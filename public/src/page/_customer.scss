@@ -14,9 +14,8 @@
 			color: #3F3F3F;
 		}
 }
-
-.table-striped tbody tr.diffColor td{ 
-	background-color: #fefdee !important; 
+.list-page .list-page-body table tr.diffColor td{
+	background-color: $tableBackgroundSelected; 
 }
 .agent-list-page {
   &.deleted-list{

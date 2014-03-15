@@ -4,6 +4,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
+  # add for multiform phase 1 migration
+  include Helpdesk::Ticketfields::TicketFormFields
   
   set_table_name "helpdesk_ticket_fields"
   attr_protected  :account_id
@@ -23,6 +25,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_destroy :delete_from_ticket_filter
   # before_update :delete_from_ticket_filter
   before_save :set_portal_edit
+
+  # Phase1:- multiform , will be removed once migration is done.
+  after_commit_on_create :save_form_field_mapping
+  after_commit_on_update :save_form_field_mapping
+  after_commit_on_destroy :remove_form_field_mapping
+  #Phase1:- end
+
   # xss_terminate
   acts_as_list
 
@@ -359,10 +368,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def populate_label
       self.label = name.titleize if label.blank?
       self.label_in_portal = label if label_in_portal.blank?
-   end
-   def set_portal_edit
+    end
+
+    def set_portal_edit
       self.editable_in_portal = false unless visible_in_portal
       self
-   end
+    end
+
+    def save_form_field_mapping
+      save_form_field(self)
+    end
+
+    def remove_form_field_mapping
+      remove_form_field(self)
+    end
 
 end

@@ -1,4 +1,6 @@
 class Post < ActiveRecord::Base
+  include ActionController::UrlWriter
+
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
 
@@ -14,6 +16,12 @@ class Post < ActiveRecord::Base
 
   named_scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+
+  named_scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
+  named_scope :published, :conditions => {:published => true, :trash => false }
+  named_scope :trashed, :conditions => {:trash => true }
+
+  named_scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
 
   named_scope :by_user, lambda { |user|
       { :joins => [:topic],
@@ -31,8 +39,10 @@ class Post < ActiveRecord::Base
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]  
   #format_attribute :body
   
-  attr_protected	:topic_id , :account_id , :attachments
+  attr_protected  :topic_id , :account_id , :attachments, :published, :spam
   after_save  :monitor_topic, :if => :can_monitor?
+
+  attr_accessor :request_params
     
   def to_xml(options = {})
     options[:except] ||= []
@@ -102,5 +112,13 @@ class Post < ActiveRecord::Base
   def self.filter(_per_page = self.per_page, _page = 1)
     paginate :per_page => _per_page, :page => _page
   end
-  
+
+  def topic_path
+    support_discussions_topic_path(topic)
+  end
+
+  def topic_url
+    support_discussions_topic_url(topic, :host => account.host)
+  end
+
 end

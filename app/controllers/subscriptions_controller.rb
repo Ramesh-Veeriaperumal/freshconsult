@@ -39,7 +39,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def convert_subscription_to_free
-    scoper.state = FREE
+    scoper.state = FREE if scoper.card_number.blank?
     if activate_subscription
       update_features
       flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.name )

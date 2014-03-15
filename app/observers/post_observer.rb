@@ -3,7 +3,8 @@ class PostObserver < ActiveRecord::Observer
 	include ActionController::UrlWriter
 
 	def before_create(post)
-		post.forum_id = post.topic.forum_id 
+		post.forum_id = post.topic.forum_id
+		post.published = post.user.agent? #Agent posts are approved by default.
 	end
 
 	def before_save(post)
@@ -12,15 +13,20 @@ class PostObserver < ActiveRecord::Observer
 
 	def after_create(post)
 		update_cached_fields(post)
-		monitor_reply(post)
+		monitor_reply(post) if post.published?
 		unless post.topic.last_post_id.nil?
-			create_activity(post, 'new_post')
+			create_activity(post, 'new_post') if post.published?
 		end
+
+	end
+
+	def after_update(post)
+		create_activity(post, 'published_post') if post.published_changed? and post.published?
 	end
 
 	def after_destroy(post)
 		update_cached_fields(post)
-		create_activity(post, 'delete_post')
+		create_activity(post, 'delete_post') unless post.trash
 	end
 
 	def monitor_reply(post)
@@ -33,6 +39,18 @@ class PostObserver < ActiveRecord::Observer
       PostMailer.deliver_monitor_email!(monitorship_email,post,post.user) unless monitorship_email.blank? or (post.user_id == monitorship.user_id)
     end
   end
+	def after_update(post)
+		update_cached_fields(post) if post.published_changed?
+		if post.published_changed? and post.published?
+
+			monitor_reply(post)
+			if post.topic.new?
+				post.topic.published = true
+				post.topic.save
+			end
+		end
+		create_activity(post, 'published_post') if post.published_changed? and post.published? and !post.topic.new?
+	end
 
 	private
 
@@ -41,7 +59,7 @@ class PostObserver < ActiveRecord::Observer
     end
 
     def update_cached_fields(post)
-      Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => post.forum_id})], ['id = ?', post.forum_id]
+      Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => post.forum_id, :published => true })], ['id = ?', post.forum_id]
       User.update_posts_count(post.user_id)
       post.topic.update_cached_post_fields(post)
   	end
@@ -52,17 +70,17 @@ class PostObserver < ActiveRecord::Observer
 			:short_descr => "activities.forums.#{type}.short",
 			:account 		=> post.account,
 			:user 			=> post.user,
-			:activity_data 	=> { 
-								 :path => category_forum_topic_path(post.forum.forum_category_id, 
+			:activity_data 	=> {
+								 :path => category_forum_topic_path(post.forum.forum_category_id,
 										 post.forum_id, post.topic_id),
 								 :url_params => {
-												 :category_id => post.forum.forum_category_id, 
-												 :forum_id => post.forum_id, 
+												 :category_id => post.forum.forum_category_id,
+												 :forum_id => post.forum_id,
 												 :topic_id => post.topic_id,
 												 :path_generator => 'category_forum_topic_path'
 												},
 								 :title => h(post.to_s)
-								} 
+								}
 		)
 	end
 

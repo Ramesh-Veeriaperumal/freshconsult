@@ -1,0 +1,4 @@
+page.replace_html "result-wrapper", :partial => "search/result_wrapper"
+page.replace_html "search-sort-menu", :partial => "search/search_sort_menu_dropdown"
+page << "SEARCH_RESULTS_PAGE.data = #{@result_json.html_safe}"
+page << "SEARCH_RESULTS_PAGE.initializeSearchPageDefaults()"

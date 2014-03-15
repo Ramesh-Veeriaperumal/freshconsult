@@ -1,30 +1,243 @@
+// Search Result UI
+#sticky_header.search-sticky{
+	margin: 0;
+	padding: 0;
+	border-bottom:1px solid #ddd;
+	background: transparent;
+	.stuck{
+		@include box-shadow(0 3px 20px -10px rgba(0, 0, 0, 0.3))
+	}
+}
+.search-page .pagearea{ padding: 0 0 0px; }
 
+.search-form{
+	border-bottom: 1px solid #bbb;	
+	position: relative;
+	.search-dark{
+		position: absolute;
+		top: 16px;
+		left: 16px;
+		opacity: 0.5;
+	}
+}
+
+
+.search-grey-box{
+	@include clearfix;
+	border-top:1px solid #e2e2e2; 
+}
+
+
+.search-title{
+	font-size: 1.1em;
+	font-weight:500;
+}
+.searched-text{
+	background: #f9fda2;
+	font-weight: bold;
+	padding: 0 2px;
+	color: #333;
+	box-shadow: 0 0 6px 0px rgba(0,0,0,0.1);
+	border-radius: 4px;
+}
+.search-input{	
+	padding: 15px 1% 15px 4%;
+	margin-top: 0;
+	width: 95%;
+	border: 0;
+	@include box-shadow(inset 0px 4px 10px 0px rgba(0, 0, 0, 0.1));
+	&.lead{ margin-bottom: 0; }
+}
+
+.search-sorting-wrapper{
+	background:$tableBackgroundHeader;
+}
+
+.search-sorting-wrapper{
+	#search-sort-menu{ 
+		padding:15px 0;
+		margin-left: 14px;
+	}
+	.menu-list{
+		.nav-tabs{
+			border-bottom:0;
+			li{
+				padding: 0;
+				border:0;
+				margin-bottom:-2px;
+				a, .title-text{
+					padding: 15px;
+					margin-left: -1px;
+					border:0;
+					margin:0;
+					border-left: 1px solid #e9e9e9;
+					font-weight: 200;
+					font-size: 14px;
+					color: #333;;
+					background: transparent;
+					@include border-radius(0);
+				}
+				&:last-child a{
+						margin-right:0
+				}
+				.title-text{
+					border-left:0;
+					color:#999;
+				}
+				&.active{
+					a, a:hover{
+						background: #fff;
+						color: #333;
+						font-weight: bold;
+						padding-bottom:16px;
+						@include box-shadow(inset 0 -3px 0 #888);
+					}
+				}
+				&:hover{
+					background: #fafafa;
+					@include box-shadow(0 1px 0 #fafafa);
+				}
+			}
+		}
+		.nav{
+			margin:0;
+		}			
+	}
+}
+.search-list-wrap{
+	display:inline-block;	
+	width:100%;
+	.search-result-image, .avatar{
+		margin-right:-40px;
+	}
+}
+
+.search-page{	
+	.result-wrapper{ 
+		padding-bottom: 100px;
+		li{
+			padding: 15px 0 15px 15px;
+			border-bottom:1px solid $tableBorder;
+			&:hover{
+				background:$tableBackgroundHover;
+			}
+			.search-result-image{
+				display: inline-block;
+				width: 30px;
+				min-height: 30px;
+				.preview_pic{
+					margin-right: 0;
+					img{
+						max-width: 30px;
+						max-height: 30px;
+					}
+				}
+			}
+			$searchResultInfoWidth: 270px;
+			.search-result-text{
+				width:100%;
+				vertical-align:top;
+				.search-result-content{
+					padding-left:50px;
+					margin-right:$searchResultInfoWidth;
+					float: left;
+					p.muted{
+						padding-left: 15px;
+						border-left: 1px dotted #ccc;
+						margin: 0 0 0px;
+					}
+				}
+				.search-result-info{
+					width:$searchResultInfoWidth - 30px;
+					padding: 0 15px 0;
+					margin-left:-($searchResultInfoWidth);
+				}
+			}
+			.emphasize{
+				color:#333;
+				font-weight: 400;
+			}
+			.result-info{
+				display: inline-block;
+				max-width:$searchResultInfoWidth - 80px ; //Search-label width 50px + padding 30px
+				vertical-align: text-bottom;
+				cursor: default;
+			}
+			&.customer-results .result-info{
+				max-width: 94%;
+			}
+			a.emphasize:hover, a .emphasize:hover{
+	      		color: #0066cc;
+			}
+			.search-label{
+				float: left;
+				width: 50px;
+			}
+			.search-label, .result-info{
+				line-height: 20px;
+			}
+		}
+		.loadmore-wrap{
+			text-align:center;
+			padding:10px;
+			min-height: 20px;
+		}
+		#load-more{
+			margin: 0px auto;
+			position: relative;
+			font-weight: bold;
+			cursor: pointer;
+		}
+	}
+}
+// Hack for old search results on community pages
+
+.community-search{
+	border-top: 1px solid #e9e9e9;
+}
+.search-grey-box .result-wrapper{
+	padding-bottom: 0px;
+}
+.page-search{
+	background: #f6f6f6;
+	padding:$common-padding;
+}
+.search-input-wrap{
+	display: inline-block;
+	.search{
+		margin-bottom: 0;
+	}
+}
+// End of community hack
+
+// From app-common
 .search_results_bar{
 	@include border-bottom-radius(6px);
-	@include box-shadow(#aaa 0 3px 10px);
+	@include box-shadow(#aaa 0px 10px 40px -10px);
 	border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
-	right:0;
+	right:0px;
 	top:-1px;
 	border-top:1px solid #dddede;
 	padding-left:100px;
 	z-index:9999999;
-	.results{
-		width:300px;
-		@include border-radius(0 0 6px 0);
+	ul.results{
+		width:298px;
 		background:#f6f6f6;
 		border-left:1px solid #dedede;
+		padding:6px 0px 0px 0px;			
+		border-bottom:1px solid #efefef;
 		li{
-			padding:6px 0 0 0;			
-			border-bottom:1px solid #efefef;
 			a:hover, a.active{
 				background-color:#333333;
 				color:#ffffff;
 			} 
-			border-bottom:1px solid #efefef;
 		}
+	}
+	ul.results_info{
+		@include border-radius(0 0 6px 0);
 	}
 }
 
@@ -39,7 +252,6 @@
 	li{
 		list-style:none;
 		position:relative;
-		padding:6px 0 8px 0;
 		span.icon{ 
 			position:absolute;
 			width:16px;
@@ -50,7 +262,7 @@
 		a{
 			display:block;
 			text-decoration:none;
-			line-height:16px;
+			line-height:20px;
 			background-position:5px 4px;
 			background-repeat:no-repeat;
 			@include link-colors($default_txt_color, #ffffff, $default_txt_color, $default_txt_color);
@@ -77,8 +289,8 @@
 		
 		h4{
 			position:absolute;
-			left:0;
-			top:9px;
+			left:0px;
+			top:5px;
 			margin-left:-100px;
 			width:90px;
 			color:#888888;
@@ -86,7 +298,7 @@
 			text-align:right;
 		}
 		div, a{
-			padding:4px 8px 4px 25px;
+			padding:4px 8px 4px 30px;
 		}
 		div.title{
 			background:#efefef;
@@ -102,17 +314,17 @@
 			padding-top:6px;
 			padding-bottom:6px;
 			.preview_pic{
-				padding:0;
-				margin:0;
+				padding:0px;
+				margin:0px;
 				position:relative;
 				margin-left:-28px;
 				img{
-					border:0;
+					border:0px;
 					padding:6px;
 				}
 			}
 			span{
-				padding:0 0 4px 0; 
+				padding:0px 0px 4px 0px; 
 			}
 			span.small{
 				font-size:11px;
@@ -121,8 +333,8 @@
 				color:#888888;
 			}
 			span.icon{ 
-				padding:0;
-				margin-left:-5px;
+				padding:0px;
+				margin-left:-20px;
 			}
 		}
 	}

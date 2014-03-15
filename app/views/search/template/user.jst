@@ -1,0 +1,30 @@
+<li id="<%= id %>-user" rel="searched-users" class="customer-results">
+	<div class="search-list-wrap">
+		<div class="avatar avatar-small pull-left">
+			<img alt="" onerror="imgerror(this)" size_type="thumb" src="<%= avatar_url %>">
+		</div>
+		<div class="search-result-text row-fluid">
+			<div class="ticket_subject search-result-content">
+				<h5 class="ticket-description-tip">
+					<a href="<%= path %>" class="search-title"><%= name %></a>
+				</h5>
+				<% if (!_.isNull(company_name)){ %>
+					<span class="muted"><%= company_name %></span>
+				<% } %>
+			</div>
+			<div class="search-result-info pull-right info-data">
+				<% if (!_.isNull(email)){ %>
+					<div>
+						<span class="emphasize ellipsis result-info"><%= email %></span>
+					</div>
+				<% } %>
+				<% if (!_.isNull(phone)){ %>
+					<div>
+						<span class="muted"><%= SEARCH_RESULT_LANG["phone"] %></span> 
+						<span class="emphasize ellipsis result-info"><%= phone %></span>
+					</div>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</li>

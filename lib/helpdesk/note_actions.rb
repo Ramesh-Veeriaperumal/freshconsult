@@ -26,7 +26,7 @@ module Helpdesk::NoteActions
 
   def conv_details note
     conv_array = []
-    conv_array << [t('Subject'), note.subject] if note.subject
+    conv_array << [t('Subject'), note.subject] unless note.subject.blank?
     conv_array << [t('to'), generate_email_strings(note.to_emails)]
     conv_array << [t('helpdesk.shared.cc'), generate_email_strings(note.cc_emails)] unless note.cc_emails.blank?
     conv_array << [t('helpdesk.shared.bcc'), generate_email_strings(note.bcc_emails)] unless note.bcc_emails.blank?

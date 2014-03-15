@@ -55,7 +55,7 @@
 		<%= auto_link(post.body_html.html_safe, :all, :target => "_blank") %>
 	</div>
 	<% unless post.attachments.empty? %>
-			<h4><%= pluralize(post.attachments.size, 'attachment')%></h4>
+			<strong><%= pluralize(post.attachments.size, 'attachment')%></strong>
 			<ul class="attachment_list">
         <%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, 
             :locals => {:show_delete => privilege?(:edit_topic, post), :url => [post] } %>

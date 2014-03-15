@@ -41,7 +41,7 @@ describe "XssTermination" do
         xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script>alert(\"hi\")</hello>hello")
         xss_terminate.save!
         XssTermination.first.field1.should eql "hiihello<div></div>"
-        XssTermination.first.field2.should eql "hiialert(\"hi\")&lt;/hello&gt;hello"
+        XssTermination.first.field2.should eql "hii"
       end
       it "should sanitize only one of the field when sanitize option is passed" do
         perform = {:only => [:field1,:field2], :html_sanitize => [:field1] }
@@ -68,7 +68,7 @@ describe "XssTermination" do
         xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script>alert(\"hi\")</hello>hello")
         xss_terminate.save!
         XssTermination.first.field1.should eql "<hello>hii</hello>hello<div></div>"
-        XssTermination.first.field2.should eql "hiialert(\"hi\")&lt;/hello&gt;hello"
+        XssTermination.first.field2.should eql "hii"
       end
     end
 
