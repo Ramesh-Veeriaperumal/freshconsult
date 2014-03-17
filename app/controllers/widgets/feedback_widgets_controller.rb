@@ -3,6 +3,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
   before_filter :build_item, :only => :new
+  before_filter :set_native_mobile, :only => [:create]
   include SupportTicketControllerMethods 
 
   def new
@@ -26,6 +27,7 @@ class Widgets::FeedbackWidgetsController < SupportController
      respond_to do |format|
         format.html { render :action => :thanks}
         format.xml  { head 200}
+        format.nmobile { render :json => {:success => true}}
       end
     else
       render :action => :new
