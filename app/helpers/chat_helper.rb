@@ -1,9 +1,19 @@
 module ChatHelper
 
-  def chat_enabled?
-    chat_setting = current_account.chat_setting
-    (feature?(:chat) && feature?(:chat_enable) && chat_setting.show_on_portal && 
-                            (!chat_setting.portal_login_required || logged_in?))
+  def chat_feature_enabled?
+    feature?(:chat) && feature?(:chat_enable)
+  end
+
+  def portal_chat_enabled?
+    account = current_account
+    chat_setting = account.chat_setting
+    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting.show_on_portal && 
+                                                  (!chat_setting.portal_login_required || logged_in?)
+  end
+
+  def chat_trial_expiry
+    subscription = current_account.subscription 
+    subscription.trial? ? subscription.next_renewal_at.to_i * 1000 : 0
   end
 
   def encoded_freshchat_setting
@@ -42,7 +52,8 @@ module ChatHelper
       :name_place =>  t("freshchat.name"), :mail_place => t("freshchat.mail") ,
       :phone_place => t("freshchat.phone"), :text_place => t("freshchat.text_placeholder") ,
       :begin_chat => t("freshchat.begin_chat"), :color => window_color,
-      :offset =>  window_offset, :position => window_position
+      :offset =>  window_offset, :position => window_position,
+      :expiry =>  chat_trial_expiry
     }
     return freshchat_setting.to_json.html_safe
   end

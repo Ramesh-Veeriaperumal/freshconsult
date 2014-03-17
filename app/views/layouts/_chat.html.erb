@@ -1,4 +1,6 @@
-<%if(current_user && current_account.features?(:chat) && current_account.features?(:chat_enable) && current_account.chat_setting && !(is_assumed_user?))
+<% account = current_account %>
+<%if(current_user && account.features?(:chat) && account.features?(:chat_enable) && account.chat_setting && 
+                           !(is_assumed_user?) && account.active? && !account.subscription.finished_trial?)
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
@@ -8,7 +10,7 @@
 <script language="javascript">
 
 var CS_URL = "<%=comm_url%>";
-var WEB_ROOT = "//<%=current_account.full_domain%>";
+var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
 (function($){
@@ -49,8 +51,8 @@ var CURRENT_USER = {
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>
 };
 
-var SITE_ID = '<%=current_account.chat_setting.display_id%>';
-var IS_TYPING = '<%=current_account.chat_setting.typing_message%>';
+var SITE_ID = '<%=account.chat_setting.display_id%>';
+var IS_TYPING = '<%=account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
 var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             title:'<%= t("freshchat.title") %>',
