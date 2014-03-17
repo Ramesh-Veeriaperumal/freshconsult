@@ -5,7 +5,6 @@ module Helpdesk::TicketActions
   include ParserUtil
   include ExportCsvUtil
   include Helpdesk::ToggleEmailNotification
-  include Mobile::Controllers::Ticket
 
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
