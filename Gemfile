@@ -125,7 +125,7 @@ gem "premailer", "~> 1.8.0"
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 group :production,:test,:staging do
-  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+  gem 'tire', :git => "git://github.com/arvinthj/tire.git"
 end
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"

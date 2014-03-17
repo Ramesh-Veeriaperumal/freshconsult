@@ -131,7 +131,7 @@ class ContactsController < ApplicationController
   end
 
   def configure_export
-    render :partial => "contacts/contact_export", :locals => {:csv_headers => export_contact_fields}
+    render :partial => "contacts/contact_export", :locals => {:csv_headers => EXPORT_CONTACT_FIELDS}
   end
 
   def export_csv

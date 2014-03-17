@@ -130,12 +130,14 @@
       :collection => { :reorder => :put }
     admin.resources :observer_rules, :member => { :activate_deactivate => :put },
       :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} ,
-    :collection => { :existing_email => :get,
-                     :personalized_email_enable => :post,
-                     :personalized_email_disable => :post,
-                     :reply_to_email_enable => :post,
-                     :reply_to_email_disable => :post }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
+    :collection => { :existing_email => :get, 
+                     :personalized_email_enable => :post, 
+                     :personalized_email_disable => :post, 
+                     :reply_to_email_enable => :post, 
+                     :reply_to_email_disable => :post, 
+                     :id_less_tickets_enable => :post, 
+                     :id_less_tickets_disable => :post }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
@@ -173,11 +175,18 @@
   end
 
   map.namespace :search do |search|
-    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get, :ticket_search => :get }
-    search.ticket_related_solutions    '/related_solutions/ticket/:ticket/', :controller => 'home', :action => 'related_solutions'
-    search.ticket_search_solutions    '/search_solutions/ticket/:ticket/', :controller => 'home', :action => 'search_solutions'
+    search.resources :home, :only => :index, :collection => { :suggest => :get }
+    search.resources :tickets, :only => :index
+    search.resources :solutions, :only => :index
+    search.resources :forums, :only => :index
+    search.resources :customers, :only => :index
+    search.ticket_related_solutions '/related_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'related_solutions'
+    search.ticket_search_solutions '/search_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'search_solutions'
   end
-
+  map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
+  map.connect '/search/all', :controller => 'search/home', :action => 'index'
+  map.connect '/search/topics', :controller => 'search/forums', :action => 'index'
+  
   map.namespace :reports do |report|
     report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports',
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
@@ -257,6 +266,7 @@
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
         resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
       end
+      admin.resources :freshfone_subscriptions, :as => 'freshfone_admin'
       # admin.resources :analytics
       admin.resources :spam_watch, :only => :index
       admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details

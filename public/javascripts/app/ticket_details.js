@@ -327,7 +327,9 @@ var updatePagination = function() {
 }
 
 var freshfoneAudioDomSetting = function (){
-			soundManager.reboot();
+	  if(threeSixtyPlayer){
+			threeSixtyPlayer.init();	  	
+	  }
 			$('.call_duration').each(function () {
 				if ($(this).data("time") === undefined) { return; }
 					$(this).html($(this).data("time").toTime());
@@ -371,7 +373,7 @@ var scrollToError = function(){
 		changeYear: true,
 		onSelect: function(dateText, inst) {
 			selectedDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
-			$("#due-date-value").html( selectedDate.toDateString() );
+			$("#due-date-value").html( moment(selectedDate).format(getDateFormat('moment_date_with_week')) );
 			CalcSelectedDateTime();
 		}
 	});
@@ -683,6 +685,11 @@ var scrollToError = function(){
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .submit_btn", function(ev) {
 		ev.preventDefault();
+        if(window.replySubscription)
+        {
+          window.replySubscription.cancel();
+        }
+        window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 

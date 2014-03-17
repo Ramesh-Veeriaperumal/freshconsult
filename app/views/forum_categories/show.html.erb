@@ -8,16 +8,16 @@
 
 <div class="forum_list">
 	<div class="forum-group">
-		<div class="search-grey-box">
+		<div class="search-grey-box search-page">
 			<% if privilege?(:manage_forums) -%>
-				<div class="btn-group pull-right">
+				<div class="btn-group pull-right mt18 mr20">
 					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "btn") unless
 							(@forum_category.send("#{@content_scope}forums").size <= 1) %>
 					<%= link_to t('forum.new'), new_category_forum_path(@forum_category), :class => "btn" %>
 					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "btn" %>
 				</div>
 			<% end -%> 
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => h(@forum_category.name)), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => h(@forum_category.name)), :url => "/search/forums?category_id=#{@forum_category.id}&term=" } %>
 		</div>
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 	</div>		

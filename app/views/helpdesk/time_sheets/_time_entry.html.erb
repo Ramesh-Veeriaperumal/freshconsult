@@ -35,7 +35,7 @@
     <div class="info">
       <div class="time_stamp">
         <%# content_tag(:div, "Timer started @ #{formated_date(time_entry.start_time, "%I:%M %p")} ", :class => "started_time") if time_entry.timer_running %>
-        <span>on <%= formated_date(time_entry.executed_at,"%a, %b %e, %Y") %></span>
+        <span>on <%= formated_date(time_entry.executed_at, {:format => :short_day_with_week}) %></span>
       </div>
       <div class="is_billable">
         <%= time_entry.billable ? t('helpdesk.time_sheets.billable') : t('helpdesk.time_sheets.non_billable') %>

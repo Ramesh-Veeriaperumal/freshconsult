@@ -77,40 +77,6 @@ class Solution::Article < ActiveRecord::Base
     nickname
   end
   
-  def self.suggest_solutions(ticket)
-    to_ret = suggest(ticket, ticket.subject)
-    to_ret = suggest(ticket, ticket.description) if to_ret.empty?
-    
-    to_ret
-
-  end
-  
-  def self.suggest(ticket, search_by)
-    return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
-    begin
-      Search::EsIndexDefinition.es_cluster(ticket.account_id)
-      options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account_id), options do |search|
-        search.query do |query|
-          query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
-            f.filter :term, { :account_id => ticket.account_id }
-          end
-        end
-        search.from options[:size].to_i * (options[:page].to_i-1)
-        search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
-      end
-
-      item.results.each_with_hit do |result,hit|
-        SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
-      end
-      item.results
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      []
-    end
-  end
-  
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -176,5 +142,4 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
-
 end

@@ -80,7 +80,7 @@ label.overlabel{
 		@include box-sizing(border-box);
 
 	}
-	z-index:1;  	
+	z-index:1; 
 	margin:0;	
 	padding-right:$sidebar-width;   
 	.sidebar{ 
@@ -413,7 +413,7 @@ a.new_ticket{
 		top:0;
 		right:0;
 		@include transition(width ease-out 200ms, background ease-in 200ms);
-		.searchIcon, .search-icon-inactive{
+		.nav-search-icon, .search-icon-inactive{
 		   position:absolute;
 		   right:0;
 		   width:15px;

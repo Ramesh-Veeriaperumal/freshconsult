@@ -8,9 +8,9 @@
   </h3>
   </li>
     <li>
-     <%
-			date_range = @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date
-			%>
+     	<%
+			date_range = @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date	
+		%>
 			
   		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  

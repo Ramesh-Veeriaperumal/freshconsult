@@ -24,9 +24,9 @@ jQuery(document).ready(function() {
 		presets: {
 			dateRange: '<%= t('reports.date_ranges.custom') %>'
 		},
-		dateFormat: 'dd MM yy',
+		dateFormat: getDateFormat('datepicker'),
 		closeOnSelect: true
 	});
-	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');   
+	jQuery("#date_range").val('<%= date_range_val(30.days.ago,Time.now) %>');   
 });     
 <% end %>

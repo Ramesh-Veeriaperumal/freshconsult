@@ -1,0 +1,34 @@
+$avatar-border-color: #ccc;
+$avatar-radius: 3px;
+$avatar-roundred-radius: 100%;
+$avatar-size-small: 32px;
+$avatar-size: 48px;
+$avatar-size-large: 73px;
+$avatar-circle:100%;
+
+$btn-sizes:
+//	class		size  		radius  	border-color
+	default 	48px 		5px			#c7c7c7,
+  	small		32px		4px	 		#c7c7c7,
+  	large 		73px		3px 		#c7c7c7;
+
+.avatar{
+    border: 1px solid $avatar-border-color;    
+    &, img{
+	    @include border-radius($avatar-radius);
+	    width: $avatar-size;
+	    height: $avatar-size;
+	}
+}
+
+.avatar-small{
+	&, img{
+		width: $avatar-size-small;
+		height: $avatar-size-small;
+	}
+}
+.avatar-circle{
+	&, img{
+		@include border-radius($avatar-circle);
+	}
+}

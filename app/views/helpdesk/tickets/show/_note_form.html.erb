@@ -57,12 +57,12 @@
     <div class="btn-toolbar">
       
       <span class="btn-group">
-        <button class="btn cancel_btn" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
+        <button class="btn cancel_btn reply_agent_collision" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
           <%= t('cancel') %>
         </button>
       </span>
       <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
-        <button class="btn btn-primary submit_btn"
+        <button class="btn btn-primary submit_btn reply_agent_collision"
             data-public-text="<%= t('ticket.note_form.add_public_note') %>" 
             data-default-text="<%= t('ticket.note_form.add_private_note') %>" >
           <span rel="text"><%= t('ticket.note_form.add_private_note') %></span>
@@ -79,7 +79,7 @@
           %>
           <% ticket_statuses.each do |status| %>
           <li>
-            <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+            <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' class="reply_agent_collision" >
               <%= t('ticket.note_form.add_and_set_as', 
                     { :status => (status.is_default ? t(status.name.downcase) : status.name) }).html_safe %>
               </a>

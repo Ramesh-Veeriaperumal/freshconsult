@@ -1,6 +1,65 @@
 en:
   meta:
    language_name: 'English'
+  date:
+    ago: ago
+    from: from now
+    now: just now
+    second: second
+    seconds: seconds
+    minute: minute
+    minutes: minutes
+    hour: hour
+    hours: hours
+    day: day
+    days: days
+    week: week
+    weeks: weeks
+    month: month
+    months: months
+    year: year
+    years: years
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    order: [ :year, :month, :day ]
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "about 1 hour"
+        other: "about %{count} hours"
+      about_x_months:
+        one: "about 1 month"
+        other: "about %{count} months"
+      about_x_years:
+        one: "about 1 year"
+        other: "about %{count} years"
+      almost_x_years:
+        one: "almost 1 year"
+        other: "almost %{count} years"
+      half_a_minute: "half a minute"
+      less_than_x_minutes:
+        one: "less than a minute"
+        other: "less than %{count} minutes"
+      less_than_x_seconds:
+        one: "less than 1 second"
+        other: "less than %{count} seconds"
+      over_x_years:
+        one: "over 1 year"
+        other: "over %{count} years"
+      x_days:
+        one: "1 day"
+        other: "%{count} days"
+      x_minutes:
+        one: "1 minute"
+        other: "%{count} minutes"
+      x_months:
+        one: "1 month"
+        other: "%{count} months"
+      x_seconds:
+        one: "1 second"
+        other: "%{count} seconds"
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
@@ -2773,6 +2832,8 @@ en:
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
+    id_less_tickets: Include Ticket ID in requester email subject line?
+    id_less_tickets_info: "If YES then the Ticket ID will be included in subject line for all agent replies.<br/>To manually include Ticket ID, <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/191769'>read more</a>."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -3139,6 +3200,9 @@ en:
     info6: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
     save: Save
     time_zone: Time Zone
+    date_format: Date Format
+    non_us: DATE-MONTH-YEAR
+    us: MONTH-DATE-YEAR
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
@@ -3645,6 +3709,8 @@ en:
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
   export_data:
+    in_sla: Within SLA
+    out_of_sla: SLA Violated
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select fields to export"
@@ -3679,24 +3745,6 @@ en:
     hours: Hrs
     days: Days
     months: Mos
-  date:
-    ago: ago
-    from: from now
-    now: just now
-    second: second
-    seconds: seconds
-    minute: minute
-    minutes: minutes
-    hour: hour
-    hours: hours
-    day: day
-    days: days
-    week: week
-    weeks: weeks
-    month: month
-    months: months
-    year: year
-    years: years
   go_back_admin: Go back to Admin
   social:
     facebook_pages:
@@ -4368,7 +4416,31 @@ en:
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
-    no_results_msg: "No results found"
+    no_results_msg: "No results found"  
+    showing: "Showing:"
+    all_results: "All Results"
+    tickets: "Tickets"
+    solutions: "Solutions"
+    forums: "Forums"
+    customers: "Customers"
+    companies: "Companies"
+    contacts: "Contacts"
+    see_more_results: 'See more results for "%{term}"  &raquo;'
+    display_results: "Displaying %{result}"
+    sorted_by: "Sorted by:"
+    by: "by:"
+    requested_by: "Requested by,"
+    agent: "Agent:"
+    status: "Status:"
+    topic_hierarchy: "... / %{forum_name} / %{category_name}"
+    ago: "ago"
+    email: "Email:"
+    phone: "Phone:"
+    no_matching_results: "No matching results for <b>%{search_key}</b>"
+    sort_by:
+      relevance: Relevance
+      created_at: Date Created
+      updated_at: Last Modified
   assumed_identity_msg: "You've assumed your identity as %{user_name}."
   unauthorized_msg: "Authorization failed"
   assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
@@ -4947,15 +5019,15 @@ en:
     title: "Freshchat"
     widget: "Widget"
     messages: "Messages"
-    set_default_msgs: "Set default messages"
+    set_default_msgs: "Default messages"
     minimize_chat_title: "Title when chat is minimized"
     maximize_chat_title: "Title when chat is maximized"
     welcome: "Welcome Message"
     thank_title: "Thank you/Closure Message"
     wait_title: "Wait/On hold Message"
     is_typing_header: "When agent/visitor <br> starts typing"
-    prechat_title: "Pre-Chat Form"
-    prechat_desc: "With Pre Chat form you can collect little more detail about your customer,like name phone number and email. When Pre-Chat form is on, All visitors should first fill the form to begin chat."
+    prechat_title: "Pre-Chat form"
+    prechat_desc: "Collect personal details about your visitors before you start chatting with them. When this is on, visitors will need to submit the form to begin a chat."
     prechat_msg: "Pre-Chat Message"
     welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
@@ -4967,9 +5039,9 @@ en:
     typing_message: "is typing..."
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
-    proactive_note: "Note:Pre-chat form will not be shown when Proactive chat is ON"
-    proactive_time: "Visitors time spend %{seconds} on same page"
-    procative_info: "Proactive chat lets you automatically initiate chat conversations if a visitor spends more than a certain amount of time in a page"
+    proactive_note: "Note: Pre-chat form will not be shown when proactive chat is on."
+    proactive_time: "Greet when more than %{seconds} on the same page"
+    procative_info: "Automatically initiate chat conversations with visitors if they spend more than a certain amount of time on the same page"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"
@@ -4990,7 +5062,7 @@ en:
     bottom_right: "Bottom Right"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
     integrate_freshchat_title: "Integrate Freshchat into your website and applications"
-    custom_chat_window: "Customize your chat window"
+    custom_chat_window: "Chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
     in_conversation: "In-conversation"
@@ -5038,7 +5110,7 @@ en:
     ignore: "Ignore"
     transfer_msg: "made a chat transfer request"
     unauthorized_attempt_msg: "Unauthorized Attempt - logout"
-    update_success_msg: "Chat settings has been successfully updated"
+    update_success_msg: "Chat settings saved. Please update installation code in your website or app for changes to reflect."
     update_error_msg: "Error while updating chat settings."
     recent_messages: "Recent Messages"
     agents: "Agents"
@@ -5089,8 +5161,8 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
-    click_to_go_online: "You are offline now <br> Click to go online"
-    click_to_go_offline: "You are online now <br> Click to go offline"
+    click_to_go_online: "You are offline to visitors"
+    click_to_go_offline: "You are online to visitors"
     fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"
@@ -5109,6 +5181,11 @@ en:
     intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, your agents can not only chat with each other without leaving Freshdesk (finally!), they can also provide instant answers to your prospective customers. It’s another feather in your quiver, a channel designed to bring you closer to your users and visitors."
     enable_chat: "Enable freshchat"
     learn_freshchat: "Learn more about freshchat"
+    support_portal: "Chat on support portal"
+    logged_in_users: "Logged in users only"
+    everyone: "Everyone"
+    portal_desc: "Support your customers in real-time within your Freshdesk portal, apart from chatting with them on your website."
+    portal_option_info: "Show chat widget for"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

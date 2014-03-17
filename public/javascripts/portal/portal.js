@@ -195,10 +195,12 @@
 				}
 			})
 		})
-		
-		$("img[rel=lazyloadimage]").jail({
-			// placeholder : '/images/animated/ajax-loader.gif',
-		})
+
+		$(".image-lazy-load img").unveil(200, function() {
+		    $(this).load(function() {
+		      this.style.opacity = 1;
+		    });
+		});
 
 	})
 

@@ -24,8 +24,9 @@ module Helpdesk::TicketModelExtension
       {:label => "First Response Time (in Hrs)", :value => "first_res_time_bhrs", :selected => false},
       {:label => "Resolution Time (in Hrs)", :value => "resolution_time_bhrs", :selected => false},
       {:label => "Agent interactions", :value => "outbound_count", :selected => false},
-      {:label => "Customer interactions", :value => "inbound_count", :selected => false}
-
+      {:label => "Customer interactions", :value => "inbound_count", :selected => false},
+      {:label => "Resolution Status", :value => "resolution_status", :selected => false},
+      {:label => "First Response Status", :value => "first_response_status", :selected => false}
      ]
    end
 

@@ -1,5 +1,6 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
+  include ExportCsvUtil
   include ActionController::UrlWriter
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
@@ -60,29 +61,28 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
 
   def csv_export
     csv_hash = export_params[:export_fields]
-    record_headers = csv_hash.keys.sort
+    record_headers = delete_invisible_fields
     csv_string = CSVBridge.generate do |csv|
       csv_headers = record_headers.collect {|header| csv_hash[header]}
       csv << csv_headers
-      ticket_data(csv)
+      ticket_data(csv,record_headers)
     end
     csv_string 
   end
 
   def xls_export
     require 'erb'
-    @xls_hash = export_params[:export_fields] 
-    @headers = @xls_hash.keys.sort
-    @records = ticket_data
+    @xls_hash = export_params[:export_fields]
+    @headers = delete_invisible_fields 
+    @records = ticket_data(@headers)
     path =  "#{RAILS_ROOT}/app/views/support/tickets/export_csv.xls.erb"
     ERB.new(File.read(path)).result(binding)
   end
 
-  def ticket_data(records=[])
+  def ticket_data(records=[],headers)
     @no_tickets = true
     # Initializing for CSV with Record headers.
     @records = records
-    headers = export_params[:export_fields].keys.sort
     Account.current.tickets.find_in_batches(export_query) do |items|
       add_to_records(headers, items)  
     end
@@ -110,6 +110,27 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       end
       @records << record
     end
+  end
+
+  def allowed_fields
+    @allowed_fields ||= begin
+      (export_fields.collect do |key| 
+        [key[:value]].concat( nested_fields_values(key) )
+      end).flatten
+    end
+  end
+
+  def nested_fields_values(key)
+    return [] unless key[:type] == "nested_field"
+    key[:levels].collect {|lvl| lvl[:name] }
+  end
+
+  def delete_invisible_fields
+    headers = export_params[:export_fields].keys.sort
+    headers.delete_if{|header_key|
+      !allowed_fields.include?(header_key)
+    }
+    headers
   end
 
   def parse_date(date_time)
@@ -174,7 +195,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def file_name
-    "ticket_export.#{export_params[:format]}"
+    "ticket_export_#{Account.current.id}.#{export_params[:format]}"
   end
 
   def escape_html(val)
@@ -182,7 +203,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
   
   def remove_export_file(file_path)
-    # FileUtils.rm_f(file_path)
+    FileUtils.rm_f(file_path)
     @item.completed!
   end
 

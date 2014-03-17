@@ -1,7 +1,7 @@
  <%= include_cloudfront_css :reports  %>
 
 <%
-date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime("%d %B %Y")} - #{Time.zone.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
 %>
 
    <div id="report-container" class="report-container">

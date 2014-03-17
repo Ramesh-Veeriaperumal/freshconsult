@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
 		presets: {
 			dateRange: '<%= t('reports.date_ranges.custom') %>'
 		},
-		dateFormat: 'dd MM yy',
+		dateFormat: getDateFormat('datepicker'),
 		closeOnSelect: true,
 		onClose: function() {
 			jQuery('#date_range').trigger('change');

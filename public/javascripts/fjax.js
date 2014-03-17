@@ -68,7 +68,12 @@ FreshdeskPjax.prototype = {
     },
 
     _setLoading: function() {
-      NProgress.start();
+      NProgress.set(0);
+      NProgress.set(0.4);
+      NProgress.set(0.5);
+      NProgress.set(0.6);
+      NProgress.set(0.7);
+      NProgress.set(0.8);
     },
 
     _triggerUnload: function() {
@@ -115,6 +120,7 @@ FreshdeskPjax.prototype = {
     },
 
     _beforeSendCleanup: function() {
+      this._FayeCleanUp();
 			$('#cf_cache').remove();
 			$('#response_dialog').remove();
 			$('.ui-dialog').remove();
@@ -129,6 +135,21 @@ FreshdeskPjax.prototype = {
 			$('.modal:not(.persistent_modal), .modal-backdrop').remove();
 			$('.twipsy').remove();
     },
+
+    _FayeCleanUp: function()
+    {
+      if(window.faye_realtime.fayeClient)
+      {
+        for(var i=0;i < window.faye_realtime.faye_subscriptions.length;i++)
+        { 
+          window.faye_realtime.faye_subscriptions[i].cancel();
+        }
+        window.faye_realtime.faye_subscriptions = [];
+        window.faye_realtime.fayeClient.disconnect();
+        window.faye_realtime.fayeClient = null;
+      }
+    },
+
 
     _disconnectNode: function() {
       try {
@@ -195,7 +216,17 @@ if (!$.browser.msie) {
   }).bind('pjax:success',function(evnt,xhr,settings){
      Fjax.success();
    });
-
 }
+
+var PJAX_DEFAULTS = {timeout: -1,
+                  push : true,
+                  maxCacheLength: 0,
+                  replace: false,
+                  container: '#body-container'}
+
+window.pjaxify = function(url) {
+  $.pjax($.extend({}, PJAX_DEFAULTS, {url : url} ));
+}
+
 }(window.jQuery);
 Fjax = new FreshdeskPjax();

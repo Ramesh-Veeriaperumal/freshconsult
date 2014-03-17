@@ -10,7 +10,7 @@
 				<span class="<%=smiley%>"></span>					
 				<p class="inner-box">
 						<strong class="box-title"><%=remark.customer[:name]%></strong>		
-					<span class="box-date">on <%=remark[:created_at].strftime("%d %b %Y")%></span>
+					<span class="box-date">on <%=formated_date(remark[:created_at], {:format => :short_day_separated, :include_year => true})%></span>
 				</p>			
 			</div>
 		</a>	

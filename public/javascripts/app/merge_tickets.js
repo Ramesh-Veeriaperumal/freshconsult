@@ -106,10 +106,10 @@ function MergeTicketsInitializer() {
   var ContactsSearch = new Template(
     '<li><div class="contactdiv" data-id="#{display_id}">'+
     '<span id="resp-icon"></span>'+
-    '<div id="merge-ticket" class="merge_element" data-id="#{display_id}" data-created="#{created}">'+
-    '<span class="item_info" title="#{title}">##{display_id} #{subject}</span>'+
+    '<div id="merge-ticket" class="merge_element" data-id="#{display_id}" data-created="#{created_at_int}">'+
+    '<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>'+
     '<div class="info-data hideForList">'+
-    '<span class="merge-ticket-info">#{info}</span>'+
+    '<span class="merge-ticket-info">#{ticket_info}</span>'+
     '</div></div></div></li>'
   );
   
@@ -118,15 +118,13 @@ function MergeTicketsInitializer() {
   var lookup = function(searchString, callback) { 
     var type = jQuery('#search-type option:selected').val();
     var list =  jQuery('#'+type+'_results').find('ul');
+    var search_field = jQuery('#search-type option:selected').val();
     list.empty();
     jQuery('#'+type+'_results').addClass("sloading");
-    new Ajax.Request('/search/home/ticket_search',
+    new Ajax.Request('/search/tickets/filter/'+search_field,
                       { 
                         parameters: {
-                          search_string: searchString,
-                          key: jQuery('#search-type option:selected').val(),
-                          search_method: "with_"+jQuery('#search-type option:selected').val(),
-                          rand: (new Date()).getTime()
+                          term: searchString,
                         },
                         onSuccess: function(response) {   
                           jQuery('.merge_results:visible').removeClass("sloading");
@@ -195,7 +193,6 @@ function MergeTicketsInitializer() {
     });
     return oldestTicket;
   }
-
 }
 
 function MergeTicketsDestructor() {

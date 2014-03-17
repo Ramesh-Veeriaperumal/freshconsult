@@ -2,9 +2,11 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include ForumHelperMethods
+  include AccountConstants
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
+  include ChatHelper
 
   include MemcacheKeys
 
@@ -21,10 +23,11 @@ module ApplicationHelper
                         ["(gt IE 10)|!(IE)", "", true]]
     language = current_portal.language
     language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
+    date_format = DATEFORMATS[current_account.account_additional_settings.date_format]
     html_conditions.map { |h|
       %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-          language }">#{h[2] ? '<!--' : ''}<![endif]-->)
+          language }" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
     }.to_s.html_safe
   end
 
@@ -441,19 +444,25 @@ module ApplicationHelper
 
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+  def user_avatar(user, profile_size = :thumb, profile_class = "preview_pic", options = {})
     #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
     #Remove once found the cause. 
     user = User.new if user.nil?
-    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name }
+    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
     avatar_content = MemcacheKeys.fetch(["v6","avatar",profile_size,user],30.days.to_i) do
-      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+      img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
+      content_tag(:div, (cached_user_avatar(user, profile_size, img_tag_options)), :class => profile_class)
     end
-    avatar_content
+  end
+
+  def cached_user_avatar(user, profile_size, img_tag_options)
+    MemcacheKeys.fetch(["v7", "avatar", profile_size, user], 30.days.to_i) do
+      image_tag(user_avatar_url(user, profile_size), img_tag_options)
+    end
   end
 
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
@@ -463,6 +472,10 @@ module ApplicationHelper
       img_tag_options[:height] = options.fetch(:height)
     end 
     content_tag( :div, (image_tag "/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+  end
+
+  def user_avatar_url(user, profile_size = :thumb)
+    (user.avatar ? user.avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(user, profile_size)) if user.present?
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
@@ -503,11 +516,29 @@ module ApplicationHelper
       content_tag(:strong, h(user.display_name), options)
     end
   end
-  
-  # Date and time format that is mostly used in our product
-  def formated_date(date_time, format = "%a, %b %e, %Y at %l:%M %p")
-    format = format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
-    date_time.strftime(format)
+
+  def formated_date(date_time, options={})
+    default_options = {
+      :format => :short_day_with_time,
+      :include_year => false,
+      :translation => true
+    }
+    options = default_options.merge(options)
+    time_format = current_account.date_type(options[:format])
+    unless options[:include_year]
+      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+    end
+    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
+  end
+
+  def date_range_val(start_date,end_date,additional_options={})
+    options = {
+      :format => :short_day_separated,
+      :include_year => true,
+      :translate => false
+    }
+    options = options.merge(additional_options)
+    params[:date_range].blank? ? "#{formated_date(start_date,options)} - #{formated_date(end_date,options)}" :  h(params[:date_range])
   end
   
   # Get Pref color for individual portal
@@ -744,15 +775,21 @@ module ApplicationHelper
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    
-  def pageless(total_pages, url, message=t("loading.items"), params = {})
+  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "" )
     opts = {
-      :totalPages => total_pages,
-      :url        => url,
-      :loaderMsg  => message,
-      :params => params,
-      :currentPage => 1
+      :totalPages   => total_pages,
+      :url          => url,
+      :loaderMsg    => message,
+      :params       => params,
+      :currentPage  => 1, 
+      :dataType     => data_type,
+      :complete     => complete
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+
+  def load_more(opts = {})
+    javascript_tag("setTimeout(function(){jQuery('#{opts[:container]}').loadmore(#{opts.to_json})}, 500);")
   end
   
   def render_page
@@ -849,7 +886,7 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
+      "<a class = 'user_name' href='/users/#{ticket.requester.id}' target='_blank'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
     else
       "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
     end
@@ -943,5 +980,4 @@ module ApplicationHelper
     platform = current_platform || "windows"
     Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
   end
-
 end

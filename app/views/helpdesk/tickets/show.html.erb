@@ -1,4 +1,3 @@
-<%= include_cloudfront_js :'360player' %>
 <%= include_cloudfront_css :tkt_details_print, :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/sticky.html.erb" %>
@@ -40,6 +39,7 @@
 
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
+<%= render :partial => "helpdesk/tickets/show/agent_collision_show.html.erb", :locals => { :ticket => @ticket } if feature?(:collision) %>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
@@ -56,6 +56,11 @@ jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
+	if(threeSixtyPlayer && soundManager){
+		threeSixtyPlayer = new ThreeSixtyPlayer();
+		soundManager.onready(threeSixtyPlayer.init);
+		jQuery.extend(threeSixtyPlayer.config, custom_options);
+	}
 	jQuery(".call_duration").each(function () {
 			if (jQuery(this).data("time") === undefined) { return; }
 			jQuery(this).html(jQuery(this).data("time").toTime());

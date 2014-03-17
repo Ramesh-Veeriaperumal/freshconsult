@@ -7,9 +7,9 @@
 		defaults = {
 			template : new Template(
 				'<li><div class="searchresult" data-id="#{display_id}"><span id="resp-icon"></span>' +
-					'<span class="item_info" title="#{title}">##{display_id} #{subject}</span>' +
+					'<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>' +
 					'<div class="info-data hideForList">' +
-					'<span class="merge-ticket-info">#{info}</span><span>#{agent}</span>' +
+					'<span class="merge-ticket-info">#{ticket_info}</span><span>#{agent}</span>' +
 					'</div></div></li>'
 			),
 			className: this.$element.attr('class') || 'search_container',
@@ -18,21 +18,15 @@
 
 				var search_type = self.$element.find('.search-type option:selected').val(),
 					list =  self.$element.find('.' + search_type + '_results').find('ul'),
-					search_parameters,
 					ajax_request;
 				list.empty();
 
 				self.$element.find('.' + search_type + '_results')
 					.addClass("loading-small, sloading");
 			
-				search_parameters = {
-					search_string: searchString,
-					key: search_type,
-					search_method: "with_" + search_type,
-					rand: (new Date()).getTime()
-				};
-				ajax_request = new Ajax.Request('/search/home/ticket_search',
-					{ parameters: search_parameters,
+				ajax_request = new Ajax.Request('/search/tickets/filter/'+search_type,
+					{ parameters: { term: searchString },
+						dataType: 'json',
 						onSuccess: function (response) {
 							self.$element.find('.ticket_search_results:visible')
 								.removeClass("loading-small, sloading");

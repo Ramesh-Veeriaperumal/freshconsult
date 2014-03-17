@@ -26,7 +26,7 @@
                         <%= rating_msg %>
                     </span>
                     <div class="help-text">
-                        <%= t('.rated_on', :rated_on => sresult.created_at.strftime("%a, %b %d, %Y"))%>
+                        <%= t('.rated_on', :rated_on => formated_date(sresult.created_at, {:format => :short_day_with_week}))%>
                     </div>
                     <div class="help-text">
                         <%= t('.change_of_mind') %>

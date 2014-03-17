@@ -3,6 +3,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Cache::Memcache::Account
   include ErrorHandle
+  include AccountConstants
 
   has_many_attachments
   
@@ -270,6 +271,10 @@ class Account < ActiveRecord::Base
     !google_domain.blank?
   end
 
+  def date_type(format)
+    DATEFORMATS_TYPES[DATEFORMATS[self.account_additional_settings.date_format]][format]
+  end
+  
   def default_form
     flexi_field_defs.default_form.first
   end

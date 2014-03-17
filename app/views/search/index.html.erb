@@ -1,0 +1,53 @@
+<% content_for :layoutType do %>search-page<% end %>
+<div id="sticky_header" class="search-sticky">
+	<% form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
+		<span class="search-dark"></span>
+		<input class="search-input lead" value="<%= @search_key %>" 
+				placeholder="Search" autocomplete="off" name="term" />
+	<% end %>
+	<div class="search-sorting-wrapper">
+		<div class="row-fluid">
+		    <div class="span4" id='search-sort-menu'>
+				<%= render :partial => '/search/search_sort_menu_dropdown' %>
+			</div>
+			<div class="span7 menu-list pull-right">
+				<ul class="inline pull-right nav nav-tabs">
+					<%= search_filter_tabs %>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<% unless @search_results.blank? %>
+	<div class="result-wrapper" id="result-wrapper">
+		<%= render :partial => '/search/result_wrapper' %>
+	</div>
+<% else %>
+	<div class="big-info">
+		<div class="no-info-text">
+			<%= t('search.no_matching_results', :search_key => h(@search_key)).html_safe %>
+		</div>
+	</div>
+<% end %>
+<%= include_cloudfront_js :search %>
+<script type="text/javascript">
+	window.SEARCH_RESULTS_PAGE = {
+		data : <%= @result_json.html_safe %>,
+		initializeSearchPageDefaults : function(){
+			window['search_page'] = new window.SearchResults();
+			window['search_page'].asyncRender();
+		}
+	}
+	window.SEARCH_RESULT_LANG = {
+								agent : "<%= t('search.agent') %>",
+								status: "<%= t('search.status') %>",
+								by	: "<%= t('search.by') %>",
+								phone : "<%= t('search.phone') %>",
+								priority: "<%= t('filter_options.priority') %>:",
+								group: "<%= t('Group') %>:"
+							}
+	
+	SEARCH_RESULTS_PAGE.initializeSearchPageDefaults();
+
+	Fjax.afterNextPage = function(){ window['search_page'].destroy()}
+</script>

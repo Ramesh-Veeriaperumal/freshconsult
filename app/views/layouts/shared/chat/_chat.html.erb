@@ -1,0 +1,20 @@
+<script type='text/javascript'>
+	jQuery( document ).ready(function() {
+		var asset = <%= ChatConfig['asset_url'][Rails.env].to_json.html_safe %>;
+		var isSecured = <%= current_account.ssl_enabled %>;
+		var fc_CSS = document.createElement('link');
+		fc_CSS.setAttribute('rel','stylesheet');
+		fc_CSS.setAttribute('type','text/css');
+		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor.css');
+		document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+		var jsload = (typeof jQuery=='undefined') ? 'visitor-jquery':'visitor';
+		var fc_JS = document.createElement('script');
+		fc_JS.type = 'text/javascript';
+		fc_JS.src = ((isSecured) ? asset.cloudfront : asset.js)+'/js/'+jsload+'.js';
+		document.body.appendChild(fc_JS);
+		window.freshchat_setting = '<%=encoded_freshchat_setting%>';
+		<% if current_user %>
+			window.FRESHCHAT_VISITORINFO = {name:"<%= current_user.name%>",email:"<%= current_user.email%>"};
+		<% end %>
+	});
+</script>

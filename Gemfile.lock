@@ -1,4 +1,14 @@
 GIT
+  remote: git://github.com/arvinthj/tire.git
+  revision: ed645b2c1ac381805d73365e9409014d63d348f5
+  specs:
+    tire (0.4.3)
+      hashr (~> 0.0.19)
+      multi_json (~> 1.0)
+      rake
+      rest-client (~> 1.6)
+
+GIT
   remote: git://github.com/freshdesk/Marketo.git
   revision: 5f53130eb61d751b90e6a7f8b1452b308f15a39a
   specs:
@@ -49,16 +59,6 @@ GIT
   specs:
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
-
-GIT
-  remote: git://github.com/freshdesk/tire.git
-  revision: 915c18f2929fd1ca8978afece65cff199ef41faa
-  specs:
-    tire (0.4.3)
-      hashr (~> 0.0.19)
-      multi_json (~> 1.0)
-      rake
-      rest-client (~> 1.6)
 
 GIT
   remote: git://github.com/jim/carmen.git

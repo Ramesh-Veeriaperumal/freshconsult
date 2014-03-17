@@ -27,7 +27,7 @@ else
     end
     last_reply_content = "
 <blockquote class='freshdesk_quote'>
-  On #{last_conv.created_at.strftime("%a, %b %e, %Y at %l:%M %p")} <span class='separator' /> , #{last_reply_by} wrote:
+  On #{formated_date(last_conv.created_at)} <span class='separator' /> , #{last_reply_by} wrote:
   #{doc.at_css("body").inner_html}
 </blockquote>"
   end
@@ -38,7 +38,7 @@ else
     prev_notes.each do |note|
       last_reply_content = "
 <blockquote class='freshdesk_quote'>
-  On #{note.created_at.strftime("%a, %b %e, %Y at %l:%M %p")} <span class='separator' /> , #{note.user.name} wrote:
+  On #{formated_date(note.created_at)} <span class='separator' /> , #{note.user.name} wrote:
 
   #{note.body_html}
 

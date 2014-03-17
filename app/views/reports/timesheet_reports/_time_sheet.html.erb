@@ -4,13 +4,14 @@
 		<%unless group_by.include?(:workable) %>
 			<%group_title = t("none") if group_title.match(/^No +/) %>
 		<%end%>
+		<% group_title = formated_date(Time.parse(group_title),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria)%>
 		<td colspan="<%=colspan%>"><strong><%= group_title %></strong></td> 
 		<td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
 	</tr>	
 	<% time_entrys.each do |time_entry| %>
 	<tr class="odd">
 		<% @headers.each do |item| %> 
-			<% content = formated_date(time_entry.executed_at, "%A, %e %b %Y") if item.eql?(:group_by_day_criteria) 
+			<% content = formated_date(time_entry.executed_at, {:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)  
 			 	content ||= time_entry.send( item.eql?(:hours) ? :time_spent : item ) %>
 			<%if item.eql?(:workable)%>
 	 			<%= content_tag(:td, content_tag(:a,h(content),:href => helpdesk_ticket_path(content.display_id),:target => "_blank"), :class => item) %>

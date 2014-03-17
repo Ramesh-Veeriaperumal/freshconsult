@@ -30,3 +30,7 @@
 	margin-left: -53px;
 }
 .uv-user-thumb .user-pic-thumb { margin-left: -40px; }
+.image-lazy-load img{
+  opacity: .5;
+  transition: all .8s ease-in;
+}

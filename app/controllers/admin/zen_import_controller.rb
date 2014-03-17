@@ -6,7 +6,7 @@ class Admin::ZenImportController < Admin::AdminController
 
   def index
     @zendesk_import = current_account.zendesk_import
-    find_agent unless @import_status.blank?
+    find_agent if @import_status.present? && @import_status['current_user'].present?
   end
   
   def import_data

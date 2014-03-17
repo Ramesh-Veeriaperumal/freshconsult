@@ -8,11 +8,11 @@
 
 /* %% app-common */ 
 .results{ 
-	.ticket_icon	span.icon{ @include icons-sprite(page-white); }
-	.contact_icon	span.icon{ @include icons-sprite(user); }
-	.company_icon	span.icon{ @include icons-sprite(building); }
-	.solution_icon	span.icon{ @include icons-sprite(solutions); }
-	.forum_icon		span.icon{ @include icons-sprite(comments); }
+	.helpdesk_ticket_icon	span.icon{ @include icons-sprite(page-white); }
+	.user_icon	span.icon{ @include icons-sprite(user); }
+	.customer_icon	span.icon{ @include icons-sprite(building); }
+	.solution_article_icon	span.icon{ @include icons-sprite(solutions); }
+	.topic_icon		span.icon{ @include icons-sprite(comments); }
 }
 
 .sort .sort_order{	
