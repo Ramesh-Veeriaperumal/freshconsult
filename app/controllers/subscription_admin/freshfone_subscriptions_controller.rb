@@ -18,7 +18,7 @@ class SubscriptionAdmin::FreshfoneSubscriptionsController < ApplicationControlle
         JOIN subscriptions ON accounts.id = subscriptions.account_id 
         WHERE subscriptions.state = 'active' AND freshfone_payments.status_message IS NULL 
         GROUP BY DATE_FORMAT(freshfone_payments.created_at, '%b, %Y') 
-        ORDER BY credit_month DESC"
+        ORDER BY freshfone_payments.created_at DESC"
     end
 
     def cumulative_credits(credits, results={})
