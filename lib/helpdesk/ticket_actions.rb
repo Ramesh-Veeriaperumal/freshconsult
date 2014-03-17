@@ -11,7 +11,7 @@ module Helpdesk::TicketActions
     ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
-    return false if need_captcha && !(current_user || is_native_mobile? || verify_recaptcha(:model => @ticket, 
+    return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
     return false unless @ticket.save_ticket
