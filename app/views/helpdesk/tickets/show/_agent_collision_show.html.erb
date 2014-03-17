@@ -52,7 +52,7 @@
 
       jQuery('[data-note-type]').click(function(e){
 
-        window.replySubscription = this.faye_client.subscribe("<%= agent_collision_ticket_reply_channel(@ticket.display_id) %>",(function(message){
+        window.replySubscription = window.FayeClient.subscribe("<%= agent_collision_ticket_reply_channel(@ticket.display_id) %>",(function(message){
           agents.replying = [];
         }).bind(this));
         window.faye_realtime.faye_subscriptions.push(window.replySubscription);
