@@ -186,6 +186,8 @@
   map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
   map.connect '/search/topics', :controller => 'search/forums', :action => 'index'
+  map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
+
   
   map.namespace :reports do |report|
     report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports',
@@ -575,7 +577,7 @@
   end
 
   map.namespace :mobile do |mobile|
-    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get , :load_reply_emails => :get}
+    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
   end
 

@@ -8,8 +8,8 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
 
-  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 
-                            'category', 'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id']
+  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
+                            'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
 
   set_table_name "helpdesk_notes"
 
@@ -314,7 +314,7 @@ class Helpdesk::Note < ActiveRecord::Base
         super
       rescue NoMethodError => e
         Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
-        if (load_schema_less_note && schema_less_note.respond_to?(method))
+        if(SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?")))
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
         end
