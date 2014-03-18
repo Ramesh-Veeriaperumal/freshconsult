@@ -240,6 +240,8 @@ javascripts:
     #- public/javascripts/pattern/bootstrap-tooltip.js
     # - public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
+    - public/javascripts/pattern/sticky.js
+    - public/javascripts/pattern/stickyinit.js
 
   search:
     - public/javascripts/app/search.js

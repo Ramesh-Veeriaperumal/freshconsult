@@ -124,22 +124,6 @@
 <% end %>
 
 <% notification_type = @email_notification.notification_type %>	
-<!-- <ul class="admin-breadcrumb">
-	  <li class="non-arrow"><a href="http://localhost:3000/admin/home">Admin</a><span class="divider"></span></li>
-	  <li class="active"><a href="http://localhost:3000/admin/email_notifications"><#%=t('email_notifications.title')%></a></li>
-	  <li class="active "><#%if @type == 'requester_template'%>
-	  												<#%=t('email_notifications.requestor_notification')%>
-	  										<#%elsif @type == 'agent_template'%>
-	  												<#%=t('email_notifications.agent_notification')%>	
-	  										<#%else%>
-	  												<#%=t('email_notifications.notification_template')%>
-	  										<#%end%>
-	  </li>
-	  <li class="non-arrow pull-right">
-	  	<%#= link_to "&larr; #{t('account.cancel')}", "/admin/email_notifications##{@type}", { :class => "btn" } %>
-	  </li>
-</ul>-->
-
 <div class="list-page email-notification-edit row-fluid">
 	<div class="list-page-header row-fluid"> 
 		<div class="row-fluid">

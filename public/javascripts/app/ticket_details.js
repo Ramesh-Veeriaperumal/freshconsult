@@ -1177,7 +1177,6 @@ var scrollToError = function(){
 				$.scrollTo('#show_more');
 			} else if(TICKET_DETAILS_DATA['scroll_to_last']) {
 				$.scrollTo('[rel=activity_container] .conversation:last');
-				$('#scroll-to-top').show();
 			}
 		}
 	}

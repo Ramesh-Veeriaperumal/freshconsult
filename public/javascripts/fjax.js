@@ -103,7 +103,9 @@ FreshdeskPjax.prototype = {
 
     callAfterRecieve: function(evnt,xhr,settings) {
       Fjax.callAfterReceive();
-      window.destroyScroll();
+
+      sticky.destroy();
+      
       if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
       window.pjaxPrevUnload = null;
       Fjax.callAtEnd();
@@ -116,7 +118,7 @@ FreshdeskPjax.prototype = {
       {
         $(settings.data.parallelPlaceholder).html(options.parallelData);
       }
-      setupScroll();
+      window.sticky = new SetupSticky();
     },
 
     _beforeSendCleanup: function() {

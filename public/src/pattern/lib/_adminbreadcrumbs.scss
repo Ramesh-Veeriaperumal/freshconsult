@@ -1,94 +1,37 @@
-/*//
-//<div class="sticky-breadcrumb row-fluid">
-//  <div class="span7">
-//    <ul class="admin-breadcrumb">
-//      <li><a href="#">Home</a> <span>/</span></li>
-//      <li><a href="#">Library</a><span>/</span></li>
-//      <li class="active">Data</li>
-//    </ul>
-//  </div>
-//  <div class="span5 pull-right align-right">
-//    <a class="btn">test 1</a>
-//    <a class="btn">test 2</a>
-//  </div>
-//</div>*/
 // -------------------------------------------------------------------------------------------------
 //                                      Admin Sticky Breadcrumbs
 // -------------------------------------------------------------------------------------------------
+
 .sticky-breadcrumb{
-  position:relative;
-  background-color: $admin-breadcrum-color;
-  border:1px solid lighten($admin-breadcrum-color, 4%);
-  border-bottom:1px solid darken($admin-breadcrum-color, 9%);
-  padding:7px ($common-padding - 1) 5px;
-  padding-right:($common-padding) - 2px;
-  margin: -$common-padding;
-  margin-bottom: $common-padding;
-  &.move{
-    @include box-shadow(0px 3px 4px -3px rgba(0,0,0,0.2));
+  margin: (-$common-padding / 2) (-$common-padding) 0;
+  padding: ($common-padding / 2) $common-padding ;
+  &.is_stuck {
+    background: $admin-breadcrum-color;
+    @include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
+    border:1px solid lighten($admin-breadcrum-color, 4%);
+    border-bottom-color:darken($admin-breadcrum-color, 9%);
+    z-index:9999;
+    margin: 0 (-$common-padding);
+    >*{
+      margin-bottom:0
+    }
   }
-}
-.admin-breadcrumb{ 
-  list-style: none;
-  margin-top:5px;
-  li {
-    display: inline-block;
-    position:relative;
-    font-size: $admin-font-size;
-    @include ie7-inline-block();
-    @include text-shadow(0 1px 0 $white);
-    &.pull-right{
-      &:first-child{
-        padding-left:0;
-      }
-    }
-    span{
-      margin: 0 5px;
-      font-size: $admin-font-size + 0.1;
-    }
-    a{
-      color:$grayLight;
-      &:hover{
-        color:#00438A;
-      }
-      &.btn{
-        color:$grayDark;
-      }
-      &.btn-primary,.btn-info, .btn-success, .btn-warning, .btn-danger, .btn-inverse{
-        color:$grayLighter;
-      }
-    }
-    
-  }
-  .non-arrow{
-      padding-left: 0px;
-      &:after{
-        border:0;
-      }
-      &:before{
-        border:0;
-      }
-    }
-    .divider {
-      color: #ccc;
-      
-    }
-    .active {
-      color: $gray;
-      font-weight: bold;
-    }
 }
 
-.breadcum-footer{
-  @include border-top-radius(0px);
-  border-bottom:0;
-  @include border-bottom-radius(4px);
-  border-top:1px solid darken($admin-breadcrum-color, 10%);
+.is_stuck{
+  z-index:99;
+  &.sticky-child{
+    z-index:98; 
+  }
 }
 
-.admin-breadcrumb{
-  &.breadcum-footer{
-    margin-top:20px;
-    padding-top:10px;
-  }
+.list-page-header{
+  background:#fff;
+}
+.admin_form .ui-custom-fields.sticky-child.is_stuck{
+  margin: ($common-padding / 2) (-$common-padding) 0;
+  background-color: #F3F3F3;
+  padding: 5px 20px 20px;
+  @include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
+  border-bottom: 1px solid #CCC;
 }
