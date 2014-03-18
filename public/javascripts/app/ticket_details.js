@@ -683,6 +683,11 @@ var scrollToError = function(){
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .submit_btn", function(ev) {
 		ev.preventDefault();
+        if(window.replySubscription)
+        {
+          window.replySubscription.cancel();
+        }
+        window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 

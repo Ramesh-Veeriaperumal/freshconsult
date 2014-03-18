@@ -115,6 +115,7 @@ FreshdeskPjax.prototype = {
     },
 
     _beforeSendCleanup: function() {
+      this._FayeCleanUp();
 			$('#cf_cache').remove();
 			$('#response_dialog').remove();
 			$('.ui-dialog').remove();
@@ -129,6 +130,21 @@ FreshdeskPjax.prototype = {
 			$('.modal:not(.persistent_modal), .modal-backdrop').remove();
 			$('.twipsy').remove();
     },
+
+    _FayeCleanUp: function()
+    {
+      if(window.faye_realtime.fayeClient)
+      {
+        for(var i=0;i < window.faye_realtime.faye_subscriptions.length;i++)
+        { 
+          window.faye_realtime.faye_subscriptions[i].cancel();
+        }
+        window.faye_realtime.faye_subscriptions = [];
+        window.faye_realtime.fayeClient.disconnect();
+        window.faye_realtime.fayeClient = null;
+      }
+    },
+
 
     _disconnectNode: function() {
       try {
