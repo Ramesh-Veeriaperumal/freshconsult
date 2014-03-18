@@ -21,16 +21,9 @@ module SupportTicketControllerMethods
   
   def create
     if create_the_ticket(feature?(:captcha))
-      respond_to do |format|
-        format.html {
-          flash.keep(:notice)
-          flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
-          redirect_to redirect_url
-        } 
-        format.json {
-          render :json => {:success => true}
-        }
-      end
+      flash.keep(:notice)
+      flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
+      redirect_to redirect_url
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
       @params = params
