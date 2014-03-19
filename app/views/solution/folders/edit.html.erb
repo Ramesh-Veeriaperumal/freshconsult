@@ -1,8 +1,8 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="lead"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
+<h3 class="lead itil-hide"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
 <% form_for (@folder), :url => solution_category_folder_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
-	<div class="button-container align-right">
+	<div class="button-container align-right itil-hide">
 		<div class="pull-left">
 			<%= link_to(t('delete'), solution_category_folder_path(@folder.category, @folder), :method => 'delete', :confirm => "#{t('folder.info1')}?", :class => "btn" ) %>
 		</div>

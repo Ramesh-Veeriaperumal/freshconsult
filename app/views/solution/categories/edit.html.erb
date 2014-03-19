@@ -2,7 +2,7 @@
 <h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=h(@category.name)%>"</span> </h3>
 <% form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
-	<div class="button-container align-right">
+	<div class="button-container align-right itil-hide">
 		<div class="pull-left">
 			<%= link_to(t('delete'), solution_category_path(@category), :method => 'delete', :confirm => "#{t('solution_category.info1')}?", :class => "btn" ) %>
 		</div>

@@ -17,34 +17,8 @@
    </span>
   </td>
 
-  <%= render :partial => 'tag_count', :locals => {
-          :tag => tag,
-          :count => ticket_tags,
-          :plurals => [t('.ticket'), t('.tickets')],
-          :type => "Helpdesk::Ticket",
-          :dom_type => 'Tickets',
-          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}"
-  } %>
-
-
-  <%= render :partial => 'tag_count', :locals => {
-          :tag => tag,
-          :count => customer_tags,
-          :plurals => [t('.customer'),t('.customers')],
-          :type => "User",
-          :dom_type => 'Customers',
-          :link => "/contacts/filter/all?tag="+tag.id.to_s
-  } %>
-
-  <%= render :partial => 'tag_count', :locals => {
-          :tag => tag,
-          :count => article_tags,
-          :plurals => [t('.article'),t('.articles')],
-          :type => "Solution::Article",
-          :dom_type => 'Articles',
-          :link => ""
-  } %>
-
-
+  <%= tagged_module tag, "Tickets", ticket_tags %>
+  <%= tagged_module tag, "Customers", customer_tags %>
+  <%= tagged_module tag, "Articles", article_tags %>
 
 </tr>

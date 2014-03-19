@@ -3378,9 +3378,9 @@ en:
         article: Article
         articles: Articles
       tag_count:
-        remove_Tickets: Remove tickets associated with the tag
-        remove_Customers: Remove customers associated with the tag
-        remove_Articles: Remove articles associated with the tag
+        remove_Tickets: Remove tag associated with tickets
+        remove_Customers: Remove tag associated with customers
+        remove_Articles: Remove tag associated with articles
       tag_bulk_merge:
         bulk_merge: Merge
         tags_selected:  tags selected (Associations from the merged tags will be associated with the primary tag)

@@ -17,7 +17,7 @@ class AgentObserver < ActiveRecord::Observer
   end
 
   def after_commit_on_update(agent)
-    clear_auto_refresh_cache(agent)
+    clear_auto_refresh_cache(agent) if agent.account.features?(:auto_refresh)
   end
 
   protected

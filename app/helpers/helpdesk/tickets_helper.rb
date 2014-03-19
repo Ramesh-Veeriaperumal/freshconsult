@@ -339,6 +339,25 @@ module Helpdesk::TicketsHelper
       end
       return raw(dom)
   end
+
+  # ITIL Related Methods starts here
+
+  def load_sticky
+    render("helpdesk/tickets/show/sticky.html.erb")
+  end
+
+  def itil_ticket_tabs
+  end
+
+  def ci_fields(ticket_form)
+  end
+
+  def itil_ticket_filters
+    ""
+  end
+
+  # ITIL Related Methods ends here
+
 end
 
 def to_event_data_scenario(va_rule)

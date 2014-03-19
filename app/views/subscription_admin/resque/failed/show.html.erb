@@ -4,22 +4,37 @@
 
 <%= link_to "Overview", admin_resque_home_path(), {:class => "uiButton", :id => "overview_button" } %>
 
-    <%= link_to "#{t('remove')} #{@name}" , destroy_all_admin_resque_failed_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+    <%= link_to "Remove jobs in #{@name.humanize}" , destroy_all_admin_resque_failed_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+
     <%= link_to "Requeue" , requeue_all_admin_resque_failed_path(:name => @name), { :method => :put, :class => "uiButton" , :id => "resque_btn"} %>
 
-<h1 class="failed_heading">Failed Jobs</h1>
+<h1 class="failed_heading">Failed Jobs (<%= @failed_jobs_count %>)</h1>
 
-<%= render :partial => "jobs", :object => @failed_in_given_queue %>
-
-<div id="results" data-job-count="<%= @job_count.to_s %>"> </div>
+<table width="100%" border="1" id="results" data-job-count="<%= @job_count.to_s %>" class="queues-wrapper">
+	<tr>
+		<th>Error</th>
+		<th>Failed at</th>
+		<th></th>
+	</tr>
+	<%= render :partial => "jobs", :object => @failed_in_given_queue %>
+</table>
 
 <% javascript_tag do %>
-jQuery('#results').pageless({ 
-                           url: "<%= url_path(request.path_info.sub('/','')) %>"
-                          , params: { job_count: function(){ return jQuery("#results").data("jobCount") } }
-                          , loaderMsg: 'Loading more results'
-                          });
+	jQuery('#results').pageless({ 
+	                           url: "<%= url_path(request.path_info.sub('/','')) %>"
+	                          , params: { job_count: function(){ return jQuery("#results").data("jobCount") } }
+	                          , loaderMsg: 'Loading more results'
+	                          });
 
-<% end %>                          
-  
+	jQuery("body").on("click", ".show_trace", function(){
+		if(jQuery(this).val() == "Show Stacktrace"){
+			jQuery(this).parent().parent().next().show();
+			jQuery(this).val("Hide Stacktrace");
+		}
+		else{
+			jQuery(this).parent().parent().next().hide();
+			jQuery(this).val("Show Stacktrace");
+		}
+	});
 
+<% end %>

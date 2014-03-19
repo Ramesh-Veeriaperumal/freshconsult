@@ -98,6 +98,15 @@ module Helpdesk::TimeSheetsHelper
     return false
   end
   
+  def ticket_tasks_field(form, agent_list, type)
+    %(
+      <dt>#{form.label :user_id, t('.agent')}: </label></dt> 
+       <dd>
+        #{form.collection_select( :user_id, agent_list, :id, :name, {:selected => form.object.nil? ? current_user.id : form.object.user_id}, {:class => "select2"})}
+      </dd>
+      ).html_safe  
+  end
+  
   private 
     def integrated_apps 
       [
