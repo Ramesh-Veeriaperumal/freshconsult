@@ -28,6 +28,6 @@ class SubscriptionAdmin::FreshfoneSubscriptionsController < ApplicationControlle
           results.store(date,(credit+payment))
         end
       end
-      results
+      results.sort_by{|credit| Time.parse(credit[0])}.reverse!
     end
 end
