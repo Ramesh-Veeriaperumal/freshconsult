@@ -22,6 +22,7 @@ Spork.prefork do
   require 'factory_girl'
   require 'mocha_standalone'
   require 'mocha/object'
+  require 'authlogic/test_case'
 
   # Uncomment the next line to use webrat's matchers
   #require 'webrat/integrations/rspec-rails'
@@ -49,16 +50,14 @@ Spork.prefork do
     config.include TwitterHelper
     config.include SubscriptionHelper
     config.include ForumHelper
+    config.include ControllerHelper
+    config.include UsersHelper
+    config.include SolutionsHelper
 
-    #Clearing data after the test suite gets over.
-    config.after(:suite) do
-      if Rails.env.test?
-        User.destroy_all
-        Group.destroy_all
-        Agent.destroy_all
-        Helpdesk::Ticket.destroy_all
-        AgentGroup.destroy_all
-      end
+    config.before(:suite) do
+      ES_ENABLED = false
+      DatabaseCleaner.clean_with(:truncation,
+        {:pre_count => true, :reset_ids => false})
     end
 
     # == Fixtures

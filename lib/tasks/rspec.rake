@@ -148,6 +148,22 @@ namespace :spec do
       t.spec_files = FileList["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
     end
   end
+
+  namespace :integration_tests do
+    desc "Running all integration tests"
+    Spec::Rake::SpecTask.new(:all) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList["spec/controllers/agents_controller_spec.rb", 
+                              "spec/controllers/contacts_controller_spec.rb", 
+                              "spec/controllers/customers_controller_spec.rb", 
+                              "spec/controllers/ticket_fields_controller_spec.rb",
+                              "spec/controllers/forum/*_spec.rb",
+                              "spec/controllers/helpdesk/*_spec.rb",
+                              "spec/controllers/support/*_spec.rb",
+                              "spec/controllers/negative/*_spec.rb"
+                            ]
+    end
+  end
 end
 
 end

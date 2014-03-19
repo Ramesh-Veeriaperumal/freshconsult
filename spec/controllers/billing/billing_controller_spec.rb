@@ -1,5 +1,7 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
+# Tests may fail if test db is not in sync with Chargebee account.
+
 describe Billing::BillingController do
 	before(:all) do
 		@account = create_test_account
@@ -14,10 +16,6 @@ describe Billing::BillingController do
     billing_result = build_test_billing_result
     controller.instance_variable_set(:@billing_data, billing_result) 
     post "trigger", event_params("subscription_changed")
-    
-    p @account.subscription
-    p @account.addons
-    puts @account.features
 
     plan = retrieve_plan(billing_result.subscription.plan_id)
     renewal_period = Billing::Subscription.billing_cycle[billing_result.subscription.plan_id]
@@ -42,10 +40,6 @@ describe Billing::BillingController do
     billing_result = build_test_billing_result
     controller.instance_variable_set(:@billing_data, billing_result) 
     post "trigger", event_params("subscription_changed")
-    
-    p @account.subscription
-    p @account.addons
-    puts @account.features
 
   	@account.subscription.state.should eql "active"
   	@account.subscription.agent_limit.should eql billing_result.subscription.plan_quantity
