@@ -68,12 +68,32 @@ FreshdeskPjax.prototype = {
     },
 
     _setLoading: function() {
-      NProgress.set(0);
-      NProgress.set(0.4);
-      NProgress.set(0.5);
-      NProgress.set(0.6);
-      NProgress.set(0.7);
-      NProgress.set(0.8);
+      var n = Math.round((Math.random()*2)+0);
+      switch(n)
+      {
+      case 0:
+        NProgress.set(0);
+        NProgress.set(0.4);
+        NProgress.set(0.6);
+        NProgress.set(0.8);
+        break;
+      case 1:
+        NProgress.set(0);
+        NProgress.set(0.3);
+        NProgress.set(0.5);
+        NProgress.set(0.7);
+        NProgress.set(0.9);
+        break;
+      case 2:
+        NProgress.set(0);
+        NProgress.set(0.4);
+        NProgress.set(0.5);
+        NProgress.set(0.6);
+        NProgress.set(0.7);
+        NProgress.set(0.8);
+        NProgress.set(0.9);
+        break;
+      }
     },
 
     _triggerUnload: function() {
