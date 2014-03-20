@@ -239,6 +239,7 @@ GEM
     multipart-post (1.2.0)
     mysql2 (0.2.18)
     mysql2 (0.2.18-x86-mingw32)
+    namae (0.8.4)
     newrelic_rpm (3.5.8.72)
     nokogiri (1.5.2)
     nokogiri (1.5.2-x86-mingw32)
@@ -287,7 +288,6 @@ GEM
       activesupport (>= 2.3.2)
       cocaine (>= 0.0.2)
       mime-types
-    people (0.2.1)
     pg (0.14.1)
     pg (0.14.1-x86-mingw32)
     polyglot (0.3.3)
@@ -492,6 +492,7 @@ DEPENDENCIES
   mocha (~> 0.12.8)
   mongrel (>= 1.2.0.pre2)
   mysql2 (~> 0.2.7)
+  namae (= 0.8.4)
   newrelic_rpm (= 3.5.8.72)
   nori (= 1.1.4)
   oily_png
@@ -507,7 +508,6 @@ DEPENDENCIES
   omniauth-salesforce
   omniauth-surveymonkey (= 1.0.0)
   paperclip (~> 2.8.0)
-  people (= 0.2.1)
   pg
   premailer (~> 1.8.0)
   rack (~> 1.1.6)

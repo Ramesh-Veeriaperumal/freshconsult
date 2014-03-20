@@ -93,7 +93,7 @@ gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
-gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "namae", '0.8.4'
 gem 'ancestry', '1.3'
 gem 'rubytree'
 gem 'global_phone'
