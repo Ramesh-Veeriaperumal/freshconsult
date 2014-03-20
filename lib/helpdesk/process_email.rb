@@ -41,7 +41,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
         if !user.blocked?
-          add_to_or_create_ticket(account, from_email, to_email, user, email_config)
+          ticket = fetch_ticket(account, from_email, user)
+          if ticket
+            return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+            ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
+            add_email_to_ticket(ticket, from_email, user)
+          else
+            create_ticket(account, from_email, to_email, user, email_config)
+          end
         end
       end
       
@@ -57,24 +64,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
   end
   
-  # ITIL Related Methods starts here
-
-  def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket = fetch_ticket(account, from_email, user)
-    if ticket
-      return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-      add_email_to_ticket(ticket, from_email, user)
-    else
-      create_ticket(account, from_email, to_email, user, email_config)
-    end
-  end
-
-  def encoded_display_id_regex account
-    Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
-  end
-  
-  # ITIL Related Methods ends here
-
   def create_article(account, from_email, to_email)
 
     article_params = {}
@@ -82,7 +71,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     email_config = account.email_configs.find_by_to_email(to_email[:email])
     user = get_user(account, from_email,email_config)
     
-    article_params[:title] = params[:subject].gsub( encoded_display_id_regex(account), "" )
+    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]"),"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id

@@ -1,7 +1,6 @@
 class SubscriptionAdmin::Resque::FailedController < ApplicationController
 	include AdminControllerMethods
 	include SubscriptionAdmin::Resque::FailedHelper
-	include SubscriptionAdmin::Resque::HomeHelper
 	layout "resque_admin"
 	
 	def index
@@ -38,12 +37,9 @@ class SubscriptionAdmin::Resque::FailedController < ApplicationController
 		failed_hash = load_failed_array(job_count, @@queue_name, @failed_in_given_queue, count)
         @failed_in_given_queue = failed_hash[:array]
         @job_count = failed_hash[:job_parsed] 
-
-		if request.xhr?
-			render :partial => "jobs", :object => @failed_in_given_queue
-		else
-			@failed_jobs_count = failed_queue_count(params[:queue_name])
-		end
+        if request.xhr?
+      		render :partial => "jobs", :object => @failed_in_given_queue
+      	end
 	end 
 end	
 

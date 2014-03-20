@@ -413,7 +413,7 @@ module ApplicationHelper
       ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket',          'ticket_requester_firstname'],
       ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket',           'ticket_requester_lastname'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
-      requester_company,
+      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name.",          'ticket_requester_company_name'], #??? should it be requester.company.name?!
       ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number.",       'ticket_requester_phone'],
       ['{{ticket.requester.address}}', 'Requester address',   "Requester's Address.",       'ticket_requester_address'],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.',          'ticket_group_name'],
@@ -980,16 +980,4 @@ module ApplicationHelper
     platform = current_platform || "windows"
     Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
   end
-
-  # ITIL Related Methods starts here
-  
-  def generate_breadcrumbs(params, form=nil, *opt)
-    ""
-  end
-
-  def requester_company
-    ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name.",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
-  end
-
-  # ITIL Related Methods ends here
 end

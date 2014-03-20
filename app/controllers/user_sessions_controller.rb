@@ -228,7 +228,7 @@ include SsoUtil
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to_getting_started
+      redirect_to admin_getting_started_index_path  
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
@@ -351,14 +351,6 @@ include SsoUtil
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
   end
-
-  # ITIL Related Methods starts here
-
-  def redirect_to_getting_started
-    redirect_to admin_getting_started_index_path  
-  end
-
-  # ITIL Related Methods ends here
 
   private
 

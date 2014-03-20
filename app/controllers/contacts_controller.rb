@@ -181,7 +181,7 @@ class ContactsController < ApplicationController
     @item.update_tag_names(params[:user][:tags]) # update tags in the user object
     if @item.update_attributes(params[cname])
       respond_to do |format|
-        format.html { redirect_to redirection_url }
+        format.html { redirect_to contacts_url }
         format.xml  { head 200}
         format.json { head 200}
       end
@@ -291,10 +291,6 @@ protected
     flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
-  end
-
-  def redirection_url # Moved out to overwrite in Freshservice
-    contacts_url
   end
 
   def clean_params

@@ -81,7 +81,12 @@
 		<% end %>
 </div> 
 <div class="contact-box-additional">
-	<%= render_agent_tickets%>
+	<%= content_tag(:h3, t('agent_assigned_title').html_safe, :class => "title") %>
+	<% if @recent_unresolved_tickets.empty? %>
+		<%= "#{t('agent_assigned_info')}".html_safe %>
+	<% else %>  
+		<%= render :partial => "tickets", :object => @recent_unresolved_tickets %> 
+	<% end %>
 </div>	 
 <% javascript_tag do %> 
 jQuery("#reset_password_button").click(function() 

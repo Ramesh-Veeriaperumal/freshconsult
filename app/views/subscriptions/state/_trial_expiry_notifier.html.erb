@@ -15,7 +15,10 @@
   </p>
 
   <% if current_user.privilege?(:manage_account) and trial_days %>
-    <%= complimentary_demo_link.html_safe %>
+      <p><%= t('hard_pressed_for_time') %><br/><p>
+      <p>
+    	<b><a onclick="window.open(this.href);return false;" href="http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp&utm_medium=inapp&utm_campaign=complimentarydemo"  target="_blank"><%= t('schedule_a_complimentary_session').html_safe %></a></b>
+    </p>
     <div class="trial-background" >
     	<%= link_to("#{t('choose_a_plan')} <b class='arrow-right'></b>".html_safe, subscription_url) %>
     </div>

@@ -37,7 +37,7 @@
   
   <%= hidden_field_tag "role[privilege_list][]"%>
 </div>
-<div class="button-container pull-right clearfix itil-hide">
+<div class="button-container pull-right clearfix">
   <% unless @role.default_role? %>
     <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
     <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>  

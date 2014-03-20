@@ -61,17 +61,4 @@ module Helpdesk::SlaPoliciesHelper
 		Helpdesk::SlaDetail.sla_options
 	end
 
-	# ITIL Related Methods starts here
-
-	def form_partial(form_object)
-		render(:partial => "form", :locals => { :f => form_object })
-	end
-
-	def success_feature_buttons
-	end
-
-	def failure_feature_buttons
-	end
-
-	# ITIL Related Methods ends here
 end

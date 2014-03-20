@@ -78,7 +78,6 @@
 </script>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h5 class="lead"><%= t("tickets_filter.title") %></h5>
-    <%= itil_ticket_filters.html_safe %>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
       <input type="hidden" name="filter_name" value="<%= @current_view %>" />

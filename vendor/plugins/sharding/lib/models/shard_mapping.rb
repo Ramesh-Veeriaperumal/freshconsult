@@ -40,7 +40,7 @@ class ShardMapping < ActiveRecord::Base
  end
 
  def self.latest_shard
- 	AppConfig['latest_shard']
+ 	"shard_2" #probably fetch it from Redis or config 
  end
 
  def ok?

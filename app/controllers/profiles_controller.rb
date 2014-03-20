@@ -85,7 +85,7 @@ def change_password
       if current_user.customer?
         redirect_to edit_support_profile_path 
       else
-        redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+        render :action => :edit
       end
     end      
 end

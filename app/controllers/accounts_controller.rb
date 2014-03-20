@@ -438,7 +438,7 @@ class AccountsController < ApplicationController
         clear_account_data
       end
 
-      redirect_to "#{AppConfig['app_website']}"
+      redirect_to "http://www.freshdesk.com"
     end
 
     def update_crm

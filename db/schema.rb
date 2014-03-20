@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140214010211) do
+ActiveRecord::Schema.define(:version => 20140313141518) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.string   "bcc_email"
     t.text     "supported_languages"
     t.integer  "api_limit",           :default => 1000
+    t.integer  "date_format",                       :default => 1
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -224,6 +225,8 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.integer  "proactive_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "show_on_portal",                     :default => true
+    t.boolean  "portal_login_required",              :default => false
   end
 
   create_table "conversion_metrics", :force => true do |t|
@@ -451,6 +454,8 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.string   "module"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "product_id",          :limit => 8
+    t.boolean  "active",                           :default => true
   end
 
   add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
@@ -1213,6 +1218,11 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "field_options"
+    t.boolean  "default",                              :default => false
+    t.integer  "level",                   :limit => 8
+    t.integer  "parent_id",               :limit => 8
+    t.string   "prefered_ff_col"
+    t.integer  "import_id",               :limit => 8
   end
 
   add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
@@ -1479,11 +1489,17 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.integer  "account_id", :limit => 8
     t.boolean  "answer",                  :default => false
     t.integer  "import_id",  :limit => 8
+    t.boolean  "published",               :default => false
+    t.boolean  "spam"
+    t.boolean  "trash",                   :default => false
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
+  add_index "posts", ["account_id", "trash"], :name => "index_posts_on_account_id_and_trash"
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
+  add_index "posts", ["topic_id", "published"], :name => "index_posts_on_topic_id_and_published"
+  add_index "posts", ["topic_id", "spam"], :name => "index_posts_on_topic_id_and_spam"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
   create_table "products", :force => true do |t|
@@ -1778,6 +1794,18 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.datetime "updated_at"
   end
 
+
+  create_table "sub_section_fields", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_value_id", :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.integer  "position",              :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_section_fields", ["account_id", "ticket_field_value_id"], :name => "index_sub_section_fields_on_account_id_and_ticket_field_value_id"
+
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
     t.decimal  "rate",       :precision => 6, :scale => 4, :default => 0.0
@@ -1958,6 +1986,31 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
+
+  create_table "form_ticket_field_values", :force => true do |t|
+    t.integer  "account_id",      :limit => 8
+    t.integer  "form_id",         :limit => 8
+    t.integer  "ticket_field_id", :limit => 8
+    t.string   "value"
+    t.integer  "position",        :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "ticket_form_fields", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "form_id",           :limit => 8
+    t.integer  "ticket_field_id",   :limit => 8
+    t.string   "ff_col_name"
+    t.string   "field_alias"
+    t.integer  "position",          :limit => 8
+    t.boolean  "sub_section_field"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ticket_form_fields", ["account_id", "form_id", "ticket_field_id"], :name => "index_form_tkt_fields_on_acc_id_and_form_id_and_field_id", :unique => true
+  add_index "ticket_form_fields", ["account_id", "form_id"], :name => "index_ticket_form_fields_on_account_id_and_form_id"
 
   create_table "ticket_stats_2013_1", :id => false, :force => true do |t|
     t.integer  "account_id",       :limit => 8
@@ -2203,8 +2256,10 @@ ActiveRecord::Schema.define(:version => 20140214010211) do
     t.boolean  "delta",                     :default => true,  :null => false
     t.integer  "import_id",    :limit => 8
     t.integer  "user_votes",                :default => 0
+    t.boolean  "published",                 :default => false
   end
 
+  add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"

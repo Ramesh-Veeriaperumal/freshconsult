@@ -11,24 +11,20 @@ AWS.config(
 		:access_key_id => S3_CONFIG[:access_key_id],
 		:secret_access_key => S3_CONFIG[:secret_access_key])
 
-begin
-	#Global SNS and SQS clients
-	$sns_client = AWS::SNS.new.client
-	$sqs_client = AWS::SQS.new.client
+#Global SNS and SQS clients
+$sns_client = AWS::SNS.new.client
+$sqs_client = AWS::SQS.new.client
 
-	#for sqs queue facebook
-	$sqs_facebook = AwsWrapper::Sqs.new(SQS[:facebook_realtime_queue])
+#for sqs queue facebook
+$sqs_facebook = AwsWrapper::Sqs.new(SQS[:facebook_realtime_queue])
 
-	# Initializing global variable polling the tweets from sqs
-	$sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
+# Initializing global variable polling the tweets from sqs
+$sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
 
-	# ticket auto refresh sqs queue
-	$sqs_autorefresh = AwsWrapper::Sqs.new(SQS[:auto_refresh_realtime_queue])
+# ticket auto refresh sqs queue
+$sqs_autorefresh = AwsWrapper::Sqs.new(SQS[:auto_refresh_realtime_queue])
 
-	$social_dynamoDb = AWS::DynamoDB::ClientV2.new()
-rescue => e
-	puts "AWS::SQS connection establishment failed."
-end
+$social_dynamoDb = AWS::DynamoDB::ClientV2.new()
 
 #Configuration for dynamoDB tables
 DYNAMO_DB_CONFIG = (YAML::load_file dynamodb_config)[Rails.env]
