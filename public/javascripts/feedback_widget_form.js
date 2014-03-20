@@ -89,6 +89,9 @@
 										.attr("disabled", !enable).parent()
 					if(enable)
 						_name_div.slideDown()
+						if($("input[name='helpdesk_ticket[name]']").data('userName')){
+							jQuery("input[name='helpdesk_ticket[name]']").val($("input[name='helpdesk_ticket[name]']").data('userName'));
+						}
 					else
 						_name_div.slideUp()
 				}
