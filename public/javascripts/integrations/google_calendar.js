@@ -1109,7 +1109,7 @@ jQuery(document).ready(function(){
 		changeMonth: true, 
 		changeYear: true,
 		numberOfMonths: 1,
-		dateFormat: "D, M d, yy",
+		dateFormat: getDateFormat("datepicker_full_date"),
 		showButtonPanel: false,
 		minDate: "today",
 		showOn: "focus",
