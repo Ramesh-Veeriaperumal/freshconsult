@@ -9,3 +9,6 @@ MailgunConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailgun.yml'))[R
 AddonConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'addons.yml'))
 
 MailboxConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailbox.yml'))[RAILS_ENV]
+
+BraintreeConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'braintree.yml'))
+

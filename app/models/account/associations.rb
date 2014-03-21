@@ -1,16 +1,16 @@
 class Account < ActiveRecord::Base
 
-  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
-  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody', :dependent => :delete_all
-  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
-  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody', :dependent => :delete_all
-  has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
-  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
-  has_many :flexifields, :dependent => :delete_all
-  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
-  has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
-  has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote', :dependent => :delete_all
-  has_many :user_emails, :class_name =>'UserEmail', :dependent => :delete_all
+  has_many :tickets, :class_name => 'Helpdesk::Ticket'
+  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody'
+  has_many :notes, :class_name => 'Helpdesk::Note'
+  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody'
+  has_many :external_notes, :class_name => 'Helpdesk::ExternalNote'
+  has_many :activities, :class_name => 'Helpdesk::Activity'
+  has_many :flexifields
+  has_many :ticket_states, :class_name =>'Helpdesk::TicketState'
+  has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket'
+  has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote'
+  has_many :user_emails, :class_name =>'UserEmail'
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :mailboxes
   has_many :products, :order => "name"
-  has_many :roles, :dependent => :delete_all, :order => "default_role desc"
+  has_many :roles, :order => "default_role desc"
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
@@ -82,7 +82,7 @@ class Account < ActiveRecord::Base
   has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
-  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
@@ -191,7 +191,7 @@ class Account < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
-  has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
+  has_many :support_scores, :class_name => 'SupportScore'
 
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
