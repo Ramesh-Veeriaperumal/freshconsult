@@ -171,6 +171,9 @@ class Search::SearchController < ApplicationController
 				json << "]"
 				render :json => json
 			end
+			format.xml do 
+				render_404
+			end
 		end
 
 		def all_classes

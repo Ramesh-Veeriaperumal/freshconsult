@@ -44,7 +44,13 @@ class Search::HomeController < Search::SearchController
 						end
 					else
 						to_ret = all_classes
-					 end
+					end
+				end
+				format.json do
+					to_ret = all_classes
+				end
+				format.xml do 
+					to_ret = all_classes
 				end
 			end
 			to_ret
