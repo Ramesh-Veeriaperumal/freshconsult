@@ -8,6 +8,6 @@
 		
 	<div id="name_field" class="default_name_field hide">
 		<input class="text span12 name_field" placeholder="<%= t("ticket_form.your_name") %>" 
-			name="helpdesk_ticket[name]" type="text" disabled="disabled" />
+			name="helpdesk_ticket[name]" type="text" disabled="disabled" data-user-name="<%= params[:helpdesk_ticket][:name]%>"/>
 	</div>
 </div>
