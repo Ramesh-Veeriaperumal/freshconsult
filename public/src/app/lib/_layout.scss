@@ -14,7 +14,9 @@
 	}
   	.omega{ @include omega; }
 }
-
+body{
+	min-width: $container-min-width + 20;
+}
 .wrapper{
 	@include container;
 	min-width: $container-min-width;
