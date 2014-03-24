@@ -20,6 +20,7 @@ describe AgentsController do
   end
 
   it "should create a new agent" do
+    @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     test_email = Faker::Internet.email
     post :create, { :agent => { :occasional => "false", 
