@@ -281,7 +281,7 @@
 			}
 		});
 
-		var prepopulate_name = "<%= params[:helpdesk_ticket][:name]%>"
+		var prepopulate_name = "<%= params[:helpdesk_ticket][:name] if params[:helpdesk_ticket]%>"
 
 		if(prepopulate_name){
 			jQuery("#helpdesk_ticket_email").trigger('focusout');
