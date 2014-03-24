@@ -41,5 +41,36 @@ module Helpdesk::TagsHelper
     params[:name] || ""
   end
 
+  def tagged_module tag, dom_type, mod_count
+    case dom_type
+    when "Tickets"
+      render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => mod_count,
+          :plurals => [t('.ticket'), t('.tickets')],
+          :type => "Helpdesk::Ticket",
+          :dom_type => dom_type,
+          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}"
+      }
+    when "Customers"
+      render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => mod_count,
+          :plurals => [t('.customer'),t('.customers')],
+          :type => "User",
+          :dom_type => dom_type,
+          :link => "/contacts/filter/all?tag="+tag.id.to_s
+      }
+    when "Articles"
+      render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => mod_count,
+          :plurals => [t('.article'),t('.articles')],
+          :type => "Solution::Article",
+          :dom_type => dom_type,
+          :link => ""
+      }
+    end
+  end
 
 end

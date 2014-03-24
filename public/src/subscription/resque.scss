@@ -23,7 +23,7 @@ body{
 }
 
 .failed_heading{ font-size: 24px; }
-#redirect_button, #resque_btn{ float:right; }
+#redirect_button, #resque_btn{ float:right; padding-left: 10px; }
 #worker_time{ font-size: 9px; }
 
 .failed_category{
@@ -45,6 +45,19 @@ h1{ color: #336633;font-size: 24px; line-height: 30px; }
 	border-collapse: collapse;
 }
 
+.queues-table{
+	border: 1px #ccc solid;
+	border-collapse: collapse;
+}
+
+.queues-wrapper dt{
+	font-weight: bold;
+}
+
+.queues-wrapper dd{
+	padding-left: 25px;
+}
+
 .queues-wrapper th{
 	background: rgba(0, 0, 0, 0.1);
 	color: #333;
@@ -56,9 +69,4 @@ h1{ color: #336633;font-size: 24px; line-height: 30px; }
 	padding: 10px;
 	background-color:#fff;
 	border-bottom: 1px #ccc solid;
-}
-
-.queues-table{
-	border: 1px #ccc solid;
-	border-collapse: collapse;
 }

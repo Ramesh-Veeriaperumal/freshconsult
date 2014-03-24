@@ -1,20 +1,7 @@
 <% @page_title = "Dashboard" %>
 <% content_for :sidebar do %>
-  <% if current_account.subscription.trial? && current_account.subscription.trial_days < AppConfig['show_trail_notifier_in_days'] %>
-    <%= render :partial => '/subscriptions/state/trial_expiry_notifier' %>
-  <% end %>
-  <div id="reminders" class="reminders sidepanel">    
-  	<h3 class="title"><%= t(".todo_title") %></h3>
-    <%= render :partial => '/helpdesk/reminders/reminders', 
-               :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
-  </div>
-
-  <%= render :partial => '/freshfone/freshfone_dashboard' if current_account.freshfone_enabled? %>
-
-  <div class="sidepanel" id="chat-dashboard" style="display:none">
-    <div class="sloading loading-small loading-block"></div>
-  </div>
-  
+  <%= sidebar_content %>
+    
   <% if gamification_feature?(current_account) %>
   	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>

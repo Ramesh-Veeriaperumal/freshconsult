@@ -2,7 +2,7 @@
 	<div class="wrapper-shadow">
 		<div class="footer-content">
 		  <% unless(current_account.subscription.paid_account?) %>
-			  <%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
+			  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
 			  <%= t('footer.by_freshdesk') %>
 			  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>
 			<% end %>
@@ -10,7 +10,7 @@
 				<%= link_to_function( t('footer.submit_feedback'), "FreshWidget.show()" ) %>
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 			<% end %>
-			<%= link_to(t('footer.browse_community'), "https://support.freshdesk.com/support/discussions", :target => "_blank") %>
+			<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
 		</div> 
 	</div>
 </div>
@@ -31,6 +31,6 @@
 	@import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css); 
 </style> 
 <script type="text/javascript">
-	FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "https://support.freshdesk.com"} );
+	FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
 </script>
 <% end %>

@@ -59,7 +59,7 @@
 		<%= render :partial=> 'admin/shared/advanced_webhook_usecase.html.erb' %>
 	</div>
 
-	<div class="button-container">
+	<div class="button-container itil-hide">
 		<input type="hidden" name="save_json" id="savejson" value="" />
 		<input type="submit" class="uiButton" id="dispatchr_submit" value="<%=t('save')%>" />
 		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>

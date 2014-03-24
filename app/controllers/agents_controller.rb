@@ -182,7 +182,7 @@ class AgentsController < ApplicationController
       user = @agent.user
       if user.make_customer
         flash[:notice] = t(:'flash.agents.to_contact')
-        redirect_to contact_path(user)
+        redirection_url(user)
       else
         flash[:notice] = t(:'flash.agents.to_contact_failed')
         redirect_to :back and return
@@ -292,6 +292,10 @@ class AgentsController < ApplicationController
       flash[:notice] = t(:'flash.agents.edit.not_allowed')
       redirect_to :back  
     end
+  end
+  
+  def redirection_url(user) # Moved out to overwrite in Freshservice
+    redirect_to contact_path(user)
   end
   
 end
