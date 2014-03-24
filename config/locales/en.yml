@@ -5186,6 +5186,7 @@ en:
     everyone: "Everyone"
     portal_desc: "Support your customers in real-time within your Freshdesk portal, apart from chatting with them on your website."
     portal_option_info: "Show chat widget for"
+    loading_new_archives: "Loading new archives..."
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
