@@ -3985,7 +3985,7 @@ es:
       overlay_fwd_time: " Enviado, hace %{time_in_words}"
       overlay_note_time: " nota añadida, hace %{time_in_words}"
       friendly_status:
-        customer_responded: "Cliente Respondido"
+        customer_responded: "Client ha Respondido"
         overdue: Atrasado
         new: Nuevo
         elapsed: "respuesta a tiempo"
