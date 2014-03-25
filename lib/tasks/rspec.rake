@@ -15,6 +15,23 @@ elsif File.exist?(rspec_plugin_dir)
   $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib")
 end
 
+
+FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
+TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
+IntegrationTest = ["spec/controllers/agents_controller_spec.rb", 
+                    "spec/controllers/contacts_controller_spec.rb", 
+                    "spec/controllers/customers_controller_spec.rb", 
+                    "spec/controllers/ticket_fields_controller_spec.rb",
+                    "spec/controllers/forum/*_spec.rb",
+                    "spec/controllers/helpdesk/*_spec.rb",
+                    "spec/controllers/support/*_spec.rb",
+                    "spec/controllers/negative/*_spec.rb",
+                    "spec/models/helpdesk/mysql_*_spec.rb"]
+ModelTest = ["spec/models/helpdesk/*_spec.rb"]                    
+
+AllTest = [FacebookTest,IntegrationTest,TwitterTest,ModelTest]
+AllTest.flatten!.uniq! 
+
 # Don't load rspec if running "rake gems:*"
 unless ARGV.any? {|a| a =~ /^gems/}
 
@@ -145,7 +162,12 @@ namespace :spec do
     desc "Runs all twitter tests"
     Spec::Rake::SpecTask.new(:twitter) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-      t.spec_files = FileList["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
+      t.spec_files = FileList.new(TwitterTest)
+    end
+
+    Spec::Rake::SpecTask.new(:facebook) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList.new(FacebookTest)
     end
   end
 
@@ -153,17 +175,23 @@ namespace :spec do
     desc "Running all integration tests"
     Spec::Rake::SpecTask.new(:all) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-      t.spec_files = FileList["spec/controllers/agents_controller_spec.rb", 
-                              "spec/controllers/contacts_controller_spec.rb", 
-                              "spec/controllers/customers_controller_spec.rb", 
-                              "spec/controllers/ticket_fields_controller_spec.rb",
-                              "spec/controllers/forum/*_spec.rb",
-                              "spec/controllers/helpdesk/*_spec.rb",
-                              "spec/controllers/support/*_spec.rb",
-                              "spec/controllers/negative/*_spec.rb"
-                            ]
+      t.spec_files = FileList.new(IntegrationTest)
     end
   end
+
+  namespace :all do
+    desc "Running all the tests"
+    Spec::Rake::SpecTask.new(:tests) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList.new(AllTest)
+    end
+
+    Spec::Rake::SpecTask.new(:model) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList.new(ModelTest)
+    end
+  end
+
 end
 
 end

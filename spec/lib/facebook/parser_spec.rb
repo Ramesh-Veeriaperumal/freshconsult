@@ -162,13 +162,11 @@ describe Facebook::Core::Parser do
       json_data = {"entry"=>{"id"=>"532218423476440", "time"=>1374146359, "changes"=>[{"field"=>"feed", "value"=>{"item"=>"post", "verb"=>"add", "post_id"=>603467223018226}}]}}.to_json
       Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns({"message"=>"this is a new post", "type"=>"status", "actions"=>[{"link"=>"https://www.facebook.com/532218423476440/posts/603466913018257", "name"=>"Comment"}, {"link"=>"https://www.facebook.com/532218423476440/posts/603466913018257", "name"=>"Like"}], "privacy"=>{"value"=>""}, "from"=>{"id"=>"100005115430108", "name"=>"Rikacho Paul"}, "updated_time"=>"2013-07-18T11:26:39+0000", "created_time"=>"2013-07-18T11:17:52+0000", "id"=>"532218423476440_603466913018257", "to"=>{"data"=>[{"id"=>"532218423476440", "category"=>"Cause", "name"=>"Causeeeeeeeadded"}]}})
       Facebook::Core::Parser.new(json_data).parse
-      Helpdesk::Ticket.all.size.should eql 1
-      Helpdesk::Ticket.first.notes.size.should eql 0
+      Helpdesk::Ticket.last.notes.size.should eql 0
       json_data = {"entry"=>{"id"=>"532218423476440", "time"=>1374146800, "changes"=>[{"field"=>"feed", "value"=>{"item"=>"comment", "verb"=>"add", "comment_id"=>"603466913018257_7126753", "parent_id"=>603466913018257, "sender_id"=>532218423476440, "created_time"=>1374146800}}]}}.to_json
       Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns({"user_likes"=>false, "can_remove"=>true, "message"=>"commenting for new post", "from"=>{"id"=>"532218423476440", "category"=>"Cause", "name"=>"Causeeeeeeeadded"}, "like_count"=>0, "created_time"=>"2013-07-18T11:26:39+0000", "id"=>"603466913018257_7126753"})
       Facebook::Core::Parser.new(json_data).parse
-      Helpdesk::Ticket.all.size.should eql 1
-      note = Helpdesk::Ticket.first.notes
+      note = Helpdesk::Ticket.last.notes
       note.size.should eql 1
       note.first.user.name.should eql "Causeeeeeeeadded"
       note.first.body.should eql "commenting for new post"
