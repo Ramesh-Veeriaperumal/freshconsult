@@ -41,7 +41,7 @@ include SsoUtil
     saml_response = validate_saml_response(current_account, params[:SAMLResponse]);
 
     if saml_response.valid?
-      handle_sso_response(saml_response.email , saml_response.user_name )
+      handle_sso_response(saml_response.email , saml_response.user_name , saml_response.phone)
     else
       flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
       redirect_to login_normal_url
