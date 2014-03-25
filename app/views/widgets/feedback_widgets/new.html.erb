@@ -275,6 +275,9 @@
 				if(key == "requester" && value=="true"){
 					jQuery("#helpdesk_ticket_email").attr("readonly","readonly");
 				}
+				else if(key == "name" && value == "true"){
+					jQuery("input[name='helpdesk_ticket[name]']").attr("readonly","readonly");
+				}
 				else if(jQuery("#helpdesk_ticket_"+key) && value == "true"){
 					jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
 				}
