@@ -42,6 +42,13 @@ GIT
     lhm (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/rate-limiting.git
+  revision: 49aaf10e91aac0260ccb44ea119bf5a609ec3cf3
+  specs:
+    rate-limiting (1.0.4)
+      json
+
+GIT
   remote: git://github.com/freshdesk/rinku.git
   revision: 67f54898fe7270f96900a3fa9a4dd50b6b351f25
   specs:
@@ -515,6 +522,7 @@ DEPENDENCIES
   rails (= 2.3.18)
   rails_xss (= 0.4.0)
   rake (= 0.8.7)
+  rate-limiting!
   redis (= 3.0.7)
   resque (= 1.22.0)
   resque-scheduler
