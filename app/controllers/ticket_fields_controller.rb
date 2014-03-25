@@ -7,7 +7,7 @@ class TicketFieldsController < CustomFieldsController
 
     respond_to do |format|
       format.html {
-        @ticket_field_json = ticket_field_hash(@ticket_fields, account)
+        @ticket_field_json = ticket_field_hash(@ticket_fields, current_account)
       }
       format.xml  { render :xml => @ticket_fields.to_xml }
       format.json  { render :json => @ticket_fields }

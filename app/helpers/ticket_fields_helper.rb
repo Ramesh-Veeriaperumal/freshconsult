@@ -26,14 +26,16 @@ module TicketFieldsHelper
     end
   end
 
-  def get_choices(field, account)
-    case field.field_type
-      when "nested_field" then
-        field.nested_choices
-      when "default_status" then
-        Helpdesk::TicketStatus.statuses_list(account)
-      else
-        field.choices
+  private
+
+    def get_choices(field, account)
+      case field.field_type
+        when "nested_field" then
+          field.nested_choices
+        when "default_status" then
+          Helpdesk::TicketStatus.statuses_list(account)
+        else
+          field.choices
+      end
     end
-  end
 end
