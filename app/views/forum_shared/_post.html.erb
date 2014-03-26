@@ -37,6 +37,9 @@
                 <%end%>
               </li>
             <% end %>
+            <li class="menu-item">
+                <%= link_to(t(".mark_as_spam"), mark_as_spam_discussions_moderation_path(post), :method => :put )%>
+            </li>
   					<li class="menu-item">
   							<%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
   					</li>
