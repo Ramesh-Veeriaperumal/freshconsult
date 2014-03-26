@@ -465,7 +465,7 @@
   map.resources :topics, :posts, :monitorship
 
   map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete }, :member => {:approve => :put }
+    discussions.resources :moderation, :collection => { :empty_folder => :delete }, :member => {:approve => :put, :mark_as_spam => :put }
   end
 
   %w(forum).each do |attr|

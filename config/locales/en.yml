@@ -1148,6 +1148,7 @@ en:
     title: Forums
     start_topic: Start Topic
     forum_created: The forum has been created.
+    spam: "Spam (%{count})"
     visibility:
       anyone: Anyone
       logged_users: Logged In Users
@@ -1908,6 +1909,7 @@ en:
     open: Re-open this Topic
     edit: Edit Topic
     close: Close Topic
+    mark_as_spam: Mark as Spam
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -1990,6 +1992,7 @@ en:
       mark_answer: Mark as answer
       mark_as_solved: Mark as solved
       mark_as_unsolved: Mark as Unsolved
+      mark_as_spam: Mark as Spam
       delete_comment_confirm: Delete this comment?  Are you sure?
       delete_comment: Delete Comment
       answer: Answer
