@@ -159,7 +159,7 @@ class Search::SearchController < ApplicationController
 				render :partial => 'search/search_sort.rjs'
 			end
 			format.json do
-				render :json => @result_json
+				render :json => @result_json[:results]
 			end
 			format.nmobile do
 				json="[" 
@@ -171,8 +171,10 @@ class Search::SearchController < ApplicationController
 				json << "]"
 				render :json => json
 			end
-			format.xml do 
-				render_404
+			unless ["forums", "solutions"].include?(controller_name)
+				format.xml do
+					render_404
+				end
 			end
 		end
 
@@ -189,7 +191,7 @@ class Search::SearchController < ApplicationController
 		end
 
 		def initialize_search_parameters
-			@search_key = params[:term]
+			@search_key = params[:term] || params[:search_key]
 			initialize_search_sort
 			@result_json = { :results => [], :current_page => 1 }
 			@search_recursion_limit = 4

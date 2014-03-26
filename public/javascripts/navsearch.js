@@ -119,6 +119,9 @@ jQuery(document).ready(function(){
 								callbackToSearch(encodeURIComponent(searchString), search_url);
 								currentString = searchString;
 						    }, 450 ); 
+						}else if(currentString == searchString){
+							$J("#SearchResultsBar").css("display", "inline"); 
+							$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
 						}else{
 							jQuery("#SearchResultsBar").hide();				
 						}
