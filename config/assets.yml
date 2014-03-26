@@ -333,6 +333,7 @@ javascripts:
     - public/javascripts/portal/portal-utils.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/portal/fresh_suggest.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js

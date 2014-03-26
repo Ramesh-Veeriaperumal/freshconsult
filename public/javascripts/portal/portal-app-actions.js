@@ -207,6 +207,10 @@
 	    	ev.preventDefault();
 	    	$(".agent_actions").toggle();
 	    })
+
+	    $('input[data-suggestions]').livequery(function(){
+	    	$(this).fresh_suggestion();
+	    })
 	})
 
 }(window.jQuery);

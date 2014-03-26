@@ -617,3 +617,98 @@ hr.content-divider{
 		display: none;
 	}
 }
+
+#new_topic {
+	.title{
+		font-size: 16px;
+		font-weight: 400;
+	}
+	.topic-title{
+		margin-top: 10px;
+		padding-left: 25px;
+	}
+	.desc{
+		color: #7E7E7E;
+		font-size: 12px;
+		line-height: 16px;
+	}
+	.forum-name{
+		line-height: 9px;
+		color: #ccc;
+		font-size: 11px;
+		padding-bottom: 5px;
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------
+//											 Fresh Suggestions styles
+//----------------------------------------------------------------------------------------------------------
+
+.suggestions .popover{
+	margin-left: 0;
+	width: 400px;
+	.arrow{ top: 34px; }
+	.popover-title { display: none; }
+	.close-popover, .close-popover-mobile
+	{
+	    width: 20px;
+	    height: 20px;
+		background-color: #000;
+		border-radius: 50px;
+		cursor:pointer;
+		margin: -2px 4px 0 0;
+		&:after{
+			position: absolute;
+			margin: -1px 0 0 6px;
+			color: #fff;
+			content: "\00d7";
+			font-size: 14px;
+		}
+	}
+	.close-popover-mobile{ display: none; }
+	.show_results{ display: none; }
+}
+.hide-desktop{ display: none; }
+
+@include at-breakpoint($media-mobile-tablet){
+	.hide-desktop{ display: block; }
+	.suggestions .popover{
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		margin-left: 100%;
+		top: 0 !important;
+		left: 0 !important;
+		padding: 0;
+		padding-left: 25px;
+		.popover-title { display: none; }
+		.popover-inner{
+			height: 100%;
+			padding: 0;
+			border-radius: 0;
+			box-shadow: -5px 0 20px 0 rgba(0, 0, 0, 0.2);
+		}
+		.popover-content{
+			padding: 0 15px;
+			border-radius: 0;
+			height: 100%;
+		}
+		.arrow { display: none; }
+		.show_results{ display: block; }
+		.close-popover{ display: none; }
+		.close-popover-mobile{ 
+			display: block;
+			width: 25px;
+			height: 25px;
+			margin: 10px 0 0 0;
+			&:after{
+				margin:1px 0 0 8px;
+			}
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------
+//											Fresh Suggestions styles end
+//----------------------------------------------------------------------------------------------------------
+

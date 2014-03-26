@@ -2385,6 +2385,7 @@ en:
     popular_topics: "Popular topics"
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
+    topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -2397,6 +2398,7 @@ en:
       see_all_articles: "See all %{count} articles"
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
+      related_articles: "Related Articles"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -2419,6 +2421,8 @@ en:
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
       last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
       best_answer: Best Answer
+      matching_results: "Matching Topics Found"
+      in_forum: "In: %{forum_name}"
     topic_vote:
       you:
         one: "You"

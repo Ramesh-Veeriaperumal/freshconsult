@@ -59,13 +59,14 @@
 		</div>
 	</div>	
 </section>
-
-{% if article.folder.articles_count > 1 %}
+{% if article.related_articles.size > 1 %}
 <section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">
-			{{ article.folder | more_articles_in_folder }}
-			{{ article.folder | article_list: 10, article }}
+			<h3 class="list-lead">
+				{% translate portal.article.related_articles %}
+			</h3>
+			{{ article | related_articles_list: 10 }}
 		</section>
 	</div>
 </section>

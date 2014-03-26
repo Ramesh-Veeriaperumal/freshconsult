@@ -14,3 +14,14 @@
 	.ui-datepicker-multi .ui-datepicker-buttonpane { clear:left; }
 	.ui-datepicker-row-break { clear:both; width:100%; font-size:0em; }
 }
+
+@include at-breakpoint($media-mobile-tablet){
+	#new_topic{
+        .related-topics{
+            overflow: scroll;
+            height: 100%
+        }
+    	.title{ padding: 10px 0 5px 0; }
+        .topic-title{ font-size: 14px; }
+    }
+}
