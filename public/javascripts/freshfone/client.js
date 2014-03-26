@@ -32,6 +32,13 @@ var globalconn;
 			});
 		});
 
+		//Load Transfer agents
+		$widget.find('[href="#freshfone_available_agents"],[href="#freshfone_agents_list"]').on('shown', function (e) {
+			freshfonesocket.loadAvailableAgents();
+		});
+
+
+
 		freshfonewidget.showOutgoing();
 
 		if (freshfone.below_threshold) {
