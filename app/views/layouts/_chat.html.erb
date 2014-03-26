@@ -51,6 +51,7 @@ var CURRENT_USER = {
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>
 };
 
+var CHAT_AGENTS = '<%=chat_agents_list%>';
 var SITE_ID = '<%=account.chat_setting.display_id%>';
 var IS_TYPING = '<%=account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;

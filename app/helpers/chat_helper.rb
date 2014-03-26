@@ -1,5 +1,9 @@
 module ChatHelper
 
+  def chat_agents_list
+    Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id, :email=>c.user.email} }.to_json.html_safe )
+  end
+
   def chat_feature_enabled?
     feature?(:chat) && feature?(:chat_enable)
   end
