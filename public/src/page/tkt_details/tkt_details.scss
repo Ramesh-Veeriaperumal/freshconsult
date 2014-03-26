@@ -580,7 +580,7 @@ ol, ul, li{
     }
 
     .custom_statuses {
-    	max-height: 110px;
+    	max-height: 120px;
 		overflow-y: auto;
 		max-width: 460px;
 	}
@@ -616,6 +616,9 @@ ol, ul, li{
     		float:left;
     		@include border-radius(4px 0 0 4px);
     	}
+    }
+    form .dropdown-menu li{
+    	position: relative;
     }
 }
 

@@ -70,6 +70,18 @@
 					<span class="span4 shortcut-key">&#47;</span>
 					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.search") %></span>
 				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">r</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.reply") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">f</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.forward") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">n</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_detail_list_common.add_note") %></span>
+				</span>
 			</span>
 		</div>
 		<div class="span6">
@@ -85,7 +97,7 @@
 					<span class="span8 description"><%= t("shortcuts.ticket_list.hovercard") %></span>
 				</span>
 				<span class="row-fluid">
-					<span class="span4 shortcut-key">return</span>
+					<span class="span4 shortcut-key"><%= modifier("enter") %></span>
 					<span class="span8 description"><%= t("shortcuts.ticket_list.view") %></span>
 				</span>
 				<span class="row-fluid">
@@ -97,24 +109,20 @@
 				<hr>
 				<h3 class="sub-lead"><%= t("shortcuts.ticket_view.title") %></h3>
 				<span class="row-fluid">
-					<span class="span4 shortcut-key">r</span>
-					<span class="span8 description"><%= t("shortcuts.ticket_view.reply") %></span>
-				</span>
-				<span class="row-fluid">
-					<span class="span4 shortcut-key">f</span>
-					<span class="span8 description"><%= t("shortcuts.ticket_view.forward") %></span>
-				</span>
-				<span class="row-fluid">
-					<span class="span4 shortcut-key">n</span>
-					<span class="span8 description"><%= t("shortcuts.ticket_view.add_note") %></span>
-				</span>
-				<span class="row-fluid">
-					<span class="span4 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> enter</span>
+					<span class="span4 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("enter") %></span>
 					<span class="span8 description"><%= t("shortcuts.ticket_view.save") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key"> Alt <span>&#43;</span> <%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("enter") %></span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.openDialog") %></span>
 				</span>
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">w</span>
 					<span class="span8 description"><%= t("shortcuts.ticket_view.watch") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key"> Shift <span>&#43;</span> w</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.addwatch") %></span>
 				</span>
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">&#93;</span>
@@ -127,6 +135,10 @@
 				<span class="row-fluid">
 					<span class="span4 shortcut-key">m</span>
 					<span class="span8 description"><%= t("shortcuts.ticket_view.add_time") %></span>
+				</span>
+				<span class="row-fluid">
+					<span class="span4 shortcut-key">s</span>
+					<span class="span8 description"><%= t("shortcuts.ticket_view.scenario") %></span>
 				</span>
 			</span>
 		</div>
