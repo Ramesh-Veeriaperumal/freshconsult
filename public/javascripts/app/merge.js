@@ -18,7 +18,8 @@ function MergeInitializer() {
   }
 
   jQuery('body').on('click.merge_helpdesk', '#cancel_new_merge, #cancel-user-merge', function(){
-    active_dialog.dialog('close');
+    jQuery('#merge_freshdialog').modal('hide');
+    jQuery('#merge_freshdialog-content').html('<span class="loading-block sloading loading-small">');
   });
 
   mark_primary = function(entity){
