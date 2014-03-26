@@ -20,10 +20,6 @@ class PostObserver < ActiveRecord::Observer
 
 	end
 
-	def after_update(post)
-		create_activity(post, 'published_post') if post.published_changed? and post.published?
-	end
-
 	def after_destroy(post)
 		update_cached_fields(post)
 		create_activity(post, 'delete_post') unless post.trash

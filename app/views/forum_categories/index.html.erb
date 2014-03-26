@@ -3,7 +3,7 @@
 	<div class="pull-right">
     <% if privilege?(:delete_topic) -%>
     		<% spam_count = current_account.posts.unpublished_spam.count %>
-				<%= link_to("Spam (#{spam_count})", discussions_moderation_index_path, :class => 'mr20' ) if spam_count > 0 %>
+				<%= link_to(t('forum.spam', :count => spam_count), discussions_moderation_index_path, :class => 'mr20' ) %>
 		<% end %>
 	  <% if privilege?(:manage_forums)  and main_portal? -%>
 			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "btn btn-bold") unless(@forum_categories.size <= 1)%>

@@ -7,22 +7,18 @@ class Workers::Community::EmptyModerationTrash
 
 	  def perform(params)
 
-	  	Account.current.posts.trashed.find_in_batches do |batch|
+			Account.current.posts.find_in_batches(:conditions => ["trash = ?",true]) do |batch|
 				batch.each do |post|
-					if post.topic.posts_count > 0
-						post.destroy
-					else
-						post.topic.trash = true
-						post.topic.destroy
+					if post.present? and post.topic.present?
+						if post.original_post?
+							post.topic.trash = true	
+							post.topic.destroy
+						else
+							post.destroy
+						end
 					end
 				end
 			end
-
-	  end
-
-	  def load_user(id)
-	  	user = Account.current.users.find(id)
-	  	user.make_current
-	  end
+		end
 	end
 end
