@@ -31,7 +31,7 @@ class SubscriptionAdmin::AccountToolsController < ApplicationController
       redirect_to :action => 'index'
     else
       flash[:notice] = "Update failed"
-      render :action => 'index'
+      redirect_to :action => 'index'
     end
   end
 
