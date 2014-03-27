@@ -1,0 +1,82 @@
+
+<div class="page-header"> 
+  
+    <% if @user_ids %>
+      <div class="span4">
+          <table class="table table-striped table-bordered">
+            <tr>
+              <th>WhiteListed User Id's</th>
+              <th>Account Id's</th>
+            </tr>
+
+            <% @whitelisted_id_pagination.each do |id| %>
+              <tr>
+                <td><%= id[0] %></td> 
+                <td><%= id[1] %></td> 
+              </tr>
+            <% end %>
+            
+          </table>
+        <%= will_paginate @whitelisted_id_pagination, :renderer => BootstrapPaginationRenderer, 
+                                  :previous_label => "<b class='arrow-left'></b>",
+                                  :next_label => "<b class='arrow-right'></b>",
+                                  :class => "pagination pagination-centered" %>
+      </div>
+    <% end %> 
+
+    <div class="span3">
+      <h4>Whitelist User ID</h4>
+      <label class="control-label">User ID :</label>
+      <input type="text" name="user_id" id="user_id"/>
+      <label class="control-label">Account_id :</label>
+      <input type="text" name="user_account_id" id="user_account_id"/>
+      <input type="submit" id="add_whitelisted_user_id" value="Add User Id" class="btn" />      
+    </div>
+
+    <div class="span3">
+      <% if @user_ids %>
+        <div>
+          <h4>Remove User  Id from whitelist</h4>
+          <label class="control-label">User ID :</label>
+          <%= select_tag "user_id_list", options_for_select(@user_ids), { :class => "select2", :style => "width: 220px;" } %>
+        </div> <br/>
+        <input type="submit" id="remove_user_id" value="Remove" class="btn">     
+      <% end %>
+    </div> 
+
+    <% form_for :user_id, :url => add_whitelisted_user_id_admin_manage_users_path , 
+      :html => {:method => 'post', :id => 'add_user_id_account_id'}  do |f| %>
+      <%= f.error_messages %>
+    <% end %>
+    
+    <% form_for :user_id, :url => remove_whitelisted_user_id_admin_manage_users_path, 
+        :html => {:method => 'post', :id => 'remove_user_id_account_id'}  do |f| %>
+        <%= f.error_messages %>  
+    <% end %>
+
+  </div>                                                                        
+</div>
+
+<script src="/javascripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+  jQuery("#add_whitelisted_user_id").on('click', function () {
+    user_id = jQuery('#user_id').val();
+    account_id = jQuery('#user_account_id').val();
+    user_id_param = jQuery('<input name="user_id" type="hidden" value="'+user_id+'">');
+    account_id_param = jQuery('<input name="account_id" type="hidden" value="'+account_id+'">');
+    user_id_param.appendTo('#add_user_id_account_id');
+    account_id_param.appendTo('#add_user_id_account_id');
+    jQuery('#add_user_id_account_id').submit();
+  });
+
+  jQuery('#remove_user_id').click(function () {
+    user_id = jQuery('#user_id_list option:selected').text()
+    user_id_param = jQuery('<input name="user_id" type="hidden" value="'+user_id+'">');
+    user_id_param.appendTo('#remove_user_id_account_id');
+    jQuery('#remove_user_id_account_id').submit();
+  });
+
+});
+</script>
