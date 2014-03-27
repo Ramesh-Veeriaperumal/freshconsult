@@ -763,7 +763,7 @@ HTML
 	end
 
 	def link_to_privacy_policy portal
-		%(	<a href="http://freshdesk.com/privacy" target="_blank">
+		%(	<a href="http://freshdesk.com/privacy" target="_blank" class="privacy-link">
 				#{ I18n.t('portal.cookie.privacy_policy') }
 			</a>) if(!portal.paid_account && ["user_signup", "user_login", "submit_ticket", "profile_edit"].include?(portal['current_page']))
 	end

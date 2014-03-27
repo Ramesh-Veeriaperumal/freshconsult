@@ -105,6 +105,15 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	text-align: center;
 	color: $gray;
 }
+@include at-breakpoint($break-tablet){
+    .footer-links {
+        .privacy-link{float:right; margin-left:25px;}
+        .cookie-link{
+            float:right;
+            &:before{content: "";}
+        }
+    }
+}
 
 @if $nonResponsive == false {
     @include at-breakpoint($media-mobile){
@@ -214,9 +223,11 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
                 margin-left: 4px;
                 line-height: 24px;
                 display: inline-block;
+                margin-bottom:10px;
                 &, &:hover{ color:$footer_color; }
             }
         }
+        .footer-links{text-align:center;}
         .footer-links a:before{ content: none; }
     }
 }
