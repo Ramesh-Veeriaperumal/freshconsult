@@ -115,7 +115,7 @@ if Integrations::Application.count == 0
                   :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
                   :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" }, 
                   :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note", 
-                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_text}}' },
+                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}' },
                   :username => { :type => :text, :required => true, :label => "integrations.jira.form.username" },
                   :password => { :type => :password, :label => "integrations.jira.form.password" } 
                 }
