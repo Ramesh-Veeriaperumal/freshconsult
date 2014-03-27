@@ -5,8 +5,7 @@ class Shortcut
 			:help 				=> "?",
 			:save				=> "mod+return",
 			:cancel				=> "esc",
-			:search				=> "/",
-			:status_dialog 		=> "mod+alt+return"
+			:search				=> "/"
 		},
 		:app_nav => {
 			:dashboard			=> "g d",
@@ -28,6 +27,8 @@ class Shortcut
 			:select 			=> "x",
 			:select_all 		=> "shift+x",
 			:show_description	=> "space",
+			:go_to_next			=> ['j', 'down'],
+			:go_to_previous		=> ['k', 'up'],
 			:toggle_list_view	=> "shift+v",
 			:unwatch			=> "w",
 			:delete				=> "#",
@@ -35,10 +36,7 @@ class Shortcut
 			:spam				=> "!",
 			:close				=> "~",
 			:silent_close		=> "alt+shift+`",
-			:undo				=> "z",
-			:reply				=> "r",
-			:forward			=> "f",
-			:add_note			=> "n"
+			:undo				=> "z"
 		},
 		:ticket_detail	=> {
 			:toggle_watcher		=> "w",
@@ -54,16 +52,7 @@ class Shortcut
 			:properties			=> "p",
 			:expand				=> "]",
 			:undo				=> "z",
-			:expand 			=> "]",
-			:select_watcher		=> "shift+w",
-			:go_to_next			=> ['j', 'down'],
-			:go_to_previous		=> ['k', 'up'],
-			:scenario			=> "s",
-			:save				=> "return"
-		},
-		:portal_customizations  => {
-			:save 				=> "mod+shift+s",
-			:preview			=> "mod+shift+p"
+			:expand 			=> "]"
 		}
 	}
 
@@ -82,11 +71,6 @@ class Shortcut
 			:mac 		=> "&#8997;",
 			:windows 	=> "Alt",
 			:linux 		=> "Alt"
-		},
-		:enter		=> {
-			:mac 		=> "Return",
-			:windows 	=> "Enter",
-			:linux 		=> "Enter"
 		}
 	}
 

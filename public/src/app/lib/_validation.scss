@@ -31,6 +31,11 @@
 		  margin:0px 8px 0px 18px;
 		}
 	}
+	.close{
+		right:0px;
+		top:0px;
+		background:image-url("btn_close_icon.png") no-repeat center;
+	}
 }
 
 .ui-form label.error, .ui-form label.warning{

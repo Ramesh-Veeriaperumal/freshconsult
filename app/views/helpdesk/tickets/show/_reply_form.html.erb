@@ -202,13 +202,13 @@
             <%= t('ticket.reply_form.send') %>
           
           <% if privilege?(:edit_ticket_properties) %>
-            <button id="reply_dialog" class="btn btn-primary dropdown-toggle dialog-btn" data-toggle="dropdown" href="#">
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
               <span class="caret"></span>
             </button>
           <% end %>
           </button>
           <% if privilege?(:edit_ticket_properties) %>
-          <ul id="conversation_reply" data-menu-hover-in='li' class="menuselector dropdown-menu custom_statuses pull-right">
+          <ul class="dropdown-menu custom_statuses pull-right">
             <%
             ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
             %>

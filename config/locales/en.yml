@@ -5252,9 +5252,6 @@ en:
       spam: "Mark ticket as spam"
       close: "Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to skip notification )"
       search: "Search"
-      reply: "Reply"
-      forward: "Forward"
-      add_note: "Add note"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -5263,14 +5260,14 @@ en:
       mark: "Select a ticket, ( <span class='shortcut-key'>%{modifier_key} <span>+</span> x </span>to select all )"
     ticket_view:
       title: "Ticket View"
+      reply: "Reply"
+      forward: "Forward"
+      add_note: "Add note"
       save: "Save / Send"
       watch: "watch / unwatch ticket"
-      addwatch: "Add another watcher"
       expand: "Expand conversations"
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
-      openDialog: "Open dialog"
-      scenario: "Scenario"
   mailbox:
     mail_server: "Mail Server:"
     use_default: "Default (Freshdesk)"

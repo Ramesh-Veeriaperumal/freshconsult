@@ -188,10 +188,20 @@
     jQuery(this).parent().addClass("active")
   })
 
+  if(window.Mousetrap){
+    Mousetrap.bind('mod+shift+s', function (e) {
+      jQuery('input[name="save_button"]:visible')[0].click();
+      return false;
+    });
+
+    Mousetrap.bind('mod+shift+p', function (e) {
+      jQuery('input[name="preview_button"]:visible')[0].click();
+      return false;
+    });
+  }
+
 <% end %>
-<script>
-  Fjax.current_page = 'portal_customizations';
-</script>
+
 <% content_for :helpcard do %>
   
     <div class="help-chart mt0 shorcuts-info">

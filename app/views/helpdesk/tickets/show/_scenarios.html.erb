@@ -1,4 +1,4 @@
-<div data-menu-hover-in='tr' class="dialog-well links menuselector">
+<div class="dialog-well links">
 <table class="table table-striped selected_to_yellow">
   <% current_account.scn_automations.each do |scenario| %>
   <tr><td>
@@ -23,10 +23,3 @@
   <% end %>
 </table>
 </div>
-<script>
-	jQuery(document).ready(function(){
-		jQuery('#execute_scenario').on('shown', function() {
-        	jQuery('.dialog-well').focus();
-    	})
-	})
-</script>
