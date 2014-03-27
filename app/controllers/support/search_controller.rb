@@ -37,6 +37,11 @@ class Support::SearchController < SupportController
     render_search
   end
 
+  def suggest_topic
+    @results = search_portal([Topic])
+    render :layout => false
+  end
+
   # def widget_solutions
   #   @widget_solutions = true
   #   solutions

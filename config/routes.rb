@@ -510,7 +510,10 @@
 
     # Search for the portal, can search Articles, Topics and Tickets
     support.resource :search, :controller => 'search', :only => :show,
-      :member => { :solutions => :get, :topics => :get, :tickets => :get }
+      :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
+    support.resource :search do |search|
+      search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+    end
 
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}

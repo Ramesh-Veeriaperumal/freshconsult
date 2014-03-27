@@ -78,6 +78,8 @@ window.xhrPool = [];
     //Stickey Header and Button collapsed
     window.sticky = new SetupSticky();
 
+    $('.menuselector').livequery(function(){$(this).menuSelector() })
+
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
         if(!insideCalendar)

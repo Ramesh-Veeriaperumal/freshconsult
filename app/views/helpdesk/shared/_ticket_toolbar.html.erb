@@ -60,11 +60,22 @@
                 data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
           <% end %>
           <% if privilege?(:merge_or_split_ticket)%>    
-            <button id="merge_multiple" class="btn dialog2" data-width="715" 
-                data-parameters title="<%=t('ticket.merge_title')%>" disabled="disabled" 
-                data-destroy-on-close="true"><%=t('ticket.merge_btn')%></button>
+            <a  href="#merge_freshdialog" id="merge_multiple" 
+                class="btn" 
+                data-width="715" 
+                rel="freshdialog"
+                data-title="<%=t('ticket.merge_title')%>" 
+                disabled="disabled" 
+                data-template-footer="false"
+                data-target="#merge_freshdialog"
+                >
+                <%=t('ticket.merge_btn')%>
+            </a>
           <% end %>
-
+          <div id="merge_freshdialog" class="hide">
+            <span class="loading-block sloading loading-small">
+            </span>
+          </div>
           <% if @current_view == "monitored_by" %>
           <input class="btn tooltip" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');" 
               type="button" value="<%=t('ticket.unwatch')%>" 
@@ -109,8 +120,14 @@
       jQuery("#tickets-expanded .selector:checked").each(function(){
         selected_tickets.push(jQuery(this).val());
       });
-      jQuery(this).data("url","/helpdesk/merge_tickets/bulk_merge");
-      jQuery(this).data("parameters",{ source_tickets : selected_tickets, redirect_back : true });
+      jQuery.ajax({
+        type:              'POST',
+        url:               '/helpdesk/merge_tickets/bulk_merge',
+        data:              { source_tickets : selected_tickets, redirect_back : true },
+        success:           function(data){
+                            jQuery('#merge_freshdialog-content').html(data);
+                           }
+     });
   });
 <%- end %>
 

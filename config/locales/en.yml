@@ -2385,6 +2385,7 @@ en:
     popular_topics: "Popular topics"
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
+    topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -2397,6 +2398,7 @@ en:
       see_all_articles: "See all %{count} articles"
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
+      related_articles: "Related Articles"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -2419,6 +2421,8 @@ en:
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
       last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
       best_answer: Best Answer
+      matching_results: "Matching Topics Found"
+      in_forum: "In: %{forum_name}"
     topic_vote:
       you:
         one: "You"
@@ -5248,6 +5252,9 @@ en:
       spam: "Mark ticket as spam"
       close: "Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to skip notification )"
       search: "Search"
+      reply: "Reply"
+      forward: "Forward"
+      add_note: "Add note"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -5256,14 +5263,14 @@ en:
       mark: "Select a ticket, ( <span class='shortcut-key'>%{modifier_key} <span>+</span> x </span>to select all )"
     ticket_view:
       title: "Ticket View"
-      reply: "Reply"
-      forward: "Forward"
-      add_note: "Add note"
       save: "Save / Send"
       watch: "watch / unwatch ticket"
+      addwatch: "Add another watcher"
       expand: "Expand conversations"
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
+      openDialog: "Open dialog"
+      scenario: "Scenario"
   mailbox:
     mail_server: "Mail Server:"
     use_default: "Default (Freshdesk)"

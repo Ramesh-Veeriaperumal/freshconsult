@@ -128,7 +128,7 @@ var FreshfoneWidget;
 			this.resetForm();
 		},
 		hideTransfer: function () {
-			$('#transfer_call .transfering_call').hide();
+			$('#freshfone_available_agents .transfering_call').hide();
 		},
 		resetPreviewMode: function () {
 			this.previewMode(true);

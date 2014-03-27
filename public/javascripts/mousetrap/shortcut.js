@@ -104,20 +104,33 @@
 
             return;
         },
-        cancel = function () {
-            $('.modal:visible').modal('hide');
-            document.getElementById('header_search').value = '';
-            document.activeElement.blur();
-            $('.qtip:visible').qtip('hide');
-            $('.twipsy:visible').trigger('hide');
-            $('.cancel_btn:visible').trigger('click');
-            $('#help_chart').modal('hide');
+        cancel = function (ev) {
+            if($( ".request_panel .dropdown-menu:visible").get(0)){
+                var id = getConversationId();
+                $('#' + id + ' .dialog-btn').trigger("click");
+                $('#' + id + ' .dialog-btn').blur();
+            }else if($('.modal:visible').get(0)){
+                $('.modal:visible').modal('hide');
+            }else if($('#redactor_modal:visible').get(0)){
+                $('#redactor_modal').modal('hide');
+                $('redactor_modal_overlay').hide();
+            }else if($('#new_watcher_page:visible').get(0)){ 
+                 $(".watcher-close").trigger('click');
+            }else{ 
+                $(".watcher-close").trigger('click');    
+                document.getElementById('header_search').value = '';
+                document.activeElement.blur();
+                $('.qtip:visible').qtip('hide');
+                $('.twipsy:visible').trigger('hide');
+                $('.cancel_btn:visible').trigger('click');
+                $('#help_chart').modal('hide');
+            }
             Mousetrap.unpause();
         },
         // ------------  Ticket List  ----------------------
         showSelectedTicket = function (ev) {
             _preventDefault(ev);
-            var el = $('.' + _selectedListItemClass + ' .ticket_subject a').get(0).click();
+            $('.' + _selectedListItemClass + ' .ticket_subject a').get(0).click();
         },
         toggleTicketDescription = function (ev) {
             _preventDefault(ev);
@@ -133,7 +146,7 @@
             $('tr.' + _selectedListItemClass + ' input.selector').trigger('click').trigger('change');
         },
         initScrollTo = function (el) {
-            $('html').scrollTop(el.offset().top);
+            $(document).scrollTop(el.offset().top);
             //$.scrollTo(el).scrollTo.window().queue([]).stop();
         },
         autoScroll = function (el, percentToScroll) {
@@ -147,25 +160,17 @@
             if (itemSltrBotm <= docTop || itemSltrTop >= frame) {
                 initScrollTo(el);
             } else if (itemSltrBotm >= frame) {
-                $('html').scrollTop((docTop + scrollTo));
+                $(document).scrollTop((docTop + scrollTo));
             } else if (itemSltrTop <= docTop) {
-                $('html').scrollTop((docTop - scrollTo));
+                $(document).scrollTop((docTop - scrollTo));
             }
         },
-        moveItemSelector = function (ev, key) {
-            var $el = $("tr." + _selectedListItemClass),
-                _method = (key === "go_to_previous") ? 'prev' : 'next';
-
-            if ($el && $el[_method]().length !== 0) {
-                _preventDefault(ev);
-                var $other_el = $el[_method]();
-                $other_el.addClass(_selectedListItemClass);
-                $el.removeClass(_selectedListItemClass).addClass('fade-out');
-                setTimeout(function(){ $el.removeClass('fade-out'); }, 250);
-                
-                autoScroll($other_el, 50);  // params : (movable element to trace, percent to scroll)
-            }
-        },
+        selectedTicketReply = function(ev,key) {
+            var href = $('.' + _selectedListItemClass + ' .ticket_subject a').attr('href');
+                href += "#"+key;
+            $('.' + _selectedListItemClass + ' .ticket_subject a').attr('href', href);
+            showSelectedTicket(ev);
+        },        
         // ----------  Ticket Detail view  -------------
         toggleWatcher = function (ev) {
             _preventDefault(ev);
@@ -205,27 +210,58 @@
         expand = function () {
             $('#show_more:visible').trigger('click');
         },
+        ticketStatusDialog = function(){
+            var id = getConversationId();
+            $('#' + id + ' .dialog-btn').trigger("click");
+        },
+        selectWatcher = function(ev){
+            _preventDefault(ev);
+            $("#watcher_toggle a").trigger('click');
+            $("#addwatcher .select2-search-field input").focus();
+        },
+        saveContent = function(){
+            if(jQuery('#execute_scenario:visible').get(0)){
+                $('tr.active form input[type="submit"]').trigger('click')
+            } else {
+                $("#" + getConversationId() + " .dropdown-menu li.active > a").trigger('click');
+            }   
+        },
+        getConversationId = function(){
+            return $('.conversation_thread form:visible').attr('id');
+        },
+        saveAndPreview = function(ev,key){
+            var value = (key == "save") ? 'save_button' : 'preview_button'
+            $('input[name="'+ value +'"]:visible')[0].click();
+        },
         KB = {
             global        : {
                 help                : shortcutHelp,
                 save                : save,
-                cancel              : cancel
+                cancel              : cancel,
+                status_dialog       : ticketStatusDialog
             },
             ticket_list   : {
                 ticket_show         : showSelectedTicket,
                 select              : selectTicket,
                 show_description    : toggleTicketDescription,
-                go_to_next          : moveItemSelector,
-                go_to_previous      : moveItemSelector,
                 close               : closeTicket,
-                silent_close        : closeTicket
+                silent_close        : closeTicket,
+                reply               : selectedTicketReply,
+                forward             : selectedTicketReply,
+                add_note            : selectedTicketReply
             },
             ticket_detail : {
                 toggle_watcher      : toggleWatcher,
                 properties          : ticketProperties,
                 close               : closeTicket,
                 silent_close        : closeTicket,
-                expand              : expand
+                expand              : expand,
+                select_watcher      : selectWatcher,               
+                save                : saveContent
+            },
+            portal_customizations : {
+                save                : saveAndPreview,
+                preview             : saveAndPreview
             }
         },
         // Take care of binding all namespaced callback functions of KB object
@@ -233,7 +269,6 @@
             isGlobal = isGlobal || false;
             $.each(KB[namespace], function (key) {
                 var _method = (isGlobal && key !== 'help') ? 'bindGlobal' : 'bind';
-
                 Mousetrap[_method](Shortcuts[namespace][key], function (ev) { KB[namespace][key](ev, key); });
             });
         },
@@ -290,8 +325,11 @@
                 // Bind event for elements which has attr ['data-keybinding']
                 $('[data-keybinding]').livequery(doKeyBindingfor);
 
-                // Loading item selection for tickets table view
-                this.setListItemCursor("table.tickets tbody tr");
+                $('#ticket-list').menuSelector({
+                        activeClass: 'sc-item-selected',
+                        onHoverActive:false,
+                        scrollInDocument:true
+                })
             },
             destroy: function(){
                 Mousetrap.reset();
@@ -307,8 +345,11 @@
 
                 //Remove all shortcut key hint from tooltip
                 this.resetShortcutTooltip();
+
+                $('#ticket-list').menuSelector('destroy');
             },
             setListItemCursor: function(class_name) {
+                $('#ticket-list').menuSelector('reset');
                 if(!$('.' + _selectedListItemClass).get(0))
                     $(class_name).first().addClass(_selectedListItemClass);
             },
@@ -326,6 +367,7 @@
             ev.shortcuts_data = ev.shortcuts_data || {};
 
             window.shortcuts = new KeyboardShortcuts(ev.shortcuts_data);
+
         })
         .on("shortcuts:destroy", function(ev){
             if(window.shortcuts || window.shortcuts != null){
