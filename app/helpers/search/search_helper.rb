@@ -21,7 +21,7 @@ module Search::SearchHelper
 		options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container"} : {}
 
 		search_tabs = [ [t('search.all_results'), 'all', 
-						"/search/all?term=#{URI.escape(@search_key)}", privilege?(:manage_tickets)],
+						"/search/all?term=#{CGI.escape(@search_key)}", privilege?(:manage_tickets)],
 					[t('search.tickets'), 'tickets', 
 						search_tickets_path(:term => @search_key), privilege?(:manage_tickets)],
 					[t('search.solutions'), 'solutions', 

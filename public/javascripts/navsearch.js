@@ -120,8 +120,10 @@ jQuery(document).ready(function(){
 								currentString = searchString;
 						    }, 450 ); 
 						}else if(currentString == searchString){
-							$J("#SearchResultsBar").css("display", "inline"); 
-							$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+							if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
+								$J("#SearchResultsBar").css("display", "inline"); 
+								$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+							}
 						}else{
 							jQuery("#SearchResultsBar").hide();				
 						}
