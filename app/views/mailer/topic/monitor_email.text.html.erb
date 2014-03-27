@@ -14,7 +14,7 @@
 			<img src="<%= profile_image_user_url(@user.id, :host => @user.account.host)%>" rel="lazyloadimage" width="30" height="30" />
 		</div> 
 		<div class="user_identity">
-			<b style="color:#333;"><%= @user.name %></b><br><%= formated_date(@topic.created_at,{:include_year => true}) %>
+			<b style="color:#333;"><%= @user.name %></b><br><%= @topic.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
 		</div>
 		<br>
 		<div class="actual_content">
