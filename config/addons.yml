@@ -1,10 +1,18 @@
 Agent Collision: 
   - :agent_collision
+Chat:
+  - :chat
+  - :chat_enable
 Custom Roles: 
   - :custom_roles
 Custom Ssl: 
   - :custom_domain
   - :custom_ssl
+Enterprise Reporting:
+  - :enterprise_reporting
+  - :surveys
+  - :survey_links
+  - :timesheets
 Gamification:
   - :forums
   - :gamification
