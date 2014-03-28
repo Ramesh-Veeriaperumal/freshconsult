@@ -21,12 +21,6 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
-  r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true ,:per_url => true )
-  store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
-  r.set_cache(store) if store.present?
-end
-
 # config.gem "thoughtbot-shoulda", :lib => 'shoulda', :source => "http://gems.github.com"
 
 # config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec-rails'))

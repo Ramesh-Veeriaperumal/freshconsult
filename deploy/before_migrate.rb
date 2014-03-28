@@ -17,5 +17,4 @@ run "ln -nfs #{shared_path}/config/text_datastore.yml #{rel_path}/config/text_da
 run "ln -nfs #{shared_path}/config/mailgun.yml #{rel_path}/config/mailgun.yml"
 run "ln -nfs #{shared_path}/config/mailbox.yml #{rel_path}/config/mailbox.yml"
 run "ln -nfs #{shared_path}/config/freshfone.yml #{rel_path}/config/freshfone.yml"
-run "ln -nfs #{shared_path}/config/rate_limit.yml #{rel_path}/config/rate_limit.yml"
 run "ln -nfs #{shared_path}/config/akismet.yml #{rel_path}/config/akismet.yml"
