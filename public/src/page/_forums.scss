@@ -573,3 +573,48 @@
 
 
 // ------------------------ END OF SPAM --------------------------- //
+
+
+// ---------------------------------------------------------------- //
+// ----------------  Contact Page Forum Activity ------------------ //
+// ---------------------------------------------------------------- //
+
+#forum-activity{
+	.activity-details{
+		border-bottom: 1px solid #EEE;
+		padding: 10px 5px 7px 5px;
+		display: inline-block;
+	}
+    .topic-details{
+		> div a{
+			font-size: 14px;
+		}
+		.details{
+			a{
+				font-size: 12px;
+				color: #555;
+			}
+			a:hover{
+				color: #06C;
+			}
+		}
+	}
+	.label {
+
+		display: inline-block;
+		width: 85px;
+		padding: 2px 0;
+		margin-top: 2px;
+		text-align: center;
+	
+		&.reply {
+			background-color: #a378a6;
+		}
+		&.new_topic {
+			background-color: #68b5b5;
+		}
+	}
+}
+
+// ------------------------ END OF FORUM ACTIVITY --------------------------- //
+

@@ -74,14 +74,24 @@
   			</div>
       <% end %>
 		<% end %>	
-</div>
 <% unless @user.deleted %>
-	<div id="tickets-expanded" class="contact_tickets row-fluid">
+	<% if feature?(:forums) && privilege?(:view_forums) %>
+		<h4 class="title pb15"><%=t('contacts.info7', :nick_name => h(@user.display_name)).html_safe%></h4>
+		<ul class="tabs nav-tabs">
+		  <li class="active">
+		    <a href="#tickets-expanded"  data-toggle="tab"><%= t('header.tabs.tickets')%></a>
+		  </li>
+		  <li><a href="#forum-activity"  data-toggle="tab"><%= t('header.tabs.forums')%></a></li>
+		</ul>
+	 <% else %>
+	 	<h4 class="title"><%=t('contacts.info4', :nick_name => h(@user.display_name)).html_safe%></h4>
+	 	<span class="seperator"></span>
+	 <% end %>
+<div class="tab-content">
+	<div id="tickets-expanded" class="contact_tickets row-fluid tab-pane active lead-desc">
 		<div class="detailed_view">
-			<h4 class="title"><%=t('contacts.info4',:nick_name => h(@user.display_name)).html_safe%></h4>
-			<span class="seperator"></span>
 			<% if @user_tickets.blank? %>
-				<%= "#{t('contacts.info5')}" %>
+				<div class="sub-lead text-center mt15"><%= t('contacts.info5', :nick_name => h(@user.display_name)) %></div>
 			<% else %>
 				<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
 				<table class="tickets" id="tickets_view" width="100%">	
@@ -98,7 +108,13 @@
 		  	<% end %>
 		</div>
 	</div>
+	<% if feature?(:forums) && privilege?(:view_forums) %>
+		<%= render :partial => "forum_activity" %>
+	<% end %>
+</div>
 <% end %>
+
+</div>
 
 <% javascript_tag do %>
   // need to convert this to util

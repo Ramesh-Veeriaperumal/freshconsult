@@ -2234,10 +2234,15 @@ en:
     info3: Background information of %{nick_name}
     working: Working at
     info4: Recent tickets from %{nick_name}
+    info7: Recent Activity by %{nick_name}
+    info8: "No forum activity by %{nick_name}"
     show_more: Show more tickets from %{nick_name} »
+    post_created: "<span class='muted'>%{time} ago in </span><a href='%{forum_url}'>%{forum_name}</a>"
+    new_topic: New Topic
+    reply: Reply
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
-    info5: User has not created any ticket till now
+    info5: "No tickets by %{nick_name}"
     restore: Restore
     activation : Send Activation
     info6: Add specific notes regarding this contact

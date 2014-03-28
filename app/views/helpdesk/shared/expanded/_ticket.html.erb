@@ -1,3 +1,4 @@
+<% user_page ||= false %>
 <% ticket_style = subject_style(ticket,@onhold_and_closed_statuses) %>
 <% modal ||= false %>
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
@@ -7,10 +8,12 @@
   	<input class="selector" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
 
-  <td class="name">
+  <td class="name <%= 'user-page' if user_page %>">
+  	<% unless user_page %>
 	<span class="hideForList">
 		<%= user_avatar(ticket.requester,:thumb, "preview_pic" , { :width => "45px", :height => "45px" }) %>
 	</span>
+	<% end %>
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
@@ -32,7 +35,6 @@
 
 		<% unless ticket.requester.nil? %>
 			<div class="info-data hideForList">
-				<% user_page ||= false %>
 				<% sentence_type = user_page ? "ticket_user_list_status_" : "ticket_list_status_" %>
 				
 				<%= t("ticket." + sentence_type + ticket.ticket_states.current_state, 
