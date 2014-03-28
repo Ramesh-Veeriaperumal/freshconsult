@@ -8,6 +8,9 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
 
+  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
+                            'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
+
   set_table_name "helpdesk_notes"
 
   concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
@@ -179,9 +182,9 @@ class Helpdesk::Note < ActiveRecord::Base
             'activities.tickets.conversation.out_email.private.short')  
   end
 
-  def respond_to?(attribute)
+  def respond_to?(attribute, include_private=false)
     return false if [:to_ary].include? attribute.to_sym
-    super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
+    super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def save_response_time
@@ -311,7 +314,8 @@ class Helpdesk::Note < ActiveRecord::Base
         super
       rescue NoMethodError => e
         Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
-        if (load_schema_less_note && schema_less_note.respond_to?(method))
+        if(SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?")))
+          load_schema_less_note
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
         end

@@ -584,3 +584,18 @@
 @mixin grid-input-span($columns, $gridColumnWidth, $gridGutterWidth) {
   width: (($gridColumnWidth) * $columns) + ($gridGutterWidth * ($columns - 1)) - 14;
 }
+
+
+// Generic utilites 
+// =====================================
+
+// Helper to get the class name if its not default
+@function get-class-name($suffix, $base) {  
+  @if $suffix == default {
+    @return #{ "." + $base};
+  } @else if $suffix == disabled {
+    @return #{ "." + $base + "." + $suffix + ", ." + $base + "[" + $suffix + "]" };
+  } @else {
+    @return #{ "." + $base + "-" + $suffix };
+  }  
+}

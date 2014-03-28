@@ -22,16 +22,6 @@ class Mobile::TicketsController < ApplicationController
 	render :json => ticket_props
   end
 
-  def get_suggested_solutions
-    item = current_account.tickets.find_by_display_id(params[:id]) 
-    suggested_articles = Solution::Article.suggest_solutions(item)
-    json = "["; sep=""
-    suggested_articles.each do |article| 
-      json << sep + article.to_mob_json[11..-2]; sep=","
-    end
-    render :json => json + "]"
-  end
-
   def load_reply_emails
     reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     render :json => reply_emails

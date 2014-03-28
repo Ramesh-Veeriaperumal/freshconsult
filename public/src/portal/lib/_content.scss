@@ -43,7 +43,7 @@
 }
 
 .best-answer-info{
-	margin: -11px -14px -11px -14px;
+	margin: -11px -13px -11px -13px;
 	padding: 11px 14px 1px 14px;
 	background: #fffffa;
 	@include border-radius(0px 0px 5px 5px);
@@ -453,7 +453,10 @@ hr.content-divider{
 	
 		.toolbar-actions, .topic-list .topic-labels{ float: none; }
 
-		#topic-toolbar .btn{ min-width: 30%; }
+		#topic-toolbar .btn{ 
+			padding-left: 10px; 
+			padding-right: 10px; 
+		}
 		.cs-s{
 			margin:0.5em 0;
 			h3{ border-top-width:4px; }

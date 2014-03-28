@@ -1,34 +1,50 @@
 <% 
 	placeholder ||= "Search"
-	url = url.gsub('/search', '/search/home')
+	url			||= "/search/home?term="
 %>
-<form class="page-search" >
-	<div class="live_search">
+<form class="page-search row-fluid" >
+	<span class="search-input-wrap">
 		<input class="search" type="text" id="PageSearch" placeholder="<%= placeholder.html_safe %>" /> 
-	</div>
+	</span>
 </form>
 
-<div id="search_results" style="display:none;"></div>
+<ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
+
+<%= include_cloudfront_js :search  %>
+
 <script type="text/javascript">
+	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>" }
 	callbackToPageSearch = function(string){
 								jQuery.ajax({ 
-									url: "<%=url%>"+string, 
+									url: "<%=url%>"+encodeURIComponent(string),
+									dataType: "json",
 									success: function(data){
-									 			jQuery("#search_results").show();
-												jQuery("#search_results").html(data);
-												jQuery("#PageSearch").removeClass("sloading loading-small");
+										var result_list = jQuery("#page_search_results");
+										var resultHtml = ''
+										if(data.results.length){
+								 			data.results.each(function(result){
+												var resultType = result.result_type
+												if(result) { resultHtml += (JST[resultType](result)); }
+											})
+										} else {
+											resultHtml = '<li><%= t("search.no_results_msg") %></li>'
+										}
+										result_list.html(resultHtml).show();
+										jQuery("#PageSearch").parent().removeClass("sloading loading-small");
 									}});
 								};
 				
 	jQuery("#PageSearch").bind("keyup", function(ev){
 		var searchString = this.value.replace(/^\s+|\s+$/g, "");
+		var result_list = jQuery('#page_search_results');
 		if(searchString != '' && searchString.length > 1){
-			jQuery(this).parent().addClass("sloading loading-small loading-right");
-			delay(function(){
+			result_list.hide().empty();
+			setTimeout(function(){
+				jQuery("#PageSearch").parent().addClass("sloading loading-small loading-right");
 		    	callbackToPageSearch(searchString);
-			}, 200 ); 
+			}, 450 ); 
 		}else{
-			jQuery("#search_results").hide()
+			result_list.hide()
 			jQuery(this).parent().removeClass("sloading loading-small loading-right");				
 		}
 	});

@@ -485,11 +485,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
   
-  def respond_to?(attribute)
+  def respond_to?(attribute, include_private=false)
     return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
-    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
+    super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
@@ -704,6 +704,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     flexifield.set_ff_value ff_alias, ff_value
   end
   # flexifield - custom_field syncing code ends here
+
+  def resolution_status
+    return "" unless [RESOLVED, CLOSED].include?(status)
+    resolved_at.nil? ? "" : ((resolved_at < due_by)  ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
+
+  def first_response_status
+    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
 
   protected
 

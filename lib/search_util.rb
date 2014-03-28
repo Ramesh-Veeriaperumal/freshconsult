@@ -31,14 +31,15 @@ module SearchUtil
   	end
   end
 
-  def self.es_filter_key(query)
+  def self.es_filter_key(query, wildcard=true)
     query.strip!
     query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*\/:~])/,'\\\\\1')
-    query = "#{query}*"
+    query = "#{query}*" if wildcard
+    query
   end
 
   def self.es_exact_match?(query)
-    query.blank? || ( query.start_with?('<') && query.end_with?('>') )
+    query.blank? || ( query.start_with?('<', '"') && query.end_with?('>', '"') )
   end
 
   def self.es_filter_exact(query)

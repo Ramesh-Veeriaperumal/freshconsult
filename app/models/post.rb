@@ -71,6 +71,10 @@ class Post < ActiveRecord::Base
     topic.title
   end
 
+  def original_post?
+    topic.posts.first == self
+  end
+
   def can_monitor?
     self.import_id.nil?
   end

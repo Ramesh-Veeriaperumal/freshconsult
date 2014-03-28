@@ -482,6 +482,32 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+    return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
+    begin
+      Search::EsIndexDefinition.es_cluster(account_id)
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([User], account_id), options do |search|
+        search.query do |query|
+          query.filtered do |f|
+            if SearchUtil.es_exact_match?(search_by)
+              f.query { |q| q.text :name, SearchUtil.es_filter_exact(search_by), :type => :phrase }        
+            else
+              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name'], :analyzer => "include_stop" }
+            end
+            f.filter :term, { :account_id => account_id }
+            f.filter :term, { :deleted => false }
+          end
+        end
+        search.from options[:size].to_i * (options[:page].to_i-1)
+        search.highlight :description, :name, :job_title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
+      end
+      item.results
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      []
+    end 
+  end
+
   protected
   
     def search_fields_updated?

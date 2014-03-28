@@ -14,8 +14,10 @@
     .select2-container{
          width: 208px;
     }
-    .level_2, .level_3{
-        select2-container{
+    .level_2, .level_3, .nested-child{
+        border-left: 1px dotted #afafaf;
+        padding-left: 10px;
+        .select2-container{
             width: 196px;
         }
     }
@@ -139,13 +141,6 @@
     float:left;
     width:33%;
     margin-bottom:12px;
-    .level_2, .level_3, .nested-child{
-        border-left: 1px dotted #afafaf;
-        padding-left: 10px;
-        .select2-container{
-            width: 196px;
-        }
-    }
     label{
         font-size:13px;
     }

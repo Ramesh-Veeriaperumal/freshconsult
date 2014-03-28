@@ -1,0 +1,14 @@
+<% @page_title = 'Freshfone' %>   
+<div class="row">       
+  <div class="span3">
+    <h3>Credits Per month</h3>
+    <table id="customers" class="table">
+      <%@credits_by_month.each do |date,credit|%>
+        <tr>
+           <td><%=date%></td>
+           <td><%=credit.to_f%></td>
+         </tr>
+      <%end%>
+    </table>
+  </div>
+</div>

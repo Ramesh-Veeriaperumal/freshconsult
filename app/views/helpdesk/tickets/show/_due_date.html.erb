@@ -20,7 +20,7 @@
 				<p>
 					<%= t(".due") %>
 					<span id="due-date-value">
-						<%= @ticket.due_by.strftime("%a %B %e %Y") %>
+						<%= formated_date(@ticket.due_by,{:format => :short_day_with_week, :include_year => true}) %>
 					</span>
 				</p>
 				<p>

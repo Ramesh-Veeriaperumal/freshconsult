@@ -13,8 +13,8 @@
 	</div>
 <%- end %>
 <h3 class="lead"><%=t('solution.title').html_safe%></h3> 
-<div class="search-grey-box ignore-margin-20">
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder').html_safe, :url => "/search/solutions?search_key=" } %>
+<div class="search-grey-box ignore-margin-20 search-page">
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder').html_safe, :url => "/search/solutions?term=" } %>
 </div>
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>

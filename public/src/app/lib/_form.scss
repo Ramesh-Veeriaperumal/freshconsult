@@ -474,7 +474,7 @@ a.addchoice:hover{
 				margin:2px 4px;
 			}
 
-			.select2-container *{
+			.select2-choices, .select2-container a, .select2-choices, .select2-container a span{
 				float: none;
 			}
 
@@ -1182,16 +1182,6 @@ input.search{
     margin-bottom:8px;
     font-size:18px;
 }
-
-
-.search-grey-box{
-	@include clearfix;
-	background-color:#f6f6f6;
-	border-top:1px solid #e2e2e2; 
-	padding:6px $common-padding 6px $common-padding; 
-	margin-top:15px; 
-}
-
 
 .sidepanel{
 	.close{ right:14px; }

@@ -327,7 +327,9 @@ var updatePagination = function() {
 }
 
 var freshfoneAudioDomSetting = function (){
-			soundManager.reboot();
+	  if(threeSixtyPlayer){
+			threeSixtyPlayer.init();	  	
+	  }
 			$('.call_duration').each(function () {
 				if ($(this).data("time") === undefined) { return; }
 					$(this).html($(this).data("time").toTime());
@@ -371,7 +373,7 @@ var scrollToError = function(){
 		changeYear: true,
 		onSelect: function(dateText, inst) {
 			selectedDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
-			$("#due-date-value").html( selectedDate.toDateString() );
+			$("#due-date-value").html( moment(selectedDate).format(getDateFormat('moment_date_with_week')) );
 			CalcSelectedDateTime();
 		}
 	});
@@ -1092,8 +1094,11 @@ var scrollToError = function(){
       var new_status = jQuery(this).data('statusVal'); 
       changeStatusTo(new_status);
 
-      if($('#custom_ticket_form').valid())
+      var ticket_properties_form = $('#custom_ticket_form');
+      if(ticket_properties_form.valid()) {
+      	ticket_properties_form.trigger('submit');
       	$(this).parents('form').trigger('submit');
+      }
       else
       	scrollToError();
 

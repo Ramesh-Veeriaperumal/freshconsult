@@ -1,0 +1,12 @@
+<ul class="unstyled" id="search-page-results">
+</ul>
+<%= load_more({
+  :totalPages   => @total_pages,
+  :url          => %{/search/#{current_filter}},
+  :params       => { :term => @search_key },
+  :dataType     => 'json',
+  :complete 	=> 'search_page.loadMoreRender(data)',
+  :container => '#search-page-results',
+  :currentPage => @current_page,
+  :loadMoreHtml => %{<div class="loadmore-wrap"><a id="load-more" data-loading-text="<span class='sloading loading-small'></span>">
+  	#{t('freshchat.chat_loadmore')}</a></div>} }) %>

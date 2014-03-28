@@ -33,7 +33,7 @@
       <% if post.created_at > Time.now.utc-24.hours%>
       <%= time_ago_in_words(post.created_at).sub(/about /, '') %>
       <% else %>
-      <%= post.created_at.strftime("%b %e, %Y"[:date_format])%>
+      <%= formated_date(post.created_at, {:format => :short_day_separated})%>
       <% end %>
       </abbr>
     </div>

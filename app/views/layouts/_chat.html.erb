@@ -1,4 +1,6 @@
-<%if(current_user && current_account.features?(:chat) && current_account.features?(:chat_enable) && current_account.chat_setting && !(is_assumed_user?))
+<% account = current_account %>
+<%if(current_user && account.features?(:chat) && account.features?(:chat_enable) && account.chat_setting && 
+                           !(is_assumed_user?) && account.active? && !account.subscription.finished_trial?)
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
@@ -8,7 +10,7 @@
 <script language="javascript">
 
 var CS_URL = "<%=comm_url%>";
-var WEB_ROOT = "//<%=current_account.full_domain%>";
+var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
 (function($){
@@ -35,7 +37,7 @@ var CHAT_DEBUG = "<%=chat_debug%>";
                 var path = window.location.pathname.split('/')
                 if(path[path.length - 1] == "chat_setting"){
                     if(window.behaviour){
-                        behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : 'Bottom Right'%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>',weburl:WEB_ROOT,nodeurl:CS_URL,fc_id:'<%=@chat.display_id%>',fc_se:'<%=@chat.visitor_session%>',debug:CHAT_DEBUG,'text_place':'<%=t('freshchat.text_placeholder')%>','name_place':'<%=t('freshchat.name')%>','mail_place':'<%=t('freshchat.mail')%>','phone_place':'<%=t('freshchat.phone')%>','asset':asset_url});
+                        behaviour.initialize({setting:<%=freshchat_setting%>,asset:asset_url});
                     }
                 }
             });
@@ -49,8 +51,9 @@ var CURRENT_USER = {
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>
 };
 
-var SITE_ID = '<%=current_account.chat_setting.display_id%>';
-var IS_TYPING = '<%=current_account.chat_setting.typing_message%>';
+var CHAT_AGENTS = '<%=chat_agents_list%>';
+var SITE_ID = '<%=account.chat_setting.display_id%>';
+var IS_TYPING = '<%=account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
 var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             title:'<%= t("freshchat.title") %>',
@@ -176,7 +179,8 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             on: "<%= t('freshchat.texton') %>",
             off: "<%= t('freshchat.textoff') %>",
             copy_to_clipboard: "<%= t('freshchat.copy_to_clipboard') %>",
-            copied: "<%= t('freshchat.copied') %>"
+            copied: "<%= t('freshchat.copied') %>",
+            loading_new_archives: "<%= t('freshchat.loading_new_archives') %>"
         }
 </script>
     <!-- Chat related contents ends -->

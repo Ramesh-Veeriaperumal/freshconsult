@@ -68,7 +68,12 @@ FreshdeskPjax.prototype = {
     },
 
     _setLoading: function() {
-      NProgress.start();
+      NProgress.set(0);
+      NProgress.set(0.4);
+      NProgress.set(0.5);
+      NProgress.set(0.6);
+      NProgress.set(0.7);
+      NProgress.set(0.8);
     },
 
     _triggerUnload: function() {
@@ -211,7 +216,17 @@ if (!$.browser.msie) {
   }).bind('pjax:success',function(evnt,xhr,settings){
      Fjax.success();
    });
-
 }
+
+var PJAX_DEFAULTS = {timeout: -1,
+                  push : true,
+                  maxCacheLength: 0,
+                  replace: false,
+                  container: '#body-container'}
+
+window.pjaxify = function(url) {
+  $.pjax($.extend({}, PJAX_DEFAULTS, {url : url} ));
+}
+
 }(window.jQuery);
 Fjax = new FreshdeskPjax();

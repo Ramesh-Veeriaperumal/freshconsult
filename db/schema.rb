@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140220092916) do
+ActiveRecord::Schema.define(:version => 20140313141518) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20140220092916) do
     t.string   "bcc_email"
     t.text     "supported_languages"
     t.integer  "api_limit",           :default => 1000
+    t.integer  "date_format",                       :default => 1
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -224,6 +225,8 @@ ActiveRecord::Schema.define(:version => 20140220092916) do
     t.integer  "proactive_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "show_on_portal",                     :default => true
+    t.boolean  "portal_login_required",              :default => false
   end
 
   create_table "conversion_metrics", :force => true do |t|

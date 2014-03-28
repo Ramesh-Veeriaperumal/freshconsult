@@ -92,7 +92,7 @@ module Mobile::Actions::Ticket
       :only => [ :id,:display_id,:subject,:description,:priority],
       :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :requester_name ]
     }
-    to_json options
+    to_json(options,false)
   end
 
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")

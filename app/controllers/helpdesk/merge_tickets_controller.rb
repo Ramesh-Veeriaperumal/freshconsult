@@ -15,7 +15,6 @@ class Helpdesk::MergeTicketsController < ApplicationController
  #  }
 
     def bulk_merge
-        @ticket_search = Array.new
         render :partial => "helpdesk/merge/bulk_merge", :locals => { :redirect_back => params[:redirect_back]}
     end
 

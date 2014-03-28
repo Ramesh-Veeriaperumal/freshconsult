@@ -21,12 +21,12 @@
 			<p>			
 				<strong><%=t('account.active_since')%></strong>
 				<br />
-				<%= formated_date(current_account.created_at) %>			
+				<%= formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) %>			
 			</p>
 			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "btn") %>
 		<% else %>
 			<p>
-				<%= t(".restore_account", :delete_at => 14.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')).html_safe %>
+				<%= t(".restore_account", :delete_at => formated_date(14.days.since(del_customer.created_at), {:format => :short_day_with_week, :include_year => true})).html_safe %>
 			</p>
 		<% end %>
 	</div>

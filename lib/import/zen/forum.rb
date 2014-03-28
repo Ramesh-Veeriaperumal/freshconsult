@@ -190,6 +190,7 @@ def save_solution_article topic_prop
 end
 
   def convert_inline_images  body
+    return "-" if body.blank?
     desc_html = Nokogiri::HTML(CGI.unescapeHTML(body))
     desc_html.search('img').each do |img_tag|
       unless URL_REGEX.match img_tag['src']

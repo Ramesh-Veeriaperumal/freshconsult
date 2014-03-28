@@ -18,9 +18,12 @@ module Import::Zen::User
  
  def save_user user_xml
   user_prop = UserProp.parse(user_xml)
-  customer =  @current_account.customers.find_by_import_id(user_prop.customer_id) 
-  customer_id = customer.id if customer
-  user_params = { :user =>user_prop.to_hash.merge({:customer_id =>customer_id}) }
+  user_params = { :user => user_prop.to_hash }
+
+  unless user_prop.customer_id.blank?
+    customer =  @current_account.customers.find_by_import_id(user_prop.customer_id)
+    user_params[:user][:customer_id] = customer.id if customer
+  end
   
   # Not a customer
   if user_prop.user_role.to_i != 0

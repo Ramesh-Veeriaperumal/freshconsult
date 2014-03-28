@@ -21,7 +21,7 @@
 					  <div class="filter-container">
 						  <ul class="inline" id="filter_container">
 						  	<li><%=t('reports.time_sheets.filter_by_title')%>:</li>
-						  	<li><%=t('reports.time_sheets.time_period')%> : <strong><%= @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date%></strong></li>
+						  	<li><%=t('reports.time_sheets.time_period')%> : <strong><%= @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date%></strong></li>
 						  </ul>
 					  </div>
 					 	<div class="">

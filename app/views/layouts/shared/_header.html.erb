@@ -99,15 +99,15 @@
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
-								 <% form_tag(search_home_index_path, :method => :get, :class => "nav_search") do %>
-								 	<div class="search_bar" id="SearchBar">
-								 	  <span class="search-icon-inactive"></span>
-								 	  <span class="searchIcon"></span>
-										<label class="overlabel" for="header_search"><%= t("header.search").html_safe %></label>
-										<input value="" type="text" id="header_search" autocomplete="off" name="search_key"
-											data-keybinding="<%= shortcut('global.search') %>"/>
-									</div>
-								 <% end %>
+							<% form_tag('/search/all', :method => :get, :class => "nav_search") do %>
+								<div class="search_bar" id="SearchBar">
+									<span class="search-icon-inactive"></span>
+									<span class="searchIcon nav-search-icon"></span>
+									<label class="overlabel" for="header_search"><%= t("header.search").html_safe %></label>
+									<input value="" type="text" id="header_search" autocomplete="off" name="term"
+										data-keybinding="<%= shortcut('global.search') %>"/>
+								</div>
+							<% end %>
 						<% end %>
 					</div>
 					<ul class="header-tabs">

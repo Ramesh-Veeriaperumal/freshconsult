@@ -1,13 +1,17 @@
-class Workers::Community::ReportHam
+class Workers::Community::ReportPost
   extend Resque::AroundPerform
 
 	include ActionController::UrlWriter
 
-  @queue = 'report_ham'
+  @queue = 'report_post'
 
   class << self
 	  def perform(params)
-	  	Akismetor.submit_ham(akismet_params(build_post(params[:id])))
+	  	if params[:report_type]
+	  		Akismetor.submit_ham(akismet_params(build_post(params[:id])))
+	  	else
+	  		Akismetor.submit_spam(akismet_params(build_post(params[:id])))
+	  	end
 	  end
 
 	  private

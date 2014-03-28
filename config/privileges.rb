@@ -49,7 +49,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest, :related_solutions, :search_solutions, :ticket_search]
+    resource :"search/home", :only => [:index, :suggest]
+    resource :"search/solution", :only => [:related_solutions, :search_solutions]
+    resource :"search/ticket", :only => [:index]
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -111,6 +113,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/folder", :only => [:index, :show]
     resource :"solution/article", :only => [:index, :show]
     resource :"search/home", :only => [:solutions]
+    resource :"search/solution", :only => [:index]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
   end
 
@@ -139,6 +142,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
+    resource :"search/forum", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
   end
 
@@ -174,6 +178,7 @@ Authority::Authorization::PrivilegeList.build do
 	 resource :customer, :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
+    resource :"search/customer", :only => [:index]
 	end
 
   # add_or_edit_contact

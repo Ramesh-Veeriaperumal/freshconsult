@@ -2145,7 +2145,7 @@ nl:
     login_details: "Voer de aanmeldingsgegevens in die u tijdens de registratie hebt opgegeven."
     login_options: "... of aanmelden via"
     reset_password: "Voer uw e-mailadres in, zodat we instructies voor het opnieuw instellen van uw wachtwoord kunnen sturen."
-    signup: "Aanmelden"
+    signup: "registreren"
     or_signup: " of %{signup} voor een account"
     to_post_comment: " om een reactie te posten"
     to_submit_ticket: " om een nieuw ticket te versturen"

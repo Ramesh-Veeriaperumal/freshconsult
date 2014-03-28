@@ -7,7 +7,8 @@
 			"data-remote-triggers" => "focusout" %>
 		
 	<div id="name_field" class="default_name_field hide">
+		<% requester_user_name = params[:helpdesk_ticket][:name] if params[:helpdesk_ticket]%>
 		<input class="text span12 name_field" placeholder="<%= t("ticket_form.your_name") %>" 
-			name="helpdesk_ticket[name]" type="text" disabled="disabled" />
+			name="helpdesk_ticket[name]" type="text" disabled="disabled" data-user-name="<%= requester_user_name || ''%>"/>
 	</div>
 </div>

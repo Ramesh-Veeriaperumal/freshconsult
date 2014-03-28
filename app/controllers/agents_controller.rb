@@ -22,12 +22,6 @@ class AgentsController < ApplicationController
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
   
-  def list
-    respond_to do |format|
-      format.json {render :json => current_account.users.technicians.to_json({:only=>[:id,:name,:email,:deleted]})}
-    end
-  end
-
   def load_object
     @agent = scoper.find(params[:id])
     @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level

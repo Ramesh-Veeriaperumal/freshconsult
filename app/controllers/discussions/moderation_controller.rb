@@ -2,8 +2,10 @@ class Discussions::ModerationController < ApplicationController
 
 
 	before_filter :set_selected_tab
-	before_filter :load_post, :only => :approve
+	before_filter :load_post, :only => [:approve, :mark_as_spam]
 	before_filter { |c| c.requires_feature :forums }
+
+	REPORT = { :ham => true, :spam => false }
 
 	def index
 		@posts = current_account.posts.unpublished_spam.paginate(:page => (params[:page] || 1))
@@ -13,7 +15,7 @@ class Discussions::ModerationController < ApplicationController
 		@post.published = true
 		@post.save
 
-		report_for_ham
+		report_post(REPORT[:ham])
 	end
 
 	def empty_folder
@@ -24,6 +26,16 @@ class Discussions::ModerationController < ApplicationController
 
 		flash[:notice] = t('discussions.moderation.flash.empty_folder')
 		redirect_to categories_path
+	end
+
+	def mark_as_spam
+		@post.published = false, 
+		@post.spam = true
+		@post.save
+		@post.topic.update_attributes(:published => false) if @post.original_post?
+
+		report_post(REPORT[:spam])
+		redirect_to :back
 	end
 
 	private
@@ -37,10 +49,11 @@ class Discussions::ModerationController < ApplicationController
 			@post = current_account.posts.find(params[:id])
 		end
 
-		def report_for_ham
-			Resque.enqueue(Workers::Community::ReportHam, {
+		def report_post(type)
+			Resque.enqueue(Workers::Community::ReportPost, {
 					:id => @post.id,
-					:account_id => @post.account_id
+					:account_id => @post.account_id,
+					:report_type => type
 			})
 		end
 

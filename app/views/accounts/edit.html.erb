@@ -87,8 +87,9 @@
 								<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
 							</div>
 						</div>
-						<% if feature?(:dynamic_content) %>
-							<% f.fields_for :account_additional_settings do |settings| %>
+						
+						<% f.fields_for :account_additional_settings do |settings| %>
+							<% if feature?(:dynamic_content) %>
 								<div class="control-group" id="supported_language_list">
 									<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
 									<div class="controls">
@@ -101,6 +102,19 @@
 									</div>					
 								</div>
 							<%end%>	
+							<div class="control-group">
+								<%= settings.label :date_format, t('account.date_format'), :class => "control-label"  %>
+								<div class="controls">
+
+									<% options_for_dateformat = []%>
+									<% 	AccountConstants::DATEFORMATS.invert.each do |format, val| 
+											options_for_dateformat.push([t("account.#{format}"),val])
+										end
+									%>
+									<%= settings.select :date_format, options_for_dateformat, {}, {}%>
+									<span id="sample_date"></span>
+				 				</div>
+							</div>
 						<%end%>	
 						<div class="control-group">
 							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
@@ -204,6 +218,18 @@
 <% end %>
 </div>
 <% content_for :onload_script do %>
+
+	DATE_FORMATS_BINDING = <%= AccountConstants::DATEFORMATS.to_json.html_safe%>
+
+	var set_default_date = function(element){
+		var date_format = DATE_FORMATS[DATE_FORMATS_BINDING[element.val()]]['moment_date_with_week']
+		jQuery("#sample_date").html("<span class='muted'>"+moment(new Date()).format(date_format)+"</span>");
+	}
+
+	jQuery("#account_account_additional_settings_attributes_date_format").on("change",function(){
+		set_default_date(jQuery(this));
+	}).trigger('change');
+
 	jQuery("[data-rebrand-form]").on("change", function(ev){
 		var target = jQuery(ev.target);
 		if(target.attr('data-loadedScript'))

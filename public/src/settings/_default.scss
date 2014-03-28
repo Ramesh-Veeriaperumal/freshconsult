@@ -61,8 +61,10 @@ $fontWeightBold:        700 							!default;
 // -------------------------
 $tableBackground:                   transparent  		!default; 		// overall background-color
 $tableBackgroundAccent:             #FBFBFB 			!default; 		// for striping
-$tableBackgroundHover:              #FEFDEE 			!default; 		// for hover
+$tableBackgroundHover:              #f9f9f9 			!default; 		// for hover
 $tableBorder:                       #eee 				!default; 		// table and cell border
+$tableBackgroundSelected:			#fefac3				!default; 		
+$tableBackgroundHeader:				#f6f6f6				!default;
 
 // Buttons
 // -------------------------
