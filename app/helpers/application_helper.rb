@@ -23,7 +23,7 @@ module ApplicationHelper
                         ["(gt IE 10)|!(IE)", "", true]]
     language = current_portal.language
     language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
-    date_format = (DATEFORMATS[current_account.account_additional_settings.date_format] if current_account) || :non_us
+    date_format = (DATEFORMATS[current_account.account_additional_settings.date_format] if current_account.account_additional_settings) || :non_us
     html_conditions.map { |h|
       %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
