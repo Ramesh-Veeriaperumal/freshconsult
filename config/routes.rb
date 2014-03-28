@@ -74,7 +74,7 @@
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
     freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
-    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
+    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
     freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
