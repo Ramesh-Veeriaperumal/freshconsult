@@ -23,7 +23,7 @@ module ApplicationHelper
                         ["(gt IE 10)|!(IE)", "", true]]
     language = current_portal.language
     language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
-    date_format = DATEFORMATS[current_account.account_additional_settings.date_format]
+    date_format = (DATEFORMATS[current_account.account_additional_settings.date_format] if current_account) || :non_us
     html_conditions.map { |h|
       %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
@@ -524,7 +524,7 @@ module ApplicationHelper
       :translation => true
     }
     options = default_options.merge(options)
-    time_format = current_account.date_type(options[:format])
+    time_format = (current_account.date_type(options[:format]) if current_account) || "%a, %-d %b, %Y at %l:%M %p"
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
