@@ -11,7 +11,7 @@ module ChatHelper
   def portal_chat_enabled?
     account = current_account
     chat_setting = account.chat_setting
-    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting.show_on_portal && 
+    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting && chat_setting.show_on_portal && 
                                                   (!chat_setting.portal_login_required || logged_in?)
   end
 
