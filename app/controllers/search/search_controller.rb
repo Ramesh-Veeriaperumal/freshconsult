@@ -119,11 +119,12 @@ class Search::SearchController < ApplicationController
 				search(search_in, options) 	
 			else
 				@current_page = options[:page]
-				@search_key = params[:term].gsub(/\\/,'')
+				@search_key = (params[:term] || params[:search_key]).gsub(/\\/,'')
 				generate_result_json unless @suggest
 			end
 
 			rescue Exception => e
+				@result_json = @result_json.to_json
 				Rails.logger.debug e.inspect
 				NewRelic::Agent.notice_error(e)
 		end
