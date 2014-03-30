@@ -205,13 +205,13 @@ class Subscription < ActiveRecord::Base
   end
 
   def add_free_freshfone_credit
-    if(@old_subscription.trial? and self.paying_account?)
-      if account.freshfone_credit.blank?
-        account.create_freshfone_credit(:available_credit => 5)
-        account.freshfone_payments.create(:status_message => "promotional", 
-                                          :purchased_credit => 5, :status => true)
-      end
-    end
+    # if(@old_subscription.trial? and self.paying_account?)
+    #   if account.freshfone_credit.blank?
+    #     account.create_freshfone_credit(:available_credit => 5)
+    #     account.freshfone_payments.create(:status_message => "promotional", 
+    #                                       :purchased_credit => 5, :status => true)
+    #   end
+    # end
   end
 
   protected
