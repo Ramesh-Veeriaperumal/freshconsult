@@ -30,6 +30,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         return api_limit > @count
       end
     rescue Exception => e
+      Rails.logger.debug "Exception on api throttler ::: #{e.message}"
+      NewRelic::Agent.notice_error(e)
       true
     end
   end
@@ -66,6 +68,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     if @content_type.nil?
       return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
     else
+      Rails.logger.debug "Content type on API:: #{@content_type}"
       return !THROTTLED_TYPES.include?(@content_type)
     end
   end
