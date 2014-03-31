@@ -26,7 +26,21 @@ module SupportHelper
 	end
 
 	def short_day_with_time(date_time)
-		date_time.to_s(:short_day_with_time) unless date_time.nil?
+		formated_date(date_time,{:include_year => true})
+	end
+
+	def formated_date(date_time, options={})
+	    default_options = {
+	      :format => :short_day_with_time,
+	      :include_year => false,
+	      :translation => true
+	    }
+	    options = default_options.merge(options)
+	    time_format = Account.current.date_type(options[:format])
+	    unless options[:include_year]
+	      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+	    end
+	    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
 
 	# Top page login, signup and user welcome information

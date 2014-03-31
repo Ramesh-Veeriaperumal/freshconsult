@@ -1,5 +1,9 @@
 module ChatHelper
 
+  def chat_agents_list
+    Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id, :email=>c.user.email} }.to_json.html_safe )
+  end
+
   def chat_feature_enabled?
     feature?(:chat) && feature?(:chat_enable)
   end
@@ -7,7 +11,7 @@ module ChatHelper
   def portal_chat_enabled?
     account = current_account
     chat_setting = account.chat_setting
-    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting.show_on_portal && 
+    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting && chat_setting.show_on_portal && 
                                                   (!chat_setting.portal_login_required || logged_in?)
   end
 

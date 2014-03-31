@@ -79,7 +79,7 @@ class Search::TicketsController < Search::SearchController
 		end
 
 		def search_highlight search
-			search.highlight :description, :subject, :body, :options => highlight_options
+			search.highlight :description, :subject, :options => highlight_options
 		end
 
 		def initialize_search_parameters

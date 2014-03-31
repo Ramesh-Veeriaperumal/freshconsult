@@ -17,7 +17,7 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 
-gem 'debugger', "1.6.3"
+gem 'debugger', "1.6.6"
 gem 'test-unit', '1.2.3'
 
 gem "omniauth-oauth2", "1.0"
@@ -125,7 +125,7 @@ gem "premailer", "~> 1.8.0"
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 group :production,:test,:staging do
-  gem 'tire', :git => "git://github.com/arvinthj/tire.git"
+  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 end
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"

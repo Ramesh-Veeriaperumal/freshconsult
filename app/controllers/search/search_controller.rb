@@ -9,10 +9,10 @@ class Search::SearchController < ApplicationController
 	before_filter :initialize_search_parameters
 
 	INCLUDE_ASSOCIATIONS_BY_CLASS = {
-				Helpdesk::Note => { :include => [ :note_body, {:notable => [:ticket_status, :ticket_states, 
-															:responder, {:requester => :avatar} ] } ] },
+				Helpdesk::Note => { :include => [ :note_old_body, {:notable => [:ticket_status, :ticket_states, 
+															:responder, :group, {:requester => :avatar} ] } ] },
 				Helpdesk::Ticket => { :include => [{:flexifield => :flexifield_def}, {:requester => :avatar}, 
-												:ticket_states, :ticket_body, :ticket_status, :responder]},
+												:ticket_states, :ticket_old_body, :ticket_status, :responder, :group]},
 				Topic => { :include => [ {:forum => :forum_category}, :user] },
 				Solution::Article => { :include => [ :user, :folder ] },
 				User => { :include => [:avatar, :customer]}, Customer => {}
@@ -119,11 +119,12 @@ class Search::SearchController < ApplicationController
 				search(search_in, options) 	
 			else
 				@current_page = options[:page]
-				@search_key = params[:term].gsub(/\\/,'')
+				@search_key = (params[:term] || params[:search_key]).gsub(/\\/,'')
 				generate_result_json unless @suggest
 			end
 
 			rescue Exception => e
+				@result_json = @result_json.to_json
 				Rails.logger.debug e.inspect
 				NewRelic::Agent.notice_error(e)
 		end
@@ -159,7 +160,7 @@ class Search::SearchController < ApplicationController
 				render :partial => 'search/search_sort.rjs'
 			end
 			format.json do
-				render :json => @result_json
+				render :json => @result_json[:results]
 			end
 			format.nmobile do
 				json="[" 
@@ -170,6 +171,11 @@ class Search::SearchController < ApplicationController
 				}
 				json << "]"
 				render :json => json
+			end
+			unless ["forums", "solutions"].include?(controller_name)
+				format.xml do
+					render_404
+				end
 			end
 		end
 
@@ -186,7 +192,7 @@ class Search::SearchController < ApplicationController
 		end
 
 		def initialize_search_parameters
-			@search_key = params[:term]
+			@search_key = params[:term] || params[:search_key]
 			initialize_search_sort
 			@result_json = { :results => [], :current_page => 1 }
 			@search_recursion_limit = 4

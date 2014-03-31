@@ -56,10 +56,8 @@ jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
-	if(threeSixtyPlayer && soundManager){
-		threeSixtyPlayer = new ThreeSixtyPlayer();
+	if((typeof soundManager != "undefined") && (typeof threeSixtyPlayer != "undefined")) {
 		soundManager.onready(threeSixtyPlayer.init);
-		jQuery.extend(threeSixtyPlayer.config, custom_options);
 	}
 	jQuery(".call_duration").each(function () {
 			if (jQuery(this).data("time") === undefined) { return; }

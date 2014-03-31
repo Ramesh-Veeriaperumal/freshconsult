@@ -4,8 +4,19 @@ class Search::SolutionsController < Search::SearchController
 
 	def related_solutions
 		article_suggest @ticket.subject
-		article_suggest @ticket.description if @search_results.blank?
-		render :layout => false
+		article_suggest @ticket.description if @result_set.blank?
+		respond_to do |format|
+			format.js do
+				render :layout => false
+			end
+			format.json do 
+				json = "["; sep=""
+			    @result_set.each do |article| 
+			      json << sep + article.to_mob_json[11..-2]; sep=","
+			    end
+			    render :json => json + "]"
+			end
+		end				
 	end
 
 	def search_solutions
@@ -64,5 +75,6 @@ class Search::SolutionsController < Search::SearchController
 
 		def load_ticket
 			@ticket = current_account.tickets.find_by_id(params[:ticket])
+			@ticket = current_account.tickets.find_by_display_id(params[:ticket]) if is_native_mobile?
 		end
 end

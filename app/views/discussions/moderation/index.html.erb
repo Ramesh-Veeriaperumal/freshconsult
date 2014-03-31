@@ -1,9 +1,11 @@
 <% content_for :layoutType do %>single<% end %>
 
 <div class="clearfix">
-	<div class="pull-right">
-		<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' %>
-	</div>
+	<% if (@posts.size > 0) %>
+		<div class="pull-right">
+			<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' %>
+		</div>
+	<% end %>
 	<h3 class="lead"><%= t('.title') %></h3>
 </div>
 

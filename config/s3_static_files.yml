@@ -12,8 +12,8 @@ test:
   <<: *defaults
 
 production:
-  access_key_id: AKIAJWGOEYKNTQ75K5TQ
-  secret_access_key: 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
+  access_key_id: AKIAIJC5RAU5BFF3FQKA
+  secret_access_key: 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
 
 staging:
   <<: *defaults

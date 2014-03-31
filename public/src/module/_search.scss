@@ -10,6 +10,11 @@
 }
 .search-page .pagearea{ padding: 0 0 0px; }
 
+.search-page .dropdown{
+	a, a:hover{
+		color:$default_txt_color;
+	}
+}
 .search-form{
 	border-bottom: 1px solid #bbb;	
 	position: relative;
@@ -160,7 +165,7 @@
 			.result-info{
 				display: inline-block;
 				max-width:$searchResultInfoWidth - 80px ; //Search-label width 50px + padding 30px
-				vertical-align: text-bottom;
+				vertical-align: bottom;
 				cursor: default;
 			}
 			&.customer-results .result-info{
@@ -174,7 +179,7 @@
 				width: 50px;
 			}
 			.search-label, .result-info{
-				line-height: 20px;
+				line-height: 18px;
 			}
 		}
 		.loadmore-wrap{

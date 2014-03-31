@@ -117,8 +117,8 @@ body, .feedback-wrapper{
 	display: none;
 }
 
-//Fix for Select2 scroll
-.custom_dropdown{
+//Fix for Select2 vertical scroll
+.custom_dropdown,.default_ticket_type{
 	overflow-y: hidden;
 }
 /* Embedded Widget styles */
@@ -207,7 +207,7 @@ body, .feedback-wrapper{
 }
 
 .form-widget{
-	.select2-container{ width:100%; }
+	.select2-container{ width:100%; vertical-align:baseline; } 
 	.custom_checkbox .controls{ margin-left: 0; }
 }
 

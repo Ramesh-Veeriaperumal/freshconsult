@@ -51,6 +51,7 @@ var CURRENT_USER = {
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>
 };
 
+var CHAT_AGENTS = '<%=chat_agents_list%>';
 var SITE_ID = '<%=account.chat_setting.display_id%>';
 var IS_TYPING = '<%=account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
@@ -178,7 +179,8 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             on: "<%= t('freshchat.texton') %>",
             off: "<%= t('freshchat.textoff') %>",
             copy_to_clipboard: "<%= t('freshchat.copy_to_clipboard') %>",
-            copied: "<%= t('freshchat.copied') %>"
+            copied: "<%= t('freshchat.copied') %>",
+            loading_new_archives: "<%= t('freshchat.loading_new_archives') %>"
         }
 </script>
     <!-- Chat related contents ends -->

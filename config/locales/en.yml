@@ -5205,6 +5205,7 @@ en:
     everyone: "Everyone"
     portal_desc: "Support your customers in real-time within your portal"
     portal_option_info: "Show chat widget for"
+    loading_new_archives: "Loading new archives..."
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

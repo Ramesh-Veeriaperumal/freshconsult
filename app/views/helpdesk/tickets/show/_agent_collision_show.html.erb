@@ -45,71 +45,62 @@
           },
           'ticket_view_channel' : function(message){
           }
-        }).setEvents({
-          'replyStart' : function()
-          {
-              jQuery('[data-note-type]').click((function(e){
-
-                window.replySubscription = this.faye_client.subscribe("<%= agent_collision_ticket_reply_channel(@ticket.display_id) %>",(function(message){
-                  agents.replying = [];
-                }).bind(this));
-                window.faye_realtime.faye_subscriptions.push(window.replySubscription);
-              }).bind(this));
-          },
-          'replyEnd' : function()
-          {
-              jQuery('.reply_agent_collision').click((function(){
-                if(window.replySubscription)
-                {
-                  window.replySubscription.cancel();
-                }
-                window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
-              }).bind(this));
-          },
-          'unloadOnLinkClick' : function()
-          {
-            jQuery('.link').click(function(){
-              if(window.faye_realtime.fayeClient)
-              {
-                for(var i=0;i < window.faye_realtime.faye_subscriptions.length;i++)
-                { 
-                  window.faye_realtime.faye_subscriptions[i].cancel();
-                }
-              }
-              window.faye_realtime.fayeClient.disconnect();
-            });
-          },
-          'notice_popover' : function()
-          {
-            jQuery("[rel=notice-popover]")      
-              .popover({
-                html: true,           
-                trigger: "manual",
-                content: function(){
-                  container = "";
-                  if(this.id != "notification"){
-                    agents[jQuery(this).data("object")].each(function(item){
-                      container += "<div>" + item.name + "</div>";
-                    });                         
-                  }else{
-                    container += "Click to refresh ticket...";
-                  }
-                  return container;
-                },
-                template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
-              }).live({ 
-                mouseenter: function(){  
-                  if(jQuery(this).hasClass("active"))
-                    jQuery(this).popover('show');
-                }, 
-                mouseleave: function(){
-                  jQuery(this).popover('hide');
-                }
-            });
-          }
-        } ).init({agent_names : <%= raw current_account.agent_names_from_cache.to_json %>, 
+        }).init({agent_names : <%= raw current_account.agent_names_from_cache.to_json %>, 
       current_user : "<%= escape_javascript(current_user.name) %>" 
       ,current_user_id : "<%= current_user.id %>"
+      });
+
+      jQuery('[data-note-type]').click(function(e){
+
+        window.replySubscription = window.FayeClient.subscribe("<%= agent_collision_ticket_reply_channel(@ticket.display_id) %>",(function(message){
+          agents.replying = [];
+        }).bind(this));
+        window.faye_realtime.faye_subscriptions.push(window.replySubscription);
+      })
+
+      jQuery('.reply_agent_collision').click(function(){
+        if(window.replySubscription)
+        {
+          window.replySubscription.cancel();
+        }
+        window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
+      })
+
+      jQuery('.link').click(function(){
+        if(window.faye_realtime.fayeClient)
+        {
+          for(var i=0;i < window.faye_realtime.faye_subscriptions.length;i++)
+          { 
+            window.faye_realtime.faye_subscriptions[i].cancel();
+          }
+        }
+        window.faye_realtime.fayeClient.disconnect();
+      });
+
+      jQuery("[rel=notice-popover]")      
+        .popover({
+          html: true,           
+          trigger: "manual",
+          content: function(){
+            container = "";
+            if(this.id != "notification"){
+              agents[jQuery(this).data("object")].each(function(item){
+                container += "<div>" + item.name + "</div>";
+              });                         
+            }else{
+              container += "Click to refresh ticket...";
+            }
+            return container;
+          },
+          template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
+        }).live({ 
+          mouseenter: function(){  
+            if(jQuery(this).hasClass("active"))
+              jQuery(this).popover('show');
+          }, 
+          mouseleave: function(){
+            jQuery(this).popover('hide');
+          }
       });
 
 

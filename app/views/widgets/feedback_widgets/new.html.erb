@@ -1,5 +1,4 @@
 <% responsive = widget_option(:responsive) %>
-<% disable_requester = widget_option(:disable_requester) || false%>
 <% disable_options = params[:disable]%>
 
 <% if(responsive != "no") %>
@@ -263,7 +262,7 @@
 
 	jQuery(document).ready(function () {
 
-		var disabled_options=<%= disable_options.to_json.html_safe%>
+		var disabled_options=<%= disable_options.to_json.html_safe%> || {}
 		jQuery.each(disabled_options,function(key,value){
 			if(key=="custom_field")
 			{
@@ -276,11 +275,20 @@
 				if(key == "requester" && value=="true"){
 					jQuery("#helpdesk_ticket_email").attr("readonly","readonly");
 				}
+				else if(key == "name" && value == "true"){
+					jQuery("input[name='helpdesk_ticket[name]']").attr("readonly","readonly");
+				}
 				else if(jQuery("#helpdesk_ticket_"+key) && value == "true"){
 					jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
 				}
 			}
 		});
+
+		var prepopulate_name = "<%= params[:helpdesk_ticket][:name] if params[:helpdesk_ticket]%>"
+
+		if(prepopulate_name){
+			jQuery("#helpdesk_ticket_email").trigger('focusout');
+		}
 
 		var embeddedWidget = jQuery("#widgetType").val();
 		if(embeddedWidget == "embedded") {
