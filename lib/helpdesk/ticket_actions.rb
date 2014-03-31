@@ -11,7 +11,11 @@ module Helpdesk::TicketActions
     ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
-    return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
+    # The below is_native_mobile? check is valid for iPhone app version 1.0.0 and Android app update 1.0.3 
+    # Once substantial amout of users have upgraded from these version, we need to remove 
+    # 1. json format in create method in lib/support_ticket_controller_method.rb
+    # 2. is_native_mobile? check in create method in lib/helpdesk/ticket_actions.rb
+    return false if need_captcha && !(current_user || is_native_mobile? ||verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
     return false unless @ticket.save_ticket
