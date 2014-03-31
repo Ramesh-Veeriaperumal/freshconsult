@@ -153,6 +153,7 @@ Autocompleter.MultiValue = Class.create({
     this.options = options || { };
     var outputElement = $(element);
     this.name = outputElement.name;
+    this.choices_visible = false;
     this.form = outputElement.up('form');
     this.dataFetcher = dataFetcher;
     this.active = false;
@@ -210,6 +211,7 @@ Autocompleter.MultiValue = Class.create({
   },
   
   show: function() {
+    this.choices_visible = true;
     if (!this.choicesHolderList.empty()) {
       if(Element.getStyle(this.choicesHolder, 'display')=='none') {        
         this.options.onShow(this.holder, this.choicesHolder);
@@ -221,6 +223,7 @@ Autocompleter.MultiValue = Class.create({
     this.stopIndicator();
     if(Element.getStyle(this.choicesHolder, 'display')!='none') {
       this.options.onHide(this.element, this.choicesHolder);
+      this.choices_visible = false;
     }                   
     if(this.iefix) Element.hide(this.iefix);
   },
@@ -292,7 +295,9 @@ Autocompleter.MultiValue = Class.create({
   
   onSearchFieldBlur: function(event) {
     this.addNewValueFromSearchField.bind(this).delay(0, event.element());    
-    this.selectEntry(); 
+    if (this.choices_visible) { 
+      this.selectEntry(); 
+    } 
   },
   
   addNewValueFromSearchField: function(searchFieldElement) {

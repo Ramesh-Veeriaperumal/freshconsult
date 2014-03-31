@@ -8,6 +8,7 @@
     sso_type = :none
   end%>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
+  <%= generate_breadcrumbs(params, f, :force_admin => true, :submit_text => "save", :redirect_to_admin => true) %>
   <%= f.error_messages %>
   <ul class="security-form">
     <li class="inline-field">
@@ -194,7 +195,7 @@
 		</div>
 	</script>
 
-  <div class="button-container">
+  <div class="button-container itil-hide">
     <%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
     <%= f.submit t('save'), :class => "btn btn-primary" %>
   </div>

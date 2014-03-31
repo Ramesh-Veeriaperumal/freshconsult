@@ -25,7 +25,7 @@ class Sanitize
     HTML_RELAXED = {
       :elements => %w[
         a abbr acronym address audio b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
-        dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
+        dt em font figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
         tfoot th thead time tr tt u ul var wbr span iframe source
       ],
@@ -50,7 +50,8 @@ class Sanitize
         'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
         'source'     => ['src', 'type'],
         'audio'      => ['controls', 'width', 'height'],
-        'pre'        => ['rel','code-brush']
+        'pre'        => ['rel','code-brush'],
+        'font'       => ['color']
       },
 
       :protocols => {

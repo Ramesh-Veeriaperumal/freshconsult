@@ -40,7 +40,7 @@ gem "ruby-openid-apps-discovery", "1.2.0"
 gem "twilio-ruby"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
-gem "ruby-saml", "0.7.2"
+gem "ruby-saml", "0.8.1"
 
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
@@ -149,6 +149,7 @@ group :test do
   gem "autotest-rails", "4.1.0"
   gem "faker", "~> 1.0.1"
   gem "simplecov", "~> 0.7.1"
+  gem "database_cleaner"
 end
 
 group :assets do

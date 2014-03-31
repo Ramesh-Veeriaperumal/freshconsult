@@ -4,26 +4,26 @@
     var settings = $.extend({ width:false, direction:'left', duration:"faster" }, options);
 
     return this.each(function() {
-		$this = $(this)
-		$slider = $($this.attr("href"))
-		$parent = $($this.data("parent"))
-		$slider.css({'visibility':'hidden', 'display':'block'})//display:none have to be clear for calculate correct width
-		$parent.show() 
+		$this = $(this);
+		$slider = $($this.attr("href"));
+		$parent = $($this.data("parent"));
+		$slider.css({'visibility':'hidden', 'display':'block'});//display:none have to be clear for calculate correct width
+		$parent.show();
 
-		var el = get_common_ancestor($slider, $parent)
-		var parent_width = $parent.outerWidth(true)
-		var parent_height = Math.max($parent.outerHeight(true), $slider.outerHeight(true))
-		var org_width = (!settings.width) ? $slider.outerWidth(true) : settings.width
+		var el = get_common_ancestor($slider, $parent);
+		var parent_width = $parent.outerWidth(true);
+		var parent_height = Math.max($parent.outerHeight(true), $slider.outerHeight(true));
+		var org_width = (!settings.width) ? $slider.outerWidth(true) : settings.width;
 
-		$(el).css({'position':'relative', 'overflow':'hidden', 'padding':'0'}).data("sliderOpen", true)
-		$slider.css({'left':"-"+org_width+"px", 'position':'absolute'})
+		$(el).css({'position':'relative', 'overflow':'hidden', 'padding':'0'}).data("sliderOpen", true);
+		$slider.css({'left':"-"+org_width+"px", 'position':'absolute'});
 		$parent.css({
 			'left':"0", 
 			'position':'relative', 
 			'width': org_width+parent_width, 
 			'min-height': parent_height,
 			'height':'auto !important'
-		})
+		});
 
 		$this.live("click", function(ev){
 			ev.preventDefault()

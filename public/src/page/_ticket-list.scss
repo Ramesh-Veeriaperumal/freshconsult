@@ -320,6 +320,7 @@
 	}		 
 	td{
 		vertical-align:top;
+		position:relative;
 		padding: 6px 10px;
 		font-size:12px;
 		line-height: 16px;
@@ -459,6 +460,9 @@
       width:auto;
       padding-left:58px;
       line-height:  16px;
+      &.user-page {
+      	padding-left: 5px;
+      }
       .preview_pic{
       	*position: static;
          margin:0px;

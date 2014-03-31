@@ -56,5 +56,10 @@
 			}
 		});
 	<% end %>
+	<script type="text/javascript" src="https://js.braintreegateway.com/v1/braintree.js"></script>
+	<script type="text/javascript">
+		var braintree = Braintree.create("<%= BraintreeConfig["client_side_encryption_key"][Rails.env] %>")
+		braintree.onSubmitEncryptForm("credit-card-form");
+	</script>
 
 <% end %>

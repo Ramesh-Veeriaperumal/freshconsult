@@ -1,0 +1,19 @@
+<% unless @results.blank? %>
+	<div class="title"><%= t('portal.topic.matching_results') %></div>
+	<div class="related-topics">
+		<% @results.each do |result| %>
+		<div class="suggested_results">
+			<i class="icon-topic-list pull-left"></i>
+			<div class="topic-title">
+				<div><%= link_to result["title"].html_safe, result["url"] %></div>
+				<div class="forum-name">
+					<%= t('portal.topic.in_forum', :forum_name => result["group"] ) %>
+				</div>
+				<div class="desc">
+					<%= result["desc"]  %>
+				</div>
+			</div>
+		</div>
+		<% end %>
+	</div>
+<% end %>

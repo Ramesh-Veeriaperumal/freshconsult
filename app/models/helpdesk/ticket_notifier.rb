@@ -101,13 +101,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      params[:attachments].each do |a|
-        attachment  :content_type => a.content_content_type,
-                    :body => File.read(a.content.to_file.path, :mode => "rb"),
-                    :filename => a.content_file_name
-      end
-    end
+    
+    params[:attachments].each do |a|
+      attachment  :content_type => a.content_content_type,
+                  :body => File.read(a.content.to_file.path, :mode => "rb"),
+                  :filename => a.content_file_name
+    end    
   end
 
   def reply(ticket, note , options={})
@@ -146,12 +145,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      note.all_attachments.each do |a|
-        attachment  :content_type => a.content_content_type, 
-                    :body => File.read(a.content.to_file.path, :mode => "rb"), 
-                    :filename => a.content_file_name
-      end
+    note.all_attachments.each do |a|
+      attachment  :content_type => a.content_content_type, 
+                  :body => File.read(a.content.to_file.path, :mode => "rb"), 
+                  :filename => a.content_file_name
     end
   end
   

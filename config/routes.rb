@@ -74,7 +74,7 @@
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
     freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
-    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :get, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
+    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
     freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
@@ -511,7 +511,10 @@
 
     # Search for the portal, can search Articles, Topics and Tickets
     support.resource :search, :controller => 'search', :only => :show,
-      :member => { :solutions => :get, :topics => :get, :tickets => :get }
+      :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
+    support.resource :search do |search|
+      search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+    end
 
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
@@ -591,6 +594,7 @@
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
+  map.connect '/all_agents', :controller => 'agents', :action => 'list'
   map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
 end

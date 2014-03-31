@@ -72,7 +72,7 @@
 		background-color: $endcall-background;
 	}
 //	transfer call starts
-	.ffone-transfer-call { 
+	.ffone_available_agents { 
 		max-height: 380px;
 		width: 260px;
 		background-color: $transfer-call-background;
@@ -82,7 +82,7 @@
 			@include border-radius(0);
 			height: 46px;
 			border: none;
-			border-bottom: 3px solid $transfer-search-border;
+			border-bottom: 1px solid $transfer-search-border;
 			padding-left: 40px;
 		}
 	}

@@ -18,7 +18,7 @@
     }
  }
   var CLIENT_DEFAULT_OPTIONS = {
-      retry: 10,
+      retry: 1,
       timeout: 120
     },
     FreshdeskNode = function(){

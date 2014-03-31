@@ -1,0 +1,173 @@
+// --------------------------------------------------
+// Popovers
+// --------------------------------------------------
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: $zindexPopover;
+  padding: 6px;
+  display: none;
+  .popover-inner {
+    background: $popoverStroke;
+    background: rgba($popoverStroke, 0.8);
+    padding: 4px 1px 1px;
+    overflow: hidden;
+    @include min-width(230px);
+    @include border-radius($popover-radius);
+    @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4));
+  }
+  .popover-title {
+    margin: 0; // reset heading margin
+    background-color: $popoverTitleBackground;
+    border-bottom: 1px solid darken($popoverTitleBackground, 5%);
+    padding: 9px 15px;
+    line-height: 1;
+    @include border-radius($popover-radius $popover-radius 0 0);
+  }
+  .popover-content {
+    overflow:hidden; // fix for Contact hover
+    background-color: #ffffff;
+    padding: 14px;
+    @include border-radius($popover-radius);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+    p, ul, ol{
+      margin-bottom: 0;
+    }
+  }
+
+  .arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    &:after {
+      content:" ";
+      display:block;
+      position: absolute;
+      width:0; height:0;
+    }
+  }
+  &.above{
+    .arrow {
+      bottom: -1px;
+      left: 50%;
+      margin-left: -$popover-arrow-size;
+      border-left: $popover-arrow-size solid transparent;
+      border-right: $popover-arrow-size solid transparent;
+      border-top: $popover-arrow-size solid $popoverStroke;
+      &:after {
+        bottom: 1px;
+        left: 50%;
+        margin-left: -$popover-arrow-size;
+        border-left: $popover-arrow-size solid transparent;
+        border-right: $popover-arrow-size solid transparent;
+        border-top: $popover-arrow-size solid $popover-arrow-color;
+        z-index: 2000;
+      }
+    }
+  }
+  &.below{
+    .arrow {
+      top: -2px;
+      left: 50%;
+      margin-left: -$popover-arrow-size;
+      border-left: $popover-arrow-size solid transparent;
+      border-right: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid $popoverStroke;
+      border-bottom: $popover-arrow-size solid rgba($popoverStroke, 0.8);
+    }
+  }
+  &.belowLeft{
+    .arrow {
+      top: -2px;
+      left: 90%;
+      margin-left: -$popover-arrow-size;
+      border-left: $popover-arrow-size solid transparent;
+      border-right: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid $popoverStroke;
+      border-bottom: $popover-arrow-size solid rgba($popoverStroke, 0.8);
+    }
+  }
+  &.left{
+    .arrow {
+      top: 50%;
+      right: -1px;
+      margin-top: -$popover-arrow-size;
+      border-top: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid transparent;
+      border-left: $popover-arrow-size solid  $popoverStroke;
+      &:after {
+        top: 0px;
+        right: 1px;
+        margin-top: -$popover-arrow-size;
+        border-top: $popover-arrow-size solid transparent;
+        border-bottom: $popover-arrow-size solid transparent;
+        border-left: $popover-arrow-size solid $popover-arrow-color;
+        z-index: 2000;
+      }
+    }
+  }
+  &.topLeft{
+    .arrow {
+      top: 30px;
+      right: -1px;
+      margin-top: -$popover-arrow-size;
+      border-top: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid transparent;
+      border-left: $popover-arrow-size solid  $popoverStroke;
+      &:after {
+        top: 0px;
+        right: 1px;
+        margin-top: -$popover-arrow-size;
+        border-top: $popover-arrow-size solid transparent;
+        border-bottom: $popover-arrow-size solid transparent;
+        border-left: $popover-arrow-size solid $popover-arrow-color;
+        z-index: 2000;
+      }
+    }
+  }
+  &.right{
+    .arrow {
+      top: 50%;
+      left: -2px;
+      margin-top: -$popover-arrow-size;
+      border-top: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid transparent;
+      border-right: $popover-arrow-size solid $popoverStroke;
+      &:after {
+        top: 0px;
+        left: 1px;
+        margin-top: -$popover-arrow-size;
+        border-top: $popover-arrow-size solid transparent;
+        border-bottom: $popover-arrow-size solid transparent;
+        border-right: $popover-arrow-size solid $popover-arrow-color;
+        z-index: 2000;
+      }
+    }
+  }
+  &.topRight{
+    .arrow {
+      top: 30px;
+      left: -2px;
+      margin-top: -$popover-arrow-size;
+      border-top: $popover-arrow-size solid transparent;
+      border-bottom: $popover-arrow-size solid transparent;
+      border-right: $popover-arrow-size solid $popoverStroke;
+      &:after {
+        top: 0px;
+        left: 1px;
+        margin-top: -$popover-arrow-size;
+        border-top: $popover-arrow-size solid transparent;
+        border-bottom: $popover-arrow-size solid transparent;
+        border-right: $popover-arrow-size solid $popover-arrow-color;
+        z-index: 2000;
+      }
+    }
+  }
+  .negtive-margin{
+    margin:-27px;
+  }
+}

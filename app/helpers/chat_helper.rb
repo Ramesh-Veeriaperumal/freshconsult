@@ -11,8 +11,13 @@ module ChatHelper
   def portal_chat_enabled?
     account = current_account
     chat_setting = account.chat_setting
-    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting.show_on_portal && 
+    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting && chat_setting.show_on_portal && 
                                                   (!chat_setting.portal_login_required || logged_in?)
+  end
+
+  def multiple_business_hours?
+    feature?(:multiple_business_hours) && 
+      current_account.business_calendar.count > 1
   end
 
   def chat_trial_expiry
@@ -26,6 +31,7 @@ module ChatHelper
 
   def freshchat_setting
     chat_setting = current_account.chat_setting
+    business_calendar = chat_setting.business_calendar.to_json({:only => [:time_zone, :business_time_data, :holiday_data]})
     preferences = chat_setting.preferences
     if preferences
       window_color = preferences['window_color']
@@ -48,6 +54,7 @@ module ChatHelper
       :prechat_form => chat_setting.prechat_form,
       :prechat_mail => chat_setting.prechat_mail, :prechat_phone => chat_setting.prechat_phone,  
       :proactive_chat => chat_setting.proactive_chat, :proactive_time => chat_setting.proactive_time, 
+      :business_calendar => business_calendar,
       :show_on_portal => chat_setting.show_on_portal, :portal_login_required => chat_setting.portal_login_required,
       :weburl => current_account.full_domain, :nodeurl => ChatConfig["communication_url"][Rails.env],
       :debug => ChatConfig["chat_debug"][Rails.env], :agent_joined_msg => t("freshchat.agent_joined_msg") ,

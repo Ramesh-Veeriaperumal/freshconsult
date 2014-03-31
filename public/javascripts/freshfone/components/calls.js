@@ -25,7 +25,7 @@ var FreshfoneCalls;
 			this.errorcode = null;
 			this.transfered = false;
 			this.recordingInstance = null;
-			$('#transfer_call .transfering_call').hide();
+			$('#freshfone_available_agents .transfering_call').hide();
 		},
 		$container: $('.freshfone_content_container'),
 		loadDependencies: function (freshfoneuser, timer, freshfoneUserInfo) {
@@ -58,7 +58,7 @@ var FreshfoneCalls;
 		outgoingNumber: function () { return numbersHash[this.outgoingNumberId()]; },
 
 		$dialpadButton: $('.freshfone_widget .showDialpad'),
-		$transferAgent: $('#transfer_call .transfering_call'),
+		$transferAgent: $('#freshfone_available_agents .transfering_call'),
 		$number: $("#number"),
 //		isKeyPressAllowed: function (char) {
 //			return ((char >= 48 && char <= 57) || ($.inArray(char, [35, 42, 43]) >= 0)) &&

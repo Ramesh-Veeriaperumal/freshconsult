@@ -8,14 +8,45 @@ if ENV["RAILS_ENV"] == "test"
     t.status 2
     t.urgent 0
     t.deleted 0
-    t.to_email "test@testind.com"
+    t.to_email Faker::Internet.email
     t.ticket_type "Question"
-    t.ticket_body { Factory.next :ticket_body }
     t.display_id 1
     t.trained 0
     t.isescalated 0
     t.priority 1
-    t.subject "sample ticket creation"
+    t.subject Faker::Lorem.sentence(3)
+  end
+
+  Factory.define :time_sheet, :class => Helpdesk::TimeSheet do |t|
+    t.start_time Time.zone.now
+    t.time_spent 0
+    t.timer_running false
+    t.billable false
+    t.note Faker::Lorem.sentence(3)
+    t.executed_at Time.zone.now
+    t.workable_type "Helpdesk::Ticket"
+  end
+
+  Factory.define :reminder, :class => Helpdesk::Reminder do |r|
+    r.body Faker::Lorem.sentence(3)
+    r.deleted false
+  end
+
+  Factory.define :flexifield_def_entry, :class => FlexifieldDefEntry do |f|
+    f.flexifield_order 3
+    f.flexifield_coltype "paragraph"
+  end
+
+  Factory.define :ticket_field, :class => Helpdesk::TicketField do |t|
+    t.description Faker::Lorem.sentence(3)
+    t.active true
+    t.field_type "custom_paragraph"
+    t.position 3
+    t.required false
+    t.visible_in_portal true
+    t.editable_in_portal true 
+    t.required_in_portal false
+    t.required_for_closure false
   end
 
   Factory.define :agent do |a|
@@ -75,11 +106,16 @@ if ENV["RAILS_ENV"] == "test"
     f.time_zone "Chennai"
     f.active 1
     f.user_role 1
-    f.crypted_password "8e24071f6bb54583777852f7a11ba7d4b41317629c8c07af44cf96a8562810a69fd660250821acac3e37f5cb286ae6c52e2fadac96035ade19bcb2f02771cf73"
-    f.single_access_token "xtoQaHDQ7TtTLQ5OKt1"
-    f.persistence_token "cf2e1c6adcad74585f3a9004b911da05c38dcbb2c6dacdfb326d9659aaada194308988bd93d8d398d3694c1b5b0f3197be49f03b696cf2d6b299356daafb3199"
+    f.crypted_password "5ceb256c792bcf9dab05c8a00775fc13b42a6abd516f130acd76ab81af046d49a1fc5062bec4f27b77580348de6d8c510c7ff6b29f720694ff39a5bfd69c604d"
+    f.sequence(:single_access_token) { |n| "#{Faker::Lorem.characters(19)}#{n}" }
+    f.password_salt "Hd8iUst0Jr5TWnulZhgf"
+    f.sequence(:persistence_token) { |n| "#{Faker::Lorem.characters(127)}#{n}" }
     f.delta 1
     f.language "en"
+  end
+
+  Factory.define :customer do |c|
+    c.name "Atlantic City"
   end
 
 
@@ -131,7 +167,6 @@ if ENV["RAILS_ENV"] == "test"
     t.search_keys ["freshdesk", "@freshdesk"]
   end
 
-
   Factory.define :forum_category  do |c|
     c.sequence(:name) { |n| "Test Category #{n}"}
     c.sequence(:description) { |n| "This is a test category #{n}."}
@@ -150,8 +185,27 @@ if ENV["RAILS_ENV"] == "test"
     t.sequence(:body_html) { |n| "<p>This is a new topic #{n}.</p>"}
   end
 
-
   Factory.define :post do |p|
     p.sequence(:body_html) { |n| "<p>This is a new post #{n}.</p>"}
+  end
+
+  Factory.define :solution_categories, :class => Solution::Category do |t|
+    t.name "TestingSolutionCategory"
+    t.description "Test for Solution Categories"
+    t.is_default true
+  end
+
+  Factory.define :solution_folders, :class => Solution::Folder do |t|
+    t.name "TestingSolutionCategoryFolder"
+    t.description "Test for Solution Categories Folders"
+    t.visibility 1
+  end
+
+  Factory.define :solution_articles, :class => Solution::Article do |t|
+    t.title "TestingSolutionCategoryFolder"
+    t.description "test article"
+    t.folder_id 1
+    t.status 2
+    t.art_type 1
   end
 end

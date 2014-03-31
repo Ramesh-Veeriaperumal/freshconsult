@@ -199,7 +199,7 @@ module TicketsFilter
                                 and helpdesk_ticket_statuses.status_id NOT IN 
                                 (#{RESOLVED},#{CLOSED})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
-        :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED , false],
+        :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end

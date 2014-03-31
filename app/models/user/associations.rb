@@ -80,6 +80,8 @@ class User < ActiveRecord::Base
   has_many :moderatorships, :dependent => :destroy
   has_many :forums, :through => :moderatorships, :order => "#{Forum.table_name}.name"
   has_many :posts
+
+  has_many :recent_posts, :class_name => 'Post', :order => "created_at desc", :limit => 5
   has_many :topics
   has_many :monitorships
   has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :monitorable, :source_type => "Topic"

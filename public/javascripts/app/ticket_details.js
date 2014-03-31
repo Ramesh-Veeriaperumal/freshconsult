@@ -1094,11 +1094,8 @@ var scrollToError = function(){
       var new_status = jQuery(this).data('statusVal'); 
       changeStatusTo(new_status);
 
-      var ticket_properties_form = $('#custom_ticket_form');
-      if(ticket_properties_form.valid()) {
-      	ticket_properties_form.trigger('submit');
+      if($('#custom_ticket_form').valid())
       	$(this).parents('form').trigger('submit');
-      }
       else
       	scrollToError();
 
@@ -1180,7 +1177,6 @@ var scrollToError = function(){
 				$.scrollTo('#show_more');
 			} else if(TICKET_DETAILS_DATA['scroll_to_last']) {
 				$.scrollTo('[rel=activity_container] .conversation:last');
-				$('#scroll-to-top').show();
 			}
 		}
 	}

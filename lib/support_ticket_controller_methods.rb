@@ -36,6 +36,10 @@ module SupportTicketControllerMethods
     @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
                           ( privilege?(:client_manager) && @ticket.requester.customer == current_user.customer))))
   end
+
+  def visible_ticket?
+    !(@ticket.spam || @ticket.deleted)
+  end
   
   def show_survey_form
     render :partial => "/support/shared/survey_form" if customer_survey_required?

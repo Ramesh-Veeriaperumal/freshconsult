@@ -70,6 +70,10 @@ class Solution::ArticleDrop < BaseDrop
     source.excerpts.desc_un_html
   end
 
+  def related_articles
+    source.related(@portal.source).compact
+  end
+
   # def feedback_form
   #   ActionView::Base.new(Rails::Configuration.new.view_path).render_to_string :partial => 
   # end

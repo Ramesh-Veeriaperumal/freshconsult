@@ -2843,13 +2843,13 @@ $collision_delay: 1s;
 
 }
 
-#sticky_header.stuck {
+.tkt-details-sticky.is_stuck {
 	.status_info {
 		visibility: visible;
 	}
 }
 
-#sticky_header.collapsed {
+.tkt-details-sticky.collapsed {
 	.show_on_collapse { display: block; }
 	.hide_on_collapse { display: none; }
 }
