@@ -20,10 +20,21 @@ module SupportTicketControllerMethods
   end
   
   def create
+    # The below json is valid for iPhone app version 1.0.0 and Android app update 1.0.3 
+    # Once substantial amout of users have upgraded from these version, we need to remove 
+    #  1. json format in create method in lib/support_ticket_controller_method.rb
+    #  2. is_native_mobile? check in create method in lib/helpdesk/ticket_actions.rb
     if create_the_ticket(feature?(:captcha))
-      flash.keep(:notice)
-      flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
-      redirect_to redirect_url
+      respond_to do |format|
+        format.html {
+          flash.keep(:notice)
+          flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
+          redirect_to redirect_url
+        } 
+        format.json {
+          render :json => {:success => true}
+        }
+      end
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
       @params = params
