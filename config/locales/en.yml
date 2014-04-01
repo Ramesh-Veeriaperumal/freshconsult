@@ -4523,7 +4523,7 @@ en:
   saving: "Saving..."
   draft: "Draft"
   last_draft: "Your last draft"
-  clear_draft_text: "Are you sure you want to clear saved draft?"
+  clear_draft_text: "If you cancel, your saved draft for this ticket will be discarded. Are you sure?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
   canned_folders:
