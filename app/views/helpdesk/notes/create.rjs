@@ -10,3 +10,6 @@ else
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
 	page << "trigger_event('note_created', #{to_event_data(@item)} );"
 end
+
+# Replacing the new quoted text back into the reply quoted textarea
+page.replace_html 'cnt-reply-quoted', quoted_text(@parent)

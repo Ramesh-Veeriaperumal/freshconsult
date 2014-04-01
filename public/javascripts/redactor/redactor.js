@@ -113,7 +113,8 @@ var RLANG = {
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?',
 	codeEditor:'Code Snippet',
 	codeEditor_html:'Enter code snippet and select language',
-	label_lang: 'Language : '
+	label_lang: 'Language : ',
+	show_quoted_text: 'Show Quoted text'
 };
 
 var DEFAULT_LANG = jQuery.extend({}, RLANG);
@@ -851,6 +852,13 @@ Redactor.prototype = {
 		this.$editor.on('focus', function() {
 			$(this).parent().addClass("redactor_focus");
 		})
+
+		if(this.$el.data("quotedTextarea")){
+			$(this).quotedtext(this);
+			this.hasQuotedText = true;
+		}else{
+			this.hasQuotedText = false;
+		}
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -976,7 +984,7 @@ Redactor.prototype = {
 					}
 					else
 					{
-		        this.shortcuts(e, 'undo'); // Ctrl + z  
+		        		this.shortcuts(e, 'undo'); // Ctrl + z  
 					}
 				}
 				else if(shift)
@@ -1071,7 +1079,9 @@ Redactor.prototype = {
 				}
 				else if (pre === false)
 				{
-					this.shortcuts(e, 'indent'); // Tab
+					e.preventDefault();
+					// Currently disabling the default tab functionality 
+					// this.shortcuts(e, 'indent'); // Tab
 				}
 				else
 				{
@@ -1266,8 +1276,12 @@ Redactor.prototype = {
 		{
 			this.dropdowns[i].remove();
 			delete(this.dropdowns[i]);
-		}			
-		
+		}
+
+		// Destroy for quoted text
+		if(this.hasQuotedText){
+			this.$quoted.destroy();
+		}
 	},
 	// end API functions
 
@@ -1503,17 +1517,22 @@ Redactor.prototype = {
             }
             else if((cmd == "undo" || cmd == "redo" ) && ($.browser.msie == true))
             {
-
                 document.execCommand(cmd);
             }
             else
             {
-            	document.execCommand(cmd, false, param);    
+            	document.execCommand(cmd, false, param);                
+
+                if((cmd == "undo" || cmd == "redo") && this.hasQuotedText){
+                	this.$quoted.checkQuotedText();
+                }                
+
             	if(cmd == "redo"){  
             	   	if($('pre[rel="highlighter"]').length > 0){ 
             			$('pre[rel="highlighter"]').attr("contenteditable",false);
             		}
             	}
+
             }
 			}	
 			if (cmd === 'inserthorizontalrule')
@@ -4155,8 +4174,29 @@ Redactor.prototype = {
 		if($.trim($(element).css(css_property)) == $.trim($(element).parent().css(css_property))) {
 			$(element).css(css_property,'');
 		}
+	},
+	placeCaretAtEnd: function() {
+		var el = this.$editor.get(0);
+	    el.focus();
+	    if (typeof window.getSelection != "undefined"
+	            && typeof document.createRange != "undefined") {
+	        var range = document.createRange();
+	        range.selectNodeContents(el);
+	        range.collapse(false);
+	        var sel = window.getSelection();
+	        sel.removeAllRanges();
+	        sel.addRange(range);
+	    } else if (typeof document.body.createTextRange != "undefined") {
+	        var textRange = document.body.createTextRange();
+	        textRange.moveToElementText(el);
+	        textRange.collapse(false);
+	        textRange.select();
+	    }
+	},
+	insertHtmlAtLast: function(html){
+		this.placeCaretAtEnd();
+		this.insertHtml(html);
 	}
-	
 };
 
 
@@ -4213,6 +4253,75 @@ $.fn.insertExternal = function(html)
 };
 
 })(jQuery);
+ 
+/* Plugin Quoted text */ 
+(function($){
+	
+	"use strict";
+	
+	// Initialization	
+	$.fn.quotedtext = function(options){		
+		return this.each(function() {
+			var obj = new Quotedtext(this, options);
+			obj.init();
+		});
+	};
+ 
+	// Options and variables	
+	function Quotedtext(redactor, options) {
+		this.opts = $.extend({		
+			class_name: "q-marker",
+			template: "<div class='wrap-marker'></div>",
+			tooltip_text: "Show quoted text"
+		}, options);
+ 
+		this.$redactor 			= redactor;
+		this.$redactor.$quoted 	= this;
+		this.$quoted_area 		= $(this.$redactor.$el.data("quotedTextarea"));
+		this.$marker 			= $("<span class='"+this.opts.class_name+" tooltip' title='"+this.opts.tooltip_text+"' />")
+		this.$template 			= $(this.opts.template).append(this.$marker);
+		this.$form 				= this.$redactor.$el.get(0).form;
+		this.$draft_added       = false;
+	}
+ 
+	Quotedtext.prototype = {
+		init: function(){
+			this.$template.insertAfter(this.$redactor.$editor);
+			this.checkQuotedText();
+			jQuery(this.$form).on("submit.quotedtext", $.proxy(this.syncQuotedText, this))
+			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
+		},
+		insertQuotedText: function(){
+			this.$redactor.insertHtmlAtLast(this.getQuotedText());
+			this.$redactor.syncCode();
+			this.checkQuotedText();
+		},
+		checkQuotedText: function(){			
+			this.$draft_added = this.$redactor.$editor.find(".freshdesk_quote").get(0) ? true : false
+			this.$template.toggle(!this.$draft_added);
+		},
+		syncQuotedText: function(){
+			if(!this.$draft_added){
+				var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
+				this.$redactor.$el.val(full_text);
+			}
+		},
+		getQuotedText: function(){
+			return this.$quoted_area.val() + "<p><br /></p>";
+		},
+		reset: function(){
+			this.$draft_added = false;
+		},
+		destroy: function(){
+			this.$draft_added = false;
+			this.$template.remove();
+			jQuery(this.$form).off(".quotedtext");
+			jQuery(this.$redactor.$box).off(".quotedtext");
+		}
+	};
+ 
+})(window.jQuery);
+
 /*
 	Plugin Drag and drop Upload v1.0.2
 	http://imperavi.com/ 
