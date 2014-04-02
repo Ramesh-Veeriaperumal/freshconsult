@@ -530,7 +530,7 @@
 		}
 	}
 	.search-content{
-		width: 315px;
+		width: 355px;
 		padding-right: 5px;
 		margin-top: 2px;
 		margin-bottom: 10px;
@@ -539,8 +539,9 @@
 			top: 35px !important;
 		}
 		.searchicon{
-			right: 14px;
-			top:32px;
+			right: 10px;
+			top: 6px;
+			height: 14px;
 		}
 		#search-type{
 			width: auto;
@@ -548,6 +549,7 @@
 			float: left;
 		}
 		.searchticket{
+			position: relative;
 			display: block;
 			width: 68%;
 			float: right;
