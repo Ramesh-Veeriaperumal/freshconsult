@@ -13,10 +13,10 @@
 			<div class="span6"><h3 class="title"><%= t('freshfone.admin.freshfone_numbers') %></h3></div>
 			<div class="span6 pull-right pagination-right header_buttons align-right" >
 				<% if @numbers.any? %>
-			 		<%# form_tag(toggle_freshfone_admin_freshfone_path, 
+			 		<% form_tag(toggle_freshfone_admin_freshfone_path, 
 			 					{:class => "toggle_freshfone_form", :method => :put}) do %>
-						<%#= check_box_tag :toggle_freshfone, 1, feature?(:freshfone), :class => 'toggle_freshfone' %>
-					<%# end %>
+						<%= check_box_tag :toggle_freshfone, 1, feature?(:freshfone), :class => 'toggle_freshfone' %>
+					<% end %>
 					<%= link_to t('freshfone.admin.numbers.buy'), search_admin_freshfone_path, 
 								:class => "btn btn-primary" if feature?(:freshfone) %>
 				<% end %>
