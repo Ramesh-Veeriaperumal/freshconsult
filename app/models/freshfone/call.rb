@@ -66,11 +66,6 @@ class Freshfone::Call < ActiveRecord::Base
 
 	default_scope :order => "created_at DESC"
 	
-	named_scope :active_calls, :conditions => [
-		'call_status = ? AND updated_at >= ?', 
-		CALL_STATUS_HASH[:default], 4.hours.ago.to_s(:db)
-	]
-
 	named_scope :filter_by_call_sid, lambda { |call_sid|
 		{ :conditions => ["call_sid = ? or dial_call_sid = ?", call_sid, call_sid], :limit => 1 }
 	}

@@ -36,14 +36,6 @@ class Freshfone::CallActions
 			:params => params
 		)
 	end
-
-	def register_direct_dial(number)
-		current_call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
-		if current_call
-			current_call.customer_data[:direct_dial_number] = number
-			current_call.save
-		end
-	end
 	
 	def register_call_transfer(outgoing=false)
 		self.outgoing = outgoing

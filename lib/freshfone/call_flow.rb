@@ -12,10 +12,10 @@ class Freshfone::CallFlow
   delegate :freshfone_users, :to => :current_account
 	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :block_incoming_call,
-          :initiate_recording, :initiate_voicemail, :initiate_outgoing, :connect_caller_to_numbers,
+          :initiate_recording, :initiate_outgoing, :connect_caller_to_numbers,
           :return_non_availability, :return_non_business_hour_call, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
-           :register_direct_dial, :to => :call_actions
+           :to => :call_actions
 
   def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
     self.params = params
@@ -57,8 +57,6 @@ class Freshfone::CallFlow
   end
   
   def call_user_with_number(number)
-    return initiate_voicemail if direct_dialled_number_busy?(number)
-    register_direct_dial(number)
     self.numbers = [number]
     connect_caller_to_numbers
   end
@@ -112,14 +110,6 @@ class Freshfone::CallFlow
         :type => type,
         :performer => performer.to_s
       }
-    end
-
-    def direct_dialled_number_busy?(number)
-      calls_today = current_account.freshfone_calls.active_calls
-      calls_today.each do |call|
-        return true if call.direct_dial_number == number
-      end
-      false
     end
 
     def all_agents_busy?
