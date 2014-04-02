@@ -239,6 +239,11 @@
 		}
 	}
 
+	jQuery('[id^="text"][id$="_time"],[id^="select"][id$="_time"]').each(function(){
+		var field = jQuery(this).prop('id').match(/[0-9].+/);
+		updateInSeconds(field);
+    });
+
 	jQuery(document).ready(function(){
 		jQuery('.sla-time-col a, .sla-time-col div input').prop('tabIndex','-1');
 
