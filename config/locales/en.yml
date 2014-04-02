@@ -3739,6 +3739,9 @@ en:
     twenty_four: "From yesterday"
     custom_filter: "Set date"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
+    created_time: Created time
+    resolved_time: Resolved time
+    closed_time: Closed time
     created_at: created
     resolved_at: resolved
     closed_at: closed
