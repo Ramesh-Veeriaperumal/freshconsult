@@ -59,7 +59,7 @@
 		</div>
 	</div>	
 </section>
-{% if article.related_articles.size > 1 %}
+{% if article.related_articles.size > 0 %}
 <section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">
