@@ -10,7 +10,7 @@ end
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
   task :ticket_load => :environment do
-    
+    include Cache::Memcache::WhitelistUser
     puts "Check for abnormal activities started at  #{Time.now}"
     shards = Sharding.all_shards
     shards.each do |shard_name|
@@ -43,11 +43,9 @@ def execute_sql_on_slave(query_str)
 end
 
 def check_for_spam(table,column_name, id_limit, threshold,shard_name)
-    require 'cache/memcache/whitelist_user'
-    include Cache::Memcache::WhitelistUser
     current_time = Time.zone.now #Should it be Time.now?!?!
     whitelisted_users = WhitelistUser.whitelist_users.join(",")
-    
+    whitelisted_users = "0" if whitelisted_users.blank?
     query_str = <<-eos
       select #{column_name},count(*) as total, account_id from #{table} where created_at 
       between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and #{column_name} IS NOT NULL
