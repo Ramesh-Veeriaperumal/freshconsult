@@ -147,7 +147,7 @@ module Helpdesk::TicketsHelper
     quoted_text = ""
 
     if quoted or forward
-      quoted_text = quoted_text(item)
+      quoted_text = quoted_text(item, forward)
     else
       default_reply = parsed_reply_template(ticket, signature)
     end 
@@ -169,10 +169,10 @@ module Helpdesk::TicketsHelper
     default_reply
   end
 
-  def quoted_text(item)
+  def quoted_text(item, forward = false)
     # item can be note/ticket 
     # If its a ticket we will be getting the last note from the ticket
-    @last_item = (item.is_a? Helpdesk::Ticket) ? (item.notes.visible.public.last || item) : item
+    @last_item = (item.is_a?(Helpdesk::Note) or forward) ? item : (item.notes.visible.public.last || item)
 
     %(<div class="freshdesk_quote">
         <blockquote class="freshdesk_quote">On #{formated_date(@last_item.created_at)}
