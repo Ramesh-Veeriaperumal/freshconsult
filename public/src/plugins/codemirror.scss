@@ -125,8 +125,9 @@ div.CodeMirror-selected { background: #d9d9d9; }
 .CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
 
 .CodeMirror-searching {
-  background: #ffa;
-  background: rgba(255, 255, 0, .4);
+  background-color: #ffa;
+  background-color: rgba(255, 255, 0, .4);
+  border-radius: 3px;
 }
 
 /* Default theme */
@@ -219,11 +220,49 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   position: absolute;
   width: 21px; height: 21px;
   z-index: 999;
-  right: 5px;
-  top: 5px;
+  right: 10px;
+  top: 9px;
   @include opacity(0.5);
   cursor: pointer;
   background: inline-image('cdn-ignored/inline-images/cm-fullscreen.png') no-repeat #ffffff;
+}
+
+/*  Codemirror dialog styles */
+
+.CodeMirror-dialog {
+  position: relative;
+  font-size: 90%;
+}
+
+.CodeMirror-dialog > div {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: white;
+  z-index: 15;
+  padding: .1em .8em;
+  overflow: hidden;
+  color: #333;
+  border: 1px solid #dfdfdf;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding-left: 50px;
+  border-radius: 4px 4px 0 0;
+}
+
+.CodeMirror-dialog input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 20em;
+  color: inherit;
+  font-family: monospace;
+  top: 4px;
+  position: relative;
+  min-width: 330px;
+  border: 1px solid #f3f3f3;
+}
+
+.CodeMirror-dialog button {
+  font-size: 70%;
 }
 
 /** Textmate Style Theme **/
