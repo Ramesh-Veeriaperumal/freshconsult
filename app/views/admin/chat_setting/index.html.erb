@@ -142,14 +142,13 @@
 					 <div class="fields marginleftnone">
 					 	<div class="ff_item">
 							  <label class="item-large"> 
-							    <div class="fc_title_info"><%= t('freshchat.show_chat_hours_msg') %></div>
-					     		<div class="info-data"><%= t('freshchat.show_chat_hours_info') %></div>
+							    <div class="fc_title_info"><%= t('freshchat.show_chat_hours_msg') %><%= t('freshchat.show_chat_hours_info') %></div>
 							  </label>
 						 </div>
 					 </div>
 				  </li>
 
-				  <li class="inline-field chat_portal_enable_form">
+				  <li class="inline-field chat_portal_enable_form chat_business_options_wrap">
 				  	<label class="caption form_divider"><%= t('freshchat.show_chat_hours') %></label>
 				  		<div class="fields">
 				  			<ul>
@@ -162,7 +161,7 @@
 
 								<li class="inline-field">
 									<label class="item"> 
-										<input type="radio" id="chat_business_hours" name="show_chat_hours" value="1">
+										<input type="radio" id="chat_business_hours" name="show_chat_hours" value="<%=default_business_hour%>">
 										<span>
 											<%=t('freshchat.business_hours')%> 
 											<% if multiple_business_hours? %>

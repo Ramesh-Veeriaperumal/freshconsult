@@ -22,6 +22,10 @@ module ChatHelper
       current_account.business_calendar.count > 1
   end
 
+  def default_business_hour
+    current_account.business_calendar.default.first.id
+  end
+
   def chat_trial_expiry
     subscription = current_account.subscription 
     subscription.trial? ? subscription.next_renewal_at.to_i * 1000 : 0
