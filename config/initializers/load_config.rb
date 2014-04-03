@@ -12,3 +12,4 @@ MailboxConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailbox.yml'))[R
 
 BraintreeConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'braintree.yml'))
 
+RateLimitConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'rate_limit.yml'))[RAILS_ENV]
