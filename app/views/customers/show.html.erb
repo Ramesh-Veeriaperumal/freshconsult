@@ -58,7 +58,7 @@
 <% end %>
 <div class="control-group">
 	<label class="title">
-			<b><%=t('company.info4')%> <span class="muted">&nbsp;|&nbsp;</span></b>
+			<b><%=t('company.notes')%> <span class="muted">&nbsp;|&nbsp;</span></b>
 			<%= @customer.note.blank? ? (link_to t('company.add_notes'), '#', :class=>"edit_text_area") : (link_to t('company.edit_notes'), '#', :class=>"edit_text_area") %>
 	</label>
 	<div id="notes">	

@@ -3156,7 +3156,6 @@ en:
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."
     info2: Domain Names for this company
-    info4: Notes
     info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
