@@ -41,7 +41,7 @@ include SsoUtil
     saml_response = validate_saml_response(current_account, params[:SAMLResponse]);
 
     if saml_response.valid?
-      handle_sso_response(saml_response.email , saml_response.user_name )
+      handle_sso_response(saml_response.email , saml_response.user_name , saml_response.phone)
     else
       flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
       redirect_to login_normal_url
@@ -228,7 +228,7 @@ include SsoUtil
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to admin_getting_started_index_path  
+      redirect_to_getting_started
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
@@ -351,6 +351,14 @@ include SsoUtil
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
   end
+
+  # ITIL Related Methods starts here
+
+  def redirect_to_getting_started
+    redirect_to admin_getting_started_index_path  
+  end
+
+  # ITIL Related Methods ends here
 
   private
 

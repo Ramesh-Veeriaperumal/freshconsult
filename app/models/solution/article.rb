@@ -76,6 +76,48 @@ class Solution::Article < ActiveRecord::Base
   def to_s
     nickname
   end
+
+  
+  def related(current_portal)
+    return [] if title.blank? || (title = self.title.gsub(/[\^\$]/, '')).blank?
+    begin
+      Search::EsIndexDefinition.es_cluster(account_id)
+      options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
+        search.query do |query|
+          query.filtered do |f|
+            f.query { |q| q.string SearchUtil.es_filter_key(title), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
+            f.filter :term, { :account_id => account_id }
+            f.filter :not, { :ids => { :values => [self.id] } }
+            f.filter :or, { :not => { :exists => { :field => :status } } },
+                          { :not => { :term => { :status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] } } }
+            f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
+                          { :terms => { 'folder.visibility' => user_visibility } }
+            f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
+                          { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
+            f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
+                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } } unless current_portal.main_portal
+          end
+        end
+        search.from options[:size].to_i * (options[:page].to_i-1)
+      end
+
+      item.results.results
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      []
+    end
+  end
+
+  def user_visibility
+    vis_arr = [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+    if User.current
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:agents] if User.current.agent?
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] if User.current.has_company?
+    end
+    vis_arr
+  end
   
   def to_xml(options = {})
      options[:indent] ||= 2

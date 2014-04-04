@@ -93,6 +93,7 @@ HarvestWidget.prototype= {
 
 	handleLoadClient:function() {
 		selectedClientNode = UIUtil.constructDropDown(this.clientData, 'hash', "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
+		UIUtil.sortDropdown("harvest-timeentry-clients");
 		client_id = selectedClientNode["id"];
 		this.clientChanged(client_id);
 		UIUtil.hideLoading('harvest','clients','-timeentry');

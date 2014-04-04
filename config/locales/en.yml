@@ -2234,10 +2234,15 @@ en:
     info3: Background information of %{nick_name}
     working: Working at
     info4: Recent tickets from %{nick_name}
+    info7: Recent Activity by %{nick_name}
+    info8: "No forum activity by %{nick_name}"
     show_more: Show more tickets from %{nick_name} »
+    post_created: "<span class='muted'>%{time} ago in </span><a href='%{forum_url}'>%{forum_name}</a>"
+    new_topic: New Topic
+    reply: Reply
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
-    info5: User has not created any ticket till now
+    info5: "No tickets by %{nick_name}"
     restore: Restore
     activation : Send Activation
     info6: Add specific notes regarding this contact
@@ -2388,6 +2393,7 @@ en:
     popular_topics: "Popular topics"
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
+    topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -2400,6 +2406,7 @@ en:
       see_all_articles: "See all %{count} articles"
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
+      related_articles: "Related Articles"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -2422,6 +2429,8 @@ en:
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
       last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
       best_answer: Best Answer
+      matching_results: "Matching Topics Found"
+      in_forum: "In: %{forum_name}"
     topic_vote:
       you:
         one: "You"
@@ -3147,7 +3156,6 @@ en:
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."
     info2: Domain Names for this company
-    info4: Notes
     info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
@@ -3381,9 +3389,9 @@ en:
         article: Article
         articles: Articles
       tag_count:
-        remove_Tickets: Remove tickets associated with the tag
-        remove_Customers: Remove customers associated with the tag
-        remove_Articles: Remove articles associated with the tag
+        remove_Tickets: Remove tag associated with tickets
+        remove_Customers: Remove tag associated with customers
+        remove_Articles: Remove tag associated with articles
       tag_bulk_merge:
         bulk_merge: Merge
         tags_selected:  tags selected (Associations from the merged tags will be associated with the primary tag)
@@ -4432,6 +4440,7 @@ en:
     display_results: "Displaying %{result}"
     sorted_by: "Sorted by:"
     by: "by:"
+    in: "in"
     requested_by: "Requested by,"
     agent: "Agent:"
     status: "Status:"
@@ -4514,7 +4523,7 @@ en:
   saving: "Saving..."
   draft: "Draft"
   last_draft: "Your last draft"
-  clear_draft_text: "Are you sure you want to clear saved draft?"
+  clear_draft_text: "If you cancel, your saved draft for this ticket will be discarded. Are you sure?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
   canned_folders:
@@ -5045,6 +5054,13 @@ en:
     proactive_note: "Note: Pre-chat form will not be shown when proactive chat is on."
     proactive_time: "Greet when more than %{seconds} on the same page"
     procative_info: "Automatically initiate chat conversations with visitors if they spend more than a certain amount of time on the same page"
+    chat_availability: "Chat Availability"
+    show_chat_hours: "Show Chat during"
+    show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
+    show_chat_hours_info: "Chat window will appear only when agents are available."
+    business_hours: "Business Hours"
+    anytime: "24/7"
+    business_calendar: "Select Business Hour"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"
@@ -5073,7 +5089,7 @@ en:
     visitors_online: "Visitors Online"
     returning_visitors: "Returning Visitors"
     website_visitors_msg: "See all Website Visitors"
-    message_archives: "Chat Message archives"
+    message_archives: "Message archives"
     see_all: "See all"
     says: "says"
     tag_msg: "Tag this Conversation"
@@ -5092,7 +5108,7 @@ en:
     chat_with: "Chat with"
     ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
-    website_visitors: "Website Visitors"
+    website_visitors: "Visitors"
     connection_error_msg: "Can't connect to chat server. Retrying..."
     connection_success_msg: "Connection established"
     filter_by: "Filter by"
@@ -5187,7 +5203,7 @@ en:
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: "Everyone"
-    portal_desc: "Support your customers in real-time within your Freshdesk portal, apart from chatting with them on your website."
+    portal_desc: "Support your customers in real-time within your portal"
     portal_option_info: "Show chat widget for"
     loading_new_archives: "Loading new archives..."
   facebook_tab:

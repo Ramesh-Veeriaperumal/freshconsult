@@ -61,8 +61,22 @@ unless Account.current
 	  a.addon_type = addon_types[:agent_quantity]
 	end
 
+	chat = Subscription::Addon.seed(:name) do |a|
+	  a.name = 'Chat'
+	  a.amount = 8.0
+	  a.renewal_period = 1
+	  a.addon_type = addon_types[:agent_quantity]
+	end
+
+	enterprise_reporting = Subscription::Addon.seed(:name) do |a|
+	  a.name = 'Enterprise Reporting'
+	  a.amount = 8.0
+	  a.renewal_period = 1
+	  a.addon_type = addon_types[:agent_quantity]
+	end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization, 
-									multiple_business_hours, round_robin ]
+									multiple_business_hours, round_robin, chat, enterprise_reporting ]
 	garden_addons = all_addons - [ multiple_business_hours ]
   SubscriptionPlan.seed_many(:name, plan_list(all_addons, garden_addons))
 end

@@ -138,11 +138,53 @@
 				  </li>
 
 				  <li class="inline-field">
+				  	<h3 class="title space_top"><%= t('freshchat.chat_availability') %></h3> 
+					 <div class="fields marginleftnone">
+					 	<div class="ff_item">
+							  <label class="item-large"> 
+							    <div class="fc_title_info"><%= t('freshchat.show_chat_hours_msg') %><%= t('freshchat.show_chat_hours_info') %></div>
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field chat_portal_enable_form chat_business_options_wrap">
+				  	<label class="caption form_divider"><%= t('freshchat.show_chat_hours') %></label>
+				  		<div class="fields">
+				  			<ul>
+				  				<li class="inline-field">
+									<label class="item"> 
+										<input type="radio" id="chat_anytime" name="show_chat_hours" value="0">
+										<span><%=t('freshchat.anytime')%></span>
+									</label>
+								</li>
+
+								<li class="inline-field">
+									<label class="item"> 
+										<input type="radio" id="chat_business_hours" name="show_chat_hours" value="<%=default_business_hour%>">
+										<span>
+											<%=t('freshchat.business_hours')%> 
+											<% if multiple_business_hours? %>
+											<span id="chat_business_options" class="chat_business_options">
+												<%= select_tag :business_calendar_id, 
+												options_from_collection_for_select(current_account.business_calendar, 
+												:id, :name, @chat.business_calendar_id), 
+												:class => 'select2 business_calendar_select2' %>
+											</span>
+											<% end %>
+										</span>
+									</label>
+								</li>
+							</ul>
+						</div>
+				  </li>
+
+				  <li class="inline-field">
 				  	<h3 class="title space_top"><%=t('freshchat.support_portal')%><span class='show_on_portal_checkbox'><%= check_box_tag :show_on_portal, 1, :class => 'filter_item' %></span></h3> 
 					 <div class="fields marginleftnone">
 					 	<div class="ff_item">
 							  <label class="item-large"> 
-							    <span><%=t('freshchat.portal_desc')%></span>							     
+							    <span><%=t('freshchat.portal_desc')%></span>
 							  </label>
 						 </div>
 					 </div>
@@ -281,9 +323,7 @@
 				<textarea id="EmbedCode" readonly></textarea>
 				<div class="intro"><%=t('freshchat.integrate_freshchat_info')%>
 			</li>
-		</ul>
-
-		
+		</ul>		
       </div>
    </div>
 </div>

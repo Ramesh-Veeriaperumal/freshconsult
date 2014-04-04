@@ -3,11 +3,22 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 module TicketHelper
 
   def create_ticket(params = {}, group = nil)
-  	requester = User.find_by_email("customer@customer.in")
-  	test_ticket = Factory.build(:ticket, :requester_id =>  requester.id)
-  	test_ticket.account_id = group ? group.account_id : Account.first.id
-  	test_ticket.group_id = group ? group.id : nil
-  	test_ticket.save(false)
-  	test_ticket
+    requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
+    unless requester_id
+      user = Factory.build(:user)
+      user.save
+      requester_id = user.id
+    end
+    subject = params[:subject] || Faker::Lorem.words(10).join(" ")
+    account_id =  group ? group.account_id : Account.first.id
+    test_ticket = Factory.build(:ticket, :status => params[:status],
+                                         :display_id => params[:display_id], 
+                                         :requester_id =>  requester_id,
+                                         :subject => subject,
+                                         :account_id => account_id)
+    test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
+    test_ticket.group_id = group ? group.id : nil
+    test_ticket.save(false)
+    test_ticket
   end
 end

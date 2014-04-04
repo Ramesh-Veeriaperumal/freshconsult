@@ -31,6 +31,7 @@ class Admin::ChatSettingController < Admin::AdminController
 
       if @chat.update_attributes(params[:chat_setting])
       	@chat.save
+        @business_calendar = @chat.business_calendar
       	@status = "success"
         render_result
       else
@@ -59,7 +60,8 @@ class Admin::ChatSettingController < Admin::AdminController
   def render_result
        respond_to do |format|
           format.json{
-             render :json => {:status => @status , :message => @message}
+            render :json => {:status => @status ,:message => @message,
+            :business_calendar => @business_calendar.to_json({:only => [:time_zone, :business_time_data, :holiday_data]})}
           }
        end
   end

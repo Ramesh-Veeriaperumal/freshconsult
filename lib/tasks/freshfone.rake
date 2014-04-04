@@ -76,4 +76,12 @@ namespace :freshfone do
 		end
 	end
 
+	desc "Delete freshfone recordings in Twilio"
+	task :freshfone_call_twilio_recording_delete => :environment do
+		Sharding.execute_on_all_shards do
+			Freshfone::Account.all.each do |account|
+					Freshfone::Cron::CallRecordingAttachmentDelete.delete_twilio_recordings(account)
+			end
+		end
+	end
 end

@@ -7,6 +7,14 @@
 		&:last-child{
 			margin-right:0;
 		}
+		.icon-headphones {
+			font-size: 22px;
+			padding: 5px 10px;
+			background-image: none;
+			margin: 0;
+			color: #FCFCF5;
+			text-shadow: -1px -1px 0px #333;
+		}
 	}
 	.availabilityOnPhone.active {
 		background-color:$popuptab-toggle-active;
@@ -233,5 +241,6 @@
 	.recent_calls_time_ago {
 		display: inline-block;
 	}
+	
 	//  recent calls - ends
 }

@@ -35,9 +35,12 @@ class Subscription::Addon < ActiveRecord::Base
 	end
 
 	def billing_quantity(subscription)
+		ssl_certificate_count(subscription.account) if name.eql?("Custom Ssl")
 		case addon_type
 		when ADDON_TYPES[:agent_quantity]
 			subscription.agent_limit		
+		when ADDON_TYPES[:portal_quantity]
+			subscription.account.portals.count	
 		end
 	end
 
@@ -47,5 +50,9 @@ class Subscription::Addon < ActiveRecord::Base
 
 	def allowed_in_plan?(plan)
 		plan.addons.include?(self)
+	end
+
+	def ssl_certificate_count(account)
+		account.portals.select{ |portal| portal.elb_dns_name.present? }.count
 	end
 end

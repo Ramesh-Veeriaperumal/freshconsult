@@ -296,6 +296,12 @@ module SupportHelper
 			end
 			output.join("")
 		end
+	end
+
+	def related_articles_list article, limit = 5
+		output = []
+		output << %(<ul>#{ article.related_articles.take(limit).map { |a| article_list_item(a.to_liquid) } }</ul>)
+		output.join("")
 	end	
 
 	def more_articles_in_folder folder
@@ -777,7 +783,7 @@ HTML
 	end
 
 	def link_to_privacy_policy portal
-		%(	<a href="http://freshdesk.com/privacy" target="_blank">
+		%(	<a href="http://freshdesk.com/privacy" target="_blank" class="privacy-link">
 				#{ I18n.t('portal.cookie.privacy_policy') }
 			</a>) if(!portal.paid_account && ["user_signup", "user_login", "submit_ticket", "profile_edit"].include?(portal['current_page']))
 	end

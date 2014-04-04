@@ -18,7 +18,7 @@ class Support::TicketsController < SupportController
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
-    return access_denied unless can_access_support_ticket?
+    return access_denied unless can_access_support_ticket? && visible_ticket?
 
     @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
     @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }

@@ -104,9 +104,12 @@
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
         <% conv_item = conv_id.nil? ? @ticket : @note %>
         <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_reply(conv_item, @signature, false, true) %>
+            <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
+                              :value => bind_last_reply(conv_item, @signature),
+                              :"data-quoted-textarea" => "##{cntid}-quoted" %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
-        <% end %>
+            <%= text_area_tag "quoted_text_html", quoted_text(conv_item), { :id => "#{cntid}-quoted", :class => "hide" } %>
+        <% end %>        
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
@@ -141,14 +144,12 @@
           <%= content_tag :div, "#{t("draft")} #{t("saved_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
         </span>
 
-        <!-- <label>
-          <%# check_box_tag :quoted_text, "true", true %><%# t("ticket.include_quoted_text") %>
-        </label> -->
         <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
           <label>
               <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
           </label>
         <% end %>
+
         <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
                                         Survey::SPECIFIC_EMAIL_RESPONSE) 
            show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox? @ticket.account

@@ -17,13 +17,9 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       
       delete_zip_file zip_file_path #cleaning up the directory
       FileUtils.mkdir_p @out_dir
-      
-      export_forums_data  #Forums data
-      export_solutions_data #Solutions data
-      export_users_data #Users data
-      export_customers_data #Companies data
-      export_tickets_data #Tickets data
-      export_groups_data #Groups data
+
+      export_data #method overwritten in itil
+
       zip_all_files zip_file_path
       @data_export.file_created!
       @file = File.open(zip_file_path,  'r')
@@ -111,6 +107,15 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
   def write_to_file(filename,res_data)
     file_path = File.join(@out_dir , filename) 
     File.open(file_path, 'w') {|f| f.write(res_data) }
+  end
+  
+  def export_data   
+      export_forums_data  #Forums data
+      export_solutions_data #Solutions data
+      export_users_data #Users data
+      export_customers_data #Companies data
+      export_tickets_data #Tickets data
+      export_groups_data #Groups data
   end
   
 end

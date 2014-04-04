@@ -1,5 +1,5 @@
 
-<% default_page_count = 10 %>
+<% default_page_count = 25 %>
 <% start = params[:start].to_i %>
 <% per_page = (params[:per_page].to_i > 0) ? params[:per_page].to_i : default_page_count %>
 <% failed = Resque::Failure.all(start, per_page) %>
@@ -14,7 +14,7 @@
 
 <% unless failed.blank? %>
   <% Resque.queues.each do |name| %>
-    <%= link_to "#{t('remove')} #{name}" , destroy_all_admin_resque_failed_path(:name => name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+    <%= link_to "Remove jobs in #{name.humanize}" , destroy_all_admin_resque_failed_path(:name => name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
   <%end%>
 <% end %>
 
@@ -23,53 +23,65 @@
 
 <p >Showing <%=start%> to <%= start + ((failed.size < per_page) ? failed.size : per_page) %> of <b><%= size = Resque::Failure.count %></b> jobs</p>
 
-<ul class='failed failed-grids'>
-  <%for job in failed%>
+<table width="100%" class="queues-wrapper">
+  <tr>
+    <th>Error</th>
+    <th>Failed at</th>
+    <th>Queue</th>
+    <th></th>
+  </tr>
+
+  <% failed.each do |job|%>
     <% index += 1 %>
     <% id = start + index - 1 %>
-    <li>
-      <dl>
-        <% if job.nil? %>
-          <dt>Error</dt>
-          <dd>Job <%= index%> could not be parsed; perhaps it contains invalid JSON?</dd>
-        <% else %>
+    <% if job.nil? %>
+      <tr>
+        <td>Error</td>
+        <td colspan="3">
+          Job <%= id %> could not be parsed; perhaps it contains invalid JSON?
+        </td>
+      </tr>
+    <% else %>
+      <tr>
+        <td>
+          <%= job['error'] %>
+        </td>
+        <td>
+          <span class="resque_time"><%= Time.parse(job['failed_at']).strftime(date_format) %></span>
+        </td>
+        <td>
+          <%= job['queue'] %>
+        </td>
+        <td>
+          <input type="button" class="show_trace" value="Show Stacktrace" />
+          <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "btn" } %>
+          
+          <%= link_to 'retry', requeue_admin_resque_failed_path(id), { :method => :put, :class => "btn" } unless job['retired_at'] %>
+        </td>
+      </tr>
+      <tr style="display:none">
+        <td colspan="4">
           <dt>Worker</dt>
-          <dd>
-            <%= puts job['worker']%>
-            <b class='resque_worker'><%= job['worker'].split(':')[0...2].join(':') %></b> on <b class='queue-tag'><%= job['queue'] %></b > at <b><span class="resque_time"><%= Time.parse(job['failed_at']).strftime(date_format) %></span></b>
-            <% if job['retried_at'] %>
-              <div style="margin-left: 760px;">
-                
-                <b class="retried">Retried at </b> <b><span class="resque_time"><%= Time.parse(job['retried_at']).strftime(date_format) %></span></b>
-                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton", :id => "resque_btn" } %>
-                              
-              </div>
-            <% else %>
-                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton",:id => "resque_btn" } %>
-                
-                <%= link_to 'retry', requeue_admin_resque_failed_path(id), { :method => :put, :class => "uiButton" , :id => "resque_btn" } %>
-            <% end %>
-          </dd>
-          <dt class='failed_category'>Class</dt>
-            <dd><code><%= job['payload'] ? job['payload']['class'] : 'nil' %></code></dd>
-          <dt class='failed_category'>Arguments</dt>
-            <dd><pre><%=h job['payload'] ? Array(job['payload']['args']).map { |a| a.inspect }.join("\n"): 'nil' %></pre></dd>
-          <dt class='failed_category'>Exception</dt>
-            <dd><code><%= job['exception'] %></code></dd>
-          <dt class='failed_category'>Error</dt>
-            <dd class='error'>
-              <% if job['backtrace'] %>
-                <%= h(job['error']) %>
-                <pre style='display:none'><%=h job['backtrace'].join("\n") %></pre>
-              <% else %>
-                <%=h job['error'] %>
-              <% end %>
+            <dd>
+              <%= puts job['worker']%>
+              <b class='resque_worker'><%= job['worker'].split(':')[0...2].join(':') %></b> on <b class='queue-tag'><%= job['queue'] %></b > at <b><span class="resque_time"><%= Time.parse(job['failed_at']).strftime(date_format) %></span></b>
             </dd>
-        <% end %>
-      </dl>
-    </li>
+            <dt class='failed_category'>Class</dt>
+              <dd><code><%= job['payload'] ? job['payload']['class'] : 'nil' %></code></dd>
+            <dt class='failed_category'>Arguments</dt>
+              <dd><pre><%=h job['payload'] ? Array(job['payload']['args']).map { |a| a.inspect }.join("\n"): 'nil' %></pre></dd>
+            <dt class='failed_category'>Exception</dt>
+              <dd><code><%= job['exception'] %></code></dd>
+          <dt>Stacktrace</dt>
+            <dd>
+              <pre><%=h job['backtrace'].join("\n") %></pre>
+            </dd>
+        </td>
+      </tr>
+    <% end %>
   <%end%>
-</ul>
+
+</table>
 
 <% if  start - default_page_count >= 0 || start + default_page_count <= size %>
 <p class='pagination'>
@@ -81,3 +93,16 @@
   <% end %>
 </p>
 <%end%>
+
+<% javascript_tag do -%>
+  jQuery(".show_trace").on("click", function(){
+    if(jQuery(this).val() == "Show Stacktrace"){
+      jQuery(this).parent().parent().next().show();
+      jQuery(this).val("Hide Stacktrace");
+    }
+    else{
+      jQuery(this).parent().parent().next().hide();
+      jQuery(this).val("Show Stacktrace");
+    }
+  });
+<% end %>

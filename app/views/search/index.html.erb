@@ -1,5 +1,5 @@
 <% content_for :layoutType do %>search-page<% end %>
-<div id="sticky_header" class="search-sticky">
+<div id="sticky_header" class="search-sticky" rel="sticky" data-scroll-top="true">
 	<% form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
 		<span class="search-dark"></span>
 		<input class="search-input lead" value="<%= @search_key %>" 
@@ -42,6 +42,7 @@
 								agent : "<%= t('search.agent') %>",
 								status: "<%= t('search.status') %>",
 								by	: "<%= t('search.by') %>",
+								in : "<%= t('search.in') %>",
 								phone : "<%= t('search.phone') %>",
 								priority: "<%= t('filter_options.priority') %>:",
 								group: "<%= t('Group') %>:"

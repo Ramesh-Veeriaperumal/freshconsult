@@ -10,17 +10,19 @@
 		<label class="control-label required" for="topic_title">
 			<%= t('portal.topic.topic_title') %>
 		</label>
-		<div class="controls">
-			<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
-		</div>
-	</div> 	
+		<div class="controls suggestions">
+			<%= form.text_field :title, :class => "required text span12", 
+			:autocomplete => :off, :tabindex => 10, 
+			'data-suggestions' => @topic.new_record? ? "/support/search/topics/suggest" : '', 
+			'data-left-position' => "96.5%", 'data-top-position' => "5%" %>
+		</div> 	
 	<div class="control-group">
 		<label class="control-label required description-label" for="topic_body">
 			<%= t('message') %>
 		</label>
 		<div class="controls">
 			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-				:rows => 12, "editor-type" => :forum, :class => "required" %>
+				:rows => 12, "editor-type" => :forum, :class => "required_redactor" %>
 		</div>
 	</div>	
 	<div class="control-group">

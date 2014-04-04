@@ -13,6 +13,23 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		end
 	end
 
+	def available_agents
+		@freshfone_users = freshfone_user_scoper.online_agents_with_avatar.map do |freshfone_user|
+			{ :available_agents_name => freshfone_user.name, 
+				:available_agents_avatar => user_avatar(freshfone_user.user),
+				:id => freshfone_user.user_id
+			}
+		end
+		freshfone_users_id = @freshfone_users.collect { |u| u[:id] }
+		if params[:existing_users_id]
+			@offline_users_id = params[:existing_users_id].reject { |id| freshfone_users_id.include? id.to_i }
+			@freshfone_users.reject! { |user| (user[:id] == current_user.id) || (params["existing_users_id"].include? user[:id].to_s) }
+		end
+		respond_to do |format|
+			format.js 
+		end
+	end
+
 	def transfer_incoming_call
 		render :xml => current_call_flow.transfer(params[:agent])
 	end
@@ -24,6 +41,10 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 
 	private
 
+		def freshfone_user_scoper
+			current_account.freshfone_users
+		end
+		
 		def validate_agent
 			return empty_twiml if called_agent.blank?
 			params.merge!({ :agent => called_agent })

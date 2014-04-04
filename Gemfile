@@ -40,7 +40,7 @@ gem "ruby-openid-apps-discovery", "1.2.0"
 gem "twilio-ruby"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
-gem "ruby-saml", "0.7.2"
+gem "ruby-saml", "0.8.1"
 
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
@@ -93,7 +93,7 @@ gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
-gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "namae", '0.8.4'
 gem 'ancestry', '1.3'
 gem 'rubytree'
 gem 'global_phone'
@@ -149,6 +149,7 @@ group :test do
   gem "autotest-rails", "4.1.0"
   gem "faker", "~> 1.0.1"
   gem "simplecov", "~> 0.7.1"
+  gem "database_cleaner"
 end
 
 group :assets do

@@ -1,7 +1,4 @@
-<%# controllerName = @controller.controller_name.to_sym %>
-<%#= controllerName %>
-<%#= include_cloudfront_css controllerName unless Jammit.configuration[:stylesheets][controllerName].blank? %>
-
+<% selected_tab = @selected_tab.to_s%>
 <div class="wrapper">
 	<div class="wrapper-shadow">
 		<title><%= page_title.html_safe %></title>
@@ -19,28 +16,28 @@
 		<% end %>
 		<%= render(:partial => '/search/navsearch') %>
 		<div id="inner"> 
-			<% if @content_for_sidebar %>
-				<div class="sidebar" id="Sidebar"> 
-					<%= yield :sidebar %>					
-				</div>
-			<% end %> 
-			<% if @content_for_helpcard %>
-				<div class="sidebar sidebar-help" id="Sidebar"> 
-					<div class="sidepanel">
-						<i class="common-icon-help"></i>
-						<%= yield :helpcard %> 
+				<% if @content_for_sidebar %>
+					<div class="sidebar" id="Sidebar" <% if(selected_tab == "admin") %> rel="sticky" <% end %> >
+						<%= yield :sidebar %>					
+					</div>
+				<% end %> 
+				<% if @content_for_helpcard %>
+					<div class="sidebar sidebar-help" id="Sidebar" <% if(selected_tab == "admin") %> rel="sticky" <% end %> >
+						<div class="sidepanel">
+							<i class="common-icon-help"></i>
+							<%= yield :helpcard %> 
+						</div>
+					</div>
+				<% end %> 				
+				<div class="leftcontent" >
+					<%= show_announcements %>
+					<%= show_flash %>
+					<div class="alert notice" id="noticeajax" style="display:none;"></div>
+					<%= yield :pagetop %>
+					<div class="pagearea" id="Pagearea">
+						<%= yield %>
 					</div>
 				</div>
-			<% end %> 				
-			<div class="leftcontent">  
-				<%= show_announcements %>
-				<%= show_flash %>
-				<div class="alert notice" id="noticeajax" style="display:none;"></div>
-				<%= yield :pagetop %>
-				<div class="pagearea" id="Pagearea">
-					<%= yield %>
-				</div>
-			</div>
 		</div> 
 	</div>
 </div>
@@ -55,4 +52,3 @@
 		}, 50);
 	<% end %>
 <% end %>
-<i id="scroll-to-top"></i>

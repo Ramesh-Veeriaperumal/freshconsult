@@ -123,6 +123,17 @@ module AgentsHelper
       :assigned_tickets => 'agent.individual'
     } 
   end
-  
 
+  # ITIL Related Methods starts here
+
+  def sidebar_content
+  end
+
+  def render_agent_tickets
+    output = content_tag(:h3, t('agent_assigned_title').html_safe, :class => "title")
+    output << (@recent_unresolved_tickets.empty? ? t('agent_assigned_info') : render(:partial => "tickets", :object => @recent_unresolved_tickets))
+    output.html_safe
+  end
+  
+  # ITIL Related Methods ends here
 end

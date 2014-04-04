@@ -2,6 +2,7 @@
 
 <%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "lead" ) %>
 <% form_for(:account, :url => admin_portal_path(@account), :html => { :method => :put }) do |f| %>
+	<%= generate_breadcrumbs(params, f, :redirect_to_admin => true, :force_admin => true, :submit_text => 'save') %>
 <div>
 	<div class="checkbox">
 		<%= f.feature_check_box :anonymous_tickets %> <%=t('portal_customizer_option_tickets')%>
@@ -49,7 +50,7 @@
 	</div>
 	<br/>
 </div>
-<div class="align-right">
+<div class="align-right itil-hide">
 	<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
 	<%= f.submit t('save'), { :class => "btn btn-primary" } %>
 </div>

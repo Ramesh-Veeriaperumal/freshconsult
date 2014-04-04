@@ -296,6 +296,8 @@ JiraWidget.prototype = {
 		jiraWidget.freshdeskWidget.call_init_requests();
 	},
 	jiraCreateSummaryAndDescription: function(){
+		var jira_initialtext = jQuery("#jira-note").text();
+		jQuery("#jira-note").html(jira_initialtext);
 		if(jQuery('input[name="fields[description]"]').size() == 0)
 		{
 			jQuery('<input>').attr({

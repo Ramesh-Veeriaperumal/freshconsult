@@ -1,0 +1,39 @@
+<div id="forum-activity" class="tab-pane row-fluid">
+	<% user_posts = @user.recent_posts %>
+	<% if user_posts.blank? %>
+		<div class="sub-lead text-center">
+			<%= t('contacts.info8', :nick_name => h(@user.display_name)).html_safe %>
+		</div>
+	<% else %>
+		<% user_posts.each do |post| %>
+		<div class="activity-details row-fluid">
+			<div class="span2">
+				<span class="label <%= post.original_post? ? 'new_topic' : 'reply' %>">
+							<%= post.original_post? ? t('contacts.new_topic') : t('contacts.reply') %></span>
+			</div>
+			<div class="topic-details span8 clear-left-margin">
+				<div>
+					<%= link_to h(post.topic.title), category_forum_topic_path(post.topic.forum.forum_category_id,post.forum_id,post.topic_id), :title => h(post.topic.title)%>
+				</div>
+				<div class='details'>
+					<%= t('contacts.post_created', 
+							:time => time_ago_in_words(post.updated_at), 
+							:forum_name => h(post.topic.forum.name), 
+							:forum_url => category_forum_path(post.topic.forum.forum_category_id,post.forum_id)).html_safe %>
+				</div>
+			</div>
+			<div class="span2 text-right muted">
+				<% if post.topic.stamp_type?
+					if post.topic.forum.ideas? %>
+						<%= h(post.topic.stamp_name)%>
+					<% elsif post.topic.forum.questions? %>
+						<%= t("topic.questions.#{Topic::QUESTIONS_STAMPS_TOKEN_BY_KEY[post.topic.stamp_type].to_s}") %>
+					<% elsif post.topic.forum.problems? %>
+						<%= t("topic.problems.#{Topic::PROBLEMS_STAMPS_TOKEN_BY_KEY[post.topic.stamp_type].to_s}") %>
+					<% end
+				end %>
+			</div>
+		</div>
+		<% end %>
+	<% end %>
+</div>

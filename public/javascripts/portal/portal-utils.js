@@ -102,3 +102,12 @@ window.highlight_code = function() {
     }
     SyntaxHighlighter.all();
 }
+
+// Delay in typing of search text
+var delay = (function(){
+  var timer = 0;
+  return function(callback, ms){
+      clearTimeout (timer);
+      timer = setTimeout(callback, ms);
+  };
+})();

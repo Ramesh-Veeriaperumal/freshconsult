@@ -1,6 +1,5 @@
 <% account = current_account %>
-<%if(current_user && account.features?(:chat) && account.features?(:chat_enable) && account.chat_setting && 
-                           !(is_assumed_user?) && account.active? && !account.subscription.finished_trial?)
+<%if (current_user && chat_active? && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe

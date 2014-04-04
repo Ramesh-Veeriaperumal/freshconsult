@@ -20,13 +20,13 @@ class FreshfoneController < FreshfoneBaseController
 	end
 	
 	def dashboard_stats
-		@freshfone_users = freshfone_user_scoper.online_agents_with_avatar.map do |freshfone_user|
-			{ :available_agents_name => freshfone_user.name, 
-				:available_agents_avatar => user_avatar(freshfone_user.user),
-				:id => freshfone_user.user_id
-			}
-		end
-		
+		# @freshfone_users = freshfone_user_scoper.online_agents_with_avatar.map do |freshfone_user|
+		# 	{ :available_agents_name => freshfone_user.name, 
+		# 		:available_agents_avatar => user_avatar(freshfone_user.user),
+		# 		:id => freshfone_user.user_id
+		# 	}
+		# end
+		@available_agents = freshfone_user_scoper.online_agents.count		
 		@active_calls = get_count_from_integ_redis_set(NEW_CALL % {:account_id => current_account.id})
 		respond_to do |format|
 			format.js 

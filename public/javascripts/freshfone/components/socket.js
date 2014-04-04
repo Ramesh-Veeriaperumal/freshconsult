@@ -11,6 +11,9 @@ var FreshfoneSocket;
 		this.$availableAgents = this.$dashboard.find('.live-available-agents');
 		this.$liveCalls = this.$dashboard.find('.live-calls');
 		this.$dashboardTable = this.$dashboard.find('.freshfone_dash');
+		this.$contentContainer = $('.freshfone_content_container');
+		this.$freshfoneAvailableAgentsList = this.$contentContainer.find('.ffone_available_agents');
+		this.$freshfoneAvailableAgentsListContainer = this.$freshfoneAvailableAgentsList.find('.transfer_call_container');
 		this.onlineAgents = 0;
 		this.onloadUserarray = [];
 		this.connection = null;
@@ -42,6 +45,7 @@ var FreshfoneSocket;
 			this.freshfone_socket_channel.on('reconnect', function () {
 				clearTimeout(reconnectTimeout);
 				self.freshfoneuser.reset_presence_on_reconnect();
+				self.loadAvailableAgents(true);
 			});
 			this.freshfone_socket_channel.on('reconnecting', function () {
 				if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
@@ -50,9 +54,9 @@ var FreshfoneSocket;
 				}
 			});
 		},
-		$transferSearch: $('#transfer_call .search'),
-		$transferNoAvailableAgent: $('#transfer_call .no_available_agents'),
-		$transferAvailableAgentsList: $('#transfer_call #online-agents-list'),
+		$freshfoneAvailableAgentsListSearch: $('.ffone_available_agents .search'),
+		$noAvailableAgent: $('.ffone_available_agents .no_available_agents'),
+		$availableAgentsList: $('.ffone_available_agents #online-agents-list'),
 		handleFailure: function () {
 		},
 		loadDependencies: function(freshfonecalls) {
@@ -172,6 +176,11 @@ var FreshfoneSocket;
 			});
 		},
 
+		populateAvailableAgentsCount: function () {
+			freshfonesocket.totalAgents = this.available_agents;
+			freshfonesocket.tryUpdateDashboard();
+		},
+
 		populateAvailableAgents: function () {
 			var options = {
 				item: 'agents-item',
@@ -189,9 +198,9 @@ var FreshfoneSocket;
 				} else {
 					this.agentList = new List('online-agents-list', options);
 				}
-				this.$transferSearch.toggle(this.agentList.items.length > 7);
+				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
-				this.bindTransfer();
+				if(freshfonecalls.tConn) { this.bindTransfer();	}
 			}
 			// else {
 				// this.agentList.add(this.onloadUserarray); // temporary
@@ -202,7 +211,7 @@ var FreshfoneSocket;
 			if (user.id === freshfone.current_user || this.agentList === undefined) { return false; }
 			if (!this.agentList.get("id", user.id)) {
 				this.agentList.add(user);
-				this.$transferSearch.toggle(this.agentList.items.length > 7);
+				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 			}
 		},
@@ -212,12 +221,23 @@ var FreshfoneSocket;
 			this.agentList.remove("id", id);
 			this.noAvailableAgentsToggle();
 		},
+
+		removeOfflineAgents: function (ids) {
+			var self = this;
+			if ( !ids  ) { return false; }
+			ids.each (
+				function (id) {
+					self.onloadUserarray = self.onloadUserarray.reject(function (user) { if(user.id == parseInt(id) ) { return user; } });
+				}	
+			 );
+			this.noAvailableAgentsToggle();
+		},
 		
 		toggleUserStatus: function  (status) {
-			if (status === userStatus.BUSY){
+			if (status === userStatus.BUSY) {
 				this.freshfoneuser.setStatus(status); 
 			}
-			else{
+			else {
 				freshfoneuser.setStatus(status); 
 				freshfoneuser.online = freshfoneuser.isOnline();
 				freshfoneuser.userPresenceDomChanges();
@@ -233,15 +253,35 @@ var FreshfoneSocket;
 
 		noAvailableAgentsToggle: function () {
 			var showAgentsList = (this.agentList && this.agentList.items.length) ? true : false;
-			this.$transferNoAvailableAgent.toggle(!showAgentsList);
-			this.$transferAvailableAgentsList.toggle(showAgentsList);
+			this.$noAvailableAgent.toggle(!showAgentsList);
+			this.$availableAgentsList.toggle(showAgentsList);
 		},
 
 		bindTransfer: function () {
 			var self = this;
-			$('.available_agents_list').on('click', 'li', function () {
+			$('#freshfone_available_agents .available_agents_list').on('click', 'li', function () {
 				self.freshfonecalls.transferCall($(this).find('.id').html());
 			});
 		},
+
+		loadAvailableAgents: function (forceLoading) {
+			if (!freshfonesocket.onloadUserarray.length || forceLoading) {
+				this.$freshfoneAvailableAgentsList.addClass('loading-small sloading');
+				this.$freshfoneAvailableAgentsListContainer.hide();
+					$.ajax({
+						data: { "existing_users_id": this.onloadUserarray.pluck('id') },
+						url : freshfone.transfer_list_path
+
+						// error: function () {
+						// 	$recentCalls.removeClass('loading-small sloading');
+						// 	$recentCallsContainer.show();
+						// }
+					});
+			}
+			else {
+				this.populateAvailableAgents();
+			}
+
+		}
 	};
 }(jQuery));

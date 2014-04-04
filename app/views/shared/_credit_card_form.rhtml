@@ -29,7 +29,7 @@
 <div class="field-box">
 	<%= content_tag( :label, "#{t('card_number')} *" , :class => "caption" ) %> 
 	<div class="fields">
-		<%= text_field :creditcard, :number, :size => 20, :class => "required" %>
+		<%= text_field :creditcard, :number, :size => 20, :class => "required", "data-encrypted-name" => "number" %>
 	</div>
 </div>
 <div class="field-box">
@@ -42,7 +42,7 @@
 <div class="field-box">
 	<%= content_tag( :label, "#{t('security_code')} *", :class => "caption" ) %> 
 	<div class="fields">
-		<%= password_field :creditcard, :verification_value, :size => 4, :maxlength => 4, :class => "required" %>
+		<%= password_field :creditcard, :verification_value, :size => 4, :maxlength => 4, :class => "required", "data-encrypted-name" => "cvv" %>
 		<%= link_to_function(t("what_is_cvv"), "jQuery('#cvv-info').toggle();") %> 
 			
 		<div id="cvv-info" class="cvv-help-text" style="display:none;">

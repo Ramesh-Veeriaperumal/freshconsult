@@ -165,6 +165,8 @@ class SubscriptionsController < ApplicationController
 
     def add_card_to_billing
       begin
+        @creditcard.number = params[:number]
+        @creditcard.verification_value = params[:cvv]
         result = billing_subscription.store_card(@creditcard, @address, scoper)        
         scoper.set_billing_info(result.card)
         scoper.save!

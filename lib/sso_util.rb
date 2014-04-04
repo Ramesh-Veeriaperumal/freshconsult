@@ -4,18 +4,20 @@ module SsoUtil
   SAML="saml"
   SAML_NAME_ID_FORMAT="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
   SSO_ALLOWED_IN_SECS = 1800
-  SAML_CLOCK_DRIFT = 1 # No of secs the response time can be before the server time .. Keep this very low for security
-  FIRST_NAME_STRS = [ "FirstName", "User.FirstName", "username" ].map &:to_sym  # username will always return something
-  LAST_NAME_STRS = [ "LastName", "User.LastName" ].map &:to_sym 
+  SAML_CLOCK_DRIFT = 10 # No of secs the response time can be before the server time .. Keep this very low for security
+  FIRST_NAME_STRS = [ "givenname" , "FirstName", "User.FirstName", "username" ].map &:to_sym  # username will always return something
+  LAST_NAME_STRS = [ "surname", "LastName", "User.LastName" ].map &:to_sym 
+  PHONE_NO_STRS = [ "phone"].map &:to_sym 
 
   class SAMLResponse
 
-    attr_accessor :user_name, :email , :error_message
+    attr_accessor :user_name, :email , :phone , :error_message
 
-    def initialize(valid,user_name,email,error_message)
+    def initialize(valid,user_name,email,phone,error_message)
       @valid = valid;
       @user_name = user_name;
       @email = email;
+      @phone = phone
       @error_message = error_message ? error_message : "";
     end
 
@@ -28,14 +30,14 @@ module SsoUtil
     #redirect to SSO login page
     if current_account.is_saml_sso?
       settings = get_saml_settings(current_account)
-      redirect_to Onelogin::Saml::Authrequest.new.create(settings)
+      redirect_to OneLogin::RubySaml::Authrequest.new.create(settings)
     else
       redirect_to current_account.sso_login_url;
     end
   end
 
   def get_saml_settings(acc)
-    settings = Onelogin::Saml::Settings.new
+    settings = OneLogin::RubySaml::Settings.new
 
     settings.issuer = request.host;
     port = Rails.env.development? ? ":3000" : ""
@@ -48,7 +50,7 @@ module SsoUtil
   end
 
 
-  def handle_sso_response(user_email_id , user_name )
+  def handle_sso_response(user_email_id , user_name , phone )
     @current_user = current_account.all_users.find_by_email(user_email_id)
 
     if @current_user && @current_user.deleted?
@@ -57,7 +59,11 @@ module SsoUtil
     end
 
     if !@current_user
-      @current_user = create_user(user_email_id,current_account,nil,{:name => user_name})
+      options = {}
+      options[:name] = user_name
+      options[:phone] = phone unless phone.blank?
+
+      @current_user = create_user(user_email_id,current_account,nil, options)
       @current_user.active = true
       saved = @current_user.save
     elsif current_account.sso_enabled?
@@ -79,24 +85,24 @@ module SsoUtil
 
   def validate_saml_response(acc, saml_xml)
 
-    user_name = user_email_id = error_message = "";
+    user_name = user_email_id = phone = error_message = "";
 
-    response = Onelogin::Saml::Response.new(saml_xml, :allowed_clock_drift => SAML_CLOCK_DRIFT)
+    response = OneLogin::RubySaml::Response.new(saml_xml, :allowed_clock_drift => SAML_CLOCK_DRIFT)
     response.settings = get_saml_settings(acc)
 
     if response.is_valid?
-      Rails.logger.debug("Got back a valid response from SAML #{response.document}")
       user_email_id = response.name_id
       user_name = response.attributes[:username] # default user name is actually just the part before @ in the email
 
-      first_name = get_first_match(response.attributes , FIRST_NAME_STRS) # these have to be negotiated with the SAML IDP - e.g. Onelogin / okta
-      last_name = get_first_match(response.attributes , LAST_NAME_STRS) # these have to be negotiated with the SAML IDP - e.g. Onelogin / okta
+      first_name = get_first_match(response.attributes , FIRST_NAME_STRS)
+      last_name = get_first_match(response.attributes , LAST_NAME_STRS)
+      phone = get_first_match(response.attributes , PHONE_NO_STRS)
 
       user_name = first_name if first_name;
       user_name += " " + last_name if last_name;
     else
       begin
-        Rails.logger.debug("Not a valid response from SAML provider");
+        Rails.logger.debug("Got an invalid response from SAML Provider #{response.document}")
         response.validate! # force validation to get exact error
         error_message = "Login Rejected"
       rescue Exception => e
@@ -104,7 +110,7 @@ module SsoUtil
         error_message = " Validation Failed :  #{e.message}"
       end
     end
-    SAMLResponse.new(response.is_valid? , user_name , user_email_id, error_message);
+    SAMLResponse.new(response.is_valid? , user_name , user_email_id, phone, error_message);
   end
 
   private

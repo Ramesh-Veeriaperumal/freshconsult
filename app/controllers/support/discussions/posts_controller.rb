@@ -100,12 +100,16 @@ class Support::Discussions::PostsController < SupportController
 private
 	def load_topic
 		@topic = scoper.find_by_id(params[:topic_id])
-		@forum = @topic.forum
-		@forum_category = @forum.forum_category
-
-		wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
-		raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
-		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)		
+		if @topic.nil?
+			flash[:notice] = I18n.t('portal.topic_deleted')
+			redirect_to support_discussions_path
+		else
+			@forum = @topic.forum
+			@forum_category = @forum.forum_category
+			wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
+			raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+		end
 	end
 
 	def find_post     

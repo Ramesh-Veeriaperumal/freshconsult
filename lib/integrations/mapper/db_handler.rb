@@ -18,8 +18,10 @@ class Integrations::Mapper::DBHandler
 
   def save(data, config)
     if data.is_a?(Helpdesk::Ticket) 
+      data.requester.make_current if data.requester 
       data.save_ticket! 
     elsif data.is_a?(Helpdesk::Note)
+      data.user.make_current if data.user 
       data.save_note!
     else
       data.save!   
