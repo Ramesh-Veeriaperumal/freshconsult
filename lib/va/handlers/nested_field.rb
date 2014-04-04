@@ -8,7 +8,6 @@ class Va::Handlers::NestedField < Va::RuleHandler
       return to_ret unless to_ret
       
       (nested_rules || []).each do |nested_rule|
-        return true if nested_rule[:value] == '--'
         if evaluate_on.respond_to?(nested_rule[:name])
           to_ret = send(condition.operator, evaluate_on.send(nested_rule[:name]),nested_rule[:value])
           return to_ret unless to_ret
