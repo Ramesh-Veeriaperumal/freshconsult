@@ -13,6 +13,7 @@ class ChatSetting < ActiveRecord::Base
 	after_create :set_display_id
 
 	serialize :preferences, Hash
+	serialize :non_availability_message, Hash
 
 	attr_protected :account_id, :display_id
 

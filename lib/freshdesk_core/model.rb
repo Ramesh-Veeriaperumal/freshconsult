@@ -1,5 +1,7 @@
 module FreshdeskCore::Model
   include Subscription::Events::Constants
+  include Redis::RedisKeys
+  include Redis::OthersRedis	
 
   HELPKIT_TABLES =  [   "account_additional_settings",  
                         "account_configurations", 
@@ -123,6 +125,7 @@ module FreshdeskCore::Model
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
+    remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
@@ -132,6 +135,14 @@ module FreshdeskCore::Model
   end
 
   private
+
+    def remove_mobile_registrations account_id
+        message = {
+            :account_id => account_id,
+			:delete_axn => :account
+        }.to_json
+        publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
+    end
   
     def delete_gnip_twitter_rules(account)
       account.twitter_handles.each do |twt_handle|

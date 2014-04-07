@@ -582,6 +582,7 @@
   map.namespace :mobile do |mobile|
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
+	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
   end
 
   map.root :controller => "home"

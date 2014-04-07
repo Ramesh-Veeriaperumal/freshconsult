@@ -3738,6 +3738,9 @@ en:
     twenty_four: "From yesterday"
     custom_filter: "Set date"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
+    created_time: Created time
+    resolved_time: Resolved time
+    closed_time: Closed time
     created_at: created
     resolved_at: resolved
     closed_at: closed
@@ -5038,7 +5041,7 @@ en:
     thank_title: "Thank you/Closure Message"
     wait_title: "Wait/On hold Message"
     is_typing_header: "When agent/visitor <br> starts typing"
-    prechat_title: "Pre-Chat form"
+    prechat_title: "Pre-chat form"
     prechat_desc: "Collect personal details about your visitors before you start chatting with them. When this is on, visitors will need to submit the form to begin a chat."
     prechat_msg: "Pre-Chat Message"
     welcome_tip: "Text will appear at the top of chat window"
@@ -5051,15 +5054,15 @@ en:
     typing_message: "is typing..."
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
-    proactive_note: "Note: Pre-chat form will not be shown when proactive chat is on."
+    proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
     proactive_time: "Greet when more than %{seconds} on the same page"
     procative_info: "Automatically initiate chat conversations with visitors if they spend more than a certain amount of time on the same page"
     chat_availability: "Chat Availability"
-    show_chat_hours: "Show Chat during"
+    show_chat_hours: "Show chat"
     show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
-    show_chat_hours_info: "Chat window will appear only when agents are available."
-    business_hours: "Business Hours"
-    anytime: "24/7"
+    show_chat_hours_info: "Note: Chat window will appear only when agents are available."
+    business_hours: "During business hours"
+    anytime: "Always (24/7)"
     business_calendar: "Select Business Hour"
     texton: "On"
     textoff: "Off"
@@ -5193,7 +5196,7 @@ en:
     agent_joined_msg: "$ has joined the chat"
     agent_left_msg: "$ has left the chat"
     connecting_msg: "Waiting for an agent"
-    ignore_msg: "Looks like all our agents are tied up right now :( Sorry about that, but please <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>leave us a message</a> and we'll get right back."
+    non_availability_message: "Looks like all our agents are tied up right now :( Sorry about that, but please # leave us a message # and we'll get right back."
     date_invalid: Invalid date
     installation: "Installation"
     intro_title: "Why Freshchat?"
@@ -5203,9 +5206,18 @@ en:
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: "Everyone"
-    portal_desc: "Support your customers in real-time within your portal"
+    portal_desc: "Support your customers in real-time within your Freshdesk portal."
     portal_option_info: "Show chat widget for"
     loading_new_archives: "Loading new archives..."
+    non_availability_msg_header: "Non availability message"
+    non_availability_msg_help: "To hyperlink a text enclose the Phrase within '# #'"
+    feedback_widget: "New ticket via Feedback widget"
+    new_ticket_page: "New ticket page on your support portal"
+    custom_link: "A custom Link"
+    on_click_goto: "On click Goto…"
+    enter_custom_link: "Enter Url..."
+    url_error_msg: "Please enter a valid Url."
+    widget_option_info: "If feedback widget not available, new ticket page will be opened"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

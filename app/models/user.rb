@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
     #The following is a part to validate email only if its not deleted
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_REGEX
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
-    c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
+    c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
   end
   
   validates_presence_of :email, :unless => :customer?

@@ -48,12 +48,14 @@ module Helpdesk::S3
       key = generate_file_path(args[:account_id],args[:key_id])
       if args[:delete]
         delete(key,bucket)
-      elsif args[:create]
-        value = args[:data].to_json
-        create(key,value,bucket) unless exists?(key, bucket)
       else
+        return if args[:data].blank?
         value = args[:data].to_json
-        create(key,value,bucket)
+        if args[:create]
+          create(key,value,bucket) unless exists?(key, bucket)
+        else
+          create(key,value,bucket)
+        end
       end
     end
   end

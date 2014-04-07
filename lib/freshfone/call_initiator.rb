@@ -40,7 +40,7 @@ class Freshfone::CallInitiator
 	def connect_caller_to_numbers
 		twiml_response do |r|
 			numbers.each do |number|
-				r.Dial :callerId => params[:From], :record => record?, :timeLimit => time_limit,
+				r.Dial :callerId => params[:From], :record => record?, :timeLimit => 1800,
 							 :action => direct_dial_url(number) do |d|
 					d.Number number, :url => direct_dial_success(number)
 				end
@@ -80,7 +80,7 @@ class Freshfone::CallInitiator
 		if current_number.voicemail_active
 			twiml_response do |r|
 				read_voicemail_message(r, type)
-				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => 300
 				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
 			end
 	 	else

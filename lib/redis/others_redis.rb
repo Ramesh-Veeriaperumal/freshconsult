@@ -27,4 +27,10 @@ module Redis::OthersRedis
 	def increment_others_redis(key)
 		newrelic_begin_rescue { $redis_others.INCR(key) }
 	end
+
+  def publish_to_channel channel, message
+      newrelic_begin_rescue do
+          return $redis_others.publish(channel, message)
+      end
+  end	
 end

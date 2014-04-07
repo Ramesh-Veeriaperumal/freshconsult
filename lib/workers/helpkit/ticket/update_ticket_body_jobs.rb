@@ -10,6 +10,7 @@ class Workers::Helpkit::Ticket::UpdateTicketBodyJobs
       begin
         bucket = S3_CONFIG[:ticket_body]
         ticket_body = Helpdesk::TicketOldBody.find_by_ticket_id_and_account_id(args[:key_id],args[:account_id])
+        return unless ticket_body
         args[:data] = ticket_body.attributes
         Helpdesk::S3::Ticket::Body.push_to_s3(args,bucket)
       rescue Exception => e

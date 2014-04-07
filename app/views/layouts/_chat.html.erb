@@ -8,7 +8,7 @@
 <div id="freshchat_layout"></div>
 <script language="javascript">
 
-var CS_URL = "<%=comm_url%>";
+var CS_URL = "http://<%=comm_url%>:80";
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
@@ -19,6 +19,7 @@ var CHAT_DEBUG = "<%=chat_debug%>";
         var css_url = asset_url.css;
         if(window.location && window.location.protocol=='https:'){
             url = css_url = asset_url.cloudfront;
+            CS_URL = "https://<%=comm_url%>:443";;
         }
         var fc_CSS=document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');
@@ -173,7 +174,7 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             agent_joined_msg: "<%= t('freshchat.agent_joined_msg') %>",
             agent_left_msg: "<%= t('freshchat.agent_left_msg') %>",
             connecting_msg: "<%= t('freshchat.connecting_msg') %>",
-            ignore_msg: "<%= t('freshchat.ignore_msg').html_safe %>",
+            non_availability_message: "<%= t('freshchat.non_availability_message') %>",
             me: "<%= t('freshchat.me') %>",
             on: "<%= t('freshchat.texton') %>",
             off: "<%= t('freshchat.textoff') %>",

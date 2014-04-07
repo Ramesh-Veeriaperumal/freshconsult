@@ -39,5 +39,12 @@ ActionController::Base.asset_host =  Proc.new { |source, request|
     "https://asset.freshpo.com"
   end
 }
+
+config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
+  r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
+  store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
+  r.set_cache(store) if store.present?
+end
+
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false

@@ -1,5 +1,6 @@
 module Helpdesk::SlaPoliciesHelper
 
+	DEFAULT_SLA_SECONDS = 900 #Default time for sla - 15 minutes
 	SECONDS_IN_MINUTE = 60
 	SECONDS_IN_HOUR = 3600
 	SECONDS_IN_DAY = 86400
@@ -41,6 +42,7 @@ module Helpdesk::SlaPoliciesHelper
 	alias_method :ticket_type_list, :ticket_types
 
 	def get_value seconds, select_field=false
+		seconds = DEFAULT_SLA_SECONDS unless seconds.present?
 		seconds = seconds.to_f # For enabling decimal division
 		if !(seconds/SECONDS_IN_MONTH).zero? and (seconds/SECONDS_IN_MONTH) % 1 == 0
 			return SECONDS_IN_MONTH if select_field
