@@ -2,7 +2,8 @@
 module Mobile::Actions::Ticket
   
   include ActionView::Helpers::DateHelper
-
+  include Mobile::Actions::Push_Notifier
+  
   NOTES_OPTION = {
       :only => [ :created_at, :user_id, :id, :private, :deleted ],
       :include => {

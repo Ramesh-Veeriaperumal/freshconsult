@@ -25,6 +25,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/automation"
+	resource :"mobile/notification"
     resource :"social/twitter_handle",
        :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
 

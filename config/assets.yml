@@ -193,6 +193,8 @@ javascripts:
     - public/javascripts/codemirror/mode-xml.js
     - public/javascripts/codemirror/util-match-highlighter.js
     - public/javascripts/codemirror/util-overlay.js
+    - public/javascripts/codemirror/util-dialog.js
+    - public/javascripts/codemirror/util-search.js
     - public/javascripts/codemirror/util-searchcursor.js
 
   colorpicker:

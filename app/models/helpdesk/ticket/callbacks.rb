@@ -25,6 +25,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
   after_commit_on_update :update_group_escalation, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
+
+  after_commit_on_create :push_create_notification
+  after_commit_on_update :push_update_notification
+
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
 
@@ -236,7 +240,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def publish_ticket_properties(type)
     user_id = User.current ? User.current.id : ""
     ticket_responder_id = responder_id ? responder_id : -1
-    message = { 
+    message = {
                 "ticket_id" => display_id, 
                 "user_id" => user_id,
                 "type" => type,
@@ -263,8 +267,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     $sqs_autorefresh.send_message(body)
   end
-  
-private
+
+private 
+  def push_create_notification
+	push_mobile_notification(:new)
+  end 
+
+  def push_update_notification
+	push_mobile_notification(:update)
+  end
+
+  def push_mobile_notification(type)
+	return unless @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || @model_changes.key?(:status)
+
+    message = {
+                :ticket_id => display_id,
+                :group => group_name,
+                :status_name => status_name,
+                :requester => requester_name,
+                :ticket_sla_status => ticket_sla_status,
+                :subject => truncate(subject, :length => 100),
+                :priority => priority
+              }
+	send_mobile_notification(type,message)
+  end 
 
   def model_changes?
     @model_changes.present?
@@ -428,6 +454,7 @@ private
   rescue Exception => e
     NewRelic::Agent.notice_error(e)
   end
+
 
   def update_group_escalation
     if @model_changes.key?(:group_id)

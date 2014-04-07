@@ -18,6 +18,9 @@ $redis_integrations = Redis.new(:host => config["host"], :port => config["port"]
 $redis_portal = Redis.new(:host => config["host"], :port => config["port"])
 $redis_others = Redis.new(:host => config["host"], :port => config["port"])
 
+mobile_config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis_mobile.yml'))[RAILS_ENV]
+$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"])
+
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}
 Redis.class_eval {add_method_tracer :del}

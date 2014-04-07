@@ -8,6 +8,8 @@ gem "rails","2.3.18"
 gem "json", "~> 1.7.7"
 gem "mysql2", "~> 0.2.7"
 
+gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
+
 gem "mail"
 gem "i18n", "0.4.2"
 gem "RedCloth", "4.2.9"
