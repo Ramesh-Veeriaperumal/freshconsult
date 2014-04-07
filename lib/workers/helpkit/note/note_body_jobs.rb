@@ -11,7 +11,12 @@ class Workers::Helpkit::Note::NoteBodyJobs
         bucket = S3_CONFIG[:note_body]
         unless args[:delete]
           note_body = Helpdesk::NoteOldBody.find_by_note_id_and_account_id(args[:key_id],args[:account_id])
-          args[:data] = note_body.attributes
+          if args[:retry].to_i < (WorkerNoteBodyRetry-1)
+            args[:data] = note_body.attributes
+          else
+            return if note_body.blank?
+            args[:data] = note_body.attributes
+          end
         end
         Helpdesk::S3::Note::Body.push_to_s3(args,bucket)
       rescue Exception => e
