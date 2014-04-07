@@ -5,6 +5,6 @@ class AddIndexToAdminUserAccessesOnType < ActiveRecord::Migration
   end
 
   def self.down
-  	remove_index(:admin_user_accesses, :name => 'index_admin_user_accesses_on_account_id_accessible_id_and_accessible_type)
+  	remove_index(:admin_user_accesses, :name => 'index_admin_user_accesses_on_account_id_accessible_id_and_accessible_type')
   end
 end
