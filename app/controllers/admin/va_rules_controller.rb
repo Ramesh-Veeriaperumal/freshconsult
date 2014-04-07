@@ -174,7 +174,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
 
     def add_custom_filters filter_hash
-      special_case = [['', t('none')]]
+      special_case = [['--', t('any_val.any_value')], ['', t('none')]]
       cf = current_account.ticket_fields.custom_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
