@@ -11,6 +11,7 @@ module HelpdeskSystem
         render :text => "abort" if request.headers['X-PJAX']
       }
       format.json { 
+        session.delete(:return_to) 
         render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 
         render :update do |page| 
