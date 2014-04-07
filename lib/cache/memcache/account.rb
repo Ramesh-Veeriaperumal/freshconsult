@@ -41,6 +41,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
   end
 
+  def agents_count_from_cache
+    key = agents_count_memcache_key
+    MemcacheKeys.fetch(key) { self.agents.count }
+  end
+
   def groups_from_cache
     key = groups_memcache_key
     MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
@@ -141,6 +146,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def agents_count_memcache_key
+      ACCOUNT_AGENTS_COUNT % { :account_id => self.id }
     end
 
     def groups_memcache_key
