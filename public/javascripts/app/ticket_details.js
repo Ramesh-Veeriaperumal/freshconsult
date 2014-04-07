@@ -1048,6 +1048,28 @@ var scrollToError = function(){
 		}
 	}
 
+	var openConversation = function(){ 
+		var key = window.location.hash; 
+		switch (key){
+			case "#reply":
+			    $('#ReplyButton').trigger('click');
+			    break;
+			case "#forward":
+			    $('#FwdButton').trigger('click')
+			    break;
+			case "#add_note":
+			    $('#noteButton').trigger('click')
+			    break;
+		}
+	}    
+
+	setTimeout(openConversation, 200);
+
+	$(document).on('click.ticket_details','.conversation .dialog-btn',function(){
+		var id = jQuery('.conversation_thread form:visible').attr('id')
+		jQuery( "#" + id + " ul.dropdown-menu").focus();
+	})
+
 	$('body').on('click.ticket_details', '[rel=TicketReplyPlaceholder]', function(ev) {
 		ev.preventDefault();
 		$(this).hide();

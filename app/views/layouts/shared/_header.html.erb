@@ -146,7 +146,6 @@
 		var that = this;
 		jQuery(this)
 			.attr('disabled', 'disabled')
-			.parent().addClass('sloading');
 		jQuery.ajax({
 			type: "PUT",
 			dataType:"json",
@@ -154,10 +153,9 @@
 			success: function (response) {
 				jQuery(that)
 					.removeAttr('disabled')
-					.parent().removeClass('sloading');
 				if (response.shortcuts_enabled) {
 					if(window.shortcuts !== undefined){
-						jQuery(document).trigger("shortcuts:invoke")
+						jQuery(document).trigger("shortcuts:invoke").scrollTop(0)
 					} else {
         				scriptLoader.load('shortcut');
 					}
