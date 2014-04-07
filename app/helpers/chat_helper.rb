@@ -4,6 +4,12 @@ module ChatHelper
     Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id, :email=>c.user.email} }.to_json.html_safe )
   end
 
+  def ticket_link_options
+    return [  [  I18n.t('freshchat.feedback_widget'),  0],
+              [  I18n.t('freshchat.new_ticket_page'),  1],
+              [  I18n.t('freshchat.custom_link'),      2] ]
+  end
+
   def chat_feature_enabled?
     feature?(:chat) && feature?(:chat_enable)
   end
@@ -39,6 +45,7 @@ module ChatHelper
     chat_setting = current_account.chat_setting
     business_calendar = chat_setting.business_calendar.to_json({:only => [:time_zone, :business_time_data, :holiday_data]})
     preferences = chat_setting.preferences
+    non_available_message = chat_setting.non_availability_message
     if preferences
       window_color = preferences['window_color']
       window_position = preferences['window_position']
@@ -48,8 +55,18 @@ module ChatHelper
       window_position = "Bottom Right"
       window_offset = 30
     end
+    unless non_available_message.blank?
+      non_availability_message = non_available_message['text']
+      ticket_link_option = non_available_message['ticket_link_option']
+      custom_link_url = non_available_message['custom_link_url']
+    else
+      non_availability_message = t("freshchat.non_availability_message")
+      ticket_link_option = 0
+      custom_link_url = ""
+    end
     freshchat_setting = {
-      :fc_id => chat_setting.display_id, :fc_se => chat_setting.visitor_session,
+      :fc_id => chat_setting.display_id, 
+      :fc_se => chat_setting.visitor_session,
       :minimized_title => chat_setting.minimized_title.blank? ? t("freshchat.minimized_title") : chat_setting.minimized_title, 
       :maximized_title => chat_setting.maximized_title.blank? ? t("freshchat.maximized_title") : chat_setting.maximized_title,
       :welcome_message => chat_setting.welcome_message.blank? ? t("freshchat.welcome_message") : chat_setting.welcome_message,
@@ -58,19 +75,32 @@ module ChatHelper
       :typing_message => chat_setting.typing_message.blank? ? t("freshchat.typing_message") : chat_setting.typing_message,
       :prechat_message => chat_setting.prechat_message.blank? ? t("freshchat.prechat_message") : chat_setting.prechat_message, 
       :prechat_form => chat_setting.prechat_form,
-      :prechat_mail => chat_setting.prechat_mail, :prechat_phone => chat_setting.prechat_phone,  
-      :proactive_chat => chat_setting.proactive_chat, :proactive_time => chat_setting.proactive_time, 
+      :prechat_mail => chat_setting.prechat_mail, 
+      :prechat_phone => chat_setting.prechat_phone,  
+      :proactive_chat => chat_setting.proactive_chat, 
+      :proactive_time => chat_setting.proactive_time, 
       :business_calendar => business_calendar,
-      :show_on_portal => chat_setting.show_on_portal, :portal_login_required => chat_setting.portal_login_required,
-      :weburl => current_account.full_domain, :nodeurl => ChatConfig["communication_url"][Rails.env],
-      :debug => ChatConfig["chat_debug"][Rails.env], :agent_joined_msg => t("freshchat.agent_joined_msg") ,
-      :agent_left_msg  => t("freshchat.agent_left_msg"), :connecting_msg => t("freshchat.connecting_msg") ,
-      :ignore_msg => t("freshchat.ignore_msg"), :me => t("freshchat.me") ,
-      :name_place =>  t("freshchat.name"), :mail_place => t("freshchat.mail") ,
-      :phone_place => t("freshchat.phone"), :text_place => t("freshchat.text_placeholder") ,
-      :begin_chat => t("freshchat.begin_chat"), :color => window_color,
-      :offset =>  window_offset, :position => window_position,
-      :expiry =>  chat_trial_expiry
+      :show_on_portal => chat_setting.show_on_portal, 
+      :portal_login_required => chat_setting.portal_login_required,
+      :weburl => current_account.full_domain, 
+      :nodeurl => ChatConfig["communication_url"][Rails.env],
+      :debug => ChatConfig["chat_debug"][Rails.env], 
+      :agent_joined_msg => t("freshchat.agent_joined_msg") ,
+      :agent_left_msg  => t("freshchat.agent_left_msg"), 
+      :connecting_msg => t("freshchat.connecting_msg") ,
+      :non_availability_message => non_availability_message,
+      :me => t("freshchat.me") ,
+      :name_place =>  t("freshchat.name"), 
+      :mail_place => t("freshchat.mail") ,
+      :phone_place => t("freshchat.phone"), 
+      :text_place => t("freshchat.text_placeholder") ,
+      :begin_chat => t("freshchat.begin_chat"), 
+      :color => window_color,
+      :offset =>  window_offset, 
+      :position => window_position,
+      :ticket_link_option => ticket_link_option, 
+      :expiry =>  chat_trial_expiry,
+      :custom_link_url => custom_link_url
     }
     return freshchat_setting.to_json.html_safe
   end
