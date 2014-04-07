@@ -13,7 +13,9 @@ ChatSetting.seed(:account_id) do |c|
   c.prechat_phone = 0
   c.prechat_mail = 0
   c.proactive_chat = 0
-  c.proactive_time = 10
+  c.proactive_time = 15
   
+  c.show_on_portal = 1
+  c.portal_login_required = 0
 
 end

@@ -24,8 +24,6 @@ ActionController::Base.asset_host =  Proc.new { |source, request|
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = true
 
-
-
 config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
 end

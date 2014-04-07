@@ -266,11 +266,11 @@ class User < ActiveRecord::Base
   end
 
   def first_name
-    name_part(:first)
+    name_part("given")
   end
 
   def last_name
-    name_part(:last)
+    name_part("family")
   end
 
   #Savage_beast changes start here
@@ -518,11 +518,12 @@ class User < ActiveRecord::Base
 
   private
     def name_part(part)
+      part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]
     end
 
     def parsed_name
-      @parsed_name ||= People::NameParser.new.parse(self.name)
+      @parsed_name ||= Namae::Name.parse(self.name)
     end
 
     def bakcup_user_changes

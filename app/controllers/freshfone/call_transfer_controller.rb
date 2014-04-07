@@ -41,6 +41,10 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 
 	private
 
+		def freshfone_user_scoper
+			current_account.freshfone_users
+		end
+		
 		def validate_agent
 			return empty_twiml if called_agent.blank?
 			params.merge!({ :agent => called_agent })

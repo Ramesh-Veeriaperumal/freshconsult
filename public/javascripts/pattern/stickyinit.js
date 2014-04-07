@@ -7,7 +7,7 @@
       var scroll_top = $(this).data( "scrollTop" );
 
       if($(this).data("collapsed"))
-        $self.collapsed(this);
+        $self.collapsed($(this));
 
       if(prev_ele != null){
         var prev_ele_height = $('#'+prev_ele).outerHeight(true);

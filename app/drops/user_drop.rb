@@ -32,11 +32,11 @@ class UserDrop < BaseDrop
 	end
 
 	def firstname
-		name_part(:first)
+		name_part("given")
 	end
 
 	def lastname
-		name_part(:last)
+		name_part("family")
 	end
 
 	def recent_tickets
@@ -56,10 +56,11 @@ class UserDrop < BaseDrop
 
 	private
 		def name_part(part)
-			parsed_name[part].blank? ? parsed_name[:clean] : parsed_name[part]
+			part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
+			parsed_name[part].blank? ? @source.name : parsed_name[part]
 		end
 
 		def parsed_name
-			@parsed_name ||= People::NameParser.new.parse(@source.name)
+			@parsed_name ||= Namae::Name.parse(@source.name)
 		end
 end

@@ -1,13 +1,15 @@
 // Search Result UI
-#sticky_header.search-sticky{
+.search-sticky{
 	margin: 0;
 	padding: 0;
 	border-bottom:1px solid #ddd;
 	background: transparent;
-	.stuck{
-		@include box-shadow(0 3px 20px -10px rgba(0, 0, 0, 0.3))
-	}
 }
+
+.search-sticky.is_stuck{
+	@include box-shadow(0 3px 20px -10px rgba(0, 0, 0, 0.3))
+}
+
 .search-page .pagearea{ padding: 0 0 0px; }
 
 .search-page .dropdown{

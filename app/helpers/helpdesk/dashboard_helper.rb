@@ -17,7 +17,7 @@ module Helpdesk::DashboardHelper
 		sidebar_content.concat(render :partial => '/freshfone/freshfone_dashboard') if current_account.freshfone_enabled?
 
 		sidebar_content.concat(content_tag(:div, content_tag(:div, :class => "sloading loading-small loading-block").concat("<script>if(window.dashboardView){dashboardView.render(true);}</script>"),
-			:class => "side-panel", :id => "chat-dashboard", :style => "display:none;"))
+			:class => "sidepanel", :id => "chat-dashboard", :style => "display:none;"))
 
 		sidebar_content.html_safe
 	end
