@@ -48,6 +48,8 @@ class Search::SearchController < ApplicationController
 			@search_recursion_counter += 1
 			process_results(search_in, options) unless is_native_mobile?
 		rescue Exception => e
+			@result_json = @result_json.to_json
+			Rails.logger.debug e.inspect
 			NewRelic::Agent.notice_error(e)
 		end
 	end
@@ -119,7 +121,7 @@ class Search::SearchController < ApplicationController
 				search(search_in, options) 	
 			else
 				@current_page = options[:page]
-				@search_key = (params[:term] || params[:search_key]).gsub(/\\/,'')
+				@search_key = (params[:term] || params[:q] || params[:search_key]).gsub(/\\/,'')
 				generate_result_json unless @suggest
 			end
 

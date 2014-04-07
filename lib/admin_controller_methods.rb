@@ -54,7 +54,7 @@ module AdminControllerMethods
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
          if Rails.env.production?
-            username == 'freshdesk' && Digest::MD5.hexdigest(password) == "8fb52088220a703c6e478392802815ce"
+            username == 'freshdesk' && Digest::MD5.hexdigest(password) == "c5dac0ac46757410380dc7a7302cab38"
          else
             username == 'freshdesk' && password == "USD40$" 
          end

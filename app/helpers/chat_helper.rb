@@ -8,16 +8,22 @@ module ChatHelper
     feature?(:chat) && feature?(:chat_enable)
   end
 
+  def chat_active?
+    chat_feature_enabled? && !current_account.subscription.suspended? && current_account.chat_setting
+  end
+
   def portal_chat_enabled?
-    account = current_account
-    chat_setting = account.chat_setting
-    chat_feature_enabled? && !account.subscription.finished_trial? && chat_setting && chat_setting.show_on_portal && 
-                                                  (!chat_setting.portal_login_required || logged_in?)
+    chat_setting = current_account.chat_setting
+    chat_active? && chat_setting.show_on_portal && (!chat_setting.portal_login_required || logged_in?)
   end
 
   def multiple_business_hours?
     feature?(:multiple_business_hours) && 
       current_account.business_calendar.count > 1
+  end
+
+  def default_business_hour
+    current_account.business_calendar.default.first.id
   end
 
   def chat_trial_expiry

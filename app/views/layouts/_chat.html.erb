@@ -1,6 +1,5 @@
 <% account = current_account %>
-<%if(current_user && account.features?(:chat) && account.features?(:chat_enable) && account.chat_setting && 
-                           !(is_assumed_user?) && account.active? && !account.subscription.finished_trial?)
+<%if (current_user && chat_active? && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
@@ -9,7 +8,7 @@
 <div id="freshchat_layout"></div>
 <script language="javascript">
 
-var CS_URL = "<%=comm_url%>";
+var CS_URL = "http://<%=comm_url%>:80";
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
@@ -20,6 +19,7 @@ var CHAT_DEBUG = "<%=chat_debug%>";
         var css_url = asset_url.css;
         if(window.location && window.location.protocol=='https:'){
             url = css_url = asset_url.cloudfront;
+            CS_URL = "https://<%=comm_url%>:443";;
         }
         var fc_CSS=document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');

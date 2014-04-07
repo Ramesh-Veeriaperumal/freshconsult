@@ -2302,7 +2302,7 @@ es:
         out_email:
           default: "Agente contestó"
           private: "Ticket reenviado"
-        in_email: "Cliente respondido"
+        in_email: "Cliente ha respondido"
         note: "Nueva nota"
         twitter: Tweet
       timesheet:

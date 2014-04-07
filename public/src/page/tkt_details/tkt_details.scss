@@ -21,7 +21,6 @@ ol, ul, li{
 	margin: 0;
 }
 
-
 .ticket_details .clearfix:before,
 .ticket_details .clearfix:after {
     content:"";
@@ -829,13 +828,8 @@ ol, ul, li{
     	}
 
     	.attachments-wrap {
-
 			display: block;
-
-			i {
-				font-style: normal;
-			}
-
+			i{ font-style: normal; }
     	}
 
     	&.message {
@@ -1015,14 +1009,13 @@ ol, ul, li{
     		width: auto;
 
     		padding: 0 10px;
-    		margin-bottom: -10px;
+    		margin-bottom: -15px;
 
     		overflow: hidden;
 
-    		label {
+    		label{
     			float: left;
-    			width: 130px;
-    			margin: 10px 15px 0 0;
+    			margin: 13px 15px 0 8px;
     		}
 
     		.file-types-def {
@@ -1166,11 +1159,11 @@ ol, ul, li{
 
 	blockquote.freshdesk_quote {
 		font-size: 13px;
-		line-height: 22px;
-		margin: .5em;
+		line-height: 18px;
+		margin: 10px 3px 5px;
 		color: #666;
 		border-left: 1px dotted #999;
-		padding: 6px 6px 1px 1em;
+		padding: 0 0 0 7px;
 	}
 
 	.actions {
@@ -2245,11 +2238,9 @@ ol, ul, li{
 }
 
 .attachments-wrap{
-	padding-top:15px;
 	color: #333333;
-	.attachments-container {
-		display: inline;
-	}
+	
+	.attachments-container { display: inline; }
 
 	.attachment_contents {
 		float: left;
@@ -2980,3 +2971,39 @@ $collision_delay: 1s;
 }
  
 // Chat conversation ticket CSS - END
+
+
+// Ticket Reply container
+.redactor_box .redactor_editor, .redactor_focus .redactor_editor{
+	border-radius: 0;
+	padding-bottom:0 !important;
+}
+
+.q-marker{ 
+	display: inline-block; 
+	height: 10px; 
+	width: 22px; 
+	background-color:#efefef; 
+	border:1px solid #dfdfdf;
+	cursor: pointer;
+	line-height: 3px;
+	letter-spacing: -3px;
+	text-align: center;
+	font-size: 14px;
+	font-family: monospace;
+	border-radius: 2px;	
+	&:before{
+		content: "...";
+		text-align: center;
+		margin-left: -3px;
+	}
+	&:hover{
+		background-color: #dfdfdf;
+	}
+}
+
+.wrap-marker{
+	padding-left: 15px;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}

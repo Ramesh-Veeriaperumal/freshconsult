@@ -31,14 +31,14 @@ class Admin::FreshfoneController < Admin::AdminController
 	end
 
 	def toggle_freshfone
-		if feature?(:freshfone)
-			@freshfone_account.suspend
-			current_account.features.freshfone.destroy
-		else
-			@freshfone_account.restore
-			current_account.features.freshfone.create
-		end
-		current_account.reload
+		# if feature?(:freshfone)
+		# 	@freshfone_account.suspend
+		# 	current_account.features.freshfone.destroy
+		# else
+		# 	@freshfone_account.restore
+		# 	current_account.features.freshfone.create
+		# end
+		# current_account.reload
 		redirect_to admin_freshfone_numbers_path
 	end
 

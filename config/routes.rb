@@ -76,7 +76,7 @@
     freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post}
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get}
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                        :children => :get, :recent_calls => :get }
@@ -262,6 +262,7 @@
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
       admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post, :update_global_blacklist_ips => :put }
+      admin.resources :manage_users, :as => 'manage_users', :collection =>{:add_whitelisted_user_id => :post, :remove_whitelisted_user_id => :post }
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'

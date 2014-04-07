@@ -21,10 +21,14 @@
 					<%= t('.remember') %>
 				</label>
 			</div>
-			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
-			<%= link_to(t('.forgot'), "", 
+	  	</div>
+	  	<div class="control-group">			
+	  		<%= link_to(t('.forgot'), "", 
 					:id => "forgot_password",
 					"data-toggle-dom" => "#forgot-form, #login-form" ) %>
+	  		<div class="controls">
+	  			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
+	  		</div>
 	  	</div>
 	</fieldset>
 <% end %>

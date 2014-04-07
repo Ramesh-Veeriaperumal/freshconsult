@@ -131,56 +131,76 @@ module Helpdesk::TicketsHelper
 
     o.join
   end
-  
-  def bind_last_conv (item, signature, forward = false, quoted=true)
-    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
-    if (last_conv.is_a? Helpdesk::Ticket)
-      last_reply_by = (h(last_conv.requester.name) || '')+"<"+(last_conv.requester.email || '')+">"
-      last_reply_time = last_conv.created_at
-      last_reply_content = last_conv.description_html
-    else
-      last_reply_by = (h(last_conv.user.name) || '')+"<"+(last_conv.user.email || '')+">" 
-      last_reply_by  = (h(ticket.reply_name) || '')+"<"+(ticket.reply_email || '')+">" unless last_conv.user.customer?       
-      last_reply_time = last_conv.created_at
-      last_reply_content = last_conv.full_text_html
-      unless last_reply_content.blank?
-        doc = Nokogiri::HTML(last_reply_content)
-        doc_fd_css = doc.css('div.freshdesk_quote')
-        unless doc_fd_css.blank?
-          remove_prev_quote = doc_fd_css.xpath('//div/child::*[1][name()="blockquote"]')[3] # will show last 4 conversations apart from recent one
-          remove_prev_quote.remove unless remove_prev_quote.blank?
-        end
-        last_reply_content = doc.at_css("body").inner_html 
-      end
-    end
-    
-    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
 
-    if(!forward)
-      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
-      if(!requester_template.nil?)
-        reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket,'helpdesk_name' => ticket.account.portal_name)
-        default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
-      end 
-    end
-
-    return default_reply unless quoted or forward
-    
-    content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
-              "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content.to_s+"</blockquote></div>"
-    return content
-  end
-
-  def bind_last_reply (item, signature, forward = false, quoted = false)
+  def bind_last_reply(item, signature, forward = false, quoted = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     # last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
     return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
+  end
+
+  def bind_last_conv(item, signature, forward = false, quoted = true)    
+    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+    quoted_text = ""
+
+    if quoted or forward
+      quoted_text = quoted_text(item, forward)
+    else
+      default_reply = parsed_reply_template(ticket, signature)
+    end 
+
+    "#{default_reply} #{quoted_text}"
+  end
+
+  def parsed_reply_template(ticket, signature)   
+    # Adding <p> tag for the IE9 text not shown issue
+    # default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+ 
+    requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
+    if(!requester_template.nil?)
+      reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
+      # Adding <p> tag for the IE9 text not shown issue
+      default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>"
+    end 
+ 
+    default_reply
+  end
+
+  def quoted_text(item, forward = false)
+    # item can be note/ticket 
+    # If its a ticket we will be getting the last note from the ticket
+    @last_item = (item.is_a?(Helpdesk::Note) or forward) ? item : (item.notes.visible.public.last || item)
+
+    %(<div class="freshdesk_quote">
+        <blockquote class="freshdesk_quote">On #{formated_date(@last_item.created_at)}
+          <span class="separator" />, #{user_details_template(@last_item)} wrote:
+          #{ (@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
+        </blockquote>
+       </div>)
+  end
+
+  def user_details_template(item)
+    user = (item.is_a? Helpdesk::Ticket) ? item.requester :
+            ((item.user.customer?) ? item.user :
+              { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
+
+    %( #{h(user['name'])} &lt;#{h(user['email'])}&gt; )
+  end
+
+  def extract_quote_from_note(note)
+    unless note.full_text_html.blank?
+      doc = Nokogiri::HTML(note.full_text_html)
+      doc_fd_css = doc.css('div.freshdesk_quote')
+      unless doc_fd_css.blank?
+        # will show last 4 conversations apart from recent one
+        remove_prev_quote = doc_fd_css.xpath('//div/child::*[1][name()="blockquote"]')[3] 
+        remove_prev_quote.remove unless remove_prev_quote.blank?
+      end
+      doc.at_css("body").inner_html
+    end
   end
 
   

@@ -13,7 +13,8 @@
 <%= include_cloudfront_js :search  %>
 
 <script type="text/javascript">
-	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>" }
+	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>",
+							in : "<%= t('search.in') %>" }
 	callbackToPageSearch = function(string){
 								jQuery.ajax({ 
 									url: "<%=url%>"+encodeURIComponent(string),

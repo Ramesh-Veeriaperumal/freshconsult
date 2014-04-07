@@ -27,7 +27,7 @@ TICKET_DETAILS_DATA = {
 						}
 };
 </script>
-<textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, true) %></textarea>
+<textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, false) %></textarea>
 <script type="text/javascript">
 TICKET_DETAILS_DATA['draft']['default_reply'] = document.getElementById('ticket_draft_default_reply').value;
 </script>

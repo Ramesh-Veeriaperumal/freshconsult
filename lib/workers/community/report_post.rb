@@ -21,8 +21,12 @@ class Workers::Community::ReportPost
 	  	end
 
 	  	def akismet_params(post)
+	  		env_params = { :is_test => 1 } unless (Rails.env.production? or Rails.env.staging?)
+			
 			{
 				:key => AkismetConfig::KEY,
+
+				:comment_type => 'forum-post',
 
 				:blog => post.account.full_url,
 				:permalink => post.topic_url,
@@ -30,8 +34,7 @@ class Workers::Community::ReportPost
 				:comment_author			=> post.user.name,
 				:comment_author_email	=> post.user.email,
 				:comment_content		=> post.body,
-			}
-
+			}.merge(env_params || {})
 		end
 	end
 end
