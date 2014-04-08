@@ -29,7 +29,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       params = { :ticket => ticket,
              :notification_type => notification_type,
-             :receips => ticket.requester.email,
+             :receips => ticket.from_email,
              :email_body_plain => plain_version,
              :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
@@ -254,7 +254,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     self.class.set_mailbox ticket.reply_email_config.smtp_mailbox
     
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
-    recipients    ticket.requester.email
+    recipients    ticket.from_email
     from          ticket.friendly_reply_email
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-replied", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now

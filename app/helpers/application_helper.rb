@@ -412,7 +412,7 @@ module ApplicationHelper
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.',         'ticket_requester_name'],
       ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket',          'ticket_requester_firstname'],
       ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket',           'ticket_requester_lastname'],
-      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
+      ['{{ticket.from_email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
       requester_company,
       ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number.",       'ticket_requester_phone'],
       ['{{ticket.requester.address}}', 'Requester address',   "Requester's Address.",       'ticket_requester_address'],
@@ -422,7 +422,8 @@ module ApplicationHelper
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.',         'ticket_latest_public_comment'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.',         'helpdesk_name'],
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
-      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description'],
+      ['{{ticket.requester.email}}', 'Contact Primary email', "Contact's primary email", 'contact_primary_email'],
     ]
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]

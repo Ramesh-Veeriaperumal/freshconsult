@@ -337,7 +337,8 @@ private
       portal = self.product.portal if self.product
       requester = account.users.new
       requester.signup!({:user => {
-        :email => email , :twitter_id => twitter_id, :external_id => external_id,
+        :user_emails_attributes => { "0" => {:email => self.email, :primary_role => true} }, 
+        :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone }}, 

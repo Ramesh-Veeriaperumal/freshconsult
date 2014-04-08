@@ -1,8 +1,8 @@
 # encoding: utf-8
 class UserEmail < ActiveRecord::Base
 
-  # include Users::Activator
-  # include ActionController::UrlWriter
+  include Users::Activator
+  include ActionController::UrlWriter
 
   EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
 
@@ -12,55 +12,90 @@ class UserEmail < ActiveRecord::Base
   validates_format_of :email, :with => EMAIL_REGEX
   validates_uniqueness_of :email, :scope => [:account_id]
   before_create :set_token
-  #before_update :drop_authorization, :if => :check_email_changed?
-  #before_destroy :drop_authorization
+  before_validation :downcase_email
+  before_update :drop_authorization, :if => :email_changed?
+  before_update :save_model_changes
+  after_commit_on_update :change_email_status, :if => :check_for_email_change?
+  before_destroy :drop_authorization, :check_active_with_emails
 
-  # def self.find_email_using_perishable_token(token, age)
-  #   return if token.blank?
+  def self.find_email_using_perishable_token(token, age)
+    return if token.blank?
     
-  #   age = age.to_i
-  #   conditions_sql = "perishable_token = ?"
-  #   conditions_subs = [token]
-  #   if age > 0
-  #     conditions_sql += " and updated_at > ?"
-  #     conditions_subs << age.seconds.ago
-  #   end
-  #   find(:first, :conditions => [conditions_sql, *conditions_subs])
-  # end
+    age = age.to_i
+    conditions_sql = "perishable_token = ?"
+    conditions_subs = [token]
+    if age > 0
+      conditions_sql += " and updated_at > ?"
+      conditions_subs << age.seconds.ago
+    end
+    find(:first, :conditions => [conditions_sql, *conditions_subs])
+  end
 
-  # def check_email_changed?
-  #   (self.email_changed?)
-  # end
+  def save_model_changes
+    @ue_changes = self.changes.clone
+  end
 
-  # def mark_as_verified
-  #   self.update_attribute(:verified, true) if !self.verified?
-  # end
+  def check_for_email_change?
+    @ue_changes.key?("email")
+  end
 
-  #  def self.user_for_email(email, scoper=nil)
-  #    user_email = (scoper || UserEmail).find_by_email(email)
-  #    user_email ? user_email.user : nil
-  #  end
+  def downcase_email
+    self.email = email.downcase if email
+  end
 
-  # def self.user_for_email(email)
-  #   user_email = find_by_email(email)
+  def mark_as_verified
+    self.update_attribute(:verified, true) if !self.verified?
+  end
+
+  # def self.user_for_email(email, scoper=nil)
+  #   user_email = (scoper || UserEmail).find_by_email(email)
   #   user_email ? user_email.user : nil
   # end
 
-  # protected
+  def self.user_for_email(email)
+    if Account.current.features?(:multiple_user_emails)
+      Account.current.all_users.find_by_email(email)
+    else
+      user_email = find_by_email(email)
+      user_email ? user_email.user : nil
+    end
+  end
 
-  #   def drop_authorization
-  #     self.user.authorizations.each do |auth|
-  #       auth.destroy
-  #     end 
-  #   end
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:email, :verified, :primary_role]) 
+  end
+
+  def as_json(options = {})
+    options[:only] = [:id, :email, :verified, :primary_role]
+    super options
+  end
+
+  def change_email_status
+    self.update_attribute(:verified, false) if self.verified?
+    deliver_contact_activation_email
+  end
+
+  protected
+
+    def drop_authorization
+      self.user.authorizations.each do |auth|
+        auth.destroy unless ["twitter", "facebook"].include?(auth.provider)
+      end 
+    end
+
+    def check_active_with_emails
+      self.user.toggle(:active) if (self.user.active? and self.user.verified_emails.blank?)
+    end
 
   private
 
     def set_token(portal=nil)
-      self.perishable_token = user.perishable_token
-      #self.perishable_token = Authlogic::Random.friendly_token
-      # if !primary_role? and self.user.active?
-      #     deliver_contact_activation_email if (!email.blank?)
-      # end
+      self.perishable_token = Authlogic::Random.friendly_token
+      if !primary_role? and self.user.active? and (!email.blank?)
+          deliver_contact_activation_email
+      end
     end
 end

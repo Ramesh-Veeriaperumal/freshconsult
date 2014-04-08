@@ -2,7 +2,7 @@
 	<td class="selector-box">
     <% if (params[:state].eql?("unverified") && privilege?(:manage_users)) ||
         privilege?(:delete_contact) %>
-		  <%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+		  <%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector', :disabled => contact.parent) %>
     <% end %>
 	</td>
 	<td >
@@ -33,7 +33,7 @@
 		<div class="user_actions" align="right">
       <% if privilege?(:delete_contact) %>
 			   <%= link_to(t('unblock').html_safe, {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'put', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
-			   <%= link_to(t('contacts.restore').html_safe, {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? %>
+			   <%= link_to(t('contacts.restore').html_safe, {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? %>
       <% end %>
       <% if privilege?(:view_contacts) %>
 			  <%= link_to(t('contacts.send_activation').html_safe, '', "data-method" => 'put', 	:class => "btn send-activation btn-mini", 

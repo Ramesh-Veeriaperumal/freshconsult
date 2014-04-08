@@ -403,11 +403,13 @@ class AccountsController < ApplicationController
       email = params[:user][:email]
       @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,account.id)
       @current_user = @auth.user unless @auth.blank?
-      @current_user = account.all_users.find_by_email(email) if @current_user.blank?    
+      @current_user = account.user_emails.user_for_email(email) if @current_user.blank?  
     end
 
     def build_signup_param
       params[:signup] = {}
+      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email]}}
+      params[:user].delete(:email)
       
       [:user, :account].each do |param|
         params[param].each do |key, value|

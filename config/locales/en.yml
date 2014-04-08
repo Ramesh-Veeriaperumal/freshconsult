@@ -206,6 +206,7 @@ en:
     address: Address
     work: Work
     email: Email
+    emails: Emails
     choose_another_photo: "Choose another photo"
     change_photo: "Change photo"
     remove_photo: "Remove photo"
@@ -1157,6 +1158,7 @@ en:
       select_company: Select Companies
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
+  additional_email_verification: Additional Email Verification
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
@@ -1945,6 +1947,7 @@ en:
         not_a_number: is not a number
         inclusion: is not included in the list
         user_role: A user must be associated with atleast one role
+        agent_email: An agent must have exactly one valid email
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -2200,11 +2203,13 @@ en:
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."
     delete_confirmation: When you delete a contact, future communication from the contact will be marked as SPAM. Are you sure you want to proceed?
     delete_contact: Delete Contact
+    convert_note: Converting to agent will delete all the secondary emails of this contact. Proceed to convert?
     add_new_user: Add a new user
     search_by: Search by Name or Email or Tags...
     new: New Contact
     edit_contact: Edit contact
     edit: Edit Contact
+    merged_into: Contact merged to
     save_changes: Save changes
     save: Save
     deleted_message: This is a deleted contact
@@ -2690,55 +2695,58 @@ en:
     reset_confirm: "All changes will be lost when you reset. Do you still want to continue?"
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\"> Click here </a>to learn more"
-      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_10:
         topic: "User Activation Email"
-        info1: "The User Activation Email is sent when a new agent is added in your helpdesk. The activation email must necessarily contain the “Agent Activation URL” {{activation_url}} for agents to create their password and complete the signup process.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create an activation email specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "The User Activation Email is sent when a new agent is added in your helpdesk. The activation email must necessarily contain the “Agent Activation URL” {{activation_url}} for agents to create their password and complete the signup process.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create an activation email specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_1:
         topic: New Ticket Created
-        info1: "The New Ticket Created email will be sent out to your agents whenever a new ticket is created in your help desk. You can pick which agent should be receiving this notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "The New Ticket Created email will be sent out to your agents whenever a new ticket is created in your help desk. You can pick which agent should be receiving this notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_14:
         topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your agents when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "Password Reset Email will be sent out to your agents when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_2:
         topic: Ticket Assigned to a Group
-        info1: "This notification goes out to all the agents in a group whenever a ticket gets assigned to that group. This email should contain the ticket URL {{ticket.url}} making it easier for the agents to check the ticket. <br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
+        info1: "This notification goes out to all the agents in a group whenever a ticket gets assigned to that group. This email should contain the ticket URL {{ticket.url}} making it easier for the agents to check the ticket. <br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
       agent_template_3:
         topic: Ticket Assigned to an Agent
-        info1: "This notification will be sent out to individual agents when a ticket has been assigned to them. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
+        info1: "This notification will be sent out to individual agents when a ticket has been assigned to them. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated. "
       agent_template_11:
         topic: Ticket Unattended in a Group
-        info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_6:
         topic: Requestor Replies to the Ticket
-        info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_12:
         topic: First Response SLA Violation
-        info1: "This notification is sent out to an agent when he has not responded to the ticket within the first response due time of the ticket. This email could contain the ticket URL and the due by time of the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This notification is sent out to an agent when he has not responded to the ticket within the first response due time of the ticket. This email could contain the ticket URL and the due by time of the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_13:
         topic: Resolution Time SLA Violation
-        info1: "This notification is sent out to agent when the ticket assigned to them has not been resolved within the due by time. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This notification is sent out to agent when the ticket assigned to them has not been resolved within the due by time. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_10:
         topic: User Activation Email
-        info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_14:
         topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_1:
         topic: New Ticket Created
-        info1: "A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_4:
         topic: Agent Adds Comment to the Ticket
-        info1: "This email is sent to a requestor whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to a requestor whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_7:
         topic: Agent Solves the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_8:
         topic: Agent Closes the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      requester_template_17:
+        topic: A new Email id has been added
+        info1: "This email is sent to the requestors asking them to verify a newly added email id to their contact."
       reply_template_15:
         topic: Agent Reply Template
-        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icons-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -3649,6 +3657,7 @@ en:
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
+        merge_text: The following contacts will be merged into the above contact and that will become the primary contact.
         target_merge_description1: Ticket %{ticket_id} %{ticket_subject} is merged with this request
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge
@@ -4569,6 +4578,38 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  merge_contacts:
+    header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
+    info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
+    invalid: "The E-Mail address provided is invalid"
+    loading: "Preparing Merge <img src='/images/loading.gif'>"
+    email_activated: "E-Mail already activated"
+    new_email_activation: "New E-Mail id activated. Login to your account"
+    contact_updated: "Contact has been updated"
+    primary_changed: "Default E-Mail changed"
+    failed_change: "Failed to change default E-Mail"
+    cannot_remove: "Default E-Mail cannot be removed"
+    removed: "E-Mail id removed"
+    confirm_and_merge: "Confirm and Merge"
+    activation_sent: "Activation mail sent. Please verify within a week"
+    client_manager: "You have selected a Client Manager {{name}} to merge."
+    cannot_restore: "Merged user cannot be restored"
+    primary: "Default"
+    not_verified: "Not Verified"
+    merge_contact: "Merge Contact"
+    verify: "Verify Now"
+    remove: "Remove"
+    success: "Contacts have been successfully merged"
+    verify_mail: "Verification email sent. Please verify within a week"
+    show_primary: "  (Default)"
+    unverified: "Email Unverified"
+    make_primary: "Mark as Default"
+    please_wait: "Please Wait..."
+    add_another: "Add Another"
+    merged_with: "This contact has been merged with : "
+    email_remove: "Are you sure you want to remove this Email?"
+    default_email: "Default Email"
+    additional_email: "Additional Email Verification"
   portalcss:
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?

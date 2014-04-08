@@ -1,0 +1,80 @@
+<%= include_cloudfront_js 'merge' %>
+<% javascript_tag do -%>
+
+  MergeInitializer();
+  ContactsMergeInitializer();
+
+  this.ContactsSearch = new Template(
+      '<li><div class="contactdiv" data-id="#{id}">'+
+      '<span id="resp-icon"></span>'+
+      '<div id="user-contact" data-uid="#{id}" class="merge_element">'+
+      '<div id="avatar_image"><div id="pic" class="preview_pic" size_type="thumb">'+
+      '<img alt="" onerror="imgerror(this)" src="#{avatar}"></div></div>'+
+      '<div id="user_info_item"><a class="item_info"><b>#{name}</b></a>'+
+      '<div class="info_contact_data">'+
+      '<span>#{email}</span>'+
+      '<span>#{company}</span>'+
+      '</div></div></div></div></li>'
+  );
+
+  function lookup(searchString, callback) { 
+    jQuery('#match_results').addClass('sloading loading-small');
+    var list = jQuery('#match_results').find('ul');
+    if(list.length)
+      list.empty();
+    new Ajax.Request('<%= search_contact_contact_merge_path(@source_user.id) %>?v='+searchString+'&id=<%= @source_user.id %>', 
+                        { parameters: {name: searchString, rand: (new Date()).getTime()},
+                          method: 'get',
+                          onSuccess: function(response) {       
+                            callback(response.responseJSON.results);
+                            jQuery('#match_results').removeClass('sloading loading-small');
+                          } 
+                        }
+                    );
+  }
+var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+<%- end %>
+<div id="mergebox_confirm"></div>
+<div id="mergebox" class="row-fluid">
+  <div id="merge-content" class="span6">
+    <div class="content-show">
+      <div class="merge-cont cont-primary present-contact">
+        <div class="primary-marker">
+          <span id="marker"></span>
+        </div>
+        <div id="contact-area">
+          <span id="resp-icon"></span>
+          <div id="user-contact" data-uid=<%= h(@source_user.id) %> class="merge_element">
+            <%= user_avatar(@source_user) %>
+            <a class="item_info"><b><%= h(@source_user.name) %></b></a>
+            <div class="info_contact_data">
+              <span><%= h(@source_user.customer.name) unless @source_user.customer.nil?%></span>
+              <span><%= h(@source_user.email) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="selected-contacts" class="contacts-empty merge_entity"></div>
+    </div>
+  </div>
+  <div class="search-content span6">
+    <span>
+    <input type="text" id="select-user" name="select-user" class="search_merge" placeholder="Search contacts to merge"/><span class="searchicon"></span></span>
+    <% javascript_tag do %>
+      new Autocompleter.PanedSearch("select-user", cachedLookup, this.ContactsSearch, "match_results", $A(<%= @contact_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true, afterPaneShow: ContactsMergeAfterShow, separatorRegEx:/;|,/});
+    <% end %>
+      <div id="match_results"></div>
+  </div>
+  <% form_tag do -%>
+  <input type="hidden" name="parent_user" id="parent_user_id" value="<%=params[:id]%>" />
+  <div id="inputs"></div>
+  <div class="button-container">
+    <a class="btn"id="cancel_new_merge" data-dismiss="modal"><%= t('cancel') %></a>
+    <%= submit_to_remote "Merge", "Continue", :url => { :controller => 'contact_merge', :action => "confirm", :id => params[:id] }, :html => {:class => "btn btn-primary disabled", :role => 'button', 'disabled' => 'disabled', "data-loading-text" => t('merge_contacts.please_wait'), :id => "new_merge_confirm"}%>
+  </div>
+  <%- end %>
+    <div id="invalid_user" class="info-highlight" style="display:none;"></div>
+</div>   
+

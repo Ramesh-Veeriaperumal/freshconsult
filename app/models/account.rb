@@ -317,7 +317,7 @@ class Account < ActiveRecord::Base
     rescue Errno::ETIMEDOUT
       false
     end 
-    
+
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
     end
@@ -325,6 +325,18 @@ class Account < ActiveRecord::Base
     def set_sso_options_hash
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => "", :sso_type => ""})
     end
+    
+    # def create_admin
+    #   self.user.active = true  
+    #   self.user.account = self
+    #   self.user.user_emails.first.account = self
+    #   self.user.user_emails.first.verified = true
+    #   self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
+    #   self.user.build_agent()
+    #   self.user.agent.account = self
+    #   self.user.save
+    #   User.current = self.user
+    # end
 
     def subscription_next_renewal_at
       subscription.next_renewal_at

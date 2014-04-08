@@ -39,6 +39,10 @@ class UserDrop < BaseDrop
 		name_part("family")
 	end
 
+	def all_emails
+		source.user_emails.collect(&:email)
+	end
+
 	def recent_tickets
 		source.tickets.visible.newest(5)
 	end

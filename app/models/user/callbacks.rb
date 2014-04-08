@@ -1,19 +1,24 @@
 class User < ActiveRecord::Base
 
-	before_validation :downcase_email
-  before_create :set_time_zone , :set_company_name 
+  before_create :set_time_zone , :set_company_name
+  #user_email callbacks
+  before_validation :assign_user_email, :if => :email_required?
+  after_validation :set_primary_email, :on => :create
+  #end
   before_create :set_language, :unless => :created_from_email
   before_save :set_customer_privilege, :if => :customer?
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user,:remove_user_mobile_registrations, :if => :deleted?
   before_save :set_contact_name, :check_email_value, :update_user_related_changes
-  after_create :update_user_email, :if => [:has_email?, :user_emails_migrated?] #for user email delta
-  after_update :drop_authorization , :if => :email_changed?
-  after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?] #for user email delta
-  after_update :update_verified, :if => [:active_changed?, :has_email?, :user_emails_migrated?] #for user email delta
-  before_update :make_inactive, :if => :email_changed?
-  after_commit_on_update :send_activation_email, :if => :email_updated?
+  after_create :update_user_email, :if => [:user_emails_migrated?, :no_multiple_user_emails] #for user email delta
+  after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
+  after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
+  after_update :update_verified, :if => [:active_changed?, :email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
+  before_update :make_inactive, :if => [:email_changed?, :no_multiple_user_emails]
+  after_commit_on_update :send_activation_email, :if => [:email_updated?, :no_multiple_user_emails]
+  before_save :set_primary_email, :if => :no_primary_email
+  before_save :remove_duplicate_emails
 
   after_commit_on_create :clear_agent_list_cache,:clear_agent_list_cache_count, :if => :agent?
   after_commit_on_update :clear_agent_list_cache,:clear_agent_list_cache_count, :if => :agent?
@@ -26,12 +31,20 @@ class User < ActiveRecord::Base
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :company_info_updated?
 
-  def downcase_email
-    self.email = email.downcase if email
-  end
-
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+  end
+
+  def no_primary_email
+    self.email.blank?
+  end
+
+  def remove_duplicate_emails
+    email_array = []
+    self.user_emails.select(&:new_record?).each do |ue|
+      ue.delete if email_array.include?(ue.email)
+      email_array << ue.email
+    end
   end
 
   def set_customer_privilege
@@ -48,13 +61,17 @@ class User < ActiveRecord::Base
     true
   end
 
+  def email_available?
+    self[:email].present?
+  end
+
   def destroy_user_roles
     self.privileges = "0"
     self.roles.clear
   end
 
   def check_email_value
-    if email.blank?
+    if !email_available?
       self.email = nil
     end
   end
@@ -66,7 +83,7 @@ class User < ActiveRecord::Base
   protected
 
   def set_contact_name 
-    if self.name.blank? && email
+    if self.name.blank? && self.email
       self.name = (self.email.split("@")[0]).capitalize
     end
   end
@@ -82,13 +99,13 @@ class User < ActiveRecord::Base
        cust = account.customers.domains_like(email_domain).first
        self.customer_id = cust.id unless cust.nil?    
    end
- end
+  end
 
   def drop_authorization
-   authorizations.each do |auth|
-     auth.destroy
-   end 
- end
+    authorizations.each do |auth|
+      auth.destroy
+    end 
+  end
 
   def make_inactive
     self.active = false
@@ -96,34 +113,45 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false)
+    self.deliver_activation_instructions!(account.main_portal,false) unless verified_emails.any?
+  end
+
+  def assign_user_email
+    self.user_emails.build unless user_emails.present? or no_multiple_user_emails
+  end
+
+  def set_primary_email
+    if self.user_emails.present?
+      self.user_emails.reject(&:marked_for_destruction?).first.primary_role = true unless self.user_emails.reject(&:marked_for_destruction?).first.nil?
+      self.primary_email = self.user_emails.first
+    end
   end
 
   def update_user_email
     # for user email delta
-    create_user_email({:email => email, :primary_role => true, :verified => active}) unless user_email
+    create_primary_email({:email => self[:email], :primary_role => true, :verified => active}) unless !email_available? or user_emails.present?
   end
 
   def change_user_email
     # for user email delta
-    if user_email
-      if has_email?
-        user_email.update_attributes({:email => email})
+    if primary_email
+      if email_available?
+        primary_email.update_attributes({:email => self[:email]})
       else
-        user_email.destroy
+        primary_email.destroy
       end
     else
-      create_user_email({:email => email, :primary_role => true, :verified => active}) if has_email?
+      create_primary_email({:email => self[:email], :primary_role => true, :verified => active}) if email_available?
     end
   end
 
   def update_verified
     #for user email delta
-    if user_email
+    if primary_email
       if active?
-        user_email.update_attributes({:verified => true})
+        primary_email.update_attributes({:verified => true})
       else
-        user_email.update_attributes({:verified => false})
+        primary_email.update_attributes({:verified => false})
       end
     end
   end

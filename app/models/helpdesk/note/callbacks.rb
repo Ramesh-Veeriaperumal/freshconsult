@@ -42,7 +42,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if email_conversation?
         if schema_less_note.to_emails.blank?
-          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.to_emails = notable.from_email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)

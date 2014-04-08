@@ -441,6 +441,10 @@ javascripts:
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
+    - public/javascripts/app/contacts_merge.js
+
+  contact_form:
+    - public/javascripts/app/contact_form.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js

@@ -25,7 +25,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "parent_ticket"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket"]
   OBSERVER_ATTR = []
 
   set_table_name "helpdesk_tickets"
@@ -412,7 +412,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def from_email
-    requester.email if requester
+    self.sender_email || requester.email
   end
 
   def ticlet_cc
@@ -725,7 +725,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   private
-
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
     end

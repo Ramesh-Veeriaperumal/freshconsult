@@ -80,7 +80,7 @@ module AuthenticationSystem
       if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
         error_code = "unauthorized"
         unless @current_user_session.blank?
-          assume_agent = current_account.users.find_by_email(assume_agent_email)
+          assume_agent = current_account.user_emails.user_for_email(assume_agent_email)
           puts "assume_agent : #{assume_agent.inspect}"
           if assume_agent.blank?
             error_code = "assuming_identity_user_does_not_exist"

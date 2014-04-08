@@ -41,6 +41,7 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
+    ticket.sender_email = email[:from][:email]
   end
 
   def hash_cc_emails

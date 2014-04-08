@@ -99,6 +99,7 @@ module FreshdeskCore::Model
                         
                         "users",
                           "admin_user_accesses",
+                          "user_emails",
                           "agents", 
                           "customers",
                           "user_emails", 

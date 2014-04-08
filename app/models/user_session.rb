@@ -1,5 +1,6 @@
 class UserSession < Authlogic::Session::Base
 
+	find_by_login_method :find_by_user_emails
   params_key :k
   single_access_allowed_request_types :any
   after_save :set_user_time_zone, :set_node_session
@@ -27,4 +28,8 @@ class UserSession < Authlogic::Session::Base
       controller.cookies['helpdesk_node_session'] = generated_hash
     end
   end
+  
+  attr_accessor :email, :password
+  password_field(:password)
+
 end

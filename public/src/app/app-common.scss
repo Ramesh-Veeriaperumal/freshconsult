@@ -3295,6 +3295,77 @@ a.pill.help{
 //								Forum by prashanth end
 //------------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------------
+//								Contact form changes by prashanth
+//------------------------------------------------------------------------------------
+
+.email_con{
+	.control-group{
+		margin-bottom: 0;
+	}
+
+	.fieldWithErrors{
+		display: inline-block;
+		border: 2px solid #fabfbf;
+	}
+
+	#cancel_email{
+		margin-left: 9px;
+	}
+
+	label.error{
+		position: absolute;
+		margin-left: 112px;
+	}
+
+	p.primary_text{
+		display: inline-block;
+	}
+
+}
+
+.controls.new_email_text{
+	margin-bottom: 8px;
+}
+
+.user-info{
+	span.def_text{
+		float: none;
+		color: #999999;
+	}
+
+	div.span9{
+		margin-left: 7px;
+	}
+
+	.user-email-bullet{
+			margin-left:12px;
+			li:before{
+				content:"";
+				@include border-radius(100%);
+				position: absolute;
+				width: 0px;
+				height: 0px;
+				border: 3px solid #666;
+				margin-top: 6px;
+				margin-left:-12px;
+				margin-bottom:5px;
+			}
+			li{
+				margin-bottom: 5px;
+				p{
+					margin: 0;
+				}
+				p.helper{
+					color: #666;
+				}
+			}
+	}
+}
+
+//------------------------------------------------------------------------------------
+//								Contact form changes by prashanth end
+//------------------------------------------------------------------------------------
 
  /*lazy loader */
 .image-lazy-load img{

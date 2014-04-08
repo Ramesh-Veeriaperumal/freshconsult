@@ -24,7 +24,29 @@ class ActivationsController < SupportController
       return redirect_to new_password_reset_path
     end
     set_portal_page :activation_form
+  end  
+
+  def new_email
+    @email = current_account.user_emails.find_email_using_perishable_token(params[:activation_code],
+                 1.weeks)
+    if @email.nil?
+      flash[:notice] = t('users.activations.code_expired')
+    else
+      if !@email.user.active?
+        @user = @email.user
+        render :new and return
+      else
+        if @email.verified?
+          flash[:notice] = t('merge_contacts.email_activated')
+        else
+          @email.mark_as_verified
+          flash[:notice] = t('merge_contacts.new_email_activation')
+        end
+      end
+    end
+    redirect_to home_index_path
   end
+
 
   def create
     unless params[:perishable_token].blank? 

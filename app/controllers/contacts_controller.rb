@@ -5,6 +5,7 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
+   before_filter :set_email_params, :only => [:create, :update]
    before_filter :clean_params, :only => [:update]
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
@@ -12,11 +13,12 @@ class ContactsController < ApplicationController
    before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
+   before_filter :check_parent, :only => :restore
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
    before_filter :load_user_by_phone, :only => :freshfone_user_info
    
-   def check_demo_site
+  def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
       flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
@@ -33,7 +35,7 @@ class ContactsController < ApplicationController
       end
 
       format.json  do
-        render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+        render :json => @contacts.to_json({:except=>[:account_id] ,:include => [:user_emails], :only=>[:id,:name,:email,:verified, :primary_role, :created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
       end
@@ -69,8 +71,8 @@ class ContactsController < ApplicationController
     redirect_to(customer_url(customer))
   end
   
-  def create   
-    if build_and_save    
+  def create  
+    if build_and_save
       flash[:notice] = t(:'flash.contacts.create.success')
       respond_to do |format|
         format.html { redirect_to contacts_url }
@@ -139,20 +141,21 @@ class ContactsController < ApplicationController
     export_contact_data csv_hash
   end
   
-  def build_and_save
-    @user = current_account.users.new #by Shan need to check later  
-    company_name = params[:user][:customer]    
+  def build_and_save 
+    @user = current_account.users.new #by Shan need to check later
+    company_name = params[:user][:customer]  
     unless company_name.blank?      
      params[:user][:customer_id] = current_account.customers.find_or_create_by_name(company_name).id 
-    end    
+    end   
     @user.signup!(params)
   end
   
   def show
     email = params[:email]
     @user = nil # reset the user object.
-    @user = current_account.all_users.find_by_email(email) unless email.blank?
+    @user = current_account.user_emails.user_for_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
+    @merged_user = @user.parent unless @user.parent.nil?
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
     respond_to do |format|
       format.html { 
@@ -181,6 +184,7 @@ class ContactsController < ApplicationController
     @item.update_tag_names(params[:user][:tags]) # update tags in the user object
     if @item.update_attributes(params[cname])
       respond_to do |format|
+        flash[:notice] = t('merge_contacts.contact_updated')
         format.html { redirect_to redirection_url }
         format.xml  { head 200}
         format.json { head 200}
@@ -192,6 +196,16 @@ class ContactsController < ApplicationController
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
         format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
+    end
+  end
+
+  def verify_email
+    @user_mail = current_account.user_emails.find(params[:email_id])
+    @user_mail.deliver_contact_activation_email
+    @user_mail.user.change_primary_email(params[:email_id]) if !@user_mail.user.active?
+    flash[:notice] = t('merge_contacts.activation_sent')
+    respond_to do |format|
+      format.js
     end
   end
   
@@ -234,8 +248,7 @@ class ContactsController < ApplicationController
  
   def contact_email
     email = params[:email]
-    @user = current_account.all_users.find_by_email(email) unless email.blank?
-    puts "@user #{@user}"
+    @user = current_account.user_emails.user_for_email(email) unless email.blank?
     if @user.blank?
       initialize_new_user
       render :new, :layout => "widgets/contacts"
@@ -252,10 +265,15 @@ protected
     @user.avatar = Helpdesk::Attachment.new
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
+    @user.user_emails.build
   end
 
   def cname
       @cname ='user'
+  end
+
+  def check_parent
+    @items.delete_if{ |item| !item.parent.nil? }
   end
 
   def scoper
@@ -281,10 +299,12 @@ protected
   end
   
   def check_email_exist
-    if("has already been taken".eql?(@user.errors["email"]))        
-			@existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
-		end
- end
+    @user.user_emails.each do |ue|
+      if("has already been taken".eql?(ue.errors["email"]))
+        @existing_user = current_account.user_emails.user_for_email(ue.email)
+      end
+    end
+  end
 
  def check_agent_limit
     if current_account.reached_agent_limit? 
@@ -301,6 +321,12 @@ protected
     if params[:user]
       params[:user].delete(:helpdesk_agent)
       params[:user].delete(:role_ids)
+    end
+  end
+
+  def set_email_params
+    if current_account.features?(:multiple_user_emails)
+      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email]}} if params[:user][:email] and !params[:user][:user_emails_attributes]
     end
   end
 

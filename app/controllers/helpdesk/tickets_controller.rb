@@ -62,7 +62,7 @@ class Helpdesk::TicketsController < ApplicationController
  
   def user_ticket
     if params[:email].present?
-      @user = current_account.users.find_by_email(params[:email])
+      @user = current_account.user_emails.user_for_email(params[:email])
     elsif params[:external_id].present?
       @user = current_account.users.find_by_external_id(params[:external_id])
     end
@@ -639,6 +639,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
+    @item.sender_email = params[:helpdesk_ticket][:email]
 
     build_attachments @item, :helpdesk_ticket
 
@@ -862,7 +863,7 @@ class Helpdesk::TicketsController < ApplicationController
     def add_requester_filter
       email = params[:email]
       unless email.blank?
-        requester = current_account.all_users.find_by_email(email) 
+        requester = current_account.user_emails.user_for_email(email) 
         @user_name = email
         unless requester.nil?
           params[:requester_id] = requester.id;

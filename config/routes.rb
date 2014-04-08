@@ -28,12 +28,16 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+    contacts.resources :contact_merge, :collection => { :search => :get }
+  end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
 
   map.resources :groups
 
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
+    profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
+  end
 
   map.resources :agents, :member => { :delete_avatar => :delete ,
                                       :toggle_shortcuts => :put,
@@ -95,6 +99,7 @@
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
+  map.register_new_email 'register_new_email/:activation_code', :controller => 'activations', :action => 'new_email'
   map.activate '/activate/:perishable_token', :controller => 'activations', :action => 'create'
   map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index

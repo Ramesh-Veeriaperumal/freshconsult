@@ -11,7 +11,9 @@
     </li>
     <li>
       <%= add_requester.label t('user.email') %>
-      <%= add_requester.text_field :email, :class => "require_from_group user_info email" %>
+      <% add_requester.fields_for :user_emails do |ue| %>
+        <%= ue.text_field :email, :class => "require_from_group user_info email" %>
+      <% end %>
     </li>
     <li>
       <%= add_requester.label t('user.phone_no') %>
