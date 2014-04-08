@@ -63,6 +63,10 @@ class Account < ActiveRecord::Base
     features?(:freshfone) and freshfone_account.present?
   end
 
+  def freshfone_active?
+    features?(:freshfone) and freshfone_numbers.present?
+  end
+
   def active_groups
     active_groups_in_account(id)
   end
