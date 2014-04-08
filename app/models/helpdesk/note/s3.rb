@@ -35,7 +35,7 @@ class Helpdesk::Note < ActiveRecord::Base
     }) if s3_update
   end
 
-  def push_to_resque_delete
+  def push_to_resque_destroy
     Resque.enqueue(::Workers::Helpkit::Note::NoteBodyJobs, {
                      :account_id => self.account_id,
                      :key_id => self.id,
