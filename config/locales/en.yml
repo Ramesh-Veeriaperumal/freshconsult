@@ -4913,6 +4913,7 @@ en:
       dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
+      direct_dial_subject: "Call with %{customer}"
       human_name: "ticket"
       view: "View"
     note:

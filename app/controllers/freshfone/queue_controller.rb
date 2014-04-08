@@ -3,6 +3,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   include FreshfoneHelper
   include Freshfone::NumberMethods
   include Freshfone::Queue
+  include Freshfone::CallHistory
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
 
@@ -12,6 +13,7 @@ class Freshfone::QueueController < FreshfoneBaseController
               :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
   before_filter :remove_wait_job,
               :only => [:hangup, :quit_queue_on_voicemail, :dequeue]
+  after_filter :update_call, :only => :hangup
   
   def enqueue
     enqueue_caller
@@ -107,7 +109,7 @@ class Freshfone::QueueController < FreshfoneBaseController
 		end
 
     def validate_twilio_request
-      @callback_params = params.except(*[:hunt_id, :hunt_type, :client])
+      @callback_params = params.except(*[:hunt_id, :hunt_type, :force_termination, :client])
       super
     end
 end

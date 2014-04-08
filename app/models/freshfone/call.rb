@@ -260,6 +260,8 @@ class Freshfone::Call < ActiveRecord::Base
 		def ticket_subject
 			return I18n.t('freshfone.ticket.voicemail_subject', 
 							{:customer => customer_name || caller_number}) if voicemail?
+			return I18n.t('freshfone.ticket.direct_dial_subject',
+							{:customer => customer_name || caller_number}) if ivr_direct_dial?
 			params_ticket_subject || default_ticket_subject
 		end
 		

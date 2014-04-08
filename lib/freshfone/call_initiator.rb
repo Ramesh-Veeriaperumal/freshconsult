@@ -168,7 +168,7 @@ class Freshfone::CallInitiator
 		end
 
 		def quit_queue_url
-			"#{host}/freshfone/queue/hangup#{hunt_params}"
+			"#{host}/freshfone/queue/hangup#{hunt_params}&force_termination=true"
 		end
 
 		def hunt_params
