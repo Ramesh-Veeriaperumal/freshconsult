@@ -42,7 +42,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    @account.users.find_by_email(test_email).should be_nil
+    @account.user_emails.user_for_email(test_email).should be_nil
   end
 
   it "should not allow the admin to create more agents than allowed by the plan" do
@@ -67,7 +67,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    @account.users.find_by_email(test_email).should be_nil
+    @account.user_emails.user_for_email(test_email).should be_nil
     @account.subscription.update_attributes(:state => "trial")
   end
 end

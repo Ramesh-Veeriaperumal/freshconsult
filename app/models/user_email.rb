@@ -53,7 +53,7 @@ class UserEmail < ActiveRecord::Base
   # end
 
   def self.user_for_email(email)
-    if Account.current.features?(:multiple_user_emails)
+    if !Account.current.features?(:multiple_user_emails)
       Account.current.all_users.find_by_email(email)
     else
       user_email = find_by_email(email)

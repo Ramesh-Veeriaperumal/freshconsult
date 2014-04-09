@@ -30,4 +30,14 @@ module UsersHelper
     new_user.save(false)
     new_user
   end
+
+  def add_new_user(account, options={})
+    new_user = Factory.build(:user, :account => account,
+                                    :name => Faker::Name.name, 
+                                    :time_zone => "Chennai", 
+                                    :delta => 1, 
+                                    :language => "en")
+    new_user.save(false)
+    new_user
+  end
 end
