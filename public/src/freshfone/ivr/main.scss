@@ -284,6 +284,9 @@
 		margin-left: 20px;
 		width: 212px;
 	}
+	.number_performer {
+		height: auto;		
+	}
 }
 .select2-result-unselectable {
 	cursor: default;
@@ -294,4 +297,15 @@
 }
 .errorExplanation {
 	clear:both;
+}
+.js_validation_error {
+	font-size: 13px !important;
+	border: 1px solid #efefef;
+	background: #fefcea;
+	display: none;
+	padding: 8px 12px;
+	width: 471px;
+	color: #a90329;
+	left: -423px;
+	position: relative;
 }

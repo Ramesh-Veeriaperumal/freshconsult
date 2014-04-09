@@ -86,6 +86,7 @@ var Ivr;
 			});
 		},
 		submitIvr: function (submitButton, $form, preview) {
+			if (this.anyErrorInIvrForm()) {return;}
 			var $submitButton = $(submitButton),
 				self = this;
 			$submitButton.button('loading');
@@ -121,6 +122,30 @@ var Ivr;
 			$form.find('#errorExplanation').remove();
 			$form.prepend($(data.error_message));
 			$submitButton.button('reset');
+		},
+		bindDirectDialNumberValidation: function () {
+			var self = this;
+			$(".number_performer_input").on('blur', function () {
+				var element =  $(this);
+				self.toggleInvalidNumberError(!isValidNumber(element.val()), element.next());
+			});
+			$(".number_performer_input").on('focus', function () {
+				self.toggleInvalidNumberError(false, $(this).next());
+			});
+		},
+		toggleInvalidNumberError: function (isVisible, element) {
+			isVisible ? element.show() : element.hide();
+		},
+		anyErrorInIvrForm: function () {
+			var self = this, error=false, element;
+			$(".number_performer_input:visible").each(function () { 
+				element = $(this);
+				if ( !isValidNumber(element.val()) ) {
+					self.toggleInvalidNumberError(true, element.next());
+					error = true;
+				}
+			});
+			return error;
 		}
 	};
 }(jQuery));
