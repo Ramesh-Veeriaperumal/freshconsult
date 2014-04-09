@@ -650,7 +650,7 @@ class User < ActiveRecord::Base
     end
 
     def no_multiple_user_emails
-      !Account.current.features?(:multiple_user_emails)
+      !self.account.features?(:multiple_user_emails) 
     end
 
     def self.find_by_user_emails(login)
