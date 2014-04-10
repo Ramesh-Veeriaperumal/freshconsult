@@ -20,10 +20,8 @@
 <% end %>
 
 <% content_for :pagefixed do %>
-  <% if(current_account.agents_from_cache.count > 1) %>
-    <%= render :partial => "collision_index" if feature?(:agent_collision) %>
-    <%= render :partial => "agent_collision_index" if feature?(:collision) %>
-  <% end %>
+  <%= render :partial => "collision_index" if feature?(:agent_collision) && current_account.agents_from_cache.count > 1 %>
+  <%= render :partial => "agent_collision_index" if feature?(:collision) && current_account.agents_from_cache.count > 1 %>
   <%= render :partial => "auto_refresh_faye" if @is_auto_refresh_feature %>
 <% end %>  
 
