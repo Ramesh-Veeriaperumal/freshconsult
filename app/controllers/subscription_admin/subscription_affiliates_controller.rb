@@ -8,6 +8,8 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
   
   skip_filter :run_on_slave, :only => [ :create, :update, :add_subscription ]
 
+  RESELLER_TOKEN = "FDRES"
+  AFFILIATE = "Share A Sale"
 
   def add_subscription
     @subscription_affiliate = SubscriptionAffiliate.find(params[:id])
@@ -23,6 +25,12 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
     end
 
     render :action => 'show'
+  end
+
+  def index
+    @resellers = SubscriptionAffiliate.all.select{ |affiliate| affiliate.token.include?(RESELLER_TOKEN) }
+    @shareasale_affiliates = SubscriptionAffiliate.all.select{ |affiliate| affiliate.name.eql?(AFFILIATE) }
+    @others = SubscriptionAffiliate.all - @resellers - @shareasale_affiliates
   end
 
   protected
