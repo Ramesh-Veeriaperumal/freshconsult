@@ -78,6 +78,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end
+
+      if @model_changes[:status][0] == PENDING  
+        ticket_states.pending_since = nil
+      end
       
       ticket_states.pending_since=Time.zone.now if (status == PENDING)
       ticket_states.set_resolved_at_state if (status == RESOLVED)
