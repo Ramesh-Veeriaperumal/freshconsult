@@ -102,6 +102,10 @@ class Agent < ActiveRecord::Base
     ticket_permission == PERMISSION_KEYS_BY_TOKEN[:group_tickets]
   end
 
+  def assigned_ticket_permission
+    ticket_permission == PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
+  end
+
   def signature_value
     self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
   end

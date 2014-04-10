@@ -31,6 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   layout :choose_layout 
   
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever]  
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
