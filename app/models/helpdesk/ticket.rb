@@ -114,6 +114,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
       user.id ] } }
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+
+  named_scope :assigned_tickets_permission , lambda { |user,ids| { 
+    :select => "helpdesk_tickets.display_id",
+    :conditions => ["responder_id=? and display_id in (?)", user.id, ids] } 
+  }
+
+  named_scope :group_tickets_permission , lambda { |user,ids| { 
+    :select => "distinct helpdesk_tickets.display_id", 
+    :joins => "LEFT JOIN agent_groups on helpdesk_tickets.group_id = agent_groups.group_id and helpdesk_tickets.account_id = agent_groups.account_id", 
+    :conditions => ["(agent_groups.user_id=? or helpdesk_tickets.responder_id=? or helpdesk_tickets.requester_id=?) and display_id in (?)", user.id, user.id, user.id, ids] } 
+  }
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
 

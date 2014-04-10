@@ -16,7 +16,7 @@ module Subscription::Events::AssignEventCode
 				when free?(subscription, old_subscription)
 					CODES[:free]
 
-				when affiliate?(subscription)
+				when affiliate?(subscription, old_subscription)
 					CODES[:affiliates]
 
 				when trial_to_paid?(subscription, old_subscription)
@@ -61,8 +61,8 @@ module Subscription::Events::AssignEventCode
 			previously_trial?(old_subscription) and subscription.amount.eql?(ZERO_AMOUNT)
 		end
 
-		def affiliate?(subscription)
-			subscription.active? and !(subscription.affiliate.blank?)
+		def affiliate?(subscription, old_subscription)
+			previously_trial?(old_subscription) and subscription.active? and !(subscription.affiliate.blank?)
 		end
 
 		def trial_to_paid?(subscription, old_subscription)

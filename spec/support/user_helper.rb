@@ -28,6 +28,10 @@ module UsersHelper
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_name("Account Administrator").privileges
     new_user.save(false)
+    if options[:group_id]
+      ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
+      ag_grp.save!
+    end
     new_user
   end
 

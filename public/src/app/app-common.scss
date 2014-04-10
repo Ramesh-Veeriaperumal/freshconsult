@@ -3372,3 +3372,38 @@ a.pill.help{
   opacity: .5;
   transition: all .8s ease-in;
 }
+
+//------------------------------------------------------------------------------------
+//								Scenario search by Ranjith
+//------------------------------------------------------------------------------------
+
+.execute_scenario{
+	.scenario-search{
+		.searchicon{
+	    	left: 10px;
+		}
+		input[type="text"]{
+			border: 0;
+			box-shadow: none;
+			margin: 4px;
+			padding-left: 20px;
+			width: 95%;
+		}
+		position: relative;
+		background: #fff;
+		border-bottom: 1px solid #ccc;
+		margin: 1px;
+		border-radius: 5px 5px 1px 0px;
+	}
+	.dialog-well{
+		margin-top: -36px;
+	}
+	table.table{
+		margin-top: 30px;
+	}
+}
+
+//------------------------------------------------------------------------------------
+//								Scenario search by Ranjith end
+//------------------------------------------------------------------------------------
+

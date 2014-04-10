@@ -10,8 +10,6 @@ module MemcacheKeys
 
   ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
 
-  ACCOUNT_AGENTS_COUNT = "v3/ACCOUNT_AGENTS_COUNT:%{account_id}"
-
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"

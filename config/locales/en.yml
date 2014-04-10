@@ -4891,6 +4891,7 @@ en:
       call_notes: "Call Notes"
       on_phone: "Available on Phone"
       on_browser: "Available on Browser"
+      invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
       no_calls: "No recent calls found"
       available: "You are available to take calls"
       unavailable: "You are unavailable to take calls"
@@ -5072,6 +5073,7 @@ en:
         invalid_jump_to: "Cannot have 'Jump To' for non-root menu %{menu}"
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"
+        invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
   freshchat:
     title: "Freshchat"
     widget: "Widget"

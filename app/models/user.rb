@@ -434,6 +434,10 @@ class User < ActiveRecord::Base
   def group_ticket_permission
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
+
+  def assigned_ticket_permission
+    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
+  end
   
   def has_ticket_permission? ticket
     (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 

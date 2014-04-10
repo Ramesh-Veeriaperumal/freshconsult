@@ -167,7 +167,6 @@ FreshdeskPjax.prototype = {
           window.faye_realtime.faye_subscriptions[i].cancel();
         }
         window.faye_realtime.faye_subscriptions = [];
-        window.faye_realtime.faye_channels = [];
         window.faye_realtime.fayeClient.disconnect();
         window.faye_realtime.fayeClient = null;
       }
