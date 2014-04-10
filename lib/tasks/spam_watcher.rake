@@ -60,7 +60,7 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     results.each{ |x| user_ids << x[column_name]; }
     whitelisted_users = whitelisted_users.to_a 
     user_ids =  user_ids - whitelisted_users
-    puts "spam user_ids = #{user_ids}"
+    puts "spam user_ids = #{user_ids*","}"
 
     unless user_ids.empty?
 
