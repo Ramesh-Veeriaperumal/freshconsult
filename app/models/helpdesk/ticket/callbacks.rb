@@ -285,7 +285,6 @@ private
                 :group => group_name,
                 :status_name => status_name,
                 :requester => requester_name,
-                :ticket_sla_status => ticket_sla_status,
                 :subject => truncate(subject, :length => 100),
                 :priority => priority
               }

@@ -162,7 +162,6 @@ class Helpdesk::Note < ActiveRecord::Base
 	def push_mobile_notification
     	message = { :ticket_id => notable.display_id,
                   :status_name => notable.status_name,
-                  :ticket_sla_status => notable.ticket_sla_status,
                   :subject => truncate(notable.subject, :length => 100),
                   :priority => notable.priority }
 		  send_mobile_notification(:response,message)
