@@ -84,6 +84,13 @@ describe ContactsController do
     occasional_agent.occasional.should be_true
   end
 
+  it "should verify an email" do
+    @user2 = add_user_with_multiple_emails(@account, 4)
+    last_id = @user2.user_emails.last.id
+    post :verify_email, :email_id => last_id
+    response.body.should =~ /Activation mail sent/
+  end
+
   it "should delete an existing contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
