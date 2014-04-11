@@ -229,7 +229,7 @@ class User < ActiveRecord::Base
     self.deleted = true if (user_emails.present? && user_emails.first.email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
-    if (!deleted and !self.user_emails.empty?)
+    if (!deleted and !email.blank?)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
