@@ -764,7 +764,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', true);
 
 			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
+			if(statusChangeField.val() != "") {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
@@ -1115,11 +1115,7 @@ var scrollToError = function(){
 
       var new_status = jQuery(this).data('statusVal'); 
       changeStatusTo(new_status);
-
-      if($('#custom_ticket_form').valid())
-      	$(this).parents('form').trigger('submit');
-      else
-      	scrollToError();
+      $(this).parents('form').trigger('submit');
 
     });
 
