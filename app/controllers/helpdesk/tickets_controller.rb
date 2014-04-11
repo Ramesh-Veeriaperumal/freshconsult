@@ -911,10 +911,23 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def report_ticket_filter
+      begin
+        key_args = { :account_id => current_account.id,
+                     :user_id => current_user.id,
+                     :session_id => request.session_options[:id],
+                     :report_type => params[:report_type]
+                   }
+        reports_filters_str = get_tickets_redis_key(REPORT_TICKET_FILTERS % key_args)
+        JSON.parse(reports_filters_str) if reports_filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+
     def load_cached_ticket_filters
       if custom_filter?
-        @cached_filter_data = get_cached_filters
-
+        @cached_filter_data = report_filter? ? report_ticket_filter : get_cached_filters
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
           handle_unsaved_view
@@ -937,6 +950,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     def custom_filter?
       params[:filter_key].blank? and params[:filter_name].blank? and is_custom_filter_ticket?
+    end
+
+    def report_filter?
+      !params[:report_type].blank?
     end
 
     def is_custom_filter_ticket?

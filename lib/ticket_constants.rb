@@ -139,6 +139,18 @@ module TicketConstants
     :ticket_type      => "create_ticket_type_activity"
   }
 
+  REPORT_TYPE_HASH = {
+    :helpdesk_received  => :created_at,
+    :group_received     => :created_at,
+    :agent_received     => :created_at,
+    :customer_received  => :created_at,
+    :helpdesk_resolved  => :"helpdesk_ticket_states.resolved_at",
+    :group_resolved     => :"helpdesk_ticket_states.resolved_at",
+    :agent_resolved     => :"helpdesk_ticket_states.resolved_at",
+    :customer_resolved  => :"helpdesk_ticket_states.resolved_at"
+  }
+
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end

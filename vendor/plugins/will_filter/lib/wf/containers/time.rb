@@ -46,8 +46,10 @@ class Wf::Containers::Time < Wf::FilterContainer
         if is_numeric?(value)
           return [" #{table_name}.created_at > ? ", time]
         else
+          condition_key = condition.key
+          condition_key = "#{table_name}.#{condition_key}" if condition_key.eql?(:created_at)
           start_date, end_date = value.split("-")
-          [" (#{table_name}.created_at >= ? and #{table_name}.created_at <= ?) ", time_at(start_date,"start_date"), time_at(end_date,"end_date")] 
+          [" (#{condition_key} >= ? and #{condition_key} <= ?) ", time_at(start_date,"start_date"), time_at(end_date,"end_date")] 
         end
     end 
   end

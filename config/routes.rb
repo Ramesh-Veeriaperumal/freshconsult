@@ -420,6 +420,7 @@
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
     helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
+    helpdesk.reports_filter        '/tickets/filter/reports/:report_type', :controller => 'tickets', :action => 'index'
 
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
