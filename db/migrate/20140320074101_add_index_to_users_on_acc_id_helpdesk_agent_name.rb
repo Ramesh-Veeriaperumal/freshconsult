@@ -1,10 +1,14 @@
 class AddIndexToUsersOnAccIdHelpdeskAgentName < ActiveRecord::Migration
   shard :all	
   def self.up
-  	add_index :users, [:account_id, :helpdesk_agent, :name], :name => 'index_users_on_acc_id_helpdek_agent_name'
+  	Lhm.change_table :users, :atomic_switch => true do |m|
+  		m.add_index [:account_id, :helpdesk_agent, :name] , 'index_users_acc_id_name'
+  	end
   end
 
   def self.down
-  	remove_index(:users, :name => 'index_users_on_acc_id_helpdek_agent_name')
+  	Lhm.change_table :users, :atomic_switch => true do |m|
+  		m.remove_index [:account_id, :helpdesk_agent, :name] ,'index_users_acc_id_name'
+  	end 	
   end
 end
