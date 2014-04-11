@@ -231,15 +231,6 @@
             $("#watcher_toggle a").trigger('click');
             $("#addwatcher .select2-search-field input").focus();
         },
-        saveContent = function(){
-            if(jQuery('#execute_scenario:visible').get(0)){
-                $('tr.active form input[type="submit"]').trigger('click')
-            } else {
-                if(!$('.blockUI:visible').get(0)){
-                    $("#" + getConversationId() + " .dropdown-menu li.active > a").trigger('click');
-                }
-            }   
-        },
         getConversationId = function(){
             return $('.conversation_thread form:visible').attr('id');
         },
@@ -253,8 +244,7 @@
                 save                : save,
                 cancel              : cancel,
                 status_dialog       : ticketStatusDialog,
-                save_cuctomization  : saveAndPreview,
-                execute             : saveContent
+                save_cuctomization  : saveAndPreview
             },
             ticket_list   : {
                 ticket_show         : showSelectedTicket,
@@ -318,7 +308,7 @@
             
             // Binding keyboard reset for pjax
             $(document)
-                .on('pjax:complete.keyboard_shortcuts', function() { $self.reset(); })
+                .on('pjax:complete.keyboard_shortcuts', function() { $(document).off("keydown.menuSelector"); $self.reset();})
             
             // To prevent Mozilla's "search for text when i start typing" pref option
             // if ($.browser.mozilla) {

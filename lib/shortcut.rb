@@ -7,8 +7,7 @@ class Shortcut
 			:cancel				=> "esc",
 			:search				=> "/",
 			:status_dialog 		=> "mod+alt+return",
-			:save_cuctomization => "mod+shift+s",
-			:execute			=> "return"
+			:save_cuctomization => "mod+shift+s"
 		},
 		:app_nav => {
 			:dashboard			=> "g d",

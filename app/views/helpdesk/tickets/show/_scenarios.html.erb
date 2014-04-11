@@ -3,7 +3,7 @@
 		<input type="text" id="search_scenarios" class="hide">
 		<i class="searchicon"></i>
 	</div>
-	<div data-menu-hover-in='tr' class="dialog-well links menuselector">
+	<div data-menu-hover-in='tr' data-menu-trigger="[type='submit']" class="dialog-well links menuselector">
 		<table class="table table-striped selected_to_yellow scenarios_table">
 		  <% current_account.scn_automations.each do |scenario| %>
 		  <tr><td>
@@ -19,7 +19,7 @@
 						") do %>
 
 					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
-					<input type="submit" class="btn tooltip" value="Execute"  placement = "below" title="Execute" data-hotkey = <%="#{shortcut('global.execute')}"%> />
+					<input type="submit" class="btn" value="Execute"  placement = "below" title="Execute"/>
 				<% end %>
 				</div>
 				<div><strong> <%= h scenario.name %> </strong> </div>
