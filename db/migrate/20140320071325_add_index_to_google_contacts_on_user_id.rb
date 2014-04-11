@@ -1,10 +1,14 @@
 class AddIndexToGoogleContactsOnUserId < ActiveRecord::Migration
   shard :all	
   def self.up
-  	add_index :google_contacts, [:account_id, :user_id], :name => 'index_google_contacts_on_account_id_user_id' 
+  	Lhm.change_table :google_contacts, :atomic_switch => true do |m|
+  		m.add_index [:account_id, :user_id] 
+  	end
   end
 
   def self.down
-  	remove_index(:google_contacts, :name => 'index_google_contacts_on_account_id_user_id')
+  	Lhm.change_table :google_contacts, :atomic_switch => true do |m|
+  		m.remove_index [:account_id, :user_id]
+  	end
   end
 end
