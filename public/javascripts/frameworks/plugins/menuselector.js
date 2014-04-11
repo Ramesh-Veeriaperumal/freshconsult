@@ -37,13 +37,17 @@
 		},
 		keydown: function(ev){			
 	    	// Checking if the up : 38 / down : 40 key is pressed
-	   		if (!/(38|40)/.test(ev.keyCode)) return
+	   		if (!/(38|40|13)/.test(ev.keyCode)) return
 
 	   		ev.preventDefault()
 			ev.stopPropagation()	
 
 			var currentIndex = this.currentIndex,
 				activeClass  = this.options.activeClass 
+
+			if(ev.keyCode == 13){
+				this.triggerEvent();
+			} 	
 
 			$(this.selectElement).eq(currentIndex).removeClass(activeClass);
 
@@ -64,7 +68,13 @@
 	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
 	 	    $(ev.currentTarget).addClass(this.options.activeClass);
 	 	    this.currentIndex = $(ev.currentTarget).index();
-	    },    
+	    }, 
+	    triggerEvent: function(){
+	    	if(this.options.menuTrigger != "")
+				this.currentElement.find(this.options.menuTrigger).trigger('click');
+			//Callback function for triggered event
+			this.options.menuCallback.call(this);
+	    },  
 	    scrollElement: function(){
 			var ele 		 = this.options.scrollInDocument ? document : this.element,
 				current_el	 = this.currentElement,
@@ -115,6 +125,10 @@
 		menuHoverIn : "li",		
 		// Callback function that will invoke when the last element in the menu is reached
 		afterLastItem: "",
+		//Will trigger click event for the current active element 
+		menuTrigger:"",
+		// Callback function for trigger event
+		menuCallback: function(){},		
 		// To check which item to scroll when moving to a menu not available in the viewport
 		scrollInDocument: false,
 		scrollPercent: 50
