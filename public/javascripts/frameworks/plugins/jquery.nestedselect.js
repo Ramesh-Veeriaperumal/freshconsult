@@ -124,6 +124,14 @@
           {$(category).attr('placeholder', 'None');} // Hack coz select2 takes the first value as placeholder,
                                                                                   // when its value is set to null
 
+
+        if(_init.nested_rules && _init.nested_rules[0].value=='')
+          {$(subcategory).attr('placeholder', 'None');}    
+
+        if(_init.nested_rules && _init.nested_rules[1].value=='')
+          {$(items).attr('placeholder', 'None');} 
+
+
          category.select2(selectopts)
          subcategory.select2(selectopts)
          items.select2(selectopts)

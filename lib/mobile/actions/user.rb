@@ -1,5 +1,7 @@
 module Mobile::Actions::User
-	
+
+	include Mobile::Actions::Push_Notifier
+
 	def to_mob_json_search
     options = { 
       :methods => [ :avatar_url, :is_agent, :is_customer,  :is_client_manager, :company_name,:user_time_zone],

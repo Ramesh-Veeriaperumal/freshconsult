@@ -16,10 +16,14 @@ module DataStoreCallbacks
     def generate_methods
       class_name = text_data_store_options[:class]
       class_eval %Q(
+        attr_accessor :s3_create, :s3_delete, :s3_update
         after_create "create_#{class_name}_body"
         after_update "update_#{class_name}_body"
         after_destroy "destroy_#{class_name}_body"
         after_rollback "handle_rollback_for_riak"
+        after_commit_on_create "push_to_resque_create"
+        after_commit_on_update "push_to_resque_update"
+        after_commit_on_destroy "push_to_resque_destroy"
 
         def create_#{class_name}_body
           self.rollback_#{class_name}_body = true

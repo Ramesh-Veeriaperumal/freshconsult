@@ -1,6 +1,6 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
-  def create_in_s3
+  def push_to_resque_create
     # value = construct_ticket_old_body_hash.merge(add_created_at_and_updated_at)
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_ticket_bodies")
     # Heldpesk::TicketBodyWeekly.create(table_name,value)
@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                      :key_id => self.id,
                      :create => true
                      # :table_name => table_name
-    })
+    }) if s3_create
   end
 
   def read_from_s3
@@ -21,7 +21,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return s3_ticket_body
   end
 
-  def update_in_s3
+  def push_to_resque_update
     # value = construct_ticket_old_body_hash.merge(add_updated_at)
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_ticket_bodies")
     # value[:conditions] = {:account_id => self.account_id, :ticket_id => self.id}
@@ -30,15 +30,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
                      :account_id => self.account_id,
                      :key_id => self.id
                      # :table_name => table_name
-    })
+    }) if s3_update
   end
 
-  def delete_in_s3
+  def push_to_resque_destroy
     Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
                      :account_id => self.account_id,
                      :key_id => self.id,
                      :delete => true
-    })
+    }) if s3_delete
+  end
+
+  def create_in_s3
+    self.s3_create = true 
+  end
+
+  def update_in_s3
+    self.s3_update = true
+  end
+
+  def delete_in_s3
+    self.s3_delete = true
   end
 
   alias_method :rollback_in_s3, :update_in_s3

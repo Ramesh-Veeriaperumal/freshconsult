@@ -5,9 +5,11 @@ class Va::Handlers::NestedField < Va::RuleHandler
     if evaluate_on.respond_to?(condition.key)
       #return evaluate_on.send(filter.key).send(operator_fn(@operator), @values)
       to_ret = send(condition.operator, evaluate_on.send(condition.key), value)
+      return true if value == '--'
       return to_ret unless to_ret
       
       (nested_rules || []).each do |nested_rule|
+        return true if nested_rule[:value] == '--'
         if evaluate_on.respond_to?(nested_rule[:name])
           to_ret = send(condition.operator, evaluate_on.send(nested_rule[:name]),nested_rule[:value])
           return to_ret unless to_ret

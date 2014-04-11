@@ -13,6 +13,7 @@ require 'openssl'
 include Redis::RedisKeys
 include Redis::TicketsRedis
 include SsoUtil
+include Mobile::Actions::Push_Notifier
 
   skip_before_filter :check_privilege  
   skip_before_filter :require_user, :except => :destroy
@@ -143,7 +144,7 @@ include SsoUtil
     redirect_to :action => :new
   end
   
-  def create   
+  def create  
     @user_session = current_account.user_sessions.new(params[:user_session])
     if @user_session.save
       #Temporary hack due to current_user not returning proper value
@@ -193,13 +194,13 @@ include SsoUtil
   end
   
   def destroy
-
     remove_old_filters if current_user && current_user.agent?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
 
     flash.clear if mobile?
+	remove_logged_out_user_mobile_registrations if is_native_mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and !current_account.sso_logout_url.blank?

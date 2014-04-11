@@ -8,7 +8,7 @@ class Search::IndexUpdate
 
     def self.perform(args)
       args.symbolize_keys!
-      user = Account.current.users.find(args[:user_id])
+      user = Account.current.all_users.find(args[:user_id])
       user_tickets = user.tickets
       es_update(user_tickets) unless user_tickets.blank?
     end

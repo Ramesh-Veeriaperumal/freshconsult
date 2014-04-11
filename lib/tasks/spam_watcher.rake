@@ -44,12 +44,12 @@ end
 
 def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     current_time = Time.zone.now #Should it be Time.now?!?!
-    whitelisted_users = WhitelistUser.whitelist_users.join(",")
+    whitelisted_users = WhitelistUser.whitelist_users
     whitelisted_users = "0" if whitelisted_users.blank?
     query_str = <<-eos
       select #{column_name},count(*) as total, account_id from #{table} where created_at 
       between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and #{column_name} IS NOT NULL
-      and id > #{id_limit} and #{column_name} not in (#{whitelisted_users.to_a}) group by #{column_name} having total > #{threshold}
+      and id > #{id_limit} group by #{column_name} having total > #{threshold}
     eos
     puts query_str
     results = execute_sql_on_slave(query_str)
@@ -58,8 +58,10 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     user_ids = []
     account_ids = Hash.new
     results.each{ |x| user_ids << x[column_name]; }
-    
-    puts "-------->spam user_ids = #{user_ids}"
+    whitelisted_users = whitelisted_users.to_a 
+    user_ids =  user_ids - whitelisted_users
+    puts "spam user_ids = #{user_ids.inspect}"
+
     unless user_ids.empty?
 
       user_sql = <<-eos
@@ -96,10 +98,10 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
         account.make_current    
         puts "::::account->#{account}"
         $redis_others.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
-        puts "deleted_users 1::::::::->#{deleted_users}"
+        puts "deleted_users 1::::::::->#{deleted_users.inspect}"
         deleted_users = account_ids[account_id]
         unless deleted_users.empty?
-          puts "deleted_users 2::::::::->#{deleted_users}"
+          puts "deleted_users 2::::::::->#{deleted_users.inspect}"
           deleted_users = account.all_users.find(deleted_users)
           SubscriptionNotifier.send_later(:deliver_admin_spam_watcher, account, deleted_users)
         end

@@ -1,7 +1,7 @@
 
 class Helpdesk::Note < ActiveRecord::Base
 
-  def create_in_s3
+  def push_to_resque_create
     # value = construct_note_old_body_hash.merge(add_created_at_and_updated_at)
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_note_bodies")
     # Heldpesk::NoteBodyWeekly.create(table_name,value)
@@ -10,7 +10,7 @@ class Helpdesk::Note < ActiveRecord::Base
                      :key_id => self.id,
                      :create => true
                      # :table => table_name
-    })
+    }) if s3_create
   end
 
   # fetching from s3
@@ -23,7 +23,7 @@ class Helpdesk::Note < ActiveRecord::Base
     return s3_note_body
   end
 
-  def update_in_s3
+  def push_to_resque_update
     # value = construct_note_old_body_hash.merge(add_updated_at)
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_note_bodies")
     # value[:conditions] = {:account_id => self.account_id, :note_id => self.id}
@@ -32,15 +32,27 @@ class Helpdesk::Note < ActiveRecord::Base
                      :account_id => self.account_id,
                      :key_id => self.id
                      # :table => table_name
-    })
+    }) if s3_update
   end
 
-  def delete_in_s3
+  def push_to_resque_destroy
     Resque.enqueue(::Workers::Helpkit::Note::NoteBodyJobs, {
                      :account_id => self.account_id,
                      :key_id => self.id,
                      :delete => true
-    })
+    }) if s3_delete
+  end
+
+  def create_in_s3
+    self.s3_create = true 
+  end
+
+  def update_in_s3
+    self.s3_update = true
+  end
+
+  def delete_in_s3
+    self.s3_delete = true
   end
 
   alias_method :rollback_in_s3, :update_in_s3

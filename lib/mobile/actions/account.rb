@@ -1,5 +1,7 @@
 module Mobile::Actions::Account
 
+	include Mobile::Actions::Push_Notifier
+
 	JSON_INCLUDE = {
     :main_portal => {
       :only => [ :name, :preferences ],

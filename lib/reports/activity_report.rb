@@ -249,7 +249,7 @@ end
   def previous_start
     distance_between_dates =  Time.zone.parse(end_date) - Time.zone.parse(start_date)
     prev_start = Time.zone.parse(previous_end) - distance_between_dates
-    prev_start.beginning_of_day.to_s(:db)
+    (prev_start.since 1.day).beginning_of_day.to_s(:db)
   end
   
   def previous_end

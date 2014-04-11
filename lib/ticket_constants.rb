@@ -122,9 +122,9 @@ module TicketConstants
   CREATED_AT_OPTIONS = CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
   STATES_HASH = {
-    :closed_at => I18n.t("export_data.closed_at"),
-    :resolved_at => I18n.t("export_data.resolved_at"),
-    :created_at => I18n.t("export_data.created_at")
+    :closed_at => I18n.t("export_data.closed_time"),
+    :resolved_at => I18n.t("export_data.resolved_time"),
+    :created_at => I18n.t("export_data.created_time")
   }
   
   ACTIVITY_HASH = {
