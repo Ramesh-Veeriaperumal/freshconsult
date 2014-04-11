@@ -59,17 +59,17 @@ module TicketConstants
     :requester_id, "helpdesk_schema_less_tickets.product_id" ]
   
   DEFAULT_COLUMNS =  [
-    [ :status,              'status',   :dropdown],
-    [ :responder_id,        'responder_id',   :dropdown],
-    [ :ticket_type,         'ticket_type',     :dropdown],
-    [ :group_id,            'group_id',   :dropdown],
-    [ :source,              'source',   :dropdown],
-    [ :priority,            'priority', :dropdown],
-    [ :due_by,              'due_by',  :due_by],
-    [ "helpdesk_tags.name", "tags",     :dropdown],
-    [ "users.customer_id",  "customers", :customer],
-    [ :created_at,          "created_at", :created_at],
-    [ :requester_id,        'requester', :requester],
+    [ :status,              'status',           :dropdown],
+    [ :responder_id,        'responder_id',     :dropdown],
+    [ :ticket_type,         'ticket_type',      :dropdown],
+    [ :group_id,            'group_id',         :dropdown],
+    [ :source,              'source',           :dropdown],
+    [ :priority,            'priority',         :dropdown],
+    [ :due_by,              'due_by',           :due_by],
+    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "users.customer_id",  "customers",        :customer],
+    [ :created_at,          "created_at",       :created_at],
+    [ :requester_id,        'requester',        :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]
   ]
   
@@ -116,7 +116,8 @@ module TicketConstants
     [ :this_week,        'seven_days',         "week" ],
     [ :this_month,       'thirty_days',       "month" ],
     [ :two_months,       'two_months',   "two_months" ], 
-    [ :six_months,       'six_months',   "six_months" ]
+    [ :six_months,       'six_months',   "six_months" ],
+    [ :set_date,         'set_date',       "set_date" ]
   ]
 
   CREATED_AT_OPTIONS = CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
@@ -172,5 +173,10 @@ module TicketConstants
   
   def self.created_within_list
     CREATED_WITHIN_VALUES.map { |i| [i[2], I18n.t(i[1])] }
+  end
+
+  #TODO : change the format of the date based on the account config
+  def self.created_date_range_default
+    "#{1.month.ago.strftime("%d %b %Y")} - #{1.days.ago.strftime("%d %b %Y")}"
   end
 end

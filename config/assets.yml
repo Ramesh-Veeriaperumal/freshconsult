@@ -182,6 +182,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.unveil.js
     - public/javascripts/lookup.js
     - public/javascripts/base64.js
+    - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
 
   # Code editor for portal cms

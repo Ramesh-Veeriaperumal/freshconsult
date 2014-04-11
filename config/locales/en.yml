@@ -112,6 +112,7 @@ en:
     mygroups: My Groups
     unassigned: Unassigned
     products: Products
+    created_date_range: Time period
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -4657,6 +4658,7 @@ en:
   thirty_days: This Month
   two_months: Last 2 months
   six_months: Last 6 months
+  set_date: Select Time Period
   any_time: Any time
   any: Any
   Source: Source
