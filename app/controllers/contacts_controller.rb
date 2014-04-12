@@ -164,7 +164,7 @@ class ContactsController < ApplicationController
       }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
                     :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
       format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
