@@ -187,6 +187,7 @@ insertIntoConversation = function(value,element_id){
 
 	if($("#" + element_id)){
 		$("#"+element_id).getEditor().focus();
+		$("#"+element_id).data('redactor').restoreSelection();
 		$("#"+element_id).insertHtml(value);
 	}    
 	return;
@@ -1081,12 +1082,16 @@ var scrollToError = function(){
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
+		var editorId = $('#canned_response_show').data('editorId');
+		$('#'+editorId).data('redactor').saveSelection();
 		$('#canned_response_show').trigger('click');
 	});
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
+		var editorId = $('#suggested_solutions_show').data('editorId');
+		$('#'+editorId).data('redactor').saveSelection();
 		$('#suggested_solutions_show').trigger('click');
 	});
 
