@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
-  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules, :increment_ticket_counter
+  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules
 
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 

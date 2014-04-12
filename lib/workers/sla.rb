@@ -101,7 +101,7 @@ class Workers::Sla
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
-    set_stats(account.id, total_tickets)
+    # set_stats(account.id, total_tickets)
     log_format=logging_format(account,overdue_tickets,overdue_tickets_time_taken,froverdue_tickets,froverdue_tickets_time_taken)
     sla_logger.info "#{log_format}" unless sla_logger.nil?
   end
