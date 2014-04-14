@@ -137,4 +137,13 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/html"     
   end
 
+  def one_time_password(email_id,text = "")
+    subject       "One time password instructions to login"
+    recipients    email_id
+    from          AppConfig['from_email']
+    sent_on       Time.now
+    content_type  "text/html"
+    body           text
+  end
+
 end

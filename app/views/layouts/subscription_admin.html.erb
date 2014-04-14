@@ -26,16 +26,21 @@
 		            <ul class="nav">                    
 		              <%=
 		              	  [
-										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
-										      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-											  [admin_subscription_events_path, :events, "Events"],
-											  [admin_account_tools_path, :tools, "Tools"],
-											  [admin_manage_users_path, :users, "Users"]
-										    ].map do |s| 
-										      content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : ""))
-										    end.to_s.html_safe
-									%>          
+		              	  	[customers_admin_subscriptions_path(), :customers, "Customers" ],
+							[admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+							[admin_subscription_announcements_path, :announcements, "Announcements" ],
+							[admin_subscription_events_path, :events, "Events"],
+							[admin_account_tools_path, :tools, "Tools"],
+							[admin_manage_users_path, :users, "Users"],
+							[admin_subscription_users_path, :admin_users, "Admin Users"]
+							].map do |s| 
+							content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : "")) if current_user && current_user.has_role?(s[1])
+							end.to_s.html_safe
+						%>          
+						<% if current_user %>         
+							<li><%= link_to "Logout",admin_subscription_logout_path(@subscription_session) %></li>
+							<%= content_tag(:li, link_to("My Profile", show_admin_subscription_user_path(current_user)).html_safe) %>   
+						<% end %>    
 		            </ul> 
 								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
 								  <%= text_field_tag :search, params[:search], :class => "search-query span3", :placeholder => "Search account", :autocompelete => "off" %> 

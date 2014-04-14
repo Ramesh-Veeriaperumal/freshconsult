@@ -281,6 +281,9 @@
       admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
       admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
       admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
+      admin.subscription_logout 'admin_sessions/logout', :controller => :admin_sessions , :action => :destroy
+      admin.subscription_login 'admin_sessions/login', :controller => :admin_sessions , :action => :new
+      admin.resources :subscription_users, :as => 'subscription_users', :member => { :update => :post, :edit => :get, :show => :get }, :collection => {:reset_password => :get }
     end
   end
 

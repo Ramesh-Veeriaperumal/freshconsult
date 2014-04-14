@@ -37,6 +37,13 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
     def set_selected_tab
        @selected_tab = :affiliates
     end
+
+    def check_admin_user_privilege
+      if !(current_user and  current_user.has_role?(:affiliates))
+        flash[:notice] = "You dont have access to view this page"
+        redirect_to(admin_subscription_login_path)
+      end
+    end 
     
     def load_discounts
       @free_agent_coupons = AffiliateDiscount.free_agent_coupons

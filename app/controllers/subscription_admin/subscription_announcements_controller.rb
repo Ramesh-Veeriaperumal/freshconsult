@@ -48,4 +48,11 @@ class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationContro
     def set_selected_tab
        @selected_tab = :announcements
     end
+
+    def check_admin_user_privilege
+      if !(current_user and  current_user.has_role?(:announcements))
+        flash[:notice] = "You dont have access to view this page"
+        redirect_to(admin_subscription_login_path)
+      end
+    end 
 end

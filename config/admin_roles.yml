@@ -1,0 +1,34 @@
+super_admin:
+  - manage_admin 
+  - admin_users
+  - affiliates 
+  - customers 
+  - announcements 
+  - events 
+  - tools 
+  - accounts 
+  - users 
+  - analytics 
+  - converstion_metrics 
+  - plans 
+  - payments 
+  - metrics
+  - freshfone
+
+marketer:
+  - affiliates 
+  - customers 
+  - announcements 
+  - events 
+  - tools 
+  - accounts 
+  - users 
+  - analytics 
+  - converstion_metrics 
+  - plans 
+  - payments
+
+support:
+ - accounts 
+
+
