@@ -1,7 +1,6 @@
 class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
-  include Reports::ReportTimes
   include ReadsToSlave
   
   before_filter :check_permission, :set_selected_tab
@@ -53,6 +52,11 @@ class Reports::TimesheetReportsController < ApplicationController
   
   def time_sheet_for_export
     @time_sheets = filter(@start_date,@end_date)
+  end
+
+  def set_time_range(prev_time = false)
+    @start_time = prev_time ? previous_start : start_date
+    @end_time = prev_time ? previous_end : end_date  
   end
 
   private
