@@ -765,7 +765,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', true);
 
 			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() != "") {
+			if(statusChangeField.val() != undefined && statusChangeField.val() != "") {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
