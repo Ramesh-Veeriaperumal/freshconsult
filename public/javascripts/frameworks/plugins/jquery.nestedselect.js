@@ -126,7 +126,7 @@
               // when its value is set to null
 
           if (_init.nested_rules) {
-            for(i=0; _init.nested_rules.length < i; i++){
+            for(i=0; _init.nested_rules.length > i; i++){
               if(_init.nested_rules[i].value==''){ 
                 switch(i){
                   case 0:               
