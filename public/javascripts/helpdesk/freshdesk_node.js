@@ -174,7 +174,14 @@
                       if((created_at < Date.today()) && ( created_at > Date.today().add({days : -1}) )){
                         count++;
                       }
-                    } else {
+                    } else if(created_at_filter.split("-").length == 2){
+                      var date_arr = created_at_filter.split("-");
+                      var start_date = Date.parse(date_arr[0]);
+                      var end_date = Date.parse(date_arr[1]);
+                      if(created_at > start_date && created_at < end_date){
+                        count++;
+                      }
+                    }else {
                       if( created_at > ticketFilterDateoptions[created_at_filter]){
                         count++;
                       }

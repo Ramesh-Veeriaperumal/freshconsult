@@ -180,7 +180,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/frameworks/plugins/nprogress.js
     - public/javascripts/frameworks/plugins/jquery.unveil.js
+    - public/javascripts/lookup.js
     - public/javascripts/base64.js
+    - public/javascripts/frameworks/plugins/daterangepicker.js
+    - public/javascripts/frameworks/plugins/menuselector.js
 
   # Code editor for portal cms
   codemirror:
@@ -440,6 +443,10 @@ javascripts:
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
+    - public/javascripts/app/contacts_merge.js
+
+  contact_form:
+    - public/javascripts/app/contact_form.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js

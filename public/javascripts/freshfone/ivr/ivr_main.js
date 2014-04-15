@@ -17,7 +17,7 @@ Array.prototype.deleteElement = function (element) {
 
 	ivr = new Ivr();
 	ivr.buildExistingIvr(menu_json);
-
+	ivr.bindDirectDialNumberValidation();
 	$(document).ready(function () {
 		$('.new-menu').click(function () { ivr.menuCreation(); });
 		var setting = new FreshfoneMessage(freshfone.welcome_message_settings_json, 'ivr_setting',

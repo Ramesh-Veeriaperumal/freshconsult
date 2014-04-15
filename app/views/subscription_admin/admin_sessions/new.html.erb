@@ -1,0 +1,19 @@
+<%= error_messages_for :admin_session %>
+<fieldset>
+  <legend>Login</legend>
+  <% form_for @admin_session, :url => {:controller => 'admin_sessions', :action => 'create'}  do |f| %>
+  
+    <label for="session_name">Email</label><br />
+    <%= f.text_field :email %><br />
+  
+    <label for="session_password">Password</label><br />
+    <%= f.password_field :password %><br />
+  	<% if @key_exists %>
+  	 	<label for="otp">One time password</label><br />
+  		 <input type="text" name="admin_session[otp]" value="" />
+  	<% end %>
+    <%= submit_tag "login" %>
+  
+  <% end %>
+
+</fieldset>

@@ -1,10 +1,7 @@
 class Helpdesk::AutocompleteController < ApplicationController
 	
 	def requester
-		requesters = { :results => results.map { |i| {
-                      :details => i.name_details, 
-                      :id => i.id, :value => i.name
-                  }}} 
+		requesters = { :results => results.map{|x| x.search_data}.flatten} 
 		requesters[:results].push({ 
                   :id => current_account.kbase_email, 
                   :value => ""
@@ -28,7 +25,11 @@ class Helpdesk::AutocompleteController < ApplicationController
   	def results
       @results ||= begin 
         return [] if params[:q].blank? 
-        scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
+        if @current_action == "requester"
+          scoper.matching_users_from(params[:q])
+        else
+          scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
+        end
       end
   	end
   	

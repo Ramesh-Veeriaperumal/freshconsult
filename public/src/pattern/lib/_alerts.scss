@@ -22,9 +22,15 @@
 // Adjust close link position
 .alert .close {
   position: absolute;
-  top: 1px;
-  right: 0px;
+  top: 6px;
+  right: 10px;
   line-height: $baseLineHeight;
+  &:before{
+    content: "\00d7";
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+  }
 }
 .alert, .alert-heading {
   color: #82683c;

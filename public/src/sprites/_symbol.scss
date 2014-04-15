@@ -117,17 +117,27 @@
 
 #resp-icon{ 
 	@include symbols-sprite(bullet-folder1); 
-	&:hover{ @include symbols-sprite(bullet-folder1_hover); }
 }
 .pick-response, .recently_used{
  	a:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
 }
-#results li, .merge_results li{
+#results li, .merge_results li, .match_results li{
 	&:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
 }
-.merge_results li #resp-icon.clicked, .merge_results li #resp-icon.clicked:hover{ @include symbols-sprite(resp-icon-clicked); }
+
+.contactdiv:hover{
+	#resp-icon{
+		@include symbols-sprite(bullet-folder1_hover);
+	}
+	#resp-icon.clicked{
+		@include symbols-sprite(bullet-folder);
+	}
+}
+
+.merge_results li #resp-icon.clicked, .match_results li #resp-icon.clicked:hover{@include symbols-sprite(bullet-folder); }
 #cont-chosen:hover #resp-icon{ @include symbols-sprite(email_config_active); }
 #contact-area #resp-icon{ @include symbols-sprite(removeButton); }
+.rem_mail, #cancel_email, .remove_image { @include symbols-sprite(removeButton); padding: 0 0 2px 20px; margin-left: 5px; cursor: pointer; }
 
 #marker{ @include symbols-sprite(tickUnselect); }
 .cont-primary #marker{ @include symbols-sprite(tickSelect); }

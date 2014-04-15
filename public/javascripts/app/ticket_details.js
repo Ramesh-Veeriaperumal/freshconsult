@@ -187,6 +187,7 @@ insertIntoConversation = function(value,element_id){
 
 	if($("#" + element_id)){
 		$("#"+element_id).getEditor().focus();
+		$("#"+element_id).data('redactor').restoreSelection();
 		$("#"+element_id).insertHtml(value);
 	}    
 	return;
@@ -764,7 +765,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', true);
 
 			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
+			if(statusChangeField.val() != "") {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
@@ -1048,6 +1049,28 @@ var scrollToError = function(){
 		}
 	}
 
+	var openConversation = function(){ 
+		var key = window.location.hash; 
+		switch (key){
+			case "#reply":
+			    $('#ReplyButton').trigger('click');
+			    break;
+			case "#forward":
+			    $('#FwdButton').trigger('click')
+			    break;
+			case "#add_note":
+			    $('#noteButton').trigger('click')
+			    break;
+		}
+	}    
+
+	setTimeout(openConversation, 200);
+
+	$(document).on('click.ticket_details','.conversation .dialog-btn',function(){
+		var id = jQuery('.conversation_thread form:visible').attr('id')
+		jQuery( "#" + id + " ul.dropdown-menu").focus();
+	})
+
 	$('body').on('click.ticket_details', '[rel=TicketReplyPlaceholder]', function(ev) {
 		ev.preventDefault();
 		$(this).hide();
@@ -1059,12 +1082,16 @@ var scrollToError = function(){
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
+		var editorId = $('#canned_response_show').data('editorId');
+		$('#'+editorId).data('redactor').saveSelection();
 		$('#canned_response_show').trigger('click');
 	});
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
+		var editorId = $('#suggested_solutions_show').data('editorId');
+		$('#'+editorId).data('redactor').saveSelection();
 		$('#suggested_solutions_show').trigger('click');
 	});
 
@@ -1093,11 +1120,7 @@ var scrollToError = function(){
 
       var new_status = jQuery(this).data('statusVal'); 
       changeStatusTo(new_status);
-
-      if($('#custom_ticket_form').valid())
-      	$(this).parents('form').trigger('submit');
-      else
-      	scrollToError();
+      $(this).parents('form').trigger('submit');
 
     });
 

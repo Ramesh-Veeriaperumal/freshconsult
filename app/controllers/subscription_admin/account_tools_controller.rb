@@ -42,5 +42,12 @@ class SubscriptionAdmin::AccountToolsController < ApplicationController
   protected
     def set_selected_tab
        @selected_tab = :tools
-    end   
+    end  
+
+    def check_admin_user_privilege
+      if !(current_user and current_user.has_role?(:tools))
+        flash[:notice] = "You dont have access to view this page"
+        redirect_to(admin_subscription_login_path)
+      end
+    end 
 end

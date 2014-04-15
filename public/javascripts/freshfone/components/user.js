@@ -98,8 +98,13 @@ var FreshfoneUser,
 		
 		toggleAvailabilityOnPhone: function (skip_alert) {
 			if (freshfone.user_phone) {
-				this.availableOnPhone = !this.availableOnPhone;
-				this.publishAvailabilityOnPhone();
+				if (this.availableOnPhone || isValidNumber(freshfone.user_phone)) {
+					this.availableOnPhone = !this.availableOnPhone;
+					this.publishAvailabilityOnPhone();	
+				} else {
+					if(!skip_alert) { alert(freshfone.invalid_user_number_text); }
+					this.toggleAvailabilityOnPhoneClass();
+				}
 			} else {
 				this.availableOnPhone = false;
 				this.toggleAvailabilityOnPhoneClass();

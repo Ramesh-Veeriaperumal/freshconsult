@@ -22,6 +22,7 @@
 .autocomplete_filter .select2-choices { border-radius: 5px; }
 .autocomplete_filter .select2-search-field { height: 27px; }
 .autocomplete_filter .select2-container, .ff_item .select2 { width: 190px; }
+.ticket-leftcol .leftFilter .ff_item #created_date_range{ width: 186px; } // Its based on the select2 width[ Above line ] 
 .ff_item.level_2 .select2, .ff_item.level_3 .select2 { width: 179px; }
 .align_options .select2-results ul.select2-result-sub > li .select2-result-label { 
 	padding-left: 7px; 
@@ -93,13 +94,65 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	}
 
 }
-
 // syntaxhighlighter 
 //------------------
 .syntaxhighlighter .gutter {
 	color: #eee !important;
 }
-
 .syntaxhighlighter code, .syntaxhighlighter pre {
 	display: initial;
+}
+// Date picker Hack
+//-----------------
+.daterangepicker{
+		td.active{
+
+			background-color: #eee;
+		  background-image: -moz-linear-gradient(top, #eee, #eee);
+		  background-image: -ms-linear-gradient(top, #eee, #eee);
+		  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(#eee));
+		  background-image: -webkit-linear-gradient(top, #eee, #eee);
+		  background-image: -o-linear-gradient(top, #eee, #eee);
+		  background-image: linear-gradient(top, #eee, #eee);
+
+		}
+		td.in-range{
+			background: #eee;
+			color: #333;
+		}
+		td.active:hover{
+		background-color: #888;
+		  background-image: -moz-linear-gradient(top, #888, #888);
+		  background-image: -ms-linear-gradient(top, #888, #888);
+		  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#888), to(#888));
+		  background-image: -webkit-linear-gradient(top, #888, #888);
+		  background-image: -o-linear-gradient(top, #888, #888);
+		  background-image: linear-gradient(top, #888, #888);
+		}
+		td.off.in-range{
+			color: #bbb;
+		}
+		td.in-range:hover,td.available:hover{
+			background-color: #888;
+			color: #fff;
+		}
+		.table-condensed td {
+			padding: 4px 4px 0px 4px;
+		}
+		td.available, td.available:hover{
+			border-radius: 0px;
+		}
+		td.end-date{
+			background: #eee;
+			border-radius: 0% 50% 50% 0%;			
+			color: #000;
+			font-weight: bold;
+		}
+		td.start-date{
+			background: #eee;
+			border-radius: 50% 0% 0% 50%;
+			color: #000;
+			font-weight: bold;
+		}
+
 }

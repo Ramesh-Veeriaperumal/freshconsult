@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
-  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules, :increment_ticket_counter
+  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules
 
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
@@ -77,6 +77,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
+      end
+
+      if @model_changes[:status][0] == PENDING  
+        ticket_states.pending_since = nil
       end
       
       ticket_states.pending_since=Time.zone.now if (status == PENDING)
@@ -336,7 +340,8 @@ private
       portal = self.product.portal if self.product
       requester = account.users.new
       requester.signup!({:user => {
-        :email => email , :twitter_id => twitter_id, :external_id => external_id,
+        :user_emails_attributes => { "0" => {:email => self.email, :primary_role => true} }, 
+        :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone }}, 
@@ -419,10 +424,38 @@ private
   end
 
   def set_dueby_on_status_change(sla_detail)
-    unless (ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?)
+    if calculate_dueby_and_frdueby?
       self.due_by = sla_detail.calculate_due_by_time_on_status_change(self)      
-      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self) 
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self)
+      if changed_to_closed_or_resolved?
+        update_ticket_state_sla_timer
+      end
     end
+  end
+
+  def calculate_dueby_and_frdueby?
+    changed_to_sla_timer_calculated_status? || changed_from_sla_timer_stopped_status_to_closed_or_resolved?
+  end
+
+  def changed_to_sla_timer_calculated_status?
+    !(ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?)
+  end
+
+  def changed_from_sla_timer_stopped_status_to_closed_or_resolved?
+    changed_to_closed_or_resolved? && previous_state_was_sla_stop_state?
+  end
+
+  def changed_to_closed_or_resolved?
+    [CLOSED, RESOLVED].include?(ticket_status.status_id)
+  end
+
+  def previous_state_was_sla_stop_state?
+    account.ticket_statuses.find_by_status_id(@model_changes[:status][0]).stop_sla_timer? 
+  end
+
+  def update_ticket_state_sla_timer
+    ticket_states.sla_timer_stopped_at = Time.zone.now
+    ticket_states.save
   end
 
   def regenerate_reports_data

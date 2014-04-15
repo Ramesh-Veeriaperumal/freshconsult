@@ -92,6 +92,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
       defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
       defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
+      defs[:"helpdesk_ticket_states.resolved_at"] = ({:operator => :is_greater_than,:is_in => :resolved_at, :options => [], :name => "helpdesk_ticket_states.resolved_at", :container => :resolved_at})
       defs
     end
   end
@@ -301,6 +302,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
+    all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
     all_joins
   end
 

@@ -31,6 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   layout :choose_layout 
   
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever]  
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
@@ -62,7 +63,7 @@ class Helpdesk::TicketsController < ApplicationController
  
   def user_ticket
     if params[:email].present?
-      @user = current_account.users.find_by_email(params[:email])
+      @user = current_account.user_emails.user_for_email(params[:email])
     elsif params[:external_id].present?
       @user = current_account.users.find_by_external_id(params[:external_id])
     end
@@ -639,6 +640,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
+    @item.sender_email = params[:helpdesk_ticket][:email]
 
     build_attachments @item, :helpdesk_ticket
 
@@ -862,7 +864,7 @@ class Helpdesk::TicketsController < ApplicationController
     def add_requester_filter
       email = params[:email]
       unless email.blank?
-        requester = current_account.all_users.find_by_email(email) 
+        requester = current_account.user_emails.user_for_email(email) 
         @user_name = email
         unless requester.nil?
           params[:requester_id] = requester.id;
@@ -909,10 +911,23 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def report_ticket_filter
+      begin
+        key_args = { :account_id => current_account.id,
+                     :user_id => current_user.id,
+                     :session_id => request.session_options[:id],
+                     :report_type => params[:report_type]
+                   }
+        reports_filters_str = get_tickets_redis_key(REPORT_TICKET_FILTERS % key_args)
+        JSON.parse(reports_filters_str) if reports_filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+
     def load_cached_ticket_filters
       if custom_filter?
-        @cached_filter_data = get_cached_filters
-
+        @cached_filter_data = report_filter? ? report_ticket_filter : get_cached_filters
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
           handle_unsaved_view
@@ -935,6 +950,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     def custom_filter?
       params[:filter_key].blank? and params[:filter_name].blank? and is_custom_filter_ticket?
+    end
+
+    def report_filter?
+      !params[:report_type].blank?
     end
 
     def is_custom_filter_ticket?

@@ -14,52 +14,23 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :skip_before_filter, :select_shard
     base.send :layout, "subscription_admin"
-    base.send :prepend_before_filter, :login_from_basic_auth
-    base.send :prepend_before_filter, :set_time_zone
+    base.send :prepend_before_filter, :set_time_zone, :ensure_login
+    base.send :before_filter, :check_admin_user_privilege
     
   end
   
   protected
   
-    def current_user
-      @current_user ||= login_from_basic_auth unless @current_user == false
-    end
-    
-    # This method is called when authentication fails for the admin
-    # area.  If you handle authentication in the code, rather than
-    # in the web server (see the login_from_basic_auth method), then
-    # you'll want to use the commented-out code in this method to
-    # display the browser popup to collect the username and password.
-#    def access_denied
-#      render :text => 'Access Denied', :status => 403
-#    end
-    
      def access_denied
        request_http_basic_authentication 'Admin Area'
      end
     
-    # Handle logins by HTTP Auth (browser popup).  By default
-    # this method just requires that the user be authenticated by
-    # the web server, by checking to make sure the REMOTE_USER
-    # header has been set.  If you don't want to mess with the web
-    # server configuration for doing authentication, you can see the
-    # commented-out code for an example of how to do the
-    # authentication here.
-#    def login_from_basic_auth
-#      !request.headers['REMOTE_USER'].blank?
-#    end
-    
-     def login_from_basic_auth
-       #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
-       authenticate_or_request_with_http_basic do |username, password|
-         # This has to return true to let the user in
-         if Rails.env.production?
-            username == 'freshdesk' && Digest::MD5.hexdigest(password) == "c5dac0ac46757410380dc7a7302cab38"
-         else
-            username == 'freshdesk' && password == "USD40$" 
-         end
-       end
-     end
+    def ensure_login
+      if current_user_session.nil? and current_user.nil?
+        flash[:notice] = "Please login to continue"
+        redirect_to(admin_subscription_login_path)
+      end
+    end
 
     def set_time_zone
       Time.zone = 'Pacific Time (US & Canada)'
@@ -81,5 +52,26 @@ module AdminControllerMethods
     # (by default) a 404.
     def check_admin_subdomain
       raise ActionController::RoutingError, "Not Found" unless admin_subdomain?
+    end
+
+    def current_user
+      return @current_user if defined?(@current_user)
+      @current_user_session = AdminSession.find
+      @current_user = @current_user_session.record if @current_user_session
+
+      @current_user
+    end
+
+    def current_user_session
+      return @current_user_session if defined?(@current_user_session)
+      activate_auth
+      @current_user_session = AdminSession.find
+      @current_user = @current_user_session.record if @current_user_session
+
+      @current_user_session
+    end
+
+    def activate_auth
+      Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self) unless Authlogic::Session::Base.controller
     end
 end

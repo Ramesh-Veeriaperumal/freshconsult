@@ -19,7 +19,8 @@ class AuthorizationsController < ApplicationController
     failure if @omniauth.blank?
     @omniauth_origin = session["omniauth.origin"]
     if @omniauth['provider'] == :open_id
-      @current_user = current_account.all_users.find_by_email(@omniauth['info']['email'])  unless  current_account.blank?
+      current_account.make_current
+      @current_user = current_account.user_emails.user_for_email(@omniauth['info']['email'])  unless  current_account.blank?
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "twitter"
       twitter_id = @omniauth['info']['nickname']
@@ -169,7 +170,7 @@ class AuthorizationsController < ApplicationController
     user_account.make_current
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
-      @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
+      @current_user = user_account.user_emails.user_for_email(fb_email) unless fb_email.blank?
       @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank? and !fb_profile_id.blank?
@@ -235,7 +236,9 @@ class AuthorizationsController < ApplicationController
   def create_from_hash(hash, account)
     user = account.users.new  
     user.name = hash['info']['name']
-    user.email = hash['info']['email']
+    if hash['info']['email']
+      user.user_emails.build({:email => hash['info']['email'], :verified => true})
+    end
     unless hash['info']['nickname'].blank?
       user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
       user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'

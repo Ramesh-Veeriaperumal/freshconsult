@@ -93,6 +93,16 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :requester_template => '<p>Dear {{ticket.requester.name}},<br /><br />Our Support Rep has indicated that your ticket has been Resolved. <br /><br />If you believe that the ticket has not been resolved, please reply to this email to automatically reopen the ticket.<br />If there is no response from you, we will assume that the ticket has been resolved and the ticket will be automatically closed after 48 hours.<br /><br />Sincerely,<br />{{helpdesk_name}}Support Team<br />{{ticket.url}}</p>',
     :requester_subject_template => "Ticket Resolved - {{ticket.subject}}"
 },
+  {
+    :notification_type => EmailNotification::ADDITIONAL_EMAIL_VERIFICATION,
+    :account_id => account.id, :requester_notification => true, :agent_notification => false,
+    :requester_template => '<p>Hi {{contact.name}},<br/><br/>This email address ({{email}}) has been added to your 
+      {{helpdesk_name}} account. Please click on the link below to verify it.
+      <br/><br/>Verification link: {{activation_url}}<br/><br/>If the link above does not work, 
+      try copy-pasting the URL into your browser. Please get in touch with us if you need any help. 
+      <br/><br/>Thanks, <br/>{{helpdesk_name}} <br/></p>',
+    :requester_subject_template => '{{helpdesk_name}} Email Activation'
+},
   { :notification_type => EmailNotification::TICKET_CLOSED, 
       :account_id => account.id, :requester_notification => true, :agent_notification => false,
       :requester_template => '<p>Dear {{ticket.requester.name}},<br /><br />Your ticket - {{ticket.subject}} -  has been closed.<br /><br />We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please reply to this email.<br /><br />Sincerely,<br />{{helpdesk_name}} Support Team<br />{{ticket.url}}</p>',

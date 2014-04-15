@@ -38,6 +38,7 @@ function insertSuggestions(value)
 	if(jQuery('#' + element_id)){
 		//restoreCaretPosition(element_id);//method in ticket show page.
 	  jQuery("#"+element_id).getEditor().focus();
+	  jQuery("#"+element_id).data('redactor').restoreSelection();
  		jQuery("#"+element_id).insertHtml(value);
 	}
 

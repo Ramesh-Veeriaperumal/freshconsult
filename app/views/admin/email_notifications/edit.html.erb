@@ -33,8 +33,8 @@
 		jQuery('#place-dialog').hide();
 		jQuery('.tab-pane').each(function() {
 			var tab_pane = jQuery(this);
-			if(tab_pane.find('.common-icons-outdated').length) {
-				jQuery('#' + tab_pane.data('lang') + '-tab' + ' i').addClass('common-icons-outdated');
+			if(tab_pane.find('.common-icon-outdated').length) {
+				jQuery('#' + tab_pane.data('lang') + '-tab' + ' i').addClass('common-icon-outdated');
 			} else {
 				if(tab_pane.find('.common-icons-updated').length)
 					jQuery('#' + tab_pane.data('lang') + '-tab' + ' i').addClass('common-icons-updated');
@@ -312,7 +312,7 @@
 					<div class="span8">	
 						<% if content.outdated?  %>
 							<div class="notification-icon">
-								<i class="common-icons-outdated"></i>
+								<i class="common-icon-outdated"></i>
 							</div>
 							<div class="notification-message" title="<%= content.updated_at %>">
 								<b><%=t('email_notifications.translation_outdated')%></b> <br/>

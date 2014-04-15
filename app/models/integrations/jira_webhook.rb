@@ -110,7 +110,7 @@ class Integrations::JiraWebhook
 
   def create_a_contact(installed_app,email,name)
     account = installed_app.account
-    user = account.all_users.find_by_email(email) 
+    user = account.user_emails.user_for_email(email)
     unless user
       user = account.contacts.new
       if user.signup!({:user => {:name => name, :email => email, 

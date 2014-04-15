@@ -5,6 +5,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include ParserUtil
   include HelpdeskControllerMethods
 
+  before_filter :filter_params_ids, :only => :update_multiple
   before_filter :load_multiple_items, :only => :update_multiple
 
   def update_multiple             

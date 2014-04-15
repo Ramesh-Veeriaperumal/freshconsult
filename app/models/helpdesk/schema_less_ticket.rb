@@ -17,6 +17,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :st_survey_rating, :int_tc01
 	alias_attribute :survey_rating_updated_at, :datetime_tc01
 	alias_attribute :trashed, :boolean_tc02
+	alias_attribute :sender_email, :string_tc03
 	alias_attribute :access_token, :string_tc01
 	alias_attribute :escalation_level, :int_tc02
 	alias_attribute :sla_policy_id, :long_tc01

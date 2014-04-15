@@ -1,69 +1,11 @@
-<% content_for :onload_script do %>               
-  jQuery("#contact_customer").autocomplete({
-      source: function(request, response) {
-          jQuery.ajax({
-              url: "<%=autocomplete_contacts_path%>",
-              data: {
-                  v: request.term
-              },
-              success: function(data) {
-                  response(jQuery.map(data.results,
-                  function(item) {
-                      return {
-                          label: item.value,
-                          value: item.value
-                      }
-                  }));
-              }
-          });
-      },
-      select: function(event, ui) {
-      			jQuery("#user_address").focus();
-          },
-      open: function() {
-          jQuery(this).removeClass('ui-corner-all');
-      }
-  }).data("autocomplete")
-  ._renderItem = function(ul, item) {
-      return jQuery("<li></li>")
-      .data("item.autocomplete", item)
-      .append("<a>" + item.label + "</a>")
-      .appendTo(ul);
-  };
+<%= include_cloudfront_js 'contact_form' %>  
 
-  jQuery("#contact_submit").bind("click",
-  function(ev){
-  	var company_name=jQuery('#contact_customer').val().trim();
-  	if(company_name=='')
- 	  {
-  		jQuery('#contact_role').removeAttr('checked');
-   	}
-  	return true;
-	});
-
-  jQuery("#contact_customer").bind("keyup",
-  function(ev) {
-      var company = this.value.trim();
-      if (company != null && company != "")
-      {
-          jQuery('#contact_role').removeAttr("disabled");
-      }
-      else
-      {
-          jQuery('#contact_role').removeAttr('checked');
-          jQuery('#contact_role').prop("disabled", true);
-      }
-  });
-	jQuery("#user_tags").select2({
-	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-	  	tokenSeparators: [',']
-	}); 
-
-  jQuery(".ui-menu-item").live("click",function(ev){
-  	jQuery("#user_address").focus();
-	});
-
+<% content_for :onload_script do %>  
+  var confirm_text = "<%= t('merge_contacts.email_remove') %>",
+  	  tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
+  ContactFormInitializer(confirm_text, tags_options)
 <% end %>
+
 
  	 <% if @existing_user %>
 	  	<div id="errorExplanation" class="errorExplanation">
@@ -72,11 +14,11 @@
 		</div>
 	  <%else%>		
 	   	<%= error_messages_for :user %>
+	   	<%= error_messages_for :user_emails %>
 	 <%end%>
 
 
-	 	 
-	<ul class="form-horizontal">	
+	<ul id="cont-form" class="form-horizontal">	
 		<li class="control-group">
 			<%= label(:user, :name, t('user.full_name'), :class => "control-label") %>
 			<div class="controls">
@@ -89,12 +31,35 @@
 				<%= text_field(:user, :job_title, :class => "text input-xlarge" ) %>
 			</div>
 		</li>
+		<% if current_account.features?(:multiple_user_emails) %>
+		<div id="emails_con" class="email_con">
+			<li class="control-group closebottom">
+				<%= label_tag :email, "Email", :id => "email-label", :class => "control-label" %>
+					<% f.fields_for :user_emails do |ue| %>
+					<div class="controls">
+						<% if !ue.object.primary_role %>
+							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge" %> 
+							<%= f.object.new_record? ? "" : 
+							content_tag(:span, "", :class => "remove_image rem_mail", "data-email" => ue.object.id)%>
+						<% else %>
+							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge default_email" %>
+							<span class='email_primary remove_image rem_mail'></span>
+							<p class="primary_text"><b><%= t('merge_contacts.primary') %></b></p>
+						<% end %>
+                        <%= ue.hidden_field :_destroy, :value => false %>
+					</div> <!-- The hidden id field gets added after this -->
+					<% end %>
+			</li>
+		</div>
+		<div class="controls new_email_text"><a id="add_new_mail" class="<%= f.object.new_record? ? "disabled" : "" %>" href="#"><span id="add_email"></span><%= t('merge_contacts.add_another') %></a></div>
+		<% else %>
 		<li class="control-group">
 			<%= label(:user, :email, t('user.email'), :class => "control-label") %> 
 			<div class="controls">
 				<%= text_field(:user, :email, :id => "email_primary", :class => "email input-xlarge") %> 
 			</div>
 		</li>
+		<% end %>
 		<li class="control-group">
 			<%= label(:user, :phone, "#{t('user.work_phone')}.",:class => "control-label" ) %>
 			<div class="controls">

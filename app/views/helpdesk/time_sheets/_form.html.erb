@@ -50,5 +50,8 @@
 		else
 			jQuery('#new_timeentry [data-submit=modal]').button('reset');
 	});
+	jQuery('#new_timeentry').on('shown', function() {
+		jQuery('#time_entry_hhmm').focus();
+	});
 </script>
 <% end %>

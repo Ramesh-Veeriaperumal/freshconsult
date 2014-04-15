@@ -119,6 +119,20 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
+  create_table "admin_users", :force => true do |t|
+    t.string   "name"
+    t.string   "password_salt"
+    t.string   "crypted_password"
+    t.string   "email"
+    t.string   "perishable_token"
+    t.string   "persistence_token"
+    t.integer  "role"
+    t.boolean  "active"
+    t.datetime "last_request_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "affiliate_discount_mappings", :id => false, :force => true do |t|
     t.integer "subscription_affiliate_id", :limit => 8
     t.integer "affiliate_discount_id",     :limit => 8

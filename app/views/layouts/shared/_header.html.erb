@@ -16,7 +16,7 @@
 		</div>	
 		<% if current_user then %>  
 		  	<div class="header-link-wrapper">
-		  		<% if current_account.freshfone_enabled? %>
+		  		<% if current_account.freshfone_active? %>
 						<a href="#" id="freshfone-presence-toggle" class="tooltip"
 							data-placement="below"  
 						 	title="<%= current_user.freshfone_user_online? ? "You are available to take calls" : "You are unavailable to take calls" %>" data-html="true">
@@ -146,7 +146,6 @@
 		var that = this;
 		jQuery(this)
 			.attr('disabled', 'disabled')
-			.parent().addClass('sloading');
 		jQuery.ajax({
 			type: "PUT",
 			dataType:"json",
@@ -154,10 +153,9 @@
 			success: function (response) {
 				jQuery(that)
 					.removeAttr('disabled')
-					.parent().removeClass('sloading');
 				if (response.shortcuts_enabled) {
 					if(window.shortcuts !== undefined){
-						jQuery(document).trigger("shortcuts:invoke")
+						jQuery(document).trigger("shortcuts:invoke").scrollTop(0)
 					} else {
         				scriptLoader.load('shortcut');
 					}

@@ -61,9 +61,7 @@ module SupportTicketControllerMethods
   end
 
   def check_email
-    items = check_email_scoper.find(
-              :all, 
-              :conditions => ["email = ?", "#{params[:v]}"])
+    items = current_account.user_emails.user_for_email(params[:v])
     respond_to do |format|
       format.json { render :json => { :user_exists => items.present? }  }
     end

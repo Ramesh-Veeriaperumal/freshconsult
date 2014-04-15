@@ -1,6 +1,8 @@
 module Reports::HelpdeskReportControllerMethods
-	
-	def parse_wf_params
+  include Redis::RedisKeys
+  include Redis::ReportsRedis
+  
+  def parse_wf_params
     @sql_condition = add_filter_conditions(params)
     @report_date = params[:date_range]
     @filter_data = ActiveSupport::JSON.decode params[:selected_filter_data]
@@ -66,5 +68,41 @@ module Reports::HelpdeskReportControllerMethods
       r << Reports::Constants::AJAX_TOP_N_ANALYSIS_COLUMNS[key]
       r
     end
+  end
+
+  def cache_report_filter_params(glance_type)
+    filter_params = params.clone.symbolize_keys
+    date_range = filter_params[:date_range]
+    filter_params.select! {|k,v| [:data_hash].include?(k) }
+    parsed_data_hash = JSON.parse(filter_params[:data_hash])
+
+    # Prepending flexifields and users class to match the condition as in ticket list view data hash
+    parsed_data_hash.each do |x|
+      x['condition'].prepend('flexifields.') if x['condition'].include?('ffs_')
+      x['condition'].prepend('users.') if x['condition'] == 'customer_id'
+    end
+
+    Reports::Constants::REPORTS_GLANCE_TICKET_VIEW[glance_type.to_sym].each do |report_type|
+
+      condition_key = TicketConstants::REPORT_TYPE_HASH[report_type]
+      filter = [{:condition => condition_key, :operator => :is_greater_than, :value => date_range}]
+      filter_params[:data_hash] = (parsed_data_hash | filter).to_json
+      filter_params.merge!(:unsaved_view => true)
+      begin
+        set_reports_redis_key(report_filter_redis_key(report_type), filter_params.to_json, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+
+    end
+  end
+
+  def report_filter_redis_key(report_type)
+    key_args = { :account_id => current_account.id,
+                 :user_id => current_user.id,
+                 :session_id => request.session_options[:id],
+                 :report_type => report_type
+               }
+    REPORT_TICKET_FILTERS % key_args
   end
 end
