@@ -51,6 +51,7 @@ end
     </span>
     <%= submit_tag t("portalcss.publish_changes"),
                 "data-loading-text" => t("portalcss.please_wait"),
+                "data-code-refresh" => _coderefresh_ids,
                 :name => 'publish_button', :class => "btn btn-primary" %>
   </span>
 </div>
