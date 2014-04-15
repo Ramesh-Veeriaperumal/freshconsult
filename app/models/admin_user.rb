@@ -12,8 +12,12 @@ class AdminUser < ActiveRecord::Base
   validates_format_of :name, :with => /^([a-z0-9_]{2,16})$/i,
     :message => "must be 4 to 16 letters, numbers or underscores and have no spaces"
  
-  validates_format_of :password, :with => /^([\x20-\x7E]){4,16}$/,
-    :message => "must be 4 to 16 characters"
+  validates_format_of :password, :with => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+    :message => "At least one upper case letter
+                At least one lower case letter
+                At least one digit
+                At least one special character
+                Minimum 8 in length"
  
   validates_confirmation_of :password
 
@@ -33,9 +37,9 @@ class AdminUser < ActiveRecord::Base
 
   attr_accessible :name, :password, :password_confirmation, :email, :role
 
-  #authlogic method to specify idle time before logging out the user.
+  #authlogic method to specify idle time before logging out the user.1 day
   def logged_in_timeout
-    60.minutes
+    1440.minutes
   end
 
   def self.role_list
