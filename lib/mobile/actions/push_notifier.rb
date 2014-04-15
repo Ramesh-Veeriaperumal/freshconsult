@@ -54,7 +54,7 @@ module Mobile::Actions::Push_Notifier
 
     puts "DEBUG :: send_mobile_notification hash : #{notification_types}"
 	return if notification_types.empty?
-	message.merge!(:notification_types => notification_types, :user => current_user_name)
+	message.merge!(:notification_types => notification_types, :user => current_user_name, :user_id => current_user_id)
 	message.store(:account_id,self.account.id)
 	
     puts "DEBUG :: send_mobile_notification hash : #{message}"
