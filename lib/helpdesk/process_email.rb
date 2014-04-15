@@ -374,7 +374,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def can_be_added_to_ticket?(ticket,user)
       ticket and
-      ((user.agent? && !user.deleted? && from_email[:email].downcase == user.email.downcase) or
+      ((user.agent? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
       belong_to_same_company?(ticket,user))
