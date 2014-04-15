@@ -34,7 +34,12 @@ class SubscriptionAdmin::SubscriptionUsersController < ApplicationController
         redirect_to admin_subscription_login_path      
       else     
         if @check_session.valid?
-          flash[:notice] = 'New password does not match.'
+          flash[:notice] = 'Invalid password format. Must have 
+                            "At least one upper case letter,
+                              At least one lower case letter,
+                              At least one digit,
+                              At least one special character,
+                              Minimum 8 in length"'
         else
           flash[:notice] = "Wrong password"
         end
