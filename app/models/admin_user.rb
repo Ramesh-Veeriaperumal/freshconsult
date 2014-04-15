@@ -1,5 +1,6 @@
 # encoding: utf-8
 class AdminUser < ActiveRecord::Base
+  not_sharded
   
   FD_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+[a-zA-Z0-9.-]+@freshdesk\.com\b/
   PASSWORD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
