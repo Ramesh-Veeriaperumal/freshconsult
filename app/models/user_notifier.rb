@@ -7,7 +7,7 @@ class UserNotifier < ActionMailer::Base
     send_the_mail(user, params[:email_body], params[:reply_email])
   end
 
-  def email_activation(email_id, params)
+  def email_activation(email_id, params, reply_email_config)
     self.class.set_mailbox reply_email_config.smtp_mailbox
 
     subject     params[:subject]

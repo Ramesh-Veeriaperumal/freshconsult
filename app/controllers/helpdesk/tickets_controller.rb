@@ -640,6 +640,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
+    @item.email = params[:helpdesk_ticket][:email]
     @item.sender_email = params[:helpdesk_ticket][:email]
 
     build_attachments @item, :helpdesk_ticket

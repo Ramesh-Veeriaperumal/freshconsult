@@ -11,6 +11,7 @@ class ContactsController < ApplicationController
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
+   before_filter :set_user_email, :only => :edit
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :check_parent, :only => :restore
@@ -292,6 +293,10 @@ protected
     @user = @item = scoper.find(params[:id])
 
     @item || raise(ActiveRecord::RecordNotFound)
+  end
+
+  def set_user_email
+    @user.user_emails.build if current_account.features?(:multiple_user_emails) and @user.user_emails.blank?
   end
    
   def set_selected_tab

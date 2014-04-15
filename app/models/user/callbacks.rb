@@ -83,9 +83,13 @@ class User < ActiveRecord::Base
   protected
 
   def set_contact_name 
-    if self.name.blank? && self.email
-      self.name = (self.email.split("@")[0]).capitalize
+    if self.name.blank? && email_obtained.present?
+      self.name = (email_obtained.split("@")[0]).capitalize
     end
+  end
+
+  def email_obtained
+    self[:email] || self.email
   end
 
   def update_user_related_changes
