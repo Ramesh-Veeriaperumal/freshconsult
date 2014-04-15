@@ -1,5 +1,6 @@
 # encoding: utf-8
 class AdminUser < ActiveRecord::Base
+  not_sharded
   
   acts_as_authentic do |c|
     c.session_class = AdminSession
