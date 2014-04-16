@@ -1588,7 +1588,15 @@ p.info-text{
 		border-right:5px solid blue;
 	}
 }
-
+a.close{
+   position: absolute;
+   right: 5px;
+   top: 5px;
+   width: 28px;
+   height: 28px;
+   background: url(/images/close_delete.png) no-repeat center;
+   z-index: 999;
+}
 .list_with_icon{
 	padding-top:3px;	
 	li, div.list-item{
