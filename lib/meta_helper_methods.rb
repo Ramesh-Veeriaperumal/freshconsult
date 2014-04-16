@@ -21,7 +21,7 @@ module MetaHelperMethods
     content << "<div class='meta-info'>"
     content << "#{user_agent_browser(meta['user_agent'])} #{user_agent_os(meta['user_agent'])}" if meta['user_agent'].present?
     content << meta_referrer_element(meta['referrer']) if meta['referrer'].present?
-    content << meta.body[1..-4].gsub('"',' ').gsub(",","<br /> ") if ticket.mobihelp?
+    content << meta.body[1..-3].gsub('"',' ').gsub(",","<br /> ") if ticket.mobihelp?
     content << "</div>"
     content_tag(:span, t("helpdesk.tickets.show.meta"), 
           :class => "meta_icon", :rel => 'hover-popover', 

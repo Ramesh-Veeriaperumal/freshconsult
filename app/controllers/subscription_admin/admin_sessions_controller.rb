@@ -4,7 +4,7 @@ class SubscriptionAdmin::AdminSessionsController < ApplicationController
   include TwoFactorAuthentication
   filter_parameter_logging :password
 
-  skip_before_filter :ensure_login, :check_admin_user_privilege
+  skip_before_filter :check_admin_user_privilege
  
   def index
     redirect_to(admin_subscription_login_path)

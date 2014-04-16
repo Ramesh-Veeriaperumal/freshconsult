@@ -120,16 +120,25 @@
          }
 
          var selectopts = { minimumResultsForSearch : 10 }
-         if(_init.value=='')
-          {$(category).attr('placeholder', 'None');} // Hack coz select2 takes the first value as placeholder,
-                                                                                  // when its value is set to null
+        if(_init.value==''){
+          $(category).attr('placeholder', 'None');
+        } // Hack coz select2 takes the first value as placeholder,
+              // when its value is set to null
 
-
-        if(_init.nested_rules && _init.nested_rules[0].value=='')
-          {$(subcategory).attr('placeholder', 'None');}    
-
-        if(_init.nested_rules && _init.nested_rules[1].value=='')
-          {$(items).attr('placeholder', 'None');} 
+          if (_init.nested_rules) {
+            for(i=0; _init.nested_rules.length > i; i++){
+              if(_init.nested_rules[i].value==''){ 
+                switch(i){
+                  case 0:               
+                    $(subcategory).attr('placeholder', 'None');
+                    break;
+                  case 1:
+                    $(items).attr('placeholder', 'None');
+                    break;
+                  }
+              }
+            }
+          }
 
 
          category.select2(selectopts)

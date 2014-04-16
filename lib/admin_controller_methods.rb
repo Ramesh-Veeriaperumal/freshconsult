@@ -14,7 +14,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :skip_before_filter, :select_shard
     base.send :layout, "subscription_admin"
-    base.send :prepend_before_filter, :set_time_zone, :ensure_login
+    base.send :prepend_before_filter, :set_time_zone
     base.send :before_filter, :check_admin_user_privilege
     
   end
@@ -25,13 +25,6 @@ module AdminControllerMethods
        request_http_basic_authentication 'Admin Area'
      end
     
-    def ensure_login
-      if current_user_session.nil? and current_user.nil?
-        flash[:notice] = "Please login to continue"
-        redirect_to(admin_subscription_login_path)
-      end
-    end
-
     def set_time_zone
       Time.zone = 'Pacific Time (US & Canada)'
     end

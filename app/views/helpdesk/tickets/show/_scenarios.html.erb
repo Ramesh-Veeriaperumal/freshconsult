@@ -37,9 +37,10 @@
     	})
 	});
 
-	jQuery('#search_scenarios').hide();
+	jQuery('.scenario-search').hide();
 	if(jQuery(".selected_to_yellow td").length > 10){
-		jQuery('#search_scenarios').show().focus();
+		jQuery('.scenario-search').show();
+		jQuery('#search_scenarios').focus();
 		var search_elements = jQuery(".scenarios_table td");
 		var search_elements_text = [];
 		search_elements.each(function(){

@@ -72,7 +72,7 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 							<%= content_tag(:p, "#{h(mail.email)}".html_safe) if !mail.primary_role %>
 							<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to_remote t('merge_contacts.verify'), 
 							:url => {:controller => "contacts", :id => params[:id], :action => "verify_email", :email_id => mail.id.to_s},
-							:method => :put, :complete => "jQuery('#verify_email').text('Verification sent');", :html => {:id => "verify_email"}}".html_safe, :class => "helper") if !mail.verified and !mail.primary_role %>
+							:method => :put, :complete => "jQuery('[data-verify-id=#{mail.id}]').text('Verification sent');", :html => {:id => "verify_email", 'data-verify-id' => mail.id}}".html_safe, :class => "helper") if !mail.verified and !mail.primary_role %>
 
 							<p class="helper"><%= link_to_remote t('merge_contacts.make_primary'), :url => make_primary_profile_user_email_path(params[:id], :email_id => mail.id.to_s), :method => :get, :html => {:id => "primary_maker"} if !mail.primary_role and mail.verified %></p>
 						</li>
