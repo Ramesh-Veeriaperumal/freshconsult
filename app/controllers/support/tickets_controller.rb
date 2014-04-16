@@ -28,8 +28,6 @@ class Support::TicketsController < SupportController
 
     respond_to do |format|
       format.html { set_portal_page :ticket_view }
-      format.xml  { render :xml => @ticket.to_xml }
-      format.json { render :json => @ticket.to_json }
     end
   end
   
@@ -38,8 +36,6 @@ class Support::TicketsController < SupportController
 
     respond_to do |format|
       format.html { set_portal_page :ticket_list }
-      format.xml  { render :xml => @tickets.to_xml }
-      format.json { render :json => @tickets.to_json }
     end
   end
 
