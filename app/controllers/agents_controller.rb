@@ -67,7 +67,7 @@ class AgentsController < ApplicationController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
-    @agent.user.user_emails.build({:primary_role => true})
+    @agent.user.user_emails.build({:primary_role => true}) if @agent.user.user_emails.blank?
     @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
      respond_to do |format|
       format.html # new.html.erb
@@ -118,7 +118,6 @@ class AgentsController < ApplicationController
     else  
         check_email_exist
         @agent.user =@user
-        @user.user_emails.build({:primary_role => true, :email => @user.user_emails.first.email})
         @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
         render :action => :new        
     end    
@@ -248,9 +247,15 @@ class AgentsController < ApplicationController
   end
   
   def check_email_exist
-     if("has already been taken".eql?(@user.user_emails.first.errors["email"]))        
-           @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
-     end
+    if current_account.features?(:multiple_user_emails)
+      if("has already been taken".eql?(@user.user_emails.first.errors["email"]))        
+        @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
+      end
+    else
+      if("Email has already been taken".eql?(@user.errors["base"]))        
+        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+      end
+    end
   end
   
   def check_agent_limit

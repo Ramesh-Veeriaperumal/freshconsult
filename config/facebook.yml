@@ -2,7 +2,7 @@ defaults: &defaults
 
  app_id: 128260310615386
  secret_key: ab8eb7b00386bf05035b0c62031d43f3
- callback_url: http://login.freshbugs.com/social/facebook
+ callback_url: http://login.freshpo.com/social/facebook
 
 
 development:
@@ -15,7 +15,7 @@ development:
 staging:
  app_id: 177912822282439
  secret_key: 81297d69e2deaf8152a7b0b96508c161
- callback_url: http://login.freshbugs.com/social/facebook
+ callback_url: http://login.freshpo.com/social/facebook
  page_tab_app_id: 433285340124104
  page_tab_app_secret: 2c3c9458bea17840b25041f1d8b18460
 

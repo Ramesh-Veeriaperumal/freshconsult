@@ -64,6 +64,12 @@ class User < ActiveRecord::Base
   
   validate :has_role?, :unless => :customer?
   validate :user_email_count, :if => :email_required?, :on => :update
+  validate :email_validity, :if => :chk_email_validation?
+
+  def email_validity
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:email] =~ EMAIL_REGEX
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and User.find_by_email(self[:email])
+  end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
   

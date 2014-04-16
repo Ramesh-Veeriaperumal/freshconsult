@@ -16,6 +16,7 @@ class UserEmail < ActiveRecord::Base
   before_update :drop_authorization, :if => :email_changed?
   before_update :save_model_changes
   after_commit_on_update :change_email_status, :if => :check_for_email_change?
+  after_commit_on_create :send_activation
   before_destroy :drop_authorization, :check_active_with_emails
 
   def self.find_email_using_perishable_token(token, age)
@@ -94,8 +95,9 @@ class UserEmail < ActiveRecord::Base
 
     def set_token(portal=nil)
       self.perishable_token = Authlogic::Random.friendly_token
-      if !primary_role? and self.user.active? and (!email.blank?)
-          deliver_contact_activation_email
-      end
+    end
+
+    def send_activation
+      deliver_contact_activation_email if self.user.active?
     end
 end

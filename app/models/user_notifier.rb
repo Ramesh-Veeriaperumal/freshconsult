@@ -11,7 +11,6 @@ class UserNotifier < ActionMailer::Base
     self.class.set_mailbox reply_email_config.smtp_mailbox
 
     subject     params[:subject]
-    body        params[:email_body]
     send_the_mail(email_id, params[:email_body], params[:reply_email])
   end
   

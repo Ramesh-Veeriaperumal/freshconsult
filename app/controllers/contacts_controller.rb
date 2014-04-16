@@ -304,9 +304,16 @@ protected
   end
   
   def check_email_exist
-    @user.user_emails.each do |ue|
-      if("has already been taken".eql?(ue.errors["email"]))
-        @existing_user = current_account.user_emails.user_for_email(ue.email)
+    if current_account.features?(:multiple_user_emails)
+      @user.user_emails.each do |ue|
+        if("has already been taken".eql?(ue.errors["email"]))
+          @existing_user = current_account.user_emails.user_for_email(ue.email)
+        end
+      end
+    else
+      puts @user.errors.inspect
+      if("Email has already been taken".eql?(@user.errors["base"]))        
+        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
       end
     end
   end

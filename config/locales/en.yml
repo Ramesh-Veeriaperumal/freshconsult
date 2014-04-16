@@ -1950,6 +1950,8 @@ en:
         inclusion: is not included in the list
         user_role: A user must be associated with atleast one role
         agent_email: An agent must have exactly one valid email
+        email_not_unique: Email has already been taken
+        email_invalid: Email is invalid
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -4585,8 +4587,8 @@ en:
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
-    email_activated: "E-Mail already activated"
-    new_email_activation: "New E-Mail id activated. Login to your account"
+    email_activated: "email id already activated"
+    new_email_activation: "New email id has been activated"
     contact_updated: "Contact has been updated"
     primary_changed: "Default E-Mail changed"
     failed_change: "Failed to change default E-Mail"
