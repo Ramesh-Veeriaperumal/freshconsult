@@ -73,6 +73,7 @@ module Reports::HelpdeskReportControllerMethods
   def cache_report_filter_params(glance_type)
     filter_params = params.clone.symbolize_keys
     date_range = filter_params[:date_range]
+    date_range = [date_range, date_range].join(' - ') if !date_range.include?(' - ')
     filter_params.select! {|k,v| [:data_hash].include?(k) }
     parsed_data_hash = JSON.parse(filter_params[:data_hash])
 
