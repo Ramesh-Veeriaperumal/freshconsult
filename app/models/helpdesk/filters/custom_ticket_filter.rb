@@ -269,6 +269,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
 
+      all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
+
       if @without_pagination
         return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
                                       :limit => per_page, :offset => (page - 1) * per_page,
@@ -302,7 +304,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
-    all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
     all_joins
   end
 
