@@ -2816,8 +2816,6 @@ en:
       info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com,
                       sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
                        automatically assign emails from each mailbox to a specific group.
-      info22: Custom Mailboxes
-      info23: If you are on the estate plan you can choose to send and receive support emails from your own email servers. You will need to provide a username and password for authentication of the mailbox.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
@@ -5356,9 +5354,11 @@ en:
     imap_port: "Port"
     use_ssl: "Use SSL"
     use_ssl_tls: "Use SSL/TLS"
+    use_outbound_mailbox: "Add a mailbox for only outbound mails"
     imap_server_info: "IMAP server name to fetch the emails"
     smtp_server_info: "SMTP server name to send emails"
     delete_from_server: "Delete emails from server after fetching?"
+    domain: "Domain:"
     authentication: "Authentication:"
     user_name: "User Name"
     password: "Password"
@@ -5366,7 +5366,11 @@ en:
     outgoing_mail_settings: "Outgoing Mail Settings"
     outgoing_mail_server: "Outgoing Mail Server:"
     smtp_server_name: "SMTP Server Name"
+    domain_name: Domain Name
     smtp_port: "Port"
+    use_mail_server_for: "Use mail server for:"
+    incoming_and_outgoing: "Incoming and Outgoing"
+    outgoing_only: "Outgoing only"
     idle_not_supported: "Specified IMAP mail server is not supported. Please use a different one"
     imap_connection_error: "Could not connect to the imap server. Please verify server name, port and credentials"
     imap_error: "Error while verifying the mailbox imap details. Please verify server name, port and credentials"
@@ -5377,7 +5381,7 @@ en:
     invalid_credentials: "Error while authenticating the smtp server. Please make sure your user name and password are correct"
     smtp_error: "Error while verifying the mailbox smtp details - %{error}"
     verifying_mailbox_input: "Verifying..."
-    smtp_alert_gmail: 'Gmail limits the number of emails sent per day. 200 for trial users and 500 for paid users.<a target="_blank" href="https://support.google.com/a/answer/166852?hl=en">Learn more</a>'
+    smtp_alert_gmail: 'Gmail limits the number of emails sent per day. <a target="_blank" href="https://support.google.com/a/answer/166852?hl=en">Click here</a> to learn more.'
     smtp_alert_aol: "AOL allows no more than 100 recipients per message or 500 recipients per connection."
     smtp_alert_other: "Generally the number of outgoing emails per day have a specific limit. Please contact your email provider for more info."
   discussions:

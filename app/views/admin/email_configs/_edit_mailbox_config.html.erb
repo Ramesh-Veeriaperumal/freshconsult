@@ -39,13 +39,13 @@
 	<li class="control-group">
 		<label class="control-label" ><%=t('mailbox.mail_server').html_safe%></label>
 		<div class="controls row-fluid">
-      		<% mailbox_enabled = @email_config.mailbox && !@email_config.mailbox.new_record? %>
+      		<% mailbox_enabled = @email_config.smtp_mailbox && !@email_config.smtp_mailbox.new_record? %>
       		<label class="radio span3 inline">
-	        	<input checked="checked" id="DisableMailbox" name="email_config[mailbox_attributes][_destroy]" type="radio" value="1" <%= 'checked="checked"' unless  mailbox_enabled %> >
+	        	<input checked="checked" id="DisableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="1" <%= 'checked="checked"' unless  mailbox_enabled %> >
 	        	<%= t('mailbox.use_default')%>
     		</label>
     		<label class="radio inline">
-				<input id="EnableMailbox" name="email_config[mailbox_attributes][_destroy]" type="radio" value="0" <%= 'checked="checked"' if mailbox_enabled %> >
+				<input id="EnableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="0" <%= 'checked="checked"' if mailbox_enabled %> >
 				<%= t('mailbox.use_your_own')%>
 			</label>
 		</div>
@@ -62,8 +62,11 @@
 		</div>
 
 		<div class="hide" id="CustomMailbox">
-			<% f.fields_for :mailbox, @mailbox do |mailbox| %>
-				<%= render :partial => "edit_mailbox", :locals => {:mailbox => mailbox} %>
+			<% f.fields_for :imap_mailbox, @imap_mailbox do |imap_mailbox| %>
+				<%= render :partial => "edit_imap_mailbox", :locals => {:imap_mailbox => imap_mailbox} %>
+			<% end %>
+			<% f.fields_for :smtp_mailbox, @smtp_mailbox do |smtp_mailbox| %>
+				<%= render :partial => "edit_smtp_mailbox", :locals => {:smtp_mailbox => smtp_mailbox} %>
 			<% end %>
 		</div>
 	</li>

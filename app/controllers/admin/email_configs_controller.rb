@@ -27,7 +27,8 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def new
-    @mailbox = @email_config.build_mailbox
+    @imap_mailbox = @email_config.build_imap_mailbox
+    @smtp_mailbox = @email_config.build_smtp_mailbox
     @products = current_account.products
     @groups = current_account.groups
   end
@@ -35,7 +36,8 @@ class Admin::EmailConfigsController < Admin::AdminController
   def edit
     @products = current_account.products
     @groups = current_account.groups
-    @mailbox = (@email_config.mailbox || @email_config.build_mailbox)
+    @imap_mailbox = (@email_config.imap_mailbox || @email_config.build_imap_mailbox)
+    @smtp_mailbox = (@email_config.smtp_mailbox || @email_config.build_smtp_mailbox)
   end
   
   def update    

@@ -1359,6 +1359,25 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
   add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
 
+  create_table "imap_mailboxes", :force => true do |t|
+    t.integer  "email_config_id",    :limit => 8
+    t.integer  "account_id",         :limit => 8
+    t.string   "server_name"
+    t.string   "user_name"
+    t.text     "password"
+    t.integer  "port"
+    t.string   "authentication"
+    t.boolean  "use_ssl"
+    t.string   "folder"
+    t.boolean  "delete_from_server"
+    t.boolean  "enabled",                         :default => true
+    t.integer  "timeout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "imap_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
+
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id", :limit => 8
     t.integer  "account_id",     :limit => 8
@@ -1387,32 +1406,6 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
-
-  create_table "mailboxes", :force => true do |t|
-    t.integer  "email_config_id",         :limit => 8
-    t.integer  "account_id",              :limit => 8
-    t.string   "imap_server_name"
-    t.string   "imap_user_name"
-    t.text     "imap_password"
-    t.integer  "imap_port"
-    t.string   "imap_authentication"
-    t.boolean  "imap_use_ssl"
-    t.string   "imap_folder"
-    t.boolean  "imap_delete_from_server"
-    t.string   "smtp_server_name"
-    t.string   "smtp_user_name"
-    t.text     "smtp_password"
-    t.integer  "smtp_port"
-    t.string   "smtp_authentication"
-    t.boolean  "smtp_use_ssl"
-    t.boolean  "imap_enabled",                         :default => true
-    t.boolean  "smtp_enabled",                         :default => true
-    t.integer  "imap_timeout"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -1621,6 +1614,23 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   end
 
   add_index "sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
+
+  create_table "smtp_mailboxes", :force => true do |t|
+    t.integer  "email_config_id", :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.string   "server_name"
+    t.string   "user_name"
+    t.text     "password"
+    t.integer  "port"
+    t.string   "authentication"
+    t.boolean  "use_ssl"
+    t.boolean  "enabled",                      :default => true
+    t.string   "domain"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "smtp_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",            :limit => 8
