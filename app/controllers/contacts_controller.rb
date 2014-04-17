@@ -311,7 +311,6 @@ protected
         end
       end
     else
-      puts @user.errors.inspect
       if("Email has already been taken".eql?(@user.errors["base"]))        
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
       end

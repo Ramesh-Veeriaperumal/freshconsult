@@ -34,6 +34,7 @@ class Integrations::GoogleContactsImporter
   end
 
   def sync_google_contacts(options = {})
+    @google_account.account.make_current
     Rails.logger.info "###### Inside sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     overwrite_existing_user = options[:overwrite_existing_user].blank? ? @google_account.overwrite_existing_user : options[:overwrite_existing_user]
     sync_type = options[:sync_type].blank? ? @google_account.sync_type : options[:sync_type]

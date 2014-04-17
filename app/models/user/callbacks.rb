@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   end
 
   def no_primary_email
-    self.email.blank?
+    self.actual_email.blank? and !no_multiple_user_emails
   end
 
   def remove_duplicate_emails
@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
   end
 
   def email_obtained
-    self[:email] || self.email
+    self[:email] || self.actual_email
   end
 
   def update_user_related_changes

@@ -32,7 +32,7 @@ class ActivationsController < SupportController
     if @email.nil?
       flash[:notice] = t('users.activations.code_expired')
     else
-      if !@email.user.active?
+      if !@email.user.active? or @email.user.crypted_password.blank?
         @user = @email.user
         render :new and return
       else
