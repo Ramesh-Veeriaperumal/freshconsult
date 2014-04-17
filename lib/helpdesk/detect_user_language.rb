@@ -3,7 +3,7 @@ require 'google/api_client'
 class Helpdesk::DetectUserLanguage
 	def self.set_user_language!(user, text)
     begin
-      client = Google::APIClient.new
+      client = Google::APIClient.new(:application_name => "Helpkit")
       translate = client.discovered_api('translate', 'v2')
       oauth_keys = Integrations::OauthHelper.get_oauth_keys('google_oauth2')
       client.authorization.access_token = oauth_keys["consumer_token"]
