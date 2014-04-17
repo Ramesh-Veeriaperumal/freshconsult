@@ -26,8 +26,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_update :update_group_escalation, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
-  after_commit_on_create :push_create_notification
-  after_commit_on_update :push_update_notification
+  #after_commit_on_create :push_create_notification
+  #after_commit_on_update :push_update_notification
 
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
