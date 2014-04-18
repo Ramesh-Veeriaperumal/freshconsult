@@ -24,7 +24,7 @@ namespace :facebook do
     premium_acc_ids = Rails.env.production? ? PREMIUM_ACC_IDS[:production] : PREMIUM_ACC_IDS[:staging]
     if queue_empty?(queue_name)
       premium_acc_ids.each do |account_id|
-        Resque.enqueue(Facebook::Worker::PremiumFacebookWorker, {:account_id => account_id })
+        Resque.enqueue(Facebook::Worker::FacebookMessage::PremiumFacebookWorker, {:account_id => account_id })
       end
     else
       puts "Premium Facebook Worker is already running . skipping at #{Time.zone.now}"
