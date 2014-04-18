@@ -10,7 +10,7 @@ class Support::TicketsController < SupportController
   end
 
   before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
-  before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
+  before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
 
   # Ticket object loading
   before_filter :build_tickets, :only => [:index, :filter]
@@ -151,10 +151,6 @@ class Support::TicketsController < SupportController
         @requested_item = current_user
         @requested_item.tickets
       end
-    end
-   
-    def require_user_login
-      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     end
 
     def check_user_permission
