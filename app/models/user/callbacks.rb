@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user,:remove_user_mobile_registrations, :if => :deleted?
   before_save :set_contact_name, :check_email_value, :update_user_related_changes
-  after_create :update_user_email, :if => [:user_emails_migrated?, :no_multiple_user_emails] #for user email delta
+  after_create :update_user_email, :if => [:email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
   after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   after_update :update_verified, :if => [:active_changed?, :email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta

@@ -34,7 +34,7 @@ class ActivationsController < SupportController
     else
       if !@email.user.active? or @email.user.crypted_password.blank?
         @user = @email.user
-        render :new and return
+        set_portal_page :activation_form and return
       else
         if @email.verified?
           flash[:notice] = t('merge_contacts.email_activated')
