@@ -1,82 +1,380 @@
 module Admin::HomeHelper
   
-  def admin_link(list_array)
-    link_item = list_array.map do |pref|
-                  next if !pref[2].nil? && !pref[2]
-                    link_content = <<HTML
-                    <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ pref[1] }" /></div>
-                    <div class="admin-icon-text">#{t(".#{pref[1]}")}</div>
-HTML
-                    content_tag( :li, link_to( link_content.html_safe, pref[0].html_safe ))
+  ######### Admin Items ########
 
-                end
+  def admin_items
+    @admin_items ||= {
+      :email                           =>   {
+        :url                           =>   "/admin/email_configs",
+        :privilege                     =>   privilege?(:manage_email_settings)
+      },
+      :freshchat                       =>   {
+        :url                           =>   "/admin/chat_setting",
+        :privilege                     =>   current_account.features?(:chat) && privilege?(:admin_tasks)
+      },
+      :freshfone                       =>   {
+        :url                           =>   "/admin/freshfone",
+        :privilege                     =>   can_view_freshfone_admin? && privilege?(:admin_tasks)
+      },
+      :"twitter-setting"               =>   {
+        :url                           =>   "/social/twitters",
+        :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
+      },
+      :"facebook-setting"              =>   {
+        :url                           =>   "/social/facebook",
+        :privilege                     =>   current_account.features?(:facebook) && privilege?(:admin_tasks)
+      },
+      :feedback                        =>   {
+        :url                           =>   "/admin/widget_config",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :rebranding                      =>   {
+        :url                           =>   "/account/edit",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :"ticket-fields"                 =>   {
+        :url                           =>   "/ticket_fields",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :"customer-portal"               =>   {
+        :url                           =>   "/admin/portal",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :agent                           =>   {
+        :url                           =>   "/agents",
+        :privilege                     =>   privilege?(:manage_users)
+      },
+      :group                           =>   {
+        :url                           =>   "/groups",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :role                            =>   {
+        :url                           =>   "/admin/roles",
+        :privilege                     =>   feature?(:custom_roles) && privilege?(:admin_tasks)
+      },
+      :security                        =>   {
+        :url                           =>   "/admin/security",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :sla                             =>   {
+        :url                           =>   "/helpdesk/sla_policies",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :"business-hours"                =>   {
+        :url                           =>   "/admin/business_calendars",
+        :privilege                     =>   feature?(:business_hours) && privilege?(:admin_tasks)
+      },
+      :"multi-product"                 =>   {
+        :url                           =>   "/admin/products",
+        :privilege                     =>   feature?(:multi_product) && privilege?(:admin_tasks)
+      },    
+      :tags                            =>   {
+        :url                           =>   "/helpdesk/tags",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :dispatcher                      =>   {
+        :url                           =>   "/admin/va_rules",
+        :privilege                     =>   privilege?(:manage_dispatch_rules)
+      },
+      :supervisor                      =>   {
+        :url                           =>   "/admin/supervisor_rules",
+        :privilege                     =>   privilege?(:manage_supervisor_rules)
+      },
+      :observer                        =>   {
+        :url                           =>   "/admin/observer_rules",
+        :privilege                     =>   privilege?(:manage_dispatch_rules)
+      },
+      :scenario                        =>   {
+        :url                           =>   "/admin/automations",
+        :privilege                     =>   feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules)
+      },
+      :"email-notifications"           =>   {
+        :url                           =>   "/admin/email_notifications",
+        :privilege                     =>   privilege?(:manage_email_settings)
+      },
+      :"canned-response"               =>   {
+        :url                           =>   "/admin/canned_responses/folders",
+        :privilege                     =>   privilege?(:manage_canned_responses)
+      },
+      :"survey-settings"               =>   {
+        :url                           =>   "/admin/surveys",
+        :privilege                     =>   current_account.features?(:surveys) && privilege?(:admin_tasks)
+      },
+      :"gamification-settings"         =>   {
+        :url                           =>   "/admin/gamification",
+        :privilege                     =>   current_account.features?(:gamification) && privilege?(:admin_tasks)
+      },
+      :"email_commands_setting"        =>   {
+        :url                           =>   "/admin/email_commands_settings",
+        :privilege                     =>   privilege?(:manage_email_settings)
+      },
+      :integrations                    =>   {
+        :url                           =>   "/integrations/applications",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
+      :account                         =>   {
+        :url                           =>   "/account",
+        :privilege                     =>   privilege?(:manage_account)
+      },
+      :billing                         =>   {
+        :url                           =>   "/subscription",
+        :privilege                     =>   privilege?(:manage_account)
+      },
+      :import                          =>   {
+        :url                           =>   "/admin/zen_import",
+        :privilege                     =>   privilege?(:manage_account)
+      },
+      :day_pass                        =>   {
+        :url                           =>   "/admin/day_passes",
+        :privilege                     =>   privilege?(:manage_account)
+      },
+      :multiple_mailboxes              =>   {
+        :privilege                     =>   feature?(:multiple_emails)
+      },
+      :layout_customization            =>   {
+        :url                           =>   "/admin/portal/#{current_account.main_portal.id}/template#layout",
+        :privilege                     =>   feature?(:layout_customization)
+      },
+      :stylesheet_customization        =>   {
+        :url                           =>   "/admin/portal/#{current_account.main_portal.id}/template#custom_css",
+        :privilege                     =>   feature?(:css_customization)
+      },
+      :custom_domain_name              =>   {
+        :privilege                     =>   feature?(:custom_domain)
+      },
+      :automatic_ticket_assignment     =>   {
+        :privilege                     =>   feature?(:round_robin)
+      },
+      :set_businesshour_group          =>   {
+        :privilege                     =>   feature?(:multiple_business_hours)
+      },
+      :trusted_ip                      =>   {
+        :privilege                     =>   feature?(:custom_ssl)
+      },
+      :create_new_sla                  =>   {
+        :url                           =>   "/helpdesk/sla_policies/new",
+        :privilege                     =>   feature?(:customer_slas)
+      },
+      :configure_escalation_emails     =>   {
+        :privilege                     =>   false
+      },
+      :cancel_service                  =>   {
+        :url                           =>   "/account/cancel",
+        :privilege                     =>   privilege?(:manage_account)
+      }
+    }
+  end
+
+  ######### Admin groups & Associated admin items Constant ########
+
+    ADMIN_GROUP = {
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback"],
+      :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
+                                          "business-hours", "multi-product", "tags"],
+      :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
+                                          "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
+      :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
+    }
+
+  ######### keywords Constant ########
+    
+    ####### Keywords HASH Structure ###################
+
+    # :admin_item_class_name (sym) => [
+    #   each_keyword (sym) || {
+    #     :keyword     =>  (sym),
+    #     :url         =>  (string),    # optional
+    #     :privilege   =>  (Boolean),   # optional
+    #     :meta        =>  (Array)      # optional
+    #   }
+    # ]
+
+    ##################################################
+
+    ADMIN_KEYWORDS = {
+      :email                      =>      {
+          :open_keywords          =>      [:configure_support_email, :Personalized_email_replies, :remove_ticket_id, :reply_to_email],
+          :closed_keywords        =>      [:multiple_mailboxes]
+      },
+      :freshchat                  =>      {
+          :open_keywords          =>      [:chat_integration]
+      },
+      :freshfone                  =>      {
+          :open_keywords          =>      [:phone_integration]
+      },
+      :feedback                   =>      {
+          :open_keywords          =>      [:customize_feedback_widget, :embedded_widget, :popup_widget]
+      },
+      :rebranding                 =>      {
+          :open_keywords          =>      [:set_time_zone, :set_helpdesk_language, :set_portal_url, :set_ticket_id, 
+                                              :set_portal_name, :supported_languages, :portal_customization],
+          :closed_keywords        =>      [:layout_customization, :stylesheet_customization, :custom_domain_name]
+      },
+      :"ticket-fields"            =>      {
+          :open_keywords          =>      [:customize_new_ticket_form]
+      },
+      :"customer-portal"          =>      {
+          :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions]
+      },
+      :"agent"                    =>      {
+          :open_keywords          =>      [:add_new_agent, :occasional_agent, :daypass_agent]
+      },
+      :"group"                    =>      {
+          :open_keywords          =>      [:add_new_group],
+          :closed_keywords        =>      [:automatic_ticket_assignment, :set_businesshour_group]
+      },
+      :role                       =>      {
+          :open_keywords          =>      [:add_new_agent_role, :agent_roles_permissions]
+      },
+      :security                   =>      {
+          :open_keywords          =>      [:ssl_encryption, :single_signon],
+          :closed_keywords        =>      [:trusted_ip]
+      },
+      :sla                        =>      {
+          :closed_keywords        =>      [:create_new_sla, :configure_escalation_emails]
+      },
+      :"business-hours"           =>      {
+          :open_keywords          =>      [:operating_hours, :set_holiday_list, :business_hours_multiple_locations]
+      },
+      :dispatcher                 =>      {
+          :open_keywords          =>      [:ticket_creation_rules]
+      },
+      :supervisor                 =>      {
+          :open_keywords          =>      [:hourly_trigger]
+      },
+      :observer                   =>      {
+          :open_keywords          =>      [:event_based_rules]
+      },
+      :"survey-settings"          =>      {
+          :open_keywords          =>      [:customer_survey]
+      },
+      :"gamification-settings"    =>      {
+          :open_keywords          =>      [:gamification]
+      },
+      :integrations               =>      {
+          :open_keywords          =>      [:list_all_integrations]
+      },
+      :account                    =>      {
+          :open_keywords          =>      [:invoice_emails, :export_data],
+          :closed_keywords        =>      [:cancel_service]
+      },
+      :"import"                   =>      {
+          :open_keywords          =>      [:import_data_zendesk]
+      }
+    }
+
+    KEYWORDS_META = {
+      :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages],
+      :phone_integration                      =>    [:purchase_support_number, :voice_integration, :ivr, :integrated_phone_support],
+      :"twitter-setting"                      =>    [:social],
+      :"facebook-setting"                     =>    [:social],
+      :stylesheet_customization               =>    [:css_customization, :customisation],
+      :custom_domain_name                     =>    [:cname],
+      :portal_customization                   =>    [:rebrand_portal, :customisation],
+      :automatic_ticket_assignment            =>    [:round_robin_assignment],
+      :set_businesshour_group                 =>    [:multiple_business_hours],
+      :agent_roles_permissions                =>    [:custom_roles],
+      :single_signon                          =>    [:sso],
+      :trusted_ip                             =>    [:private_helpdesk],
+      :business_hours_multiple_locations      =>    [:multiple_business_hours],
+      :"multi-product"                        =>    [:multi_brand],
+      :ticket_creation_rules                  =>    [:automations, :workflows],
+      :hourly_trigger                         =>    [:automations, :workflows],
+      :event_based_rules                      =>    [:automations, :workflows],
+      :scenario                               =>    [:macros],
+      :"email-notifications"                  =>    [:auto_responses],
+      :"canned-response"                      =>    [:predefined_responses],
+      :"billing"                              =>    [:choose_plan],
+      :import_data_zendesk                    =>    [:zendesk_import],
+      :"day_pass"                             =>    [:occasional_agent]
+    }
+
+  ######### Constructing Admin Page ########
+
+  def admin_link(items)
+    link_item = 
+      items.map do |item|
+        admin_item = admin_items[item.to_sym]
+        next unless admin_item[:privilege]      ## Skip according to the item privilege
+          link_content = <<HTML
+          <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ item.to_s }" /></div>
+          <div class="admin-icon-text">#{t(".#{item.to_s}")}</div>
+HTML
+          content_tag( :li, link_to(link_content.html_safe, admin_item[:url].html_safe))
+      end
+
     link_item.to_s.html_safe
   end
-  
-  # Defining the Array and constructing the Admin Page links
-  # !!! IMPORTANT: 
-  #     The name listed below in the Array next to the link is the key value for the Item
-  # =>  This key value will be used as the 
-  # =>       1. i18n key
-  # =>       2. Name of the image that is placed under the admin-icon folder
-  # =>  Group title text are also used in admin.scss file as a class name
-  
-  def admin_pref_links
-    admin_links = [
 
-      [ [t(".helpdesk")], [ 
-          ['/account/edit',               'rebranding',              privilege?(:admin_tasks) ],
-          ['/admin/email_configs',        'email-settings',          privilege?(:manage_email_settings) ],
-          ['/admin/email_notifications',  'email-notifications',     privilege?(:manage_email_settings) ],      
-          ['/ticket_fields',              'ticket-fields',           privilege?(:admin_tasks) ],
-          ['/helpdesk/sla_policies',      'sla',                     privilege?(:admin_tasks) ],  
-          ['/admin/business_calendars',   'business-hours',          feature?(:business_hours) && privilege?(:admin_tasks) ],
-          ['/admin/products',             'multi-product',           feature?(:multi_product) && privilege?(:admin_tasks) ],
-          ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
-          ['/admin/freshfone',            'freshfone',               can_view_freshfone_admin? && privilege?(:admin_tasks) ],
-          ['/social/twitters',            'twitter-setting',         feature?(:twitter) && privilege?(:admin_tasks) ],
-          ['/social/facebook',            'facebook-setting',        current_account.features?(:facebook) && privilege?(:admin_tasks) ],
-          ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
-          ['/agents',                     'agent',                   privilege?(:manage_users) ],
-          ['/groups',                     'group',                   privilege?(:admin_tasks) ],
-          ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ],
-          ['/helpdesk/tags',              'tags',                    privilege?(:admin_tasks) ]
-      ], "Helpdesk"],
-      [ [t(".helpdesk"),t(".productivity")], [ 
-          ['/admin/va_rules',             'dispatcher',              privilege?(:manage_dispatch_rules) ],
-          ['/admin/supervisor_rules',     'supervisor',              privilege?(:manage_supervisor_rules) ],
-          ['/admin/observer_rules',       'observer',                privilege?(:manage_dispatch_rules) ],
-          ['/admin/automations',          'scenario',                feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules) ],
-          ['/admin/email_commands_settings', 'email_commands_setting', privilege?(:manage_email_settings) ], 
-          ['/integrations/applications',  'integrations',            privilege?(:admin_tasks) ],
-          ['/admin/canned_responses/folders',     'canned-response', privilege?(:manage_canned_responses) ],
-          ['/admin/surveys',              'survey-settings',         current_account.features?(:surveys) && privilege?(:admin_tasks) ],
-          ['/admin/gamification',         'gamification-settings',   current_account.features?(:gamification) && privilege?(:admin_tasks) ]
-      ], "HelpdeskProductivity"],
-      [ [t(".customer"),t(".portal")], [        
-          ['/admin/security',             'security',                privilege?(:admin_tasks) ],
-          ['/admin/portal',               'customer-portal',         privilege?(:admin_tasks) ],
-          ['/admin/widget_config',        'feedback',                privilege?(:admin_tasks) ]
-      ], "CustomerPortal"],
-      
-      [ [t(".account")], [
-          ['/account',                    'account-settings',        privilege?(:manage_account) ],
-          ['/subscription',               'billing',                 privilege?(:manage_account) ],
-          ['/admin/zen_import',           'import',                  privilege?(:manage_account) ],
-      ], "Account"]
-    ]
- 
+  def build_admin_prefpane
     admin_html = 
-      admin_links.map do |group|
-        links = admin_link(group[1])
-        unless links.blank?
-          content_tag( :div, 
-              content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>".html_safe, :class => "title") +
-              content_tag(:ul, links, :class => "admin_icons").html_safe,
-              :class => "admin #{ cycle('odd', 'even') } #{group[2]} ") 
-        end
+      ADMIN_GROUP.map do |group_title, items|
+        
+        url = admin_link(items)
+        next if url.blank?
+        
+        content_tag(:div, 
+          content_tag(:h3, "<span>#{t('.'+group_title.to_s)}</span>".html_safe, :class => "title") +
+          content_tag(:ul, url, :class => "admin_icons").html_safe, 
+              :class => "admin #{ cycle('odd', 'even') } #{group_title} ")
       end
-    
+
     admin_html.to_s.html_safe
   end
+
+  ###########################################
+
+  ###### Generating Admin UI Keywords #######
+
+  def generate_keywords_hash
+    keywords_hash = Hash.new
+      ADMIN_GROUP.each do |group_name, items|
+        keywords_hash.merge!(keywords(items))
+      end
+    keywords_hash
+  end
+
+  def keywords(admin_items_array)
+    kw_items = Hash.new
+
+    admin_items_array.each do |item|
+
+      ## Skip according to the item privilege
+      next unless admin_items[item.to_sym][:privilege]
+
+      ## Item URL
+      url = admin_items[item.to_sym][:url]
+      meta = KEYWORDS_META[item.to_sym]
+
+      kw_items[t(".#{item}")] = 
+                    [url, "admin-icon-#{item}"].concat(meta.blank? ? [] : [meta.map { |e| t("admin.home.keywords.#{e}") }])
+
+      ## if item has keywords
+      if( (kw_item = ADMIN_KEYWORDS[item.to_sym]).present? )      
+        # Collecting open items
+        (kw_item[:open_keywords] || []).each { |kw| 
+          kw_items.merge!(collect_keywords(kw, url, item)) 
+        }
+
+        # Collecting privilege based meta items
+        (kw_item[:closed_keywords] || []).each { |kw|
+          kw_items.merge!(collect_keywords(kw, (admin_items[kw][:url] || url), item)) if admin_items[kw][:privilege]
+        }
+      end
+
+    end
+
+    kw_items
+  end
+
+  def collect_keywords(keyword, url, item)
+    meta = KEYWORDS_META[keyword.to_sym]
+    item_value = [url, "admin-icon-#{item}"]
+    item_value << (meta || []).map { |e| t("admin.home.keywords.#{e}") }
+
+    Hash[t("admin.home.keywords.#{keyword}"), item_value]
+  end
+
+  ############################################
+
 end

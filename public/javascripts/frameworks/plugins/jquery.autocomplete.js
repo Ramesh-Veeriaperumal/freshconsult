@@ -83,7 +83,8 @@
                 paramName: 'query',
                 transformResult: function (response) {
                     return typeof response === 'string' ? $.parseJSON(response) : response;
-                }
+                },
+                addEvents: null,
             };
 
         // Shared variables:
@@ -186,6 +187,9 @@
             that.el.on('blur.autocomplete', function () { that.onBlur(); });
             that.el.on('focus.autocomplete', function () { that.onFocus(); });
             that.el.on('change.autocomplete', function (e) { that.onKeyUp(e); });
+
+            // Register etc events defined on init
+            options.addEvents.call(that, container, suggestionSelector, selected);
         },
 
         onFocus: function () {
@@ -358,7 +362,7 @@
             }
 
             // Cancel event if function did not return:
-            e.stopImmediatePropagation();
+            // e.stopImmediatePropagation();
             e.preventDefault();
         },
 
@@ -393,9 +397,12 @@
         onValueChange: function () {
             var that = this,
                 options = that.options,
-                value = that.el.val(),
+                value = $.trim(that.el.val()),
                 query = that.getQuery(value),
                 index;
+
+            // do stuff before search start
+            options.onSearchStart.call(that);
 
             if (that.selection) {
                 that.selection = null;
@@ -420,6 +427,9 @@
             } else {
                 that.getSuggestions(query);
             }
+
+            // do stuff After search complete
+            options.onSearchComplete.call(that);
         },
 
         findSuggestionIndex: function (query) {
@@ -543,11 +553,6 @@
         },
 
         suggest: function () {
-            if (this.suggestions.length === 0) {
-                this.hide();
-                return;
-            }
-
             var that = this,
                 options = that.options,
                 formatResult = options.formatResult,
@@ -560,6 +565,20 @@
                 index,
                 width;
 
+            if (that.suggestions.length === 0) {
+                if (options.emptyResult) {
+                    html = '<div class="autocomplete-no-result">' + options.emptyResult + '</div>';
+                    container.width(that.el.outerWidth() - 2);
+                    container.html(html);
+                    container.show();
+                } else {
+                    that.hide();
+                }
+                
+                that.visible = false;
+                return;
+            }
+
             if (options.triggerSelectOnValidInput) {
                 index = that.findSuggestionIndex(value);
                 if (index !== -1) {
@@ -570,7 +589,7 @@
 
             // Build suggestions inner HTML:
             $.each(that.suggestions, function (i, suggestion) {
-                html += '<div class="' + className + '" data-index="' + i + '">' + formatResult(suggestion, value) + '</div>';
+                html += '<div class="' + className + '" data-index="' + i + '" data-current-item="' + suggestion.data + '">' + formatResult(suggestion, value) + '</div>';
             });
 
             // If width is auto, adjust width before displaying suggestions,
@@ -673,7 +692,7 @@
                 selected = that.classes.selected,
                 container = $(that.suggestionsContainer),
                 children = container.children();
-
+            
             container.children('.' + selected).removeClass(selected);
 
             that.selectedIndex = index;
@@ -750,7 +769,7 @@
                 $(that.suggestionsContainer).scrollTop(offsetTop - that.options.maxHeight + heightDelta);
             }
 
-            that.el.val(that.getValue(that.suggestions[index].value));
+            // that.el.val(that.getValue(that.suggestions[index].value));
             that.signalHint(null);
         },
 

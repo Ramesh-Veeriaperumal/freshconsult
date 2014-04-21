@@ -457,6 +457,9 @@ javascripts:
     # - public/javascripts/mousetrap/record.js
     - public/javascripts/mousetrap/shortcut.js
 
+  admin:
+    - public/javascripts/admin/ui_search.js
+
 <% 
   # Adding specific javascript assets to the package list
   # Add new lang lib to /public/javascripts/lang/{framework name}/es.js etc.
