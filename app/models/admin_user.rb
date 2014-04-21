@@ -1,27 +1,19 @@
 # encoding: utf-8
 class AdminUser < ActiveRecord::Base
   
+  FD_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+[a-zA-Z0-9.-]+@freshdesk\.com\b/
+  PASSWORD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+
   acts_as_authentic do |c|
     c.session_class = AdminSession
+    c.validate :password_validation
+    c.validates_format_of_email_field_options :with => FD_EMAIL_REGEX
   end
-
-  FD_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+[a-zA-Z0-9.-]+@freshdesk\.com\b/
 
   validates_uniqueness_of :name, :message => "is already in use"
  
   validates_format_of :name, :with => /^([a-z0-9_]{2,16})$/i,
     :message => "must be 4 to 16 letters, numbers or underscores and have no spaces"
- 
-  validates_format_of :password, :with => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-    :message => "At least one upper case letter
-                At least one lower case letter
-                At least one digit
-                At least one special character
-                Minimum 8 in length"
- 
-  validates_confirmation_of :password
-
-  validates_format_of :email, :with => FD_EMAIL_REGEX
 
   ADMIN_ROLES = [
     [:super_admin, "Super Admin", 1],
@@ -36,6 +28,12 @@ class AdminUser < ActiveRecord::Base
   ADMIN_ROLES_KEYS_BY_NAME = Hash[*ADMIN_ROLES.map { |i| [i[1], i[2]] }.flatten]
 
   attr_accessible :name, :password, :password_confirmation, :email, :role
+
+
+  def password_validation
+    password =~ PASSWORD_REGEX
+  end
+
 
   #authlogic method to specify idle time before logging out the user.1 day
   def logged_in_timeout
