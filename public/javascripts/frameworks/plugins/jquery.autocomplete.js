@@ -163,11 +163,6 @@
             // Deselect active element when mouse leaves suggestions container:
             container.on('mouseout.autocomplete', function () {
                 that.selectedIndex = -1;
-                
-                if (container.children('.' + selected).length > 0) {
-                    $('.' + container.children('.' + selected).data('currentItem').split(',')[1]).removeClass('exact-match');
-                }
-
                 container.children('.' + selected).removeClass(selected);
             });
 
@@ -575,7 +570,7 @@
 
             // Build suggestions inner HTML:
             $.each(that.suggestions, function (i, suggestion) {
-                html += '<div class="' + className + '" data-index="' + i + '" data-current-item="' + suggestion.data + '">' + formatResult(suggestion, value) + '</div>';
+                html += '<div class="' + className + '" data-index="' + i + '">' + formatResult(suggestion, value) + '</div>';
             });
 
             // If width is auto, adjust width before displaying suggestions,
@@ -679,11 +674,6 @@
                 container = $(that.suggestionsContainer),
                 children = container.children();
 
-            // console.log($('.' + container.children('.' + selected).data('currentItem').split(',')[1]));
-            if (container.children('.' + selected).length > 0) {
-                $('.' + container.children('.' + selected).data('currentItem').split(',')[1]).removeClass('exact-match');
-            }
-            
             container.children('.' + selected).removeClass(selected);
 
             that.selectedIndex = index;
@@ -691,8 +681,6 @@
             if (that.selectedIndex !== -1 && children.length > that.selectedIndex) {
                 activeItem = children.get(that.selectedIndex);
                 $(activeItem).addClass(selected);
-                // console.log($(activeItem).data('currentItem').split(',')[1]);
-                $('.' + $(activeItem).data('currentItem').split(',')[1]).addClass('exact-match');
                 return activeItem;
             }
 
@@ -721,7 +709,6 @@
 
             if (that.selectedIndex === 0) {
                 $(that.suggestionsContainer).children().first().removeClass(that.classes.selected);
-                $('.exact-match').removeClass('exact-match');
                 that.selectedIndex = -1;
                 that.el.val(that.currentValue);
                 that.findBestHint();
