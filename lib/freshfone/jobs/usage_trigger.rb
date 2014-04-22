@@ -43,21 +43,21 @@ class Freshfone::Jobs::UsageTrigger
     end
 
     def self.ut_credit_overdraft(args)
+      return if args[:trigger_value].present?
+      
+      available_credit = Account.current.freshfone_credit.available_credit
       topup_credit = args[:purchased_credit]
-      trigger_value = args[:trigger_value]
-
-      if topup_credit.present?
-        available_credit = Account.current.freshfone_credit.available_credit
-        if topup_credit > available_credit
-          topup_credit = available_credit
-        else
-          topup_credit += previous_trigger_balance
-        end
-        trigger_value = topup_credit
+      previous_balance = 0
+      if topup_credit.blank?
+        topup_credit = available_credit
+      else
+        previous_balance = previous_trigger_balance
       end
+      topup_credit = (topup_credit * 0.85) + previous_balance
+      topup_credit = (available_credit * 0.85) if topup_credit > available_credit
 
-      #85% considering profit margin
-      args[:trigger_value] = "+#{(trigger_value * 0.85).to_i}"
+      trigger_value = (topup_credit > 0) ? topup_credit.to_i : 0
+      args[:trigger_value] = "+#{trigger_value}"
     end
 
     def self.previous_trigger_balance
