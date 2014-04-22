@@ -409,7 +409,11 @@ include Mobile::Actions::Push_Notifier
     def create_user(email, account,identity_url=nil,options={})
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank? 
-      @contact.user_emails.create({:email => email, :primary => true})
+      if account.features?(:multiple_user_emails)
+        @contact.user_emails.build({:email => email, :primary_role => true})
+      else
+        @contact.email = email
+      end
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact
