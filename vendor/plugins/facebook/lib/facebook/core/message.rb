@@ -46,12 +46,12 @@ class Facebook::Core::Message
     def add_as_note(thread, ticket)
       thread_id = thread[:id]
       messages = thread[:messages].symbolize_keys!
-      messages[:data].each do |message|
+      messages[:data].reverse.each do |message|
         message.symbolize_keys!
         user = facebook_user(message[:from])
         @note = ticket.notes.build(
           :note_body_attributes => {
-            :body => message[:message]
+            :body_html => get_html_content_from_message(message)
           },
           :private => true ,
           :incoming => true,
@@ -103,8 +103,7 @@ class Facebook::Core::Message
           :thread_id => thread[:id]
         },
         :ticket_body_attributes => {
-          :description => message[:message],
-          :description_html => message[:message]
+          :description_html => get_html_content_from_message(message)
         }
       )
 
@@ -136,4 +135,5 @@ class Facebook::Core::Message
         end
       end
     end
+
 end
