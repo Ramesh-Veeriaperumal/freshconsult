@@ -60,6 +60,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 		end
 		
 		def restore_freshfone_account_state(account)
+			return if freshfone_credit.below_calling_threshold?
 			if account.freshfone_account.restore
 				restore_freshfone_numbers(account)
 			end

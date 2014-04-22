@@ -88,6 +88,8 @@
     freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
     freshfone.resources :autocomplete, :collection => { :requester_search => :get }
+    freshfone.resources :usage_triggers, :collection => { :notify => :post }
+    freshfone.resources :ops_notification, :member => { :voice_notification => :post }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,

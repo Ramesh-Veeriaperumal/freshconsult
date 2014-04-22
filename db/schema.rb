@@ -812,6 +812,22 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
 
   add_index "freshfone_payments", ["account_id"], :name => "index_freshfone_payments_on_account_id"
 
+  create_table "freshfone_usage_triggers", :force => true do |t|
+    t.integer  "account_id",           :limit => 8
+    t.integer  "freshfone_account_id", :limit => 8
+    t.integer  "trigger_type"
+    t.string   "sid",                  :limit => 50
+    t.integer  "start_value"
+    t.integer  "trigger_value"
+    t.integer  "fired_value"
+    t.string   "idempotency_token",    :limit => 100
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_usage_triggers", ["account_id", "created_at", "trigger_type"], :name => "index_ff_usage_triggers_account_created_at_type"
+  add_index "freshfone_usage_triggers", ["account_id", "sid"], :name => "index_freshfone_usage_triggers_on_account_id_and_sid"
+
   create_table "freshfone_users", :force => true do |t|
     t.integer  "account_id",          :limit => 8,                    :null => false
     t.integer  "user_id",             :limit => 8,                    :null => false

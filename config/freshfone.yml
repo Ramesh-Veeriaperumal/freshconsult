@@ -1,3 +1,10 @@
 development:
   node_url: "http://localhost:5000"
   secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
+  ops_alert:
+    call:
+      from: "+919840777891"
+      to: ["+919840777891", "+919994269753"]
+    mail:
+      from: "freshfone@freshdesk.com"
+      to: "freshfone@freshdesk.com"
