@@ -12,6 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
+  before_update :clear_sender_email, :if => [:requester_id_changed?, :sender_email]
+
   before_save :update_dueby, :unless => :manual_sla?
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
@@ -66,6 +68,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
     ticket_states.status_updated_at = Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
+  end
+
+  def clear_sender_email
+    self.sender_email = nil
+    schema_less_ticket.save
   end
 
   def update_ticket_states 
