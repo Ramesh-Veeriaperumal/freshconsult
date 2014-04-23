@@ -15,7 +15,7 @@ class UserEmail < ActiveRecord::Base
   before_validation :downcase_email
   before_update :drop_authorization, :if => [:email_changed?, :check_multiple_email_feature]
   before_update :save_model_changes
-  after_commit_on_update :change_email_status, :if => [:check_for_email_change?, :check_multiple_email_feature]
+  after_commit_on_update :change_email_status, :send_agent_activation, :if => [:check_for_email_change?, :check_multiple_email_feature]
   after_commit_on_create :send_activation, :if => :check_multiple_email_feature
   before_destroy :drop_authorization, :check_active_with_emails, :if => :check_multiple_email_feature
 
@@ -103,5 +103,9 @@ class UserEmail < ActiveRecord::Base
 
     def send_activation
       deliver_contact_activation_email if self.user.active?
+    end
+
+    def send_agent_activation
+      user.deliver_activation_instructions!(account.main_portal,false) if user.agent?
     end
 end

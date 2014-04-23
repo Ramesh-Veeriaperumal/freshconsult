@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) unless verified_emails.any?
+    self.deliver_activation_instructions!(account.main_portal,false)
   end
 
   def assign_user_email

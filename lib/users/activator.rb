@@ -94,7 +94,7 @@ module Users
       @user = self.user
       unless verified?
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::ADDITIONAL_EMAIL_VERIFICATION)
-        return unless e_notification.requester_notification?
+        return unless e_notification.requester_notification? and @user.customer?
         UserNotifier.send_later(:deliver_email_activation, self, 
             {:email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => @user, 
               'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'email' => self.email, 'activation_url' => register_new_email_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> @user.url_protocol)), 
