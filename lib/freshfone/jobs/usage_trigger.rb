@@ -37,7 +37,7 @@ class Freshfone::Jobs::UsageTrigger
         trigger = previous_usage_trigger
         get_trigger(trigger.sid).delete if trigger.present?
       rescue Exception => e
-        NewRelic::Agent.notice_error(e, { :sid => sid })
+        NewRelic::Agent.notice_error(e, { :sid => trigger.sid })
         #puts "Error - #{e} \n #{e.backtrace.join("\n\t")}"
       end
     end

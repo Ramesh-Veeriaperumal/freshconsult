@@ -8,10 +8,10 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
 
   def notify
     begin
-      Freshfone::OpsNotifier.new(current_account, 
-        trigger.trigger_type, { :message => alert_message }).alert
       update_trigger
       send trigger.trigger_type if respond_to?(trigger.trigger_type, true)
+      Freshfone::OpsNotifier.new(current_account, 
+        trigger.trigger_type, { :message => alert_message }).alert
     rescue Exception => e
       NewRelic::Agent.notice_error(e, params)
       #puts "Error - #{e} \n #{e.backtrace.join("\n\t")}"
@@ -25,10 +25,7 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
     def credit_overdraft
       if freshfone_account.active? && overdraft?
         # freshfone_account.suspend
-        alert_message = "Suspend Freshfone account #{current_account.id}. 
-          Available balance #{current_account.freshfone_credit.available_credit}"
-        Freshfone::OpsNotifier.new(current_account, trigger.trigger_type, 
-          { :message => alert_message }).alert_mail
+        @alert_message = "SUSPEND FRESHFONE ACCOUNT. #{alert_message}"
       end
     end
 
@@ -39,8 +36,8 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
     end
 
     def alert_message
-      "Freshfone #{trigger.trigger_type} alert for account #{current_account.id}. 
-          Available balance #{current_account.freshfone_credit.available_credit}"
+      @alert_message ||= "Freshfone #{trigger.trigger_type} alert for account #{current_account.id}. 
+        Available balance #{current_account.freshfone_credit.available_credit}."
     end
 
     def recurring?
