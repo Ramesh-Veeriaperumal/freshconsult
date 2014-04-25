@@ -1096,8 +1096,8 @@ en:
         survey-settings: Customer Satisfaction
         gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
-        account-settings: Account Settings
-        helpdesk-productivity: Helpdesk Productivity
+        account-settings: Account
+        customer-portal: Customer Portal
         canned-response: Canned Response
         multi-product: Multi-Product
         import: Import data from Zendesk
@@ -1112,13 +1112,13 @@ en:
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
-        email: Email
+        email-settings: Email Setup
         everything: Everything
-        support-channels: Support Channels
+        helpdesk: Helpdesk
         role: Roles
         else: else
         settings: Settings
-        general-settings: General Settings
+        productivity: Productivity
         portal: Portal
         account: Account
         customer: Customer
@@ -1132,92 +1132,6 @@ en:
         billing: "Plans & Billing"
         freshfone: "Freshfone"
         tags: Tags
-        customer-portal: Customer Portal
-      keywords:
-        configure_support_email: "Configure support email"
-        Personalized_email_replies: "Personalized email replies"
-        remove_ticket_id: "Remove ticket ID from replies"
-        reply_to_email: "Reply to email"
-        multiple_mailboxes: "Multiple Mailboxes"
-        chat_integration: "Chat integration"
-        customize_chat_window: "Customize chat window/widget"
-        customise_chat_window: "Customise chat window/widget"
-        configure_chat_messages: "Configure chat messages"
-        phone_integration: "Phone integration"
-        purchase_support_number: "Purchase support number"
-        voice_integration: "Voice integration"
-        ivr: "IVR"
-        integrated_phone_support: "Integrated phone support"
-        social: "social"
-        customize_feedback_widget: "Customize feedback widget"
-        embedded_widget: "Embedded widget"
-        popup_widget: "Popup Widget"
-        set_time_zone: "Set Time Zone"
-        set_helpdesk_language: "Set Helpdesk Language"
-        set_portal_url: "Set portal/helpdesk URL"
-        set_ticket_id: "Set ticket id"
-        set_portal_name: "Set helpdesk/portal name"
-        layout_customization: "Layout Customization"
-        stylesheet_customization: "Stylesheet Customization"
-        css_customization: "CSS Customization"
-        customisation: "Customisation"
-        custom_domain_name: "Custom domain name"
-        cname: "CNAME"
-        supported_languages: "Supported Languages"
-        portal_customization: "Portal Customization"
-        rebrand_portal: "Rebrand Portal"
-        customize_new_ticket_form: "Customize new ticket Form"
-        signin_using_google: "sign in using google"
-        signin_using_facebook: "sign in using facebook"
-        signin_using_twitter: "sign in using twitter"
-        suggestion_solutions: "Suggest Solutions"
-        daypass_agent: "Daypass agent"
-        occasional_agent: "Occasional Agent"
-        add_new_agent: "Add new agent"
-        add_new_group: "Add new group"
-        automatic_ticket_assignment: "Automatic ticket assignment"
-        round_robin_assignment: "Round Robin assignment"
-        set_businesshour_group: "Set business hour for a group"
-        multiple_business_hours: "Multiple Business Hours"
-        add_new_agent_role: "Add new agent role"
-        agent_roles_permissions: "Agent roles & permissions"
-        custom_roles: "Custom roles"
-        ssl_encryption: "SSL Encryption"
-        single_signon: "Single Sign on"
-        sso: "SSO"
-        trusted_ip: "Trusted IP"
-        private_helpdesk: "Private Helpdesk"
-        create_new_sla: "Create new SLA Policy"
-        configure_escalation_emails: "Configure Escalation Emails"
-        operating_hours: "Operating hours"
-        set_holiday_list: "Set Holiday List"
-        business_hours_multiple_locations: "Business hours for multiple locations"
-        multiple_business_hours: "Multiple Business Hours"
-        multiple_products: "Multiple Products"
-        multi_brand: "Multi brand"
-        ticket_creation_rules: "Ticket creation rules"
-        automations: "Automations"
-        workflows: "Workflows"
-        hourly_trigger: "Hourly Trigger"
-        event_based_rules: "Event based rules"
-        scenario_automations: "Scenario Automations"
-        macros: "Macros"
-        email_notifications: "Email Notifications"
-        auto_responses: "Auto responses"
-        canned_responses: "Canned Responses"
-        predefined_responses: "Predefined responses"
-        customer_survey: "Customer Survey"
-        gamification: "Gamification"
-        list_all_integrations: "List of all integrations"
-        invoice_emails: "Invoice Emails"
-        export_data: "Export Data"
-        cancel_service: "Cancel Service"
-        plans_billing: "Plans & Billing"
-        choose_plan: "Choose Plan"
-        import_data_zendesk: "Import Data from Zendesk"
-        zendesk_import: "Zendesk Import"
-        daypasses: "Day Passes"
-        occasional_agent: "Occasional Agent"
   ends_with: Ends with
   last_name: Last Name
   forum:

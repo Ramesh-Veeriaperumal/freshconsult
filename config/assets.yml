@@ -184,7 +184,6 @@ javascripts:
     - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
-    - public/javascripts/frameworks/plugins/jquery.autocomplete.js
 
   # Code editor for portal cms
   codemirror:
@@ -456,9 +455,6 @@ javascripts:
     - public/javascripts/mousetrap/pause.js
     # - public/javascripts/mousetrap/record.js
     - public/javascripts/mousetrap/shortcut.js
-
-  admin:
-    - public/javascripts/admin/ui_search.js
 
 <% 
   # Adding specific javascript assets to the package list
