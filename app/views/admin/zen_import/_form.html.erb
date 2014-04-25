@@ -23,10 +23,11 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label"><%= t('file_url') %></label>
+		<label class="control-label"><%= t('zendesk_backup') %></label>
 		<div class="controls">
-			<%= f.text_field :file_url, :class => "text url required"%>
-			<label class="muted"><%= t('zendesk_url_expired') %></label>
+ 			<%= f.file_field :file , :accept => 'zip', :class =>"required zip-file zendesk_size_validity"%>
+ 			<label class="muted"><%= t('zendesk_backup_info') %></label>
+ 			<div class="hide error" id="file_size_limit" ><%= t('backup_error_msg').html_safe %></div>
 		</div>
 	</div>
 	<h5 class="lead"><%= t('zendesk_import_files') %></h6>
@@ -68,3 +69,20 @@
     </div>
 </div>
 <% end -%>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery('#zendesk_file').on("change",function () {
+		jQuery("#file_size_limit").hide();
+  		jQuery("#zendesk_file").valid();
+    });
+	jQuery("#import_request").on("click", function(ev){
+    	ev.preventDefault();
+    	if(!window.widget_updated){
+    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>&helpdesk_ticket[subject]=Zendesk+Import+Request", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+    	}
+    	window.widget_updated = true
+        FreshWidget.show();
+    });  
+});
+</script>

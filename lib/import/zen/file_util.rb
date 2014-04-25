@@ -4,7 +4,7 @@ module Import::Zen::FileUtil
 def extract_zendesk_zip(file_url,username,password) 
     puts "extract_zen_zip :: curr time:: #{Time.now}" 
     begin
-      file =  RemoteFile.new(file_url, username, password)   
+      file = @current_account.zendesk_import.attachments.first.content.to_file 
       @upload_file_name = file.original_filename
       zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
       @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
