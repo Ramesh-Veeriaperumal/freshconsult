@@ -155,12 +155,17 @@ module Admin::HomeHelper
         :url                           =>   "/helpdesk/sla_policies/new",
         :privilege                     =>   feature?(:customer_slas)
       },
-      :configure_escalation_emails     =>   {
-        :privilege                     =>   false
-      },
       :cancel_service                  =>   {
-        :url                           =>   "/account/cancel",
-        :privilege                     =>   privilege?(:manage_account)
+        :url                           =>   "/account/cancel"
+      },
+      :add_new_agent                   =>   {
+        :url                           =>   "/agents/new"
+      },
+      :add_new_group                   =>   {
+        :url                           =>   "/groups/new"
+      },
+      :add_new_agent_role              =>   {
+        :url                           =>   "/admin/roles/new"
       }
     }
   end
@@ -180,14 +185,13 @@ module Admin::HomeHelper
     
     ####### Keywords HASH Structure ###################
 
-    # :admin_item_class_name (sym) => [
-    #   each_keyword (sym) || {
-    #     :keyword     =>  (sym),
-    #     :url         =>  (string),    # optional
-    #     :privilege   =>  (Boolean),   # optional
-    #     :meta        =>  (Array)      # optional
-    #   }
-    # ]
+    #### Each :keyword will used as a key of its i18n content ####
+
+    # :admin_item (sym)       =>    {
+    #   :open_keywords        =>    [array of keywords (sym)],
+    # In case of spl (URL or Privilege) need to assign, the data will get fetch from @admin_item
+    #   :closed_keywords      =>    [array of keywords (sym)]
+    # }
 
     ##################################################
 
@@ -217,21 +221,23 @@ module Admin::HomeHelper
           :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions]
       },
       :"agent"                    =>      {
-          :open_keywords          =>      [:add_new_agent, :occasional_agent, :daypass_agent]
+          :open_keywords          =>      [:occasional_agent, :daypass_agent],
+          :closed_keywords        =>      [:add_new_agent]
       },
       :"group"                    =>      {
-          :open_keywords          =>      [:add_new_group],
-          :closed_keywords        =>      [:automatic_ticket_assignment, :set_businesshour_group]
+          :closed_keywords        =>      [:automatic_ticket_assignment, :set_businesshour_group, :add_new_group]
       },
       :role                       =>      {
-          :open_keywords          =>      [:add_new_agent_role, :agent_roles_permissions]
+          :open_keywords          =>      [:agent_roles_permissions],
+          :closed_keywords        =>      [:add_new_agent_role]
       },
       :security                   =>      {
           :open_keywords          =>      [:ssl_encryption, :single_signon],
           :closed_keywords        =>      [:trusted_ip]
       },
       :sla                        =>      {
-          :closed_keywords        =>      [:create_new_sla, :configure_escalation_emails]
+          :open_keywords          =>      [:configure_escalation_emails],
+          :closed_keywords        =>      [:create_new_sla]
       },
       :"business-hours"           =>      {
           :open_keywords          =>      [:operating_hours, :set_holiday_list, :business_hours_multiple_locations]
@@ -358,7 +364,8 @@ HTML
 
         # Collecting privilege based meta items
         (kw_item[:closed_keywords] || []).each { |kw|
-          kw_items.merge!(collect_keywords(kw, (admin_items[kw][:url] || url), item)) if admin_items[kw][:privilege]
+          kw_items.merge!(collect_keywords(kw, 
+            (admin_items[kw][:url] || url), item)) if (admin_items[kw][:privilege].nil? || admin_items[kw][:privilege])
         }
       end
 

@@ -22,15 +22,18 @@
 	        		meta = suggestion.data[2],
 	        		matchCount = 0;
 
-	        	$.each(query, function(index, val) {
-	        		if (keyword.indexOf(val) > -1) {
+	        	query.forEach(function (item) {
+
+	        		// checks match occurence in Keyword
+	        		if (keyword.indexOf(item) > -1) {
         				matchCount++;
         				return;
         			}
 
+        			// checks match occurence Keyword metas
         			if (meta && typeof meta === 'object') {
-	        			$.each(meta, function(index, meta) {
-	        				if (meta.toLowerCase().indexOf(val) > -1) {
+	        			meta.forEach(function (kwMeta) {
+	        				if (kwMeta.toLowerCase().indexOf(item) > -1) {
 		        				matchCount++;
 		        			}
 	        			});
@@ -64,6 +67,8 @@
 	        	} else {
 	        		$('.admin_icons').children('li').removeClass('blur');
 	        	}
+
+	        	$('.related-match, .exact-match').removeClass('related-match exact-match');
 	    	},
 	        onSearchComplete: function () {
 	        	var that = this,
@@ -120,40 +125,45 @@
 				);
 
 				// Events for Search input
-				searchInpt.on('keydown.autocomplete', function (ev) {
-					var that = this,
-						up = 38,	// pressed up key
-						down = 40,	// pressed down key
-						splKeys = /8|9|13|16|17|18|20|27|32|33|34|35|36|37|38|39|40|45|46|91|93|224/; // special keys
+				searchInpt.on({
+					'keydown.autocomplete' : function (ev) {
+						var	up = 38,	// pressed up key
+							down = 40;	// pressed down key
+	
+						if (ev.which == up && obj.selectedIndex === -1) {
+							$('.exact-match').removeClass('exact-match');
+						} else if ((container.children('.' + selected).length > 0) && (ev.which == up || ev.which == down)) {
+							$('.exact-match').removeClass('exact-match');
+							setTimeout(function(){
+								$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
+								.parentsUntil('.admin_icons', 'li')
+								.addClass('exact-match');
+							}, 5);
+						}
+					},
+					'keyup.autocomplete' : function (ev) {
+						var that = this;
 
-					if (ev.which == up && obj.selectedIndex === -1) {
-						$('.exact-match').removeClass('exact-match');
-					} else if ((container.children('.' + selected).length > 0) && (ev.which == up || ev.which == down)) {
-						$('.exact-match').removeClass('exact-match');
-						setTimeout(function(){
-							$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
-							.parentsUntil('.admin_icons', 'li')
-							.addClass('exact-match');
-						}, 5);
-					} else {
-						$('.related-match, .exact-match').removeClass('related-match exact-match');
-					}
+						if ($(this).val().trim().length < 1) {
+							$('.as-clear')
+								.unbind('click')
+								.hide();
 
-					if (obj.el.val().trim().length < obj.options.minChars) {
-						$('.as-clear').hide();
-					}
+							return false;
+						}
 
-					// Clear search field
-					if(!$('.as-clear').is(':visible') && !splKeys.test(ev.which)) {
-						$('.as-clear')
-							.css({ 'display' : 'inline-block' })
-							.bind('click', function (ev) {
-								ev.preventDefault();
-								$('.blur, .related-match, .exact-match').removeClass('blur related-match exact-match');
-								$('.as-more').hide();
-								$(that).val('').trigger('focus');
-								$(this).hide();
-							});
+						// Clear search field
+						if(!$('.as-clear').is(':visible')) {
+							$('.as-clear')
+								.css({ 'display' : 'inline-block' })
+								.bind('click', function (ev) {
+									ev.preventDefault();
+									$('.blur, .related-match, .exact-match').removeClass('blur related-match exact-match');
+									$('.as-more').hide();
+									$(that).val('').trigger('focus');
+									$(this).hide();
+								});
+						}
 					}
 				});
 			}
