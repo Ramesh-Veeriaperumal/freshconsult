@@ -87,7 +87,8 @@ class Freshfone::User < ActiveRecord::Base
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)
-			xml_builder.Number number, :url => forward_call_url
+			@agent_number = GlobalPhone.parse(number).international_string
+			xml_builder.Number @agent_number, :url => forward_call_url
 		end
 		
 		def call_agent_on_browser(xml_builder)

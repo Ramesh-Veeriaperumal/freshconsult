@@ -44,8 +44,12 @@
     </div>
     <div class="report-summary-footer">
       <ul class="inline">
-        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_recieved_tickets")%>' data-placement="below"><%= t('reports.summary.received_tickets')%></label></li>
-        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_resolved_tickets")%>' data-placement="below"><%= t('reports.summary.resolved_tickets')%></label></li>
+        <li>
+          <%= link_to(content_tag(:span, t('reports.summary.received_tickets'), :class => "tooltip", :title => t("adv_reports.helptext.glance.#{@helptext_for}_recieved_tickets"), "data-placement" => "below"), helpdesk_reports_filter_path("#{@helptext_for}_received"), :target => '_blank')%>
+        </li>
+        <li>
+          <%= link_to(content_tag(:span, t('reports.summary.resolved_tickets'), :class => "tooltip", :title => t("adv_reports.helptext.glance.#{@helptext_for}_resolved_tickets"), "data-placement" => "below"), helpdesk_reports_filter_path("#{@helptext_for}_resolved"), :target => '_blank')%>
+        </li>
         <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_backlog_tickets")%>' data-placement="below"><%=t('adv_reports.glance.backlog_tickets')%></label></li>
         <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_resp_time")%>' data-placement="below"><%=t('adv_reports.glance.avg_resp_time_in_hrs')%></label></li>
         <li><label class="tooltip" data-placement="below" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_first_resp_time")%>'><%=t('adv_reports.glance.avg_first_resp_time_in_hrs')%></label></li>

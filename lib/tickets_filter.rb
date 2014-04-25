@@ -20,6 +20,7 @@ module TicketsFilter
     [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
     [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
     
+    [:untitled_view,    I18n.t('tickets_filter.unsaved_view'), [:visible] ],
     [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
     [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
     #[:new_and_open,     "New & Open Tickets", [:visible]  ],

@@ -30,7 +30,7 @@ function MergeTicketsInitializer() {
     if(same){
       jQuery('#select-requester').val('<'+requester+'>').keyup();
       global['select-requester'].onSearchFieldKeyDown(42);
-      setTimeout(function(){ jQuery('#select-requester').val(requester) }, 10);
+      setTimeout(function(){ jQuery('#select-requester').val(requester) }, 100);
     }
   }
 

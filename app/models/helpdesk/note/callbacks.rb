@@ -42,7 +42,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if email_conversation?
         if schema_less_note.to_emails.blank?
-          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.to_emails = notable.from_email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
@@ -60,6 +60,7 @@ class Helpdesk::Note < ActiveRecord::Base
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
       end
       
       # note_body.update_attribute(:body_html,self.note_body.body_html)

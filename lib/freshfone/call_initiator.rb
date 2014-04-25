@@ -148,11 +148,11 @@ class Freshfone::CallInitiator
 		end
 		
 		def direct_dial_url(number)
-			"#{host}/freshfone/call/status?direct_dial_number=#{CGI.escape(number)}"
+			"#{host}/freshfone/call/status?direct_dial_number=#{CGI.escape(format_number(number))}"
 		end
 		
 		def direct_dial_success(number)
-			"#{host}/freshfone/call/direct_dial_success?direct_dial_number=#{CGI.escape(number)}"
+			"#{host}/freshfone/call/direct_dial_success?direct_dial_number=#{CGI.escape(format_number(number))}"
 		end
 
 		def forward_call_url(agent)
@@ -168,7 +168,7 @@ class Freshfone::CallInitiator
 		end
 
 		def quit_queue_url
-			"#{host}/freshfone/queue/hangup#{hunt_params}"
+			"#{host}/freshfone/queue/hangup#{hunt_params}&force_termination=true"
 		end
 
 		def hunt_params
@@ -218,5 +218,9 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 				incoming += 1
 			end
 			(incoming << 4) + outgoing
+		end
+
+		def format_number(number)
+			@number = GlobalPhone.parse(number).international_string
 		end
 end

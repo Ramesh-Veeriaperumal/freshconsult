@@ -53,7 +53,7 @@ class Public::NotesController < ApplicationController
   private
 
     def can_add_note?(email)
-      @requester = current_account.all_users.find_by_email(email)
+      @requester = current_account.user_emails.user_for_email(email)
       return true if @requester && @requester.id == @ticket.requester_id  # return if requester had added note
       get_cc_email
       @cc_parsed_array.each do |cc_parsed|

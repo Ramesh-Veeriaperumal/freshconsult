@@ -13,10 +13,16 @@
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
-  jQuery.getScript('/helpdesk/tickets/full_paginate');
+  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>' : '';
+  var paginate_url = '/helpdesk/tickets/full_paginate';
+  paginate_url = paginate_url + rep_type_param
+  jQuery.getScript(paginate_url);
 <% end %>
 <% content_for :onload_script do %>
-  Fjax.pjax_parallel_request = {parallelUrl: "/helpdesk/tickets/filter_options", parallelPlaceholder: "#ticket-leftFilter", pjax: "#body-container"};
+  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>' : '';
+  var parallel_url = "/helpdesk/tickets/filter_options"
+  parallel_url = parallel_url + rep_type_param
+  Fjax.pjax_parallel_request = {parallelUrl: parallel_url, parallelPlaceholder: "#ticket-leftFilter", pjax: "#body-container"};
 <% end %>
 
 <% content_for :pagefixed do %>

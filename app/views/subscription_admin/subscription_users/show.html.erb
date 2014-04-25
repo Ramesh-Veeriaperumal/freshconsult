@@ -1,0 +1,17 @@
+<% form_for @admin_user, :url => {:controller => 'subscription_users', :action => 'reset_password', :id => @admin_user.id}  do |f| %>
+  
+  <h3> Change password </h3>
+  <br/> <br />
+  <label for="person_name">Current password</label>
+  <input id="admin_user_password" name="admin_user[password]" size="30" type="password">
+  
+  <label for="person_password">New Password:</label>
+  <input id="admin_user_password" name="admin_user[new_password]" size="30" type="password">
+  
+  <label for="person_password_confirmation">Password Confirmation:</label>
+  <input id="admin_user_password" name="admin_user[password_confirmation]" size="30" type="password">
+  <br/>
+ 
+  <%= submit_tag "Submit" %>
+
+  <% end %>

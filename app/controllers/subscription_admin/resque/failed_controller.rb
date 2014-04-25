@@ -45,5 +45,12 @@ class SubscriptionAdmin::Resque::FailedController < ApplicationController
 			@failed_jobs_count = failed_queue_count(params[:queue_name])
 		end
 	end 
+
+	def check_admin_user_privilege
+      if !(current_user and  current_user.has_role?(:manage_admin))
+        flash[:notice] = "You dont have access to view this page"
+        redirect_to(admin_subscription_login_path)
+      end
+    end 
 end	
 

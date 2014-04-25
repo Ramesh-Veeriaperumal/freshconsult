@@ -566,7 +566,11 @@ $single_stackbar_chart_height: 120px;
 	}
 	ul {
 		li{
-			label{
+			a span{
+				color: #323232;
+				display:block;
+			}
+			label, a span{
 				text-transform: uppercase;
 				font-size: 11px;
 				margin: 0;

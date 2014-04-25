@@ -1,25 +1,56 @@
-<div class="dialog-well links">
-<table class="table table-striped selected_to_yellow">
-  <% current_account.scn_automations.each do |scenario| %>
-  <tr><td>
-		<div class="actions">
-		<%  form_remote_tag(
-			:url => execute_scenario_helpdesk_ticket_path(ticket), 
-			:method => :post,
-			:after => "
-				jQuery('#execute_scenario .dialog-well').hide();
-				jQuery('#execute_scenario .modal-body .sloading').remove();
-				jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
-				") do %>
+<div class="execute_scenario">
+	<div class="scenario-search" rel="sticky">
+		<input type="text" id="search_scenarios" class="hide">
+		<i class="searchicon"></i>
+	</div>
+	<div data-menu-hover-in='tr' data-menu-trigger="[type='submit']" class="dialog-well links menuselector">
+		<table class="table table-striped selected_to_yellow scenarios_table">
+		  <% current_account.scn_automations.each do |scenario| %>
+		  <tr><td>
+				<div class="actions">
+				<%  form_remote_tag(
+					:url => execute_scenario_helpdesk_ticket_path(ticket), 
+					:method => :post,
+					:after => "
+						jQuery('#execute_scenario .dialog-well').hide();
+						jQuery('#execute_scenario .modal-body .sloading').remove();
+						jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
 
-			<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
-			<input type="submit" class="btn" value="Execute" />
-		<% end %>
+						") do %>
 
-		</div>
-		<div><strong> <%= h scenario.name %> </strong> </div>
-		<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
-  </td></tr>
-  <% end %>
-</table>
+					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
+					<input type="submit" class="btn" value="Execute"  placement = "below" title="Execute"/>
+				<% end %>
+				</div>
+				<div><strong> <%= h scenario.name %> </strong> </div>
+				<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
+		  </td></tr>
+		  <% end %>
+		</table>
+	</div>
 </div>
+<% javascript_tag do%>
+
+	jQuery(document).ready(function(){
+		jQuery('#execute_scenario').on('shown', function() {
+        	jQuery('.dialog-well').focus();
+    	})
+	});
+
+	jQuery('.scenario-search').hide();
+	if(jQuery(".selected_to_yellow td").length > 10){
+		jQuery('.scenario-search').show();
+		jQuery('#search_scenarios').focus();
+		var search_elements = jQuery(".scenarios_table td");
+		var search_elements_text = [];
+		search_elements.each(function(){
+			search_elements_text.push(jQuery(this).text().toLowerCase());
+		})
+		jQuery("#search_scenarios").on("keyup",function(){
+			var input_value = jQuery(this).val();
+			search_elements.each(function(index){
+				jQuery(this).toggle(window.lookups.scenario_execution_search(input_value,search_elements_text[index]))
+			});
+		});
+	}
+<% end %>

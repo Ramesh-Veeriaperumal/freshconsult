@@ -8,7 +8,9 @@ module TwilioMaster
 		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call],
 		:device => [:record],
 		:queue => [:enqueue, :dequeue, :trigger_voicemail, :trigger_non_availability, :hangup, :quit_queue_on_voicemail],
-		:voicemail => [:quit_voicemail]
+		:voicemail => [:quit_voicemail],
+		:usage_triggers => [:notify],
+		:ops_notification => [:voice_notification, :status]
 	}
 	
 	CALL_INITIATION_METHODS = {

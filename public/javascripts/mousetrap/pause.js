@@ -11,9 +11,9 @@ Mousetrap = (function(Mousetrap) {
 
     self.stopCallback = function(e, element, combo) {
         var isHelp = (combo === Shortcuts.global.help),
-            isCancel = (combo === Shortcuts.global.cancel);
+            isCancel = (combo === Shortcuts.global.cancel)
 
-        if (!enabled && !isHelp && !isCancel) {
+        if (!enabled && !isHelp && !isCancel ) {
             _preventDefault(e);
             return true;
         }

@@ -50,7 +50,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def valid_user
-    (user.agent? and !user.deleted?) or belongs_to_same_company?
+    (user.agent? and !user.deleted? and email[:from][:email].downcase == user.email.downcase) or belongs_to_same_company?
   end
 
   def valid_ticket_contact given_ticket

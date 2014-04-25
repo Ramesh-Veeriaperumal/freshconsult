@@ -6,6 +6,13 @@ class UserNotifier < ActionMailer::Base
     subject       params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])
   end
+
+  def email_activation(email_id, params, reply_email_config)
+    self.class.set_mailbox reply_email_config.smtp_mailbox
+
+    subject     params[:subject]
+    send_the_mail(email_id, params[:email_body], params[:reply_email])
+  end
   
   def password_reset_instructions(user, params, reply_email_config)
     self.class.set_mailbox reply_email_config.smtp_mailbox
@@ -14,11 +21,11 @@ class UserNotifier < ActionMailer::Base
     send_the_mail(user, params[:email_body], params[:reply_email])
   end
   
-  def send_the_mail(user, email_body, reply_email =nil)
-    from          reply_email || user.account.default_friendly_email
-    recipients    user.email
+  def send_the_mail(user_or_email, email_body, reply_email =nil)
+    from          reply_email || user_or_email.account.default_friendly_email
+    recipients    user_or_email.email
     sent_on       Time.now
-    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{user_or_email.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "multipart/mixed"
 
     part :content_type => "multipart/alternative" do |alt|
@@ -127,6 +134,15 @@ class UserNotifier < ActionMailer::Base
     body          :helpdesk_urls => helpdesk_urls
     sent_on       Time.now
     content_type  "text/html"     
+  end
+
+  def one_time_password(email_id,text = "")
+    subject       "One time password instructions to login"
+    recipients    email_id
+    from          AppConfig['from_email']
+    sent_on       Time.now
+    content_type  "text/html"
+    body           text
   end
 
 end

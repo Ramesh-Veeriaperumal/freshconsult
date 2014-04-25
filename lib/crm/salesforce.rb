@@ -27,6 +27,7 @@ class CRM::Salesforce < Resque::Job
 
   def add_paid_customer_to_crm(payment)
     #returned_value = sandbox(0){
+      return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
       crm_ids = search_crm_record(payment.account_id)
       opportunity_id = add_opportunity(crm_ids, payment)
       add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
@@ -133,7 +134,7 @@ class CRM::Salesforce < Resque::Job
     def account_details(crm_account_id, payment)
       account_info = account_attributes(payment.account)
       payment_info = payment_attributes(payment).delete_if{|k, v| [:Name, :Amount].include? k }
-      record = { :id => crm_account_id, :Name => payment.account.full_domain, 
+      record = { :id => crm_account_id, :Name => payment.account.name, 
                   :Customer_Status__c => CUSTOMER_STATUS[:paid] }
 
       record.merge(payment_info.merge(account_info))

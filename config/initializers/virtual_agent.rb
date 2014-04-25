@@ -54,7 +54,7 @@ module VAConfig
   
     def self.custom_field_handler_type field, account
       t_field = fetch_ticket_field field.to_s, account
-      t_field.present? ? t_field.field_type.to_sym : :default
+      t_field.present? && t_field.parent_id.nil? ? t_field.field_type.to_sym : :default
     end
 
     def self.fetch_ticket_field field, account

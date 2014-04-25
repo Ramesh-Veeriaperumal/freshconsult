@@ -12,6 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
+  before_update :clear_sender_email, :if => [:requester_id_changed?, :sender_email]
+
   before_save :update_dueby, :unless => :manual_sla?
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
@@ -68,6 +70,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
   end
 
+  def clear_sender_email
+    self.sender_email = nil
+    schema_less_ticket.save
+  end
+
   def update_ticket_states 
     ticket_states.assigned_at=Time.zone.now if (@model_changes.key?(:responder_id) && responder)    
     if (@model_changes.key?(:responder_id) && @model_changes[:responder_id][0].nil? && responder)
@@ -77,6 +84,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
+      end
+
+      if @model_changes[:status][0] == PENDING  
+        ticket_states.pending_since = nil
       end
       
       ticket_states.pending_since=Time.zone.now if (status == PENDING)
@@ -336,7 +347,8 @@ private
       portal = self.product.portal if self.product
       requester = account.users.new
       requester.signup!({:user => {
-        :email => email , :twitter_id => twitter_id, :external_id => external_id,
+        :user_emails_attributes => { "0" => {:email => self.email, :primary_role => true} }, 
+        :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone }}, 

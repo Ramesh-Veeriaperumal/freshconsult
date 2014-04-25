@@ -1,4 +1,4 @@
-<strong rel="status_name"><%= h(@ticket.status_name) %></strong>,
+<strong rel="status_name"><%= h(@ticket.status_name.html_safe) %></strong>,
 <span rel="status_timestamp">
 <% unless (@ticket.onhold_and_closed? or @ticket.ticket_status.deleted?)%>
 	<%=t( @ticket.due_by > Time.now() ? 'ticket_future_due_by_live' : 'ticket_past_due_by_live',

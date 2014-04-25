@@ -51,7 +51,7 @@ include Mobile::Actions::Push_Notifier
 
   def sso_login
     if params[:hash] == gen_hash_from_params_hash
-      @current_user = current_account.all_users.find_by_email(params[:email])
+      @current_user = current_account.user_emails.user_for_email(params[:email])  
       
       if @current_user && @current_user.deleted?
         flash[:notice] = t(:'flash.login.deleted_user')
@@ -150,8 +150,7 @@ include Mobile::Actions::Push_Notifier
       #Temporary hack due to current_user not returning proper value
       @current_user_session = @user_session
       @current_user = @user_session.record
-      #Hack ends here
-      
+      #Hack ends here      
       
       if grant_day_pass 
         respond_to do |format|
@@ -288,7 +287,7 @@ include Mobile::Actions::Push_Notifier
       logger.debug "The display identifier is :: #{identity_url.inspect}"
       @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
       @current_user = @auth.user unless @auth.blank?
-      @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
+      @current_user = current_account.user_emails.user_for_email(email) if @current_user.blank?
       unless gmail_gadget_temp_token.blank?
         key_options = {:account_id => current_account.id, :token => gmail_gadget_temp_token}
         kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options))
@@ -410,7 +409,11 @@ include Mobile::Actions::Push_Notifier
     def create_user(email, account,identity_url=nil,options={})
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank? 
-      @contact.email = email
+      if account.features?(:multiple_user_emails)
+        @contact.user_emails.build({:email => email, :primary_role => true})
+      else
+        @contact.email = email
+      end
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact

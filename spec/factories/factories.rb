@@ -102,7 +102,7 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :user do |f|
     f.sequence(:name) { |n| "foo#{n}" }
-    f.sequence(:email) { |n| "venky#{n}@freshdesk.com" }
+    f.sequence(:user_emails_attributes) { |n| { "0" => {:email => "venky#{n}@freshdesk.com", :primary_role => true}} }
     f.time_zone "Chennai"
     f.active 1
     f.user_role 1
@@ -112,6 +112,9 @@ if ENV["RAILS_ENV"] == "test"
     f.sequence(:persistence_token) { |n| "#{Faker::Lorem.characters(127)}#{n}" }
     f.delta 1
     f.language "en"
+  end
+
+  Factory.define :user_email do |f|
   end
 
   Factory.define :customer do |c|

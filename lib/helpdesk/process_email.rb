@@ -244,10 +244,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
+      ticket.sender_email = from_email[:email]
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
       check_for_auto_responders(ticket)
-      check_support_emails_from(account, ticket, user)
+      check_support_emails_from(account, ticket, user, from_email)
 
       begin
         if (user.agent? && !user.deleted?)
@@ -295,8 +296,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
 
-    def check_support_emails_from(account, ticket, user)
-      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
+    def check_support_emails_from(account, ticket, user, from_email)
+      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
     end
 
     def ticket_from_email_body(account)
@@ -384,12 +385,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def get_user(account, from_email, email_config)
-      user = account.all_users.find_by_email(from_email[:email])
+      user = account.user_emails.user_for_email(from_email[:email])
       unless user
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name],
+        signup_status = user.signup!({:user => {:user_emails_attributes => { "0" => {:email => from_email[:email], :primary_role => true}}, :name => from_email[:name], 
           :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
         args = [user, params[:text][0..20]]  
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status

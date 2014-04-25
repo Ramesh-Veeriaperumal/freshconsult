@@ -215,7 +215,7 @@ def handle_user_import base_dir
                      }     
      @user = nil
      unless usr_email.blank?
-      @user= @current_account.all_users.find_by_email(usr_email)    
+      @user= @current_account.user_emails.user_for_email(usr_email)    
      end
      @user = @current_account.all_users.find_by_import_id(import_id) if @user.blank?     
      puts "email is :: #{usr_email} and import id :: #{import_id} and \n user: #{@user.inspect}"

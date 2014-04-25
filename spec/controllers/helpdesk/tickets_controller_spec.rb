@@ -226,4 +226,118 @@ describe Helpdesk::TicketsController do
       delete :destroy, :id => @test_ticket.display_id
       @account.tickets.find(@test_ticket.id).deleted.should be_true
     end
+
+  # Tickets filter
+    it "should return ticket for tickets created today in created at filter" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_day.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_day+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "today"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end   
+    
+    it "should return tickets created yesterday" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.yesterday.beginning_of_day.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.yesterday.beginning_of_day+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "yesterday"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end 
+
+    it "should return tickets created within this week" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_week.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_week+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "week"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should return tickets created within this month" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_month.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_month+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "month"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should return tickets created within 2 months" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_day.ago(2.months).to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_day.ago(2.months)+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "two_months"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should return tickets created within 6 months" do 
+      created_at_timestamp = "#{Time.now.to_f} - #{Time.zone.now.beginning_of_day.ago(6.months).to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_day.ago(6.months)+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "six_months"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should return tickets created within mins of integer values" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "20"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_true
+      (response.body.include? created_at_timestamp).should be_true
+    end
+
 end

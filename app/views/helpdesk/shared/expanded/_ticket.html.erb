@@ -70,7 +70,7 @@
 	  		<li class="<%= quick_action unless modal %>" title="<%= 'Change Status' unless modal %>"  
 	  			data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
 				<label><%=t('ticket.status')%>: </label>
-				<span class="result"><%= h(ticket.status_name) %></span>
+				<span class="result"><%= h(ticket.status_name.html_safe) %></span>
 			</li>
 			<li class="<%= quick_action unless modal %>" title="<%= 'Change Priority' unless modal %>"  
 				data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">

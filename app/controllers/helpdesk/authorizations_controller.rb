@@ -21,18 +21,19 @@ class Helpdesk::AuthorizationsController < ApplicationController
   def deliver_autocomplete auto_scoper
     items = auto_scoper.find(
       :all, 
-      :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
+      :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
+      :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
+      :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 1000)
 
-    r = {:results => items.map {|i| {:id => i.email, :value => i.name, :user_id => i.id }}}
+    r = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     
     respond_to do |format|
       format.json { render :json => r.to_json }
     end
-    
   end
-  
+
   def company_autocomplete
     respond_to do |format|
       format.json { 

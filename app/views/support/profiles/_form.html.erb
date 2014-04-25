@@ -38,8 +38,13 @@
 			</div>
 			<br />
 			<% if @profile.email.present? %>
-				<h4><%= t("user.email") %></h4>
-				<div><%= @profile.email %></div>
+				<% if current_account.features?(:multiple_user_emails) %>
+					<h4><%= t("user.emails") %></h4>
+					<div><%= @profile.emails.join(", ") %></div>
+				<% else %>
+					<h4><%= t("user.email") %></h4>
+					<div><%= @profile.email %></div>
+				<% end %>
 			<% end %>
 			<br />
 			<% if @profile.customer.present? %>

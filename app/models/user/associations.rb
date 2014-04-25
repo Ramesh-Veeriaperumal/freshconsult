@@ -1,11 +1,18 @@
 class User < ActiveRecord::Base
 
   belongs_to :customer
+  belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
 
-  has_one :user_email , :class_name =>'UserEmail', :dependent => :destroy #for user email delta
+  has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
+  has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
+  has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }
+
+  accepts_nested_attributes_for :user_emails, :reject_if => proc {|att| att['email'].blank? }, :allow_destroy => true
+
+  delegate :email, :to => :primary_email, :allow_nil => true, :prefix => :actual
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    
@@ -54,6 +61,8 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
+  has_many :notes, :class_name => 'Helpdesk::Note'
+  has_many :activities, :class_name => 'Helpdesk::Activity'
   
   has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
   :conditions => {:status => [OPEN,PENDING]},

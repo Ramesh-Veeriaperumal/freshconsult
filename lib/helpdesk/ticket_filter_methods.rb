@@ -16,6 +16,9 @@ module Helpdesk::TicketFilterMethods
 
     if selected_item.blank?
       selected_from_default = (selected.blank? ? nil : SELECTORS.select { |v| v.first == selected.to_sym })
+      unless params[:report_type].blank?
+        selected_from_default = SELECTORS.select { |v| v.first == :untitled_view }
+      end
       selected_item = selected_from_default.blank? ? 
                       (default_views.first) :
                       (selected_from_default.map { |i| { :id => i[0], :name => i[1], :default  =>  true} }.first)
@@ -114,6 +117,9 @@ module Helpdesk::TicketFilterMethods
   end
 
   def cancel_link view
+    unless params[:report_type].blank?
+      view = current_filter
+    end
     link_to(link_title('cancel'), filter_path(view), 
                                 :class => "hide", :id => "cancel_filter",
                                 :"data-parallel-placeholder" => "#ticket-leftFilter", 

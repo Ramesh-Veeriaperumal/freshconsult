@@ -1,4 +1,4 @@
-<div id="sticky_header" rel="sticky" data-scroll-top = "true" class="tkt-details-sticky" data-collapsed="true">
+<div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky" data-collapsed="true">
 	<div class="sticky_right">
 		<div class="status_info">
 
@@ -7,12 +7,10 @@
 		<div class="pagination-link" id="adjacents">
 			<ul>
 				<li>
-					<a id="next_page" href="#" class="page-btn btn disabled tooltip" 
-						data-keybinding="<%= shortcut('ticket_detail.next') %>"><span class="arrow-next"></span></a>
+					<a id="next_page" href="#" class="page-btn btn disabled"><span class="arrow-next"></span></a>
 				</li>
 				<li>
-					<a href="#" class="page-btn btn disabled" 
-						data-keybinding="<%= shortcut('ticket_detail.previous') %>"><span class="arrow-previous"></span></a>
+					<a href="#" class="page-btn btn disabled"><span class="arrow-previous"></span></a>
 				</li>
 			</ul>
 		</div>
@@ -35,7 +33,8 @@
 					</div>
 					<% unless params[:format]=='widget' %>
 					<div id="watcher_toggle" class="btn monitor_div tooltip" data-placement = "below"
-						title='<%= "#{t('helpdesk.tickets.add_watcher.toggle_watch')} ( #{shortcut('ticket_detail.toggle_watcher')} )" %>' 
+						title='<%= "#{t('helpdesk.tickets.add_watcher.toggle_watch')}" %>' 
+						data-hotkey='<%="#{shortcut('ticket_detail.toggle_watcher')}" %>'
 						data-watching="<%= @ticket.subscriptions.map(&:user_id).include? current_user.id %>" 
 						data-currentuserid="<%= current_user.id %>">
 						<span id="monitor">
@@ -51,7 +50,7 @@
 					<div class="btn-group">
 						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
 					  	<a class="btn tooltip" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
-					  		rel="note-button" data-note-type="reply" id="ReplyButton" data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
+					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
 					  		data-highlight="true" >
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
@@ -59,13 +58,13 @@
 						<% end %>
 						<% if privilege?(:forward_ticket) %>
 					  	<a href="#" id="FwdButton" class="btn tooltip" title='<%= t('fwd_to') %>' 
-					  		data-placement = "below" rel="note-button" data-note-type="fwd" data-keybinding="<%= shortcut('ticket_detail.forward') %>"  
+					  		data-placement = "below" rel="note-button" data-note-type="fwd" data-keybinding="<%= shortcut('ticket_detail.forward') %>" 
 					  		data-highlight="true" >
 					  		<span class="forward-inner"></span>
 				    		<%= t('fwd_to') %>
 				    	</a>
 				    	<% end %>
-					  	<a href="#" rel="note-button" class="btn tooltip" title='<%= t('ticket.add_note') %>' 
+					  	<a href="#" id="noteButton" rel="note-button" class="btn tooltip" title='<%= t('ticket.add_note') %>' 
 					  		data-placement = "below" data-note-type="note" data-keybinding="<%= shortcut('ticket_detail.add_note') %>" 
 					  		data-highlight="true" >
 					  		<span class="note-inner"></span>
@@ -85,9 +84,9 @@
 				<% end %>
 				<% if privilege?(:merge_or_split_ticket) %>
 				<li class="ticket-btns hide_on_collapse">
-					<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
-							:id => "ticket_merge_btn", :title => t('ticket.merge_title'), :class => 'btn',
-							"data-placement" => "below",
+					<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 	
+						:id => "ticket_merge_btn", :title => t('ticket.merge_title'),"class" => "btn",
+						"data-placement" => "below", 
 							"data-ajax-dialog" => true, "data-width" => "727",
 							"data-highlight" => "true"
 					%>
@@ -95,11 +94,11 @@
 
 				<% end %>
 				<li class="ticket-btns hide_on_collapse">
+					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
-					  				"data-placement" => "below", "data-template-footer" => "",
-					  				:title => t('ticket.execute_scenario')) 
-					%>
+					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn ', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
+					  				:title => t('ticket.execute_scenario')) %> 
+					</div>
 				</li>
 				<li class="ticket-btns">
 					<div class="btn-group">
@@ -128,7 +127,7 @@
 
 						<li class="show_on_collapse">
 							<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", "data-template-footer" => "",
+					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", "data-template-footer" => "", :id => "ticket_scenario_btn" ,
 					  				:title => t('ticket.execute_scenario') ) %>
 						</li>
 					  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>

@@ -72,7 +72,7 @@ class Account < ActiveRecord::Base
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
-  has_many :email_users, :class_name => 'User', :conditions => ["email IS NOT null"], :order => :id #To be removed
+  has_many :user_emails, :class_name => 'UserEmail'
   
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
