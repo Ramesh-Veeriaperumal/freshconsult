@@ -477,7 +477,7 @@
   map.resources :topics, :posts, :monitorship
 
   map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete }, :member => {:approve => :put, :mark_as_spam => :put }
+    discussions.resources :moderation, :collection => { :empty_folder => :delete, :spam_multiple => :put }, :member => {:approve => :put, :mark_as_spam => :put }
   end
 
   %w(forum).each do |attr|
@@ -486,7 +486,7 @@
 
   map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
   forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
-    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }, :collection => { :destroy_multiple => :delete }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put }
       topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer

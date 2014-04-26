@@ -1,19 +1,25 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
 describe TopicsController do
+	integrate_views
+  	setup :activate_authlogic
+  	self.use_transactional_fixtures = false
+
 
 	before(:all) do
 		@account = create_test_account
+		@agent = add_test_agent(@account)
 	end
 
 	before(:each) do
 		@category = create_test_category
 		@question_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:howto])
 		@problem_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:problem])
-	end
-
-	after(:each) do
-		@category.destroy
+		@request.host = @account.full_domain
+	    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+	                                        (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+        @request.env['HTTP_REFERER'] = '/categories'
+	    log_in(@agent)
 	end
 
 	after(:all) do
@@ -69,6 +75,19 @@ describe TopicsController do
 			topic.toggle_solved_stamp
 			topic.reload
 			topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]
+		end
+	end
+
+	describe "Bulk delete of topics" do
+		it "should mark delete all the topics when 'destroy_multiple'" do
+			topics = []
+			5.times do |n|
+				topics << create_test_topic(@question_forum)
+			end
+			delete :destroy_multiple, :ids => topics.map(&:id), :category_id => @category.id, "forum_id"=> @question_forum.id
+			topics.each do |topic|
+				@account.topics.find_by_id(topic.id).should be_nil
+			end
 		end
 	end
 end
