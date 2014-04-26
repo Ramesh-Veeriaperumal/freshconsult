@@ -63,7 +63,7 @@ describe ContactsController do
   end
 
   it "should make a customer a full-time agent" do
-    @account.subscription.update_attributes(:agent_limit => 30)
+    @account.subscription.update_attributes(:agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)

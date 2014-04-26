@@ -127,7 +127,7 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :user do |f|
     f.sequence(:name) { |n| "foo#{n}" }
-    f.sequence(:user_emails_attributes) { |n| { "0" => {:email => "venky#{n}@freshdesk.com", :primary_role => true}} }
+    f.sequence(:user_emails_attributes) { |n| { "0" => {:email => "test#{n}@freshdesk.com", :primary_role => true}} }
     f.time_zone "Chennai"
     f.active 1
     f.user_role 1
