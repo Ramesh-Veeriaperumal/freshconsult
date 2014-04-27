@@ -1924,6 +1924,8 @@ en:
     answered: Answered
     view_on_portal: "View on Portal"
     spam: Spam
+    bulk_delete: The topic(s) have been deleted.
+    bulk_spam: The topic(s) have been reported as spam.
   activerecord:
     errors:
       messages:

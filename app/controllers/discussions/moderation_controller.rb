@@ -12,10 +12,9 @@ class Discussions::ModerationController < ApplicationController
 	end
 
 	def approve
-		@post.published = true
-		@post.save
+		@post.approve!
 
-		report_post(REPORT[:ham])
+		report_post(@post, REPORT[:ham])
 	end
 
 	def empty_folder
@@ -29,12 +28,20 @@ class Discussions::ModerationController < ApplicationController
 	end
 
 	def mark_as_spam
-		@post.published = false, 
-		@post.spam = true
-		@post.save
-		@post.topic.update_attributes(:published => false) if @post.original_post?
+		@post.mark_as_spam!
 
-		report_post(REPORT[:spam])
+		report_post(@post, REPORT[:spam])
+		redirect_to :back
+	end
+
+	def spam_multiple
+		if params[:ids].present?
+			current_account.topics.find(params[:ids]).each do |item|
+				item.posts.first.mark_as_spam!
+				report_post(item.posts.first, REPORT[:spam])
+			end
+		  	flash[:notice] = I18n.t('topic.bulk_spam')
+	    end
 		redirect_to :back
 	end
 
@@ -49,10 +56,10 @@ class Discussions::ModerationController < ApplicationController
 			@post = current_account.posts.find(params[:id])
 		end
 
-		def report_post(type)
+		def report_post(post, type)
 			Resque.enqueue(Workers::Community::ReportPost, {
-					:id => @post.id,
-					:account_id => @post.account_id,
+					:id => post.id,
+					:account_id => post.account_id,
 					:report_type => type
 			})
 		end
