@@ -423,7 +423,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def from_email
-    self.sender_email || requester.email
+    requester.email
   end
 
   def ticlet_cc
