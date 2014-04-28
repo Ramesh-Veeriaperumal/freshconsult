@@ -9,6 +9,7 @@ var FreshfoneCalls;
 		this.currentUser = freshfone.current_user;
 		this.ALLOWED_DIGITS = 15;
 		this.cached = {};
+		this.freshfoneCallTransfer = {};
 	};
 
 	FreshfoneCalls.prototype = {
@@ -58,7 +59,6 @@ var FreshfoneCalls;
 		outgoingNumber: function () { return numbersHash[this.outgoingNumberId()]; },
 
 		$dialpadButton: $('.freshfone_widget .showDialpad'),
-		$transferAgent: $('#freshfone_available_agents .transfering_call'),
 		$number: $("#number"),
 //		isKeyPressAllowed: function (char) {
 //			return ((char >= 48 && char <= 57) || ($.inArray(char, [35, 42, 43]) >= 0)) &&
@@ -207,27 +207,10 @@ var FreshfoneCalls;
 			}
 		},
 		transferCall: function (id) {
-			var self = this;
-			id = parseInt(id, 10);
-			if (!this.tConn || isNaN(id)) { return false; }
-			this.$transferAgent.show();
 			this.transfered = true;
+			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id);
+		},
 
-			$.ajax({
-				type: 'POST',
-				dataType: "json",
-				url: '/freshfone/call_transfer/initiate',
-				data: { "call_sid": this.getCallSid(),
-								"id": id,
-								"outgoing": this.isOutgoing() },
-				error: function () { self.transfered = false; }
-			});
-		},
-		transferSuccessFlash: function () {
-			if (!this.transfered) { return false; }
-			$("#noticeajax").html("<div>Call transfered successfully.</div>").show();
-			closeableFlash('#noticeajax');
-		},
 		dontShowEndCallForm: function () {
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},

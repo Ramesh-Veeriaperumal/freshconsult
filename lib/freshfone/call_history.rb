@@ -10,7 +10,7 @@ module Freshfone::CallHistory
 	end
 	
 	def current_call
-		@current_call ||= ( current_call_by_id || current_call_by_filter )
+		@current_call ||= ( current_call_by_id || current_call_by_filter || current_call_by_parent_call_sid )
 	end
 
 	def set_current_call(call)
@@ -35,6 +35,10 @@ module Freshfone::CallHistory
 	
 		def current_call_by_filter
 			freshfone_calls_scoper.filter_call(params[:CallSid]) if params[:CallSid].present?
+		end
+
+		def current_call_by_parent_call_sid
+			freshfone_calls_scoper.filter_call(params[:ParentCallSid]) if params[:ParentCallSid].present?
 		end
 
 		def agent_scoper

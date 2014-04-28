@@ -1,8 +1,7 @@
 class Freshfone::CallInitiator
 	include FreshfoneHelper
 	include Freshfone::NumberMethods
-	include Redis::RedisKeys
-	include Redis::IntegrationsRedis
+	include Freshfone::CallsRedisMethods
 
 	VOICEMAIL_TRIGGERS = ['no-answer', 'busy', 'failed']
 	BATCH_SIZE = 10
@@ -10,7 +9,7 @@ class Freshfone::CallInitiator
 	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_call,
 								:below_safe_threshold, :queued
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
-					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered,
+					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :register_call_transfer,
 					 :calls_count, :outgoing?, :non_business_hour_calls?, :to => :call_flow, :allow_nil => true
 	delegate :number, :record?, :read_voicemail_message, :read_queue_message, :read_non_business_hours_message, 
 					 :read_non_availability_message,	:voice_type, :to => :current_number
@@ -31,7 +30,7 @@ class Freshfone::CallInitiator
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url,
 						 :timeLimit => time_limit do |d|
-				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent), current_number) }
+				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_url(agent), current_number, update_user_presence_url(agent))}
 			end
 			r.Redirect force_termination_url, :method => "POST"
 		end
@@ -53,7 +52,7 @@ class Freshfone::CallInitiator
 		twiml_response do |r|
 			r.Dial :callerId => number, :record => record?,
 						 :action => outgoing_url, :timeLimit => time_limit do |d|
-				d.Number params[:PhoneNumber]
+				d.Number params[:PhoneNumber], :url => update_user_presence_url
 			end
 		end
 	end
@@ -74,6 +73,12 @@ class Freshfone::CallInitiator
 			r.Enqueue current_account.name, :waitUrl => enqueue_url, :action => quit_queue_url
 			r.Redirect force_termination_url, :method => "POST"
 		end
+	end
+
+	def make_transfer_to_agent(target_agent , call_back = false)
+		agent = get_target_agent(target_agent, call_back)
+		register_call_transfer(agent.user_id, params[:outgoing])
+		return dial_to_agent(agent, call_back)
 	end
 
 	def initiate_voicemail(type = "default")
@@ -155,8 +160,13 @@ class Freshfone::CallInitiator
 			"#{host}/freshfone/call/direct_dial_success?direct_dial_number=#{CGI.escape(format_number(number))}"
 		end
 
-		def forward_call_url(agent)
-			"#{host}/freshfone/call/forward?agent=#{agent.user_id}"
+		def update_user_presence_url(agent = nil)
+			agent_params = agent.present? ? "?agent=#{agent.user_id}" : ""
+			"#{host}/freshfone/call/in_call#{agent_params}"
+		end
+
+		def forward_url(agent)
+			"#{update_user_presence_url(agent)}&forward=true"
 		end
 
 		def record_message_url
@@ -177,6 +187,18 @@ class Freshfone::CallInitiator
 
 		def quit_voicemail_url
 			"#{host}/freshfone/voicemail/quit_voicemail"
+		end
+
+		def transfer_call_status_url(call_back)
+			"#{status_url}?transfer_call=true&target_agent=#{params[:id] || params[:source_agent]}&source_agent=#{params[:source_agent]}&call_back=#{call_back}&outgoing=#{params[:outgoing]}"
+		end
+
+		def call_transfer_success_url (agent, current_user, call_back)
+			"#{host}/freshfone/call/call_transfer_success?agent=#{agent.user_id}&transfer_call=true&source_agent=#{current_user}&call_back=#{call_back}"
+		end
+
+		def forward_call_url (agent, current_user, call_back)
+			"#{call_transfer_success_url(agent, current_user, call_back)}&forward=true"
 		end
 
 		def process_in_batch(agents)
@@ -222,5 +244,22 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 
 		def format_number(number)
 			@number = GlobalPhone.parse(number).international_string
+		end
+
+		def get_target_agent(target_agent, call_back)
+			@agent = current_account.freshfone_users.online_agents.find_by_user_id(target_agent) 
+			@agent = current_account.freshfone_users.find_by_user_id(params[:source_agent]) if @agent.blank? || call_back
+			return @agent
+		end
+
+		def dial_to_agent (agent, call_back)
+			Twilio::TwiML::Response.new do |r|
+				r.Dial :callerId => params[:outgoing] ? params[:To] : params[:From],
+						 :record => current_number.record?, :action => transfer_call_status_url(call_back),
+						 :timeLimit => time_limit do |d|
+					agent.call_agent_twiml(d, forward_call_url(agent, params[:source_agent], call_back),
+							 current_number, call_transfer_success_url(agent, params[:source_agent], call_back))
+					end
+			end.text
 		end
 end

@@ -94,9 +94,9 @@ var FreshfoneSocket;
 
 				this.freshfone_socket_channel.on('agent_available', function (data) {
 					data = JSON.parse(data) || {};
+					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.ONLINE); return;}
 
 					if (data.user) { self.addToAvailableAgents(data.user); }
-					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.ONLINE); }
 				});
 
 				this.freshfone_socket_channel.on('agent_unavailable', function (data) {
@@ -151,6 +151,10 @@ var FreshfoneSocket;
 					self.handleFailure();
 				});  
 			
+				this.freshfone_socket_channel.on('CallTreansferSuccess', function (data) {
+					data = JSON.parse(data);
+					self.successTransferCall(data.result);
+				});
 			$('body').on('pjaxDone', function() {
 				self.$dashboard = $('.freshfone_dashboard');
 				self.$availableAgents = self.$dashboard.find('.live-available-agents');
@@ -282,6 +286,10 @@ var FreshfoneSocket;
 				this.populateAvailableAgents();
 			}
 
+		},
+
+		successTransferCall: function (transfer_success) {
+			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
 		}
 	};
 }(jQuery));
