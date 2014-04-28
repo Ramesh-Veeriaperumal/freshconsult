@@ -99,7 +99,7 @@ class Signup < ActivePresenter::Base
           :phone => user.phone 
         },
       
-        :billing_emails => { :invoice_emails => [ user.email ] }
+        :billing_emails => { :invoice_emails => [ user.user_emails.first.email ] }
       }
     end
 
