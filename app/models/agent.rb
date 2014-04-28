@@ -11,7 +11,7 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   
   validates_presence_of :user_id
-  validate :only_primary_email, :on => [:create, :update]
+  # validate :only_primary_email, :on => [:create, :update] moved to user.rb
   
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
   
@@ -61,10 +61,9 @@ class Agent < ActiveRecord::Base
   end
 
   #for user_emails
-  def only_primary_email
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.agent_email')) unless 
-    (self.user.user_emails.length == 1 and user.email)
-  end
+  # def only_primary_email
+  #   self.errors.add(:base, I18n.t('activerecord.errors.messages.agent_email')) unless (self.user.user_emails.length == 1)
+  # end
 
   # State => Fulltime, Occational or Deleted
   # 

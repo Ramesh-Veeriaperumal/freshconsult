@@ -137,6 +137,10 @@ class Forum::TopicDrop < BaseDrop
     published_posts.first.body.gsub(/<\/?[^>]*>/, "")
   end
 
+  def followed_by_current_user?
+    portal_user.present? && !source.monitorships.active_monitors.by_user(portal_user).count.zero?
+  end
+
   private
 
     def published_posts

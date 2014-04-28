@@ -64,6 +64,17 @@ class User < ActiveRecord::Base
   
   validate :has_role?, :unless => :customer?
   validate :user_email_count, :if => :email_required?, :on => :update
+  validate :email_validity, :if => :chk_email_validation?
+  validate :only_primary_email, :on => [:create], :unless => [:customer?, :no_multiple_user_emails]
+
+  def email_validity
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_REGEX
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+  end
+
+  def only_primary_email
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.agent_email')) unless (self.user_emails.length == 1)
+  end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
   
@@ -157,6 +168,10 @@ class User < ActiveRecord::Base
   def add_tag(tag)
     # Tag the users if he is not already tagged
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
+  end
+
+  def email
+    self.actual_email || self[:email]
   end
 
   def parent_id
@@ -265,9 +280,15 @@ class User < ActiveRecord::Base
   }
 
   def signup(portal=nil)
+    feature_based_email unless no_multiple_user_emails
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal,false) if (!deleted and self.user_emails.present?)
+    deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
     true
+  end
+
+  def feature_based_email
+    self.user_emails.build({:email => self[:email], :primary_role => true}) if self[:email]
+    self[:email] = nil
   end
 
   def check_feature_and_modify(params)

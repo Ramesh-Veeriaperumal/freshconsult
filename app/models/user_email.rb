@@ -11,12 +11,13 @@ class UserEmail < ActiveRecord::Base
   validates_presence_of :email
   validates_format_of :email, :with => EMAIL_REGEX
   validates_uniqueness_of :email, :scope => [:account_id]
-  before_create :set_token
+  before_create :set_token, :if => :check_multiple_email_feature
   before_validation :downcase_email
-  before_update :drop_authorization, :if => :email_changed?
+  before_update :drop_authorization, :if => [:email_changed?, :check_multiple_email_feature]
   before_update :save_model_changes
-  after_commit_on_update :change_email_status, :if => :check_for_email_change?
-  before_destroy :drop_authorization, :check_active_with_emails
+  after_commit_on_update :change_email_status, :send_agent_activation, :if => [:check_for_email_change?, :check_multiple_email_feature]
+  after_commit_on_create :send_activation, :if => :check_multiple_email_feature
+  before_destroy :drop_authorization, :check_active_with_emails, :if => :check_multiple_email_feature
 
   def self.find_email_using_perishable_token(token, age)
     return if token.blank?
@@ -33,6 +34,10 @@ class UserEmail < ActiveRecord::Base
 
   def save_model_changes
     @ue_changes = self.changes.clone
+  end
+
+  def check_multiple_email_feature
+    self.account.features?(:multiple_user_emails)
   end
 
   def check_for_email_change?
@@ -94,8 +99,13 @@ class UserEmail < ActiveRecord::Base
 
     def set_token(portal=nil)
       self.perishable_token = Authlogic::Random.friendly_token
-      if !primary_role? and self.user.active? and (!email.blank?)
-          deliver_contact_activation_email
-      end
+    end
+
+    def send_activation
+      deliver_contact_activation_email if self.user.active?
+    end
+
+    def send_agent_activation
+      user.deliver_activation_instructions!(account.main_portal,false) if user.agent?
     end
 end

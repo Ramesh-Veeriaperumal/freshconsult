@@ -501,34 +501,36 @@
 			height:48px;
 		}
 	}
-	.search-content{
-		width: 355px;
-		padding-right: 5px;
-		margin-top: 2px;
-		margin-bottom: 10px;
-		.typed{
-			right: 11px !important;
-			top: 35px !important;
-		}
-		.searchicon{
-			right: 10px;
-			top: 6px;
-			height: 14px;
-		}
-		#search-type{
-			width: auto;
-			height: 26px;
-			float: left;
-		}
-		.searchticket{
-			position: relative;
-			display: block;
-			width: 68%;
-			float: right;
-			margin-right: 8px;
-		}
-		.display_id, .subject{
-			display: none;
+	#mergebox{
+		.search-content{
+			width: 355px;
+			padding-right: 5px;
+			margin-top: 2px;
+			margin-bottom: 10px;
+			.typed{
+				right: 11px !important;
+				top: 35px !important;
+			}
+			.searchicon{
+				right: 10px;
+				top: 6px;
+				height: 14px;
+			}
+			#search-type{
+				width: auto;
+				height: 26px;
+				float: left;
+			}
+			.searchticket{
+				position: relative;
+				display: block;
+				width: 68%;
+				float: right;
+				margin-right: 8px;
+			}
+			.display_id, .subject{
+				display: none;
+			}
 		}
 	}
 	.contactdiv{

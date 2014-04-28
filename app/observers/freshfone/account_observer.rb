@@ -14,6 +14,10 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 		freshfone_account.close
 	end
 
+	def after_commit_on_create(freshfone_account)
+		set_usage_trigger(freshfone_account)
+	end
+
 	private
 		def initialize_subaccount_details(freshfone_account, account)
 			sub_account = TwilioMaster.client.accounts.create({ :friendly_name => subaccount_name(account) })
@@ -42,6 +46,15 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 		def subaccount_name(account)
 			"#{account.name.parameterize.underscore}_#{account.id}"
+		end
+
+		def set_usage_trigger(freshfone_account)
+      trigger_options = { :trigger_type => :daily_credit_threshold,
+                          :account_id => freshfone_account.account.id,
+                          :trigger_value => "75",
+                          :usage_category => "totalprice",
+                          :recurring => "daily" }
+      Resque.enqueue(Freshfone::Jobs::UsageTrigger, trigger_options)
 		end
 
 end

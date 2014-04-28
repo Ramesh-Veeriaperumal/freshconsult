@@ -43,7 +43,9 @@
 							content_tag(:span, "", :class => "remove_image rem_mail", "data-email" => ue.object.id)%>
 						<% else %>
 							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge default_email" %>
+							<% unless @user.email_required? %>
 							<span class='email_primary remove_image rem_mail'></span>
+							<% end %>
 							<p class="primary_text"><b><%= t('merge_contacts.primary') %></b></p>
 						<% end %>
                         <%= ue.hidden_field :_destroy, :value => false %>

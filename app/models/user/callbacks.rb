@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user,:remove_user_mobile_registrations, :if => :deleted?
   before_save :set_contact_name, :check_email_value, :update_user_related_changes
-  after_create :update_user_email, :if => [:user_emails_migrated?, :no_multiple_user_emails] #for user email delta
+  after_create :update_user_email, :if => [:email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
   after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   after_update :update_verified, :if => [:active_changed?, :email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   end
 
   def no_primary_email
-    self.email.blank?
+    self.actual_email.blank? and !no_multiple_user_emails
   end
 
   def remove_duplicate_emails
@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
   end
 
   def email_obtained
-    self[:email] || self.email
+    self[:email] || self.actual_email
   end
 
   def update_user_related_changes
@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) unless verified_emails.any?
+    self.deliver_activation_instructions!(account.main_portal,false)
   end
 
   def assign_user_email

@@ -1639,6 +1639,7 @@ en:
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
+  backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
   your_email_address: Your e-mail address
   username: Username
   reply: Reply
@@ -1952,6 +1953,8 @@ en:
         inclusion: is not included in the list
         user_role: A user must be associated with atleast one role
         agent_email: An agent must have exactly one valid email
+        email_not_unique: Email has already been taken
+        email_invalid: Email is invalid
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -4537,7 +4540,7 @@ en:
   saving: "Saving..."
   draft: "Draft"
   last_draft: "Your last draft"
-  clear_draft_text: "If you cancel, your saved draft for this ticket will be discarded. Are you sure?"
+  clear_draft_text: "Your saved draft will be discarded. Are you sure?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
   canned_folders:
@@ -4585,8 +4588,8 @@ en:
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
-    email_activated: "E-Mail already activated"
-    new_email_activation: "New E-Mail id activated. Login to your account"
+    email_activated: "email id already activated"
+    new_email_activation: "New email id has been activated"
     contact_updated: "Contact has been updated"
     primary_changed: "Default E-Mail changed"
     failed_change: "Failed to change default E-Mail"
@@ -4958,7 +4961,6 @@ en:
       dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
-      direct_dial_subject: "Call with %{customer}"
       human_name: "ticket"
       view: "View"
     note:

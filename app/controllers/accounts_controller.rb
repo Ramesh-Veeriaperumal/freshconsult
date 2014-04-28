@@ -118,6 +118,7 @@ class AccountsController < ApplicationController
     end
     Sharding.select_shard_of(@full_domain) do
       @account = Account.find_by_full_domain(@full_domain)
+      @account.make_current if @account
       open_id_user = verify_open_id_user @account
       unless open_id_user.blank?
         if open_id_user.privilege?(:manage_account)
@@ -143,6 +144,7 @@ class AccountsController < ApplicationController
     @full_domain = get_full_domain_for_google  
     Sharding.select_shard_of(@full_domain) do
     @account = Account.find_by_full_domain(@full_domain)
+    @account.make_current if @account
     @check_session = @account.user_sessions.new(params[:user_session])
     if @check_session.save
        logger.debug "The session is :: #{@check_session.user}"

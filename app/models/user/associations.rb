@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :user_emails, :reject_if => proc {|att| att['email'].blank? }, :allow_destroy => true
 
-  delegate :email, :to => :primary_email, :allow_nil => true
+  delegate :email, :to => :primary_email, :allow_nil => true, :prefix => :actual
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    

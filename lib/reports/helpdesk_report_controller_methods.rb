@@ -73,6 +73,7 @@ module Reports::HelpdeskReportControllerMethods
   def cache_report_filter_params(glance_type)
     filter_params = params.clone.symbolize_keys
     date_range = filter_params[:date_range]
+    date_range = [date_range, date_range].join(' - ') if !date_range.include?(' - ')
     filter_params.select! {|k,v| [:data_hash].include?(k) }
     parsed_data_hash = JSON.parse(filter_params[:data_hash])
 
@@ -86,6 +87,9 @@ module Reports::HelpdeskReportControllerMethods
 
       condition_key = TicketConstants::REPORT_TYPE_HASH[report_type]
       filter = [{:condition => condition_key, :operator => :is_greater_than, :value => date_range}]
+      filter.push({:condition => :status,
+                   :operator => :is_in,
+                   :value => Helpdesk::Ticketfields::TicketStatus::RESOLVED}) if report_type.to_s.include?('resolved')
       filter_params[:data_hash] = (parsed_data_hash | filter).to_json
       filter_params.merge!(:unsaved_view => true)
       begin

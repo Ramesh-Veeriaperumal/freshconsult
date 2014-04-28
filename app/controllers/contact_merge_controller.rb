@@ -19,7 +19,7 @@ class ContactMergeController < ApplicationController
 
   def search
     source_user = scoper.find(params[:id])
-    items = current_account.all_contacts.matching_users_from(params[:v]).without(source_user).find(:all,
+    items = current_account.contacts.matching_users_from(params[:v]).without(source_user).find(:all,
      :include => [:primary_email, :avatar]).reject(&:helpdesk_agent?)
     r = {
       :results => items.map do |i| 

@@ -207,6 +207,7 @@ module Helpdesk::TicketActions
       load_ticket_filter
       @ticket_filter.deserialize_from_params(params)
       joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+      joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
       options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
       if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
         options[:distinct] = true 

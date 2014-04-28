@@ -237,7 +237,11 @@ class AuthorizationsController < ApplicationController
     user = account.users.new  
     user.name = hash['info']['name']
     if hash['info']['email']
-      user.user_emails.build({:email => hash['info']['email'], :verified => true})
+      if account.features?(:multiple_user_emails)
+        user.user_emails.build({:email => hash['info']['email'], :verified => true})
+      else
+        user.email = hash['info']['email']
+      end
     end
     unless hash['info']['nickname'].blank?
       user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
