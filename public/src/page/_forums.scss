@@ -168,6 +168,17 @@
 				top:16px;
 				img{ width:36px; height:36px; padding:0; border:0; }
 			}
+			.bulk-check{
+				position: absolute;
+				left: 20px;
+				top: 26px;
+			}
+		}
+		li.with-checkbox{
+			padding-left: 90px;
+			.preview_pic{
+				left: 43px;
+			}
 		}
 		li:hover{
 			background:#f4f4f4;

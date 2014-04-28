@@ -25,14 +25,14 @@ module ActionMailerCallbacks
     def set_smtp_settings
       if smtp_mailbox
         self.smtp_settings = {
-          :tls                  => smtp_mailbox.smtp_use_ssl,
+          :tls                  => smtp_mailbox.use_ssl,
           :enable_starttls_auto => true,
-          :user_name            => smtp_mailbox.smtp_user_name,
-          :password             => smtp_mailbox.decrypt_password(smtp_mailbox.smtp_password),
-          :address              => smtp_mailbox.smtp_server_name,
-          :port                 => smtp_mailbox.smtp_port,
-          :authentication       => smtp_mailbox.smtp_authentication,
-          :domain               => smtp_mailbox.smtp_domain
+          :user_name            => smtp_mailbox.user_name,
+          :password             => smtp_mailbox.decrypt_password(smtp_mailbox.password),
+          :address              => smtp_mailbox.server_name,
+          :port                 => smtp_mailbox.port,
+          :authentication       => smtp_mailbox.authentication,
+          :domain               => smtp_mailbox.domain
         }
       else
         self.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]

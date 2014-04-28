@@ -26,7 +26,7 @@
   </td>
 
   <td>
-    <% unless email_config.mailbox %>
+    <% unless email_config.smtp_mailbox %>
       <div class="muted">Forwarded to: </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %>
     <% else %>
       <%= content_tag :span, t('email_configs.using_custom_mailbox').html_safe, :class => "wrap ellipses" %>

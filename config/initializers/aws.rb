@@ -25,6 +25,9 @@ begin
 	# ticket auto refresh sqs queue
 	$sqs_autorefresh = AwsWrapper::Sqs.new(SQS[:auto_refresh_realtime_queue])
 
+	# custom mailbox sqs queue
+	$sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
+
 	$social_dynamoDb = AWS::DynamoDB::ClientV2.new()
 rescue => e
 	puts "AWS::SQS connection establishment failed."

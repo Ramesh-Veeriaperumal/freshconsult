@@ -41,9 +41,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    puts "email here is  ::::::: #{test_email.inspect}"
     created_user = @account.user_emails.user_for_email(test_email)
-    puts "created user here is  ::::: #{created_user}"
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
   end
@@ -79,11 +77,10 @@ describe AgentsController do
                                             }, 
                                    :user => { :helpdesk_agent => true, 
                                               :name => Faker::Name.name, 
-                                              :user_emails_attributes => {"0" => {:email => test_email}}, 
                                               :time_zone => user.time_zone, 
                                               :language => user.language
                                             }
-    edited_user = @account.user_emails.user_for_email(test_email)
+    edited_user = @account.user_emails.user_for_email(user.email)
     edited_user.should be_an_instance_of(User)
     edited_user.agent.ticket_permission.should be_eql(2)
   end

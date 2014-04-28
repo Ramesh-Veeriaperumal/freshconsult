@@ -40,7 +40,7 @@ class Post < ActiveRecord::Base
   #format_attribute :body
   
   attr_protected  :topic_id , :account_id , :attachments, :published, :spam
-  after_save  :monitor_topic, :if => :can_monitor?
+  after_create  :monitor_topic, :if => :can_monitor?
 
   attr_accessor :request_params
     
@@ -110,6 +110,17 @@ class Post < ActiveRecord::Base
 
   def can_mark_as_answer?(current_user)
     (topic.forum.questions?) and (current_user == topic.user) and (current_user != user)
+  end
+
+  def approve!
+    self.published = true 
+    self.save
+  end
+
+  def mark_as_spam!
+    self.published = false
+    self.spam = true
+    self.save
   end
 
   # Added for portal customisation drop

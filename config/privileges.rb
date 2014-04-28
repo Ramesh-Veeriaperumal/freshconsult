@@ -168,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
 
   # delete_forum_topic
   delete_topic do
-    resource :topic, :only => [:destroy], :owned_by => { :scoper => :topics }
+    resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
   end
 

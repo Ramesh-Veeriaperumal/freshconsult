@@ -12,7 +12,7 @@
     <% else %>
       <div class="user_design">
         <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %>
-        <% if feature?(:gamification) and user.agent? %>
+        <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
           <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
         <% end %>
       </div>

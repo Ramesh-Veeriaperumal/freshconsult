@@ -1,0 +1,76 @@
+<div class="control-group">
+  <%= content_tag(:label, t('mailbox.outgoing_mail_settings'), :class => "lead") %>
+  <div class="smtp_limit_alert"> <%= t('mailbox.smtp_alert_gmail').html_safe %> </div>
+  <div>
+    <%= content_tag(:label, t('mailbox.outgoing_mail_server') , :class => "control-label") %>
+    <div class="controls">
+      <div class="form-inline">
+        <%= smtp_mailbox.text_field :server_name, :class => "text input-xlarge", :placeholder => t('mailbox.smtp_server_name')%>
+        <%= smtp_mailbox.text_field :port, :class => "text port input-small", :placeholder => t('mailbox.smtp_port') %>
+        <label for="email_config_mailbox_attributes_smtp_use_ssl" class="checkbox pl5 pb0">
+          <%= check_box "email_config[smtp_mailbox_attributes]", "use_ssl", {:checked => "checked"}, "true", "false" %>
+          <%=t('mailbox.use_ssl_tls')%>
+        </label>
+      </div>
+      <%= content_tag(:div, t('mailbox.smtp_server_info'), :class => "info-data") %>
+    </div>
+    </br>
+
+      <%= content_tag(:label, t('mailbox.authentication'), :class => "control-label") %>
+      <div class="controls">
+        <%= select_tag("email_config[smtp_mailbox_attributes][authentication]", options_for_select(MailboxConstants::AUTHENTICATION_OPTIONS[0..1]), :class => "select2 input-large") %>
+        <div class="form-inline mt15 row-fluid">
+          <div class="input-prepend span6">
+            <span class="add-on"><i class="mailbox-username"></i></span>
+            <%= smtp_mailbox.text_field :user_name, :class => "email-icon text credentials input-large", :autocomplete => "off", :placeholder => t('mailbox.user_name'), :rel=> "username" %>
+          </div>
+          <div class="input-prepend ml5 span6">
+            <span class="add-on"><i class="mailbox-password"></i></span>
+            <%= smtp_mailbox.password_field :password, :class => "password-icon text credentials input-large", :placeholder => t('mailbox.password')%>
+          </div>
+        </div>
+      </div>
+      <div class="mt20 hide">
+        <%= content_tag(:label, t('mailbox.domain'), :class => "control-label") %>
+        <div class="controls">
+          <%= smtp_mailbox.text_field :domain, :class => "input-large", :placeholder => t('mailbox.domain_name'), :value => @smtp_mailbox.domain %>
+        </div>
+      </div>
+  </div>
+</div>
+
+<% content_for :pagefixed do -%>
+  <% javascript_tag do %>
+
+    jQuery(document).ready(function(){
+      jQuery("#imap_mailbox")
+        .bind("change", function(ev){ 
+          jQuery(".smtp_limit_alert").html(jQuery("#imap_mailbox").find(":selected").data('smtpAlert'));
+          _data = jQuery(this).find(":selected").data();
+          ['imap', 'smtp'].each(function(name){
+
+            _id = "#email_config_" + name + "_mailbox_attributes";
+
+            if (_data.server != ""){
+              jQuery(_id + '_server_name').val(name + "." + _data.server);
+            }
+            else {
+              jQuery(_id + '_server_name').val(null).attr('placeholder', ((name == "imap") ? 'IMAP Server Name' : 'SMTP Server Name'));
+            }
+
+            if (_data.server == "gmail.com"){
+              jQuery("#email_config_imap_mailbox_attributes_use_ssl").attr("disabled", "disabled").val(true);
+              jQuery('input[name="email_config[imap_mailbox_attributes][use_ssl]"][type="hidden"]').val(true);
+            } else {
+              jQuery("#email_config_imap_mailbox_attributes_use_ssl").removeAttr('disabled');
+              jQuery('input[name="email_config[imap_mailbox_attributes][use_ssl]"][type="hidden"]').val(false);
+            }
+
+            jQuery(_id + '_port').val( (name == "imap") ? _data.imapPort : _data.smtpPort );
+            jQuery(_id + '_use_ssl').val( true ).attr('checked', true);
+          });
+        })
+        .trigger("change");
+    });
+  <% end %>
+<% end %>
