@@ -147,7 +147,7 @@ swapEmailNote = function(formid, link){
 			} catch (e) {}
 		});
 	}
-
+	window.AgentCollisionShow.reply_event();
 	activeForm.trigger("visibility")
 
 	//Draft Saving for Reply form
@@ -690,7 +690,7 @@ var scrollToError = function(){
         {
           window.replySubscription.cancel();
         }
-        window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
+        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 
