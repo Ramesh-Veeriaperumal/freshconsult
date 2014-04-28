@@ -54,14 +54,14 @@ module Freshfone::Jobs
 					build_recording_audio
 				end
 			rescue Exception => e
-				NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
-					failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
-					recording_sid => #{@recording_sid} :: attempt #{args[:attempt]|| 0 }"})
 				if args[:attempt].present?
-					raise e
-				end			
-				args.merge!({:attempt => 1})	
-				Resque::enqueue_at(15.minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, args)
+					NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
+						failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
+						recording_sid => #{@recording_sid} :: attempt #{args[:attempt]}"})
+					raise e unless e.code == 20404
+				end				
+				Resque::enqueue_at(15.minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, 
+					args.merge!({:attempt => 1})) unless e.code == 20404 && args[:attempt].present?
 			ensure
 				release_data
 			end

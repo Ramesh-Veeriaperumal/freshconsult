@@ -41,10 +41,14 @@
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) && current_account.agents_from_cache.count > 1%>
 <%= render :partial => "helpdesk/tickets/show/agent_collision_show.html.erb", :locals => { :ticket => @ticket } if feature?(:collision)  && current_account.agents_from_cache.count > 1%>
 <script type="text/javascript">
+	scriptLoader.load('360player');
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
 	jQuery('#ticket_original_request,.details').find("a").prop("target","_blank")
 });
+try {
+	freshfonePlayerSettings();
+} catch(e) {console.log("freshfonePlayerSettings not loaded");}
 !function(){
 	"use strict";
 	Fjax.bodyClass = 'ticket_details';
@@ -56,13 +60,6 @@ jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
-	if((typeof soundManager != "undefined") && (typeof threeSixtyPlayer != "undefined")) {
-		soundManager.onready(threeSixtyPlayer.init);
-	}
-	jQuery(".call_duration").each(function () {
-			if (jQuery(this).data("time") === undefined) { return; }
-			jQuery(this).html(jQuery(this).data("time").toTime());
-		});
 	<% unless @draft.nil? %>
 		swapEmailNote('cnt-reply', null);
 		TICKET_DETAILS_DATA['draft']['hasChanged'] = false;

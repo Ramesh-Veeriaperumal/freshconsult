@@ -13,8 +13,15 @@
 		<% end %>
 
 		jQuery(".call_duration").each(function () {
+			var format,time;
 			if (jQuery(this).data("time") === undefined) { return; }
-			jQuery(this).html(jQuery(this).data("time").toTime());
+			time = jQuery(this).data("time");
+			if (time>=3600) {
+			 format = "hh:mm:ss";
+			} else {
+				format = "mm:ss";
+			}
+			jQuery(this).html(time.toTime(format));
 		});
 	});
 
