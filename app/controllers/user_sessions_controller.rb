@@ -195,6 +195,8 @@ include Mobile::Actions::Push_Notifier
   def destroy
     remove_old_filters if current_user && current_user.agent?
 
+    mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
+
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
 
@@ -364,6 +366,10 @@ include Mobile::Actions::Push_Notifier
 
     def remove_old_filters
       remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+    end
+
+    def mark_agent_unavailable
+      current_user.agent.update_attribute(:available,false)
     end
 
     def check_sso_params
