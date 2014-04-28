@@ -969,7 +969,7 @@ module ApplicationHelper
   end
 
   def current_platform
-    os = UserAgent.parse(request.user_agent).os
+    os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|
       return v if os.downcase.include?(v)
     end
