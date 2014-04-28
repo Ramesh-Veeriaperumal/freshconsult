@@ -1,9 +1,9 @@
-def self.plan_list(all_addons, garden_addons)
+def self.plan_list(all_addons, garden_addons, blossom_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00, 
     	:addons => all_addons },
     { :name => 'Blossom', :amount => 19, :free_agents => 0, :day_pass_amount => 2.00,
-    	:addons => all_addons },
+    	:addons => blossom_addons },
     { :name => 'Garden', :amount => 29, :free_agents => 0, :day_pass_amount => 2.00,
     	:addons => garden_addons },
     { :name => 'Estate', :amount => 49, :free_agents => 0, :day_pass_amount => 3.00 }  
@@ -75,8 +75,17 @@ unless Account.current
 	  a.addon_type = addon_types[:agent_quantity]
 	end
 
+	custom_domain = Subscription::Addon.seed(:name) do |a|
+	  a.name = 'Custom Domain'
+	  a.amount = 3.0
+	  a.renewal_period = 1
+	  a.addon_type = addon_types[:agent_quantity]
+	end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization, 
-									multiple_business_hours, round_robin, chat, enterprise_reporting ]
-	garden_addons = all_addons - [ multiple_business_hours ]
-  SubscriptionPlan.seed_many(:name, plan_list(all_addons, garden_addons))
+									multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain ]
+
+	garden_addons = all_addons - [ multiple_business_hours, custom_domain ]
+	blossom_addons = all_addons - [ custom_domain ]
+  SubscriptionPlan.seed_many(:name, plan_list(all_addons, garden_addons, blossom_addons))
 end

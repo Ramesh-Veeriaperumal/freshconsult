@@ -8,7 +8,7 @@ module ForumHelper
 		forum_category
 	end
 
-	def create_test_forum(forum_category,type)
+	def create_test_forum(forum_category,type = 1)
 		forum = Factory.build(
 							:forum, 
 							:account_id => @account.id, 
@@ -39,5 +39,21 @@ module ForumHelper
 							)
 		post.save(true)
 		post			
+	end
+
+	def publish_topic(topic)
+		topic.published = true
+		topic.save(true)
+		topic
+	end
+
+	def mark_as_spam(post)
+		post.mark_as_spam!
+		post
+	end
+
+	def publish_post(post)
+		post.approve!
+		post
 	end
 end

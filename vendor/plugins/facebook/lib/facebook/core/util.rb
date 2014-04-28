@@ -29,7 +29,7 @@ module Facebook::Core::Util
       if user.signup!({
                         :user => {
                           :fb_profile_id => profile_id,
-                          :name => profile_name || profile_id,
+                          :name => profile_name.blank? ? profile_id : profile_name,
                           :active => true,
                           :helpdesk_agent => false
                         }
@@ -101,6 +101,26 @@ module Facebook::Core::Util
         <p>#{desc}</p></div></div>"
     elsif "photo".eql?(feed[:type])
       html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
+    end
+
+    return html_content
+  end
+
+  def get_html_content_from_message(message)
+    #puts "get_html_content"
+    message = HashWithIndifferentAccess.new(message)
+    html_content =  CGI.escapeHTML(message[:message])
+    if message[:attachments]
+      if message[:attachments][:data]
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
+        message[:attachments][:data].each do |attachment|
+          if attachment[:image_data] && attachment[:image_data][:preview_url] && attachment[:image_data][:url]
+            html_content = "#{html_content} <a href=\"#{attachment[:image_data][:url]}\" target=\"_blank\">
+                                <img src=\"#{attachment[:image_data][:preview_url]}\"></a>"
+          end
+        end
+        html_content = "#{html_content} </p></div>"
+      end
     end
 
     return html_content

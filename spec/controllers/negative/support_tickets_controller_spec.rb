@@ -16,7 +16,7 @@ describe Support::TicketsController do
 
   it "should not allow a user view tickets wwithout logging in" do
     get :index
-    response.should redirect_to 'support/login'
+    response.should redirect_to 'login'
   end
 
   it "should not allow a user to access tickets from a different company" do

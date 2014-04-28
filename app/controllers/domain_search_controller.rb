@@ -1,7 +1,7 @@
 class DomainSearchController < ApplicationController
   
   skip_filter filter_chain
-  before_filter :unset_current_account
+  before_filter :unset_current_account, :ensure_email
 
   def locate_domain
     agents = urls = []
@@ -18,5 +18,12 @@ class DomainSearchController < ApplicationController
     UserNotifier.deliver_helpdesk_url_reminder(params[:user_email], urls) if urls.present?
     render :json => { :available => urls.present? }, :callback => params[:callback]
   end
+
+  private
+    def ensure_email
+      if params[:user_email].blank?
+        render :json => { :available => false }, :callback => params[:callback]
+      end
+    end
 
 end

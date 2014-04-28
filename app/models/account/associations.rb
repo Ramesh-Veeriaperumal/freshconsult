@@ -16,7 +16,8 @@ class Account < ActiveRecord::Base
   has_many :email_configs, :conditions => { :active => true }
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
-  has_many :mailboxes
+  has_many :imap_mailboxes
+  has_many :smtp_mailboxes
   has_many :products, :order => "name"
   has_many :roles, :order => "default_role desc"
   has_many :portals, :dependent => :destroy

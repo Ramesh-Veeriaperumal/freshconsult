@@ -20,7 +20,6 @@ describe ContactMergeController do
 
   it "should not merge for agent" do
     post :new, :id => @user.id
-    puts response.body.inspect
     response.body.should =~ /The change you wanted was rejected/
   end
 
