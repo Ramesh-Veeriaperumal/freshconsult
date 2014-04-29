@@ -421,15 +421,28 @@
         }
 
         var setEvents = function () {
-            window.addEventListener('beforeunload',function(event){
-                if (window.FreshdeskNode.getValue('faye_realtime').fayeClient) {
-                    for (var i = 0; i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions; i++) {
-                        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
+            if($.browser.mozilla){
+                $(window).unload(function(event){
+                    if (window.FreshdeskNode.getValue('faye_realtime').fayeClient) {
+                        for (var i = 0; i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions; i++) {
+                            window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
+                        }
                     }
-                }
-                window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
-                event.preventDefault();
-            });
+                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    event.preventDefault();
+                });
+            }
+            else{
+                window.addEventListener('beforeunload',function(event){
+                    if (window.FreshdeskNode.getValue('faye_realtime').fayeClient) {
+                        for (var i = 0; i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions; i++) {
+                            window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
+                        }
+                    }
+                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    event.preventDefault();
+                });
+            }
         }
 
         var data = function (opts) {
@@ -536,6 +549,7 @@
                     window.clearInterval(interval);
                 }
                 window.replySubscription = faye_utils.subscribe(freshdesk_node.getValue('agent_collision_show_data').ticket_reply_channel, function (message) {});
+                freshdesk_node.getValue('faye_realtime').faye_channels.push(freshdesk_node.getValue('agent_collision_show_data').ticket_reply_channel);
                 window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.push(window.replySubscription);
             }
         }
@@ -555,6 +569,7 @@
                 if (window.replySubscription) {
                     window.replySubscription.cancel();
                 }
+                window.FreshdeskNode.getValue('faye_realtime').faye_channels.splice(window.FreshdeskNode.getValue('faye_realtime').faye_channels.indexOf(window.FreshdeskNode.getValue('agent_collision_show_data').ticket_reply_channel),1);
                 window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
             });
 
