@@ -30,4 +30,11 @@ class SubscriptionAdmin::FreshfoneSubscriptionsController < ApplicationControlle
       end
       results.sort_by{|credit| Time.parse(credit[0])}.reverse!
     end
+
+    def check_admin_user_privilege
+      if !(current_user and  current_user.has_role?(:freshfone))
+        flash[:notice] = "You dont have access to view this page"
+        redirect_to(admin_subscription_login_path)
+      end
+    end 
 end

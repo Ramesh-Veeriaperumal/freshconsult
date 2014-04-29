@@ -1,10 +1,14 @@
 class AddIndexToAdminUserAccessesOnType < ActiveRecord::Migration
   shard :all	
   def self.up
-  	add_index :admin_user_accesses, [:account_id, :accessible_id, :accessible_type], :name => 'index_admin_user_accesses_on_account_id_accessible_id_and_accessible_type' 
+  	Lhm.change_table :admin_user_accesses, :atomic_switch => true do |m|
+  		m.add_index [:account_id, :accessible_id, :accessible_type] , 'index_admin_acc_id_type'
+	end	
   end
 
   def self.down
-  	remove_index(:admin_user_accesses, :name => 'index_admin_user_accesses_on_account_id_accessible_id_and_accessible_type')
+  	Lhm.change_table :admin_user_accesses, :atomic_switch => true do |m|
+  		m.remove_index [:account_id, :accessible_id, :accessible_type] , 'index_admin_acc_id_type'
+	end	
   end
 end

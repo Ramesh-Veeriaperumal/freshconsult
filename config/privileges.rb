@@ -168,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
 
   # delete_forum_topic
   delete_topic do
-    resource :topic, :only => [:destroy], :owned_by => { :scoper => :topics }
+    resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
   end
 
@@ -185,9 +185,11 @@ Authority::Authorization::PrivilegeList.build do
   # add_or_edit_contact
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
-               :contact_email, :edit, :update]
+               :contact_email, :edit, :update, :verify_email]
     resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :contact_import
+    resource :contact_merge
+    resource :user_email
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
   end

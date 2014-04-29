@@ -30,8 +30,8 @@ describe AgentsController do
                                 :ticket_permission => "1"
                                 }, 
                     :user => { :helpdesk_agent => true, 
-                                :name => "Tony", 
-                                :email => test_email, 
+                                :name => Faker::Name.name, 
+                                :user_emails_attributes => {"0" => {:email => test_email}}, 
                                 :time_zone => "Chennai", 
                                 :job_title =>"Support Agent", 
                                 :phone => Faker::PhoneNumber.phone_number, 
@@ -41,7 +41,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    created_user = @account.users.find_by_email(test_email)
+    created_user = @account.user_emails.user_for_email(test_email)
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
   end
@@ -77,11 +77,10 @@ describe AgentsController do
                                             }, 
                                    :user => { :helpdesk_agent => true, 
                                               :name => Faker::Name.name, 
-                                              :email => test_email, 
                                               :time_zone => user.time_zone, 
                                               :language => user.language
                                             }
-    edited_user = @account.users.find_by_email(test_email)
+    edited_user = @account.user_emails.user_for_email(user.email)
     edited_user.should be_an_instance_of(User)
     edited_user.agent.ticket_permission.should be_eql(2)
   end

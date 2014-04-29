@@ -5,7 +5,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
 		params[:contacts].symbolize_keys! if params[:contacts]
 		mapped_fields, fields = params[:contacts][:mapped_fields], params[:contacts][:fields]
 		current_account = Account.current || Account.find_by_id(params[:account_id])
-		current_user = current_account.users.find_by_email(params[:email])
+		current_user = current_account.user_emails.user_for_email(params[:email])
 	  mapped_fields.shift
 	  created = updated = 0
     disable_user_activation(current_account)
@@ -17,7 +17,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
 		mapped_fields.each do |row|
           @params_hash ={ :user => {:name => (row[fields["0"]] ),
                                     :job_title => (row[fields["1"]] ) ,
-                                    :email =>  (row[fields["2"]] ) ,
+                                    :user_emails_attributes => {"0" => {:email => row[fields["2"]]} },
                                     :phone => (row[fields["3"]] ) ,
                                     :mobile => (row[fields["4"]] ) , 
                                     :twitter_id => (row[fields["5"]] ) ,
@@ -29,10 +29,11 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                 :customer_id => nil
                                  }
                       }
+          email = @params_hash[:user][:user_emails_attributes]['0'][:email]
           company_name = @params_hash[:user][:company].to_s.strip
           @params_hash[:user][:client_manager] = @params_hash[:user][:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
-          search_options = {:email => @params_hash[:user][:email], :twitter_id => @params_hash[:user][:twitter_id]}
+          search_options = {:email => @params_hash[:user][:user_emails_attributes]["0"][:email], :twitter_id => @params_hash[:user][:twitter_id]}
           user = current_account.users.find_by_an_unique_id(search_options) 
           unless user.nil?
             @params_hash[:user][:deleted] = false #To make already deleted user active

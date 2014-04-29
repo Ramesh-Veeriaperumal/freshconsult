@@ -127,7 +127,7 @@ table.selected_to_yellow tbody tr td {
   }
 
   &.links {
-    td:hover {
+    tr.active:hover ,tr.active td:nth-child(odd), .active{
       background:#fffad8;
     }
   }
@@ -141,7 +141,7 @@ table.selected_to_yellow tbody tr td {
     @include transition(opacity 0.2s ease-out);
   }
 
-  td:hover {
+  tr.active:hover,.active{
     .actions {
       visibility: visible;
       @include opacity(1);

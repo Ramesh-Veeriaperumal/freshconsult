@@ -21,6 +21,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.id
 	end
 
+	def from_email
+		@source.from_email
+	end
+
 	def encode_id
 		@source.encode_display_id
 	end

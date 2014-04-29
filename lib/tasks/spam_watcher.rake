@@ -60,7 +60,7 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     results.each{ |x| user_ids << x[column_name]; }
     whitelisted_users = whitelisted_users.to_a 
     user_ids =  user_ids - whitelisted_users
-    puts "spam user_ids = #{user_ids}"
+    puts "spam user_ids = #{user_ids.inspect}"
 
     unless user_ids.empty?
 
@@ -98,10 +98,10 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
         account.make_current    
         puts "::::account->#{account}"
         $redis_others.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
-        puts "deleted_users 1::::::::->#{deleted_users}"
+        puts "deleted_users 1::::::::->#{deleted_users.inspect}"
         deleted_users = account_ids[account_id]
         unless deleted_users.empty?
-          puts "deleted_users 2::::::::->#{deleted_users}"
+          puts "deleted_users 2::::::::->#{deleted_users.inspect}"
           deleted_users = account.all_users.find(deleted_users)
           SubscriptionNotifier.send_later(:deliver_admin_spam_watcher, account, deleted_users)
         end

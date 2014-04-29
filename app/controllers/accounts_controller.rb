@@ -118,6 +118,7 @@ class AccountsController < ApplicationController
     end
     Sharding.select_shard_of(@full_domain) do
       @account = Account.find_by_full_domain(@full_domain)
+      @account.make_current if @account
       open_id_user = verify_open_id_user @account
       unless open_id_user.blank?
         if open_id_user.privilege?(:manage_account)
@@ -143,6 +144,7 @@ class AccountsController < ApplicationController
     @full_domain = get_full_domain_for_google  
     Sharding.select_shard_of(@full_domain) do
     @account = Account.find_by_full_domain(@full_domain)
+    @account.make_current if @account
     @check_session = @account.user_sessions.new(params[:user_session])
     if @check_session.save
        logger.debug "The session is :: #{@check_session.user}"
@@ -403,11 +405,13 @@ class AccountsController < ApplicationController
       email = params[:user][:email]
       @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,account.id)
       @current_user = @auth.user unless @auth.blank?
-      @current_user = account.all_users.find_by_email(email) if @current_user.blank?    
+      @current_user = account.user_emails.user_for_email(email) if @current_user.blank?  
     end
 
     def build_signup_param
       params[:signup] = {}
+      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email]}}
+      params[:user].delete(:email)
       
       [:user, :account].each do |param|
         params[param].each do |key, value|

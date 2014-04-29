@@ -1,3 +1,4 @@
+
 function MergeInitializer() {
 
   clearSearchField = function(entity){
@@ -13,7 +14,11 @@ function MergeInitializer() {
   	element.removeClass('cont-primary present-contact');
     element.find('.merge_element').replaceWith(entity.children('.merge_element').clone());
     element.appendTo(jQuery('.merge_entity'));
-    mark_primary(findOldestTicket());
+    // Commented condition was breaking ticket merge
+    // console.log(entity);
+    // if(!jQuery(entity).hasClass('contactdiv')){
+      mark_primary(findOldestTicket());
+    // }
     entity.children('#resp-icon').addClass('clicked');
   }
 

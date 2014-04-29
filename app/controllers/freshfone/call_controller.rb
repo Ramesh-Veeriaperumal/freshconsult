@@ -45,7 +45,6 @@ class Freshfone::CallController < FreshfoneBaseController
 	private
 		def handle_forwarded_calls
 			unpublish_live_call(params)
-			build_ticket
 			update_call
 			empty_twiml
 		ensure

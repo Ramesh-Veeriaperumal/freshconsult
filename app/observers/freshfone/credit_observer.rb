@@ -6,7 +6,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 	def after_update(freshfone_credit)
 		account = freshfone_credit.account
 		update_freshfone_widget(freshfone_credit, account) if freshfone_credit.available_credit_changed?
-		restore_freshfone_account_state(account) if freshfone_credit.freshfone_suspended?
+		restore_freshfone_account_state(account, freshfone_credit) if freshfone_credit.freshfone_suspended?
 		update_freshfone_account_state(freshfone_credit, account) if freshfone_credit.available_credit_changed?
 		notify_low_balance(freshfone_credit, account) if freshfone_credit.available_credit_changed?
 		trigger_auto_recharge(freshfone_credit) if credit_threshold_reached?(freshfone_credit)
@@ -59,7 +59,8 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 			freshfone_credit.send_later(:perform_auto_recharge)
 		end
 		
-		def restore_freshfone_account_state(account)
+		def restore_freshfone_account_state(account, freshfone_credit)
+			return if freshfone_credit.zero_balance?
 			if account.freshfone_account.restore
 				restore_freshfone_numbers(account)
 			end

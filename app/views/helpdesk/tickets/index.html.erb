@@ -13,16 +13,22 @@
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
-  jQuery.getScript('/helpdesk/tickets/full_paginate');
+  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>' : '';
+  var paginate_url = '/helpdesk/tickets/full_paginate';
+  paginate_url = paginate_url + rep_type_param
+  jQuery.getScript(paginate_url);
 <% end %>
 <% content_for :onload_script do %>
-  Fjax.pjax_parallel_request = {parallelUrl: "/helpdesk/tickets/filter_options", parallelPlaceholder: "#ticket-leftFilter", pjax: "#body-container"};
+  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>' : '';
+  var parallel_url = "/helpdesk/tickets/filter_options"
+  parallel_url = parallel_url + rep_type_param
+  Fjax.pjax_parallel_request = {parallelUrl: parallel_url, parallelPlaceholder: "#ticket-leftFilter", pjax: "#body-container"};
 <% end %>
 
 <% content_for :pagefixed do %>
-  <%= render :partial => "collision_index" if feature?(:agent_collision) %>
-  <%= render :partial => "agent_collision_index" if feature?(:collision) %>
-  <%= render :partial => "auto_refresh_faye" if @is_auto_refresh_feature %>
+   <%= render :partial => "freshdesk_node", :locals => 
+  {:ticket => nil}  if current_account.features_included?(:collision)  || @is_auto_refresh_feature %>
+  <%= render :partial => "collision_index" if feature?(:agent_collision) && current_account.agents_from_cache.count > 1 %>
 <% end %>  
 
 <% content_for :layoutType do -%>ticket_list<%- end %>

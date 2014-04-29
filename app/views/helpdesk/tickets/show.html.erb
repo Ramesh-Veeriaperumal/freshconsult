@@ -38,8 +38,8 @@
 </div>
 
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
-<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
-<%= render :partial => "helpdesk/tickets/show/agent_collision_show.html.erb", :locals => { :ticket => @ticket } if feature?(:collision) %>
+<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) && current_account.agents_from_cache.count > 1%>
+<%= render :partial => "helpdesk/tickets/freshdesk_node.html.erb", :locals => {:ticket => @ticket } if current_account.features_included?(:collision)  && current_account.agents_from_cache.count > 1%>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');

@@ -3467,7 +3467,7 @@ Redactor.prototype = {
 	{
 		if ($('#redactor_file_link').val() !== '')
 		{
-			var data = '<img src="' + $('#redactor_file_link').val() + '" />';
+			var data= $('<img >').attr('src',$('#redactor_file_link').val()).get(0).outerHTML
 			this._imageSet(data, true);
 		}
 		else

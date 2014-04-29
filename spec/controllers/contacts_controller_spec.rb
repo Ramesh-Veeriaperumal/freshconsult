@@ -19,8 +19,8 @@ describe ContactsController do
 
   it "should create a new contact" do
     test_email = Faker::Internet.email
-    post :create, :user => { :email => test_email , :time_zone => "Chennai", :language => "en" }
-    @account.contacts.find_by_email(test_email).should be_an_instance_of(User)
+    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
+    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
   end
 
   it "should create a quick contact" do
@@ -39,7 +39,7 @@ describe ContactsController do
                                        :phone => "" }, 
                             :id => new_company.id
                             }
-    new_contact = @account.contacts.find_by_email(test_email)
+    new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
     new_contact.customer_id.should be_eql(new_company.id)
   end
@@ -57,13 +57,13 @@ describe ContactsController do
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone, 
                                                 :language => contact.language }
-    edited_contact = @account.contacts.find_by_email(test_email)
+    edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
   end
 
   it "should make a customer a full-time agent" do
-    @account.subscription.update_attributes(:agent_limit => 30)
+    @account.subscription.update_attributes(:agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
@@ -82,6 +82,13 @@ describe ContactsController do
     occasional_agent = @account.agents.find_by_user_id(occasional_customer.id)
     occasional_agent.should be_an_instance_of(Agent)
     occasional_agent.occasional.should be_true
+  end
+
+  it "should verify an email" do
+    @user2 = add_user_with_multiple_emails(@account, 4)
+    last_id = @user2.user_emails.last.id
+    post :verify_email, :email_id => last_id
+    response.body.should =~ /Activation mail sent/
   end
 
   it "should delete an existing contact" do

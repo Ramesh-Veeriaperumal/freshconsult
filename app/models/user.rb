@@ -50,6 +50,9 @@ class User < ActiveRecord::Base
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
     
   acts_as_authentic do |c|    
+    c.login_field(:email)
+    c.validate_login_field(false)
+    c.validate_email_field(false)
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
@@ -59,14 +62,25 @@ class User < ActiveRecord::Base
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
   end
   
-  validates_presence_of :email, :unless => :customer?
   validate :has_role?, :unless => :customer?
+  validate :user_email_count, :if => :email_required?, :on => :update
+  validate :email_validity, :if => :chk_email_validation?
+  validate :only_primary_email, :on => [:create], :unless => [:customer?, :no_multiple_user_emails]
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email
+  def email_validity
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_REGEX
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+  end
+
+  def only_primary_email
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.agent_email')) unless (self.user_emails.length == 1)
+  end
+
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
   
-  attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
+  attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, :user_emails_attributes, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
-                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids
+                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
   class << self # Class Methods
     #Search display
@@ -79,7 +93,7 @@ class User < ActiveRecord::Base
       begin
         paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
-             :order => order_by 
+             :order => order_by
       rescue Exception =>exp
         raise "Invalid fetch request for contacts"
       end
@@ -88,8 +102,8 @@ class User < ActiveRecord::Base
     def filter_condition(state, letter)
       case state
         when "verified", "unverified"
-          [ ' name like ? and deleted = ? and active = ? and email is not ? and deleted_at IS NULL and blocked = false ', 
-            "#{letter}%", false , state.eql?("verified"), nil ]
+          [ ' name like ? and deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
+            "#{letter}%", false , state.eql?("verified") ]
         when "deleted", "all"
           [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
             "#{letter}%", state.eql?("deleted")]
@@ -114,7 +128,7 @@ class User < ActiveRecord::Base
       options.delete_if { |key, value| value.blank? }
       
       #return self.find(options[:id]) if options.key?(:id)
-      return self.find_by_email(options[:email]) if options.key?(:email)
+      return UserEmail.user_for_email(options[:email]) if options.key?(:email)
       return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
       return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
       return self.find_by_phone(options[:phone]) if options.key?(:phone)
@@ -142,9 +156,13 @@ class User < ActiveRecord::Base
   end
 
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
+    (is_not_deleted?) and (no_multiple_user_emails) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
                           (mobile.blank? || !email.blank?)
+  end
+
+  def email_required?
+    is_not_deleted? and twitter_id.blank? and fb_profile_id.blank? and external_id.blank? and phone.blank? and mobile.blank?
   end
 
   def add_tag(tag)
@@ -152,8 +170,16 @@ class User < ActiveRecord::Base
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
   end
 
+  def email
+    self.actual_email || self[:email]
+  end
+
   def parent_id
-    string_uc02.to_i
+    string_uc04.to_i
+  end
+
+  def parent_id=(p_id)
+    self.string_uc04 = p_id.to_s
   end
 
   def update_tag_names(csv_tag_names)
@@ -193,12 +219,11 @@ class User < ActiveRecord::Base
 	end
 
 
-  def signup!(params , portal=nil)   
-    self.email = (params[:user][:email]).strip if params[:user][:email]
+  def signup!(params , portal=nil)
+    check_feature_and_modify(params) 
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
-    self.second_email = params[:user][:second_email]
     self.twitter_id = params[:user][:twitter_id]
     self.external_id = params[:user][:external_id]
     self.description = params[:user][:description]
@@ -210,11 +235,13 @@ class User < ActiveRecord::Base
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
+    self.email = params[:user][:email] if no_multiple_user_emails
     self.language = params[:user][:language]
     self.address = params[:user][:address]
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
-    self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
+    self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
+    self.deleted = true if (user_emails.present? && user_emails.first.email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
     if (!deleted and !email.blank?)
@@ -229,10 +256,49 @@ class User < ActiveRecord::Base
     true
   end
 
+  named_scope :matching_users_from, lambda { |search|
+    {
+      :select => %(users.id, name, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+        twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
+      :joins => %(left join user_emails on user_emails.user_id=users.id and 
+        user_emails.account_id = users.account_id and user_emails.email like '%<str>s') % { :str => "%#{search}%" },
+      :conditions => %((name like '%<str>s' or user_emails.email 
+        like '%<str>s' and deleted = 0)) % {
+        :str => "%#{search}%"      
+      },
+      
+      :group => "users.id",
+    }
+  }
+
+  named_scope :without, lambda { |source|
+    {
+      :conditions => "users.id <> %<us_id>i" % {
+        :us_id => source.id
+      }
+    }
+  }
+
   def signup(portal=nil)
+    feature_based_email unless no_multiple_user_emails
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal,false) if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
     true
+  end
+
+  def feature_based_email
+    self.user_emails.build({:email => self[:email], :primary_role => true}) if self[:email]
+    self[:email] = nil
+  end
+
+  def check_feature_and_modify(params)
+    if no_multiple_user_emails and params[:user][:user_emails_attributes]
+      params[:user][:email] = params[:user][:user_emails_attributes]["0"][:email]
+      params[:user].delete(:user_emails_attributes)
+    elsif !no_multiple_user_emails and params[:user][:email]
+      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email], :primary_role => true}}
+      params[:user].delete(:email)
+    end
   end
 
   def avatar_attributes=(av_attributes)
@@ -245,14 +311,16 @@ class User < ActiveRecord::Base
   end
   
   def has_email?
-    !email.blank?
+    !self.email.blank?
   end
+
   
   def activate!(params)
     self.active = true
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
+    self.user_emails.first.update_attributes({:verified => true});
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
@@ -321,6 +389,14 @@ class User < ActiveRecord::Base
     return "@#{twitter_id}" unless twitter_id.blank?
     name
   end
+
+  def search_data
+    if !no_multiple_user_emails and defined?(additional_email)
+      [additional_email.split(",").map{|x| {:id => id, :details => "#{name} <#{x}>", :value => name}}]
+    else
+      [{:id => id, :details => self.name_details, :value => name}]
+    end
+  end
   ##Authorization copy ends here
   
   def url_protocol
@@ -341,6 +417,10 @@ class User < ActiveRecord::Base
     
   def has_company?
     customer? && customer
+  end
+
+  def emails
+    user_emails.map(&:email)
   end
 
   def is_not_deleted?
@@ -375,6 +455,10 @@ class User < ActiveRecord::Base
   def group_ticket_permission
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
+
+  def assigned_ticket_permission
+    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
+  end
   
   def has_ticket_permission? ticket
     (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
@@ -395,7 +479,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+      super(:builder => xml,:root=>options[:root], :skip_instruct => true, :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
                                                               :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]) 
   end
@@ -423,6 +507,12 @@ class User < ActiveRecord::Base
   def badge_awarded_at(quest)
     achieved_quest(quest).updated_at
   end
+
+  def change_primary_email primary
+    self.user_emails.update_all(:primary_role => false)
+    self.user_emails.find(primary.to_i).toggle!(:primary_role) #toggle
+    return true
+  end
   
   def make_customer
     return true if customer?
@@ -441,6 +531,7 @@ class User < ActiveRecord::Base
       self.deleted = false
       self.helpdesk_agent = true
       self.role_ids = [account.roles.find_by_name("Agent").id] 
+      UserEmail.destroy self.user_emails.reject(&:primary_role?)
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       save
@@ -573,8 +664,28 @@ class User < ActiveRecord::Base
         ((@role_change_flag or new_record?) && self.roles.blank?)
     end
 
+    def user_email_count
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.user_emails")) unless
+        (user_emails.reject(&:marked_for_destruction?).count)
+    end
+
     def user_emails_migrated?
       # for user email delta
       self.account.user_emails_migrated?
     end
+
+    def no_multiple_user_emails
+      !self.account.features?(:multiple_user_emails) 
+    end
+
+    def self.find_by_user_emails(login)
+      if !Account.current.features?(:multiple_user_emails)
+        user = User.find_by_email(login)
+        user if user.present? and user.active? and !user.blocked?
+      else
+        user_email = UserEmail.find_by_email(login)
+        user_email.user if !user_email.nil? and user_email.verified? and !user_email.user.blocked?
+      end
+    end
+
 end

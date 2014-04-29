@@ -73,7 +73,10 @@ module EmailCommands
     if value && (value.casecmp("me") == 0)
       responder = user
     else
-      responder = ticket.account.users.find_by_email_or_name(value) 
+      responder = ticket.account.users.find_by_name(value)
+      if responder.nil?
+        responder = ticket.account.user_emails.user_for_email(value)
+      end
     end
     ticket.responder = responder if responder && responder.agent?
     ticket.responder = nil if value && (value.casecmp("none") == 0)

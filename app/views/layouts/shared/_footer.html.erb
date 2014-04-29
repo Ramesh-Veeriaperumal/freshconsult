@@ -7,7 +7,7 @@
 			  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>
 			<% end %>
 			<% if current_user %>
-				<%= link_to_function( t('footer.submit_feedback'), "FreshWidget.show()" ) %>
+				<%= link_to( t('footer.submit_feedback'), "#{AppConfig['support_url']}/support/tickets/new", :id => 'footer_feedback_widget' ) %>
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 			<% end %>
 			<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
@@ -15,7 +15,7 @@
 	</div>
 </div>
 <%= render :partial => 'shared/shortcuts_help_chart' %>
-<% if current_user && current_user.agent? && current_account.freshfone_enabled? %>
+<% if current_user && current_user.agent? && current_account.freshfone_active? %>
 	<script type="text/javascript" src="https://static.twilio.com/libs/twiliojs/1.1/twilio.min.js">
 	</script>
 	<%= render :partial => 'layouts/shared/freshfone' %>
@@ -32,5 +32,14 @@
 </style> 
 <script type="text/javascript">
 	FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+	
+	jQuery("body").on("click",'#footer_feedback_widget', function(ev){
+    	ev.preventDefault();
+    	if(window.widget_updated){
+    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+    	}
+    	window.widget_updated = false;
+    	FreshWidget.show();	
+    });  
 </script>
 <% end %>

@@ -129,6 +129,16 @@ class TopicsController < ApplicationController
       format.json  { head 200 }
     end
   end
+
+  def destroy_multiple
+    if params[:ids].present?
+      current_account.topics.find(params[:ids]).each do |item|
+        item.destroy
+      end
+      flash[:notice] = I18n.t('topic.bulk_delete')
+    end
+    redirect_to :back
+  end
   
    def update_stamp
     if  @topic.update_attributes(:stamp_type => params[:stamp_type])

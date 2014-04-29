@@ -16,7 +16,8 @@ class Account < ActiveRecord::Base
   has_many :email_configs, :conditions => { :active => true }
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
-  has_many :mailboxes
+  has_many :imap_mailboxes
+  has_many :smtp_mailboxes
   has_many :products, :order => "name"
   has_many :roles, :order => "default_role desc"
   has_many :portals, :dependent => :destroy
@@ -72,7 +73,7 @@ class Account < ActiveRecord::Base
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
-  has_many :email_users, :class_name => 'User', :conditions => ["email IS NOT null"], :order => :id #To be removed
+  has_many :user_emails, :class_name => 'UserEmail'
   
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   

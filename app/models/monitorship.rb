@@ -8,6 +8,7 @@ class Monitorship < ActiveRecord::Base
   validate :user_has_email
 
   named_scope :active_monitors, :conditions => { :active => true }
+  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   ALLOWED_TYPES = [:forum, :topic]
   ACTIONS = [:follow, :unfollow]

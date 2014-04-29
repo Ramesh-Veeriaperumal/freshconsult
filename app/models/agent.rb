@@ -11,6 +11,7 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   
   validates_presence_of :user_id
+  # validate :only_primary_email, :on => [:create, :update] moved to user.rb
   
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
   
@@ -59,6 +60,11 @@ class Agent < ActiveRecord::Base
     self.signature_html
   end
 
+  #for user_emails
+  # def only_primary_email
+  #   self.errors.add(:base, I18n.t('activerecord.errors.messages.agent_email')) unless (self.user.user_emails.length == 1)
+  # end
+
   # State => Fulltime, Occational or Deleted
   # 
   def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
@@ -93,6 +99,10 @@ class Agent < ActiveRecord::Base
 
   def group_ticket_permission
     ticket_permission == PERMISSION_KEYS_BY_TOKEN[:group_tickets]
+  end
+
+  def assigned_ticket_permission
+    ticket_permission == PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
   end
 
   def signature_value

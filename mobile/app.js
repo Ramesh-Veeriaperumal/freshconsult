@@ -118,10 +118,23 @@ Ext.application({
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
             //Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})
-        })
-        Ext.Ajax.addListener('requestcomplete',function(){
+        });
+        Ext.Ajax.addListener('requestcomplete',function(connObj, response, options){
             //Ext.Viewport.setMasked(false)
-        })
+            function redirectToLoginPage(){
+                window.location.href = window.location.origin + "/support/login";
+            }
+            try
+            {    
+                //Json parse not working without try catch. compression issues occur while executing sencha command.
+                if(JSON.parse(response.responseText)['require_login'])
+                {
+                   document.getElementsByClassName("x-container x-fullscreen x-layout-card-item")[0].style.display = "none";
+                   Ext.Msg.show({title:'Login Required', message:'Redirect to login page?', fn:redirectToLoginPage});
+                }
+            }
+            catch(e){}
+        });
         Ext.Ajax.addListener('requestexception',function(me,response){
             if(response.status == 302){
                 window.location = JSON.parse(response.responseText).Location;

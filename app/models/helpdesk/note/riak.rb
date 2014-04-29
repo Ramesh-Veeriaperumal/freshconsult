@@ -20,6 +20,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # fetching from riak
   def read_from_riak
+    Rails.logger.info "Riak note read #{self.account_id}/#{self.id}"
     data = Helpdesk::Riak::Note::Body.get_from_riak("#{self.account_id}/#{self.id}")
     riak_note_body = Helpdesk::NoteBody.new(data["note_body"])
     riak_note_body.new_record = false

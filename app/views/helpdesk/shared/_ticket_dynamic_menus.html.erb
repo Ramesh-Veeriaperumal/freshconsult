@@ -3,7 +3,7 @@
     statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
   	statuses.each do |status|
 	%>
-		<a data-value="<%= status.first %>" class="action_assign" data-assign-action="status" tabindex = '99'><%=status.second%></a>
+		<a data-value="<%= status.first %>" class="action_assign" data-assign-action="status" tabindex = '99'><%=status.second.html_safe%></a>
 		<%
 	end
 	%>

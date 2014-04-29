@@ -33,11 +33,33 @@
           jQuery("#div_reply_email").text(reply_email);
           jQuery("#hidden_reply_to").val(reply_email);
           jQuery("input[rel=username]").val(this.value);
-          jQuery("#hidden_imap_user_name").val(this.value);
+          jQuery("#email_config_smtp_mailbox_attributes_user_name").trigger("change");
       })        
+
+      if("<%= @smtp_mailbox.new_record? %>") jQuery("#reply_to_id").trigger("change");
+
+      jQuery("#email_config_smtp_mailbox_attributes_user_name")
+        .bind("change keyup",
+          function(ev){
+            jQuery("#email_config_smtp_mailbox_attributes_domain").val(this.value.split('@')[1]);
+        })
+        .trigger("change")
+        .blur(function(){ requireDomain(); });
   });
 
   mailbox_form = jQuery('<%= mailbox_form_id %>');
+  
+  mailbox_form.bind('submit', function(){
+    if(jQuery("#DisableMailbox").is(':checked')) {
+      var input = jQuery("<input>")
+                     .attr("type", "hidden")
+                     .attr("name", "email_config[imap_mailbox_attributes][_destroy]").val("1");
+      mailbox_form.append(jQuery(input));
+    }
+
+    requireDomain();
+  });
+
   mailbox_form.validate({
     submitHandler: function(form){
       if (jQuery("#EnableMailbox").is(':checked')){
@@ -57,6 +79,9 @@
           success: function(data){
             if(data.success){
               mailbox_form.find("input[type=submit]").val("<%= t('saving_draft') %>");
+              if(jQuery("#EnableOutgoing").is(':checked')) {
+                mailbox_form.find("#incoming_mailbox_settings").remove();
+              }
               form.submit();
             }
             else{
@@ -88,4 +113,18 @@
         }
     });
 	});
+
+  jQuery("input[name*='email_config[imap_mailbox_attributes][_destroy]']").on("change", function(){
+    jQuery("#email_system").trigger("change");
+    jQuery("#incoming_mailbox_settings").slideToggle(500);
+    jQuery("#email_config_imap_mailbox_attributes_server_name, #email_config_imap_mailbox_attributes_port, #email_config_imap_mailbox_attributes_password").attr('disabled', jQuery("#EnableOutgoing").is(':checked'));
+  });
+
+  function requireDomain(){
+    smtp_domain = jQuery("#email_config_smtp_mailbox_attributes_domain");
+    if(smtp_domain.val() == "") {
+      smtp_domain.addClass("required");
+      smtp_domain.parent().parent().slideDown(300);
+    }
+  }
 <% end %>

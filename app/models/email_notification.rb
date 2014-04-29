@@ -63,7 +63,9 @@ class EmailNotification < ActiveRecord::Base
                            TICKET_RESOLVED =>{:requester_notification => false},
                            # TICKET_REOPENED =>{:agent_notification => false},
                            REPLIED_BY_REQUESTER =>{:agent_notification =>false},
-                           USER_ACTIVATION => {:requester_notification => false} }
+                           USER_ACTIVATION => {:requester_notification => false},
+                           ADDITIONAL_EMAIL_VERIFICATION => {:requester_notification => false}
+                         }
                           
 
   # Admin settings for email notifications
@@ -88,7 +90,8 @@ class EmailNotification < ActiveRecord::Base
     [:resolution_time_sla,    RESOLUTION_TIME_SLA_VIOLATION,  VISIBILITY[:AGENT_ONLY]            ],
     [:agent_solves_tkt,       TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]        ],
     [:agent_closes_tkt,       TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]        ],
-    [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ]
+    [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ],
+    [:additional_email_verification, ADDITIONAL_EMAIL_VERIFICATION, VISIBILITY[:REQUESTER_ONLY]  ]
   ]
   
   # List of notfications to agents which cannot be turned off

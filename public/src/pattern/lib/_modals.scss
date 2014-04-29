@@ -13,6 +13,7 @@
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
   .tooltip       {  z-index: $zindexTooltip  + $zindexModal; }
+  .twipsy        {  z-index: $zindexTooltip  + $zindexModal; }
 }
 
 @-webkit-keyframes modalAnimation {

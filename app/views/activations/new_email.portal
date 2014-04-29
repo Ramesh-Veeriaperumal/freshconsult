@@ -1,0 +1,5 @@
+<section id="password-reset-container" class="content-form rounded-6 main">
+	<h3 class="heading">{% translate activate_account %} 
+	<h2 class="lead">{{ user.email }}</h2>
+	{% snippet activation_form %}
+</section>

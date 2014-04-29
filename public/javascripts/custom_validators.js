@@ -250,4 +250,20 @@ $.validator.addClassRules("required_redactor", { required_redactor : true });
   }, "Please enter a valid hex color value.")
   $.validator.addClassRules("color_field", { color_field : true });
 
+// validator to verify the size of an upload
+$.validator.addMethod("zendesk_size_validity", function(value,element){
+  var is_valid = true;
+  if (!!window.FileReader){
+    var newfile = jQuery(element)[0].files;
+
+    if(newfile.length){
+      is_valid = (newfile[0].size)/(1024*1024) <= 50;
+    }
+  }
+  jQuery("#file_size_limit").toggle(!is_valid);
+  return is_valid;
+},jQuery.format(''));
+
+$.validator.addClassRules("zendesk_size_validity", { zendesk_size_validity: true });
+
 })(jQuery);

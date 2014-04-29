@@ -44,6 +44,7 @@ class Reports::GroupGlanceReportsController < ApplicationController
     @data_obj = helpdesk_activity_query conditions
     @prev_data_obj = helpdesk_activity_query(conditions, true)
     @helptext_for = "group"
+    cache_report_filter_params(@helptext_for)
     render :partial => "/reports/helpdesk_glance_reports/glance_report_metric"
   end
   def fetch_activity_ajax

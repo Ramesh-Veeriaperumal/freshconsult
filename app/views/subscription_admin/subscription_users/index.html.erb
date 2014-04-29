@@ -1,0 +1,51 @@
+<h3>Admin Users</h3>
+<table id="admin_users" class="table">
+	<tr>
+		<th>Name</th>
+		<th>Email</th>
+		<th>Role</th>
+		<th>Manage</th>
+	</tr>
+	<% @admin_user.each do |admin| %>
+		<tr>
+			<td>
+				<%= admin.name %>
+			</td>
+			<td>
+				<%= admin.email %>
+			</td>
+			<td>
+				<%= admin.human_role_name %>
+			</td>
+			<td>
+            <%= link_to_function admin.active? ? "Deactivate" : "Activate", "updateUser(#{admin.id}, #{admin.active?})",
+             'data-url' => "/subscription_users/#{admin.id}.json", :id => "admin_#{admin.id}" %>
+			</td>
+		</tr>
+	<% end %>
+</table>
+
+<script type="text/javascript">
+	function updateUser(user_id,active){
+		console.log(user_id);
+		var currentElement = jQuery('#admin_'+user_id);
+		var currentUrl = currentElement.data('url');
+		currentElement.text('Loading...');
+		jQuery.ajax({
+			url: currentUrl,
+			type: "put",
+			success: function(data){
+				console.log(data['active']);
+				if(data['active']) {
+					currentElement.text('Deactivate');
+				}else {
+					currentElement.text('Activate');
+				}
+			},
+			dataType: 'json'
+		})
+
+	} 
+</script>
+
+

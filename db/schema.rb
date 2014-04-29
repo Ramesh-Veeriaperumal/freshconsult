@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140407061919) do
+ActiveRecord::Schema.define(:version => 20140426145046) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -118,6 +118,20 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
 
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
+
+  create_table "admin_users", :force => true do |t|
+    t.string   "name"
+    t.string   "password_salt"
+    t.string   "crypted_password"
+    t.string   "email"
+    t.string   "perishable_token"
+    t.string   "persistence_token"
+    t.integer  "role"
+    t.boolean  "active"
+    t.datetime "last_request_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "affiliate_discount_mappings", :id => false, :force => true do |t|
     t.integer "subscription_affiliate_id", :limit => 8
@@ -282,10 +296,17 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
-    t.boolean  "status"
+    t.integer  "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "source",                  :default => 1
+    t.integer  "user_id",    :limit => 8
+    t.string   "token"
+    t.text     "last_error"
   end
+
+  add_index "data_exports", ["account_id", "source", "token"], :name => "index_data_exports_on_account_id_source_and_token"
+  add_index "data_exports", ["account_id", "user_id", "source"], :name => "index_data_exports_on_account_id_user_id_and_source"
 
   create_table "day_pass_configs", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -790,6 +811,22 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   end
 
   add_index "freshfone_payments", ["account_id"], :name => "index_freshfone_payments_on_account_id"
+
+  create_table "freshfone_usage_triggers", :force => true do |t|
+    t.integer  "account_id",           :limit => 8
+    t.integer  "freshfone_account_id", :limit => 8
+    t.integer  "trigger_type"
+    t.string   "sid",                  :limit => 50
+    t.integer  "start_value"
+    t.integer  "trigger_value"
+    t.integer  "fired_value"
+    t.string   "idempotency_token",    :limit => 100
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_usage_triggers", ["account_id", "created_at", "trigger_type"], :name => "index_ff_usage_triggers_account_created_at_type"
+  add_index "freshfone_usage_triggers", ["account_id", "sid"], :name => "index_freshfone_usage_triggers_on_account_id_and_sid"
 
   create_table "freshfone_users", :force => true do |t|
     t.integer  "account_id",          :limit => 8,                    :null => false
@@ -1345,6 +1382,25 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
   add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
 
+  create_table "imap_mailboxes", :force => true do |t|
+    t.integer  "email_config_id",    :limit => 8
+    t.integer  "account_id",         :limit => 8
+    t.string   "server_name"
+    t.string   "user_name"
+    t.text     "password"
+    t.integer  "port"
+    t.string   "authentication"
+    t.boolean  "use_ssl"
+    t.string   "folder"
+    t.boolean  "delete_from_server"
+    t.boolean  "enabled",                         :default => true
+    t.integer  "timeout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "imap_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
+
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id", :limit => 8
     t.integer  "account_id",     :limit => 8
@@ -1373,32 +1429,6 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
-
-  create_table "mailboxes", :force => true do |t|
-    t.integer  "email_config_id",         :limit => 8
-    t.integer  "account_id",              :limit => 8
-    t.string   "imap_server_name"
-    t.string   "imap_user_name"
-    t.text     "imap_password"
-    t.integer  "imap_port"
-    t.string   "imap_authentication"
-    t.boolean  "imap_use_ssl"
-    t.string   "imap_folder"
-    t.boolean  "imap_delete_from_server"
-    t.string   "smtp_server_name"
-    t.string   "smtp_user_name"
-    t.text     "smtp_password"
-    t.integer  "smtp_port"
-    t.string   "smtp_authentication"
-    t.boolean  "smtp_use_ssl"
-    t.boolean  "imap_enabled",                         :default => true
-    t.boolean  "smtp_enabled",                         :default => true
-    t.integer  "imap_timeout"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -1607,6 +1637,23 @@ ActiveRecord::Schema.define(:version => 20140407061919) do
   end
 
   add_index "sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
+
+  create_table "smtp_mailboxes", :force => true do |t|
+    t.integer  "email_config_id", :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.string   "server_name"
+    t.string   "user_name"
+    t.text     "password"
+    t.integer  "port"
+    t.string   "authentication"
+    t.boolean  "use_ssl"
+    t.boolean  "enabled",                      :default => true
+    t.string   "domain"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "smtp_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",            :limit => 8

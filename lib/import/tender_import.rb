@@ -118,7 +118,7 @@ end
 
 def get_requester ticket
  email = ticket[:author_email]
- user = @current_account.all_users.find_by_email(email) 
+ user = @current_account.user_emails.user_for_email(email) 
  if user.blank?
     usr_role = 3
     user_params = {:user => {:name =>  ticket[:author_name], :email => email , :job_title => "" , :user_role => usr_role ,:time_zone =>@current_account.time_zone }}

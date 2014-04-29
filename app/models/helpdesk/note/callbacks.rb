@@ -4,7 +4,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :increment_notes_counter, :push_mobile_notification
+  after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification
 
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_create :subscribe_event_create, :if => :api_webhook_note_check  
@@ -42,7 +42,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if email_conversation?
         if schema_less_note.to_emails.blank?
-          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.to_emails = notable.from_email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
@@ -60,6 +60,7 @@ class Helpdesk::Note < ActiveRecord::Base
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
       end
       
       # note_body.update_attribute(:body_html,self.note_body.body_html)
@@ -162,7 +163,6 @@ class Helpdesk::Note < ActiveRecord::Base
 	def push_mobile_notification
     	message = { :ticket_id => notable.display_id,
                   :status_name => notable.status_name,
-                  :ticket_sla_status => notable.ticket_sla_status,
                   :subject => truncate(notable.subject, :length => 100),
                   :priority => notable.priority }
 		  send_mobile_notification(:response,message)

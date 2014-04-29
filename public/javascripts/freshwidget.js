@@ -290,6 +290,7 @@
 	 	extend(params);
 		destroyButton();
 		destroyContainer();
+		$widget_attr.iframeLoaded = false;
 		createButton();
 		createContainer();
 	 }

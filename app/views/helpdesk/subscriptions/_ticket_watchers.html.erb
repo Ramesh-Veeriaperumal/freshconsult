@@ -153,6 +153,7 @@
   function add_watcher(){
 
     var ticket_id = <%= @ticket.display_id %>;
+    var currentUserID = jQuery('#watcher_toggle').data('currentuserid');
     var user_id = jQuery(".watcher_input").select2('data').last().id;
     jQuery.ajax({   
           type: 'POST',
@@ -167,7 +168,7 @@
                     update_watcher_count();
                     },
           success: function(){
-                      jQuery('#watcher_toggle').data('watching', true);
+                      if(user_id == currentUserID) jQuery('#watcher_toggle').data('watching', true);
                       trigger_event("watcher_added",{});
                     }
     });

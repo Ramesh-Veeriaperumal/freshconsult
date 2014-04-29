@@ -467,7 +467,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     def find_user_by_email(email)
-      self.account.all_users.find_by_email(email, :include=>[:tags, :google_contacts]) unless email.blank?
+      self.account.user_emails.user_for_email(email) unless email.blank?
     end
 
     def find_user_by_google_id(google_id)

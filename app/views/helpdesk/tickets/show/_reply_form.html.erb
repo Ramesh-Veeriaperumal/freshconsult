@@ -24,7 +24,7 @@
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>" rel="emitter" data-node-name="agent_replying">
   
-  <div class="form_title"><%= t('.title') %>: <span><%= @ticket.requester.email %></span> </div>
+  <div class="form_title"><%= t('.title') %>: <span><%= @ticket.from_email %></span> </div>
   <div class="list_agents_replying" class="hide"></div>
   <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
@@ -132,7 +132,7 @@
       <%= f.hidden_field :private , :value => false %>
       <!--reply source will be always email-->
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
-      <%= f.hidden_field :to_emails , :value =>  @ticket.requester.email %>
+      <%= f.hidden_field :to_emails , :value =>  @ticket.from_email %>
       <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
       <%= f.hidden_field :email_config_id, :value => @selected_email_config_id %>
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
@@ -203,13 +203,13 @@
             <%= t('ticket.reply_form.send') %>
           
           <% if privilege?(:edit_ticket_properties) %>
-            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+            <button id="reply_dialog" class="btn btn-primary dropdown-toggle dialog-btn" data-toggle="dropdown" href="#">
               <span class="caret"></span>
             </button>
           <% end %>
           </button>
           <% if privilege?(:edit_ticket_properties) %>
-          <ul class="dropdown-menu custom_statuses pull-right">
+          <ul id="conversation_reply" data-menu-hover-in='li' data-menu-trigger="a" class="menuselector dropdown-menu custom_statuses pull-right">
             <%
             ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
             %>

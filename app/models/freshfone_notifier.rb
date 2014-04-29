@@ -72,4 +72,14 @@ class FreshfoneNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "text/html"
   end
+
+  def ops_alert(account, notification, message)
+    subject       "Alert #{notification} for account #{account.id}"
+    recipients    FreshfoneConfig['ops_alert']['mail']['to']
+    from          FreshfoneConfig['ops_alert']['mail']['from']
+    body          :account => account, :message => message
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+
 end

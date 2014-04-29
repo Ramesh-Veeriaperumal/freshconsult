@@ -188,5 +188,12 @@ module Reports
       :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report'    
     }
 
+    REPORTS_GLANCE_TICKET_VIEW = {
+      :helpdesk  => [:helpdesk_received, :helpdesk_resolved],
+      :group     => [:group_received, :group_resolved],
+      :agent     => [:agent_received, :agent_resolved],
+      :customer  => [:customer_received, :customer_resolved]
+    }
+
 	end
 end

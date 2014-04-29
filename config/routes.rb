@@ -28,12 +28,16 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+    contacts.resources :contact_merge, :collection => { :search => :get }
+  end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
 
   map.resources :groups
 
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
+    profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
+  end
 
   map.resources :agents, :member => { :delete_avatar => :delete ,
                                       :toggle_shortcuts => :put,
@@ -84,6 +88,8 @@
     freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
     freshfone.resources :autocomplete, :collection => { :requester_search => :get }
+    freshfone.resources :usage_triggers, :collection => { :notify => :post }
+    freshfone.resources :ops_notification, :member => { :voice_notification => :post }
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
@@ -95,6 +101,7 @@
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
+  map.register_new_email 'register_new_email/:activation_code', :controller => 'activations', :action => 'new_email'
   map.activate '/activate/:perishable_token', :controller => 'activations', :action => 'create'
   map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
@@ -276,6 +283,9 @@
       admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
       admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
       admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
+      admin.subscription_logout 'admin_sessions/logout', :controller => :admin_sessions , :action => :destroy
+      admin.subscription_login 'admin_sessions/login', :controller => :admin_sessions , :action => :new
+      admin.resources :subscription_users, :as => 'subscription_users', :member => { :update => :post, :edit => :get, :show => :get }, :collection => {:reset_password => :get }
     end
   end
 
@@ -415,6 +425,7 @@
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
     helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
+    helpdesk.reports_filter        '/tickets/filter/reports/:report_type', :controller => 'tickets', :action => 'index'
 
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
@@ -465,7 +476,7 @@
   map.resources :topics, :posts, :monitorship
 
   map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete }, :member => {:approve => :put, :mark_as_spam => :put }
+    discussions.resources :moderation, :collection => { :empty_folder => :delete, :spam_multiple => :put }, :member => {:approve => :put, :mark_as_spam => :put }
   end
 
   %w(forum).each do |attr|
@@ -474,7 +485,7 @@
 
   map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
   forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
-    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }, :collection => { :destroy_multiple => :delete }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put }
       topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer

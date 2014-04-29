@@ -20,9 +20,11 @@ FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
 IntegrationTest = ["spec/controllers/agents_controller_spec.rb", 
                     "spec/controllers/contacts_controller_spec.rb", 
+                    "spec/controllers/contact_merge_controller_spec.rb",
+                    "spec/controllers/user_emails_controller_spec.rb",
                     "spec/controllers/customers_controller_spec.rb", 
                     "spec/controllers/ticket_fields_controller_spec.rb",
-                    "spec/controllers/forum/*_spec.rb",
+                    "spec/controllers/discussions/*_spec.rb",
                     "spec/controllers/helpdesk/*_spec.rb",
                     "spec/controllers/support/*_spec.rb",
                     "spec/controllers/negative/*_spec.rb",

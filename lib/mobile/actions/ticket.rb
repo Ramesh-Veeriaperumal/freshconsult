@@ -73,7 +73,8 @@ module Mobile::Actions::Ticket
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
                     :source_name, :is_closed, :to_emails, :to_cc_emails,:conversation_count, 
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook,
-                    :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , :ticket_notes],
+                    :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , 
+                    :ticket_notes, :ticket_sla_status],
       :include => json_inlcude
     }
     to_json(options,false) 

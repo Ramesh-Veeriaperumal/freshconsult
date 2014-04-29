@@ -38,7 +38,7 @@ module AccountHelper
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
-      :user_email => Helpdesk::EMAIL[:sample_email],
+      :user_user_emails_attributes => {"0" => {:email => Helpdesk::EMAIL[:sample_email], :primary_role => true}},
       :user_helpdesk_agent => true
     )
     signup.save

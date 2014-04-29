@@ -50,7 +50,7 @@
 								</td>
 									<td class="text-right">
 										<% if (item.outdated_agent_content == true ) %>
-											<i class="common-icons-outdated"></i>
+											<i class="common-icon-outdated"></i>
 											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
 									<%end%>	
 									</td>
@@ -65,6 +65,7 @@
 			<div class="tab-pane hide" id="requester"> 
 				<table class="table table-striped">
 					<% @user_notifications.each do |item| %>
+					<% unless !current_account.features?(:multiple_user_emails) and item.notification_type == 17 %>
 							<tr>
 								<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(item.can_turn_off_for_requester?) %>>
 									<% if !(item.can_turn_off_for_requester?) %>
@@ -83,7 +84,7 @@
 
 									<td class="text-right">
 										<% if (item.outdated_requester_content == true ) %>
-											<i class="common-icons-outdated"></i>
+											<i class="common-icon-outdated"></i>
 											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
 										<%end%>	
 									</td>
@@ -92,6 +93,7 @@
 									<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"requester_template"), :class => 'btn btn-mini' ) %>
 								</td>
 							</tr>
+						<% end %>
 					<%end%>
 				</table>
 			</div>
@@ -111,7 +113,7 @@
 							</td>
 								<td class="text-right">
 									<% if (item.outdated_requester_content == true ) %>
-										<i class="common-icons-outdated"></i>
+										<i class="common-icon-outdated"></i>
 										<span class="muted"><%=t('email_notifications.index_outdated')%></span>
 									<%end%>	
 								</td>
