@@ -410,8 +410,6 @@ class AccountsController < ApplicationController
 
     def build_signup_param
       params[:signup] = {}
-      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email]}}
-      params[:user].delete(:email)
       
       [:user, :account].each do |param|
         params[param].each do |key, value|

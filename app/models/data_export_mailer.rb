@@ -13,7 +13,7 @@ class DataExportMailer < ActionMailer::Base
 
   def ticket_export(options={})
     subject       formatted_export_subject(options)
-    recipients    options[:user][:email]
+    recipients    options[:user].email
     body          :user => options[:user], :url => options[:url]
     from          "support@freshdesk.com"
     #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
