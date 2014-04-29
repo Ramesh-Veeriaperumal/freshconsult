@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :facebook_realtime, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
     
@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :facebook_realtime, :forums, :surveys , :scoreboard, :timesheets, 
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
         :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :facebook_realtime, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -73,7 +73,8 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :whitelisted_ips => false, :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => true,
-    :mailbox => false, :chat_enable => true, :collision => false, :multiple_user_emails => false  }
+    :mailbox => false, :chat_enable => true, :collision => false, :multiple_user_emails => false,
+    :facebook_realtime => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
