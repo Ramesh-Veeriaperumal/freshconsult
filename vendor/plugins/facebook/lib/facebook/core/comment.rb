@@ -15,7 +15,7 @@ class Facebook::Core::Comment
     if @comment_id
       post_id = feed.page_id + "_" + feed.parent_id
       post = @account.facebook_posts.find_by_post_id(post_id)
-      return add_as_post_and_note(post_id,feed) if post.blank?
+      return add_as_post_and_note(post_id) if post.blank?
       add_as_note(post.postable)
     end
   end
@@ -83,13 +83,8 @@ class Facebook::Core::Comment
 
   private
 
-    def add_as_post_and_note(post_id,feed)
-      # one more hack nothing can be done facebook bug
-      begin
-        @koala_post.fetch(post_id)
-      rescue Exception => e
-        @koala_post.fetch(feed.parent_id,feed.page_id)
-      end
+    def add_as_post_and_note(post_id)
+      @koala_post.fetch(post_id)
       if @koala_post.create_ticket
         Facebook::Core::Post.new(@fan_page).add_as_ticket(@koala_post)
         post = @account.facebook_posts.find_by_post_id(post_id)
