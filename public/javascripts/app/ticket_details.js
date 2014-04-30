@@ -698,7 +698,10 @@ var scrollToError = function(){
 		ev.preventDefault();
 		var btn = $(this);
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
-			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])) return false; 
+			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
+				window.AgentCollisionShow.reply_event();
+				return false; 
+			} 
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
