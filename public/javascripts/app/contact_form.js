@@ -4,7 +4,7 @@ function ContactFormInitializer(confirm_text, tags_options) {
   jQuery("#contact_customer").autocomplete({
       source: function(request, response) {
           jQuery.ajax({
-              url: "<%=autocomplete_contacts_path%>",
+              url: "/contacts/autocomplete",
               data: {
                   v: request.term
               },
