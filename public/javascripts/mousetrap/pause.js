@@ -14,7 +14,6 @@ Mousetrap = (function(Mousetrap) {
             isCancel = (combo === Shortcuts.global.cancel)
 
         if (!enabled && !isHelp && !isCancel ) {
-            _preventDefault(e);
             return true;
         }
 

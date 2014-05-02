@@ -39,9 +39,6 @@
 	    	// Checking if the up : 38 / down : 40 key is pressed
 	   		if (!/(38|40|13)/.test(ev.keyCode)) return
 
-	   		ev.preventDefault()
-			ev.stopPropagation()	
-
 			var currentIndex = this.currentIndex,
 				activeClass  = this.options.activeClass 
 
@@ -51,8 +48,14 @@
 
 			$(this.selectElement).eq(currentIndex).removeClass(activeClass);
 
-			if (ev.keyCode == 38 && currentIndex > 0) currentIndex--
-	  		if (ev.keyCode == 40 && currentIndex < this.totalItems - 1) currentIndex++
+			if (ev.keyCode == 38 && currentIndex > 0) { 
+				this.stopBubbling(ev);
+				currentIndex-- ;
+			} 
+	  		if (ev.keyCode == 40 && currentIndex < this.totalItems - 1) { 
+	  			this.stopBubbling(ev);
+	  			currentIndex++ ;
+	  		}
 
 	  		this.currentElement = $(this.selectElement).eq(currentIndex).addClass(activeClass);	  		
 	 		this.scrollElement();
@@ -75,6 +78,10 @@
 			//Callback function for triggered event
 			this.options.menuCallback.call(this);
 	    },  
+	    stopBubbling: function(ev){
+	    	ev.preventDefault(); 
+			ev.stopPropagation();
+	    },
 	    scrollElement: function(){
 			var ele 		 = this.options.scrollInDocument ? document : this.element,
 				current_el	 = this.currentElement,
@@ -97,6 +104,12 @@
 	    destroy: function(){
 	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
 	    	$(this.element).off(".menuSelector").removeData("menuSelector");
+	    	this.off();
+	    },
+	    unpause: function(){
+	    	$(document).on("keydown.menuSelector", $.proxy(this.keydown, this));
+	    },
+	    pause: function(){
 	    	$(document).off("keydown.menuSelector");
 	    }
 	}
