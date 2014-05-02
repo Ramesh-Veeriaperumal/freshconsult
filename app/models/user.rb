@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_REGEX
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present?  and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
   end
 
   def only_primary_email
@@ -320,7 +320,7 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true});
+    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
