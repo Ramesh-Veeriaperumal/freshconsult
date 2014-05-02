@@ -63,6 +63,11 @@
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
   }
 
+  function toggle_save_and_refresh() {
+    jQuery("#active_filter").addClass('unsaved');
+    refresh_tickets();
+  }
+
   function showSave() {
     jQuery('.view_filters').addClass('disable-hover');
     jQuery("#save_as_filter,#cancel_filter,#save_filter,.unsaved_star").switchClass('hide','vertical-alignment');
