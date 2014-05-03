@@ -359,6 +359,7 @@
         var common_variables = {
             faye_auth_params: null,
             agent_names: null,
+            faye_server: '',
             current_user_id: '',
             current_user: '',
             auto_refresh_data: null,
@@ -423,6 +424,15 @@
         var setEvents = function () {
             if($.browser.mozilla){
                 $(window).unload(function(event){
+                     $.ajax({
+                      url: window.FreshdeskNode.getValue('faye_server'),
+                      async: 'false',
+                      type: "POST",
+                      data: {'channels' : window.FreshdeskNode.getValue('faye_realtime').faye_channels , 'clientId' : window.FreshdeskNode.getValue('faye_realtime').fayeClient._clientId}
+                    })
+                      .done(function( data ) {
+                        // console.log('I am in the ajax');
+                      });
                     if (window.FreshdeskNode.getValue('faye_realtime').fayeClient) {
                         for (var i = 0; i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions; i++) {
                             window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
@@ -451,6 +461,7 @@
             common_variables.current_user_id = opts.current_user_id;
             common_variables.current_user = opts.current_user;
             common_variables.agent_names = opts.agent_names;
+            common_variables.faye_server = opts.faye_server;
             if (opts.auto_refresh) {
                 addClient(window.AutoRefreshIndex);
                 common_variables.auto_refresh_data = opts.auto_refresh

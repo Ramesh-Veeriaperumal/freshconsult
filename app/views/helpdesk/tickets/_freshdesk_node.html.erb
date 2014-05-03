@@ -30,6 +30,7 @@
         retry: 10,
         timeout: 120
       },
+      faye_server : "<%= faye_server %>",
       faye_auth_params : <%= faye_auth_params %>,
       current_user : "<%= escape_javascript(current_user.name) %>", 
       agent_names : <%= raw current_account.agent_names_from_cache.to_json %>
