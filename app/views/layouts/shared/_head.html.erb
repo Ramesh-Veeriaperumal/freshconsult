@@ -57,7 +57,6 @@
 	<% if current_account.features?(:freshfone) ||
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
-		<%= include_cloudfront_js :'360player' %>
 		<%= include_cloudfront_css :icomoon %>
 	<% end %>
 

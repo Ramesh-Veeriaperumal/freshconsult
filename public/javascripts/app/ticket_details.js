@@ -322,20 +322,13 @@ var updatePagination = function() {
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			trigger_event("ticket_show_more",{})
-			freshfoneAudioDomSetting();
+			try {
+			freshfonePlayerSettings();
+		} catch (e) { console.log("freshfonePlayerSettings not loaded");}
 		});
 	});
 }
 
-var freshfoneAudioDomSetting = function (){
-	  if(threeSixtyPlayer){
-			threeSixtyPlayer.init();	  	
-	  }
-			$('.call_duration').each(function () {
-				if ($(this).data("time") === undefined) { return; }
-					$(this).html($(this).data("time").toTime());
-			});
-}
 $('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
 		ev.preventDefault();
 		window.location.reload(true);

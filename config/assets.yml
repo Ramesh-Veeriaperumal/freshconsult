@@ -329,6 +329,7 @@ javascripts:
     - public/javascripts/soundmanager2/berniecode-animator.js
     - public/javascripts/soundmanager2/360player.js
     - public/javascripts/freshfone/soundmanager_config.js
+    - public/javascripts/freshfone/freshfone_player.js
 
   portal_head:
     - public/javascripts/prototype.js

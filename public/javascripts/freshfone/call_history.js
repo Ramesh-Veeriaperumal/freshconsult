@@ -12,13 +12,6 @@ var setLocationIfUnknown,
 		$filterContainer = $freshfoneCallHistory.find(".ff_item"),
 		$currentNumber = $filterSortForm.find("input[name=number_id]");
 	
-	setCallDuration = function () {
-		$(".call_duration").each(function () {
-			if ($(this).data("time") === undefined) { return; }
-			$(this).html($(this).data("time").toTime());
-		});
-	};
-	
 	setLocationIfUnknown = function () {
 		$(".location_unknown").each(function () {
 			var country = countryForE164Number("+" + $(this).data('number'));
@@ -190,9 +183,7 @@ var setLocationIfUnknown,
 
 
 	$(document).ready(function () {
-		setCallDuration();
 		setLocationIfUnknown();
-		threeSixtyPlayer.init();
 		setFilterData();
 	});
 
