@@ -357,7 +357,6 @@ javascripts:
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/portal/jail.js
     - public/javascripts/moment/*
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal_custom_validators.js
