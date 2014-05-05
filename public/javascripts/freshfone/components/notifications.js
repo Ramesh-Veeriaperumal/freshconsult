@@ -167,7 +167,7 @@ var FreshfoneNotification;
 																callerName : freshfoneConnection.callerName,
 																callerId : freshfoneConnection.callerId });
 			this.freshfonecalls.disableCallButton();
-
+			this.freshfonecalls.transfered = false;
 			this.setOngoingStatusAvatar($(freshfoneConnection.avatar));
 		},
 

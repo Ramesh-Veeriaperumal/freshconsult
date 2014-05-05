@@ -13,7 +13,7 @@ class Freshfone::CallFlow
 	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :block_incoming_call,
           :initiate_recording, :initiate_voicemail, :initiate_outgoing, :connect_caller_to_numbers,
-          :return_non_availability, :return_non_business_hour_call, :to => :call_initiator
+          :return_non_availability, :return_non_business_hour_call, :make_transfer_to_agent, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
            :register_direct_dial, :to => :call_actions
 
@@ -67,11 +67,12 @@ class Freshfone::CallFlow
     Freshfone::IvrMethods.trigger_ivr_flow(params, current_account, current_number, self)
   end
   
-  def transfer(agent, outgoing=false)
+  def transfer(agent, current_user_id, outgoing = false)
     self.outgoing_transfer = outgoing
     self.transfered = true
-    register_call_transfer(outgoing_transfer)
-    call_user_with_id(params[:id], agent.freshfone_user)
+    params.merge!({:source_agent => current_user_id, :outgoing => self.outgoing_transfer})
+    find_user_with_id(params[:id], agent.freshfone_user)
+    make_transfer_to_agent(params[:id])
   end
   
   def dequeue(agent)

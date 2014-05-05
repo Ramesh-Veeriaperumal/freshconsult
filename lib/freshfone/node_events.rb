@@ -44,6 +44,11 @@ module Freshfone::NodeEvents
     notify_socket(capability_token_channel, token_message(token))
   end
 
+  def publish_success_of_call_transfer(user, success = true)
+    @user = user
+    notify_socket(call_transfer_success_channel, success_transfer_message(success))
+  end
+
   def check_user_offline(user)
     (user.freshfone_user_offline?) ? publish_offline : publish_busy
   end
@@ -105,6 +110,13 @@ module Freshfone::NodeEvents
         :calls => integ_set_members(live_calls_key).count }
     end
 
+    def success_transfer_message(success)
+      {
+        :agent_id => @user.id,
+        :success => success
+      }
+    end
+
     def agent_availability_key
       AGENT_AVAILABILITY % { :account_id => @user.account_id }
     end
@@ -131,6 +143,10 @@ module Freshfone::NodeEvents
     
     def credits_channel(status)
       "#{@account.id}/credits/#{status}"
+    end
+
+    def call_transfer_success_channel 
+      "#{@user.account_id}/calltransfer/#{@user.id}"
     end
 
     def freshfone_node_session

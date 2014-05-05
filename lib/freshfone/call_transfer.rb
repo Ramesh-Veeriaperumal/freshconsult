@@ -37,11 +37,11 @@ class Freshfone::CallTransfer
 		end
 
 		def transfer_incoming_call_url
-			"#{host}/freshfone/call_transfer/transfer_incoming_call/#{params[:id]}"
+			"#{host}/freshfone/call_transfer/transfer_incoming_call?id=#{params[:id]}&source_agent=#{self.current_user.id}"
 		end
 
 		def transfer_outgoing_call_url
-			"#{host}/freshfone/call_transfer/transfer_outgoing_call/#{params[:id]}"
+			"#{host}/freshfone/call_transfer/transfer_outgoing_call?id=#{params[:id]}&source_agent=#{self.current_user.id}"
 		end
 		
 		def outgoing?

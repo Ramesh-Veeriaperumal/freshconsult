@@ -6,22 +6,32 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::TicketActions
 	include Freshfone::NumberMethods
 	include Freshfone::Queue
+	include Freshfone::CallsRedisMethods
 	
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :force_termination, :only => [ :status ]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :handle_batch_calls, :only => [ :status ]
 	before_filter :handle_missed_calls, :only => [:status]
+	before_filter :handle_transferred_call, :only => [:status]
 	after_filter  :check_for_bridged_calls, :only => [:status]
-	before_filter :prepare_message_for_publish,  :only => [:forward]
+	before_filter :prepare_message_for_publish,  :only => [:in_call]
+	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success]
 	
-	def forward
-    update_presence_and_publish_call(params, @message)
-    return empty_twiml
-  end
+	def in_call
+		update_presence_and_publish_call(params, @message) if params[:agent].present?
+		update_call
+		return empty_twiml
+	end
 	
 	def direct_dial_success
 		publish_live_call(params)
+		return empty_twiml
+	end
+
+	def call_transfer_success
+		update_agent_presence(params[:source_agent]) unless params[:call_back].to_bool
+		update_call
 		return empty_twiml
 	end
 
@@ -32,7 +42,7 @@ class Freshfone::CallController < FreshfoneBaseController
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml
 		ensure
-			call_transferred? ? add_transfer_cost_job : add_cost_job
+			add_cost_job unless call_transferred?
 		end
 	end
 
@@ -87,7 +97,8 @@ class Freshfone::CallController < FreshfoneBaseController
 			@transfer_key = FRESHFONE_TRANSFER_LOG % { :account_id => current_account.id, 
 											 :call_sid => (params[:ParentCallSid] || params[:CallSid]) }
 			@transferred_calls ||= get_key(@transfer_key)
-			@transferred_calls.present?
+			@transferred_calls.present? || params[:call_back].present? 
+			# call_back param used while source agent reject the transfered call
 		end
 		
 		def force_termination
@@ -132,7 +143,8 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def prepare_message_for_publish
-      @message = {:agent => params[:agent], :answered_on_mobile => true}
+    	@message = {:agent => params[:agent]}
+    	@message.merge!({:answered_on_mobile => true}) if params[:forward].present?
     end
 		
 		def cost_params
@@ -157,11 +169,15 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def call_initiator
-			@call_initiator ||= Freshfone::CallInitiator.new(params, current_account, current_number)
+			@call_initiator ||= Freshfone::CallInitiator.new(params, current_account, current_number, current_call_flow)
 		end
 
 		def call_action
 			@call_action ||= Freshfone::CallActions.new(params, current_account, current_number)
+		end
+
+		def current_call_flow
+			@current_call_flow ||= Freshfone::CallFlow.new(params, current_account, current_number)
 		end
 
 		def batch_call?
@@ -192,7 +208,48 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def validate_twilio_request
 			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
-							:batch_call, :force_termination, :number_id, :below_safe_threshold])
+							:batch_call, :force_termination, :number_id, :below_safe_threshold, :forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing])
 			super
+		end
+
+		def update_agent_presence(agent)
+			return if agent.blank?
+			agent = current_account.users.find_by_id(agent)
+			update_freshfone_presence(agent, Freshfone::User::PRESENCE[:online])
+			publish_freshfone_presence(agent)
+			publish_success_of_call_transfer(agent, is_successful_transfer?)
+		end
+
+		def handle_transferred_call
+			if call_transferred?
+				update_call
+				dial_to_source_agent and return	empty_twmil_without_render if should_call_back_to_agent?
+				add_transfer_cost_job
+				update_agent_presence(params[:source_agent])
+				unpublish_live_call(params)
+				return empty_twmil_without_render
+			end
+		end
+
+		def should_call_back_to_agent?
+			!(params[:CallStatus] == 'completed' || params[:DialCallStatus] == 'completed'  || params[:call_back].to_bool)
+		end
+
+		def is_successful_transfer?
+		 params[:DialCallStatus] == "in-progress"
+		end
+
+		def set_dial_call_sid
+			params.merge!({:DialCallSid => params[:CallSid], :DialCallStatus => params[:CallStatus]})
+		end
+
+		def dial_to_source_agent
+			params.merge!({:outgoing => params[:outgoing].to_bool})
+			update_transfer_log(params[:source_agent])
+			render :xml => call_initiator.make_transfer_to_agent(params[:source_agent], true)
+		end
+
+		def empty_twmil_without_render
+			Twilio::TwiML::Response.new
 		end
 end

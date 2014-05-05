@@ -307,6 +307,7 @@ javascripts:
     - public/javascripts/freshfone/client.js
     - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/phoneformatutil.js
+    - public/javascripts/freshfone/components/call_transfer.js
 
   freshfone_call_history:
     - public/javascripts/freshfone/call_history.js
