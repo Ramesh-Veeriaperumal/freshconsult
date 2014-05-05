@@ -254,9 +254,9 @@ var Redactor = function(element, options)
 			'Arial', 'Verdana', 'Helvetica', "Helvetica Neue", 'Arial Black', 'Impact', 'Tahoma', 'Trebuchet MS',
 			'Terminal', 'Courier New', 'Comic Sans MS', 'Andale Mono', 'Georgia', 'Book Antiqua', 'Times New Roman',
 			'Symbol', 'Webdings', 'Windings'],
-		fontsizes: [2, 4, 5, 6, 7],
-		fontsize_levels: {2:10, 4:13, 5:18, 6:24, 7:36},
-		fontsize_levels_reverse: {'10px':2, '13px':4, '18px':5, '24px':6, '36px':7},
+		fontsizes: [1, 2, 3, 4, 5],
+		fontsize_levels: {1:10, 2:13, 3:16, 4:18, 5:24, 6:32},
+		fontsize_levels_reverse: {'10px':1, '13px':2, '16px':3, '18px':4, '24px':5, '32px':6},
 		fontsize_naming: ['Tiny', 'Small', 'Medium', 'Large', 'Huge'],
 		// private
 		allEmptyHtml: '<p><br /></p>',
@@ -1341,10 +1341,14 @@ Redactor.prototype = {
 	{
 		var fontstyle = $(parent).css(css_property) || this.$editor.css(css_property);
 		fontstyle = fontstyle.split(",")[0];
-		if(css_property == 'font-size')
+		if(css_property == 'font-size'){
+			if ($.browser.msie){
+				fontstyle = fontstyle.replace('px','').split(".")[0] + 'px';
+			}
 			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
-		else
+		}else{
 			element = $('[rel="' + fontstyle + '"].redactor_font_link');
+		}
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
 		}
