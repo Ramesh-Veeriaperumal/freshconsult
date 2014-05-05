@@ -725,6 +725,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
   end
 
+  def requester_fb_profile_id
+    requester.fb_profile_id
+  end
+
   protected
 
     def search_fields_updated?

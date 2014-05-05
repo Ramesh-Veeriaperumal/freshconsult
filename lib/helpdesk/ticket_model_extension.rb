@@ -12,6 +12,7 @@ module Helpdesk::TicketModelExtension
       {:label => "Customer", :value => "customer_name", :selected => false},
       {:label => "Requester Name", :value => "requester_name", :selected => false},
       {:label => "Requester Email", :value => "requester_info", :selected => true},
+      {:label => "Facebook Profile Id", :value => "requester_fb_profile_id", :selected => false},
       {:label => "Agent", :value => "responder_name", :selected => false},
       {:label => "Group", :value => "group_name", :selected => false},
       {:label => "Created Time", :value => "created_at", :selected => false},
