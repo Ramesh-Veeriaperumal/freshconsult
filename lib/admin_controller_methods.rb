@@ -67,4 +67,8 @@ module AdminControllerMethods
     def activate_auth
       Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self) unless Authlogic::Session::Base.controller
     end
+
+    def last_request_update_allowed?
+      false
+    end
 end

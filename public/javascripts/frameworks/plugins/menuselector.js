@@ -111,6 +111,12 @@
 	    },
 	    pause: function(){
 	    	$(document).off("keydown.menuSelector");
+	    },
+	    unpause: function(){
+	    	$(document).on("keydown.menuSelector", $.proxy(this.keydown, this));
+	    },
+	    pause: function(){
+	    	$(document).off("keydown.menuSelector");
 	    }
 	}
 

@@ -63,6 +63,12 @@ jQuery('.email').live('keyup', function(){
 			<%= label(:user, :job_title, t("user.title")) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
 		</li>	
+		<%if !feature?(:multiple_user_emails) %>
+			<li class="medium">
+	 			<%= label(:user, :email, t("user.email")) %>			
+	 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
+ 			</li>
+		<% else %>
 		<div id="emails_con" class="email_con">
 		<li class="closebottom medium">
 			<%= label(:user, :email, "Email", :id => "email-label") %>
@@ -86,6 +92,7 @@ jQuery('.email').live('keyup', function(){
 		</li>
 		</div>
 		<a id="add_new_mail" class="profile" href="#"><span id="add_email"></span><%= t('merge_contacts.add_another') %></a>
+		<% end %>
 		<li class="small">
 			<%= label(:user, :phone, t("user.phone_no")) %>	
 			<div>

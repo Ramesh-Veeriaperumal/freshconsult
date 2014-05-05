@@ -565,7 +565,7 @@ cs:
   signup: "Registrovat se"
   signup_title: "Registrovat se k %{current_portal}"
   signup_up_with_us: "Zaregistrujte se k nám"
-  import_ticket_group: "Požadavky &amp;amp; Skupiny"
+  import_ticket_group: "Požadavky & Skupiny"
   signup_help_information: "Jakmile se zaregistrujete, získáte přístup ke všem řešením a FAQ, budete moci klást otázky a učit se od naší komunity uživatelů. Také budete moci zadávat požadavky na podporu a sledovat jejich stav."
   trial_expired_on: "Pozor! Vaše zkušební verze vypršela!"
   tickets_filter:
@@ -1198,7 +1198,7 @@ cs:
         google_calendar_settings: "Nastavení kalendáře Google"
     batchbook:
       label: Batchbook
-      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their e-mail address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
+      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number & Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their e-mail address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
       desc: "Přeneste své informace o kontaktech z vašeho Batchbooku do Freshdesku"
       detect_error: "Nelze detekovat verzi Batchbooku. Prosím, zkontrolujte doménu."
       form:
@@ -1312,7 +1312,7 @@ cs:
         username: "Jméno uživatele iContact"
         api_password: "Heslo pro API"
         api_url: "URL pro API"
-        api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &amp;quot;Account Information&amp;quot; section. "
+        api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot; section. "
     dropbox:
       label: DropBox
       desc: "Připoj a sdílej svá data a soubory z DropBoxu."
@@ -1597,7 +1597,7 @@ cs:
         title_message: "Nastartujte vaši podporu ve čtyřech krocích..."
         support_email_title: "E-mail<br> podpory"
         agents_title_1: "Přidání<br> zástupců"
-        rebrand_title: "Logo <br>&amp; barvy"
+        rebrand_title: "Logo <br>& barvy"
         social_title_1: "Zapojte <br>se do sociálních sítí"
         skip_text: "Ne děkuji, vemte mne na můj helpdesk."
         back_link: Zpět
@@ -2416,9 +2416,9 @@ cs:
     reset_all_confirm_message: "Tato akce vyresetuje všechna vaše uživatelská nastavení na implicitní hodnoty. Jste si jisti, že chcete pokračovat?"
     publish_changes: "Uložit a publikovat"
     title: "Přizpůsobení portálu \"%{portal}\""
-    color_and_font_header: "Barva &amp;amp;amp; font"
+    color_and_font_header: "Barva & font"
     css_header: Stylesheet
-    layout_and_pages_header: "Rozvržení &amp;amp;amp; stránky"
+    layout_and_pages_header: "Rozvržení & stránky"
     editing: Úpravy
     reset_to_last_published: "Resetovat stránku do poslední publikované podoby"
     preview: "Náhled portálu"
@@ -3168,7 +3168,7 @@ cs:
     realtime: "<b>Realtimové streamování \"feed fatching\" je zastaveno</b> kvůli změnám v účtu Facebook <a href='%{realtime_url}' > Znovu se autorizujte a povolte.</a> "
   import_user_notification: "Při importu osob zákazníka lze poslat aktivační e-mail uživatele "
   what_is_cvv: "Co je to cvv (ověřovací číslo platební karty)?"
-  pro_details: "Vše jako v &amp;quot;Základní&amp;quot; licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a e-mailová podpora."
+  pro_details: "Vše jako v &quot;Základní&quot; licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a e-mailová podpora."
   open: Otevřít
   zendesk_url: "Adresa URL Zendesk"
   special_beta_offer: "Speciální nabídka pro Beta účty"
@@ -3604,7 +3604,7 @@ cs:
       begin_subscription_info: "nabije Vaši kartu a můžete začít okamžitě využívat Vaše předplatné."
       billing: Účtování
       save_billing_information: "Uložit účtovací údaje"
-      save_billing_information_info: "uloží informace o vaší &quot;Licenci &amp; účtování&quot;. Nabijeme vaši kartu a vy můžete začít používat své předplatné jakmile vyprší zkušební doba."
+      save_billing_information_info: "uloží informace o vaší &quot;Licenci & účtování&quot;. Nabijeme vaši kartu a vy můžete začít používat své předplatné jakmile vyprší zkušební doba."
       begin_subscription: "Začít podepisování ..."
     show:
       export_data: "Exportovat data"
@@ -3646,7 +3646,7 @@ cs:
   bottom: Dole
   feedbackwidget_help_title: "Panel pro zpětnou vazbu"
   name: Jméno
-  import_user_org_text: "Všichni uživatelé &amp; organizace z vašeho účtu Zendesk budou importováni do účtu Freshdesk jako &quot;Osoby &amp; Společnosti&quot;"
+  import_user_org_text: "Všichni uživatelé & organizace z vašeho účtu Zendesk budou importováni do účtu Freshdesk jako &quot;Osoby & Společnosti&quot;"
   portal_customizer_open_solutions: "Toto veřejné řešení může prohlížet kdokoli"
   portal_customizer_option_solutions: "Uživatelé mohou nahlížet do veřejných řešení bez nutnosti se přihlašovat"
   portal_customizer_option_auto_suggest_solutions: "Automaticky navrhovat řešení když uživatel vytváří nový poždavek."
@@ -3730,7 +3730,7 @@ cs:
   delete: Smazat
   message: Zpráva
   edit_forum_category: "Upravit kategorii fóra"
-  agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené &amp;amp; Čekající)"
+  agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené & Čekající)"
   send_email_to_requester: "Poslat e-mail žadateli"
   feedbackwidget_btcustomize: "Přizpůsobení tlačítka"
   chatwidget_agentsonline: "Když je zástupce online"
@@ -4611,7 +4611,7 @@ cs:
       reset_warning: "Po resetování klíče API přestanou pracovat všechny aplikace, které používají starý klíč.  Opravdu chcete pokračovat?"
   add_to_do: "Přidat úkol"
   subject_or_description: "Předmět nebo popis"
-  premium_details: "Vše v  &amp;quot;Pro&amp;quot;licenci + podpora více produktů, podpora více časových zón, Komunita, E-mailová &amp; telefonní podpora"
+  premium_details: "Vše v  &quot;Pro&quot;licenci + podpora více produktů, podpora více časových zón, Komunita, E-mailová & telefonní podpora"
   sprout_details: "Management e-mailových odpovědí, všechny automatizace, výchozí zásady SLA, znalostní databáze, samoobslužný portál, mapování domény, základní reporty, komunitní podpora."
   blossom_details: "Vše ve &quot;Sprout&quot; Plan plus, podpora Twitteru, podpora Facebooku, fóra, podpora komunity a e-mailu."
   garden_details: "Vše v  &quot;Blossom&quot; Plan plus, podpora více produktů, pokročilé reporty, komunita, e-mailová a telefonická podpora"
@@ -4855,7 +4855,7 @@ cs:
     set_bcc_email_text: "Nastavit automatickou skrytou kopii e-mailu"
     name_info_msg: "Název e-mailové adresy, která bude použita v odpovědích na požadavek"
     Personalized_email_replies: "Použít jména zástupců pro přizpůsobené e-mailové odpovědi?"
-    Personalized_email_replies_info: "Pokud ANO, pak odpovědi zástupce budou obsahovat jméno zástupce jako jméno odesilatele (e-mailová adresa bude i nadále vaše e-mailová adresa podpory). Například '%{current_user_name} &amp;lt;%{current_account_domain}&amp;gt;'."
+    Personalized_email_replies_info: "Pokud ANO, pak odpovědi zástupce budou obsahovat jméno zástupce jako jméno odesilatele (e-mailová adresa bude i nadále vaše e-mailová adresa podpory). Například '%{current_user_name} &lt;%{current_account_domain}&gt;'."
     Personalized_email_replies_yes: Ano
     Personalized_email_replies_no: Ne
     config_saved_message: "Vaše nastavení bylo úspěšně uloženo."
@@ -5243,7 +5243,7 @@ cs:
   lead: Vést
   comments: Komentáře
   forum_confirm_msg1: "Jste si jistí, že chcete smazat tuto kategorii?"
-  plans_billing: "Licence &amp; účtování"
+  plans_billing: "Licence & účtování"
   portal_customizer_open_forums: "Toto fórum si může prohlížet kdokoli"
   portal_customizer_option_forums: "Uživatelé mohou prohlížet Fórum bez přihlášení"
   business_hours:
@@ -5281,7 +5281,7 @@ cs:
   your_trial_account: "Váš zkušební účet"
   reply_comment: "Přidat komentář"
   import_step2_info: "Namapovat pole CSV souboru s poli databáze a importovat"
-  feedbackwidget_defaulttitle: "Nápověda &amp;amp;amp; Podpora"
+  feedbackwidget_defaulttitle: "Nápověda & Podpora"
   two: "2 hodiny"
   set_status_as: "Nastavit stav jako"
   trigger_webhook: "Spouštěč Webhook"

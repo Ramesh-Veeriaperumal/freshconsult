@@ -47,8 +47,8 @@
         value       : (container != "nested_field") ? escapeHtml(value.toString()) : value.toString()
       }
     }
-    window.faye_realtime.new_ticket_ids = [];
-    window.faye_realtime.updated_ticket_ids = [];
+    window.FreshdeskNode.getValue('faye_realtime').new_ticket_ids = [];
+    window.FreshdeskNode.getValue('faye_realtime').updated_ticket_ids = [];
   }
 
   function refresh_tickets() {
@@ -240,9 +240,9 @@
     });
   
   jQuery("#FilterOptions").change(function(){
-    for(var i=0;i<window.faye_realtime.faye_subscriptions.length;i++)
+    for(var i=0;i<window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
     {
-      window.faye_realtime.faye_subscriptions[i].cancel();
+      window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
     }
     jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
     jQuery.ajax({
@@ -268,7 +268,7 @@
           updated_ticket_ids = [];
           jQuery("#update_message, #new_ticket_message").hide();
         }
-        window.AgentCollision.subscriptions(window.AgentCollision.channels,window.AgentCollision.channelCallbacks);
+        window.FreshdeskNode.addSubscriptions();
       }
     }); 
   });

@@ -789,7 +789,7 @@ hu:
         google_calendar_settings: "Google Calendar beállítások"
     batchbook:
       label: Batchbook
-      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
+      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number & Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>"
@@ -813,7 +813,7 @@ hu:
           label: "Felmérő link szöveg"
           default_content: "Kérjük ezt a felmérést töltse ki, hogy a jövőben tanulni tudjunk belőle. A kitöltés 2 percet sem vesz igénybe."
     highrise:
-      helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
+      helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number & Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
       form:
         domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrisehq.com/</strong> , enter <strong> mycompany </strong>. </span>"
         api_key: "API kulcs"
@@ -1116,7 +1116,7 @@ hu:
         congratulations: "Gratulálunk! Az Ön Freshdesk-je kész!"
         support_email_title: Ügyfélszolgálati<br>email
         agents_title_1: "Ügyintézők<br> hozzáadása"
-        rebrand_title: "Logo <br>&amp; színek"
+        rebrand_title: "Logo <br>& színek"
         back_link: Vissza
         next_link: Következő
         next_please_wait: "Kérjük várjon..."
@@ -1673,9 +1673,9 @@ hu:
   portalcss:
     publish_changes: "Mentés és publikálás"
     title: "Ügyfélszolgálati oldal testreszabása \"%{portal}\""
-    color_and_font_header: "Szín &amp;amp; betűtípus"
+    color_and_font_header: "Szín & betűtípus"
     css_header: Stíluslap
-    layout_and_pages_header: "Layout &amp;amp; oldalak"
+    layout_and_pages_header: "Layout & oldalak"
     editing: Szerkesztés
     preview: "Ügyfélszolgálati oldal megtekintése"
     save_and_continue: Mentés
@@ -1811,7 +1811,7 @@ hu:
       select_company: "Cégek kiválasztása"
   password_reset_email: "Jelszó visszaállítási email"
   default_reply_template: "Ügyintéző válasz sablon"
-  import_user_org: "Felhasználók, Szervezetek &amp; Csoportok"
+  import_user_org: "Felhasználók, Szervezetek & Csoportok"
   to_do: Teendő
   does_not_contain: "Nem tartalmaz"
   flash:
@@ -3458,7 +3458,7 @@ hu:
   add: Hozzáadás
   portal_customizer_title: "Ügyfélszolgálati oldal testreszabása"
   reply_comment: "Komment írása"
-  feedbackwidget_defaulttitle: "Segítség &amp;amp; Támogatás"
+  feedbackwidget_defaulttitle: "Segítség & Támogatás"
   two: "2 óra"
   selected: Kiválasztott
   connect_ticket: "Link a kérelemhez"

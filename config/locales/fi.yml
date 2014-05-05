@@ -1319,7 +1319,7 @@ fi:
         title_message: "Näillä neljällä vaiheella otat asiakastukesi käyttöön... "
         support_email_title: Tuki<br>sähköposti
         agents_title_1: "Lisätään<br> edustajia"
-        rebrand_title: "Logo <br>&amp; värit"
+        rebrand_title: "Logo <br>& värit"
         social_title_1: "Ryhdy<br> sosiaaliseksi"
         skip_text: "Ei kiitos, vie minut käyttätukeeni."
         back_link: Takaisin
@@ -1871,9 +1871,9 @@ fi:
     reset_all_confirm_message: "Tämä toiminto resetoi kaikki mukautuksesi Fresdeskin oletustilaan. Oletko varma, että haluat jatkaa?"
     publish_changes: "Tallenna ja julkaise"
     title: "Portaalin mukautus \"%{portal}\""
-    color_and_font_header: "Väri &amp;amp;amp; fontti"
+    color_and_font_header: "Väri & fontti"
     css_header: Tyylisivu
-    layout_and_pages_header: "Asettelu &amp;amp;amp; sivut"
+    layout_and_pages_header: "Asettelu & sivut"
     editing: Muokataan
     reset_to_last_published: "Resetoi sivu viimeisimpään julkaisumuotoon"
     preview: "Esikatsele portaalia"
@@ -3349,7 +3349,7 @@ fi:
     set_bcc_email_text: "Aseta automaattinen piilokopio sähköpostiin"
     name_info_msg: "Sähköpostin nimeä käytetään tikettien vastauksiin"
     Personalized_email_replies: "Haluatko käyttää edustajien nimiä, personalisoidaksesi sähköpostin vastausviestit ?"
-    Personalized_email_replies_info: "Jos valitsit KYLLÄ, edustajien vastausviesteissä näkyy edustajan nimi lähettäjänä (tukisähköpostiosoitettasi kuitenkin käytetään sähköpostiosoitteena). Esimerkiksi näin '%{current_user_name} &amp;lt;%{current_account_domain}&amp;gt;'."
+    Personalized_email_replies_info: "Jos valitsit KYLLÄ, edustajien vastausviesteissä näkyy edustajan nimi lähettäjänä (tukisähköpostiosoitettasi kuitenkin käytetään sähköpostiosoitteena). Esimerkiksi näin '%{current_user_name} &lt;%{current_account_domain}&gt;'."
     Personalized_email_replies_yes: Kyllä
     Personalized_email_replies_no: Ei
   step2: "Vaihe 2"
@@ -3554,7 +3554,7 @@ fi:
   recent_activities: "Viimeaikaiset tapahtumat"
   forgot_password: "Unohtunut salasana"
   change_plan: "Vaihda sopimusta"
-  feedbackwidget_embed_code_intro: "Kopioi ja liitä alla oleva koodi sivustosi sivupohjaan tai kullekin sivulle, jossa tahdot käyttää Freshdesk-widgettiä. Suositeltu paikka koodille on juuri ennen &amp;lt;/body&amp;gt; tagia."
+  feedbackwidget_embed_code_intro: "Kopioi ja liitä alla oleva koodi sivustosi sivupohjaan tai kullekin sivulle, jossa tahdot käyttää Freshdesk-widgettiä. Suositeltu paikka koodille on juuri ennen &lt;/body&gt; tagia."
   import_forum: Keskustelualueet
   title: Otsikko
   new_ticket_created: "Uusi tiketti luotu"
