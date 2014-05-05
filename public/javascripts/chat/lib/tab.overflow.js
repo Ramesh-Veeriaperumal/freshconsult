@@ -4,7 +4,8 @@
 
     //Global Veriables
     var nodeLength, lastNode = '';
-    tabOverflow = function(chatId) {
+    tabOverflow = function(chatId,chatCount) {
+      var getTab,tabRel;
     	$('#openChat').removeClass("animate");
 
       nodeLength = $('#tabs ul li').length;
@@ -12,8 +13,16 @@
       if(nodeLength < 6){
     		lastNode = nodeLength;
     	}else{
+        if(nodeLength == chatCount && $('li.ui-state-active').prev().hasClass('ui-state-disabled')){
+            getTab = $('li.ui-state-active').prevAll().not('.ui-state-disabled').first();
+            tabRel = $(getTab).attr('rel');
+            hideTab = Number(tabRel)-1;
+        }else{
     		//start hide tabs goes behind screen area
     		hideTab = nodeLength-2;
+        getTab = $('li.ui-state-active').prev();
+        tabRel = hideTab + 1;
+        }
     		$( "#tabs" ).jtabs( "disable", hideTab);
     		
     		// Create/append overflow tab count
@@ -29,8 +38,8 @@
         var tabid = $('li.ui-state-active').find('a').attr('href');
     		rel = $(tabid).attr('rel');
     		updateHiddenChat({
-    			name:$('li.ui-state-active').prev(),
-    			rel:hideTab+1
+    			name:getTab,
+    			rel:tabRel
     		});
     		
     		//bind click events for the hidden chats
