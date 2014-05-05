@@ -304,6 +304,7 @@
                     // Pause / resume keyboard shortcut on help chart toggle
                     var _switch = (e.type === 'shown') ? 'pause' : 'unpause';
                     Mousetrap[_switch]();
+                    $('#ticket-list').menuSelector(_switch)
                 });
             
             // Binding keyboard reset for pjax
