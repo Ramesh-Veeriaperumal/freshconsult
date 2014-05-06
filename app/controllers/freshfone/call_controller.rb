@@ -16,7 +16,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :handle_transferred_call, :only => [:status]
 	after_filter  :check_for_bridged_calls, :only => [:status]
 	before_filter :prepare_message_for_publish,  :only => [:in_call]
-	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success]
+	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success, :direct_dial_success]
 	
 	def in_call
 		update_presence_and_publish_call(params, @message) if params[:agent].present?
@@ -25,6 +25,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	end
 	
 	def direct_dial_success
+		update_call
 		publish_live_call(params)
 		return empty_twiml
 	end
