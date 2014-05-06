@@ -4278,6 +4278,13 @@ en:
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
+    pivotal_tracker:
+      label: "Pivotal Tracker"
+      desc: "Create Stories in Pivotal Tracker and track them from within freshdesk" 
+      helptext: "<h4>Pivotal Tracker Integration Help</h4><br/><p>Pivotal Tracker is a project management tool that helps your team collaborate and work on projects. This integration lets your agents create stories in Pivotal Tracker based on incoming tickets from your helpdesk . You can even track the status of the stories and the updates are added as notes in those tickets. <a href='http://www.pivotaltracker.com/help/gettingstarted' target='_blank'>(Learn more)</a> <br/<br/><p>You will need to configure your Pivotal Tracker account information and your API token to enable the integration. The API Token will be found on your profile page in your Pivotal Tracker account.</p>"
+      api_key: "API Token"
+      api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
+      pivotal_updates: "Select to get updates from Pivotal Tracker"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

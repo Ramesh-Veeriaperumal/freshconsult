@@ -1,7 +1,7 @@
 class Integrations::IntegratedResource < ActiveRecord::Base
   belongs_to :installed_application, :class_name => 'Integrations::InstalledApplication'
   belongs_to :local_integratable, :polymorphic => true
-  belongs_to :account
+  belongs_to_account
 
   before_create :set_integratable_type
 

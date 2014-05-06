@@ -1,0 +1,26 @@
+<% if is_application_installed?("pivotal_tracker") %>
+<% installedApp = get_app_details("pivotal_tracker") %>
+<% pivotal_integrated_resource = Integrations::IntegratedResource.find(:all,:conditions => {
+	:installed_application_id => installedApp.id, :local_integratable_id => @ticket.display_id}) %>
+	<div class="widget inactive load_on_click" id="pivotal_tracker">
+		<h3 ><%= t('integrations.pivotal_tracker.label') %></h3>
+		<div class="content">
+			<div id="story_content">
+			</div>
+			<div id="btn_content">
+			</div>
+		</div>
+		<div class="hide" id="pivotal_tracker_widget_dialog">
+			<div class="sloading loading-block loading-small" id="pivotal_tracker_loading"></div>
+		</div>
+		<textarea style="display:none" rel="lazyload">
+			<%
+			@liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, 
+			"integrated_resource" => pivotal_tracker_split_resource(pivotal_integrated_resource,installedApp)} %>
+			<% widget_code = get_app_widget_script("pivotal_tracker", "pivotal_tracker_widget", @liquid_objects) 
+			widget_code = widget_code.gsub("}}", " | encode_html}}")
+			%>
+			<%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
+		</textarea>
+	</div>
+<% end %>

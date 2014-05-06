@@ -25,6 +25,8 @@ class HttpRequestProxyController < ApplicationController
           params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
         elsif params[:app_name] == "harvest"
           harvest_auth(installed_app)
+        elsif params[:app_name] == "pivotal_tracker"
+          params[:custom_auth_header] = {"X-Trackertoken" => "#{installed_app.configs[:inputs]['api_key']}" }
         else
           params[:password] = installed_app.configsdecrypt_password
         end
