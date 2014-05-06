@@ -1,0 +1,39 @@
+<div class="row">       
+  <div class="span3">
+    <h3>Active Calls </h3>
+    <table id="customers" class="table">
+      <%@calls.each do |acc, name, calls|%>
+        <tr>
+           <td><%=acc%></td>
+           <td><%=name%></td>
+           <td><%=calls%></td>
+         </tr>
+      <%end%>
+    </table>
+  </div>
+  <div class="span4">
+    <h3>Freshfone Payments </h3>
+    <table id="customers" class="table">
+      <%@payments.each do |acc, name, credit, created|%>
+        <tr>
+           <td><%=acc%></td>
+           <td><%=name%></td>
+           <td><%=credit%></td>
+           <td><%=distance_of_time_in_words_to_now created%> ago</td>
+         </tr>
+      <%end%>
+    </table>
+  </div>
+  <div class="span4">
+    <h3>Freshfone Signups </h3>
+    <table id="customers" class="table">
+      <%@signups.each do |acc, name, created|%>
+        <tr>
+           <td><%=acc%></td>
+           <td><%=name%></td>
+           <td><%=distance_of_time_in_words_to_now created%> ago</td>
+         </tr>
+      <%end%>
+    </table>
+  </div>
+</div>
