@@ -5221,6 +5221,7 @@ en:
     nochat: "No chat available"
     chat_with_archive: "<b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
+    chat_viewmore: "View More..."
     ticket_subject: "Chat with $1 on $2"
     ticket_description: "Created via Chat. Conversation between <b>$1</b>$2and <b>$3</b>."
     ticket_title: "Ticket Title"
