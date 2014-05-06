@@ -26,7 +26,8 @@ module Integrations::SurveyMonkey
 			agent = last_note.user if last_note
 		end
 		if url.present? and agent
-		 	url = "#{url}?c=#{agent.email}"
+		 	url = "#{url}?c=#{agent.email}&fd_ticketid=#{ticket.id}"
+		 	url = "#{url}&fd_group=#{ticket.group.name}" if ticket.group
 			send_while = installed_app.configs[:inputs]['send_while'].to_i
 		end
 		return nil if url.blank? or agent.blank? or send_while.blank? or
