@@ -8,7 +8,7 @@ describe Helpdesk::MergeTicketsController do
   before(:all) do
     @account = create_test_account
     @user = add_test_agent(@account)
-    @target_ticket = create_ticket({ :status => 2, :display_id => 31 }, create_group(@account, {:name => "Merge"}))
+    @target_ticket = create_ticket({ :status => 2, :display_id => 999999 }, create_group(@account, {:name => "Merge"}))
     @group = @account.groups.first
   end
 
