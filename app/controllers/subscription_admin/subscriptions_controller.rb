@@ -12,6 +12,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
+    @free_agent_count = cumilative_count { Subscription.free_agent_count }
   end  
   
   def deleted_customers
