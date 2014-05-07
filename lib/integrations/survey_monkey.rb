@@ -8,8 +8,9 @@ module Integrations::SurveyMonkey
 		installed_app = ticket.account.installed_applications.with_name('surveymonkey').first
 		url = installed_app.configs[:inputs]['survey_link'] if installed_app
 		if url.present?
-			url ="#{url}?c=#{user.email}"
-			send_while = installed_app.configs[:inputs]['send_while'].to_i 
+			url = "#{url}?c=#{user.email}&fd_ticketid=#{ticket.id}"
+			url = "#{url}&fd_group=#{ticket.group.name}" if ticket.group
+			send_while = installed_app.configs[:inputs]['send_while'].to_i
 		end
 		return nil if url.blank? or send_while.blank? or (s_while!=send_while)
 		{:link => url, :text => installed_app.configs[:inputs]['survey_text']}
