@@ -38,7 +38,7 @@ class Search::SolutionsController < Search::SearchController
 
 		def search_query f
 			if @suggest
-				f.query { |q| q.string SearchUtil.es_filter_key(@search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => "include_stop" }
+				f.query { |q| q.string SearchUtil.es_filter_key(@search_key), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
 			else
 				super(f)
 			end
