@@ -40,18 +40,28 @@ class Integrations::PivotalTrackerController < ApplicationController
           changes += "</div>"
           add_note(project_id, story_id, changes, performer_id, performer_name) if changes.include? "changed from"
         when :story_delete_activity
-          changes = "<div> story &quot;#{primary_resources["name"]}&quot; deleted. </div>"
-          add_note(project_id, story_id, changes, performer_id, performer_name)
-          delete_integrated_resource(project_id, story_id)
+          pivotal_updates["primary_resources"].each do |resource|
+            changes = "<div> story &quot;#{resource["name"]}&quot; deleted. </div>"
+            add_note(project_id, resource["id"], changes, performer_id, performer_name)
+            delete_integrated_resource(project_id, resource["id"])
+          end
         when :story_move_into_project_activity
-          changes = "<div> Story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a> moved 
-            to project #{pivotal_updates["project"]["name"]}}" 
-          add_note(project_id, story_id, changes, performer_id, performer_name)
-          integrated_resource = Integrations::IntegratedResource.find(:all, :conditions => ['remote_integratable_id LIKE ?',"%/stories/#{story_id}"]).first if integrated_resource.nil?
-          integrated_resource["remote_integratable_id"] = "#{project_id}/stories/#{story_id}"
-          integrated_resource.save!
+          pivotal_updates["primary_resources"].each do |resource|
+            integrated_resource = Integrations::IntegratedResource.find(:all, :conditions => ['remote_integratable_id LIKE ?',"%/stories/#{resource["id"]}"]).first if integrated_resource.nil?
+            integrated_resource["remote_integratable_id"] = "#{project_id}/stories/#{resource["id"]}"
+            integrated_resource.save!
+          end
+        when :story_move_from_project_activity
+          pivotal_updates["primary_resources"].each do |resource|
+            changes = "<div> Story <a href=#{resource["url"]} target=_blank > #{resource["name"]}</a> moved from project 
+            #{pivotal_updates["project"]["name"]}</div>" 
+            add_note(project_id, resource["id"], changes, performer_id, performer_name)
+            end
         when :task_create_activity, :task_update_activity, :comment_delete_activity, :comment_create_activity
-          changes = "<div> #{pivotal_updates["message"]} for the story &quot;#{primary_resources["name"]}&quot;(<a href=#{primary_resources["url"]} target=_blank > #{primary_resources["id"]}</a>) </div>"
+          changes = "<div> #{pivotal_updates["message"]} for the story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a> </div>"
+          add_note(project_id, story_id, changes, performer_id, performer_name)
+        when :task_delete_activity
+          changes = "<div> #{performer_name} deleted a task for the story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a> </div>"
           add_note(project_id, story_id, changes, performer_id, performer_name)
         else
           Rails.logger.debug "#{pivotal_updates["kind"]} case not handled"
