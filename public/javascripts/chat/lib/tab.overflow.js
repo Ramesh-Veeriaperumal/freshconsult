@@ -81,6 +81,27 @@
     		});
     },
 
+    maximizeTab = function(chatid){
+        var clickObj = $('#hiddenList').children();
+        $.each(clickObj, function(){
+          var relTab = $(this).attr('rel');
+          var maxTabRel = $("#tabs-chat-"+chatid).attr('rel'); 
+          if(Number(maxTabRel) == relTab){
+              var thisTab = $(this).attr('rel');
+              var currentTab = getacitveTab();
+              $('li.ui-state-active').find('a:first-child').trigger('click');
+              $( "#tabs" ).jtabs( "disable", currentTab-1);
+              $( "#tabs" ).jtabs( "enable", thisTab-1);
+              reConstruct({
+                that:this,
+                disabled:currentTab,
+                enabled:thisTab
+              });
+              return;
+          }
+        });
+    },
+
     updateHiddenChat = function(object){
     		$('#hiddenList').append('<div rel="'+object.rel+'">'+object.name.find('a:first-child').html()+'</div>');
     		tabPosition();
