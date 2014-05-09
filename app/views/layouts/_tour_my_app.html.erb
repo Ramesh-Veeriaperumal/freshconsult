@@ -2,16 +2,29 @@
 <!-- <script type="text/javascript" src="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js"></script> -->
 
 <script type="text/javascript">
-	AsyncJSLoader('https://d345spfe4d65od.cloudfront.net/static/tourmyapp/v1/tourmyapp.js', function(){
-		jQuery(document).ready(function() {
-		    tour = new TourMyApp("freshdesk");
-		    if (window.location.href.indexOf("freshpo.com") != -1) {
-	    		tour.setOptions({"test_mode": true});
-	  		}
-	  		tour.setUserReference("<%= current_account.full_domain%>");
-	  		var string_table = tour._getOption("translations");
-	  		string_table["default"]["Step"] = "Step {1} of {2}";
-		    tour.start();
-		});
-	})
+  AsyncJSLoader('https://d345spfe4d65od.cloudfront.net/static/tourmyapp/v1/tourmyapp.js', function(){
+    jQuery(document).ready(function() {
+        tour = new TourMyApp("freshdesk");
+        if (window.location.href.indexOf("freshpo.com") != -1) {
+          tour.setOptions({"test_mode": true});
+        }
+        tour.setUserReference("<%= current_account.full_domain%>");
+        var string_table = tour._getOption("translations");
+        string_table["default"]["Step"] = "Step {1} of {2}";
+
+        var CustomTourIds = <%= raw TourMyApp::AdminTourIds.to_json %>;
+        tour.bind("tour_start", function(inst, params) {
+          if (CustomTourIds.indexOf(params["tour"]) > -1){
+            var removeToolbar = setInterval( function(){
+              if(jQuery(".tourmyapp-toolbar").length != 0){
+                jQuery(".tourmyapp-toolbar").remove();
+                clearInterval(removeToolbar);
+              }
+            }, 10);
+          }
+        });
+
+        tour.start();
+    });
+  })
 </script>
