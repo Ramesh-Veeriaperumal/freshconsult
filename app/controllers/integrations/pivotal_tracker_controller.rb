@@ -123,7 +123,7 @@ class Integrations::PivotalTrackerController < ApplicationController
       if current_user
         user_id = current_user.id
       else
-        user = current_account.all_users.find_by_external_id("pivotal_tracker - #{performer_id}")
+        user = current_account.all_users.find_by_external_id("PT - #{performer_id}")
         user = current_account.users.find_by_email_or_name(get_performer_email(project_id, performer_id)) unless user
         user_id = get_user_id(user, performer_name, performer_id)
       end
@@ -142,7 +142,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
     def get_user_id(user,performer_name, performer_id)
      if user
-        user[:external_id] = "pivotal_tracker - #{performer_id}"
+        user[:external_id] = "PT - #{performer_id}"
         user.save!
         user_id = user.id
       else
@@ -152,7 +152,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
     def create_user(name, id)
       user = current_account.contacts.new
-      user.signup!({ :user => { :name => name, :external_id => "pivotal_tracker - #{id}", :active => true, :helpdesk_agent => false }})
+      user.signup!({ :user => { :name => name, :external_id => "PT - #{id}", :active => true, :helpdesk_agent => false }})
       user
     end
 
