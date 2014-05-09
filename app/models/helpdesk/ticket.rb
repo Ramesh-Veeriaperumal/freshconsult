@@ -540,8 +540,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return json_str
     end
     if deep
+      options[:methods].push(:attachments)
       self[:notes] = self.notes
-      options[:include] = [:attachments]
     end
     options[:except] = [:account_id,:import_id]
     options[:methods].push(:custom_field)
@@ -723,6 +723,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def first_response_status
     first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
+
+  def requester_fb_profile_id
+    requester.fb_profile_id
   end
 
   protected

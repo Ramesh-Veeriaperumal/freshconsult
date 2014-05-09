@@ -9,7 +9,7 @@ module ApplicationHelper
   include ChatHelper
 
   include MemcacheKeys
-
+  include Integrations::Util
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -647,7 +647,7 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + '  ' +field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value == "1" ) + '  ' +field_label)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :value => field_value)
     end
@@ -969,7 +969,7 @@ module ApplicationHelper
   end
 
   def current_platform
-    os = UserAgent.parse(request.user_agent).os
+    os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|
       return v if os.downcase.include?(v)
     end

@@ -3,6 +3,6 @@ page << "jQuery('.fresfone-call-history  ##{dom_id(@parent_call)}')
 	:collection => @calls,
 	:as => :call,
 	:locals => { :children => true, :parent => @parent_call }) }');
-setCallDuration();
+freshfonePlayerSettings();
 setLocationIfUnknown();
 threeSixtyPlayer.init();"

@@ -121,6 +121,7 @@ var FreshfoneWidget;
 			this.callNote.val('');
 		},
 		resetToDefaultState: function () {
+			freshfonewidget.toggleWidgetInactive(false);
 			freshfonewidget.handleWidgets('outgoing');
 			if (this.force_disable_widget) {
 				this.disableFreshfoneWidget();
@@ -156,6 +157,9 @@ var FreshfoneWidget;
 		toggleSidebarTabsContainer: function (show) {
 			this.$sidebarTabsContainer.toggle(this.$sidebarTabsContainer.data('chat') || show);
 			this.$sidebarTabsContainer.data('freshfone', show);
+		},
+		toggleWidgetInactive: function (state) {
+			state ? this.widget.addClass('in_active_ongoing_widget') :  this.widget.removeClass('in_active_ongoing_widget');
 		}
 	};
 	

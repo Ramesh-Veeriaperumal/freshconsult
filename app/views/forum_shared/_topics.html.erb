@@ -1,9 +1,16 @@
 <% unless (topics.size == 0) %> 
 	<ul class="topic-list-view">
 		<% topics.each do |topic| %>
-			<% className = (topic.sticky?) ? "sticky" : "" %>
+			<% 
+			className = (topic.sticky?) ? "sticky" : ""
+			className << " with-checkbox" if privilege?(:delete_topic) 
+
+			%>
 			<% last_post = topic.last_post %>
 			<li class="<%= className %>"> 
+				<% if privilege?(:delete_topic) %>
+					<input type="checkbox" id="topic-<%= topic.id %>" class="bulk-check" name="ids[]" value="<%= topic.id %>"/>
+				<% end %>
 				<% if topic.posts_count > 1 %>
 					<%= user_avatar( last_post.user ) %>
 				<% else %>
@@ -65,4 +72,36 @@
 		  <%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
     <% end %>
 	</div>
+<% end %>
+<% javascript_tag do %>
+(function($){
+	$('#bulk-action-btn').on('click','#select-all',function(){
+		$(".topic-list-view :checkbox")
+            .prop("checked", $(this).prop("checked"))
+            .trigger('change');
+	})
+	$(".topic-list-view :checkbox").on('change', function(){
+		$('#bulk-action-btn :checkbox').prop('checked', $(".topic-list-view :checkbox:checked").length == $(".topic-list-view :checkbox").length )
+
+		var toggleFilters = $('.forum-group :checkbox:checked').length > 0;
+		$('#bulk-action-btn .btn').toggle(toggleFilters);
+		$('#bulk-action-btn #filters').toggle(!toggleFilters);
+	})
+
+	$('#bulk-action-btn .btn').on('click', function(){
+		var $this = $(this);
+		topic_submit($this.data('actionUrl'), $this.data('method'))
+	})
+
+	$('#bulk-action-btn :checkbox').prop('disabled', $(".topic-list-view :checkbox").length == 0 );
+
+	$("#topic-bulk-action").append($("<input type='hidden' name='_method'/>"));
+
+	function topic_submit(url, method){ 
+		var form = $("#topic-bulk-action");
+		form.find('input[name=_method]').attr('value', method);
+		form.attr('action', url);
+		form.submit();
+	}
+})(jQuery)
 <% end %>	

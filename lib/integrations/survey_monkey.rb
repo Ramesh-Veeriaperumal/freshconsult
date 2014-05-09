@@ -8,7 +8,7 @@ module Integrations::SurveyMonkey
 		installed_app = ticket.account.installed_applications.with_name('surveymonkey').first
 		url = installed_app.configs[:inputs]['survey_link'] if installed_app
 		if url.present?
-			url = "#{url}?c=#{user.email}&fd_ticketid=#{ticket.id}"
+			url = "#{url}?c=#{user.name}&fd_ticketid=#{ticket.display_id}"
 			url = "#{url}&fd_group=#{ticket.group.name}" if ticket.group
 			send_while = installed_app.configs[:inputs]['send_while'].to_i
 		end
@@ -26,7 +26,7 @@ module Integrations::SurveyMonkey
 			agent = last_note.user if last_note
 		end
 		if url.present? and agent
-		 	url = "#{url}?c=#{agent.email}&fd_ticketid=#{ticket.id}"
+		 	url = "#{url}?c=#{agent.name}&fd_ticketid=#{ticket.display_id}"
 		 	url = "#{url}&fd_group=#{ticket.group.name}" if ticket.group
 			send_while = installed_app.configs[:inputs]['send_while'].to_i
 		end

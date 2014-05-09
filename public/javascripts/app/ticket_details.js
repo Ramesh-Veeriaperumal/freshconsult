@@ -147,7 +147,7 @@ swapEmailNote = function(formid, link){
 			} catch (e) {}
 		});
 	}
-
+	window.AgentCollisionShow.reply_event();
 	activeForm.trigger("visibility")
 
 	//Draft Saving for Reply form
@@ -322,20 +322,13 @@ var updatePagination = function() {
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			trigger_event("ticket_show_more",{})
-			freshfoneAudioDomSetting();
+			try {
+			freshfonePlayerSettings();
+		} catch (e) { console.log("freshfonePlayerSettings not loaded");}
 		});
 	});
 }
 
-var freshfoneAudioDomSetting = function (){
-	  if(threeSixtyPlayer){
-			threeSixtyPlayer.init();	  	
-	  }
-			$('.call_duration').each(function () {
-				if ($(this).data("time") === undefined) { return; }
-					$(this).html($(this).data("time").toTime());
-			});
-}
 $('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
 		ev.preventDefault();
 		window.location.reload(true);
@@ -690,7 +683,7 @@ var scrollToError = function(){
         {
           window.replySubscription.cancel();
         }
-        window.faye_realtime.faye_subscriptions.splice(window.faye_realtime.faye_subscriptions.indexOf(window.relySubscription), 1);
+        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 
@@ -698,7 +691,10 @@ var scrollToError = function(){
 		ev.preventDefault();
 		var btn = $(this);
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
-			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])) return false; 
+			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
+				window.AgentCollisionShow.reply_event();
+				return false; 
+			} 
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');

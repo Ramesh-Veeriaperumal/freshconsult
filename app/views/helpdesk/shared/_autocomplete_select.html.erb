@@ -10,7 +10,7 @@ end
 %>
 
 <div class = "autocomplete_filter">
-  <input type="hidden" id="<%= container %>_filter" name="<%=container%>" class="filter_item" />
+  <input type="hidden" id="<%= container %>_filter" name="<%=container%>" />
 </div>
 <script>
 jQuery(document).ready(function() {
@@ -72,7 +72,7 @@ jQuery(document).ready(function() {
   jQuery("#<%=container%>_filter").select2("val",[]);
 
   jQuery("#<%=container%>_filter").on("change", function(){
-    refresh_tickets();
+    toggle_save_and_refresh();
   });  
 
 });

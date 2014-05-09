@@ -87,13 +87,15 @@
 				toggle_name = function(enable){ 
 					var _name_div = $("#name_field").find("input")
 										.attr("disabled", !enable).parent()
-					if(enable)
+					if(enable){
 						_name_div.slideDown()
 						if($("input[name='helpdesk_ticket[name]']").data('userName')){
 							jQuery("input[name='helpdesk_ticket[name]']").val($("input[name='helpdesk_ticket[name]']").data('userName'));
 						}
-					else
+					}
+					else{
 						_name_div.slideUp()
+					}
 				}
 
 			if(email_path == "") return

@@ -63,6 +63,7 @@ var FreshfoneEndCall;
 		self.$endCallShowSaveTicketFormButton.bind('click', function () {
 			self.$endCallMainContent.hide();
 			self.$endCallNewTicketDetailsForm.show();
+			self.initRequesterValue();
 
 		});
 		// Requeser Field in new ticket form -- end call form
@@ -79,10 +80,7 @@ var FreshfoneEndCall;
 					};
 				},
 				results: function (data, page, query) {
-					var temp;
-					if (!data.results.length) {
-						return { results: [ { value: query.term, id: ""} ] }
-					}
+					data.results.push({value: query.term, id: ''});
 					return {results: data.results};
 				}
 			},
@@ -90,13 +88,17 @@ var FreshfoneEndCall;
 				var userDetails = result.email || result.mobile || result.phone;
 				if(userDetails && $(userDetails).trim != "") {
 					userDetails = "(" + userDetails + ")";
+				} else {
+					if (!result.id) { userDetails = freshfone.new_requester;}
 				}
+
 				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
-								(userDetails || freshfone.new_requester) + "</span>"; 
+								(userDetails) + "</span>"; 
 			},
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
+				self.$requesterName.data("requester_id",result.id);
 				self.$requesterName.val(result.value);
 				return result.value;
 			}
@@ -189,6 +191,7 @@ var FreshfoneEndCall;
 					'CallSid': this.callSid,
 					'call_log': this.ticket_notes,
 					'requester_name': this.requesterName(),
+					'custom_requester_id' : this.custom_requester_id(),
 					'ticket_subject': this.ticketSubject(),
 					'requester_email': this.requesterEmail(),
 					'call_history': !this.inCall
@@ -211,6 +214,9 @@ var FreshfoneEndCall;
 					'call_history': !this.inCall
 				}
 			});
+		},
+		custom_requester_id: function () {
+			return this.$requesterName.data('requester_id');
 		},
 		requesterName: function () {
 			return this.$requesterName.val();
@@ -243,11 +249,10 @@ var FreshfoneEndCall;
 			var callerId = (this.inCall) ? this.freshfonecalls.callerId : this.callerId;
 			this.number = this.number || this.freshfonecalls.number;
 			this.callerName = this.callerName || this.freshfonecalls.callerName;
-			this.$requesterNameContainer.toggle(!callerId);
 			this.prefillForm();
 		},
 		prefillForm: function () {
-			this.$requesterName.val(this.formattedNumber());
+			this.$requesterName.val(this.number);
 			this.$ticketSubject.val(this.generateTicketSubject());
 			this.$requesterTicketSearch.initializeRequester(this.callerName);
 		},
@@ -266,6 +271,17 @@ var FreshfoneEndCall;
 		hideEndCallForm: function () {
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('hide');
+		},
+		initRequesterValue: function () {
+			var initData = this.$requesterName.val(),self = this;
+				if(initData.blank()) { return;}
+				$.ajax({
+				url: freshfone.requester_autocomplete_path,
+				quietMillis: 1000,
+				data: {q: initData},
+				}).done(function(data) {
+					self.$requesterName.select2("data",data.results[0]);
+				});
 		}
 	};
 }(jQuery));

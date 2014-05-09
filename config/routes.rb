@@ -77,10 +77,10 @@
 
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
-    freshfone.resources :call, :collection => {:status => :post, :forward => :post, :direct_dial_success => :post, :inspect_call => :get}
+    freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :call_transfer_success => :post }
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get}
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                        :children => :get, :recent_calls => :get }
@@ -119,6 +119,7 @@
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
+    integration.resources :pivotal_tracker, :collection => { :tickets => :get, :pivotal_updates => :post, :update_config => :post}
     integration.resources :user_credentials
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
@@ -275,7 +276,10 @@
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
         resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
       end
-      admin.resources :freshfone_subscriptions, :as => 'freshfone_admin'
+      
+      admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
+      admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
+      
       # admin.resources :analytics
       admin.resources :spam_watch, :only => :index
       admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
@@ -476,7 +480,7 @@
   map.resources :topics, :posts, :monitorship
 
   map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete }, :member => {:approve => :put, :mark_as_spam => :put }
+    discussions.resources :moderation, :collection => { :empty_folder => :delete, :spam_multiple => :put }, :member => {:approve => :put, :mark_as_spam => :put }
   end
 
   %w(forum).each do |attr|
@@ -485,7 +489,7 @@
 
   map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
   forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
-    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }, :collection => { :destroy_multiple => :delete }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put }
       topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer

@@ -31,6 +31,8 @@ module Freshfone::CallHistoryHelper
 		case call.call_status
 		when Freshfone::Call::CALL_STATUS_HASH[:'no-answer']
 			(call.incoming? ? t('freshfone.call_status.missedcall') : t('freshfone.call_status.noanswer'))
+		when Freshfone::Call::CALL_STATUS_HASH[:'in-progress']
+			t("freshfone.call_status.in_progress")
 		else
 			status = Freshfone::Call::CALL_STATUS_REVERSE_HASH[call.call_status]
 			t("freshfone.call_status.#{status}")

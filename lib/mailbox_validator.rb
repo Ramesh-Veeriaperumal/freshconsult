@@ -11,7 +11,11 @@ module MailboxValidator
   private
 
     def verify_mailbox_details
-      imap_verify = verify_imap_details?
+      unless params[:email_config][:imap_mailbox_attributes][:_destroy].to_bool
+        imap_verify = verify_imap_details?
+      else
+        imap_verify = { :success => true }
+      end
       smtp_verify = verify_smtp_details?
       verified = imap_verify[:success] && smtp_verify[:success]
       unless imap_verify[:success] || smtp_verify[:success]
@@ -24,18 +28,18 @@ module MailboxValidator
     end
     
     def verify_imap_details?
-      args = params[:email_config][:mailbox_attributes]
+      args = params[:email_config][:imap_mailbox_attributes]
       verified = false
       msg = ""
       begin
-        imap = Net::IMAP.new(args[:imap_server_name], args[:imap_port], args[:imap_use_ssl].to_bool)
+        imap = Net::IMAP.new(args[:server_name], args[:port], args[:use_ssl].to_bool)
 
         raise IdleNotSupportedError, "Mailbox server does not support IDLE" unless imap.capability.include?("IDLE")
 
-        if "PLAIN".casecmp(args[:imap_authentication]) == 0
-          imap.login(args[:imap_user_name], args[:imap_password])
+        if "PLAIN".casecmp(args[:authentication]) == 0
+          imap.login(args[:user_name], args[:password])
         else
-          imap.authenticate(args[:imap_authentication], args[:imap_user_name], args[:imap_password]) 
+          imap.authenticate(args[:authentication], args[:user_name], args[:password]) 
         end
         imap.logout()
         #msg = I18n.t('mailbox.authetication_success')
@@ -54,11 +58,11 @@ module MailboxValidator
     end
 
     def verify_smtp_details?
-      args = params[:email_config][:mailbox_attributes]
+      args = params[:email_config][:smtp_mailbox_attributes]
       verified = false
       msg = ""
       begin
-        Net::SMTP.start(args[:smtp_server_name], args[:smtp_port],args[:smtp_server_name], args[:smtp_user_name], args[:smtp_password], args[:smtp_authentication]) do |smtp|
+        Net::SMTP.start(args[:server_name], args[:port],args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|
         end
         #flash[:notice] = I18n.t('mailbox.authetication_success')
         verified = true

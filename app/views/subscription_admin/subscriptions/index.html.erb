@@ -49,8 +49,12 @@
 		      <td><%=format_float_value(@monthly_revenue)%></td>
 		    </tr>
 			<tr>
-			  <th>Agent Count</th>
+			  <th>Paying agents</th>
 		      <td><%= @customer_agent_count %> </td>
+			</tr>
+			<tr>
+			  <th>Free agents</th>
+				<td><%= @free_agent_count %> </td>
 			</tr>
 	  </table>
   </div> 

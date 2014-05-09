@@ -33,11 +33,13 @@
 			if(!freshfonecalls.isOutgoing()) { freshfoneNotification.initializeCall(conn); }
 			freshfonecalls.errorcode = null;
 			freshfonecalls.lastAction = null;
+			freshfonecalls.transfered = false;
 			if (recordingMode()) { return freshfonecalls.setRecordingState(); }
 			$("#log").text("Successfully established call");
 			freshfoneNotification.resetJsonFix();
 			freshfoneNotification.popAllNotification(conn);
 			freshfonetimer.startCallTimer();
+			freshfonewidget.toggleWidgetInactive(false);
 			freshfonewidget.handleWidgets('ongoing');
 			freshfonecalls.disableCallButton();
 			if (previewMode()) {
@@ -68,12 +70,7 @@
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
 				freshfoneendcall.showEndCallForm();
 			} else {
-				freshfonecalls.transferSuccessFlash();
-				freshfoneuser.resetStatusAfterCall();
-				freshfoneuser.updatePresence();
-				freshfonewidget.resetToDefaultState();
-				freshfonecalls.init();
-				freshfoneuser.init();
+				
 			}
 			freshfonecalls.lastAction = null;
 			freshfonewidget.hideTransfer();

@@ -45,17 +45,17 @@ class Freshfone::CallActions
 		end
 	end
 	
-	def register_call_transfer(outgoing=false)
+	def register_call_transfer(agent, outgoing = false)
 		self.outgoing = outgoing
+		params.merge!({:agent => calling_agent(agent)})
 		return if current_call.blank?
-
 		current_call.root.increment(:children_count).save if build_child.save
 	end
 
 
 	private
-		def calling_agent
-			current_account.users.technicians.visible.find_by_id(params[:agent])
+		def calling_agent(agent = params[:agent])
+			current_account.users.technicians.visible.find_by_id(agent)
 		end
 		
 		def build_child

@@ -1,3 +1,4 @@
+<%= render :partial => "/integrations/applications/pivotal_tracker_form" %>
 <% if is_application_installed?("jira")  %>
 <% installedApp = get_app_details("jira") %>
 <% jira_integrated_resource = Integrations::IntegratedResource.find_by_installed_application_id_and_local_integratable_id(installedApp, @ticket.id) %>

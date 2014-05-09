@@ -1,7 +1,8 @@
 class Freshfone::CallTransferController < FreshfoneBaseController
 	include FreshfoneHelper
 	include Freshfone::NumberMethods
-	
+  include Freshfone::CallsRedisMethods
+
 	before_filter :validate_agent, :only => [:transfer_incoming_call, :transfer_outgoing_call]
 	before_filter :log_transfer, :only => [:initiate]
 
@@ -31,16 +32,14 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 	end
 
 	def transfer_incoming_call
-		render :xml => current_call_flow.transfer(params[:agent])
+		render :xml => current_call_flow.transfer(params[:agent], params[:source_agent])
 	end
 
 	def transfer_outgoing_call
-		render :xml => current_call_flow.transfer(params[:agent], true)
+		render :xml => current_call_flow.transfer(params[:agent], params[:source_agent], true)
 	end
 
-
 	private
-
 		def freshfone_user_scoper
 			current_account.freshfone_users
 		end
@@ -50,13 +49,6 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 			params.merge!({ :agent => called_agent })
 		end
 
-		def log_transfer
-			key = FRESHFONE_TRANSFER_LOG % { :account_id => current_account.id, :call_sid => transfer_sid }
-			calls = get_key(key)
-	    transferred_calls = (calls) ? JSON.parse(calls) : []
-	    transferred_calls << params[:id]
-	    set_key(key, transferred_calls.to_json)
-		end
 		
 		def called_agent
 			@calling_agent ||= called_agent_scoper.find_by_id(params[:id])
@@ -66,11 +58,6 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 			current_account.users.technicians.visible
 		end
 		
-		def transfer_sid
-			(params[:outgoing].to_bool) ? params[:call_sid] : 
-										current_account.freshfone_subaccount.calls.get(params[:call_sid]).parent_call_sid
-		end
-
 		def call_transfer
 			@call_transfer ||= Freshfone::CallTransfer.new(params, current_account, current_number, current_user)
 		end
@@ -80,8 +67,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(:id)
+			@callback_params = params.except(*[:id, :source_agent, :target_agent, :outgoing, :call_back])
 			super
 		end
-
-	end
+end

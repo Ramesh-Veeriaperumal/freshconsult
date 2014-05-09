@@ -3,6 +3,8 @@ Agent Collision:
 Chat:
   - :chat
   - :chat_enable
+Custom Domain:
+  - :custom_domain
 Custom Roles: 
   - :custom_roles
 Custom Ssl: 

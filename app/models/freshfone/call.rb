@@ -158,7 +158,7 @@ class Freshfone::Call < ActiveRecord::Base
 			:email => params[:requester_email],
 			:name => requester_name,
 			:phone => caller_number,
-			:requester_id => customer_id,
+			:requester_id => params[:custom_requester_id] || customer_id,
 			:responder => params[:agent],
 			:source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
 			:subject => ticket_subject
