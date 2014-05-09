@@ -16,7 +16,7 @@ FreshdeskPjax.prototype = {
     constructor: FreshdeskPjax,
 
     callBeforeSend: function(evnt,xhr,settings,options) {
-
+      this._FayeCleanUp();
       $.xhrPool_Abort();
       this._beforeSendExtras(evnt,xhr,settings,options);
 
@@ -142,7 +142,6 @@ FreshdeskPjax.prototype = {
     },
 
     _beforeSendCleanup: function() {
-      this._FayeCleanUp();
 			$('#cf_cache').remove();
 			$('#response_dialog').remove();
 			$('.ui-dialog').remove();
@@ -160,15 +159,20 @@ FreshdeskPjax.prototype = {
 
     _FayeCleanUp: function()
     {
-      if(window.faye_realtime.fayeClient)
+      $('[data-note-type]').off("click.agent_collsion");
+      $('.reply_agent_collision').off("click.agent_collsion");
+      if(window.FreshdeskNode.getValue('faye_realtime').fayeClient)
       {
-        for(var i=0;i < window.faye_realtime.faye_subscriptions.length;i++)
+        for(var i=0;i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
         { 
-          window.faye_realtime.faye_subscriptions[i].cancel();
+          window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
         }
-        window.faye_realtime.faye_subscriptions = [];
-        window.faye_realtime.fayeClient.disconnect();
-        window.faye_realtime.fayeClient = null;
+        window.FreshdeskNode.clearClients();
+        window.FreshdeskNode.clearReplyOnLoad();
+        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions = [];
+        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+        window.FreshdeskNode.getValue('faye_realtime').faye_channels = [];
+        window.FreshdeskNode.getValue('faye_realtime').fayeClient = null;
       }
     },
 

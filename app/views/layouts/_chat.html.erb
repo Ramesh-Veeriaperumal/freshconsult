@@ -8,7 +8,7 @@
 <div id="freshchat_layout"></div>
 <script language="javascript">
 
-var CS_URL = "http://<%=comm_url%>:80";
+var CS_URL = "<%=comm_url%>";
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 
@@ -19,7 +19,6 @@ var CHAT_DEBUG = "<%=chat_debug%>";
         var css_url = asset_url.css;
         if(window.location && window.location.protocol=='https:'){
             url = css_url = asset_url.cloudfront;
-            CS_URL = "https://<%=comm_url%>:443";;
         }
         var fc_CSS=document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');

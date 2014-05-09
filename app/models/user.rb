@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_REGEX
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present?  and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
   end
 
   def only_primary_email
@@ -93,7 +93,7 @@ class User < ActiveRecord::Base
       begin
         paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
-             :order => order_by, :include => :primary_email
+             :order => order_by
       rescue Exception =>exp
         raise "Invalid fetch request for contacts"
       end
@@ -320,7 +320,7 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true});
+    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
@@ -479,7 +479,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml,:root=>options[:root], :skip_instruct => true, :include => :user_emails, :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+      super(:builder => xml,:root=>options[:root], :skip_instruct => true, :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
                                                               :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]) 
   end

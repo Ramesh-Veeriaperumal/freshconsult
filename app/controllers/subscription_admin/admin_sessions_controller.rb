@@ -52,6 +52,10 @@ class SubscriptionAdmin::AdminSessionsController < ApplicationController
     redirect_to(admin_subscription_login_url)
   end
 
+  def last_request_update_allowed?
+    action_name == "create"
+  end
+
   private
 
     def scoper

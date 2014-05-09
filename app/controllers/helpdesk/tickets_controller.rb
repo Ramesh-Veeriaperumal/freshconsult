@@ -463,11 +463,11 @@ class Helpdesk::TicketsController < ApplicationController
                                         :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
           redirect_to :back
         }
-        format.xml { render :xml => @item, :status=>:success }
+        format.xml { render :xml => @item }
         format.mobile {
           render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json 
         }
-        format.json { render :json => @item, :status=>:success }  
+        format.json { render :json => @item }  
         format.js { 
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
                                         :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
@@ -884,7 +884,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_autorefresh_feature
-      @is_auto_refresh_feature = current_account.features?(:auto_refresh)
+      @is_auto_refresh_feature = current_account.features_included?(:auto_refresh)
     end
 
     def get_cached_filters

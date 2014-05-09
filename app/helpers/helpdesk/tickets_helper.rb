@@ -336,6 +336,10 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["faye_host"]}"
   end
 
+  def faye_server
+    "#{request.protocol}#{NodeConfig["faye_server"]}"
+  end
+
   def attachment_unlink_path(attachment, note_id = nil)
     (attachment.attachable_type != "Account" or note_id.blank?) ?
             helpdesk_attachment_path(attachment) : 

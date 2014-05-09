@@ -396,7 +396,7 @@ da:
   signup: opret
   signup_title: "Opret dig hos %{current_portal}"
   signup_up_with_us: "Opret dig hos os"
-  import_ticket_group: "Supportsager &amp;amp; Gruppe"
+  import_ticket_group: "Supportsager & Gruppe"
   signup_help_information: "Når du tilmelder dig, vil du have fuld adgang til vores løsninger og ofte stillede spørgsmålDu kan også stille spørgsmål og finde svar i brugergruppe, eller oprette en supportsag, og spore sagernes status."
   trial_expired_on: "Vigtigt! Din prøveperiode er udløbet!"
   tickets_filter:
@@ -1239,7 +1239,7 @@ da:
         send_test_mail_response_no2: "Lær hvordan"
       index:
         support_email_title: "Support<br> e-mail"
-        rebrand_title: "Logo <br>&amp; farver"
+        rebrand_title: "Logo <br>& farver"
         skip_text: "Nej tak, tag mig til min helpdesk"
         back_link: Tilbage
         next_link: Næste
@@ -1792,7 +1792,7 @@ da:
     reset_all_confirm_message: "Denne handling til nulstille alle tilretninger, og sætte Freshdesk til startindstillingen. Er du sikker på at du vil fortsætte?"
     publish_changes: "Gem og udgiv"
     title: "Portal tilretning \"%{portal}\""
-    color_and_font_header: "Farve &amp;amp; font"
+    color_and_font_header: "Farve & font"
     layout_and_pages_header: "Layout og sider"
     editing: Redigerer
     reset_to_last_published: "Nulstil siden til seneste udgivelse"
@@ -1934,7 +1934,7 @@ da:
       select_company: "Vælg firmaer"
   password_reset_email: "E-mail til nulstilling af kodeord"
   default_reply_template: "Agent Svartemplate"
-  import_user_org: "Brugere &amp;amp; Organisationer"
+  import_user_org: "Brugere & Organisationer"
   to_do: "To Do "
   does_not_contain: "Indeholder ikke"
   flash:
@@ -2236,7 +2236,7 @@ da:
   import_topics: Emner
   assigned_to: "Tildelt til"
   change: Rediger
-  back_plans_billing: "Tilbage til Planer &amp;amp;amp; Fakturering"
+  back_plans_billing: "Tilbage til Planer & Fakturering"
   f_request: "Anmodning om Feature"
   save_and_create: "Gem og Opret en Ny"
   save_and_new: "Gem og ny"
@@ -2253,7 +2253,7 @@ da:
     not_authorized: "Du blev ikke godkendt af Facebook"
   import_user_notification: "Send Bruger aktiveringsmail under import"
   what_is_cvv: "Hvad er cvv?"
-  pro_details: "Alt indenfor &amp;quot;Basic&amp;quot; Plan plus, Scenarie  Automations, Kundespecifik SLAs, Åbningstider, Forummer, Følleskab &amp;amp; E-mail Support."
+  pro_details: "Alt indenfor &quot;Basic&quot; Plan plus, Scenarie  Automations, Kundespecifik SLAs, Åbningstider, Forummer, Følleskab & E-mail Support."
   open: Åben
   zendesk_url: "Zendesk URL"
   special_beta_offer: "Specielt tilbud til Beta-kontoer"
@@ -2528,7 +2528,7 @@ da:
   bottom: Nederste
   feedbackwidget_help_title: "Feedback widget"
   name: Navn
-  import_user_org_text: "Alle Brugere &amp; Organisationer i din Zendesk konto vil blive importeret til din aktuelle Freshdesk konto som \"Kontakter & Firmaer\""
+  import_user_org_text: "Alle Brugere & Organisationer i din Zendesk konto vil blive importeret til din aktuelle Freshdesk konto som \"Kontakter & Firmaer\""
   portal_customizer_open_solutions: "Alle kan se offentlige løsninger"
   portal_customizer_option_solutions: "Brugere kan se offentlige løsninger uden at logge ind"
   portal_customizer_option_auto_suggest_solutions: "Automatisk foreslå løsninger, når brugeren opretter en ny billet."
@@ -2587,7 +2587,7 @@ da:
       browse_articles: "Gennemse artikler"
   message: Besked
   edit_forum_category: "Rediger Forumkategori"
-  agent_assigned_title: "For nylig tildelte billetter (Open &amp;amp;amp; Pending)"
+  agent_assigned_title: "For nylig tildelte billetter (Open & Pending)"
   send_email_to_requester: "Send E-mail til Rekvient"
   feedbackwidget_btcustomize: Knap-personalisering
   solution_category:
@@ -3240,10 +3240,10 @@ da:
       reset_warning: "Når API-nøgle bliver nulstillet, vil alle programmer, der bruger den gamle nøgle stoppe med at arbejde. Er du sikker på du vil fortsætte?"
   add_to_do: "Tilføj To do"
   subject_or_description: "Emne eller beskrivelse"
-  premium_details: "Alt indenfor &amp;quot;Pro&amp;quot; Plan plus, Multi-Product Support, Multi-tidszone support, Fælleskab, E-mail &amp;amp; Telefon Support"
+  premium_details: "Alt indenfor &quot;Pro&quot; Plan plus, Multi-Product Support, Multi-tidszone support, Fælleskab, E-mail & Telefon Support"
   sprout_details: "E-mail Svar Administration, Alle Automationer, Standard SLA Politik, Vidensbase, Selvservice Portal, Domæne Kortlægning, Basale Rapporter, Fælleskabs Support."
-  blossom_details: "Alt i &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forummer, Fælleskab &amp; E-mail Support."
-  garden_details: "Alt indenfor &quot;Blossom&quot; Plan plus, Multi Produkt Support, Avanceret Rapportering, Fælleskab, E-mail- &amp; Telefonsupport"
+  blossom_details: "Alt i &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forummer, Fælleskab & E-mail Support."
+  garden_details: "Alt indenfor &quot;Blossom&quot; Plan plus, Multi Produkt Support, Avanceret Rapportering, Fælleskab, E-mail- & Telefonsupport"
   estate_details: "Alt i &quot;Garden&quot; Plan plus, Gamification."
   how_to: Spørgsmål
   customers: Kunder
@@ -3395,7 +3395,7 @@ da:
     set_bcc_email_text: "Indstil automatisk Bcc e-mail"
     name_info_msg: "Navnet på e-mailen der vil blive brugt i billetsvar"
     Personalized_email_replies: "Brug Agentnavne til Individualiserede e-mail svar?"
-    Personalized_email_replies_info: "Hvis JA så vil agentens svar have agentens navn som afsender navn (e-mailadresse vil stadig være din Support E-mail-adresse). For eksempel '%{current_user_name} &amp;lt;%{current_account_domain}&amp;gt;'."
+    Personalized_email_replies_info: "Hvis JA så vil agentens svar have agentens navn som afsender navn (e-mailadresse vil stadig være din Support E-mail-adresse). For eksempel '%{current_user_name} &lt;%{current_account_domain}&gt;'."
     Personalized_email_replies_yes: Ja
     Personalized_email_replies_no: Nej
     config_saved_message: "Dine indstillinger er gemt."
@@ -3614,7 +3614,7 @@ da:
   recent_activities: "Seneste aktivitet"
   forgot_password: "Glemt kodeord"
   change_plan: "Skift plan"
-  feedbackwidget_embed_code_intro: "Du bedes kopiere og indsætte koden nedenfor overalt før &amp;lt;/body&amp;gt; tagget i HTML-skabelonen på din hjemmeside eller hver side, hvor du ønsker at tilbyde Freshdesk widgetten."
+  feedbackwidget_embed_code_intro: "Du bedes kopiere og indsætte koden nedenfor overalt før &lt;/body&gt; tagget i HTML-skabelonen på din hjemmeside eller hver side, hvor du ønsker at tilbyde Freshdesk widgetten."
   import_forum: Fora
   title: Titel
   new_ticket_created: "Ny Billet Oprettet"
@@ -3737,7 +3737,7 @@ da:
   your_trial_account: "Din prøvekonto"
   reply_comment: "Tilføj kommentar"
   import_step2_info: "Marker følgende CSV felter med database felter og import."
-  feedbackwidget_defaulttitle: "Hjælp &amp;amp; Support"
+  feedbackwidget_defaulttitle: "Hjælp & Support"
   two: "2 timer"
   set_status_as: "Sæt Status som"
   selected: Valgt

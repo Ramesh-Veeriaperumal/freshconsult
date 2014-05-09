@@ -36,7 +36,7 @@ class ContactsController < ApplicationController
       end
 
       format.json  do
-        render :json => @contacts.to_json({:except=>[:account_id] ,:include => [:user_emails], :only=>[:id,:name,:email,:verified, :primary_role, :created_at,:updated_at,:active,:job_title,
+        render :json => @contacts.to_json({:except=>[:account_id] , :only=>[:id,:name,:email,:verified, :primary_role, :created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
       end

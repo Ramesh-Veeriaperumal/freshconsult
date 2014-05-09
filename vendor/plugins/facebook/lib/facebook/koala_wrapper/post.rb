@@ -9,21 +9,13 @@ class Facebook::KoalaWrapper::Post
     @rest = Koala::Facebook::GraphAndRestAPI.new(fan_page.page_token)
   end
 
-  # Adding page_id param is just an hack for this facebook bug
-  # https://developers.facebook.com/bugs/695633340458716/
-  # https://developers.facebook.com/bugs/256674844497023
-  # side affects will create duplicate ticket if not present
-  def fetch(post_id,page_id=nil)
+  def fetch(post_id)
     @post = @rest.get_object(post_id)
-    if @post
-      @post =  @post.symbolize_keys!
-      # Overiding post in case of wrong post_id
-      @post[:id] = "#{page_id}_#{post_id}" if !post_id.include?("_") && page_id
-      parse 
-    end
+    parse if @post
   end
 
   def parse
+    @post =  @post.symbolize_keys!
     @post_id = @post[:id]
     @feed_type = @post[:type]
     @requester = facebook_user(@post[:from])
