@@ -6,6 +6,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   include Social::Util
 
   before_save :set_default_state, :add_default_search
+  before_create :set_default_threaded_time
   before_update :cache_old_model
   after_commit_on_create :construct_avatar, :subscribe_to_gnip
   after_commit_on_update :update_streams, :update_ticket_rules
@@ -16,7 +17,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   def construct_avatar
     args = {:account_id => self.account_id,
             :twitter_handle_id => self.id}
-    Resque.enqueue(Social::Twitter::Workers::UploadAvatar, args) unless Rails.env.test?
+    Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args) unless Rails.env.test?
   end
 
   def gnip_rule
@@ -33,25 +34,54 @@ class Social::TwitterHandle < ActiveRecord::Base
       :rule => gnip_rule,
       :action => RULE_ACTION[:add]
     }
-    Resque.enqueue(Social::Twitter::Workers::Gnip, args) unless valid_params?(args)
+    Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) unless valid_params?(args)
   end
 
-  def populate_default_stream
+  def build_default_streams
     def_stream = default_stream
     if def_stream.frozen? || def_stream.nil?
-      stream = self.twitter_streams.build(
-        :includes => search_keys,
-        :data => {
-          :kind => STREAM_TYPE[:default]
-        })
-      stream.save
+      default_stream_includes = [formatted_handle, "#{TWITTER_RULE_OPERATOR[:from]}#{self.screen_name}"]
+      build_stream(formatted_handle, STREAM_TYPE[:default], true, default_stream_includes)
+      build_stream(screen_name, STREAM_TYPE[:dm], false, screen_name)
     else
       error_params = {
-        :twitter_handle_id => self.id,
-        :account_id => self.account_id,
-        :stream => def_stream.inspect
+        :twitter_handle_id => id,
+        :account_id        => account_id,
+        :stream            => def_stream.inspect
       }
       notify_social_dev("Default Stream already present for the handle", error_params)
+    end
+  end
+
+  def build_custom_streams
+    search_keys.each do |search_key|
+      build_stream(search_key, STREAM_TYPE[:custom], false, search_key) unless search_key == formatted_handle
+    end
+  end
+
+  def update_ticket_rules
+    streams = self.twitter_streams
+    unless streams.empty?
+      default_stream = self.default_stream
+      if @old_handle.capture_mention_as_ticket && !capture_mention_as_ticket
+        default_stream.ticket_rules.first.destroy unless (default_stream.ticket_rules.empty?)
+      elsif !@old_handle.capture_mention_as_ticket && capture_mention_as_ticket
+        default_stream.populate_ticket_rule(nil, [formatted_handle])
+      end
+
+      dm_stream = self.dm_stream
+      if @old_handle.capture_dm_as_ticket && !capture_dm_as_ticket
+        dm_stream.ticket_rules.first.destroy unless (dm_stream.ticket_rules.empty?)
+      elsif !@old_handle.capture_dm_as_ticket && capture_dm_as_ticket
+        dm_stream.populate_ticket_rule(nil, includes)
+      end
+
+    else # TODO REMOVE AFTER MIGRATION
+      if @old_handle.capture_mention_as_ticket && !capture_mention_as_ticket
+        cleanup
+      elsif !@old_handle.capture_mention_as_ticket && capture_mention_as_ticket
+        subscribe_to_gnip
+      end
     end
   end
 
@@ -64,28 +94,37 @@ class Social::TwitterHandle < ActiveRecord::Base
         :rule => gnip_rule,
         :action => RULE_ACTION[:delete]
       }
-      Resque.enqueue(Social::Twitter::Workers::Gnip, args) unless valid_params?(args)
+      Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) unless valid_params?(args)
     end
 
-    #Delete the 'default' stream associated with this handle and
-    #set social_id to nil for the remaining associated streams
     streams = self.twitter_streams
     streams.each do |stream|
-      if stream.data[:kind] == STREAM_TYPE[:default]
-        stream.destroy
-      else
-        stream.social_id = nil
-        stream.save
-      end
+      stream.destroy
     end
   end
 
 
-  private
 
+  private
     def cache_old_model
       @old_handle = Social::TwitterHandle.find id
     end
+
+    def build_stream(name, type, subscription, search_keys)
+      stream = twitter_streams.build(
+        :name     => name,
+        :includes => search_keys.to_a,
+        :excludes => [],
+        :filter   => {
+          :exclude_twitter_handles => []
+        },
+        :data => {
+          :kind => type,
+          :gnip => subscription
+        })
+      stream.save
+    end
+
 
     def add_default_search
       if search_keys.blank?
@@ -100,30 +139,26 @@ class Social::TwitterHandle < ActiveRecord::Base
       self.state ||= TWITTER_STATE_KEYS_BY_TOKEN[:active]
     end
 
-    def update_streams
-      stream = default_stream
-      unless stream.nil?
-        old_search_keys = @old_handle.search_keys
-        unless ((old_search_keys - search_keys) + (search_keys - old_search_keys)).empty?
-          stream.update_attributes(:includes => search_keys)
-        end
-      end
+    # default value set for the column is '0'. To avoid db migration, setting at the callback level. Might change later
+    def set_default_threaded_time
+      self.dm_thread_time = DM_THREADTIME_KEYS_BY_TOKEN[:day]
     end
 
-    def update_ticket_rules
-      stream = default_stream
-      unless stream.nil?
-        if @old_handle.capture_mention_as_ticket && !capture_mention_as_ticket
-          tkt_rules = stream.ticket_rules
-          tkt_rules.first.destroy # which rule to delete? Deleting first rule now
-        elsif !@old_handle.capture_mention_as_ticket && capture_mention_as_ticket
-          stream.populate_ticket_rule([formatted_handle])
+    def update_streams
+      streams = self.twitter_streams
+      unless streams.empty?
+        #Can Change to one custom stream, now multiple streams
+        old_search_keys = @old_handle.search_keys
+
+        remove_keywords = old_search_keys - search_keys
+        remove_keywords.each do |remove_keyword|
+          stream = find_custom_stream(remove_keyword)
+          stream.destroy unless stream.nil?
         end
-      else # TODO REMOVE AFTER MIGRATION
-        if @old_handle.capture_mention_as_ticket && !capture_mention_as_ticket
-          cleanup
-        elsif !@old_handle.capture_mention_as_ticket && capture_mention_as_ticket
-          subscribe_to_gnip
+
+        add_keywords = search_keys - old_search_keys
+        add_keywords.each do |add_keyword|
+          build_stream(add_keyword, STREAM_TYPE[:custom], false, add_keyword)
         end
       end
     end

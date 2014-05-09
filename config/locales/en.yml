@@ -3813,6 +3813,10 @@ en:
         title: "Twitter Accounts"
         reauthorize: Reauthorize
         reauth_required: Reauthorization required
+        handle_auth_error: One of your twitter handles requires authentication. So could not perform the operation
+        rate_limit_reached: Twitter Rate limit has been reached. Please check after sometime
+        forbidden_error: You are forbidden to perform this operation.
+        client_error: We could not process your request. Please try after sometime.
         from: "From: "
         note_title: "Note: "
         note:  The current reply will not be registered as a ticket or a conversation inside Freshdesk.

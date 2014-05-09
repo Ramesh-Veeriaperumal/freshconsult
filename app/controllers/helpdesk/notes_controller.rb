@@ -42,9 +42,9 @@ class Helpdesk::NotesController < ApplicationController
         format.xml do
          render :xml => @notes.to_xml(options) 
         end
-		format.json do
-			render :json => @notes.to_json(options)
-		end
+    format.json do
+      render :json => @notes.to_json(options)
+    end
     format.nmobile do
         response = "["
         sep = ""
@@ -169,7 +169,8 @@ class Helpdesk::NotesController < ApplicationController
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
-          if  send("send_tweet_as_#{twt_type}")
+          twt_success, reply_twt = send("send_tweet_as_#{twt_type}")
+          if twt_success
             flash[:notice] = t(:'flash.tickets.reply.success') 
           else
             flash.now[:notice] = t('twitter.not_authorized')

@@ -55,7 +55,7 @@ namespace :gnip_stream do
         if difference_in_seconds > Social::Twitter::Constants::TIME[:replay_stream_wait_time]
           args = {:start_time => period[0], :end_time => period[1]}
           puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"
-          Resque.enqueue(Social::Twitter::Workers::Replay, args)
+          Resque.enqueue(Social::Workers::Gnip::TwitterReplay, args)
           $redis_others.lrem(disconnect_list, 1, disconnected_period)
         end
       end
@@ -73,7 +73,7 @@ namespace :gnip_stream do
       tweet_array = tweet_stream.split(Gnip::Constants::DELIMITER[:production_stream])
       tweet_array.each do |tweet|
         unless tweet.blank?
-          gnip_msg = Social::Twitter::Feed.new(tweet, queue)
+          gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
           unless gnip_msg.nil?
             gnip_msg.process
             log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?

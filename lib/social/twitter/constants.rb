@@ -8,7 +8,8 @@ module Social::Twitter::Constants
 
   #Stream and Ticket Rule type
   STREAM_TYPE = {
-    :default => "Default",
+    :default => "Mention",
+    :dm => "DM",
     :custom => "Custom"
   }
 
@@ -18,13 +19,23 @@ module Social::Twitter::Constants
     :reconnect_timeout => 30,
     :replay_stream_wait_time => 1800
   }
+  
+  MAX_LIVE_TWEET_COUNT = 500
 
-  DYNAMO_KEYS = {
-    "feeds" => ["body", "retweetCount", {"gnip" => ["matching_rules"]},
-                {"actor" => ["preferredUsername", "image", "id"]}, "verb",
-                "postedTime", "id", {"inReplyTo" => ["link"]}
-                ],
-    "conversations" => ["body", "id"]
+  TWITTER_RULE_OPERATOR = {
+    :and => " ",
+    :or => " OR ",
+    :neg => " -",
+    :from => "from:",
+    :ignore_rt => "-rt"
   }
+
+  SEARCH_RESULT_TYPE = {
+    :mixed => "mixed",
+    :recent => "recent",
+    :top => "top"
+  }
+
+  RETWEETS_COUNT =  15
 
 end

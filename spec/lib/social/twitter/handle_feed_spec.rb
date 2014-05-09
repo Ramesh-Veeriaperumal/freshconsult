@@ -2,13 +2,19 @@ require 'spec_helper'
 include GnipHelper
 include DynamoHelper
 
-describe Social::Twitter::Feed do
+describe Social::Gnip::TwitterFeed do
 
   self.use_transactional_fixtures = false
 
   before(:all) do
     Resque.inline = true
-    @handle = create_test_twitter_handle(nil, true)
+    @account = create_test_account
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+    end
+    @handle = create_test_twitter_handle(@account, true)
+    update_handle_rule(@handle) unless GNIP_ENABLED
     Resque.inline = false
     @rule = {:rule_value => @handle.rule_value, :rule_tag => @handle.rule_tag}
   end
@@ -21,12 +27,12 @@ describe Social::Twitter::Feed do
     account = @handle.account
     account.make_current
     
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(3.hours))
+    sample_dm = sample_twitter_dm(Time.zone.now.ago(7.days))
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Twitter::Workers::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
     tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -35,17 +41,17 @@ describe Social::Twitter::Feed do
     ticket_body.should eql(sample_dm[:text])
   end
   
-  it "should create a note when a DM arrives and if dm threaded time is greater than zero" do
+  it "should create a note when a DM arrives and if dm threaded time is greater less than one day" do
     account = @handle.account
     account.make_current    
     
     # For creating ticket
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(2.hours))
+    sample_dm = sample_twitter_dm(Time.zone.now.ago(6.days))
     # stub the twitter api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Twitter::Workers::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
     tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -58,12 +64,12 @@ describe Social::Twitter::Feed do
     # update threaded time for twitter handle
     @handle.update_attributes(:dm_thread_time => 604800)
     
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(1.hour))
+    sample_dm = sample_twitter_dm(Time.zone.now.ago(5.days))
     # stub the twitter api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Twitter::Workers::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
 
     tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -113,10 +119,10 @@ describe Social::Twitter::Feed do
     reply_body.should eql(body)
   end
 
-  it "should convert a reply to a tweet if the 'replied-to' tweet doesnt come in the next 10 minutes" do
+  it "should convert a reply to a ticket if the 'replied-to' tweet doesnt come in the next 10 minutes" do
     #Send Tweet
     ticket_feed = sample_gnip_feed(@rule)
-    sleep 1 #to ensure that the 'tweet' and 'reply' get different tweet_ids
+    sleep 2 #to ensure that the 'tweet' and 'reply' get different tweet_ids
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
@@ -126,23 +132,26 @@ describe Social::Twitter::Feed do
     reply_tweet.should be_nil #Reply tweet will be converted to a ticket after 10 minutes
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
-    reply_tweet = wait_for_tweet(reply_tweet_id, 660)
+
+    fd_counter = 60
+
+    while reply_tweet.nil?
+      fd_counter = fd_counter + 60
+      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
+    end
 
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
-    reply_tweet.stream_id.should be_nil
-    dynamo_feed_for_tweet(@handle, reply_feed, false)
 
     reply_body = reply_feed["body"]
     body = reply_tweet.tweetable.ticket_body.description
     reply_body.should eql(body)
   end
-
+  
   it "should convert the reply tweet to a note if the 'replied-to' tweet arrives within 10 minutes" do
-    #Send Tweet
+    #Ticket feed
     ticket_feed = sample_gnip_feed(@rule)
-
-    sleep 1 #to ensure that the 'tweet' and 'reply' get different tweet_ids
+    sleep 1
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
@@ -151,32 +160,28 @@ describe Social::Twitter::Feed do
 
     reply_tweet.should be_nil #Reply tweet will be converted to a ticket after 10 minutes
 
+    reply_tweet_id = reply_feed["id"].split(":").last.to_i
+
+    fd_counter = 60
+
+    while fd_counter != 180
+      fd_counter = fd_counter + 60
+      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
+    end
+
     #Send 'replied-to' tweet
-    ticket_tweet = send_tweet_and_wait(ticket_feed)
-    ticket_tweet.should_not be_nil
-    ticket_tweet.is_ticket?.should be_true
-    ticket_tweet.stream_id.should be_nil
-    dynamo_feed_for_tweet(@handle, ticket_feed, false)
+    tweet = send_tweet_and_wait(ticket_feed)
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
-    reply_tweet = wait_for_tweet(reply_tweet_id, 600)
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
 
     #Reply tweet should be converted to a note
     reply_tweet.should_not be_nil
     reply_tweet.is_note?.should be_true
-    reply_tweet.stream_id.should be_nil
 
     reply_body = reply_feed["body"]
     body = reply_tweet.tweetable.note_body.body
     reply_body.should eql(body)
-  end
-
-  it "should not create a ticket if the feed doesnot have any matching rules" do
-    feed = sample_gnip_feed()
-    feed["gnip"]["matching_rules"] = []
-    tweet = send_tweet_and_wait(feed)
-    tweet.should be_nil
-    dynamo_feed_for_tweet(@handle, feed, false)
   end
 
   it "should not convert a share/retweet to a ticket" do
@@ -190,16 +195,6 @@ describe Social::Twitter::Feed do
   it "should convert tweets with @mentions to tickets" do
     feed = sample_gnip_feed(@rule)
     feed["body"] = "#{@handle.formatted_handle} @mention tweet"
-    tweet = send_tweet_and_wait(feed)
-    tweet.should_not be_nil
-    tweet.stream_id.should be_nil
-    dynamo_feed_for_tweet(@handle, feed, false)
-  end
-
-  it "should convert tweets with keywords to tickets" do
-    keys = @handle.search_keys - [@handle.formatted_handle]
-    feed = sample_gnip_feed(@rule)
-    feed["body"] = "#{keys.first} keywords tweet"
     tweet = send_tweet_and_wait(feed)
     tweet.should_not be_nil
     tweet.stream_id.should be_nil
@@ -232,6 +227,7 @@ describe Social::Twitter::Feed do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
+    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
     @handle.destroy
     Resque.inline = false
   end

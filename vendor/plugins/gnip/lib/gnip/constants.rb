@@ -24,7 +24,10 @@ module Gnip
 
     RULE_OPERATOR = {
       :and => " AND ",
-      :or => " OR "
+      :or => " OR ",
+      :neg => " -",
+      :from => "from",
+      :ignore_rt => " -is:retweet"
     }
 
     STREAM = {

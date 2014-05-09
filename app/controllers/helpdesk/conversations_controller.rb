@@ -67,7 +67,8 @@ class Helpdesk::ConversationsController < ApplicationController
   def twitter
     if @item.save_note
       twt_type = params[:tweet_type] || :mention.to_s
-      if send("send_tweet_as_#{twt_type}")
+      twt_success, reply_twt = send("send_tweet_as_#{twt_type}")
+      if twt_success
         flash[:notice] = t(:'flash.tickets.reply.success') 
       else
         flash.now[:notice] = t('twitter.not_authorized')
@@ -144,7 +145,7 @@ class Helpdesk::ConversationsController < ApplicationController
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
       url_redirect = params[:redirect_to].present? ? TICKET_REDIRECT_MAPPINGS[params[:redirect_to]] : item_url
       
-	  respond_to do |format|
+    respond_to do |format|
         format.html { redirect_to url_redirect }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }

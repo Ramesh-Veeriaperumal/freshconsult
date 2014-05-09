@@ -4,7 +4,7 @@ class CreateSocialConversationsDynamodb < ActiveRecord::Migration
     include Social::Constants
 
     [Time.now, Time.now+7.days].each do |time|
-      table = "conversations"
+      table = "interactions"
       schema = TABLES[table][:schema]
       properties = DYNAMO_DB_CONFIG[table]
       name = Social::DynamoHelper.select_table(table, time)
