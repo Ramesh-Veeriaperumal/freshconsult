@@ -83,6 +83,10 @@ class Subscription < ActiveRecord::Base
   def self.paid_agent_count
     sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00"]).to_i
   end
+
+  def self.free_agent_count
+    sum('free_agents', :conditions => [ "state in ('#{ACTIVE}', '#{FREE}')"]).to_i
+  end
  
   def self.monthly_revenue
     sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00"]).to_f
