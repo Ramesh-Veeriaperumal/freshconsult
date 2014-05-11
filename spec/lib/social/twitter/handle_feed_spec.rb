@@ -122,22 +122,19 @@ describe Social::Gnip::TwitterFeed do
   it "should convert a reply to a ticket if the 'replied-to' tweet doesnt come in the next 10 minutes" do
     #Send Tweet
     ticket_feed = sample_gnip_feed(@rule)
-    sleep 2 #to ensure that the 'tweet' and 'reply' get different tweet_ids
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
     reply_feed = sample_gnip_feed(@rule, ticket_tweet_id)
     reply_tweet = send_tweet_and_wait(reply_feed)
-
     reply_tweet.should be_nil #Reply tweet will be converted to a ticket after 10 minutes
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
     fd_counter = 60
-
-    while reply_tweet.nil?
+    while reply_tweet.nil? and fd_counter <= 240   
+      reply_tweet = send_tweet_and_wait(reply_feed, fd_counter)
       fd_counter = fd_counter + 60
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
     end
 
     reply_tweet.should_not be_nil
@@ -151,29 +148,29 @@ describe Social::Gnip::TwitterFeed do
   it "should convert the reply tweet to a note if the 'replied-to' tweet arrives within 10 minutes" do
     #Ticket feed
     ticket_feed = sample_gnip_feed(@rule)
-    sleep 1
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
     reply_feed = sample_gnip_feed(@rule, ticket_tweet_id)
     reply_tweet = send_tweet_and_wait(reply_feed)
-
     reply_tweet.should be_nil #Reply tweet will be converted to a ticket after 10 minutes
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
     fd_counter = 60
-
-    while fd_counter != 180
+    while fd_counter < 240 and reply_tweet.nil?      
+      reply_tweet = send_tweet_and_wait(reply_feed, fd_counter)
       fd_counter = fd_counter + 60
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
     end
+    reply_tweet.should be_nil
 
     #Send 'replied-to' tweet
     tweet = send_tweet_and_wait(ticket_feed)
+    tweet.should_not be_nil
+    tweet.is_ticket?.should be_true
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
-    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
+    reply_tweet = send_tweet_and_wait(reply_feed)
 
     #Reply tweet should be converted to a note
     reply_tweet.should_not be_nil

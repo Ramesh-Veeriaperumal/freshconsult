@@ -4,7 +4,9 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 module GnipHelper
 
   def sample_gnip_feed(rule_hash=nil, reply=nil)
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    begin
+      tweet_id = (Time.now.utc.to_f*100000).to_i
+    end until reply != tweet_id
     feed_hash = {
       "body" => "@TestingGnip Testing Gnip",
       "retweetCount" => 2,

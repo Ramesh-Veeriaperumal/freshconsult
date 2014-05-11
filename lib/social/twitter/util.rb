@@ -24,11 +24,11 @@ module Social::Twitter::Util
     )
 
     if ticket.save_ticket
-      puts "This ticket has been saved - #{tkt_hash[:tweet_id]}"
+      Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}"
     else
       NewRelic::Agent.notice_error("Error in converting a tweet to ticket", :custom_params =>
                                    {:error_params => ticket.errors.to_json})
-      puts "error while saving the ticket - #{tkt_hash[:tweet_id]} :: #{ticket.errors.to_json}"
+      Rails.logger.debug "error while saving the ticket - #{tkt_hash[:tweet_id]} :: #{ticket.errors.to_json}"
       ticket = nil
     end
     return ticket
@@ -55,11 +55,11 @@ module Social::Twitter::Util
     )
 
     if note.save_note
-      puts "This note has been added - #{note_hash[:tweet_id]}"
+      Rails.logger.debug "This note has been added - #{note_hash[:tweet_id]}"
     else
       NewRelic::Agent.notice_error("Error in converting a tweet to ticket", :custom_params =>
                                    {:error_params => note.errors.to_json})
-      puts "error while saving the note - #{note_hash[:tweet_id]} :: #{note.errors.to_json}"
+      Rails.logger.debug "error while saving the note - #{note_hash[:tweet_id]} :: #{note.errors.to_json}"
       note = nil
     end
     return note
