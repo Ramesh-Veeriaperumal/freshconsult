@@ -87,28 +87,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
       return {:medium => "127x177>",:thumb  => "50x50#" }
     end
   end
-
-  def exclude
-    [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
-  end
-
-  def attachment_url_for_api
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days).gsub( "#{AwsWrapper::S3::DEFAULT_HOST}/", '' )  
-  end
-
-  def to_json(options = {})
-    options[:except] = exclude
-    options[:methods] = [:attachment_url_for_api]
-    json_str = super(options)
-    ActiveSupport::JSON.encode(ActiveSupport::JSON.decode(json_str)["attachment"]).sub("\"attachment_url_for_api\"", "\"attachment_url\"")
-  end
   
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => exclude) do |xml|
-         xml.tag!("attachment_url", attachment_url_for_api)
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:description,:content_updated_at,:attachable_id,:attachable_type]) do |xml|
+         xml.tag!("attachment_url",AwsWrapper::S3Object.url_for(content.path,content.bucket_name,:expires => 5.days).gsub( "#{AwsWrapper::S3::DEFAULT_HOST}/", '' ))
      end
    end
 

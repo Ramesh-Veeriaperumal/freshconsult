@@ -540,8 +540,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return json_str
     end
     if deep
-      options[:methods].push(:attachments)
       self[:notes] = self.notes
+      options[:include] = [:attachments]
     end
     options[:except] = [:account_id,:import_id]
     options[:methods].push(:custom_field)
