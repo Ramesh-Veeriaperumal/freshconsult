@@ -1,3 +1,6 @@
+Authlogic::Session::Base.after_save.delete_if{ |callback| callback.method == :save_cookie }
+Authlogic::Session::Base.persist.delete_if{ |callback| callback.method == :persist_by_cookie }
+Authlogic::Session::Base.after_destroy.delete_if{ |callback| callback.method == :destroy_cookie }
 class UserSession < Authlogic::Session::Base
 
 	find_by_login_method :find_by_user_emails

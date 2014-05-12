@@ -1723,6 +1723,7 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.text     "action_data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position"
   end
 
   add_index "social_ticket_rules", ["account_id", "stream_id"], :name => "index_social_ticket_rules_on_account_id_and_stream_id"

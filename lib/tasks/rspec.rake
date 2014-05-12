@@ -18,7 +18,7 @@ end
 
 FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
-IntegrationTest = ["spec/controllers/agents_controller_spec.rb", 
+IntegrationTest = [ "spec/controllers/agents_controller_spec.rb", 
                     "spec/controllers/contacts_controller_spec.rb", 
                     "spec/controllers/contact_merge_controller_spec.rb",
                     "spec/controllers/user_emails_controller_spec.rb",
@@ -28,7 +28,9 @@ IntegrationTest = ["spec/controllers/agents_controller_spec.rb",
                     "spec/controllers/helpdesk/*_spec.rb",
                     "spec/controllers/support/*_spec.rb",
                     "spec/controllers/negative/*_spec.rb",
-                    "spec/models/helpdesk/mysql_*_spec.rb"]
+                    "spec/models/helpdesk/mysql_*_spec.rb",
+                    "spec/lib/social/twitter/*_spec.rb",
+                    "spec/models/social/twitter_*_spec.rb"]
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]                    
 
 AllTest = [FacebookTest,IntegrationTest,TwitterTest,ModelTest]
@@ -195,5 +197,4 @@ namespace :spec do
   end
 
 end
-
 end

@@ -198,7 +198,7 @@ var IvrOption;
 			var self = this;
 			this.$keypressContainer.find('option[disabled]').removeAttr('disabled', 'disabled');
 			keys.each(function (key) {
-				self.$keypressContainer.find('option[value=' + key + ']').each(function () {
+				self.$keypressContainer.find('option[value="' + key + '"]').each(function () {
 					if ($(this).attr('selected') === undefined) {
 						$(this).attr('disabled', 'disabled');
 					}

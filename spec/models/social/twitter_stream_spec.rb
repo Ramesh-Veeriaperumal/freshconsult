@@ -1,5 +1,6 @@
 require 'spec_helper'
 include GnipHelper
+include Social::Twitter::Constants
 
 describe Social::TwitterStream do
 
@@ -7,11 +8,22 @@ describe Social::TwitterStream do
 
   before(:all) do
     Resque.inline = true
-    @handle = create_test_twitter_handle()
+    @account = create_test_account
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns(nil) 
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response) 
+    end
+    @handle = create_test_twitter_handle(@account, false)
     @stream = @handle.default_stream
+    update_stream_rule(@stream) unless GNIP_ENABLED
   end
 
   before(:each) do
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns(nil)
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response) 
+      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+    end
     @handle.reload
   end
 
@@ -21,24 +33,35 @@ describe Social::TwitterStream do
     @stream.should_not be_nil
     @stream.data[:kind].should be_eql(Social::Twitter::Constants::STREAM_TYPE[:default])
   end
+  
+  
+  it "should create twitter streams of 'custom' kind for search keys other than twitter_handle" do
+    @streams = @handle.twitter_streams
+    streams = @streams.map{|stream| stream.includes if stream.data[:kind] == STREAM_TYPE[:custom]}.flatten.compact
+    streams.length.should equal(@handle.search_keys.length-1)
+  end
 
   it "should create a gnip rule" do
-    #Check rule in gnip
-    mrule = gnip_rule(@stream.gnip_rule)
-    mrule.should_not be_nil
+    if GNIP_ENABLED
+      #Check rule in gnip
+      mrule = gnip_rule(@stream.gnip_rule)
+      mrule.should_not be_nil
 
-    #check for matching rule tag
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    tags = mrule.tag.split(tag_delimiter)
-    tags.should include(@stream.gnip_rule[:tag])
+      #check for matching rule tag
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      tags = mrule.tag.split(tag_delimiter)
+      tags.should include(@stream.gnip_rule[:tag])
+    end
   end
 
-  it "should insert keywords into stream <includes>" do
-    @stream.includes.should have(3).items #@freshdesk, freshdesk, @TestingGnip
-    @stream.includes.should include("@freshdesk", "freshdesk", "@TestingGnip")
+  it "should insert keywords into streams <includes>" do
+    @streams = @handle.twitter_streams
+    includes = @streams.map{|stream| stream.includes}.flatten
+    includes.should have(5).items
+    includes.should include("@freshdesk", "freshdesk", "@TestingGnip", "from:TestingGnip", "TestingGnip")
   end
 
-  it "should create a ticket rule with only @mention in the includes" do
+  it "should create a ticket rule with blank in the includes" do
     verify_mention_rule(@handle.formatted_handle)
   end
 
@@ -55,26 +78,19 @@ describe Social::TwitterStream do
     @stream.reload
     verify_mention_rule(@handle.formatted_handle)
   end
-
-  it "should update gnip rule when its search_keys are updated" do
-    new_keys = ["freshdesk", "freshchat"]
-    @handle.update_attributes(:search_keys => new_keys)
-
-    @handle.reload
-    @stream.reload
-
-    @stream.includes.should have(3).items #@freshphone, freshchat, @TestingGnip
-    @stream.includes.should include("freshdesk", "freshchat", "@TestingGnip")
-
-    #Check rule in gnip
-    mrule = gnip_rule(@stream.gnip_rule)
-    mrule.should_not be_nil
-
-    #check for matching rule tag
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    tags = mrule.tag.split(tag_delimiter)
-    tags.should include(@stream.gnip_rule[:tag])
+  
+  it "should add  new ticket rule if 'capture_mention_as_dm' is seleted" do
+    @handle.update_attributes(:capture_dm_as_ticket => true)
+    @dm_stream = @handle.dm_stream
+    @dm_stream.ticket_rules.first.should_not be_nil
   end
+
+  it "should ticket rule if 'capture_mention_as_dm' is deseleted" do
+    @handle.update_attributes(:capture_dm_as_ticket => false)
+    @dm_stream = @handle.dm_stream
+    @dm_stream.ticket_rules.first.should be_nil
+  end
+
 
   it "should delete the gnip rule if account is suspended" do
     current_state = @handle.account.subscription.state
@@ -82,11 +98,14 @@ describe Social::TwitterStream do
     rule = @stream.gnip_rule
     if current_state != "suspended"
       @handle.account.subscription.update_attributes(:state => "suspended")
-      mrule = gnip_rule(rule)
-      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-      if !mrule.nil?
-        tags = mrule.tag.split(tag_delimiter)
-        tags.should_not include(rule[:tag])
+      
+      if GNIP_ENABLED
+        mrule = gnip_rule(rule)
+        tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+        if !mrule.nil?
+          tags = mrule.tag.split(tag_delimiter)
+          tags.should_not include(rule[:tag])
+        end
       end
 
       stream = Social::Stream.find_by_id(stream_id)
@@ -98,15 +117,17 @@ describe Social::TwitterStream do
     current_state = @handle.account.subscription.state
     if current_state == "suspended"
       @handle.account.subscription.update_attributes(:state => "trial")
-      rule = @handle.gnip_rule
 
-      mrule = gnip_rule(rule)
-      mrule.should_not be_nil
+      if GNIP_ENABLED
+        rule = @handle.gnip_rule
+        mrule = gnip_rule(rule)
+        mrule.should_not be_nil
 
-      mrule.value.should eql rule[:value]
-      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-      tags = mrule.tag.split(tag_delimiter)
-      tags.should include(rule[:tag])
+        mrule.value.should eql rule[:value]
+        tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+        tags = mrule.tag.split(tag_delimiter)
+        tags.should include(rule[:tag])
+      end
     end
   end
 
@@ -118,13 +139,15 @@ describe Social::TwitterStream do
     #Destroy the handle
     @handle.destroy
 
-    #Check rule in gnip
-    mrule = gnip_rule(rule)
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    if !mrule.nil?
-      #check for matching rule tag
-      tags = mrule.tag.split(tag_delimiter)
-      tags.should_not include(rule[:tag])
+    if GNIP_ENABLED
+      #Check rule in gnip
+      mrule = gnip_rule(rule)
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      if !mrule.nil?
+        #check for matching rule tag
+        tags = mrule.tag.split(tag_delimiter)
+        tags.should_not include(rule[:tag])
+      end
     end
 
     #Ensure the handle and stream have been deleted
@@ -134,7 +157,7 @@ describe Social::TwitterStream do
     # stream = Social::Stream.find_by_id(stream_id)
     # stream.should be_nil
   end
-
+  
   after(:all) do
     Resque.inline = false
   end

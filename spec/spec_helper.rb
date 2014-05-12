@@ -56,10 +56,11 @@ Spork.prefork do
 
     config.before(:suite) do
       ES_ENABLED = false
+      GNIP_ENABLED = false
       DatabaseCleaner.clean_with(:truncation,
         {:pre_count => true, :reset_ids => false})
     end
-
+    
     # == Fixtures
     #
     # You can declare fixtures for each example_group like this:

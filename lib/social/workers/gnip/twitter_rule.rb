@@ -1,16 +1,16 @@
-class Social::Twitter::Workers::Gnip
+class Social::Workers::Gnip::TwitterRule
   extend Resque::AroundPerform
 
   @queue = "twitter_gnip_worker"
 
-  include Social::Twitter::DbUtil
+  include Social::Gnip::DbUtil
   include Social::Twitter::Constants
   include Gnip::Constants
 
   def self.perform(args)
     powertrack_envs = args[:env]
-    rule = args[:rule].symbolize_keys!
-    source = SOURCE[:twitter]
+    rule            = args[:rule].symbolize_keys!
+    source          = SOURCE[:twitter]
 
     powertrack_envs.each do |env|
       client = Gnip::RuleClient.new(source, env, rule)

@@ -1,15 +1,15 @@
 class Social::TwitterHandle < ActiveRecord::Base
 
+  belongs_to_account
   belongs_to :product
-  belongs_to :account
 
   has_one :avatar,
-    :as => :attachable,
+    :as         => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+    :dependent  => :destroy
 
   has_many :twitter_streams,
     :foreign_key => :social_id,
-    :class_name => 'Social::TwitterStream'
+    :class_name  => 'Social::TwitterStream'
 
 end

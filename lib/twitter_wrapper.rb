@@ -11,15 +11,13 @@ class TwitterWrapper
       @product = twitter_handle.product
     end
     @account = options[:current_account]  || twitter_handle.account
-    @config = File.join(Rails.root, 'config', 'twitter.yml')
-    @tokens = YAML::load_file @config
     @callback_url = "#{options[:callback_url]}"
     @callback_url = "#{@callback_url}?product_id=#{@product.id}" if @product
-    @consumer ||= OAuth::Consumer.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env], {:site => "https://api.twitter.com"}
+    @consumer ||= OAuth::Consumer.new TwitterConfig::CLIENT_ID, TwitterConfig::CLIENT_SECRET, {:site => "https://api.twitter.com"}
     @twitter_handle = twitter_handle
     Twitter.configure do |config|
-      config.consumer_key = @tokens['consumer_token'][Rails.env]
-      config.consumer_secret = @tokens['consumer_secret'][Rails.env]
+      config.consumer_key = TwitterConfig::CLIENT_ID
+      config.consumer_secret = TwitterConfig::CLIENT_SECRET
     end
 
   end
@@ -28,7 +26,7 @@ class TwitterWrapper
     rtoken = @consumer.get_request_token(:oauth_callback => @callback_url)       
   end
 
-##Need to consider re-authorize where we dont need to add the same twitter handle again
+  #Need to consider re-authorize where we dont need to add the same twitter handle again
   def auth(rtoken,rsecret, verifier)    
     request_token = OAuth::RequestToken.new(@consumer,rtoken,rsecret)
     access_token = request_token.get_access_token(:oauth_verifier => verifier)        
@@ -50,7 +48,6 @@ class TwitterWrapper
   def get_twitter    
     twitter = Twitter::Client.new(:oauth_token => @twitter_handle.access_token,
                                   :oauth_token_secret => @twitter_handle.access_secret)
-    #twitter.home_timeline.first
     twitter
   end
   

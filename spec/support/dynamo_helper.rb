@@ -28,18 +28,14 @@ module DynamoHelper
       feed_entry.should be_nil
     end
 
-    #Check conversations table
+    #Check interactions table
     result = false
-    for i in 1..5
-      table = "conversations"
-      user_entry = dynamodb_entry(table, hash_key, "#{user_id}", tweet_feed["postedTime"])
-      unless user_entry.nil?
-        user_entry["data"][:ss].each do |twt|
-          result ||= compare_intersecting_keys(tweet_feed, JSON.parse(twt))
-        end
-      end
-      break if result
-      sleep 2 if !user_entry.nil?
+    table = "interactions"
+    user_entry = dynamodb_entry(table, hash_key, "user:#{user_id}", tweet_feed["postedTime"])
+    tweet_id = tweet_feed["id"].split(":").last
+    unless user_entry.nil?
+      user_entry_tweet_ids = user_entry["feed_ids"][:ss]
+      result ||= user_entry_tweet_ids.include?(tweet_id)
     end
 
     if present
@@ -70,13 +66,9 @@ module DynamoHelper
       properties = DYNAMO_DB_CONFIG[table] #Social::Twitter::Constants::
       name = Social::DynamoHelper.select_table(table, time)
 
-      for i in 1..10
-        result = Social::DynamoHelper.query(name, hash_key, range_key, schema, 1)
-        unless result[:member].empty?
-          return result[:member].first
-        else
-          sleep 1
-        end
+      result = Social::DynamoHelper.query(name, hash_key, range_key, schema, 1, false)
+      unless result[:member].empty?
+        return result[:member].first
       end
 
       return nil

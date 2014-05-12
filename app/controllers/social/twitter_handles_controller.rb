@@ -1,14 +1,14 @@
 class Social::TwitterHandlesController < ApplicationController
 
   include ErrorHandle
-  include Social::Twitter::DynamoUtil
+  include Social::Dynamo::Twitter
 
   before_filter { |c| c.requires_feature :twitter }
 
-  prepend_before_filter :load_product, :only => [ :signin, :authdone ]
+  prepend_before_filter :load_product, :only => [:signin, :authdone]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]
-  before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
+  before_filter :twitter_wrapper, :only => [:signin, :authdone, :index]
   before_filter :check_if_handles_exist, :only => [:feed]
 
   def check_if_handles_exist
@@ -43,8 +43,8 @@ class Social::TwitterHandlesController < ApplicationController
 
   def tweet_exists
     converted_tweets = current_account.tweets.find(:all,
-                              :conditions => { :tweet_id => params[:tweet_ids].split(",")},
-                              :include => :tweetable)
+                                                   :conditions => { :tweet_id => params[:tweet_ids].split(",")},
+                                                   :include => :tweetable)
     @tweet_tkt_hsh = {}
     converted_tweets.each do |tweet|
       @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.display_id)
@@ -57,19 +57,20 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def index
-   returned_val = sandbox(0) {
-    request_token = @wrapper.request_tokens
-    session[:request_token] = request_token.token
-    session[:request_secret] = request_token.secret
-    @auth_redirect_url = request_token.authorize_url
-    @twitter_handles = all_twitters
-   }
+    returned_val = sandbox(0) {
+      request_token = @wrapper.request_tokens
+      session[:request_token] = request_token.token
+      session[:request_secret] = request_token.secret
+      @auth_redirect_url = request_token.authorize_url
+      @twitter_handles = all_twitters
+    }
 
-      if returned_val == 0
-        flash[:error] = t('twitter.not_authorized')
-        redirect_to admin_home_index_url
-      end
+    if returned_val == 0
+      flash[:error] = t('twitter.not_authorized')
+      redirect_to admin_home_index_url
+    end
   end
+
   def signin
     request_token = @wrapper.request_tokens
     session[:request_token] = request_token.token
@@ -85,25 +86,27 @@ class Social::TwitterHandlesController < ApplicationController
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
       handle = all_twitters.find_by_twitter_user_id(twitter_handle[:twitter_user_id])
       unless handle.nil?
-        handle.attributes = { :access_token => twitter_handle.access_token,
-                              :access_secret => twitter_handle.access_secret,
-                              :last_dm_id => nil, :last_mention_id => nil,
-                              :state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active],
-                              :last_error => nil }
+        handle.attributes = {
+          :access_token  => twitter_handle.access_token,
+          :access_secret => twitter_handle.access_secret,
+          :last_dm_id    => nil, :last_mention_id => nil,
+          :state         => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active],
+          :last_error    => nil
+        }
         handle.save
         handle.construct_avatar unless handle.avatar
         redirect_to edit_social_twitter_url(handle)
       else
         twitter_handle.save
-        portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
+        portal_name    = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)
         redirect_to edit_social_twitter_url(twitter_handle)
       end
-   }
-   if returned_value == 0
-     flash[:notice] = t('twitter.not_authorized')
-     redirect_to social_twitters_url
-   end
+    }
+    if returned_value == 0
+      flash[:notice] = t('twitter.not_authorized')
+      redirect_to social_twitters_url
+    end
   end
 
   def destroy
@@ -113,7 +116,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def show_time_lines
-     @tweets = @wrapper.get_twitter
+    @tweets = @wrapper.get_twitter
   end
 
   def tweet
@@ -133,20 +136,13 @@ class Social::TwitterHandlesController < ApplicationController
 
     if @item.update_attributes(params[:social_twitter_handle])
       flash[:notice] = I18n.t(:'flash.twitter.updated')
+      redirect_to social_twitters_url
     else
-      update_error
-    end
-    respond_to do |format|
-      format.html { redirect_back_or_default social_twitters_url }
-      format.js
+      flash.now[:notice] = 'We encountered and error while saving the twitter handle'
+      render 'edit'
     end
   end
 
-#  def new_search
-#    @twitter_handles = scoper.find(:all, :include => :user)
-#    @twitter_search = current_account.twitter_search_keys.new
-#    render :partial => "new_search_key"
-#  end
 
   def feed
     @selected_tab = :social
@@ -154,7 +150,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def create_ticket_from_tweet
-    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
+    user    = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
     @ticket
@@ -164,22 +160,27 @@ class Social::TwitterHandlesController < ApplicationController
     user = current_account.all_users.find_by_twitter_id(screen_name)
     unless user
       user = current_account.contacts.new
-      user.signup!({:user => {:twitter_id => screen_name, :name => screen_name,
-                    :active => true,
-                    :helpdesk_agent => false}})
+      user.signup!({:user => {
+                      :twitter_id     => screen_name,
+                      :name           => screen_name,
+                      :active         => true,
+                      :helpdesk_agent => false
+      }})
     end
     if user.avatar.nil? && !profile_image_url.nil?
-      args = {:account_id => current_account.id,
-              :twitter_user_id => user.id,
-              :prof_img_url => profile_image_url}
-      Resque.enqueue(Social::Twitter::Workers::UploadAvatar, args)
+      args = {
+        :account_id      => current_account.id,
+        :twitter_user_id => user.id,
+        :prof_img_url    => profile_image_url
+      }
+      Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args)
     end
     user
   end
 
   def create_note_from_tweet(in_reply_to_status_id)
     tweet = current_account.tweets.find_by_tweet_id(in_reply_to_status_id)
-    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
+    user  = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
 
     unless tweet.nil?
       @ticket = tweet.get_ticket
@@ -187,16 +188,20 @@ class Social::TwitterHandlesController < ApplicationController
 
     unless @ticket.blank?
       @note = @ticket.notes.build(
-        :note_body_attributes => {:body => params[:helpdesk_tickets][:ticket_body_attributes][:description]},
-        :private => true ,
-        :incoming => true,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-        :account_id => current_account.id,
-        :user_id => user.id ,
-        :tweet_attributes => {:tweet_id => params[:helpdesk_tickets][:tweet_attributes][:tweet_id],
-                                          :twitter_handle_id => tweet.twitter_handle_id}
-       )
-       @note
+        :note_body_attributes => {
+          :body => params[:helpdesk_tickets][:ticket_body_attributes][:description]
+        },
+        :private          => true,
+        :incoming         => true,
+        :source           => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+        :account_id       => current_account.id,
+        :user_id          => user.id,
+        :tweet_attributes => {
+          :tweet_id          => params[:helpdesk_tickets][:tweet_attributes][:tweet_id],
+          :twitter_handle_id => tweet.twitter_handle_id
+        }
+      )
+      @note
     else
       create_ticket_from_tweet
     end
@@ -208,8 +213,8 @@ class Social::TwitterHandlesController < ApplicationController
     return_value = sandbox(0) {
       twt_handle = current_account.twitter_handles.find(params[:helpdesk_tickets][:tweet_attributes][:twitter_handle_id])
       if twt_handle
-        wrapper = TwitterWrapper.new twt_handle
-        twitter = wrapper.get_twitter
+        wrapper   = TwitterWrapper.new twt_handle
+        twitter   = wrapper.get_twitter
         stream_id = twt_handle.default_stream_id
         params[:helpdesk_tickets][:tweet_attributes].merge!(:stream_id => stream_id)
         in_reply_to_status_id = twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
@@ -218,7 +223,7 @@ class Social::TwitterHandlesController < ApplicationController
 
     if return_value == 0
       flash.now[:notice] = "Something wrong with the twitter API"
-      return  render :partial => "create_twicket"
+      return render :partial => "create_twicket"
     end
 
     if in_reply_to_status_id.blank?
@@ -236,12 +241,6 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def send_tweet
-    #@ARV@ TODO - Conversations::Twitter#send_tweet_as_mention
-    # 1. ignore twitter handle streams, update dynamo for "streams" ONLY
-    # 2. what if the "tweet" that is being replied to is not present in the db ?? Can this even happen?
-    # 3. Validate the stream. Make sure its a "saved" gnip stream and not a "search" stream created on the fly
-    # 4. Use "stream.id" to form "stream_id" dynamo key
-
     reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
 
     begin
@@ -250,24 +249,7 @@ class Social::TwitterHandlesController < ApplicationController
         twitter  = @wrapper.get_twitter
         reply_tweet_body = params[:tweet][:body].strip
         in_reply_to = params[:tweet][:in_reply_to]
-        default_stream_id = reply_twitter.default_stream_id
-
         reply_tweet = twitter.update(reply_tweet_body, {:in_reply_to_status_id => in_reply_to})
-
-        reply_params = {
-          :id => reply_tweet.attrs[:id_str],
-          :in_reply_to_user_id => reply_tweet.attrs[:in_reply_to_user_id_str],
-          :body => reply_tweet_body,
-          :in_reply_to_id => in_reply_to,
-          :posted_at => reply_tweet.attrs[:created_at]
-        }
-
-        # Update reply in DynamoDB if stream id is not nil
-        unless default_stream_id.nil?
-          stream_id = "#{current_account.id}_#{default_stream_id}"
-          update_reply(stream_id, reply_params)
-        end
-
         flash.now[:notice] = "Successfully sent a tweet"
       end
     rescue Twitter::Error::Forbidden => e
@@ -280,47 +262,50 @@ class Social::TwitterHandlesController < ApplicationController
     end
   end
 
-   #Followig method will check requester is a follower of responding twitter Id
-   def user_following
-     user_follows = false
-     reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
-      unless reply_twitter.nil?
-        @wrapper = TwitterWrapper.new reply_twitter
-        twitter  = @wrapper.get_twitter
-        user_follows = twitter.friendship?(params[:req_twt_id], reply_twitter.screen_name)
-      end
-     render :json =>{:user_follows => user_follows }.to_json
-   end
+  #Followig method will check requester is a follower of responding twitter Id
+  def user_following
+    user_follows  = false
+    reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
+    unless reply_twitter.nil?
+      @wrapper = TwitterWrapper.new reply_twitter
+      twitter  = @wrapper.get_twitter
+      user_follows = twitter.friendship?(params[:req_twt_id], reply_twitter.screen_name)
+    end
+    render :json => {:user_follows => user_follows }.to_json
+  end
 
   protected
-    def twitter_wrapper
-      @wrapper = TwitterWrapper.new @item ,{ :product => @current_product,
-                                             :current_account => current_account,
-                                             :callback_url => url_for(:action => 'authdone')}
-    end
 
-    def scoper
-      @current_product ? @current_product.twitter_handles : current_account.twitter_handles
-    end
+  def twitter_wrapper
+    @wrapper = TwitterWrapper.new(@item ,{
+                                    :product         => @current_product,
+                                    :current_account => current_account,
+                                    :callback_url    => url_for(:action => 'authdone')
+    })
+  end
 
-    def all_twitters
-      current_account.twitter_handles
-    end
+  def scoper
+    @current_product ? @current_product.twitter_handles : current_account.twitter_handles
+  end
 
-    def load_product
-      @current_product = current_account.products.find(params[:product_id]) if params[:product_id]
-    end
+  def all_twitters
+    current_account.twitter_handles
+  end
 
-    def build_item
-      @item = scoper.build
-    end
+  def load_product
+    @current_product = current_account.products.find(params[:product_id]) if params[:product_id]
+  end
 
-    def load_item
-      @item = current_account.twitter_handles.find(params[:id])
-    end
+  def build_item
+    @item = scoper.build
+  end
 
-    def human_name
-      'Twitter'
-    end
+  def load_item
+    @item = current_account.twitter_handles.find(params[:id])
+  end
+
+  def human_name
+    'Twitter'
+  end
 
 end

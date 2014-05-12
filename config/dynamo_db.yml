@@ -3,7 +3,7 @@ development:
     suffix: dev
     read_capacity: 10
     write_capacity: 5
-  conversations:
+  interactions:
     suffix: dev
     read_capacity: 10
     write_capacity: 5
@@ -14,7 +14,7 @@ staging:
     suffix: staging
     read_capacity: 10
     write_capacity: 5
-  conversations:
+  interactions:
     suffix: staging
     read_capacity: 10
     write_capacity: 5
@@ -25,7 +25,7 @@ production:
     suffix: production
     read_capacity: 10
     write_capacity: 20
-  conversations:
+  interactions:
     suffix: production
     read_capacity: 10
     write_capacity: 20
@@ -36,7 +36,7 @@ test:
     suffix: test
     read_capacity: 10
     write_capacity: 5
-  conversations:
+  interactions:
     suffix: test
     read_capacity: 10
     write_capacity: 5
