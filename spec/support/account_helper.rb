@@ -34,11 +34,10 @@ module AccountHelper
       :account_name => 'Test Account',
       :account_domain => 'localhost',
       :locale => I18n.default_locale,
-      
       :user_name => 'Support',
       :user_password => 'test',
-      :user_password_confirmation => 'test', 
-      :user_user_emails_attributes => {"0" => {:email => Helpdesk::EMAIL[:sample_email], :primary_role => true}},
+      :user_password_confirmation => 'test',
+      :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )
     signup.save
