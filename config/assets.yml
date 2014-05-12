@@ -178,6 +178,7 @@ javascripts:
     - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/app/ticket_details.js
     - public/javascripts/frameworks/plugins/jquery.tabby.js
+    - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/nprogress.js
     - public/javascripts/frameworks/plugins/jquery.unveil.js
     - public/javascripts/lookup.js

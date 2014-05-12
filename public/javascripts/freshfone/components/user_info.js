@@ -1,6 +1,6 @@
 var FreshfoneUserInfo;
 (function ($) {
-	"use strict";
+	// "use strict";
 	var customerNumber;
 
 	FreshfoneUserInfo = function () {
@@ -16,6 +16,7 @@ var FreshfoneUserInfo;
 		},
 		$contactTemplate: $('#freshfone-contact-template'),
 		$contactTemplateNameless: $('#ffone-contact-template-nameless'),
+		$callMetaTemplate: $('#freshfone-call-meta-template'),
 		setRequestObject: function (requestObject) {
 			this.requestObject = requestObject;
 		},
@@ -37,7 +38,7 @@ var FreshfoneUserInfo;
 		fetchUserDetails: function (params) {
 			var self = this;
 			$.ajax({
-				url: '/contacts/freshfone_user_info',
+				url: '/freshfone/call/caller_data',
 				dataType: "json",
 				data: params,
 				async: true,
@@ -46,16 +47,30 @@ var FreshfoneUserInfo;
 						self.requestObject.callerName = data.user_name;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
+						self.requestObject.callMeta = self.construct_meta(data.call_meta);
 					}
 					if (self.isOutgoing) {
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
 					} else {
 						params.callerName = self.requestObject.callerName;
+						params.callMeta = self.requestObject.callMeta;
 						self.buildContactTemplate(params);
 					}
 					self.unknownUserFiller();
 				}
 			});
+		},
+		construct_meta: function (meta) {
+			var call_meta = "";
+			if (meta) {
+				number = meta.number || "";
+				group  = meta.group  || "";
+				if (number != "" && group != "") {
+					group = " (" + group + ")"
+				}
+				call_meta = number + group;
+			}
+			return call_meta;
 		},
 		removeExistingPopup: function () {
 			var popover = $('.unknown_user_hover').data('popover') ||
@@ -97,18 +112,19 @@ var FreshfoneUserInfo;
 		},
 		buildContactTemplate: function (params) {
 			var template = this.requestObject.callerName ? this.$contactTemplate.clone() : this.$contactTemplateNameless.clone();
-
+			var metaTemplate = this.$callMetaTemplate.clone();
 			this.requestObject.$userInfoContainer.find('.customer').html(template.tmpl(params));
+			this.requestObject.$userInfoContainer.find('.call-meta').html(metaTemplate.tmpl(params));
 			if (this.requestObject.avatar) {
 				var avatar = $(this.requestObject.avatar).find('img');
-				this.requestObject.$userInfoContainer.find('.avatar')
+				this.requestObject.$userInfoContainer.find('.user_avatar')
 					.html(avatar);
 			} else {
 				this.setBlankProfileImage();
 			}
 		},
 		setBlankProfileImage: function () {
-			this.requestObject.$userInfoContainer.find('.avatar')
+			this.requestObject.$userInfoContainer.find('.user_avatar')
 				.html($('<img />').attr('src', PROFILE_BLANK_THUMB_PATH));
 		},
 

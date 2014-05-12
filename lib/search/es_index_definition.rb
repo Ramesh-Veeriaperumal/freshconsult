@@ -8,7 +8,7 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :freshfone_callers]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER)
@@ -207,6 +207,17 @@ class Search::EsIndexDefinition
             }
   		}
 	end
+
+  def freshfone_callers 
+    {
+      :"freshfone/caller" => {
+        :properties => {
+            :number => { :type => :string, :boost => 10, :store => 'yes' },
+            :account_id => { :type => :long, :include_in_all => false }
+        }
+      }
+    }
+  end
 
   def create_model_index(index_name, model_mapping)
   	sandbox(0) {

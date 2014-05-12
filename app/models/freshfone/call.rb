@@ -2,31 +2,35 @@ class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	set_table_name :freshfone_calls
 
-	serialize :customer_data, Hash
+  serialize :customer_data, Hash
 
-	belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
-	belongs_to_account
-	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
-	belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'
-	belongs_to :note, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Note'
+  belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
+  belongs_to_account
+  belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
+  belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'
+  belongs_to :note, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Note'
 
-	belongs_to :customer, :class_name => 'User', :foreign_key => 'customer_id'
+  belongs_to :customer, :class_name => 'User', :foreign_key => 'customer_id'
 
-	belongs_to :notable, :polymorphic => true, :validate => true
+  belongs_to :notable, :polymorphic => true, :validate => true
 
-	has_ancestry :orphan_strategy => :destroy
+  belongs_to :caller, :class_name => 'Freshfone::Caller', :foreign_key => 'caller_number_id'
 
-	before_save   :update_call_changes
-	after_commit_on_update :recording_attachment_job, :if => :trigger_recording_job?
+  has_ancestry :orphan_strategy => :destroy
 
-	has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
+  before_save   :update_call_changes
+  after_commit_on_update :recording_attachment_job, :if => :trigger_recording_job?
 
-	delegate :number, :to => :freshfone_number
-	delegate :name, :to => :agent, :allow_nil => true, :prefix => true
-	delegate :name, :to => :customer, :allow_nil => true, :prefix => true
+  has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
+  has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
 
-	attr_protected :account_id
-	attr_accessor :params
+  delegate :number, :to => :freshfone_number
+  delegate :name, :to => :agent, :allow_nil => true, :prefix => true
+  delegate :name, :to => :customer, :allow_nil => true, :prefix => true
+  delegate :group, :to => :meta, :allow_nil => true
+
+  attr_protected :account_id
+  attr_accessor :params
 	
 	CALL_STATUS = [
 		[ :default, 'default', 0 ],
@@ -68,7 +72,7 @@ class Freshfone::Call < ActiveRecord::Base
 	
 	named_scope :active_calls, :conditions => [
 		'call_status = ? AND updated_at >= ?', 
-		CALL_STATUS_HASH[:default], 4.hours.ago.to_s(:db)
+		CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
 	]
 
 	named_scope :filter_by_call_sid, lambda { |call_sid|
@@ -79,8 +83,13 @@ class Freshfone::Call < ActiveRecord::Base
 	named_scope :include_customer, { :include => [ :customer ] }
 	named_scope :include_agent, { :include => [ :agent ] }
 	named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-	named_scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
-
+	named_scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:'in-progress'] }, :limit => 1
+	named_scope :agent_progress_calls, lambda { |user_id|
+		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or call_status = ?)",
+					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db), CALL_STATUS_HASH[:'in-progress']
+				]
+		}
+	}
 
 	def self.filter_call(call_sid)
 		filter_by_call_sid(call_sid).first
@@ -108,12 +117,8 @@ class Freshfone::Call < ActiveRecord::Base
 
 	[ :number, :city, :state, :country ].each do |type|
 		define_method("caller_#{type}") do
-			(customer_data || {})[type]
+			(caller || {})[type]
 		end
-	end
-	
-	def direct_dial_number
-		(customer_data || {})[:direct_dial_number]
 	end
 	
 	def update_call_details(params)
@@ -122,7 +127,7 @@ class Freshfone::Call < ActiveRecord::Base
 		self.agent = params[:called_agent] if agent.blank?
 		self.recording_url = params[:RecordingUrl] if recording_url.blank?
 		self.call_duration = params[:DialCallDuration] || params[:RecordingDuration] if call_duration.blank?
-		self.customer_data[:direct_dial_number] = params[:direct_dial_number] if ivr_direct_dial?
+		self.direct_dial_number = params[:direct_dial_number] if ivr_direct_dial?
 
 		update_status(params)
 	end
@@ -150,22 +155,23 @@ class Freshfone::Call < ActiveRecord::Base
 	
 	
 	def initialize_ticket(params)
-		self.params = params
-		self.customer_id = params[:custom_requester_id] if customer_id.blank?
-		self.notable.attributes = {
-			:account_id => account_id,
-			:ticket_body_attributes => { :description_html => description_html },
-			:email => params[:requester_email],
-			:name => requester_name,
-			:phone => caller_number,
-			:requester_id => params[:custom_requester_id] || customer_id,
-			:responder => params[:agent],
-			:source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
-			:subject => ticket_subject
-		}
-		self.notable.build_ticket_and_sanitize
-		self
-	end
+    self.params = params
+    self.customer_id = params[:custom_requester_id] if customer_id.blank?
+    self.notable.attributes = {
+      :account_id => account_id,
+      :ticket_body_attributes => { :description_html => description_html },
+      :email => params[:requester_email],
+      :name => requester_name,
+      :phone => caller_number,
+      :requester_id => params[:custom_requester_id] || customer_id,
+      :responder => params[:agent],
+      :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
+      :subject => ticket_subject,
+      :group => group
+    }
+    self.notable.build_ticket_and_sanitize
+    self
+  end
 	
 	def initialize_notes(params)
 		self.params = params
@@ -173,7 +179,7 @@ class Freshfone::Call < ActiveRecord::Base
 			:account_id => account_id,
 			:note_body_attributes => { :body_html => description_html },
 			:incoming => true,
-			:source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
+			:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
 			:user => params[:agent],
 			:private => false
 		}

@@ -93,6 +93,10 @@ class Freshfone::Number < ActiveRecord::Base
 		end.to_json
 	end
 
+	def number_name
+		self.name || self.number
+	end
+
 	def non_business_hour_calls?
     business_calendar.blank?
   end

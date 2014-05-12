@@ -1,6 +1,6 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post
+	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post, Freshfone::Caller
 
 	def after_commit_on_create(model)
 		model.update_es_index

@@ -176,7 +176,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
 	view_contacts do
-	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv, :freshfone_user_info]
+	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv]
 	 resource :customer, :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
