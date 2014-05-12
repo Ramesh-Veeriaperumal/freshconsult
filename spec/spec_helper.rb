@@ -3,10 +3,15 @@ require 'spork'
 
 require 'simplecov'
 SimpleCov.start do
-  add_filter '/spec/'
-  add_filter '/config/'
-  add_filter '/vendor/'
+  add_filter 'spec/'
+  add_filter 'config/'
+  add_filter 'test/'
+  #add_filter '/vendor/'
   add_group 'email', 'lib/helpdesk/email'
+  add_group 'plugins', '/vendor/'
+  add_group 'controllers', 'app/controllers'
+  add_group 'models', 'app/models'
+  add_group 'libs', 'lib/'
 end
 
 
@@ -60,7 +65,7 @@ Spork.prefork do
       DatabaseCleaner.clean_with(:truncation,
         {:pre_count => true, :reset_ids => false})
     end
-    
+
     # == Fixtures
     #
     # You can declare fixtures for each example_group like this:
@@ -117,4 +122,3 @@ end
 
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
-
