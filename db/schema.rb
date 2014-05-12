@@ -1895,6 +1895,15 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.datetime "updated_at"
   end
 
+  create_table "subscription_currencies", :force => true do |t|
+    t.string   "name"
+    t.string   "billing_site"
+    t.string   "billing_api_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.decimal  "exchange_rate",   :precision => 10, :scale => 5
+  end
+
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"
     t.string   "code"
@@ -1961,6 +1970,7 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.integer  "free_agents"
     t.decimal  "day_pass_amount", :precision => 10, :scale => 2
     t.boolean  "classic",                                        :default => false
+    t.text     "price"
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -1981,9 +1991,11 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.integer  "free_agents"
     t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
     t.datetime "discount_expires_at"
+    t.integer  "subscription_currency_id",  :limit => 8
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+  add_index "subscriptions", ["subscription_currency_id"], :name => "index_subscriptions_on_subscription_currency_id"
 
   create_table "support_scores", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8, :null => false

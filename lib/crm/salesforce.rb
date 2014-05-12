@@ -6,7 +6,7 @@ class CRM::Salesforce < Resque::Job
                             :opportunity_contact_role => "OpportunityContactRole" }
 
   PAYMENT_ATTRIBUTES  =   { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
-                            :Amount__c => :amount, :Amount => :amount, 
+                            :Amount__c => :usd_equivalent, :Amount => :usd_equivalent, 
                             :Renewal_Period__c => :renewal_period }
 
   CRM_IDS             =   { :account => :AccountId, :contact => :Id }
@@ -176,7 +176,7 @@ class CRM::Salesforce < Resque::Job
         :StageName => STAGE_NAME,
         :Status__c => CUSTOMER_STATUS[:paid],
         :CloseDate =>  Time.now.to_s(:db),
-        :CMRR__c => (payment.subscription.amount/payment.subscription.renewal_period).to_s
+        :CMRR__c => payment.subscription.cmrr.to_s
       }
     end
 

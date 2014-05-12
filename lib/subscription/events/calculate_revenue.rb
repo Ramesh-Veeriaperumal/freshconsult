@@ -18,11 +18,12 @@ module Subscription::Events::CalculateRevenue
 	  end
 
 	  def new_business_revenue(subscription)
-	    subscription.amount/subscription.renewal_period
+	    subscription.usd_equivalent/subscription.renewal_period
 	  end
 
 	  def existing_business_revenue(subscription, old_subscription)
-	    (subscription.amount/subscription.renewal_period) - (old_subscription[:amount]/old_subscription[:renewal_period])
+	    (subscription.usd_equivalent/subscription.renewal_period) - 
+	    	(old_subscription[:usd_equivalent]/old_subscription[:renewal_period])
 	  end
 
 	end

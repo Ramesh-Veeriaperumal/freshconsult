@@ -6,5 +6,16 @@
 		<%= f.select "credit", recharge_options, {}, 
 					:class => 'select2', :'data-minimum-results-for-search' => '30' %>
 		<%= submit_tag "Purchase Credits", :class => "btn" %>
+		<% unless default_currency? %>
+			<div id = "fone-credit-followup">$<%= @freshfone_credit ? @freshfone_credit.last_purchased_credit : 25 %> <%= t('freshfone.subscription.followup_text') %></div>
+		<% end %>
 	</div>
 <% end %>
+
+<script type="text/javascript">
+	<% unless default_currency? %>
+    jQuery("#freshfone_credits_credit").live("change", function(ev){
+    	jQuery("#fone-credit-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
+    });
+   <% end %>
+</script>

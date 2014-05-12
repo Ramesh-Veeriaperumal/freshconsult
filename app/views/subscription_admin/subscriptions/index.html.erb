@@ -46,7 +46,7 @@
 		    </tr>
 			<tr>
 		      <th>CMRR</th>
-		      <td><%=format_float_value(@monthly_revenue)%></td>
+		      <td><%= link_to format_float_value(@monthly_revenue), "/currency" %></td>
 		    </tr>
 			<tr>
 			  <th>Paying agents</th>

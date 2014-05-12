@@ -2,7 +2,7 @@
 <div class="billing-cost">
 	<dl>
     <dt><%=t('subscription.billing')%></dt>
-  	<dd><%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, @subscription.renewal_period) %></dd>
+  	<dd><%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, @subscription.renewal_period), :class => "select2" %></dd>
   </dl>
 
   <dl>
@@ -13,10 +13,10 @@
 		  <% if @subscription.free_agents > 0 %>
 	  		<div class="agents-split">
 		  		<dl><dd> <b><%=t('subscription.free')%></b> : <%= @subscription.available_free_agents %> </dd></dl>
-		  		<dl><dd> <b><%=t('subscription.paid')%></b> : <%= @subscription.non_free_agents %> x <span id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></span></dd></dl>
+		  		<dl><dd> <b><%=t('subscription.paid')%></b> : <%= @subscription.non_free_agents %> x <span id="cost-per-agent"><%= fetch_plan_amount(@subscription.subscription_plan) %></span></dd></dl>
 				</div>
 		  <% else %>
-		  	<dd>x <b id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></b></dd>
+		  	<dd>x <b id="cost-per-agent"><%= fetch_plan_amount(@subscription.subscription_plan) %></b></dd>		  	
 		  <% end %>
 		</dl>
   <dl class="tr-total" id="total-cost">
@@ -24,12 +24,20 @@
   		<%= t('total_price')%>
   	</dt>
   	<dd class="numbers">
-  		<h2><b class="total" id="total-cost-per-agent">$<%= amount %></b></h2>
+  		<h2><b class="total" id="total-cost-per-agent">
+  			<%= format_amount(amount, @subscription.currency_name) %>
+  		</b></h2>
   	</dd>
+		<% unless current_account.has_credit_card? %>
+			<div id="currency-note"><span class="arrow-up"></span>
+				<%= t('subscription.currency-note') %> <%= @subscription.currency_name %>
+			</div>
+		<% end %>
   </tr>
 	
 	<dl><dd>
 		<input type="hidden" id="plan_id" name="plan_id" value="" />
+		<input type="hidden" id="currency" name="currency" value="<%= @subscription.currency_name %>" />
 		<% current_subscription = Subscription.find(current_account.subscription.id) %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = ((@subscription.state == 'trial' and !(@subscription.non_free_agents <= @subscription.free_agents)) ? t('enter_payment') : t('change_my_plan')) %>

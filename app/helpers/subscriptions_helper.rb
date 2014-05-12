@@ -1,5 +1,8 @@
 module SubscriptionsHelper 
+  include Subscription::Currencies::Constants
+
   def get_payment_string(period,amount)
+    amount = format_amount(amount, current_account.currency_name)
 		if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
     		return t('billed_amount_annually', :amount => amount ).html_safe 
 		end
@@ -33,11 +36,41 @@ module SubscriptionsHelper
 
   #Options to be re-written before release
   def recharge_options
+    credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
     cost_options = []
     (Freshfone::Credit::RECHARGE_OPTIONS).step(Freshfone::Credit::STEP){ |cost|
-      cost_options << [ number_to_currency(cost, :precision => 0), cost ]
+      cost_options << [ format_amount((cost * credit_price), current_account.currency_name), cost ]
     }
     cost_options
+  end
+
+  def fetch_recharge_amount
+    credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
+    recharge_price = current_account.freshfone_credit.recharge_quantity * credit_price
+    format_amount(recharge_price, current_account.currency_name)
+  end
+
+  def fetch_plan_amount(plan)    
+    currency = current_account.currency_name
+    amount = plan.pricing(currency)
+    format_amount(amount, currency)
+  end
+
+  def format_amount(amount, currency)    
+    number_to_currency(amount, :unit => CURRENCY_UNITS[currency], :separator => ".", 
+      :delimiter => ",", :format => "%u%n", :precision => 0)
+  end
+
+  def fetch_currency_unit
+    CURRENCY_UNITS[current_account.currency_name]
+  end
+
+  def fetch_currencies
+    options_for_select(BILLING_CURRENCIES, :selected => current_account.currency_name)
+  end
+
+  def default_currency?
+    current_account.currency_name.eql?(DEFAULT_CURRENCY)
   end
 
  end

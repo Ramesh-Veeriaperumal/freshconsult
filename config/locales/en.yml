@@ -1788,7 +1788,7 @@ en:
       billing: Billing
       save_billing_information: Save billing information
       save_billing_information_info: will save your "Plan & billing" information. We will charge your card and begin your subscription only once your trial is over.
-      begin_subscription: Begin subscription now...
+      begin_subscription: Begin subscription now
     show:
       export_data: Export Data
       export_now: Export now
@@ -2436,10 +2436,12 @@ en:
     paid: Paid
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
+    currency-note: "Note : All your future payments will be in "
   activate: Activate
   feedbackwidget_button_text: Label
-  billed_amount_per_month: You will be billed $%{amount} %{period}
-  billed_amount_annually: You will be billed $%{amount} annually
+  billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
+  billed_amount_annually: You will be billed <b>%{amount} annually</b>.
+  currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident
@@ -2707,7 +2709,7 @@ en:
   blossom_brief: Social Customer Support
   garden_brief: Multi Product Support
   estate_brief: Enterprise Level Support
-  begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
+  begin_subscription_confirm: Your credit card is going to be charged for the amount of %{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
@@ -2855,7 +2857,7 @@ en:
   update_and_login: "Update & login"
   activate_and_login: "Activate & login"
   password: "Password"
-  enter_payment: Enter Payment details...
+  enter_payment: Enter Payment details
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
@@ -4963,6 +4965,7 @@ en:
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
+      followup_text: "worth Freshfone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"

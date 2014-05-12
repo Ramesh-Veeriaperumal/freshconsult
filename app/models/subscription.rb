@@ -7,7 +7,8 @@ class Subscription < ActiveRecord::Base
   SUBSCRIPTION_ATTRIBUTES = { :account_id => :account_id, :amount => :amount, :state => :state,
                               :subscription_plan_id => :subscription_plan_id, :agent_limit => :agent_limit,
                               :free_agents => :free_agents, :renewal_period => :renewal_period, 
-                              :subscription_discount_id => :subscription_discount_id }
+                              :subscription_discount_id => :subscription_discount_id, 
+                              :usd_equivalent => :usd_equivalent }
 
   ADDRESS_INFO = { :first_name => :first_name, :last_name => :last_name, :address1 => :billing_addr1,
                   :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
@@ -32,6 +33,10 @@ class Subscription < ActiveRecord::Base
     :source => :subscription_addon,
     :foreign_key => :subscription_addon_id
 
+  belongs_to :currency, 
+    :class_name => "Subscription::Currency", 
+    :foreign_key => :subscription_currency_id
+
 
   before_create :set_renewal_at
   before_save :update_amount
@@ -46,6 +51,18 @@ class Subscription < ActiveRecord::Base
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
+
+  named_scope :paying_subscriptions, { 
+    :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
+    :include => "currency" }
+  
+  named_scope :free_subscriptions, { 
+    :conditions => ["state IN ('#{ACTIVE}', '#{FREE}') AND amount = 0.00"] }
+  
+  named_scope :filter_with_currency, lambda { |currency| {    
+    :conditions => { :subscription_currency_id => currency.id }
+  }}
+  
   named_scope :filter_with_state, lambda { |state| {
     :conditions => { :state => state }
   }}
@@ -54,6 +71,8 @@ class Subscription < ActiveRecord::Base
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
             :invoice_emails, :to => "account.account_configuration"
   delegate :name, :full_domain, :to => "account", :prefix => true
+
+  delegate :name, :billing_site, :billing_api_key, :exchange_rate, :to => :currency, :prefix => true
 
   # renewal_period is the number of months to bill at a time
   # default is 1
@@ -84,17 +103,29 @@ class Subscription < ActiveRecord::Base
     sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00"]).to_i
   end
 
+  #Total monthly revenue in USD
+  def self.monthly_revenue    
+    paying_subscriptions().inject(0) { |sum, subscription| sum + subscription.cmrr }
+  end
+
+  #Monthly revenue in local currency
+  def self.fetch_monthly_revenue(currency)
+    subscriptions = paying_subscriptions.filter_with_currency(currency)
+    subscriptions.inject(0) { |sum, subscription| sum + subscription.amount }
+  end
+
   def self.free_agent_count
     sum('free_agents', :conditions => [ "state in ('#{ACTIVE}', '#{FREE}')"]).to_i
   end
- 
-  def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00"]).to_f
-  end
 
   def cmrr
-    (amount/renewal_period).to_f
+    (usd_equivalent/renewal_period).to_f
   end
+
+  def usd_equivalent
+    (amount * currency_exchange_rate).to_f
+  end
+
   
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
@@ -218,6 +249,29 @@ class Subscription < ActiveRecord::Base
     # end
   end
 
+  def billing
+    Billing::Subscription.new
+  end
+
+  def set_billing_params(currency)
+    currency_object = Subscription::Currency.find_by_name(currency)
+    self.currency = currency_object
+  end
+
+  def coupon
+    result = billing.retrieve_subscription(account_id)
+    result.subscription.coupon
+  end
+
+  def retrieve_addon_price(addon)
+    response = billing.retrieve_addon(addon_mapping[addon])
+    (response.addon.price)/100.0
+  end
+
+  def trial_expired?
+    suspended? and card_number.blank? and subscription_payments.empty?
+  end
+
   protected
   
     def non_social_plans
@@ -244,7 +298,12 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      total_amount(self.addons)
+      if self.amount.blank?
+        self.amount = subscription_plan.amount
+      else
+        response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
+        self.amount = to_currency(response.estimate.amount)
+      end
     end
     
     def paid_account?
@@ -252,13 +311,9 @@ class Subscription < ActiveRecord::Base
     end
     alias :is_paid_account :paid_account?
     
-    def total_amount(addons)
-      if self.amount.blank?
-        self.amount = subscription_plan.amount
-      else
-        response = Billing::Subscription.new.calculate_estimate(self, addons)
-        self.amount = (response.estimate.amount/100.0).round.to_f
-      end
+    def total_amount(addons, coupon_code)      
+      response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
+      self.amount = to_currency(response.estimate.amount)
     end
     
     def cache_old_model
@@ -365,10 +420,20 @@ class Subscription < ActiveRecord::Base
     end
 
     def update_reseller_subscription 
-      if state_changed? or (active? and amount_changed?)
+      if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed?
         Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
           :event_type => :subscription_updated })
       end
     end
 
+    def addon_mapping
+      {
+        :day_pass => subscription_plan.canon_name,
+        :freshfone => :freshfonecredits
+      }
+    end
+
+    def to_currency(amount)
+      (amount/100.0).round.to_f
+    end
  end
