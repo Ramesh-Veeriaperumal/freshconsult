@@ -2,4 +2,20 @@
 <%= check_fb_reauth_required  %>
 <%= check_twitter_reauth_required %>
 <% content_for :layoutType do -%>single<%- end %>
-<%= admin_pref_links %>
+<%= content_tag(:div, 
+		content_tag(:div, 
+			text_field_tag(:admin_search, "", :class => "as-input") + 
+			text_field_tag(:admin_search_hint, "", :class => "as-hint", :disabled => true) + 
+			link_to("", "#", :class => "as-clear") +
+			content_tag(:div, "", :id => "suggestions-container", :class => "as-suggestions-container"),
+		:class => "pull-right" ) + 
+		content_tag(:h3, @page_title, :class => "lead"),
+	:rel => "sticky", :"data-scroll-top" =>  true, :class => "admin-header") %>
+<%= build_admin_prefpane %>
+<%= link_to(t('more'), "#", :class => "as-more") %>
+
+<% javascript_tag do %>
+	var adminSearchKeywords = <%= generate_keywords_hash.to_json.html_safe %>;
+<% end %>
+
+<%= include_cloudfront_js :admin %>
