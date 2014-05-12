@@ -426,9 +426,10 @@
                 $(window).unload(function(event){
                      $.ajax({
                       url: window.FreshdeskNode.getValue('faye_server'),
+                      timeout: 300,
                       async: 'false',
                       type: "POST",
-                      data: {'channels' : window.FreshdeskNode.getValue('faye_realtime').faye_channels , 'clientId' : window.FreshdeskNode.getValue('faye_realtime').fayeClient._clientId}
+                      data: {'channels' : window.FreshdeskNode.getValue('faye_realtime').faye_channels , 'clientId' : window.FreshdeskNode.getValue('faye_realtime').fayeClient._clientId, 'domainName' : window.FreshdeskNode.getValue('faye_auth_params').domainName }
                     })
                       .done(function( data ) {
                         // console.log('I am in the ajax');

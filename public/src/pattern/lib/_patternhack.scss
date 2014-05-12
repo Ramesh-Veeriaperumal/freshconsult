@@ -22,7 +22,11 @@ input[type="color"], .uneditable-input{
     border-top:3px solid #878787;
   }
 }
-
+.control-group.bold{
+  .control-label{
+    font-weight:500;  
+  }
+}
 del{
   color:rgba(#000, 0.3);
   div,span,label{

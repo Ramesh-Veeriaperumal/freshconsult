@@ -104,12 +104,6 @@
 	    destroy: function(){
 	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
 	    	$(this.element).off(".menuSelector").removeData("menuSelector");
-	    	this.off();
-	    },
-	    unpause: function(){
-	    	$(document).on("keydown.menuSelector", $.proxy(this.keydown, this));
-	    },
-	    pause: function(){
 	    	$(document).off("keydown.menuSelector");
 	    },
 	    unpause: function(){

@@ -313,9 +313,9 @@ protected
 
   def filter_params_ids
     if current_user.group_ticket_permission
-      params[:ids] = current_account.tickets.group_tickets_permission(current_user, params[:ids]).collect(&:display_id)
+      params[:ids] = current_account.tickets.group_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id)
     elsif current_user.assigned_ticket_permission
-      params[:ids] = current_account.tickets.assigned_tickets_permission(current_user, params[:ids]).collect(&:display_id)
+      params[:ids] = current_account.tickets.assigned_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id)
     end
   end
 
