@@ -281,15 +281,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 private 
   def push_create_notification
-	  push_mobile_notification(:new)
+	push_mobile_notification(:new)
   end 
 
   def push_update_notification
-    return unless @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || @model_changes.key?(:status)
-	  push_mobile_notification(:update)
+	push_mobile_notification(:update)
   end
 
   def push_mobile_notification(type)
+	return unless @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || @model_changes.key?(:status)
+
     message = {
                 :ticket_id => display_id,
                 :group => group_name,
@@ -298,7 +299,7 @@ private
                 :subject => truncate(subject, :length => 100),
                 :priority => priority
               }
-	  send_mobile_notification(type,message)
+	send_mobile_notification(type,message)
   end 
 
   def model_changes?

@@ -36,11 +36,7 @@ module Mobile::Actions::Push_Notifier
       
       if @model_changes.key?(:responder_id) && responder_id != current_user_id then
         notification_types = {NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]}
-      elsif @model_changes.key?(:group_id) && group_id
-        user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
-        user_ids.delete(current_user_id)
-        notification_types = {NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids} unless user_ids.empty?
-      else  
+      else
         notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
       end
 		
