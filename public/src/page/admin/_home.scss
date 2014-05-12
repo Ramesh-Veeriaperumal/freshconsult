@@ -9,6 +9,10 @@ $CustomerPortal_hover_color:#866aa0;
 
 $Account_color:#a1a1a1;
 $Account_hover_color:#838383;
+
+$RelatedMatch_color: #009C96;
+$ExactMatch_color: #006063;
+
 	
 $hover_boxshadow_start: 0 0 0 0;
 $hover_boxshadow_middle: 0 0 0 7px;
@@ -17,6 +21,9 @@ $animation_timing: .2s;
 
 .admin {
 	padding:0 0 5px 0;
+	.blur {
+		opacity : .5;
+	}
 	h3{
 		&.title{
 			margin-bottom:16px;
@@ -76,7 +83,7 @@ $animation_timing: .2s;
 		}	
 	}
 
-	&.Helpdesk, &.HelpdeskProductivity, &.CustomerPortal, &.Account{
+	&.support-channels, &.general-settings, &.helpdesk-productivity, &.account-settings{
 		h3.title{
 			border-top:1px solid;
 			span{
@@ -84,7 +91,7 @@ $animation_timing: .2s;
 			}
 		}
 	}
-	&.Helpdesk{
+	&.support-channels{
 	    ul.admin_icons{
 			li a 
 			{
@@ -111,7 +118,7 @@ $animation_timing: .2s;
 			}
 		}
 	}
-	&.HelpdeskProductivity{
+	&.general-settings{
 		ul.admin_icons{
 			li a{ 
 				img{
@@ -137,7 +144,7 @@ $animation_timing: .2s;
 			}
 		}
 	}
-	&.CustomerPortal{
+	&.helpdesk-productivity{
 		ul.admin_icons{
 			li a{ 
 				img{
@@ -163,7 +170,7 @@ $animation_timing: .2s;
 			}
 		}
 	}
-	&.Account{
+	&.account-settings{
 		ul.admin_icons{
 			li a{ 
 				img{
@@ -189,6 +196,113 @@ $animation_timing: .2s;
 			}
 		}
 	}
+	&.support-channels, &.general-settings, &.helpdesk-productivity, &.account-settings {
+		ul.admin_icons li {
+			// .related-match, .exact-match{
+			// 	@include animation(helpdesk_beat $animation_timing);
+			// }
+			&.related-match {
+				opacity : 1;
+				a .img-outer {
+					background-color: $RelatedMatch_color;
+				}
+				img {
+					background-color: $RelatedMatch_color;
+					@include animation(RelatedMatch_beat $animation_timing);
+					@include box-shadow( $hover_boxshadow_final $RelatedMatch_color);
+				}
+			}
+			&.exact-match {
+				opacity : 1;
+				a .img-outer {
+					background-color: $ExactMatch_color;	
+				}
+				img{
+					background-color: $ExactMatch_color;
+					@include animation(ExactMatch_beat $animation_timing);
+					@include box-shadow( $hover_boxshadow_final $ExactMatch_color);
+				}
+			}
+		}
+	}
+}
+
+input[type=text].as-input {
+	width:250px;
+	position: absolute;
+	z-index: 3;
+	right: $common-padding;
+	background: transparent;
+	padding: 5px;
+}
+input[type=text].as-hint {
+	@extend .as-input;
+	z-index: 2;
+	color: #ccc;
+}
+.as-clear {
+	display: none;
+	width: 25px;
+	height: 27px;
+	&:before {
+		content: '\d7';
+		font-size: 20px;
+		font-weight: bold;
+		position: relative;
+		top: 3px;
+		left: 6px;
+		color: $black;
+		z-index: 3;
+	}
+}
+.as-suggestions-container {
+	position: absolute;
+	top: 47px;
+	right: 282px;
+}
+.as-more {
+	-webkit-animation-duration: 1s;
+  	animation-duration: 1s;
+  	-webkit-animation-fill-mode: both;
+  	animation-fill-mode: both;
+  	-webkit-animation-name: bounceInUp;
+  	animation-name: bounceInUp;
+
+	padding:10px 20px;
+	background-color: #252525;
+	color: $white;
+	font-weight: 600;
+	display: none;
+	position: fixed;
+	&:after {
+		content: '';
+		width: 0; 
+		height: 0; 
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-top: 7px solid $white;
+		position: relative;
+		top: 13px;
+		left: 5px;
+	}
+	&:hover {
+		color: $white;
+	}
+	&.hide {
+		-webkit-animation-duration: 1s;
+		animation-duration: 1s;
+		-webkit-animation-fill-mode: both;
+		animation-fill-mode: both;
+		-webkit-animation-name: bounceOutDown;
+		animation-name: bounceOutDown;
+	}
+}
+.is_stuck.admin-header {
+	background-color: #fff;
+	padding: $common-padding $common-padding 0;
+	margin-left: -($common-padding);
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 
 @include keyframes(helpdesk_beat) {
@@ -238,6 +352,77 @@ $animation_timing: .2s;
 	to {
 		@include box-shadow($hover_boxshadow_final $Account_hover_color);
 	}
+}
+/* Exact Match Animation */
+@include keyframes(ExactMatch_beat) {
+	from {
+		@include box-shadow($hover_boxshadow_start $ExactMatch_color);
+	}
+	50% {
+		@include box-shadow($hover_boxshadow_middle $ExactMatch_color);
+	}
+	to {
+		@include box-shadow($hover_boxshadow_final $ExactMatch_color);
+	}
+}
+/* Related Match Animation */
+@include keyframes(RelatedMatch_beat) {
+	from {
+		@include box-shadow($hover_boxshadow_start $RelatedMatch_color);
+	}
+	50% {
+		@include box-shadow($hover_boxshadow_middle $RelatedMatch_color);
+	}
+	to {
+		@include box-shadow($hover_boxshadow_final $RelatedMatch_color);
+	}
+}
+@-webkit-keyframes bounceInUp {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(2000px);
+    transform: translateY(2000px);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+
+  80% {
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes bounceOutDown {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  20% {
+    opacity: 1;
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+  }
+
+  40% {
+    opacity: 1;
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(2000px);
+    transform: translateY(2000px);
+  }
 }
 
 /* Admin Home Page css end */
