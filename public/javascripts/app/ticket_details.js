@@ -321,6 +321,7 @@ var updatePagination = function() {
 			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
+			$('#ticket_original_request,.details').find("a").prop("target","_blank")
 			trigger_event("ticket_show_more",{})
 			try {
 			freshfonePlayerSettings();
