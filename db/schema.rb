@@ -709,6 +709,8 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.datetime "updated_at"
   end
 
+  add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
+
   create_table "freshfone_calls", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                 :null => false
     t.integer  "account_id",          :limit => 8,                 :null => false
@@ -861,6 +863,9 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_meta_data_on_account_id_and_call_id"
+  add_index "freshfone_calls_meta", ["account_id", "group_id"], :name => "index_ff_meta_data_on_account_id_and_group_id"
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
