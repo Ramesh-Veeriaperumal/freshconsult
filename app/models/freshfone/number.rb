@@ -94,7 +94,7 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 
 	def number_name
-		self.name || self.number
+		self.name.blank? ? self.number : self.name
 	end
 
 	def non_business_hour_calls?
