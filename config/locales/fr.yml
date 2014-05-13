@@ -2347,7 +2347,7 @@ fr:
             export_ticket_data: "Exporter les tickets"
             export_to_csv: "Exporter au format CSV"
             ticket_list: "Liste des tickets"
-            mark_closed: "Marquer le ticket comme clôturé"
+            mark_closed: "Marquer le ticket comme clos"
             add_people: "Ajouter des personnes"
             reply_placeholder: "Cliquez ici pour répondre à ce ticket"
             details: "Détails du ticket"
