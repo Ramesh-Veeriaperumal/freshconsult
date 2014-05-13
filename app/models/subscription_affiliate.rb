@@ -113,6 +113,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
 
     def add_affiliate(account, affiliate_token)
       begin
+        account.make_current
         affiliate = find_by_token(affiliate_token)
         if affiliate.blank? and subscription_from_shareasale?(account, affiliate_token)
           affiliate = create_shareasale_affiliate(affiliate_token) 
