@@ -84,6 +84,7 @@ end
 
 namespace :spec do
   desc "Run all specs in spec directory with RCov (excluding plugin specs)"
+
   Spec::Rake::SpecTask.new(:rcov) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
     t.spec_files = FileList['spec/**/*_spec.rb']
@@ -160,6 +161,29 @@ namespace :spec do
         end
       end
     end
+
+    task :reset => :environment do
+      require 'faker'
+      require 'simplecov'
+      require 'active_record'
+      load 'Rakefile'
+      config = YAML::load(IO.read(File.join(RAILS_ROOT, 'config/database.yml')))
+      ActiveRecord::Base.establish_connection(config["test"])
+      ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
+        t.string   "name"
+        t.decimal  "amount",          :precision => 10, :scale => 2
+        t.datetime "created_at"
+        t.datetime "updated_at"
+        t.integer  "renewal_period",                                 :default => 1
+        t.decimal  "setup_amount",    :precision => 10, :scale => 2
+        t.integer  "trial_period",                                   :default => 1
+        t.integer  "free_agents"
+        t.decimal  "day_pass_amount", :precision => 10, :scale => 2
+        t.boolean  "classic",                                        :default => false
+        t.text     "price"
+      end
+      Rake::Task["db:bootstrap".to_sym].invoke
+    end
   end
 
   namespace :social do
@@ -177,6 +201,7 @@ namespace :spec do
 
   namespace :unit_tests do
     desc "Running all integration tests"
+    Rake::Task["spec:db:reset".to_sym].invoke
     Spec::Rake::SpecTask.new(:all) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
       t.spec_files = FileList.new(UnitTest)
