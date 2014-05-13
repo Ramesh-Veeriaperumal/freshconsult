@@ -50,6 +50,7 @@ describe AgentsController do
      user = add_agent(@account, { :name => "1#{Faker::Name.name}", 
                                   :email => Faker::Internet.email, 
                                   :active => 1, 
+                                  :agent => 1,
                                   :role => 1, 
                                   :agent => 1,
                                   :ticket_permission => 3,
