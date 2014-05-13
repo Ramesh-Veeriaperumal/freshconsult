@@ -5,6 +5,7 @@
 	<table id="subscriptions" class="table">
 	  <tr>
 	    <th>Account</th>
+	    <th>Currency</th>
 	    <th>Amount</th>
 	    <th>Created</th>
 	    <th>Next Renewal</th>
@@ -14,7 +15,8 @@
 	   <%if subscription %>
 	    <tr>
 	      <td><%= link_to(h(subscription.account.name), [:admin, subscription.account]) %></td>
-	      <td><%= number_to_currency(subscription.amount) %></td>
+	      <td><%= subscription.currency_name %></td>
+	      <td><%= subscription.amount %></td>
 	      <td><%= subscription.created_at.to_s(:short_day) %></td>
 	      <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
 	      <td><%= subscription.state %></td>

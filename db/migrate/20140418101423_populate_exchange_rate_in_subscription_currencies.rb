@@ -10,13 +10,13 @@ class PopulateExchangeRateInSubscriptionCurrencies < ActiveRecord::Migration
 	}
   
   def self.up
-  	Subscription::Currencies.all.each do |currency|
+  	Subscription::Currency.all.each do |currency|
   		currency.update_attributes(:exchange_rate => EXCHANGE_RATES[currency.name])
   	end
   end
 
   def self.down
-  	Subscription::Currencies.all.each do |currency|
+  	Subscription::Currency.all.each do |currency|
   		currency.update_attributes(:exchange_rate => 0.0)
   	end
   end

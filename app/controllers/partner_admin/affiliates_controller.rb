@@ -248,7 +248,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
         :email => account.admin_email,
         :state => account.subscription.state,
         :cmrr => account.subscription.amount/account.subscription.renewal_period,
-        :conversion_metric => account.conversion_metric ? account.conversion_metric.session_json : {}
+        :conversion_metric => account.conversion_metric ? account.conversion_metric.session_json : {},
+        :currency => account.currency_name
       }
     end
 
