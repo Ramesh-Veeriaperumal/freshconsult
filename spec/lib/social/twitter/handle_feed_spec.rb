@@ -27,7 +27,7 @@ describe Social::Gnip::TwitterFeed do
     account = @handle.account
     account.make_current
     
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(7.days))
+    sample_dm = sample_twitter_dm("#{(Time.now.utc.to_f*100000).to_i}", Faker::Lorem.words(3), Time.zone.now.ago(7.days))
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
@@ -46,7 +46,9 @@ describe Social::Gnip::TwitterFeed do
     account.make_current    
     
     # For creating ticket
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(6.days))
+    user_id = "#{(Time.now.utc.to_f*100000).to_i}"
+    user_name = Faker::Lorem.words(3)
+    sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
     # stub the twitter api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
@@ -60,11 +62,7 @@ describe Social::Gnip::TwitterFeed do
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
     
-    # For creating notes
-    # update threaded time for twitter handle
-    @handle.update_attributes(:dm_thread_time => 604800)
-    
-    sample_dm = sample_twitter_dm(Time.zone.now.ago(5.days))
+    sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(1.hour))
     # stub the twitter api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
