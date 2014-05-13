@@ -7,7 +7,7 @@ class CustomFieldsController < Admin::AdminController
   MAX_ALLOWED_COUNT = { 
     :string => 80,
     :text => 10,
-    :number => 10,
+    :number => 20,
     :date => 10,
     :boolean => 10
   }
