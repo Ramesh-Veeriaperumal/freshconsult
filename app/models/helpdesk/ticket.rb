@@ -541,7 +541,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     if deep
       self[:notes] = self.notes
-      options[:include] = [:attachments]
+      options[:methods].push(:attachments)
     end
     options[:except] = [:account_id,:import_id]
     options[:methods].push(:custom_field)
