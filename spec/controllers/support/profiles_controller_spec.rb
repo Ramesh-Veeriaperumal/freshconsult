@@ -17,7 +17,7 @@ describe Support::ProfilesController do
     get :edit, :id => @user.id
     response.should render_template :edit
     phone_no = Faker::PhoneNumber.phone_number
-    put :update, :id => @user.id, :user => {:email => @user.email,
+    put :update, :id => @user.id, :user => {:name => @user.name,
                                             :job_title => "Developer",
                                             :phone => phone_no,
                                             :time_zone => "Arizona", 

@@ -38,6 +38,7 @@ module UsersHelper
   def add_new_user(account, options={})
     new_user = Factory.build(:user, :account => account,
                                     :name => Faker::Name.name, 
+                                    :email => Faker::Internet.email,
                                     :time_zone => "Chennai", 
                                     :delta => 1, 
                                     :language => "en")

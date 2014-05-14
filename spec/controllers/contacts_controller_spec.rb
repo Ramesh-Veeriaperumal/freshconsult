@@ -85,10 +85,13 @@ describe ContactsController do
   end
 
   it "should verify an email" do
-    @user2 = add_user_with_multiple_emails(@account, 4)
-    last_id = @user2.user_emails.last.id
-    post :verify_email, :email_id => last_id
-    response.body.should =~ /Activation mail sent/
+    if @account.features?(:multiple_user_emails)
+      @user2 = add_user_with_multiple_emails(@account, 4)
+      last_id = @user2.user_emails.last.id
+      post :verify_email, :email_id => last_id
+      response.body.should =~ /Activation mail sent/
+      Delayed::Job.last.handler.should include("deliver_email_activation")
+    end
   end
 
   it "should delete an existing contact" do
