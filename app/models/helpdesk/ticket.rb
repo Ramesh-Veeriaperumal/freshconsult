@@ -377,7 +377,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def included_in_to_emails?(from_email)
-    (self.to_emails || []).include?(from_email.downcase)
+    (self.to_emails || []).select{|email_id| email_id.include?(from_email.downcase) }.present?
   end
 
   def ticket_id_delimiter
