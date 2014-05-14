@@ -1214,10 +1214,8 @@ en:
         cancel_service: "Cancel Service"
         plans_billing: "Plans & Billing"
         choose_plan: "Choose Plan"
-        import_data_zendesk: "Import Data from Zendesk"
         zendesk_import: "Zendesk Import"
         daypasses: "Day Passes"
-        occasional_agent: "Occasional Agent"
   ends_with: Ends with
   last_name: Last Name
   forum:

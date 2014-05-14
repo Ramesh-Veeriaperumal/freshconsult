@@ -263,14 +263,11 @@ module Admin::HomeHelper
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
-      },
-      :"import"                   =>      {
-          :open_keywords          =>      [:import_data_zendesk]
       }
     }
 
     KEYWORDS_META = {
-      :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages],
+      :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages, :customise_chat_window],
       :phone_integration                      =>    [:purchase_support_number, :voice_integration, :ivr, :integrated_phone_support],
       :"twitter-setting"                      =>    [:social],
       :"facebook-setting"                     =>    [:social],
@@ -291,7 +288,7 @@ module Admin::HomeHelper
       :"email-notifications"                  =>    [:auto_responses],
       :"canned-response"                      =>    [:predefined_responses],
       :"billing"                              =>    [:choose_plan],
-      :import_data_zendesk                    =>    [:zendesk_import],
+      :import                                 =>    [:zendesk_import],
       :"day_pass"                             =>    [:occasional_agent]
     }
 

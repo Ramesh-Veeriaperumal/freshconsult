@@ -21,8 +21,8 @@ $animation_timing: .2s;
 
 .admin {
 	padding:0 0 5px 0;
-	.blur {
-		opacity : .5;
+	&.blur {
+		opacity : .2;
 	}
 	h3{
 		&.title{
@@ -247,11 +247,11 @@ input[type=text].as-hint {
 	&:before {
 		content: '\d7';
 		font-size: 20px;
-		font-weight: bold;
+		font-weight: 200;
 		position: relative;
 		top: 3px;
 		left: 6px;
-		color: $black;
+		color: #666;
 		z-index: 3;
 	}
 }
