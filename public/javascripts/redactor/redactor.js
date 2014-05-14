@@ -2659,7 +2659,7 @@ Redactor.prototype = {
 	},
 	restoreSelection: function()
 	{	
-		if (this.savedSel !== null && this.savedSelObj !== null && this.savedSel[0].tagName !== 'BODY')
+		if (this.savedSel !== null && this.savedSelObj !== null && this.savelSel != undefined && this.savedSelObj != undefined && this.savedSel[0].tagName !== 'BODY')
 		{
             window.Selection.setSelection(window, this.savedSel[0], this.savedSel[1], this.savedSelObj[0], this.savedSelObj[1]);
 		}
