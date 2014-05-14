@@ -250,6 +250,13 @@ $.validator.addClassRules("required_redactor", { required_redactor : true });
   }, "Please enter a valid hex color value.")
   $.validator.addClassRules("color_field", { color_field : true });
 
+// validator to check the folder name presence in canned response
+
+  $.validator.addMethod("presence_in_list", function(value, element) {
+    return $(element).data("list").indexOf(value) == -1;
+  }, "The name already exists.")
+  $.validator.addClassRules("presence_in_list", { presence_in_list : true });
+
 // validator to verify the size of an upload
 $.validator.addMethod("zendesk_size_validity", function(value,element){
   var is_valid = true;
