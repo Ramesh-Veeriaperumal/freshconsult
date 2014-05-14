@@ -169,6 +169,7 @@ class Helpdesk::Note < ActiveRecord::Base
 	end
 
     def notify_ticket_monitor
+      return if meta?
       notable.subscriptions.each do |subscription|
         if subscription.user.id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
