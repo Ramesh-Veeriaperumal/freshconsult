@@ -20,7 +20,7 @@ LogMeInWidget.prototype= {
 			'<hr /><b>Remote Session Instructions</b><br />'+
 			'Pincode : #{pincode}<br/><br/>'+
 			'Click the link below to start your remote session<br/>'+
-			'<a href=\"https://secure.logmeinrescue.com/Customer/Code.aspx?Code=#{pincode}\"> https://secure.logmeinrescue.com/Customer/Code.aspx?Code=#{pincode}</a><br /><br />'+
+			'<a target="_blank" href=\"https://secure.logmeinrescue.com/Customer/Code.aspx?Code=#{pincode}\"> https://secure.logmeinrescue.com/Customer/Code.aspx?Code=#{pincode}</a><br /><br />'+
 			'<hr/><br/>'
 	),
 	
@@ -91,6 +91,7 @@ LogMeInWidget.prototype= {
 	},
 
 	processPincode:function(response){	
+
 		if(response.responseText.indexOf('OK') >= 0) {
 			jQuery('#pinsubmit').prop('value', 'New Remote Session');
 			jQuery('#pinsubmit').removeAttr('disabled');
@@ -117,6 +118,7 @@ LogMeInWidget.prototype= {
 	},
 
 	copyPincode: function(rescuePincode) {
+		console.log("copyPincode " + rescuePincode);
 		var pincodeInstructions = logmeinWidget.SessionInstructions.evaluate({ pincode: logmeinBundle.pincode })  ;
 		jQuery('#ReplyButton').trigger("click");
 		insertIntoConversation(pincodeInstructions.interpolate({ pincode:rescuePincode }), 'cnt-reply-body');
