@@ -178,7 +178,6 @@ namespace :spec do
 
   namespace :unit_tests do
     desc "Running all integration tests"
-    Rake::Task["spec:db:reset".to_sym].invoke
     Spec::Rake::SpecTask.new(:all) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
       t.spec_files = FileList.new(UnitTest)
