@@ -57,6 +57,8 @@ Spork.prefork do
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
+      DatabaseCleaner.clean_with(:truncation,
+        {:pre_count => true, :reset_ids => false})
     end
     
     # == Fixtures
@@ -115,4 +117,3 @@ end
 
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
-

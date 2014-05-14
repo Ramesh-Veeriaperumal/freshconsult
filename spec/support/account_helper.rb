@@ -10,25 +10,25 @@ module AccountHelper
       create_dummy_customer
       return @acc
     end
-    # ENV["SEED"]="002_subscription_plans"
-    # SeedFu::PopulateSeed.populate
-    # ENV["SEED"] = nil
-    # signup = Signup.new(  
-    #   :account_name => 'Test Account',
-    #   :account_domain => 'localhost',
-    #   :locale => I18n.default_locale,
-    #   :user_name => 'Support',
-    #   :user_password => 'test',
-    #   :user_password_confirmation => 'test',
-    #   :user_email => Helpdesk::EMAIL[:sample_email],
-    #   :user_helpdesk_agent => true
-    # )
-    # signup.save
-    # @acc = signup.account
-    # @acc.make_current
-    # create_dummy_customer
-    # @acc
-    fail "No account in db. Ending tests..."
+    ENV["SEED"]="002_subscription_plans"
+    SeedFu::PopulateSeed.populate
+    ENV["SEED"] = nil
+    signup = Signup.new(  
+      :account_name => 'Test Account',
+      :account_domain => 'localhost',
+      :locale => I18n.default_locale,
+      :user_name => 'Support',
+      :user_password => 'test',
+      :user_password_confirmation => 'test',
+      :user_email => Helpdesk::EMAIL[:sample_email],
+      :user_helpdesk_agent => true
+    )
+    signup.save
+    PopulateGlobalBlacklistIpsTable.create_default_record
+    @acc = signup.account
+    @acc.make_current
+    create_dummy_customer
+    @acc
   end
 
   def create_dummy_customer
