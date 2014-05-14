@@ -22,26 +22,28 @@
 	        		meta = suggestion.data[2],
 	        		matchCount = 0;
 
-	        	query.forEach(function (item) {
-
+	        	for (var t = 0; t < query.length; t++) {
+	        		var term = query[t];
 	        		// checks match occurence in Keyword
-	        		if (keyword.indexOf(item) > -1) {
+	        		if (keyword.indexOf(term) > -1) {
         				matchCount++;
-        				return;
+        				continue;
         			}
 
         			// checks match occurence Keyword metas
         			if (meta && typeof meta === 'object') {
-	        			meta.forEach(function (kwMeta) {
-	        				if (kwMeta.toLowerCase().trim().indexOf(item) > -1) {
+	        			for (var m = 0; m < meta.length; m++) {
+	        				var kwMeta = meta[m];
+	        				
+	        				if (kwMeta.toLowerCase().trim().indexOf(term) > -1) {
 		        				matchCount++;
-		        				return false;
+		        				break;
 		        			}
-	        			});
+	        			}
 	        		}
-	        	});
+	        	}
 
-	        	return matchCount >= query.length;
+	        	return matchCount === query.length;
 	    	},
 	        formatResult : function (suggestion, currentValue) {
 	            var patn = new RegExp(suggestion.value, 'gi'),
