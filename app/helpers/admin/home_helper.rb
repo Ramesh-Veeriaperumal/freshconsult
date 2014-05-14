@@ -232,8 +232,8 @@ module Admin::HomeHelper
           :closed_keywords        =>      [:add_new_agent_role]
       },
       :security                   =>      {
-          :open_keywords          =>      [:ssl_encryption, :single_signon],
-          :closed_keywords        =>      [:trusted_ip]
+          :open_keywords          =>      [:ssl_encryption, :single_signon]
+          # :closed_keywords        =>      [:trusted_ip]
       },
       :sla                        =>      {
           :open_keywords          =>      [:configure_escalation_emails],
@@ -278,7 +278,7 @@ module Admin::HomeHelper
       :set_businesshour_group                 =>    [:multiple_business_hours],
       :agent_roles_permissions                =>    [:custom_roles],
       :single_signon                          =>    [:sso],
-      :trusted_ip                             =>    [:private_helpdesk],
+      # :trusted_ip                             =>    [:private_helpdesk],
       :business_hours_multiple_locations      =>    [:multiple_business_hours],
       :"multi-product"                        =>    [:multi_brand],
       :ticket_creation_rules                  =>    [:automations, :workflows],
