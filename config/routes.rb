@@ -28,7 +28,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :freshfone_user_info => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
@@ -77,7 +77,7 @@
 
   map.namespace :freshfone do |freshfone|
     freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
-    freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :caller_data => :get, :call_transfer_success => :post }
+    freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :call_transfer_success => :post }
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
     freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
