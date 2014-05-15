@@ -440,7 +440,6 @@
                         }
                     }
                     window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
-                    event.preventDefault();
                 });
             }
             else{
@@ -451,7 +450,6 @@
                         }
                     }
                     window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
-                    event.preventDefault();
                 });
             }
         }
