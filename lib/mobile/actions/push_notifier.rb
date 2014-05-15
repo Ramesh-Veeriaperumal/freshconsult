@@ -51,6 +51,10 @@ module Mobile::Actions::Push_Notifier
 		
     elsif action == :response then
         user_ids = notable.subscriptions.map(&:user_id)
+        unless incoming || self.to_emails.blank? then
+          notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
+          user_ids = user_ids | account.users.find(:all, :select => :id , :conditions => {:email => notified_agent_emails}).map(&:id)
+        end
 		user_ids.delete(current_user_id)
 
         user_ids.push(notable.responder_id) unless notable.responder_id.blank? || notable.responder_id == current_user_id || user_ids.include?(notable.responder_id)
