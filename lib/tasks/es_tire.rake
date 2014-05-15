@@ -157,7 +157,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Freshfone::Caller'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
