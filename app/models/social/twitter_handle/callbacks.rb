@@ -6,7 +6,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   include Social::Util
 
   before_save :set_default_state, :add_default_search
-  before_create :set_default_threaded_time
+  #before_create :set_default_threaded_time
   before_update :cache_old_model
   after_commit_on_create :construct_avatar, :subscribe_to_gnip
   after_commit_on_update :update_streams, :update_ticket_rules
