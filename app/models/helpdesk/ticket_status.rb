@@ -41,7 +41,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.statuses_list(account)
     statuses = account.ticket_status_values
-    statuses.map{|status| { :status_id => status.status_id, :name => status.name, :customer_display_name => status.customer_display_name, :stop_sla_timer => status.stop_sla_timer, :deleted => status.deleted } }
+    statuses.map{|status| { :status_id => status.status_id, :name => Helpdesk::TicketStatus.translate_status_name(status,"name"), 
+      :customer_display_name => Helpdesk::TicketStatus.translate_status_name(status,"customer_display_name"), 
+      :stop_sla_timer => status.stop_sla_timer, :deleted => status.deleted } }
   end
   
   def self.statuses(account)
