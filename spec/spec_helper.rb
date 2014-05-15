@@ -58,6 +58,8 @@ Spork.prefork do
     config.include ControllerHelper
     config.include UsersHelper
     config.include SolutionsHelper
+    config.include CompanyHelper
+    config.include APIHelper, :type => :controller
 
     config.before(:suite) do
       ES_ENABLED = false

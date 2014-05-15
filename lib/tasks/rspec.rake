@@ -30,7 +30,9 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
                     "spec/controllers/negative/*_spec.rb",
                     "spec/models/helpdesk/mysql_*_spec.rb",
                     "spec/lib/social/twitter/*_spec.rb",
-                    "spec/models/social/twitter_*_spec.rb"]
+                    "spec/models/social/twitter_*_spec.rb",
+                    "spec/controllers/api/xml/*_api_spec.rb",
+                    "spec/controllers/api/json/*_api_spec.rb"]
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 
 AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest]
