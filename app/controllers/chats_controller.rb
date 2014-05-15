@@ -24,7 +24,6 @@ class ChatsController < ApplicationController
                   :email  => params[:ticket][:email],
                   :subject  => params[:ticket][:subject],
                   :requester_name => params[:ticket][:name],
-                  :phone => params[:ticket][:phone],
                   :ticket_body_attributes => { :description_html => params[:ticket][:content] }
               ) 
 
