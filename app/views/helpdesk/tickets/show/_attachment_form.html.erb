@@ -80,16 +80,7 @@
   The following is a template used by multifile.js to create rows in
   the attachments table.
  %>
-<script id="file-list-template" type="text/x-jquery-tmpl">
-<div class="item">
-  <a class="attachment-close"  href="javascript:void(0)" 
-            onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;" 
-            inputId="${inputId}"></a>
-  <div class="attachment-type file-types-def">
-    <a href="javascript:void(0)">${name}</a>
-  </div>
-</div>
-</script>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
 <% unless dropbox_app_key.blank? %>
   <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
 <% end %>

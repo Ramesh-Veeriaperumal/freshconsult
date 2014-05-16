@@ -2249,6 +2249,12 @@ ol, ul, li{
 	.attachment_contents {
 		float: left;
 		width: auto;
+		.alert-text{
+			color:red;
+		}
+		.invalid_attachment {
+			text-decoration: line-through;
+		}
 	}
 
 	.attachment_list {

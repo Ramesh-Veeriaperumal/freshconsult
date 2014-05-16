@@ -17,13 +17,7 @@
 				</div>
 			</div>	
 						
-			<script id="file-list-template" type="text/x-jquery-tmpl">			
-			  <div class="item">
-			  	<span>
-			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}"><%= t('remove') %></a>
-				</span>
-			  </div>
-			</script>
+			<%= render :partial => "/support/shared/multifile_template" %>
 		</div>
 		<% if is_application_installed?("screenr") %>
 	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>

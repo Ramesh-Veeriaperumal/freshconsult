@@ -14,10 +14,4 @@
   the attachments table.
  %>
 			
-<script id="file-list-template" type="text/x-jquery-tmpl">			
-  <div class="item">
-  	<span>
-  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
-	</span>
-  </div>
-</script>
+<%= render :partial => "/shared/multifile_template" %>

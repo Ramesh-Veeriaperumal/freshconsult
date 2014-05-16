@@ -252,7 +252,9 @@
 		}
 	})
 	jQuery('.fileAdminUpload').live("change", function(){ 
-		jQuery("#redirect_url").val("<%= edit_account_path %>") 
-		this.form.submit()
+		if ( jQuery(this.form).valid() ) {
+			jQuery("#redirect_url").val("<%= edit_account_path %>") 
+			this.form.submit()
+		}
 	})
 <% end %>

@@ -141,6 +141,20 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
 
+// validator to verify the size of an upload
+$.validator.addMethod("upload_size_validity", function(value,element){
+  if (!!window.FileReader){
+    var newfile = jQuery(element)[0].files;
+    if(newfile.length){
+      filesize = (newfile[0].size)/(1024*1024);
+      return (filesize<15)
+    }
+  }
+  return true;
+},jQuery.format("Upload exceeds the available 15MB limit"));
+
+$.validator.addClassRules("upload_size_validity", { upload_size_validity: true });
+
 // Agent role validation
 // To check if atleast one role is present
 $.validator.addMethod("at_least_one_item", function(value, element, options) {

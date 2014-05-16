@@ -88,3 +88,22 @@
   color: #82683C;
   font-size: 13px;
 }
+
+// Alternate Alert styles
+// -------------------------
+
+.alert-invalid{
+  text-decoration:line-through;
+  color: #888;
+  background: transparent;
+  border: 0;
+  padding-left: 0;
+}
+.alert-invalid-text{
+  color:$errorText;
+  float:right;
+}
+
+.alert-invalid-attach-text{
+  color:$errorText;
+}

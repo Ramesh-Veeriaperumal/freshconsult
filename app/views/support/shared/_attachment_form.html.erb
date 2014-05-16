@@ -104,14 +104,7 @@
   <% end %>
 
   <% if widget_option(:attachFile) %>
-    <%# Attachment list template %>
-    <script id="file-list-template" type="text/x-jquery-tmpl">
-      <div class="item">
-        <a href="#" class="close attach-close"
-          onclick="Helpdesk.Multifile.remove(this);return false;" inputId="${inputId}">&times;</a>
-        <div class="ellipsis">${name}</div>
-      </div>
-    </script>
+    <%= render :partial => "/support/shared/multifile_ticket_template"%>
 
     <% unless dropbox_app_key.blank? %>
       <script type="text/javascript">

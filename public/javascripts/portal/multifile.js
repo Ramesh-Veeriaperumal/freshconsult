@@ -12,9 +12,11 @@ Helpdesk.Multifile = {
     },
 
     onFileSelected: function(input){ 
-        if(jQuery(input).css("display") != "none"){ 
-            this.addFileToList(input);
-            this.duplicateInput(input);
+        if(jQuery(input).css("display") != "none"){           
+           this.duplicateInput(input);
+           if (!this.addFileToList(input)) {
+                jQuery(input).remove();
+           }
         }
     },
 
@@ -50,39 +52,99 @@ Helpdesk.Multifile = {
        jQuery(input).unbind('change');
     },
 
-    addFileToList: function(oldInput){
-        var container = jQuery(oldInput).attr('fileContainer');
+        addFileToList: function(oldInput){
+        var container = jQuery(oldInput).attr('fileContainer'),
+            filesize = 0,
+            validFile = true,
+            filereader = !!window.FileReader;
+
         jQuery("#"+container).show();
-		
+
+        if (filereader)
+        {
+            filesize = this.findFileSize(oldInput);
+
+            validFile = this.validateTotalSize(oldInput);
+            if(validFile){
+                this.incrementTotalSize(oldInput,filesize);
+            }
+            if (filesize < 1)
+            {
+                filesize *=1024;
+                filesize = filesize.toFixed(2) + ' KB '; 
+            }
+            else
+            {
+                filesize = filesize.toFixed(2) + ' MB ';
+            }
+        }
         var target = jQuery("#"+jQuery(oldInput).attr('fileList'));
         target.append(jQuery.tmpl(this.template, {
-            name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
-            inputId: jQuery(oldInput).attr('id')
-        }));
+                name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
+                inputId: jQuery(oldInput).attr('id'),
+                size: filesize,
+                file_valid: validFile
+            }));
         jQuery("#"+container + ' label i').text(target.children(':visible').length);
+
+        return validFile;
+    },
+
+    decrementTotalSize: function(fileInput)
+    {
+        var filesize = this.findFileSize(fileInput);
+        this.incrementTotalSize(fileInput, -filesize);
+    },
+
+    getTotalSize: function(fileInput){
+        return jQuery(fileInput).parents('form').data('totalAttachmentSize') || 0;
+    },
+
+    incrementTotalSize: function(fileInput, addition){
+        var totalfilesize = this.getTotalSize(fileInput);
+        jQuery(fileInput).parents('form').data('totalAttachmentSize', totalfilesize + addition);
+    },
+
+    validateTotalSize: function(fileInput){
+        var totalfilesize = this.getTotalSize(fileInput);
+        var filesize = this.findFileSize(fileInput);
+        return !((filesize + totalfilesize) > 15);
+    },
+
+    findFileSize: function(oldInput){
+        return jQuery(oldInput)[0].files[0].size / (1024 * 1024);
     },
 
     remove: function(link){
-		try{
+        try{
             var fileInput = jQuery('#'+jQuery(link).attr('inputId'));
+            if (!!window.FileReader)
+            {
+                this.decrementTotalSize(fileInput);
+            }
+
             var target = jQuery("#"+jQuery(fileInput).attr('fileList'));
             var container = jQuery(fileInput).attr('fileContainer');
 
-			jQuery('#'+jQuery(link).attr('inputId')).remove();
+            jQuery('#'+jQuery(link).attr('inputId')).remove();
             jQuery(link).parents("div:first").remove();
 
             jQuery("#"+container + ' label i').text(target.children(':visible').length);
-		}catch(e){
-			alert(e);
-		}
-    },
+            return true;
+        }catch(e){
+            alert(e);
+        }
+    },    
+
     updateCount: function(item) {
         var target = jQuery("#"+jQuery(item).attr('fileList'));
         var container = jQuery(item).attr('fileContainer');
         jQuery("#"+container + ' label i').text(target.children(':visible').length);
     },
+
     resetAll: function(form) {
         var inputs = jQuery(form).find("input[fileList]");
+        jQuery(form).data('totalAttachmentSize',0);
         if (inputs.length >= 1) {
             jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
             jQuery("#"+inputs.first().attr('fileList')).children().show();
