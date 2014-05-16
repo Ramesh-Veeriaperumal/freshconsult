@@ -198,9 +198,6 @@ $animation_timing: .2s;
 	}
 	&.support-channels, &.general-settings, &.helpdesk-productivity, &.account-settings {
 		ul.admin_icons li {
-			// .related-match, .exact-match{
-			// 	@include animation(helpdesk_beat $animation_timing);
-			// }
 			&.related-match {
 				opacity : 1;
 				a .img-outer {
@@ -234,25 +231,29 @@ input[type=text].as-input {
 	right: $common-padding;
 	background: transparent;
 	padding: 5px;
+	&::-ms-clear {
+		display: none;
+	}
 }
 input[type=text].as-hint {
 	@extend .as-input;
 	z-index: 2;
 	color: #ccc;
+	&::-ms-clear {
+		display: none;
+	}
 }
 .as-clear {
 	display: none;
-	width: 25px;
-	height: 27px;
-	&:before {
-		content: '\d7';
-		font-size: 20px;
-		font-weight: 200;
-		position: relative;
-		top: 3px;
-		left: 6px;
+	padding: 8px 5px 10px;
+	font-size: 20px;
+	font-weight: 200;
+	line-height: 10px;
+	color: #666;
+	position: relative;
+	z-index: 3;
+	&:hover {
 		color: #666;
-		z-index: 3;
 	}
 }
 .as-suggestions-container {
@@ -260,43 +261,43 @@ input[type=text].as-hint {
 	top: 47px;
 	right: 282px;
 }
-.as-more {
-	-webkit-animation-duration: 1s;
-  	animation-duration: 1s;
-  	-webkit-animation-fill-mode: both;
-  	animation-fill-mode: both;
-  	-webkit-animation-name: bounceInUp;
-  	animation-name: bounceInUp;
+// .as-more {
+// 	-webkit-animation-duration: 1s;
+//   	animation-duration: 1s;
+//   	-webkit-animation-fill-mode: both;
+//   	animation-fill-mode: both;
+//   	-webkit-animation-name: bounceInUp;
+//   	animation-name: bounceInUp;
 
-	padding:10px 20px;
-	background-color: #252525;
-	color: $white;
-	font-weight: 600;
-	display: none;
-	position: fixed;
-	&:after {
-		content: '';
-		width: 0; 
-		height: 0; 
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-		border-top: 7px solid $white;
-		position: relative;
-		top: 13px;
-		left: 5px;
-	}
-	&:hover {
-		color: $white;
-	}
-	&.hide {
-		-webkit-animation-duration: 1s;
-		animation-duration: 1s;
-		-webkit-animation-fill-mode: both;
-		animation-fill-mode: both;
-		-webkit-animation-name: bounceOutDown;
-		animation-name: bounceOutDown;
-	}
-}
+// 	padding:10px 20px;
+// 	background-color: #252525;
+// 	color: $white;
+// 	font-weight: 600;
+// 	display: none;
+// 	position: fixed;
+// 	&:after {
+// 		content: '';
+// 		width: 0; 
+// 		height: 0; 
+// 		border-left: 5px solid transparent;
+// 		border-right: 5px solid transparent;
+// 		border-top: 7px solid $white;
+// 		position: relative;
+// 		top: 13px;
+// 		left: 5px;
+// 	}
+// 	&:hover {
+// 		color: $white;
+// 	}
+// 	&.hide {
+// 		-webkit-animation-duration: 1s;
+// 		animation-duration: 1s;
+// 		-webkit-animation-fill-mode: both;
+// 		animation-fill-mode: both;
+// 		-webkit-animation-name: bounceOutDown;
+// 		animation-name: bounceOutDown;
+// 	}
+// }
 .is_stuck.admin-header {
 	background-color: #fff;
 	padding: $common-padding $common-padding 0;
@@ -377,52 +378,52 @@ input[type=text].as-hint {
 		@include box-shadow($hover_boxshadow_final $RelatedMatch_color);
 	}
 }
-@-webkit-keyframes bounceInUp {
-  0% {
-    opacity: 0;
-    -webkit-transform: translateY(2000px);
-    transform: translateY(2000px);
-  }
+// @-webkit-keyframes bounceInUp {
+//   0% {
+//     opacity: 0;
+//     -webkit-transform: translateY(2000px);
+//     transform: translateY(2000px);
+//   }
 
-  60% {
-    opacity: 1;
-    -webkit-transform: translateY(-10px);
-    transform: translateY(-10px);
-  }
+//   60% {
+//     opacity: 1;
+//     -webkit-transform: translateY(-10px);
+//     transform: translateY(-10px);
+//   }
 
-  80% {
-    -webkit-transform: translateY(5px);
-    transform: translateY(5px);
-  }
+//   80% {
+//     -webkit-transform: translateY(5px);
+//     transform: translateY(5px);
+//   }
 
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-@-webkit-keyframes bounceOutDown {
-  0% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
+//   100% {
+//     -webkit-transform: translateY(0);
+//     transform: translateY(0);
+//   }
+// }
+// @-webkit-keyframes bounceOutDown {
+//   0% {
+//     -webkit-transform: translateY(0);
+//     transform: translateY(0);
+//   }
 
-  20% {
-    opacity: 1;
-    -webkit-transform: translateY(5px);
-    transform: translateY(5px);
-  }
+//   20% {
+//     opacity: 1;
+//     -webkit-transform: translateY(5px);
+//     transform: translateY(5px);
+//   }
 
-  40% {
-    opacity: 1;
-    -webkit-transform: translateY(-10px);
-    transform: translateY(-10px);
-  }
+//   40% {
+//     opacity: 1;
+//     -webkit-transform: translateY(-10px);
+//     transform: translateY(-10px);
+//   }
 
-  100% {
-    opacity: 0;
-    -webkit-transform: translateY(2000px);
-    transform: translateY(2000px);
-  }
-}
+//   100% {
+//     opacity: 0;
+//     -webkit-transform: translateY(2000px);
+//     transform: translateY(2000px);
+//   }
+// }
 
 /* Admin Home Page css end */
