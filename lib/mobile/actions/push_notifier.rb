@@ -51,7 +51,7 @@ module Mobile::Actions::Push_Notifier
 		
     elsif action == :response then
         user_ids = notable.subscriptions.map(&:user_id)
-        unless incoming || self.to_emails.blank? then
+        unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
           user_ids = user_ids | account.users.find(:all, :select => :id , :conditions => {:email => notified_agent_emails}).map(&:id)
         end
