@@ -1,19 +1,19 @@
+<% if call.caller_number %>
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
-
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip">
-				<%= content_tag :span, "", :class => "tooltip blacklist-toggle "+(blocked_number?(call.customer_number) ? '	blacklisted' : 'blacklist').to_s,
-					:"data-number" => call.customer_number.gsub(/^\+/, ''),
-					:title => blocked_number?(call.customer_number) ? t('freshfone.call_history.unblock_number') :
+				<%= content_tag :span, "", :class => "tooltip blacklist-toggle "+(blocked_number?(call.caller_number) ? '	blacklisted' : 'blacklist').to_s,
+					:"data-number" => call.caller_number.gsub(/^\+/, ''),
+					:title => blocked_number?(call.caller_number) ? t('freshfone.call_history.unblock_number') :
 																														t('freshfone.call_history.block_number') %>
 	
 			<%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
 			
 			<div class="ellipsis">
-					<b><%= call.customer.present? ? link_to_user(call.customer) : call.customer_number %></b>
+					<b><%= call.customer.present? ? link_to_user(call.customer) : call.caller_number %></b>
 			</div>
 			<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
-						data-number='<%= call.customer_number %>'>
+						data-number='<%= call.caller_number %>'>
 				<%= call.location %>
 			</div>
 		</div>
@@ -73,7 +73,7 @@
 				<%= link_to t('freshfone.call_history.convert'), "#", 
 										:class => "create_freshfone_ticket tooltip",
 										"data-id" => call.id, "data-customer-id" => call.customer_id,
-										"data-number" => call.customer_number,
+										"data-number" => call.caller_number,
 										"data-date" => call.created_at,
 										"data-customer-name" => call.customer_name,
 										:title => t('freshfone.call_history.save_ticket') %>
@@ -93,12 +93,13 @@
 	</td>
 	<td class="width3">
 		<div class="center">
-			<% if call.recording_url.blank? %>
+			<% @freshfone_recording = call.recording_audio 
+			if @freshfone_recording.blank? && call.recording_url.blank? %>
 				<span class="center" ><%= call_duration_formatted(call.call_duration) if call.call_duration.present? %>
 				</span>
 			<% else %>
 				<div class="ui360">
-				<%=	link_to('', call.recording_audio || call.recording_url, :type => 'audio/mp3',
+				<%=	link_to('', @freshfone_recording || call.recording_url, :type => 'audio/mp3',
          :class => 'call_duration', :'data-time' => call.call_duration) %>
 				</div>
 			<% end %>
@@ -106,10 +107,10 @@
 	</td>
 	<td>
 		<div class="call_user" align="left">
-				<%= can_make_calls(call.customer_number, "", call.freshfone_number_id) %>
+				<%= can_make_calls(call.caller_number, "", call.freshfone_number_id) %>
 		</div>
 
 	</td>
 </tr>
-
+<% end %>
 

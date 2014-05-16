@@ -39,5 +39,21 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
     return nil
   end
+  
+  def dm_stream
+    streams = self.twitter_streams
+    streams.each do |stream|
+      return stream if stream.data[:kind] == STREAM_TYPE[:dm]
+    end
+    return nil
+  end
+  
+  def find_custom_stream(keyword)
+    streams = self.twitter_streams
+    streams.each do |stream|
+      return stream if (stream.data[:kind] == STREAM_TYPE[:custom] && stream.includes.include?(keyword))
+    end
+    return nil
+  end
 
 end

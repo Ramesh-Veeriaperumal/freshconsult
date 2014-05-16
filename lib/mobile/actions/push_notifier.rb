@@ -10,7 +10,7 @@ module Mobile::Actions::Push_Notifier
             :user_id => self.id,
             :delete_axn => :user
         }.to_json
-        puts "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
+        Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
 
         publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
 	end
@@ -21,7 +21,7 @@ module Mobile::Actions::Push_Notifier
             :user_id => current_user.id,
 			:delete_axn => :user
         }.to_json
-        puts "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
+        Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
 
         publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
     end
@@ -33,10 +33,19 @@ module Mobile::Actions::Push_Notifier
   current_user_name = User.current ? User.current.name : ""
 
     if action == :new then
-      
-      if @model_changes.key?(:responder_id) && responder_id != current_user_id then
+      if responder_id && responder_id != current_user_id then
         notification_types = {NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]}
-      else
+      elsif group_id
+        begin
+          user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+          user_ids.delete(current_user_id)
+          notification_types = {NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids} unless user_ids.empty?
+        rescue Exception => e
+          ### When the group_id is invalid (before deleteing email_configs invalid entries),
+          ### new ticket notification is sent.
+          notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
+        end
+      else 
         notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
       end
 		
@@ -52,12 +61,12 @@ module Mobile::Actions::Push_Notifier
 		process_status_update_notification message, notification_types, current_user_id
     end
 
-    puts "DEBUG :: send_mobile_notification hash : #{notification_types}"
+    Rails.logger.debug "DEBUG :: send_mobile_notification hash : #{notification_types}"
 	return if notification_types.empty?
 	message.merge!(:notification_types => notification_types, :user => current_user_name, :user_id => current_user_id)
 	message.store(:account_id,self.account.id)
 	
-    puts "DEBUG :: send_mobile_notification hash : #{message}"
+    Rails.logger.debug "DEBUG :: send_mobile_notification hash : #{message}"
 	channel_id = self.account.id%MOBILE_NOTIFICATION_CHANNEL_COUNT
 
 	publish_to_mobile_channel message.to_json, channel_id
@@ -87,7 +96,7 @@ module Mobile::Actions::Push_Notifier
 
   def publish_to_mobile_channel message, channel_id
 	  channel = MOBILE_NOTIFICATION_MESSAGE_CHANNEL % {:channel_id => channel_id}
-	  puts "DEBUG :: pushing to channel : #{channel}"
+	  Rails.logger.debug "DEBUG :: pushing to channel : #{channel}"
       newrelic_begin_rescue do
           $redis_mobile.publish(channel, message)
       end

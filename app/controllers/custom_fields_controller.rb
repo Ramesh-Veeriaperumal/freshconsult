@@ -5,9 +5,9 @@ class CustomFieldsController < Admin::AdminController
   before_filter :check_ticket_field_count, :only => [ :update ]
   
   MAX_ALLOWED_COUNT = { 
-    :string => 30,
+    :string => 80,
     :text => 10,
-    :number => 10,
+    :number => 20,
     :date => 10,
     :boolean => 10
   }

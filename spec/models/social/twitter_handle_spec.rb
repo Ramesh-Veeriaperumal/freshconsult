@@ -6,13 +6,24 @@ describe Social::TwitterHandle do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @account = create_test_account
     Resque.inline = true
-    @handle = create_test_twitter_handle(nil, true)
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response) 
+    end
+    @handle = create_test_twitter_handle(@account, true)
+    update_handle_rule(@handle) unless GNIP_ENABLED
     @stream = @handle.default_stream
     @rule = @handle.gnip_rule
   end
 
   before(:each) do
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response) 
+      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) 
+    end
     @handle.reload
   end
 
@@ -21,25 +32,29 @@ describe Social::TwitterHandle do
   end
 
   it "should create a gnip rule" do
-    #Check rule in gnip
-    mrule = gnip_rule(@rule)
-    mrule.should_not be_nil
+    if GNIP_ENABLED
+      #Check rule in gnip
+      mrule = gnip_rule(@rule)
+      mrule.should_not be_nil
 
-    #check for matching rule tag
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    tags = mrule.tag.split(tag_delimiter)
-    tags.should include(@rule[:tag])
+      #check for matching rule tag
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      tags = mrule.tag.split(tag_delimiter)
+      tags.should include(@rule[:tag])
+    end
   end
 
   it "should delete gnip rule if 'capture_mention_as_ticket' is deselected" do
     @handle.update_attributes(:capture_mention_as_ticket => false)
 
-    mrule = gnip_rule(@rule)
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    if !mrule.nil?
-      #check for matching rule tag
-      tags = mrule.tag.split(tag_delimiter)
-      tags.should_not include(@rule[:tag])
+    if GNIP_ENABLED
+      mrule = gnip_rule(@rule)
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      if !mrule.nil?
+        #check for matching rule tag
+        tags = mrule.tag.split(tag_delimiter)
+        tags.should_not include(@rule[:tag])
+      end
     end
   end
 
@@ -52,21 +67,16 @@ describe Social::TwitterHandle do
     @stream.should be_nil
 
     #Check rule in gnip
-    @rule = @handle.gnip_rule
-    mrule = gnip_rule(@rule)
-    mrule.should_not be_nil
-
-    #check for matching rule tag
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    tags = mrule.tag.split(tag_delimiter)
-    tags.should include(@rule[:tag])
-
-    # #Check ticket rules
-    # verify_mention_rule(@handle.formatted_handle)
-
-    # #Check 'includes'
-    # @stream.includes.should have(3).items #@freshdesk, freshdesk, @TestingGnip
-    # @stream.includes.should include("@freshdesk", "freshdesk", "@TestingGnip")
+    if GNIP_ENABLED
+      @rule = @handle.gnip_rule
+      mrule = gnip_rule(@rule)
+      mrule.should_not be_nil
+      
+      #check for matching rule tag
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      tags = mrule.tag.split(tag_delimiter)
+      tags.should include(@rule[:tag])
+    end
   end
 
   it "should destroy the gnip rule on twitter handle destroy" do
@@ -80,12 +90,14 @@ describe Social::TwitterHandle do
     handle.destroy
 
     #Check gnip to make sure the rule is deleted
-    mrule = gnip_rule(rule)
-    tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-    if !mrule.nil?
-      #check for matching rule tag
-      tags = mrule.tag.split(tag_delimiter)
-      tags.should_not include(rule[:rule_tag])
+    if GNIP_ENABLED
+      mrule = gnip_rule(rule)
+      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+      if !mrule.nil?
+        #check for matching rule tag
+        tags = mrule.tag.split(tag_delimiter)
+        tags.should_not include(rule[:rule_tag])
+      end
     end
 
     #Ensure the handle has been deleted
@@ -98,11 +110,13 @@ describe Social::TwitterHandle do
     rule = @handle.gnip_rule
     if current_state != "suspended"
       @handle.account.subscription.update_attributes(:state => "suspended")
-      mrule = gnip_rule(rule)
-      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-      if !mrule.nil?
-        tags = mrule.tag.split(tag_delimiter)
-        tags.should_not include(rule[:tag])
+      if GNIP_ENABLED
+        mrule = gnip_rule(rule)
+        tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+        if !mrule.nil?
+          tags = mrule.tag.split(tag_delimiter)
+          tags.should_not include(rule[:tag])
+        end
       end
     end
   end
@@ -112,14 +126,17 @@ describe Social::TwitterHandle do
     if current_state == "suspended"
       @handle.account.subscription.update_attributes(:state => "trial")
       rule = @handle.gnip_rule
+      update_handle_rule(@handle) unless GNIP_ENABLED
 
-      mrule = gnip_rule(rule)
-      mrule.should_not be_nil
+      if GNIP_ENABLED
+        mrule = gnip_rule(rule)
+        mrule.should_not be_nil
 
-      mrule.value.should eql rule[:value]
-      tag_delimiter = Gnip::Constants::DELIMITER[:tags]
-      tags = mrule.tag.split(tag_delimiter)
-      tags.should include(rule[:tag])
+        mrule.value.should eql rule[:value]
+        tag_delimiter = Gnip::Constants::DELIMITER[:tags]
+        tags = mrule.tag.split(tag_delimiter)
+        tags.should include(rule[:tag])
+      end
     end
   end
 

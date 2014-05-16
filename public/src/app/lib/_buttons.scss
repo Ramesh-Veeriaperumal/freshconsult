@@ -527,5 +527,9 @@ div.action_buttons:hover{
   font-weight:bold;
   display: block;
   line-height:20px;
-  &:hover{ border-color: darken(#CCC, 5%); }
+}
+.guided-tour-button:hover, .tourmyapp .tourmyapp-content a:hover { 
+  border-color: darken(#CCC, 5%); 
+  text-decoration:none; 
+  color:$linkColorHover;
 }

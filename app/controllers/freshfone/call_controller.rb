@@ -16,7 +16,19 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :handle_transferred_call, :only => [:status]
 	after_filter  :check_for_bridged_calls, :only => [:status]
 	before_filter :prepare_message_for_publish,  :only => [:in_call]
-	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success]
+	before_filter :load_user_by_phone, :only => :caller_data
+	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success, :direct_dial_success]
+	before_filter :reset_outgoing_count, :only => [:status]
+
+	def caller_data
+		render :json => {
+      :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
+                           :locals => { :user => @user }),
+      :user_name => (@user || {})[:name],
+      :user_id => (@user || {})[:id],
+      :call_meta => call_meta
+    }
+	end
 	
 	def in_call
 		update_presence_and_publish_call(params, @message) if params[:agent].present?
@@ -25,6 +37,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	end
 	
 	def direct_dial_success
+		update_call
 		publish_live_call(params)
 		return empty_twiml
 	end
@@ -117,6 +130,23 @@ class Freshfone::CallController < FreshfoneBaseController
     		return true
     	end
 		end
+
+		def load_user_by_phone
+			@user = Freshfone::Search.search_user_with_number(params[:PhoneNumber])
+		end
+
+		def call_meta
+	    #Yet to handle the scenario where multiple calls at the same time 
+	    #from the same number targeting different groups.
+	    call = current_account.freshfone_calls.first(:joins => [:caller], 
+	            :include => [:freshfone_number, {:meta => :group}], 
+	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]})
+	    if call.present?
+		    { :number => call.freshfone_number.number_name,
+		    	:group 	=> (call.meta.group.name if call.meta.present?)
+		    }
+		  end
+	  end
 
 		def clear_client_calls
 			key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
@@ -251,5 +281,9 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def empty_twmil_without_render
 			Twilio::TwiML::Response.new
+		end
+
+		def reset_outgoing_count
+			remove_device_from_outgoing(split_client_id(params[:From])) if current_call.outgoing?
 		end
 end

@@ -19,7 +19,6 @@ class Freshfone::CallTransfer
 	end
 
 	private
-
 		def transfer_outgoing_call
 			scoper_for_calls.list({
 				:ParentCallSid => call_sid }).first.update({

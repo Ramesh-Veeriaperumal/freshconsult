@@ -9,6 +9,9 @@
 			<li class="current-balance">
 				<p class="current-balance-text"><%= t('freshfone.subscription.current_balance') %></p>
 				<div class="current-balance-amt"><%= current_freshfone_balance(@freshfone_credit) %></div>
+				<% unless default_currency? %>
+					<p class="current-balance-followup">(<%= t('freshfone.subscription.followup_text') %>)</p>
+				<% end %>
 			</li>
 		  <li class="recharge-now">
 		  	<% if current_account.subscription.active? and current_account.has_credit_card? %>

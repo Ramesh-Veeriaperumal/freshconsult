@@ -82,6 +82,9 @@ module FreshdeskCore::Model
 
                         "social_twitter_handles",
                           "social_tweets", 
+                        
+                        "social_streams",
+                          "social_ticket_rules",
 
                         "solution_categories", 
                           "solution_customer_folders", 
@@ -123,6 +126,7 @@ module FreshdeskCore::Model
 
   def perform_destroy(account)
     delete_gnip_twitter_rules(account)
+    delete_social_redis_keys(account)
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
@@ -136,6 +140,12 @@ module FreshdeskCore::Model
   end
 
   private
+  
+    def delete_social_redis_keys(account)
+       account.twitter_streams.each do |stream|
+         stream.clear_volume_in_redis
+       end
+    end
 
     def remove_mobile_registrations account_id
         message = {

@@ -4,7 +4,9 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 module GnipHelper
 
   def sample_gnip_feed(rule_hash=nil, reply=nil)
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    begin
+      tweet_id = (Time.now.utc.to_f*100000).to_i
+    end until reply != tweet_id
     feed_hash = {
       "body" => "@TestingGnip Testing Gnip",
       "retweetCount" => 2,
@@ -12,12 +14,14 @@ module GnipHelper
         "matching_rules" => [{
                 "tag" =>"0_0",
                 "value" => "@TestingGnip"
-            }]
+            }],
+        "klout_score" => "0"
       },
       "actor" => {
         "preferredUsername" => "GnipTestUser",
         "image" => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
-        "id" => "id:twitter.com:612609996"
+        "id" => "id:twitter.com:612609996",
+        "displayName" => "Gnip Test User"
       },
       "verb" => "post",
       "postedTime" => Time.now.utc.iso8601,
@@ -43,11 +47,10 @@ module GnipHelper
   end
 
   def verify_mention_rule(mention=nil)
-    mention = "@TestingGnip" if mention.nil?
+    #mention = "@TestingGnip" if mention.nil?
     ticket_rule = @stream.ticket_rules.first
-    rule_includes = ticket_rule.filter_data[:includes]
-    rule_includes.should have(1).items
-    rule_includes.should include(mention)
+    ticket_rule.should_not be_nil
+    ticket_rule.filter_data[:includes].should include(mention)
   end
 
   def gnip_rule(rule)

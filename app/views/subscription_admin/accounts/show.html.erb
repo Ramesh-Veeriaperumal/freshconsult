@@ -18,31 +18,45 @@
         <td><%= @account.admin_email %> <%= @account.admin_phone %> </td>
       </tr>
       <tr>
-        <th>Non-Active Agents</th>
-        <% @account.technicians.active(false).each do |agent| %>
-          <td> <%= agent.email %> </td>
-        <% end %>
-      </tr>
-      <tr>
-        <th>Monthly Revenue</th>
-        <td><%= number_to_currency(@account.subscription.amount) %></td>
-      </tr>
-      <tr>
-        <th>Lifetime Revenue</th>
-        <td><%= number_to_currency(@account.subscription_payments.sum(:amount)) %></td>
-      </tr>
-      <tr>
         <th>Created</th>
         <td><%= @account.created_at.to_s(:short_day) %></td>
       </tr>
       <tr>
-        <th>Next Renewal</th>
-        <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
-      </tr>       
+        <th>Billing site</th>
+        <td><%= link_to(@account.subscription.currency_billing_site, %(https://#{@account.subscription.currency_billing_site}.chargebee.com)) %></td>
+      </tr>
+      <tr>
+        <th>State</th>
+        <td><%= @account.subscription.state %></td>
+      </tr>
       <tr>
         <th>Plan</th>
-        <td><%= @account.subscription.subscription_plan %></td>
+        <td><%= @account.subscription.subscription_plan.name %></td>
       </tr>
+      <tr>
+        <th>Billing cycle (in months)</th>
+        <td><%= @account.subscription.renewal_period %></td>
+      </tr>
+      <tr>
+        <th>Monthly Revenue (adjusted to current exchange rate)</th>
+        <td>$<%= format_float_value(@account.subscription.cmrr) %></td>
+      </tr>
+      <tr>
+        <th>Next Renewal</th>
+        <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
+      </tr>
+      <tr>
+        <th>Currency</th>
+        <td><%= @account.currency_name %></td>
+      </tr>
+      <tr>
+        <th>Amount (charged on next renewal)</th>
+        <td><%= (@account.subscription.amount) %> <%= @account.currency_name %></td>
+      </tr>
+      <tr>
+        <th>Lifetime Revenue</th>
+        <td><%= @account.subscription_payments.sum(:amount) %> <%= @account.currency_name %></td>
+      </tr>       
       <tr>
         <th>Remaining Day Passes</th>
         <td><%= @account.day_pass_config.available_passes %></td>
@@ -51,10 +65,6 @@
         <th>Freshfone Credits</th>
         <% credit = @account.freshfone_credit %>
         <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
-      </tr>
-      <tr>
-        <th>State</th>
-        <td><%= @account.subscription.state %></td>
       </tr>
       <tr>
         <th>Agents</th>
@@ -109,11 +119,13 @@
       <tr>
         <th>Email</th>
         <th>Verified</th>
+        <th>Occasional</th>
       </tr>
       <% @account.agents.each do |agent| %>
         <tr>
           <td><%= agent.user.email %></td>
           <td><%= agent.user.active %></td>
+          <td><%= agent.occasional %></td>
         </tr>
       <% end %>     
     </table>

@@ -38,11 +38,12 @@ module AccountHelper
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
-      :user_user_emails_attributes => {"0" => {:email => Helpdesk::EMAIL[:sample_email], :primary_role => true}},
+      :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )
     signup.save
     @acc = signup.account
+    update_currency
     @acc.make_current
     create_dummy_customer
     @acc
@@ -69,4 +70,15 @@ module AccountHelper
     Solution::Article.destroy_all  
   end
 
+  def update_currency
+    currency = Subscription::Currency.find_by_name("USD")
+    if currency.blank?
+      currency = Subscription::Currency.create({ :name => "USD", :billing_site => "freshpo-test", 
+          :billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"})
+    end
+    
+    subscription = @acc.subscription
+    subscription.set_billing_params("USD")
+    subscription.save
+  end
 end

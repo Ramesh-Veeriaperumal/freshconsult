@@ -4,7 +4,7 @@ class Freshfone::PulseRate
 																									'freshfone_charges.yml'))
 	attr_accessor :call, :number, :country, :forwarded, :credit
 	
-	delegate :incoming?, :caller_country, :customer_number, :freshfone_number, :outgoing?,
+	delegate :incoming?, :caller_country, :caller_number, :freshfone_number, :outgoing?,
 						:to => :call, :allow_nil => true
 	delegate :number_type, :to => :freshfone_number, :allow_nil => true
 	delegate :country, :to => :freshfone_number, :prefix => true, :allow_nil => true
@@ -38,7 +38,7 @@ class Freshfone::PulseRate
 
 		def outgoing_cost
 			self.country = caller_country
-			self.number = customer_number
+			self.number = caller_number
 
 			calculate(:outgoing)
 		end

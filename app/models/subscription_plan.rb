@@ -2,6 +2,7 @@ class SubscriptionPlan < ActiveRecord::Base
   not_sharded
   
   include ActionView::Helpers::NumberHelper
+  serialize :price, Hash
   
   has_many :subscriptions
   
@@ -110,6 +111,10 @@ class SubscriptionPlan < ActiveRecord::Base
   
   def free_plan?
     name == SUBSCRIPTION_PLANS[:free]
+  end
+
+  def pricing(currency)
+    price[currency]
   end
   
 end

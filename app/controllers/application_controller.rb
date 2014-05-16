@@ -179,5 +179,11 @@ class ApplicationController < ActionController::Base
       end
       traverse.call(params, force_encoding)
     end
+
+    def handle_unverified_request
+      super
+      cookies.delete 'user_credentials'
+      @current_user_session = @current_user = nil
+    end
 end
 

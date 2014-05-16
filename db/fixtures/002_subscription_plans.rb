@@ -1,13 +1,47 @@
 def self.plan_list(all_addons, garden_addons, blossom_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00, 
-    	:addons => all_addons },
+    	:addons => all_addons, :price => plan_price[:sprout] },
     { :name => 'Blossom', :amount => 19, :free_agents => 0, :day_pass_amount => 2.00,
-    	:addons => blossom_addons },
+    	:addons => blossom_addons, :price => plan_price[:blossom] },
     { :name => 'Garden', :amount => 29, :free_agents => 0, :day_pass_amount => 2.00,
-    	:addons => garden_addons },
-    { :name => 'Estate', :amount => 49, :free_agents => 0, :day_pass_amount => 3.00 }  
+    	:addons => garden_addons, :price => plan_price[:garden] },
+    { :name => 'Estate', :amount => 49, :free_agents => 0, :day_pass_amount => 3.00, 
+    	:price => plan_price[:estate] }  
 	]
+end
+
+def self.plan_price
+	{
+		:sprout => {
+			"BRL" => 36.0,
+			"EUR" => 12.0,
+			"INR" => 899.0,
+			"USD" => 15.0,
+			"ZAR" => 169.0
+		},
+		:blossom => {
+			"BRL" => 49.0,
+			"EUR" => 16.0,
+			"INR" => 1199.0,
+			"USD" => 19.0,
+			"ZAR" => 229.0
+		},
+		:garden => {
+			"BRL" => 69.0,
+			"EUR" => 25.0,
+			"INR" => 1799.0,
+			"USD" => 29.0,
+			"ZAR" => 349.0
+		},
+		:estate => {
+			"BRL" => 119.0,
+			"EUR" => 40.0,
+			"INR" => 2999.0,
+			"USD" => 49.0,
+			"ZAR" => 549.0
+		}
+	}
 end
 
 unless Account.current

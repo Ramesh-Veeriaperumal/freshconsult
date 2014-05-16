@@ -2,6 +2,7 @@ class Freshfone::CallFlow
   include FreshfoneHelper
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+  include Freshfone::CallsRedisMethods
 	BEYOND_THRESHOLD_PARALLEL_INCOMING = 3 # parallel incomings allowed beyond safe_threshold
 	BEYOND_THRESHOLD_PARALLEL_OUTGOING = 1 # parallel incomings allowed beyond safe_threshold
   
@@ -15,7 +16,7 @@ class Freshfone::CallFlow
           :initiate_recording, :initiate_voicemail, :initiate_outgoing, :connect_caller_to_numbers,
           :return_non_availability, :return_non_business_hour_call, :make_transfer_to_agent, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
-           :register_direct_dial, :to => :call_actions
+           :register_direct_dial, :save_call_meta, :to => :call_actions
 
   def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
     self.params = params
@@ -88,6 +89,7 @@ class Freshfone::CallFlow
   private
 
     def outgoing
+      return reject_twiml unless register_outgoing_device
       register_outgoing_call
       initiate_outgoing
     end
@@ -163,6 +165,7 @@ class Freshfone::CallFlow
     def load_users_from_group(performer_id)
       self.available_agents = freshfone_users.online_agents_in_group(performer_id)
       self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
+      save_call_meta(performer_id)
       set_hunt_options(:group, performer_id)
     end
 
@@ -189,5 +192,15 @@ class Freshfone::CallFlow
 
     def incoming_limit_reached?
       (calls_count >> 4) >= BEYOND_THRESHOLD_PARALLEL_INCOMING
+    end
+
+    def register_outgoing_device
+      agent_user_id = split_client_id(params[:From])
+      return true if set_outgoing_device([agent_user_id])
+      agent_progress_calls?(agent_user_id).blank?
+    end
+
+    def agent_progress_calls?(agent_user_id)
+      Freshfone::Call.agent_progress_calls(agent_user_id).first
     end
 end

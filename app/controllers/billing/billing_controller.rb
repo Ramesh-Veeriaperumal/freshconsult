@@ -50,6 +50,7 @@ class Billing::BillingController < ApplicationController
       send(params[:event_type], params[:content])
     end
 
+    Account.reset_current_account
     respond_to do |format|
       format.xml { head 200 }
       format.json  { head 200 }
@@ -101,6 +102,7 @@ class Billing::BillingController < ApplicationController
     def retrieve_account
       @account = Account.find_by_id(params[:content][:customer][:id])      
       return render :json => ActiveRecord::RecordNotFound, :status => 404 unless @account
+      @account.make_current
     end
 
     #Subscription info
@@ -169,7 +171,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_cancelled(content)
-      @account.subscription.update_attribute(:state, SUSPENDED)
+      @account.subscription.update_attributes(:state => SUSPENDED)
     end
 
     def subscription_reactivated(content)

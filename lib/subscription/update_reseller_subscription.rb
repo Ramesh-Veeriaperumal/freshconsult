@@ -24,7 +24,8 @@ class Subscription::UpdateResellerSubscription
     private
       def trigger_subscription_updated_event(account)
         data = { :account_id => account.id, :state => account.subscription.state, 
-                  :cmrr => account.subscription.cmrr }        
+                  :cmrr => (account.subscription.amount/account.subscription.renewal_period), 
+                  :currency => account.currency_name }        
         http_connect(:subscription_updated, data, "post")
       end
 

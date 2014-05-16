@@ -1,0 +1,6 @@
+admin_tour_ids: [
+                  "52bbd0d3bc1fbe3d28000459", # Email config, Ticket view & fie
+                  "52caaa93bc1fbe7041000121", # Add agents & Automations
+                  "52de5bdebc1fbe3cbd0009a6", # Arcade and Satisfaction survey
+                  "52e7812dbc1fbe730d0001f2"  # Reports and multi products
+                ]

@@ -33,7 +33,6 @@ module DataStoreCallbacks
 
         def update_#{class_name}_body
           if self.#{class_name}_body_content && self.#{class_name}_body_content.attributes_changed?
-              puts "Inside update action"
             self.rollback_#{class_name}_body = true
             created_at_updated_at_on_update
             load_full_text

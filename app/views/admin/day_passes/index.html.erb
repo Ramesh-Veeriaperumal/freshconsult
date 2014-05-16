@@ -21,12 +21,12 @@
              <%= ul @day_pass_amounts.map { |pass|
                   content_tag :label,  
                     radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
-                    content_tag(:span, t(".day_pass_pack", :quantity => pass[0], :currency => "$", :amount => pass[1]))
+                    day_pass_display_string(pass)    
                  },  
                  :class => "inputs-list"
              %>
             <p>
-        	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} $' + jQuery('input[name=quantity]:checked').data('amount'));" %>
+        	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} #{fetch_currency_unit}'  + jQuery('input[name=quantity]:checked').data('amount'));" %>
         	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp(function(){jQuery('#daypass_button').show()});", :class => "uiButton" %>
         		</p>
         		<% end %>

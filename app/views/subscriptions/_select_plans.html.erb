@@ -20,7 +20,7 @@
 																<%= content_tag(:h3, "Free") %>
 																<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents).html_safe, :class => "info-data") %>
 															<% else %>
-																<%= content_tag(:h3, "$#{plan.amount.to_i}") %>
+																<%= content_tag(:h3, fetch_plan_amount(plan)) %>
 																<%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
 															<% end %>
 													<% end %>								
@@ -33,15 +33,15 @@
 												<div class="activate-options">
 													<%= content_tag(:div, " #{plan.free_agents} Agents Free") %>
 													<div class = "add-more">
-														<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
+														<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
 													</div>
-													<%= content_tag(:h2, t('total_price') + " : $0") %>
+													<%= content_tag(:h2, t('total_price') + " : #{format_amount(0, @subscription.currency_name)}").html_safe %>
 													<% downgrade_confirm = ( (plan.id < current_account.subscription.subscription_plan_id) or current_account.subscription.classic? ) ? true : false %>
 													<%= link_to(t('select_plan'), "javascript:confirm(#{downgrade_confirm}, true)".html_safe, :class => "uiButton confirm-change", "data-to" => plan.name) %>
 													<div class="confirm-text" style="display:none;"><%= t('downgrade_confirm', :from => current_account.subscription.subscription_plan.name, :to => plan.name).html_safe %></div>
 												</div>
 											<% end %>
-											<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
+											<button data-plan="<%= plan.name %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
 											<div id="billing-<%= plan.name %>"></div>
 									</td>
 								<% end %>
@@ -110,6 +110,7 @@
 		plan_cost	  	  = null;
 		plan_billing  	= null; 
 		current_plan_id = null;
+		currency = "<%= @subscription.currency_name %>";
 		original_data = null;
 		current_active_plan_flag = false;
 		cache_agent_value = 0;
@@ -193,11 +194,12 @@
       calculateCost();
    });
 
-    function calculateCost(){
+    function calculateCost(){    	
     	if(calculate_request)
     		calculate_request.abort();
 			calculate_request = $.post( "/subscription/calculate_amount",
-              { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
+              { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id,
+              	"currency" : currency },              
               function(data){
               		$(".billing-submit").removeAttr("disabled");
 									$("#billing-template").removeClass("sloading inner-form-hide");

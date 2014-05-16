@@ -1096,8 +1096,8 @@ en:
         survey-settings: Customer Satisfaction
         gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
-        account-settings: Account
-        customer-portal: Customer Portal
+        account-settings: Account Settings
+        helpdesk-productivity: Helpdesk Productivity
         canned-response: Canned Response
         multi-product: Multi-Product
         import: Import data from Zendesk
@@ -1112,13 +1112,13 @@ en:
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
-        email-settings: Email Setup
+        email: Email
         everything: Everything
-        helpdesk: Helpdesk
+        support-channels: Support Channels
         role: Roles
         else: else
         settings: Settings
-        productivity: Productivity
+        general-settings: General Settings
         portal: Portal
         account: Account
         customer: Customer
@@ -1132,6 +1132,90 @@ en:
         billing: "Plans & Billing"
         freshfone: "Freshfone"
         tags: Tags
+        customer-portal: Customer Portal
+      keywords:
+        configure_support_email: "Configure support email"
+        Personalized_email_replies: "Personalized email replies"
+        remove_ticket_id: "Remove ticket ID from replies"
+        reply_to_email: "Reply to email"
+        multiple_mailboxes: "Multiple Mailboxes"
+        chat_integration: "Chat integration"
+        customize_chat_window: "Customize chat window/widget"
+        customise_chat_window: "Customise chat window/widget"
+        configure_chat_messages: "Configure chat messages"
+        phone_integration: "Phone integration"
+        purchase_support_number: "Purchase support number"
+        voice_integration: "Voice integration"
+        ivr: "IVR"
+        integrated_phone_support: "Integrated phone support"
+        social: "social"
+        customize_feedback_widget: "Customize feedback widget"
+        embedded_widget: "Embedded widget"
+        popup_widget: "Popup Widget"
+        set_time_zone: "Set Time Zone"
+        set_helpdesk_language: "Set Helpdesk Language"
+        set_portal_url: "Set portal/helpdesk URL"
+        set_ticket_id: "Set ticket id"
+        set_portal_name: "Set helpdesk/portal name"
+        layout_customization: "Layout Customization"
+        stylesheet_customization: "Stylesheet Customization"
+        css_customization: "CSS Customization"
+        customisation: "Customisation"
+        custom_domain_name: "Custom domain name"
+        cname: "CNAME"
+        supported_languages: "Supported Languages"
+        portal_customization: "Portal Customization"
+        rebrand_portal: "Rebrand Portal"
+        customize_new_ticket_form: "Customize new ticket Form"
+        signin_using_google: "sign in using google"
+        signin_using_facebook: "sign in using facebook"
+        signin_using_twitter: "sign in using twitter"
+        suggestion_solutions: "Suggest Solutions"
+        daypass_agent: "Daypass agent"
+        occasional_agent: "Occasional Agent"
+        add_new_agent: "Add new agent"
+        add_new_group: "Add new group"
+        automatic_ticket_assignment: "Automatic ticket assignment"
+        round_robin_assignment: "Round Robin assignment"
+        set_businesshour_group: "Set business hour for a group"
+        multiple_business_hours: "Multiple Business Hours"
+        add_new_agent_role: "Add new agent role"
+        agent_roles_permissions: "Agent roles & permissions"
+        custom_roles: "Custom roles"
+        ssl_encryption: "SSL Encryption"
+        single_signon: "Single Sign on"
+        sso: "SSO"
+        trusted_ip: "Trusted IP"
+        private_helpdesk: "Private Helpdesk"
+        create_new_sla: "Create new SLA Policy"
+        configure_escalation_emails: "Configure Escalation Emails"
+        operating_hours: "Operating hours"
+        set_holiday_list: "Set Holiday List"
+        business_hours_multiple_locations: "Business hours for multiple locations"
+        multiple_business_hours: "Multiple Business Hours"
+        multiple_products: "Multiple Products"
+        multi_brand: "Multi brand"
+        ticket_creation_rules: "Ticket creation rules"
+        automations: "Automations"
+        workflows: "Workflows"
+        hourly_trigger: "Hourly Trigger"
+        event_based_rules: "Event based rules"
+        scenario_automations: "Scenario Automations"
+        macros: "Macros"
+        email_notifications: "Email Notifications"
+        auto_responses: "Auto responses"
+        canned_responses: "Canned Responses"
+        predefined_responses: "Predefined responses"
+        customer_survey: "Customer Survey"
+        gamification: "Gamification"
+        list_all_integrations: "List of all integrations"
+        invoice_emails: "Invoice Emails"
+        export_data: "Export Data"
+        cancel_service: "Cancel Service"
+        plans_billing: "Plans & Billing"
+        choose_plan: "Choose Plan"
+        zendesk_import: "Zendesk Import"
+        daypasses: "Day Passes"
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -1702,7 +1786,7 @@ en:
       billing: Billing
       save_billing_information: Save billing information
       save_billing_information_info: will save your "Plan & billing" information. We will charge your card and begin your subscription only once your trial is over.
-      begin_subscription: Begin subscription now...
+      begin_subscription: Begin subscription now
     show:
       export_data: Export Data
       export_now: Export now
@@ -2350,10 +2434,12 @@ en:
     paid: Paid
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
+    currency-note: "Note : All your future payments will be in "
   activate: Activate
   feedbackwidget_button_text: Label
-  billed_amount_per_month: You will be billed $%{amount} %{period}
-  billed_amount_annually: You will be billed $%{amount} annually
+  billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
+  billed_amount_annually: You will be billed <b>%{amount} annually</b>.
+  currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident
@@ -2621,7 +2707,7 @@ en:
   blossom_brief: Social Customer Support
   garden_brief: Multi Product Support
   estate_brief: Enterprise Level Support
-  begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
+  begin_subscription_confirm: Your credit card is going to be charged for the amount of %{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
@@ -2769,7 +2855,7 @@ en:
   update_and_login: "Update & login"
   activate_and_login: "Activate & login"
   password: "Password"
-  enter_payment: Enter Payment details...
+  enter_payment: Enter Payment details
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
@@ -3813,6 +3899,10 @@ en:
         title: "Twitter Accounts"
         reauthorize: Reauthorize
         reauth_required: Reauthorization required
+        handle_auth_error: One of your twitter handles requires authentication. So could not perform the operation
+        rate_limit_reached: Twitter Rate limit has been reached. Please check after sometime
+        forbidden_error: You are forbidden to perform this operation.
+        client_error: We could not process your request. Please try after sometime.
         from: "From: "
         note_title: "Note: "
         note:  The current reply will not be registered as a ticket or a conversation inside Freshdesk.
@@ -4873,6 +4963,7 @@ en:
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
+      followup_text: "worth Freshfone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       not_enough_credit: "Not Enough Credit"
@@ -5031,6 +5122,8 @@ en:
         all_groups: "All Groups"
         business_hours: Business Hours
         anytime: 24/7 Anytime
+        name: Name
+        name_placeholder: Enter a friendly name for your number
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -5148,7 +5241,7 @@ en:
     available_agents: "Available Agents"
     visitors_online: "Visitors Online"
     returning_visitors: "Returning Visitors"
-    website_visitors_msg: "See all Website Visitors"
+    website_visitors_msg: "Visitors"
     message_archives: "Message archives"
     see_all: "See all"
     says: "says"
@@ -5228,6 +5321,7 @@ en:
     nochat: "No chat available"
     chat_with_archive: "<b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
+    chat_viewmore: "View More..."
     ticket_subject: "Chat with $1 on $2"
     ticket_description: "Created via Chat. Conversation between <b>$1</b>$2and <b>$3</b>."
     ticket_title: "Ticket Title"

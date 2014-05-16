@@ -178,12 +178,14 @@ javascripts:
     - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/app/ticket_details.js
     - public/javascripts/frameworks/plugins/jquery.tabby.js
+    - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/nprogress.js
     - public/javascripts/frameworks/plugins/jquery.unveil.js
     - public/javascripts/lookup.js
     - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
+    - public/javascripts/frameworks/plugins/jquery.autocomplete.js
 
   # Code editor for portal cms
   codemirror:
@@ -357,7 +359,6 @@ javascripts:
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/portal/jail.js
     - public/javascripts/moment/*
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal_custom_validators.js
@@ -457,6 +458,9 @@ javascripts:
     - public/javascripts/mousetrap/pause.js
     # - public/javascripts/mousetrap/record.js
     - public/javascripts/mousetrap/shortcut.js
+
+  admin:
+    - public/javascripts/admin/ui_search.js
 
 <% 
   # Adding specific javascript assets to the package list

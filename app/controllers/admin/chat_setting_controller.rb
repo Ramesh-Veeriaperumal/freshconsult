@@ -1,5 +1,6 @@
 class Admin::ChatSettingController < Admin::AdminController
 
+  include ChatHelper
   before_filter { |c| c.requires_feature :chat }
   before_filter  :validate, :only => [:update]
 
@@ -60,8 +61,7 @@ class Admin::ChatSettingController < Admin::AdminController
   def render_result
        respond_to do |format|
           format.json{
-            render :json => {:status => @status ,:message => @message,
-            :business_calendar => @business_calendar.to_json({:only => [:time_zone, :business_time_data, :holiday_data]})}
+            render :json => {:status => @status ,:message => @message, :setting => freshchat_setting}
           }
        end
   end

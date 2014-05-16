@@ -14,7 +14,7 @@
         <div class="free-plan-agents">
           <%= content_tag(:h4, t('subscription.agents').html_safe) %>
           <%= content_tag(:label, "<strong> #{ @subscription.agent_limit } </strong>".html_safe) %>
-          <%= content_tag(:p, "Add more agents at $#{@subscription.subscription_plan.amount.to_i} #{t('plan_amount')}", :class => "free-plan-payment") %>
+          <%= content_tag(:p, "Add more agents at #{fetch_plan_amount(@subscription.subscription_plan)} #{t('plan_amount')}", :class => "free-plan-payment") %>
         </div>
         <div class="free-plan-since">
           <%= content_tag(:h4, t('account.active_since').html_safe) %>

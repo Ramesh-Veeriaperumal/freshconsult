@@ -19,7 +19,7 @@ describe ContactsController do
 
   it "should not create a new contact without an email" do
     post :create, :user => { :name => Faker::Name.name, :email => "" }
-    response.body.should =~ /Email can&#39;t be blank./
+    response.body.should =~ /Email is invalid/
   end
 
   it "should not allow to create more agents than allowed by the plan" do
