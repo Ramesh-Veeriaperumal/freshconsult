@@ -4280,6 +4280,13 @@ en:
           label: "Survey Link Text"
           description: "This text appears below your signature at the bottom of the email sent to the customer, along with the survey link."
           default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
+    shopify:
+      label: "Shopify"
+      desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
+      helptext: "<h4>Shopify Integration</h4><br/><p>Configure your shopname to display customer's recent orders in Freshdesk. You will be directed to your Shopify shop to authorize Freshdesk. Once authorized, You will be able to view the Customer's recent Orders and Order details on the Ticket details and Contact Details pages. You can quickly access the details in Shopify with one click from the Widget.</p>"
+      form:
+        shop_name: "Shop Name"
+        shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
