@@ -137,7 +137,7 @@
     jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
   }
 
-  if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
+  if(jQuery("#created_at").data("selectedValue").split("-").length == 2){
     jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
     jQuery("#created_at").val("set_date").change();
     jQuery("#div_ff_created_date_range").show();
