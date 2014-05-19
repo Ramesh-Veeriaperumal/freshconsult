@@ -2880,6 +2880,100 @@ $collision_delay: 1s;
 	}
 }
 
+.shopify_customer{
+
+  .name{
+    font-weight: bold;
+  }
+}
+
+.shopify_orders_type{
+  padding-top: 10px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+.shopify_orders{
+  .status{
+    padding-bottom: 6px;
+    padding-top: 10px;
+    .shipping_status{
+      float: left;
+      background: #eee;
+      color: #333;
+      font-weight: inherit;
+    }
+    .payment_status{
+      float: right;
+      text-align: right;
+      background: #eee;
+      color: #333;
+      font-weight: inherit;
+    }
+
+  }
+
+  .price{
+    padding-bottom: 5px;
+    .amount{
+      float: right;
+      text-align: right;
+    }
+
+  }
+
+  .order_details{
+    float: left;
+    .number{
+      font-weight: bold;
+      color: #0066cc;
+    }
+    .items{
+      color: #999999;
+    }
+
+  }
+
+  .date{
+    padding-bottom: 10px;
+    color: #999999;
+  }
+
+  .empty_orders{
+    color: #999999 ;
+    padding: 77px;
+  }
+
+  .shipping_address{
+    padding-left: 56px;
+  }
+
+  .address{
+    color: #5C5C5C;
+  }
+  .address_1{
+    padding-left: 12px;
+  }
+
+  .line_items{
+    color: #5C5C5C;
+  }
+
+  .product{
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+  }
+
+  .notes{
+    color: #999999 ;
+    padding-bottom: 6px;
+  }
+
+}
+
 // ATTACHMENT DROP IN EMAIL - CSS
 .commentbox {
 	#ticket_original_request, .helpdesk_note .details {

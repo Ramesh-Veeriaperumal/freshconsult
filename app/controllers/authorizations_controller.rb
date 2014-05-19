@@ -121,7 +121,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_oauth2(provider, params)
 
-    if provider  == 'surveymonkey'
+    if provider  == 'surveymonkey' || provider == "shopify"
       access_token = @omniauth.credentials
     else
       access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, @app_name)
@@ -132,7 +132,9 @@ class AuthorizationsController < ApplicationController
       'refresh_token' => "#{@omniauth.credentials.refresh_token}",
       'oauth_token' => "#{access_token.token}"
     }
+
     config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
+    config_params['shop_name'] = params[:shop] if provider == "shopify"
     config_params = config_params.to_json
 
     #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
@@ -278,6 +280,6 @@ class AuthorizationsController < ApplicationController
     redirect_to root_url
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
 end
