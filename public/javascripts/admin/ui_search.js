@@ -3,7 +3,7 @@
 
     	var keywords = $.map(adminSearchKeywords, function (value, key) { return { value: key, data: value }; });
 	    
-	    $('#admin_search').autocomplete({
+	    $('#admin_search').autosuggester({
 	        lookup : keywords,
 	        triggerSelectOnValidInput : false,
 	        appendTo : '#suggestions-container',
@@ -103,14 +103,14 @@
 				// Events for suggestion container
 				container.on(
 					{
-						'mouseout.autocomplete' : function () {
+						'mouseout.autosuggester' : function () {
 							if (container.children('.' + selected).length > 0) {
 								$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
 									.parentsUntil('.admin_icons', 'li')
 									.removeClass('exact-match');
 							}
 						},
-						'mouseover.autocomplete' : function () {
+						'mouseover.autosuggester' : function () {
 							$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
 								.parentsUntil('.admin_icons', 'li')
 								.removeClass('hide')
@@ -121,7 +121,7 @@
 
 				// Events for Search input
 				searchInpt.on({
-					'keydown.autocomplete' : function (ev) {
+					'keydown.autosuggester' : function (ev) {
 						var	up = 38,	// pressed up key
 							down = 40;	// pressed down key
 	
@@ -129,13 +129,16 @@
 							$('.exact-match').removeClass('exact-match');
 						} else if ((container.children('.' + selected).length > 0) && (ev.which == up || ev.which == down)) {
 							$('.exact-match').removeClass('exact-match');
-							$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
-								.parentsUntil('.admin_icons', 'li')
-								.removeClass('hide')
-								.addClass('exact-match');
+							// timedelay to make the bubble effect on traverse suggestions list
+							setTimeout( function () {
+								$('.' + container.children('.' + selected).data('currentItem').split(',')[1])
+									.parentsUntil('.admin_icons', 'li')
+									.removeClass('hide')
+									.addClass('exact-match');
+							}, 5);
 						}
 					},
-					'keyup.autocomplete' : function (ev) {
+					'keyup.autosuggester' : function (ev) {
 						var that = this;
 
 						if ($(this).val().trim().length < 1) {
