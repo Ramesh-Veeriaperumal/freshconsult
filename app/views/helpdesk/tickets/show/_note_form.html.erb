@@ -50,7 +50,7 @@
 
     <div id="toggle-note-visibility">
       <label><%= t("helpdesk.tickets.note.public_note_tip") %></label>
-      <%= f.check_box(:private, :checked => true, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes") %>
+      <%= f.check_box(:private, :checked => true, :disabled => @ticket.mobihelp?, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes") %>
     </div>
 
 

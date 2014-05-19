@@ -180,6 +180,9 @@
     end
     admin.resources :roles
     admin.resources :mailboxes
+    admin.namespace :mobihelp do |mobihelp|
+      mobihelp.resources :apps
+    end
   end
 
   map.namespace :search do |search|
@@ -195,7 +198,7 @@
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
   map.connect '/search/topics.:format', :controller => 'search/forums', :action => 'index'
   map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
-  
+
   map.namespace :reports do |report|
     report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports',
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
@@ -393,7 +396,7 @@
 
       ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
-                                       :twitter => :post, :facebook => :post}
+                                       :twitter => :post, :facebook => :post, :mobihelp => :post}
 
       ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post,
@@ -404,6 +407,7 @@
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :mobihelp_ticket_extras, :name_prefix => 'helpdesk_ticket_helpdesk_', :only => :index
 
     end
 
@@ -444,7 +448,7 @@
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :attachments, :member => { :unlink_shared => :delete }
+    helpdesk.resources :attachments, :member => { :unlink_shared => :delete, :text_content => :get }
     helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
@@ -583,6 +587,10 @@
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create',
       :conditions => { :method => :post }
 
+    support.namespace :mobihelp do |mobihelp|
+      mobihelp.resources :tickets
+    end
+
   end
 
   map.namespace :anonymous do |anonymous|
@@ -599,6 +607,12 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
+  end
+ 
+  map.namespace :mobihelp do |mobihelp|
+    mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
+    mobihelp.resources :solutions, { :collection => {:articles => :get }}
+    #mobihelp.connect '/solutions.:format', :action => 'solutions', :conditions => { :method => :post }
   end
 
   map.root :controller => "home"

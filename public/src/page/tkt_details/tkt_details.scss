@@ -1302,7 +1302,7 @@ ol, ul, li{
 }
 
 .ticket_details {
-	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat {
 		overflow: hidden;
 	}
 }
@@ -3111,4 +3111,72 @@ $collision_delay: 1s;
 	padding-left: 15px;
 	padding-bottom: 10px;
 	padding-top: 5px;
+}
+
+.ticket-app-info{
+	.table{
+		table-layout: fixed;
+	}
+	td.app-info-data{
+		width: 50%;
+		padding: 10px;
+		border: 0;
+		border-bottom: 1px solid #eeeeee;
+		word-break: break-word;
+		&:nth-child(2n) {
+			font-weight: 500;
+		}
+	}
+	.ellips{
+		white-space: nowrap;
+		overflow: hidden;
+		-ms-text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		text-overflow: ellipsis;
+	}
+
+}
+
+
+.app-content-wrapper{
+	.nav-tabs{
+		border-bottom: 0;
+		margin-bottom: 0;
+	}
+	.pre-wrap{
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+	.tab-content{
+		max-height: 350px;
+		overflow: scroll;
+		background-color: #F6F6F6;
+		padding-left: 10px;
+		border: 1px solid #E0E0E0;
+		td.app-info-data{
+			width: 50%;
+			padding: 10px;
+			border: 0;
+			border-bottom: 1px solid #eeeeee;
+			word-break: break-word;
+			&:nth-child(2n) {
+				font-weight: 500;
+			}
+		}
+	}
+	.table{
+		width: 98%;
+	}
+	.list-header{
+		font-weight: bold;
+		color: #8E8E8E;
+		border-bottom: 1px solid #B3B3B3;
+	}
+}
+
+.code-view{
+	textarea.mobihelpcode{
+		height:60px;
+		margin-left: -20px;
+	}
 }

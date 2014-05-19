@@ -57,9 +57,10 @@ class Helpdesk::ConversationsController < ApplicationController
   def note
     build_attachments @item, :helpdesk_note
     if @item.save_note
-      flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
+      flash_message "success"
       process_and_redirect
     else
+      flash_message "failure"
       create_error
     end
   end
@@ -88,6 +89,15 @@ class Helpdesk::ConversationsController < ApplicationController
     end
   end
   
+  def mobihelp
+    if @item.save_note
+      flash[:notice] = t(:'flash.tickets.reply.success') 
+      process_and_redirect
+    else
+      create_error
+    end
+  end
+
   protected
 
     def build_note_body_attributes
@@ -206,5 +216,13 @@ class Helpdesk::ConversationsController < ApplicationController
                                     :user_id => current_user.id, 
                                     :ticket_id => @item.notable_id
                                 })
+      end
+
+      def flash_message(status)
+        if @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
+          flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{status}")
+        else
+          flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
+        end
       end
 end

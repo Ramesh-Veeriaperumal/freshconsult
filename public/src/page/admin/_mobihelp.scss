@@ -1,0 +1,123 @@
+.mobiapp-form{
+	.app-image{
+		float: left;
+		width: 70px;
+		height: 70px;
+		border: 1px solid #B4B4B4;
+		margin-right: 20px;
+		border-radius: 5px;
+		.app-icon{
+			margin: auto;
+			margin-top: 12px;
+		}
+	}
+	.seperator{
+		border: 0;
+		margin-bottom: 20px;
+	}
+	.toggle-button{
+		margin-left: 20px;
+	}
+	.codetextarea{
+		margin-left: -20px;
+	}
+}
+
+.sdk-content{
+	margin-top: 20px;
+	.sdk-downloads{
+		margin-bottom: 30px;
+		.text-info{
+			border-left: 1px solid #CACACA;
+			padding-left: 10px;
+			margin-left: 10px;
+			min-height: 40px;
+		}
+		p{
+			margin-bottom: 8px;
+		}
+		.upcoming{
+			color: #959595;
+			font-weight: 600;
+			font-size: 15px;
+			padding: 6px 0px;
+		}
+	}
+}
+
+.product-list{
+	td{
+		p{
+			margin: 0;
+			margin-left: 5px;
+			font-weight: 500;
+		}
+	}
+	.preview-image{
+		display: inline-block;
+		vertical-align: middle;
+		border: 1px solid #CCC;
+		border-radius: 3px;
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.mobihelp-apps{ 
+	.index-app-container{
+		margin-top: 60px;
+		.index-app-span{
+			border-right: 1px solid #D2D2D2;
+			text-align: center;
+			min-height: 160px;
+			&:nth-child(3){
+				border:0;
+			}
+			.app-icon{
+				margin: auto;
+				margin-top: 15px;
+				margin-bottom: 15px;
+			}
+			.app-def{
+				text-align: center;
+				padding: 0px 10px 0px 10px;
+				line-height: 1.5;
+				cursor: pointer;
+			}
+			h4{
+				margin-bottom: 10px;
+			}
+			.app-image{
+		    	display: inline-block;
+				vertical-align: middle;
+				margin-right: 5px;
+				margin-top: -3px;
+			}
+		}
+	}
+}
+
+.create-container{
+	margin-top: 50px;
+	&:nth-child(1){
+		margin-left:0;
+	}
+	.create-btn{
+		margin: 0 auto !important;
+		float: none !important;
+		border: 1px solid #2E679B;
+		border-radius: 5px;
+		background-color: #FAFAFA;
+		text-align: center;
+		padding: 20px;
+		font-size: 16px;
+		a{
+			color: #4674A3;
+			padding: 5px;
+			text-decoration: underline;
+		}
+		form{
+			display: inline-block;
+		}
+	}
+}
