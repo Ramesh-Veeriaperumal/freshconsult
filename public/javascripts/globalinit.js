@@ -353,10 +353,11 @@ window.xhrPool = [];
 
       $.validator.setDefaults({ 
         errorPlacement: function(error, element) {
-          if(element.prop("type") == "checkbox")
+          if (element.prop("type") == "checkbox" || element.hasClass("portal-logo") || element.hasClass("portal-fav-icon")){
             error.insertAfter(element.parent());
-          else
+          } else {
             error.insertAfter(element);
+          }
         },
         onkeyup: false,
         focusCleanup: false,

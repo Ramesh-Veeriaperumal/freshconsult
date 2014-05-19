@@ -6,9 +6,8 @@ module TwitterHelper
   def create_test_twitter_handle(test_account=nil, deprecated=false)
     account = test_account.nil? ? Account.first : test_account
     account.make_current
-    last_handle = Social::TwitterHandle.last
-    last_handle_id = last_handle.nil? ? 1 : last_handle.twitter_user_id
-    @handle = Factory.build(:twitter_handle, :account_id => account.id, :twitter_user_id => last_handle_id + 1)
+    last_handle_id = "#{(Time.now.utc.to_f*100000).to_i}"
+    @handle = Factory.build(:twitter_handle, :account_id => account.id, :twitter_user_id => last_handle_id)
     @handle.save()
     @handle.reload
 
@@ -44,11 +43,11 @@ module TwitterHelper
     gnip_msg.process
   end
   
-  def sample_twitter_dm(time)
+  def sample_twitter_dm(twitter_id, screen_name, time)
     tweet_id = (Time.now.utc.to_f*100000).to_i
     user_params = {
-      :id => 123, 
-      :screen_name => "test_test", 
+      :id => "#{twitter_id}", 
+      :screen_name => "#{screen_name}", 
       :profile_image_url => "https://pbs.twimg.com/profile_images/2901592982/001829157606dbea8ac8db3c374ac506_normal.jpeg"
     }
     sender = Twitter::User.new(user_params)

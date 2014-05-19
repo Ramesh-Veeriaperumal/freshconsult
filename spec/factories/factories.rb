@@ -138,13 +138,12 @@ if ENV["RAILS_ENV"] == "test"
     f.language "en"
   end
 
-  Factory.define :user_email do |f|
+  Factory.define :company, :class => Customer do |c|
+    c.name {Faker::Company.name}
+    c.description {Faker::Lorem.sentence(2)}
+    c.note {Faker::Lorem.sentence(2)}
+    c.domains {Faker::Internet.domain_name}
   end
-
-  Factory.define :customer do |c|
-    c.name "Atlantic City"
-  end
-
 
   Factory.define :subscription do |f|
     f.amount 49.00

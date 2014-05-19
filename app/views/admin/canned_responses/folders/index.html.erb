@@ -53,7 +53,7 @@
 									:title => t('canned_folders.create'),
 									:"data-placement" => 'below'
 							), "#create_folder",
-                	    	:"data-width" => "400", 
+                	    	:"data-width" => "400",
                 	    	:"data-submit-label" => t('save'), 
                 	    	:"data-close-label" => t('cancel'),
 	                	    :id => "create-folder",
@@ -63,11 +63,15 @@
 			    </div>
 			</div>
 			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
-	        <div class="hide" id="create_folder">
-                <% form_for @new_ca_res_folder do |f| %>
+	        <div class="hide canned_create_folder" id="create_folder">
+                <% form_for @new_ca_res_folder, :html => { :rel => "validate"} do |f| %>
 					<%= render :partial => "folder_form", :locals => { :f => f } %>
 			    <% end %>
             </div> 
+
+            <% javascript_tag do %>
+    			jQuery(".presence_in_list").data("list", <%= raw @ca_res_folders.map(&:name).to_json%>)
+    		<% end %>
 
 			<div id="editing" class="hide">
 				<div id="edit_form" class="center">

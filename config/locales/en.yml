@@ -3737,6 +3737,8 @@ en:
         not_added: Note has not been added!
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
+           not_added: (Not Added)
+           exceed_limit: Exceeds attachments size
     merge:
       merge:
         merge_into: Merge into?

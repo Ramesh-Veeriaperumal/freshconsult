@@ -2,6 +2,6 @@
 <div class="form-horizontal">
 	<%= f.label(:name, t('canned_folders.new'), :class => "control-label") %>
     <div class="controls">
-    	<%= f.text_field :name, :id => "new_name", :class => "text required", :minlength => "3" %>
+    	<%= f.text_field :name, :id => "new_name", :class => "text required presence_in_list", :minlength => "3" %>
     </div>
 </div>

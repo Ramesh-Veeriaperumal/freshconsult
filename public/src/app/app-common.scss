@@ -914,6 +914,9 @@ h4.border_title{
 		}
 		@include clearfix;
 	}
+	.invalid_attachment{
+		text-decoration: line-through;
+	}
 }
 
 div.survey_check{

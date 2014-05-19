@@ -44,7 +44,7 @@
         condition   : element.getAttribute("condition"),
         operator    : element.getAttribute("operator"),
         ff_name     : element.getAttribute("ff_name"),
-        value       : (container != "nested_field") ? escapeHtml(value.toString()) : value.toString()
+        value       : value.toString()
       }
     }
     window.FreshdeskNode.getValue('faye_realtime').new_ticket_ids = [];

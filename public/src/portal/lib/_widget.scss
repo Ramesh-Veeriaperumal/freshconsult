@@ -344,6 +344,19 @@ body, .feedback-wrapper{
 		}
 	}
 }
+
+.alert-invalid{
+	text-decoration:line-through;
+	color: #888;
+	background: transparent;
+	border: 0;
+	padding-left: 0;
+}
+.alert-invalid-text{
+	color:#b94a48;
+	float:left;
+}
+
 // IE hacks
 
 .ie .portal-attach .attach-file{ display:block !important; }

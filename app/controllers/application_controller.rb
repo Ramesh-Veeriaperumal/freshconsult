@@ -8,12 +8,12 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   before_filter :unset_current_account, :set_current_account
+  before_filter :set_default_locale, :set_locale
   include Authority::Rails::ControllerHelpers
   before_filter :freshdesk_form_builder
   before_filter :check_account_state, :except => [:show,:index]
-  before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
-  before_filter :set_locale, :force_utf8_params
+  before_filter :force_utf8_params
   before_filter :persist_user_agent
   before_filter :set_cache_buster
   before_filter :logging_details 

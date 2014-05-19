@@ -74,7 +74,8 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end 
 
   def activate_subscription(subscription)
-    super subscription.account_id
+    data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
+    ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
   def update_admin(config)    

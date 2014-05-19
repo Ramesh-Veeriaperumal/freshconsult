@@ -1,7 +1,7 @@
 <% javascript_tag do %>
 	function changeProfilePic(){
 		jQuery('#AvatarPic').toggle();
-		jQuery('#AvatarInput').toggle();		
+		jQuery('#AvatarInput').toggle();	
 	}
 	
 	deletePic = function() {
@@ -9,6 +9,7 @@
 		jQuery('#AvatarPic').remove();
 		jQuery('#AvatarInput').show();
 	}
+
 <% end %>
 
 <%#= label(:user, :photo, t('user.photo')) %>
@@ -19,7 +20,7 @@
 	<div id="AvatarInput" style="display:none;">
 		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>	
 			<div class="info-data"><%=t('user.info1')%></div>
-			  <%= avatar_form.file_field :content, :size => 10 %>				
+			  <%= avatar_form.file_field :content, :size => 10 , :class => 'upload_size_validity'  %>				
 		<% end %>
 	</div>
 	<div id="AvatarControls" class="avatar-controls">
@@ -35,6 +36,6 @@
 <% else %>		
 	<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 		<div class="info-data"><%=t('user.info1')%></div>
-		  <%= avatar_form.file_field :content, :size => 10 %>				
+		  <%= avatar_form.file_field :content, :size => 10, :class => 'upload_size_validity'%>				
 	<% end %>
 <% end %>
