@@ -49,6 +49,12 @@ if ENV["RAILS_ENV"] == "test"
     t.required_for_closure false
   end
 
+  Factory.define :nested_ticket_field, :class => Helpdesk::NestedTicketField do |f|
+  end
+
+  Factory.define :picklist_value, :class => Helpdesk::PicklistValue do |f|
+  end
+
   Factory.define :agent do |a|
     a.signature "Regards, agent1"
     a.available 1
