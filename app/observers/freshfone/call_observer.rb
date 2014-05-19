@@ -23,34 +23,34 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 
 		def incoming_customer_data(freshfone_call, params)
-			freshfone_call.customer_number = params[:From]
-			freshfone_call.customer_data = {
-				:number  => params[:From],
-				:city    => params[:FromCity],
-				:state   => params[:FromState],
-				:country => params[:FromCountry]
-			}
+      options = {
+          :number  => params[:From],
+          :country => params[:FromCountry],
+          :state   => params[:FromState],
+          :city    => params[:FromCity]
+      }
+      freshfone_call.caller = build_freshfone_caller(freshfone_call, options)
 		end
 
 		def blocked_customer_data(freshfone_call, params)
-			freshfone_call.customer_number = params[:From]
-			freshfone_call.call_status = Freshfone::Call::CALL_STATUS_HASH[:blocked]
-			freshfone_call.customer_data = {
-				:number  => params[:From],
-				:city    => params[:FromCity],
-				:state   => params[:FromState],
-				:country => params[:FromCountry]
-			}
+      options = {
+          :number  => params[:From],
+          :country => params[:FromCountry],
+          :state   => params[:FromState],
+          :city    => params[:FromCity]
+      }
+      freshfone_call.caller = build_freshfone_caller(freshfone_call, options)
+      freshfone_call.call_status = Freshfone::Call::CALL_STATUS_HASH[:blocked]
 		end
 
 		def outgoing_customer_data(freshfone_call, params)
-			freshfone_call.customer_number = params[:PhoneNumber] || params[:To]
-			freshfone_call.customer_data = {
-				:number  => params[:PhoneNumber] || params[:To],
-				:city    => params[:ToCity],
-				:state   => params[:ToState],
-				:country => params[:ToCountry].blank? ? params[:phone_country] : params[:ToCountry]
-			}
+      options = {
+          :number  => params[:PhoneNumber] || params[:To],
+          :country => params[:ToCountry].blank? ? params[:phone_country] : params[:ToCountry],
+          :state => params[:ToState],
+          :city  => params[:ToCity]
+      }
+      freshfone_call.caller = build_freshfone_caller(freshfone_call, options)
 		end
 
 		def set_customer_on_ticket_creation(freshfone_call)
@@ -60,4 +60,11 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 																 notable_item.requester : 
 																 notable_item.notable.requester
 		end
+		
+		def build_freshfone_caller(freshfone_call, options)
+      account = freshfone_call.account
+      caller  = account.freshfone_callers.find_or_initialize_by_number(options[:number])
+      caller.update_attributes(options)
+      caller
+    end
 end

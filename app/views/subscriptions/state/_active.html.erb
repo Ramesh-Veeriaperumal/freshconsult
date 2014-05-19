@@ -20,7 +20,7 @@
               <td>
                 <%= content_tag(:label, "<strong> #{ SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] } </strong>".html_safe) %>
                 <% unless @subscription.offline_subscription? %>
-                  <a href="#" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
+                  <a href="#" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
                 <% end %>
               </td>
             </tr>
@@ -29,13 +29,13 @@
               <td>
                 <%= content_tag(:label, "<strong> #{ @subscription.agent_limit } </strong>".html_safe) %>
                 <% unless @subscription.offline_subscription? %>
-                  <a href="#" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
+                  <a href="#" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
                 <% end %>
               </td>
             </tr>
             <tr>
               <td><%= content_tag(:label, t('subscription.total').html_safe, :class => "caption" ) %> </td>
-              <td><%= content_tag(:label, "<strong> #{ (number_to_currency @subscription.amount) } </strong>".html_safe) %></td>
+              <td><%= content_tag(:label, "<strong> #{ (format_amount(@subscription.amount, @currency)) } </strong>".html_safe) %></td>
             </tr>
           </table>
         </div>

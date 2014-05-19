@@ -1,4 +1,4 @@
-class Billing::Subscription
+class Billing::Subscription < Billing::ChargebeeWrapper
 
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
                        :company => :name }
@@ -37,35 +37,10 @@ class Billing::Subscription
     Hash[*MAPPED_PLANS.map { |i| [i[0], i[2]] }.flatten]
   end
 
-  #constructor
-  def initialize
-    ChargeBee.configure(:site => AppConfig['chargebee'][RAILS_ENV]['site'],
-                        :api_key => AppConfig['chargebee'][RAILS_ENV]['api_key'])
-  end
-
   #instance methods
-  def create_subscription(account)
-    data = account_info(account).merge(subscription_data(account.subscription))
-    
-    begin
-      ChargeBee::Subscription.create(data)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
-        { :subject => "Error creating account in ChargeBee. Account Id - #{account.id}" }) if Rails.env.production?
-    end
-  end
-
-  def calculate_estimate(subscription, addons)
-    data = subscription_data(subscription).merge(:id => subscription.account_id) 
-    merge_addon_data(data, subscription, addons)
-    attributes = subscription.suspended? ? { :subscription => data } : 
-                                { :subscription => data, :end_of_term => true }
-    attributes.merge!(:replace_addon_list => true)
-
-    Rails.logger.debug ":::ChargeBee - Calculate Estimate - Params sent:::"
-    Rails.logger.debug attributes.inspect
-    ChargeBee::Estimate.update_subscription(attributes)    
+  def create_subscription(account, subscription_params = {})
+    data = create_subscription_params(account, subscription_params)
+    super(data)
   end
 
   def update_subscription(subscription, prorate, addons)
@@ -74,14 +49,28 @@ class Billing::Subscription
     merge_addon_data(data, subscription, addons)
     data.merge!(:replace_addon_list => true)
 
-    Rails.logger.debug ":::ChargeBee - Update Subscription - Params sent:::"
-    Rails.logger.debug data.inspect
-    ChargeBee::Subscription.update(subscription.account_id, data)
+    super(subscription.account_id, data)
+  end
+
+  #estimate
+  def calculate_estimate(subscription, addons, discount)
+    data = create_estimate_params(subscription, addons, discount)
+    create_subscription_estimate(data)
+  end
+
+  def calculate_update_subscription_estimate(subscription, addons)
+    data = subscription_data(subscription).merge(:id => subscription.account_id) 
+    merge_addon_data(data, subscription, addons)
+    attributes = cancelled_subscription?(subscription.account_id) ? { :subscription => data } : 
+                                { :subscription => data, :end_of_term => true }
+    attributes.merge!(:replace_addon_list => true)
+    
+    update_subscription_estimate(attributes)
   end
 
   def store_card(card, address, subscription)
     card_info = card_info(card).merge(billing_address(address))
-    ChargeBee::Card.update_card_for_customer(subscription.account.id, card_info)
+    add_card(subscription.account.id, card_info)    
   end 
 
   def activate_subscription(subscription)
@@ -89,39 +78,62 @@ class Billing::Subscription
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
-  def update_admin(config)
-    ChargeBee::Customer.update(config.account_id, customer_data(config.account))
+  def update_admin(config)    
+    update_customer(config.account_id, customer_data(config.account))
   end
 
   def buy_day_passes(account, quantity)
-    ChargeBee::Invoice.charge_addon( day_pass_data(account, quantity) )  
+    update_non_recurring_addon(day_pass_data(account, quantity))
   end
 
   def purchase_freshfone_credits(account, quantity)
-    ChargeBee::Invoice.charge_addon( freshfone_addon(account, quantity) )                                         
-  end
-
-  def remove_credit_card(account_id)
-    ChargeBee::Card.delete_card_for_customer(account_id)
-  end
+    update_non_recurring_addon(freshfone_addon(account, quantity))    
+  end  
 
   def cancel_subscription(account)
-    account.active? ? ChargeBee::Subscription.cancel(account.id) : true
+    account.active? ? super(account.id) : true
   end
 
-  def retrieve_subscription(account_id)
-    ChargeBee::Subscription.retrieve(account_id)
+  def reactivate_subscription(subscription, data = {})
+    ChargeBee::Subscription.reactivate(subscription.account_id, data)
   end
 
   def add_discount(account, discount_code)
-    ChargeBee::Subscription.update(account.id, :coupon => discount_code)
+    super account.id, discount_code
   end
 
   def offline_subscription?(account_id)
     retrieve_subscription(account_id).customer.auto_collection.eql?("off")
   end
+
+  def cancelled_subscription?(account_id)
+    retrieve_subscription(account_id).subscription.status.eql?("cancelled")
+  end
+  
+  def retrieve_plan(plan_name, renewal_period = 1)
+    billing_plan_name = %(#{plan_name.to_s.downcase}_#{BILLING_PERIOD[renewal_period]})
+    super billing_plan_name
+  end
+
+  def subscription_exists?(account_id)
+    begin
+      retrieve_subscription(account_id)
+      true
+    rescue ChargeBee::APIError => error
+      return false if error.http_code == 404
+      NewRelic::Agent.notice_error(error)      
+    end
+  end
   
   private
+    def create_subscription_params(account, subscription_params)
+      subscription_info = if subscription_params
+        subscription_data(account.subscription).merge(subscription_params)
+      else
+        subscription_data(account.subscription)
+      end
+      account_info(account).merge(subscription_info)
+    end
 
     def account_info(account)
       {
@@ -186,9 +198,16 @@ class Billing::Subscription
     end
 
     def extend_trial(subscription)
-      return subscription.next_renewal_at.to_i if subscription.trial? and subscription.next_renewal_at > Time.now
+      return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial? and subscription.next_renewal_at > Time.now
         
       1.hour.from_now.to_i if subscription.suspended? and subscription.card_number.blank?
     end
 
+    def create_estimate_params(subscription, addons, discount)
+      data = subscription_data(subscription)
+      merge_addon_data(data, subscription, addons)
+      data.merge!(:coupon => discount)      
+      { :subscription => data, :end_of_term => true, :replace_addon_list => true }
+    end
+    
 end

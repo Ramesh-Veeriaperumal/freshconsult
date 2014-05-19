@@ -187,6 +187,7 @@ insertIntoConversation = function(value,element_id){
 
 	if($("#" + element_id)){
 		$("#"+element_id).getEditor().focus();
+		$("#"+element_id).data('redactor').saveSelection();
 		$("#"+element_id).data('redactor').restoreSelection();
 		$("#"+element_id).insertHtml(value);
 	}    

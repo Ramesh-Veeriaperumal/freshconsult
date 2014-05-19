@@ -40,7 +40,7 @@ class Freshfone::CallActions
 	def register_direct_dial(number)
 		current_call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
 		if current_call
-			current_call.customer_data[:direct_dial_number] = number
+			current_call.direct_dial_number = number
 			current_call.save
 		end
 	end
@@ -50,6 +50,12 @@ class Freshfone::CallActions
 		params.merge!({:agent => calling_agent(agent)})
 		return if current_call.blank?
 		current_call.root.increment(:children_count).save if build_child.save
+	end
+
+	def save_call_meta(group)
+		current_call.create_meta(
+			:account => current_account, 
+			:group_id => group)
 	end
 
 

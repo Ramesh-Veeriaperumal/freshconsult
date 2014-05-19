@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140426145046) do
+ActiveRecord::Schema.define(:version => 20140506120037) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -699,10 +699,22 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
 
   add_index "freshfone_blacklist_numbers", ["account_id", "number"], :name => "index_freshfone_blacklist_numbers_on_account_id_and_number"
 
+  create_table "freshfone_callers", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.string   "number",     :limit => 50
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
+
   create_table "freshfone_calls", :id => false, :force => true do |t|
-    t.integer  "id",                  :limit => 8,                     :null => false
-    t.integer  "account_id",          :limit => 8,                     :null => false
-    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
+    t.integer  "id",                  :limit => 8,                 :null => false
+    t.integer  "account_id",          :limit => 8,                 :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                 :null => false
     t.integer  "user_id",             :limit => 8
     t.integer  "customer_id",         :limit => 8
     t.string   "call_sid",            :limit => 50
@@ -711,6 +723,7 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.integer  "call_type",                         :default => 0
     t.integer  "call_duration"
     t.string   "recording_url"
+    t.integer  "caller_number_id",    :limit => 8
     t.string   "customer_number",     :limit => 50
     t.text     "customer_data"
     t.float    "call_cost"
@@ -721,6 +734,7 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.string   "notable_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "direct_dial_number"
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
@@ -785,6 +799,7 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.datetime "updated_at"
     t.boolean  "voicemail_active",                                                      :default => false
     t.text     "non_business_hours_message"
+    t.string   "name"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -840,6 +855,17 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
 
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
+
+  create_table "freshfone_calls_meta", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "call_id",    :limit => 8
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_meta_data_on_account_id_and_call_id"
+  add_index "freshfone_calls_meta", ["account_id", "group_id"], :name => "index_ff_meta_data_on_account_id_and_group_id"
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -1874,6 +1900,15 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.datetime "updated_at"
   end
 
+  create_table "subscription_currencies", :force => true do |t|
+    t.string   "name"
+    t.string   "billing_site"
+    t.string   "billing_api_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.decimal  "exchange_rate",   :precision => 10, :scale => 5
+  end
+
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"
     t.string   "code"
@@ -1940,6 +1975,7 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.integer  "free_agents"
     t.decimal  "day_pass_amount", :precision => 10, :scale => 2
     t.boolean  "classic",                                        :default => false
+    t.text     "price"
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -1960,9 +1996,11 @@ ActiveRecord::Schema.define(:version => 20140426145046) do
     t.integer  "free_agents"
     t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
     t.datetime "discount_expires_at"
+    t.integer  "subscription_currency_id",  :limit => 8
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+  add_index "subscriptions", ["subscription_currency_id"], :name => "index_subscriptions_on_subscription_currency_id"
 
   create_table "support_scores", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8, :null => false

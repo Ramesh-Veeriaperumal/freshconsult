@@ -19,4 +19,18 @@ module Freshfone::CallsRedisMethods
     call_sid = params[:outgoing] ? params[:ParentCallSid] : params[:CallSid]
     log_transfer(user_id, call_sid)
   end
+
+  def set_outgoing_device(device_id)
+    outgoing_key
+    add_to_set(@key, device_id)
+  end
+
+  def remove_device_from_outgoing(device_id)
+    outgoing_key
+    remove_value_from_set(@key, device_id)
+  end
+
+  def outgoing_key
+    @key ||= FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => current_account.id }
+  end
 end

@@ -181,7 +181,7 @@ class Account < ActiveRecord::Base
   has_many :day_pass_usages
   has_many :day_pass_purchases, :order => "created_at desc"
 
-  delegate :addons, :to => :subscription
+  delegate :addons, :currency_name, :billing, :to => :subscription
   
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
  
@@ -218,6 +218,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_users, :class_name => "Freshfone::User"
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+  has_many :freshfone_callers, :class_name => "Freshfone::Caller"
   
   has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'

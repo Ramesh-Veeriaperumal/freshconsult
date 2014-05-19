@@ -5,7 +5,9 @@ class Admin::DayPassesController < ApplicationController
   before_filter :load_purchases, :only => [:index]
   
   def index
-    @day_pass_amounts = [5, 10, 25, 50].map{ |pass| [pass, (pass * subscription.day_pass_amount).to_i] }
+    @day_pass_amounts = [5, 10, 25, 50].map{ |pass| 
+      [pass, (pass * subscription.retrieve_addon_price(:day_pass)).to_i] 
+    }
   end
   
   def update

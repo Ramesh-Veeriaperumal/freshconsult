@@ -5,13 +5,14 @@ class SubscriptionsController < ApplicationController
   
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
+  before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
   before_filter :load_billing, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
 
   before_filter :build_subscription, :only => [ :calculate_amount, :plan ]
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
   before_filter :build_paying_subscription, :only => :billing
-  before_filter :check_for_subscription_errors, :except => [ :calculate_amount, :show ]
+  before_filter :check_for_subscription_errors, :except => [ :calculate_amount, :show, :calculate_plan_amount ]
 
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
@@ -25,16 +26,28 @@ class SubscriptionsController < ApplicationController
   FREE = "free"
 
 
-  def calculate_amount    
-    render :partial => "calculate_amount", :locals => { :amount => scoper.total_amount(@addons) }
+  def calculate_amount
+    scoper.set_billing_params(params[:currency])
+    coupon = coupon_applicable? ? @coupon : nil
+    render :partial => "calculate_amount", :locals => { :amount => scoper.total_amount(@addons, coupon) }
+  end
+
+  def calculate_plan_amount
+    # render plan pricing with selected currency
+    scoper.set_billing_params(params[:currency])
+    render :partial => "select_plans", 
+      :locals => { :plans => @plans, :subscription => scoper, :show_all => true }    
   end
 
   def plan
-    if request.post? and update_subscription
-      update_features
-      perform_next_billing_action
-    else
-      redirect_to subscription_url
+    if request.post? 
+      switch_currency if switch_currency?
+      if update_subscription
+        update_features
+        perform_next_billing_action
+      else    
+        redirect_to subscription_url
+      end
     end
   end
 
@@ -50,19 +63,22 @@ class SubscriptionsController < ApplicationController
   end
 
   def billing
-    if request.post? and add_card_to_billing
-      scoper.state = ACTIVE
-      if activate_subscription
-        flash[:notice] = t('billing_info_update')
-        flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
+    if request.post?
+      if add_card_to_billing
+        scoper.state = ACTIVE
+        if activate_subscription
+          flash[:notice] = t('billing_info_update')
+          flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
+        end
+        redirect_to subscription_url  
+      else
+        redirect_to :action => "billing"
       end
-      redirect_to subscription_url  
     end
   end
 
   def show 
   end
-
 
   private
     def admin_selected_tab
@@ -74,7 +90,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def billing_subscription
-      @billing_subscription ||= Billing::Subscription.new
+      Billing::Subscription.new
     end
 
     def load_objects      
@@ -83,7 +99,12 @@ class SubscriptionsController < ApplicationController
 
       @subscription = scoper
       @addons = scoper.addons
-      @plans = plans      
+      @plans = plans
+      @currency = scoper.currency_name
+    end
+
+    def load_coupon
+      @coupon = scoper.coupon
     end
 
     def load_subscription_plan
@@ -142,7 +163,11 @@ class SubscriptionsController < ApplicationController
     #chargebee and model updates
     def update_subscription
       begin
+        coupon = coupon_applicable? ? @coupon : nil
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
+        unless result.subscription.coupon == coupon
+          billing_subscription.add_discount(scoper.account, coupon)
+        end
         scoper.set_next_renewal_at(result.subscription)
         scoper.addons = @addons
         scoper.save!
@@ -208,7 +233,8 @@ class SubscriptionsController < ApplicationController
 
     #No proration(credit) in monthly downgrades
     def prorate?
-      !(@cached_subscription.active? and (scoper.total_amount(scoper.addons) < @cached_subscription.amount) and 
+      coupon = coupon_applicable? ? @coupon : nil
+      !(@cached_subscription.active? and (scoper.total_amount(scoper.addons, coupon) < @cached_subscription.amount) and 
         NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
@@ -243,8 +269,41 @@ class SubscriptionsController < ApplicationController
       t("subscription.error.card_update_limit_exceeded")
     end
 
-    def admin_selected_tab
-      @selected_tab = :admin
+    #switch_currency
+    def switch_currency?
+      # only trial & suspended(trial-expired) subscriptions can switch currency.
+      !current_account.has_credit_card? or scoper.trial? or scoper.suspended? or 
+      !(@currency == params[:currency])
     end
-    
+
+    def switch_currency
+      # cancel subscription in old site and clone the subscription in the new site
+      data = fetch_migration_data
+      billing_subscription.cancel_subscription(scoper.account)
+      scoper.set_billing_params(params[:currency])
+      clone_subscription(data)
+      scoper.save
+    end
+
+    def clone_subscription(data)
+      if billing_subscription.subscription_exists?(scoper.account_id)
+        billing_subscription.reactivate_subscription(scoper, data)
+      else
+        billing_subscription.create_subscription(scoper.account, data)
+      end
+    end
+
+    def fetch_migration_data
+      data = billing_subscription.retrieve_subscription(scoper.account_id)
+      {
+        :trial_end => scoper.suspended? ? 1.hour.from_now.to_i : data.subscription.trial_end,
+        :coupon => data.subscription.coupon
+      }
+    end
+
+    # To be replaced with chargebee coupon api verification
+    def coupon_applicable?      
+      (@cached_subscription.subscription_plan == scoper.subscription_plan) and 
+        (@cached_subscription.renewal_period == scoper.renewal_period)
+    end
 end

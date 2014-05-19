@@ -37,8 +37,9 @@ class Integrations::PivotalTrackerController < ApplicationController
             pivotal_values["new_values"][key] = "none" if pivotal_values["new_values"][key] == nil
             changes += "#{key} changed from #{value} to #{pivotal_values["new_values"][key]} <br/>" unless exclude_arr.include?(key)
           end
+          changes = "<div>#{pivotal_updates["message"]} for the story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>" if pivotal_updates["highlight"] == "rejected"
           changes += "</div>"
-          add_note(project_id, story_id, changes, performer_id, performer_name) if changes.include? "changed from"
+          add_note(project_id, story_id, changes, performer_id, performer_name) if changes.include? "changed from" or changes.include? "rejected"
         when :story_delete_activity
           pivotal_updates["primary_resources"].each do |resource|
             changes = "<div> story &quot;#{resource["name"]}&quot; deleted. </div>"

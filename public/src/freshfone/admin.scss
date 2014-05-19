@@ -213,7 +213,7 @@
     margin-top: 6px;
   }
   #s2id_freshfone_credits_credit, #s2id_freshfone_credits_recharge_quantity{
-    width: 80px;
+    width: 82px;
   }
 }
 .ui-form li.current-balance{
@@ -227,6 +227,10 @@
   font-size: 24px;
   margin-top: 16px;
   font-weight: bold;
+}
+.current-balance-followup{
+  color: black;
+  padding-top: 10px;
 }
 .ui-form li.recharge-now{
   width: 50%;

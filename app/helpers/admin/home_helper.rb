@@ -232,8 +232,8 @@ module Admin::HomeHelper
           :closed_keywords        =>      [:add_new_agent_role]
       },
       :security                   =>      {
-          :open_keywords          =>      [:ssl_encryption, :single_signon],
-          :closed_keywords        =>      [:trusted_ip]
+          :open_keywords          =>      [:ssl_encryption, :single_signon]
+          # :closed_keywords        =>      [:trusted_ip]
       },
       :sla                        =>      {
           :open_keywords          =>      [:configure_escalation_emails],
@@ -263,14 +263,11 @@ module Admin::HomeHelper
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
-      },
-      :"import"                   =>      {
-          :open_keywords          =>      [:import_data_zendesk]
       }
     }
 
     KEYWORDS_META = {
-      :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages],
+      :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages, :customise_chat_window],
       :phone_integration                      =>    [:purchase_support_number, :voice_integration, :ivr, :integrated_phone_support],
       :"twitter-setting"                      =>    [:social],
       :"facebook-setting"                     =>    [:social],
@@ -281,7 +278,7 @@ module Admin::HomeHelper
       :set_businesshour_group                 =>    [:multiple_business_hours],
       :agent_roles_permissions                =>    [:custom_roles],
       :single_signon                          =>    [:sso],
-      :trusted_ip                             =>    [:private_helpdesk],
+      # :trusted_ip                             =>    [:private_helpdesk],
       :business_hours_multiple_locations      =>    [:multiple_business_hours],
       :"multi-product"                        =>    [:multi_brand],
       :ticket_creation_rules                  =>    [:automations, :workflows],
@@ -291,7 +288,7 @@ module Admin::HomeHelper
       :"email-notifications"                  =>    [:auto_responses],
       :"canned-response"                      =>    [:predefined_responses],
       :"billing"                              =>    [:choose_plan],
-      :import_data_zendesk                    =>    [:zendesk_import],
+      :import                                 =>    [:zendesk_import],
       :"day_pass"                             =>    [:occasional_agent]
     }
 

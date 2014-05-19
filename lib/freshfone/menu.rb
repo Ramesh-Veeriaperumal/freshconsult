@@ -106,7 +106,7 @@ class Freshfone::Menu < Tree::TreeNode
 		end
 		
 		def menu_gather(xml_builder)
-			xml_builder.Gather :action => action_url, :timeout => 60, :numDigits => 1 do |g|
+			xml_builder.Gather :action => action_url, :timeout => 60, :numDigits => 1,  :finishOnKey => "" do |g|
 				ivr_message(g)
 				g.Pause :length => '5'
 				ivr_message(g)

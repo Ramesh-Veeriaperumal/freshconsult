@@ -143,8 +143,9 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def to_json(options = {})
     return super(options) unless options[:tailored_json].blank?
-    options[:include] = [:attachments] if options[:include].blank?
-    options[:methods] = [:user_name,:source_name] unless options[:human].blank?
+    options[:methods] = Array.new if options[:methods].nil?
+    options[:methods].push(:attachments)
+    options[:methods].push(:user_name, :source_name) unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end

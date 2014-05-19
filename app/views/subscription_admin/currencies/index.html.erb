@@ -1,0 +1,42 @@
+<% @page_title = "Currency" %>   
+<div class="row">
+  <div class="span5">
+    <h3>Revenue</h3>
+    <table id="customers" class="table well">
+      <tr>
+        <th>Currency</th>
+        <th>Revenue</th>
+        <th>Exchange Rate</th>
+        <th>Revenue in USD</th>
+      </tr>
+      <% Subscription::Currency.all.each do |currency|%>
+        <tr>
+           <td><%= currency.name %></td>
+           <td><%= instance_variable_get("@#{currency.name}_revenue") %></td>
+           <td><%= currency.exchange_rate %></td>
+           <td>$<%= instance_variable_get("@#{currency.name}_revenue_in_usd") %></td>
+         </tr>
+      <%end%>
+    </table>
+  </div>
+
+  <div class="span2">
+    <h3>Exchange rates</h3>
+    <table id="customers" class="table">
+      <p class="help-block">
+      </p>
+      <% Subscription::Currency.all.each do |currency|%>
+        <% form_for :currency, currency, :url => admin_currency_path(currency), :html => { :method => 'put' } do |form| %>
+          <%= form.error_messages %>
+          <% unless currency.name.eql?("USD") %>
+            <tr>
+              <td><%= currency.name %>    </td>
+              <td><%= form.text_field :exchange_rate, :class => "span1" %></td>
+              <td><%= submit_tag "Update", :class => "btn" %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+    </table>
+  </div>
+</div>

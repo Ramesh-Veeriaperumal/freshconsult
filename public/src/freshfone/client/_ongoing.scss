@@ -74,6 +74,7 @@
 //	transfer call starts
 	.ffone_available_agents { 
 		max-height: 380px;
+		min-height: 75px;
 		width: 260px;
 		background-color: $transfer-call-background;
 		.search {
