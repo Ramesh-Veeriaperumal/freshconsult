@@ -2,7 +2,6 @@ module Helpdesk::Email::TicketMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
   include ParserUtil
-  include Helpdesk::Utils::ManageCcEmails
 
   def get_original_user
     e_email = orig_email_from_text
@@ -46,7 +45,7 @@ module Helpdesk::Email::TicketMethods
   end
 
   def hash_cc_emails
-    {:cc_emails => filter_cc_emails(account, (email[:cc] | email[:to_emails])), :fwd_emails => []}
+    {:cc_emails => email[:cc], :fwd_emails => []}
   end
 
   def check_valid_ticket
