@@ -72,7 +72,7 @@
                 onSearchStart: noop,
                 onSearchComplete: noop,
                 onSearchError: noop,
-                containerClass: 'autocomplete-suggestions',
+                containerClass: 'autosuggester-suggestions',
                 tabDisabled: false,
                 dataType: 'text',
                 currentRequest: null,
@@ -104,8 +104,8 @@
         that.suggestionsContainer = null;
         that.options = $.extend({}, defaults, options);
         that.classes = {
-            selected: 'autocomplete-selected',
-            suggestion: 'autocomplete-suggestion'
+            selected: 'autosuggester-selected',
+            suggestion: 'autosuggester-suggestion'
         };
         that.hint = null;
         that.hintValue = '';
@@ -159,18 +159,18 @@
             }
 
             // Listen for mouse over event on suggestions list:
-            container.on('mouseover.autocomplete', suggestionSelector, function () {
+            container.on('mouseover.autosuggester', suggestionSelector, function () {
                 that.activate($(this).data('index'));
             });
 
             // Deselect active element when mouse leaves suggestions container:
-            container.on('mouseout.autocomplete', function () {
+            container.on('mouseout.autosuggester', function () {
                 that.selectedIndex = -1;
                 container.children('.' + selected).removeClass(selected);
             });
 
             // Listen for click event on suggestions list:
-            container.on('click.autocomplete', suggestionSelector, function () {
+            container.on('click.autosuggester', suggestionSelector, function () {
                 that.select($(this).data('index'));
             });
 
@@ -182,13 +182,13 @@
                 }
             };
 
-            $(window).on('resize.autocomplete', that.fixPositionCapture);
+            $(window).on('resize.autosuggester', that.fixPositionCapture);
 
-            that.el.on('keydown.autocomplete', function (e) { that.onKeyPress(e); });
-            that.el.on('keyup.autocomplete', function (e) { that.onKeyUp(e); });
-            that.el.on('blur.autocomplete', function () { that.onBlur(); });
-            that.el.on('focus.autocomplete', function () { that.onFocus(); });
-            that.el.on('change.autocomplete', function (e) { that.onKeyUp(e); });
+            that.el.on('keydown.autosuggester', function (e) { that.onKeyPress(e); });
+            that.el.on('keyup.autosuggester', function (e) { that.onKeyUp(e); });
+            that.el.on('blur.autosuggester', function () { that.onBlur(); });
+            that.el.on('focus.autosuggester', function () { that.onFocus(); });
+            that.el.on('change.autosuggester', function (e) { that.onKeyUp(e); });
 
             // Register etc events defined on init
             options.addEvents.call(that, container, suggestionSelector, selected);
@@ -275,12 +275,12 @@
 
         enableKillerFn: function () {
             var that = this;
-            $(document).on('click.autocomplete', that.killerFn);
+            $(document).on('click.autosuggester', that.killerFn);
         },
 
         disableKillerFn: function () {
             var that = this;
-            $(document).off('click.autocomplete', that.killerFn);
+            $(document).off('click.autosuggester', that.killerFn);
         },
 
         killSuggestions: function () {
@@ -575,7 +575,7 @@
 
             if (that.suggestions.length === 0) {
                 if (options.emptyResult) {
-                    html = '<div class="autocomplete-no-result">' + options.emptyResult + '</div>';
+                    html = '<div class="autosuggester-no-result">' + options.emptyResult + '</div>';
                     container.width(that.el.outerWidth() - 2);
                     container.html(html);
                     container.show();
@@ -819,16 +819,16 @@
 
         dispose: function () {
             var that = this;
-            that.el.off('.autocomplete').removeData('autocomplete');
+            that.el.off('.autosuggester').removeData('autosuggester');
             that.disableKillerFn();
-            $(window).off('resize.autocomplete', that.fixPositionCapture);
+            $(window).off('resize.autosuggester', that.fixPositionCapture);
             $(that.suggestionsContainer).remove();
         }
     };
 
     // Create chainable jQuery plugin:
-    $.fn.autocomplete = function (options, args) {
-        var dataKey = 'autocomplete';
+    $.fn.autosuggester = function (options, args) {
+        var dataKey = 'autosuggester';
         // If function invoked without argument return
         // instance of the first matched element:
         if (arguments.length === 0) {
