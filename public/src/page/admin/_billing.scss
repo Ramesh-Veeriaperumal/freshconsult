@@ -95,6 +95,25 @@
 	}
 }
 
+.currency-note{
+	border: 1px solid #EACB54; 
+	margin: 10px; 
+	padding: 5px 10px;
+	border-radius: 4px;
+	background: #FFDE5E;
+	color: #333;
+	font-weight: 400;
+	text-align: center;
+	span{
+		margin: 5px auto;
+		display: block;
+		margin-top: -17px;
+		margin-left: 48px;
+		border-bottom-color: #EACB54;
+		border-bottom-width: 7px;
+	}
+}
+
 #billing-template{
 	.billing-cost{
 		margin-top: 10px;
@@ -105,7 +124,7 @@
 		}
 		dd{
 			input[type=text]{
-				width: 45px;
+				width: 33px;
 			}
 		}
 		dt{
@@ -135,24 +154,6 @@
 				margin: 10px;
 			}
 			dl{ text-align: center; }
-		}
-		#currency-note{
-			border: 1px solid #EACB54; 
-			margin: 10px; 
-			padding: 5px 10px;
-			border-radius: 4px;
-			background: #FFDE5E;
-			color: #333;
-			font-weight: 400;
-			text-align: center;
-			span{
-				margin: 5px auto;
-				display: block;
-				margin-top: -17px;
-				margin-left: 57px;
-				border-bottom-color: #EACB54;
-				border-bottom-width: 7px;
-			}
 		}
 	}
 }
@@ -240,8 +241,7 @@
 		h2{
 			padding-top: 5px;
 			font-size: 15px;
-			font-weight: bold;
-			padding-bottom: 32px;
+			font-weight: bold;			
 		}
 		.add-more{
 			border-bottom: 1px solid #EFEFEF;
@@ -254,6 +254,11 @@
 		min-height: 0;
 		border: 0;
 		padding: 0; 
+	}
+	.currency-note{
+		span{
+			margin-left: 65px;
+		}
 	}
 }
 
