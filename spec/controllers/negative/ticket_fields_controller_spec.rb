@@ -38,7 +38,6 @@ describe TicketFieldsController do
                             :levels => [], 
                             :action => "create"})
     end
-    puts "#{@default_fields.inspect}"
     put :update, :jsonData => @default_fields.to_json
     flash[:error].should eql " #{label} : has already been taken <br />"
   end

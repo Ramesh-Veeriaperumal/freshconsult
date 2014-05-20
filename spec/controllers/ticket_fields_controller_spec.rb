@@ -80,7 +80,7 @@ describe TicketFieldsController do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                          :flexifield_alias => "solution_#{@account.id}",
-                                         :flexifield_name => "ff_text07",
+                                         :flexifield_name => "ff_text03",
                                          :account_id => @account.id)
     flexifield_def_entry.save
     custom_field = Factory.build( :ticket_field, :account_id => @account.id,
