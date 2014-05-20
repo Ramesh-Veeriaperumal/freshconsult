@@ -9,6 +9,9 @@
 		this.element = element;
 		this.options = $.extend({}, $.fn.menuSelector.defaults, options, $(element).data());
 		this.selectElement = []; 
+		this.upKeys = [ 38 ]; // default up arrow key
+		this.downKeys = [ 40 ]; // default down arrow key
+		this.keys = [ 13 ]; // all key combos. Default key "Enter : 13"
 
 		this.init();
 		this.reset();
@@ -20,6 +23,10 @@
 	    init: function() {	    	
 			var selectEle = this.options.menuHoverIn,
 			 	keybind   =  this.options.scrollInDocument ? document : this.element;
+
+			this.upKeys = this.keycombos(this.upKeys, this.options.additionUpKeys);
+			this.downKeys = this.keycombos(this.downKeys, this.options.additionDownKeys)
+			this.keys = this.keys.concat(this.upKeys, this.downKeys); 	
 
 			if(this.options.onHoverActive){
 				$(this.element)
@@ -34,38 +41,38 @@
 			this.currentIndex 	= (index == -1) ? 0 : index;
 			this.currentElement = $(this.selectElement).eq(this.currentIndex);
 			this.totalItems 	= this.selectElement.length;
+			if(this.currentIndex == 0) $(this.selectElement).eq(this.currentIndex).addClass(this.options.activeClass)
 		},
 		keydown: function(ev){			
 	    	// Checking if the up : 38 / down : 40 key is pressed
-	   		if (!/(38|40|13)/.test(ev.keyCode)) return
-
-			var currentIndex = this.currentIndex,
+   			if( $.inArray(this.keys, ev.keyCode) && !this.stopOnFocus() ){
+   				var currentIndex = this.currentIndex,
 				activeClass  = this.options.activeClass 
 
-			if(ev.keyCode == 13){
-				this.triggerEvent();
-			} 	
+				if(ev.keyCode == 13){
+					this.triggerEvent();
+				} 	
 
-			$(this.selectElement).eq(currentIndex).removeClass(activeClass);
+				$(this.selectElement).eq(currentIndex).removeClass(activeClass);
 
-			if (ev.keyCode == 38 && currentIndex > 0) { 
-				this.stopBubbling(ev);
-				currentIndex-- ;
-			} 
-	  		if (ev.keyCode == 40 && currentIndex < this.totalItems - 1) { 
-	  			this.stopBubbling(ev);
-	  			currentIndex++ ;
-	  		}
+				if ($.inArray(ev.keyCode, this.upKeys) != -1 &&  currentIndex > 0 ) { 
+					this.stopBubbling(ev);
+					currentIndex-- ;
+				} 
+		  		else if ($.inArray(ev.keyCode, this.downKeys) != -1 && currentIndex < this.totalItems - 1 ) { 
+		  			this.stopBubbling(ev);
+		  			currentIndex++ ;
+		  		}
 
-	  		this.currentElement = $(this.selectElement).eq(currentIndex).addClass(activeClass);	  		
-	 		this.scrollElement();
-	 		this.currentIndex = currentIndex;
+		  		this.currentElement = $(this.selectElement).eq(currentIndex).addClass(activeClass);	  		
+		 		this.scrollElement();
+		 		this.currentIndex = currentIndex;
 
-			//Checking callback function for last element 
-			if (typeof this.options.afterLastItem == "function" && currentIndex == this.totalItems - 1) {
-				this.options.afterLastItem.call(this); 
-			} 
-
+				//Checking callback function for last element 
+				if (typeof this.options.afterLastItem == "function" && currentIndex == this.totalItems - 1) {
+					this.options.afterLastItem.call(this); 
+				} 
+   			}
 	    },
 	    mouseenter: function(ev){
 	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
@@ -100,6 +107,23 @@
 		    } else if (itemSltrTop <= docTop) {
 		        $(ele).scrollTop((docTop - scrollTo));
 		    }   
+		},
+		keycombos:function(existingKeys, additionalKeys){
+			var combo_keys = [];
+			if( $.isArray(additionalKeys) ){
+				combo_keys = existingKeys.concat(additionalKeys);
+			}else if( $.isNumeric(additionalKeys) ){
+				combo_keys = existingKeys.concat(additionalKeys);
+			}else{ 
+				var key    = additionalKeys.split(",").map(function(x){return parseInt(x)});
+				combo_keys = existingKeys.concat(key);	
+			}
+			return combo_keys;
+		},
+		stopOnFocus: function(){
+			var element = document.activeElement;
+			// stop for input, select, textarea and content editable
+            return element.tagName == 'INPUT' || element.tagName == 'SELECT' || element.tagName == 'TEXTAREA' || element.isContentEditable;
 		},
 	    destroy: function(){
 	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
@@ -141,7 +165,11 @@
 		//Will trigger click event for the current active element 
 		menuTrigger:"",
 		// Callback function for trigger event
-		menuCallback: function(){},		
+		menuCallback: function(){},
+		// Additional keys for up. param can pass as integer or string or Array
+		additionUpKeys: [ ],
+		// Additional keys for down. param can pass as integer or string or Array
+		additionDownKeys: [ ],
 		// To check which item to scroll when moving to a menu not available in the viewport
 		scrollInDocument: false,
 		scrollPercent: 50
