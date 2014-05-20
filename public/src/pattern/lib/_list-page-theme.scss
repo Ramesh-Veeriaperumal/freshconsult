@@ -274,3 +274,21 @@
         }
   }
 }
+
+// -------------------------------------------------------------------------------------------
+//                                     Mobihelp Apps 
+// -------------------------------------------------------------------------------------------
+.list-page.mobihelp-apps{  
+   .open {
+        .dropdown-toggle{
+            color: #FFFFFF;
+        }
+    }
+    .dropdown-toggle{
+        color: white;
+        font-weight: 500;
+        .caret{
+            margin: 7px -7px 0px 7px;
+        }
+    }
+}

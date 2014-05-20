@@ -1,0 +1,33 @@
+<%= content_tag :h3, t('admin.mobihelp.apps.form.integration_details').html_safe, :class => "lead" %>
+<div class="control-group">
+  <label class="control-label" > <%= t('admin.mobihelp.apps.form.app_key').html_safe %> </label>
+  <div class="controls">
+    <label> <%= app.app_key %> </label>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" > <%= t('admin.mobihelp.apps.form.app_secret').html_safe %> </label>
+  <div class="controls">
+    <label> <%= app.app_secret %> </label>
+  </div>
+</div>
+
+<% if @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:android] %>
+  <div class="control-group">
+    <label class="control-label" >Initialization code</label>
+    <div class="controls code-view">
+      <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>Mobihelp.install(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));</textarea>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  jQuery(document).ready(function () {
+
+    jQuery('.codetextarea').on('click', function (ev) {
+      this.select();
+    })
+    
+  })
+</script>

@@ -1140,6 +1140,14 @@ var scrollToError = function(){
 		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
+
+	$('body').on('click.ticket_details', '[rel=review-button]','[id=ReviewButton]', function(ev) {
+		if(confirm("Do you want to send request for App review?")) {
+			$("#HelpdeskReviewNotes").submit();
+		}
+		ev.preventDefault();
+		ev.stopPropagation();
+	});
 	//ScrollTo the latest conversation
 
 	if (updateShowMore()) updatePagination();

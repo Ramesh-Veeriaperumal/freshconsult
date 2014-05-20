@@ -1,0 +1,83 @@
+require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
+require 'base64'
+
+module MobihelpHelper
+
+  def create_mobihelp_user(test_account=nil, email_id, device_id)
+    account = test_account.nil? ? Account.first : test_account
+    account.make_current
+    create_mobihelp_app
+    @mh_user = User.find_by_email(email_id) unless email_id.nil?
+    return @mh_user unless @mh_user.nil?
+
+    @mh_user = Factory.build(:user, :account => account, :email => email_id,
+                              :user_role => 3)
+    @mh_user.save
+    Rails.logger.debug("Created user #{@mh_user.inspect}");
+
+    create_user_device(@mh_app, @mh_user, device_id);
+    @mh_user
+  end
+
+  def create_mobihelp_app
+    @mh_app = Mobihelp::App.first;
+    return @mh_app unless @mh_app.nil?
+
+    @mh_app = Factory.build(:mobihelp_app)
+    @mh_app.save
+    Rails.logger.debug("Created mobihelp_app #{@mh_app.inspect}");
+    @mh_app
+  end
+
+  def create_user_device(app, user, device_id)
+    @mh_device = user.mobihelp_devices.find_by_device_uuid(device_id)
+    return @mh_device unless @mh_device.nil?
+
+    @mh_device = Factory.build(:mobihelp_device, :user_id => user.id , :app_id => app.id , :device_uuid => device_id)
+    @mh_device.save
+    @mh_device
+  end
+
+  def create_mobihelp_ticket
+    @mh_ticket = Helpdesk::Ticket.find_by_source(8)
+    return @mh_ticket unless @mh_ticket.nil?
+    @mh_ticket = Factory.build(:mobihelp_ticket)
+    @mh_ticket.save
+    create_mobihelp_ticket_extras(@mh_ticket.id)
+    Rails.logger.debug("Created mobihelp_ticket #{@mh_ticket.inspect}");
+    @mh_ticket
+  end
+
+  def create_mobihelp_ticket_extras(ticket_id)
+    @mh_ticket_extras = Factory.build(:mobihelp_ticket_extras)
+    @mh_ticket_extras.ticket_id = ticket_id
+    @mh_ticket_extras.save
+  end
+
+  def get_app_auth_key(app)
+    Base64.encode64("#{app.app_key}:#{app.app_secret}");
+  end
+
+  def get_sample_ticket_attributes(subject, device_id)
+    {
+      :helpdesk_ticket => {
+        :source => 8,
+        :subject => subject,
+        :external_id => device_id,
+        :ticket_body_attributes => { :description_html => "<p>Testing</p>"},
+        :mobihelp_ticket_info_attributes =>  {
+          :app_name => "MyApp",
+          :app_version => "1.4(12)",
+          :os => "ANDROID",
+          :os_version => "4.4",
+          :sdk_version => "1.0",
+          :device_make => "Samsung",
+          :device_model => "I9031",
+          :debug_data => {
+            :resource => fixture_file_upload('mobihelp_extra_complete.json', 'text/plain')
+          }
+        }
+      }
+    }
+  end
+end

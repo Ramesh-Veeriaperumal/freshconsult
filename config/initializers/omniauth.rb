@@ -5,9 +5,16 @@ require 'omniauth/strategies/twitter'
 require 'omniauth/strategies/nimble'
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
+
+
   oauth_keys = Integrations::OauthHelper::get_oauth_keys
   oauth_keys.map { |oauth_provider, key_hash|
-  if key_hash["options"].blank?
+  if oauth_provider == "shopify"
+    provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
+             :scope => 'read_orders',
+             :setup => lambda { |env| params = Rack::Utils.parse_query(env['QUERY_STRING'])
+             env['omniauth.strategy'].options[:client_options][:site] = "https://#{params['shop']}" }
+  elsif key_hash["options"].blank?
 	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
 	else
 	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]

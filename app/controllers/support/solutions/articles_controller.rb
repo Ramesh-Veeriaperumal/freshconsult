@@ -33,6 +33,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     respond_to do |format|
       format.html { set_portal_page :article_view }
+      format.json { render :json => @article.to_json  }
     end
   end
    

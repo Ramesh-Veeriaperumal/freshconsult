@@ -16,7 +16,7 @@ module TicketConstants
     [ :twitter,          'twitter_source',   5 ],
     [ :facebook,         'facebook_source',  6 ],
     [ :chat,             'chat',             7 ],
-    [ :mobi_help,        'mobi_help',        8 ],
+    [ :mobihelp,         'mobihelp',         8 ],
     [ :feedback_widget,  'feedback_widget',  9 ]
   
   ]

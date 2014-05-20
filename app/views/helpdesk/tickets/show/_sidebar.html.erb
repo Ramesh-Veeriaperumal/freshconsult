@@ -2,6 +2,7 @@
 <div class="tkt-sidebar" id="ticket_details_sidebar">
 	<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 	<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
+	<%= render :partial => "helpdesk/tickets/show/app_info.html.erb" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
 	<% unless @ticket.deleted or @ticket.spam %> 
 		<div class="widget" id='TicketProperties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>

@@ -1,5 +1,5 @@
 class Support::SolutionsController < SupportController
-	before_filter :load_category, :only => :show
+	before_filter :load_category, :only => [:show]
 	before_filter { |c| c.check_portal_scope :open_solutions }
 
 	def index

@@ -280,3 +280,21 @@
   description: integrations.pivotal_tracker.widget.description
   application_type: pivotal_tracker
 
+- options:
+    display_in_pages:
+    - helpdesk_tickets_show_page_side_bar
+    - contacts_show_page_side_bar
+  script: |-
+          <div id="shopify_widget">
+                      <div class="content"></div>
+                      <div class="error"></div>
+                      </div>
+          <script type="text/javascript">
+                      jQuery("#shopify").prepend('<h3 class="title">Shopify</h3>');
+                      CustomWidget.include_js("/javascripts/integrations/shopify.js");
+                      shopifyBundle={domain:"https://{{shopify.shop_name}}", reqEmail:"{{requester.email}}" } ;
+                     </script>
+  name: shopify_widget
+  id: 18
+  description: integrations.shopify.desc
+  application_type: shopify

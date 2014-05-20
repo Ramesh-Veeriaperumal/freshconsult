@@ -58,7 +58,7 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 		<%= render :partial => "/helpdesk/tags/tag_list", :object => @user.tags %>
 		<div id="email_mark" class="hide"></div>
 		<%= render :partial => "helpdesk/integrations/email_marketing_container" , :locals => {:contact => @user} %>
-		<div class="user-info">
+		<div class="user-info row-fluid">
 		<% if current_account.features?(:multiple_user_emails) %>
 			<div class="row-fluid">
 				<span class="span3">

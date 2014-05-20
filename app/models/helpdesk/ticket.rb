@@ -37,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   text_datastore_callbacks :class => "ticket"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -249,7 +249,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def mobihelp?
-    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+    source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
   end
 
   def priority=(val)
