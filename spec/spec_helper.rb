@@ -61,6 +61,11 @@ Spork.prefork do
     config.include CompanyHelper
     config.include APIHelper, :type => :controller
 
+    config.before(:all, :type => :controller) do
+      @account = create_test_account
+      @user = add_test_agent(@account)
+    end
+
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
