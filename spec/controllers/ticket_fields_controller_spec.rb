@@ -14,7 +14,7 @@ describe TicketFieldsController do
   before(:each) do
     @request.host = @account.full_domain
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
-    @default_fields.delete(:level_three_present)
+    @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     log_in(@user)
   end
 
@@ -80,7 +80,7 @@ describe TicketFieldsController do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                          :flexifield_alias => "solution_#{@account.id}",
-                                         :flexifield_name => "ff_text02",
+                                         :flexifield_name => "ff_text07",
                                          :account_id => @account.id)
     flexifield_def_entry.save
     custom_field = Factory.build( :ticket_field, :account_id => @account.id,
