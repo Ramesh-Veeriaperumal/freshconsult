@@ -6,13 +6,7 @@ describe AgentsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @role_id = ["#{@account.roles.first.id}"]
-    @user = add_test_agent(@account)
-  end
-
-  before(:each) do
-    @request.host = @account.full_domain
   end
 
   it "should not allow a limited access agent to create a new agent" do

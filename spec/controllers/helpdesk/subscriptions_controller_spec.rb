@@ -6,14 +6,11 @@ describe Helpdesk::SubscriptionsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "subscription"}))
     @group = @account.groups.first
   end
 
   before(:each) do
-    @request.host = @account.full_domain
     log_in(@user)
   end
 

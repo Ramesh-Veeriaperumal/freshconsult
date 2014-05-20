@@ -8,15 +8,12 @@ describe Helpdesk::TimeSheetsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Time sheets"}))
     @group = @account.groups.first
   end
 
   before(:each) do
     log_in(@user)
-    @request.host = @account.full_domain
   end
 
   it "should create a new timer" do

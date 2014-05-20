@@ -6,14 +6,11 @@ describe Admin::SecurityController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @account.features.whitelisted_ips.create
   end
 
   before(:each) do
     @request.env['CLIENT_IP'] = "127.0.0.1"
-    @request.host = @account.full_domain
     log_in(@user)
     # Delayed::Job.destroy_all
   end

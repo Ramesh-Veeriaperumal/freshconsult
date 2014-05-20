@@ -6,7 +6,6 @@ describe Support::SolutionsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @user = @account.users.find_by_email("customer@customer.in")
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "category #{@now}", :description => "new category", :is_default => false} )
@@ -23,7 +22,6 @@ describe Support::SolutionsController do
   end
 
   before(:each) do
-    @request.host = @account.full_domain
     @account.features.open_solutions.create
   end
 

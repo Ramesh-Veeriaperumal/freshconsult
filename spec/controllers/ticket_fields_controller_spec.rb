@@ -5,14 +5,8 @@ describe TicketFieldsController do
   integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-
-  before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
-  end
-
+  
   before(:each) do
-    @request.host = @account.full_domain
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     log_in(@user)
@@ -211,7 +205,7 @@ describe TicketFieldsController do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                          :flexifield_alias => "incident_#{@account.id}",
-                                         :flexifield_name => "ff_text03",
+                                         :flexifield_name => "ff_text04",
                                          :account_id => @account.id)
     flexifield_def_entry.save
     custom_field = Factory.build(:ticket_field, :account_id => @account.id,

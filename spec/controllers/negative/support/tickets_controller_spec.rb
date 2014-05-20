@@ -5,15 +5,6 @@ describe Support::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
-    @account = create_test_account
-  end
-
-  before(:each) do
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
-  end
-
   it "should not allow a user view tickets wwithout logging in" do
     get :index
     response.should redirect_to 'login'

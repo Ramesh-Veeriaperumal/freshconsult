@@ -6,11 +6,8 @@ describe Helpdesk::BulkTicketActionsController do
   self.use_transactional_fixtures = false
 
   before do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @test_ticket = create_ticket({ :status => 2, :display_id => 90 }, create_group(@account, {:name => "Bulk"}))
     @group = @account.groups.first
-    @request.host = @account.full_domain
     log_in(@user)
   end
 

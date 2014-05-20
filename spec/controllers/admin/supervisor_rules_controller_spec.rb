@@ -6,8 +6,6 @@ describe Admin::SupervisorRulesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @group_name = "Tickets - #{Time.now}"
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => @group_name}))
     @group = @account.groups.find_by_name(@group_name)
@@ -15,9 +13,6 @@ describe Admin::SupervisorRulesController do
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
-                                        (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     log_in(@user)
   end
 

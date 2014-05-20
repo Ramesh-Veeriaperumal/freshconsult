@@ -6,7 +6,6 @@ describe Support::Solutions::ArticlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @user = @account.users.find_by_email("customer@customer.in")
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "category #{@now}", :description => "new category", :is_default => false} )
@@ -21,9 +20,6 @@ describe Support::Solutions::ArticlesController do
   end
 
   before(:each) do
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
-                                       (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    @request.host = @account.full_domain
     @account.features.open_solutions.create
   end
 

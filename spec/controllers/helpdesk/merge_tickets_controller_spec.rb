@@ -6,14 +6,11 @@ describe Helpdesk::MergeTicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @target_ticket = create_ticket({ :status => 2, :display_id => 999999 }, create_group(@account, {:name => "Merge"}))
     @group = @account.groups.first
   end
 
   before do
-    @request.host = @account.full_domain
     log_in(@user)
   end
 

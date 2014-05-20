@@ -6,13 +6,7 @@ describe TicketFieldsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
-  end
-
   before(:each) do
-    @request.host = @account.full_domain
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     log_in(@user)

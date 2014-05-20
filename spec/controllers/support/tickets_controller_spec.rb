@@ -6,13 +6,10 @@ describe Support::TicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @user = @account.users.find_by_email("customer@customer.in")
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
     log_in(@user)
   end
 

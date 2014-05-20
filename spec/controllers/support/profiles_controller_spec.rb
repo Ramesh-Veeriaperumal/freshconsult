@@ -6,10 +6,6 @@ describe Support::ProfilesController do
   self.use_transactional_fixtures = false
 
   before do
-    @account = create_test_account
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
-    @user = add_new_user(@account)
     log_in(@user)
   end
 
