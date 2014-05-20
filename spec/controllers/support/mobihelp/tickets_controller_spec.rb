@@ -10,8 +10,10 @@ describe Support::Mobihelp::TicketsController do
     @user_email = "mobihelpuser@customer.in"
     @user_device_id = "11111-22222-3333333-312312312"
     @user = create_mobihelp_user(@account , @user_email, @user_device_id)
-    @test_ticket = create_mobihelp_ticket
-    #@file = fixture_file_upload('mobihelp_extra_complete.json', 'text/plain')
+
+    ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket", @user_device_id, @user)
+    @test_ticket = create_mobihelp_ticket(ticket_attributes)
+
   end
 
   before(:each) do
@@ -24,7 +26,7 @@ describe Support::Mobihelp::TicketsController do
     before(:each) do
       now = (Time.now.to_f*1000).to_i
       @test_subject = "#{Faker::Lorem.sentence(4)} #{now}"
-      @ticket_attributes = get_sample_ticket_attributes(@test_subject,@user_device_id)
+      @ticket_attributes = get_sample_mobihelp_ticket_attributes(@test_subject,@user_device_id, @user)
     end
     it "should create a new mobihelp ticket" do
       post :create, @ticket_attributes
@@ -38,6 +40,7 @@ describe Support::Mobihelp::TicketsController do
   end
 
   it "should fetch the ticket attributes" do
+    
     get :show, { :id => @test_ticket , :device_uuid => @user_device_id }
     JSON.parse(response.body).should have(1).items
   end

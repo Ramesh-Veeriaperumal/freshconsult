@@ -589,6 +589,7 @@
 
     support.namespace :mobihelp do |mobihelp|
       mobihelp.resources :tickets
+      mobihelp.connect "/tickets/:id/notes.:format", :controller => 'tickets' , :action => 'add_note'
     end
 
   end
@@ -612,7 +613,6 @@
   map.namespace :mobihelp do |mobihelp|
     mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
-    #mobihelp.connect '/solutions.:format', :action => 'solutions', :conditions => { :method => :post }
   end
 
   map.root :controller => "home"

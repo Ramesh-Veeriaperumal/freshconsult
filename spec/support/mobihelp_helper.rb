@@ -7,6 +7,7 @@ module MobihelpHelper
     account = test_account.nil? ? Account.first : test_account
     account.make_current
     create_mobihelp_app
+
     @mh_user = User.find_by_email(email_id) unless email_id.nil?
     return @mh_user unless @mh_user.nil?
 
@@ -35,22 +36,24 @@ module MobihelpHelper
 
     @mh_device = Factory.build(:mobihelp_device, :user_id => user.id , :app_id => app.id , :device_uuid => device_id)
     @mh_device.save
+    Rails.logger.debug("Created mobihelp_device #{@mh_device.inspect}");
     @mh_device
   end
 
-  def create_mobihelp_ticket
-    @mh_ticket = Helpdesk::Ticket.find_by_source(8)
-    return @mh_ticket unless @mh_ticket.nil?
-    @mh_ticket = Factory.build(:mobihelp_ticket)
+  def create_mobihelp_ticket(params = {})
+    @mh_ticket = Factory.build(:mobihelp_ticket, :subject => params[:helpdesk_ticket][:subject], 
+     :external_id => params[:helpdesk_ticket][:external_id], :requester_id => params[:helpdesk_ticket][:requester_id],
+     :ticket_body_attributes => params[:helpdesk_ticket][:ticket_body_attributes], 
+     :mobihelp_ticket_info_attributes => params[:helpdesk_ticket][:mobihelp_ticket_info_attributes]) 
     @mh_ticket.save
-    create_mobihelp_ticket_extras(@mh_ticket.id)
     Rails.logger.debug("Created mobihelp_ticket #{@mh_ticket.inspect}");
     @mh_ticket
   end
 
-  def create_mobihelp_ticket_extras(ticket_id)
+  def create_mobihelp_ticket_extras(ticket_id, account_id)
     @mh_ticket_extras = Factory.build(:mobihelp_ticket_extras)
     @mh_ticket_extras.ticket_id = ticket_id
+    @mh_ticket_extras.account_id = account_id
     @mh_ticket_extras.save
   end
 
@@ -58,14 +61,16 @@ module MobihelpHelper
     Base64.encode64("#{app.app_key}:#{app.app_secret}");
   end
 
-  def get_sample_ticket_attributes(subject, device_id)
+  def get_sample_mobihelp_ticket_attributes(subject, device_uuid, user)
     {
       :helpdesk_ticket => {
         :source => 8,
         :subject => subject,
-        :external_id => device_id,
+        :external_id => device_uuid,
+        :requester_id => user.id,
         :ticket_body_attributes => { :description_html => "<p>Testing</p>"},
         :mobihelp_ticket_info_attributes =>  {
+          :device_id => user.mobihelp_devices.find_by_device_uuid(device_uuid).id,
           :app_name => "MyApp",
           :app_version => "1.4(12)",
           :os => "ANDROID",
