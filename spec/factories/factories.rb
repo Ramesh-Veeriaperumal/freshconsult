@@ -258,4 +258,14 @@ if ENV["RAILS_ENV"] == "test"
     t.account_id 1
     t.configs HashWithIndifferentAccess.new({ :inputs => { :api_key => "f7e85279afcce3b6f9db71bae15c8b69", :updates => 1} })
   end
+
+  Factory.define :admin_canned_responses, :class => Admin::CannedResponses::Response do |t|
+    t.title "TestingCannedResponse"
+    t.content_html "Test Response content"
+    t.folder_id 1
+  end
+
+  Factory.define :ca_folders, :class => Admin::CannedResponses::Folder do |t|
+    t.name "TestingCannedResponseFolder"
+  end
 end

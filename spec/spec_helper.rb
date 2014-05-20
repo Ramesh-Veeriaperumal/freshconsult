@@ -61,6 +61,7 @@ Spork.prefork do
     config.include CompanyHelper
     config.include APIHelper, :type => :controller
     config.include SurveyHelper
+    config.include CannedResponsesHelper
 
     config.before(:all, :type => :controller) do
       @account = create_test_account
