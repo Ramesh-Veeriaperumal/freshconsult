@@ -40,12 +40,18 @@ ShopifyWidget.prototype= {
                 notes: order.note == "" ? "No notes" : order.note ,
                 line_items: order.line_items,
                 order_url: this.shopifyBundle.domain+"/admin/orders/"+order.id,
-                currency: order.currency};
-
-           orders.push(view_order)
+                currency: order.currency,
+                created_at: order_date
+            };
+            orders.push(view_order)
 
         }
-        return orders;
+
+        sorted_orders = orders.sort(function(obj1, obj2) {
+            return obj1.created_at - obj2.created_at;
+        });
+
+        return sorted_orders;
     },
 
 
