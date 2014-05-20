@@ -1,0 +1,83 @@
+require 'spec_helper'
+
+describe Admin::EmailNotificationsController do
+	integrate_views
+	setup :activate_authlogic
+	self.use_transactional_fixtures = false
+
+	before(:all) do		
+		@account = create_test_account
+		@email_notifications = @account.email_notifications
+		@test_notification = @email_notifications.find_by_notification_type("1")		
+		@test_reply_temp = @email_notifications.find_by_notification_type("15")
+		@user = add_test_agent(@account)
+		@user1 = add_test_agent(@account)
+		@user2 = add_test_agent(@account)
+	end
+
+	before(:each) do
+		@request.host = @account.full_domain
+		@request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+		                                    (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"		
+		@sample_subject = Faker::Lorem.words(10).join(" ")
+		@sample_message = Faker::Lorem.paragraphs(2).join(" ")	
+		@request.env['HTTP_REFERER'] = '/admin'
+		log_in(@user)		                                    
+	end
+
+	it "should list all corresponding notifications" do
+		get :index
+		response.should render_template("admin/email_notifications/index")		
+	end
+
+	it "should edit an agent email_notification" do
+		get :edit, :id => @test_notification.id, :type => "agent_template"
+    response.body.should =~ /Agent Notification/
+    put :update, :id => @test_notification.id, :agent => "1",
+      :email_notification => { :agent_subject_template => @sample_subject,
+                               :agent_template => @sample_message
+                             }
+		@test_notification.reload
+		@test_notification.agent_subject_template.should eql @sample_subject
+		@test_notification.agent_template.should eql @sample_message                             	
+	end
+
+	it "should edit an requester email_notification" do
+		get :edit, :id => @test_notification.id, :type => "requester_template"
+    response.body.should =~ /Requestor Notification/
+    put :update, :id => @test_notification.id, :requester => "1",
+      :email_notification => { :requester_subject_template => @sample_subject,
+                               :requester_template => @sample_message
+                             }
+		@test_notification.reload
+		@test_notification.requester_subject_template.should eql @sample_subject
+		@test_notification.requester_template.should eql @sample_message		                             			                             
+	end
+
+	it "should outdate translations" do 
+		@test_notification.dynamic_notification_templates.create( :language =>"10",
+										:category =>"2", :active =>"true", :email_notification_id =>"3", 
+										:subject=> "new Dutch subject", :description=>"new Dutch subject", :outdated=>"0")
+		put :update, :id => @test_notification.id, :requester => "1", :email_notification =>{}, :outdated => "yes"	
+			
+		@test_notification.dynamic_notification_templates.find_by_language("10").outdated.should eql true
+	end
+
+	it "should edit reply_template"	do
+		get :edit, :id => @test_reply_temp.id, :type => "reply_template"
+    response.body.should =~ /Reply Templates/
+    put :update, :id => @test_reply_temp.id, :requester => "1",
+      :email_notification => { :requester_template => @sample_message,
+                             }
+		@test_reply_temp.reload		
+		@test_reply_temp.requester_template.should eql @sample_message		                             			                             
+	end
+
+	it "should update agents" do
+		put :update_agents, :id => @test_notification.id,
+			:email_notification_agents => { :notifyagents_data => { @test_notification.id => [@user1.id,@user2.id]}.to_json },
+			"notify_agents_#{@test_notification.id}" => [@user1.id,@user2.id]
+		@test_notification.email_notification_agents.map(&:user_id).should eql [@user1.id,@user2.id] 				
+	end
+
+end

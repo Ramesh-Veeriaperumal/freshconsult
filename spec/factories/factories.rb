@@ -95,6 +95,16 @@ if ENV["RAILS_ENV"] == "test"
     e.primary_role false
   end
 
+  Factory.define :dynamic_notification_templates, :class => DynamicNotificationTemplate do |e|
+    e.email_notification_id "3"
+    e.category "2"
+    e.language "7"
+    e.description "French new ticket"
+    e.subject "French new ticket"
+    e.outdated false
+    e.active true
+  end
+
   Factory.define :primary_email_config, :class => EmailConfig do |p|
     p.name Faker::Name.name
     p.primary_role true
