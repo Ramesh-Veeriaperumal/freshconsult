@@ -28,6 +28,12 @@ describe Social::GnipTwitterController do
       json['success'].should be_false
     end
 
+    it "should render success as false if an expired reconnect_time is sent" do
+      post :reconnect, {:reconnect_time => (Time.now + 15.minutes).iso8601 }
+      json = JSON.parse(response.body)
+      json['success'].should be_false
+    end
+
     it "should not update in redis when request comes from malicious user" do
       post :reconnect, {:reconnect_time => Time.now.iso8601, :hash => Faker::Lorem.characters(100) }
       json = JSON.parse(response.body)

@@ -30,7 +30,7 @@ describe Admin::CannedResponses::FoldersController do
 		folder.should_not be_nil
 	end
 
-	it "should not create a new folder with minimum 3 characters" do
+	it "should not create a new folder with less than 3 characters" do
 		post :create, { :admin_canned_responses_folder => {:name => "cr"} }
 		folder = Admin::CannedResponses::Folder.find_by_name("cr")
 		folder.should be_nil
@@ -46,7 +46,7 @@ describe Admin::CannedResponses::FoldersController do
 		folder.should_not be_nil
 	end
 
-	it "should contain minimum 3 characters for folder name" do
+	it "should not update folder name if the name has less than 3 characters" do
 		put :update, { :id => @cr_folder_1.id,
 			:admin_canned_responses_folder => { :name => "CR" }
 		}

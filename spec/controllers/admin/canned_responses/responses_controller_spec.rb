@@ -33,7 +33,7 @@ describe Admin::CannedResponses::ResponsesController do
 		user_access.group_id.should eql 1
 	end
 
-	it "should not create a new Canned Responses" do
+	it "should not create a new Canned Responses without a title" do
 		get :new, :folder_id => @test_response_1.folder_id
 		response.should render_template("admin/canned_responses/responses/new")
 		post :create, { :admin_canned_responses_response => {:title => "", :content_html => "New Canned_Responses without title",
@@ -51,7 +51,8 @@ describe Admin::CannedResponses::ResponsesController do
 	it "should edit a Canned Responses" do
 		get :edit, :folder_id => @test_response_1.folder_id,:id => @test_response_1.id
 		response.body.should =~ /#{@test_response_1.title}/
-		put :update, { :id => @test_response_1.id,
+		put :update, {
+			:id => @test_response_1.id,
 			:admin_canned_responses_response => {
 				:title => "Updated Canned_Responses #{@now}",
 				:content_html => "Updated DESCRIPTION: New Canned_Responses Hepler",
@@ -60,7 +61,7 @@ describe Admin::CannedResponses::ResponsesController do
 			:new_folder_id => 1,
 			:folder_id => "#{@test_response_1.folder_id}"
 		}
-		canned_response = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
+		canned_response   = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
 		access_visibility = Admin::UserAccess.find_by_accessible_id(@test_response_1.id)
 		canned_response.title.should eql("Updated Canned_Responses #{@now}")
 		canned_response.content_html.should eql("Updated DESCRIPTION: New Canned_Responses Hepler")
@@ -68,10 +69,11 @@ describe Admin::CannedResponses::ResponsesController do
 		access_visibility.group_id.should_not be_nil
 	end
 
-	it "should not update a Canned Responses" do
+	it "should not update a Canned Responses with empty title" do
 		get :edit, :folder_id => @test_response_1.folder_id,:id => @test_response_1.id
 		response.body.should =~ /#{@test_response_1.title}/
-		put :update, { :id => @test_response_1.id,
+		put :update, {
+			:id => @test_response_1.id,
 			:admin_canned_responses_response => {:title => "",
 				:content_html => "Updated Canned_Responses without title",
 				:visibility => {:user_id => @user.id, :visibility => 2, :group_id => 1}

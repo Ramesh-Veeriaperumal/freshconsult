@@ -194,14 +194,15 @@ describe Social::TwitterHandlesController do
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(nil)
 
       twitter_id = Faker::Name.name
-      subject = Faker::Lorem.characters(100)
+      subject    = Faker::Lorem.characters(100)
+      tweet_id   = rand(100000000)
       get :create_twicket, {
         'helpdesk_tickets'=> {
         'subject' => subject,
         'product_id' => 'null',
         'twitter_id' => twitter_id,
         'tweet_attributes' => {
-          'tweet_id' => rand(100000000),
+          'tweet_id' => tweet_id,
           'twitter_handle_id' => twt_handler.id
         },
         'ticket_body_attributes' => {
@@ -214,12 +215,13 @@ describe Social::TwitterHandlesController do
     }
       #========================first tweet end====================================
 
-      ft = @account.tweets.find_by_tweetable_id(@account.tickets.find_by_subject(subject))
+      ft = @account.tweets.find_by_tweet_id(tweet_id)
       Twitter::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(ft.tweet_id)
 
       twitter_id = Faker::Name.name
       subject = Faker::Lorem.characters(100)
+      note_tweet_id = rand(100000000)
 
       get :create_twicket, {
         'helpdesk_tickets'=> {
@@ -227,7 +229,7 @@ describe Social::TwitterHandlesController do
           'product_id' => 'null',
           'twitter_id' => twitter_id,
           'tweet_attributes' => {
-            'tweet_id' => rand(100000000),
+            'tweet_id' => note_tweet_id,
             'twitter_handle_id' => twt_handler.id
           },
           'ticket_body_attributes' => {
@@ -243,6 +245,7 @@ describe Social::TwitterHandlesController do
       @account.contacts.find_by_twitter_id(twitter_id).present?.should be_true
       ticket = Helpdesk::Ticket.find_by_id(ft.tweetable_id)
       ticket.notes.present?.should be_true
+      ticket.notes.last.tweet.tweet_id.should be_eql(note_tweet_id)
     end
 
   end
