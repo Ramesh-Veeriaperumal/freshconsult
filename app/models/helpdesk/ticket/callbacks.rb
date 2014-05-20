@@ -276,7 +276,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         "messageType" => "publishMessage"
       }.to_json
     
-    $sqs_autorefresh.send_message(body)
+    $sqs_autorefresh.send_message(body) unless Rails.env.test?
   end
 
 private 

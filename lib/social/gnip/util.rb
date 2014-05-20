@@ -39,7 +39,7 @@ module Social::Gnip::Util
     else
       tweet_obj[:fd_counter] = tweet_obj[:fd_counter].to_i + 60
       options[:delay_seconds] = tweet_obj[:fd_counter]
-      @queue.send_message(tweet_obj.to_json, options)
+      @queue.send_message(tweet_obj.to_json, options) unless Rails.env.test?
       return true
     end
   end

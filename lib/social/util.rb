@@ -35,7 +35,7 @@ module Social::Util
     message = {} unless message
     message.merge!(:environment => Rails.env)
     topic = SNS["social_notification_topic"]
-    DevNotification.publish(topic, subject, message.to_json)
+    DevNotification.publish(topic, subject, message.to_json) unless Rails.env.test?
   end
 
   def select_valid_date(time, table="feeds")
