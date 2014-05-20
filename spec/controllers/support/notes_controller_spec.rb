@@ -17,7 +17,7 @@ describe Support::NotesController do
   it "should re-open a closed ticket after a customer reply" do
     test_ticket = create_ticket({:requester_id => @user.id, :status => 5 }, create_group(@account, {:name => "Support"}))
     Resque.inline = true
-    post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note</p>"} }, 
+    post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note</p>"} },
                   :ticket_id => test_ticket.display_id
     Resque.inline = false
     reopened_ticket = @account.tickets.find(test_ticket.id)
@@ -51,6 +51,7 @@ describe Support::NotesController do
 
     client_manager_note = @account.tickets.find(test_ticket.id).notes.last
     client_manager_note.user.customer.id.should be_eql(new_company.id)
+    client_manager_note.user_id.should be_eql(new_contacts[1].id)
     flash[:notice].should eql "The note has been added to your ticket."
   end
 

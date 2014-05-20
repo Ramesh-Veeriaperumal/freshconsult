@@ -2,45 +2,45 @@ require 'spec_helper'
 
 describe Helpdesk::CannedResponsesController do
 	integrate_views
-    setup :activate_authlogic
-  	self.use_transactional_fixtures = false
+	setup :activate_authlogic
+	self.use_transactional_fixtures = false
 
-	before(:all) do
-	    @now = (Time.now.to_f*1000).to_i
-	    @test_response_1 = create_response( {:title => "Recent Canned_Responses",:content_html => Faker::Lorem.paragraph, 
-	    	:folder_id => 1, :user_id => @user.id, :visibility => 1, :group_id => 1  } )
-	    @test_response_2 = create_response( {:title => "Recent Canned_Responses Hepler #{@now}",:content_html => Faker::Lorem.paragraph, 
-	    	:folder_id => 1, :user_id => @user.id, :visibility => 2, :group_id => 1  } )
-	    @test_response_3 = create_response( {:title => "Recent Canned_Responses Only_me #{@now}",:content_html => "CONTENT: Canned_Responses Only_me #{@now}", 
-	    	:folder_id => 1, :user_id => @user.id, :visibility => 3, :group_id => 1  } )
+		before(:all) do
+			@now = (Time.now.to_f*1000).to_i
+			@test_response_1 = create_response( {:title => "Recent Canned_Responses",:content_html => Faker::Lorem.paragraph,
+				:folder_id => 1, :user_id => @user.id, :visibility => 1, :group_id => 1  } )
+			@test_response_2 = create_response( {:title => "Recent Canned_Responses Hepler #{@now}",:content_html => Faker::Lorem.paragraph,
+				:folder_id => 1, :user_id => @user.id, :visibility => 2, :group_id => 1  } )
+			@test_response_3 = create_response( {:title => "Recent Canned_Responses Only_me #{@now}",:content_html => "CONTENT: Canned_Responses Only_me #{@now}",
+				:folder_id => 1, :user_id => @user.id, :visibility => 3, :group_id => 1  } )
+		end
+
+		before(:each) do
+			log_in(@user)
+		end
+
+		it "should go to insert CR index page" do
+			get :index
+			response.should render_template("helpdesk/tickets/components/_canned_responses")
+		end
+
+		it "should display the recent canned_responses" do
+			get :recent, :ids => "[#{@test_response_1.id},#{@test_response_2.id},#{@test_response_3.id}]", :format => 'js'
+			response.body.should =~ /#{@test_response_1.title}/
+			response.body.should_not =~ /#{@test_response_2.title}/
+			response.body.should =~ /#{@test_response_3.title}/
+		end
+
+		it "should search the canned responses" do
+			get :search, :search_string => "Recent", :format => 'js'
+			response.body.should =~ /#{@test_response_1.title}/
+			response.body.should_not =~ /#{@test_response_2.title}/
+			response.body.should =~ /#{@test_response_3.title}/
+		end
+
+		it "should view the canned responses" do
+			post :show, :ca_resp_id => @test_response_3.id, :id => 1
+			response.body.should =~ /CONTENT: Canned_Responses Only_me #{@now}/
+			response.body.should_not =~ /#{@test_response_1.content_html}/
+		end
 	end
-
-	before(:each) do
-	    log_in(@user)
-	end
-
-	it "should go to insert CR index page" do
-		get :index
-		response.should render_template("helpdesk/tickets/components/_canned_responses")
-    end
-
-    it "should display the recent canned_responses" do
-    	get :recent, :ids => "[#{@test_response_1.id},#{@test_response_2.id},#{@test_response_3.id}]", :format => 'js'
-    	response.body.should =~ /#{@test_response_1.title}/
-    	response.body.should_not =~ /#{@test_response_2.title}/
-    	response.body.should =~ /#{@test_response_3.title}/
-    end
-
-    it "should search the canned responses" do
-    	get :search, :search_string => "Recent", :format => 'js'
-    	response.body.should =~ /#{@test_response_1.title}/
-    	response.body.should_not =~ /#{@test_response_2.title}/
-    	response.body.should =~ /#{@test_response_3.title}/
-    end
-
-    it "should view the canned responses" do 
-    	post :show, :ca_resp_id => @test_response_3.id, :id => 1
-    	response.body.should =~ /CONTENT: Canned_Responses Only_me #{@now}/
-    	response.body.should_not =~ /#{@test_response_1.content_html}/
-    end
-end
