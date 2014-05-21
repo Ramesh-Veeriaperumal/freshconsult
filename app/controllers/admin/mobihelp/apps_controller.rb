@@ -41,7 +41,7 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
   end
 
   def destroy
-    @app.destroy
+    #@app.destroy
     flash[:notice] = t(:'flash.general.destroy.success', :human_name => t('admin.mobihelp.human_name'))
     respond_to do |format|
       format.html { redirect_to(admin_mobihelp_apps_path) }
