@@ -7,7 +7,7 @@ describe Admin::EmailNotificationsController do
 
 	before(:all) do
 		@email_notifications = @account.email_notifications
-		@test_notification = @email_notifications.find_by_notification_type("1")
+		@test_notification = @email_notifications.find_by_notification_type("1")		
 		@test_reply_temp = @email_notifications.find_by_notification_type("15")
 		@user1 = add_test_agent(@account)
 		@user2 = add_test_agent(@account)
@@ -49,13 +49,29 @@ describe Admin::EmailNotificationsController do
 		@test_notification.requester_template.should eql @sample_message
 	end
 
-	it "should outdate translations" do
-		@test_notification.dynamic_notification_templates.create( :language =>"10",
+	it "should outdate requester translations" do
+		@test_notification.dynamic_notification_templates.create( :language =>"5",
 										:category =>"2", :active =>"true", :email_notification_id =>"3",
-										:subject=> "new Dutch subject", :description=>"new Dutch subject", :outdated=>"0")
+										:subject=> "new spanish subject", :description=>"new spanish subject", :outdated=>"0")
 		put :update, :id => @test_notification.id, :requester => "1", :email_notification =>{}, :outdated => "yes"
+		@test_notification.reload
+		@test_notification.dynamic_notification_templates.reload
+		@test_notification.dynamic_notification_templates.find_by_language("5").outdated.should eql true
+	end
 
-		@test_notification.dynamic_notification_templates.find_by_language("10").outdated.should eql true
+	it "should verify redirection was invalid urls" do
+		get :edit, :id => @test_reply_temp.id, :type => "agent_template"
+		flash[:notice] =~ /This notification does not exist/
+	end
+
+	it "should outdate agent translations" do
+		@test_notification.dynamic_notification_templates.create( :language =>"6",
+										:category =>"1", :active =>"true", :email_notification_id =>"3",
+										:subject=> "new finnish subject", :description=>"new finnish subject", :outdated=>"0")
+		put :update, :id => @test_notification.id, :agent => "1", :email_notification =>{}, :outdated => "yes"
+		@test_notification.reload
+		@test_notification.dynamic_notification_templates.reload
+		@test_notification.dynamic_notification_templates.find_by_language("6").outdated.should eql true
 	end
 
 	it "should edit reply_template"	do
