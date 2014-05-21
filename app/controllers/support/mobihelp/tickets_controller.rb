@@ -57,6 +57,10 @@ class Support::Mobihelp::TicketsController < SupportController
     end
   end
 
+  def cache_enabled?
+    false
+  end
+
   private
     def build_tickets
       if params[:device_uuid] #filter by device id
