@@ -178,7 +178,7 @@ describe TicketFieldsController do
                                                     :required_in_portal => false,
                                                     :choices => field_choices,
                                                     :levels => [{:label=>"Monument", :label_in_portal=>"Monument", :description=>"", :level=>2,
-                                                                 :id => nested_field.id, :position=>5, :type=>"dropdown", :name => "monument_#{@account.id}",
+                                                                 :id => nested_field.id, :position=>5, :type=>"dropdown",
                                                                  :action=>"edit"}
                                                                ],
                                                     :field_options => nil,
