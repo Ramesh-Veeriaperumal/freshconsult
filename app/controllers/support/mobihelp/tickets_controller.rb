@@ -108,13 +108,10 @@ class Support::Mobihelp::TicketsController < SupportController
     def check_ticket_permissions
       render :json => { :access_denied => true } unless @ticket and current_user.has_ticket_permission? @ticket
     end
-<<<<<<< HEAD
 
     def mobihelp_user_login
       unless current_user # override validated user check for mobihelp tickets
         @current_user = User.find_by_single_access_token(params['k']); #ignore active / check
       end
     end
-=======
->>>>>>> staging
 end
