@@ -443,7 +443,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_interaction  
-    notes.visible.newest_first.exclude_source("feedback").first.body
+    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.body
   end
 
   #To use liquid template...
