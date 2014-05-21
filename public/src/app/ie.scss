@@ -3,6 +3,12 @@
 // Height adjustment for ticket customization drag and drop
 html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 
+.ie {
+	.conversation_thread .botm-space {
+		margin-bottom: 15px;
+	}
+}
+
 .ie6, .ie7{
 	.wrapper{ 
 		//expressions are too dangoreus ... pratheepv
@@ -251,5 +257,8 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 	.ticket_details .clearfix .overflowh {
     	overflow: visible;
     }
+    .conversation_thread .botm-space {
+		margin-bottom: 20px;
+	}
 
 }
