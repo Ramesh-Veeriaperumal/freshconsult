@@ -62,6 +62,7 @@ Spork.prefork do
     config.include APIHelper, :type => :controller
     config.include SurveyHelper
     config.include CannedResponsesHelper
+    config.include AutomationsHelper
 
     config.before(:all, :type => :controller) do
       @account = create_test_account
@@ -79,7 +80,7 @@ Spork.prefork do
       ES_ENABLED = false
       GNIP_ENABLED = false
       DatabaseCleaner.clean_with(:truncation,
-        {:pre_count => true, :reset_ids => false})
+                                 {:pre_count => true, :reset_ids => false})
     end
 
     # == Fixtures
