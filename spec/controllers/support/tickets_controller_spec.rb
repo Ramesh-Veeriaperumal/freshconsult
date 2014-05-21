@@ -6,7 +6,7 @@ describe Support::TicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @user = @account.users.find_by_email("customer@customer.in")
+    @user = create_dummy_customer
   end
 
   before(:each) do

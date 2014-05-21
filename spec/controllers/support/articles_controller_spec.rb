@@ -6,7 +6,7 @@ describe Support::Solutions::ArticlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @user = @account.users.find_by_email("customer@customer.in")
+    @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "category #{@now}", :description => "new category", :is_default => false} )
     @test_folder1 = create_folder( {:name => "folder1 visible to logged in customers", :description => "new folder", :visibility => 2,
