@@ -19,22 +19,14 @@ describe Mobihelp::SolutionsController do
 
   it "should fetch empty solutions for no updates" do
     update_since = (Time.now - 86400 ).utc.strftime('%FT%TZ') # no updates in 24 hours
-    post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app),
+    get  :articles, {
       :updated_since => update_since
     }
-    JSON.parse(response.body).should have(0).items
+    result = JSON.parse(response.body)
+    result.should have(0).items
   end
 
-  it "should fetch empty the solutions for no updates and solution updated time is greater than the mobihelp app updated time" do
-    update_since = Time.now.utc.strftime('%FT%TZ') 
-    post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app),
-      :updated_since => update_since
-    }
-    JSON.parse(response.body).should have(0).items
-  end
-
+  
   it "should fetch updated solution when updates present" do 
     update_since = Time.now.utc.strftime('%FT%TZ')
 
@@ -47,35 +39,61 @@ describe Mobihelp::SolutionsController do
     @mobihelp_app.config[:solutions] = @test_category.id
     @mobihelp_app.save
 
-    post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app),
+    get  :articles, {
       :updated_since => update_since
     }
-    JSON.parse(response.body).should have(1).items
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result[0]["folder"].should_not be_nil
+  end
+
+  it "should fetch all the solutions when solution updated time is lesser than the mobihelp app updated time" do
+    now = Time.now
+    @mobihelp_app.name = "Fresh app #{now}"
+    @mobihelp_app.save
+    update_since = (1.day.ago).utc.strftime('%FT%TZ') 
+    get  :articles, {
+      :updated_since => update_since
+    }
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result[0]["folder"].should_not be_nil
+  end
+
+  it "should render no_update json for no updates and solution updated time is greater than the mobihelp app updated time" do
+    update_since = (Time.now+1.day).utc.strftime('%FT%TZ') 
+
+    get  :articles, {
+      :updated_since => update_since
+    }
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result["no_update"].should be_true
   end
 
   it "should fetch all solutions when last updated time is not sent" do
-    post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app)
-    }
-    JSON.parse(response.body).should have(1).items
+    get  :articles
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result[0]["folder"].should_not be_nil
   end
 
   it "should fetch all solutions when last updated time is not valid" do
     invalid_date = "23"
-      post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app),
+      get  :articles, {
       :updated_since => invalid_date
       }
-    JSON.parse(response.body).should have(1).items
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result[0]["folder"].should_not be_nil
   end
 
   it "should fetch empty solutions when category id is invalid" do
     update_since = Time.now.utc.strftime('%FT%TZ')
+    solution_category = @mobihelp_app.config[:solutions]
     @mobihelp_app.config[:solutions] = 0
     @mobihelp_app.save
-    post  :articles, {
-      :auth_key => get_app_auth_key(@mobihelp_app),
+    get  :articles, {
       :updated_since => update_since
     }
     JSON.parse(response.body).should have(0).items

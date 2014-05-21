@@ -49,7 +49,7 @@ class Mobihelp::SolutionsController < MobihelpController
         category_id = @category.id
         account_id = @mobihelp_app.account_id
         sql_query = %(SELECT count(*) as count FROM #{FOLDER_TABLE_NAME} f LEFT JOIN #{ARTICLE_TABLE_NAME} a ON f.Id = a.folder_id 
-          WHERE (f.updated_at > '#{updated_since}' OR a.updated_at > '#{updated_since}') AND f.account_id = #{account_id} 
+          WHERE (f.updated_at >= '#{updated_since}' OR a.updated_at >= '#{updated_since}') AND f.account_id = #{account_id} 
           AND a.account_id = #{account_id} AND f.category_id = #{category_id} AND f.is_default = 0 
           AND f.visibility = #{Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]}
           AND a.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]})

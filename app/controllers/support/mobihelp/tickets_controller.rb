@@ -2,10 +2,11 @@ class Support::Mobihelp::TicketsController < SupportController
 
   include Helpdesk::TicketActions
 
+  before_filter :mobihelp_user_login
   before_filter :require_user_login
   before_filter :build_tickets, :only => [:index]
-  before_filter :load_ticket, :only => [:show]
-  before_filter :check_ticket_permissions, :only => [:show]
+  before_filter :load_ticket, :only => [:show,:add_note]
+  before_filter :check_ticket_permissions, :only => [:show,:add_note]
   before_filter :pre_process_mobihelp_params, :only => [:create]
 
   def create
@@ -38,6 +39,26 @@ class Support::Mobihelp::TicketsController < SupportController
         render :json => @tickets
       }
     end
+  end
+
+  def add_note 
+    @note = @ticket.notes.build({
+      "incoming" => true,
+      "private" => false,
+      "source" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+      "user_id" => current_user && current_user.id,
+      "account_id" => current_account && current_account.id
+    }.merge(params[:helpdesk_note]))
+    success = @note.save_note
+    respond_to do |format|
+      format.json {
+        render :json => { :success => success, :item => @note }.to_json
+      }
+    end
+  end
+
+  def cache_enabled?
+    false
   end
 
   private
@@ -90,5 +111,11 @@ class Support::Mobihelp::TicketsController < SupportController
 
     def check_ticket_permissions
       render :json => { :access_denied => true } unless @ticket and current_user.has_ticket_permission? @ticket
+    end
+
+    def mobihelp_user_login
+      unless current_user # override validated user check for mobihelp tickets
+        @current_user = User.find_by_single_access_token(params['k']); #ignore active / check
+      end
     end
 end

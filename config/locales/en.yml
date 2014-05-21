@@ -474,7 +474,7 @@ en:
           heading2: Mobihelp SDK
           content2:
             integration_guidelines: Integration guidelines
-            download_android_sdk: Download Android SDK v1.0 
+            download_android_sdk: Download Android SDK
             download_ios_sdk: Coming Soon
         form:
           app_name: Application Name
@@ -501,13 +501,12 @@ en:
           new_app: New App
           no_app:
             title: Welcome to Mobihelp
-            content1: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
             heading1: You are 3 steps away from adding in-app support to your App
             heading2: Get the latest SDK for iOS and Android
             download_heading: Download Mobihelp
             download_android: Download Android SDK
             download_apple: Download iOS SDK
-            add_heading: Add Mobihelp
+            add_heading: Add Mobihelp to your App
             learn: Learn More
             configure_heading: Configure Mobihelp
             configure: Configure
