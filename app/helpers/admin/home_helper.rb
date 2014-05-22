@@ -177,7 +177,7 @@ module Admin::HomeHelper
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback", "mobihelp"],
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback"],
       :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
