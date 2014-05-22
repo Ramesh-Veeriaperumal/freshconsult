@@ -20,7 +20,7 @@ class Admin::SecurityController <  Admin::AdminController
       if params[:account][:whitelisted_ip_attributes][:enabled].to_bool
         @account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
         @whitelisted_ips = @account.whitelisted_ip
-        @whitelisted_ips.load_ip_info(request.env['CLIENT_IP']) unless Rails.env.test?
+        @whitelisted_ips.load_ip_info(request.env['CLIENT_IP'])
       elsif @account.whitelisted_ip
         @account.whitelisted_ip.enabled = params[:account][:whitelisted_ip_attributes][:enabled]
       end
