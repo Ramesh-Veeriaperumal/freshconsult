@@ -19,6 +19,7 @@ end
 FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
 UnitTest = [ "spec/controllers/agents_controller_spec.rb",
+             "spec/controllers/groups_controller_spec.rb",
              "spec/controllers/contacts_controller_spec.rb",
              "spec/controllers/contact_merge_controller_spec.rb",
              "spec/controllers/user_emails_controller_spec.rb",
