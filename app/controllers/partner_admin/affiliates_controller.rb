@@ -93,7 +93,6 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     params = ActiveSupport::JSON.decode request.body.read    
     Sharding.select_shard_of(params["account_id"]) do
       subscription = Subscription.find_by_account_id(params["account_id"])
-      subscription.account.make_current
       subscription.update_attributes(:subscription_affiliate_id => nil)
     end
     render_json_object({:success => true})

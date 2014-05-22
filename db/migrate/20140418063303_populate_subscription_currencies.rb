@@ -4,15 +4,15 @@ class PopulateSubscriptionCurrencies < ActiveRecord::Migration
   def self.up
 		currencies = [
 			{ :name => "BRL", :billing_site => "freshpo-brl-test", 
-				:billing_api_key => "test_usPCevjp1KFcrWcdHE3fw4pe8MHKzEdFu"},
+				:billing_api_key => "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"},
 			{ :name => "EUR", :billing_site => "freshpo-eur-test", 
-				:billing_api_key => "test_GCXuNzYMPmyZYsAubdiFNG59Ac5uW63s"},
+				:billing_api_key => "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"},
 			{ :name => "INR", :billing_site => "freshpo-inr-test", 
-				:billing_api_key => "test_ZMFdEgIWilqkxJiCQYLhqQ1HWoNwlsSV"},
+				:billing_api_key => "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"},
 			{ :name => "USD", :billing_site => "freshpo-test", 
 				:billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"}, 	
 			{ :name => "ZAR", :billing_site => "freshpo-zar-test", 
-				:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"}
+				:billing_api_key => "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"},
 		]
   	Subscription::Currency.create(currencies)
   end

@@ -111,7 +111,7 @@ class Subscription < ActiveRecord::Base
   #Monthly revenue in local currency
   def self.fetch_monthly_revenue(currency)
     subscriptions = paying_subscriptions.filter_with_currency(currency)
-    subscriptions.inject(0) { |sum, subscription| sum + cmrr_in_local_currency }
+    subscriptions.inject(0) { |sum, subscription| sum + subscription.amount }
   end
 
   def self.free_agent_count
@@ -124,10 +124,6 @@ class Subscription < ActiveRecord::Base
 
   def usd_equivalent
     (amount * currency_exchange_rate).to_f
-  end
-
-  def cmrr_in_local_currency
-    (amount/renewal_period).to_f
   end
 
   
