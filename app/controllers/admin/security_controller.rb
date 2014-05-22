@@ -15,14 +15,15 @@ class Admin::SecurityController <  Admin::AdminController
     @account = current_account
     @account.sso_enabled = params[:account][:sso_enabled]
     @account.ssl_enabled = params[:account][:ssl_enabled]
-    @account.whitelisted_ip.enabled = params[:account][:whitelisted_ip_attributes][:enabled] unless
-    @account.whitelisted_ip.nil?
 
-    if current_account.features_included?(:whitelisted_ips) && (@account.whitelisted_ip ?
-      @account.whitelisted_ip.enabled : params[:account][:whitelisted_ip_attributes][:enabled])
-      @account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
-      @whitelisted_ips = @account.whitelisted_ip
-      @whitelisted_ips.load_ip_info(request.env['CLIENT_IP'])
+    if current_account.features_included?(:whitelisted_ips)
+      if params[:account][:whitelisted_ip_attributes][:enabled].to_bool
+        @account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
+        @whitelisted_ips = @account.whitelisted_ip
+        @whitelisted_ips.load_ip_info(request.env['CLIENT_IP']) unless Rails.env.test?
+      elsif @account.whitelisted_ip
+        @account.whitelisted_ip.enabled = params[:account][:whitelisted_ip_attributes][:enabled]
+      end
     end
 
     if params[:ssl_type].present?
@@ -40,6 +41,7 @@ class Admin::SecurityController <  Admin::AdminController
     else
       @portal = current_account.main_portal
       @custom_ssl_requested = get_others_redis_key(ssl_key).to_i
+      load_whitelisted_ips
       render :action => 'index'
     end
   end
