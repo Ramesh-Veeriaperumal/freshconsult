@@ -2772,11 +2772,11 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
-  sprout_details: "Single Support Email <br>Feedback Widget <br>Knowledge Base <br>All Automations <br>Phone Integration <br>Mobile Apps <br>Built-in Integrations"
-  blossom_details: "Everything in Sprout <br>Multiple Mailboxes <br>Custom Domain <br>Social Support <br>Satisfaction Surveys <br>Community Forums <br>Advanced Reporting"
+  sprout_details: "Single Support Email <br>Feedback Widget <br>Knowledge Base <br>All Automations <br>Default SLA Policy <br>Mobile Apps <br>Built-in Integrations"
+  blossom_details: "Everything in Sprout <br>Multiple Mailboxes <br>Custom Domain <br>Social Support <br>Phone Integration <br>Community Forums <br>Advanced Reporting"
   garden_details: "Everything in Blossom <br>Integrated Live Chat <br>Multiple Languages <br>Multi Product Support <br>Multiple SLA Policies <br>Multiple Timezones <br>CSS Customization"
   estate_details: "Everything in Garden <br>Gamification <br>Agent Collision <br>Custom Roles <br>Custom SSL <br>Enterprise Reporting <br>Portal Customization"
-  forest_details: "Everything in Estate <br>Custom Mail Servers <br>Secure IP Restriction"
+  forest_details: "Everything in Estate <br>Custom Mailboxes <br>Secure IP Restriction"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
