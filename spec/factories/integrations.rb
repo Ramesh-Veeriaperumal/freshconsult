@@ -16,4 +16,12 @@ if ENV["RAILS_ENV"] == "test"
     t.account_id 1
     t.configs HashWithIndifferentAccess.new({ :inputs => { :api_key => "f7e85279afcce3b6f9db71bae15c8b69", :updates => 1} })
   end
+
+  Factory.define :authorization, :class => Authorization do |t|
+    t.provider "facebook"
+    t.uid "12345678"
+    t.user_id 2
+    t.account_id 1
+  end
+  
 end
