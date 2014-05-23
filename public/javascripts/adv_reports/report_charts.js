@@ -275,7 +275,7 @@ function pieChart(opts){
 	    renderTo: opts['renderTo'],
 	    type: 'bar',
 	    borderColor: 'rgba(0,0,0,0)',
-	    margin:[00, 10, 0, 10]
+	    margin:[-50, 10, 30, 10]
 	  },
     title: {
       text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
@@ -283,7 +283,7 @@ function pieChart(opts){
     },
 	  plotOptions: {
 	  	pie: {
-	    	size: '75%',
+	    	size: '70%',
 	      borderWidth: 0,
 	      shadow: false,
 	      dataLabels: {
@@ -305,6 +305,7 @@ function pieChart(opts){
 	  legend: {
 	    layout: 'horizontal',
 	    align: 'center',
+      maxHeight: '100',
       itemStyle: {
         width: 350,
         fontFamily:'"Helvetica Neue", Helvetica, Arial'
