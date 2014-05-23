@@ -83,10 +83,10 @@ describe Helpdesk::Email::Process do
 
 		it "with attachments above 15 mb" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :attachments => 1, :large => 1})
-			lambda{ Helpdesk::Email::Process.new(email).perform }.should raise_error SystemExit
-			# ticket = Helpdesk::Ticket.last
-			# Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			# ticket.attachments.size.should eql 0
+			Helpdesk::Email::Process.new(email).perform
+			ticket = Helpdesk::Ticket.last
+			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket.attachments.size.should eql 0
 		end
 
 		it "with inline attachments" do
