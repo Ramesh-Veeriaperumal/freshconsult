@@ -111,7 +111,7 @@ class Subscription < ActiveRecord::Base
   #Monthly revenue in local currency
   def self.fetch_monthly_revenue(currency)
     subscriptions = paying_subscriptions.filter_with_currency(currency)
-    subscriptions.inject(0) { |sum, subscription| sum + subscription.amount }
+    subscriptions.inject(0) { |sum, subscription| sum + cmrr_in_local_currency }
   end
 
   def self.free_agent_count
@@ -124,6 +124,10 @@ class Subscription < ActiveRecord::Base
 
   def usd_equivalent
     (amount * currency_exchange_rate).to_f
+  end
+
+  def cmrr_in_local_currency
+    (amount/renewal_period).to_f
   end
 
   
@@ -312,8 +316,13 @@ class Subscription < ActiveRecord::Base
     alias :is_paid_account :paid_account?
     
     def total_amount(addons, coupon_code)      
-      response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
-      self.amount = to_currency(response.estimate.amount)
+      unless active?
+        response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
+        self.amount = to_currency(response.estimate.amount)
+      else
+        response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
+        self.amount = to_currency(response.estimate.amount)
+      end
     end
     
     def cache_old_model
