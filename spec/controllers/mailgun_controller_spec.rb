@@ -26,7 +26,7 @@ describe MailgunController do
     email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
     post :create, email
     puts response.status
-    response.status.should eql "302 found"
+    response.status.should eql "302 Found"
   end
 
 end

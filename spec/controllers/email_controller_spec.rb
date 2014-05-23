@@ -13,6 +13,12 @@ describe EmailController do
     response.status.should eql "200 OK"
   end
 
+  it "should give new email template" do
+    get :new
+    puts response.status
+    response.status.should eql "200 OK"
+  end
+
   it "should give 200 even on wrong address" do
     email2 = new_email({:email_config => Faker::Internet.email})
     post :create, :params => email2
