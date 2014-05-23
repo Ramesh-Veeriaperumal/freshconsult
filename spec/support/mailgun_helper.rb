@@ -1,28 +1,36 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 include ActionController::TestProcess
 
-module EmailHelper
+module MailgunHelper
 
 	RANGE = [*'0'..'9', *'a'..'z', *'A'..'Z', *'-', *'.']
 
 	attr_accessor :to, :from, :cc, :reply_to, :attachments, :cid
 
-	def new_email options={}
+	def new_mailgun_email options={}
 		set_essentials(options)
-		mail_main = Faker::Lorem.paragraphs(5).join(" ")
-		generate_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
+		env = get_m_envelope(options[:email_config], options[:another_config])
+		email_body = Faker::Lorem.paragraphs(5).join(" ")
+		generate_mailgun_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
 		{
 			:from => from,
-			:to => to,
-			:cc => cc,
-			:html => Nokogiri::HTML(mail_main).at_css('body').inner_html,
-			:text => mail_main,
+			"To" => to,
+			"Cc" => cc,
+			"body-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
+			"stripped-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
+			"body-plain" => email_body,
+			"stripped-text" => email_body,
 			:headers => get_header(options[:email_config], options[:m_id], options[:auto]),
-			:subject => Faker::Lorem.words(10).join(" "),
+			"subject" => Faker::Lorem.words(10).join(" "),
 			:sender_ip => random_ip,
-			:envelope => get_envelope(options[:email_config], options[:another_config]),
+			:recipient => env[:to],
+			:sender => env[:from],
 			:dkim =>"{@gmail.com : fail (body has been altered)}",
-			:attachments => options[:attachments] || 0,
+			"attachment-count" => options[:attachments] || 0,
+			"Message-Id" => message_id,
+			"References" => generate_references(options[:m_id]),
+			"In-Reply-To" => options[:m_id] || "",
+			"Reply-To" => options[:reply] || random_email,
 			:SPF => "pass"
 		}.merge(attachments || {})
 	end
@@ -31,28 +39,25 @@ module EmailHelper
 		self.from = random_email
 		self.to = generate_emails(rand(5), options[:email_config], options[:include_to])
 		self.cc = generate_emails(rand(10), options[:include_cc])
-		# self.mail_main = Faker::Lorem.paragraphs(5).join(" ")
+		# self.email_body = Faker::Lorem.paragraphs(5).join(" ")
 		self.reply_to = options[:reply]
 	end
 
-	def generate_attachments number, content_id=nil, large=nil
+	def generate_mailgun_attachments number, content_id=nil, large=nil
 		attach = {}
 		attachment_in = {}
 		number.times do |i|
 			if large
 				buffer = ("a" * 1024).freeze
-				file = File.open("spec/fixtures/files/temp/tmp15.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment#{i+1}"] = fixture_file_upload("files/temp/tmp15.txt", 'text')
-				attachment_in["attachment#{i+1}"] = {:filename => "tmp15.txt", :name => "tmp15.txt", :type => 'text'}
+				file = File.open("spec/fixtures/files/temp/tmp15m.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
+				attach["attachment-#{i+1}"] = fixture_file_upload("files/temp/tmp15m.txt", 'text')
 			else
-				file = fixture_file_upload('files/image4kb.png', 'image/png')
-				attach["attachment#{i+1}"] = file
-				attachment_in["attachment#{i+1}"] = {:filename => "image4kb.png", :name => "image4kb.png", :type => 'image/png'}
+				file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+				attach["attachment-#{i+1}"] = file
 			end
 		end
-		attach = con_ids(attach) if content_id
-		attachment_in = attachment_info_cid(attachment_in) if content_id
-		attach["attachment-info"] = attachment_in.to_json
+		attach = con_m_ids(attach) if content_id
+		# attach = attachment_info_cid(attach) if content_id
 		self.attachments = attach
 	end
 
@@ -114,13 +119,13 @@ module EmailHelper
 		"#{email || random_email}"
 	end
 
-	def get_envelope email_config, another_config = nil
+	def get_m_envelope email_config, another_config = nil
 		a = {
-			:to => [email_config],
+			:to => email_config,
 			:from => from
 		}
-		a[:to] << another_config if another_config
-		a.to_json
+		a[:to] = a[:to]+", #{another_config}" if another_config
+		a
 	end
 
 	def span_gen(ticket_id)
@@ -153,28 +158,36 @@ module EmailHelper
 		%(>From: #{format_3}\n)
 	end
 
-	def charset_hash(different=nil)
+	def m_charset_hash
 		{
 			:to => "utf8",
 			:cc => "utf8",
-			:html => different ? "unicode" : "ISO-8859-1",
-			:subject => different ? "ks_c_5601-1987" : "utf8",
+			:html => "ISO-8859-1",
+			:subject => "utf8",
 			:text => "ISO-8859-1"
 		}.to_json
 	end
 
-	def con_ids attach
+	def con_m_ids attach
 		self.cid = random_string(20)
-		attach["content-ids"] = {cid => "attachment1"}.to_json
+		attach["content-id-map"] = {cid => "attachment-1"}.to_json
 		attach
 	end
 
-	def attachment_info_cid attachment_in
-		attachment_in["attachment1"].merge!({"content_id" => cid})
+	def attachment_info_m_cid attach
+		attach["attachment-1"].merge!({"content_id" => cid})
 	end
 
 	def content_id
 		cid
+	end
+
+	def mailgun_essentials
+		{
+			"signature" => "9da86477ca20cca1f39a78eb5e89b6b9f939971fa065c0a724fe964098227978",
+			"token" => "1n1vfgzo9f79bwws1j73a17cceq1ef0fdufi1-8u19-614n3f6",
+			"timestamp" => "1400147147"
+		}
 	end
 
 end

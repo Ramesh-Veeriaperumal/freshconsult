@@ -23,6 +23,8 @@ describe Helpdesk::RemindersController do
                     :_ => "",  
                     :ticket_id => @test_ticket.display_id
                   }
+    p "@test_ticket.reminders.first.body"
+    p @test_ticket.reminders.first.body              
     @test_ticket.reminders.first.body.should be_eql(test_body)
   end
 

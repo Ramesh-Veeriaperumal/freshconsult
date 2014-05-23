@@ -539,6 +539,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_email_hash_value
     end
 
+    #possible unwanted code. Not used now.
     def clip_large_html
       return unless params[:html]
       @description_html = Helpdesk::HTMLSanitizer.clean(params[:html])

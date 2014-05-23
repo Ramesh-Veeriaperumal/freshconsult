@@ -39,7 +39,7 @@ describe ContactsController do
   it "should edit an existing contact" do
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save
+    contact.save(false)
     get :edit, :id => contact.id
     response.body.should =~ /Edit Contact/
     test_email = Faker::Internet.email

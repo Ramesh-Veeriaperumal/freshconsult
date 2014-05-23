@@ -41,10 +41,13 @@ module UsersHelper
 
   def add_new_user(account, options={})
     new_user = Factory.build(:user, :account => account,
-                                    :name => Faker::Name.name,
-                                    :email => Faker::Internet.email,
-                                    :time_zone => "Chennai",
-                                    :delta => 1,
+                                    :name => Faker::Name.name, 
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :time_zone => "Chennai", 
+                                    :delta => 1, 
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
                                     :language => "en")
     new_user.save(false)
     new_user

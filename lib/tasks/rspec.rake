@@ -18,6 +18,7 @@ end
 
 FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb"]
+
 UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/groups_controller_spec.rb",
              "spec/controllers/contacts_controller_spec.rb",
@@ -30,6 +31,8 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/helpdesk/*_spec.rb",
              "spec/controllers/admin/**/*_spec.rb",
              "spec/controllers/support/*_spec.rb",
+             "spec/controllers/email_controller_spec.rb",
+             "spec/controllers/mailgun_controller_spec.rb",
              "spec/controllers/social/gnip_twitter_controller_spec.rb",
              "spec/controllers/social/twitter_handles_controller_spec.rb",
              "spec/controllers/negative/**/*_spec.rb",
@@ -38,13 +41,15 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/models/social/twitter_*_spec.rb",
              "spec/controllers/api/xml/*_api_spec.rb",
              "spec/controllers/api/json/*_api_spec.rb",
-             "spec/models/social/twitter_*_spec.rb",
              "spec/controllers/integrations/logmein_controller_spec.rb",
              "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-             "spec/controllers/sso_controller_spec.rb"]
-ModelTest = ["spec/models/helpdesk/*_spec.rb"]
+             "spec/controllers/sso_controller_spec.rb",
+             "spec/lib/*_email_spec.rb"]
 
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest]
+ModelTest = ["spec/models/helpdesk/*_spec.rb"]
+EmailTest = ["spec/lib/*_email_spec.rb"]
+
+AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest]
 AllTest.flatten!.uniq!
 
 # Don't load rspec if running "rake gems:*"
@@ -219,6 +224,15 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
         t.spec_files = FileList.new(UnitTest)
+      end
+    end
+
+    namespace :email_tests do
+      desc "Running all email tests"
+      Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(EmailTest)
       end
     end
 

@@ -7,7 +7,8 @@ SimpleCov.start do
   add_filter 'config/'
   add_filter 'test/'
   #add_filter '/vendor/'
-  add_group 'email', 'lib/helpdesk/email'
+  add_group 'mailgun', 'lib/helpdesk/email'
+  add_group 'email', 'lib/helpdesk/process_email.rb'
   add_group 'plugins', '/vendor/'
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
@@ -49,7 +50,6 @@ Spork.prefork do
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
     config.include AccountHelper
     config.include AgentHelper
-    config.include EmailHelper
     config.include TicketHelper
     config.include GroupHelper
     config.include TwitterHelper
@@ -69,11 +69,13 @@ Spork.prefork do
       @user = add_test_agent(@account, false)
     end
 
-    config.before(:each, :type => :controller) do
+    config.before(:each, :type => :controller) do |x|
       @request.host = @account.full_domain
       @request.env['HTTP_REFERER'] = 'sessions/new'
       @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+
+      puts "#{x.class.description} #{x.description}"
     end
 
     config.before(:suite) do
@@ -83,7 +85,12 @@ Spork.prefork do
                                  {:pre_count => true, :reset_ids => false})
     end
 
-    # == Fixtures
+    config.after(:suite) do
+      Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
+        File.delete(file)
+      end
+    end
+    
     #
     # You can declare fixtures for each example_group like this:
     #   describe "...." do
