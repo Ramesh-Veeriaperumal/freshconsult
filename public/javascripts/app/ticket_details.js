@@ -250,6 +250,11 @@ $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() 
 	}
 });
 
+// Attach file button click action
+$('body').on('click.ticket_details', '.add_attachment', function() {
+	$(this).siblings('.original_input').trigger('click');
+});
+
 // This has been moved as a on click event directly to the cancel button 
 // jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
 
