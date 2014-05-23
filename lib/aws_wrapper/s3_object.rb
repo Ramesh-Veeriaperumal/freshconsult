@@ -12,6 +12,12 @@ module AwsWrapper
       s3object.url_for(:read,options).to_s
     end
 
+    def self.read(content_path,bucket_name,options={})
+      bucket = AWS::S3::Bucket.new(bucket_name)
+      s3object = AWS::S3::S3Object.new(bucket,content_path)
+      s3object.read(options)
+    end
+
     def self.store(file_path,file,bucket_name,options={})
       AWS::S3::Bucket.new(bucket_name).objects[file_path].write(file,options)
     end

@@ -250,6 +250,11 @@ $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() 
 	}
 });
 
+// Attach file button click action
+$('body').on('click.ticket_details', '.add_attachment', function() {
+	$(this).siblings('.original_input').trigger('click');
+});
+
 // This has been moved as a on click event directly to the cancel button 
 // jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
 
@@ -322,6 +327,7 @@ var updatePagination = function() {
 			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
+			$('#ticket_original_request,.details').find("a").prop("target","_blank")
 			trigger_event("ticket_show_more",{})
 			try {
 			freshfonePlayerSettings();
@@ -1138,6 +1144,14 @@ var scrollToError = function(){
 			ev.stopPropagation();
 		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
+	});
+
+	$('body').on('click.ticket_details', '[rel=review-button]','[id=ReviewButton]', function(ev) {
+		if(confirm("Do you want to send request for App review?")) {
+			$("#HelpdeskReviewNotes").submit();
+		}
+		ev.preventDefault();
+		ev.stopPropagation();
 	});
 	//ScrollTo the latest conversation
 

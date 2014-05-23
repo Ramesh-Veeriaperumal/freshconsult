@@ -17,6 +17,7 @@ describe AgentsController do
     @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
                                         (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     log_in(@user)
+    # Delayed::Job.destroy_all
   end
 
   it "should create a new agent" do
@@ -44,6 +45,7 @@ describe AgentsController do
     created_user = @account.user_emails.user_for_email(test_email)
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
+    # Delayed::Job.last.handler.should include("A new agent was added in your helpdesk")
   end
 
   it "should list all the created agents in the index page" do
@@ -86,12 +88,57 @@ describe AgentsController do
     edited_user.agent.ticket_permission.should be_eql(2)
   end
 
+  it "should convert a full time agent to occasional" do
+    user = @account.users.find_by_email(@user.email)
+    agent = user.agent
+    get :edit, :id => agent.id
+    response.body.should =~ /Edit Agent/
+    put :update, :id => agent.id, :agent => { :occasional => 1, 
+                                              :scoreboard_level_id => agent.scoreboard_level_id,
+                                              :user_id => user.id, 
+                                              :ticket_permission => 1
+                                            }, 
+                                   :user => { :helpdesk_agent => true, 
+                                              :name => user.name, 
+                                              :email => user.email, 
+                                              :time_zone => user.time_zone, 
+                                              :language => user.language
+                                            }
+    edited_user = @account.users.find_by_email(user.email)
+    edited_user.should be_an_instance_of(User)
+    edited_user.agent.occasional.should be_eql(true)
+    # Delayed::Job.last.handler.should include("#{edited_user.name} was converted to an occasional agent")
+  end
+
+  it "should convert an occasional to full time agent" do
+    user = @account.users.find_by_email(@user.email)
+    agent = user.agent
+    get :edit, :id => agent.id
+    response.body.should =~ /Edit Agent/
+    put :update, :id => agent.id, :agent => { :occasional => 0, 
+                                              :scoreboard_level_id => agent.scoreboard_level_id,
+                                              :user_id => user.id, 
+                                              :ticket_permission => 1
+                                            }, 
+                                   :user => { :helpdesk_agent => true, 
+                                              :name => user.name, 
+                                              :email => user.email, 
+                                              :time_zone => user.time_zone, 
+                                              :language => user.language
+                                            }
+    edited_user = @account.users.find_by_email(user.email)
+    edited_user.should be_an_instance_of(User)
+    edited_user.agent.occasional.should be_eql(false)
+    # Delayed::Job.last.handler.should include("#{edited_user.name} was converted to a full time agent")
+  end
+
   it "should convert a full time agent to a customer" do
     new_user = add_test_agent(@account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => new_user.agent.id
     @account.users.find(new_user.id).helpdesk_agent.should be_false
     @account.agents.find_by_user_id(new_user.id).should be_nil
+    # Delayed::Job.last.handler.should include("#{new_user.name} was deleted")
   end
 
   it "should delete an agent" do

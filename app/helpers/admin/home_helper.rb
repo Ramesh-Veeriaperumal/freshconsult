@@ -28,6 +28,10 @@ module Admin::HomeHelper
         :url                           =>   "/admin/widget_config",
         :privilege                     =>   privilege?(:admin_tasks)
       },
+      :mobihelp                        =>   {
+        :url                           =>   "/admin/mobihelp/apps",
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
       :rebranding                      =>   {
         :url                           =>   "/account/edit",
         :privilege                     =>   privilege?(:admin_tasks)

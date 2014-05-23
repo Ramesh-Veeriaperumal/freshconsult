@@ -28,6 +28,7 @@ Authority::Authorization::PrivilegeList.build do
 	resource :"mobile/notification"
     resource :"social/twitter_handle",
        :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
+    resource :"helpdesk/mobihelp_ticket_extra"
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -62,7 +63,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
-    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook]
+    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
@@ -299,6 +300,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"support/preview"
     resource :"admin/chat_setting"
     resource :"api_webhook", :only => [:create, :destroy]
+    resource :"admin/mobihelp/app"
   end
 
   manage_account do

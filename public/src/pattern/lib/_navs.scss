@@ -401,3 +401,16 @@
   background-color: transparent;
   cursor: default;
 }
+  
+//Selection Tab on bottom
+.selection-bottom > .nav-tabs > li > a{
+  border:0;
+  background-color:transparent;
+}
+
+.selection-bottom > .nav-tabs > li.active > a,
+.selection-bottom > .nav-tabs > .active > a:hover {
+  border: 0;
+  border-bottom: 5px solid #838383;
+  font-weight: bold;
+}  

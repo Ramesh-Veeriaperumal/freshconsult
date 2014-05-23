@@ -224,5 +224,6 @@ class Account < ActiveRecord::Base
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   
   has_one :chat_setting
+  has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
 
 end

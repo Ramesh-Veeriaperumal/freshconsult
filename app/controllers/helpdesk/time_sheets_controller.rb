@@ -221,8 +221,8 @@ private
   #API Method
   def get_time_sheets
     # start date is set to the zero if nothing is specified similarly End date is set to current time.
-    start_date = (params[:start_date].blank?) ? 0: params[:start_date] 
-    end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : params[:end_date]
+    start_date = (params[:start_date].blank?) ? 0: Time.zone.parse(params[:start_date])
+    end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : Time.zone.parse(params[:end_date])
     
     #agent/email name 
     email = params[:email]

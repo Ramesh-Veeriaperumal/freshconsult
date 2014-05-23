@@ -10,6 +10,7 @@ describe TicketFieldsController do
     @account = create_test_account
     @user = add_test_agent(@account)
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.delete(:level_three_present)
   end
 
   before(:each) do

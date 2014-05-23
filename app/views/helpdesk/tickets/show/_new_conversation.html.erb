@@ -16,12 +16,12 @@
 												:id => "suggested_solutions_show") %>
 				</div>
         <% if privilege?(:reply_ticket) %>
-			  	<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
+       		<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
 			  				:locals => { 	:id => 'send-email', 
 			  								:cntid => 'cnt-reply', 
 		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
 		  									:conv_id => nil 
-		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook?) and (@item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook? or @ticket.mobihelp?) and @item.from_email.present? %>
   				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
   							:locals => { 
   										:id => 'send-tweet', 
@@ -34,6 +34,12 @@
   										:cntid => 'cnt-reply', 
   										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
   									}) if @ticket.is_facebook? %>
+  				<%= render(	:partial => '/helpdesk/tickets/show/mobihelp_reply_form', 
+  							:locals => { 
+  										:id => 'send-mobihelp-chat', 
+  										:cntid => 'cnt-reply', 
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+  									}) if @ticket.mobihelp?%>					
         <% end %>
 
 			  <% if privilege?(:forward_ticket) %>
@@ -56,13 +62,22 @@
 									}) %>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply">
-				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp?) %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
 				<% end %>
         <% if privilege?(:forward_ticket) %>
 				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
         <% end %>
 				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
+        <% if @ticket.mobihelp? %>
+        	/ <%= link_to 'Request App review', "#", :id => "ReviewButton", :rel => "review-button" %>
+					<%= render(:partial => '/helpdesk/tickets/show/app_review_form', 
+						:locals => { 
+								:id => 'review-request',	
+								:cntid => "cnt-review-note", 
+								:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+							}) %>
+				<% end %>
 			</div>
 		</div>
 

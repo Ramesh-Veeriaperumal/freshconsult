@@ -1,0 +1,46 @@
+<% content_for :helpcard do -%>
+  <%= render :partial => "helpnote" %>
+<%-end %>
+
+<ul class="breadcrumb">
+  <li><%= link_to t('header.tabs.admin').html_safe, admin_home_index_path %> <span class="divider">/</span></li>
+  <li class="active"><%= "#{t('admin.mobihelp.human_name')}" %></li>
+</ul>
+
+<% @applist.empty? ? @page_title = t('admin.mobihelp.apps.index.no_app.title') : @page_title = t('admin.mobihelp.apps.index.title') %>
+
+<div class="list-page mobihelp-apps" id="app-index">
+  <div class="list-page-header">
+    <div class="row-fluid">
+      <div class="span6">
+        <%= content_tag :h3, @page_title, :class => "lead" %>
+      </div>
+      <%unless @applist.empty? %>
+        <div class="btn-group dropdown pull-right">
+          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><%= t('admin.mobihelp.apps.index.new_app') %>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <%Mobihelp::App::PLATFORM_NAMES_BY_ID.each do |k,v| %>
+              <%unless k ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
+                <li><%= link_to v, new_admin_mobihelp_app_path(:platform => k)%></li>
+              <%else%>
+                <li class="disabled"><%= link_to "#{v} - #{t('admin.mobihelp.apps.helpnote.content2.download_ios_sdk')}", "#"%> </li>
+              <%end%>
+            <%end%>
+          </ul>
+        </div>
+      <%end%>
+    </div>
+  </div>
+
+  <% if @applist.empty? %>
+    <%= render :partial => "no_app" %>
+  <% else %>
+    <div class="list-page-body product-list" id="multi-product-list">
+      <table class="table table-striped">
+        <%= render(:partial => "app", :collection => @applist) %>
+      </table>
+    </div>
+  <% end %>
+</div>

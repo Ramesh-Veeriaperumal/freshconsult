@@ -10,23 +10,6 @@ module AccountHelper
       create_dummy_customer
       return @acc
     end
-    # @email_config = Factory.build(:primary_email_config)
-    # @portal = Factory.build(:main_portal)
-
-    # @acc = Factory.build(:account, :primary_email_config => @email_config, :main_portal => @portal,
-    #                      :name => name, :full_domain => domain)
-    # sub = Factory.build(:subscription, :subscription_plan => @acc.plan, :account => @acc)
-    # @user1 = Factory.build(:user, :account => @acc)
-    # @acc.user = @user1
-    # @acc.subscription = sub
-    # @acc.main_portal = @portal
-    # PortalObserver.any_instance.stubs(:after_save => true)
-    # Account.any_instance.stubs(:change_shard_mapping => true)
-    # AccountConfiguration.any_instance.stubs(:after_update => true)
-    # Account.any_instance.stubs(:change_shard_status => true)
-    # @acc.save
-    # @acc.make_current
-    # create_dummy_customer
     ENV["SEED"]="002_subscription_plans"
     SeedFu::PopulateSeed.populate
     ENV["SEED"] = nil
@@ -34,7 +17,6 @@ module AccountHelper
       :account_name => 'Test Account',
       :account_domain => 'localhost',
       :locale => I18n.default_locale,
-      
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
@@ -42,6 +24,7 @@ module AccountHelper
       :user_helpdesk_agent => true
     )
     signup.save
+    PopulateGlobalBlacklistIpsTable.create_default_record
     @acc = signup.account
     update_currency
     @acc.make_current

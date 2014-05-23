@@ -37,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   text_datastore_callbacks :class => "ticket"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -249,7 +249,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def mobihelp?
-    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+    source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
   end
 
   def priority=(val)
@@ -377,7 +377,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def included_in_to_emails?(from_email)
-    (self.to_emails || []).include?(from_email.downcase)
+    (self.to_emails || []).select{|email_id| email_id.include?(from_email.downcase) }.present?
   end
 
   def ticket_id_delimiter
@@ -443,7 +443,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_interaction  
-    notes.visible.public.newest_first.exclude_source("feedback").first.body
+    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.body
   end
 
   #To use liquid template...

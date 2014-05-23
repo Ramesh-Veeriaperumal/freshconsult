@@ -4,7 +4,7 @@ module Reports::CreateReportingMonthlyTables
 	  begin
 	  	for m in 1..12
 		    ActiveRecord::Schema.define do
-		    	execute("create table ticket_stats_2013_#{m} (
+		    	execute("create table ticket_stats_#{Time.now.year}_#{m} (
 						account_id bigint(20) unsigned DEFAULT NULL,
 						ticket_id bigint(20) unsigned DEFAULT NULL,
 						created_at datetime DEFAULT NULL,

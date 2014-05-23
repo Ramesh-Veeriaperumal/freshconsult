@@ -13,10 +13,10 @@
     <div class="list_agents_replying" class="hide"></div>
     <%= content_tag( :div, t("ticket.note_form.form_title"), :class => "form_title" ) %>
     <%= f.error_messages %>
-    <ul class="ui-form dont-validate">
+    <ul class="ui-form dont-validate botm-space">
 
       <li class="inline-field field notify_agent">
-        <label class="notify" for="helpdesk_note_to_emails">
+        <label class="notify mailaddr-label from" for="helpdesk_note_to_emails">
           <%= t("ticket.note_form.notify_agents") %>:
         </label>
         <div class="email_container">
@@ -50,7 +50,7 @@
 
     <div id="toggle-note-visibility">
       <label><%= t("helpdesk.tickets.note.public_note_tip") %></label>
-      <%= f.check_box(:private, :checked => true, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes") %>
+      <%= f.check_box(:private, :checked => true, :disabled => @ticket.mobihelp?, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes") %>
     </div>
 
 

@@ -53,6 +53,11 @@
 	<script type='text/javascript' src='https://asset.freshpo.com/javascripts/frameworks/jquery.js?20131211'></script>
     <script src="https://asset.freshpo.com/javascripts/redactor/redactor.js?20131211" type="text/javascript"></script>
     <script src="https://asset.freshpo.com/javascripts/redactor/freshdesk_redactor.js?20131211" type="text/javascript"></script>
+    <link type="text/css" rel="stylesheet" media="screen, projection" href="asset.freshpo.com/stylesheets/plugins/redactor.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/stylesheets/plugins/zpluginhack.css?20130322">
+	<script src="https://asset.freshpo.com/javascripts/prototype.js" type="text/javascript"></script>
+	<script src="https://asset.freshpo.com/javascripts/lib/nestedtree.js" type="text/javascript"></script>
+    <script src="https://asset.freshpo.com/javascripts/frameworks/plugins/jquery.nested_select_tag.js" type="text/javascript"></script>
 
       <style type="text/css">
 		html {
@@ -226,6 +231,9 @@
 			hideLoading();
 			postProcess();
 			autoHeight();
+			jQuery("li.nested_field script").each(function() { 
+				jQuery(this).appendTo(document.body);
+			});
 		};
 
 		function populateFields() {

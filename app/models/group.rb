@@ -15,6 +15,7 @@ class Group < ActiveRecord::Base
    has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
 
    has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
+   has_many :email_configs, :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    belongs_to :business_calendar

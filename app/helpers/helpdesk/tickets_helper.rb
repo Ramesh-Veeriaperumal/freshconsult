@@ -216,16 +216,11 @@ module Helpdesk::TicketsHelper
     html = ""
     unless emails.blank?
       if emails.length < 3
-        html << content_tag(:span, 
-                            "#{label}" + emails.join(", ").html_safe , 
-                            :class => "") 
+        html << content_tag(:span, (label + html_escape(emails.join(", "))).html_safe)
       else
-        html << content_tag(:span, 
-                            ("#{label}" + emails[0,2].join(", ").html_safe + 
-                            "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
-                            emails[2,emails.length].join(", ").html_safe + 
-                            " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
-                            t('ticket_cc_email_more')+"</a>").html_safe , :class => "")
+        html << content_tag(:span, (label + html_escape(emails[0,2].join(", ")) + 
+                                    content_tag(:span, html_escape(', ' + emails[2,emails.length].join(", ")), :class => 'toEmailMoreContainer hide') +
+                                    link_to(" #{emails.length-2} #{t('ticket_cc_email_more')}", 'javascript:showHideToEmailContainer();', :class => 'toEmailMoreLink')).html_safe)
       end
     end
     html.html_safe

@@ -23,6 +23,8 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
                     "spec/controllers/contact_merge_controller_spec.rb",
                     "spec/controllers/user_emails_controller_spec.rb",
                     "spec/controllers/customers_controller_spec.rb",
+                    "spec/controllers/profiles_controller_spec.rb", 
+                    "spec/controllers/security_controller_spec.rb",
                     "spec/controllers/ticket_fields_controller_spec.rb",
                     "spec/controllers/discussions/*_spec.rb",
                     "spec/controllers/helpdesk/*_spec.rb",
@@ -30,11 +32,21 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
                     "spec/controllers/negative/*_spec.rb",
                     "spec/models/helpdesk/mysql_*_spec.rb",
                     "spec/lib/social/twitter/*_spec.rb",
+                    "spec/models/social/twitter_*_spec.rb",
+                    "spec/controllers/api/xml/*_api_spec.rb",
+                    "spec/controllers/api/json/*_api_spec.rb",
                     "spec/models/social/twitter_*_spec.rb"]
-ModelTest = ["spec/models/helpdesk/*_spec.rb"]
+ModelTest = ["spec/models/helpdesk/*_spec.rb"]                    
+MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
+                "spec/controllers/mobihelp/devices_controller_spec.rb",
+                "spec/controllers/mobihelp/solutions_controller_spec.rb",
+                "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
+                "spec/models/mobihelp/app_spec.rb",
+                "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
+                ]                    
 
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest]
-AllTest.flatten!.uniq!
+AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,MobihelpTest]
+AllTest.flatten!.uniq! 
 
 # Don't load rspec if running "rake gems:*"
 unless ARGV.any? {|a| a =~ /^gems/}
@@ -84,6 +96,7 @@ end
 
 namespace :spec do
   desc "Run all specs in spec directory with RCov (excluding plugin specs)"
+
   Spec::Rake::SpecTask.new(:rcov) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
     t.spec_files = FileList['spec/**/*_spec.rb']
@@ -160,6 +173,32 @@ namespace :spec do
         end
       end
     end
+
+    task :reset do
+      require 'faker'
+      require 'simplecov'
+      require 'active_record'
+      load 'Rakefile'
+      config = YAML::load(IO.read(File.join(RAILS_ROOT, 'config/database.yml')))
+      ActiveRecord::Base.establish_connection(config["test"])
+      ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
+        t.string   "name"
+        t.decimal  "amount",          :precision => 10, :scale => 2
+        t.datetime "created_at"
+        t.datetime "updated_at"
+        t.integer  "renewal_period",                                 :default => 1
+        t.decimal  "setup_amount",    :precision => 10, :scale => 2
+        t.integer  "trial_period",                                   :default => 1
+        t.integer  "free_agents"
+        t.decimal  "day_pass_amount", :precision => 10, :scale => 2
+        t.boolean  "classic",                                        :default => false
+        t.text     "price"
+      end
+      Rake::Task["db:schema:load".to_sym].invoke
+      Rake::Task["db:create_reporting_tables".to_sym].invoke
+      Rake::Task["db:create_trigger".to_sym].invoke
+      Rake::Task["db:perform_table_partition".to_sym].invoke
+    end
   end
 
   namespace :social do
@@ -177,9 +216,18 @@ namespace :spec do
 
   namespace :unit_tests do
     desc "Running all integration tests"
+    Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
     Spec::Rake::SpecTask.new(:all) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
       t.spec_files = FileList.new(UnitTest)
+    end
+  end
+
+  namespace :mobihelp do
+    desc "Running all mobihelp tests"
+    Spec::Rake::SpecTask.new(:all) do |t|
+      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_files = FileList.new(MobihelpTest)
     end
   end
 

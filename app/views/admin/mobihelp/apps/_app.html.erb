@@ -1,0 +1,14 @@
+<tr>
+  <td> 
+			<div class="preview-image">
+        <div class="<%= app.platform == Mobihelp::App::PLATFORM_ID_BY_KEY[:android] ? "common-icon-android_blue" : "common-icon-apple_blue" %> m2"></div>
+      </div>
+		<p class="text-info">
+			<%= link_to app.name, edit_admin_mobihelp_app_path(app) ,:class=> "item_info"%>
+		</p>
+  </td>
+  <td class="text-center"><%= Mobihelp::App::PLATFORM_NAMES_BY_ID[app.platform] %></td>
+  <td class="text-right">
+    <%= link_to t('edit'), edit_admin_mobihelp_app_path(app), :class => "btn btn-mini" %>
+  </td>
+</tr>

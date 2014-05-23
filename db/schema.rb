@@ -1456,6 +1456,52 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.integer  "account_id",               :limit => 8
   end
 
+  create_table "mobihelp_apps", :force => true do |t|
+    t.integer  "account_id", :limit => 8, :null => false
+    t.string   "name",                    :null => false
+    t.integer  "platform",                :null => false
+    t.string   "app_key",                 :null => false
+    t.string   "app_secret",              :null => false
+    t.text     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_apps", ["account_id", "app_key", "app_secret"], :name => "index_mobihelp_apps_on_account_id_and_app_key_and_app_secret", :unique => true
+  add_index "mobihelp_apps", ["account_id", "name", "platform"], :name => "index_mobihelp_apps_on_account_id_and_name_and_platform", :unique => true
+  add_index "mobihelp_apps", ["account_id"], :name => "index_mobihelp_apps_on_account_id"
+
+  create_table "mobihelp_devices", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "user_id",     :limit => 8, :null => false
+    t.integer  "app_id",      :limit => 8, :null => false
+    t.string   "device_uuid",              :null => false
+    t.text     "info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_devices", ["account_id", "app_id", "device_uuid"], :name => "index_mobihelp_devices_on_account_id_and_app_id_and_device_uuid", :unique => true
+  add_index "mobihelp_devices", ["account_id", "user_id", "device_uuid"], :name => "index_mobihelp_devices_on_account_id_and_user_id_and_device_uuid"
+
+  create_table "mobihelp_ticket_infos", :force => true do |t|
+    t.integer  "account_id",   :limit => 8, :null => false
+    t.integer  "ticket_id",    :limit => 8, :null => false
+    t.integer  "device_id",    :limit => 8, :null => false
+    t.text     "app_name",                  :null => false
+    t.text     "app_version",               :null => false
+    t.text     "os",                        :null => false
+    t.text     "os_version",                :null => false
+    t.text     "sdk_version",               :null => false
+    t.text     "device_make",               :null => false
+    t.text     "device_model",              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_ticket_infos", ["account_id", "device_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_device_id"
+  add_index "mobihelp_ticket_infos", ["account_id", "ticket_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_ticket_id", :unique => true
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8

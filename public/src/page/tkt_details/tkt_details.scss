@@ -508,21 +508,11 @@ ol, ul, li{
 .hidden_upload {
 	display: block;
 	width: 120px;
-	margin-left: 6px;
+	margin-left: 3px;
 	float: left;
 	clear: both;
 	overflow: hidden;
 	margin-top: -10px;
-	div {
-		color: #1272de;
-		width: 120px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		-o-text-overflow: ellipsis;
-		-webkit-text-overflow: ellipsis;
-		top: 14px;
-		position:relative;
-	}
 
 	span {
 		color: #1272de;
@@ -544,8 +534,17 @@ ol, ul, li{
 .add_attachment {
 	cursor: pointer;
 	height: 22px;
+	color: #1272de;
+	width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	-webkit-text-overflow: ellipsis;
+	top: 14px;
+	position:relative;
+	z-index: 2;
 	span{
-		padding: 0 5px 5px;
+		padding: 0 5px 5px 5px;
 		color: #1272de;
 		font-size: 22px;
 		font-weight: bold;
@@ -594,8 +593,8 @@ ol, ul, li{
 		display: inline-block;
 
     	.sav {
-    		background: transparent;
-    		border: solid 1px #999;
+    		background: #fafafa;
+    		border: solid 1px #ccc;
     		@include border-radius(4px);
     		color: #333;
     		float:left;
@@ -775,7 +774,6 @@ ol, ul, li{
 	.post_in_forum {
 		float: left; 
 		width: 200px;
-		margin: 15px 5px 0;
 		label {
 			display: block;
 			margin-right: 25px;
@@ -786,10 +784,6 @@ ol, ul, li{
 			[type="checkbox"] {
 				margin: 0 5px 0 0;
 			}
-		}
-
-		&.draft_saved {
-			margin-top:0;
 		}
 	}
 
@@ -876,9 +870,9 @@ ol, ul, li{
     		.clear_emails {
     			float:right;
     			width: 30px;
-    			padding: 5px 15px;
+    			margin-top: 5px;
+    			position: relative;
     			z-index: 2;
-    			position:relative;
     		}
     		.email_container {
     			width: 100%;
@@ -897,12 +891,9 @@ ol, ul, li{
 						background: rgba(240,240,240,0.3);
 						border: solid 1px #EEE;
 						padding: 2px 4px 3px 12px;
+						margin-top: 10px;
 					}
 				}
-			}
-
-			.request_form_options {
-				margin-top: -20px;
 			}
 
     		input[type=text] {
@@ -926,7 +917,8 @@ ol, ul, li{
     	}
 
     	ul.multi_value_field li.search_field_item {
-    		width: 100%;
+    		float: left;
+    		margin-top: 10px;
     	}
     	&.notify_agent{
     		overflow: hidden;
@@ -1027,7 +1019,7 @@ ol, ul, li{
     		}
 
     		.attachment_list {
-    			margin:2px 0 5px;
+    			margin: 8px 0 0;
     			float: left;
     			display: block;
     			width: auto;
@@ -1037,6 +1029,9 @@ ol, ul, li{
     			display: block;
     			background: none;
     			border: none;
+    			&:last-child {
+    				margin-bottom : 10px;
+    			}
 
     			a {
     				color: #000;
@@ -1061,6 +1056,14 @@ ol, ul, li{
     	}
 
     }
+
+    .mailaddr-label {
+		margin-top: 5px;
+		float: left;
+		&.from{
+			margin-top: 10px;
+		}
+	}
 
 	.uiButton {
 		background: #e7e7e7;
@@ -1089,14 +1092,13 @@ ol, ul, li{
 	}
 
     .request_panel .ui-form .request_form_options  {
-    	position: static;
+    	position: relative;
     	float: right;
-    	margin: 5px 0;
-    	width: 150px;
     	text-align: right;
+    	top: 8px;
+    	right: 0;
     	a {
     		margin: 10px 0 10px 10px;
-			padding: 5px 0 5px 5px;
     	}
     }
 
@@ -1105,7 +1107,6 @@ ol, ul, li{
     	margin: 0 0 20px;
     	background: transparent;
     	@include border-radius(5px);
-
     }
 
     .minimized .commentbox {
@@ -1301,7 +1302,7 @@ ol, ul, li{
 }
 
 .ticket_details {
-	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat {
 		overflow: hidden;
 	}
 }
@@ -2248,6 +2249,12 @@ ol, ul, li{
 	.attachment_contents {
 		float: left;
 		width: auto;
+		.alert-text{
+			color:red;
+		}
+		.invalid_attachment {
+			text-decoration: line-through;
+		}
 	}
 
 	.attachment_list {
@@ -2277,7 +2284,7 @@ ol, ul, li{
 		display: inline-block;
 		width: 9px;
 		height: 9px;
-		margin-right: 13px;
+		margin-right: 10px;
 	}
 
 	ul{
@@ -2288,7 +2295,7 @@ ol, ul, li{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
 		@include border-radius(4px);
-		padding: 5px 10px;
+		padding: 0 10px;
 		color: #1272de;
 		font-size: 12px;
 		margin: 5px;
@@ -2299,6 +2306,7 @@ ol, ul, li{
 		width: auto;
 		min-width: 100px;
 		margin-left:0;
+		margin-bottom: 0;
 		span{
 			color: #999999;
 		}
@@ -2872,6 +2880,100 @@ $collision_delay: 1s;
 	}
 }
 
+.shopify_customer{
+
+  .name{
+    font-weight: bold;
+  }
+}
+
+.shopify_orders_type{
+  padding-top: 10px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+.shopify_orders{
+  .status{
+    padding-bottom: 6px;
+    padding-top: 10px;
+    .shipping_status{
+      float: left;
+      background: #eee;
+      color: #333;
+      font-weight: inherit;
+    }
+    .payment_status{
+      float: right;
+      text-align: right;
+      background: #eee;
+      color: #333;
+      font-weight: inherit;
+    }
+
+  }
+
+  .price{
+    padding-bottom: 5px;
+    .amount{
+      float: right;
+      text-align: right;
+    }
+
+  }
+
+  .order_details{
+    float: left;
+    .number{
+      font-weight: bold;
+      color: #0066cc;
+    }
+    .items{
+      color: #999999;
+    }
+
+  }
+
+  .date{
+    padding-bottom: 10px;
+    color: #999999;
+  }
+
+  .empty_orders{
+    color: #999999 ;
+    padding: 77px;
+  }
+
+  .shipping_address{
+    padding-left: 56px;
+  }
+
+  .address{
+    color: #5C5C5C;
+  }
+  .address_1{
+    padding-left: 12px;
+  }
+
+  .line_items{
+    color: #5C5C5C;
+  }
+
+  .product{
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+  }
+
+  .notes{
+    color: #999999 ;
+    padding-bottom: 6px;
+  }
+
+}
+
 // ATTACHMENT DROP IN EMAIL - CSS
 .commentbox {
 	#ticket_original_request, .helpdesk_note .details {
@@ -3009,4 +3111,72 @@ $collision_delay: 1s;
 	padding-left: 15px;
 	padding-bottom: 10px;
 	padding-top: 5px;
+}
+
+.ticket-app-info{
+	.table{
+		table-layout: fixed;
+	}
+	td.app-info-data{
+		width: 50%;
+		padding: 10px;
+		border: 0;
+		border-bottom: 1px solid #eeeeee;
+		word-break: break-word;
+		&:nth-child(2n) {
+			font-weight: 500;
+		}
+	}
+	.ellips{
+		white-space: nowrap;
+		overflow: hidden;
+		-ms-text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		text-overflow: ellipsis;
+	}
+
+}
+
+
+.app-content-wrapper{
+	.nav-tabs{
+		border-bottom: 0;
+		margin-bottom: 0;
+	}
+	.pre-wrap{
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+	.tab-content{
+		max-height: 350px;
+		overflow: scroll;
+		background-color: #F6F6F6;
+		padding-left: 10px;
+		border: 1px solid #E0E0E0;
+		td.app-info-data{
+			width: 50%;
+			padding: 10px;
+			border: 0;
+			border-bottom: 1px solid #eeeeee;
+			word-break: break-word;
+			&:nth-child(2n) {
+				font-weight: 500;
+			}
+		}
+	}
+	.table{
+		width: 98%;
+	}
+	.list-header{
+		font-weight: bold;
+		color: #8E8E8E;
+		border-bottom: 1px solid #B3B3B3;
+	}
+}
+
+.code-view{
+	textarea.mobihelpcode{
+		height:60px;
+		margin-left: -20px;
+	}
 }
