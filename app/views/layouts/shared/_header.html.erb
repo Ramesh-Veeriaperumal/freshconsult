@@ -155,7 +155,7 @@
 					.removeAttr('disabled')
 				if (response.shortcuts_enabled) {
 					if(window.shortcuts !== undefined){
-						jQuery(document).trigger("shortcuts:invoke").scrollTop(0)
+						jQuery(document).trigger("shortcuts:invoke")
 					} else {
         				scriptLoader.load('shortcut');
 					}
