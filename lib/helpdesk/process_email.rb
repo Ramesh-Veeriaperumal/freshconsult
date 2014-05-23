@@ -423,8 +423,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           break
         end
         file_name = created_attachment.content_file_name
+        unique_file_name = file_name + "#{i}"
         if content_ids["attachment#{i+1}"]
-          content_id_hash[file_name] = content_ids["attachment#{i+1}"]
+          content_id_hash[unique_file_name] = content_ids["attachment#{i+1}"]
           created_attachment.description = "content_id"
         end
       end

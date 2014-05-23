@@ -70,8 +70,9 @@ class Helpdesk::Email::HandleTicket
 	def build_attachments item
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
-      file_name = create_attachment(item, "attachment-#{i+1}").content_file_name
-      content_id_hash[file_name] = cid(i) if cid(i)
+      created_file = create_attachment(item, "attachment-#{i+1}")
+      unique_file_name = created_file.content_file_name + "#{i}"
+      content_id_hash[unique_file_name] = cid(i) if cid(i)
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
 	end

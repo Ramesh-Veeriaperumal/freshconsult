@@ -367,8 +367,8 @@ private
     return if attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each do |attach| 
-      content_id = header[:content_ids][attach.content_file_name]
+    attachments.each_with_index do |attach, index| 
+      content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
     # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
