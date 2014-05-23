@@ -49,4 +49,10 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :picklist_value, :class => Helpdesk::PicklistValue do |f|
   end
+
+  Factory.define :helpdesk_note, :class => Helpdesk::Note do |note|
+    note.deleted 0
+    note.incoming 0
+    note.private 1
+  end
 end
