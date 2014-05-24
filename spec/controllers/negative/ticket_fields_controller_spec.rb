@@ -9,7 +9,7 @@ describe TicketFieldsController do
   before(:each) do
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
-    log_in(@user)
+    login_admin
   end
 
   it "should not allow duplicate custom field" do

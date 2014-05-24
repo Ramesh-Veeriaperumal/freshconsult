@@ -6,7 +6,7 @@ describe ContactsController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should not create a new contact without an email" do
@@ -15,7 +15,6 @@ describe ContactsController do
   end
 
   it "should not allow to create more agents than allowed by the plan" do
-    log_in(@user)
     contact = Factory.build(:user)
     contact.save
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)

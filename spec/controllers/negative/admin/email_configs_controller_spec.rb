@@ -5,7 +5,7 @@ describe Admin::EmailConfigsController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should not delete a primary email config" do

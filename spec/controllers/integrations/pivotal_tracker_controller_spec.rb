@@ -7,10 +7,10 @@ describe Integrations::PivotalTrackerController do
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     new_application = Factory.build(:application, :name => "pivotal_tracker",
-                                    :display_name => "pivotal_tracker", 
-                                    :listing_order => 23, 
+                                    :display_name => "pivotal_tracker",
+                                    :listing_order => 23,
                                     :options => {
-																        :keys_order => [:api_key, :pivotal_update], 
+																        :keys_order => [:api_key, :pivotal_update],
 																        :api_key => { :type => :text, :required => true, :label => "integrations.pivotal_tracker.api_key", :info => "integrations.pivotal_tracker.api_key_info"},
 																        :pivotal_update => { :type => :checkbox, :label => "integrations.pivotal_tracker.pivotal_updates"}
 																    },
@@ -18,15 +18,15 @@ describe Integrations::PivotalTrackerController do
     new_application.save(false)
 
     new_installed_application = Factory.build(:installed_application, :application_id => "23",
-                                              :account_id => @account.id, 
+                                              :account_id => @account.id,
                                               :configs => { :inputs => { :api_key => "f7e85279afcce3b6f9db71bae15c8b69", :pivotal_update => 1} }
                                               )
     new_installed_application.save(false)
 
   end
 
-   before(:each) do
-    log_in(@user)
+  before(:each) do
+    log_in(@agent)
   end
 
   it "should get pivotal updates" do
@@ -86,37 +86,37 @@ describe Integrations::PivotalTrackerController do
        when :task_create_activity
         changes = "other activites"
       end
-      post :pivotal_updates, { :helpdesk_note => { :body_html => "<div>#{changes}</div>", 
-                                     :user_id => @user.id, 
-                                     :private => true, 
-                                     :source => "2" 
+      post :pivotal_updates, { :helpdesk_note => { :body_html => "<div>#{changes}</div>",
+                                     :user_id => @agent.id,
+                                     :private => true,
+                                     :source => "2"
                                      },
                     :ticket_id => @test_ticket.display_id
                   }
       @test_note = @account.tickets.find(@test_ticket.id).notes
       @test_note.body_html.should be_eql("<div>#{changes}</div>")
     end
-    
+
   end
 
   it "should update installed application" do
   	installed_app = @account.installed_applications.with_name("pivotal_tracker").first
   	installed_app["configs"][:inputs]["webhooks_applicationid"] = [] unless installed_app["configs"][:inputs].include? "webhooks_applicationid"
-    unless installed_app["configs"][:inputs]["webhooks_applicationid"].include? 1234 
+    unless installed_app["configs"][:inputs]["webhooks_applicationid"].include? 1234
       installed_app["configs"][:inputs]["webhooks_applicationid"].push(12345)
       installed_app.save!
     end
   	data = "Story created"
-    post :update_config, { :helpdesk_note =>  {:body_html => "<div>#{data}</div>", 
-                                     :user_id => @user.id, 
-                                     :private => true, 
-                                     :source => "2" 
+    post :update_config, { :helpdesk_note =>  {:body_html => "<div>#{data}</div>",
+                                     :user_id => @agent.id,
+                                     :private => true,
+                                     :source => "2"
                                      },
                     :ticket_id => @test_ticket.display_id
                   }
   end
 
-  it "should add integrated resource" do 
+  it "should add integrated resource" do
     post :update_config, { "application_id" => 23, :integrated_resource => { :local_integratable_id => @test_ticket.id,
              :remote_integratable_id => "10234/stories/19484",
              :local_integratable_type => "issue-tracking", :account => @account }
@@ -124,4 +124,3 @@ describe Integrations::PivotalTrackerController do
               }
   end
 end
-

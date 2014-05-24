@@ -11,7 +11,7 @@ describe Helpdesk::SubscriptionsController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should add current user as a watcher" do

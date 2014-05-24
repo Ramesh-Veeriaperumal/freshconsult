@@ -9,7 +9,7 @@ describe Admin::EmailConfigsController do
     @name = Faker::Name.first_name
     @domain = Faker::Internet.domain_word
     @email = "#{@name}@#{@domain}.com"
-    log_in(@user)
+    login_admin
   end
 
   # Creating new email configs with and without custom mailbox

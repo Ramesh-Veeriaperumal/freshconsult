@@ -1,11 +1,8 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 module UsersHelper
-  def add_test_agent(account, create=true)
-    # unless create
-    #   agent = account.account_managers.first
-    #   return agent unless agent.nil?
-    # end
+  def add_test_agent(account=nil)
+    account = account || @account
     add_agent(account, {:name => Faker::Name.name,
                         :email => Faker::Internet.email,
                         :active => 1,
@@ -41,10 +38,10 @@ module UsersHelper
 
   def add_new_user(account, options={})
     new_user = Factory.build(:user, :account => account,
-                                    :name => Faker::Name.name, 
+                                    :name => Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
-                                    :time_zone => "Chennai", 
-                                    :delta => 1, 
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
                                     :deleted => options[:deleted] || 0,
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,

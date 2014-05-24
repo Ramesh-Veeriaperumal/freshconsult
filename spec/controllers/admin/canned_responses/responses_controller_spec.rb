@@ -8,22 +8,22 @@ describe Admin::CannedResponses::ResponsesController do
 	before(:all) do
 		@now = (Time.now.to_f*1000).to_i
 		@test_response_1 = create_response( {:title => "New Canned_Responses Hepler",:content_html => "DESCRIPTION: New Canned_Responses Hepler",
-			:folder_id => 1, :user_id => @user.id, :visibility => 1, :group_id => 1  } )
+			:folder_id => 1, :user_id => @agent.id, :visibility => 1, :group_id => 1  } )
 			@test_response_2 = create_response( {:title => "New Canned_Responses Hepler #{@now}",:content_html => "DESCRIPTION: New Canned_Responses Hepler #{@now}",
-			:folder_id => 1, :user_id => @user.id, :visibility => 3, :group_id => 1  } )
+			:folder_id => 1, :user_id => @agent.id, :visibility => 3, :group_id => 1  } )
 			@test_cr_folder_1 = create_cr_folder({:name => "New CR Folder Helper #{@now}"})
 	end
 
 	before(:each) do
 		@request.env['HTTP_REFERER'] = '/admin/canned_responses/folders'
-		log_in(@user)
+		log_in(@agent)
 	end
 
 	it "should create a new Canned Responses" do
 		get :new, :folder_id => @test_response_1.folder_id
 		response.should render_template("admin/canned_responses/responses/new")
 		post :create, { :admin_canned_responses_response => {:title => "New Canned_Responses #{@now}", :content_html => Faker::Lorem.paragraph,
-			:visibility => {:user_id => @user.id, :visibility => 2, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
+			:visibility => {:user_id => @agent.id, :visibility => 2, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
 		}
 		canned_response = Admin::CannedResponses::Response.find_by_title("New Canned_Responses #{@now}")
 		user_access = Admin::UserAccess.find_by_accessible_id(canned_response.id)
@@ -37,7 +37,7 @@ describe Admin::CannedResponses::ResponsesController do
 		get :new, :folder_id => @test_response_1.folder_id
 		response.should render_template("admin/canned_responses/responses/new")
 		post :create, { :admin_canned_responses_response => {:title => "", :content_html => "New Canned_Responses without title",
-			:visibility => {:user_id => @user.id, :visibility => 1, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
+			:visibility => {:user_id => @agent.id, :visibility => 1, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
 		}
 		canned_response = Admin::CannedResponses::Response.find_by_content_html("New Canned_Responses without title")
 		canned_response.should be_nil
@@ -56,7 +56,7 @@ describe Admin::CannedResponses::ResponsesController do
 			:admin_canned_responses_response => {
 				:title => "Updated Canned_Responses #{@now}",
 				:content_html => "Updated DESCRIPTION: New Canned_Responses Hepler",
-				:visibility => {:user_id => @user.id, :visibility => 2, :group_id => 1}
+				:visibility => {:user_id => @agent.id, :visibility => 2, :group_id => 1}
 			},
 			:new_folder_id => 1,
 			:folder_id => "#{@test_response_1.folder_id}"
@@ -76,7 +76,7 @@ describe Admin::CannedResponses::ResponsesController do
 			:id => @test_response_1.id,
 			:admin_canned_responses_response => {:title => "",
 				:content_html => "Updated Canned_Responses without title",
-				:visibility => {:user_id => @user.id, :visibility => 2, :group_id => 1}
+				:visibility => {:user_id => @agent.id, :visibility => 2, :group_id => 1}
 			},
 			:new_folder_id => 1,
 			:folder_id => "#{@test_response_1.folder_id}"

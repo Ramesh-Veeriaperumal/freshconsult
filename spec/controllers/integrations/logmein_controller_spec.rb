@@ -10,13 +10,13 @@ describe Integrations::LogmeinController do
 	before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     @redis_key = "INTEGRATIONS_LOGMEIN:#{@account.id}:#{@test_ticket.id}"
-    @logmein_session_hash = {:agent_id=>@user.id, :md5secret=>"8bf92a753625442c3f95d0e0fbb22e04",
+    @logmein_session_hash = {:agent_id=>@agent.id, :md5secret=>"8bf92a753625442c3f95d0e0fbb22e04",
 														:pincode=>"384178", :pintime=>Time.now.to_s}
 		@success_json = {:status => "Success"}.to_json
 	end
 
 	before(:each) do
-		log_in(@user)
+		log_in(@agent)
 	end
 
 	it "should update pincode on redis" do

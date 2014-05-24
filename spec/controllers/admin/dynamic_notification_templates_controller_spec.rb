@@ -17,7 +17,7 @@ describe Admin::DynamicNotificationTemplatesController do
 		@sample_subject = Faker::Lorem.words(10).join(" ")
 		@sample_message = Faker::Lorem.paragraphs(2).join(" ")
 		@request.env['HTTP_REFERER'] = '/categories'
-		log_in(@user)
+		login_admin
 	end
 
 	it "should create a new notification translation" do

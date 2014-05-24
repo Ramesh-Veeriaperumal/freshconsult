@@ -10,7 +10,7 @@ describe TopicsController do
 		@question_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:howto])
 		@problem_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:problem])
     @request.env['HTTP_REFERER'] = '/categories'
-	  log_in(@user)
+	  login_admin
 	end
 
 	after(:all) do

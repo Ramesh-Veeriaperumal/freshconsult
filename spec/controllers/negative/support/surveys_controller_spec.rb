@@ -10,7 +10,7 @@ describe Support::SurveysController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should not allow to rate a surveyed link" do

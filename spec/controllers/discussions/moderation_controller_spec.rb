@@ -13,7 +13,7 @@ describe Discussions::ModerationController do
 
 	before(:each) do
     @request.env['HTTP_REFERER'] = '/categories'
-	  log_in(@user)
+	  login_admin
 	end
 
 	after(:all) do

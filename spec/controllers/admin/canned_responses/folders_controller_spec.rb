@@ -12,7 +12,7 @@ describe Admin::CannedResponses::FoldersController do
 	end
 
 	before(:each) do
-		log_in(@user)
+		login_admin
 	end
 
 	it "should go to the folder index page" do

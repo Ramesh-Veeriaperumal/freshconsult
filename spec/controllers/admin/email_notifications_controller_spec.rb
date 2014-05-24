@@ -17,7 +17,7 @@ describe Admin::EmailNotificationsController do
 		@sample_subject = Faker::Lorem.words(10).join(" ")
 		@sample_message = Faker::Lorem.paragraphs(2).join(" ")
 		@request.env['HTTP_REFERER'] = '/admin'
-		log_in(@user)
+		login_admin
 	end
 
 	it "should list all corresponding notifications" do

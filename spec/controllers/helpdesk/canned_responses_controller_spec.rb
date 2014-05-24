@@ -8,15 +8,15 @@ describe Helpdesk::CannedResponsesController do
 		before(:all) do
 			@now = (Time.now.to_f*1000).to_i
 			@test_response_1 = create_response( {:title => "Recent Canned_Responses",:content_html => Faker::Lorem.paragraph,
-				:folder_id => 1, :user_id => @user.id, :visibility => 1, :group_id => 1  } )
+				:folder_id => 1, :user_id => @agent.id, :visibility => 1, :group_id => 1  } )
 			@test_response_2 = create_response( {:title => "Recent Canned_Responses Hepler #{@now}",:content_html => Faker::Lorem.paragraph,
-				:folder_id => 1, :user_id => @user.id, :visibility => 2, :group_id => 1  } )
+				:folder_id => 1, :user_id => @agent.id, :visibility => 2, :group_id => 1  } )
 			@test_response_3 = create_response( {:title => "Recent Canned_Responses Only_me #{@now}",:content_html => "CONTENT: Canned_Responses Only_me #{@now}",
-				:folder_id => 1, :user_id => @user.id, :visibility => 3, :group_id => 1  } )
+				:folder_id => 1, :user_id => @agent.id, :visibility => 3, :group_id => 1  } )
 		end
 
 		before(:each) do
-			log_in(@user)
+			login(@agent)
 		end
 
 		it "should go to insert CR index page" do

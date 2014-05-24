@@ -7,16 +7,15 @@ describe Solution::ArticlesController do
 
   before(:all) do
     @now = (Time.now.to_f*1000).to_i
-    @user = add_test_agent(@account)
     @test_category = create_category( {:name => "new category #{@now}", :description => "new category", :is_default => false} )
     @test_folder = create_folder( {:name => "new folder", :description => "new folder", :visibility => 1,
       :category_id => @test_category.id } )
-    @test_article = create_article( {:title => "new article", :description => "new test article", :folder_id => @test_folder.id, 
-      :user_id => @user.id, :status => "2", :art_type => "1" } )
+    @test_article = create_article( {:title => "new article", :description => "new test article", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
   end
 
   before(:each) do
-    log_in(@user)
+    log_in(@agent)
   end
 
   it "should create a new solution article" do
@@ -29,16 +28,16 @@ describe Solution::ArticlesController do
   end
 
   it "should edit a solution article" do
-    put :update, { :id => @test_article.id, 
+    put :update, { :id => @test_article.id,
                    :solution_article => {:title => "new article #{@now}",
                                           :description => "Update solution article #{@now}",
-                                          :folder_id => "#{@test_folder.id}", 
+                                          :folder_id => "#{@test_folder.id}",
                                           :status => "2",
                                           :art_type => "1"
                                           },
                     :tags => {:name => ""},
-                    :category_id => @test_category.id, 
-                    :folder_id => @test_folder.id 
+                    :category_id => @test_category.id,
+                    :folder_id => @test_folder.id
                   }
     @account.solution_articles.find_by_title("new article #{@now}").should be_an_instance_of(Solution::Article)
   end

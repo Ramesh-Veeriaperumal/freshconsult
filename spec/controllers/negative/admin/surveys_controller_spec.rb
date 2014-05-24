@@ -6,7 +6,7 @@ describe Admin::SurveysController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should not update the survey settings with invalid params" do

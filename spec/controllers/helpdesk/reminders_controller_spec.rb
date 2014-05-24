@@ -13,7 +13,7 @@ describe Helpdesk::RemindersController do
   end
 
   before(:each) do
-    log_in(@user)
+    log_in(@agent)
   end
 
   it "should create a new reminder" do
@@ -22,12 +22,12 @@ describe Helpdesk::RemindersController do
                     :helpdesk_reminder => { :body => test_body },
                     :_ => "",
                     :ticket_id => @test_ticket.display_id
-                  }           
+                  }
     @test_ticket.reminders.first.body.should be_eql(test_body)
   end
 
   it "should strike off a to-do entry" do
-    reminder = Factory.build(:reminder, :user_id => @user.id,
+    reminder = Factory.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save
@@ -36,7 +36,7 @@ describe Helpdesk::RemindersController do
   end
 
   it "should delete a reminder" do
-    reminder = Factory.build(:reminder, :user_id => @user.id,
+    reminder = Factory.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save

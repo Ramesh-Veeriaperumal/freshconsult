@@ -10,7 +10,7 @@ describe Admin::SupervisorRulesController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should go to the index page" do

@@ -10,7 +10,7 @@ describe UserEmailsController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should make email primary" do

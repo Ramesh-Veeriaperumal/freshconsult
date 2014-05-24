@@ -8,7 +8,7 @@ describe Helpdesk::BulkTicketActionsController do
   before do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Bulk"}))
     @group = @account.groups.first
-    log_in(@user)
+    log_in(@agent)
   end
 
   it "should perform bulk actions on selected tickets" do
@@ -17,7 +17,7 @@ describe Helpdesk::BulkTicketActionsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "" },
                                                 :private => "0",
-                                                :user_id => @user.id,
+                                                :user_id => @agent.id,
                                                 :source => "0"
                                               },
                             :helpdesk_ticket => { :ticket_type => "Feature Request",

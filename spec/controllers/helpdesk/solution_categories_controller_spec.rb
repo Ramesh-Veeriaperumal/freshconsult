@@ -11,7 +11,7 @@ describe Solution::CategoriesController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should create a new solution category" do

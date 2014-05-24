@@ -5,7 +5,7 @@ describe CustomersController do
   setup :activate_authlogic
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should not create a new company without a name" do

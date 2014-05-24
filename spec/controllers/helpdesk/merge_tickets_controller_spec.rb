@@ -11,7 +11,7 @@ describe Helpdesk::MergeTicketsController do
   end
 
   before do
-    log_in(@user)
+    login_admin
   end
 
   it "should merge tickets with private notes" do

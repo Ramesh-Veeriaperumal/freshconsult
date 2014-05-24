@@ -67,7 +67,7 @@ Spork.prefork do
 
     config.before(:all, :type => :controller) do
       @account = create_test_account
-      @user = add_test_agent(@account, false)
+      @agent = get_admin
     end
 
     config.before(:each, :type => :controller) do

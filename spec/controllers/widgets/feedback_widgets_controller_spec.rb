@@ -12,7 +12,7 @@ describe Widgets::FeedbackWidgetsController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
     @request.host = @account.full_domain
   end
 

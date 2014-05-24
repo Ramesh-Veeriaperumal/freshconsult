@@ -10,7 +10,7 @@ describe Support::SurveysController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should create a new survey handle" do

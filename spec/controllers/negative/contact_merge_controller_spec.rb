@@ -10,11 +10,11 @@ describe ContactMergeController do
   end
 
   before(:each) do
-    log_in(@user)
+    log_in(@agent)
   end
 
   it "should not merge for agent" do
-    post :new, :id => @user.id
+    post :new, :id => @agent.id
     response.body.should =~ /The change you wanted was rejected/
   end
 

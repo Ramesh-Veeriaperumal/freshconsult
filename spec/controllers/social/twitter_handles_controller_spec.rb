@@ -10,7 +10,7 @@ describe Social::TwitterHandlesController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   describe "GET #index" do

@@ -14,7 +14,7 @@ describe Solution::FoldersController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
   end
 
   it "should create a new solution category folder" do

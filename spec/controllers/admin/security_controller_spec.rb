@@ -11,7 +11,7 @@ describe Admin::SecurityController do
 
   before(:each) do
     @request.env['CLIENT_IP'] = "127.0.0.1"
-    log_in(@user)
+    login_admin
     # Delayed::Job.destroy_all
   end
 
