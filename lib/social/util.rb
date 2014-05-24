@@ -12,7 +12,7 @@ module Social::Util
       account = Account.current
       yield(account)
     rescue ActiveRecord::RecordNotFound => e
-      puts "Could not find account with id #{account_id}"
+      #puts "Could not find account with id #{account_id}"
       custom_params = {
         :account_id => account_id,
         :description => "Could not find valid account id in DbUtil"

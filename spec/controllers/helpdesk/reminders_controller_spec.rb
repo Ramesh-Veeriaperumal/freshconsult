@@ -18,19 +18,17 @@ describe Helpdesk::RemindersController do
 
   it "should create a new reminder" do
     test_body = Faker::Lorem.sentence(3)
-    post :create, { :source => "ticket_view", 
-                    :helpdesk_reminder => { :body => test_body }, 
-                    :_ => "",  
+    post :create, { :source => "ticket_view",
+                    :helpdesk_reminder => { :body => test_body },
+                    :_ => "",
                     :ticket_id => @test_ticket.display_id
-                  }
-    p "@test_ticket.reminders.first.body"
-    p @test_ticket.reminders.first.body              
+                  }           
     @test_ticket.reminders.first.body.should be_eql(test_body)
   end
 
   it "should strike off a to-do entry" do
-    reminder = Factory.build(:reminder, :user_id => @user.id, 
-                                        :ticket_id => @test_ticket.id, 
+    reminder = Factory.build(:reminder, :user_id => @user.id,
+                                        :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save
     put :complete, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
@@ -38,8 +36,8 @@ describe Helpdesk::RemindersController do
   end
 
   it "should delete a reminder" do
-    reminder = Factory.build(:reminder, :user_id => @user.id, 
-                                        :ticket_id => @test_ticket.id, 
+    reminder = Factory.build(:reminder, :user_id => @user.id,
+                                        :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save
     delete :destroy, :id => reminder.id

@@ -6,8 +6,8 @@ describe Helpdesk::MergeTicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @target_ticket = create_ticket({ :status => 2, :display_id => 999999 }, create_group(@account, {:name => "Merge"}))
-    @group = @account.groups.first
+    @group = create_group(@account, {:name => "Merge"})
+    @target_ticket = create_ticket({ :status => 2}, @group)
   end
 
   before do
@@ -19,12 +19,12 @@ describe Helpdesk::MergeTicketsController do
     source_ticket2 = create_ticket({ :status => 2 }, @group)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     Resque.inline = true
-    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id, 
-                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.", 
+    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
+                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "true"
                                           },
                             :source_tickets => ["#{source_ticket1.display_id}", "#{source_ticket2.display_id}"],
-                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}", 
+                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}",
                                          :is_private => "true"
                                         },
                             :redirect_back => "true"
@@ -50,12 +50,12 @@ describe Helpdesk::MergeTicketsController do
     source_ticket2 = create_ticket({ :status => 2 }, @group)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     Resque.inline = true
-    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id, 
-                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.", 
+    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
+                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "false"
                                           },
                             :source_tickets => ["#{source_ticket1.display_id}", "#{source_ticket2.display_id}"],
-                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}", 
+                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}",
                                          :is_private => "false"
                                         },
                             :redirect_back => "true"
@@ -80,12 +80,12 @@ describe Helpdesk::MergeTicketsController do
     source_ticket2 = create_ticket({ :status => 2 }, @group)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     Resque.inline = true
-    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id, 
-                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.", 
+    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
+                                          :note => "Tickets with ids #{source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "true"
                                           },
                             :source_tickets => ["#{source_ticket1.display_id}", "#{source_ticket2.display_id}"],
-                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}", 
+                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}",
                                          :is_private => "false"
                                         },
                             :redirect_back => "true"

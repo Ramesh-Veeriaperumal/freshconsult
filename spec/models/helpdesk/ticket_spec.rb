@@ -4,15 +4,14 @@ describe Helpdesk::Ticket do
 
   before(:all) do
     clear_data
-    @account = create_test_account
     setup_data
-    @new_agent = add_agent_to_account(@account, {:name => "testing", :email => "unit@testing.com", 
+    @new_agent = add_agent_to_account(@account, {:name => "testing", :email => "unit@testing.com",
                                         :token => "xtoQaHDQ7TtTLQ5OKt9", :active => 1, :role => 4,
                                         :group_id => @group.id})
-    
 
-    @new_ticket = create_ticket({:status => 2, :display_id => 10}, @group)
-    @another_ticket = create_ticket({:status => 2, :display_id => 11}, @group)
+
+    @new_ticket = create_ticket({:status => 2}, @group)
+    @another_ticket = create_ticket({:status => 2}, @group)
   end
 
   before(:each) do
@@ -28,7 +27,7 @@ describe Helpdesk::Ticket do
     @group.ticket_assign_type = 1
     @group.save!
 
-    @agent = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com", 
+    @agent = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com",
                                         :token => "xtoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
                                         })
     @agent.available = 1
@@ -37,17 +36,17 @@ describe Helpdesk::Ticket do
     ag_grp = AgentGroup.new(:user_id => @agent.user_id , :account_id =>  @account.id, :group_id => @group.id)
     ag_grp.save!
 
-    @ticket = create_ticket({:status => 2, :display_id =>9}, @group)
+    @ticket = create_ticket({:status => 2}, @group)
     @ticket.group_id = @group.id
     @ticket.save(false)
   end
 
   it "should be assigning tickets to agents in round robin" do
-    @agent2 = add_agent_to_account(@account, {:name => "testing", :email => "ticket@testing.com", 
+    @agent2 = add_agent_to_account(@account, {:name => "testing", :email => "ticket@testing.com",
                                         :token => "xtoPaHDQ7TtTLQ5OKt9", :active => 1, :role => 4,
                                         :group_id => @group.id})
 
-    @agent3 = add_agent_to_account(@account, {:name => "testing", :email => "ticket1@testing.com", 
+    @agent3 = add_agent_to_account(@account, {:name => "testing", :email => "ticket1@testing.com",
                                         :token => "xtoPaHDQ7TtTLQ4OKt9", :active => 1, :role => 4,
                                         :group_id => @group.id})
 
@@ -101,10 +100,4 @@ describe Helpdesk::Ticket do
     responder_id.should == @ticket.responder_id
   end
 
- 
-
-  
-
-
 end
-
