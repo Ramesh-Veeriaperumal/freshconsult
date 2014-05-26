@@ -3925,7 +3925,7 @@ en:
     out_of_sla: SLA Violated
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
-    select_header: "Select fields to export"
+    select_header: "Select all fields"
     select_format: "Export as:"
     csv: "CSV"
     xls: "Excel"
