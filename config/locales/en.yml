@@ -2852,8 +2852,8 @@ en:
     default_reply_template_title: Agent Reply Template
     default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
-    requestor_notification: Requestor Notification
-    requestor_notifications: Requestor Notifications
+    requestor_notification: Requester Notification
+    requestor_notifications: Requester Notifications
     notification_template: Reply Templates
     title: Email Notifications
     singular_title: Notification
