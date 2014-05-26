@@ -35,6 +35,7 @@ module TicketsFilter
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
     [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')],
+    [:mobihelp  ,        I18n.t('helpdesk.tickets.views.mobihelp')],
     
     
   ]
@@ -200,6 +201,7 @@ module TicketsFilter
                                 and helpdesk_ticket_statuses.status_id NOT IN 
                                 (#{RESOLVED},#{CLOSED})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
+        :mobihelp          => ["source = ?", TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp]],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }

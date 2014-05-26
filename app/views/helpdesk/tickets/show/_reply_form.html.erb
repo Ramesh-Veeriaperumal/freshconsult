@@ -39,7 +39,7 @@
     <%= f.error_messages %>
 
     
-    <ul class="ui-form dont-validate">
+    <ul class="ui-form dont-validate botm-space">
       <li class="inline-field field" >
           <%= f.label(:reply_email, "From:", :class => "mailaddr-label from" ) %>
           <div class="request_form_options">
@@ -247,10 +247,6 @@
           form['helpdesk_note[from_email]'].value = fromEmail;
           email_config_id = jQuery(selectObj).find(":selected").data().emailConfigId;
           form['helpdesk_note[email_config_id]'].value = email_config_id;
-    });
-
-    jQuery('.add_attachment').bind('click', function() { 
-      jQuery(this).siblings('.original_input').trigger('click');
     });
 
   <% end %>

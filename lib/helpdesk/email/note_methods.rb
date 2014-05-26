@@ -1,7 +1,5 @@
 module Helpdesk::Email::NoteMethods
 
-  include Helpdesk::Utils::ManageCcEmails
-
   def build_note_object
     self.note = ticket.notes.build(note_params)     
     set_note_source
@@ -112,8 +110,7 @@ module Helpdesk::Email::NoteMethods
 
   def update_ticket_cc
     cc_email = ticket.cc_email_hash || {:cc_emails => [], :fwd_emails => []}
-    cc_emails_val = filter_cc_emails(account, (email[:to_emails] | email[:cc]), ticket.requester.email)
-    cc_email[:cc_emails] = cc_emails_val | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
+    cc_email[:cc_emails] = email[:cc] | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
     ticket.cc_email = cc_email
   end
 end

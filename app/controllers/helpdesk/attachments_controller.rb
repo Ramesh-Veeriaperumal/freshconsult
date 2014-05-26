@@ -1,9 +1,10 @@
 # encoding: utf-8
 class Helpdesk::AttachmentsController < ApplicationController
-  
+
   include HelpdeskControllerMethods
   skip_before_filter :check_privilege
-  before_filter :check_download_permission, :only => [:show]  
+  before_filter :load_item, :only => [:text_content, :show]
+  before_filter :check_download_permission, :only => [:show, :text_content]
   before_filter :check_destroy_permission, :only => [:destroy]
   before_filter :set_native_mobile, :only => [:show]
   before_filter :load_shared, :only => [:unlink_shared]
@@ -23,10 +24,16 @@ class Helpdesk::AttachmentsController < ApplicationController
       end
     end
   end
-  
+
+  def text_content
+    style = params[:style] || "original"
+    data = AwsWrapper::S3Object.read(@attachment.content.path(style.to_sym),@attachment.content.bucket_name)
+    render :text => data
+  end
+
   def scoper
     current_account.attachments
-  end 
+  end
 
   def load_item
     @attachment = @item = scoper.find(params[:id])
@@ -44,10 +51,10 @@ class Helpdesk::AttachmentsController < ApplicationController
   end
 
   protected
-  
+
      def check_destroy_permission
       can_destroy = false
-      
+
       @items.each do |attachment|
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
@@ -62,16 +69,16 @@ class Helpdesk::AttachmentsController < ApplicationController
           can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
         end
       end
-      
+
           unless  can_destroy
             flash[:notice] = t(:'flash.general.access_denied')
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
           end
-      
-      
-     
+
+
+
    end
-   
+
     def load_shared
       @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:note_id], :conditions=>["attachment_id=?", params[:id]])
     end
@@ -80,29 +87,29 @@ class Helpdesk::AttachmentsController < ApplicationController
       privilege?(:manage_tickets) and ['Helpdesk::Note'].include? @item.shared_attachable_type
     end
 
-    def check_download_permission      
-      access_denied unless can_download?      
+    def check_download_permission
+      access_denied unless can_download?
     end
 
     def can_download?
 
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
-      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @attachment.attachable_type
-  
+      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo'].include? @attachment.attachable_type
+
         # If the user has high enough permissions, let them download it
         return true if(current_user && current_user.agent?)
-  
+
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return ticket_access? ticket
-  
+
       # Is the attachment on a solution  If so, it's always downloadable.
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
-        return @attachment.attachable.folder.visible?(current_user) 
-      elsif ['Post'].include? @attachment.attachable_type      
-        return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)     
+        return @attachment.attachable.folder.visible?(current_user)
+      elsif ['Post'].include? @attachment.attachable_type
+        return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true
       elsif ['Freshfone::Call'].include? @attachment.attachable_type
@@ -110,14 +117,14 @@ class Helpdesk::AttachmentsController < ApplicationController
         return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
-      end         
+      end
 
     end
 
     def ticket_access?(ticket)
       return false if ticket.blank?
-      (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-        (privilege?(:client_manager)  && ticket.requester.customer == current_user.customer))) || 
+      (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) ||
+        (privilege?(:client_manager)  && ticket.requester.customer == current_user.customer))) ||
         (params[:access_token] && ticket.access_token == params[:access_token])
     end
 
@@ -126,5 +133,5 @@ class Helpdesk::AttachmentsController < ApplicationController
       @attachment.attachable.notable.respond_to?(:notable) ?
         @attachment.attachable.notable.notable : @attachment.attachable.notable
     end
-  
+
 end

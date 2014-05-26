@@ -185,7 +185,7 @@ javascripts:
     - public/javascripts/base64.js
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
-    - public/javascripts/frameworks/plugins/jquery.autocomplete.js
+    - public/javascripts/frameworks/plugins/jquery.autosuggester.js
 
   # Code editor for portal cms
   codemirror:

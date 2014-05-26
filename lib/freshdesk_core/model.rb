@@ -114,7 +114,11 @@ module FreshdeskCore::Model
                         "whitelisted_ips",
                         "helpdesk_ticket_fields",
                         "helpdesk_nested_ticket_fields", 
-                        "helpdesk_shared_attachments"
+                        "helpdesk_shared_attachments", 
+
+                        "mobihelp_apps", 
+                        "mobihelp_devices",
+                        "mobihelp_ticket_extras"
                     ]
 
   STATUS = {

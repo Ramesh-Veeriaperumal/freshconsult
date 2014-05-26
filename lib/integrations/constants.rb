@@ -18,7 +18,8 @@ module Integrations::Constants
     :nimble => "nimble",
     :zohocrm => "zohocrm",
     :google_calendar => "google_calendar",
-    :surveymonkey => "surveymonkey"
+    :surveymonkey => "surveymonkey",
+    :shopify => "shopify"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

@@ -50,7 +50,7 @@ Helpdesk.Multifile = {
 
     addFileToList: function(oldInput){
         var container = jQuery(oldInput).attr('fileContainer'),
-            filesize = 0,
+            filesize = '0.00 KB ',
             validFile = true,
             filereader = !!window.FileReader;
 
@@ -108,7 +108,12 @@ Helpdesk.Multifile = {
     },
 
     findFileSize: function(oldInput){
-        return jQuery(oldInput)[0].files[0].size / (1024 * 1024);
+        if(jQuery(oldInput)[0].files){
+            return jQuery(oldInput)[0].files[0].size / (1024 * 1024);    
+        }
+        else{
+            return 0;
+        }
     },
 
     remove: function(link){

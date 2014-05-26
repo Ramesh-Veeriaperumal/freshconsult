@@ -153,7 +153,7 @@ en:
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook User
-  mobi_help: MobiHelp
+  mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
@@ -456,7 +456,93 @@ en:
       ticket_list: "User tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
+
   admin:
+    mobihelp:
+      app_review: 
+        request_sent: "App Review Request Sent"
+      human_name: Mobihelp App
+      apps:
+        helpnote:
+          heading1: What is Mobihelp?
+          content1:
+            info1: Mobihelp is Freshdesk’s mobile SDK which makes it easier for you to provide in-app support to your mobile customers.
+            info2: Once you integrate MobiHelp, your users will be able to see a dedicated support section within your app. This will include your knowledge base, and a ticket form so that they can get in touch with you if they need help. 
+            info3: MobiHelp is completely configurable. You can select everything - from the fields in your feedback form to the way it looks inside your app. Information like device name, operating system and app version are collected automatically without any effort of the user. You can also enable custom data fields and collect crash logs and breadcrumb trails. 
+            info4: You can create an unlimited number of applications to be used with MobiHelp and tie them to your Freshdesk account. Once you do, you can manage all your incoming requests from a single helpdesk.
+            info5: Please make sure that you follow our integration guide to learn how you can integrate the SDK into your app.
+          heading2: Mobihelp SDK
+          content2:
+            integration_guidelines: Integration guidelines
+            download_android_sdk: Download Android SDK
+            download_ios_sdk: Coming Soon
+        form:
+          app_name: Application Name
+          description: Application Description
+          platform: Platform
+          configurations: SDK Configurations
+          bread_crumbs: Breadcrumbs
+          debug_log_count: Debug Log Count
+          solutions: Solution Category
+          app_store_id: App Store ID
+          not_included: is not included in the list
+          select_a_platform: Select a platform
+          select_a_solution_category: Select a solution category
+          enable_push_notification: Enable Push Notification
+          gcm_api_key: GCM API Key
+          app_key: App Key
+          app_secret: App Secret
+          integration_details: Integration Details
+          app_review: Prompt for App Review
+          app_review_launch_count: After %{count} Launches
+          app_review_launch_never: Never
+        index:
+          title: Mobihelp Apps
+          new_app: New App
+          no_app:
+            title: Welcome to Mobihelp
+            heading1: You are 3 steps away from adding in-app support to your App
+            heading2: Get the latest SDK for iOS and Android
+            download_heading: Download Mobihelp
+            download_android: Download Android SDK
+            download_apple: Download iOS SDK
+            add_heading: Add Mobihelp to your App
+            learn: Learn More
+            configure_heading: Configure Mobihelp
+            configure: Configure
+        new:
+          title: New Mobihelp App
+        edit:
+          title: Edit Mobihelp App
+        show:
+          title: Show Mobihelp App
+          view_all: View All
+          configure: Configure
+          app_key: API Key
+          app_secret: App ID
+          show_app_secret: Show App Secret
+      ticket_info:
+        app_info_vars:
+          app_name: App Name
+          app_identifier: App Identifier
+          app_version: App Version
+          app_locale: App Locale
+          os: OS
+          os_version: OS Version
+          os_locale: OS Locale
+          device_make: Device Make
+          device_model: Device Model
+          device_sw_build: Device Software Build
+          active_network_type: Current Active Network
+          mobile_network_type: Mobile Network Type
+          mobile_network_operator_name: Mobile Network Operator
+          mobile_network_country_code: Mobile Network Country Code
+          battery_level: Battery Level
+          battery_status: Battery Status
+          memory_level: Memory Level
+          screen_orientation: Screen Orientation
+          storage_space_internal: Device Storage Free/Total in MB (Internal)
+          storage_space_sd: Device Storage Free/Total in MB (External)
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
@@ -1132,6 +1218,7 @@ en:
         billing: "Plans & Billing"
         freshfone: "Freshfone"
         tags: Tags
+        mobihelp: Mobihelp
         customer-portal: Customer Portal
       keywords:
         configure_support_email: "Configure support email"
@@ -1386,6 +1473,9 @@ en:
           success: The note has been added to your ticket.
         remove_attachment:
           success: 1 attachment was deleted.
+        send_review_request:
+          success: Review request has been sent successfully
+          failure: There was a problem sending the review request
       empty_spam:
         success: All tickets in the spam folder were deleted.
       timesheet:
@@ -1410,7 +1500,7 @@ en:
       failure:
         string: You have exceeded the maximum limit for this type of field.
         text: You are not allowed to create more than 10 paragraph fields.
-        number: You are not allowed to create more than 10 number fields.
+        number: You are not allowed to create more than 20 number fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
     email_settings:
       send_activation:
@@ -3192,6 +3282,12 @@ en:
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
+    app_info:
+      title: App and Device Debug info
+      show_more: Show more
+      app_and_device: App & Device
+      breadcrumbs: Breadcrumbs
+      debug_log: Debug log
     properties: Ticket Properties
     updating: "Updating"
     update_done: "Done"
@@ -3627,7 +3723,8 @@ en:
         ticket_saved_and_closed: The ticket has been created and closed.
         view_ticket: View ticket
       show:
-        meta: meta
+        meta: Meta
+        custom: Custom Data
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation
         timesheet: Time Sheet
@@ -4282,6 +4379,13 @@ en:
           label: "Survey Link Text"
           description: "This text appears below your signature at the bottom of the email sent to the customer, along with the survey link."
           default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
+    shopify:
+      label: "Shopify"
+      desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
+      helptext: "<h4>Shopify Integration</h4><br/><p>Configure your shopname to display customer's recent orders in Freshdesk. You will be directed to your Shopify shop to authorize Freshdesk. Once authorized, You will be able to view the Customer's recent Orders and Order details on the Ticket details and Contact Details pages. You can quickly access the details in Shopify with one click from the Widget.</p>"
+      form:
+        shop_name: "Shop Name"
+        shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
@@ -4545,7 +4649,7 @@ en:
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
-    no_results_msg: "No results found"  
+    no_results_msg: "No results found"
     showing: "Showing:"
     all_results: "All Results"
     tickets: "Tickets"

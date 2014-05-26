@@ -1,0 +1,62 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
+	<div class="form_title">
+		<strong>Reply </strong> 
+	</div>
+	<div class="list_agents_replying" class="hide"></div>
+	<% form_for note, :url => mobihelp_helpdesk_ticket_conversations_path(@ticket), :html => {
+						:multipart => true,  
+						:id => "HelpdeskMobihelpChat",
+						"data-panel" => cntid,
+                        "data-show-pseudo-reply" => 'true',
+                        "data-fetch-latest" => 'true',
+                        "data-cnt-id" => cntid } do |f| %>
+		<%= f.error_messages %>
+		<%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
+		<%= f.hidden_field :private , :value => "false" %>
+		<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["mobihelp"]%>  
+		<%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
+		<ul class="ui-form dont-validate">
+			<li class="inline-field field clearField continous message">
+				<% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+          <%= ff.text_area :body, { :class => 'required mobihelp_chat auto-height', :id => "#{id}-#{cntid}-body", :rows => "3" } %>
+          <%= text_area_tag "quoted_text_html", "", { :id => "#{cntid}-quoted", :class => "hide" } %>
+				<% end %>
+			</li>
+		</ul>
+
+		<div class="btn-toolbar">
+			<span>
+	      <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+	    </span>
+
+      <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
+        <a class="btn btn-primary submit_btn">
+          <%= t('ticket.reply_form.send') %>
+          <% if privilege?(:edit_ticket_properties) %>
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="caret"></span>
+            </a>
+          <% end %>
+        </a>
+        <% if privilege?(:edit_ticket_properties) %>
+          <ul class="dropdown-menu custom_statuses pull-right">
+            <%
+            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+            %>
+            <% ticket_statuses.each do |status| %>
+            <li>
+              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+                <%= t('ticket.reply_form.send_and_set_as', {:status => status.name}).html_safe %>
+              </a>
+            </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </span>
+		</div>
+	<% end %>
+</div> 	
+
+<% content_for :onload_script do %>
+  jQuery("#HelpdeskMobihelpChat").validate();	
+<% end %>
