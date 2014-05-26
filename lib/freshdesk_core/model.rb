@@ -118,7 +118,7 @@ module FreshdeskCore::Model
 
                         "mobihelp_apps", 
                         "mobihelp_devices",
-                        "mobihelp_ticket_extras"
+                        "mobihelp_ticket_infos"
                     ]
 
   STATUS = {
