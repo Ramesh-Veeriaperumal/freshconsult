@@ -60,6 +60,7 @@ Spork.prefork do
     config.include SolutionsHelper
     config.include MobihelpHelper
     config.include CompanyHelper
+    config.include JiraHelper
     config.include APIHelper, :type => :controller
     config.include SurveyHelper
     config.include CannedResponsesHelper
