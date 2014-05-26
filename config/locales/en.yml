@@ -1774,7 +1774,7 @@ en:
       ticket_split:
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
-        without_user: "Splitted the ticket from {{split_ticket_path}}"
+        without_user: "The ticket was split from {{split_ticket_path}}"
       status_change:
         short: "{{user_path}} updated status to {{status_name}}"
         without_user: "updated status to <strong>{{status_name}}</strong>"
@@ -1872,7 +1872,7 @@ en:
         test-account: We were just using this account for testing. We'll be back
     billing:
       update_billing_info: Update billing information
-      begin_subscription_info: will charge your card and begin your subscription immediately.
+      begin_subscription_info: Please note that if you choose to begin your subscription now, we will charge your card and make your account active immediately.
       billing: Billing
       save_billing_information: Save billing information
       save_billing_information_info: will save your "Plan & billing" information. We will charge your card and begin your subscription only once your trial is over.
@@ -2524,7 +2524,8 @@ en:
     paid: Paid
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
-    currency-note: "Note : All your future payments will be in "
+    currency-note: "All your future payments will be in "
+    free_plan_currency_note: "When you upgrade or add agents, your payment will be in "
   activate: Activate
   feedbackwidget_button_text: Label
   billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
@@ -2771,10 +2772,11 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
-  sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Basic Reporting.
-  blossom_details: Everything in "Sprout" Plan plus Twitter Support, Facebook Support, Community Forums, Custom Domain Mapping & Multiple incoming and outgoing emails.
-  garden_details: Everything in "Blossom" Plan plus Multiple Product Support, Multiple languages, Multi-timezone support, Multiple SLA policies, CSS-level customer portal customizations and Advanced Reporting
-  estate_details: Everything in "Garden" Plan plus Gamification, Agent Collision, Customer Portal Layout Customization and access to the FreshThemes Gallery, Custom Roles and Enterprise Insights.
+  sprout_details: "Single Support Email <br>Feedback Widget <br>Knowledge Base <br>All Automations <br>Phone Integration <br>Mobile Apps <br>Built-in Integrations"
+  blossom_details: "Everything in Sprout <br>Multiple Mailboxes <br>Custom Domain <br>Social Support <br>Satisfaction surveys <br>Community Forums <br>Advanced Reporting"
+  garden_details: "Everything in Blossom <br>Integrated Live Chat <br>Multiple Languages <br>Multi Product Support <br>Multiple SLA Policies <br>Multiple Timezones <br>CSS Customization"
+  estate_details: "Everything in Garden <br>Gamification <br>Agent Collision <br>Custom Roles <br>Custom SSL <br>Enterprise Reporting <br>Portal Customization"
+  forest_details: "Everything in Estate <br>Custom Mail Servers <br>Secure IP Restriction"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -2945,7 +2947,7 @@ en:
   update_and_login: "Update & login"
   activate_and_login: "Activate & login"
   password: "Password"
-  enter_payment: Enter Payment details
+  enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:

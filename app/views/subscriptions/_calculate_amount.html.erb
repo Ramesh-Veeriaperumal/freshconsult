@@ -29,7 +29,7 @@
   		</b></h2>
   	</dd>
 		<% unless current_account.has_credit_card? %>
-			<div id="currency-note"><span class="arrow-up"></span>
+			<div class="currency-note"><span class="arrow-up"></span>
 				<%= t('subscription.currency-note') %> <%= @subscription.currency_name %>
 			</div>
 		<% end %>
@@ -45,7 +45,7 @@
 		<% if downgrade_confirm %>
 			<%= link_to(submit_text, "javascript:confirm(#{downgrade_confirm}, false)".html_safe, :class => "uiButton billing-submit") %>		
 		<% else %>
-			<%= submit_tag(submit_text, :class => "uiButton billing-submit", :id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
+			<%= submit_tag(submit_text, :class => "uiButton billing-submit submit-disable", :id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
 		<% end %>
 		
 	</dd></dl>
@@ -56,14 +56,14 @@
   </div>
   <div class="downgrade-actions">
   	<%= link_to( t('cancel'), 'javascript:;', :class => "uiButton", :id => 'confirm-cancel'  ) %>
-  	<%= submit_tag( t('downgrade'), :class => "uiButton billing-confirm", :id => "commit", :name => "commit", "data-loading-text" => t('please_wait') ) %>
+  	<%= submit_tag( t('downgrade'), :class => "uiButton billing-confirm submit-disable", :id => "commit", :name => "commit", "data-loading-text" => t('please_wait') ) %>
   </div>
 </div>
 <% end %>	
 
 
 <script type="text/javascript">
-	jQuery('body').on('click', '.uiButton', function(){
+	jQuery('body').on('click', '.submit-disable', function(){
 		jQuery(this).button('loading');
 	});
 </script>

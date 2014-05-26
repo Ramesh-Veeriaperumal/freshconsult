@@ -20,7 +20,7 @@ staging:
 
 test:
   <<: *common
-  bucket: fdesk-testbed
+  bucket: fd-testbed
   reports_bucket: reports_archive_data_test
   ticket_body: ticketbody-test
   note_body: notebody-test

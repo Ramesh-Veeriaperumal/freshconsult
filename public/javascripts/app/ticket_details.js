@@ -327,7 +327,6 @@ var updatePagination = function() {
 			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
-			$('#ticket_original_request,.details').find("a").prop("target","_blank")
 			trigger_event("ticket_show_more",{})
 			try {
 			freshfonePlayerSettings();
@@ -458,6 +457,10 @@ var scrollToError = function(){
 	if (jQuery('.requester-info-sprite').length < 2) {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
+
+	$(document).on("click.ticket_details", '#ticket_original_request a, .details a', function(ev){
+		this.target = "_blank";
+	})
 	
 	$('body.ticket_details ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
@@ -1258,6 +1261,7 @@ TICKET_DETAILS_CLEANUP = function() {
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
 
+    jQuery(document).off(".ticket_details")
     trigger_event("ticket_view_unloaded",{});
 
 	var custom_events = [

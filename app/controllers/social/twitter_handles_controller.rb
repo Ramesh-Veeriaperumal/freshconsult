@@ -33,7 +33,7 @@ class Social::TwitterHandlesController < ApplicationController
           response = twitter.search(params[:q])
         end
       rescue Twitter::Error::TooManyRequests => e
-        response = e.to_s
+        response = { :err => e.to_s }
         NewRelic::Agent.notice_error(e)
       end
     end

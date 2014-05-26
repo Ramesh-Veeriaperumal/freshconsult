@@ -1,0 +1,9 @@
+if ENV["RAILS_ENV"] == "test"
+  Factory.define :va_rule, :class =>VARule do |v|
+    v.name "Test Rule"
+    v.description "Testing"
+    v.match_type "all"
+    v.active true
+    v.action_data [{:name=> "priority", :value=>"3"}, {:name=> "status", :value=> "3"}]
+  end
+end

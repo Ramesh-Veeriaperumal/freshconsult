@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe Support::SignupsController do
 
-  before do
-    @account = create_test_account
-    @request.host = @account.full_domain
-  end
-
   it "should not create a new user" do
     post :create, :user => { :email => "" }
     response.should render_template 'support/signups/new.portal'

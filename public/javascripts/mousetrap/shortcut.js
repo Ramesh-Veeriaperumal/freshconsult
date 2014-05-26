@@ -336,7 +336,9 @@
                 $('#ticket-list').menuSelector({
                         activeClass: 'sc-item-selected',
                         onHoverActive:false,
-                        scrollInDocument:true
+                        scrollInDocument:true,
+                        additionUpKeys:74, // key j : 74
+                        additionDownKeys:75 // key k : 75
                 })
             },
             destroy: function(){

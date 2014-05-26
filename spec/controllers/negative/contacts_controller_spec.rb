@@ -5,16 +5,8 @@ describe ContactsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
-  end
-
   before(:each) do
-    @request.host = @account.full_domain
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
-                                        (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    log_in(@user)
+    login_admin
   end
 
   it "should not create a new contact without an email" do
@@ -23,7 +15,6 @@ describe ContactsController do
   end
 
   it "should not allow to create more agents than allowed by the plan" do
-    log_in(@user)
     contact = Factory.build(:user)
     contact.save
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)

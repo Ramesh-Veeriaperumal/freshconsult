@@ -10,7 +10,7 @@ describe Social::Gnip::TwitterFeed do
     @account = create_test_account
     Resque.inline = true
     unless GNIP_ENABLED
-      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:list).returns([])
       Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account, true)
@@ -22,29 +22,31 @@ describe Social::Gnip::TwitterFeed do
   before(:each) do
     @handle.reload unless @handle
   end
-  
+
   it "should create a ticket when a DM arrives" do
     account = @handle.account
     account.make_current
-    
+
     sample_dm = sample_twitter_dm("#{(Time.now.utc.to_f*100000).to_i}", Faker::Lorem.words(3), Time.zone.now.ago(7.days))
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
-    
+
     tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
   end
-  
+
   it "should create a note when a DM arrives and if dm threaded time is greater less than one day" do
+    @handle.update_attributes(:dm_thread_time => 86400)
+
     account = @handle.account
-    account.make_current    
-    
+    account.make_current
+
     # For creating ticket
     user_id = "#{(Time.now.utc.to_f*100000).to_i}"
     user_name = Faker::Lorem.words(3)
@@ -54,14 +56,14 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm_array = [twitter_dm]
     Twitter::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
-    
+
     tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
-    
+
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(1.hour))
     # stub the twitter api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
@@ -76,8 +78,8 @@ describe Social::Gnip::TwitterFeed do
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm[:text])
   end
-  
-  
+
+
   it "should create a ticket when a tweet arrives" do
     feed = sample_gnip_feed(@rule)
     tweet = send_tweet_and_wait(feed)
@@ -117,7 +119,7 @@ describe Social::Gnip::TwitterFeed do
     reply_body.should eql(body)
   end
 
-  it "should convert a reply to a ticket if the 'replied-to' tweet doesnt come in the next 10 minutes" do
+  it "should convert a reply to a tweet if the 'replied-to' tweet doesnt come in the next 10 minutes" do
     #Send Tweet
     ticket_feed = sample_gnip_feed(@rule)
 
@@ -130,7 +132,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
     fd_counter = 60
-    while reply_tweet.nil? and fd_counter <= 240   
+    while reply_tweet.nil? and fd_counter <= 240
       reply_tweet = send_tweet_and_wait(reply_feed, fd_counter)
       fd_counter = fd_counter + 60
     end
@@ -142,7 +144,7 @@ describe Social::Gnip::TwitterFeed do
     body = reply_tweet.tweetable.ticket_body.description
     reply_body.should eql(body)
   end
-  
+
   it "should convert the reply tweet to a note if the 'replied-to' tweet arrives within 10 minutes" do
     #Ticket feed
     ticket_feed = sample_gnip_feed(@rule)
@@ -156,7 +158,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
     fd_counter = 60
-    while fd_counter < 240 and reply_tweet.nil?      
+    while fd_counter < 240 and reply_tweet.nil?
       reply_tweet = send_tweet_and_wait(reply_feed, fd_counter)
       fd_counter = fd_counter + 60
     end
@@ -217,7 +219,7 @@ describe Social::Gnip::TwitterFeed do
     tweet.should be_nil
     dynamo_feed_for_tweet(@handle, feed, false, @handle.account_id, 0)
   end
-      
+
 
   after(:all) do
     #Destroy the twitter handle

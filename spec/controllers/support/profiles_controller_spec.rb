@@ -6,11 +6,7 @@ describe Support::ProfilesController do
   self.use_transactional_fixtures = false
 
   before do
-    @account = create_test_account
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
-    @user = add_new_user(@account)
-    log_in(@user)
+    @user = create_dummy_customer
   end
 
   it "should edit an existing contact" do
@@ -20,7 +16,7 @@ describe Support::ProfilesController do
     put :update, :id => @user.id, :user => {:name => @user.name,
                                             :job_title => "Developer",
                                             :phone => phone_no,
-                                            :time_zone => "Arizona", 
+                                            :time_zone => "Arizona",
                                             :language => "fr" }
     edited_customer = @account.user_emails.user_for_email(@user.email)
     edited_customer.phone.should be_eql(phone_no)

@@ -12,7 +12,7 @@
 												<div class="plan-title">
 													<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
 													<%= content_tag(:h2, plan.name) %>
-													<%= content_tag(:div, t("#{plan_name}_brief").html_safe, :class => "plan-brief" ) %>
+													<div class="plan-brief"></div>
 													<% if(bool_beta_plan) %>
 														<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
 													<% else %> 
@@ -36,12 +36,15 @@
 														<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
 													</div>
 													<%= content_tag(:h2, t('total_price') + " : #{format_amount(0, @subscription.currency_name)}").html_safe %>
+													<div class="currency-note"><span class="arrow-up"></span>
+														<%= t('subscription.free_plan_currency_note') %> <%= @subscription.currency_name %>
+													</div>
 													<% downgrade_confirm = ( (plan.id < current_account.subscription.subscription_plan_id) or current_account.subscription.classic? ) ? true : false %>
 													<%= link_to(t('select_plan'), "javascript:confirm(#{downgrade_confirm}, true)".html_safe, :class => "uiButton confirm-change", "data-to" => plan.name) %>
 													<div class="confirm-text" style="display:none;"><%= t('downgrade_confirm', :from => current_account.subscription.subscription_plan.name, :to => plan.name).html_safe %></div>
 												</div>
 											<% end %>
-											<button data-plan="<%= plan.name %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
+											<button data-plan="<%= plan.name %>" data-plan-id="<%= plan.id %>" class="plan-button btn" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
 											<div id="billing-<%= plan.name %>"></div>
 									</td>
 								<% end %>

@@ -24,7 +24,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		freshfone_users_id = @freshfone_users.collect { |u| u[:id] }
 		if params[:existing_users_id]
 			@offline_users_id = params[:existing_users_id].reject { |id| freshfone_users_id.include? id.to_i }
-			@freshfone_users.reject! { |user| (user[:id] == current_user.id) || (params["existing_users_id"].include? user[:id].to_s) }
+			@freshfone_users.reject! { |user| (params["existing_users_id"].include? user[:id].to_s) }
 		end
 		respond_to do |format|
 			format.js 

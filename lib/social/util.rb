@@ -12,7 +12,7 @@ module Social::Util
       account = Account.current
       yield(account)
     rescue ActiveRecord::RecordNotFound => e
-      puts "Could not find account with id #{account_id}"
+      Rails.logger.debug "Could not find account with id #{account_id}"
       custom_params = {
         :account_id => account_id,
         :description => "Could not find valid account id in DbUtil"
@@ -35,7 +35,7 @@ module Social::Util
     message = {} unless message
     message.merge!(:environment => Rails.env)
     topic = SNS["social_notification_topic"]
-    DevNotification.publish(topic, subject, message.to_json)
+    DevNotification.publish(topic, subject, message.to_json) unless Rails.env.test?
   end
 
   def select_valid_date(time, table="feeds")

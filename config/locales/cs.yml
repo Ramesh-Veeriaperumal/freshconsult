@@ -4094,7 +4094,7 @@ cs:
         one: "1 hodina"
         few: ""
         many: ""
-        other: "1 hodina"
+        other: "12 hodin"
       four: "4 hodiny"
       eight: "8 hodin"
       day: "1 den"
@@ -5288,7 +5288,7 @@ cs:
   selected: Vybráno
   connect_ticket: "Odkaz na požadavek"
   edit_agent: "Upravit zástupce"
-  high: Vysoko
+  high: Vysoká
   scenario_label: "Název scénáře"
   email: E-mail
   linkback_overlabel: "Zpětná adresa URL"

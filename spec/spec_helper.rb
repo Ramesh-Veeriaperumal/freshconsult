@@ -7,7 +7,8 @@ SimpleCov.start do
   add_filter 'config/'
   add_filter 'test/'
   #add_filter '/vendor/'
-  add_group 'email', 'lib/helpdesk/email'
+  add_group 'mailgun', 'lib/helpdesk/email'
+  add_group 'email', 'lib/helpdesk/process_email.rb'
   add_group 'plugins', '/vendor/'
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
@@ -49,7 +50,6 @@ Spork.prefork do
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
     config.include AccountHelper
     config.include AgentHelper
-    config.include EmailHelper
     config.include TicketHelper
     config.include GroupHelper
     config.include TwitterHelper
@@ -61,15 +61,68 @@ Spork.prefork do
     config.include MobihelpHelper
     config.include CompanyHelper
     config.include APIHelper, :type => :controller
+    config.include SurveyHelper
+    config.include CannedResponsesHelper
+    config.include AutomationsHelper
+    config.include NoteHelper
+
+    config.before(:all, :type => :controller) do
+      @account = create_test_account
+      @agent = get_admin
+    end
+
+    config.before(:each, :type => :controller) do
+      @request.host = @account.full_domain
+      @request.env['HTTP_REFERER'] = 'sessions/new'
+      @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
+                                          (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+    end
+
+    config.before(:all) do |x|
+      @timings = []
+    end
+
+    config.before(:each) do |x|
+      name = "#{x.class.description} #{x.description}"
+      @test_start_time = Time.now
+    end
+
+    config.after(:each) do |x|
+      name = "#{x.class.description} #{x.description}"
+      @test_end_time = Time.now
+      @timings.push({
+        :name => name,
+        :duration => @test_end_time - @test_start_time
+      })
+    end
+
+    config.after(:all) do |x|
+      logfile_name = 'log/rspec_file_times.log'
+      logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
+      file = File.open(logfile, 'a')
+      @timings.each do |timing|
+        file.write(sprintf("%-150s  -  % 5.3f seconds\n",
+                            timing[:name], timing[:duration]))
+      end
+      file.close
+    end
 
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
       DatabaseCleaner.clean_with(:truncation,
-        {:pre_count => true, :reset_ids => false})
+                                 {:pre_count => true, :reset_ids => false})
+      logfile_name = 'log/rspec_file_times.log'
+      logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
+      File.delete(logfile) if File.exist?(logfile)
     end
 
-    # == Fixtures
+    config.after(:suite) do
+      Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
+        File.delete(file)
+      end
+    end
+
     #
     # You can declare fixtures for each example_group like this:
     #   describe "...." do
