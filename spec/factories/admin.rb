@@ -64,4 +64,9 @@ if ENV["RAILS_ENV"] == "test"
   Factory.define :ca_folders, :class => Admin::CannedResponses::Folder do |t|
     t.name "TestingCannedResponseFolder"
   end
+
+  Factory.define :roles, :class => Role do |t|
+    t.name "TestingRoles"
+  end
+  
 end
