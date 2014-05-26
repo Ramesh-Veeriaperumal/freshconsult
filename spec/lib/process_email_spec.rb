@@ -192,7 +192,7 @@ describe Helpdesk::ProcessEmail do
 			email = new_email({:email_config => @account.primary_email_config.to_email, :include_to => new_to_email})
 			Helpdesk::ProcessEmail.new(email).perform
 			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include (new_to_email)
+			Helpdesk::Ticket.last.to_emails.should include (new_to_email)
 		end
 
 		it "with no envelope" do
@@ -414,7 +414,7 @@ describe Helpdesk::ProcessEmail do
 			ticket = Helpdesk::Ticket.last
 			first_reply[:subject] = first_reply[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(first_reply).perform
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include (new_to_email)
+			Helpdesk::Ticket.last.to_emails.should include ("<"+new_to_email+">")
 		end
 
 		it "as reply from a TO email" do

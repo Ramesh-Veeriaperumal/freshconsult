@@ -193,7 +193,7 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_to => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
 			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include new_to_email
+			Helpdesk::Ticket.last.to_emails.should include new_to_email
 		end
 
 		it "from auto responders" do
@@ -420,7 +420,7 @@ describe Helpdesk::Email::Process do
 			Helpdesk::Email::Process.new(another).perform
 			Helpdesk::Ticket.all.size.should eql @ticket_size+1
 			Helpdesk::Note.all.size.should eql @note_size+1
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include new_to_email
+			Helpdesk::Ticket.last.to_emails.should include new_to_email
 		end
 
 		it "as reply from a TO email" do

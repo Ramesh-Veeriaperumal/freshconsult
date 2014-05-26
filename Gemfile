@@ -146,6 +146,7 @@ group :test do
   gem "rspec-rails", "1.3.3"
   gem "spork", "~> 0.8.0"
   gem "mocha", "~> 0.12.8"
+  gem 'rack-test', '~> 0.6.2'
   gem "rr", "1.1.1"
   gem "ZenTest", "4.4.1"
   gem "autotest-fsevent", "0.1.1"

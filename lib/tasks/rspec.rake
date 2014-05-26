@@ -41,7 +41,10 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/api/json/*_api_spec.rb",
              "spec/controllers/integrations/logmein_controller_spec.rb",
              "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-             "spec/controllers/sso_controller_spec.rb"]
+             "spec/controllers/sso_controller_spec.rb",
+             "spec/lib/*_email_spec.rb",
+             "spec/controllers/email_controller_spec.rb",
+             "spec/controllers/mailgun_controller_spec.rb"]
 
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 EmailTest = ["spec/lib/*_email_spec.rb"]
