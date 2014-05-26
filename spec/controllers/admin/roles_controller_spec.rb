@@ -8,15 +8,15 @@ describe Admin::RolesController do
 	before(:all) do
 		@now = (Time.now.to_f*1000).to_i
 		@test_role = create_role( {:name => "First: New role test #{@now}", :privilege_list => [ "manage_tickets", "edit_ticket_properties",
-		                            "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0" ]} )
+		                            "view_forums", "view_contacts", "view_reports"]} )
 		@test_role_1 = create_role( {:name => "Second: New role test #{@now}", :privilege_list => ["manage_tickets", "edit_ticket_properties",
 		                                "view_solutions", "manage_solutions", "view_forums", "manage_forums", "view_contacts", "view_reports", 
-		                                "manage_users", "", "0", "0", "0", "view_admin"]} )
-		@new_user = assign_user_privileges(@test_role,{:name => "Spec test user",:email => "testuser@spec.com", :signature_html=> "Spec Cheers!"})
+		                                "manage_users", "view_admin"]} )
+		@new_user = add_test_agent(@account,{:role => @test_role.id})
 	end
 
 	before(:each) do
-		log_in(@user)
+		login_admin
 	end
 
 	it "should go to the Roles index page" do
@@ -33,21 +33,21 @@ describe Admin::RolesController do
 
 	it "should create a new Role" do
 		privileges = [ "manage_tickets", "reply_ticket", "forward_ticket", "view_solutions", "view_forums", 
-			"view_contacts", "view_reports", "", "0", "0", "0", "0" ] 
+			"view_contacts", "view_reports" ] 
 		post :create, { :role => {:name => "Create: New role test #{@now}", :description => Faker::Lorem.paragraph, 
 		                          :privilege_list => privileges
 		                        } 
 		                }
 		new_role = Role.find_by_name("Create: New role test #{@now}")
-		new_user = assign_user_privileges(new_role,{:name => "Spec role user",:email => Faker::Internet.email, 
-			:signature_html=> "Spec Roles!"})
-		verify_user_privileges(new_user, privileges)
+		new_user = add_test_agent(@account,{:role => new_role.id})
+		user_privilege = verify_user_privileges(new_user, privileges)
+		user_privilege.should be_true
 		new_role.should_not be_nil
 	end
 
 	it "should not create a new Role without the name" do
 		post :create, { :role => {:name => "", :description => Faker::Lorem.paragraph, 
-		                          :privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0" ] 
+		                          :privilege_list => [ "view_forums", "view_contacts", "view_reports"] 
 		                        } 
 		                }
 		new_role = Role.find_by_description(Faker::Lorem.paragraph)
@@ -67,7 +67,7 @@ describe Admin::RolesController do
 
 	it "should update the Role" do
 		privileges = [ "manage_tickets","forward_ticket", "view_solutions", "manage_solutions", 
-			"view_forums", "manage_forums", "view_reports", "manage_users", "", "0", "0", "0", "view_admin" ]
+			"view_forums", "manage_forums", "view_reports", "manage_users", "view_admin" ]
 		put :update, {
 			:id => @test_role.id,
 			:role => {:name => "Updated: Roles #{@now}", :description => Faker::Lorem.paragraph,
@@ -77,14 +77,15 @@ describe Admin::RolesController do
 		@test_role.reload
 		@test_role.name.should eql("Updated: Roles #{@now}")
 		@new_user.reload
-		verify_user_privileges(@new_user, privileges)
+		user_privilege = verify_user_privileges(@new_user, privileges)
+		user_privilege.should be_true
 	end
 
 	it "should not update role without the name" do
 		put :update, {
 			:id => @test_role.id,
 			:role => {:name => "", :description => Faker::Lorem.paragraph,
-				:privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0" ]
+				:privilege_list => [ "view_forums", "view_contacts", "view_reports" ]
 			}
 		}
 		@test_role.reload
@@ -96,7 +97,7 @@ describe Admin::RolesController do
 		put :update, {
 			:id => default_role.id,
 			:role => {:name => "Updated default_role", :description => Faker::Lorem.paragraph,
-				:privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0" ]
+				:privilege_list => [ "view_forums", "view_contacts", "view_reports" ]
 			}
 		}
 		new_role = Role.find_by_id(default_role.id)
