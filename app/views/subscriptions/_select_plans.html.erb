@@ -36,9 +36,11 @@
 														<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
 													</div>
 													<%= content_tag(:h2, t('total_price') + " : #{format_amount(0, @subscription.currency_name)}").html_safe %>
-													<div class="currency-note"><span class="arrow-up"></span>
-														<%= t('subscription.free_plan_currency_note') %> <%= @subscription.currency_name %>
-													</div>
+													<% unless current_account.has_credit_card? %>
+														<div class="currency-note"><span class="arrow-up"></span>
+															<%= t('subscription.free_plan_currency_note') %> <%= @subscription.currency_name %>
+														</div>
+													<% end %>
 													<% downgrade_confirm = ( (plan.id < current_account.subscription.subscription_plan_id) or current_account.subscription.classic? ) ? true : false %>
 													<%= link_to(t('select_plan'), "javascript:confirm(#{downgrade_confirm}, true)".html_safe, :class => "uiButton confirm-change", "data-to" => plan.name) %>
 													<div class="confirm-text" style="display:none;"><%= t('downgrade_confirm', :from => current_account.subscription.subscription_plan.name, :to => plan.name).html_safe %></div>
