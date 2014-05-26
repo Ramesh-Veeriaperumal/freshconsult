@@ -45,10 +45,10 @@ describe Support::NotesController do
     log_in(new_contacts[0])
     test_ticket = create_ticket({ :requester_id => new_contacts[0].id, :status => 2 })
     log_in(new_contacts[1])
-
+    Resque.inline = true
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_contacts[0].name} from #{new_company.name} company </p>"} },
                   :ticket_id => test_ticket.display_id
-
+    Resque.inline = false
     client_manager_note = @account.tickets.find(test_ticket.id).notes.last
     client_manager_note.user.customer.id.should be_eql(new_company.id)
     client_manager_note.user_id.should be_eql(new_contacts[1].id)
@@ -82,9 +82,10 @@ describe Support::NotesController do
     test_ticket = create_ticket({ :requester_id => new_contact.id, :status => 2 })
 
     log_in(new_agent)
+    Resque.inline = true
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_agent.name} </p>"} },
                   :ticket_id => test_ticket.display_id
-
+    Resque.inline = false
     client_manager_note = @account.tickets.find(test_ticket.id).notes.last
     client_manager_note.user_id.should be_eql(new_agent.id)
     client_manager_note.notable.requester_id.should be_eql(new_contact.id)
