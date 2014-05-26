@@ -16,7 +16,7 @@ describe Helpdesk::CannedResponsesController do
 		end
 
 		before(:each) do
-			login(@agent)
+			log_in(@agent)
 		end
 
 		it "should go to insert CR index page" do
