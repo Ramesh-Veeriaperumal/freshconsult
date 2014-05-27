@@ -41,6 +41,17 @@ module ForumHelper
 		post			
 	end
 
+	def create_ticket_topic_mapping(topic,ticket)
+		ticket_topic = Factory.build(
+											:ticket_topic,
+											:account_id => @account.id,
+											:topic_id => topic.id,
+											:ticket_id => ticket.id 
+										)
+		ticket_topic.save(true)
+		ticket_topic
+	end
+
 	def publish_topic(topic)
 		topic.published = true
 		topic.save(true)

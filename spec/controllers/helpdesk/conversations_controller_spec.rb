@@ -85,4 +85,51 @@ describe Helpdesk::ConversationsController do
     private_note.full_text_html.should be_eql("<div>#{now}</div>")
     private_note.private.should be_true
   end
+
+  it "should add a KBase article of ticket" do
+   now = (Time.now.to_f*1000).to_i
+   post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                   :helpdesk_note => { :cc_emails => ["kbase@#{@account.full_domain}"], 
+                                       :note_body_attributes => {:body_html => "<div>#{now}</div>",
+                                                                 :full_text_html => "<div>#{now}</div>"},
+                                       :private => "0",
+                                       :source => "0",
+                                       :to_emails => "#{@agent.email}",
+                                       :from_email => "support@#{@account.full_domain}",
+                                       :bcc_emails => ""
+                                      },
+                   :ticket_status => "",
+                   :ticket_id => @test_ticket.display_id,
+                   :since_id => "-1",
+                   :showing => "notes"
+                 } 
+  end
+
+  it "should add a post to forum topic" do
+    test_ticket = create_ticket({:status => 2 })
+    category = create_test_category
+    forum = create_test_forum(category)
+    topic = create_test_topic(forum)
+    create_ticket_topic_mapping(topic,test_ticket)
+    now = (Time.now.to_f*1000).to_i
+    body = "ticket topic note #{now}"
+    post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                   :helpdesk_note => { :cc_emails => "", 
+                                       :note_body_attributes => {:body_html => "<div>#{body}</div>",
+                                                                 :full_text_html => "<div>#{body}</div>"},
+                                       :private => "0",
+                                       :source => "0",
+                                       :to_emails => "#{@agent.email}",
+                                       :from_email => "support@#{@account.full_domain}",
+                                       :bcc_emails => ""
+                                      },
+                   :ticket_status => "",
+                   :ticket_id => test_ticket.display_id,
+                   :since_id => "-1",
+                   :post_forums => "1",
+                   :showing => "notes"
+                 } 
+    topic.reload
+    topic.last_post.body.strip.should be_eql(body)
+  end
 end
