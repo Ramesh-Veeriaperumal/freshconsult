@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden ]
     },
@@ -64,7 +64,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden_classic ]
     }
@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
-    :chat_enable => true, :collision => false, :multiple_user_emails => false,
+    :chat_enable => true, :agent_collision => false, :multiple_user_emails => false,
     :facebook_realtime => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
