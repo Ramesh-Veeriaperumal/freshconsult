@@ -55,9 +55,7 @@
 	 <div class="solutions_text clearfix">
 		<%= @article.description.html_safe %>
 	 </div>
-	 <ul class="attachment_list"> 
-	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
-     </ul>
+	 <%= attachment_container(@article.attachments, privilege?(:publish_solution),"article") %>
 	 <span class="seperator"></span> 
 	 <div id="article_voting">
 		<%= render :partial => "voting", :object => @article %>

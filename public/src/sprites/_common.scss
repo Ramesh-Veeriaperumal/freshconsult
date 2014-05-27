@@ -32,9 +32,6 @@ $ticket-view-layout:smart;
 @import "cdn-ignored/sprites/product/*.png";
 @include all-product-sprites;
 
-@import "cdn-ignored/sprites/file-types/*.png";
-@include all-file-types-sprites;
-
 @import "cdn-ignored/sprites/common-icon/*.png";
 $reports-icon-layout:horizontal;
 @include all-common-icon-sprites(true);

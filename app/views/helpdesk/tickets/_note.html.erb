@@ -63,17 +63,10 @@
 	    <% unless note.all_attachments.empty? %>
 			<span class="seperator"></span>
 			<h4 class="lowercase"><%= pluralize(note.all_attachments.size, t('attachment'), t('attachments'))%></h4>
-			<ul class="attachment_list">
-			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
-			</ul>
+			<%= attachment_container(note.all_attachments,true,"ticket",nil) %>
 		<% end %>
 		<% unless note.dropboxes.empty? %>
-			<ul class="attachment_list">
-					<%note.dropboxes.each do |dropbox| %> 
-					<%= render :partial => '/helpdesk/shared/dropbox.html',:locals => {:dropbox=>dropbox,           :show_delete => true, :url => [@item] } %>
-
-					<%end%> 
-			</ul>
+			<%= attachment_container(note.dropboxes, true, "dropbox", nil) %>
 		<% end %>
 	</div>
 

@@ -11,10 +11,8 @@ class Helpdesk::DropboxDrop < BaseDrop
     source.url
   end
 
-  def thumbnail    
-    extname = source.url.split('.')[-1] 
-    extname = (["pdf", "doc", "mov", "xls", "zip", "txt", "ppt"].include?(extname)) ? extname : "def"
-    "/images/portal/file-type/#{extname}.png"
+  def thumbnail 
+    "/images/portal/file-type/def.png"
   end
 
   def extension

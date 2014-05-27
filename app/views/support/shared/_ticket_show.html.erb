@@ -38,9 +38,8 @@
 		 		<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
 					<h4><%= @ticket.attachments.size %><%= t('number_of_attachments') %></h4>
-					<ul class="attachment_list">
-				    	<%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-					</ul>
+
+					<%= attachment_container(@ticket.attachments,true,"ticket") %>
 				<% end %>
 
 				<% unless @ticket.dropboxes.empty? %>

@@ -849,6 +849,139 @@ HTML
     _output.join("").html_safe
   end
 
+def article_attachments article
+		output = []
+
+		if(article.attachments.size > 0)
+			output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
+
+			article.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def post_attachments post
+		output = []
+
+		if(post.attachments.size > 0)
+			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
+
+			post.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def ticket_attachemnts ticket		
+		output = []
+
+		if(ticket.attachments.size > 0 or ticket.dropboxes.size > 0)
+			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
+
+			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
+
+			ticket.attachments.each do |a|
+				output << attachment_item(a.to_liquid, can_delete)
+			end
+
+			ticket.dropboxes.each do |c|
+				output << dropbox_item(c.to_liquid, can_delete)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def comment_attachments comment		
+		output = []
+
+		if(comment.attachments.size > 0 or comment.dropboxes.size > 0)
+			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
+
+			can_delete = (comment.user and comment.user.id == User.current.id)
+
+			comment.attachments.each do |a|
+				output << attachment_item(a.to_liquid, can_delete)
+			end
+
+			comment.dropboxes.each do |c|
+				output << dropbox_item(c.to_liquid, can_delete)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def attachment_item attachment, can_delete = false
+		output = []
+
+		output << %(<div class="cs-g-3 attachment">)
+		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5">
+						<img src="/images/delete_icon.png">
+					</a>) if can_delete
+
+		output << default_attachment_type(attachment)
+
+		output << %(<div class="attach_content">)
+		output << %(<div class="ellipsis">)
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
+		output << %(</div>)
+		output << %(<div>#{  attachment.size  } </div>)
+		output << %(</div>)
+		output << %(</div>)
+
+		output.join('').html_safe
+	end
+
+	def dropbox_item dropbox, can_delete = false
+		output = []
+
+		output << %(<div class="cs-g-3 attachment">)
+		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5">
+						<img src="/images/delete_icon.png">
+					</a>) if can_delete
+
+		output << %(<img src="/images/dropbox_big.png"></span>)
+
+		output << %(<div class="attach_content">)
+		output << %(<div class="ellipsis">)
+		output << %(<a href="#{dropbox.url}" class="filename" target="_blank">#{ dropbox.filename } </a>)
+		output << %(</div>)
+		output << %(<div> ( dropbox link )</div>)
+		output << %(</div>)
+		output << %(</div>)
+
+		output.join('').html_safe
+	end
+
+	def default_attachment_type (attachment)
+		output = []
+	
+		if attachment.is_image?
+			output << %(<img src="#{attachment.thumbnail}" class="file-thumbnail image" alt="#{attachment.filename}">)
+		else
+	      	filetype = attachment.filename.split(".")[1]
+	      	output << %(<div class="attachment-type">)
+	      	output << %(<span class="file-type"> #{ filetype } </span> )
+	      	output << %(</div>)
+	    end
+
+	    output.join('')
+	end
+
 	private
 
 		def portal_preferences
