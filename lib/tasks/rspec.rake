@@ -49,8 +49,16 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
 
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 EmailTest = ["spec/lib/*_email_spec.rb"]
+MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
+                "spec/controllers/mobihelp/devices_controller_spec.rb",
+                "spec/controllers/mobihelp/solutions_controller_spec.rb",
+                "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
+                "spec/models/mobihelp/app_spec.rb",
+                "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
+                ]
+IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb"]
 
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest]
+AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest]
 AllTest.flatten!.uniq!
 
 # Don't load rspec if running "rake gems:*"
@@ -237,6 +245,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
 
+    namespace :integrations do
+      desc "Running all freshdesk integrations tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(IntegrationTest)
+      end
+    end
+    
     namespace :all do
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|
