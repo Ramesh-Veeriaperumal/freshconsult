@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content ],
       :inherits => [ :blossom ]
     },
 
@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :dynamic_content, :chat ],
+        :css_customization, :advanced_reporting, :dynamic_content ],
       :inherits => [ :blossom_classic ]
     },
 
@@ -73,8 +73,8 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :whitelisted_ips => false, :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
-    :mailbox => false, :chat_enable => true, :collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false  }
+    :mailbox => false, :chat_enable => false, :collision => false, :multiple_user_emails => false,
+    :facebook_realtime => false, :chat => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
