@@ -9,6 +9,7 @@ module RolesHelper
 
 	def verify_user_privileges(user, privileges)
 		privileges.each do |privilege|
+			next if privilege.blank? || privilege == "0"
 			res = user.privilege?(privilege.to_sym)
 			return false unless res
 		end
