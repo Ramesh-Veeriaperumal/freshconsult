@@ -9,20 +9,16 @@ describe EmailController do
   it "should process new email" do
     email1 = new_email({:email_config => @account.primary_email_config.to_email})
     post :create, :params => email1
-    puts response.status
     response.status.should eql "200 OK"
   end
 
   it "should give new email template" do
     get :new
-    puts response.status
-    response.status.should eql "200 OK"
   end
 
   it "should give 200 even on wrong address" do
     email2 = new_email({:email_config => Faker::Internet.email})
     post :create, :params => email2
-    puts response.status
     response.status.should eql "200 OK"
   end
 
