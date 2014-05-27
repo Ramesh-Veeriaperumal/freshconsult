@@ -257,7 +257,12 @@ protected
   def after_destory_js
     render(:update) { |page| 
       @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
-      page << "trigger_event('note_deleted', #{to_event_data(@items[0])});" if @cname == "note"
+      if @cname == "note"
+        page << "trigger_event('note_deleted', #{to_event_data(@items[0])});"
+        page << "if(document.getElementById('cnt-reply-quoted')){"
+        page.replace_html 'cnt-reply-quoted', quoted_text(@parent) if @parent
+        page << "}"
+      end
       show_ajax_flash(page)
     }
   end
