@@ -28,7 +28,6 @@ module Mobihelp::MobihelpHelperMethods
 
     def save_user(user_params, device_uuid)
       user = User.new(user_params)
-      user.active = true
       if user.email.blank? # add uuid id to ignore email requirement.
         user.external_id = device_uuid 
       else
