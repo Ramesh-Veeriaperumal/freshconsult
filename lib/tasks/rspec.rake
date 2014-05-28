@@ -58,7 +58,7 @@ MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb",
                 ]
 IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb"]
 
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest]
+AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
 AllTest.flatten!.uniq!
 
 # Don't load rspec if running "rake gems:*"
@@ -250,6 +250,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
         t.spec_files = FileList.new(IntegrationTest)
+      end
+    end
+
+    namespace :mobihelp do
+      desc "Running all mobihelp tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(MobihelpTest)
       end
     end
     
