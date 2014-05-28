@@ -85,7 +85,10 @@
 .article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
-	table{ @extend .table; }
+	table{ 
+		@extend .table; 
+		table-layout:fixed;
+	}
 }
 
 .article-list li, .topic-list li, .ticket-list li,
@@ -282,6 +285,25 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	margin-right: 10px;
 }
 
+/* File attachment based styles */
+.attachment{
+	@include clearfix;
+	margin-bottom: 15px;
+	.file-name{ display: block; }
+	.file-thumbnail{ 
+		float: left;
+		margin-right: 10px;
+		margin-top: 2px;
+		width: 30px;
+		height: 32px;
+	}
+	.file-image{
+		border: 1px solid #afafaf;	
+		width: 50px;
+		height: 50px;	
+	}
+}
+
 /* User voted list in topic details page */
 .user-list{
 	margin-top: -10px;
@@ -455,6 +477,59 @@ hr.content-divider{
 			margin-right: 0;
 		}
 
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+//											Attachment List [ Forums Edit page ]
+//----------------------------------------------------------------------------------------------------------
+.attachment-list, .attachment_list{
+	@include no-bullets;
+	color:#888987; 
+	margin-top:3px;
+	padding:0px;
+	margin-left: 0;
+	@include clearfix;	
+	li{
+		@include clearfix;
+		@include border-radius(3px);
+		float:left;
+		font-size:11px;
+		width:50%;
+		padding:5px 4px 5px 42px;
+		margin:3px 0;
+		@include min-height(40px); 
+		position:relative;
+		.preview_img{
+			margin:8px 0px;
+			position:absolute;
+			width:34px; 
+			left:5px;
+			top:0px;
+			img.image{
+				margin:0px 0px 0px 0px;
+				width:32px; height:32px;
+			}
+		}	
+		a{
+			@include link-colors(#6699cc, #336699, #6699cc, #6699cc);
+			text-decoration:none;
+		} 
+		.delete{
+			position:absolute;
+			right:10px;
+			display:none;
+			top:0px;
+		}
+	} 
+	li:hover{
+		background:#f1f7fc;
+		a{
+			@include link-colors(#993333, #6699cc, #6699cc, #6699cc);
+			text-decoration:none;
+		} 
+		.delete{
+			display:block;
+		}
 	}
 }
 
