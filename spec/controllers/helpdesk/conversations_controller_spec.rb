@@ -103,6 +103,7 @@ describe Helpdesk::ConversationsController do
                    :since_id => "-1",
                    :showing => "notes"
                  } 
+    @account.solution_articles.find_by_title(@test_ticket.subject).should be_an_instance_of(Solution::Article)
   end
 
   it "should add a post to forum topic" do
