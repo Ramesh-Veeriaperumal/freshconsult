@@ -527,6 +527,8 @@ en:
           app_identifier: App Identifier
           app_version: App Version
           app_locale: App Locale
+          app_install_time: App First Installed
+          app_update_time: App Last Updated
           os: OS
           os_version: OS Version
           os_locale: OS Locale
@@ -543,6 +545,7 @@ en:
           screen_orientation: Screen Orientation
           storage_space_internal: Device Storage Free/Total in MB (Internal)
           storage_space_sd: Device Storage Free/Total in MB (External)
+          mobihelp_sdk_version: Mobihelp SDK Version
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
