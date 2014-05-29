@@ -921,8 +921,7 @@ Faye.extend(Faye.Channel, {
   },
 
   isValid: function(name) {
-    return Faye.Grammar.CHANNEL_NAME.test(name) ||
-           Faye.Grammar.CHANNEL_PATTERN.test(name);
+    return true;
   },
 
   parse: function(name) {
