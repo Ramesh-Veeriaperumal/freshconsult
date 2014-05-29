@@ -28,7 +28,7 @@ describe Helpdesk::NotesController do
     body = "New note shown on index"
 
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>#{body}</p>"} },
-                  :ticket_id => test_ticket.display_id
+                  :ticket_id => test_ticket.display_id, :showing => "activities", :since_id => "-1"
 
     test_ticket.notes.freshest(@account)[0].body.should =~ /#{body}/
     xhr :get, :index, :v => 2, :ticket_id => test_ticket.display_id
@@ -108,14 +108,14 @@ describe Helpdesk::NotesController do
     now = (Time.now.to_f*1000).to_i
     body = "ticket topic note #{now}"
     post :create , { :reply_email => { :id => "support@#{@account.full_domain}"},
-                   :helpdesk_note => { :cc_emails => "", 
-                                       :note_body_attributes => {:body_html => "<div>#{body}</div>",
-                                                                 :full_text_html => "<div>#{body}</div>"},
+                   :helpdesk_note => { :cc_emails => "",
                                        :private => "0",
                                        :source => "0",
                                        :to_emails => "#{@agent.email}",
                                        :from_email => "support@#{@account.full_domain}",
-                                       :bcc_emails => ""
+                                       :bcc_emails => "",
+                                       :body => "#{body}",
+                                       :body_html => "<div>#{body}</div>",
                                       },
                    :ticket_status => "",
                    :ticket_id => test_ticket.display_id,
