@@ -9,15 +9,12 @@ describe Integrations::JiraIssueController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @account.make_current
-    @user = add_test_agent(@account)
+    @agent = add_test_agent(@account)
     @installed_application = create_installed_application(@account)
   end
 
   before(:each) do
-    log_in(@user)
-    @request.host = @account.full_domain
+    log_in(@agent)
     @ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
   end
 
