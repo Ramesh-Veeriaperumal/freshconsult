@@ -56,7 +56,8 @@ MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb",
                 "spec/models/mobihelp/app_spec.rb",
                 "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
                 ]
-IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb"]
+IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
+		  "spec/controllers/integrations/google_accounts_controller_spec.rb" ]
 
 AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
 AllTest.flatten!.uniq!
