@@ -26,3 +26,4 @@ public/images/sprites/
 dump.rdb
 coverage/*
 coverage/**/*
+spec/fixtures/files/temp/*

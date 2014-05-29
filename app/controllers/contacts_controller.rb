@@ -40,7 +40,7 @@ class ContactsController < ApplicationController
                     :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
       end
       format.atom do
-        @contacts = @contacts.newest(20)
+        @contacts = @contacts.newest(20) #throws error
       end
       format.nmobile do
         response="[";sep=""
@@ -162,6 +162,7 @@ class ContactsController < ApplicationController
     end
   end
   
+  #probable dead code
   def delete_avatar
     load_item
     @user.avatar.destroy
