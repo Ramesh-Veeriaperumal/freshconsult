@@ -2161,7 +2161,7 @@ Redactor.prototype = {
 	toggle: function()
 	{
 		var html;
-		console.log(this.opts.visual);
+		
 		if (this.opts.visual)
 		{
 			this.$editor.hide();
@@ -2181,7 +2181,7 @@ Redactor.prototype = {
 		}
 		else
 		{
-			console.log(this.$el);
+			
 			this.$el.hide();
 			this.$editor.show();
 
@@ -2195,7 +2195,7 @@ Redactor.prototype = {
 				{
 					html = this.opts.mozillaEmptyHtml;
 				}
-				console.log(html)
+				
 				this.$el.val(html);
 			}
 			this.selectionToggle();	
@@ -3990,8 +3990,9 @@ Redactor.prototype = {
 			$(this.form).css('position', 'absolute');
 			$(this.form).css('top', '-2000px');
 			$(this.form).css('left', '-2000px');
-			$(this.form).appendTo('body');  
+			$(this.form).appendTo('body');
 
+			add_csrf_token(this.form);
 			this.form.submit();
 		}
 		else
@@ -4000,8 +4001,10 @@ Redactor.prototype = {
 			f.attr('method', 'POST');
 			f.attr('enctype', 'multipart/form-data');
 			f.attr('action', this.uploadOptions.url);
-	
+			add_csrf_token(f);
+			
 			this.element.submit();
+			
 		}
 	},
 	insertLoadingAtCaret: function(){
@@ -4418,7 +4421,7 @@ $.fn.insertExternal = function(html)
 						
 						// append file data
 						fd.append('image[uploaded_data]', file);
-
+						
 						$.ajax({
 							dataType: 'html',
 							url: this.opts.url,

@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-		<title><%= page_title %></title>
+		<title><%= h(page_title) %></title>
 		<meta name="description" content="<%= page_description %>">
 		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
@@ -21,6 +21,10 @@
 			<link rel="canonical" href="<%= page_canonical %>" />
 		<% end %>
 
+		<!-- Adding meta tag for CSRF token -->
+		<%= csrf_meta_tag %>
+		<!-- End meta tag for CSRF token -->
+		
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->

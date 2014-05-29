@@ -1,7 +1,7 @@
 class FreshfoneBaseController < ApplicationController
 	include TwilioMaster	
 	
-	skip_before_filter :check_privilege, :if => :public_method?
+	skip_before_filter :check_privilege, :verify_authenticity_token, :if => :public_method?
 	before_filter :check_freshfone_feature
 	before_filter :validate_twilio_request, :if => :public_method?
 	before_filter :reject_call, :if => :call_initiation_method?

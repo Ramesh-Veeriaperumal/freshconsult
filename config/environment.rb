@@ -69,6 +69,7 @@ Rails::Initializer.run do |config|
   config.time_zone = 'Chennai'  
  
   ActiveSupport::JSON.backend = "JSONGem"
+  ActionController::Base.cookie_verifier_secret = '3f1fd34135e84c4245a13c212c11ff2f4b205725faf706345716efb6686f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f'
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 

@@ -15,7 +15,7 @@ include Redis::TicketsRedis
 include SsoUtil
 include Mobile::Actions::Push_Notifier
 
-  skip_before_filter :check_privilege  
+  skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login

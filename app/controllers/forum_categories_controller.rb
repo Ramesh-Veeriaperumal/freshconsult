@@ -3,7 +3,7 @@ class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
   
-  skip_before_filter :check_privilege, :only => [:index, :show]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler

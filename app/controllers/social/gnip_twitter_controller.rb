@@ -3,7 +3,7 @@ class Social::GnipTwitterController < ApplicationController
   include Redis::GnipRedisMethods
   include Social::Twitter::Constants
 
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
 
   filter_parameter_logging :hash
 

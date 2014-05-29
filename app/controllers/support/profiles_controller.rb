@@ -39,9 +39,6 @@ class Support::ProfilesController < SupportController
   end
 
   def clean_params
-    if params[:user]
-      params[:user].delete(:helpdesk_agent)
-      params[:user].delete(:role_ids)
-    end
+    params[:user].keep_if{ |k,v| User::PROTECTED_ATTRIBUTES.exclude? k }
   end
 end
