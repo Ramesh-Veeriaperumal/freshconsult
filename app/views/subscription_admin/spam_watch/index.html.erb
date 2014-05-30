@@ -65,10 +65,20 @@
 			<li ><%=h(@user.name)%></li>
 			<li ><%=h(@user.email)%></li>
 			<li >Agent : <%= @user.helpdesk_agent %></li>
-			<li ><%=@user.account.name%>(<%=@user.account_id%>)</li>
+			<li ><%=@account.name%>(<%=@user.account_id%>)</li>
+			<li> Revenue : <%= format_float_value(@account.subscription.cmrr) %></li>
+			<li> Account state : <%= @account.subscription.state %></li>
+			<li> Lifetime Revenue : <%= format_float_value(@account.subscription_payments.sum(:amount)) %></li>
+			<li> Using : <%= @using_account %></li>
+			<%unless @internal_whitelisted %>
+			<li><a class="btn" style="width: 80%;display: inline-block;margin-left: 1px;" href="/<%=params[:shard_name]%>/internal_whitelist/<%=@user.id%>">Internal Whitelist</a></li>
+            <%end%>
+
 			<li>
+
 				<%if @user.whitelisted?%>
 					<b>Whitelisted</b>
+					<a class="btn" style="width: 20%;display: inline-block;margin-left: 1px;" href="/<%=params[:shard_name]%>/hard_block/<%=@user.id%>">Irreversible</a>
 				<%else %>
 					<%if !@user.spam?%>
 						<a class="btn" style="width: 20%;display: inline-block;margin-left: 1px;" href="/<%=params[:shard_name]%>/spam_user/<%=@user.id%>">Spam</a> 

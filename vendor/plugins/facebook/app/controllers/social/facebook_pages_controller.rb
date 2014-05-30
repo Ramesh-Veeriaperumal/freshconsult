@@ -1,6 +1,6 @@
 class Social::FacebookPagesController < Admin::AdminController
 
-  skip_before_filter :check_privilege, :only => :event_listener
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :event_listener
   before_filter { |c| c.requires_feature :facebook }
 
   #This Controller should be refactored

@@ -100,7 +100,8 @@ module ChatHelper
       :position => window_position,
       :ticket_link_option => ticket_link_option, 
       :expiry =>  chat_trial_expiry,
-      :custom_link_url => custom_link_url
+      :custom_link_url => custom_link_url,
+      :environment => Rails.env
     }
     return freshchat_setting.to_json.html_safe
   end

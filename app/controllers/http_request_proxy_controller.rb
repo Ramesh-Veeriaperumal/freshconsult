@@ -1,7 +1,7 @@
 class HttpRequestProxyController < ApplicationController
   include Integrations::AppsUtil
   
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :authenticated_agent_check 
   before_filter :populate_server_password
   before_filter :populate_additional_headers

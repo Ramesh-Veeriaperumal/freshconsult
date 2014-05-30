@@ -158,30 +158,21 @@
         }
 
         var collisionMessageHandlerShow = function (message) {
+
             agents.replying = [];
             agents.viewing = [];
             var client_list = message.data;
-            if(!((typeof message.data == 'string' || message.data instanceof String))){
-                client_list = removeUnwantedData.call(this, message).data;
-                if(client_list.length == 1){
-                    window.FreshdeskNode.clearPolling();
-                }
-                else if(client_list.length > 1 ){
-                    if(!window.FreshdeskNode.getValue('interval')){
-                        window.FreshdeskNode.initPolling();
+            client_list = removeUnwantedData.call(this, message).data;
+            for (var i = 0; i < client_list.length; i++) {
+                if(client_list[i]){
+                    if ((client_list[i].reply) && (client_list[i].reply == 'true')) {
+                        checkUniq(agents.replying, client_list[i], 'viewing', agents.viewing);
+                    } else if ((client_list[i].view) && (client_list[i].view == 'true')) {
+                        checkUniq(agents.viewing, client_list[i], 'replying', agents.replying);
                     }
                 }
-                for (var i = 0; i < client_list.length; i++) {
-                    if(client_list[i]){
-                        if ((client_list[i].reply) && (client_list[i].reply == 'true')) {
-                            checkUniq(agents.replying, client_list[i], 'viewing', agents.viewing);
-                        } else if ((client_list[i].view) && (client_list[i].view == 'true')) {
-                            checkUniq(agents.viewing, client_list[i], 'replying', agents.replying);
-                        }
-                    }
-                }
-                update_notification_ui_ticket(agents);
             }
+            update_notification_ui_ticket(agents);
         };
 
         var collisionMessageHandlerIndex = function (message) {
@@ -365,8 +356,6 @@
             retry: 10,
             timeout: 120
         };
-        var initial_opts = null;
-        var channels = null;
         var common_variables = {
             faye_auth_params: null,
             agent_names: null,
@@ -378,9 +367,6 @@
             agent_collision_show_data: null,
             channel_obj: null,
             clients : [],
-            interval : null,
-            interval_time : 10,
-            needed : true,
             faye_realtime: {
                 faye_subscriptions: [],
                 fayeClient: null,
@@ -419,19 +405,6 @@
             }
         };
 
-        var initPolling = function(){
-            if(common_variables.needed){
-                for (var i = 0; i < common_variables.clients.length; i++) {
-                    try{
-                        common_variables.clients[i].setLongPolling(common_variables.interval_time);
-                    }
-                    catch(e){
-                        // console.log('does not have a poller ');
-                    }
-                }
-            }
-        }
-
         var replyOnLoad = function(){
             common_variables.reply_on_load = true;
         }
@@ -447,8 +420,6 @@
         var clearClient = function(){
             common_variables.clients = [];
         }
-
-
 
         var setEvents = function () {
             if($.browser.mozilla){
@@ -481,31 +452,9 @@
                     window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
                 });
             }
-        };
-
-        var setPollingInterval = function(interval){
-            common_variables.interval = interval;
-        }
-
-        var clearPolling = function(){
-            if(common_variables.interval){
-                window.clearInterval(common_variables.interval);
-                common_variables.interval = null;
-            }
-        }
-
-        var setPollingInfo = function(interval,needed){
-            if(!((common_variables.interval_time == interval) && (common_variables.needed == needed)))
-            {
-                common_variables.interval_time = interval;
-                common_variables.needed = needed;
-                clearPolling();
-                initPolling();
-            }
         }
 
         var data = function (opts) {
-            initial_opts = opts;
             initClient(opts.faye_host, opts.client_opts);
             common_variables.faye_auth_params = opts.faye_auth_params;
             common_variables.current_user_id = opts.current_user_id;
@@ -560,22 +509,12 @@
 
         return {
             addChannels: function (obj) {
-                channels = obj
                 var extensions = {};
                 extensions['outgoing'] = function (message, callback) {
                     message.ext = common_variables.faye_auth_params;
                     message.ext['channel'] = window.FreshdeskNode.getValue('faye_realtime').faye_channels;
                     callback(message);
                 };
-                extensions['incoming'] = function(message,callback){
-                    if((message.interval == 0) || (message.interval == false)){
-                         window.FreshdeskNode.setPollingInfo(message.interval,false);
-                    }
-                    else{
-                        window.FreshdeskNode.setPollingInfo(message.interval,true);
-                    }
-                    callback(message);
-                }
                 addExtension(extensions)
                 setEvents();
                 common_variables.channel_obj = obj
@@ -599,11 +538,7 @@
             clearClients : clearClient,
             getValue: getValue,
             replyOnLoad: replyOnLoad,
-            clearReplyOnLoad: clearReplyOnLoad,
-            setPollingInterval: setPollingInterval,
-            clearPolling: clearPolling,
-            initPolling: initPolling,
-            setPollingInfo: setPollingInfo  
+            clearReplyOnLoad: clearReplyOnLoad
         };
     })(faye_utilies, message_utilities);
 
@@ -633,16 +568,8 @@
             interval = window.setInterval(reply_event_interval,500);  
         }
 
-        var pollingEvent = function(){
-            window.FreshdeskNode.getValue('faye_realtime').fayeClient.publish(freshdesk_node.getValue('agent_collision_show_data').ticket_channel,{data : 'polling' , channel : freshdesk_node.getValue('agent_collision_show_data').ticket_channel , 'domainName' : window.FreshdeskNode.getValue('faye_auth_params').domainName  });
-        }
-
-        var setLongPolling = function(interval){
-            var interval = window.setInterval(pollingEvent,interval*1000);
-            window.FreshdeskNode.setPollingInterval(interval);
-        }
-
-        var setEvents = function () {           
+        var setEvents = function () {  
+                       
             $('[data-note-type]').on("click.agent_collsion",function (e) {
                 // window.replySubscription = faye_utils.subscribe(freshdesk_node.getValue('agent_collision_show_data').ticket_reply_channel, function (message) {});
                 // window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.push(window.replySubscription);
@@ -712,24 +639,19 @@
 
         var init = function () {
             $('#agent_collision_placeholder').append($('#agent_collision_show').detach());
-            setEvents();       
+            setEvents();
         };
         return {
             init: init,
             ticketChannelCallback: ticketChannelCallback,
             viewChannelCallback: viewChannelCallback,
-            reply_event: reply_event,
-            setLongPolling: setLongPolling
+            reply_event: reply_event
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 
     window.AgentCollisionShow = AgentCollisionShow;
 
     var AgentCollisionIndex = (function (freshdesk_node, msg_utilites, faye_utils) {
-
-        var setLongPolling = function(){
-            //console.log('can set poller if you want ');
-        }
 
         var setEvents = function () {
             $('#agent_collision_placeholder').append($('#agent_collision_show').detach());
@@ -740,12 +662,11 @@
         };
 
         var init = function () {
-            setEvents();   
+            setEvents();
         };
         return {
             init: init,
-            callback: callback,
-            setLongPolling: setLongPolling
+            callback: callback
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 
@@ -753,9 +674,6 @@
 
     var AutoRefreshIndex = (function (freshdesk_node, msg_utilites, faye_utils) {
 
-        var setLongPolling = function(){
-            //console.log('can set poller if you want');
-        }
         var setEvents = function () {
 
             $("#index_refresh_alert").bind("click", function (ev) {
@@ -780,13 +698,12 @@
         };
 
         var init = function () {
-            setEvents();  
+            setEvents();
         };
 
         return {
             init: init,
-            callback: callback,
-            setLongPolling: setLongPolling
+            callback: callback
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 

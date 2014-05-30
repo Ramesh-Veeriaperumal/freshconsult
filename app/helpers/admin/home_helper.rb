@@ -267,6 +267,9 @@ module Admin::HomeHelper
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
+      },
+      :mobihelp                   =>      { 
+          :open_keywords          =>      [:inapp_support , :ios_sdk , :android_sdk]
       }
     }
 

@@ -1,7 +1,7 @@
 <% selected_tab = @selected_tab.to_s%>
 <div class="wrapper">
 	<div class="wrapper-shadow">
-		<title><%= page_title.html_safe %></title>
+		<title><%= h(page_title)%></title>
 		<% 
 			body_class = []
 			body_class << (yield :layoutType)

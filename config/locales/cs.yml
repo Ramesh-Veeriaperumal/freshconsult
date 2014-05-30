@@ -3169,7 +3169,7 @@ cs:
   import_user_notification: "Při importu osob zákazníka lze poslat aktivační e-mail uživatele "
   what_is_cvv: "Co je to cvv (ověřovací číslo platební karty)?"
   pro_details: "Vše jako v &quot;Základní&quot; licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a e-mailová podpora."
-  open: Otevřít
+  open: Otevřeno
   zendesk_url: "Adresa URL Zendesk"
   special_beta_offer: "Speciální nabídka pro Beta účty"
   click_to_select_filter: "Klikněte pro výběr filtru"

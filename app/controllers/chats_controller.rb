@@ -1,6 +1,6 @@
 class ChatsController < ApplicationController
   
-  skip_before_filter :check_privilege, :only => [:load]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:load]
   before_filter  :load_ticket, :only => [:add_note]
 
   def load

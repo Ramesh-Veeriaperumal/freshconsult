@@ -305,7 +305,7 @@ function pieChart(opts){
 	  legend: {
 	    layout: 'horizontal',
 	    align: 'center',
-      maxHeight: '100',
+      maxHeight: '80',
       itemStyle: {
         width: 350,
         fontFamily:'"Helvetica Neue", Helvetica, Arial'

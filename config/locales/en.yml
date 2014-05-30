@@ -482,8 +482,11 @@ en:
           platform: Platform
           configurations: SDK Configurations
           bread_crumbs: Breadcrumbs
+          bread_crumbs_info: Breadcrumbs will help you retrace the user’s steps
           debug_log_count: Debug Log Count
+          debug_log_count_info: Debug logs includes the log information from logcat for your application
           solutions: Solution Category
+          solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
           select_a_platform: Select a platform
@@ -494,6 +497,7 @@ en:
           app_secret: App Secret
           integration_details: Integration Details
           app_review: Prompt for App Review
+          app_review_info: This will automatically launch the review prompt after the No. of launches configured
           app_review_launch_count: After %{count} Launches
           app_review_launch_never: Never
         index:
@@ -1306,6 +1310,9 @@ en:
         choose_plan: "Choose Plan"
         zendesk_import: "Zendesk Import"
         daypasses: "Day Passes"
+        inapp_support: "In App Support"
+        ios_sdk: "iOS SDK"
+        android_sdk: "Android SDK"
   ends_with: Ends with
   last_name: Last Name
   forum:

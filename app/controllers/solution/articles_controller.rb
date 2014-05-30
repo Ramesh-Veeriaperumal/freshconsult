@@ -3,7 +3,7 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   
-  skip_before_filter :check_privilege, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   
   before_filter :set_selected_tab
