@@ -41,10 +41,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call]
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate]
+    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
 
