@@ -168,6 +168,6 @@ class Support::TicketsController < SupportController
   private
   
     def clean_params
-      params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT::PROTECTED_ATTRIBUTES.exclude? k }
+      params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT_PROTECTED_ATTRIBUTES.exclude? k }
     end
 end

@@ -7,7 +7,7 @@ module TicketConstants
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
 
   # For preventing non-agents from updating inaccessible ticket attibutes
-  SUPPORT::PROTECTED_ATTRIBUTES = [ "email", "requester_id", "source", "spam", "deleted",
+  SUPPORT_PROTECTED_ATTRIBUTES = [ "email", "requester_id", "source", "spam", "deleted",
                                     "tweet_attributes", "fb_post_attributes" ]
    
   # DATE_RANGE_CSV = 31
