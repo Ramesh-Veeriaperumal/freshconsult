@@ -7,8 +7,6 @@ describe Solution::FoldersController do
 
   before(:all) do
     time = (Time.now.to_f*1000).to_i
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "new category #{@now}", :description => "new category", :is_default => false} )
     @test_folder = create_folder( {:name => "new folder #{@now}", :description => "new folder", :visibility => 1,
@@ -16,10 +14,7 @@ describe Solution::FoldersController do
   end
 
   before(:each) do
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
-                                       (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    @request.host = @account.full_domain
-    log_in(@user)
+    login_admin
   end
 
   it "should create a new solution category folder" do

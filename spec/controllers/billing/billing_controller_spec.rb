@@ -3,11 +3,6 @@ require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe Billing::BillingController do
-	before(:all) do
-		@account = create_test_account
-    @account.make_current
-  end
-
 
   it "should update subscription and adds(/removes) a feature as addon" do
   	@request.host = @account.full_domain

@@ -5,12 +5,6 @@ describe Support::ProfilesController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before do
-    @account = create_test_account
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
-  end
-
   # Commenting out this test for now, since this test will fail, as there are  no checks in place.
   
   # it "should not allow to edit an existing contact email" do

@@ -1,6 +1,6 @@
 class Billing::BillingController < ApplicationController
   
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :login_from_basic_auth, :ssl_check
 
   skip_before_filter :set_current_account, :set_time_zone, :set_locale, 

@@ -43,6 +43,8 @@ describe Social::Gnip::TwitterFeed do
   end
   
   it "should create a note when a DM arrives and if dm threaded time is greater than zero" do
+    @handle.update_attributes(:dm_thread_time => 86400)
+    
     account = @handle.account
     account.make_current    
     

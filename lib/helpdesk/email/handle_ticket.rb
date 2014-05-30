@@ -70,8 +70,8 @@ class Helpdesk::Email::HandleTicket
 	def build_attachments item
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
-      file_name = create_attachment(item, "attachment-#{i+1}").content_file_name
-      content_id_hash[file_name] = cid(i) if cid(i)
+      file = create_attachment(item, "attachment-#{i+1}")
+      content_id_hash[file.content_file_name+"#{i}"] = cid(i) if file.is_a? Helpdesk::Attachment and cid(i)
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
 	end
@@ -85,9 +85,24 @@ class Helpdesk::Email::HandleTicket
     begin
       create_attachment_from_params(item, attachment_params(attachment_name), nil,
                                     attachment_name)
+    rescue HelpdeskExceptions::AttachmentLimitException => ex
+      Rails.logger.error("ERROR ::: #{ex.message}")
+      add_notification_text item
     rescue Exception => e
       Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-      abort("Error ::: #{e.message}")
+    end
+  end
+
+  def add_notification_text item
+    message = I18n.t('attachment_failed_message').html_safe
+    notification_text = "\n" << message
+    notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
+    if item.is_a?(Helpdesk::Ticket)
+      item.description << notification_text
+      item.description_html << notification_text_html
+    elsif item.is_a?(Helpdesk::Note)
+      item.body << notification_text
+      item.body_html << notification_text_html
     end
   end
 

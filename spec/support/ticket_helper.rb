@@ -18,7 +18,7 @@ module TicketHelper
                                          :account_id => account_id)
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     test_ticket.group_id = group ? group.id : nil
-    test_ticket.save(false)
+    test_ticket.save_ticket
     test_ticket
   end
 end

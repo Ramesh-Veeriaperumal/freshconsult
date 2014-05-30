@@ -2,7 +2,7 @@ class SAAS::SubscriptionActions
 
   FEATURES = [ :customer_slas, :business_hours, :multi_product, :facebook, :twitter, 
                 :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
-                :dynamic_content ]
+                :dynamic_content, :mailbox ]
 
   def change_plan(account, old_subscription, existing_addons)
     update_features(account, old_subscription, existing_addons)
@@ -101,6 +101,11 @@ class SAAS::SubscriptionActions
     def drop_dynamic_content_data(account)
       account.all_users.update_all(:language => account.language) 
       account.account_additional_settings.update_attributes(:supported_languages => [])
+    end
+
+    def drop_mailbox_data(account)      
+      account.imap_mailboxes.destroy_all
+      account.smtp_mailboxes.destroy_all
     end
  
 end

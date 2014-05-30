@@ -63,6 +63,7 @@ class Social::Gnip::TwitterFeed
   def process_post(args)
     select_shard_and_account(args[:account_id]) do |account|
       notable = nil
+      tweet_requeued = false
       convert_args = can_convert(account, args)
       convert_args[:convert] = false if self_tweeted?
       user = set_user if convert_args[:convert]
@@ -70,7 +71,10 @@ class Social::Gnip::TwitterFeed
       if reply?
         tweet = account.tweets.find_by_tweet_id(@in_reply_to)
         if tweet.blank?
-          notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) if convert_args[:convert] && !requeue(@tweet_obj)
+          if convert_args[:convert]
+            tweet_requeued = requeue(@tweet_obj)
+            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) if !tweet_requeued
+          end
         else
           ticket  = tweet.get_ticket
           user = set_user unless user
@@ -80,10 +84,12 @@ class Social::Gnip::TwitterFeed
         notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) if convert_args[:convert]
       end
 
-      dynamo_feed_attr = fd_info(notable, user)
-      update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
-      update_dynamo(args, convert_args, dynamo_feed_attr)
-
+      if !tweet_requeued
+        dynamo_feed_attr = fd_info(notable, user)
+        update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
+        update_dynamo(args, convert_args, dynamo_feed_attr)
+      end
+      
       User.reset_current_user
       Account.reset_current_account
     end

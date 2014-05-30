@@ -38,9 +38,14 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden ]
+    },
+
+    :forest => {
+      :features => [ :mailbox, :whitelisted_ips ],
+      :inherits => [ :estate ]
     },
 
     :sprout_classic => {
@@ -59,7 +64,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden_classic ]
     }
@@ -72,9 +77,9 @@ class Account < ActiveRecord::Base
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => false,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
-    :whitelisted_ips => false, :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
-    :mailbox => false, :chat_enable => false, :collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false }
+    :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
+    :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
+    :facebook_realtime => false, :chat => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 

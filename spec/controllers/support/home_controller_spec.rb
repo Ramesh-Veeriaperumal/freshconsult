@@ -6,8 +6,7 @@ describe Support::HomeController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = @account.users.find_by_email("customer@customer.in")
+    @user = create_dummy_customer
     @test_category = create_category( {:name => "category", :description => "new category", :is_default => false} )
     @test_folder1 = create_folder( {:name => "folder1", :description => "new folder", :visibility => 1,
       :category_id => @test_category.id } )
@@ -22,7 +21,6 @@ describe Support::HomeController do
   end
 
   before(:each) do
-    @request.host = @account.full_domain
     @account.features.open_solutions.create
   end
 

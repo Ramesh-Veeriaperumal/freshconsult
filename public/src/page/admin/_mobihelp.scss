@@ -1,6 +1,7 @@
 .mobiapp-form{
+  margin-top : 20px;
 	.app-image{
-		float: left;
+		float: right;
 		width: 70px;
 		height: 70px;
 		border: 1px solid #B4B4B4;
@@ -21,6 +22,9 @@
 	.codetextarea{
 		margin-left: -20px;
 	}
+  .info-data {
+    margin-left: 0px !important;
+  }
 }
 
 .sdk-content{

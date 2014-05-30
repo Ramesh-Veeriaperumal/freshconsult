@@ -9,7 +9,7 @@ class Workers::DevNotification
     message = args["message"]
 
     topic = $sns_client.create_topic({:name => name})
-    $sns_client.publish(:topic_arn => topic[:topic_arn], :subject => subject, :message => message)
+    $sns_client.publish(:topic_arn => topic[:topic_arn], :subject => subject, :message => message) unless Rails.env.test?
   end
 
 end

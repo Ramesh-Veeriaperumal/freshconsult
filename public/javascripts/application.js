@@ -66,8 +66,9 @@ jQuery.noConflict()
 
       var _form = $("<form class='hide' method='post' />")
               .attr("action", this.href)
-              .append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />")
-              .get(0).submit()      
+              .append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />");
+              add_csrf_token(_form);
+              _form.get(0).submit();      
     })
 
     // Data api for onclick showing dom elements

@@ -42,7 +42,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		      :location => @ca_response }
 		  else
 				@ca_response.accessible = current_account.user_accesses.new
-				@ca_response.accessible.visibility = params[:admin_canned_response][:visibility][:visibility]
+				@ca_response.accessible.visibility = params[:admin_canned_responses_response][:visibility][:visibility]
 				format.html { render :action => "new" }
 				format.xml  { render :xml => @ca_response.errors, :status => :unprocessable_entity }
 		  end

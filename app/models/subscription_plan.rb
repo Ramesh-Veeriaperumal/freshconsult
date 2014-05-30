@@ -33,7 +33,8 @@ class SubscriptionPlan < ActiveRecord::Base
     :sprout => "Sprout",
     :blossom => "Blossom",
     :garden => "Garden",
-    :estate => "Estate"
+    :estate => "Estate",
+    :forest => "Forest"
   }
   
   BILLING_CYCLE = [

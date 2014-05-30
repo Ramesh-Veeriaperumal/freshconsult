@@ -33,12 +33,10 @@ module AccountHelper
   end
 
   def create_dummy_customer
-    @customer = User.find_by_email("customer@customer.in")
-    return unless @customer.nil?
-    @customer = Factory.build(:user, :account => @acc, :email => "customer@customer.in",
+    @customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     @customer.save
-    @acc.users << @customer
+    @customer
   end
 
   def clear_data

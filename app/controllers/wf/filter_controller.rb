@@ -23,8 +23,8 @@
 
 class Wf::FilterController < ApplicationController
   
-  skip_before_filter :check_privilege
-  before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
+  skip_before_filter :check_privilege, :verify_authenticity_token
+  before_filter :chk_usr_permission, :verify_authenticity_token, :only => [:delete_filter,:update_filter]
   
   def index
     @edit_filters = []
