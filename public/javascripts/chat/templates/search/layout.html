@@ -1,0 +1,35 @@
+<div class="containerFull">
+	<div class="chat_header_bar clearfix">
+		<div class="chat_header_bar_left">
+			<h3 class="title"><%=i18n.message_archives%></h3>
+		</div>
+		<div class="chat_header_bar_right">
+			<div class="search_caption"><a id="web_chat_visitors" href="/helpdesk/visitor/online"><%=i18n.website_visitors%></a></div>
+		</div>
+	</div>
+ 	<div class="clearfix"></div>
+
+	 <div id="search_filter" class="ticket-leftcol paddingtopnull">
+		<h1><%=i18n.filter_by%></h1>
+		<span><%=i18n.keyword%></span> 
+		<input id="search_input" type="text" placeholder="<%=i18n.keyword%>">
+		<span><%=i18n.visitor_location%></span> 
+		<input id="filterLoc" type="text" placeholder="<%=i18n.select_location%>">
+		<span><%=i18n.between%></span>
+		<div id="date"></div>
+		<span><%=i18n.tags%></span>
+		<input id="filterTag" type="text" placeholder="<%=i18n.tags%>">
+		<span><%=i18n.agent%></span>
+		<select id="agentList" class="select2"></select>
+		<div class="pull-right"><input id="startFilter" type="submit" class="btn btn-primary" value="Filter"></div>
+	</div>
+
+	<div class="contentCol hasRightCol borderleftnull">
+		<div id="search_results_list" class="search_results_list"><div class="sloading loading-small loading-block"></div></div>
+		<div id="search_results_expand" style="display:none" class="search_results_list">
+				<span id="search_chat_hdr"> &lt; <%=i18n.back%></span>
+			<div id="search_chat_list"></div>
+		</div>
+	</div>
+
+</div>
