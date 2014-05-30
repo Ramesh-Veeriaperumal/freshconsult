@@ -1,4 +1,5 @@
 require 'spec_helper'
+include MemcacheKeys
 
 describe SsoController do
 	integrate_views
@@ -23,6 +24,9 @@ describe SsoController do
     random_hash = Digest::MD5.hexdigest(curr_time)
     Redis::KeyValueStore.new(@key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
     get :login, {:provider => "facebook", :uid => "12345678", :s => random_hash, :portal_type => @authorization[:provider]}
+    kv_store = Redis::KeyValueStore.new(@key_spec)
+    kv_store.group = :integration
+    kv_store.get_key.should be_nil
     response.should redirect_to '/facebook/support/home'
   end
 
@@ -32,6 +36,12 @@ describe SsoController do
     Redis::KeyValueStore.new(@key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
     get :login, {:provider => "facebook", :uid => "12345678", :s => random_hash, :portal_type => @authorization[:provider]}
     response.should redirect_to support_login_url
+  end
+
+  it "should redirect to facebook auth url" do
+    get :facebook
+    current_portal = @account.portals.first
+    response.should redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{@account.id}%26portal_id%3D#{current_portal.id}&state="
   end
 
 end

@@ -3516,8 +3516,6 @@ cs:
     transfer_accepted_msg: "Akceptován transfer návštěvníka"
     transfer_request_timeout_msg: "Čas na požadavek přesunu byl vyčerpán"
     integrate_freshchat_info: "Poznámka: okno rozhovoru je viditelné pouze tehdy, když je zástupce online."
-    click_to_go_online: "Teď jste \"offline\" <br> Klikněte a budete \"online\""
-    click_to_go_offline: "Teď jste \"offline\" <br> Klikněte a budete \"online\""
     fetching: Fetching
     loading: Načítání...
     last_7_days: "Posledních 7 dní"

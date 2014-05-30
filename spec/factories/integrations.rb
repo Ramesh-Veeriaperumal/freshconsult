@@ -31,5 +31,13 @@ if ENV["RAILS_ENV"] == "test"
     t.local_integratable_type "issue-tracking"
     t.account_id 1
   end
+
+  Factory.define :widget, :class => Integrations::Widget do |t|
+    t.name "Test Application"
+    t.description "Test description"
+    t.script "script"
+    t.application_id 1
+    t.options HashWithIndifferentAccess.new({:display_in_pages => [:helpdesk_tickets_show_page_side_bar]})
+  end
   
 end
