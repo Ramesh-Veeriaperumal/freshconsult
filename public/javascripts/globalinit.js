@@ -403,7 +403,8 @@ window.xhrPool = [];
                                           // For all other form it will be a direct page submission
                                           }else{
                                             setTimeout(function(){ 
-                                              form.submit()
+                                              add_csrf_token(form);
+                                              form.submit();
                                             }, 50)
                                           } 
                                         }

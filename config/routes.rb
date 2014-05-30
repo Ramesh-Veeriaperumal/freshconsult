@@ -288,6 +288,8 @@
       admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
       admin.spam_user ':shard_name/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
       admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.hard_block_user ':shard_name/hard_block/:user_id', :controller => :spam_watch, :action => :hard_block
+      admin.internal_whitelist ':shard_name/internal_whitelist/:user_id', :controller => :spam_watch, :action => :internal_whitelist
       admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
       admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
       admin.resources :currencies, :as => 'currency'

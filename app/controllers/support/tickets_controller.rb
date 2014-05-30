@@ -9,6 +9,8 @@ class Support::TicketsController < SupportController
     c.check_portal_scope :anonymous_tickets
   end
 
+  before_filter :clean_params, :only => [:update]
+
   before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
 
@@ -162,5 +164,10 @@ class Support::TicketsController < SupportController
     def not_facebook?
       params[:portal_type] != "facebook"
     end
+
+  private
   
+    def clean_params
+      params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT::PROTECTED_ATTRIBUTES.exclude? k }
+    end
 end

@@ -2,7 +2,7 @@
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   
-  skip_before_filter :check_privilege, :only => [:index, :show]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]

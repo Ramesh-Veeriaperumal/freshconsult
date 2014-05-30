@@ -27,6 +27,11 @@ class User < ActiveRecord::Base
 
   EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
 
+  # For preventing non-agents from updating inaccessible user attibutes
+  PROTECTED_ATTRIBUTES = ["email", "password", "password_confirmation", "primary_email_attributes", 
+                          "user_emails_attributes", "customer_id", "client_manager", 
+                          "helpdesk_agent", "role_ids", "customer_attributes"]
+
   concerned_with :associations, :callbacks
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true

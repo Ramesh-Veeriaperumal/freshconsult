@@ -1,6 +1,6 @@
 class Social::FacebookSubscriptionController < Admin::AdminController
 
-  skip_before_filter :check_privilege, :only =>[:subscription]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only =>[:subscription]
   include Facebook::KoalaWrapper::ExceptionHandler
   
   #this controller is only for testing locally without node support

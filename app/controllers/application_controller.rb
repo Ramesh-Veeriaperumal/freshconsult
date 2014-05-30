@@ -33,7 +33,8 @@ class ApplicationController < ActionController::Base
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
-  
+  skip_before_filter :verify_authenticity_token
+  before_filter :verify_authenticity_token, :if => :api_request?
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "password"). 
@@ -88,6 +89,8 @@ class ApplicationController < ActionController::Base
       current_account.make_current
       User.current = current_user
     rescue ActiveRecord::RecordNotFound
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      handle_unverified_request
     end    
   end
 
@@ -182,8 +185,23 @@ class ApplicationController < ActionController::Base
 
     def handle_unverified_request
       super
-      cookies.delete 'user_credentials'
+      cookies.delete 'user_credentials'     
+      current_user_session.destroy unless current_user_session.nil? 
       @current_user_session = @current_user = nil
+      portal_redirect_url = root_url
+      portal_redirect_url = portal_redirect_url + "support/home" if params[:portal_type] == "facebook"
+      respond_to do |format|
+        format.html  {
+          redirect_to portal_redirect_url
+        }
+        format.nmobile{
+          render :json => {:logout => 'success'}.to_json
+        }
+      end
+    end
+
+    def api_request?
+      request.cookies["_helpkit_session"]
     end
 end
 

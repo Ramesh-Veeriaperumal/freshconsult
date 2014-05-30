@@ -1,5 +1,5 @@
 class Integrations::GmailGadgetsController < ApplicationController
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
   def spec
     if Rails.env.production?
       spec_file_name = "production-gadget-spec.xml"

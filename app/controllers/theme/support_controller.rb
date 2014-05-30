@@ -1,6 +1,6 @@
 class Theme::SupportController < ThemeController
 	
-	skip_before_filter :check_privilege
+	skip_before_filter :check_privilege, :verify_authenticity_token
 
 	# Cache key for helpdesk file detecting change in file updated time
 	THEME_URL 			= "#{RAILS_ROOT}/public/src/portal/portal.scss"

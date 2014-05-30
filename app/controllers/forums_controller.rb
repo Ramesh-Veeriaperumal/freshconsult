@@ -2,7 +2,7 @@
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController
 
-  skip_before_filter :check_privilege, :only => [:index, :show]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
 
   include Helpdesk::ReorderUtility
