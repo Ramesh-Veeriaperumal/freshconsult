@@ -11,6 +11,7 @@
 var CS_URL = "<%=comm_url%>";
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
+var CHAT_ENV = "<%= Rails.env -%>";
 
 (function($){
     $(document).ready(function(){
@@ -26,14 +27,7 @@ var CHAT_DEBUG = "<%=chat_debug%>";
         fc_CSS.setAttribute('href', css_url+'/css/chat.css');
         document.getElementsByTagName('head')[0].appendChild(fc_CSS);
             $.getScript(url+"/js/chat.js", function(){
-                window.playSound = !($.cookie('fd::'+SITE_ID));
-                if(window.playSound){
-                    $.cookie('fd::'+SITE_ID,true);
-                    $(window).unload(function(){
-                        jQuery.cookie('fd::'+SITE_ID,null);
-                    });
-                }
-                var path = window.location.pathname.split('/')
+                var path = window.location.pathname.split('/');
                 if(path[path.length - 1] == "chat_setting"){
                     if(window.behaviour){
                         behaviour.initialize({setting:<%=freshchat_setting%>,asset:asset_url});
