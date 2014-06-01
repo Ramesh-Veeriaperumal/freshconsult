@@ -56,8 +56,16 @@
 	</ul>	
 <%end%>
 <% javascript_tag do %>
+	<!-- For Select all/none functionality -->
 	jQuery('#toggle_checks').on('change', function() {
 		jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
+	});
+
+	<!-- For toggling select all/none checkbox when toggling fields -->
+	jQuery('[id^=export_fields]').on('change', function() {
+		var count = 0;
+		jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+		jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
 	});
 
   jQuery("#exportFilter").submit(function() {  
