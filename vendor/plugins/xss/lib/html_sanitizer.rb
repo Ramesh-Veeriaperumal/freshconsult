@@ -1,3 +1,4 @@
+require 'rails_sanitizer'
 module HtmlSanitizer
   def self.included(klass)
     klass.extend(ClassMethods)

@@ -1,0 +1,16 @@
+defaults: &defaults
+  host: localhost
+  port: 6379
+  namespace: sidekiqbj
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults

@@ -14,7 +14,7 @@ class Social::Twitter::Mention
   def process
     tweets = twt_handle.last_mention_id.blank? ? twitter.mentions : twitter.mentions({:since_id => twt_handle.last_mention_id})
     last_tweet_id = tweets[0].id unless tweets.blank?
-    create_ticket_from_mention (tweets, twt_handle)
+    create_ticket_from_mention(tweets ,twt_handle)
     twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
   end
 
