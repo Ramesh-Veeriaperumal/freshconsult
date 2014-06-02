@@ -8,3 +8,16 @@ development:
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
+test:
+  node_url: "http://localhost:5000"
+  secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
+  ops_alert:
+    call:
+      from: "+919840777891"
+      to: ["+919840777891", "+919994269753"]
+    mail:
+      from: "freshfone@freshdesk.com"
+      to: "freshfone@freshdesk.com"
+  twilio:
+    account_sid: "AC369004863456a98511d7af236ecc1bfb"
+    auth_token: "e439d43561d2e48ad0c1927dac31e8b7"
