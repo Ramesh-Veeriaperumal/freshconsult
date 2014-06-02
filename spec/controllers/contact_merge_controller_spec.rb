@@ -6,12 +6,17 @@ describe ContactMergeController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @user1 = add_new_user(@account)
-    @user2 = add_new_user(@account)
+    @account.features.multiple_user_emails.create
+    @user1 = add_user_with_multiple_emails(@account, 2)
+    @user2 = add_user_with_multiple_emails(@account, 2)
   end
 
   before(:each) do
     login_admin
+  end
+
+  after(:all) do
+    @account.features.multiple_user_emails.destroy
   end
 
   it "should pass new contact merge" do
@@ -26,7 +31,18 @@ describe ContactMergeController do
 
   it "contact_merge complete" do
     post :complete, :parent_user => @user1.id, :target => [@user2.id]
-    @account.user_emails.find_all_by_user_id(@user1.id).size.should eql 2
+    @account.user_emails.find_all_by_user_id(@user1.id).size.should eql 4
+  end
+
+  it "should search all except source contact" do
+    get :search, :id => @user1.id, :v => "a"
+    response.body.should_not =~ /#{@user1.name}/
+    response.body.should =~ /Rachel/
+  end
+
+  it "should not pass new contact merge for agent" do
+    post :new, :id => @agent.id
+    response.status.should eql "422 Unprocessable Entity"
   end
 
 end

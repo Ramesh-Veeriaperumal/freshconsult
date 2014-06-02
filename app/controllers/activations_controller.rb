@@ -64,10 +64,10 @@ class ActivationsController < SupportController
   protected
 
     def cname
-      "users"
+      "users" #possible dead code
     end
 
     def scoper
-      current_account.users
+      current_account.users #possible dead code
     end
 end

@@ -515,7 +515,7 @@ class User < ActiveRecord::Base
 
   def change_primary_email primary
     self.user_emails.update_all(:primary_role => false)
-    self.user_emails.find(primary.to_i).toggle!(:primary_role) #toggle
+    self.user_emails.find(primary.to_i).toggle!(:primary_role) #toggle #need to check if primary exists
     return true
   end
   
