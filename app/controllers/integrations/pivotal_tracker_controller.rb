@@ -1,6 +1,6 @@
 class Integrations::PivotalTrackerController < ApplicationController
 
-  skip_before_filter :check_privilege, :only => [:pivotal_updates]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:pivotal_updates]
   before_filter :check_app_installed?, :only => [:pivotal_updates, :update_config, :get_performer_email]
   
   def tickets

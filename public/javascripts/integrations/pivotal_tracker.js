@@ -7,13 +7,13 @@ PivotalTrackerWidget.prototype = {
 				'<div class="control-group">'+
 					'<label class="control-label">Project : </label>'+
 					'<div class="controls">'+
-						'<select class="select2" id="pivotal_tracker_projects"> </select>'+
+						'<select class="select2 chrome-border-fix" id="pivotal_tracker_projects"> </select>'+
 					'</div>'+
 				'</div>'+
 				'<div class="control-group">'+
 					'<label class="control-label">Story Type : </label>'+
 					'<div class="controls">'+
-						'<select class="select2" id="pivotal_story_type">'+
+						'<select class="select2 chrome-border-fix" id="pivotal_story_type">'+
 							'<option value=0>select story type</option>'+
 							'<option value="feature">Feature</option>'+
 							'<option value="bug">Bug</option>'+
@@ -160,7 +160,7 @@ populateProjects: function(evt) {
 	{
 		return jQuery("#pivotal_dialog .modal-body").html(pivotalTrackerWidget.PIVOTALTRACKER_NO_PROJECT.evaluate({}));
 	}
-	var populate_desc = "Ticket ID - " + pivotal_bundle.ticketId + "\n\n" + "Requester Email - " + pivotal_bundle.reqEmail + "\n\n" + "Description - " +pivotal_bundle.ticketDescription;
+	var populate_desc = "Ticket ID - " + pivotal_bundle.ticketId + "\n\n" + "Requester Email - " + pivotal_bundle.reqEmail + "\n\n" + "Description - " +jQuery("#pivotal_tracker #tkt_desc_pt").text();
 	jQuery("#pivotal_dialog .modal-body").html("<div class='sloading'> </div>");
 	jQuery("#pivotal_dialog .modal-body").html(pivotalTrackerWidget.PIVOTALTRACKER_FORM.evaluate({}));
 	jQuery('#pivotal_tracker_subject').val(pivotal_bundle.ticketSubject);
@@ -178,7 +178,7 @@ populate_loaded_project: function(){
 	jQuery('#pivotal_dialog-submit').attr("disabled", false);
 	jQuery('#pivotal_tracker_projects').val(0).change();
 	jQuery('#pivotal_story_type').val(0).change();
-	var populate_desc = "Ticket ID - " + pivotal_bundle.ticketId + "\n\n" + "Requester Email - " + pivotal_bundle.reqEmail + "\n\n" + "Description - " +pivotal_bundle.ticketDescription;
+	var populate_desc = "Ticket ID - " + pivotal_bundle.ticketId + "\n\n" + "Requester Email - " + pivotal_bundle.reqEmail + "\n\n" + "Description - " +jQuery("#pivotal_tracker #tkt_desc_pt").text();
 	jQuery('#pivotal_tracker_subject').val(pivotal_bundle.ticketSubject);
 	jQuery('#pivotal_tracker_description').val(populate_desc);
 	},

@@ -482,8 +482,11 @@ en:
           platform: Platform
           configurations: SDK Configurations
           bread_crumbs: Breadcrumbs
+          bread_crumbs_info: Breadcrumbs will help you retrace the user’s steps
           debug_log_count: Debug Log Count
+          debug_log_count_info: Debug logs includes the log information from logcat for your application
           solutions: Solution Category
+          solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
           select_a_platform: Select a platform
@@ -494,6 +497,7 @@ en:
           app_secret: App Secret
           integration_details: Integration Details
           app_review: Prompt for App Review
+          app_review_info: This will automatically launch the review prompt after the No. of launches configured
           app_review_launch_count: After %{count} Launches
           app_review_launch_never: Never
         index:
@@ -527,6 +531,8 @@ en:
           app_identifier: App Identifier
           app_version: App Version
           app_locale: App Locale
+          app_install_time: App First Installed
+          app_update_time: App Last Updated
           os: OS
           os_version: OS Version
           os_locale: OS Locale
@@ -543,6 +549,7 @@ en:
           screen_orientation: Screen Orientation
           storage_space_internal: Device Storage Free/Total in MB (Internal)
           storage_space_sd: Device Storage Free/Total in MB (External)
+          mobihelp_sdk_version: Mobihelp SDK Version
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
@@ -975,7 +982,7 @@ en:
         dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
         whitelisted_ips_enabled: Trusted IP Address
         whitelisted_ips_enabled_info: Restrict access to your support portal to only trusted locations and networks by defining the range of allowed IP addresses.
-        current_ip_info: Your current IP is <b>%{current_ip}</b> . Access from this IP addresses is allowed by default.
+        current_ip_information: Your current IP is <b>%{current_ip}</b> . You will not be allowed to save the new IP settings without your current IP address in the list.
         applies_to: Applies to
         only_agents: Agents
         agents_customers: Agents and Customers
@@ -990,7 +997,7 @@ en:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
         info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
-        info3: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents.
+        trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
     products:
       helpnote:
         tour: Help me support multiple products
@@ -1303,6 +1310,9 @@ en:
         choose_plan: "Choose Plan"
         zendesk_import: "Zendesk Import"
         daypasses: "Day Passes"
+        inapp_support: "In App Support"
+        ios_sdk: "iOS SDK"
+        android_sdk: "Android SDK"
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -2852,8 +2862,8 @@ en:
     default_reply_template_title: Agent Reply Template
     default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
-    requestor_notification: Requestor Notification
-    requestor_notifications: Requestor Notifications
+    requestor_notification: Requester Notification
+    requestor_notifications: Requester Notifications
     notification_template: Reply Templates
     title: Email Notifications
     singular_title: Notification

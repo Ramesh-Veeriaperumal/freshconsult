@@ -8,7 +8,7 @@ class Freshfone::UsersController < ApplicationController
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
-	skip_before_filter :check_privilege, :only => [:node_presence]
+	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	after_filter  :check_for_bridged_calls, :only => [:refresh_token]

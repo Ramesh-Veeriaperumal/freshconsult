@@ -1,7 +1,7 @@
 class TopicsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
-  skip_before_filter :check_privilege, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :find_forum_and_topic, :except => :index 
   before_filter :portal_check, :only => :show
   before_filter :fetch_monitorship, :only => :show

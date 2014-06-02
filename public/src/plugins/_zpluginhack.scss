@@ -32,6 +32,11 @@
 	z-index: 99999;
 }
 
+.select2.chrome-border-fix{
+	.select2-choice{
+		overflow:visible;
+	}
+}
 // Redactor Hack
 //-----------------
 .form-widget .redactor_editor{ //Mozilla fix for hidden feedback widget

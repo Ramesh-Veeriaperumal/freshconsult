@@ -1,6 +1,6 @@
 class MonitorshipsController < ApplicationController
   
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :require_user #To do Shan
 
   def create
