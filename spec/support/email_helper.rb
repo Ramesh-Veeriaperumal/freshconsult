@@ -42,10 +42,10 @@ module EmailHelper
 			if large
 				buffer = ("a" * 1024).freeze
 				file = File.open("spec/fixtures/files/temp/tmp15.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment#{i+1}"] = fixture_file_upload("files/temp/tmp15.txt", 'text')
+				attach["attachment#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/temp/tmp15.txt", 'text')
 				attachment_in["attachment#{i+1}"] = {:filename => "tmp15.txt", :name => "tmp15.txt", :type => 'text'}
 			else
-				file = fixture_file_upload('files/image4kb.png', 'image/png')
+				file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')
 				attach["attachment#{i+1}"] = file
 				attachment_in["attachment#{i+1}"] = {:filename => "image4kb.png", :name => "image4kb.png", :type => 'image/png'}
 			end
@@ -92,7 +92,7 @@ module EmailHelper
 		count.times{ email_array << send(format) }
 		if email_config
 			email_array << "#{random_name} <#{email_config}>"
-			email_array << "#{other_to}" if other_to
+			email_array << "<#{other_to}>" if other_to
 		end
 		email_array.shuffle!
 		email_array.join(", ")

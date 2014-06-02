@@ -10,7 +10,6 @@ describe MailgunController do
     email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
     email.merge!(mailgun_essentials)
     post :create, email
-    puts response.status
     response.status.should eql "200 OK"
   end
 
@@ -18,14 +17,12 @@ describe MailgunController do
     email = new_mailgun_email({:email_config => Faker::Internet.email})
     email.merge!(mailgun_essentials)
     post :create, email
-    puts response.status
     response.status.should eql "200 OK"
   end
 
   it "should not process as mailgun credentials are missing" do
     email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
     post :create, email
-    puts response.status
     response.status.should eql "302 Found"
   end
 

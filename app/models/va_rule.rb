@@ -138,8 +138,10 @@ class VARule < ActiveRecord::Base
     
     conditions.each do |c|
       c_query = c.filter_query
-      query_strings << c_query.shift
-      params = params + c_query
+      unless c_query.blank?
+        query_strings << c_query.shift
+        params = params + c_query
+      end
     end
     
     query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)

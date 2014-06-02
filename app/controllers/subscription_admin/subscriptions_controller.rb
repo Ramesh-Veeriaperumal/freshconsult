@@ -13,6 +13,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
     @free_agent_count = cumilative_count { Subscription.free_agent_count }
+    @freshfone_credits = Freshfone::Payment.last_month_purchased_credits
+    @day_passes = SubscriptionPayment.last_month_one_time_payments - @freshfone_credits
   end  
   
   def deleted_customers

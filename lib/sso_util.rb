@@ -32,7 +32,15 @@ module SsoUtil
       settings = get_saml_settings(current_account)
       redirect_to OneLogin::RubySaml::Authrequest.new.create(settings)
     else
-      redirect_to current_account.sso_login_url;
+      host_url = "host_url=#{request.host}"
+      sso_url = current_account.sso_login_url
+
+      if sso_url.include? "?" 
+        sso_url += "&#{host_url}"
+      else
+        sso_url += "?#{host_url}"
+      end
+      redirect_to sso_url;
     end
   end
 

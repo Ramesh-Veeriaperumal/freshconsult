@@ -11,6 +11,22 @@ class Workers::Sla
   end
  end
 
+class TrialSLA < Workers::Sla
+  @queue = 'trial_sla_worker'
+
+  def self.perform(args)
+    run
+  end
+end
+
+class FreeSLA < Workers::Sla
+  @queue = 'free_sla_worker'
+
+  def self.perform(args)
+   run
+  end
+end
+
  class AccountSLA < Workers::Sla 
   @queue = 'sla_worker'
 

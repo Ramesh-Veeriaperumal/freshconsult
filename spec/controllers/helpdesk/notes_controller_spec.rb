@@ -28,7 +28,7 @@ describe Helpdesk::NotesController do
     body = "New note shown on index"
 
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>#{body}</p>"} },
-                  :ticket_id => test_ticket.display_id
+                  :ticket_id => test_ticket.display_id, :showing => "activities", :since_id => "-1"
 
     test_ticket.notes.freshest(@account)[0].body.should =~ /#{body}/
     xhr :get, :index, :v => 2, :ticket_id => test_ticket.display_id
@@ -76,5 +76,54 @@ describe Helpdesk::NotesController do
     test_ticket.notes.last.body.should be_eql(body)
     post :destroy, :id => ticket_note.id, :ticket_id => test_ticket.display_id
     test_ticket.notes.last.deleted.should be_eql(true)
+  end
+
+  it "should add a KBase article of ticket" do
+   test_ticket = create_ticket({:status => 2 })
+   now = (Time.now.to_f*1000).to_i
+   post :create , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                   :helpdesk_note => { :cc_emails => ["kbase@#{@account.full_domain}"], 
+                                       :note_body_attributes => {:body_html => "<div>#{now}</div>",
+                                                                 :full_text_html => "<div>#{now}</div>"},
+                                       :private => "0",
+                                       :source => "0",
+                                       :to_emails => "#{@agent.email}",
+                                       :from_email => "support@#{@account.full_domain}",
+                                       :bcc_emails => ""
+                                      },
+                   :ticket_status => "",
+                   :ticket_id => test_ticket.display_id,
+                   :since_id => "-1",
+                   :showing => "activites"
+                 } 
+    @account.solution_articles.find_by_title(test_ticket.subject).should be_an_instance_of(Solution::Article)
+  end
+
+  it "should add a post to forum topic" do
+    test_ticket = create_ticket({:status => 2 })
+    category = create_test_category
+    forum = create_test_forum(category)
+    topic = create_test_topic(forum)
+    create_ticket_topic_mapping(topic,test_ticket)
+    now = (Time.now.to_f*1000).to_i
+    body = "ticket topic note #{now}"
+    post :create , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                   :helpdesk_note => { :cc_emails => "",
+                                       :private => "0",
+                                       :source => "0",
+                                       :to_emails => "#{@agent.email}",
+                                       :from_email => "support@#{@account.full_domain}",
+                                       :bcc_emails => "",
+                                       :body => "#{body}",
+                                       :body_html => "<div>#{body}</div>",
+                                      },
+                   :ticket_status => "",
+                   :ticket_id => test_ticket.display_id,
+                   :since_id => "-1",
+                   :post_forums => "1",
+                   :showing => "notes"
+                 } 
+    topic.reload
+    topic.last_post.body.strip.should be_eql(body)
   end
 end

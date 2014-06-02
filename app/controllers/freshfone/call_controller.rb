@@ -143,7 +143,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]})
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
-		    	:group 	=> (call.meta.group.name if call.meta.present?)
+		    	:group 	=> ((call.meta.present? && call.meta.group.present?) ? call.meta.group.name : "")
 		    }
 		  end
 	  end

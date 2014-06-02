@@ -8,6 +8,7 @@ module ApplicationHelper
   include Gamification::GamificationUtil
   include ChatHelper
 
+  include AttachmentHelper
   include MemcacheKeys
   include Integrations::Util
   require "twitter"

@@ -639,6 +639,16 @@ var scrollToError = function(){
 		}
 	});
 
+	clearCcBccEmails = function() {
+		jQuery('.clear_emails').each(function(i, clearLink){
+			var _clearLink = jQuery(clearLink);
+			var container = jQuery('#' + _clearLink.data('container'));
+			container.find('li.choice').remove();
+			jQuery('#' + _clearLink.data('toggle-checkbox')).prop('checked', false);
+			jQuery('#' + _clearLink.data('toggle-button')).show();
+			container.hide();
+		});
+	}
 
 	//Hack for those who visit upon hitting the back button
 	$('#activity_toggle').removeClass('active');

@@ -59,9 +59,6 @@
 	</div>
 	<% unless post.attachments.empty? %>
 			<strong><%= pluralize(post.attachments.size, 'attachment')%></strong>
-			<ul class="attachment_list">
-        <%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, 
-            :locals => {:show_delete => privilege?(:edit_topic, post), :url => [post] } %>
-			</ul>
+      <%= attachment_container(post.attachments, true, "article", nil) %>
 	<% end %>	
 </div>

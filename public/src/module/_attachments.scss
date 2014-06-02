@@ -1,0 +1,93 @@
+.attachment_list, .ui-form .attachment_list{
+	@include no-bullets;
+	color:#888987; 
+	margin-top:3px;
+	padding:0;
+	@include clearfix;	
+	.list_element{
+		background: rgba(255,255,255,0.4);
+		border: 1px #e8e8e8 solid;
+		@include border-radius(4px);
+		padding: 5px 10px;
+		font-size: 12px;
+		margin: 5px;
+		display: inline-block;
+		float: none;
+		min-height: 20px;
+		height:auto !important;
+		width: auto;
+		min-width: 180px;
+		margin-left:0;	
+		.attachment-type{
+			margin: 0;
+			padding: 3px 0px;
+			width: 25px;
+			height: 13px;
+			display: inline-block;
+			position: relative;
+			&:before{
+				position: absolute;
+				content: "";
+				width: 30px;
+				height: 30px;
+				background: inline-image('cdn-ignored/inline-images/page.png') no-repeat #ffffff;
+				background-size: 20px 25px;
+			}
+			img{
+				width: 26px;
+				height: 30px;
+			}
+			.file-type{
+				position: absolute;
+				top: 12px;
+				font-size: 8px;
+				background-color: #1272de;
+				color: white;
+				font-weight: 600;
+				@include border-radius(2px);
+				padding: 2px 2px;
+				text-transform: uppercase;
+				line-height: 1;
+				min-width: 16px;
+				text-align: center;
+				letter-spacing: -0.01em;
+				left: 3px;					
+			}
+		}
+		.file-types-dropbox{
+			margin: 0;
+			padding: 3px 0px 3px 25px;
+			width: auto;
+			height: 13px;
+			display: inline-block;
+			vertical-align: middle;
+			background: inline-image('cdn-ignored/inline-images/dropbox.png') no-repeat #ffffff;
+		}
+		img.image{
+				margin:0;
+				width:32px; 
+				height:32px;
+				vertical-align: middle;
+		}
+		.attach_content{
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 10px;
+			width: 110px;
+			.file-size{
+				display: block;
+			}
+		}
+		.delete{
+			img{
+				vertical-align: middle;
+			}
+		}
+		&.hide{
+			display: none;
+		}
+	} 
+}
+
+
+

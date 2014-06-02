@@ -1,7 +1,9 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 module UsersHelper
-  def add_test_agent(account=nil)
+  def add_test_agent(account=nil, options={})
+    role_id = options[:role].nil? ? account.roles.find_by_name("Account Administrator").id : options[:role]
+
     account = account || @account
     add_agent(account, {:name => Faker::Name.name,
                         :email => Faker::Internet.email,
@@ -9,7 +11,7 @@ module UsersHelper
                         :role => 1,
                         :agent => 1,
                         :ticket_permission => 1,
-                        :role_ids => ["#{account.roles.find_by_name("Account Administrator").id}"] })
+                        :role_ids => ["#{role_id}"] })
   end
 
   def add_agent(account, options={})
@@ -27,7 +29,7 @@ module UsersHelper
                                     :language => "en",
                                     :role_ids => options[:role_ids])
     new_user.agent = new_agent
-    new_user.privileges = options[:privileges] || account.roles.find_by_name("Account Administrator").privileges
+    new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
     new_user.save(false)
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])

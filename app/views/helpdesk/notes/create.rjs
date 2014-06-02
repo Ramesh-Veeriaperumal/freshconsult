@@ -15,3 +15,6 @@ end
 page << "if(document.getElementById('cnt-reply-quoted')){"
 page.replace_html 'cnt-reply-quoted', quoted_text(@parent)
 page << "}"
+
+# Clear the previously entered Cc and Bcc emails
+page << "clearCcBccEmails();"

@@ -26,18 +26,11 @@
 			    </div>  
 		 		<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
-					<h4><%= @ticket.attachments.size %> attachments</h4>
-					<ul class="attachment_list">
-				     	<%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, 
-				     	:locals => {:show_delete => true, :url => [@item] } %>
-					</ul>
+					<h4><%= @ticket.attachments.size %> <%= t('attachments')%></h4>
+					<%= attachment_container(@ticket.attachments, true, "ticket", nil) %>
 				<% end %> 
 				<% unless @ticket.dropboxes.empty? %>
-			        <ul class="attachment_list">
-			        <%@ticket.dropboxes.each do |dropbox| %> 
-			          <%= render :partial => '/helpdesk/shared/dropbox',:locals => {:dropbox => dropbox, :show_delete => true, :url => [@item] } %>
-			        <%end%> 
-			        </ul>
+			        <%= attachment_container(@ticket.dropboxes, true, "dropbox" ,nil) %>
       			<% end %>
 			</div>
 		</div>               

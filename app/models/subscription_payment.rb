@@ -55,4 +55,9 @@ class SubscriptionPayment < ActiveRecord::Base
   def usd_equivalent
     subscription.usd_equivalent
   end
+
+  def self.last_month_one_time_payments    
+    sum(:amount, :conditions => { :misc => 1, 
+      :created_at => (1.month.ago.beginning_of_month..1.month.ago.end_of_month.end_of_day) })
+  end
 end

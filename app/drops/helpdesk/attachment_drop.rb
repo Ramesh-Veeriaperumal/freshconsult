@@ -15,9 +15,7 @@ class Helpdesk::AttachmentDrop < BaseDrop
     if source.image?
       "/images/helpdesk/attachments/#{source.id}/thumb"
     else
-      extname = source.content_file_name.split('.')[-1] 
-      extname = (["pdf", "doc", "mov", "xls", "zip", "txt", "ppt"].include?(extname)) ? extname : "def"
-      "/images/portal/file-type/#{extname}.png"
+      "/images/portal/file-type/def.png"
     end
   end
 

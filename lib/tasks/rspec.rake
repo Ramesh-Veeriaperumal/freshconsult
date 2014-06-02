@@ -40,13 +40,29 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/api/xml/*_api_spec.rb",
              "spec/controllers/api/json/*_api_spec.rb",
              "spec/controllers/integrations/logmein_controller_spec.rb",
+             "spec/controllers/integrations/jira_issue_controller_spec.rb",
+             "spec/controllers/integrations/applications_controller_spec.rb",
              "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-             "spec/controllers/sso_controller_spec.rb"]
+             "spec/controllers/sso_controller_spec.rb",
+             "spec/lib/*_email_spec.rb",
+             "spec/controllers/email_controller_spec.rb",
+             "spec/controllers/mailgun_controller_spec.rb",
+             "spec/controllers/freshfone/*_spec.rb"]
 
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 EmailTest = ["spec/lib/*_email_spec.rb"]
+MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
+                "spec/controllers/mobihelp/devices_controller_spec.rb",
+                "spec/controllers/mobihelp/solutions_controller_spec.rb",
+                "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
+                "spec/models/mobihelp/app_spec.rb",
+                "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
+                ]
+IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
+		  "spec/controllers/integrations/google_accounts_controller_spec.rb" ]
+FreshfoneTest = ["spec/controllers/freshfone/*_spec.rb"]
 
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest]
+AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
 AllTest.flatten!.uniq!
 
 # Don't load rspec if running "rake gems:*"
@@ -215,6 +231,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
 
+    namespace :freshfone do
+      desc "Running all Freshfone Tests"
+      Spec::Rake::SpecTask.new(:controllers) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(FreshfoneTest)
+      end
+    end    
+
     namespace :unit_tests do
       desc "Running all integration tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
@@ -233,6 +257,22 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
 
+    namespace :integrations do
+      desc "Running all freshdesk integrations tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(IntegrationTest)
+      end
+    end
+
+    namespace :mobihelp do
+      desc "Running all mobihelp tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(MobihelpTest)
+      end
+    end
+    
     namespace :all do
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|

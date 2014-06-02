@@ -10,22 +10,22 @@ class Admin::FreshfoneController < Admin::AdminController
 	def available_numbers
 		begin
 			available_numbers = TwilioMaster.account.available_phone_numbers.get( params[:country] ).send(params[:type]).list( params[:search_options] )
-			search_results = available_numbers.inject([]) do |results, num|
-			results << {
-				:phone_number_formatted => num.friendly_name,
-				:phone_number => num.phone_number, 
-				:region => Admin::FreshfoneHelper.city_name(num.iso_country, num.region), 
-				:iso_country => num.iso_country,
-				:type => params[:type]
-			}
-	  end
+			@search_results = available_numbers.inject([]) do |results, num|
+				results << {
+					:phone_number_formatted => num.friendly_name,
+					:phone_number => num.phone_number, 
+					:region => Admin::FreshfoneHelper.city_name(num.iso_country, num.region), 
+					:iso_country => num.iso_country,
+					:type => params[:type]
+				}
+	  	end
 		rescue Twilio::REST::RequestError	=> e		
-			search_results = []
+			@search_results = []
 			Rails.logger.error "Error searching available numbers. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      		NewRelic::Agent.notice_error(e, {:description => "Error searching available numbers #{e.message}"})
+      		# NewRelic::Agent.notice_error(e, {:description => "Error searching available numbers #{e.message}"})
 		end
 		render :partial => "/admin/freshfone/numbers/freshfone_available_numbers", 
-					 :locals => { :available_numbers => search_results,
+					 :locals => { :available_numbers => @search_results,
 											 :address_required => address_required?,
 											 :rate => rate}	
 	end

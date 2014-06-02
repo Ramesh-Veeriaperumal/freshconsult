@@ -38,15 +38,10 @@
 		<div class="controls">
 			<%= render :partial=> "/forum_shared/attachment_form" %>
 			<% unless @topic.new_record? %>
-				<div class="attachment-list-container">
-					<ul class="attachment_list">
-					    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>	
-						<%= render(
-						:partial => '/helpdesk/shared/attachment', 
-						:collection => @topic.posts.first.attachments,
-						:locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-					</ul>
-				</div>
+			<% unless @topic.posts.first.attachments.empty? %>
+				<%= content_tag('h5', t('attachments'))%>
+				<%= attachment_container(@topic.posts.first.attachments, true, "article", nil) %>
+			<%end%>
 			<%end%>
 		</div>
 	</div>

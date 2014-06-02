@@ -55,9 +55,8 @@ function toggleGroup(access_id)
     </li>
 	<li>
         <div class="control-group">
-		<ul>
-			<%= render :partial => 'attachment', :collection => @item.attachments_sharable  %>
-		</ul>
+
+			 <%= attachment_container(@item.attachments_sharable, true, "remove_shared_attachment", nil) %>
         </div>
 	</li>
 
@@ -109,3 +108,13 @@ function toggleGroup(access_id)
 <% content_for :pagefixed do %>
 	<%= render :partial => "/shared/notification_placeholder" %>
 <% end %>
+
+<script>
+    jQuery(document).ready(function(){
+        jQuery(".remove_shared_attachment").on("click", function(){
+	       	id=jQuery(this).attr("id");
+	       	jQuery(this).parent().append('<input type="hidden" value="'+id+'" name="remove_attachments[]">');
+	      	jQuery("#helpdesk_attachment_"+id).addClass("hide");
+	    });
+    });
+</script>

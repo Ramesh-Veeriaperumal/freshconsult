@@ -74,10 +74,12 @@
 		<div class="attachments-wrap clearfix">
 			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
-			    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@ticket] } %>
+			    <% @ticket.attachments.each do |attached| %> 
+			    	<%= attachment_list(attached, true, "ticket",nil) %>
+			    <% end %>
 			    <% @ticket.dropboxes.each do |dropbox| %> 
-					<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@ticket] } %>
-				<%end%>
+					<%= attachment_list(dropbox, true, "dropbox",nil) %>
+				<% end %>
 			</ul>
 		</div>
 	<% end %>

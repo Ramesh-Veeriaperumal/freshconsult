@@ -25,19 +25,10 @@
 	</article>
 
 	<hr />	
-	{% if article.attachments.size > 0  %}
-	<div class="cs-g-c attachments" id="article-attachments">
-		{% for attachment in article.attachments %}
-			<div class="cs-g-3 attachment">
-				<img src="{{ attachment.thumbnail }}" class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %} " alt="{{ attachment.filename }}" />
-				<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">{{ attachment.filename }}</a>
-				<p class="help-text file-size">({{ attachment.size }})</p>
-			</div>
-		{% endfor %}
-	</div>
-	<hr />
-	{% endif %}
 	
+
+	{{article | article_attachments}}
+
 	<p class="article-vote" id="voting-container">
 		{% translate feedback.title %}
 		<span data-href="{{ article.thumbs_up_url }}" class="vote-up a-link" 
