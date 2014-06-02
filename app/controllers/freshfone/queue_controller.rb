@@ -25,7 +25,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def trigger_non_availability
-    call_initiator.queued = true
+    call_initiator.queued = true #Makes sure welcome message is prevented
     render :xml => call_initiator.return_non_availability
   end
 
@@ -59,7 +59,7 @@ class Freshfone::QueueController < FreshfoneBaseController
     return empty_twiml unless params[:Digits] == '*'
     queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
     queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
-    render :text => 'Dequeued Call #{params[:CallSid]} from #{queue_sid}'
+    render :text => "Dequeued Call #{params[:CallSid]} from #{params[:QueueSid]}"
   end
 
   private

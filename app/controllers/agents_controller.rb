@@ -8,7 +8,7 @@ class AgentsController < ApplicationController
   include MemcacheKeys
 
   skip_before_filter :check_account_state, :only => :destroy
-  skip_before_filter :check_privilege, :only => [:info_for_node]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact ]

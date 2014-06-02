@@ -4,7 +4,7 @@ class Integrations::LogmeinController < ApplicationController
   include Redis::IntegrationsRedis
   include Integrations::AppsUtil
 
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
 
   def rescue_session
     tracking = params['Tracking0']

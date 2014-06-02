@@ -11,10 +11,10 @@ describe ContactsController do
   end
 
   before(:all) do
-    @sample_contact = Factory.build(:user, :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
+    @sample_contact = Factory.build(:user, :account => @acc, :phone => "23423423434", :email => Faker::Internet.email,
                               :user_role => 3)
     @sample_contact.save(false)
-    @active_contact = Factory.build(:user, :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
+    @active_contact = Factory.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
     @active_contact.save(false)
   end
@@ -259,19 +259,22 @@ describe ContactsController do
   # end
 
   it "should verify email" do
-    u = @acc.users.last
-    u.user_emails.build({:email => Faker::Internet.email, :verified => 0})
+    @account.features.multiple_user_emails.create
+    Delayed::Job.delete_all
+    u = add_user_with_multiple_emails(@account, 3)
     u.active = true
-    u.save
-    get :verify_email, :email_id => @acc.user_emails.last.id, :format => 'js'
-    Delayed::Job.last.handler.should include("deliver_user_activation")
+    u.save(false)
+    get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
+    Delayed::Job.last.handler.should include("deliver_email_activation")
     response.body.should =~ /Activation mail sent/
+    @account.features.multiple_user_emails.destroy
   end
 
   it "should make a customer an occasional agent" do
     occasional_customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    occasional_customer.save
+    occasional_customer.save(false)
+    occasional_customer.reload
     put :make_occasional_agent, :id => occasional_customer.id
     occasional_agent = @account.agents.find_by_user_id(occasional_customer.id)
     occasional_agent.should be_an_instance_of(Agent)
@@ -281,7 +284,7 @@ describe ContactsController do
   it "should restore a deleted contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :deleted => true)
-    customer.save
+    customer.save(false)
     put :restore, :id => customer.id
     customer.reload
     customer.deleted?.should eql false
@@ -290,8 +293,8 @@ describe ContactsController do
   it "should delete an existing contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    customer.save
-    @request.env['HTTP_REFERER'] = 'sessions/new'
+    customer.save(false)
+    customer.reload
     delete :destroy, :id => customer.id
     @account.all_users.find(customer.id).deleted.should be_true
   end

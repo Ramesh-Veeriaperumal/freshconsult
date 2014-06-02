@@ -82,8 +82,9 @@
 			var _form = $("<form class='hide' method='post' />")
 							.attr("action", this.href)
 							.append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />")
-							.appendTo("body")
-							.get(0).submit()
+							.appendTo("body");
+							add_csrf_token(_form);
+							_form.get(0).submit();
 		})
 
 		// Data api for onclick showing dom elements
@@ -190,6 +191,7 @@
 				  	   	})
 			  	    }else{
 			  	    	// For all other form it will be a direct page submission			  	
+			  	    	add_csrf_token(form)
 			  	    	form.submit()
 			  	    }
 				}

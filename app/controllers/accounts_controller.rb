@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :check_privilege, :only => [:check_domain, :new_signup_free, :signup_google,
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :signup_google,
                       :create_account_google, :openid_complete, :associate_google_account,
                       :associate_local_to_google, :create, :rebrand, :dashboard]
 

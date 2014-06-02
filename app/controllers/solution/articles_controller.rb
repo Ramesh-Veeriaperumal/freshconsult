@@ -3,7 +3,7 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   
-  skip_before_filter :check_privilege, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   
   before_filter :set_selected_tab
@@ -99,7 +99,7 @@ class Solution::ArticlesController < ApplicationController
   end
    
 
-   def delete_tag     
+   def delete_tag  #possible dead code
      logger.debug "delete_tag :: params are :: #{params.inspect} "     
      article = current_account.solution_articles.find(params[:article_id])     
      tag = article.tags.find_by_id(params[:tag_id])      
@@ -111,7 +111,7 @@ class Solution::ArticlesController < ApplicationController
   
   protected
 
-    def scoper
+    def scoper #possible dead code
       eval "Solution::#{cname.classify}"
     end
 
@@ -130,7 +130,7 @@ class Solution::ArticlesController < ApplicationController
       solution_category_folder_url(params[:category_id], params[:folder_id])
     end
 
-    def cname
+    def cname #possible dead code
       @cname ||= controller_name.singularize
     end
 

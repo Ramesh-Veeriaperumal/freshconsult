@@ -3,23 +3,13 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
   include AdminControllerMethods
   include ReadsToSlave
   around_filter :select_shard
-  skip_filter :run_on_slave, :only => [:block_user,:spam_user]
+  skip_filter :run_on_slave, :only => [:block_user,:spam_user,:hard_block,:internal_whitelist]
 
   
 
-  before_filter :load_user, :load_recent_tickets, :load_recent_notes, :only => :spam_details
+  before_filter :load_user,  :only => [:spam_details,:internal_whitelist]
+  before_filter :load_recent_tickets, :load_recent_notes, :only => :spam_details
 
-  def login_from_basic_auth
-     #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
-     authenticate_or_request_with_http_basic do |username, password|
-       # This has to return true to let the user in
-       if Rails.env.production?
-          username == 'freshdesk' && Digest::MD5.hexdigest(password) == "6acadd7bf81f9a0ed8ae3a0531f4b824"
-       else
-          username == 'freshdesk' && password == "USD40$" 
-       end
-     end
-  end
 
   def spam_details
     render :index
@@ -32,6 +22,14 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
     end
     redirect_to :back
   end
+  
+  def hard_block
+    if params[:user_id]
+      User.update_all({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {:id => params[:user_id]})
+      flash[:notice] = "User success fully blocked!"
+    end
+    redirect_to :back
+  end
 
   def spam_user
     if params[:user_id]
@@ -40,6 +38,18 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
     end
     redirect_to :back
   end
+
+  def internal_whitelist
+    item = WhitelistUser.new( :user_id => @user.id, :account_id => @user.account_id)
+    if item.save
+      flash[:notice] = "User ID #{params[:user_id]}  Whitelisted"
+      redirect_to :back
+    else
+      flash[:notice] = "Adding Whitelisted User ID Failed"
+      redirect_to :back
+    end
+  end
+
 
   private
 
@@ -76,6 +86,10 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
 
     def load_user
       @user = User.find(params[:user_id])
+      @account = @user.account
+      note_id = Helpdesk::Note.maximum(:id, :conditions => [ "account_id = ? and incoming = 0", @user.account_id ])
+      @using_account = !(note_id.blank? or (note_id and Helpdesk::Note.find_by_id(note_id).created_at < 2.months.ago))
+      @internal_whitelisted = !WhitelistUser.find_by_user_id(params[:user_id]).blank?
     end
 
     def select_shard(&block)

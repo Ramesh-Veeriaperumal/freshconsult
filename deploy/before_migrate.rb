@@ -21,3 +21,4 @@ run "ln -nfs #{shared_path}/config/freshfone.yml #{rel_path}/config/freshfone.ym
 run "ln -nfs #{shared_path}/config/rate_limit.yml #{rel_path}/config/rate_limit.yml"
 run "ln -nfs #{shared_path}/config/akismet.yml #{rel_path}/config/akismet.yml"
 run "ln -nfs #{shared_path}/config/braintree.yml #{rel_path}/config/braintree.yml"
+run "ln -nfs #{shared_path}/config/sidekiq.yml #{rel_path}/config/sidekiq.yml"

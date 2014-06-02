@@ -177,7 +177,7 @@ module Admin::HomeHelper
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback"],
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback", "mobihelp"],
       :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
@@ -267,6 +267,9 @@ module Admin::HomeHelper
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
+      },
+      :mobihelp                   =>      { 
+          :open_keywords          =>      [:inapp_support , :ios_sdk , :android_sdk]
       }
     }
 

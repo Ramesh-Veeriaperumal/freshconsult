@@ -220,6 +220,7 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/dates.js
     - public/javascripts/globalinit.js
+    - public/javascripts/security.js
     - public/javascripts/fjax.js
     - public/javascripts/loader.js
     - public/javascripts/application.js
@@ -279,6 +280,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/feedback_widget_form.js    
+    - public/javascripts/security.js
 
   custom_widget:
     - public/javascripts/custom_widget.js
@@ -345,7 +347,7 @@ javascripts:
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/preview.js
 
-  portal_bottom:
+  portal_bottom:    
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
@@ -357,6 +359,7 @@ javascripts:
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/moment/*
+    - public/javascripts/security.js
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/portal/portal-app-actions.js
@@ -432,6 +435,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
     - public/javascripts/mColorPicker.js
+    - public/javascripts/security.js
     - public/javascripts/getting_started.js
 
   reports:

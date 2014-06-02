@@ -137,8 +137,9 @@
             jQuery("#cm-fs-actions .btn").attr("disabled", true)
 
             $btn.button("loading")
-
-            jQuery($btn.data("codeRefresh")).codemirror('save');
+            if( typeof CodeMirror !== 'undefined' ){
+              jQuery($btn.data("codeRefresh")).codemirror('save');
+            }
 
             if(window['codemirror-fullscreen'] !== undefined)
               setPostParam(form, "cmfullscreen", window['codemirror-fullscreen'])

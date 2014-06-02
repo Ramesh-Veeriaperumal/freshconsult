@@ -1,7 +1,7 @@
 class ActivationsController < SupportController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
-  skip_before_filter :check_privilege, :only => [:new, :create]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:new, :create]
   
   def send_invite
     user = current_account.all_users.find params[:id]
@@ -64,10 +64,10 @@ class ActivationsController < SupportController
   protected
 
     def cname
-      "users"
+      "users" #possible dead code
     end
 
     def scoper
-      current_account.users
+      current_account.users #possible dead code
     end
 end

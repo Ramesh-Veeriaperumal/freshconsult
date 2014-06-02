@@ -5,6 +5,7 @@
 config.log_level = :debug
 
 config.cache_classes = true
+config.action_controller.allow_forgery_protection = true
 
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new

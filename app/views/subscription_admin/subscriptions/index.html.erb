@@ -1,6 +1,6 @@
 <div class="row"> 
 	<div class="span8">
-	<%= link_to 'Export Customers', customers_csv_admin_subscriptions_path, :class => "btn btn-success pull-right" %>
+	<!-- <%= link_to 'Export Customers', customers_csv_admin_subscriptions_path, :class => "btn btn-success pull-right" %> -->
 	<h3><%= @page_title = "All accounts" %></h3>
 	<table id="subscriptions" class="table">
 	  <tr>
@@ -28,14 +28,14 @@
 	
 	</div>    
 	<div class="span3">           
-	 <h3>Accounts summary</h3>		
+	 <h3>Customer summary</h3>		
  	 <table id="customer_counts" class="table table-bordered">
 	    <tr>
 	      <th>Number of Customers</th>
 	      <td><%= @customer_count %></td>
 	    </tr>
 		 	<tr>
-		      <th>Paid Customers</th>
+		      <th>Paying Customers</th>
 		      <td><%= @customer_count - @free_customers %></td>
 		    </tr>
 		    <tr>
@@ -59,5 +59,18 @@
 				<td><%= @free_agent_count %> </td>
 			</tr>
 	  </table>
+
+	  <h3>Last month purchases</h3>		
+		<table id="customer_counts" class="table table-bordered">
+			<tr>
+	      <th>Day passes</th>
+	      <td><%= @day_passes %></td>
+	    </tr>
+	    <tr>
+	      <th>Freshfone credits</th>
+	      <td><%= link_to @freshfone_credits, "/freshfone_admin" %></td>
+	    </tr>	    
+	  </table>
+
   </div> 
 </div>  

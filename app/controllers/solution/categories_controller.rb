@@ -2,7 +2,7 @@
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   
-  skip_before_filter :check_privilege, :only => [:index, :show]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
@@ -92,7 +92,7 @@ class Solution::CategoriesController < ApplicationController
 
   protected
 
-    def scoper
+    def scoper #possible dead code
       eval "Solution::#{cname.classify}"
     end                                     
     
@@ -118,7 +118,7 @@ class Solution::CategoriesController < ApplicationController
       end
     end
     
-    def cname
+    def cname #possible dead code
       @cname ||= controller_name.singularize
     end
 
@@ -130,7 +130,7 @@ class Solution::CategoriesController < ApplicationController
       @selected_tab = :solutions
     end
     
-    def folder_scope
+    def folder_scope #possible dead code
       :folders
     end
 

@@ -15,7 +15,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Mobile::Controllers::Ticket
 
   before_filter :redirect_to_mobile_url  
-  skip_before_filter :check_privilege, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
 
   around_filter :run_on_slave, :only => :user_ticket

@@ -1,6 +1,6 @@
 class PasswordResetsController < SupportController
   
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :require_no_user
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
   before_filter :set_native_mobile

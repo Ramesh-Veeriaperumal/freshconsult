@@ -98,6 +98,14 @@
         <th>Security</th>
         <td>SSO - <%= @account.sso_enabled? %>  https - <%= @account.ssl_enabled? %>   Custom SSL - <%= @account.main_portal.ssl_enabled %> </td>
       </tr>
+      <tr>
+        <th>Last ticket added on</th>        
+        <td><%= @account.tickets.present? ? @account.tickets.last.created_at.to_s(:short_day) : "No tickets added." %></td>        
+      </tr>
+      <tr>
+        <th>Last ticket note added on</th>        
+        <td><%= @account.notes.present? ? @account.notes.last.created_at.to_s(:short_day) : "No notes added." %></td>
+      <tr>
     </table>   
   </div> 
   <div class="span4">
