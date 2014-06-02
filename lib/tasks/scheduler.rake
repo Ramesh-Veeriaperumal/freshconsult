@@ -21,6 +21,25 @@ namespace :scheduler do
     }
   }
 
+
+  SLA_TASKS = {
+    "trial" => {
+      :account_method => "trial_accounts", 
+      :class_name => "Admin::TrialSlaWorker"
+    },
+
+    "paid" => {
+      :account_method => "paid_accounts", 
+      :class_name => "Admin::SlaWorker"
+    },
+
+    "free" => {
+      :account_method => "free_accounts", 
+      :class_name => "Admin::FreeSlaWorker"
+    }
+
+  }
+
   PREMIUM_ACCOUNT_IDS = {:staging => [390], :production => [18685,39190]}
 
 
@@ -95,17 +114,23 @@ namespace :scheduler do
     puts "Running #{account_type} supervisor completed at #{Time.zone.now}"
   end
 
-  task :sla => :environment do 
+  task :sla, [:type] => :environment do |t,args|
+    account_type = args.type || "paid"
+    class_constant = SLA_TASKS[account_type][:class_name].constantize
+    queue_name = class_constant.get_sidekiq_options["queue"]
+    puts "::::queue_name:::#{queue_name}"
     puts "SLA escalation initiated at #{Time.zone.now}"
-    rake_logger.info "rake=SLA" unless rake_logger.nil?
+    rake_logger.info "rake= #{account_type} SLA" unless rake_logger.nil?
     current_time = Time.now.utc
-    if empty_queue?(Admin::SlaWorker.get_sidekiq_options["queue"])
+    if empty_queue?(queue_name)
       accounts_queued = 0
       Sharding.run_on_all_slaves do
-        Account.active_accounts.each do |account|
+        Account.send(SLA_TASKS[account_type][:account_method]).each do |account| 
           Account.reset_current_account
           account.make_current       
-          Admin::SlaWorker.perform_async({:account_id => account.id})
+          class_constant.perform_async({ 
+            :account_id => account.id
+          })
           accounts_queued += 1
         end
       end

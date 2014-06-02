@@ -37,7 +37,7 @@ module Admin
       Account.reset_current_account
     end
 
-    private
+    protected
     
       def log_file
         @log_file_path ||= "#{Rails.root}/log/sla.log"      
