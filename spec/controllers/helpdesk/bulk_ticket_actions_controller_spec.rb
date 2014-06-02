@@ -41,7 +41,7 @@ describe Helpdesk::BulkTicketActionsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     buffer = ("b" * 1024).freeze
     att_file = Tempfile.new('bulk_att')
-    File.open(att_file.path, 'wb') { |f| 1.kilobytes.times { f.write buffer } }
+    File.open(att_file.path, 'wb') { |f| f.write buffer }
 
     Resque.inline = true
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p>bulk ticket update with reply and attachments</p>" },

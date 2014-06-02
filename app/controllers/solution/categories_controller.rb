@@ -92,7 +92,7 @@ class Solution::CategoriesController < ApplicationController
 
   protected
 
-    def scoper
+    def scoper #possible dead code
       eval "Solution::#{cname.classify}"
     end                                     
     
@@ -118,7 +118,7 @@ class Solution::CategoriesController < ApplicationController
       end
     end
     
-    def cname
+    def cname #possible dead code
       @cname ||= controller_name.singularize
     end
 
@@ -130,7 +130,7 @@ class Solution::CategoriesController < ApplicationController
       @selected_tab = :solutions
     end
     
-    def folder_scope
+    def folder_scope #possible dead code
       :folders
     end
 

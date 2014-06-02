@@ -17,7 +17,7 @@ describe Support::TicketsController do
                               :user_role => 3, :customer_id => company.id)
     test_user1.save
     now = (Time.now.to_f*1000).to_i
-    test_ticket = create_ticket({ :status => 2, :requester => test_user1, :subject => "#{now}" }, 
+    test_ticket = create_ticket({ :status => 2, :requester_id => test_user1.id, :subject => "#{now}" }, 
                                   create_group(@account, {:name => "Tickets"}))
     test_user2 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :customer_id => company.id)
@@ -29,4 +29,28 @@ describe Support::TicketsController do
     get :show, :id => test_ticket.display_id
     response.should redirect_to 'support/login'
   end
-end
+
+  it "should not allow a user to update inaccessible attributes" do
+    user1 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    user1.save
+    user2 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    user2.save
+    now = (Time.now.to_f*1000).to_i
+    ticket = create_ticket({ :status => 2, :requester_id => user1.id, :subject => "#{now}" })
+    put :update, :id => ticket.display_id, 
+                 :helpdesk_ticket => { :status => "2", 
+                                       :priority => "1",
+                                       :requester_id => user2,
+                                       :source => "6",
+                                       :spam => true,
+                                       :deleted => true
+                                      }
+    ticket = @acc.tickets.find_by_subject(now)
+    ticket.requester_id.should be_eql(user1.id)
+    ticket.source.should_not be_eql(6)
+    ticket.spam.should be_false
+    ticket.deleted.should be_false
+  end
+end 
