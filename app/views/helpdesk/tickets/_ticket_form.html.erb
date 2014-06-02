@@ -25,6 +25,7 @@
 <% content_for :onload_script do -%> 
 
   invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'cnt-fwd');
+  jQuery('input.requester').focus();
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')

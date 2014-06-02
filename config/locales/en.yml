@@ -1607,8 +1607,8 @@ en:
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   f_request: Feature Request
   save_and_create: Save and Create Another
-  save_and_new: Save and New
-  save_and_close: Save and Close
+  save_and_new: Save and <strong>New<strong>
+  save_and_close: Save and <strong>Close</strong>
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
