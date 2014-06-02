@@ -22,7 +22,8 @@ describe Freshfone::CallController do
     setup_caller_data
 
     get :caller_data, { :PhoneNumber => @number }
-    json[:call_meta].should be_eql({ :number=>"+18062791926", :group=>"Product Management" })
+    call_meta = json[:call_meta].reject{|k,v| v.blank?}
+    call_meta.keys.should be_eql([:number, :group])
   end
 
   it 'should update call status and user presence' do

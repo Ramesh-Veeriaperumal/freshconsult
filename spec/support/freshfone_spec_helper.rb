@@ -2,6 +2,7 @@ module FreshfoneSpecHelper
 
   def create_test_freshfone_account
     Freshfone::Account.any_instance.stubs(:close)
+    Freshfone::Account.any_instance.stubs(:update_twilio_subaccount_state).returns(true)
     freshfone_account = Freshfone::Account.new( 
                           :twilio_subaccount_id => "AC626dc6e5b03904e6270f353f4a2f068f", 
                           :twilio_subaccount_token => "9440b022c423b59a8339715b6e7d4f80", 
