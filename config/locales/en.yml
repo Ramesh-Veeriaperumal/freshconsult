@@ -459,7 +459,7 @@ en:
 
   admin:
     mobihelp:
-      app_review: 
+      app_review:
         request_sent: "App Review Request Sent"
       human_name: Mobihelp App
       apps:
@@ -467,8 +467,8 @@ en:
           heading1: What is Mobihelp?
           content1:
             info1: Mobihelp is Freshdesk’s mobile SDK which makes it easier for you to provide in-app support to your mobile customers.
-            info2: Once you integrate MobiHelp, your users will be able to see a dedicated support section within your app. This will include your knowledge base, and a ticket form so that they can get in touch with you if they need help. 
-            info3: MobiHelp is completely configurable. You can select everything - from the fields in your feedback form to the way it looks inside your app. Information like device name, operating system and app version are collected automatically without any effort of the user. You can also enable custom data fields and collect crash logs and breadcrumb trails. 
+            info2: Once you integrate MobiHelp, your users will be able to see a dedicated support section within your app. This will include your knowledge base, and a ticket form so that they can get in touch with you if they need help.
+            info3: MobiHelp is completely configurable. You can select everything - from the fields in your feedback form to the way it looks inside your app. Information like device name, operating system and app version are collected automatically without any effort of the user. You can also enable custom data fields and collect crash logs and breadcrumb trails.
             info4: You can create an unlimited number of applications to be used with MobiHelp and tie them to your Freshdesk account. Once you do, you can manage all your incoming requests from a single helpdesk.
             info5: Please make sure that you follow our integration guide to learn how you can integrate the SDK into your app.
           heading2: Mobihelp SDK
@@ -4488,7 +4488,7 @@ en:
         app_key_info: "Create an App in the dropbox and provide the app key here."
     pivotal_tracker:
       label: "Pivotal Tracker"
-      desc: "Create Stories in Pivotal Tracker and track them from within freshdesk" 
+      desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
       helptext: "<h4>Pivotal Tracker Integration Help</h4><br/><p>Pivotal Tracker is a project management tool that helps your team collaborate and work on projects. This integration lets your agents create stories in Pivotal Tracker based on incoming tickets from your helpdesk . You can even track the status of the stories and the updates are added as notes in those tickets. <a href='http://www.pivotaltracker.com/help/gettingstarted' target='_blank'>(Learn more)</a> <br/<br/><p>You will need to configure your Pivotal Tracker account information and your API token to enable the integration. The API Token will be found on your profile page in your Pivotal Tracker account.</p>"
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
@@ -5625,3 +5625,38 @@ en:
         reply:
           title: Reply
           posted: "replied to"
+  link_with_marketplace: Link with Google Marketplace
+  google_signup:
+    associate_google:
+      link_your_helpdesk: Link your helpdesk
+      login_your_helpdesk: Login to your helpdesk
+      email_address: Email address
+      your_helpdesk: Your helpdesk
+      login: Login
+      login_with_admin: "You need to be an Account administrator to link your freshdesk account with Google login"
+    signup_google:
+      new_account: New account
+      existing_user: Existing account
+      company_name: Company Name
+      helpdesk_url: Helpdesk URL
+      your_freshdesk_url: Your Helpdesk URL
+      domain_info: "ex. if your helpdesk is 'http://apple.freshdesk.com' then enter 'apple'"
+      phone_no: "Phone Number"
+      create_my_account: Create your Account
+      by_clicking: "By clicking "
+      agree: "you agree to our"
+      terms_of_service: "terms of service"
+      privacy_policy: "privacy policy"
+      and: " and"
+      freshdesk_terms: "http://freshdesk.com/terms"
+      freshdesk_privacy: "http://freshdesk.com/privacy"
+      helpdesk_name: "Helpdesk name"
+      freshdesk_dot_com: ".freshdesk.com"
+      submit: Submit
+    signup_google_error:
+      error_message: "Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or "
+      signup: "Signup from Freshdesk Home page "
+      freshdesk_signup_page: "http://freshdesk.com/signup"
+    thank_you:
+      refresh_your_account: "All right! Let’s refresh your helpdesk."
+      creating_your_account: "Creating your account now..."
