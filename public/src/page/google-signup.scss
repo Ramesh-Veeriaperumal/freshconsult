@@ -1,0 +1,42 @@
+
+.ui-signup{
+	background:#fff;
+	.top_banner{
+		border-bottom:1px solid #000;
+		background:#F8F8F8;
+		padding:15px;
+	}
+	.nav-tabs{
+		border:0
+	}
+	.nav-tabs > .active > a, .nav-tabs > .active > a:hover{
+		border: 0;
+		box-shadow: inset 0px 3px 0px #000;
+		border-radius: 0;
+	}
+	.nav-tabs > li > a:hover{
+		box-shadow: inset 0px 3px 0px rgba(0,0,0,0.1);
+		background: transparent;
+	}
+	.nav-tabs > li > a{
+		border:0;
+		background:transparent;
+		border-radius:0;
+	}
+}
+.top-banner-content, .google-signup-content{
+	width:600px;
+	margin:0 auto;
+}
+.marketplace-link{
+	font-size:16px;
+	padding: 16px 0;
+	float: right;
+}
+.ui-signup .ui-form{
+	border: 0;
+	background-color: transparent;
+}
+.text-red{
+	color: red! important;
+}

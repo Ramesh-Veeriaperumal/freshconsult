@@ -67,6 +67,10 @@ stylesheets:
     - public/stylesheets/page/tkt_details/tkt_details_sprites.css
     - public/stylesheets/page/gadget.css
 
+  google_signup:
+    - public/stylesheets/common.css
+    - public/stylesheets/page/google-signup.css
+
   reports:
     - public/stylesheets/page/reports.css
 
@@ -172,7 +176,7 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
-    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js    
+    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
     - public/javascripts/app/ticket_details.js
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/base64.js
@@ -213,7 +217,7 @@ javascripts:
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
-    - public/javascripts/dyn_menu.js    
+    - public/javascripts/dyn_menu.js
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
@@ -279,7 +283,7 @@ javascripts:
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/feedback_widget_form.js    
+    - public/javascripts/feedback_widget_form.js
     - public/javascripts/security.js
 
   custom_widget:
@@ -347,7 +351,7 @@ javascripts:
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/preview.js
 
-  portal_bottom:    
+  portal_bottom:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
@@ -463,7 +467,7 @@ javascripts:
   admin:
     - public/javascripts/admin/ui_search.js
 
-<% 
+<%
   # Adding specific javascript assets to the package list
   # Add new lang lib to /public/javascripts/lang/{framework name}/es.js etc.
   # The supported language name should be with the corresponding I18n ruby locale key in lowercase
