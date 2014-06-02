@@ -169,6 +169,7 @@ FreshdeskPjax.prototype = {
         }
         window.FreshdeskNode.clearClients();
         window.FreshdeskNode.clearReplyOnLoad();
+        window.FreshdeskNode.clearPolling();
         window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions = [];
         window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
         window.FreshdeskNode.getValue('faye_realtime').faye_channels = [];
