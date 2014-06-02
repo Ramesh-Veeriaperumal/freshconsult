@@ -319,12 +319,19 @@
             }
         };
 
+        var refreshShowCallBack = function(message){
+            if(message.ticket_id == window.FreshdeskNode.getValue('agent_collision_show_data').ticket_id){
+                 jQuery('.source-badge-wrap .source').addClass('collision_refresh').attr('title', 'Click here to refresh the ticket');
+            }
+        }
+
         return {
             collisionMessageHandlerShow: collisionMessageHandlerShow,
             collisionMessageHandlerIndex: collisionMessageHandlerIndex,
             setInstanceVariables: setInstanceVariables,
             getAgents: getAgents,
-            refreshCallBack: refreshCallBack
+            refreshCallBack: refreshCallBack,
+            refreshShowCallBack: refreshShowCallBack
         };
 
 
@@ -396,6 +403,10 @@
         common_variables.faye_realtime.addChannel = function (channel) {
             if (window.FreshdeskNode.getValue('faye_realtime').faye_channels.indexOf(channel) == -1) {
                 window.FreshdeskNode.getValue('faye_realtime').faye_channels.push(channel);
+                return true;
+            }
+            else{
+                return false;
             }
         }
         var host = '';
@@ -542,8 +553,10 @@
 
         var addSubscriptions = function () {
             for (var channel in common_variables.channel_obj) {
-                window.FreshdeskNode.getValue('faye_realtime').addChannel(channel);
-                var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
+                var added = window.FreshdeskNode.getValue('faye_realtime').addChannel(channel);
+                if(added){
+                    var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
+                }
                 // faye_utils.then(subscription,function(){console.log('successfull subsction',subscription);},function(err){console.log('The subscription was not successfull',err);})
             }
         };
@@ -791,5 +804,32 @@
     })(FreshdeskNode, message_utilities, faye_utilies);
 
     window.AutoRefreshIndex = AutoRefreshIndex;
+
+    var AutoRefreshShow = (function (freshdesk_node, msg_utilites, faye_utils) {
+
+        var setLongPolling = function(){
+            //console.log('can set poller if you want');
+        }
+        var setEvents = function () {
+            // console.log('I am setting events for auto_refresh show');
+        };
+
+
+        var callback = function (message) {
+            this.refreshShowCallBack(message);
+        };
+
+        var init = function () {
+            setEvents();  
+        };
+
+        return {
+            init: init,
+            callback: callback,
+            setLongPolling: setLongPolling
+        }
+    })(FreshdeskNode, message_utilities, faye_utilies);
+
+    window.AutoRefreshShow = AutoRefreshShow;
 
 }(window.jQuery);
