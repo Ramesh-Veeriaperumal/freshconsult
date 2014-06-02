@@ -6,11 +6,6 @@ class Freshfone::Payment < ActiveRecord::Base
 
   after_commit_on_create :set_usage_trigger
 
-  def self.last_month_purchased_credits
-    sum(:purchased_credit, :conditions => { 
-      :created_at => (1.month.ago.beginning_of_month..1.month.ago.end_of_month.end_of_day) }).to_f
-  end
-
   private
     def set_usage_trigger
       return if account.freshfone_credit.zero_balance?
