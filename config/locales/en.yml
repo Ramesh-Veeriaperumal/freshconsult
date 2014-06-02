@@ -5353,6 +5353,7 @@ en:
     message_archives: "Message archives"
     see_all: "See all"
     says: "says"
+    incoming_chat: "Incoming Chat"
     tag_msg: "Tag this Conversation"
     transfer_to_agent: "Transfer to agent"
     block: "Block"
