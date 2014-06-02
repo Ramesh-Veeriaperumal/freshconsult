@@ -457,12 +457,12 @@ module ApplicationHelper
     end 
     avatar_content = MemcacheKeys.fetch(["v6","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      content_tag(:div, (cached_user_avatar(user, profile_size, img_tag_options)), :class => profile_class)
+      content_tag(:div, (cached_user_avatar(user, profile_size, img_tag_options)), :class => "#{profile_class} image-lazy-load")
     end
   end
 
   def cached_user_avatar(user, profile_size, img_tag_options)
-    MemcacheKeys.fetch(["v7", "avatar", profile_size, user], 30.days.to_i) do
+    MemcacheKeys.fetch(["v8", "avatar", profile_size, user], 30.days.to_i) do
       image_tag(user_avatar_url(user, profile_size), img_tag_options)
     end
   end
