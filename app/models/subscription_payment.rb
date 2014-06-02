@@ -6,7 +6,7 @@ class SubscriptionPayment < ActiveRecord::Base
 
   NON_RECURRING_PAYMENTS = {
     :day_pass => "Day Pass",
-    :freshfone => "Freshfone Credits"
+    :freshfone => "Freshfone"
   }
   
   belongs_to :subscription
