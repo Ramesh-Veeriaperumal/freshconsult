@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   before_filter :persist_user_agent
   before_filter :set_cache_buster
   before_filter :logging_details 
+  before_filter :remove_pjax_param 
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -156,6 +157,10 @@ class ApplicationController < ActionController::Base
 
     def revoke_logging
       logger.level = @bak_log_level 
+    end
+
+    def remove_pjax_param
+      params.delete('_pjax')
     end
 
   private

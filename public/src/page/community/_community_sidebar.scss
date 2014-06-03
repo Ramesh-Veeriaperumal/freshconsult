@@ -1,0 +1,290 @@
+@charset "UTF-8";
+$sidebar-width: 284px;
+
+.cm-sb-toggle{
+	float:left;
+	cursor:pointer;
+	width: 20px;
+	height: 20px;
+	padding-right: 8px;
+	margin-right: 20px;
+}
+.sticky_panel, .hamburger{ 
+	position:relative;
+	.cm-sb-toggle:before {
+		background: #666;
+		position: relative;
+		left: -28px;
+		padding: 6px 10px 3px 30px;
+		top: -6px;
+		border-radius: 0px 5px 5px 0;
+		color: #FFF;
+		text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+	}
+	.cm-sb-toggle:after {
+		content: "";
+		position: absolute;
+		border: 4px solid rgba(0, 0, 0, 0);
+		border-bottom-color: #333;
+		border-right-color: #333;
+		top: -13px;
+		left: -28px;
+	}
+}
+.hamburger {
+	padding-bottom:10px;
+	.cm-sb-toggle:before { 
+	top: -9px;
+	}
+}
+
+.cs-show {
+	.sticky_panel, .hamburger {
+		.cm-sb-toggle {
+			visibility: hidden;
+		}
+	}
+}
+.cm-wrapper{
+	position:absolute;
+	width:100%;
+}
+.cm-wrapper .wrapper{
+	position:relative;
+	padding:0;
+}
+.community-sidebar{
+	@include transition(left 0.2s ease-in, opacity 0.2s ease-in);
+	position: absolute;
+	z-index: 1000;
+	padding: 10px 0 10px;
+	top:0;
+	width: $sidebar-width;
+	background-color: #fff;
+	&:after{
+		content:"";
+		position:absolute;
+		right: 0px;
+		top: 0;
+		width: 0;
+		height: 100%;
+		border-left:1px solid #afafaf;
+		background: transparent;
+		@include box-shadow(2px 1px 3px rgba(0, 0, 0, 0.4));
+	}
+}
+.cm-sb-list{
+	margin-right:2px;
+	overflow:auto;
+
+	.disabled a {
+		color: #EEE;
+	}
+
+	a{
+		color: #333;
+		text-decoration: none;
+		padding-left: 50px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		display: block;
+		border-bottom:1px solid #e7e7e7;
+		position:relative;
+		font-weight:500;
+		&:hover{
+			background-color:#f7f7f7;
+		}
+		&:before{
+			content: "\2013"; // en dash -
+			font-size: 16px;
+			font-weight: bold;
+	    position: absolute;
+	    top: 6px;
+			left: 23px;
+		}
+	}
+	.cm-sb-cat-item{
+		position:relative;
+	}
+	.cm-sb-cat-item > a:before{
+		content: "";
+	}
+	.forum_expand{
+		width: 34px;
+		height: 34px;
+		position: absolute;
+		left: 5px;
+		top: 0;
+		z-index: 10;
+		cursor:pointer;
+		&:before{
+			content:"";
+			border:6px solid transparent;
+			border-left-color:#858585;
+			width:0;
+			height:0;
+			position:absolute;
+			left: 20px;
+			top: 10px;
+			@include box-shadow(-1px 0 0 rgba(0, 0, 0, 0.2));
+		}
+		&:hover:before{
+			border-left-color:#333;
+		}
+	}
+	li.toggle-open{
+		.forum_expand:before{
+			border-color:transparent;
+			border-top-color: #858585;
+			@include box-shadow(0 -1px 0 rgba(0, 0, 0, 0.2));
+			left: 17px;
+			top: 14px;
+		}
+		.forum_expand:hover:before{
+			border-top-color:#333;
+		}
+	}
+	.forum_list{ display:none; }
+	li.toggle-open .forum_list{ display:block; }
+
+
+	li.active > a, li.active > a:hover{
+		background-color: #858585;
+		color: #fff;
+		.muted{
+			color: #fff;
+		}
+		&:before{
+			color: #fff;
+		}
+	}
+
+	li.active{
+		.forum_expand:before,
+		.forum_expand:hover:before{
+			border-left-color:#fff;
+		}
+
+		&.toggle-open .forum_expand:before,
+		&.toggle-open .forum_expand:hover:before{
+			border-left-color:transparent;
+			border-top-color:#fff;
+		}
+	}
+}
+.sidebar-close{
+	background-color: #9F9F9F;
+  	font-size: 22px;
+  	font-weight: bold;
+  	height: 40px;
+  	line-height: 1.6;
+  	position: absolute;
+  	left: -40px;
+  	text-align: center;
+  	top: 5px;
+  	width: 40px;
+	cursor: pointer;
+	&:before{
+		content:"\00d7"; // × multiply sign
+		color: #FFFFFF;
+	}
+	&:hover{
+		background-color: darken(#9F9F9F, 10%);
+	}
+}
+
+.forum_list a{
+	padding-left: 65px;
+	font-weight:400;
+	&:before{
+		top: 7px;
+		left: 50px;
+		font-size:10px;
+	}
+}
+.cm-sb-list a, .cm-sb-title {
+	border-bottom:1px solid #dedede;
+}
+
+.cm-sb-title {
+	padding:10px 20px 20px;
+	font-size:16px;
+}
+body .community-sidebar {
+	-webkit-animation-duration: 0.20s;
+	animation-duration: 0.20s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+	-webkit-animation-name: fadeOutLeft;
+	animation-name: fadeOutLeft;
+}
+body.community.cs-show .community-sidebar {
+	display: block;
+	-webkit-animation-duration: 0.20s;
+  animation-duration: 0.20s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+	-webkit-animation-name: fadeInLeft;
+	animation-name: fadeInLeft;
+}
+
+
+@-webkit-keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateX(-20px);
+    transform: translateX(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateX(-20px);
+    -ms-transform: translateX(-20px);
+    transform: translateX(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+@-webkit-keyframes fadeOutLeft {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translateX(-20px);
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes fadeOutLeft {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translateX(-20px);
+    -ms-transform: translateX(-20px);
+    transform: translateX(-20px);
+  }
+}

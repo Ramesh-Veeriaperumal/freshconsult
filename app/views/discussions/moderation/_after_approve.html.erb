@@ -1,0 +1,7 @@
+<div>
+	<div><strong><%= t('.published') %></strong></div>
+	<div>
+		<%= pjax_link_to t('.goto_post'),
+			@post.original_post? ? discussions_topic_path(@post.topic_id) : "#{discussions_topic_path(@post.topic_id)}/page/last#post_#{@post.id}"%>
+	</div>
+</div>

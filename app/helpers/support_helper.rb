@@ -250,10 +250,18 @@ module SupportHelper
 	# To modify label the liquid can be modified as so
 	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
 	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		if User.current
-			_monitoring = topic['followed_by_current_user?']
+		follow_button(topic, follow_label, unfollow_label)
+	end
 
-			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
+	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
+		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+	end
+
+	def follow_button current_obj, follow_label, unfollow_label
+		if User.current
+			_monitoring = current_obj['followed_by_current_user?']
+
+			link_to _monitoring ? unfollow_label : follow_label, current_obj['toggle_follow_url'], 
 				"data-remote" => true, "data-method" => :put, 
 				:id => "topic-monitor-button",
 				:class => "btn btn-small #{_monitoring ? 'active' : ''}",

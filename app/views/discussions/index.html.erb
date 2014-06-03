@@ -1,0 +1,43 @@
+<% content_for :layoutType do %>community moderation<% end %>
+
+<% content_for :sticky_left do %>
+	<div class="all-post-heading">
+		<%= pjax_link_to t('.all_topics'), discussions_path, {
+					:class => "tooltip #{'selected-tab' if params[:action] == 'index'}"
+				} %>
+		<%= pjax_link_to t('.your_topics'), your_topics_discussions_path, {
+					:class => "tooltip ml20 #{'selected-tab' if params[:action] == 'your_topics'}",
+					:title => t('.your_topics_desc')
+				} %>
+	</div>
+<% end %>
+
+<% content_for :sticky_right do %>
+	<%= moderation_count(@counts) if privilege?(:delete_topic) %>
+	<%= new_discussions_button %>
+<% end %>
+
+<%= render :partial => '/discussions/shared/sticky', :locals => { :sticky_class => "sticky_border" } %>
+
+
+<% if @topics.blank? %>
+<div class="no-data">
+	<%= t('topic.no_posts') %>
+</div>
+<% else %>
+<div class="clearfix comm-items">
+	<%= render :partial => 'discussions/shared/topic', :collection => @topics %>
+</div>
+<% end %>
+
+
+<%= will_paginate @topics,
+				:renderer => BootstrapPaginationRenderer,
+				:previous_label => "<b class='arrow-left'></b>",
+				:next_label => "<b class='arrow-right'></b>",
+				:class => "pagination pagination-centered" if params[:action]=='my_topics' %>
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Discussions.setSpamCounts(<%= @counts.to_json.html_safe %>);
+	});
+</script>

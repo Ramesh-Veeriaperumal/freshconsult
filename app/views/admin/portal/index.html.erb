@@ -49,6 +49,27 @@
 		<%= content_tag( :div, t('portal_captcha_anon'), :class => "muted" ) %>
 	</div>
 	<br/>
+	<% if current_account.features?(:forums) %>
+	<hr />
+	<%= content_tag( :h3,  t('.moderation'),	   :class => "lead" ) %>
+	<div class="radio">
+		<input type="radio" name="moderation" value="1" <%= 'checked' if @forum_moderation == :links %>/> <%= t('.moderate_links') %>
+		<%= content_tag( :div, t('.moderate_links_help'), :class => "muted" ) %>
+		<%= content_tag( :div, t('.moderate_links_help_2'), :class => "muted" ) %>
+		<br/>
+	</div>
+	<div class="radio">
+		<input type="radio" name="moderation" value="2" <%= 'checked' if @forum_moderation == :all %>/> <%= t('.moderate_all') %>
+		<%= content_tag( :div, t('.moderate_all_help'), :class => "muted" ) %>
+		<br/>
+	</div>
+	<div class="radio">
+		<input type="radio" name="moderation" value="0" <%= 'checked' if @forum_moderation == :none %>/> <%= t('.moderate_none') %>
+		<%= content_tag( :div, t('.moderate_none_help'), :class => "muted" ) %>
+		<br/>
+	</div>
+	<% end %>
+
 </div>
 <div class="align-right itil-hide">
 	<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>

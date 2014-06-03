@@ -5,12 +5,13 @@ class TopicObserver < ActiveRecord::Observer
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
     topic.posts_count = 1 #Default count
-    topic.published = topic.user.agent? #Agent Topics are approved by default.
+    topic.published = (topic.user.agent? or topic.import_id?) #Agent Topics are approved by default.
 	end
 
-	def before_update(topic)
-		check_for_changing_forums(topic)
-	end
+  def before_update(topic)
+    check_for_changing_forums(topic)
+    assign_default_stamps(topic) if topic.changes.key?("forum_id")
+  end
 
 	def before_save(topic)
 		topic.topic_changes
@@ -64,6 +65,10 @@ private
       true
   end
 
+  def assign_default_stamps(topic)
+    topic.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[topic.forum.reload.forum_type]
+  end
+
   def update_forum_counter_cache(topic)
       forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
       # if the topic moved forums
@@ -95,14 +100,11 @@ private
       :account       => topic.account,
       :user          => user,
       :activity_data => {
-                          :path        => category_forum_topic_path(topic.forum.forum_category_id,
-                                          topic.forum_id, topic.id),
+                          :path        => discussions_topic_path(topic.id),
                           'forum_name' => h(topic.forum.to_s),
                           :url_params  => {
-                                            :category_id => topic.forum.forum_category_id,
-                                            :forum_id => topic.forum_id,
                                             :topic_id => topic.id,
-                                            :path_generator => 'category_forum_topic_path'
+                                            :path_generator => 'discussions_topic_path'
                                           },
                           :title        => h(topic.to_s),
                           :version      => 2

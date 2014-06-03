@@ -95,6 +95,9 @@ stylesheets:
   preview:
     - public/stylesheets/portal/preview.css
 
+  community:
+    - public/stylesheets/page/community/community.css
+
   widget:
     - public/stylesheets/portal/widget.css
 
@@ -224,14 +227,19 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/dates.js
     - public/javascripts/globalinit.js
+    - public/javascripts/app/app.js
     - public/javascripts/security.js
     - public/javascripts/fjax.js
+    - public/javascripts/fjax/config.js
+    - public/javascripts/fjax/assets.js
+    - public/javascripts/fjax/manager.js
     - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - app/views/shared/spotlight_result.jst
     - public/javascripts/report/date.js
     - public/javascripts/freshfone/global.js
+    - public/javascripts/app/metrics.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -250,6 +258,15 @@ javascripts:
     - public/javascripts/jquery.pageslide.js
     - public/javascripts/pattern/sticky.js
     - public/javascripts/pattern/stickyinit.js
+
+  discussions:
+    - public/javascripts/app/discussions/discussions.js
+    - public/javascripts/app/discussions/sidebar.js
+    - public/javascripts/app/discussions/reorder.js
+    - public/javascripts/app/discussions/category.js
+    - public/javascripts/app/discussions/topic_list.js
+    - public/javascripts/app/discussions/topic.js
+    - public/javascripts/app/discussions/moderation.js
 
   search:
     - public/javascripts/app/search.js

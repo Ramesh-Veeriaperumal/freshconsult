@@ -458,6 +458,16 @@ en:
       my_topics: "My Topics"
 
   admin:
+    portal:
+      index:
+        moderation: "Moderate Forums"
+        moderate_links: "Moderate only suspicious topics and replies"
+        moderate_links_help: "Enable this feature for advanced spam protection. System will check all topics and replies for third party links and other spam activity."
+        moderate_links_help_2: "Suspicious posts will be sent for your approval before publishing."
+        moderate_all: "Moderate all topics and replies"
+        moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
+        moderate_none: "Do not Moderate"
+        moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1228,6 +1238,7 @@ en:
         mobihelp: Mobihelp
         customer-portal: Customer Portal
       keywords:
+        forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
         Personalized_email_replies: "Personalized email replies"
         remove_ticket_id: "Remove ticket ID from replies"
@@ -1332,6 +1343,10 @@ en:
     title: Forums
     start_topic: Start Topic
     forum_created: The forum has been created.
+    forum_deleted: The forum has been deleted.
+    type: Forum Type
+    visible_to: Visible to
+    category: Forum Category
     spam: "Spam (%{count})"
     visibility:
       anyone: Anyone
@@ -2105,12 +2120,60 @@ en:
     post_comment: Post
     msg1: Comments are closed for this topic
     sticky: Sticky
-    locked: Locked
+    mark_as_sticky: Mark as sticky topic
+    sticky_info: Sticky topics stay on top of the forum for additional visibility
+    locked: Lock topic and prevent users from posting replies.
     answered: Answered
     view_on_portal: "View on Portal"
     spam: Spam
     bulk_delete: The topic(s) have been deleted.
     bulk_spam: The topic(s) have been reported as spam.
+    popular: Popularity
+    recent: Recently updated
+    filter_0: All
+    filter_1: Planned
+    filter_2: Implemented
+    filter_3: Not Taken
+    filter_4: In Progress
+    filter_5: Deferred
+    filter_6: Answered
+    filter_7: Unanswered
+    filter_8: Solved
+    filter_9: Unsolved
+    filter_-: Not Stamped
+    select_stamps: Select Stamps
+    add_topic: Add Topic
+    add_forum: Add Forum
+    reorder: Reorder
+    add_category: Add Category
+    forums: Forums
+    categories: Categories
+    sorted_by: Sorted by
+    filtered_by: Showing
+    all: All
+    showing_topics:
+      one: "Showing %{count} topic"
+      other: "Showing %{count} topics"
+    matching_topics: "%{count} matching of %{total} topics"
+    details: "by %{user_path}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    last_reply: Last Reply
+    last_post: "- %{last_reply} by %{user_path}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    no_categories: No Categories
+    no_forums: No Forums
+    no_topics: No Topics
+    no_posts: No Posts
+    change: change
+    marked_as: Marked as
+    mark_topic: Mark topic as
+    view_answer: Click here to view answer
+    mark_answer: Mark as Answer
+    unmark_answer: Unmark as answer
+    spam_info:
+      spam: Reply was marked as spam
+      waiting: Reply waiting for your approval
+    spam_action: Approve and Publish
+    replied_time: " replied, %{time_in_words} ago"
+    visible_in: Visible in
   activerecord:
     errors:
       messages:
@@ -2159,24 +2222,24 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: <a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> likes this Idea
-        vote_info_2: <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
-        vote_info_include_1: You like this Idea
-        vote_info_include_2: You and <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
-        voted_users_widget_title: People who like this idea
+        vote_info_1: "%{vote} Person likes this Idea"
+        vote_info_2: "%{vote} People like this Idea"
+        vote_info_include_1: "You like this Idea"
+        vote_info_include_2: "You and %{vote} People like this Idea"
+        voted_users_widget_title: "People who like this idea"
       problem:
         vote_button: I have this Problem
-        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Problem
-        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
-        vote_info_include_1: You have this Problem
-        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
-        voted_users_widget_title: People who have this problem
+        vote_info_1: "%{vote} Person has this Problem"
+        vote_info_2: "%{vote} People have this Problem"
+        vote_info_include_1: "You have this Problem"
+        vote_info_include_2: "You and %{vote} People have this Problem"
+        voted_users_widget_title: "People who have this problem"
       howto:
         vote_button: I have this Question
-        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Question
-        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
-        vote_info_include_1: You have this Question
-        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
+        vote_info_1: "%{vote} Person has this Question"
+        vote_info_2: "%{vote} People have this Question"
+        vote_info_include_1: "You have this Question"
+        vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
     post:
       posted_on: "%{user_name} on %{post_date}"
@@ -5609,14 +5672,121 @@ en:
     smtp_alert_aol: "AOL allows no more than 100 recipients per message or 500 recipients per connection."
     smtp_alert_other: "Generally the number of outgoing emails per day have a specific limit. Please contact your email provider for more info."
   discussions:
+    all_categories: All Categories
+    folders: Folders
+    views_categories: Views and Categories
+    helpnote:
+      title: Organizing your community
+      para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
+      para2: "For example, when you have a single support portal for your brand, you can create multiple categories for products or teams. This will help you drive relevant conversations to all of your top-level sections and as an administrator, you will still get to manage everything from one place. "
+      para3: "If you have multiple product portals configured in your Freshdesk account, you can choose to have one of your categories linked to that product. Once you do, users will be able to see that category, its forums and all its topics both on your main portal as well as on the product portal. "
+      para4: "Learn more about multiple products in Freshdesk."
+    shared:
+      topic:
+        tags:
+          new_topic: New Topic
+          reply: Reply
+        actions:
+          new_topic: created a topic
+          reply: replied to topic
+      post:
+        approve: Approve
+        approve_tooltip: Approve and Publish
+        ban_tooltip: Mark user and all his posts as Spam
+        spam: Spam
+    index:
+      all_topics: All Activity
+      your_topics: Your Topics Activity
+      your_topics_desc: "Shows activity on topics that you follow"
+    reorder_list:
+      visible: Visible only to
+    topics:
+      helpnote:
+        title: Driving discussions with topics
+        para1: "You can let your users start new topics in your community and talk to each other about your product on business."
+        para2: "Based on the type of your forum, your topics can be anything including ideas, questions or problems and they can be started by both agents and customers. Based on your discussions, you’ll be able to get an idea of how many people are facing the same kind of issue, who is eager to beta test your new features or what part of your product is hard to understand."
+        para3: "Additionally, agents in your team can create announcements to get the word out about a new release or campaign."
+        para4: "Forum topics can also be marked as a sticky when you want them to be featured prominently, and they can be locked to prevent more users from adding replies."
+      replied: replied
+      spam: Spam
+      waiting_for_approval: Unpublished
+      locked: Locked
+      reply: Reply
+      add_note: Add note
+      mark_as_spam: Mark as Spam
+      close_topic: Lock Topic
+      reopen_topic: Reopen Topic
+      edit_topic: Edit Topic
+      delete_topic: Delete Topic
+      approve: Approve and Publish
+      convert_to_ticket: Convert Topic to Ticket
+      linked_ticket: Linked Ticket
+      best_answer: Marked as best answer
+      widgets:
+        ticket:
+          title: "Linked Ticket"
+          agent: "Agent"
+      post:
+        delete_confirm: Delete this comment?  Are you sure?
+        created_topic: created a topic
+        replied_to: replied to topic
+      title_meta:
+        replies:
+          one: "1 reply"
+          other: "%{count} replies"
+          zero: "No replies"
+        voices: "%{count} people participating in this topic"
+        following:
+          one: "1 Person following this topic"
+          other: "%{count} people following this topic"
+        hits:
+          one: "1 view"
+          other: "%{count} views"
+          zero: "None"
+        vote_info:
+          ideas:
+            one: "%{count} Person likes this Idea"
+            other: "%{count} people like this Idea"
+            zero: "None"
+          announce:
+            one: "%{count} Person likes this Annoucement"
+            other: "%{count} people like this Annoucement"
+            zero: "None"
+          problem:
+            one: "%{count} Person has this Problem"
+            other: "%{count} people have this Problem"
+            zero: "None"
+          howto:
+            one: "%{count} Person has this Question"
+            other: "%{count} people have this Question"
+            zero: "None"
+    forums:
+      helpnote:
+        title: "Using forums to set the tone"
+        para1: "Forums let you create specific sections in your community to address different types of discussions with your users."
+        para2: "Freshdesk lets you create four types of forums: announcements, ideas, questions and problems. Each of these types represent a collection of topics falling under the same umbrella."
+        para3: "For example, an idea forum called &ldquo;Feature Requests&rdquo; can have users suggesting new ideas and voting on them, and a problem forum called &ldquo;Bug Reports&rdquo; can have issues and people indicating that they are are facing the problem. You can learn more about forum types <a href='https://support.freshdesk.com/support/articles/37607' target='_blank'>here</a>."
+        para4: "By default, new forums will be accessible to all of your customers. But if you want to, you can choose to restrict it to just agents, logged in users, or a particular company of users."
     moderation:
+      page_title: Forum Moderation
+      after_ban:
+        marked: Marked as Spam
+        restore_contact: Restore contact
+        contact_deleted: To avoid further Spam the contact was deleted -
+        cleared_rest: All older posts by this user have also been marked as Spam
+      after_approve:
+        published: Post has been published
+        goto_post: Goto Post
       spam_folder: Spam Folder
       flash:
         empty_folder: "All the posts in your spam folder have been removed."
       index:
         title: Spam
+        waiting: Waiting for Approval
+        waiting_desc: "Review and publish"
         empty_folder: "Empty Folder"
-        no_spam: "There's no spam here. We swear!"
+        no_waiting_for_approval: "All topics and replies have been reviewed."
+        no_unpublished_spam: "There's no spam here. We swear!"
       spam:
         approve: "Approve and Publish"
         new_topic:

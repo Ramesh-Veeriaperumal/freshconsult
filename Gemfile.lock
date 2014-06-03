@@ -52,7 +52,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
-  revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
+  revision: 271908bbe2197ce167cc59ba79d4ea0dac15df3f
   specs:
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
@@ -138,15 +138,15 @@ GEM
     chargebee (1.2.9)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
-    chunky_png (1.2.6)
+    chunky_png (1.3.1)
     clockwork (0.4.1)
       tzinfo
     cocaine (0.4.2)
     columnize (0.3.6)
-    compass (0.12.2)
+    compass (0.12.6)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
-      sass (~> 3.1)
+      sass (~> 3.2.19)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
     css_parser (1.3.5)
@@ -174,6 +174,11 @@ GEM
       multipart-post (~> 1.1)
     fastercsv (1.5.4)
     ffi (1.9.0)
+    ffi (1.9.0-x86-mingw32)
+    fontcustom (1.3.3)
+      json (~> 1.4)
+      listen (~> 1.0)
+      thor (~> 0.14)
     forgery (0.5.0)
     fssm (0.2.9)
     gem_plugin (0.2.3)
@@ -224,6 +229,10 @@ GEM
     launchy (2.3.0)
       addressable (~> 2.3)
     libv8 (3.16.14.3)
+    listen (1.3.1)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+      rb-kqueue (>= 0.2)
     lockfile (1.4.3)
     macaddr (1.6.7)
       systemu (~> 2.6.2)
@@ -254,8 +263,9 @@ GEM
     oauth (0.4.5)
     oauth2 (0.5.2)
       faraday (~> 0.7)
-    oily_png (1.0.3)
-      chunky_png (~> 1.2.1)
+      multi_json (~> 1.0)
+    oily_png (1.1.1)
+      chunky_png (~> 1.3.0)
     omniauth (1.0.0)
       hashie (~> 1.2)
       rack
@@ -320,6 +330,11 @@ GEM
       rake (>= 0.8.3)
     rails_xss (0.4.0)
     rake (0.8.7)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.4)
+      ffi (>= 0.5.0)
+    rb-kqueue (0.2.2)
+      ffi (>= 0.5.0)
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
@@ -369,7 +384,7 @@ GEM
       tzinfo (>= 0.3.22)
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
-    sass (3.2.1)
+    sass (3.2.19)
     savon (0.9.7)
       akami (~> 1.0)
       builder (>= 2.1.2)
@@ -404,7 +419,7 @@ GEM
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
     static_model (1.0.4)
-    susy (1.0.5)
+    susy (1.0.9)
       compass (>= 0.12.2)
       sass (>= 3.2.0)
     sys-uname (0.9.2)
@@ -416,6 +431,7 @@ GEM
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
+    thor (0.19.1)
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
@@ -481,6 +497,7 @@ DEPENDENCIES
   factory_girl (= 1.2.3)
   faker (~> 1.0.1)
   faraday (= 0.8.7)
+  fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   freshdesk_authority!
   global_phone
@@ -506,7 +523,7 @@ DEPENDENCIES
   namae (= 0.8.4)
   newrelic_rpm (= 3.5.8.72)
   nori (= 1.1.4)
-  oily_png
+  oily_png (= 1.1.1)
   omniauth (= 1.0)
   omniauth-constantcontact2 (~> 1.0.4)
   omniauth-facebook
@@ -547,14 +564,14 @@ DEPENDENCIES
   rubytree
   rubyzip (= 0.9.4)
   sanitize (= 2.0.3)
-  sass (= 3.2.1)
+  sass (= 3.2.19)
   sax-machine (~> 0.1.0)
   simplecov (~> 0.7.1)
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
   static_model (~> 1.0.4)
-  susy
+  susy (= 1.0.9)
   test-unit (= 1.2.3)
   therubyracer
   tire!

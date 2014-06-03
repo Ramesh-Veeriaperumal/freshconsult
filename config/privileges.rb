@@ -140,10 +140,14 @@ Authority::Authorization::PrivilegeList.build do
   # ************** FORUMS **************************
 
 	view_forums do
+    resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
+    resource :"discussions/forum", :only => [:show]
+    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
+    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
@@ -153,24 +157,31 @@ Authority::Authorization::PrivilegeList.build do
   # create_edit_forum_category
   manage_forums do
     resource :forum_category, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :discussion, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"discussions/forum", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
   end
 
   # create_forum_topic
   create_topic do
+    resource :"discussions/topic", :only => [:new, :create ]
     resource :topic, :only => [:new, :create ]
     resource :forums_uploaded_image, :only => [:create]
   end
 
   # edit_forum_topic
   edit_topic do
-    resource :topic, :only => [:edit, :update, :update_lock, 
+    resource :"discussions/topic", :only => [:edit, :update, :toggle_lock,
+          :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
+    resource :topic, :only => [:edit, :update, :update_lock,
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
+    resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic
   delete_topic do
+    resource :"discussions/topic", :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
   end

@@ -2,9 +2,10 @@
   window['SetupSticky'] = function(){
     var $self = this;
 
-    $("[rel=sticky]").each(function(){      
+    $("[rel=sticky]").each(function(){
       var prev_ele = $(this).data( "stickyPrevious" );
       var scroll_top = $(this).data( "scrollTop" );
+      var parent_selector = $(this).data( "parentSelector" ) || void(0);
 
       if($(this).data("collapsed"))
         $self.collapsed($(this));
@@ -12,11 +13,14 @@
       if(prev_ele != null){
         var prev_ele_height = $('#'+prev_ele).outerHeight(true);
         $(this).stick_in_parent({
-          offset_top :  prev_ele_height
+          "offset_top" :  prev_ele_height,
+          "parent_selector": parent_selector
         });
         $(this).addClass('sticky-child');
       }else{
-        $(this).stick_in_parent()
+        $(this).stick_in_parent({
+            "parent_selector": parent_selector
+          })
           .on("sticky_kit:stick", function(e){
             if(scroll_top){
               if(!$('#scroll-to-top').length){
@@ -40,7 +44,7 @@
 
       $(window).on('resize.freshdesk', function() {
         //Extra buffer 20px
-        var width_elements_visible = 20, 
+        var width_elements_visible = 20,
             to_collapse = false;
 
         ele.each(function(){

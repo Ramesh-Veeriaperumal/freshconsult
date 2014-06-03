@@ -16,7 +16,7 @@ class ForumsController < ApplicationController
   before_filter :fetch_monitorship, :only => :show
 
   def index
-   redirect_to categories_url
+    redirect_to discussions_path
   end
 
   def show
@@ -39,9 +39,8 @@ class ForumsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        @page_canonical = category_forum_url(@forum.forum_category, @forum)
-        # keep track of when we last viewed this forum for activity indicators
-         end
+        redirect_to discussions_forum_path(@forum)
+      end
       format.xml  { render :xml => @forum.to_xml(:include => :topics) }
       format.json  { render :json => @forum.to_json(:include => :topics) }
       format.atom
@@ -54,7 +53,7 @@ class ForumsController < ApplicationController
     @forum.account_id ||= current_account.id
     if @forum.save
       respond_to do |format|
-        format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => I18n.t('forum.forum_created')) }
+        format.html { redirect_to(discussions_forum_path(@forum), :notice => I18n.t('forum.forum_created')) }
         format.xml  { render :xml => @forum,:status => 200 }
         format.json  { render :json => @forum,:status => :created }
       end
@@ -69,7 +68,7 @@ class ForumsController < ApplicationController
   def update
     if @forum.update_attributes(params[:forum])
       respond_to do |format|
-        format.html { redirect_to category_forum_path(@forum_category,@forum) }
+        format.html { redirect_to discussions_forum_path(@forum) }
         format.xml  { head 200 }
         format.json { head 200 }
       end
@@ -82,10 +81,8 @@ class ForumsController < ApplicationController
   end
 
   def new
-    current_category = scoper.find(params[:category_id])
-    @forum = current_category.forums.new
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { redirect_to new_discussions_forum_path }
       format.xml  { render :xml => @forum }
     end
   end
@@ -94,10 +91,14 @@ class ForumsController < ApplicationController
     @forum.backup_forum_topic_ids
     @forum.destroy
     respond_to do |format|
-      format.html { redirect_to categories_path }
+      format.html { redirect_to discussions_path }
       format.xml  { head 200 }
       format.json { head 200 }
     end
+  end
+
+  def edit
+    redirect_to edit_discussions_forum_path(@forum)
   end
 
   protected
@@ -115,7 +116,7 @@ class ForumsController < ApplicationController
     end
 
     def reorder_redirect_url
-      category_path(params[:category_id])
+      discussion_path(params[:category_id])
     end
 
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
@@ -134,7 +135,7 @@ class ForumsController < ApplicationController
 
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum.page_not_found')
-      redirect_to categories_path
+      redirect_to discussions_path
     end
 
   private

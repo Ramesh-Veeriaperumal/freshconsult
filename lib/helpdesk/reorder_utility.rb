@@ -10,7 +10,10 @@ module Helpdesk::ReorderUtility
         reorder_item.save
       end
     end
-    redirect_to reorder_redirect_url    
+    respond_to do |format|
+      format.html { redirect_to reorder_redirect_url }
+      format.js { head 200}
+    end
   end
   
 end

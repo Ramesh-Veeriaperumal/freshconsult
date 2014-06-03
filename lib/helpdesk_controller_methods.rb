@@ -117,6 +117,10 @@ module HelpdeskControllerMethods
       result.nmobile { render :json => { :success => true }}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
+      result.js {
+        flash[:notice] = render_to_string(
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+      }
     end
   end
 

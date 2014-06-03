@@ -1,0 +1,10 @@
+// font-size for glyph icons
+$sizes: 8 12 13 14 15 16 18 21 22 23 24 28 36 48 60 72;
+
+// font-size class name for glyph icons
+$prefix-class-name: "fsize-";
+
+// Glyph size eg: g-size-24
+@each $size in $sizes{
+	.#{$prefix-class-name}#{$size}{ font-size: #{$size}px; }
+}

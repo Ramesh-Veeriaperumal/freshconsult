@@ -67,9 +67,9 @@ ul.disc{
 .clearfix {
   @include clearfix();
 }
-.clearBoth{ clear:both; }            
-.clearLeft{ clear:left; }            
-.clearRight{ clear:right; }    
+.clearBoth{ clear:both; }
+.clearLeft{ clear:left; }
+.clearRight{ clear:right; }
 
 // --------------------------------------------------
 //          Accessible yet invisible text
@@ -78,6 +78,12 @@ ul.disc{
   @include hide-text();
 }
 
+// --------------------------------------------------
+//          Faded text
+// --------------------------------------------------
+.faded {
+  opacity: 0.4;
+}
 // --------------------------------------------------
 //  Uses box-sizing mixin, so must be defined here
 // --------------------------------------------------
@@ -117,7 +123,7 @@ ul.disc{
 //                Margin and padding
 // --------------------------------------------------
 @for $i from 0 through 20 {
-  
+
   .m#{$i}{margin:#{$i}px;}            //Margin
   .mt#{$i}{margin-top:#{$i}px;}       //Margin-top
   .mb#{$i}{margin-bottom:#{$i}px;}    //Margin-bottom
@@ -174,7 +180,7 @@ ul.disc{
   border-left-color: #666;
   left: 0.35em;
 }
-                    
+
 .arrow-down {
   border-top-width: 1em;
   border-top-style: solid;

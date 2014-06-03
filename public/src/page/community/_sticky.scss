@@ -1,0 +1,45 @@
+&.moderation, &.topic-show{
+	#sticky_header {
+		margin: 0px -20px 0 -20px;
+		padding: 15px 20px 0 20px;
+		border-bottom: 1px solid #CCC;
+	}	
+}
+#sticky_header {
+	background-color: #FFF;
+	padding-top: 15px;
+	&.is_stuck {
+		margin-top: 0;
+		border-bottom: 1px solid #CCC;
+		@include box-shadow(0 6px 6px -6px rgba(0, 0, 0, 0.15));
+	}
+	
+	&.sticky_border {
+		border-bottom: solid 1px #dadada;
+	}
+	
+	.sticky_panel{
+		@include pie-clearfix;
+		height:36px;
+	}
+
+	.sticky_left {
+		float: left;
+		font-size: 14px;
+	}
+
+	.sticky_right {
+		float: right;
+	}
+
+	.btn-group {
+		display: inline-block;
+	}
+
+	.btn .inline-icon {
+		width: 16px;
+		height: 16px;
+		display: inline-block;
+		margin: -2px 5px -3px 0px;
+	}
+}

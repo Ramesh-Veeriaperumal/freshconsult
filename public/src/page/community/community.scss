@@ -1,0 +1,239 @@
+@import "../../settings/settings";
+
+$sidebar_bg: #f2f4f4;
+$sidebar_width: 270px;
+$avatar_size: 39px;
+$widget_avatar_size: 30px;
+
+body.community {
+	h1 {
+		font-size: 19px;
+		font-weight: 200;
+		color: #000;
+	}
+
+	&.topic-show #inner{
+			.leftcontent, .pagearea {
+				padding-bottom: 0;
+			}
+	}
+	
+	.community-reorder-icon, .community-reorder-btn-icon {
+		display: inline-block;
+		width: 14px;
+		height: 11px;
+		vertical-align: middle;
+	}
+	@import "sticky";
+	@import "show";
+	@import "conversation";
+	@import "topic_list";
+
+	&.forms .controls .toggle-button {
+		margin-left:0;
+	}
+	a.cl50{
+		opacity: 0.5;
+		&:hover{
+			opacity: 1;
+		}
+	}
+}
+
+.reorder-icon .ficon-reorder{
+	color: white;
+}
+
+.sub-action-list{
+	@include pie-clearfix;
+	margin-top: 3px;
+	& > ul > li{
+		float:left;
+		margin-right: 18px;
+		[class*="ficon-"] {
+			font-size: 18px;
+			float: left;
+			margin-top: -2px;
+			margin-right: 5px;
+		}
+	}
+}
+
+.label-topic{
+	position: relative;
+	margin-right: 6px;
+	top: -3px;
+	text-transform: uppercase;
+	font-size: 10px;
+	padding: 2px 5px 3px 7px;
+	background-color: #333;
+}
+
+.breadcrumb{
+	// border:1px solid red;
+	float:left;
+	margin-top: -7px;
+	margin-bottom: 0;
+	li:after{
+		content: "\002F";
+		padding-left: 8px;
+		padding-right: 7px;
+	}
+	li:last-child:after{
+		content: none;
+	}
+}
+
+@import "community_sidebar";
+
+.comm-item-title{
+	padding-bottom: 3px;
+}
+
+// Move this to list scss
+.list-panel-main{
+	@include pie-clearfix;
+	background-color: #E9EDED;
+	border-top: 1px solid #D4D4D4;
+	vertical-align:middle;
+}
+
+.list-actions-left{
+	float:left;
+	margin-left: 5px;
+	li{
+		float:left;
+		text-align: center;
+		height: 35px;
+		width: 35px;
+		padding-left: 5px;
+		padding-top: 12px;
+	}
+}
+
+.list-title{
+	font-size: 20px;
+	line-height: 2.4;
+	font-weight: 200;
+	padding-left: 15px;
+}
+
+.list-actions-right{
+	float:right;
+	margin-right: 12px;
+	margin-top: 10px;
+	margin-left: 15px;
+}
+
+.list-query-panel{
+	@include pie-clearfix;
+	border-top: 1px solid #FFF;
+	background-color: #F2F5F5;
+	.lf-item{
+		float: left;
+		min-height: 20px;
+		.item-sort{
+			.dropdown-toggle{
+				padding: 10px 0px 10px 15px;
+				margin: -10px 0px;
+			}
+			.caret{
+				margin-right: 15px;
+			}
+		}
+	}
+	.lf-item-right{
+		float: right;
+	}
+	.lf-item, .lf-item-right{
+		.item-checkbox, .item-sort, .item-filter, .item-matches{
+			border-right: 1px solid #FFF;
+			padding: 10px 16px 10px 17px;
+		}
+		.item-sort{
+			padding: 10px 0;	
+		}
+		&.lf-btns{
+			padding: 5px 16px 2px;
+		}
+	}
+	.lf-hover:hover{
+		background-color: #e2e5e5;
+	}
+	
+	.lf-item-right{
+		.item-checkbox, .item-sort, .item-filter, .item-matches{
+			border-right: 0;
+		}
+	}
+	.dropdown-menu{
+		margin-top: 9px;
+		width: 220px;
+		border-top-left-radius: 0px;
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 5px;
+		border-bottom-left-radius: 5px;
+		li.active > a{
+			background: none;
+			color: #333;
+			&:before{
+				position: absolute;
+				left: 10px;
+			}
+		}
+		li > a:hover,
+		li > a:focus,
+		li.active > a:hover
+		li.active > a:focus{
+			background-image: none;
+			background-color: #8a8a8a;
+			@include transition(none);
+			color: #fff;
+		}
+		a{
+			padding:6px 30px;
+		}
+	}
+
+	.lf-btns{
+		padding-top: 5px;
+		padding-bottom: 5px;
+		min-height: 30px;
+	}
+
+	.lf-filter{
+		cursor: pointer;
+		min-width: 380px;
+		a{ color: #000; }
+		.filter-select{
+			width: 250px;
+		}
+		.filter-stamps{
+			margin-left: 5px;
+			position: relative;
+			z-index: 1;
+		}
+		.select2-container{
+			position: absolute;
+			left: 0;
+		}
+		.select2-choices{
+			border-radius: 2px;
+			margin-top: -6px;
+			margin-bottom: 1px;
+		}
+		.select2-search-choice{
+			background-image: none;
+			background-color: #efefef;
+			margin: 3px 2px;
+			padding: 3px 3px 4px 6px;
+			border: 1px solid #afafaf;
+			box-shadow: none;
+			font-weight: 600;
+		}
+	}
+}
+
+.categories-list-page .reorder-content{
+		margin-left:15px;
+}

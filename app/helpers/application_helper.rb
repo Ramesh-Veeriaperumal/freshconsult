@@ -174,6 +174,10 @@ module ApplicationHelper
   end
 
   
+  def pjax_link_to(title, url, options = {})
+    options.merge!({:"data-pjax" => "#body-container"})
+    link_to(title, url, options)
+  end
 
   def each_or_message(partial, collection, message, locals = {})
     render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message.html_safe, :class => "list-noinfo")
@@ -218,6 +222,19 @@ module ApplicationHelper
     class_name = is_active ? "active" : ""
     link_to(text, url, :class => class_name, :tabindex => "-1")
   end
+  
+  def btn_dropdown_menu(btn, list, options = {})
+    output = ""
+    output << %(<div class="btn-group dropdown">)
+    output << link_to(btn[0], btn[1], options.merge({:class => "btn btn-primary", "tabindex" => "-1"}))
+		output << %(<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+			            <i class="caret"></i>
+		            </button>)
+    output << dropdown_menu(list, options)
+    output << %(</div>)
+    
+    output.html_safe
+  end
 
   def dropdown_menu(list, options = {})
     return if list.blank?
@@ -229,7 +246,8 @@ module ApplicationHelper
         if item[0] == :divider
           output << %(<li class="divider"></li>)
         else
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+          li_opts = (item[3].present?) ? options.merge(item[3]) : options
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -252,8 +270,8 @@ module ApplicationHelper
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
-      solutions_tab,      
-      forums_tab,
+      solutions_tab,
+      ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
       ['/reports',            :reports,      privilege?(:view_reports) ],
@@ -839,9 +857,9 @@ module ApplicationHelper
     
     def forums_tab
       if main_portal?
-        ['/categories', :forums,  forums_visibility?]
+        ['/discussions', :forums,  forums_visibility?]
       elsif current_portal.forum_category
-        [category_path(current_portal.forum_category), :forums,  forums_visibility?]
+        [discussion_path(current_portal.forum_category), :forums,  forums_visibility?]
       else
         ['#', :forums, false]
       end
@@ -968,7 +986,6 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
-
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|
@@ -982,9 +999,26 @@ module ApplicationHelper
     platform = current_platform || "windows"
     Shortcut::MODIFIER_KEYS[key.to_sym][platform.to_sym].html_safe
   end
+  
+  def moderation_enabled?
+    current_account.features?(:moderate_all_posts) || current_account.features?(:moderate_posts_with_links)
+  end
+
+  def font_icon(name, opts = {})
+    opts[:class] = font_class(name, opts[:size], opts[:class])
+    content_tag :i, "", opts
+  end
+
+  def font_class(name, size = nil, more_classes = "")
+    _class = []
+    _class << "ficon-#{name.to_s}"
+    _class << "fsize-#{size}" if size.present?
+    _class << more_classes
+    _class.join(" ")
+  end
 
   # ITIL Related Methods starts here
-  
+
   def generate_breadcrumbs(params, form=nil, *opt)
     ""
   end

@@ -1,0 +1,24 @@
+$font-class: "ficon-";
+
+// Default font size will be taken from the parents font size
+[class*="#{$font-class}"] {
+  font-size: inherit;
+}
+
+// Font icons used inside a link
+a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
+  color:#333;
+}
+
+// Font icons used in forum pages
+.forum_follow_icon{              @extend .#{$font-class}star-o; }
+.forum_follow_icon.active{       @extend .#{$font-class}star; }
+.forum_follow_icon.active:after{ @extend .#{$font-class}star-o:before; }
+.forum-type-problem{             @extend .#{$font-class}notice-o; }
+.forum-type-announce{            @extend .#{$font-class}bullhorn; }
+.forum-type-ideas{               @extend .#{$font-class}bulb; }
+.forum-type-howto{               @extend .#{$font-class}help; }
+.agent-preview{                  @extend .#{$font-class}open-in-new-window; }
+.list-query-panel .dropdown-menu li.active a:before{ 	
+		 														@extend .#{$font-class}checkmark; 
+}

@@ -5,18 +5,16 @@
 	  	</script>
   	<%end%>
   	<meta charset="utf-8">
-	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
+	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
 	     Remove this if you use the .htaccess -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
   	<title><%= h(page_title) %></title>
 	<meta name="description" content="<%= page_description %>">
-	<meta name="author" content="">                            
+	<meta name="author" content="">
 	<meta name="keywords" content="<%= page_keywords %>">
-
 	<!-- Adding meta tag for CSRF token -->
 	<%= csrf_meta_tag %>
 	<!-- End meta tag for CSRF token -->
-
 	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<% unless page_canonical.blank? %>
@@ -33,6 +31,8 @@
 	<%= include_cloudfront_css :ie_hacks %>
 	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
 	<%= include_cloudfront_css :'360player' %>
+	<%= include_cloudfront_css :community %>
+
 	<%= include_cloudfront_css :'freshfone_recording_playback' %>
 	<%#= render :partial => "shared/theme.css"  %>
 
@@ -57,7 +57,7 @@
 	<%= include_cloudfront_js :merge  %>
 
 	<%= include_cloudfront_js :custom_widget %>
-	
+
 	<% if current_account.features?(:freshfone) ||
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
@@ -68,13 +68,18 @@
 
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
-     	window.scriptLoader = new ScriptLoader(JSON.parse('<%= Jammit.configuration[:javascripts].to_json =%>'.replace(/&quot;/g,'"')),JSON.parse('<%= Jammit.configuration[:stylesheets].to_json =%>'.replace(/&quot;/g,'"')));
+		var js_assets = JSON.parse('<%= Jammit.configuration[:javascripts].to_json =%>'.replace(/&quot;/g,'"')),
+				css_assets = JSON.parse('<%= Jammit.configuration[:stylesheets].to_json =%>'.replace(/&quot;/g,'"'));
+		window.scriptLoader = new ScriptLoader(js_assets, css_assets);
+		Fjax.Assets.setup(js_assets, css_assets, cloudfront_version, cloudfront_host_url);
+		Fjax.Manager.start();
 	</script>
+
 
 	<%= yield :head %>
 
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
-
+	<%= render :partial => 'layouts/shared/app_analytics' if current_user.present? and current_user.agent? and Rails.env.production? %>
 </head>
 
 <%if @debuging %>
@@ -97,4 +102,3 @@
 	<div id="benchmarkresult">
 	</div>
 <%end%>
-

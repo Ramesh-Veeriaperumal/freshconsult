@@ -1,31 +1,40 @@
-<% content_for :layoutType do %>single<% end %>
+<% content_for :layoutType do %>community<% end %>
 
-<div class="clearfix">
+<% content_for :sticky_left do %>
+	<div class="all-post-heading">
+		<%= pjax_link_to (t('.waiting') + " <span rel='count-waiting' class='muted'>(#{@counts[:waiting]})</span> ").html_safe,
+									discussions_moderation_filter_path(:waiting),
+									:class => "tooltip #{'selected-tab' if @moderation_scope == :waiting_for_approval}",
+									:title => t('.waiting_desc') if moderation_enabled? or @counts[:waiting] > 0 %>
+		<%= pjax_link_to (t('.title') + " <span rel='count-spam' class='muted'>(#{@counts[:spam]})</span> ").html_safe,
+									discussions_moderation_filter_path(:spam),
+									:class => "#{'selected-tab' unless @moderation_scope == :waiting_for_approval}" %>
+	</div>
+<% end %>
+
+<% content_for :sticky_right do %>
 	<% if (@posts.size > 0) %>
-		<div class="pull-right">
-			<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' %>
-		</div>
+		<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == :waiting_for_approval %>
 	<% end %>
-	<h3 class="lead"><%= t('.title') %></h3>
-</div>
+<% end %>
 
-<div class="forum-group">
-	<div class="search-grey-box"></div>
-	<% if (@posts.size > 0) %>
+<%= render :partial => '/discussions/shared/sticky', :locals => { :sticky_class => "sticky_border" } %>
 
-		<ul class="topic-list-view spam">
-			<%= render(:partial => "spam", :collection => @posts) %>
-		</ul>
-
-  	<% else %>
-
+<div class="clearfix comm-items">
+	<% if @posts.blank? %>
 		<div class="big-info">
-			<div class="no-info-text mt20 mb20"><%= t('.no_spam')%></div>
+			<div class="no-info-text mt20 mb20"><%= t(".no_#{@moderation_scope}")%></div>
 		</div>
-
+	<% else %>
+		<%= render :partial => '/discussions/shared/post', :collection => @posts %>
 	<% end %>
 </div>
 <%= will_paginate @posts, :renderer => BootstrapPaginationRenderer,
 							        				:previous_label => "<b class='arrow-left'></b>",
 							        				:next_label => "<b class='arrow-right'></b>",
 							        				:class => "pagination pagination-centered" %>
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Discussions.setSpamCounts(<%= @counts.to_json.html_safe %>);
+	});
+</script>

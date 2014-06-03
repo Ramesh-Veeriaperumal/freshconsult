@@ -19,23 +19,34 @@ module ForumHelper
 		forum
 	end
 
-	def create_test_topic(forum)
+	def create_test_topic(forum, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
 		topic = Factory.build(
 							:topic, 
 							:account_id => @account.id, 
 							:forum_id => forum.id,
-							:user_id => @customer.id
+							:user_id => user.id,
+							:stamp_type => stamp_type
 							)
 		topic.save(true)
-		topic
+		post = Factory.build(
+							:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							)
+		post.save!
+		publish_post(post)
+		topic.reload
 	end
 
-	def create_test_post(topic)
+	def create_test_post(topic, user = @customer)
 		post = Factory.build(
 							:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
-							:user_id => @customer.id
+							:user_id => user.id
 							)
 		post.save(true)
 		post			
@@ -66,5 +77,38 @@ module ForumHelper
 	def publish_post(post)
 		post.approve!
 		post
+	end
+
+	def monitor_topic(topic)
+		monitorship = Factory.build(
+									:monitorship,
+									:monitorable_id => topic.id,
+									:user_id => @user.id,
+									:active => 1,
+									:account_id => @account.id,
+									:monitorable_type => "Topic" 
+									)
+		monitorship.save(true)
+	end
+
+	def lock_topic(topic)
+		topic.locked = true
+		topic.save
+		topic
+	end
+
+	def mark_as_answer(post)
+		post.toggle_answer
+		post
+	end
+
+	def change_visibility(forum, visibility)
+		forum.update_attributes(:forum_visibility => visibility)
+		forum
+	end
+	
+	def destroy_session
+		@current_user_session = UserSession.find
+		@current_user_session.destroy
 	end
 end

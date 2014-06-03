@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>glyphs glyphs preview</title>
+
+    <style>
+      /* Page Styles */
+
+      * {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #fafafa;
+        color: #444;
+        font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      a,
+      a:visited {
+        color: #888;
+        text-decoration: underline;
+      }
+      a:hover,
+      a:focus { color: #000; }
+
+      header {
+        overflow: hidden;
+        padding: 20px 0;
+        margin:0 5px 20px 0px;
+      }
+
+      header h1 {
+        color: #555;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      header p{
+        font-size: 12px;
+      }
+      header code{
+        background: #ffe59a;
+      }
+      header a {
+        float: right;
+        font-size: 14px;
+      }
+
+      .container {
+        margin: 0 auto;
+        max-width: 1200px;
+        min-width: 960px;
+        padding: 0 40px 50px;
+        width: 90%;
+      }
+      .glyph {
+        border: 1px solid #eee;
+        padding: 10px;
+        margin-left: -1px;
+        margin-bottom:-1px;
+        width: 20%;
+        text-align: center;
+        float: left;
+        background: #fff;
+      }
+      .glyph:hover{
+        background: #fff9e7;
+      }
+
+      .preview-glyphs {}
+
+      .preview-scale {
+        color: #888;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+
+      .step {
+        display: inline-block;
+        line-height: 1;
+        position: relative;
+        width: 10%;
+      }
+
+      .step .letters,
+      .step i {
+        -webkit-transition: opacity .3s;
+        -moz-transition: opacity .3s;
+        -ms-transition: opacity .3s;
+        -o-transition: opacity .3s;
+        transition: opacity .3s;
+      }
+
+      .step:hover .letters { opacity: 1; }
+      .step:hover i { opacity: .3; }
+
+      .letters {
+        opacity: .3;
+        position: absolute;
+      }
+
+      .characters-off .letters { display: none; }
+      .characters-off .step:hover i { opacity: 1; }
+
+      
+      .size-12 { font-size: 12px; }
+      
+      .size-14 { font-size: 14px; }
+      
+      .size-16 { font-size: 16px; }
+      
+      .size-18 { font-size: 18px; }
+      
+      .size-21 { font-size: 21px; }
+      
+      .size-24 { font-size: 24px; }
+      
+      .size-36 { font-size: 36px; }
+      
+      .size-48 { font-size: 48px; }
+      
+      .size-60 { font-size: 60px; }
+      
+      .size-72 { font-size: 72px; }
+      
+
+      .usage { font-size: 12px; }
+
+      .usage span {
+        font-family: monospace;
+        margin-right: 3px;
+        padding: 2px 5px;
+        text-align: center;
+      }
+
+      .usage .point { width: 150px; }
+
+      .usage .class { width: 250px; }
+
+      footer {
+        color: #888;
+        font-size: 12px;
+        padding: 20px 0;
+      }
+
+      .clearboth{
+        clear:both;
+      }
+      /* Icon Font: glyphs */
+
+      @font-face {
+  font-family: "glyphs";
+  src: url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.eot");
+  src: url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.eot?#iefix") format("embedded-opentype"),
+       url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.woff") format("woff"),
+       url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.ttf") format("truetype"),
+       url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.svg#glyphs") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "glyphs";
+    src: url("../../fonts/glyphs_51d95f877f92d95e82bd937b23375f8a.svg#glyphs") format("svg");
+  }
+}
+
+      [data-icon]:before { content: attr(data-icon); }
+
+      [data-icon]:before,
+      .ficon-all-streams:before,
+.ficon-answer-checked:before,
+.ficon-answer-unchecked:before,
+.ficon-arrow-down:before,
+.ficon-arrow-left:before,
+.ficon-arrow-right:before,
+.ficon-arrow-up:before,
+.ficon-book:before,
+.ficon-bulb:before,
+.ficon-bullhorn:before,
+.ficon-caret-down:before,
+.ficon-caret-left:before,
+.ficon-caret-right:before,
+.ficon-caret-up:before,
+.ficon-checkmark:before,
+.ficon-checkmark-round:before,
+.ficon-checkmark-round-o:before,
+.ficon-comment-multi:before,
+.ficon-conversation:before,
+.ficon-cross:before,
+.ficon-crown:before,
+.ficon-dots:before,
+.ficon-earth:before,
+.ficon-edit:before,
+.ficon-ellipsis:before,
+.ficon-eye:before,
+.ficon-facebook:before,
+.ficon-file-edit:before,
+.ficon-file-visible:before,
+.ficon-folder-o:before,
+.ficon-folder-open-o:before,
+.ficon-freshdesk:before,
+.ficon-gear:before,
+.ficon-googleplus:before,
+.ficon-help:before,
+.ficon-like:before,
+.ficon-link:before,
+.ficon-linkedin:before,
+.ficon-lock:before,
+.ficon-lock-open:before,
+.ficon-map-marker:before,
+.ficon-minus:before,
+.ficon-notice:before,
+.ficon-notice-o:before,
+.ficon-open-in-new-window:before,
+.ficon-paperplane:before,
+.ficon-plus:before,
+.ficon-post-edit:before,
+.ficon-reorder:before,
+.ficon-reply:before,
+.ficon-retweet:before,
+.ficon-search:before,
+.ficon-sidebar-list:before,
+.ficon-star:before,
+.ficon-star-o:before,
+.ficon-ticket:before,
+.ficon-ticket2:before,
+.ficon-trash:before,
+.ficon-trash-o:before,
+.ficon-twitter:before,
+.ficon-unlock:before,
+.ficon-user:before,
+.ficon-view-retweets:before,
+.ficon-warning:before {
+        display: inline-block;
+  font-family: "glyphs";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+      }
+
+      .ficon-all-streams:before { content: "\f100"; }
+.ficon-answer-checked:before { content: "\f12e"; }
+.ficon-answer-unchecked:before { content: "\f140"; }
+.ficon-arrow-down:before { content: "\f101"; }
+.ficon-arrow-left:before { content: "\f102"; }
+.ficon-arrow-right:before { content: "\f103"; }
+.ficon-arrow-up:before { content: "\f104"; }
+.ficon-book:before { content: "\f105"; }
+.ficon-bulb:before { content: "\f13a"; }
+.ficon-bullhorn:before { content: "\f13b"; }
+.ficon-caret-down:before { content: "\f106"; }
+.ficon-caret-left:before { content: "\f107"; }
+.ficon-caret-right:before { content: "\f108"; }
+.ficon-caret-up:before { content: "\f109"; }
+.ficon-checkmark:before { content: "\f10a"; }
+.ficon-checkmark-round:before { content: "\f12f"; }
+.ficon-checkmark-round-o:before { content: "\f130"; }
+.ficon-comment-multi:before { content: "\f131"; }
+.ficon-conversation:before { content: "\f10b"; }
+.ficon-cross:before { content: "\f10c"; }
+.ficon-crown:before { content: "\f10d"; }
+.ficon-dots:before { content: "\f10e"; }
+.ficon-earth:before { content: "\f10f"; }
+.ficon-edit:before { content: "\f110"; }
+.ficon-ellipsis:before { content: "\f111"; }
+.ficon-eye:before { content: "\f112"; }
+.ficon-facebook:before { content: "\f113"; }
+.ficon-file-edit:before { content: "\f132"; }
+.ficon-file-visible:before { content: "\f133"; }
+.ficon-folder-o:before { content: "\f114"; }
+.ficon-folder-open-o:before { content: "\f115"; }
+.ficon-freshdesk:before { content: "\f116"; }
+.ficon-gear:before { content: "\f117"; }
+.ficon-googleplus:before { content: "\f118"; }
+.ficon-help:before { content: "\f13c"; }
+.ficon-like:before { content: "\f13d"; }
+.ficon-link:before { content: "\f119"; }
+.ficon-linkedin:before { content: "\f11a"; }
+.ficon-lock:before { content: "\f11b"; }
+.ficon-lock-open:before { content: "\f11c"; }
+.ficon-map-marker:before { content: "\f11d"; }
+.ficon-minus:before { content: "\f11e"; }
+.ficon-notice:before { content: "\f134"; }
+.ficon-notice-o:before { content: "\f135"; }
+.ficon-open-in-new-window:before { content: "\f13e"; }
+.ficon-paperplane:before { content: "\f11f"; }
+.ficon-plus:before { content: "\f120"; }
+.ficon-post-edit:before { content: "\f136"; }
+.ficon-reorder:before { content: "\f137"; }
+.ficon-reply:before { content: "\f121"; }
+.ficon-retweet:before { content: "\f122"; }
+.ficon-search:before { content: "\f123"; }
+.ficon-sidebar-list:before { content: "\f138"; }
+.ficon-star:before { content: "\f124"; }
+.ficon-star-o:before { content: "\f139"; }
+.ficon-ticket:before { content: "\f125"; }
+.ficon-ticket2:before { content: "\f126"; }
+.ficon-trash:before { content: "\f13f"; }
+.ficon-trash-o:before { content: "\f127"; }
+.ficon-twitter:before { content: "\f128"; }
+.ficon-unlock:before { content: "\f129"; }
+.ficon-user:before { content: "\f12a"; }
+.ficon-view-retweets:before { content: "\f12b"; }
+.ficon-warning:before { content: "\f12c"; }
+    </style>
+
+    <!--[if lte IE 8]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script>
+      function toggleCharacters() {
+        var body = document.getElementsByTagName('body')[0];
+        body.className = body.className === 'characters-off' ? '' : 'characters-off';
+      }
+    </script>
+  </head>
+
+  <body class="characters-off">
+    <div id="page" class="container">
+      <header>
+        <h1>Fonticons (64)</h1>
+        <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code></p>
+      </header>
+
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-all-streams" class="ficon-all-streams"></i></span>
+        </div>
+        <div class="usage">
+          <span>all-streams</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-answer-checked" class="ficon-answer-checked"></i></span>
+        </div>
+        <div class="usage">
+          <span>answer-checked</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-answer-unchecked" class="ficon-answer-unchecked"></i></span>
+        </div>
+        <div class="usage">
+          <span>answer-unchecked</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-arrow-down" class="ficon-arrow-down"></i></span>
+        </div>
+        <div class="usage">
+          <span>arrow-down</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-arrow-left" class="ficon-arrow-left"></i></span>
+        </div>
+        <div class="usage">
+          <span>arrow-left</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-arrow-right" class="ficon-arrow-right"></i></span>
+        </div>
+        <div class="usage">
+          <span>arrow-right</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-arrow-up" class="ficon-arrow-up"></i></span>
+        </div>
+        <div class="usage">
+          <span>arrow-up</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-book" class="ficon-book"></i></span>
+        </div>
+        <div class="usage">
+          <span>book</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-bulb" class="ficon-bulb"></i></span>
+        </div>
+        <div class="usage">
+          <span>bulb</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-bullhorn" class="ficon-bullhorn"></i></span>
+        </div>
+        <div class="usage">
+          <span>bullhorn</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-caret-down" class="ficon-caret-down"></i></span>
+        </div>
+        <div class="usage">
+          <span>caret-down</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-caret-left" class="ficon-caret-left"></i></span>
+        </div>
+        <div class="usage">
+          <span>caret-left</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-caret-right" class="ficon-caret-right"></i></span>
+        </div>
+        <div class="usage">
+          <span>caret-right</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-caret-up" class="ficon-caret-up"></i></span>
+        </div>
+        <div class="usage">
+          <span>caret-up</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-checkmark" class="ficon-checkmark"></i></span>
+        </div>
+        <div class="usage">
+          <span>checkmark</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-checkmark-round" class="ficon-checkmark-round"></i></span>
+        </div>
+        <div class="usage">
+          <span>checkmark-round</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-checkmark-round-o" class="ficon-checkmark-round-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>checkmark-round-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-comment-multi" class="ficon-comment-multi"></i></span>
+        </div>
+        <div class="usage">
+          <span>comment-multi</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-conversation" class="ficon-conversation"></i></span>
+        </div>
+        <div class="usage">
+          <span>conversation</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-cross" class="ficon-cross"></i></span>
+        </div>
+        <div class="usage">
+          <span>cross</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-crown" class="ficon-crown"></i></span>
+        </div>
+        <div class="usage">
+          <span>crown</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-dots" class="ficon-dots"></i></span>
+        </div>
+        <div class="usage">
+          <span>dots</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-earth" class="ficon-earth"></i></span>
+        </div>
+        <div class="usage">
+          <span>earth</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-edit" class="ficon-edit"></i></span>
+        </div>
+        <div class="usage">
+          <span>edit</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ellipsis" class="ficon-ellipsis"></i></span>
+        </div>
+        <div class="usage">
+          <span>ellipsis</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-eye" class="ficon-eye"></i></span>
+        </div>
+        <div class="usage">
+          <span>eye</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-facebook" class="ficon-facebook"></i></span>
+        </div>
+        <div class="usage">
+          <span>facebook</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-file-edit" class="ficon-file-edit"></i></span>
+        </div>
+        <div class="usage">
+          <span>file-edit</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-file-visible" class="ficon-file-visible"></i></span>
+        </div>
+        <div class="usage">
+          <span>file-visible</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-folder-o" class="ficon-folder-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>folder-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-folder-open-o" class="ficon-folder-open-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>folder-open-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-freshdesk" class="ficon-freshdesk"></i></span>
+        </div>
+        <div class="usage">
+          <span>freshdesk</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-gear" class="ficon-gear"></i></span>
+        </div>
+        <div class="usage">
+          <span>gear</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-googleplus" class="ficon-googleplus"></i></span>
+        </div>
+        <div class="usage">
+          <span>googleplus</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-help" class="ficon-help"></i></span>
+        </div>
+        <div class="usage">
+          <span>help</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-like" class="ficon-like"></i></span>
+        </div>
+        <div class="usage">
+          <span>like</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-link" class="ficon-link"></i></span>
+        </div>
+        <div class="usage">
+          <span>link</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-linkedin" class="ficon-linkedin"></i></span>
+        </div>
+        <div class="usage">
+          <span>linkedin</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-lock" class="ficon-lock"></i></span>
+        </div>
+        <div class="usage">
+          <span>lock</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-lock-open" class="ficon-lock-open"></i></span>
+        </div>
+        <div class="usage">
+          <span>lock-open</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-map-marker" class="ficon-map-marker"></i></span>
+        </div>
+        <div class="usage">
+          <span>map-marker</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-minus" class="ficon-minus"></i></span>
+        </div>
+        <div class="usage">
+          <span>minus</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-notice" class="ficon-notice"></i></span>
+        </div>
+        <div class="usage">
+          <span>notice</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-notice-o" class="ficon-notice-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>notice-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-open-in-new-window" class="ficon-open-in-new-window"></i></span>
+        </div>
+        <div class="usage">
+          <span>open-in-new-window</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-paperplane" class="ficon-paperplane"></i></span>
+        </div>
+        <div class="usage">
+          <span>paperplane</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-plus" class="ficon-plus"></i></span>
+        </div>
+        <div class="usage">
+          <span>plus</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-post-edit" class="ficon-post-edit"></i></span>
+        </div>
+        <div class="usage">
+          <span>post-edit</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-reorder" class="ficon-reorder"></i></span>
+        </div>
+        <div class="usage">
+          <span>reorder</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-reply" class="ficon-reply"></i></span>
+        </div>
+        <div class="usage">
+          <span>reply</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-retweet" class="ficon-retweet"></i></span>
+        </div>
+        <div class="usage">
+          <span>retweet</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-search" class="ficon-search"></i></span>
+        </div>
+        <div class="usage">
+          <span>search</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-sidebar-list" class="ficon-sidebar-list"></i></span>
+        </div>
+        <div class="usage">
+          <span>sidebar-list</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-star" class="ficon-star"></i></span>
+        </div>
+        <div class="usage">
+          <span>star</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-star-o" class="ficon-star-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>star-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ticket" class="ficon-ticket"></i></span>
+        </div>
+        <div class="usage">
+          <span>ticket</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ticket2" class="ficon-ticket2"></i></span>
+        </div>
+        <div class="usage">
+          <span>ticket2</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-trash" class="ficon-trash"></i></span>
+        </div>
+        <div class="usage">
+          <span>trash</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-trash-o" class="ficon-trash-o"></i></span>
+        </div>
+        <div class="usage">
+          <span>trash-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-twitter" class="ficon-twitter"></i></span>
+        </div>
+        <div class="usage">
+          <span>twitter</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-unlock" class="ficon-unlock"></i></span>
+        </div>
+        <div class="usage">
+          <span>unlock</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-user" class="ficon-user"></i></span>
+        </div>
+        <div class="usage">
+          <span>user</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-view-retweets" class="ficon-view-retweets"></i></span>
+        </div>
+        <div class="usage">
+          <span>view-retweets</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-warning" class="ficon-warning"></i></span>
+        </div>
+        <div class="usage">
+          <span>warning</span>
+        </div>
+      </div>
+      
+      <div class="clearboth"></div>
+    </div>
+  </body>
+</html>

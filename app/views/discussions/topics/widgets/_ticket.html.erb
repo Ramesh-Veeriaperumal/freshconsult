@@ -1,0 +1,23 @@
+<div class="widget">
+
+	<% unless @topic.ticket.present? %>
+		<strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id) %></strong>
+
+	<% else %>
+
+		<div class="muted"><%= t('.title') %></div>
+		<strong><%= link_to @topic.ticket, @topic.ticket %></strong>
+		<div>
+			<% if @topic.ticket.responder_id? %>
+			<div><%= t('.agent') %>: <%= @topic.ticket.responder.name %></div>
+			<% end %>
+			<% changed_time = @topic.ticket.ticket_states.send(status_changed_time_value_hash(@topic.ticket)[:method]) %>
+			<div>
+				<%= @topic.ticket.status_name %>,
+				<abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
+			</div>
+		</div>
+
+	<% end %>
+
+</div>

@@ -1,0 +1,15 @@
+<% content_for :layoutType do %>community<% end %>
+<div class="row-fluid hamburger">
+	<%= sidebar_toggle("mt4") %>
+	<h3 class="lead"><%= t('forum.edit') %></h3>
+</div>
+<% form_for @forum, :url => discussions_forum_path(@forum)   do |f| -%>
+	<%= render :partial => "form", :object => f %>
+	<div class="button-container align-left">
+		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "btn",  :confirm => t('forum.confim_msg1') ) %>
+		<div class="pull-right align-right">
+			<%= pjax_link_to(t('cancel'), :back, :class => "btn" ) -%>
+			<%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
+		</div>
+	</div>
+<% end -%>

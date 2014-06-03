@@ -79,10 +79,12 @@ class Account < ActiveRecord::Base
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
     :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false  }
+    :facebook_realtime => false, :chat => false,
+    :moderate_all_posts => false, :moderate_posts_with_links => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
                             :open_forums, :google_signin, :twitter_signin, :facebook_signin,
-                            :signup_link, :captcha]
+                            :signup_link, :captcha,
+                            :moderate_all_posts, :moderate_posts_with_links ]
 end

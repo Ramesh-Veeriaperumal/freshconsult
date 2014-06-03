@@ -158,8 +158,15 @@ group :test do
 end
 
 group :assets do
-   gem "sass", "3.2.1"
-   gem "compass-rails", "1.0.3"
-   gem "susy"  # Portal grid system is done using susy grids
-   gem "oily_png" # To optimize sprite generation
+  gem "sass",          "3.2.19"
+  gem "compass-rails", "1.0.3"
+
+  # Portal grid system is done using susy grids
+  gem "susy",          "1.0.9"
+
+  # To optimize sprite generation
+  gem "oily_png",     "1.1.1"
+
+  # Building custom font icons inside the application
+  gem "fontcustom",   "1.3.3"
 end

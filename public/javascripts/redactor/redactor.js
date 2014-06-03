@@ -1162,7 +1162,7 @@ Redactor.prototype = {
 				this.$box.insertAfter(this.$editor).append(this.$el).append(this.$editor);
 							
 			}
-      		$('body').append('<div rel="tmpClipboard" />');		
+      		$('body').append('<div rel="tmpClipboard" class="hide" />');		
 			// conver newlines to p
 			html = this.paragraphy(html);
 			
@@ -4248,6 +4248,11 @@ $.fn.setFocus = function()
 {
 	this.data('redactor').$editor.focus();
 };
+	
+$.fn.clearRichText = function() {
+	var redactor = this.data('redactor');
+	redactor.setCode(redactor.paragraphy(''));
+}
 
 $.fn.execCommand = function(cmd, param)
 {

@@ -487,9 +487,29 @@
   map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
   map.resources :topics, :posts, :monitorship
 
-  map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete, :spam_multiple => :put }, :member => {:approve => :put, :mark_as_spam => :put }
+  map.namespace :discussions do |discussion|
+    discussion.resources :forums, :collection => {:reorder => :put}, :except => :index
+    discussion.resources :topics,
+        :except => :index,
+        :member => { :toggle_lock => :put, :latest_reply => :get, :update_stamp => :put,:remove_stamp => :put, :vote => :put, :destroy_vote => :delete },
+        :collection => {:destroy_multiple => :delete } do |topic|
+      discussion.connect "/topics/:id/page/:page", :controller => :topics, :action => :show
+      discussion.topic_component "/topics/:id/component/:name", :controller => :topics, :action => :component
+
+      topic.resources :posts, :except => :new, :member => { :toggle_answer => :put }
+      topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
+
+    end
+    discussion.resources :moderation,
+      :collection => { :empty_folder => :delete, :spam_multiple => :put },
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
+
+    discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
   end
+
+  map.resources :discussions, :collection => { :your_topics => :get, :sidebar => :get, :categories => :get, :reorder => :put }
+
+  map.resources :discussions
 
   %w(forum).each do |attr|
     map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
@@ -543,11 +563,11 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
+      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put }
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
         :action => :show
-      discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put,
           :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put },
           :collection => {:my_topics => :get} do |topic|

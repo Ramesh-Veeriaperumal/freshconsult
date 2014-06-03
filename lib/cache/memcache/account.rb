@@ -1,5 +1,5 @@
 module Cache::Memcache::Account
-  
+
   include MemcacheKeys
   module ClassMethods
     include MemcacheKeys
@@ -132,6 +132,16 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) do
       api_webhook_rules.find(:all)
     end
+  end
+
+  def forum_categories_from_cache
+    key = FORUM_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ], :order => :position) }
+  end
+
+  def clear_forum_categories_from_cache
+    key = FORUM_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
   end
 
   private

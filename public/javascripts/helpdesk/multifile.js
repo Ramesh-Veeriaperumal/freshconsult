@@ -123,13 +123,10 @@ Helpdesk.Multifile = {
             {
                 this.decrementTotalSize(fileInput);
             }
-
             var target = jQuery("#"+jQuery(fileInput).attr('fileList')),
                 container = jQuery(fileInput).attr('fileContainer');
-
 			jQuery('#'+jQuery(link).attr('inputId')).remove();
-            jQuery(link).parents("div:first").remove();
-
+            jQuery(link).parents("div:first, .attachment.list_element").remove();
             jQuery("#"+container + ' label i').text(target.children(':visible').length);
             return true;
 		}catch(e){

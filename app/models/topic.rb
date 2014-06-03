@@ -23,12 +23,15 @@ class Topic < ActiveRecord::Base
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
-  has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
+  has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id DESC", :class_name => 'Post'
+  has_one  :first_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id ASC", :class_name => 'Post'
 
   has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
 
-  has_many :voices, :through => :posts, :source => :user, :uniq => true
+  has_many :voices, :through => :posts, :source => :user, :uniq => true, :order => "#{Post.table_name}.id DESC"
+
+  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -43,6 +46,12 @@ class Topic < ActiveRecord::Base
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   named_scope :published, :conditions => { :published => true }
+
+  named_scope :as_activities,
+      :conditions => { :published => true },
+      :include => {:last_post => [:user], :forum => []},
+      :order => "#{Topic.table_name}.replied_at DESC"
+
   named_scope :find_by_forum_category_id, lambda { |forum_category_id|
     { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
         forums.account_id = topics.account_id),
@@ -60,6 +69,11 @@ class Topic < ActiveRecord::Base
       :order => 'hits DESC, user_votes DESC, replied_at DESC',
       :include => :last_post }
   }
+
+  named_scope :sort_by_popular,
+      :order => 'user_votes DESC, hits DESC, replied_at DESC',
+      :include => :last_post
+
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
   named_scope :by_stamp, lambda { |stamp_type|
@@ -145,8 +159,20 @@ class Topic < ActiveRecord::Base
     Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_TOKENS,
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [],
   }
+
+  ALL_TOKENS_FOR_FILTER = {
+    Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY,
+    Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY,
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY,
+    Forum::TYPE_KEYS_BY_TOKEN[:announce] => [],
+  }
   STAMPS_BY_KEY = IDEAS_STAMPS_BY_TOKEN.merge(QUESTIONS_STAMPS_BY_TOKEN).merge(PROBLEMS_STAMPS_BY_TOKEN)
   NAMES_BY_KEY = IDEAS_STAMPS_NAMES_BY_TOKEN.merge(QUESTIONS_STAMPS_NAMES_BY_TOKEN).merge(PROBLEMS_STAMPS_NAMES_BY_TOKEN)
+
+  DEFAULT_STAMPS_BY_FORUM_TYPE = {
+    Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_TOKEN[:unanswered],
+    Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+  }
 
   def monitorship_emails
     user_emails = Array.new
@@ -170,6 +196,10 @@ class Topic < ActiveRecord::Base
 
 	def hit!
     self.class.increment_counter :hits, id
+  end
+
+  def reply_count
+    [posts_count - 1, 0].max
   end
 
   def sticky?() sticky == 1 end

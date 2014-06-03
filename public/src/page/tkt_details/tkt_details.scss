@@ -527,6 +527,7 @@ ol, ul, li{
 		right: 0;
 		@include opacity(0);
 		cursor: pointer;
+		z-index: 10;
 	}
 	
 }

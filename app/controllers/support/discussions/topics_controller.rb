@@ -1,5 +1,7 @@
 class Support::Discussions::TopicsController < SupportController
 
+  include SupportDiscussionsControllerMethods
+
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
                                       :users_voted, :destroy, :toggle_solution]
   before_filter :require_user, :except => [:index, :show]
@@ -40,7 +42,7 @@ class Support::Discussions::TopicsController < SupportController
         # keep track of when we last viewed this topic for activity indicators
         (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
         # authors of topics don't get counted towards total hits
-        @topic.hit! unless logged_in? and @topic.user == current_user
+        @topic.hit! unless logged_in? and (@topic.user == current_user or current_user.agent?)
         @page_title = @topic.title
 
         @post = Post.new
@@ -155,17 +157,6 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
 
-  def toggle_monitor
-    @monitorship = @topic.monitorships.find_or_initialize_by_user_id(current_user.id)
-    if @monitorship.new_record?
-      @monitorship.save
-    else
-      @monitorship.update_attribute(:active, !@monitorship.active)
-    end
-
-    render :nothing => true
-  end
-
   #method to fetch the monitored status of the topic given the user_id
   def check_monitor
     @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(params[:user_id], params[:id], "Topic")
@@ -212,7 +203,7 @@ class Support::Discussions::TopicsController < SupportController
     @topic.locked = !@topic.locked
     @topic.save!
      respond_to do |format|
-        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+        format.html { redirect_to discussions_topic_path(@topic) }
         format.xml  { head 200 }
      end
   end
@@ -275,7 +266,7 @@ class Support::Discussions::TopicsController < SupportController
 
     def load_agent_actions
       @agent_actions = []
-      @agent_actions <<   { :url => category_forum_topic_path(@forum_category,@forum,@topic),
+      @agent_actions <<   { :url => discussions_topic_path(@topic),
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_forums)
       @agent_actions
@@ -284,7 +275,7 @@ class Support::Discussions::TopicsController < SupportController
     def post_request_params
       {
         :request_params => {
-          :user_ip => request.env['CLIENT_IP'],
+          :user_ip => request.remote_ip,
           :referrer => request.referrer,
           :user_agent => request.env['HTTP_USER_AGENT']
         }
