@@ -110,7 +110,7 @@
 			ev.stopPropagation();
 	    },
 	    setCurrentElement: function(index){
-	    	$("." + this.options.activeClass).removeClass(this.options.activeClass);
+	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
 	 	    this.currentIndex = index;
 	 	    this.currentElement = $(this.selectElement).eq(index).addClass(this.options.activeClass);
 	    },
