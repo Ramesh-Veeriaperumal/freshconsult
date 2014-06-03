@@ -386,7 +386,9 @@
             channel_obj: null,
             clients : [],
             interval : null,
-            interval_time : 10,
+            interval_time : 0.1,
+            index_interval_time : 0.1,
+            index_needed : true,
             needed : true,
             faye_realtime: {
                 faye_subscriptions: [],
@@ -506,9 +508,17 @@
         }
 
         var setPollingInfo = function(interval,needed){
-            if(!((common_variables.interval_time == interval) && (common_variables.needed == needed)))
-            {
+            if(!((common_variables.interval_time == interval) && (common_variables.needed == needed))){
                 common_variables.interval_time = interval;
+                common_variables.needed = needed;
+                clearPolling();
+                initPolling();
+            }
+        }
+
+        var setPollingInfoIndex = function(interval,needed){
+            if(!((common_variables.index_interval_time == interval) && (common_variables.needed == needed))){
+                common_variables.index_interval_time = interval;
                 common_variables.needed = needed;
                 clearPolling();
                 initPolling();
@@ -587,6 +597,12 @@
                     else{
                         window.FreshdeskNode.setPollingInfo(message.interval,true);
                     }
+                    if((message.index_interval == 0) || (message.index_interval == false)){
+                         window.FreshdeskNode.setPollingInfoIndex(message.index_interval,false);
+                    }
+                    else{
+                        window.FreshdeskNode.setPollingInfoIndex(message.index_interval,true);
+                    }
                     callback(message);
                 }
                 addExtension(extensions)
@@ -616,7 +632,8 @@
             setPollingInterval: setPollingInterval,
             clearPolling: clearPolling,
             initPolling: initPolling,
-            setPollingInfo: setPollingInfo  
+            setPollingInfo: setPollingInfo,  
+            setPollingInfoIndex: setPollingInfoIndex 
         };
     })(faye_utilies, message_utilities);
 
@@ -740,9 +757,15 @@
 
     var AgentCollisionIndex = (function (freshdesk_node, msg_utilites, faye_utils) {
 
-        var setLongPolling = function(){
-            //console.log('can set poller if you want ');
-        }
+        var pollingEvent = function(){
+            window.FreshdeskNode.getValue('faye_realtime').fayeClient.publish(freshdesk_node.getValue('agent_collision_index_data').collision_channel,{data : 'index_polling' , channel : freshdesk_node.getValue('agent_collision_index_data').collision_channel , 'domainName' : window.FreshdeskNode.getValue('faye_auth_params').domainName  });
+        };
+
+        var setLongPolling = function(interval){
+            var interval = window.setInterval(pollingEvent,window.FreshdeskNode.getValue('index_interval_time')*1000);
+            window.FreshdeskNode.setPollingInterval(interval);
+
+        };
 
         var setEvents = function () {
             $('#agent_collision_placeholder').append($('#agent_collision_show').detach());
