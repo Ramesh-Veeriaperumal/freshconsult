@@ -14,6 +14,8 @@ class Support::Solutions::ArticlesController < SupportController
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
 
+  skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
+
   def handle_unknown
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
