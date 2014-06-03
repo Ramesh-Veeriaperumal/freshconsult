@@ -262,7 +262,7 @@ GEM
     mysql2 (0.2.18)
     mysql2 (0.2.18-x86-mingw32)
     namae (0.8.4)
-    newrelic_rpm (3.8.0.218)
+    newrelic_rpm (3.6.0.83)
     nokogiri (1.5.2)
     nokogiri (1.5.2-x86-mingw32)
     nori (1.1.4)
@@ -520,7 +520,7 @@ DEPENDENCIES
   mongrel (>= 1.2.0.pre2)
   mysql2 (~> 0.2.7)
   namae (= 0.8.4)
-  newrelic_rpm (= 3.8.0.218)
+  newrelic_rpm (= 3.6.0.83)
   nori (= 1.1.4)
   oily_png
   omniauth (= 1.0)

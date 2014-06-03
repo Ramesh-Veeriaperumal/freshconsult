@@ -65,7 +65,7 @@ gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.gi
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","3.8.0.218"
+gem "newrelic_rpm","3.6.0.83"
 
 gem "faraday" , "0.8.7"
 gem "twitter" , "~> 4.6.2"
