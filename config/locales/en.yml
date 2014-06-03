@@ -980,7 +980,7 @@ en:
         default_ssl: Default SSL
         custom_ssl: Custom SSL
         dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
-        whitelisted_ips_enabled: Trusted IP Address
+        whitelisted_ips_enabled: IP Whitelisting
         whitelisted_ips_enabled_info: Restrict access to your support portal to only trusted locations and networks by defining the range of allowed IP addresses.
         current_ip_information: Your current IP is <b>%{current_ip}</b> . You will not be allowed to save the new IP settings without your current IP address in the list.
         applies_to: Applies to
