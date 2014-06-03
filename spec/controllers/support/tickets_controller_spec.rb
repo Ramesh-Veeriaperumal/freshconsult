@@ -45,4 +45,17 @@ describe Support::TicketsController do
     response.should render_template 'support/tickets/show.portal'
     response.body.should =~ /#{test_subject}/
   end
+
+  it "should mark a ticket as closed" do
+    test_subject = Faker::Lorem.sentence(4)
+    test_user = Factory.build(:user, :account => @account, :email => Faker::Internet.email,
+                               :user_role => 3)
+    test_user.save
+    test_ticket = create_ticket({ :status => 2, :requester_id => test_user.id, :subject => test_subject })
+    log_in(test_user)
+    get :show, :id => test_ticket.display_id
+    post :close, :id => test_ticket.display_id
+    test_ticket.reload
+    @account.tickets.find_by_display_id(test_ticket.display_id).status.should be_eql(5)
+  end
 end
