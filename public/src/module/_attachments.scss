@@ -79,8 +79,12 @@
 			}
 		}
 		.delete{
-			img{
-				vertical-align: middle;
+			vertical-align: middle;
+			&:before{
+				content: "\00d7";
+				font-size: 20px;
+				font-weight: 500;
+				color: #999;
 			}
 		}
 		&.hide{

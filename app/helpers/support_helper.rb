@@ -884,54 +884,51 @@ def article_attachments article
 	def ticket_attachemnts ticket		
 		output = []
 
-		if(ticket.attachments.size > 0 or ticket.dropboxes.size > 0)
+		if(ticket.attachments.size > 0 or ticket.dropboxes != nil)
 			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
 
-			ticket.attachments.each do |a|
+			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
 
-			ticket.dropboxes.each do |c|
+			(ticket.dropboxes || []).each do |c|
 				output << dropbox_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
 		end
-
 		output.join('').html_safe 
 	end
 
 	def comment_attachments comment		
 		output = []
 
-		if(comment.attachments.size > 0 or comment.dropboxes.size > 0)
+		if(comment.attachments.size > 0 or comment.dropboxes != nil)
 			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
 
-			comment.attachments.each do |a|
+			(comment.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
 
-			comment.dropboxes.each do |c|
+			(comment.dropboxes || []).each do |c|
 				output << dropbox_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
 		end
-
 		output.join('').html_safe 
+
 	end
 
 	def attachment_item attachment, can_delete = false
 		output = []
 
 		output << %(<div class="cs-g-3 attachment">)
-		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5">
-						<img src="/images/delete_icon.png">
-					</a>) if can_delete
+		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << default_attachment_type(attachment)
 
@@ -950,9 +947,7 @@ def article_attachments article
 		output = []
 
 		output << %(<div class="cs-g-3 attachment">)
-		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5">
-						<img src="/images/delete_icon.png">
-					</a>) if can_delete
+		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/images/dropbox_big.png"></span>)
 

@@ -12,7 +12,7 @@
 		float: none;
 		min-height: 20px;
 		height:auto !important;
-		width: 250px;
+		width: 270px;
 		margin-left:0;	
 		.attachment-type{
 			margin: 0;
@@ -76,8 +76,15 @@
 		}
 		.delete{
 			margin-right: 10px;
-			img{
-				vertical-align: middle;
+			vertical-align: middle;
+			&:before{
+				content: "\00d7";
+				font-size: 20px;
+				font-weight: 500;
+				color: #999;
+			}
+			&:hover{
+				text-decoration: none;
 			}
 		}
 	} 
