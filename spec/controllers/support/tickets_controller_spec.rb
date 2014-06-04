@@ -58,4 +58,26 @@ describe Support::TicketsController do
     test_ticket.reload
     @account.tickets.find_by_display_id(test_ticket.display_id).status.should be_eql(5)
   end
+
+  it "should add emails that need to be copied when a notification for ticket is sent" do
+    test_subject = Faker::Lorem.sentence(4)
+    test_user = Factory.build(:user, :account => @account, :email => Faker::Internet.email,
+                               :user_role => 3)
+    test_user.save
+    test_cc_email1 = Faker::Internet.email
+    test_cc_email2 = Faker::Internet.email
+    test_ticket = create_ticket({ :status => 2, :requester_id => test_user.id, :subject => test_subject })
+    log_in(test_user)
+    get :show, :id => test_ticket.display_id
+    put :add_people, :id => test_ticket.display_id,
+                     :helpdesk_ticket => { :cc_email => 
+                                           { :cc_emails => [test_cc_email1,test_cc_email2].join(",")
+                                           }
+                                         }
+    test_ticket.reload
+    flash[:notice].should be_eql("Email(s) successfully added to CC.")
+    response.should redirect_to "support/tickets/#{test_ticket.display_id}"
+    @account.tickets.find_by_display_id(test_ticket.display_id).cc_email[:cc_emails].should be_eql([test_cc_email1,test_cc_email2])
+
+  end
 end
