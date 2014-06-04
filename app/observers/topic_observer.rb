@@ -27,11 +27,13 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
   def after_update(topic)
+    topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
     return if !topic.stamp_type_changed? or topic.stamp_type.blank?
     create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
   end
 
   def after_create(topic)
+    topic.account.clear_forum_categories_from_cache
     monitor_topic(topic)
     create_activity(topic, 'new_topic') if topic.published?
   end
@@ -48,6 +50,7 @@ class TopicObserver < ActiveRecord::Observer
   end
 
 	def after_destroy(topic)
+    topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
     create_activity(topic, 'delete_topic', User.current) unless topic.trash
 	end
