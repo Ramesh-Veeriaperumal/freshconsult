@@ -39,7 +39,10 @@
       <div class="info-data">
          <div class="pull-left">
           <a href="http://twitter.com/<%=feed.user[:screen_name]%>/status/<%=feed.feed_id%>" target="_blank" data-original-title="View on Twitter" twipsy-content-set="true" data-placement="right" class="tooltip c-tw-link"><%= font_icon "twitter", :size => 16 %></a>
-          <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= formated_date(Time.parse(feed.posted_time)) %>"></span>
+            <% parsed_time = formated_date(Time.parse(feed.posted_time)) %>
+            <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= parsed_time %>">
+              <%= time_ago_in_words(Time.parse(feed.posted_time)) %> ago
+            </span>
           <% if feed.agent_name %>
             <span class="timestamp">&nbsp; by <%= feed.agent_name %></span>
           <% end %>
