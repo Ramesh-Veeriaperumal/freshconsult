@@ -1,6 +1,6 @@
 <% options.each do |key, value| %>
-  <label class="item"> 
-    <%= check_box_tag value, key, (selected_val.include? key.to_s), { :class => "filter_item" } %> 
+  <label class="item">
+    <%= check_box_tag h(value), h(key), (selected_val.include? key.to_s), { :class => "filter_item" } %> 
     <span><%=value.html_safe%></span>
   </label>
 <% end %>
