@@ -26,7 +26,7 @@
 	</div>
 </div>
 <script id="file-list-template" type="text/x-jquery-tmpl">
-	<li class="attachment list_element">
+	<li class="attachment list_element {{if (!file_valid)}}invalid tooltip{{/if}}"{{if (!file_valid)}} title="<%= t('helpdesk.tickets.note.attachment_size.exceed_limit') %>"{{/if}}>
 		<div>
 			<a 	class="delete mr10" href="#" 
 				onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;"

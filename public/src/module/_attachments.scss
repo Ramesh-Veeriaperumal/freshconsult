@@ -90,6 +90,17 @@
 		&.hide{
 			display: none;
 		}
+
+		&.invalid {
+			 .file-size {
+				color: #D00;
+				font-weight: bold;
+			}
+			.attach_content a {
+				color: #CCC;
+				text-decoration: line-through;
+			}
+		}
 	} 
 }
 
