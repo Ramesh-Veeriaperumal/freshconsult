@@ -220,6 +220,7 @@ var StreamManager = Class.create({
           j.event.trigger({ //IMPORTANT TO REGISTER EVENTS AFTER STREAMS LOADED -  DOING IT with Custom Event
             type: "streamLoadedEvent", message: "Success", time: new Date()
           });
+          j('#no_old_results').hide(); 
         }
     });
   },
