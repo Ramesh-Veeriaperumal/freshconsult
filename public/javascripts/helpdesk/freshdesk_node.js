@@ -481,7 +481,9 @@
                             window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
                         }
                     }
-                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    if(window.FreshdeskNode.getValue('faye_realtime').fayeClient){
+                        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    }
                 });
             }
             else{
@@ -491,7 +493,9 @@
                             window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
                         }
                     }
-                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    if(window.FreshdeskNode.getValue('faye_realtime').fayeClient){
+                        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    }
                 });
             }
         };
