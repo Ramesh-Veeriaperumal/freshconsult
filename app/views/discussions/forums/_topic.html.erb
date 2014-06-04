@@ -29,21 +29,11 @@
 		</div>
 	</div>
 	<div class="span3 pull-right mt6 pr15">
-		<% if topic.stamp_type? %>
+		<% if !@forum.announcement? && topic.stamp.present?  %>
 			<div class="span6 stamp-badge pull-right align-right">
-				<% if @forum.ideas? %>
 					<span class="stamp stamp_type_<%=topic.stamp_type%> align-right">
-						<%= topic.stamp_name %>
+						<%= topic.stamp %>
 					</span>
-				<%elsif @forum.questions? %>
-					<span class="stamp stamp_type_<%=topic.stamp_type%>  align-right">
-						<%= topic.answered? ? t('topic.questions.answered') : t('topic.questions.unanswered') %>
-					</span>
-				<%elsif @forum.problems? %>
-					<span class="stamp stamp_type_<%=topic.stamp_type%>  align-right">
-						<%= topic.solved? ? t('topic.problems.solved') : t('topic.problems.unsolved') %>
-					</span>
-				<% end %>
 			</div>
 		<% end %>
 		<div class="span6 pr15">

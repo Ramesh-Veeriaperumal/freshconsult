@@ -198,6 +198,16 @@ class Topic < ActiveRecord::Base
     self.class.increment_counter :hits, id
   end
 
+  def stamp?
+    stamp_type? && Topic::ALL_TOKENS_FOR_FILTER[forum.forum_type].present? && ALL_TOKENS_FOR_FILTER[forum.forum_type].keys.include?(stamp_type)
+  end
+
+  def stamp
+    stamp? ? 
+      ALL_TOKENS_FOR_FILTER[forum.forum_type][stamp_type] : 
+      ALL_TOKENS_FOR_FILTER[forum.forum_type][DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]]
+  end
+
   def reply_count
     [posts_count - 1, 0].max
   end

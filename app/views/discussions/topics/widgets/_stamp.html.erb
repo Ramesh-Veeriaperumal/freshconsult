@@ -1,8 +1,10 @@
 <div class="widget <%= "marked" if @topic.stamp_type? %>" id="stamp-data">
-<% stamped = @topic.stamp_type? %>
+<% stamped = @topic.stamp.present? %>
 <div class="stamp-list <%= 'pull-right mt12' if stamped %>">
 	<div class="dropdown">
-		<a href="#" class="dropdown-toggle" id="stamp_type" data-toggle="dropdown" data-url="<%= update_stamp_discussions_topic_path(@topic.id) %>" >
+		<a href="#" class="dropdown-toggle" id="stamp_type" 
+			data-toggle="dropdown" 
+			data-url="<%= update_stamp_discussions_topic_path(@topic.id) %>" >
 			<strong>
 				<div class="">
 				<% if stamped %>
@@ -43,7 +45,7 @@
 		<div class="muted"><%= t('topic.marked_as')%></div>
 		<div class="stamp-set">
 			<strong>
-				<%= Topic::ALL_TOKENS_FOR_FILTER[@topic.forum.forum_type][@topic.stamp_type] %>
+				<%= @topic.stamp %>
 			</strong>
 		</div>
 	</div>
