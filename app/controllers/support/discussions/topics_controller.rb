@@ -94,7 +94,7 @@ class Support::Discussions::TopicsController < SupportController
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       build_attachments
       if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
-        topic_saved = @topic.save if @post.valid?
+        topic_saved = @post.valid? and @topic.save
         post_saved = @post.save
       end
     end
