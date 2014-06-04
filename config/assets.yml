@@ -53,9 +53,6 @@ stylesheets:
   tkt_details_print:
     - public/stylesheets/page/tkt_details/tkt_details_print.css
 
-  survey:
-    - public/stylesheets/support/rating.css
-
   gadget:
     - public/stylesheets/common.css
     - public/stylesheets/pages.css
@@ -112,9 +109,6 @@ stylesheets:
 
   rating:
     - public/stylesheets/portal/rating.css
-
-  icomoon:
-    - public/stylesheets/chat/icomoon.css
 
   freshfone:
     - public/stylesheets/freshfone/freshfone.css
