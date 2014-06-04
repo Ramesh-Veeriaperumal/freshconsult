@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "183a85a002047536b29aa7a6a6767141b472fbc05207ed8fd25db6a6795101dd",
-    "current": "183a85a002047536b29aa7a6a6767141b472fbc05207ed8fd25db6a6795101dd"
+    "previous": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075",
+    "current": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075"
   },
   "fonts": [
-    "public/fonts/glyphs_183a85a002047536b29aa7a6a6767141.ttf",
-    "public/fonts/glyphs_183a85a002047536b29aa7a6a6767141.svg",
-    "public/fonts/glyphs_183a85a002047536b29aa7a6a6767141.woff",
-    "public/fonts/glyphs_183a85a002047536b29aa7a6a6767141.eot"
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.ttf",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.svg",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.woff",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.eot"
   ],
   "glyphs": {
     "all-streams": {
@@ -149,6 +149,10 @@
     "help": {
       "codepoint": 61756,
       "source": "public/glyphs/vectors/help.svg"
+    },
+    "infinity-5": {
+      "codepoint": 61761,
+      "source": "public/glyphs/vectors/infinity-5.svg"
     },
     "like": {
       "codepoint": 61757,

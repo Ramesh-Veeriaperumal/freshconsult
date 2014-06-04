@@ -3,7 +3,7 @@ class Support::Discussions::TopicsController < SupportController
   include SupportDiscussionsControllerMethods
 
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
-                                      :users_voted, :destroy, :toggle_solution]
+                                      :users_voted, :destroy, :toggle_solution, :hit]
   before_filter :require_user, :except => [:index, :show]
 
   before_filter :load_agent_actions, :only => :show
@@ -37,14 +37,7 @@ class Support::Discussions::TopicsController < SupportController
   def show
     respond_to do |format|
       format.html do
-        # see notes in application.rb on how this works
-        update_last_seen_at
-        # keep track of when we last viewed this topic for activity indicators
-        (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
-        # authors of topics don't get counted towards total hits
-        @topic.hit! unless logged_in? and (@topic.user == current_user or current_user.agent?)
         @page_title = @topic.title
-
         @post = Post.new
       end
       format.xml do
@@ -59,6 +52,15 @@ class Support::Discussions::TopicsController < SupportController
       end
     end
     set_portal_page :topic_view
+  end
+
+  def hit
+    # keep track of when we last viewed this topic for activity indicators
+    (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
+    # authors of topics don't get counted towards total hits
+    @topic.hit! unless logged_in? and (@topic.user == current_user or current_user.agent?)
+
+    render_tracker
   end
 
   def new

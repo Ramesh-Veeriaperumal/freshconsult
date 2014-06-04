@@ -163,4 +163,12 @@ class SupportController < ApplicationController
     def facebook?
       params[:portal_type] == "facebook"
     end
+
+    protected
+
+    def render_tracker
+      File.open("#{Rails.root}/public/images/spacer.gif", 'rb') do |f|
+        send_data f.read, :type => "image/gif", :disposition => "inline"
+      end
+    end
 end

@@ -584,7 +584,7 @@
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
         :action => :show
-      discussion.resources :topics, :except => :index, :member => { :like => :put,
+      discussion.resources :topics, :except => :index, :member => { :like => :put, :hit => :get,
           :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put },
           :collection => {:my_topics => :get} do |topic|
         discussion.connect "/topics/my_topics/page/:page", :controller => :topics,

@@ -985,6 +985,15 @@ def article_attachments article
 	    output.join('')
 	end
 
+	def page_tracker
+		case @current_page_token.to_sym
+		when :topic_view
+			return image_tag hit_support_discussions_topic_path(@topic)
+		else
+			""
+		end
+	end
+
 	private
 
 		def portal_preferences
