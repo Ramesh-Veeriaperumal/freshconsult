@@ -23,22 +23,22 @@ module Social::BaseHelper
   end
   
   def handles_select_tag(current_handle)
-    select_arr = "<select id='twt-as'>"
+    select_arr = "<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"
     @all_handles.each do |handle|
       select_arr << handle_options(handle, current_handle)
     end
-    select_arr << '</select>'
+    select_arr << '</ul>'
     select_arr.html_safe
   end
   
   def handle_options(handle, select_handle)
     options = ""
     if handle.screen_name.eql?(select_handle.screen_name)  
-      options << "<option value='#{handle.id}' selected='selected' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>"
+      options << "<li><a href='#' value='#{handle.id}' class='selected' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
     else
-      options << "<option value='#{handle.id}' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>"
+      options << "<li><a href='#' value='#{handle.id}' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
     end
-    options << "#{handle.screen_name}" << '</option>'
+    options << '</li>'
   end
   
 end

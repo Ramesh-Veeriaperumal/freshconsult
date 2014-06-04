@@ -33,9 +33,7 @@ var StreamManager = Class.create({
     j(document).on("keyup",".reply-input",function(e){
       var _val = j(e.currentTarget).val(),
           _len = _val.length;
-          console.log(_len);
       if((_val == "") || (_len > 140)) {
-        console.log("more than 140");
         j('.twt-submit').attr("disabled","disabled");
       } else {
         j('.twt-submit').removeAttr("disabled");
@@ -78,7 +76,7 @@ var StreamManager = Class.create({
     /*Static RIGHT PANE ACTIONS */
     j("#recent_search").on("click.social_evt", "p.query-list a", this.recentSearchQL.bindAsEventListener(this));
     j(".tw-wrapper").on("click.social_evt",".post-twt-submit", this.triggerPostTweetSubmit.bindAsEventListener(this))
-                    .on('change.social_evt', ".twt-as",this.tweetAs.bindAsEventListener(this)); //tweet as user
+                    .on('click.social_evt', ".twt-as .dropdown-menu a",this.tweetAs.bindAsEventListener(this)); //tweet as user
     //convo panel actions
     j("body").on("mouseenter.social_evt", this.convoElement, this.convoBoxMouseOver.bindAsEventListener(this))
              .on("mouseleave.social_evt", this.convoElement, this.convoBoxMouseLeave.bindAsEventListener(this));
@@ -507,12 +505,13 @@ var StreamManager = Class.create({
   /*Right Pane Actions */
   tweetAs: function(e){
     var str = "",handle_id, _img;
-    _img = j(e.currentTarget).find('select').find("option:selected" ).attr("data-img-url");
-    handle_id = j(e.currentTarget).find('select').find("option:selected" ).val();
-    str = j(e.currentTarget).find('select').find("option:selected" ).text();
+    j(e.target).addClass('selected');
+    _img = j(e.target).attr("data-img-url");
+    handle_id = j(e.target).val();
+    str = j(e.target).text();
 
     j(".twt-profile img").attr("src", _img);
-    j(".twt-name").html(str +" <i class='ficon-caret-down fsize-16' size='16'></i>").attr("data-original-title", str);
+    j(".dropdown-toggle").html(str +" <i class='ficon-caret-down fsize-16' size='16'></i>").attr("data-original-title", str);
     j(".twitter_handle_id").val(handle_id);
   },
   closeOnBodyClick: function(e){
