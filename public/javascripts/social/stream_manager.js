@@ -40,8 +40,11 @@ var StreamManager = Class.create({
       }
     });
 
-    j(this.socialPage.left_pane).on("click.social_evt", "#unifiedStreams", this.unifiedStreams.bindAsEventListener(this));
-    j('#unifiedStreams').trigger("click");
+    if(j('#unifiedStreams').length>0){
+      j(this.socialPage.left_pane).on("click.social_evt", "#unifiedStreams", this.unifiedStreams.bindAsEventListener(this));
+      j('#unifiedStreams').trigger("click");
+    }
+    else this.registerStreamEvents();
 
     Fjax.current_page = 'social_stream';
     //this.autoStreamLoad =  setInterval(this.loadNewFeeds.bindAsEventListener(this), this.timer);
@@ -55,7 +58,24 @@ var StreamManager = Class.create({
     this.registerCustEvent();
     console.log("Into streamLoadedEvent");
     this.autoStreamLoad =  setInterval(this.loadNewFeeds.bindAsEventListener(this), this.timer);
-    //LEFT PANE ACTIONS
+    this.registerStreamEvents();
+
+    j(this.streamBoxElements.stream_template).menuSelector({
+        activeClass: 'selected-tweet',
+        onHoverActive:false,
+        onClickActive:true,
+        scrollInDocument:true,
+        menuHoverIn: "div.twt-list-item",
+        additionUpKeys: 74,
+        additionDownKeys: 75,
+        onClickCallback: function(element){
+          $this.showSocialConvo(element);
+        }
+    });
+    j(this.streamBoxElements.stream_template).menuSelector('reset');
+  },
+  registerStreamEvents: function(e){
+     //LEFT PANE ACTIONS
     j("#streams").on("click.social_evt", "#unifiedStreams", this.unifiedStreams.bindAsEventListener(this));
     j("#streams").on("click.social_evt", ".item_info", this.streamsItemInfo.bindAsEventListener(this)); // Clicking an individual brand(saved) stream
     j("#customSearches").on("click.social_evt", ".item_info", this.customSearchesItemInfo.bindAsEventListener(this));
@@ -84,20 +104,6 @@ var StreamManager = Class.create({
     j(this.streamBoxElements.stream_template).on("click.social_evt", "p.autolink a", this.onAutoLinkClick.bindAsEventListener(this));
     j('body').on("mouseup.social_evt", this.closeOnBodyClick.bindAsEventListener(this)); //on body click to close social convo box
     j(this.streamBoxElements.convo_wrapper).on("change.social_evt",".reply-input", this.onReplyTextAreaChange.bindAsEventListener(this));
-
-    j(this.streamBoxElements.stream_template).menuSelector({
-        activeClass: 'selected-tweet',
-        onHoverActive:false,
-        onClickActive:true,
-        scrollInDocument:true,
-        menuHoverIn: "div.twt-list-item",
-        additionUpKeys: 74,
-        additionDownKeys: 75,
-        onClickCallback: function(element){
-          $this.showSocialConvo(element);
-        }
-    });
-    j(this.streamBoxElements.stream_template).menuSelector('reset');
   },
   registerCustEvent: function(e){
     j(document).on("streamLoadedEvent", this.onStreamLoaded.bindAsEventListener(this)); //Custom event - this will trigger on ajax call success
