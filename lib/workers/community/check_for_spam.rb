@@ -57,11 +57,11 @@ class Workers::Community::CheckForSpam
     end
 
     def suspicious?(post)
-      email_or_phone?(post) || unsafe_links?(post)
+      email_or_phone?(post.body_html.gsub(URI.regexp,'')) || unsafe_links?(post)
     end
 
-    def email_or_phone?(post)
-      post.body_html.scan(NUMBER_PATTERN).present? || post.body_html.scan(EMAIL_PATTERN).present?
+    def email_or_phone?(content)
+      content.scan(NUMBER_PATTERN).present? || content.scan(EMAIL_PATTERN).present?
     end
 
     def unsafe_links?(post)
@@ -83,8 +83,9 @@ class Workers::Community::CheckForSpam
 
     def any_unsafe_link?(links, domain_list)
       links.each do |link|
-        next if link.blank?
-        return true unless domain_list.include? url_host(link)
+        host = url_host(link)
+        next if host.blank?
+        return true unless domain_list.include? host
       end
       false
     end
