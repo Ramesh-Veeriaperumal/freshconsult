@@ -22,12 +22,12 @@ window.Fjax = window.Fjax || {};
 		loadReqdAssets: function (path) {
 			path = path || window.location.pathname;
 			var asset = this.assetForPath(path), $this = this;
+			this.previous = this.current;
 			if (!asset) {
 				this.current = '';
 				return;
 			}
-
-			this.previous = this.current;
+			
 			this.current = asset;
 
 			if (!Fjax.Assets.alreadyLoaded(asset)) {

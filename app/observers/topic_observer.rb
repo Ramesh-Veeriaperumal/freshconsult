@@ -70,6 +70,9 @@ private
   end
 
   def update_forum_counter_cache(topic)
+      # Forum Sidebar Cache is cleared from here
+      # As forum callbacks will not be fired from here.
+      topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
       forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
       # if the topic moved forums
       if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id

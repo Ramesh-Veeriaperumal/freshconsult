@@ -108,7 +108,7 @@ class Forum < ActiveRecord::Base
   end
 
   def after_update
-    account.clear_forum_categories_from_cache unless (self.changes.keys & ['name', 'forum_category_id', 'position', 'topics_count']).empty?
+    account.clear_forum_categories_from_cache unless (self.changes.keys & ['name', 'forum_category_id', 'position']).empty?
   end
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 

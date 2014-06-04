@@ -41,19 +41,19 @@ window.App.Discussions = window.App.Discussions || {};
 			$('#community-sidebar li').removeClass('active');
 			switch (App.namespace) {
 			case 'discussions/index':
-				$('#community-sidebar [data-page=all_posts]').parent().addClass('active');
+				$('#community-sidebar [data-page-name=all_posts]').parent().addClass('active');
 				break;
 			case 'discussions/categories':
-				$('#community-sidebar [data-page=folders]').parent().addClass('active');
+				$('#community-sidebar [data-page-name=folders]').parent().addClass('active');
 				break;
 			case 'discussions/your_topics':
-				$('#community-sidebar [data-page=your_posts]').parent().addClass('active');
+				$('#community-sidebar [data-page-name=your_posts]').parent().addClass('active');
 				break;
 			case 'discussions/moderation/index':
 				if (window.location.pathname === '/discussions/moderation/filter/waiting') {
-					$('#community-sidebar [data-page=waiting]').parent().addClass('active');
+					$('#community-sidebar [data-page-name=waiting]').parent().addClass('active');
 				} else {
-					$('#community-sidebar [data-page=spam]').parent().addClass('active');
+					$('#community-sidebar [data-page-name=spam]').parent().addClass('active');
 				}
 				break;
 			case 'discussions/show':
@@ -84,7 +84,7 @@ window.App.Discussions = window.App.Discussions || {};
 		setCurrentPageAs: function (page) {
 			this.activeForum = null;
 			$('#community-sidebar li').removeClass('active');
-			$('#community-sidebar [data-page=' + page + ']').parent().addClass('active');
+			$('#community-sidebar [data-page-name=' + page + ']').parent().addClass('active');
 		},
 
 		setActiveForumAs: function (forum_id) {

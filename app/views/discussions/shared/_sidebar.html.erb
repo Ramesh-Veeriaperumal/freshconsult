@@ -13,23 +13,23 @@
 			<ul class="cm-sb-list" id="cm-sb-list">
 				<% disabled_class = current_account.topics.count > 0 ? '' : 'disabled' %>
 				<li class="<%= disabled_class %>">
-					<%= pjax_link_to(t('discussions.index.all_topics'), discussions_path, {:"data-page" => :all_posts})%>
+					<%= pjax_link_to(t('discussions.index.all_topics'), discussions_path, {:"data-page-name" => :all_posts})%>
 				</li>
 				<li class="<%= disabled_class %>">
-					<%= pjax_link_to(t('discussions.index.your_topics'), your_topics_discussions_path, {:"data-page" => :your_posts})%>
+					<%= pjax_link_to(t('discussions.index.your_topics'), your_topics_discussions_path, {:"data-page-name" => :your_posts})%>
 				</li>
 				<% if privilege?(:delete_topic) %>
 					<% if moderation_enabled? %>
 					<li class="<%= disabled_class %>">
-						<%= pjax_link_to (t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:waiting), {:"data-page" => :waiting} %>
+						<%= pjax_link_to (t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:waiting), {:"data-page-name" => :waiting} %>
 					</li>
 					<% end %>
 					<li class="<%= disabled_class %>">
-						<%= pjax_link_to (t('discussions.moderation.index.title') + " <span rel='count-spam' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:spam), {:"data-page" => :spam} %>
+						<%= pjax_link_to (t('discussions.moderation.index.title') + " <span rel='count-spam' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:spam), {:"data-page-name" => :spam} %>
 					</li>
 				<% end %>
 				<li>
-					<%= pjax_link_to t('discussions.all_categories'), categories_discussions_path, {:"data-page" => :folders} %>
+					<%= pjax_link_to t('discussions.all_categories'), categories_discussions_path, {:"data-page-name" => :folders} %>
 				</li>
 				<ul id="cm-sb-categories" data-remote-url="/discussions/sidebar" rel="remote"></ul>
 			</ul>
