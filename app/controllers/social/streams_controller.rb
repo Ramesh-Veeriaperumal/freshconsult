@@ -14,6 +14,7 @@ class Social::StreamsController < Social::BaseController
     @all_handles      = current_account.twitter_handles_from_cache
     @thumb_avatar_urls = twitter_avatar_urls("thumb") # reorg the avatar urls - make as a function
     @medium_avatar_urls = twitter_avatar_urls("medium")
+    @recent_search = current_user.agent.recent_social_searches
     @meta_data      = []
     @streams.each do |stream|
       @meta_data << {

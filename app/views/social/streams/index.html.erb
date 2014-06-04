@@ -34,13 +34,29 @@
         <%= render :partial => 'social_search' %>
       </div>
 
+      <!-- No Visible streams -->
+      <% if @streams.empty? && @custom_streams.empty? %>
+        <div class="scl-search-here">
+          Search twitter for updates <span class="image-lazy-load"><img src="/images/cdn-ignored/inline-images/social/noresults-search.png" data-src-retina="/images/cdn-ignored/inline-images/social/noresults-search.png" alt /></span>
+        </div>
+        <div class="info-highlight no-stream">No activity available</div>
+      <% end %>
+      <!-- / No Visible streams -->
+
+
+      <!-- only custom Visible streams -->
+      <% if @streams.empty? && !@custom_streams.empty? %>
+        <div class="info-highlight no-stream">Click on a stream to see activity</div>
+      <% end %>
+      <!-- /only custom Visible streams -->
+
       <div id="streamHighlight" class = 'info-highlight center' style="display:none;">
         <a href='#' class="new-tweets"> 0 </a>
       </div>
 
       <div id="stream_error_msgs" class='info-highlight center' style="display:none;"></div>
 
-      <div class="info-highlight" id="tweet_noresults" style="display:none;">
+      <div class="info-highlight center" id="tweet_noresults" style="display:none;">
         <%= t('social.streams.no_results') %>
       </div>
 
@@ -67,7 +83,7 @@
     <% if privilege?(:reply_ticket) %>
       <div class="tw-explorer">
         <div class="info-highlight fs-notify">
-          <a href="#"> <%= t('social.streams.twitter.flash_card_html')%> </a>
+          <a href="https://support.freshdesk.com/support/solutions/articles/195543" target="_blank"> <%= t('social.streams.twitter.flash_card_html')%> </a>
         </div>
         <div class="ph-grey">
           <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
@@ -75,11 +91,10 @@
             <%= render :partial => 'social/twitter/post_tweet', :locals => {:handle => @all_handles.first } %>
           </div>
         </div>
-        <div class="ph-grey white">
-          <h4 class="title pane-title"><%= t('social.streams.recent_searches')%></h4>
-        </div>
         <div id="query-box" class="bb-box head">
-          <div id="recent_search"></div>
+          <div id="recent_search">
+            <%= render :partial => 'recent_search' %>
+          </div>
         </div>
       </div>
     <% end %>

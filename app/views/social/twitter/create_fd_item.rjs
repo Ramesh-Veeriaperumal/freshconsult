@@ -13,6 +13,7 @@ else
     page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('data-original-title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('href', '#{helpdesk_tickets_url}/#{item_link}');"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').removeClass('current_interaction_ctt')"
 
     # For converting the ticket icon to ticket number in unified feeds
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_not_ticket').hide();"

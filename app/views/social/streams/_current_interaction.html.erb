@@ -153,10 +153,10 @@
             </div>
             
             <div class="twt-as">
-              <%= handles_select_tag(handle) %>
-              <span class="twt-name" title="@<%=handle.screen_name%>">
-                @<%=handle.screen_name%><i class='ficon-caret-down fsize-16' size='16'></i>
-              </span>
+              <div class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
+                <%= handles_select_tag(handle) %>  
+              </div>
             </div>
         
             <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id" %>

@@ -6,15 +6,16 @@ module Social::Stream::Interaction
 
   def pull_interactions(current_feed_hash, search_type)
     visible_stream_ids = fetch_visible_stream_ids
+    interactions = {}
     unless visible_stream_ids.blank?
       current_interactions = build_current_interaction(current_feed_hash, search_type, false)
       user_interactions    = build_user_interactions(current_feed_hash[:user_id], visible_stream_ids, current_interactions_table, search_type)
       other_interactions   = user_interactions - current_interactions
       sorted_other_interactions = Social::Stream::Feed.sort(other_interactions, :desc)
-      interactions = {
-        :current => current_interactions,
-        :others => sorted_other_interactions
-      }
+      interactions[:current] = current_interactions
+      interactions[:others] = sorted_other_interactions
+    else
+      interactions[:current] = [build_current_twitter_feed(current_feed_hash)]
     end
     interactions
   end

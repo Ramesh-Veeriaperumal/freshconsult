@@ -186,6 +186,8 @@ var StreamManager = Class.create({
   /* Show/hide dom when individual stream is clicked */
   applyChanges: function(){
     j(this.streamBoxElements.stream_template).addClass(this.loadingClass);
+    j(".scl-search-here").hide();
+    j(".no-stream").hide();
     /* remove the highlight if its not clicked */
     j('#streamHighlight a.new-tweets').html(0);
     j('#streamHighlight').hide();
@@ -220,7 +222,7 @@ var StreamManager = Class.create({
           j.event.trigger({ //IMPORTANT TO REGISTER EVENTS AFTER STREAMS LOADED -  DOING IT with Custom Event
             type: "streamLoadedEvent", message: "Success", time: new Date()
           });
-          j('#no_old_results').hide(); 
+          //j('#no_old_results').hide();
         }
     });
   },
@@ -234,6 +236,8 @@ var StreamManager = Class.create({
       j("#no_query").show();
       return false;
     }
+    j(".scl-search-here").hide();
+    j(".no-stream").hide();
     /* remove the highlight if its not clicked - i.e - newer feeds */
     j("#streamHighlight a.new-tweets").html(0);
     j("#streamHighlight").hide();
@@ -293,7 +297,7 @@ var StreamManager = Class.create({
     // j("#customSearches .item_info").each(function(el){
     //   j(el).removeClass('selected');
     // });
-    j("#customSearches .item_info").removeClass("selected");    
+    j("#customSearches .item_info").removeClass("selected");
     /* change the stream type to custom_search */
     j("#social_meta_info #social_search_type").val("custom_search");
     j(e.currentTarget).addClass('selected');
@@ -514,7 +518,7 @@ var StreamManager = Class.create({
     var str = "",handle_id, _img;
     j(e.target).addClass('selected');
     _img = j(e.target).attr("data-img-url");
-    handle_id = j(e.target).val();
+    handle_id = j(e.target).attr("data-handle-id");
     str = j(e.target).text();
 
     j(".twt-profile img").attr("src", _img);

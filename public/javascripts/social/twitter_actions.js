@@ -117,7 +117,7 @@ var TwitterActions = Class.create({
 			}
 		});
 	},
-	currentInteractionClick: function(e){ 
+	currentInteractionClick: function(e){
 		var feed_id = j(e.currentTarget).attr("data-feed-id");
 		j("[data-feed-id="+feed_id+"] .convert_as_ticket").addClass("sloading loading-tiny loading-align");
 	    j("[data-feed-id="+feed_id+"] .convert_as_ticket i").hide();
@@ -143,6 +143,7 @@ var TwitterActions = Class.create({
 		  datatype:'json',
 		  success: function(data){}
 		});
+		e.preventDefault();
 	},
 	viewUserInteraction:function(e){
 		this._preventDefault(e);
@@ -170,7 +171,7 @@ var TwitterActions = Class.create({
 	_preventDefault: function (e) {
     	if (e.preventDefault) e.preventDefault();
     	e.returnValue = false; // for IE 8 & below
-  	}, 
+  	},
 	destroy: function(){
 		j(this.twitterBoxEle.convo_panel).off('.twitter_evt');
 		j(document).off("convoLoadedEvent");
