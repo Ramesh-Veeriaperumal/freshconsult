@@ -976,9 +976,13 @@ def article_attachments article
 		if attachment.is_image?
 			output << %(<img src="#{attachment.thumbnail}" class="file-thumbnail image" alt="#{attachment.filename}">)
 		else
-	      	filetype = attachment.filename.split(".")[1]
+	      	filetype = attachment.filename.split(".")[-1] || ""
 	      	output << %(<div class="attachment-type">)
-	      	output << %(<span class="file-type"> #{ filetype } </span> )
+	      	if (filetype != "" && filetype.size <= 4)
+	      		output << %(<span class="file-type"> #{ filetype } </span> )
+	        else
+	        	output << %( <span> </span> )
+	        end
 	      	output << %(</div>)
 	    end
 

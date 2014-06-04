@@ -1,17 +1,19 @@
  module AttachmentHelper
 
   def attachment_container(attachment, show_delete, page, note_id=nil)
-    output = ""
-    output << %(<div class="attachment_wrapper mb20">)
-    output << %(<ul class="attachments attachment_list">)
+    unless attachment.empty?
+      output = ""
+      output << %(<div class="attachment_wrapper mb20">)
+      output << %(<ul class="attachments attachment_list">)
 
-    attachment.each do |attached|
-      output << attachment_list(attached, show_delete, page, note_id)
+      attachment.each do |attached|
+        output << attachment_list(attached, show_delete, page, note_id)
+      end
+
+      output << %(</ul>)
+      output << %(</div>)
+      output.html_safe
     end
-
-    output << %(</ul>)
-    output << %(</div>)
-    output.html_safe
   end
 
   def attachment_list(attached, show_delete, page, note_id)
@@ -65,7 +67,7 @@
         else
           extname = attached.content_file_name.split('.')[-1] || ""
 
-          if(extname != "" && extname != nil )
+          if(extname != "" && extname.size <= 4 )
             output << content_tag( :div, content_tag( :span, extname ,:class => "file-type"), :class => 'attachment-type')
           else
             output << content_tag( :div, content_tag( :span ), :class => 'attachment-type')
