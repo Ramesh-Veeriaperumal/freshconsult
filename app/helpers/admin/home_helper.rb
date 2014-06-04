@@ -17,7 +17,7 @@ module Admin::HomeHelper
         :privilege                     =>   can_view_freshfone_admin? && privilege?(:admin_tasks)
       },
       :"twitter-setting"               =>   {
-        :url                           =>   "/social/twitters",
+        :url                           =>   (feature?(:social_revamp) ? "/admin/social/streams" : "/social/twitters"),
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   {

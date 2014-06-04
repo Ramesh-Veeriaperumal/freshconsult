@@ -1,0 +1,46 @@
+<% other_interactions_count  = Social::Twitter::Constants::OTHER_INTERACTIONS_COUNT %>
+<% if @interactions[:others].length > 0 %>
+  <div id="oldconv-box" class="o-converse">
+    <% unless user_info_page %>
+      <h4 class="title pane-title oi-btn"><%= font_icon "caret-down", :size => 16 %> <%= "#{@name}'s"%> <%= t('social.streams.other_interactions')%></h4>
+    <% end %>
+    <div class="oi-contents">
+      <% @interactions[:others].each_with_index do |feed, index| %>
+        <% if user_info_page || index < other_interactions_count %>
+          <div id="conv_div_<%= feed.feed_id%>" class="tweets-conv tweets-feed clearfix">
+            <div class="other-tweets">
+              <div class="feed-info-data">
+                <%= render :partial => 'social/streams/feed_hidden_info' , :locals => { :feed => feed }%>
+              </div>
+              <p class="profile-name">
+                <% if user_info_page %>
+                  <span class="username"><%=feed.user[:name]%></span>
+                <% else %>
+                  <a href="javascript:void(0);" class="username conv-userbtn" data-feed-id="<%= feed.feed_id%>">
+                      <%=feed.user[:name]%> 
+                  </a>
+                <% end %>
+                <span class="tw-handle">@<%=feed.user[:screen_name]%></span>
+              </p>
+
+              <p class="autolink"><%=feed.body %></p>
+
+              <div class="info-data">
+                <%= font_icon "twitter", :size => 13 %> 
+                <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= formated_date(Time.parse(feed.posted_time)) %>"></span>
+                <% if feed.agent_name %>
+                  <span>&nbsp; by <%= feed.agent_name %></span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <% if !user_info_page && @interactions[:others].length > other_interactions_count %>
+        <div style="text-align:center;" class="more_results more_interactions" id="more_interactions">
+          <button class="uiButton show_more_interactions" id="show_more_interactions" data-feed-id="<%= @feed_id%>">Show more</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

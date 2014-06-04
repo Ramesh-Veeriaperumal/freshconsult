@@ -39,7 +39,7 @@
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
-
+  
   map.resources :agents, :member => { :delete_avatar => :delete ,
                                       :toggle_shortcuts => :put,
                                       :restore => :put,
@@ -71,7 +71,7 @@
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
 
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
-
+  
   map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
@@ -179,7 +179,12 @@
       freshfone.resources :numbers, :collection => { :purchase => :post }
       freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
     end
-    admin.resources :roles
+    admin.resources :roles    
+    admin.namespace :social do |social|
+      social.resources :streams, :controller => 'streams', :only => :index
+      social.resources :twitter_streams, :controller => 'twitter_streams', :member => {:delete_ticket_rule => :post}
+      social.resources :twitters, :controller => 'twitter_handles', :collection => {:authdone => :any}
+    end
     admin.resources :mailboxes
     admin.namespace :mobihelp do |mobihelp|
       mobihelp.resources :apps
@@ -253,11 +258,21 @@
 
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
+                :collection =>  { :show => :any, :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :gnip, :controller => 'gnip_twitter',
                 :collection => {:reconnect => :post}
+                
+    social.resources :streams, 
+                :collection => { :stream_feeds => :get, :show_old => :get, :fetch_new => :get, :interactions => :any }
+    
+    social.resources :welcome, :controller => 'welcome',
+                :only => :index, :collection => { :get_stats => :get, :enable_feature => :post }
+                
+    social.resources :twitter,
+                :collection => {  :twitter_search => :get, :show_old => :get, :fetch_new => :get, :create_fd_item => :post,
+                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post  }
   end
 
   #SAAS copy starts here
@@ -397,6 +412,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get,
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
 
+
       ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post, :mobihelp => :post}
@@ -471,7 +487,7 @@
   end
 
   map.resources :api_webhooks, :as => 'webhooks/subscription'
-
+  
   map.namespace :solution do |solution|
     solution.resources :categories, :collection => {:reorder => :put}  do |category|
       category.resources :folders, :collection => {:reorder => :put}  do |folder|

@@ -1,0 +1,7 @@
+<% @sorted_feeds.each do |feed| %>
+  <% unless feed.agent_name %> <!-- For removing agent replies -->
+    <% if feed.source == Gnip::Constants::SOURCE[:twitter] %>
+      <%= render :partial => 'social/twitter/feed', :locals => { :feed => feed } %>
+    <% end %>
+  <% end %>
+<% end %>

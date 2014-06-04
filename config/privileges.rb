@@ -25,10 +25,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/automation"
-	resource :"mobile/notification"
+	  resource :"mobile/notification"
+    resource :"helpdesk/mobihelp_ticket_extra"
+    # Social - Twitter
     resource :"social/twitter_handle",
        :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
-    resource :"helpdesk/mobihelp_ticket_extra"
+    resource :"social/stream",
+       :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
+    resource :"social/twitter",
+        :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -71,6 +76,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/bulk_ticket_action"
     # Used for API
     resource :"helpdesk/note", :only => [:create]
+    resource :"social/twitter",
+        :only => [:create_fd_item, :reply, :retweet, :post_tweet]
   end
 
   forward_ticket do
@@ -287,6 +294,8 @@ Authority::Authorization::PrivilegeList.build do
   admin_tasks do
     resource :"admin/business_calendar"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
+    resource :"social/streams"
+    resource :"social/welcome"
     resource :"social/facebook_page"
     resource :"social/facebook_tab"
     resource :"admin/survey"
@@ -312,6 +321,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"support/preview"
     resource :"admin/chat_setting"
     resource :"api_webhook", :only => [:create, :destroy]
+    resource :"admin/social/stream"
+    resource :"admin/social/twitter_stream"
+    resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
   end
 

@@ -1,0 +1,27 @@
+page.replace_html "recent_search", :partial => 'social/streams/recent_search'
+
+if @sorted_feeds.length == 0 && @social_error_msg.blank?
+  page << "jQuery('#tweet_noresults').show();"
+end
+
+unless @social_error_msg.blank?
+  page.replace_html "stream_error_msgs", "#{@social_error_msg}"
+  page << "jQuery('#stream_error_msgs').show();"
+end
+
+unless @sorted_feeds.blank?
+  page.insert_html :bottom, "streamTemplate", :partial => "social/streams/stream_feeds"
+
+  page << "jQuery('#social_meta_info #refresh_url').val('#{@refresh_url}')"
+  page << "jQuery('#social_meta_info #next_results').val('#{@next_results}')"
+  
+  # Must add css for this - as parsu suggested
+  page << "jQuery('#no_old_results').hide();"
+  page << "jQuery('#more_stream_feeds').show();"
+  page << "jQuery('#show_more_feeds').show();"
+  page << "jQuery('#tweet_noresults').hide();"
+end
+
+page << "jQuery('#more_stream_feeds').removeClass('sloading loading-block');"
+page << "jQuery('#streamTemplate').removeClass('sloading loading-block');"
+

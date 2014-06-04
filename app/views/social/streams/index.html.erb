@@ -1,0 +1,135 @@
+<%= include_cloudfront_css :social %>
+<div class="row-fluid">
+  <div class="span2">
+    <% if @streams.length > 0 %>
+      <div id="streams" class="tw-accs">
+        <h5 class="title"><%= t('social.streams.social_accounts') %></h5>
+          <ul>
+            <li><a href="#" id="unifiedStreams" class="active" tittle="All"><%= font_icon "all-streams", :size => 24 %><span>All</span></a></li>
+            <% @streams.each do |stream| %>
+              <li class="strmlst"><a href="#" class="image-lazy-load item_info" data-stream-id="<%= stream.id %>" title="<%= h(stream.name) %>">
+                <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
+                <span><%= h(stream.name) %></span></a></li>
+            <% end %>
+          </ul>
+      </div>
+
+    <% end %>
+    <% if @custom_streams.length > 0 %>
+      <div id="customSearches" class="tw-accs">
+        <h4 class="title"><%= t('social.streams.custom_streams') %></h4>
+        <ul>
+          <% @custom_streams.each do |stream| %>
+              <li> <%= link_to( h(stream.name), "#", :class => "item_info", "data-stream-id" => stream.id, "data-query" => stream.includes.join(","), "data-exclude-keywords" => stream.excludes.join(","), "data-exclude-handles" => stream.filter[:exclude_twitter_handles].join(",")) %> </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="tw-wrapper span10">
+    <div id="center-pane" class="center-pane clearfix">
+
+      <div class="tw-header">
+        <%= render :partial => 'social_search' %>
+      </div>
+
+      <div id="streamHighlight" class = 'info-highlight center' style="display:none;">
+        <a href='#' class="new-tweets"> 0 </a>
+      </div>
+
+      <div id="stream_error_msgs" class='info-highlight center' style="display:none;"></div>
+
+      <div class="info-highlight" id="tweet_noresults" style="display:none;">
+        <%= t('social.streams.no_results') %>
+      </div>
+
+      <div id="streamTemplate" class="tw-streams"> </div>
+
+      <div style="display:none;text-align:center;" class="more_results" id="more_stream_feeds">
+        <button class="uiButton" id="show_more_feeds">Show more</button>
+      </div>
+
+      <div id="no_old_results" class = 'info-highlight center' style="display:none">
+        <%= t('social.streams.twitter.no_older_results')%>
+      </div>
+
+      <div id="social_meta_info" style="display:none">
+        <input type="hidden" id="social_search_type" value="streams"/>
+        <input type="hidden" id="stream_ids" value="<%= @meta_data.map{ |data| data[:stream_id] }.join(',')%>" />
+        <input type="hidden" id="first_ids" value="<%= @meta_data.map{ |data| data[:first_feed_id] }.join(',')%>" />
+        <input type="hidden" id="last_ids" value="<%= @meta_data.map{ |data| data[:last_feed_id] }.join(',')%>" />
+        <input type="hidden" id="refresh_url" value = "" />
+        <input type="hidden" id="next_results" value= "" />
+      </div>
+    </div>
+
+    <% if privilege?(:reply_ticket) %>
+      <div class="tw-explorer">
+        <div class="info-highlight fs-notify">
+          <a href="#"> <%= t('social.streams.twitter.flash_card_html')%> </a>
+        </div>
+        <div class="ph-grey">
+          <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
+          <div class="twt-box clear">
+            <%= render :partial => 'social/twitter/post_tweet', :locals => {:handle => @all_handles.first } %>
+          </div>
+        </div>
+        <div class="ph-grey white">
+          <h4 class="title pane-title"><%= t('social.streams.recent_searches')%></h4>
+        </div>
+        <div id="query-box" class="bb-box head">
+          <div id="recent_search"></div>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
+
+      <div id="conv-floater" style="display:block;">
+        <div class="pane-head">
+          <h3 class="ph conv-title"> <%= t('social.streams.interactions')%> </h3>
+          <span class="floatr ph-icons conv-closebtn">
+            <%= font_icon "cross", :size => 24 %>
+          </span>
+        </div>
+        <div id="conv-wrapper"></div>
+      </div>
+
+      <div id="userinfo-floater" style="display:none;">
+        <div class="pane-head">
+          <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+            <%= font_icon "arrow-left", :size => 24 %>
+          </a>
+          <h3 class="ph"> <%= t('social.streams.twitter.user_profile')%></h3>
+          <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+            <%= font_icon "cross", :size => 24 %>
+          </a>
+        </div>
+        <div id="stream_userinfo"></div>
+      </div>
+
+      <div id="retweet-floater" style="display:none">
+        <div class="pane-head">
+          <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+            <%= font_icon "arrow-left", :size => 24 %>
+          </a>
+          <span id="default_rt_header"> <h3 class="ph span10">Retweets</h3> </span>
+          <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
+          <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+            <%= font_icon "cross", :size => 24 %>
+          </a>
+        </div>
+        <div id="retweet-info"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= include_cloudfront_js  :social_tab %>
+<script type="text/javascript">
+  Fjax.afterNextPage = function () {
+    streamMgr.destroy();
+    twitterActions.destroy();
+  }
+</script>

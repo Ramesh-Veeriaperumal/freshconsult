@@ -7,8 +7,10 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 .margin-bottom{ margin-bottom:10px; }
-.margin-right{ margin-right: 10px; }
+.margin-right,.mrt{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; }
+.margin-left-zero,.mlt{ margin-left: 0px; }
+.margin-left-two{margin-left: 2px}
 
 //Used in Announcement
 .alert-message {
@@ -288,7 +290,7 @@ div.leader-right{
 }
 h4.title{
 	font-size:1.1em;
-	font-weight:bold;
+	font-weight:500;
 }
 .request_details{
 	margin:(-$common-padding) (-$common-padding) 20px (-$common-padding);
@@ -517,6 +519,10 @@ h4.title{
 		font-size:12px;
 	}
 }
+
+.field-important{
+ 	color: red;
+ }
  
 .big-info{
 	text-align:center;
@@ -3362,3 +3368,335 @@ a.pill.help{
 input[type="file"].zip-file {
     line-height: 10px;
 }
+
+// Admin Social styles
+// ============================
+$adm-link-color: #333333;
+$adm-txt-color: #000;
+$adm-bg:#f8f8f8;
+$adm-sidebar-bg:#fff;
+$adm-bdr:#F0F0F0;
+.scl-btn-group{
+	padding-top: 30px;
+}
+.adm-social{
+	padding: 20px;
+	&.adm-bg{
+		background: $adm-bg;
+		margin-bottom: 20px;
+	}
+	&.bdr{
+		border: solid 1px $adm-bdr;
+		border-radius: 4px;
+	}
+	&.adm-p{
+		padding: 0 5px 20px;
+	}
+	&.sm-acc{
+		padding-left:0;
+		.acc-box{
+			background: #FAFAFA;
+			border: solid 1px #F7F7F7;
+			padding: 10px;
+			margin-bottom: 15px;
+		}
+		.acc-box:nth-child(3n+1){
+			margin-left:0;
+		}
+	}
+	.form_data{
+		.control-group .select2{
+			margin-left: 0;
+		}
+	}
+	.social-brand{
+		i{color: #ccc;}
+	}
+	.select2-container .select2-choice{
+		height: 28px;
+		line-height: 28px;
+	}
+	h4.adm-title{margin:0px 0 10px 0;}
+	label input[type=radio]{
+		margin: 0 2px 4px;
+	}
+	.social-links{
+		padding: 20px;
+		text-align: center;
+		li{
+	    	display: inline-block;
+	    	list-style-type: none;
+	    	margin: 10px;
+	  	}
+	  	a{
+	  		width:64px;
+	  		height: 64px;
+	  		display: block;
+	  	}
+	  	span{
+	  		margin-top: 22px;
+	  	}
+	  	.btn-mini{
+	  		background-image:none;
+	  	}
+	}
+	.smedia-spec{
+		.profile-logo{
+			padding: 2px;
+			height: 50px;
+			width: 50px;
+			border-radius: 4px;
+			@include box-shadow(0 1px 10px #eee);
+		}
+		.profile-name{
+			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			margin-left: 42px;
+			font-size: 18px;
+			a{
+				font-weight: bold;
+				color: $adm-link-color;
+			}
+			span{
+				font-weight:400;
+			}
+			&.streams-home{
+				margin-left: 13px;
+				font-size: 15px;
+			}
+			p{
+				margin-top: 6px;
+				font-size: 13px;
+			}
+		}
+	}
+	.acc-form{
+		margin-top: 15px;
+		li{
+			margin:6px 0;
+		} 
+		.pdt-select{
+			clear:both;
+		}
+		.capture-dm{
+			margin:15px 0 0 0;
+			clear:both;
+		}
+		.options-dm{
+			display: none;
+		}
+		label{
+			line-height: 30px;
+		}
+		select{
+			width: 100%;
+		}
+		.checkbox{
+			margin: 0px 5px 3px 0;
+		}
+		.label-offset{
+			margin-left: 187px;
+		}
+		.msg{
+			font-size: 11px;
+			margin-top: 5px;
+		}
+		.adm-radio{
+			float: left;
+			margin-right: 20px;
+		}
+	}
+	.title-bar{
+		height: 30px;
+	}
+	.options-dm .row{
+		margin-left: 0px !important;
+		&:last-child{
+			margin-left: 2.12766%;
+		}
+	}
+	&.sts{
+	padding: 0;
+		.tkt-rule{
+			padding:0;
+			margin-bottom: 18px;
+			border-bottom: 1px solid #ddd;
+			.select2,.text{
+				margin-left: 0;
+			}
+			.mlt{ margin-left: 0px; }
+		}
+		.control-group{
+			margin-left: 0px;
+			min-height: 53px;
+			overflow: inherit;
+			&:last-child{
+				margin-left: 2.12766%;
+			}
+			.select2{
+				margin-left: 0;
+			}
+		}
+		&.c-tkt{
+			padding: 17px 0 0;
+			margin-bottom: 0;
+		}
+	}
+	.tkt-rule{
+		background:#F8F8F8;
+	}
+	.all-social-icons {
+		display: inline-block;
+		vertical-align: text-top;
+	}
+	.key-handles{
+		margin-top: 10px;
+		display: inline-block;
+	}
+	.key-handles-container{
+		display: none;
+	}
+	.add-another{
+		display: block;
+		background: #ffffff;
+		padding: 12px 0 12px 8px;
+		margin: -21px 0 0;
+		color: #000;
+		border-top:1px solid #ddd;
+		.#{$font-class-name}plus{
+			background: #9ad400;
+			color: #fff;
+			width: 16px;
+			height: 16px;
+			display: inline-block;
+			text-align: center;
+			border-radius: 10px;
+			border: 1px solid #599f00;
+			margin: 0 22px 0 8px;
+		}
+		&:hover{
+			background: #efefef;
+		}
+	}
+	.ce-btn{
+		border: none;
+		background: none;
+		position: relative;
+		top: 0px;
+		left: 4px;
+		margin: 0;
+		padding: 0;
+		.#{$font-class-name}minus{
+			background: #fd735f;
+			color: #fff;
+			width: 16px;
+			height: 16px;
+			display: inline-block;
+			text-align: center;
+			border-radius: 10px;
+			border: 1px solid #bf3727;
+			margin: 0 0 0 12px;
+		}
+	}
+	&.table{
+		td{
+			vertical-align: middle;
+			&.adm-options{
+				text-align: right;
+				padding-right: 30px;
+			}
+		}
+		.stream-pic{
+			width: 36px;
+		}
+		.adm-uimg{
+			display: block;
+			vertical-align: middle;
+			text-align: center;
+			img{
+				@include border-radius(4px);
+				display: block;
+				margin: 0 auto;
+			}
+			&.custom-stream-icon{
+				i{
+					width: 24px;
+					height: 24px;
+					display: inline-block;
+					border: 1px solid #ddd;
+					background: #eee;
+					color: #888;
+					@include border-radius(4px);
+				}
+			}
+		}
+	}
+	.msg{
+		float: inherit;
+		margin-top: 5px;
+		font-size: 12px;
+	}
+	.rules-wrapper{
+		background: #f1f1f1;
+		border: 1px solid #ddd;
+		@include border-radius(4px);
+		margin-bottom: 20px;
+		overflow: hidden;
+		#capture-dm{
+			font-weight: bold;
+		}
+		.twt-stream-change{
+			position: absolute;
+			top: 50%;
+			margin-top: -15px;
+		}
+		.form_data{
+			label.error{
+				display: block;
+				clear: left;
+			}
+			.control-group{
+				.select2-container{
+					margin-left: 0;
+				}
+				&:last-child{
+					margin-left: 2.12766%;	
+				}
+			}
+		}
+		#dm-option {
+			.control-group,
+			.control-group:last-child{
+				margin-left: 0;	
+			}
+		}
+		.head{
+			position: relative;
+			padding: 15px 15px 10px;
+			border-bottom: 1px solid #ddd;
+			.label-bold{
+				font-weight: bold;
+				display: inline-block;
+			}
+		}
+		.dm-options{
+			padding-bottom:8px;
+			label{
+				margin-left: 15px;
+			}
+		}
+		.dm-label{
+			border-top: 1px solid #ddd;
+			label{
+				margin:10px 0 0;
+			}
+		}
+	}
+	.error{
+		display: block;
+		clear: left;
+		padding-top: 4px;
+	}
+}
+
+// Admin Social styles end
+// =======================

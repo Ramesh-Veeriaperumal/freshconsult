@@ -102,5 +102,10 @@ class User < ActiveRecord::Base
 
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   has_many :data_exports
+
+  has_and_belongs_to_many :accesses,  
+    :class_name => 'Helpdesk::Access',
+    :join_table => 'user_accesses'
+
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
 end

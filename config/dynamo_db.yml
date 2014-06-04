@@ -1,42 +1,50 @@
 development:
   feeds:
     suffix: dev
-    read_capacity: 10
+    start_read_capacity: 2
+    final_read_capacity: 10
     write_capacity: 5
   interactions:
     suffix: dev
-    read_capacity: 10
+    start_read_capacity: 2
+    final_read_capacity: 10
     write_capacity: 5
 
 
 staging:
   feeds:
     suffix: staging
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 5
   interactions:
     suffix: staging
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 5
 
 
 production:
   feeds:
     suffix: production
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 20
   interactions:
     suffix: production
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 20
 
 
 test:
   feeds:
     suffix: test
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 5
   interactions:
     suffix: test
-    read_capacity: 10
+    start_read_capacity: 10
+    final_read_capacity: 10
     write_capacity: 5

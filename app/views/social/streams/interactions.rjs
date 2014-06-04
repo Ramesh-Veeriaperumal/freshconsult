@@ -1,0 +1,5 @@
+page << "jQuery('#conv-wrapper').removeClass('sloading loading-block');"
+page << "jQuery('#conv-wrapper').empty();"
+
+page.replace_html "conv-wrapper", :partial => "interactions"
+page << "jQuery('#conv-wrapper').show();"

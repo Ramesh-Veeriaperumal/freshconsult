@@ -6,78 +6,98 @@ class Social::TwitterStream < Social::Stream
   include Social::Util
 
   before_create :set_default_values
-  before_update :cache_old_model
-  after_commit_on_create :subscribe_to_gnip, :if => :gnip_subscription?
-  after_commit_on_update :update_gnip_subscription
-  after_commit_on_destroy :unsubscribe_from_gnip, :if => :gnip_subscription?
+  before_validation :valid_rule?, :if => :gnip_subscription?
+  before_save :update_rule_value, :unless => :gnip_subscription?
+  before_save :persist_previous_changes
+  after_commit_on_create :subscribe_to_gnip, :create_global_access, :if => :gnip_subscription?
+  after_commit_on_create :populate_ticket_rule
+  after_commit_on_update :update_gnip_subscription, :if => :gnip_subscription?
+  after_commit_on_destroy :unsubscribe_from_gnip, :if =>  :gnip_subscription?
   after_commit_on_destroy :clear_volume_in_redis
 
 
-
   def gnip_rule
-    {:value => rule_value, :tag => rule_tag }
+    gnip_rule = {
+      :value => rule_value,
+      :tag   => rule_tag
+    }
   end
 
   def clear_volume_in_redis
     newrelic_begin_rescue { $redis_others.del(stream_volume_redis_key) }
   end
 
+  def previous_changes
+    @custom_previous_changes || {}
+  end
+  
+  def gnip_subscription?
+    self.data[:gnip] == true
+  end
+  
+  def construct_unsubscribe_args(rule_value)
+    rule = gnip_rule
+    rule[:value] = rule_value unless rule_value.nil?
+    envs = STREAM.values
+    args = {
+      :account_id => self.account_id,
+      :rule       => rule,
+      :env        => envs,
+      :action     => RULE_ACTION[:delete]
+    }
+  end
+
   private
-
-    def gnip_subscription?
-      self.data[:gnip] == true
-    end
-
-    def cache_old_model
-      @old_stream = Social::TwitterStream.find id
-    end
-
     def set_default_values
-      self.data[:gnip] ||= false
+      self.data[:gnip]            ||= false
       self.data[:gnip_rule_state] ||= GNIP_RULE_STATES_KEYS_BY_TOKEN[:none]
-      self.data[:rule_value] ||= nil
-      self.data[:rule_tag] ||= nil
-      self.includes = [] if includes.blank?
-      self.excludes = [] if excludes.blank?
-      self.filter = {:exclude_twitter_handles => []} if filter.blank?
+      self.data[:rule_value]      ||= nil
+      self.data[:rule_tag]        ||= nil
+      self.includes = [] if includes.nil? or includes.empty?
+      self.excludes = [] if excludes.nil? or excludes.empty?
+      self.filter   = {:exclude_twitter_handles => []} if filter.nil? or filter.empty?
     end
 
-    def update_gnip_subscription
-      unless ((@old_stream.includes - includes) + (includes - @old_stream.includes)).empty?
-        unsubscribe_from_gnip(@old_stream.data[:rule_value])
-        #self.reload if Rails.env.test? #Resque is run inline in test environment so need to reload 'self'
-        subscribe_to_gnip([STREAM[:replay], STREAM[:production]])
-      end
+    def persist_previous_changes
+      @custom_previous_changes = changes
     end
 
     def subscribe_to_gnip(environments=nil)
       envs = environments.nil? ? gnip_envs({:subscribe => true}) : environments
       if self.account.active?
         args = {
-          :account_id => self.account_id,
-          :rule => gnip_rule,
-          :env => envs,
-          :action => RULE_ACTION[:add]
+          :account_id => account_id,
+          :rule       => gnip_rule,
+          :env        => envs,
+          :action     => RULE_ACTION[:add]
         }
-        Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) unless valid_params?(args)
+        Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) if valid_params?(args)
+      end
+    end
+
+    def valid_rule?
+      GnipRule::Rule.new(rule_value, rule_tag).valid?
+    end
+
+    def update_gnip_subscription
+      if rule_value_changed?
+        unsubscribe_from_gnip(data[:rule_value])
+        subscribe_to_gnip(STREAM.values)
       end
     end
 
     def unsubscribe_from_gnip(rule_value=nil)
-      rule = gnip_rule
-      rule[:value] = rule_value unless rule_value.nil?
-      envs = STREAM.values
-      args = {
-        :account_id => self.account_id,
-        :rule => rule,
-        :env => envs,
-        :action => RULE_ACTION[:delete]
-      }
-      Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) unless valid_params?(args)
+      args = construct_unsubscribe_args(rule_value)
+      Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) if valid_params?(args)
+    end
+
+    def update_rule_value
+      query = Social::Twitter::Query.new(includes, excludes, filter[:exclude_twitter_handles])
+      self.data[:rule_value] = query.query_string
     end
 
     def valid_params?(args)
-      args[:env].blank? || args[:rule][:tag].nil? || args[:rule][:value].nil?
+      !(args[:env].blank? && args[:rule][:tag].nil? && args[:rule][:value].nil?)
     end
 
     def rule_value
@@ -85,12 +105,16 @@ class Social::TwitterStream < Social::Stream
       query.query_string
     end
 
+    def rule_value_changed?
+      !(previous_changes["includes"].nil? and previous_changes["excludes"].nil? and previous_changes["filter"].nil?)
+    end
+
     def rule_tag
       "#{TAG_PREFIX}#{self.id}#{DELIMITER[:tag_elements]}#{self.account_id}"
     end
 
     def gnip_envs(options = {})
-      gnip_state = self.data[:gnip_rule_state]
+      gnip_state = data[:gnip_rule_state]
       case gnip_state
       when GNIP_RULE_STATES_KEYS_BY_TOKEN[:none]
         streams = options[:subscribe] ? [STREAM[:replay], STREAM[:production]] : []
@@ -103,9 +127,9 @@ class Social::TwitterStream < Social::Stream
       else
         streams = []
         params = {
-          :id => self.id,
+          :id         => self.id,
           :account_id => self.account_id,
-          :data => self.data
+          :data       => self.data
         }
         notify_social_dev("Invalid rule state for streams", params)
       end

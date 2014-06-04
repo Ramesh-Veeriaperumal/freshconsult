@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 marketplace developer dev apps freshapps fone )
 
-	PLANS_AND_FEATURES = {
+  PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
     :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false,
+    :facebook_realtime => false, :chat => false, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features

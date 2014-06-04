@@ -1,0 +1,16 @@
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title"><%=t('social.twitter_handles.signin_info.title')%></h3>
+<ul class="ui-form">
+  <li class="inline-field">
+	  <div class="admin_help_image">
+      <%= get_img("twitter-admin-page.png", :help) %>
+      <div class="content">
+        <h2 class="title"><%=t('social.twitter_handles.signin_info.engage_customers')%></h2>
+        <p class="info-data">
+        	<%=t('social.twitter_handles.signin_info.associate_account', :product_name => (product ? product.name : current_account.portal_name)).html_safe%>
+		    </p>
+        <a href="<%= @auth_redirect_url %>" class="uiButton special large"><%=t('social.twitter_handles.signin_info.add_twitter')%></a>
+      </div>
+    </div>
+  </li>
+</ul>

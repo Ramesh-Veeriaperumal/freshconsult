@@ -35,7 +35,9 @@ module Social::Util
     message = {} unless message
     message.merge!(:environment => Rails.env)
     topic = SNS["social_notification_topic"]
-    DevNotification.publish(topic, subject, message.to_json) unless Rails.env.test?
+    puts subject
+    puts message.inspect
+    DevNotification.publish(topic, subject, message.to_json) unless (Rails.env.development? or Rails.env.test?)
   end
 
   def select_valid_date(time, table="feeds")
@@ -68,7 +70,7 @@ module Social::Util
     klout_id_url =  URI.parse('http://api.klout.com/v2/identity.json/twitter?screenName='+screen_name+'&key='+api_key+'')
     klout_id_response = get_response(screen_name, api_key, klout_id_url)
     return 0 if klout_id_response == 0
-    klout_id  = klout_id_response['id']
+    klout_id = klout_id_response['id']
     score_url = URI.parse('http://api.klout.com/v2/user.json/'+klout_id.to_s+'?key='+api_key+'')
     score_response = get_response(screen_name, api_key, score_url)
     return 0 if score_response == 0
@@ -79,8 +81,8 @@ module Social::Util
     req      = Net::HTTP::Get.new(url.request_uri)
     http     = Net::HTTP.new(url.host, url.port)
     res      = http.start{|http| http.request(req) }
-    body     = JSON.parse(res.body)
-    response = body['error'] ? 0 : body # @REV raise dev notification in case of error?
+    body     = res.is_a?(Net::HTTPSuccess) ?  JSON.parse(res.body) : res.body
+    response = (body.blank? || body['error']) ? 0 : body
   end
 
 end

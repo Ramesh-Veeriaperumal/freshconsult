@@ -49,6 +49,7 @@ module Redis::RedisKeys
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}" 
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
 	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}" 
+	STREAM_RECENT_SEARCHES = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}"
 	STREAM_VOLUME = "STREAM_VOLUME:%{account_id}:%{stream_id}"
 	USER_OTP_KEY = "USER_OTP_KEY:%{email}" 
 	MOBILE_NOTIFICATION_MESSAGE_CHANNEL = "MOBILE_NOTIFICATION_MESSAGE_CHANNEL_%{channel_id}"

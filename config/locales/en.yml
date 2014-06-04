@@ -458,6 +458,75 @@ en:
       my_topics: "My Topics"
 
   admin:
+    social:
+      helpcard:
+        title1: "Adding social accounts"
+        info1: "Add Twitter accounts to your helpdesk and manage them along with your support tickets. You can convert your incoming tweets (@mentions) and direct messages into tickets and assign them automatically to specific groups. Click on an account to define ticket rules for converting tweets to tickets."
+        info2: "Social streams are a set of keywords you can monitor from your Freshdesk account, other than the accounts you have added. It lets you track support questions coming in through tweets that do not even mention your brand. If you are just starting out or have a support team that doubles up as your marketing team, you can even create a stream to monitor your business space and competitors. Click on the <b>New Stream</b> button to add a social stream, and customize it for your specific needs. For example, you can create a stream called \"Support\" and add your brand acronym and commonly used brand misspellings. All these tweets can be seen in your Social tab and you can reply to them using any of your integrated twitter accounts."
+        title2: "Proactive support using social streams"
+        handle_title1: "Integrating a Twitter account"
+        handle_info1: "If you support multiple products, you can link a different social account to each product. You can manage the visibility of each account. For example, you can make the tweets mentioning @yourproduct_france  visible only to your France support agent group. The stream for this account will contain all your @mentions and will be shown in your social tab. Your DMs will be converted to tickets, and you can assign them to a specific agent group. You can set up a ticket threading interval so that multiple DMs from the same person within that time interval can be merged into one ticket."
+        handle_title2: "Converting specific tweets to tickets automatically"
+        handle_info2: "You can convert tweets with certain keywords into tickets automatically using Ticket Rules. For example, every tweet mentioning your twitter handle with the words “not working” or “bug” could be converted into tickets and assigned to the “Bug report” group. And you can create another rule for tweets containing the words “system down” and assign them to your “Dev ops” group. The first rule satisfied will be executed. You can also link these tickets to specific products."
+        stream_title1: "Defining social streams"
+        stream_info1: "You can create multiple streams to search for different sets of keywords on Twitter. Enter the main keywords you want to look for, based on your business and even exclude certain keywords, hashtags and handles to narrow your search. For example, you may not want to see tweets by your marketers or executives in the custom stream you created to monitor support queries coming in through your brand and brand acronyms.Each stream can be made visible to one or many agent groups. You can also pick the default reply handle for each stream."
+        stream_title2: "Converting specific tweets to tickets automatically"
+        stream_info2: "The tweets coming in through these social streams can be filtered further using certain keywords and converted to tickets automatically. They can even be assigned to groups and products. You can set up more than one rule and the first rule that the tweet satisfies will get executed. For example, you can convert tweets mentioning “switching to” with your competitors names into tickets and escalate them to your support team head."
+      flash:
+        stream_updated: "Twitter stream %{stream_name} has been updated"
+        stream_deleted: "Twitter stream %{stream_name} has been deleted"
+        stream_save_error: "Error encountred on stream save"
+        ticket_rule_error: "Some ticket rules might not have been saved due to empty keyword filters"
+      streams:
+        visibility:
+          all: Everyone
+        cancel: "Cancel"
+        update: "Update"
+        index: 
+          title: "Social Streams"
+          new_account: "New Account"
+          new_stream: "New Stream"
+        twitter_streams:
+          reauthorize: "Reauthorize"
+          edit: "Edit"
+        stream_delete_alert: "Are you sure you want to delete this twitter stream?"
+        last_stream_delete_alert: "Are you sure you want to delete this twitter stream? You'll not be able to view your custom streams when you have no default streams associated."
+      twitter_streams:
+        define_stream: "Define Social Stream"
+        stream_brief: "A stream can contain any brand or support related keyword that you want to track and respond to"
+        stream_name: "Stream Name"
+        preview_stream: "Preview Stream"
+        includes: "Create a stream which contains these keywords "
+        exclude_title: "Filter out keywords and handles..."
+        exclude_keywords: "Filter out these keywords"
+        exclude_handles: "And tweets from these handles"
+        reply_handle: "Default Reply Handle"
+        include_helptext:  "example: @appleofficial, \"apple mac\", #smartphones, @android"
+        exclude_helptext: "example: fruit, #diet, awesome"
+        handles_helptext: "example: @tim_cook, @ericschmidt"
+        new:
+          title: "New Stream"
+          create: "Create"
+        edit:
+          title: "Edit Stream"
+          link_to_product: "Link to Product"
+          visible_to: "Visible to"
+      ticket_rules:
+        title: "Create Ticket Rules"
+        header: "Convert tweets from above stream to tickets"
+        header_ext: "and assign product"
+        add: "Add new ticket rule"
+        includes: "Convert to ticket when stream contains these keywords"
+        assign_to_gp: "Assign to Group"
+        assign_to_product: "Assign to Product"
+        mention_tickets: "@Mentions to tickets"
+        mention_to_tickets: "Convert mentions to tickets"
+        mention_do_not_convert: "Do not convert"
+        dm_tickets: "Convert all Direct Messages to tickets"
+        dm_threading_interval: "Set Ticket Threading Interval"
+        dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
+        include_helptext: "example: support, \"System down\", @insideapple"
+        brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
     portal:
       index:
         moderation: "Moderate Forums"
@@ -1392,6 +1461,10 @@ en:
       save_success: "View has been saved successfully!"
     twitter:
       updated: Twitter setting has been updated
+    stream:
+      created: Twitter Stream has been created successfully
+      updated: Twitter Stream settings have been updated
+      create_error: There was an error creating the Twitter Stream
     not_allowed_in_demo_site: Demo site doesn't have this access!
     portal:
       discussions:
@@ -1608,6 +1681,7 @@ en:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
     forum_category:
       page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
+
 
   agent_closes_tkt: Agent Closes the Ticket
   submit: submit
@@ -3121,10 +3195,12 @@ en:
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
-    ticket_save: Successfully converted the tweet as a ticket
+    ticket_save: Ticket has been created.
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.
     duplicate_status: Tweet is a duplicate. Reply with some other text
+  stream:
+    deleted: The twitter account @%{stream_name} has been removed.
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
@@ -4035,6 +4111,66 @@ en:
     months: Mos
   go_back_admin: Go back to Admin
   social:
+    streams:
+      interactions: Interactions
+      other_interactions: Other Interactions
+      recent_searches: Recent Searches
+      recent_tickets: Recent Tickets
+      social_accounts: Social Accounts
+      custom_streams: Social Streams
+      post_tweet : Post a tweet
+      compose: Compose
+      no_results: No recent posts in this stream.
+      no_recent_searches: No recent searches
+      search:
+        exclude_handles: Filter out tweets from these handles
+        img_twitter: <i class="ficon-twitter fsize-18" size="18"></i>
+      tooltip:
+        db_contact: Contact
+        replied: Replied
+        in_conversation: In conversation with %{user_mentions}
+        convert_to_tkt: Convert to Ticket
+        go_to_tkt: "Go to ticket #%{display_id}"
+      twitter:
+        user_profile: User Profile
+        user_info_failure: Could not fetch user's information. Please try after sometime.
+        user_info_blank: Please add a twitter handle to your account to fetch user's information.
+        feeds_blank: Please add a twitter handle to your account to fetch your custom stream.
+        retweet_success: Retweeted.
+        already_retweeted: Tweet has already been retweeted from this account.
+        tweeted: Your tweet has been sent.
+        already_tweeted: Your tweet is a duplicated.
+        handle_auth_error: Could not perform the operation. Please check your twitter account authentication and try again.
+        rate_limit_reached: Could not perform the operation. Please try after sometime.
+        forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
+        client_error: We could not process your request. Please try after sometime.
+        cannot_reply: You dont have permission to reply to a tweet.
+        cannot_retweet: You dont have permission to retweet a tweet.
+        cannot_create_fd_item: You dont have permission to convert a tweet to a ticket / note.
+        cannot_post: You dont have permission to tweet.
+        no_older_results: No more recent posts in this stream.
+        add_search_keywords:  Please enter a search term.
+        ignore_keywords: Ignore Keywords and hashtags
+        ignore_handles: Ignore Tweets from these handles
+        no_retweets: No retweets
+        contact_details: Contact Details
+        flash_card_html: <b> What's New in Social? </b>
+    welcome:
+      title: Social Support
+      turn_off: Turn OFF Social
+      off_helptext_html: To Turn ON, add your <br /> twitter handle from admin
+      get_started: Get Started
+      customer_tweets: "Customer tweets:"
+      replied_tweets: "Customer tweets that were replied-to by the brand: "
+      helptext_title1: "Why should you support customers over social channels?"
+      helptext1: "Your customers are probably spending a good amount of their time on social networks. And they are already talking about your business there. In fact, 32% of social customers expect a response to their queries within 30 minutes."
+      helptext2: "If you make a social customer happy with a quick and effective response, they'll be recommending you to their friends 71 times out of 100. Why would you want to miss out on that?"
+      helptext3: "Add your social accounts to Freshdesk and talk to your customers no matter where they are."
+      helptext_title2: "Calculate your Social Response Rate"
+      response_rate_html: "<b>Your response rate on Twitter is %{perct}</b>."
+      lt30_html: Looks like you haven't been noticing your customers on Twitter. Start now by <a href="/admin/social/streams">adding your Twitter account</a> to Freshdesk.
+      30to70_html: Improve your social customer satisfaction by <a href="/admin/social/streams"> adding a Twitter account</a> to your Freshdesk, and respond to them just like you deal with complaints over email or phone.
+      gt70_html: Good job! <a href="/admin/social/streams"> Add your Twitter account</a> to Freshdesk to make your social support all the more easier.
     facebook_pages:
       index:
         remove_facebook_page: "Are you sure you want to remove this facebook page"
@@ -4063,7 +4199,7 @@ en:
       index:
         go_to_ticket: Go to Ticket
         results_for: Results for
-        no_tweet_results: "No Tweet results for "
+        no_tweet_results: "No Tweet results for your query "
         no_search_default: No Search Default search keywords are defined for any of your twitter handle.
         search: Search
         convert_to_ticket: Convert to Ticket

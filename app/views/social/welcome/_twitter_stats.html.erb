@@ -1,0 +1,14 @@
+<div>
+  <br />
+  <% if @perct <= 30 %>
+   <p><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></p>
+   <p><%= t('social.welcome.lt30_html')%></p>
+  <% elsif  @perct > 30 and @perct <= 70 %>
+   <p><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></p>
+   <p><%= t('social.welcome.30to70_html')%></p>
+  <% else %>
+    <p> <%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%> </p> 
+    <p><%= t('social.welcome.gt70_html')%></p>
+  <% end %>
+</div>
+

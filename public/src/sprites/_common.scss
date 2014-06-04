@@ -32,6 +32,10 @@ $ticket-view-layout:smart;
 @import "cdn-ignored/sprites/product/*.png";
 @include all-product-sprites;
 
+/*Social product source icons */
+@import "cdn-ignored/sprites/social/*.png";
+@include all-social-sprites(true);
+
 @import "cdn-ignored/sprites/common-icon/*.png";
 $reports-icon-layout:horizontal;
 @include all-common-icon-sprites(true);
@@ -42,6 +46,7 @@ $reports-icon-layout:horizontal;
 
 @import "cdn-ignored/sprites/mailbox/*.png";
 @include all-mailbox-sprites(true);
+
 
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
 * These sprites are moved there so that they can be imported only if the feature is enabled */

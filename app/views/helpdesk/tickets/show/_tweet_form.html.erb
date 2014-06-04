@@ -25,7 +25,7 @@
 			<li class="inline-field field">
 				<%= f.label(:reply_email, t('ticket.from') ) %>
 				<%= select_tag :twitter_handle, 
-								options_from_collection_for_select(current_account.twitter_handles, :id, "formatted_handle" , {:selected => @ticket.fetch_twitter_handle}), 
+								options_from_collection_for_select(current_account.twitter_handles_from_cache, :id, "formatted_handle" , {:selected => @ticket.fetch_twitter_handle}), 
 								:class => 'select2 responder_field' %>
 			</li>				
 			<li class="inline-field field clearField continous message">

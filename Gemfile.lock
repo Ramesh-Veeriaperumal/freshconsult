@@ -134,6 +134,7 @@ GEM
     beefcake (0.3.7)
     braintree (2.10.0)
       builder
+    buftok (0.2.0)
     builder (3.0.0)
     chargebee (1.2.9)
       json_pure (~> 1.5)
@@ -162,7 +163,10 @@ GEM
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.3.2)
     delayed_job (1.8.4)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
     encryptor (1.1.3)
+    equalizer (0.0.9)
     erubis (2.7.0)
     execjs (2.0.2)
     extlib (0.9.16)
@@ -183,8 +187,8 @@ GEM
     fssm (0.2.9)
     gem_plugin (0.2.3)
     global_phone (1.0.1)
-    gnip-rule (0.4.0)
-      json (~> 1.7.7)
+    gnip-rule (0.4.1)
+      json (~> 1.8)
       rest-client (~> 1.6.7)
     google-api-client (0.6.4)
       addressable (>= 2.3.2)
@@ -203,7 +207,10 @@ GEM
     hoe (3.5.2)
       rake (>= 0.8, < 11.0)
     htmlentities (4.3.1)
+    http (0.5.1)
+      http_parser.rb
     http_accept_language (1.0.1)
+    http_parser.rb (0.6.0)
     httparty (0.10.0)
       multi_json (~> 1.0)
       multi_xml
@@ -218,7 +225,7 @@ GEM
       yui-compressor (>= 0.9.3)
     jira4r (0.3.0)
       soap4r
-    json (1.7.7)
+    json (1.8)
     json_pure (1.8.1)
     jwt (0.1.6)
       multi_json (>= 1.0)
@@ -241,6 +248,8 @@ GEM
       treetop (~> 1.4.8)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
+    memoizable (0.4.2)
+      thread_safe (~> 0.3, >= 0.3.1)
     metaclass (0.0.1)
     mime-types (1.16)
     mocha (0.12.10)
@@ -432,6 +441,7 @@ GEM
       libv8 (~> 3.16.14.0)
       ref
     thor (0.19.1)
+    thread_safe (0.3.4)
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
@@ -440,10 +450,17 @@ GEM
       builder (>= 2.1.2)
       jwt (>= 0.1.2)
       multi_json (>= 1.3.0)
-    twitter (4.6.2)
-      faraday (~> 0.8, < 0.10)
-      multi_json (~> 1.0)
-      simple_oauth (~> 0.2)
+    twitter (5.5.1)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      descendants_tracker (~> 0.0.3)
+      equalizer (~> 0.0.9)
+      faraday (>= 0.8, < 0.10)
+      http (~> 0.5.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      simple_oauth (~> 0.2.0)
     tzinfo (0.3.26)
     uglifier (2.1.2)
       execjs (>= 0.3.0)
@@ -501,7 +518,7 @@ DEPENDENCIES
   forgery (= 0.5.0)
   freshdesk_authority!
   global_phone
-  gnip-rule (~> 0.4.0)
+  gnip-rule (= 0.4.1)
   google-api-client (~> 0.6.3)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
@@ -510,7 +527,7 @@ DEPENDENCIES
   ipaddress (= 0.8.0)
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
-  json (~> 1.7.7)
+  json (~> 1.8)
   koala (~> 1.6.0)
   lhm!
   lockfile (= 1.4.3)
@@ -576,7 +593,7 @@ DEPENDENCIES
   therubyracer
   tire!
   twilio-ruby
-  twitter (~> 4.6.2)
+  twitter (~> 5.5.1)
   tzinfo
   uglifier (~> 2.1.2)
   useragent (~> 0.4.16)

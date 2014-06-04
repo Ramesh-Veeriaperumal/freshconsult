@@ -1,0 +1,58 @@
+<% unless @social_error_msg.blank? %>
+  <div id="error_msg" class="info-highlight center">
+    <%= "#{@social_error_msg}"%>
+  </div>
+<% end %>
+
+<% if @retweets && @retweets[:count] > 0 %>
+  <div class="conv-wrapper">
+    <div class="conversations">
+      <div id="original_feed" class="tweets-conv tweets-feed clearfix">
+        <div class="span1 prof-pic image-lazy-load">
+          <img src="/images/fillers/profile_blank_thumb.gif" 
+          data-src="<%= normal_twt_avatar(@retweets[:status].user[:image])%>" 
+          data-src-retina="<%= bigger_twt_avatar(@retweets[:status].user[:image])%>"/>
+        </div>
+
+        <div class="span10 tweet-box">
+          <p class="profile-name">
+            <%=@retweets[:status].user[:name]%>
+            <span class="tw-handle">@<%=@retweets[:status].user[:screen_name]%></span>
+          </p>
+
+          <p class="tweet-msg autolink">
+            <%= @retweets[:status].body%>
+          </p>
+
+          <div class="info-data">
+            <%= font_icon "twitter", :size => 12 %>
+            <span data-livestamp="<%= @retweets[:status].posted_time %>" 
+              title="<%= @retweets[:status].posted_time %>"> </span>
+          </div>
+        </div>
+      </div>
+
+      <% @retweets[:feeds].each_with_index do |retweet, index| %>
+        <div class="tweets-conv tweets-feed clearfix" >
+          <div class="span1 prof-pic image-lazy-load">
+            <img src="/images/fillers/profile_blank_thumb.gif" 
+            data-src="<%= normal_twt_avatar(retweet.user[:image])%>" 
+            data-src-retina="<%= bigger_twt_avatar(retweet.user[:image])%>" class="small32" />
+          </div>
+
+          <div class="span10 tweet-box">
+            <p class="profile-name">
+              <%=retweet.user[:name]%>
+              <span class="tw-handle">@<%=retweet.user[:screen_name]%></span>
+            </p>
+
+            <p><%=retweet.user[:followers_count]%> Followers</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% elsif @social_error_msg.blank? && !@retweets.blank? %>
+  <p class="info-highlight center">  <%= t('social.streams.twitter.no_retweets')%> </p>
+<% end %>
+

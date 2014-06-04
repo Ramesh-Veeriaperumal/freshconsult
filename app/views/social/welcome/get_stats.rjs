@@ -1,0 +1,2 @@
+page << "jQuery('#twitterStats').removeClass('sloading loading-block');"
+page.replace_html "twitterStats", :partial => 'twitter_stats'

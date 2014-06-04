@@ -1,0 +1,41 @@
+<div class="form-horizontal tkt-rule">
+  <%= hidden_field_tag "social_ticket_rule[][ticket_rule_id]", ticket_rule.id %>
+  <%= hidden_field_tag "social_ticket_rule[][deleted]", false, :class => "ticket_deleted" %>
+  
+  <div class="row-fluid">
+    <div class="span1">
+        <div class="pull-left">
+          <button type="button" class="ce-btn ticket_rule_delete"><%= font_icon "minus", :size=>"14" %></button>  
+        </div>
+    </div>
+    <div class='form_data span11 mlt'>
+      <div class="control-group span12">
+        <label><%= t('admin.social.ticket_rules.includes')%></label>
+        <%= text_field_tag "social_ticket_rule[][includes]", ticket_rule.include_keys, :class => 'text span12 social_ticket_rule_includes', :placeholder => t('admin.social.ticket_rules.include_helptext') %>
+      </div>
+
+      <div class="control-group span6">
+        <label><%= t('admin.social.ticket_rules.assign_to_gp')%></label>
+        <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2 filter_item span12 rule_group"} %>
+      </div>
+
+      <div class="control-group span6">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  jQuery(".social_ticket_rule_includes").select2({
+      tags: [],
+      tokenSeparators: [","],
+      formatNoMatches: function () {
+          return "  ";
+      }
+  });
+  
+</script>
+
+
+

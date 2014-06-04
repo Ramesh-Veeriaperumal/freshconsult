@@ -107,6 +107,9 @@ stylesheets:
   facebook:
     - public/stylesheets/portal/facebook.css
 
+  social: 
+    - public/stylesheets/social/social.css
+
   rating:
     - public/stylesheets/portal/rating.css
 
@@ -254,7 +257,7 @@ javascripts:
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
     #- public/javascripts/pattern/bootstrap-tooltip.js
-    # - public/javascripts/pattern/bootstrap-popover.js
+    #- public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
     - public/javascripts/pattern/sticky.js
     - public/javascripts/pattern/stickyinit.js
@@ -446,6 +449,13 @@ javascripts:
 
   excanvas:
     - public/javascripts/excanvas.js
+
+  social_tab:
+    - public/javascripts/social/stream_manager.js
+    - public/javascripts/social/twitter_actions.js
+
+  social_admin:
+    - app/views/admin/social/streams/social_tweet.jst
 
   getting_started:
     - public/javascripts/jquery-1.7.1.min.js

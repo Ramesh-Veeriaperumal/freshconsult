@@ -12,7 +12,7 @@ module Social::Gnip::Util
         stream = account.twitter_streams.find_by_id(args[:stream_id].gsub(TAG_PREFIX, ""))
         if stream
           @twitter_handle = stream.twitter_handle
-          stream.increment_volume_in_redis
+          stream.update_volume_in_redis
           convert_hash = stream.check_ticket_rules(@tweet_obj[:body])
         end
       else
@@ -23,12 +23,12 @@ module Social::Gnip::Util
     convert_hash.merge!(:tweet => true)
   end
 
-  def update_dynamo(args, convert_args, attributes)
+  def update_dynamo(args, convert_args, attributes, tweet_obj)
     if !convert_args[:stream_id].nil? and !@twitter_handle.nil? and post?
       if self_tweeted? and !self_tweeted_with_mention?
         attributes.merge!(:replied_by => "@#{@sender}")
       end
-      update_tweet(args, attributes, self) #it is bad to send self
+      update_tweet(args, attributes, self, tweet_obj) #it is bad to send self
     end
   end
 
@@ -63,15 +63,15 @@ module Social::Gnip::Util
       Resque.enqueue_at(5.minutes.from_now, resque_class, args)
     end
   end
-
+  
   def self_tweeted_with_mention?
     return false if @twitter_handle.nil?
-    self_tweeted? && @tweet_obj[:body].include?(@twitter_handle.formatted_handle)
+    self_tweeted? && @tweet_obj[:body].include?(@twitter_handle.formatted_handle) 
   end
-
+  
   def self_tweeted?
     return false if @twitter_handle.nil?
     @sender.downcase.strip().eql?(@twitter_handle.screen_name.downcase.strip) if @twitter_handle
-  end
+  end      
 
 end

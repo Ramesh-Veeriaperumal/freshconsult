@@ -1,0 +1,22 @@
+<% content_for :sidebar do -%><%-end %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+
+<% unless @twitter_handles.empty? %>
+  <div class="floatr">
+    <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
+    <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url , :class => "btn btn-primary" %> 
+  </div>
+  <h3 class="title"><%=t('.title')%></h3><hr />
+  <% unless @twitter_streams.empty? %>
+    <%= render :partial => "twitter_streams", :locals => { :streams => @twitter_streams } %>
+  <% end %>
+
+<% else %>
+  <%= render :partial => "signin_info", :locals => { :product => @current_product } %>
+<% end %>
+
+
+

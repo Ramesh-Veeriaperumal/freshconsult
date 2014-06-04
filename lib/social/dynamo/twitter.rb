@@ -5,17 +5,24 @@ module Social::Dynamo::Twitter
   include Social::Constants
   include Gnip::Constants
 
-  def update_tweet(args, attributes, tweet_obj)
+  def update_tweet(args, attributes, gnip_twt_feed, tweet_obj)
     id = args[:stream_id]
     args[:stream_id] = id.starts_with?(TAG_PREFIX) ? id.gsub(TAG_PREFIX, "") : id
-    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
-    posted_time = Time.parse(tweet_obj.posted_time)
+    posted_time = Time.parse(gnip_twt_feed.posted_time)
     attributes.merge!(:posted_time => "#{(posted_time.to_f * 1000).to_i}")
+    can_insert_feed = true
+    if gnip_twt_feed.in_reply_to and !has_parent_feed?(posted_time, args, attributes, gnip_twt_feed)
+      can_insert_feed = false
+    end
+    update_tweet_in_dynamo(posted_time, args, attributes, gnip_twt_feed) if can_insert_feed or !requeue(tweet_obj)
+  end
 
-    parent_feed_id_hash = insert_feed(posted_time, args, attributes, tweet_obj)
+  def update_tweet_in_dynamo(posted_time, args, attributes, gnip_twt_feed)
+    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
+    parent_feed_id_hash = insert_feed(posted_time, args, attributes, gnip_twt_feed)
     params = {
-      :in_reply_to_user_id => tweet_obj.twitter_user_id,
-      :id                  => tweet_obj.feed_id
+      :in_reply_to_user_id => gnip_twt_feed.twitter_user_id,
+      :id                  => gnip_twt_feed.feed_id
     }
     insert_user_interactions(posted_time, dynamo_hash_key, parent_feed_id_hash, params)
   end
@@ -42,7 +49,7 @@ module Social::Dynamo::Twitter
     }
     insert_user_interactions(posted_time, dynamo_hash_key, parent_feed_id_hash, params)
   end
-  
+
   def update_brand_streams_reply(stream_id, reply_params, note)
     posted_time = Time.parse(reply_params[:posted_at])
     reply_params.merge!(:source => SOURCE[:twitter])

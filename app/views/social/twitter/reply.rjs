@@ -1,0 +1,6 @@
+unless flash.empty?
+  page << "jQuery('body,html').animate({scrollTop: 0}, 800);"
+  show_ajax_flash page
+end
+page << "jQuery('#reply_box_#{@in_reply_to}').hide();"
+page.insert_html :bottom, "current_interaction", :partial => "social/streams/current_interaction"

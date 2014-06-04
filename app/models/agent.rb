@@ -3,6 +3,7 @@ class Agent < ActiveRecord::Base
   belongs_to_account
   include Cache::Memcache::Agent
   include Agents::Preferences
+  include Social::Ext::AgentMethods
 
   before_destroy :remove_escalation
 
@@ -117,7 +118,7 @@ class Agent < ActiveRecord::Base
   def remove_escalation                                        
     Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
     clear_group_cache
-end
+  end
 
   def clear_group_cache
     MemcacheKeys.delete_from_cache(ACCOUNT_GROUPS % { :account_id =>self.account_id })

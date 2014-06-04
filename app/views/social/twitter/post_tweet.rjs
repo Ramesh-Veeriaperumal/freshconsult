@@ -1,0 +1,2 @@
+show_ajax_flash page
+page << "jQuery('#post_tweet_textarea').val('')"

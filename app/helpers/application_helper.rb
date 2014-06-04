@@ -269,7 +269,9 @@ module ApplicationHelper
       ['/home',               :home,        !privilege?(:manage_tickets) ],
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
-      ['/social/twitters/feed', :social,     can_view_twitter?  ],
+      ['/social/twitters/feed', :social,     can_view_social? && !feature?(:social_revamp) && handles_associated?],
+      ['/social/streams', :social,     can_view_social? && feature?(:social_revamp) && handles_associated?],
+      ['/social/welcome', :social,     can_view_welcome_page?],
       solutions_tab,
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
@@ -511,8 +513,11 @@ module ApplicationHelper
     end
   end
   
-  def twitter_avatar(handle, profile_size = "thumb")
-    handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"
+  def s3_twitter_avatar(handle, profile_size = "thumb")
+    handle_avatar = MemcacheKeys.fetch(["v1","twt_avatar", profile_size, handle], 30.days.to_i) do
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/images/fillers/profile_blank_#{profile_size}.gif"
+    end
+    handle_avatar
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
@@ -873,8 +878,21 @@ module ApplicationHelper
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
     
-    def can_view_twitter?
-      privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+    def can_view_social?
+      privilege?(:manage_tickets) && feature?(:twitter)
+    end
+    
+    def additional_settings?
+      additional_settings = current_account.account_additional_settings
+      additional_settings.attributes.keys.include?("additional_settings") && (additional_settings.additional_settings.nil? || additional_settings.additional_settings[:enable_social])
+    end
+    
+    def handles_associated?
+      !current_account.twitter_handles_from_cache.blank?
+    end
+    
+    def can_view_welcome_page?
+      privilege?(:view_admin) && can_view_social? && feature?(:social_revamp)  && !handles_associated? && additional_settings?
     end
     
   def tour_button(text, tour_id)
@@ -1016,7 +1034,6 @@ module ApplicationHelper
     _class << more_classes
     _class.join(" ")
   end
-
   # ITIL Related Methods starts here
 
   def generate_breadcrumbs(params, form=nil, *opt)
@@ -1028,4 +1045,5 @@ module ApplicationHelper
   end
 
   # ITIL Related Methods ends here
+
 end

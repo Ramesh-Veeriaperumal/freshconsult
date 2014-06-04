@@ -2,7 +2,7 @@
   <div class="span2 circle-profile">
     <div class="row-fluid align-center">
       <div class="preview_pic align-center">
-        <%= image_tag(twitter_avatar(twitter_handle), :alt => twitter_handle.screen_name) %>
+        <%= image_tag(s3_twitter_avatar(twitter_handle), :alt => twitter_handle.screen_name) %>
         <span class="tweet_pic"></span>
       </div>
     </div>
@@ -28,7 +28,7 @@
           jQuery("li.search_field_item input").autoGrowInput();
         <%- end %>
         <div>
-          <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+          <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_to_s }   %>
         </div>
         <div class="muted"> <%=t('.info_data').html_safe%> </div>  
         <br/>

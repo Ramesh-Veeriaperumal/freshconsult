@@ -74,6 +74,12 @@ window.xhrPool = [];
     $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
       $(this).dialog2();
     })
+    
+    //Added for social tweet links
+    $(".autolink").livequery(function(ev){
+      $(this).autoLink();
+    })
+    
 
     //Stickey Header and Button collapsed
     window.sticky = new SetupSticky();
@@ -284,6 +290,13 @@ window.xhrPool = [];
           minimumResultsForSearch:    10
         }
         $(this).select2($.extend( defaults, $(this).data()));
+      });
+      $("input.select2").livequery(function(){
+        $(this).select2({tags: [],tokenSeparators: [","],
+          formatNoMatches: function () {
+           return "  ";
+          }
+        });
       });
 
       // - Quote Text in the document as they are being loaded
