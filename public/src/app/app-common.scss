@@ -3562,20 +3562,6 @@ $adm-bdr:#F0F0F0;
 		margin: -21px 0 0;
 		color: #000;
 		border-top:1px solid #ddd;
-		.#{$font-class-name}plus{
-			background: #9ad400;
-			color: #fff;
-			width: 16px;
-			height: 16px;
-			display: inline-block;
-			text-align: center;
-			border-radius: 10px;
-			border: 1px solid #599f00;
-			margin: 0 22px 0 8px;
-		}
-		&:hover{
-			background: #efefef;
-		}
 	}
 	.ce-btn{
 		border: none;
@@ -3585,17 +3571,6 @@ $adm-bdr:#F0F0F0;
 		left: 4px;
 		margin: 0;
 		padding: 0;
-		.#{$font-class-name}minus{
-			background: #fd735f;
-			color: #fff;
-			width: 16px;
-			height: 16px;
-			display: inline-block;
-			text-align: center;
-			border-radius: 10px;
-			border: 1px solid #bf3727;
-			margin: 0 0 0 12px;
-		}
 	}
 	&.table{
 		td{

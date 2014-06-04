@@ -70,16 +70,11 @@ $bdr-color:#e1e1e1;
 				width: 70%;
 				overflow: hidden;
 			}
-			img,.ficon-all-streams{
+			img{
 				width: 24px;
 				height: 24px;
 				float: left;
 				@include border-radius(4px);
-			}
-			.ficon-all-streams{
-				background: #333;
-				color: #fff;
-				text-align: center;
 			}
 			&.active, &.active:hover, &:hover{
 				border-top:1px solid transparent;
@@ -98,21 +93,12 @@ $bdr-color:#e1e1e1;
 				}
 			}
 			&:after{
-				content: "\f116";
-				display: inline-block;
-				font-family: "glyphs";
-				font-size: 18px;
-				text-decoration: inherit;
-				text-rendering: optimizeLegibility;
-				text-transform: none;
-				-moz-osx-font-smoothing: grayscale;
-				-webkit-font-smoothing: antialiased;
-				font-smoothing: antialiased;
 				color: #aaa;
 				position: absolute;
 				top:50%;
 				right:7px;
-				margin-top: -12px;
+				margin-top: -10px;
+				font-size: 18px;
 			}
 			&:hover:after{
 				color: #000;
@@ -203,13 +189,6 @@ $bdr-color:#e1e1e1;
 			background: transparent;
 		}
 	}
-	#search_social .#{$font-class-name}twitter{
-		position: absolute;
-		top: 12px;
-		left: 19px;
-		z-index: 1;
-		color: #aaa;
-	}
 	.tw-inside{
 		position: absolute;
 		top: 7px;
@@ -277,13 +256,6 @@ $bdr-color:#e1e1e1;
 				width: 100%;
 			}
 			.ph-icons{
-
-				.#{$font-class-name}cross{
-					display: inline-block;
-					margin-top: 2px;
-					color: #333;
-					margin-right: 5px;
-				}
 				&#backtoconv-btn{
 					margin-top:2px;
 					color: #333;
@@ -352,18 +324,12 @@ $bdr-color:#e1e1e1;
 }
 .conv-wrapper{
 	overflow-y: auto;
-	.#{$font-class-name}freshdesk{
-		color: #4E903E;
-	}
 	.nav-tabs{
 		a{
 			padding: 10px 0;
 			margin: 0 15px;
 		}
 	}
-}
-.icon-lst i.#{$font-class-name}twitter{
-	color: #55acee;
 }
 .conversations{
 	background: #fafafa;
@@ -917,13 +883,8 @@ $bdr-color:#e1e1e1;
 
 a.tw-tkt-link{
 	position: relative;
-	i.#{$font-class-name}ticket{
-		color: green;
-	}
 	&:before{
 		display: block;
-		font-family: "glyphs";
-		content: "\f11d";
 		position: absolute;
 		z-index: 1;
 		color: black;
@@ -936,12 +897,6 @@ a.tw-tkt-link{
 		height: 10px;
 		text-align: center;
 		line-height: 10px;
-	}
-	&.tw-agent{
-		i.#{$font-class-name}ticket{
-			position: relative;
-			right: 3px;
-		}
 	}
 }
 .oi-contents .tweets-conv{
@@ -978,19 +933,6 @@ a.tw-tkt-link{
 			padding: 10px 0;
 			margin: 0;
 		}
-	}
-}
-i.#{$font-class-name}twitter{
-	color: #888;
-}
-.info-data a{
-	i.#{$font-class-name}twitter{
-		color: #888;
-		position: relative;
-		top: 1px;
-	}
-	&:hover i.#{$font-class-name}twitter{
-		color:#55acee;
 	}
 }
 .active-cust{
