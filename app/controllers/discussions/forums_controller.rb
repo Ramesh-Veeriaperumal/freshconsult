@@ -121,13 +121,11 @@ class Discussions::ForumsController < ApplicationController
 
 		def load_topics
 
-			@topics = params[:order].eql?('popular') ? @forum.topics.sort_by_popular : @forum.topics.newest
+			@topics = params[:order].eql?('popular') ? @forum.topics.as_list_view.sort_by_popular : @forum.topics.as_list_view.newest
 
-			if params[:filter].blank?
-				@topics = @topics.published.find(:all, :include => [:votes, :user]).sort_by { |u| [-u.sticky,-u.votes.size] }
-			else
+			unless params[:filter].blank?
 				stamps = params[:filter].delete('-').split(',')
-				@topics = @topics.published.find(:all,:conditions => [filter_conditions, stamps])
+				@topics = @topics.find(:all,:conditions => [filter_conditions, stamps])
 			end
 		end
 
