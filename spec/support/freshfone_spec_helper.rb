@@ -45,13 +45,25 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid } )
   end
 
+  def build_freshfone_caller
+      number = "+12345678900"
+      account = @freshfone_call.account
+      caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
+      caller.update_attributes({:number => number})
+      @freshfone_call.update_attributes(:caller => caller)
+    end
+
   def create_freshfone_user(presence = 0)
-    @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
-    @freshfone_user.save!
+    # @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
+    @freshfone_user = Freshfone::User.find_by_user_id(@agent.id)
+    if @freshfone_user.blank?
+      @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => @agent })
+    end
   end
 
   def create_online_freshfone_user
-    create_freshfone_user(1)
+    create_freshfone_user
+    @freshfone_user.update_attributes(:presence => 1)
   end
 
   def create_call_family
