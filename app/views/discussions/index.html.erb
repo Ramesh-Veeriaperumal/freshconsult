@@ -15,6 +15,7 @@
 <% content_for :sticky_right do %>
 	<%= moderation_count(@counts) if privilege?(:delete_topic) %>
 	<%= new_discussions_button %>
+	<%= tour_button(t('.tour'), '538446dabc1fbe0d8e00165e') %>
 <% end %>
 
 <%= render :partial => '/discussions/shared/sticky', :locals => { :sticky_class => "sticky_border" } %>

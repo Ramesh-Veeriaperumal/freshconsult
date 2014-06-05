@@ -6,7 +6,7 @@ it:
   or: o
   reorder_rules: Riordina regole attive
   plain_yes: Sì
-  plain_no: No
+  plain_no: "No"
   unspam: Non spam
   unblock: Inserisci in whitelist
   enabled: Abilitato
@@ -2716,12 +2716,12 @@ it:
     add_bcc_text: Aggiungi ccn
     set_bcc_email_text: Imposta ccn e-mail automatico
     name_info_msg: Nome dell&apos;e-mail che sarà utilizzata per le risposte ai ticket
-    Personalized_email_replies: Usare il nome dell&apos;agente per le e-mail personalizzate di risposta?
+    Personalized_email_replies: Usare il nome dell'agente per le e-mail personalizzate di risposta?
     Personalized_email_replies_info: Se SÌ, nelle risposte il nome dell&apos;agente sarà il nome del mittente (l&apos;indirizzo e-mail resterà quella del supporto tecnico). Ad esempio &apos;%{current_user_name} &lt;%{current_account_domain}&gt;&apos;.
     Personalized_email_replies_yes: Sì
     Personalized_email_replies_no: No
     config_saved_message: La tua impostazione è stata salvata.
-    reply_to_tickets: Utilizza l&apos;indirizzo e-mail &quot;Rispondi a&quot; per creare i contatti del richiedente
+    reply_to_tickets: Utilizza l'indirizzo e-mail "Rispondi a" per creare i contatti del richiedente
     reply_to_tickets_info: "Nota: se disabilitato, il richiedente verrò creato utilizzando l&apos;indirizzo &apos;Da&apos; dell&apos;e-mail."
     primary_email_delete_alert: Impossibile eliminare un&apos;e-mail principale
     using_custom_mailbox: Utilizzo server di posta personalizzato

@@ -5,6 +5,10 @@
 	 	<%= list_discussions_panel(:category) %>
 	  	<h2 class="list-title ellipsis"><%= t('topic.categories')%></h2>
 	</div>
+	
+<% end %>
+<% content_for :sticky_right do %>
+	<%= tour_button(t('discussions.tour'), '5384276bbc1fbe0d8e001638') unless @topics_count > 0 %>
 <% end %>
 <%= render :partial => '/discussions/shared/sticky', :locals => { :page => :home } %>
 

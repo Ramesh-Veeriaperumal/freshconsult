@@ -47,6 +47,10 @@ class Topic < ActiveRecord::Base
 
   named_scope :published, :conditions => { :published => true }
 
+  named_scope :as_list_view,
+      :conditions => { :published => true },
+      :include => {:last_post => [:user], :forum => [], :user => []}
+
   named_scope :as_activities,
       :conditions => { :published => true },
       :include => {:last_post => [:user], :forum => []},
@@ -71,8 +75,7 @@ class Topic < ActiveRecord::Base
   }
 
   named_scope :sort_by_popular,
-      :order => 'user_votes DESC, hits DESC, replied_at DESC',
-      :include => :last_post
+      :order => 'user_votes DESC, hits DESC, replied_at DESC'
 
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list

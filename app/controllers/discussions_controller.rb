@@ -68,6 +68,7 @@ class DiscussionsController < ApplicationController
 	def categories
 		@forum_categories = scoper
 		@portals = current_account.portals
+		@topics_count = current_account.topics.count
 	end
 
 	def sidebar
