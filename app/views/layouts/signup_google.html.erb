@@ -2,16 +2,16 @@
   	<%= open_html_tag %>
 	<head>
 	  	<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  	<title><%= h(page_title) %></title>
 		<meta name="description" content="<%= page_description %>">
-		<meta name="author" content="">                            
+		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
 
     <!-- Adding meta tag for CSRF token -->
     <%= csrf_meta_tag %>
     <!-- End meta tag for CSRF token -->
-    
+
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<% unless page_canonical.blank? %>
 			<link rel="canonical" href="<%= page_canonical %>" />
@@ -19,6 +19,7 @@
 		<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
 		<%= include_cloudfront_css :common %>
 		<%= include_cloudfront_css :ie_hacks %>
+		<%= include_cloudfront_css :google_signup %>
 		<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
 		<%= render :partial => "shared/theme.css"  %>
 
@@ -32,28 +33,15 @@
 		</script>
 		<%= include_cloudfront_js :defaults  %>
 		<%= include_cloudfront_js :frameworks %>
-		<%= include_cloudfront_js :workspace %>		
+		<%= include_cloudfront_js :workspace %>
 		<%= include_cloudfront_js :pattern  %>
-		<%= include_cloudfront_js :visitor %>
+		<%#= include_cloudfront_js :visitor %>
 		<%= yield :head %>
-	</head>	
-	<body class="single">
+	</head>
+	<body class="single ui-signup">
 		<script type="text/javascript"> var _kmq = _kmq || []; function _kms(u){ setTimeout(function(){ var s = document.createElement('script'); var f = document.getElementsByTagName('script')[0]; s.type = 'text/javascript'; s.async = true; s.src = u; f.parentNode.insertBefore(s, f); }, 1); } _kms('//i.kissmetrics.com/i.js');_kms('//doug1izaerwt3.cloudfront.net/9e29dee2b27b1887c331d10cbac62ffb56a2f520.1.js'); </script>
-		<div id="wrap">
-			<div class="content">
-				<div class="wrapper">	
-					<div class="wrapper-shadow">					
-						<div id="inner">
-							<div class="leftcontent">
-								<div class="ui-signup">
-									<%= show_flash %>						 
-									<%= yield %> 
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div>
+				<%= yield %>
 			</div>
-		</div>
-    </body>
+		</body>
 </html>

@@ -43,6 +43,7 @@ development:
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+    name: google_login
  shopify:
   consumer_token: b78ef7808d2dba974b17fd21dc94201f
   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
@@ -89,11 +90,12 @@ staging:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
  google_oauth2:
-  consumer_token: 367378856688.apps.googleusercontent.com
-  consumer_secret: M0tVzcR4cSL-pRxDUqSV2FH1
-  api_key: AIzaSyDZWCWNdZUiq_mYe70i80tKHpzRBz4ZADM
+  consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
+  consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
+  api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+    name: google_login
  mailchimp:
   consumer_token: 187267923355
   consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219
@@ -129,6 +131,7 @@ production:
   api_key: AIzaSyDZWCWNdZUiq_mYe70i80tKHpzRBz4ZADM
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+    name: google_login
  mailchimp:
   consumer_token: 560756408749
   consumer_secret: d30b60816fe878cf6ea67489b7c47dad

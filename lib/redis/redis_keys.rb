@@ -23,7 +23,9 @@ module Redis::RedisKeys
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
 	AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
-	
+	GOOGLE_OAUTH_TOKEN = "GOOGLE_OAUTH_TOKEN:%{domain_name}"
+	GOOGLE_OAUTH_SSO = "GOOGLE_OAUTH_SSO:%{domain}:%{uid}"
+
 	NEW_QUEUE_MEMBER = "FRESHFONE:NEW_QUEUE_MEMBER:%{account_id}:%{queue_id}"
 	AGENT_AVAILABILITY = "FRESHFONE:AGENT_AVAILABILITY:%{account_id}"
 	NEW_CALL = "FRESHFONE:NEW_CALL:%{account_id}"

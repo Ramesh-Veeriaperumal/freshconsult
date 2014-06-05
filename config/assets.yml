@@ -67,6 +67,10 @@ stylesheets:
     - public/stylesheets/page/tkt_details/tkt_details_sprites.css
     - public/stylesheets/page/gadget.css
 
+  google_signup:
+    - public/stylesheets/common.css
+    - public/stylesheets/page/google-signup.css
+
   reports:
     - public/stylesheets/page/reports.css
 

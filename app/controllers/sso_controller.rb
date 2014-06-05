@@ -1,5 +1,10 @@
 class SsoController < ApplicationController
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
+  skip_before_filter :check_privilege
+  before_filter :get_redis_key, :only =>[:google_login]
   skip_before_filter :check_privilege, :verify_authenticity_token
   
   def login
@@ -33,6 +38,48 @@ class SsoController < ApplicationController
   def facebook
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}&state=#{params[:portal_type]}"
   end
+
+  def google_login
+    protocol = current_account.ssl_enabled? ? "https" : "http"
+    if @oauth_user.nil? || @oauth_user.deleted
+      user_deleted
+    else
+      make_user_active
+      create_user_session(protocol)
+    end
+  end
+
+  private
+    def get_redis_key
+      redis_oauth_key = GOOGLE_OAUTH_SSO % {:domain => params['domain'],:uid => params['uid']}
+      redis_oauth_value = get_others_redis_key(redis_oauth_key)
+      @oauth_user = current_account.all_users.find_by_email(redis_oauth_value)
+      remove_others_redis_key(redis_oauth_key)
+    end
+
+    def user_deleted
+      flash[:notice] = t('google_signup.signup_google_error.error_message')
+      redirect_to login_url
+    end
+
+    def create_user_session(protocol)
+      @user_session = current_account.user_sessions.new(@oauth_user)
+      if @user_session.save!
+        redirect_url = protocol+"://"+portal_url
+        redirect_back_or_default redirect_url
+      else
+        redirect_to login_url
+      end
+    end
+
+    def portal_url
+      params['portal_url'].present? ? params['portal_url'] : current_account.host
+    end
+
+    def make_user_active
+      @oauth_user.active = true
+      @oauth_user.save
+    end
 
   TIMEOUT = 60000
 end
