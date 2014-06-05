@@ -692,6 +692,37 @@ li.nested_field{
 	}
 }
 
+.ui-login, .ui-signup{ 
+	text-align:center;
+	display:block;
+	padding:18px 0;
+	.ui-form{ 
+		background:none;
+		border:0;
+		margin:4px auto;
+		@include border-radius(12px);
+		@include box-shadow(rgba(0, 0, 0, 0.10) 0 1px 6px);
+		text-align:left;
+		padding:25px;
+		border:1px solid #c2c2c2; 
+		background:#ffffff;
+		ul{
+			margin:0;
+			li{
+				input.text{
+					margin:3px 0 5px 0;
+					width:320px;	
+				}
+				border-bottom:0;
+				padding-top:5px;
+				padding-bottom:5px;
+			}
+			.checkbox{
+				padding-left:24px;
+			}
+		}
+	}
+}
 
 .business_hours{
 	.select2{

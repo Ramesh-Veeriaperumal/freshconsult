@@ -11,7 +11,6 @@
 
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
-  map.callback '/auth/google_login/callback', :controller => 'google_login', :action => 'create_account_from_google'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
@@ -110,7 +109,7 @@
   map.resources :email, :only => [:new, :create]
   map.resources :mailgun, :only => :create
   map.resources :password_resets, :except => [:index, :show, :destroy]
-  map.resources :sso, :collection => {:login => :get, :facebook => :get, :google_login => :get}
+  map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.resource :account_configuration
 
   map.namespace :integrations do |integration|
@@ -617,9 +616,6 @@
     mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
-
-  map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
-  map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   map.root :controller => "home"
   #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'

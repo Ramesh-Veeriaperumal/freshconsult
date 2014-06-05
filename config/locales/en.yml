@@ -5625,38 +5625,3 @@ en:
         reply:
           title: Reply
           posted: "replied to"
-  link_with_marketplace: Link with Google Marketplace
-  google_signup:
-    associate_google:
-      link_your_helpdesk: Link your helpdesk
-      login_your_helpdesk: Login to your helpdesk
-      email_address: Email address
-      your_helpdesk: Your helpdesk
-      login: Login
-      login_with_admin: "You need to be an Account administrator to link your freshdesk account with Google login"
-    signup_google:
-      new_account: New account
-      existing_user: Existing account
-      company_name: Company Name
-      helpdesk_url: Helpdesk URL
-      your_freshdesk_url: Your Helpdesk URL
-      domain_info: "ex. if your helpdesk is 'http://apple.freshdesk.com' then enter 'apple'"
-      phone_no: "Phone Number"
-      create_my_account: Create your Account
-      by_clicking: "By clicking "
-      agree: "you agree to our"
-      terms_of_service: "terms of service"
-      privacy_policy: "privacy policy"
-      and: " and"
-      freshdesk_terms: "http://freshdesk.com/terms"
-      freshdesk_privacy: "http://freshdesk.com/privacy"
-      helpdesk_name: "Helpdesk name"
-      freshdesk_dot_com: ".freshdesk.com"
-      submit: Submit
-    signup_google_error:
-      error_message: "Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or "
-      signup: "Signup from Freshdesk Home page "
-      freshdesk_signup_page: "http://freshdesk.com/signup"
-    thank_you:
-      refresh_your_account: "All right! Let’s refresh your helpdesk."
-      creating_your_account: "Creating your account now..."

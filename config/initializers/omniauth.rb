@@ -16,13 +16,9 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
              env['omniauth.strategy'].options[:client_options][:site] = "https://#{params['shop']}" }
   elsif key_hash["options"].blank?
 	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
-  elsif key_hash["options"]["name"].blank?
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
-  else
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], { scope: key_hash["options"]["scope"], name: key_hash["options"]["name"] }
-    key_hash["options"].delete "name"
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
-  end
+	else
+	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+	end
   }
 
   # OmniAuth.origin on failure callback; so get it via params
@@ -37,7 +33,7 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
     end
     [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
   end
-
+  
   provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
 end
 

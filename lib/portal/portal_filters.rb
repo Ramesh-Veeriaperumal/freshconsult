@@ -99,11 +99,7 @@ module Portal::PortalFilters
 	def login_via_google label
 		link_to(label, "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "btn btn-google") if Account.current.features? :google_signin
 	end
-
-	def login_via_google_plus label
-		link_to(label, "/google/login", :class => "btn btn-google") if Account.current.features? :google_signin
-	end
-
+	
 	def login_via_twitter label
 		link_to(label, "/auth/twitter", :class => "btn btn-twitter") if Account.current.features? :twitter_signin
 	end
