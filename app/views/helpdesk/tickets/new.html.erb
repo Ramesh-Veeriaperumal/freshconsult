@@ -55,6 +55,8 @@
   });
 
   jQuery('#NewTicket').bind("submit", function(){
-    jQuery(this).find("button, a.btn").attr('disabled',true);
+    var _form = jQuery(this);
+    if(_form.valid())
+      _form.find("button, a.btn").attr('disabled',true);
   });
 <% end %>
