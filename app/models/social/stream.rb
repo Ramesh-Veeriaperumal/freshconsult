@@ -46,6 +46,6 @@ class Social::Stream < ActiveRecord::Base
     agent_groups = self.groups.map { |group| group.agent_groups }.flatten
     accessible_user_ids_in_groups = agent_groups.map {|agent_group| agent_group.user_id }
     
-    (accessible.global_access_type? &&  accessible_user_ids_in_groups.include?(user.id))
+    (accessible.group_access_type? &&  accessible_user_ids_in_groups.include?(user.id))
   end
 end

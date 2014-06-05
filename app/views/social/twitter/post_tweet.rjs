@@ -1,2 +1,5 @@
+unless @tweet_obj.blank?
+  page << "jQuery('#post_tweet_textarea').val('')"
+  page << "jQuery('#tweet_counter').html('140')"
+end
 show_ajax_flash page
-page << "jQuery('#post_tweet_textarea').val('')"

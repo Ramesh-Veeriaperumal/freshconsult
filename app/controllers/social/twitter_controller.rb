@@ -123,8 +123,8 @@ class Social::TwitterController < Social::BaseController
     if privilege?(:reply_ticket)
       handle_id = params[:twitter_handle_id]
       handle = current_account.twitter_handles_from_cache.find_by_id(handle_id)
-      tweet_obj, @social_error_msg = Social::Twitter::Feed.post_tweet(handle, params[:tweet][:body])
-      unless tweet_obj.blank?
+      @tweet_obj, @social_error_msg = Social::Twitter::Feed.post_tweet(handle, params[:tweet][:body])
+      unless @tweet_obj.blank?
         flash.now[:notice] = t('social.streams.twitter.tweeted')
       else
         flash.now[:notice] = @social_error_msg
