@@ -5811,6 +5811,7 @@ en:
     all_categories: All Categories
     folders: Folders
     views_categories: Views and Categories
+    tour: Help me setup my forums
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
@@ -5834,6 +5835,7 @@ en:
       all_topics: All Activity
       your_topics: Your Topics Activity
       your_topics_desc: "Shows activity on topics that you follow"
+      tour: What’s new?
     reorder_list:
       visible: Visible only to
     topics:
@@ -5923,6 +5925,7 @@ en:
         empty_folder: "Empty Folder"
         no_waiting_for_approval: "All topics and replies have been reviewed."
         no_unpublished_spam: "There's no spam here. We swear!"
+        moderation_solution: Learn more about Forum Moderation
       spam:
         approve: "Approve and Publish"
         new_topic:

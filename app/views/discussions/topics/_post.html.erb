@@ -51,8 +51,9 @@ unpublished =  !original && !post.published
 											:"data-track" => "#{post.answer ? "Unmark Answer" : "Mark as Answer"}") %>
 						<% else %>
 							<a href='<%=discussions_topic_best_answer_path(@topic, post)%>'
-								rel='freshdialog'  class='<%= font_class("answer-checked", 21) %>'
-								data-target='#best_answer' data-width='700px'>
+								rel='freshdialog'  class='<%= font_class("answer-checked", 21, "tooltip") %>'
+								data-target='#best_answer' data-width='700px'
+								title='<%= t('topic.mark_answer') %>'>
 							</a>
 						<% end %>
 					<% end %>
@@ -61,7 +62,7 @@ unpublished =  !original && !post.published
 										:url => mark_as_spam_discussions_moderation_path(post),
 										:method => :put,
 										:html => {
-											:class => "community-mark-spam tooltip",
+											:class => font_class("notice-o", 21, "tooltip"),
 											:title => t('topic.mark_as_spam'),
 											:"data-track" => 'Marked as Spam',
 											 }) %>
@@ -94,7 +95,7 @@ unpublished =  !original && !post.published
 		<% end %>
 		<%= attachment_container(post.attachments, true, "article", nil) %>
 
-		<% if original && @topic.answered? %>
+		<% if original && @topic.answered? && @topic.answer %>
 			<%= render :partial => 'discussions/shared/answer',
 						:locals => {
 							:post => @topic.answer,
