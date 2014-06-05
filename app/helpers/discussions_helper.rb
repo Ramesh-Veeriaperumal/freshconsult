@@ -8,10 +8,10 @@ module DiscussionsHelper
 			when :category
 				_output << @forum_category.name
 			when :forum
-				_output << category_link(@forum)
-				_output << @forum.name
+				_output << category_link(@forum, page)
+				_output << truncate(@forum.name, :length => 40)
 			when :topic
-				_output << category_link(@forum)
+				_output << category_link(@forum, page)
 				_output << forum_link(@forum)
 			else
 		end
@@ -19,11 +19,16 @@ module DiscussionsHelper
 	end
 
 	def forum_link forum
-		pjax_link_to(forum.name, discussions_forum_path(forum.id))
+		options = { :title => forum.name } if forum.name.length > 40
+		pjax_link_to(truncate(forum.name, :length => 40), discussions_forum_path(forum.id), (options || {}))
 	end
 
-	def category_link forum
-		pjax_link_to(forum.forum_category.name, "/discussions/#{forum.forum_category_id}")
+	def category_link(forum, page)
+		truncate_length = ( (page == :forum) ? 75 : 40 )
+		forum_category_name = forum.forum_category.name 
+		options = { :title => forum_category_name } if forum_category_name.length > truncate_length
+		pjax_link_to(truncate(forum.forum_category.name, :length => truncate_length), 
+			 			"/discussions/#{forum.forum_category_id}", (options || {}))
 	end
 
 	def more_user_avatar(count, href, options={})
