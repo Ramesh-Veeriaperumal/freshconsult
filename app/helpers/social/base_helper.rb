@@ -34,9 +34,9 @@ module Social::BaseHelper
   def handle_options(handle, select_handle)
     options = ""
     if handle.screen_name.eql?(select_handle.screen_name)
-      options << "<li><a href='#' data-handle-id='#{handle.id}' class='selected' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
+      options << "<li><a href='#' data-handle-id='#{handle.id}' onclick='return false;' class='selected' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
     else
-      options << "<li><a href='#' data-handle-id='#{handle.id}' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
+      options << "<li><a href='#' data-handle-id='#{handle.id}' onclick='return false;' data-img-url='#{@thumb_avatar_urls[handle.screen_name]}'>#{handle.screen_name}</a>"
     end
     options << '</li>'
   end
