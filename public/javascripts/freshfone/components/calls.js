@@ -66,7 +66,7 @@ var FreshfoneCalls;
 //		},
 
 		isMaxSizeReached: function () {
-			return (this.$number.val().length < this.ALLOWED_DIGITS);
+			return (this.$number.val().length > this.ALLOWED_DIGITS);
 		},
 
 		// removeDisallowedCharacters: function () {

@@ -24,7 +24,8 @@ var FreshfoneWidget;
 			this.freshfone_dashboard = $('.freshfone_dashboard');
 			this.$freshfone_realtime = this.freshfone_dashboard.find('.freshfone_realtime');
 			this.$freshfone_alert = this.freshfone_dashboard.find('.freshfone_alert');
-			this.$number = $("#number");
+			this.$dialNumber = $("#number");
+			this.$lastDial = $("#lastDial");
 			this.isWidgetUninitialized = false;
 			this.isPageCloseBinded = false;
 			this.noteType = false;
@@ -42,10 +43,10 @@ var FreshfoneWidget;
 				this.showIncoming();
 			} else if (type === "ongoing") {
 				this.showOngoing();
-				localStorage.setItem('lastDial', this.$number.val());
+				this.$lastDial.val(this.$dialNumber.val());
 			} else {
 				this.showOutgoing();
-				this.$number.val(localStorage.getItem('lastDial'));
+				this.$dialNumber.val(this.$lastDial.val());
 			}
 			this.toggleSidebarTabsContainer(type === "ongoing");
 		},

@@ -30,7 +30,7 @@
 		},
 		onMousedown: function (keypad, inst) {
 
-			if (!freshfonecalls.isMaxSizeReached()) { return (keypad.preventDefault = true); }
+			if (freshfonecalls.isMaxSizeReached()) { return (keypad.preventDefault = true); }
 			freshfonecalls.toggleInvalidNumberText(false);
 
 			if ($(this).html() === "0") {
@@ -47,10 +47,10 @@
 		
 		var key = String.fromCharCode(ev.charCode), key_element;
 		
-		if (!freshfonecalls.isOngoingCall() && !freshfonecalls.isMaxSizeReached() ) { return ev.preventDefault(); }
-          
 		if (freshfonecalls.isOngoingCall()) {
 			freshfonecalls.tConn.sendDigits(key);
+		} else if (freshfonecalls.isMaxSizeReached()) {
+		 return ev.preventDefault(); 
 		}
 		
 		if (key === "+") { key = "0"; }
@@ -62,7 +62,7 @@
 
 	}).bind('paste', function (ev) {
 
-		if (!freshfonecalls.isMaxSizeReached()) { return ev.preventDefault(); }
+		if (freshfonecalls.isMaxSizeReached()) { return ev.preventDefault(); }
 		freshfonecalls.toggleInvalidNumberText(false);
 		
 		setTimeout(function () { freshfonecalls.removeExtraCharacters(); }, 1);
