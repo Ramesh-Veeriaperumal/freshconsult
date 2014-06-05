@@ -52,5 +52,9 @@
     }
 
     _form.submit();
-  })
+  });
+
+  jQuery('#NewTicket').bind("submit", function(){
+    jQuery(this).find("button, a.btn").attr('disabled',true);
+  });
 <% end %>
