@@ -101,7 +101,9 @@ window.App.Discussions = window.App.Discussions || {};
 		bindPostUpdateForm: function () {
 			var $this = this;
 			$('body').on('submit.topic_show', '[rel=post-update]', function (ev) {
-				$this.blockElement($this.findPostElement(this));
+				if($(this).valid()){
+					$this.blockElement($this.findPostElement(this));
+				}
 			});
 		},
 

@@ -1,5 +1,14 @@
-<% remote_form_for @post, :url => discussions_topic_post_path(:topic_id => @post.topic_id, :id => @post), :html => { :method => :put, :rel=> "post-update" } do |f| -%>
-	<%= (f.rich_editor :body_html, :height => "150px", :index => @post.id, 'editor-type' => :forum).html_safe  %>
+<% remote_form_for @post, 
+			:url => discussions_topic_post_path(:topic_id => @post.topic_id, :id => @post),
+			:before => "if (!jQuery(this).valid()) { return false; }",
+			:html => { 
+				:method => :put, 
+				:rel=> "post-update", 
+				:class => 'cnt' 
+			} do |f| -%>
+	<%= (f.rich_editor 	:body_html, 
+						:class => "required_redactor", :height => "150px", 
+						:index => @post.id, 'editor-type' => :forum).html_safe  %>
 	<% if is_application_installed?("screenr") %>
 		<br>
 			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
