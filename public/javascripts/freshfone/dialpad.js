@@ -47,9 +47,9 @@
 		
 		var key = String.fromCharCode(ev.charCode), key_element;
 		
-		if (!freshfonecalls.isMaxSizeReached()) { return ev.preventDefault(); }
+		if (!freshfonecalls.isOngoingCall() && !freshfonecalls.isMaxSizeReached() ) { return ev.preventDefault(); }
           
-		if (freshfonecalls.tConn && freshfonecalls.tConn._status === "open") {
+		if (freshfonecalls.isOngoingCall()) {
 			freshfonecalls.tConn.sendDigits(key);
 		}
 		

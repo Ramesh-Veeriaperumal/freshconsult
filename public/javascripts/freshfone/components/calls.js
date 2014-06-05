@@ -250,6 +250,9 @@ var FreshfoneCalls;
 				if (typeof lastAction === "function") { lastAction(); }
 			};
 			this.lastAction();
+		},
+		isOngoingCall : function () {
+		return	(this.tConn && this.tConn._status === "open")
 		}
 	};
 }(jQuery));
