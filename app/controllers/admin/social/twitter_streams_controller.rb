@@ -55,11 +55,18 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
 
   def update
     update_twitter_handle if params[:social_twitter_handle]
-    update_ticket_rules if params[:social_ticket_rule]
-    update_twitter_stream if params[:twitter_stream]
-    update_stream_accessible
-    flash[:notice] = @ticket_error_flash.nil? ? t('admin.social.flash.stream_updated', :stream_name => @twitter_stream.name) : @ticket_error_flash
-    return redirect_to admin_social_streams_url
+    update_twitter_stream if params[:twitter_stream] and @ticket_error_flash.nil?
+    update_stream_accessible if @ticket_error_flash.nil?
+    update_dm_rule if params[:dm_rule] and @ticket_error_flash.nil?
+    update_ticket_rules if params[:social_ticket_rule] and @ticket_error_flash.nil?    
+
+    unless @ticket_error_flash.nil?
+      flash[:notice] = @ticket_error_flash
+      redirect_to :action => 'edit'
+    else
+      flash[:notice] = t('admin.social.flash.stream_updated', :stream_name => @twitter_stream.name)
+      redirect_to admin_social_streams_url
+    end
   end
 
   def delete_ticket_rule
@@ -77,14 +84,16 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   end
 
   private
+
+  def update_dm_rule
+    dm_stream = @twitter_handle.dm_stream
+    dm_stream.update_ticket_action_data(dm_group_id) unless dm_stream.ticket_rules.empty?
+  end
   
   def update_twitter_handle
     twitter_handle_params = construct_handle_params
-    if @twitter_handle.update_attributes(twitter_handle_params)
-      @twitter_handle.update_ticket_rules(dm_group_id, [], mention_group_id)
-    else
-     flash[:notice] = t('admin.social.flash.stream_save_error')
-     return redirect_to :action => 'edit'
+    unless @twitter_handle.update_attributes(twitter_handle_params)
+      @ticket_error_flash = t('admin.social.flash.stream_save_error')
     end
   end
   
@@ -101,12 +110,8 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     twitter_stream_params.merge!({:social_id => twitter_handle.id}) if twitter_data[:kind] == STREAM_TYPE[:default]
     
     unless twitter_stream_params[:includes].empty?
-      if @twitter_stream.update_attributes(twitter_stream_params)
-        flash[:notice] = I18n.t(:'flash.stream.updated')
-      else
-        load_ticket_rules
-        flash[:notice] = t('admin.social.flash.stream_save_error')
-        return redirect_to :action => 'edit'
+      unless @twitter_stream.update_attributes(twitter_stream_params)
+        @ticket_error_flash = t('admin.social.flash.stream_save_error')
       end
     end
   end
@@ -134,9 +139,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def construct_handle_params
     twitter_handle = {
       :product_id           => params[:social_twitter_handle][:product_id],
-      :capture_dm_as_ticket => params[:social_twitter_handle][:capture_dm_as_ticket],
-      :dm_thread_time       => params[:social_twitter_handle][:dm_thread_time],
-      :capture_mention_as_ticket => params[:social_twitter_handle][:capture_mention_as_ticket]
+      :dm_thread_time       => params[:social_twitter_handle][:dm_thread_time]
     }
   end
 
