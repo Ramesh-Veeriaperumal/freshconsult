@@ -1162,7 +1162,7 @@ Redactor.prototype = {
 				this.$box.insertAfter(this.$editor).append(this.$el).append(this.$editor);
 							
 			}
-      		$('body').append('<div rel="tmpClipboard" class="hide" />');		
+      		$('body').append('<div rel="tmpClipboard" />');		
 			// conver newlines to p
 			html = this.paragraphy(html);
 			
