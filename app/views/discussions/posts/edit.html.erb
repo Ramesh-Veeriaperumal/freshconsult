@@ -6,9 +6,9 @@
 				:rel=> "post-update", 
 				:class => 'cnt' 
 			} do |f| -%>
-	<%= (f.rich_editor 	:body_html, 
+	<%= f.rich_editor 	:body_html, 
 						:class => "required_redactor", :height => "150px", 
-						:index => @post.id, 'editor-type' => :forum).html_safe  %>
+						:index => @post.id, 'editor-type' => :forum  %>
 	<% if is_application_installed?("screenr") %>
 		<br>
 			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>

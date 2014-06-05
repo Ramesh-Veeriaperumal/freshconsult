@@ -71,7 +71,7 @@ unpublished =  !original && !post.published
 			<% end %>
 
 			<div>
-				<%= link_to_user(post.user).html_safe %>
+				<%= link_to_user(post.user)%>
 				<%= original ? "created topic" : "replied" %>
 			</div>
 
