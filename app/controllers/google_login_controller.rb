@@ -2,8 +2,9 @@ class GoogleLoginController < AccountsController
 	include GoogleLoginHelper
 	include GoogleOauth
 
+  around_filter :select_shard
   skip_before_filter :check_privilege
-  before_filter :set_redis_key, :login_account, :only =>[:create_account_from_google]
+  before_filter :login_account, :only =>[:create_account_from_google]
 
   def marketplace_login
     redirect_to construct_google_auth_url('')
@@ -21,10 +22,23 @@ class GoogleLoginController < AccountsController
     end
   end
 
+  def select_shard(&block)
+    account_domain_or_id = request.host
+    if integrations_url?
+      account_domain_or_id = actual_domain ||
+        find_account_by_google_domain(request_domain)
+    end
+    Sharding.select_shard_of(account_domain_or_id || request.host) do
+      yield
+    end
+  end
+
   private
-    def set_redis_key
-      redis_key = GOOGLE_OAUTH_TOKEN % {:domain_name => request_domain}
-      set_others_redis_key(redis_key, access_token)
+
+    def integrations_url?
+      request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
+       (Rails.env.development? and
+        request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
     end
 
     def auth_hash
@@ -32,14 +46,16 @@ class GoogleLoginController < AccountsController
     end
 
     def login_from_portal
-      redirect_to requested_portal_url and return if login_account.nil?
+      redirect_to "http://#{requested_portal_url}" and return if login_account.blank?
     end
 
     def requested_portal_url
       if params[:state].present?
-        @portal_url ||= state_params['portal_url']? state_params['portal_url'][0].to_s : state_params['full_domain'][0].to_s
-      else
+        @portal_url ||= state_params['portal_url'] ? state_params['portal_url'][0].to_s : state_params['full_domain'][0].to_s
+      elsif login_account
         login_account.full_domain
+      else
+        request.host
       end
     end
 
@@ -53,8 +69,12 @@ class GoogleLoginController < AccountsController
       end
     end
 
+    def actual_domain
+      state_params && state_params['full_domain'][0].to_s
+    end
+
     def login_account
-      return @login_account if defined?(@login_account)
+      return @login_account if @login_account && @login_account.present?
       if params[:state].present?
         @login_account = Account.find_by_full_domain(state_params['full_domain'][0].to_s)
       elsif request_domain.present?
@@ -65,10 +85,8 @@ class GoogleLoginController < AccountsController
 
     def activate_user_and_redirect
       request_domain = requested_portal_url
-      Sharding.select_shard_of(login_account.id) do
-        verify_domain_user
-        set_redis_and_redirect(request_domain, email, login_account, uid)
-      end
+      verify_domain_user
+      set_redis_and_redirect(request_domain, email, login_account, uid)
     end
 
 end

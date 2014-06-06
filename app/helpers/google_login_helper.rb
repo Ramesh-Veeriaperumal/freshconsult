@@ -78,11 +78,11 @@ module GoogleLoginHelper
   def verify_domain_user
     domain_user = login_account.all_users.find_by_email(email)
     if domain_user.blank?
-      created_user = create_user(login_account, name, email)
-      create_auth(created_user, uid, login_account.id)
+      domain_user = create_user(login_account, name, email)
     elsif !domain_user.active?
       make_user_active domain_user
     end
+    create_auth(domain_user, uid, login_account.id)
   end
 
   def make_user_active user
