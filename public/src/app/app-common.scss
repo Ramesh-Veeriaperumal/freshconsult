@@ -858,6 +858,23 @@ h4.border_title{
 	}
 }
 
+.attachments{
+	padding:8px;
+	margin-top:8px;
+	background:#f6f6f6;
+	border:1px solid #dfdfdf;
+	div.item{
+		padding:5px;
+		em{
+			font-size:11px;
+			color:#527EAA;
+		}
+		@include clearfix;
+	}
+	.invalid_attachment{
+		text-decoration: line-through;
+	}
+}
 
 div.survey_check{
 	padding:0 10px;

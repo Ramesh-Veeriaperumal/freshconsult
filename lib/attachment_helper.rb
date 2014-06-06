@@ -4,7 +4,7 @@
     unless attachment.empty?
       output = ""
       output << %(<div class="attachment_wrapper mb20">)
-      output << %(<ul class="attachments attachment_list">)
+      output << %(<ul class="attachment_list">)
 
       attachment.each do |attached|
         output << attachment_list(attached, show_delete, page, note_id)
