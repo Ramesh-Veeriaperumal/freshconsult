@@ -28,6 +28,15 @@
 									} %>
 		</div>
 	</div>
+
+	<% if @topic.new_record? and is_application_installed?("screenr") %>
+		<div class="control-group">
+			<div class="controls">
+				<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+			</div>
+		</div>
+	<% end %>
+
 	<% if @topic.new_record? or privilege?(:view_admin) %>
 		<div id="topic_forum" class="control-group">
 	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
@@ -66,13 +75,6 @@
 
 	<% end %>
 
-	<% if is_application_installed?("screenr") %>
-	  <div class="control-group">
-	  	<div class="controls">
-			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
-		</div>
-	  </div>
-	<% end %>
 </div>
 
 <% javascript_tag do %>
