@@ -1,4 +1,4 @@
-page << "jQuery('#toggle_monitorship_status').data('twipsy').$tip.remove()"
+page << "jQuery('#toggle_monitorship_status').removeTip();"
 page << "jQuery('#monitorship_link').removeClass('sloading loading-small')"
 page.replace :toggle_monitorship_status, link_to_remote("", :url => toggle_monitorship_path(params[:object], params[:id], (@monitorship.active? ? "unfollow" : "follow")),
 													:method => :post,
