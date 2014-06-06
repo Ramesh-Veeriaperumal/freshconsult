@@ -11,6 +11,7 @@ module Social::Twitter::ErrorHandler
 
     def twt_sandbox(handle)
       exception = nil
+      @social_error_msg = nil      
       begin
         @sandbox_handle = handle
         return_value = false
