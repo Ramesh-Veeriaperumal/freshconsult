@@ -229,6 +229,7 @@ GEM
     jira4r (0.3.0)
       soap4r
     json (1.7.7)
+    json-compare (0.1.8)
     json_pure (1.8.1)
     jwt (0.1.6)
       multi_json (>= 1.0)
@@ -510,6 +511,7 @@ DEPENDENCIES
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
   json (~> 1.7.7)
+  json-compare (= 0.1.8)
   koala (~> 1.6.0)
   lhm!
   lockfile (= 1.4.3)

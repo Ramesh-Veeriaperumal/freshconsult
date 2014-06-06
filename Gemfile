@@ -6,6 +6,7 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.7.7"
+gem "json-compare", "0.1.8"
 gem "mysql2", "~> 0.2.7"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"

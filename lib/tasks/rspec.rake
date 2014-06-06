@@ -64,6 +64,9 @@ IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.
 FreshfoneTest = ["spec/controllers/freshfone/*_spec.rb",
                  "spec/lib/freshfone/*_spec.rb"]
 
+APITest = [ "spec/controllers/api/json/*_spec.rb",
+            "spec/controllers/api/xml/*_spec.rb"]
+  
 AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
 AllTest.flatten!.uniq!
 
@@ -275,6 +278,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
     
+    namespace :api do
+      desc "Running all api tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(APITest)
+      end
+    end
+
     namespace :all do
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|
