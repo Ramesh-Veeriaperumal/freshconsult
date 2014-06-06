@@ -35,6 +35,7 @@ stylesheets:
     - public/stylesheets/app/ie.css
 
   tour_my_app:
+    - public/stylesheets/plugins/tourmyapp_initial.css
     - public/stylesheets/plugins/tourmyapp.css
 
   codemirror:
