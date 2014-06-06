@@ -19,7 +19,7 @@ describe Helpdesk::TicketsController do
   end
   it "should update a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	put :update, { :helpdesk_ticket => {:status => 3, :priority => 2 },:format => 'json',:id=>new_ticket.id }, :content_type => 'application/json'
+  	put :update, { :helpdesk_ticket => {:status => 3, :priority => 2 },:format => 'json',:id=>new_ticket.display_id }, :content_type => 'application/json'
    	response.status.should be_eql ('200 OK')
    	result =  parse_json(response)
   	expected = (response.status =~ /200 OK/) && compare(result['ticket'].keys,APIHelper::TICKET_UPDATE_ATTRIBS,{}).empty?
@@ -27,20 +27,20 @@ describe Helpdesk::TicketsController do
  	end
   it "should show a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	get :show, { :id => new_ticket.id, :format => 'json' }
+  	get :show, { :id => new_ticket.display_id, :format => 'json' }
    	result =  parse_json(response)
   	expected = (response.status =~ /200 OK/) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
   	expected.should be(true)
   end
   it "should delete a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	delete :destroy, { :id => new_ticket.id, :format => 'json' }
+  	delete :destroy, { :id => new_ticket.display_id, :format => 'json' }
    	response.status.should be_eql ('200 OK')
   end
   it "should restore a delete ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	delete :destroy, { :id => new_ticket.id, :format => 'json' }
-  	put :restore, {:id => new_ticket.id, :format => 'json' }
+  	delete :destroy, { :id => new_ticket.display_id, :format => 'json' }
+  	put :restore, {:id => new_ticket.display_id, :format => 'json' }
    	response.status.should be_eql ('200 OK')
   end
   it "should assign a ticket to the agent" do
@@ -48,17 +48,17 @@ describe Helpdesk::TicketsController do
   	new_agent = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com",
                                         :token => "xtoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
                                         })
-  	put :assign, {:id => new_ticket.id,:responder_id => new_agent.user_id,:format => 'json'}
+  	put :assign, {:id => new_ticket.display_id,:responder_id => new_agent.user_id,:format => 'json'}
   	response.status.should be_eql ('200 OK') 
   end
   it "agent should be able to pick a ticket " do
   	new_ticket = create_ticket({:status => 2})
-  	put :pick_tickets, {:id => new_ticket.id,:format => 'json'}
+  	put :pick_tickets, {:id => new_ticket.display_id,:format => 'json'}
   	response.status.should be_eql ('200 OK')
   end
   it "should be able to close a ticket" do
     new_ticket = create_ticket({:status => 2})
-    put :close_multiple, {:id => new_ticket.id, :format => 'json'}
+    put :close_multiple, {:id => new_ticket.display_id, :format => 'json'}
     result = parse_json(response)
     expected = (response.status == '200 OK') && (result.first['ticket']['status_name'] == 'Closed')
     expected.should be(true)

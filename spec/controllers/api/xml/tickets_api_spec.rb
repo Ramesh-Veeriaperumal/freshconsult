@@ -16,7 +16,7 @@ describe Helpdesk::TicketsController do
   end
   it "should update a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	put :update, { :helpdesk_ticket => {:status => 3, :priority => 2 },:format => 'xml',:id=>new_ticket.id }, :content_type => 'application/xml'
+  	put :update, { :helpdesk_ticket => {:status => 3, :priority => 2 },:format => 'xml',:id=>new_ticket.display_id }, :content_type => 'application/xml'
    	response.status.should be_eql ('200 OK')
     # comparison ignored now because "to_emails" is returned in json but not in xml. 
     # fix it to make json == xml and add the below comparison.
@@ -26,18 +26,18 @@ describe Helpdesk::TicketsController do
  	end
   it "should show a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	get :show, { :id => new_ticket.id, :format => 'xml' }
+  	get :show, { :id => new_ticket.display_id, :format => 'xml' }
    	response.status.should be_eql ('200 OK')
   end
   it "should delete a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	delete :destroy, { :id => new_ticket.id, :format => 'xml' }
+  	delete :destroy, { :id => new_ticket.display_id, :format => 'xml' }
    	response.status.should be_eql ('200 OK')
   end
   it "should restore a delete ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	delete :destroy, { :id => new_ticket.id, :format => 'xml' }
-  	put :restore, {:id => new_ticket.id, :format => 'xml' }
+  	delete :destroy, { :id => new_ticket.display_id, :format => 'xml' }
+  	put :restore, {:id => new_ticket.display_id, :format => 'xml' }
    	response.status.should be_eql ('200 OK')
   end
   it "should assign a ticket to the agent" do
@@ -45,17 +45,17 @@ describe Helpdesk::TicketsController do
   	new_agent = add_agent_to_account(@account, {:name => "testing21", :email => "unit12@testing.com",
                                         :token => "wn3ujqf2pwlxjzgl30p7", :active => 1, :role => 1
                                         })
-  	put :assign, {:id => new_ticket.id,:responder_id => new_agent.user_id,:format => 'xml'}
+  	put :assign, {:id => new_ticket.display_id,:responder_id => new_agent.user_id,:format => 'xml'}
   	response.status.should be_eql ('200 OK') 
   end
   it "agent should be able to pick a ticket " do
   	new_ticket = create_ticket({:status => 2})
-  	put :pick_tickets, {:id => new_ticket.id,:format => 'xml'}
+  	put :pick_tickets, {:id => new_ticket.display_id,:format => 'xml'}
   	response.status.should be_eql ('200 OK')
   end
   it "should be able to close a ticket" do
     new_ticket = create_ticket({:status => 2})
-    put :close_multiple, {:id => new_ticket.id, :format => 'xml'}
+    put :close_multiple, {:id => new_ticket.display_id, :format => 'xml'}
     result = parse_xml(response)
     expected = (response.status == '200 OK') && (result['helpdesk_tickets'].first['status_name'] == 'Closed')
     expected.should be(true)
