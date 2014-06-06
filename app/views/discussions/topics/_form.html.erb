@@ -29,7 +29,7 @@
 		</div>
 	</div>
 
-	<% if @topic.new_record? and is_application_installed?("screenr") %>
+	<% if is_application_installed?("screenr") %>
 		<div class="control-group">
 			<div class="controls">
 				<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
