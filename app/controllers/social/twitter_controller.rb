@@ -83,6 +83,7 @@ class Social::TwitterController < Social::BaseController
     @interactions = {
       :current => []
     }
+    params[:twitter_handle] = params[:twitter_handle_id]
     @in_reply_to = params[:tweet][:in_reply_to]
     if has_permissions?(params[:search_type], params[:stream_id])
       tweet        = current_account.tweets.find_by_tweet_id(@in_reply_to)

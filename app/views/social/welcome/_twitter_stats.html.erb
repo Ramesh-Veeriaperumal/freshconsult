@@ -1,6 +1,5 @@
 <div>
   <br />
-  <% @perct = 80 %>
   <% if @perct <= 30 %>
    <p><b><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></b></p>
    <p><%= t('social.welcome.lt30_html', :link_meta => "href='/admin/social/streams'")%></p>
