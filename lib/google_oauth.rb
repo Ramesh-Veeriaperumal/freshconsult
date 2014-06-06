@@ -17,12 +17,13 @@ module GoogleOauth
   def set_redis_and_redirect(request_domain, email, domain_account, uid)
     set_redis_key_for_sso(request_domain, email, uid)
     redirect_url = construct_redirect_url(domain_account, request_domain, "oauth", uid)
+    Rails.logger.info "GoogleOauth redirect_url #{redirect_url}"
     redirect_to redirect_url
   end
 
   def set_redis_key_for_sso(domain, email, uid)
     redis_oauth_key = GOOGLE_OAUTH_SSO % { :domain => domain , :uid => uid}
-    set_others_redis_key(redis_oauth_key, email)
+    set_others_redis_key(redis_oauth_key, email, 300) # key expires in 5*60 seconds (5 mins)
   end
 
   def construct_redirect_url(account, domain, type, uid)
