@@ -83,7 +83,7 @@ describe Helpdesk::TicketsController do
     new_ticket = create_ticket({:status => 2,:requester_id => requester_id})
     get :user_ticket, {:email => email, :format => 'json'}
     response.status.should be_eql ('200 OK')
-    result = parse_xml(response)
+    result = parse_json(response)
     result.length.should be <= 30
   end
   it "should create a ticket with attachments" do
