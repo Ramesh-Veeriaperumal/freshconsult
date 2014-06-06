@@ -101,7 +101,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       current_account.sla_policies
     end
 
-    def cname
+    def cname #possible dead code
       @cname ||= controller_name.singularize
     end
 
