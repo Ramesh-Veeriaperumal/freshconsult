@@ -430,7 +430,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	break;
                  	}
                 }else{
-                	dom = conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2', {'minimumResultsForSearch':'10'} );
+                	var default_value = (hg_item.domtype == "nested_field") ?  {value:'--'} : null
+                	dom = conditional_dom(hg_item, data_id, name, default_value, "value", 'select2', {'minimumResultsForSearch':'10'} );
                   rule_drop.append(dom);
                 }
 								postProcessCondition(hg_item, data_id);
