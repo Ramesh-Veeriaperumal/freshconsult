@@ -1,0 +1,16 @@
+<% content_for :layoutType do %>community<% end %>
+<% content_for :helpcard do -%>
+	<%= render :partial => 'helpnote' %>
+<%-end %>
+<div class="row-fluid hamburger">
+	<%= sidebar_toggle("mt4") %>
+	<h3 class="lead"><%=t 'category.new'%> </h3>
+</div>
+<% form_for :forum_category, :url => discussions_path do |f| -%>
+	<%= f.error_messages %>
+	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
+	<div class="button-container">
+		<%= link_to(t('cancel'), categories_discussions_path, :class => "btn" ) -%>
+		<%= submit_tag t('save'), { :class => "btn btn-primary" } -%>
+	</div>
+<% end -%>

@@ -218,7 +218,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 					var filterList = [];
 					if(setting.delete_last){
-						var selected_quest = jQuery("input[name=quest[category]]:checked").val();
+						var selected_quest = jQuery("input[name='quest[category]']:checked").val();
 						//var criteria_list = quest_criteria_types[selected_quest];
 						filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 					} else {
@@ -430,7 +430,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	break;
                  	}
                 }else{
-                	dom = conditional_dom(hg_item, data_id, name, null, "value", 'select2', {'minimumResultsForSearch':'10'} );
+                	dom = conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2', {'minimumResultsForSearch':'10'} );
                   rule_drop.append(dom);
                 }
 								postProcessCondition(hg_item, data_id);

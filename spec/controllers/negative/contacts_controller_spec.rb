@@ -7,6 +7,13 @@ describe ContactsController do
 
   before(:each) do
     login_admin
+    @user_count = @account.users.all.size
+  end
+
+  before(:all) do
+    @sample_contact = Factory.build(:user, :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
+                              :user_role => 3)
+    @sample_contact.save(false)
   end
 
   it "should not create a new contact without an email" do
@@ -23,4 +30,63 @@ describe ContactsController do
     @account.agents.find_by_user_id(contact.id).should be_nil
     @account.subscription.update_attributes(:state => "trial")
   end
+
+  it "should not create a contact within a company" do
+    new_company = Factory.build(:customer, :name => Faker::Name.name)
+    new_company.save
+    post :quick_customer, { :customer_id => new_company.id, 
+                            :user => { :name => Faker::Name.name, 
+                                       :email => @sample_contact.email, 
+                                       :phone => "" }, 
+                            :id => new_company.id
+                            }
+    @account.users.all.size.should eql @user_count
+    response.should redirect_to(customer_url(new_company.id))
+  end
+
+  it "should not edit a contact" do
+    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    contact.save(false)
+    test_email = Faker::Internet.email
+    test_phone_no = Faker::PhoneNumber.phone_number
+    put :update, :id => contact.id, :user => { :email => @sample_contact.email, 
+                                                :job_title => "Developer",
+                                                :phone => test_phone_no,
+                                                :time_zone => contact.time_zone, 
+                                                :language => contact.language }
+    response.body.should =~ /Email has already been taken/
+  end
+
+  it "should fail create for existing email" do
+    post :create, :user => { :name => Faker::Name.name, :email => @sample_contact.email , :time_zone => "Chennai", :language => "en" }
+    response.body.should =~ /Email has already been taken/
+    @account.users.all.size.should eql @user_count
+  end
+
+  it "should fail create for no credentials" do
+    post :create, :user => { :name => Faker::Name.name, :time_zone => "Chennai", :language => "en" }
+    response.body.should =~ /Email is invalid/   
+    @account.users.all.size.should eql @user_count
+  end
+
+  it "should fail making a customer a full-time agent" do
+    @account.subscription.update_attributes(:agent_limit => 1)
+    customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    customer.save
+    put :make_agent, :id => customer.id
+    response.should redirect_to(@request.env['HTTP_REFERER'])
+    @account.subscription.update_attributes(:agent_limit => nil)
+  end
+
+  it "should fail user creation MUE feature enabled" do
+    @account.features.multiple_user_emails.create
+    test_email = @account.users.first.email
+    post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
+    @account.users.all.size.should eql @user_count
+    response.body.should =~ /Email has already been taken/
+    @account.features.multiple_user_emails.destroy
+  end
+  
 end

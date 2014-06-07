@@ -6,6 +6,7 @@ SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
   add_filter 'test/'
+  add_filter 'app/controllers/subscription_admin'
   #add_filter '/vendor/'
   add_group 'mailgun', 'lib/helpdesk/email'
   add_group 'email', 'lib/helpdesk/process_email.rb'
@@ -13,8 +14,7 @@ SimpleCov.start do
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
   add_group 'libs', 'lib/'
-end
-
+end 
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
@@ -60,11 +60,15 @@ Spork.prefork do
     config.include SolutionsHelper
     config.include MobihelpHelper
     config.include CompanyHelper
+    config.include JiraHelper
     config.include APIHelper, :type => :controller
     config.include SurveyHelper
     config.include CannedResponsesHelper
     config.include AutomationsHelper
     config.include NoteHelper
+    config.include RolesHelper
+    config.include ApplicationsHelper
+    config.include FreshfoneSpecHelper
 
     config.before(:all, :type => :controller) do
       @account = create_test_account
@@ -73,7 +77,7 @@ Spork.prefork do
 
     config.before(:each, :type => :controller) do
       @request.host = @account.full_domain
-      @request.env['HTTP_REFERER'] = 'sessions/new'
+      @request.env['HTTP_REFERER'] = '/sessions/new'
       @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     end

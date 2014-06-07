@@ -7,7 +7,7 @@ describe Mobihelp::App do
   end
 
   it "should have unique app name for each account" do
-    dup_mobihelp_app = Factory.build(:mobihelp_app)
+    dup_mobihelp_app = @mobihelp_app.clone
     status = dup_mobihelp_app.save
     status.should_not be_true
   end

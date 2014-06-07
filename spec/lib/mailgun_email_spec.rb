@@ -193,7 +193,7 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_to => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
 			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include new_to_email
+			Helpdesk::Ticket.last.to_emails.should include new_to_email
 		end
 
 		it "from auto responders" do
@@ -409,11 +409,11 @@ describe Helpdesk::Email::Process do
 			@account.notes.last.notable.id.should eql ticket2.id
 		end
 
-		it "as reply with new TO emails" do
+		it "as reply with new CC emails" do
 			email_id = Faker::Internet.email
 			new_to_email = Faker::Internet.email
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
-			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_to => new_to_email})
+			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = Helpdesk::Ticket.last
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
@@ -423,11 +423,11 @@ describe Helpdesk::Email::Process do
 			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include new_to_email
 		end
 
-		it "as reply from a TO email" do
+		it "as reply from a CC email" do
 			email_id = Faker::Internet.email
 			new_to_email = Faker::Internet.email
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
-			first_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_to => new_to_email})
+			first_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_to_email})
 			second_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = Helpdesk::Ticket.last

@@ -1,153 +1,166 @@
 class Social::Twitter::Feed
 
-  include Redis::GnipRedisMethods
-  include Social::Twitter::Util
-  include Social::Util
   include Gnip::Constants
-  include Social::Twitter::DynamoUtil
-  include Social::Twitter::Constants
   include Social::Constants
+  include Social::Dynamo::Twitter
+  include Social::Twitter::Constants
+  include Social::Twitter::Util
+  include Social::Twitter::ErrorHandler
+  include Social::Twitter::TicketActions
 
-  attr_accessor :posted_time, :tweet_id
+  attr_accessor :feed_id, :posted_time, :user, :body, :is_replied, :ticket_id, :user_in_db, :dynamo_posted_time,
+    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions
 
-  def initialize(tweet, queue)
-    begin
-      @tweet_obj = JSON.parse(tweet).symbolize_keys!
-      @queue = queue
-      unless @tweet_obj.nil?
-        #Monitoring::RecordMetrics.register(@tweet_obj)
 
-        @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
-        if @tweet_obj[:actor]
-          @sender = @tweet_obj[:actor]["preferredUsername"]
-          @profile_image_url = @tweet_obj[:actor]["image"]
-          @twitter_user_id = @tweet_obj[:actor]["id"].split(":").last.to_i if @tweet_obj[:actor]["id"]
-        end
-
-        @in_reply_to = @tweet_obj[:inReplyTo]["link"].split("/").last if @tweet_obj[:inReplyTo]
-        @posted_time = @tweet_obj[:postedTime]
-        @tweet_id = @tweet_obj[:id].split(":").last.to_i if @tweet_obj[:id]
-      end
-    rescue TypeError, JSON::ParserError => e
-      @tweet_obj = nil
-      puts "Error in parsing gnip feed json"
-      NewRelic::Agent.notice_error("Error in parsing JSON format", :custom_params =>
-                                  {:msg => tweet})
-    end
+  def initialize(feed_obj)
+    @stream_id      = feed_obj[:stream_id]
+    @feed_id        = feed_obj[:id_str]
+    @parent_feed_id = feed_obj[:id_str]
+    @posted_time    = feed_obj[:created_at]
+    @dynamo_posted_time = Time.parse("#{feed_obj[:created_at]}").to_i
+    @user = {
+      :name            => feed_obj[:user][:name],
+      :screen_name     => feed_obj[:user][:screen_name],
+      :image           => process_img_url(feed_obj[:user][:profile_image_url]),
+      :id              => feed_obj[:user][:id_str],
+      :followers_count => feed_obj[:user][:followers_count],
+      :klout_score     => 0
+    }
+    @user_mentions = process_twitter_entities(feed_obj[:entities])
+    @body        = feed_obj[:text]
+    @source      = SOURCE[:twitter]
+    @in_reply_to = feed_obj[:in_reply_to_status_id_str]
+    @ticket_id   = feed_obj[:ticket_id]
+    @is_replied  = 0
+    @user_in_db  = false
+    @in_conv     = 0
+    @agent_name  = false
   end
 
-  def process
-    return if @tweet_obj.nil?
-    unless @matching_rules.blank? or @matching_rules.nil?
-      @matching_rules.each do |rule|
-        tag_array = rule["tag"].to_s.split(DELIMITER[:tags])
-        tag_array.each do |tag|
-          tag_obj = Gnip::RuleTag.new(tag)
-          args = {
-            :account_id => tag_obj.account_id,
-            :stream_id => tag_obj.stream_id
-          }
-          convert(args)
-        end
-      end
+  def convert_to_fd_item(stream, action_data)
+    notable = nil
+    handle  = select_reply_handle(stream)
+    account = handle.account
+    @sender = self.user[:screen_name]
+    user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+    feed_obj = {
+      :body       => self.body,
+      :id         => self.feed_id,
+      :postedTime => self.posted_time
+    }
+    tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
+    unless tweet.blank?
+      ticket = tweet.get_ticket
+      notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
     else
-      notify_social_dev("Received a Gnip System message", @tweet_obj)
+      notable = add_as_ticket(feed_obj, handle, :mention, action_data) if action_data[:convert]
     end
+    notable
+  end
+  
+  def push_to_dynamo(account_id, tweeted, tweeted_with_mention)
+    screen_names_hash = {}
+    posted_time = Time.parse(self.posted_time)
+    args = {
+      :stream_id => self.stream_id,
+      :account_id => account_id,
+      :tweeted => tweeted,
+      :tweeted_with_mention => tweeted_with_mention
+    }
+    if self.user_mentions
+      screen_names_hash = self.user_mentions.map {|mention| {:screen_name => mention} }
+    end
+    dynamo_params = {
+      :id => self.feed_id,
+      :body => self.body,
+      :ticket_id => self.ticket_id,
+      :posted_at => self.posted_time,
+      :user => self.user,
+      :user_mentions => screen_names_hash 
+    }
+    update_live_feed(posted_time, args, dynamo_params, self )
   end
 
+  def self.fetch_tweets(handle, search_params, max_id, since_id, options)
+    query = feeds = next_results = refresh_url = next_fetch_id = nil
+    sorted_feeds = []
+    response, error_msg = search(handle, search_params, max_id, since_id, options) # TODO Handle the case if response is nil due to rate limiting
+    if response
+      query         = response.attrs[:search_metadata][:query]
+      next_results  = (response.attrs[:search_metadata][:next_results] ? response.attrs[:search_metadata][:next_results] : response.attrs[:search_metadata][:refresh_url])
+      refresh_url   = response.attrs[:search_metadata][:refresh_url]
+      next_fetch_id = response.attrs[:search_metadata][:max_id_str]
+      feeds = response.attrs[:statuses].inject([]) do |arr, status|
+        stream_id = "#{Account.current.id}_#{search_params[:stream_id]}" if search_params[:stream_id]
+        status.merge!(:stream_id => stream_id)
+        feed = Social::Twitter::Feed.new(status)
+        arr << feed
+        arr
+      end
+      sorted_feeds = sort(feeds, options[:sort_order])
+    end
+    return [error_msg, query, sorted_feeds, next_results, refresh_url, next_fetch_id]
+  end
+
+  def self.fetch_retweets(handle, feed_id)
+    return {:count => 0, :status => nil, :feeds => []} if feed_id.blank?
+    twt_sandbox(handle) do
+      twitter = TwitterWrapper.new(handle).get_twitter
+      status = twitter.status("#{feed_id}")
+      original_feed = Social::Twitter::Feed.new(status.attrs)
+      retweet_count = status[:retweet_count].to_i
+      retweeted_feeds = retweet_count > 0  ? retweets(twitter, feed_id) : []
+      return {:count => retweet_count, :feeds => retweeted_feeds, :status => original_feed }
+    end
+
+  end
+
+  def self.retweet(handle, feed_id)
+    return if feed_id.blank?
+    twt_sandbox(handle) do
+      twitter = TwitterWrapper.new(handle).get_twitter
+      retweet = twitter.retweet("#{feed_id}")
+      return retweet
+    end
+  end
+  
+  def self.post_tweet(handle, body)
+    return if handle.blank?
+    twt_sandbox(handle) do
+      twitter = TwitterWrapper.new(handle).get_twitter
+      tweet = twitter.update(body)
+      return tweet
+    end
+  end
 
   private
+  
+  def self.retweets(twitter, feed_id)
+    results       = twitter.retweets("#{feed_id}", :count => RETWEETS_COUNT)
+    retweet_feeds = results.inject([]) { |arr, result| arr << Social::Twitter::Feed.new(result.attrs); arr }
+  end
 
-    def reply?
-      !@in_reply_to.blank?
-    end
+  def self.search(handle, search_params, max_id, since_id, options)
+    twt_query = Social::Twitter::Query.new(search_params[:q], search_params[:exclude_keywords], search_params[:exclude_handles])
+    query     = twt_query.query_string
 
-    def post?
-      @tweet_obj[:verb].eql?("post")
-    end
-
-    def can_convert(account, args)
-      twitter_handles = account.twitter_handles
-      convert_hash = {}
-      unless twitter_handles.blank?
-        if args[:stream_id].starts_with?(TAG_PREFIX)
-          stream = account.twitter_streams.find_by_id(args[:stream_id].gsub(TAG_PREFIX, ""))
-          if stream
-            @twitter_handle = stream.twitter_handle
-            convert_hash = stream.check_ticket_rules(@tweet_obj[:body])
-          end
-        else
-          @twitter_handle = account.twitter_handles.find_by_id(args[:stream_id])
-          convert_hash = @twitter_handle.check_ticket_rules if @twitter_handle
-        end
+    twt_sandbox(handle) do
+      wrapper = TwitterWrapper.new handle
+      twitter = wrapper.get_twitter
+      if max_id
+        options.merge!({:max_id => max_id})
+      elsif since_id
+        options.merge!({:since_id => since_id})
       end
-      convert_hash.merge!(:gnip => true)
+      return twitter.search(query, options)
     end
-
-    def convert(args)
-      select_shard_and_account(args[:account_id]) do |account|
-        dynamo_feed_attr = {
-          :fd_link => nil, 
-          :fd_user => nil
-        }
-        notable = nil
-
-        convert_args = can_convert(account, args)        
-
-        if convert_args[:convert] and post?
-          @account = @twitter_handle.account
-          @user = get_twitter_user(@sender, @profile_image_url)
-          dynamo_feed_attr[:fd_user] = @user.id
-          if reply?
-            tweet = @account.tweets.find_by_tweet_id(@in_reply_to)
-            unless tweet.blank?
-              ticket = tweet.get_ticket
-              notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, convert_args)
-            else
-              notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) unless requeue(@tweet_obj)
-            end
-          else
-            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args)
-          end
-          dynamo_feed_attr[:fd_link] = helpdesk_ticket_link(notable)
-          update_tweet_time_in_redis(@posted_time) unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
-        else
-          user = account.all_users.find_by_twitter_id(@sender)
-          dynamo_feed_attr[:fd_user] = user.id unless user.nil?
-        end
-        
-        update_dynamo(args, convert_args, dynamo_feed_attr)
-      end
-    end
-
-    def requeue(tweet_obj)
-      options = {}
-      if tweet_obj[:fd_counter] and tweet_obj[:fd_counter].to_i >= TIME[:max_time_in_sqs]
-        return false
-      else
-        tweet_obj[:fd_counter] = tweet_obj[:fd_counter].to_i + 60
-        options[:delay_seconds] = tweet_obj[:fd_counter]
-        @queue.send_message(tweet_obj.to_json, options)
-        return true
-      end
-    end
-    
-    def helpdesk_ticket_link(item)
-      return nil if item.nil? or item.id.nil? #if the ticket/note save failed or we requeue the feed
-      if item.is_a?(Helpdesk::Ticket)
-        link = "#{item.display_id}"
-      elsif item.is_a?(Helpdesk::Note)
-        ticket = item.notable
-        link = "#{ticket.display_id}#note#{item.id}"
-      end
-    end
-
-    def update_dynamo(args, convert_args, attributes)
-      #Valid account_id, stream_id
-      #Also avoid updating for twitter_handle feeds
-      if !convert_args[:stream_id].nil? and !@twitter_handle.nil? and post?
-        update_tweet(args, attributes)
-      end
-    end
+  end
+  
+  def self.sort(results, order)
+    results = results.reject(&:blank?)
+    results.flatten!
+    sorted_results = results.sort_by { |result| result.dynamo_posted_time.to_i }
+    order == :desc ? sorted_results.reverse! : sorted_results
+  end
 
 end

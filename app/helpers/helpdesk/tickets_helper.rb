@@ -335,12 +335,6 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["faye_server"]}"
   end
 
-  def attachment_unlink_path(attachment, note_id = nil)
-    (attachment.attachable_type != "Account" or note_id.blank?) ?
-            helpdesk_attachment_path(attachment) : 
-            unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
-  end
-
   def freshfone_audio_dom(notable = nil)
       notable = notable || @ticket
       call = notable.freshfone_call

@@ -1,0 +1,10 @@
+<div class="widget">
+	<div rel="stamp_container">
+		<div class="muted"><%= t('topic.marked_as')%></div>
+		<div class="stamp-set">
+			<strong>
+				<%= Topic::ALL_TOKENS_FOR_FILTER[@topic.forum.forum_type][@topic.stamp_type] %>
+			</strong>
+		</div>
+	</div>
+</div>

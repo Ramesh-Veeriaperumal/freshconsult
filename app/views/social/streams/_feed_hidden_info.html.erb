@@ -1,0 +1,12 @@
+<input type="hidden" id="stream_id" value="<%= feed.stream_id%>">
+<input type="hidden" id="feed_id" value="<%= feed.feed_id%>">
+<input type="hidden" id="user_id" value="<%= feed.user[:id]%>">
+<input type="hidden" id="in_reply_to" value="<%= feed.in_reply_to%>">
+<input type="hidden" id="parent_feed_id" value="<%= feed.parent_feed_id%>">
+<input type="hidden" id="user_name" value="<%= feed.user[:name]%>">
+<input type="hidden" id="img_url" value="<%= normal_twt_avatar(feed.user[:image])%>">
+<input type="hidden" id="screen_name" value="<%= feed.user[:screen_name]%>">
+<input type="hidden" id="twt_msg" value="<%= feed.body%>">
+<input type="hidden" id="user_mentions" value="<%= feed.user_mentions.join(",") %>">
+<input type="hidden" id="posted_time" value="<%= feed.posted_time%>">
+ <input type="hidden" id="klout_score" value="<%= feed.user[:klout_score]%>">

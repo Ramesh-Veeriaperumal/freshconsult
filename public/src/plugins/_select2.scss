@@ -479,6 +479,13 @@ disabled look for already selected choices in the results dropdown
  
 }
 
+/* Same color border for select2 drop */
+
+.select2-drop.select2-drop-active{
+  @include box-shadow('inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(82, 168, 236, 0.3');
+  border-color: rgba(82, 168, 236, 1);
+}
+
 /* Retina-ize icons */
 
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5) {

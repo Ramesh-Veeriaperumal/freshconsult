@@ -1,0 +1,30 @@
+<div class="list-panel-main">
+	<div class="forum-icon <%= @forum.type_symbol %> tooltip" title="<%= @forum.type_name%>">
+		<i class="forum-type-<%= @forum.type_symbol %>"></i>
+	</div>
+	<ul class="list-actions-left">
+		<li id="monitorship_link">
+			<%= link_to_remote "", :url => toggle_monitorship_path("forum", @forum.id, (@monitor ? "follow" : "unfollow")),
+						:method => :post,
+						:before => "jQuery('#toggle_monitorship_status').hide();jQuery('#monitorship_link').addClass('sloading loading-tiny');",
+						:html => {
+							:class => "forum_follow_icon tooltip #{@monitor ? '' : 'active'}",
+							:id => "toggle_monitorship_status",
+							:title => t((@monitor ? 'monitorships.follow_title' : 'monitorships.unfollow_title')),
+							:"data-keybinding" => "#{shortcut("community_actions.monitor_forum")}"
+						}
+			%>
+		</li>
+		<% if privilege?(:manage_forums) -%>
+		<li>
+			<%= pjax_link_to("", edit_discussions_forum_path(@forum), :class => font_class(:edit, 23, "tooltip"), :title => "Edit")%>
+		</li>
+		<% end %>
+	</ul>
+	<ul class="list-actions-right">
+		<li>
+			<%= new_discussions_button(:topic) %>
+		</li>
+	</ul>
+	<h2 class="list-title ellipsis"><%= h(@forum.name) %></h2>
+</div>

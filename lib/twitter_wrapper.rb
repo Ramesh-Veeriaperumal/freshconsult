@@ -15,11 +15,6 @@ class TwitterWrapper
     @callback_url = "#{@callback_url}?product_id=#{@product.id}" if @product
     @consumer ||= OAuth::Consumer.new TwitterConfig::CLIENT_ID, TwitterConfig::CLIENT_SECRET, {:site => "https://api.twitter.com"}
     @twitter_handle = twitter_handle
-    Twitter.configure do |config|
-      config.consumer_key = TwitterConfig::CLIENT_ID
-      config.consumer_secret = TwitterConfig::CLIENT_SECRET
-    end
-
   end
 
   def request_tokens   
@@ -32,23 +27,29 @@ class TwitterWrapper
     access_token = request_token.get_access_token(:oauth_verifier => verifier)        
     @twitter_handle.access_token, @twitter_handle.access_secret = access_token.token, access_token.secret
     @twitter_handle.account_id = @account.id
+    @twitter_handle.capture_dm_as_ticket = true
     set_twitter_user   
   end
   
   def set_twitter_user
-    twitter = Twitter::Client.new(:oauth_token => @twitter_handle.access_token,
-                                  :oauth_token_secret => @twitter_handle.access_secret)
-    
-    cred = twitter.verify_credentials
+    client = set_configuration
+    cred = client.verify_credentials
     @twitter_handle.screen_name = cred.screen_name   
     @twitter_handle.twitter_user_id = cred.id.to_i()
     @twitter_handle
   end
 
   def get_twitter    
-    twitter = Twitter::Client.new(:oauth_token => @twitter_handle.access_token,
-                                  :oauth_token_secret => @twitter_handle.access_secret)
-    twitter
+    client = set_configuration
+  end
+  
+  def set_configuration
+    client = Twitter::REST::Client.new do |config|
+      config.consumer_key = TwitterConfig::CLIENT_ID
+      config.consumer_secret = TwitterConfig::CLIENT_SECRET
+      config.access_token = @twitter_handle.access_token
+      config.access_token_secret = @twitter_handle.access_secret
+    end
   end
   
   

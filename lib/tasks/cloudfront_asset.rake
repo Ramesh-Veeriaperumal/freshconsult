@@ -1,15 +1,15 @@
-namespace :cloudfront_assets do 
+namespace :cloudfront_assets do
   desc "upload cloudfront uploads"
 
   task :compile => :environment do
     change?
-    compile! 
+    compile!
   end
 
   task :upload => :environment do
     change_in_assets = change?
     upload! if change_in_assets
-    puts "NO CHANGE IN assets.. So not uploading to cloudfront. 
+    puts "NO CHANGE IN assets.. So not uploading to cloudfront.
             VERSIONS are cloudfront::#{@cloudfront_version} Repo::#{@git_version}" unless change_in_assets
   end
 
@@ -26,19 +26,22 @@ namespace :cloudfront_assets do
   def compile!
     puts "::::Compile started:::#{Time.now}"
     sh "bundle exec compass compile -e production"
-    sh "bundle exec jammit --output #{RAILS_ROOT}/public/#{Jammit.package_path}" 
+    sh "bundle exec jammit --output #{RAILS_ROOT}/public/#{Jammit.package_path}"
     sh "sudo rm -rf #{RAILS_ROOT}/public/#{Jammit.package_path}/images"
+    sh "sudo rm -rf #{RAILS_ROOT}/public/#{Jammit.package_path}/fonts"
     sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
+    sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/fonts/"
     sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/sprites"
     sh "cp -r #{RAILS_ROOT}/public/images/sprites/ #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
+    sh "cp -r #{RAILS_ROOT}/public/fonts/ #{RAILS_ROOT}/public/#{Jammit.package_path}/"
     puts "::::Compile ended:::#{Time.now}"
   end
 
   def upload!
     Rake::Task["cloudfront_assets:compile"].execute
     puts "::::upload started:::#{Time.now}"
-    CloudfrontAssetHost::Uploader.upload!(:verbose => true, 
-      :dryrun =>  !CloudfrontAssetHost.enabled, 
+    CloudfrontAssetHost::Uploader.upload!(:verbose => true,
+      :dryrun =>  !CloudfrontAssetHost.enabled,
       :force_write => true)
     $redis_portal.set("cloudfront_version",@git_version)
     puts "::::upload started:::#{Time.now}"

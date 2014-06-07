@@ -1,9 +1,9 @@
 /* !PATTERN box-sizing to be included later and tweeked in all pages */
 /*@include border-box-sizing;*/
 
-// -------------------------------------------------------------------------------------------- 
-// 											Layout common styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 											Layout common styles
+// --------------------------------------------------------------------------------------------
 
 @include at-breakpoint($break-tablet){
 	// Generic Grid classes
@@ -55,7 +55,7 @@ body{
 			opacity: 0.4;
 		}
 	}
-}     
+}
 .containerFull{
   	@include pie-clearfix;
 	margin:-$common-padding;
@@ -63,7 +63,7 @@ body{
 }
 label.overlabel{
 	color:#888888;
-	position:absolute; 
+	position:absolute;
 	font-size:1.0em;
 	font-weight:normal;
 	z-index:5;
@@ -82,15 +82,15 @@ label.overlabel{
 		@include box-sizing(border-box);
 
 	}
-	z-index:1; 
-	margin:0;	
-	padding-right:$sidebar-width;   
-	.sidebar{ 
+	z-index:1;
+	margin:0;
+	padding-right:$sidebar-width;
+	.sidebar{
 		background: transparent;
 		width:$sidebar-width;
 		float:right;
 		margin-right:-($sidebar-width);
-	}  
+	}
 }
 .index-page-content{
 	@include min-height(1100px);
@@ -101,44 +101,44 @@ label.overlabel{
 }
 
 .pagearea, .no-helpdesk{
-	background-color:$content-color;	
+	background-color:$content-color;
 }
 
-.pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .common-padding{  
-	padding:$common-padding; 
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .common-padding{
+	padding:$common-padding;
 	margin:0;
 }
 .pagearea{
-	@include min-height(480px);
+	@include min-height($page-min-height);
 	position:relative;
 }
 
 .alert{
 	margin: $common-padding;
 }
-// -------------------------------------------------------------------------------------------- 
-// 											Layout without sidebar styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 											Layout without sidebar styles
+// --------------------------------------------------------------------------------------------
 .single #inner{
-	padding-right:0px;	
+	padding-right:0px;
 	.pagearea{
 		border:0;
 	}
 	.sidebar{
 		display:none;
-	}	
+	}
 	.leftcontent{
 		margin-right:0px;
 		border-right:0px;
-	}	
+	}
 }
-// -------------------------------------------------------------------------------------------- 
-// 											Header styles 										
-// -------------------------------------------------------------------------------------------- 
-.header {  
+// --------------------------------------------------------------------------------------------
+// 											Header styles
+// --------------------------------------------------------------------------------------------
+.header {
 	@include pie-clearfix;
 	position:relative;
-	background:$header_color;	
+	background:$header_color;
 }
 .header-link-wrapper *{ vertical-align: middle; }
 .header-link-wrapper{
@@ -179,7 +179,7 @@ label.overlabel{
 .brand{
 	@include pie-clearfix;
 	position:absolute;
-	left:10px;       
+	left:10px;
 	top:5px;
 	text-decoration:none;
 	a{ text-decoration:none; }
@@ -198,13 +198,13 @@ label.overlabel{
 	float:right;
 	text-align:right;
 	height:46px;
-	margin:2px 12px; 
+	margin:2px 12px;
 	a{
- 		padding:0px 6px;	 
+ 		padding:0px 6px;
 		color:#ffffff;
 		text-decoration:none;
 	}
-	a:hover{              
+	a:hover{
 		@include opacity(0.9);
 		color:#ffffff;
 		text-decoration:none;
@@ -212,40 +212,40 @@ label.overlabel{
 	a.nav-trigger{
 	 	padding:0px 12px 0px 6px;
 	 	font-weight:bold;
-	}             
-	a.nav-trigger:before{           
+	}
+	a.nav-trigger:before{
 		content:"";
 		position:absolute;
 		border:4px solid transparent;
 		border-top-color:#fff;
-		width:0;        
-		top:9px; 
+		width:0;
+		top:9px;
 		right:9px;
 	}
-} 
-.profile_info{     
+}
+.profile_info{
 	visibility:hidden;
-	right:0;     
-	margin-top:45px;     
+	right:0;
+	margin-top:45px;
 	position:absolute;
   	font-size:13px;
   	background:#ffffff;
-	padding:0;     
+	padding:0;
   	z-index:999;
 	width:300px;
 	border-bottom: 7px solid #eee;
 	@include border-radius(5px);
 	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
-	&:after{           
+	&:after{
 		content:"";
 		position:absolute;
 		border:6px solid transparent;
 		border-bottom-color:#eee;
-		width:1px;        
-		top:-12px; 
+		width:1px;
+		top:-12px;
 		right:32px;
 	}
-	&:before{           
+	&:before{
 		content:"";
 		position:absolute;
 		border:8px solid transparent;
@@ -259,14 +259,14 @@ label.overlabel{
 		padding:0;
 		margin:0;
 		height:0;
-	}                  
-	.link, h5, .user{          
+	}
+	.link, h5, .user{
 		font-size:14px;
-	} 
+	}
 	.header-arrow-right {
 			display:inline-block;
-			width: 0; 
-			height: 0; 
+			width: 0;
+			height: 0;
 			border-top: 5px solid transparent;
 			border-bottom: 5px solid transparent;
 			border-left: 5px solid #909090;
@@ -274,18 +274,18 @@ label.overlabel{
 			margin-left:-5px;
 	}
 	.user{
-		margin:0; 
-		background:#eee;  
+		margin:0;
+		background:#eee;
 		@include border-radius(5px);
 		span{
 			position:relative;
-		 	top:7px; 
+		 	top:7px;
 			color:#888;
 			font-weight: 300;
 			font-size: 18px;
 			text-shadow: 1px 1px 0 #FFF;
 		}
-	}               
+	}
 	h5{ padding-bottom:6px; }
 	a.link{
 		display:block;
@@ -295,25 +295,25 @@ label.overlabel{
 	}
 	a.link:hover{
 		background: #999;
-		color:#ffffff; 
+		color:#ffffff;
 		.header-arrow-right {
 			border-left-color:#fff;
-		}   
+		}
 	}
 	.info{
 		padding:4px 24px;
-	}            
+	}
 	.user{
 		padding:2px 18px 18px;
 	}
-	.preview_pic img{     
-		width:30px;height:30px;  
+	.preview_pic img{
+		width:30px;height:30px;
 		@include box-shadow( rgba(0, 0, 0, 0.8) 0px 1px 5px inset );
 		@include border-radius(50px);
-	}  
+	}
 	.top-margin{
 		margin-top:8px;
-	}                         
+	}
 	.select2-container .select2-choice{
 		color:$default_txt_color;
 		font-size: 14px;
@@ -340,40 +340,40 @@ label.overlabel{
 		}
 	}
 }
-// -------------------------------------------------------------------------------------------- 
-// 											Header Tab styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 											Header Tab styles
+// --------------------------------------------------------------------------------------------
 .top_nav_bg{
 	position: relative;
-	background:$tab_color; 
-} 
+	background:$tab_color;
+}
 ul.header-tabs{
 	list-style:none;
 	li{
-		float:left; 
-		position:relative;	
-		padding-top:1px; 
+		float:left;
+		position:relative;
+		padding-top:1px;
 		a{
 			position:relative;
 			z-index:5;
 			text-decoration:none;
 			color:#ffffff;
 			text-align:center;
-			display:block;                          
+			display:block;
 			padding: 8px 20px;
 			font-size: $default-font-size;
 			font-weight: 500;
 		}
 		a:hover{
 			background:lighten($tab_color, 10%);
-		} 
-	}  
+		}
+	}
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
 		background:$content-color;
-		color:#000000; 
-	} 
-} 
+		color:#000000;
+	}
+}
 a.new_ticket, .nav_search{
 	float:left;
 }
@@ -382,31 +382,31 @@ a.new_ticket{
 	padding: 8px 20px;
 	font-size: $default-font-size;
 	font-weight: 500;
-	text-decoration:none; 
+	text-decoration:none;
 	color:#fff;
-	position:relative; 
+	position:relative;
 	margin-right:80px;
-	span{ 
+	span{
 		background:none;
 		&:before{
 			content:"+";
-			position:absolute; 
-			left:0; 
+			position:absolute;
+			left:0;
 			font-size:22px;
 			top:6px;
-			font-weight:bold;		
+			font-weight:bold;
 		}
-	}	
-	&:hover{ 
-		border-color:#606c88;  
-		color:#ffffff;	 
+	}
+	&:hover{
+		border-color:#606c88;
+		color:#ffffff;
 	}
 }
 .nav_search{
 	height:33px;
 	position:relative;
 	margin:0 0 0 6px;
-	div.search_bar{ 
+	div.search_bar{
 		height:100%;
 		width:90px;
 		background:none;
@@ -431,8 +431,8 @@ a.new_ticket{
 		 	padding:9px;
 		 	padding-left:25px;
 		 	font-weight:500;
-		} 
-		input{		
+		}
+		input{
 			border:0;
 			position:relative;
 			font-size:14px;
@@ -442,15 +442,15 @@ a.new_ticket{
 			height:100%;
 			padding-left:25px;
 			background:none;
-			float:right;	
+			float:right;
 			@include box-sizing(border-box);
 		}
-		input:focus{ @include box-shadow(#ffffff 0 0 0); }		
+		input:focus{ @include box-shadow(#ffffff 0 0 0); }
 	}
 	div.search_bar{
 		&:hover,&.active{
 			box-shadow: inset 0 0 1px 0px #000;
-			input{	
+			input{
 				color:#333;
 			}
 			label.overlabel{
@@ -467,18 +467,18 @@ a.new_ticket{
 
 .nav_right{
 	position:relative;
-	z-index:10; 
-	float:right; 
+	z-index:10;
+	float:right;
 }
-// -------------------------------------------------------------------------------------------- 
-// 												Footer styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 												Footer styles
+// --------------------------------------------------------------------------------------------
 
 /*#footer.wrapper{
 	@include box-shadow(0px -5px 5px 0px rgba(0, 0, 0, 0.5), 0px 70px+$footer-padding 5px 0px rgba(0, 0, 0, 0.5));
 }*/
 .footer-content{
-	padding:20px 0; 
+	padding:20px 0;
 	text-align: center;
 	padding-bottom: 80px;
 	background-color:$footer-bg;
@@ -487,9 +487,9 @@ a.new_ticket{
 	@include box-shadow(inset 0px 1px 0px #FFF, 0 4px 10px -4px rgba(0,0,0,0.2));
 }
 
-// -------------------------------------------------------------------------------------------- 
-// 										Header icons loading 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 										Header icons loading
+// --------------------------------------------------------------------------------------------
 .header-link-wrapper a img{
 	&.header-spinner{
 	    position: relative;

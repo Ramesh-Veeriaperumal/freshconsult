@@ -68,17 +68,4 @@ describe TopicsController do
 			topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]
 		end
 	end
-
-	describe "Bulk delete of topics" do
-		it "should mark delete all the topics when 'destroy_multiple'" do
-			topics = []
-			5.times do |n|
-				topics << create_test_topic(@question_forum)
-			end
-			delete :destroy_multiple, :ids => topics.map(&:id), :category_id => @category.id, "forum_id"=> @question_forum.id
-			topics.each do |topic|
-				@account.topics.find_by_id(topic.id).should be_nil
-			end
-		end
-	end
 end

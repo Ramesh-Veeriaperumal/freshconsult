@@ -69,7 +69,8 @@
 }
 
 #tweet_noresults{
-	height:200px;
+	background: white;
+	border: none;
 }
 
 .left-panel{
@@ -122,9 +123,9 @@
 
 
 .tweet-counter{
-	font-size:16px; 
+	font-size:12px; 
 	position:relative;
-	top:3px;
+	top:6px;
 	right:5px;
 	color:$default_txt_color;
 }
@@ -145,4 +146,72 @@
 
 .more-tweets:hover{
 	background-color:darken(#fffbee, 10%);
+}
+.more_results{
+	padding: 0;
+	.uiButton{
+		display: block;
+		width: 100%;
+		padding: 10px;
+		background: transparent;
+		border: 0;
+	}
+}
+/* ======
+   Social Welcome Page
+ */
+.sidebar{
+	.scl-welcome{
+		padding: 15px 10px;
+		h5{
+			font-size: 16px;
+			font-weight: 400;
+			margin: 10px  0  17px;
+		}
+	}
+}
+.scl-welcome{
+	border-top: 1px solid #ddd;
+	padding-top: 30px;
+	h4{
+		margin-bottom: 8px;
+	}
+	p{
+		line-height: 1.8em;
+	}
+	.scl-desc{
+		padding-right: 20px;
+		border-right: 1px solid #ddd;
+	}
+	.scl-statinput{
+		border: 1px solid #ddd;
+			@include border-radius(5px);
+		input{
+			float: left;
+			border: none;
+			@include box-shadow(none);
+			margin: 0;
+			padding: 5px;
+			&:focus{
+				outline: none;
+			}
+		}
+		input[type=text]{
+			width: 79.5%;
+		}
+		input[type=submit]{
+			float: right;
+			@include border-top-left-radius(0);
+			@include border-bottom-left-radius(0);
+			background: #999;
+			padding: 5px 15px;
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 400;
+			width: 16.5%;
+		}
+	}
+	.btn{
+		margin-bottom: 8px;
+	}
 }

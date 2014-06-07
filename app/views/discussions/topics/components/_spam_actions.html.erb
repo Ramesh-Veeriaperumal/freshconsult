@@ -1,0 +1,16 @@
+<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic),
+										:class => 'btn' if privilege?(:edit_topic, @topic) %>
+
+<% if privilege?(:delete_topic) %>
+<div class="btn-group">
+	<%= link_to t('discussions.topics.approve'), approve_discussions_moderation_path(@first_post),
+										:method => :put, :class => 'btn',
+										:"data-track" => 'Action on Unpublished post',
+										:"data-event-data" => {:action => 'Publish', :spam => true }.to_json %>
+
+	<%= link_to t('discussions.topics.delete_topic'), discussions_topic_path(@topic),
+										:method => :delete, :class => 'btn',
+										:"data-track" => 'Action on Unpublished post',
+										:"data-event-data" => {:action => 'Delete', :spam => true }.to_json  %>
+</div>
+<% end %>

@@ -1,6 +1,7 @@
 class Account < ActiveRecord::Base
 
   include Mobile::Actions::Account
+  include Social::Ext::AccountMethods
   include Cache::Memcache::Account
   include ErrorHandle
   include AccountConstants
@@ -58,7 +59,7 @@ class Account < ActiveRecord::Base
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
-
+  
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end

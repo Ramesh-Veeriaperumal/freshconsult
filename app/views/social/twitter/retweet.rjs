@@ -1,0 +1,3 @@
+page << "jQuery('body,html').animate({scrollTop: 0}, 800);"
+show_ajax_flash page
+page << "jQuery('#rt_box_#{@feed_id}').hide();"

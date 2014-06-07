@@ -25,10 +25,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/automation"
-	resource :"mobile/notification"
+	  resource :"mobile/notification"
+    resource :"helpdesk/mobihelp_ticket_extra"
+    # Social - Twitter
     resource :"social/twitter_handle",
        :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
-    resource :"helpdesk/mobihelp_ticket_extra"
+    resource :"social/stream",
+       :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
+    resource :"social/twitter",
+        :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -41,10 +46,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call]
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate]
+    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
 
@@ -70,6 +76,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/bulk_ticket_action"
     # Used for API
     resource :"helpdesk/note", :only => [:create]
+    resource :"social/twitter",
+        :only => [:create_fd_item, :reply, :retweet, :post_tweet]
   end
 
   forward_ticket do
@@ -139,10 +147,14 @@ Authority::Authorization::PrivilegeList.build do
   # ************** FORUMS **************************
 
 	view_forums do
+    resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
+    resource :"discussions/forum", :only => [:show]
+    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
+    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
@@ -152,24 +164,31 @@ Authority::Authorization::PrivilegeList.build do
   # create_edit_forum_category
   manage_forums do
     resource :forum_category, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :discussion, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"discussions/forum", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
   end
 
   # create_forum_topic
   create_topic do
+    resource :"discussions/topic", :only => [:new, :create ]
     resource :topic, :only => [:new, :create ]
     resource :forums_uploaded_image, :only => [:create]
   end
 
   # edit_forum_topic
   edit_topic do
-    resource :topic, :only => [:edit, :update, :update_lock, 
+    resource :"discussions/topic", :only => [:edit, :update, :toggle_lock,
+          :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
+    resource :topic, :only => [:edit, :update, :update_lock,
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
+    resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic
   delete_topic do
+    resource :"discussions/topic", :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
   end
@@ -275,6 +294,8 @@ Authority::Authorization::PrivilegeList.build do
   admin_tasks do
     resource :"admin/business_calendar"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
+    resource :"social/streams"
+    resource :"social/welcome"
     resource :"social/facebook_page"
     resource :"social/facebook_tab"
     resource :"admin/survey"
@@ -300,6 +321,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"support/preview"
     resource :"admin/chat_setting"
     resource :"api_webhook", :only => [:create, :destroy]
+    resource :"admin/social/stream"
+    resource :"admin/social/twitter_stream"
+    resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
   end
 

@@ -30,12 +30,16 @@ module DynamoHelper
 
     #Check interactions table
     result = false
-    table = "interactions"
-    user_entry = dynamodb_entry(table, hash_key, "user:#{user_id}", tweet_feed["postedTime"])
-    tweet_id = tweet_feed["id"].split(":").last
-    unless user_entry.nil?
-      user_entry_tweet_ids = user_entry["feed_ids"][:ss]
-      result ||= user_entry_tweet_ids.include?(tweet_id)
+    for i in 1..5
+      table = "interactions"
+      user_entry = dynamodb_entry(table, hash_key, "user:#{user_id}", tweet_feed["postedTime"])
+      tweet_id = tweet_feed["id"].split(":").last
+      unless user_entry.nil?
+        user_entry_tweet_ids = user_entry["feed_ids"][:ss]
+        result ||= user_entry_tweet_ids.include?(tweet_id)
+      end
+      break if result
+      sleep 1 if !user_entry.nil?
     end
 
     if present
@@ -43,11 +47,17 @@ module DynamoHelper
     else
       result.should be_false
     end
+    
+    [feed_entry, user_entry]
   end
-
+  
+  def dynamo_feeds_for_tweet(table, hash_key, range_key, postedTime) 
+    dynamodb_entry(table, hash_key, range_key, postedTime)
+  end
 
   private
     def dynamodb_entry(table, hash_value, range_value, postedTime)
+      
       hash_key = {
           :comparison_operator => "EQ",
           :attribute_value_list => [
@@ -66,9 +76,13 @@ module DynamoHelper
       properties = DYNAMO_DB_CONFIG[table] #Social::Twitter::Constants::
       name = Social::DynamoHelper.select_table(table, time)
 
-      result = Social::DynamoHelper.query(name, hash_key, range_key, schema, 1, false)
-      unless result[:member].empty?
-        return result[:member].first
+      for i in 1..5
+        result = Social::DynamoHelper.query(name, hash_key, range_key, schema, 1, false)
+        unless result[:member].empty?
+          return result[:member].first
+        else
+          sleep 1
+        end
       end
 
       return nil

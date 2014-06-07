@@ -117,6 +117,10 @@ module HelpdeskControllerMethods
       result.nmobile { render :json => { :success => true }}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
+      result.js {
+        flash[:notice] = render_to_string(
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+      }
     end
   end
 
@@ -257,7 +261,12 @@ protected
   def after_destory_js
     render(:update) { |page| 
       @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
-      page << "trigger_event('note_deleted', #{to_event_data(@items[0])});" if @cname == "note"
+      if @cname == "note"
+        page << "trigger_event('note_deleted', #{to_event_data(@items[0])});"
+        page << "if(document.getElementById('cnt-reply-quoted')){"
+        page.replace_html 'cnt-reply-quoted', quoted_text(@parent) if @parent
+        page << "}"
+      end
       show_ajax_flash(page)
     }
   end

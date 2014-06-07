@@ -1,0 +1,68 @@
+<div class="conv-wrapper">
+    <div class="conversations" style="padding-top:20px;">
+        <div id="tw-profile">
+            <div id="user-infobox" class="bb-box">
+              <div class="profile-pic image-lazy-load">
+                <% if @klout_score > 0 %>
+                  <i class='klout-icon'><%= @klout_score%></i>
+                <% end %>
+                <img src="/images/fillers/profile_blank_thumb.gif" 
+                data-src="<%= normal_twt_avatar(@user[:image])%>" 
+                data-src-retina="<%= bigger_twt_avatar(@user[:image])%>"/>
+              </div>
+              <div>
+                <h4 class="profile-name">
+                  <% if @user[:db] %>
+                    <span class="active-cust"><%= font_icon "crown", :size => 14 %></span>
+                  <% end %>
+                  <%=@user[:name] %> 
+                  <a href="http://twitter.com/<%=@user[:screen_name] %>" 
+                    target="_blank" class="tw-handle">
+                    @<%=@user[:screen_name] %>
+                  </a>
+                </h4>
+                <% if @user[:twitter] %>
+                  <p class="info-data profile-info"><%=@user[:twitter].description %>, 
+                    <span><%=@user[:twitter].location %></span></p>
+                <% end %>
+              </div>
+            </div>
+        </div>
+        <%
+          interactions_length = @interactions[:others].length
+          tickets_length = @user_tickets.length
+        %>
+      
+        <section  class="twt-tabs">
+          <!-- First tab input and label -->
+          <% if interactions_length > 0 %>
+            <input id="t-1" name="tabbed-tabs" type="radio" checked="checked">
+            <label for="t-1" class="tabs">Interactions</label>
+          <% end %>
+          <!-- Second tab input and label -->
+          <% if tickets_length > 0 %>
+            <input id="t-2" name="tabbed-tabs" type="radio" 
+              <% if interactions_length == 0 %> checked="checked" <% end %> >
+            <label for="t-2" class="tabs">Tickets</label>
+          <% end %>
+          
+          <div class="tc">
+            <div class="tab-1">
+                <%= render :partial => 'social/streams/other_interactions', :locals => { :user_info_page => true } %>
+            </div>
+            <div class="tab-2">
+                <%= render :partial => 'social/streams/recent_tickets' %>
+            </div>
+          </div>
+        </section>
+
+
+<!-- <div id="merge-box" class="bb-box">
+  <h4 class="title pane-title">Merge Contacts</h4>
+  <p>Found a matching contact?</p>
+  <p>
+    <a href="#">Merge Contact</a> or <a href="#">Create a new contact</a>
+  </p>
+</div> -->
+  </div>
+</div>

@@ -105,6 +105,14 @@ class Forum::ForumDrop < BaseDrop
     @unsolved ||= filter_topics(:unsolved)
   end
 
+  def followed_by_current_user?
+    portal_user.present? && !source.monitorships.count(:conditions => ["user_id = ? and active = ?", portal_user.id, true]).zero?
+  end
+
+  def toggle_follow_url
+    toggle_monitor_support_discussions_forum_path(source)
+  end
+
   private
     def filter_topics filter = self.current_topic_filter
       case filter

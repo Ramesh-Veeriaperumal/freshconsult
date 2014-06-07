@@ -27,8 +27,10 @@ class Va::Handlers::NestedField < Va::RuleHandler
   end
 
   def filter_query
+    return '' if value == "--"
     query_conditions = send("filter_query_#{condition.operator}", condition.key, (query_value value))
     (nested_rules || []).each do |nested_rule|
+      return '' if nested_rule[:value] == "--"
       query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{query_condition}"
     end

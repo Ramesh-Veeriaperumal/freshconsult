@@ -50,7 +50,7 @@
 		},
 		keydown: function(ev){		
 	    	// Checking if pressed key in keycombo and check if the focused in input fields
-   			if( $.inArray(this.keys, ev.keyCode) && !this.stopOnFocus() ){
+   			if( $.inArray(ev.keyCode, this.keys) != -1 && !this.stopOnFocus() ){
    				var currentIndex = this.currentIndex,
 				activeClass  = this.options.activeClass 
 
@@ -110,7 +110,7 @@
 			ev.stopPropagation();
 	    },
 	    setCurrentElement: function(index){
-	    	$("." + this.options.activeClass).removeClass(this.options.activeClass);
+	    	$(this.element).find(this.options.menuHoverIn).removeClass(this.options.activeClass)
 	 	    this.currentIndex = index;
 	 	    this.currentElement = $(this.selectElement).eq(index).addClass(this.options.activeClass);
 	    },

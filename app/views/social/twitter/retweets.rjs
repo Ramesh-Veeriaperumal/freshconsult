@@ -1,0 +1,15 @@
+if (@retweets && @retweets[:count] == 0) || !@social_error_msg.blank?
+  text = "Retweets"
+elsif @retweets && @retweets[:count] > 0
+  text = "Retweeted #{pluralize(@retweets[:count], 'time')}"
+end
+
+page << "jQuery('#retweet-floater').find('#changed_rt_header').find('.ph').html('#{text}');"
+page << "jQuery('#retweet-floater').find('#default_rt_header').hide();"
+page << "jQuery('#retweet-floater').find('#changed_rt_header').show();"
+
+page << "jQuery('#retweet-info').removeClass('sloading loading-block')";
+page << "jQuery('#retweet-info').empty()";
+
+page.replace_html "retweet-info", :partial => "retweets"
+page << "jQuery('#retweet-info').show();"

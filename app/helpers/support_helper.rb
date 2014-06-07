@@ -250,10 +250,18 @@ module SupportHelper
 	# To modify label the liquid can be modified as so
 	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
 	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		if User.current
-			_monitoring = topic['followed_by_current_user?']
+		follow_button(topic, follow_label, unfollow_label)
+	end
 
-			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
+	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
+		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+	end
+
+	def follow_button current_obj, follow_label, unfollow_label
+		if User.current
+			_monitoring = current_obj['followed_by_current_user?']
+
+			link_to _monitoring ? unfollow_label : follow_label, current_obj['toggle_follow_url'], 
 				"data-remote" => true, "data-method" => :put, 
 				:id => "topic-monitor-button",
 				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
@@ -848,6 +856,147 @@ HTML
     end 
     _output.join("").html_safe
   end
+
+def article_attachments article
+		output = []
+
+		if(article.attachments.size > 0)
+			output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
+
+			article.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def post_attachments post
+		output = []
+
+		if(post.attachments.size > 0)
+			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
+
+			post.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+
+			output << %(</div>)
+		end
+
+		output.join('').html_safe 
+	end
+
+	def ticket_attachemnts ticket		
+		output = []
+
+		if(ticket.attachments.size > 0 or ticket.dropboxes != nil)
+			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
+
+			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
+
+			(ticket.attachments || []).each do |a|
+				output << attachment_item(a.to_liquid, can_delete)
+			end
+
+			(ticket.dropboxes || []).each do |c|
+				output << dropbox_item(c.to_liquid, can_delete)
+			end
+
+			output << %(</div>)
+		end
+		output.join('').html_safe 
+	end
+
+	def comment_attachments comment		
+		output = []
+
+		if(comment.attachments.size > 0 or comment.dropboxes != nil)
+			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
+
+			can_delete = (comment.user and comment.user.id == User.current.id)
+
+			(comment.attachments || []).each do |a|
+				output << attachment_item(a.to_liquid, can_delete)
+			end
+
+			(comment.dropboxes || []).each do |c|
+				output << dropbox_item(c.to_liquid, can_delete)
+			end
+
+			output << %(</div>)
+		end
+		output.join('').html_safe 
+
+	end
+
+	def attachment_item attachment, can_delete = false
+		output = []
+
+		output << %(<div class="cs-g-3 attachment">)
+		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
+
+		output << default_attachment_type(attachment)
+
+		output << %(<div class="attach_content">)
+		output << %(<div class="ellipsis">)
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
+		output << %(</div>)
+		output << %(<div>#{  attachment.size  } </div>)
+		output << %(</div>)
+		output << %(</div>)
+
+		output.join('').html_safe
+	end
+
+	def dropbox_item dropbox, can_delete = false
+		output = []
+
+		output << %(<div class="cs-g-3 attachment">)
+		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
+
+		output << %(<img src="/images/dropbox_big.png"></span>)
+
+		output << %(<div class="attach_content">)
+		output << %(<div class="ellipsis">)
+		output << %(<a href="#{dropbox.url}" class="filename" target="_blank">#{ dropbox.filename } </a>)
+		output << %(</div>)
+		output << %(<div> ( dropbox link )</div>)
+		output << %(</div>)
+		output << %(</div>)
+
+		output.join('').html_safe
+	end
+
+	def default_attachment_type (attachment)
+		output = []
+	
+		if attachment.is_image?
+			output << %(<img src="#{attachment.thumbnail}" class="file-thumbnail image" alt="#{attachment.filename}">)
+		else
+	      	filetype = attachment.filename.split(".")[-1] || ""
+	      	output << %(<div class="attachment-type">)
+	      	if (filetype != "" && filetype.size <= 4)
+	      		output << %(<span class="file-type"> #{ filetype } </span> )
+	        else
+	        	output << %( <span> </span> )
+	        end
+	      	output << %(</div>)
+	    end
+
+	    output.join('')
+	end
+
+	def page_tracker
+		case @current_page_token.to_sym
+		when :topic_view
+			"<img src='#{hit_support_discussions_topic_path(@topic)}' />".html_safe
+		else
+			""
+		end
+	end
 
 	private
 

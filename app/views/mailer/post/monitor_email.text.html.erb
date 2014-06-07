@@ -6,7 +6,7 @@
 	<div class="mail_content">
 		<b>New Reply</b> - <%= @post.topic.posts_count-1 %> replies in topic 
 		<%= link_to @post.topic.title, 
-					category_forum_topic_url(@post.topic.forum.forum_category.id, @post.topic.forum.id, @post.topic.id, :host => @user.account.host)%>
+					discussions_topic_url(@post.topic.id, :host => @user.account.host)%>
 	</div>
 
 	<div class="forum_content">
@@ -24,7 +24,7 @@
 		<br>
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", category_forum_topic_url(@post.topic.forum.forum_category.id, @post.topic.forum.id, @post.topic.id, :host => @user.account.host) << "#reply-to-post", :class => "reply" %>
+		<%= link_to "Reply", discussions_topic_url(@post.topic.id, :host => @user.account.host) << "#reply-to-post", :class => "reply" %>
 		<div class="footer-text">
 			<%= link_to "Turn Off", toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @user.account.host) %>
 			Reply notifications for this topic

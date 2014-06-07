@@ -4248,6 +4248,11 @@ $.fn.setFocus = function()
 {
 	this.data('redactor').$editor.focus();
 };
+	
+$.fn.clearRichText = function() {
+	var redactor = this.data('redactor');
+	redactor.setCode(redactor.paragraphy(''));
+}
 
 $.fn.execCommand = function(cmd, param)
 {

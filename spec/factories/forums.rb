@@ -14,10 +14,12 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :topic do |t|
     t.sequence(:title) { |n| "Test Topic #{n}"}
-    t.sequence(:body_html) { |n| "<p>This is a new topic #{n}.</p>"}
   end
 
   Factory.define :post do |p|
     p.sequence(:body_html) { |n| "<p>This is a new post #{n}.</p>"}
+  end
+
+  Factory.define :ticket_topic do |tt|
   end
 end

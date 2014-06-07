@@ -1,0 +1,131 @@
+$font-class: "ficon-";
+
+// Default font size will be taken from the parents font size
+[class*="#{$font-class}"] {
+  font-size: inherit;
+}
+
+// Font icons used inside a link
+a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
+  color:#333;
+}
+
+// Font icons used in forum pages
+.forum_follow_icon{              @extend .#{$font-class}star-o; }
+.forum_follow_icon.active{       @extend .#{$font-class}star; }
+.forum_follow_icon.active:after{ @extend .#{$font-class}star-o:before; }
+.forum-type-problem{             @extend .#{$font-class}notice-o; }
+.forum-type-announce{            @extend .#{$font-class}bullhorn; }
+.forum-type-ideas{               @extend .#{$font-class}bulb; }
+.forum-type-howto{               @extend .#{$font-class}help; }
+.agent-preview{                  @extend .#{$font-class}open-in-new-window; }
+.list-query-panel .dropdown-menu li.active a:before{ 	
+	@extend .#{$font-class}checkmark; 
+}
+
+// Font icons used in Freshsocial
+.tw-accs{
+	li{
+		a{
+			.#{$font-class-name}all-streams{
+				width: 24px;
+				height: 24px;
+				float: left;
+				background: #333;
+				color: #fff;
+				text-align: center;
+				@include border-radius(4px);
+			}
+			&:after{
+				@extend .#{$font-class-name}arrow-right:before;
+			}
+		}
+	}
+}
+.tw-wrapper{
+	#search_social .#{$font-class-name}twitter{
+		position: absolute;
+		top: 12px;
+		left: 19px;
+		z-index: 1;
+		color: #aaa;
+	}
+	.tw-explorer{
+		.pane-head{
+			.ph-icons{
+				.#{$font-class-name}cross{
+					display: inline-block;
+					margin-top: 2px;
+					color: #333;
+					margin-right: 5px;
+				}
+			}
+		}
+	}
+}
+.conv-wrapper{
+	.#{$font-class-name}freshdesk{
+		color: #4E903E;
+	}
+}
+.icon-lst i.#{$font-class-name}twitter{
+	color: #55acee;
+}
+a.tw-tkt-link{
+	i.#{$font-class-name}ticket{
+		color: green;
+	}
+	&:before{
+		@extend .#{$font-class-name}checkmark:before;
+	}
+	&.tw-agent{
+		i.#{$font-class-name}ticket{
+			position: relative;
+			right: 3px;
+		}
+	}
+}
+i.#{$font-class-name}twitter{
+	color: #888;
+}
+.info-data a{
+	i.#{$font-class-name}twitter{
+		color: #888;
+		position: relative;
+		top: 1px;
+	}
+	&:hover i.#{$font-class-name}twitter{
+		color:#55acee;
+	}
+}
+.adm-social{
+	.add-another{
+		.#{$font-class-name}plus{
+			background: #9ad400;
+			color: #fff;
+			width: 16px;
+			height: 16px;
+			display: inline-block;
+			text-align: center;
+			border-radius: 10px;
+			border: 1px solid #599f00;
+			margin: 0 22px 0 8px;
+		}
+		&:hover{
+			background: #efefef;
+		}
+	}
+	.ce-btn{
+		.#{$font-class-name}minus{
+			background: #fd735f;
+			color: #fff;
+			width: 16px;
+			height: 16px;
+			display: inline-block;
+			text-align: center;
+			border-radius: 10px;
+			border: 1px solid #bf3727;
+			margin: 0 0 0 12px;
+		}
+	}
+}

@@ -1,0 +1,96 @@
+<% if @refresh %> <!-- TODO must change -->
+  <div class="twt-list-item refresh-item" id="tweet_div_<%= feed.feed_id %>" data-feed-id="<%=feed.feed_id %>" style="display:none" >
+<% else %>
+  <div class="twt-list-item" id="tweet_div_<%= feed.feed_id %>" data-feed-id="<%=feed.feed_id %>" >
+<% end %>
+    <span class="cursor"></span>
+    <!-- social feeed starts -->
+    <div class="social-feed">
+      
+      <div class="feed-info-data">
+        <%= render :partial => 'social/streams/feed_hidden_info' , :locals => { :feed => feed }%>
+      </div>
+      
+      <div class="preview-pic span1 image-lazy-load">
+         <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= normal_twt_avatar(feed.user[:image])%>" data-src-retina="<%= bigger_twt_avatar(feed.user[:image])%>">
+      </div>
+      <div class="tweet-box span11">
+        <p class="twh">
+          <% if feed.user_in_db %>
+          <span class="tooltip active-cust" data-original-title="<%=t('social.streams.tooltip.db_contact') %>" twipsy-content-set="true">
+              <%= font_icon "crown", :size => 14 %>
+            </span>
+          <% end %>
+          <strong id="name"> <%= feed.user[:name]%> </strong>
+          <span class="tw-handle">@<%= feed.user[:screen_name]%></span>
+          
+          <% if feed.is_replied > 0 %>
+            <% replied_icon_class = "" %>
+            <% conv_icon_class = "hide" %> 
+          <% elsif feed.in_conv > 0 %>
+            <% replied_icon_class = "hide" %>
+            <% conv_icon_class = "" %>
+          <% else %>
+            <% replied_icon_class = "hide" %>
+            <% conv_icon_class = "hide" %>
+          <% end %>
+          <span class="replied-icon <%= replied_icon_class%> tooltip pull-right" data-original-title="<%=t('social.streams.tooltip.replied') %>" twipsy-content-set="true" data-placement="left">
+            <%= font_icon "reply", :size => 18 %>
+          </span>
+          <% in_conv_with = feed.user_mentions.select {|mention| @all_screen_names.include?(mention) } %>
+          <span class="conv-icon <%= conv_icon_class%> tooltip pull-right" data-original-title="<%=t('social.streams.tooltip.in_conversation', :user_mentions => in_conv_with.map{|name| "@#{name}"}.join(' , ')) %>" 
+            twipsy-content-set="true" data-placement="left">
+            <%= font_icon "conversation", :size => 18 %>
+          </span>
+
+        </p>
+
+        <p class="tweet-msg autolink"><%= feed.body.html_safe%></p>
+
+        <div class="info-data">
+          <div class="pull-left">
+            <a class="tooltip tw-link" href="http://twitter.com/<%=feed.user[:screen_name]%>/status/<%=feed.feed_id%>" target="_blank" data-original-title="View on Twitter" data-placement="right" twipsy-content-set="true"><%= font_icon "twitter", :size => 16 %></a>
+            <% parsed_time = formated_date(Time.parse(feed.posted_time)) %>
+            <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= parsed_time %>">
+              <%= time_ago_in_words(Time.parse(feed.posted_time)) %> ago
+            </span>
+          </div>
+
+          <% if privilege?(:reply_ticket) %>
+            <ul class="sharer">
+              <li>
+                <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id%>" data-clicked="no" class="more-links sharer_reply_button tooltip" data-original-title="Reply" twipsy-content-set="true" >
+                  <%= font_icon "reply", :size => 18 %>
+                </a>
+              </li>
+              <li>
+                <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id%>" data-clicked="no" class="more-links sharer_retweet_button tooltip" data-original-title="Retweet" twipsy-content-set="true">
+                  <%= font_icon "retweet", :size => 18 %>
+                </a>
+              </li>
+
+              <li>
+                <% convert_ticket_class = feed.ticket_id.blank? ? "" : "hide" %>
+                <% show_ticket_class = !feed.ticket_id.blank? ? "" : "hide" %>
+                
+                <span class="sharer_twt_not_ticket <%= convert_ticket_class %>">
+                  <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket more-links unified_view_ctt" data-original-title="<%=t('social.streams.tooltip.convert_to_tkt')%>" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
+                    <%= font_icon "ticket", :size => 18%>
+                  </a>
+                </span>
+                
+                <span class="sharer_twt_ticket <%= show_ticket_class %> ">
+                  <% ticket_url = "#{helpdesk_tickets_url}/#{feed.ticket_id}" %>
+                  <% ticket_display_id = feed.ticket_id.split("#").first  if feed.ticket_id %>
+                  <% ticket_hover = "#{t('social.streams.tooltip.go_to_tkt', :display_id => ticket_display_id)}" %>
+                  <a href="<%= ticket_url %>" target="_blank" twipsy-content-set="true" class="ctt-btn  more-links tooltip tw-tkt-link" data-original-title='<%= ticket_hover %>' data-placement="left">
+                     <%= font_icon "ticket", :size => 18 %>
+                  </a>
+                </span>
+              </li>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>

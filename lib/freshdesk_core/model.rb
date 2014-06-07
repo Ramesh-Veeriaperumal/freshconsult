@@ -85,7 +85,7 @@ module FreshdeskCore::Model
                         
                         "social_streams",
                           "social_ticket_rules",
-
+                        
                         "solution_categories", 
                           "solution_customer_folders", 
                           "solution_folders",
@@ -114,7 +114,11 @@ module FreshdeskCore::Model
                         "whitelisted_ips",
                         "helpdesk_ticket_fields",
                         "helpdesk_nested_ticket_fields", 
-                        "helpdesk_shared_attachments", 
+                        "helpdesk_shared_attachments",
+                        
+                        "helpdesk_accesses",
+                          "user_accesses",
+                          "group_accesses",
 
                         "mobihelp_apps", 
                         "mobihelp_devices",
@@ -132,6 +136,7 @@ module FreshdeskCore::Model
     delete_gnip_twitter_rules(account)
     delete_social_redis_keys(account)
     delete_facebook_subscription(account)
+    delete_social_redis_keys(account)
     delete_jira_webhooks(account)
     clear_attachments(account)
     remove_mobile_registrations(account.id)
@@ -161,7 +166,21 @@ module FreshdeskCore::Model
   
     def delete_gnip_twitter_rules(account)
       account.twitter_handles.each do |twt_handle|
-        twt_handle.cleanup
+        streams = twt_handle.twitter_streams
+        default_stream = streams.select {|stream| stream.default_stream? }.first
+        if default_stream
+          args = default_stream.construct_unsubscribe_args(nil)
+          Social::Workers::Gnip::TwitterRule.perform(args)
+        end
+      end
+    end
+    
+    def delete_social_redis_keys(account)
+      account.twitter_streams.each do |stream|
+        stream.clear_volume_in_redis
+      end
+      account.agents.each do |agent|
+        agent.clear_social_searches
       end
     end
 
@@ -181,7 +200,6 @@ module FreshdeskCore::Model
         Integrations::JiraWebhook.new(app, HttpRequestProxy.new).send_later(:delete_webhooks)
       end
     end
-
 
     def clear_attachments(account)
       delete_files(account)

@@ -1,0 +1,26 @@
+# Must add css for this - as parsu suggested
+unless @social_error_msg.blank?
+  page.replace_html "stream_error_msgs", "#{@social_error_msg}"
+  page << "jQuery('#stream_error_msgs').show();"
+end
+
+
+unless @sorted_feeds.blank?
+  if @sorted_feeds.length > 0
+    page << "new_feeds = jQuery('#streamHighlight a.new-tweets').html();
+             refreshed_new_feeds = parseInt(new_feeds) + parseInt('#{@sorted_feeds.length}')
+             jQuery('#streamHighlight a.new-tweets').html(refreshed_new_feeds + ' new feeds');"
+    page << "jQuery('#streamHighlight').show();"
+    page.insert_html :top, 'streamTemplate', :partial => 'social/streams/stream_feeds'
+  end
+  page << "jQuery('#social_meta_info #refresh_url').val('#{@refresh_url}')"
+  
+  # Must add css for this - as parsu suggested
+  page << "jQuery('#no_old_results').hide();"
+  page << "jQuery('#more_stream_feeds').show();"
+  page << "jQuery('#show_more_feeds').show();"
+  page << "jQuery('#tweet_noresults').hide();"
+end
+
+page << "jQuery('#more_stream_feeds').removeClass('sloading loading-block');"
+page << "jQuery('#streamTemplate').removeClass('sloading loading-block');"

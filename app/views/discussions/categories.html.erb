@@ -1,0 +1,39 @@
+<% content_for :layoutType do %>community<% end %>
+
+<% content_for :sticky_title do %>
+	<div class="list-panel-main">
+	 	<%= list_discussions_panel(:category) %>
+	  	<h2 class="list-title ellipsis"><%= t('topic.categories')%></h2>
+	</div>
+	
+<% end %>
+<% content_for :sticky_right do %>
+	<%= tour_button(t('discussions.tour'), '5384276bbc1fbe0d8e001638') unless @topics_count > 0 %>
+<% end %>
+<%= render :partial => '/discussions/shared/sticky', :locals => { :page => :home } %>
+
+<% if @forum_categories.blank? %>
+	<div class="no-data">
+		<%= t('topic.no_categories') %>
+		<div>
+			<% if privilege?(:manage_forums) and main_portal? %>
+				<%= pjax_link_to(t('topic.add_category'), new_discussion_path, :class => "btn btn-primary mt20") %>
+			<% end %>
+		</div>
+	</div>
+<% else %>
+	<div class="clearfix reorder-list">
+		<%= render :partial => "forum_category", :locals => {
+						:items => @forum_categories,
+						:action_url => reorder_discussions_path,
+						:title => :name,
+						:container_id => "forum_category_sort",
+						:reorder_id => "forums_reorder_button",
+						:list_id => "forums_list"} %>
+	</div>
+<% end %>
+<script type="text/javascript">
+jQuery('body').on('assetLoaded.fjax', function() {
+	App.Discussions.Sidebar.setCurrentPageAs('folders');
+});
+</script>

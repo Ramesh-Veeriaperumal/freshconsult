@@ -1,0 +1,65 @@
+<% topic = post.topic %>
+<% post_type = post.original_post? ? 'new_topic' : 'reply' %>
+<div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.id %>" data-user="<%= post.user_id %>">
+	<div class="pull-left">
+		<%= user_avatar(post.user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+	</div>
+	<div class="comm-item-main row-fluid">
+		<div class="comm-item-main-content">
+			<div>
+				<span class="label <%= post_type %>">
+								<%= t("contacts.#{post_type}") %></span>
+				<span class='muted'>
+					<abbr data-livestamp='<%= post.created_at.to_i %>'><%= formated_date(post.created_at) %></abbr>,
+					In <%= pjax_link_to topic.forum.name, discussions_forum_path(topic.forum_id), :class => 'muted' %>
+				</span>
+			</div>
+			<div class="comm-item-details">
+				<strong><%= link_to_user(post.user, :class => 'hover-link') %></strong>
+				<%= post.original_post? ? t('discussions.topics.post.created_topic') : t('discussions.topics.post.replied_to') %>
+				<%= pjax_link_to topic.title, "#{discussions_topic_path(topic.id)}/page/last/##{dom_id(post)}" %>
+			</div>
+			<div class="post-desc pl20 mt5">
+				<%= truncate( post.body, :length => 400 )%>
+			</div>
+		</div>
+	</div>
+	<div class="post-action-bar">
+			<div class="action-icon">
+				<%= link_to_remote '', :url => approve_discussions_moderation_path(post),
+						:method => :put,
+						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
+						:html => {
+								:class => font_class("checkmark-round", 28, "tooltip post-approve"),
+								:title => t('.approve_tooltip'),
+								:"data-track" => 'Action on Unpublished post',
+								:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json
+							} %>
+			</div>
+		<% unless post.spam? %>
+			<div class="action-icon">
+				<%= link_to_remote('', :url =>"/discussions/topics/#{topic.id}/posts/#{post.id}",
+						:method => :delete,
+						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
+						:html => {
+							:class => font_class("trash", 28, "tooltip post-delete delete_action"),
+							:title => t('delete'),
+							:"data-track" => 'Action on Unpublished post',
+							:"data-event-data" => {:action => 'Delete', :spam => false }.to_json
+						}) %>
+			</div>
+			<div class="action-icon">
+				<%= link_to_remote("", :url => ban_discussions_moderation_path(post),
+						:method => :put,
+						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
+						:html => {
+							:class => font_class("notice", 28, "tooltip post-ban-user"),
+							:title => t('.ban_tooltip'),
+							:"data-placement" => "left",
+							:"data-track" => 'Action on Unpublished post',
+							:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json
+						}) if privilege?(:delete_contact) %>
+			</div>
+		<% end %>
+	</div>
+</div>

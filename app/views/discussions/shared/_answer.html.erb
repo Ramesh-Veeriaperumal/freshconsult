@@ -1,0 +1,21 @@
+<div class="best-answer-info">
+	<%= font_icon "checkmark-round", :size => 28, :class => "best-answer pull-left" %>
+	<div class="answer-comment">
+		<div class="best-badge"><%= t('discussions.topics.best_answer') %></div>
+		<div>
+			<%= link_to user_avatar(post.user), post.user %>
+			<div class="pt3">
+				<strong><%= link_to_user(post.user) %></strong>
+				<%= t('discussions.topics.replied') %>
+			</div>
+		</div>
+		<div class="mt8">
+			<% if popup %>
+				<%= truncate(post.body, :length => 500 ) %>
+			<% else %>
+				<%= post.body_html.html_safe %>
+			<% end %>
+		</div>
+		<%= attachment_container(post.attachments, true, "article", nil)  unless popup %>
+	</div>
+</div>

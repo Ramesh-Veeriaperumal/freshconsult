@@ -1,0 +1,302 @@
+{
+  "checksum": {
+    "previous": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075",
+    "current": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075"
+  },
+  "fonts": [
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.ttf",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.svg",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.woff",
+    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.eot"
+  ],
+  "glyphs": {
+    "all-streams": {
+      "codepoint": 61696,
+      "source": "public/glyphs/vectors/all-streams.svg"
+    },
+    "answer-checked": {
+      "codepoint": 61742,
+      "source": "public/glyphs/vectors/answer-checked.svg"
+    },
+    "answer-unchecked": {
+      "codepoint": 61760,
+      "source": "public/glyphs/vectors/answer-unchecked.svg"
+    },
+    "arrow-down": {
+      "codepoint": 61697,
+      "source": "public/glyphs/vectors/arrow-down.svg"
+    },
+    "arrow-left": {
+      "codepoint": 61698,
+      "source": "public/glyphs/vectors/arrow-left.svg"
+    },
+    "arrow-right": {
+      "codepoint": 61699,
+      "source": "public/glyphs/vectors/arrow-right.svg"
+    },
+    "arrow-up": {
+      "codepoint": 61700,
+      "source": "public/glyphs/vectors/arrow-up.svg"
+    },
+    "book": {
+      "codepoint": 61701,
+      "source": "public/glyphs/vectors/book.svg"
+    },
+    "bulb": {
+      "codepoint": 61754,
+      "source": "public/glyphs/vectors/bulb.svg"
+    },
+    "bullhorn": {
+      "codepoint": 61755,
+      "source": "public/glyphs/vectors/bullhorn.svg"
+    },
+    "caret-down": {
+      "codepoint": 61702,
+      "source": "public/glyphs/vectors/caret-down.svg"
+    },
+    "caret-left": {
+      "codepoint": 61703,
+      "source": "public/glyphs/vectors/caret-left.svg"
+    },
+    "caret-right": {
+      "codepoint": 61704,
+      "source": "public/glyphs/vectors/caret-right.svg"
+    },
+    "caret-up": {
+      "codepoint": 61705,
+      "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "checkmark": {
+      "codepoint": 61706,
+      "source": "public/glyphs/vectors/checkmark.svg"
+    },
+    "checkmark-round": {
+      "codepoint": 61743,
+      "source": "public/glyphs/vectors/checkmark-round.svg"
+    },
+    "checkmark-round-o": {
+      "codepoint": 61744,
+      "source": "public/glyphs/vectors/checkmark-round-o.svg"
+    },
+    "comment-multi": {
+      "codepoint": 61745,
+      "source": "public/glyphs/vectors/comment-multi.svg"
+    },
+    "conversation": {
+      "codepoint": 61707,
+      "source": "public/glyphs/vectors/conversation.svg"
+    },
+    "cross": {
+      "codepoint": 61708,
+      "source": "public/glyphs/vectors/cross.svg"
+    },
+    "crown": {
+      "codepoint": 61709,
+      "source": "public/glyphs/vectors/crown.svg"
+    },
+    "dots": {
+      "codepoint": 61710,
+      "source": "public/glyphs/vectors/dots.svg"
+    },
+    "earth": {
+      "codepoint": 61711,
+      "source": "public/glyphs/vectors/earth.svg"
+    },
+    "edit": {
+      "codepoint": 61712,
+      "source": "public/glyphs/vectors/edit.svg"
+    },
+    "ellipsis": {
+      "codepoint": 61713,
+      "source": "public/glyphs/vectors/ellipsis.svg"
+    },
+    "eye": {
+      "codepoint": 61714,
+      "source": "public/glyphs/vectors/eye.svg"
+    },
+    "facebook": {
+      "codepoint": 61715,
+      "source": "public/glyphs/vectors/facebook.svg"
+    },
+    "file-edit": {
+      "codepoint": 61746,
+      "source": "public/glyphs/vectors/file-edit.svg"
+    },
+    "file-visible": {
+      "codepoint": 61747,
+      "source": "public/glyphs/vectors/file-visible.svg"
+    },
+    "folder-o": {
+      "codepoint": 61716,
+      "source": "public/glyphs/vectors/folder-o.svg"
+    },
+    "folder-open-o": {
+      "codepoint": 61717,
+      "source": "public/glyphs/vectors/folder-open-o.svg"
+    },
+    "freshdesk": {
+      "codepoint": 61718,
+      "source": "public/glyphs/vectors/freshdesk.svg"
+    },
+    "gear": {
+      "codepoint": 61719,
+      "source": "public/glyphs/vectors/gear.svg"
+    },
+    "googleplus": {
+      "codepoint": 61720,
+      "source": "public/glyphs/vectors/googleplus.svg"
+    },
+    "help": {
+      "codepoint": 61756,
+      "source": "public/glyphs/vectors/help.svg"
+    },
+    "infinity-5": {
+      "codepoint": 61761,
+      "source": "public/glyphs/vectors/infinity-5.svg"
+    },
+    "like": {
+      "codepoint": 61757,
+      "source": "public/glyphs/vectors/like.svg"
+    },
+    "link": {
+      "codepoint": 61721,
+      "source": "public/glyphs/vectors/link.svg"
+    },
+    "linkedin": {
+      "codepoint": 61722,
+      "source": "public/glyphs/vectors/linkedin.svg"
+    },
+    "lock": {
+      "codepoint": 61723,
+      "source": "public/glyphs/vectors/lock.svg"
+    },
+    "lock-open": {
+      "codepoint": 61724,
+      "source": "public/glyphs/vectors/lock-open.svg"
+    },
+    "map-marker": {
+      "codepoint": 61725,
+      "source": "public/glyphs/vectors/map-marker.svg"
+    },
+    "minus": {
+      "codepoint": 61726,
+      "source": "public/glyphs/vectors/minus.svg"
+    },
+    "notice": {
+      "codepoint": 61748,
+      "source": "public/glyphs/vectors/notice.svg"
+    },
+    "notice-o": {
+      "codepoint": 61749,
+      "source": "public/glyphs/vectors/notice-o.svg"
+    },
+    "open-in-new-window": {
+      "codepoint": 61758,
+      "source": "public/glyphs/vectors/open-in-new-window.svg"
+    },
+    "paperplane": {
+      "codepoint": 61727,
+      "source": "public/glyphs/vectors/paperplane.svg"
+    },
+    "plus": {
+      "codepoint": 61728,
+      "source": "public/glyphs/vectors/plus.svg"
+    },
+    "post-edit": {
+      "codepoint": 61750,
+      "source": "public/glyphs/vectors/post-edit.svg"
+    },
+    "reorder": {
+      "codepoint": 61751,
+      "source": "public/glyphs/vectors/reorder.svg"
+    },
+    "reply": {
+      "codepoint": 61729,
+      "source": "public/glyphs/vectors/reply.svg"
+    },
+    "retweet": {
+      "codepoint": 61730,
+      "source": "public/glyphs/vectors/retweet.svg"
+    },
+    "search": {
+      "codepoint": 61731,
+      "source": "public/glyphs/vectors/search.svg"
+    },
+    "sidebar-list": {
+      "codepoint": 61752,
+      "source": "public/glyphs/vectors/sidebar-list.svg"
+    },
+    "star": {
+      "codepoint": 61732,
+      "source": "public/glyphs/vectors/star.svg"
+    },
+    "star-o": {
+      "codepoint": 61753,
+      "source": "public/glyphs/vectors/star-o.svg"
+    },
+    "ticket": {
+      "codepoint": 61733,
+      "source": "public/glyphs/vectors/ticket.svg"
+    },
+    "ticket2": {
+      "codepoint": 61734,
+      "source": "public/glyphs/vectors/ticket2.svg"
+    },
+    "trash": {
+      "codepoint": 61759,
+      "source": "public/glyphs/vectors/trash.svg"
+    },
+    "trash-o": {
+      "codepoint": 61735,
+      "source": "public/glyphs/vectors/trash-o.svg"
+    },
+    "twitter": {
+      "codepoint": 61736,
+      "source": "public/glyphs/vectors/twitter.svg"
+    },
+    "unlock": {
+      "codepoint": 61737,
+      "source": "public/glyphs/vectors/unlock.svg"
+    },
+    "user": {
+      "codepoint": 61738,
+      "source": "public/glyphs/vectors/user.svg"
+    },
+    "view-retweets": {
+      "codepoint": 61739,
+      "source": "public/glyphs/vectors/view-retweets.svg"
+    },
+    "warning": {
+      "codepoint": 61740,
+      "source": "public/glyphs/vectors/warning.svg"
+    }
+  },
+  "options": {
+    "autowidth": true,
+    "config": "config/fontcustom.yml",
+    "css_selector": ".ficon-{{glyph}}",
+    "debug": false,
+    "font_name": "glyphs",
+    "force": false,
+    "input": {
+      "templates": "public/glyphs/templates",
+      "vectors": "public/glyphs/vectors"
+    },
+    "no_hash": false,
+    "output": {
+      "css": "public/src/fonts",
+      "fonts": "public/fonts",
+      "preview": "public/fonts"
+    },
+    "preprocessor_path": "",
+    "quiet": false,
+    "templates": [
+      "scss",
+      "index.html"
+    ]
+  },
+  "templates": [
+    "public/src/fonts/_glyphs.scss",
+    "public/fonts/index.html"
+  ]
+}

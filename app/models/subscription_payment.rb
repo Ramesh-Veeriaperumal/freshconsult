@@ -3,6 +3,11 @@ class SubscriptionPayment < ActiveRecord::Base
   serialize :meta_info
   
   include HTTParty
+
+  NON_RECURRING_PAYMENTS = {
+    :day_pass => "Day Pass",
+    :freshfone => "Freshfone"
+  }
   
   belongs_to :subscription
   belongs_to :account
@@ -55,4 +60,31 @@ class SubscriptionPayment < ActiveRecord::Base
   def usd_equivalent
     subscription.usd_equivalent
   end
+
+  #One time payments
+  def self.day_pass_purchases
+    day_passes = 0
+    non_recurring_payments.each do |payment|
+      day_passes += payment.amount if payment.to_s.include?(NON_RECURRING_PAYMENTS[:day_pass])
+    end
+    day_passes
+  end
+
+  def self.freshfone_credits
+    fone_credits = 0
+    non_recurring_payments.each do |payment|
+      fone_credits += payment.amount if payment.to_s.include?(NON_RECURRING_PAYMENTS[:freshfone])
+    end
+    fone_credits
+  end
+
+  def self.non_recurring_payments(start_date = 1.month.ago.beginning_of_month, 
+      end_date = 1.month.ago.end_of_month.end_of_day)
+    find(:all, 
+      :joins => ["INNER JOIN subscriptions ON subscription_payments.account_id = 
+                  subscriptions.account_id and subscriptions.state = 'active'"], 
+      :conditions => [ "subscription_payments.created_at > ? AND subscription_payments.created_at < ? 
+                        AND subscription_payments.misc = 1", start_date, end_date ])
+  end
+
 end

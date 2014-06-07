@@ -37,6 +37,28 @@ FD.Util = {
 	reBrand: function(data){
 		Ext.Viewport.getAt(1).setBranding(data);
 	},
+    getCookie : function(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i].trim();
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+    },
+    deleteCookie : function(cname, ctoken){
+            document.cookie = cname + '=' + ctoken + '; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    },
+    create_meta_tag : function(csrf_token){
+        var meta_element = document.createElement("meta");
+        meta_element.name = "csrf-param";
+        meta_element.content = "authenticity_token";
+        document.getElementsByTagName('head')[0].appendChild(meta_element);
+        meta_element = document.createElement("meta");
+        meta_element.name = "csrf-token";
+        meta_element.content = csrf_token;
+        document.getElementsByTagName('head')[0].appendChild(meta_element);
+    },
 	initCustomer : function(){
 		//initializing customer login settings..
 		//Ext.ComponentQuery.query('#ticketCustomerInfo')[0].hide();

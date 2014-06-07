@@ -3,7 +3,7 @@
  */
 var $J = jQuery.noConflict();
 is_touch_device = function() {
-  return !!('ontouchstart' in window) // works on most browsers 
+  return !!('ontouchstart' in window) // works on most browsers
       || !!('onmsgesturechange' in window); // works on ie10
 };
 window.xhrPool = [];
@@ -14,11 +14,11 @@ window.xhrPool = [];
       $('html').addClass('ie ie11');
     }
    // Global Jquery Plugin initialisation
-   // $.fn.qtip.baseIndex = 10000;   
-       
-  // App initialisation  
+   // $.fn.qtip.baseIndex = 10000;
+
+  // App initialisation
   $.oldajax = $.ajax;
-  $.xhrPool_Abort  = function(){ 
+  $.xhrPool_Abort  = function(){
     if(window.xhrPool)
     {
       for (var i = 0; i < window.xhrPool.length; i++) {
@@ -49,7 +49,7 @@ window.xhrPool = [];
       window.xhrPool.push(xhr);
       return xhr;
     }
-  
+
   }
   $(document).ready(function() {
     var widgetPopup = null;
@@ -74,6 +74,12 @@ window.xhrPool = [];
     $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
       $(this).dialog2();
     })
+    
+    //Added for social tweet links
+    $(".autolink").livequery(function(ev){
+      $(this).autoLink();
+    })
+    
 
     //Stickey Header and Button collapsed
     window.sticky = new SetupSticky();
@@ -95,8 +101,8 @@ window.xhrPool = [];
       }
     }
 
-    hidePopover = function (ev) {  
-      if(!$.contains(this, ev.relatedTarget) ) { 
+    hidePopover = function (ev) {
+      if(!$.contains(this, ev.relatedTarget) ) {
         if(hoverPopup && !$(ev.relatedTarget).is('[rel=contact-hover]')) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
@@ -116,9 +122,9 @@ window.xhrPool = [];
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-    
+
     $("a[rel=popover]")
-      .popover({ 
+      .popover({
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -129,9 +135,9 @@ window.xhrPool = [];
           return $("#" + $(this).attr("data-widget-container")).html();
         }
       });
-    
+
     $("a[rel=click-popover-below-left]").livequery(function(){
-      $(this).popover({ 
+      $(this).popover({
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -146,7 +152,7 @@ window.xhrPool = [];
     });
 
     $("a[rel=widget-popover]")
-      .popover({ 
+      .popover({
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -158,8 +164,8 @@ window.xhrPool = [];
         }
       });
 
-    $("[rel=contact-hover]").livequery(function(){ 
-      $(this).popover({ 
+    $("[rel=contact-hover]").livequery(function(){
+      $(this).popover({
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -170,11 +176,11 @@ window.xhrPool = [];
           var container_id = "user-info-div-"+$(this).data('contactId');
           return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
         }
-      }); 
-    });    
+      });
+    });
 
-    $("[rel=hover-popover]").livequery(function(){ 
-       $(this).popover({ 
+    $("[rel=hover-popover]").livequery(function(){
+       $(this).popover({
          delayOut: 300,
          trigger: 'manual',
          offset: 5,
@@ -184,14 +190,14 @@ window.xhrPool = [];
          content: function(){
            return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
          }
-        }); 
+        });
       });
 
     $("textarea.autosize").livequery(function(){
       $(this).autosize();
     });
 
-    $("[rel=remote-load]").livequery(function(){ 
+    $("[rel=remote-load]").livequery(function(){
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
@@ -201,11 +207,11 @@ window.xhrPool = [];
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("sloading loading-small loading-block");
-          
-          if(!$this.data("loadUnique"))            
+
+          if(!$this.data("loadUnique"))
             $(this).clone().prependTo('#remote_loaded_dom_elements');
 
-          if($this.data("extraLoadingClasses"))            
+          if($this.data("extraLoadingClasses"))
             $(this).removeClass($this.data("extraLoadingClasses"));
         });
     });
@@ -252,42 +258,49 @@ window.xhrPool = [];
 
       }).live('mouseleave',function(ev) {
           clearTimeout($(this).data('timeoutDelayShow'));
-          hidePopoverTimer = setTimeout(function() { 
-            if(widgetPopup) widgetPopup.popover('hide'); 
+          hidePopoverTimer = setTimeout(function() {
+            if(widgetPopup) widgetPopup.popover('hide');
             hoverPopup = false;
           },1000);
       });
 
     $("a[rel=widget-popover], a[rel=click-popover-below-left]").live("click", function(e){
         e.preventDefault();
-        e.stopPropagation(); 
+        e.stopPropagation();
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
         hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
 
-    $("body").on('input propertychange', 'textarea[maxlength]', function() {  
-        var maxLength = $(this).attr('maxlength');  
-        if ($(this).val().length > maxLength) {  
-            $(this).val($(this).val().substring(0, maxLength));  
-        }  
+    $("body").on('input propertychange', 'textarea[maxlength]', function() {
+        var maxLength = $(this).attr('maxlength');
+        if ($(this).val().length > maxLength) {
+            $(this).val($(this).val().substring(0, maxLength));
+        }
     });
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
       $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
       $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
- 
+
       $("select.select2").livequery(function(){
         var defaults = {
           minimumResultsForSearch:    10
         }
-        $(this).select2($.extend( defaults, $(this).data())); 
+        $(this).select2($.extend( defaults, $(this).data()));
       });
-      
+      $("input.select2").livequery(function(){
+        $(this).select2({tags: [],tokenSeparators: [","],
+          formatNoMatches: function () {
+           return "  ";
+          }
+        });
+      });
+
       // - Quote Text in the document as they are being loaded
-      $("div.request_mail").livequery(function(){ quote_text(this); }); 
+      $("div.request_mail").livequery(function(){ quote_text(this); });
 
       $("input.datepicker").livequery(function(){ $(this).datepicker( $.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker') }  )) });
 
@@ -296,7 +309,7 @@ window.xhrPool = [];
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
       // - Tour My App 'Next' button change
-      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
       });
@@ -304,23 +317,31 @@ window.xhrPool = [];
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $('body').on('afterShow', '[rel=remote]', function(ev) {
           var _self = $(this);
-          if(_self.data('remoteUrl')) {
+          if(!_self.data('loaded')) {
             _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
-                _self.data('remoteUrl', false);
+                _self.data('loaded', true);
+                _self.trigger('remoteLoaded');
             });
           }
       });
-      
+
+      $('body').on('reload', '[rel=remote]', function(ev) {
+        var _self = $(this);
+        _self.empty();
+        _self.data('loaded', false);
+        _self.trigger('afterShow');
+      });
+
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
 
-      $(".full-width-tooltip").twipsy({ 
+      $(".full-width-tooltip").twipsy({
         live: true,
         template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
       });
 
-      $(".form-tooltip").twipsy({ 
+      $(".form-tooltip").twipsy({
         live: true,
         trigger: 'focus',
         template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
@@ -337,7 +358,7 @@ window.xhrPool = [];
 
         el.bind('click', function(e) {
           e.preventDefault();
-          e.stopPropagation(); 
+          e.stopPropagation();
           $(this).toggleClass('inactive');
 
           $(this).children('.text').text( $(this).hasClass('inactive') ? inactive_text : active_text);
@@ -347,11 +368,11 @@ window.xhrPool = [];
           } else {
             $(this).children('input[type=checkbox]').attr('checked','checked');
           }
-          
+
         });
       });
 
-      $.validator.setDefaults({ 
+      $.validator.setDefaults({
         errorPlacement: function(error, element) {
           if (element.prop("type") == "checkbox" || element.hasClass("portal-logo") || element.hasClass("portal-fav-icon")){
             error.insertAfter(element.parent());
@@ -362,7 +383,7 @@ window.xhrPool = [];
         onkeyup: false,
         focusCleanup: false,
         focusInvalid: true,
-        ignore:"select.nested_field:empty, .portal_url:not(:visible)" 
+        ignore:"select.nested_field:empty, .portal_url:not(:visible)"
       });
 
       $(".image-lazy-load img").livequery(function(ev){
@@ -376,7 +397,7 @@ window.xhrPool = [];
         $(this).not(".dont-validate").parents('form:first').validate();
       })
       $("div.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").find('form:first').validate(); 
+        $(this).not(".dont-validate").find('form:first').validate();
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
@@ -406,7 +427,7 @@ window.xhrPool = [];
                                               add_csrf_token(form);
                                               form.submit();
                                             }, 50)
-                                          } 
+                                          }
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
@@ -449,11 +470,11 @@ window.xhrPool = [];
     });
 
     $("input[rel=companion]")
-      .live({ 
+      .live({
         "keyup": function(ev){
           selector = $(this).data("companion");
           if($(this).data("companionEmpty")) $(selector).val(this.value);
-        }, 
+        },
         "focus": function(ev){
           selector = $(this).data("companion");
           $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
@@ -466,9 +487,9 @@ window.xhrPool = [];
 
       // Tab auto select based on window hash url
       hashTabSelect();
-      
+
       $(window).on('hashchange', hashTabSelect);
-          
+
         qtipPositions = {
           normal : {
             my: 'center right',
@@ -477,14 +498,14 @@ window.xhrPool = [];
           top: {
             my: 'bottom center',  // Position my top left...
             at: 'top center' // at the bottom right of...
-          }, 
+          },
           bottom : {
             my: 'top center',  // Position my top left...
-            at: 'bottom center' 
+            at: 'bottom center'
           },
           left : {
             my: 'top left',
-            at: 'bottom  left'          
+            at: 'bottom  left'
           }
         };
 
@@ -525,31 +546,31 @@ window.xhrPool = [];
           $.attr(this, 'oldtitle', $.attr(this, 'title'));
           this.removeAttribute('title');
         })
-         
+
         menu_box_count = 0;
         fd_active_drop_box = null;
-         
+
         function hideMenuItem(){
             $(".nav-drop .menu-box").hide();
             $(".nav-drop .menu-trigger").removeClass("selected");
         }
-         
+
         $(".nav-drop .menu-trigger")
             .live('click', function(ev){
                 ev.preventDefault();
-                 
+
                 $(this).toggleClass("selected").next().toggle();
-                 
+
                 if( !$(this).attr("data-menu-name") )
                         $(this, $(this).next())
                             .attr("data-menu-name", "page_menu_"+menu_box_count++);
-                 
+
                 if($(this).attr("data-menu-name") !== $(fd_active_drop_box).attr("data-menu-name") ){
                     $(fd_active_drop_box).removeClass("selected").next().hide();
                 }
                 fd_active_drop_box = $(this);
             });
-            
+
          $('[rel=guided-tour]').live('click',function(ev) {
           ev.preventDefault();
           try {
@@ -557,21 +578,21 @@ window.xhrPool = [];
           } catch(e) { }
         });
 
-         
+
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();
         });
- 
+
         $(document).bind('click', function(e) {
             var $clicked = $(e.target);
             if (! $clicked.parents().hasClass("nav-drop"))
                 hideMenuItem();
- 
+
             if (! $clicked.parent().hasClass("request_form_options")){
               $("#canned_response_container").hide();
           }
         });
- 
+
       flash = $("div.alert").not('[rel=permanent]');
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
@@ -583,10 +604,14 @@ window.xhrPool = [];
 
       $('#Activity .activity > a.notelink').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
-      })      
+      });
+			
+			$(window).on("scroll.select2", function(ev) {
+			    $(".select2-container.select2-dropdown-open").not($(this)).select2('positionDropdown');
+			});
    });
 })(jQuery);
- 
+
 function closeableFlash(flash){
    flash = jQuery(flash);
    jQuery("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){

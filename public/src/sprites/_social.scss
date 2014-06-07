@@ -1,0 +1,196 @@
+@import "compass/utilities/sprites/base";
+
+// General Sprite Defaults
+// You can override them before you import this file.
+$social-sprite-base-class: ".social-sprite" !default;
+$social-sprite-dimensions: false !default;
+$social-position: 0% !default;
+$social-spacing: 0 !default;
+$social-repeat: no-repeat !default;
+$social-prefix: '' !default;
+$social-clean-up: true !default;
+$social-layout:vertical !default;
+$social-inline: false !default;
+
+  
+ // These variables control the generated sprite output
+ // You can override them selectively before you import this file.
+ 
+   $social-active-cust-position: $social-position !default;
+   $social-active-cust-spacing:  $social-spacing !default;
+   $social-active-cust-repeat:   $social-repeat !default;
+ 
+   $social-close-position: $social-position !default;
+   $social-close-spacing:  $social-spacing !default;
+   $social-close-repeat:   $social-repeat !default;
+ 
+   $social-conversation-position: $social-position !default;
+   $social-conversation-spacing:  $social-spacing !default;
+   $social-conversation-repeat:   $social-repeat !default;
+ 
+   $social-left-arrow-grey-position: $social-position !default;
+   $social-left-arrow-grey-spacing:  $social-spacing !default;
+   $social-left-arrow-grey-repeat:   $social-repeat !default;
+ 
+   $social-replied-position: $social-position !default;
+   $social-replied-spacing:  $social-spacing !default;
+   $social-replied-repeat:   $social-repeat !default;
+ 
+   $social-reply-grey-position: $social-position !default;
+   $social-reply-grey-spacing:  $social-spacing !default;
+   $social-reply-grey-repeat:   $social-repeat !default;
+ 
+   $social-retweet-grey-position: $social-position !default;
+   $social-retweet-grey-spacing:  $social-spacing !default;
+   $social-retweet-grey-repeat:   $social-repeat !default;
+ 
+   $social-retweet-position: $social-position !default;
+   $social-retweet-spacing:  $social-spacing !default;
+   $social-retweet-repeat:   $social-repeat !default;
+ 
+   $social-tweet-ticket-position: $social-position !default;
+   $social-tweet-ticket-spacing:  $social-spacing !default;
+   $social-tweet-ticket-repeat:   $social-repeat !default;
+ 
+   $social-twitter-grey-position: $social-position !default;
+   $social-twitter-grey-spacing:  $social-spacing !default;
+   $social-twitter-grey-repeat:   $social-repeat !default;
+ 
+   $social-twitter-mini-blue-position: $social-position !default;
+   $social-twitter-mini-blue-spacing:  $social-spacing !default;
+   $social-twitter-mini-blue-repeat:   $social-repeat !default;
+ 
+   $social-twitter-view-position: $social-position !default;
+   $social-twitter-view-spacing:  $social-spacing !default;
+   $social-twitter-view-repeat:   $social-repeat !default;
+ 
+   $social-twitter-white-position: $social-position !default;
+   $social-twitter-white-spacing:  $social-spacing !default;
+   $social-twitter-white-repeat:   $social-repeat !default;
+ 
+   $social-user-crown-position: $social-position !default;
+   $social-user-crown-spacing:  $social-spacing !default;
+   $social-user-crown-repeat:   $social-repeat !default;
+ 
+   $social-user-position: $social-position !default;
+   $social-user-spacing:  $social-spacing !default;
+   $social-user-repeat:   $social-repeat !default;
+ 
+
+ $social-sprites: sprite-map("cdn-ignored/sprites/social/*.png",
+ 
+   $social-active-cust-position: $social-active-cust-position, 
+   $social-active-cust-spacing:  $social-active-cust-spacing, 
+   $social-active-cust-repeat:   $social-active-cust-repeat,
+ 
+   $social-close-position: $social-close-position, 
+   $social-close-spacing:  $social-close-spacing, 
+   $social-close-repeat:   $social-close-repeat,
+ 
+   $social-conversation-position: $social-conversation-position, 
+   $social-conversation-spacing:  $social-conversation-spacing, 
+   $social-conversation-repeat:   $social-conversation-repeat,
+ 
+   $social-left-arrow-grey-position: $social-left-arrow-grey-position, 
+   $social-left-arrow-grey-spacing:  $social-left-arrow-grey-spacing, 
+   $social-left-arrow-grey-repeat:   $social-left-arrow-grey-repeat,
+ 
+   $social-replied-position: $social-replied-position, 
+   $social-replied-spacing:  $social-replied-spacing, 
+   $social-replied-repeat:   $social-replied-repeat,
+ 
+   $social-reply-grey-position: $social-reply-grey-position, 
+   $social-reply-grey-spacing:  $social-reply-grey-spacing, 
+   $social-reply-grey-repeat:   $social-reply-grey-repeat,
+ 
+   $social-retweet-grey-position: $social-retweet-grey-position, 
+   $social-retweet-grey-spacing:  $social-retweet-grey-spacing, 
+   $social-retweet-grey-repeat:   $social-retweet-grey-repeat,
+ 
+   $social-retweet-position: $social-retweet-position, 
+   $social-retweet-spacing:  $social-retweet-spacing, 
+   $social-retweet-repeat:   $social-retweet-repeat,
+ 
+   $social-tweet-ticket-position: $social-tweet-ticket-position, 
+   $social-tweet-ticket-spacing:  $social-tweet-ticket-spacing, 
+   $social-tweet-ticket-repeat:   $social-tweet-ticket-repeat,
+ 
+   $social-twitter-grey-position: $social-twitter-grey-position, 
+   $social-twitter-grey-spacing:  $social-twitter-grey-spacing, 
+   $social-twitter-grey-repeat:   $social-twitter-grey-repeat,
+ 
+   $social-twitter-mini-blue-position: $social-twitter-mini-blue-position, 
+   $social-twitter-mini-blue-spacing:  $social-twitter-mini-blue-spacing, 
+   $social-twitter-mini-blue-repeat:   $social-twitter-mini-blue-repeat,
+ 
+   $social-twitter-view-position: $social-twitter-view-position, 
+   $social-twitter-view-spacing:  $social-twitter-view-spacing, 
+   $social-twitter-view-repeat:   $social-twitter-view-repeat,
+ 
+   $social-twitter-white-position: $social-twitter-white-position, 
+   $social-twitter-white-spacing:  $social-twitter-white-spacing, 
+   $social-twitter-white-repeat:   $social-twitter-white-repeat,
+ 
+   $social-user-crown-position: $social-user-crown-position, 
+   $social-user-crown-spacing:  $social-user-crown-spacing, 
+   $social-user-crown-repeat:   $social-user-crown-repeat,
+ 
+   $social-user-position: $social-user-position, 
+   $social-user-spacing:  $social-user-spacing, 
+   $social-user-repeat:   $social-user-repeat,
+ 
+ $layout: $social-layout,
+ $cleanup: $social-clean-up
+ );
+
+
+// All sprites should extend this class
+// The social-sprite mixin will do so for you.
+@if $social-inline {
+  #{$social-sprite-base-class} {
+    background-image: inline-sprite($social-sprites);
+  } 
+} @else {
+  #{$social-sprite-base-class} {
+    background: $social-sprites no-repeat;
+  }
+}
+//sass functions to return the dimensions of a sprite image as units
+
+  @function social-sprite-width($name) {
+    $file: sprite_file($social-sprites, $name);
+    @return image-width($file);
+  }
+
+  @function social-sprite-height($name) {
+    $file: sprite_file($social-sprites, $name);
+    @return image-height($file);
+  }
+
+
+// Use this to set the dimensions of an element
+// based on the size of the original image.
+@mixin social-sprite-dimensions($name) {
+  @include sprite-dimensions($social-sprites, $name)
+}
+
+// Move the background position to display the sprite.
+@mixin social-sprite-position($name, $offset-x: 0, $offset-y: 0) {
+  @include sprite-background-position($social-sprites, $name, $offset-x, $offset-y)
+}
+
+// Extends the sprite base class and set the background position for the desired sprite.
+// It will also apply the image dimensions if $dimensions is true.
+@mixin social-sprite($name, $dimensions: $social-sprite-dimensions, $offset-x: 0, $offset-y: 0) {
+  @extend #{$social-sprite-base-class};
+  @include sprite($social-sprites, $name, $dimensions, $offset-x, $offset-y)
+}
+
+@mixin social-sprites($sprite-names, $dimensions: $social-sprite-dimensions, $prefix: sprite-map-name($social-sprites), $offset-x: 0, $offset-y: 0) {
+  @include sprites($social-sprites, $sprite-names, $social-sprite-base-class, $dimensions, $prefix, $offset-x, $offset-y)
+}
+
+// Generates a class for each sprited image.
+@mixin all-social-sprites($dimensions: $social-sprite-dimensions, $prefix: sprite-map-name($social-sprites), $offset-x: 0, $offset-y: 0) {
+  @include social-sprites(active-cust close conversation left-arrow-grey replied reply-grey retweet-grey retweet tweet-ticket twitter-grey twitter-mini-blue twitter-view twitter-white user-crown user, $dimensions, $prefix, $offset-x, $offset-y);
+}

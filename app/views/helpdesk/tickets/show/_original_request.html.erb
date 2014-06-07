@@ -62,7 +62,7 @@
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>
     <% if privilege?(:view_forums) %>
-    "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    "<%= link_to("#{truncate(@ticket.topic.title)}", discussions_topic_path(@ticket.topic.id), :class => "link_to") %>"
     <% else %>
       "<%= truncate(@ticket.topic.title)%>"
     <% end %>
@@ -74,10 +74,12 @@
 		<div class="attachments-wrap clearfix">
 			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
-			    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@ticket] } %>
+			    <% @ticket.attachments.each do |attached| %> 
+			    	<%= attachment_list(attached, true, "ticket",nil) %>
+			    <% end %>
 			    <% @ticket.dropboxes.each do |dropbox| %> 
-					<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@ticket] } %>
-				<%end%>
+					<%= attachment_list(dropbox, true, "dropbox",nil) %>
+				<% end %>
 			</ul>
 		</div>
 	<% end %>

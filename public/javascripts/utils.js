@@ -438,7 +438,18 @@ active_dialog = null;
       }
     );
     return this;
- }; 
+ };
+
+	//usage: $('#some-id').removeTip()
+	$.fn.removeTip = function () {
+		try {
+			var twipsy = $(this).data('twipsy');
+			if (twipsy) {
+				twipsy.$tip.remove();
+			} 
+				
+		} catch(e) {}
+	} 
 
  $(document).bind('mousedown', function(e) {       
    if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;

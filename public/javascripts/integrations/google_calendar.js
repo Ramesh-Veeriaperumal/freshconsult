@@ -13,7 +13,8 @@ GoogleCalendar.prototype = {
 										 }, \
 										 "end": { \
 										  "dateTime": "#{end_datetime_string}" \
-										 } \
+										 }, \
+										 "location": "#{location_name_string}" \
 											}'),
 
 	EVENT_TEMPLATE: new Template('<div class="row-fluid event  #{custom_class}" id="event_#{id}"> \
@@ -26,6 +27,7 @@ GoogleCalendar.prototype = {
 											</span>\
 										</div> \
 										<div class="event-summary">\
+											<div>#{event_location}</div> \
 											<b><a href="#{event_link}" target="_blank">#{event_summary}</a></b> \
 										</div> \
 										<div class="event-description">#{event_description}</div> \
@@ -68,6 +70,17 @@ GoogleCalendar.prototype = {
 			            <span class="hyphen-container">-</span> \
 		                <input class="span2 g-time required time_12" type="text" value="" id="gcal-end-time-field" placeholder="hh:mm" autocomplete="off"> \
 			            <span id="gcal-event-duration"></span> \
+			        </div> \
+			    </div> \
+			    <div class="row-fluid"> \
+			        <div class="span2"> \
+			            <span class="field-label"> \
+			                Where \
+			            </span> \
+			        </div> \
+			        <div class="span10"> \
+			            <input class="input-block-level span11 required" type="text" id="gcal-event-location-field"> \
+			            <span id="google-calendar-event-location"></span> \
 			        </div> \
 			    </div> \
 			    <div class="row-fluid"> \
@@ -258,11 +271,13 @@ GoogleCalendar.prototype = {
 		endDateTime = gcal.getEndDateTime();
 		cFrom = startDateTime.toISO8601();
 		cTo = endDateTime.toISO8601();
+		locationName = gcal.getLocation();
 		
 		reqBody = gcal.EVENT_REQUEST_BODY.evaluate({summary: escapeJSON(jQuery("#gcal-event-summary").val()),
 			start_datetime_string: cFrom, end_datetime_string: cTo,
 			description: escapeJSON(jQuery("#google_calendar_event_description").val()
-						 + '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href)
+						 + '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href),
+			location_name_string: locationName
 		});
 
 		selected_calendar_id = jQuery('#gcal-calendar-list option:selected').val();
@@ -330,11 +345,13 @@ GoogleCalendar.prototype = {
 		endDateTime = gcal.getEndDateTime();
 		cFrom = startDateTime.toISO8601();
 		cTo = endDateTime.toISO8601();
+		locationName = gcal.getLocation();
 		
 		reqBody = gcal.EVENT_REQUEST_BODY.evaluate({summary: escapeJSON(jQuery("#gcal-event-summary").val()),
 			start_datetime_string: cFrom, end_datetime_string: cTo,
 			description: escapeJSON( jQuery("#google_calendar_event_description").val()
-									+ '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href)
+									+ '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href),
+			location_name_string: locationName
 		});
 
 		selected_calendar_id = jQuery('#gcal-calendar-list option:selected').val();
@@ -581,7 +598,8 @@ GoogleCalendar.prototype = {
 												formatted_time: formatEventTime(calEvents[evNo].start, calEvents[evNo].end),
 												custom_class: isFutureEvent(ev)?'':'past-event', 
 												id: calEvents[evNo].id,
-												event_link: calEvents[evNo].htmlLink 
+												event_link: calEvents[evNo].htmlLink,
+												event_location: calEvents[evNo].location
 											});	
 			evNo++;
 		}
@@ -710,6 +728,10 @@ GoogleCalendar.prototype = {
 						jQuery("#gcal-end-date-alt-field").val() );
 	},
 
+	getLocation: function(){
+		return jQuery("#gcal-event-location-field").val();
+	},
+
 	setTime: function(dObj, id){
 		hrs = dObj.getHours();
 		mins = dObj.getMinutes();
@@ -749,6 +771,7 @@ GoogleCalendar.prototype = {
 		gcal.setEndDateTime(endDateTime);
 		jQuery('#gcal-event-summary').val(ev.summary);
 		jQuery('#google_calendar_event_description').val(ev.description);
+		jQuery('#gcal-event-location-field').val(ev.location);
 		jQuery('#gcal-calendar-list option[value=\''+gcal.getCalId(eventId)+'\']').attr("selected", "selected");
 		jQuery('#gcal-submit-event-button').val('Update');
 	},

@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 marketplace developer dev apps freshapps fone )
 
-	PLANS_AND_FEATURES = {
+  PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
@@ -74,15 +74,17 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => false,
+    :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
     :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false  }
+    :facebook_realtime => false, :chat => false, :social_revamp => false,
+    :moderate_all_posts => false, :moderate_posts_with_links => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
                             :open_forums, :google_signin, :twitter_signin, :facebook_signin,
-                            :signup_link, :captcha]
+                            :signup_link, :captcha,
+                            :moderate_all_posts, :moderate_posts_with_links ]
 end

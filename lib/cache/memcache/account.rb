@@ -1,5 +1,5 @@
 module Cache::Memcache::Account
-  
+
   include MemcacheKeys
   module ClassMethods
     include MemcacheKeys
@@ -70,6 +70,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.customers.all }
   end
 
+  def twitter_handles_from_cache
+    key = handles_memcache_key
+    MemcacheKeys.fetch(key) { self.twitter_handles }
+  end
+  
   def twitter_reauth_check_from_cache
     key = TWITTER_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.twitter_handles.reauth_required.present? }
@@ -134,6 +139,16 @@ module Cache::Memcache::Account
     end
   end
 
+  def forum_categories_from_cache
+    key = FORUM_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ], :order => :position) }
+  end
+
+  def clear_forum_categories_from_cache
+    key = FORUM_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
@@ -153,6 +168,10 @@ module Cache::Memcache::Account
 
     def customers_memcache_key
       ACCOUNT_CUSTOMERS % { :account_id => self.id }
+    end
+    
+    def handles_memcache_key
+      ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
     end
 
 

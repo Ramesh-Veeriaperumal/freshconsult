@@ -1,0 +1,58 @@
+<%= include_cloudfront_js :social_admin %>
+<%= include_cloudfront_css :social %>
+<% content_for :sidebar do -%><%-end %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+
+<% form_for :twitter_stream, :url => admin_social_twitter_stream_path(@twitter_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
+
+  <div class="floatr">
+    <%= link_to(t('admin.social.streams.cancel'), :admin_social_streams , :class => "btn" ) %>
+    <%= submit_tag t('admin.social.streams.update') , :class => "btn btn-primary mrt", :id => "update_stream" %>
+  </div>
+
+  <h3 class="title"><%= t('.title')%></h3><hr />
+  
+  <% unless @twitter_stream.default_stream? %>
+      <%= render :partial => 'form', :locals => { :twitter_stream => @twitter_stream } %>
+  <% else %>
+      <%= render :partial => 'handle_form', :locals => { :twitter_handle => @twitter_handle } %>
+  <% end %>
+
+  <div class="adm-social sts">
+   <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
+    <p><%= t('admin.social.ticket_rules.brief_desc') %></p>
+    <div class="rules-wrapper">
+        <%= render :partial => 'ticket_rules_header', :locals => { :twitter_stream => @twitter_stream } %>
+        <div id = "ticket_rules" class="adm-social sts adm-bg c-tkt">
+          <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @ticket_rules } %>
+        </div>
+    </div>
+    <% if @twitter_stream.default_stream? and @twitter_handle.capture_dm_as_ticket%>
+      <div class="rules-wrapper">
+          <%= render :partial => 'convert_dm',  :locals => { :twitter_handle => @twitter_handle } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<script  type="text/javascript">
+  jQuery(".twt-stream-name").trigger('click');
+  jQuery(function() {
+    if(jQuery("#social_twitter_handle_capture_mention_as_ticket").attr('checked')){
+      jQuery('.mention_rule').show()
+    }else{
+      jQuery('.mention_rule').hide()
+    }
+    
+  });
+  
+  jQuery('#social_twitter_handle_capture_mention_as_ticket').click(function(){
+    jQuery('#ticket_rules').toggle();
+  });
+  
+</script>
+
+<div id="previewFeeds"></div>

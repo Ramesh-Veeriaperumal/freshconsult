@@ -5,12 +5,13 @@ class TopicObserver < ActiveRecord::Observer
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
     topic.posts_count = 1 #Default count
-    topic.published = topic.user.agent? #Agent Topics are approved by default.
+    topic.published = (topic.user.agent? or topic.import_id?) #Agent Topics are approved by default.
 	end
 
-	def before_update(topic)
-		check_for_changing_forums(topic)
-	end
+  def before_update(topic)
+    check_for_changing_forums(topic)
+    assign_default_stamps(topic) if topic.changes.key?("forum_id")
+  end
 
 	def before_save(topic)
 		topic.topic_changes
@@ -26,11 +27,13 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
   def after_update(topic)
+    topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
     return if !topic.stamp_type_changed? or topic.stamp_type.blank?
     create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
   end
 
   def after_create(topic)
+    topic.account.clear_forum_categories_from_cache
     monitor_topic(topic)
     create_activity(topic, 'new_topic') if topic.published?
   end
@@ -47,6 +50,7 @@ class TopicObserver < ActiveRecord::Observer
   end
 
 	def after_destroy(topic)
+    topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
     create_activity(topic, 'delete_topic', User.current) unless topic.trash
 	end
@@ -64,7 +68,14 @@ private
       true
   end
 
+  def assign_default_stamps(topic)
+    topic.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[topic.forum.reload.forum_type]
+  end
+
   def update_forum_counter_cache(topic)
+      # Forum Sidebar Cache is cleared from here
+      # As forum callbacks will not be fired from here.
+      topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
       forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
       # if the topic moved forums
       if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
@@ -95,14 +106,11 @@ private
       :account       => topic.account,
       :user          => user,
       :activity_data => {
-                          :path        => category_forum_topic_path(topic.forum.forum_category_id,
-                                          topic.forum_id, topic.id),
+                          :path        => discussions_topic_path(topic.id),
                           'forum_name' => h(topic.forum.to_s),
                           :url_params  => {
-                                            :category_id => topic.forum.forum_category_id,
-                                            :forum_id => topic.forum_id,
                                             :topic_id => topic.id,
-                                            :path_generator => 'category_forum_topic_path'
+                                            :path_generator => 'discussions_topic_path'
                                           },
                           :title        => h(topic.to_s),
                           :version      => 2

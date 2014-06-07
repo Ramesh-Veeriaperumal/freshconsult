@@ -1,0 +1,53 @@
+<div class="widget <%= "marked" if @topic.stamp_type? %>" id="stamp-data">
+<% stamped = @topic.stamp.present? %>
+<div class="stamp-list <%= 'pull-right mt12' if stamped %>">
+	<div class="dropdown">
+		<a href="#" class="dropdown-toggle" id="stamp_type" 
+			data-toggle="dropdown" 
+			data-url="<%= update_stamp_discussions_topic_path(@topic.id) %>" >
+			<strong>
+				<div class="">
+				<% if stamped %>
+					<%= t('topic.change')%>
+				<% else%>
+					<%= t('topic.mark_topic')%>...
+				<%end%>
+				</div>
+			</strong>
+		</a>
+		<ul class="dropdown-menu <%= 'pull-right' if stamped %>" role="menu" aria-labelledby="stamp_type">
+			<% if @forum.ideas? %>
+				<li>
+					<a role="menuitem" tabindex="-1" href="#" id="stamp_change" data-value="">
+						<% unless stamped %>
+							<span class="icon ticksymbol"></span>
+						<% end %>
+						<%= t('none')%>
+					</a>
+				</li>
+			<% end %>
+			<% Topic::ALL_TOKENS_FOR_FILTER[@topic.forum.forum_type].each do |val, text|%>
+			<li>
+				<a role="menuitem" tabindex="-1" href="#" id="stamp_change_<%= val%>" data-value="<%= val %>">
+					<% if stamped &&  @topic.stamp_type == val %>
+						<span class="icon ticksymbol"></span>
+					<% end %>
+					<%= text %>
+				</a>
+			</li>
+			<% end %>
+		</ul>
+	</div>
+</div>
+
+<% if stamped %>
+	<div rel="stamp_container">
+		<div class="muted"><%= t('topic.marked_as')%></div>
+		<div class="stamp-set">
+			<strong>
+				<%= @topic.stamp %>
+			</strong>
+		</div>
+	</div>
+<% end %>
+</div>

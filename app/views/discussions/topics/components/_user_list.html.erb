@@ -1,0 +1,9 @@
+<div class="topics_list">
+	<ul class="base_set">
+		<% user_list.each do |user| %>
+			<li>
+				<%= user_avatar(user) %><%= link_to_user user, :class => "avatar-wrap" , :qid => "#{user.id}" %>
+			</li>
+		<% end %>
+	</ul>
+</div>

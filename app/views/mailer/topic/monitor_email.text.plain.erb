@@ -11,13 +11,13 @@ By: <%= @user.name %>
 <%= "_" * 100 %>
 
 View Topic
-<%= category_forum_topic_url(@topic.forum.forum_category.id, @topic.forum.id, @topic.id, :host => @user.account.host) %>
+<%= discussions_topic_url(@topic.id, :host => @user.account.host) %>
 
 Reply
-<%= category_forum_topic_url(@topic.forum.forum_category.id, @topic.forum.id, @topic.id, :host => @user.account.host) << "#reply-to-post"%>
+<%= discussions_topic_url(@topic.id, :host => @user.account.host) << "#reply-to-post"%>
 
 View Forum
-<%= category_forum_url(@topic.forum.forum_category.id, @topic.forum.id, :host => @user.account.host) %>
+<%= discussions_forum_url(@topic.forum.id, :host => @user.account.host) %>
 
 Turn off notifications for this forum
 <%= toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @user.account.host) %>

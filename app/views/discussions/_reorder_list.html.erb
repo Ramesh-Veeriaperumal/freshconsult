@@ -1,0 +1,35 @@
+<div class="comm-items" id="forum_category_sort" data-menu-hover-in='li.comm-item' >
+	<% form_for :reorder, items, :url => action_url, :html => { :method => :put, :class => "form-reorder" } do |f| %>
+	  <input name="reorderlist" type="hidden" value="" />
+	  <ul class="row-fluid" rel="sortlist">
+		  <% items.each do |forum| %>
+		  	<% content_tag :li, :item_id => forum.id,
+		  						:class => "comm-item" do %>
+				<div class="reorder-icon vertical-alignment  handle-reorder">
+						<%= font_icon "reorder", :size => 15, :id => "sortable-icon" %>
+				</div>
+				<div class="vertical-alignment reorder-content row-fluid">
+			  		<div class="comm-item-main span8 clear-left-margin">
+			  			<i class="forum-type-<%= forum.type_symbol %> type-icon mr15 tooltip" title="<%= forum.type_name%>"></i>
+						<div class="comm-item-title">
+							<%= pjax_link_to(h(forum.name), discussions_forum_path(forum))%>
+							<span class="muted">(<%= forum.topics_count %>)</span>
+						</div>
+						<div class="comm-item-details muted">
+							<%= truncate(h(forum.description), :length => 100)%>
+						</div>
+					</div>
+					<div class="span4 mt6 pull-right">
+						<% unless forum.visible_to_all? %>
+							<span class="span6 pull-right align-right pr15">
+									<div class="muted"><%= t('.visible') %></div>
+									<%= forum.visibility_name %>
+							</span>
+						<% end %>
+					</div>
+				</div>
+		  	<% end %>
+		  <% end %>
+	  </ul>
+	<% end %>
+</div>

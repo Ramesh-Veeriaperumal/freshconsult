@@ -1,8 +1,0 @@
-<p class="<%=msg.class %>">
-	<img src="<%= msg.photo ? msg.photo : "/images/fillers/profile_blank_thumb.gif"%>" alt="" />
-	<span class="msg-block">
-		<b><%= msg.name %></b>
-		<span class="time"><%= msg.time %></span>
-		<span class="msg <%=msg.detclass ? msg.detclass : ''%>" <%= msg.mail ? "data-mail='"+msg.mail+"'" : ''%> <%= msg.phone ? "data-phone='"+msg.phone+"'" : ''%>><%= msg.msg %></span>
-	</span>
-</p>

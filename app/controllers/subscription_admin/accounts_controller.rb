@@ -8,6 +8,8 @@ class SubscriptionAdmin::AccountsController < ApplicationController
 
   def show
   	@account = Account.find(params[:id])
+    note_id = Helpdesk::Note.maximum(:id, :conditions => [ "account_id = ?", @account.id ])
+    @note = Helpdesk::Note.find_by_id(note_id)
   end
   
   def add_day_passes

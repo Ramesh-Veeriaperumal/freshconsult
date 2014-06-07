@@ -59,10 +59,13 @@
     <% else %>
       data['agent_collision_show'] = {
         ticket_path : "<%= helpdesk_ticket_path(ticket.display_id) %>",
-        ticket_reply_channel : "<%= agent_collision_ticket_reply_channel(ticket.display_id) %>"
+        ticket_id : "<%= ticket.display_id %>",
+        ticket_reply_channel : "<%= agent_collision_ticket_reply_channel(ticket.display_id) %>",
+        ticket_channel : "<%= agent_collision_ticket_channel(ticket.display_id) %>"
       }
       channels["<%= agent_collision_ticket_channel(ticket.display_id) %>"] = window.AgentCollisionShow.ticketChannelCallback;
       channels["<%= agent_collision_ticket_view_channel(ticket.display_id) %>"] = window.AgentCollisionShow.viewChannelCallback;
+      channels[ "<%= auto_refresh_channel %>"] = window.AutoRefreshShow.callback 
     <% end %>
     window.channels = channels;
     window.FreshdeskNode.data(data).addChannels(channels).init();

@@ -1,0 +1,23 @@
+<% unless current_account.twitter_handles_from_cache.blank? %>
+  <form action="#" name="search_social" id="search_social" class="form-inline">
+    <button class="btn searchico" type="submit"> <%= font_icon "search", :size => 18 %></button>
+    <%= font_icon "twitter", :size => 18 %>
+    <%= text_field_tag('search', '', :class => "tw-search select2", :id => "twitterquery", 
+    :"data-placeholder" => "#{t('admin.social.twitter_streams.include_helptext')}")%> 
+    <button id="settings-btn" type="button" class="btn btn-small settingsico">...</button>
+    <div id="advsearch-box" class="advsearch-box" style="display:none;">
+      <div class="clear advs-form">
+        <label for="ignore-keywords"><%= t('admin.social.twitter_streams.exclude_keywords') %> </label>
+        <%= text_field_tag('ignore_keywords', '', :class => "ignore-inputs select2", :id => "ignore-keywords", :placeholder => t('admin.social.twitter_streams.exclude_helptext'))%>
+        <label for="ignore-handles"><%= t('social.streams.search.exclude_handles') %>  </label>
+        <%= text_field_tag('ignore_handles', '', :class => "ignore-inputs select2", :id => "ignore-handles", :placeholder => t('admin.social.twitter_streams.handles_helptext'))%>
+        <div class="frm-ctrl">
+          <button id="submitSearch" class="btn btn-primary pull-right"> Search </button>
+        </div>
+      </div>
+    </div>
+    <div id="no_query" class = 'info-highlight center' style="display:none">
+      <%= t('social.streams.twitter.add_search_keywords')%>
+    </div>
+  </form>
+<% end %>

@@ -1,0 +1,85 @@
+<% content_for :helpcard do -%>
+	<%= render :partial => 'helpnote' %>
+<%-end %>
+<div class="form-horizontal">
+	<div class="control-group">
+		<label for="topic_title" class="control-label">
+			<%= t('topic.name') %>
+			<span class="required_star">*</span>
+			</label>
+		<div class="controls">
+			<%= form.text_field :title, :class => "required text", :tabindex => 10 %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="topic_body" class="control-label">
+			<%= t('message') %>
+			<span class="required_star">*</span>
+		</label>
+		<div class="controls flow-form">
+			<%= form.rich_editor(:body_html,
+						:class => 'required_redactor',
+						:value => !@topic.new_record? ? @topic.posts.first.body_html : "",
+						:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
+
+			<%= render :partial=> "discussions/shared/attachment_form", :locals => {
+										:attachments => @topic.new_record? ? [] : @topic.posts.first.attachments,
+										:show_delete => true
+									} %>
+		</div>
+	</div>
+
+	<% if is_application_installed?("screenr") %>
+		<div class="control-group">
+			<div class="controls">
+				<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+			</div>
+		</div>
+	<% end %>
+
+	<% if @topic.new_record? or privilege?(:view_admin) %>
+		<div id="topic_forum" class="control-group">
+	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
+	  		<div class="controls">
+	  			<%= form.select :forum_id, grouped_options_for_select(forum_options), {},
+	  							{:class => "select2 input-xlarge"} %>
+	  		</div>
+		</div>
+	<% end %>
+
+	<% if @topic.new_record? or privilege?(:view_admin) or current_user.moderator_of?(@topic.forum) %>
+
+	<div class="control-group">
+		<div class="controls">
+			<div class="vertical-alignment">
+				<%= form.check_box :sticky, :rel => 'toggle',  "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') %>
+			</div>
+			<div class="vertical-alignment pl5">
+				<b><%= t('topic.mark_as_sticky') %></b>
+				<div class="muted"><%= t('topic.sticky_info') %></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label for="topic_locked" class="control-label"></label>
+		<div class="controls">
+			<div class="vertical-alignment">
+				<%= form.check_box :locked, :rel => 'toggle',  "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') %>
+			</div>
+			<div class="vertical-alignment pl5">
+				<b><%= t('topic.locked') %></b>
+			</div>
+		</div>
+	</div>
+
+	<% end %>
+
+</div>
+
+<% javascript_tag do %>
+	jQuery("#topic_locked").click(function(ev){
+		jQuery("#monitor-topic-lable").toggle(!this.checked);
+	});
+	 jQuery('#topic_forum_id').val(<%= params[:forum_id] || @topic.forum_id %>)
+<% end %>

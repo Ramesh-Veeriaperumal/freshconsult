@@ -1,0 +1,5 @@
+page << "jQuery('#stream_userinfo').removeClass('sloading loading-block')";
+page << "jQuery('#stream_userinfo').empty()";
+
+page.replace_html "stream_userinfo", :partial => 'user_info'
+page << "jQuery('#stream_userinfo').show()";

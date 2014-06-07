@@ -1,0 +1,153 @@
+<div class="adm-social sts">
+  <div class="acc-form row-fluid">
+    <div class="span2"><label><%= t('admin.social.twitter_streams.stream_name') %></label></div>
+    <div class="span10">
+      <%= text_field(:twitter_stream, :name, :class => "text required span12", :value => twitter_stream.name)  %>
+    </div>
+  </div>
+</div>
+<div class="adm-social sts">
+  <div class="acc-form">
+    <h4 class="adm-title"><%= t('admin.social.twitter_streams.define_stream') %></h4>
+    <p><%= t('admin.social.twitter_streams.stream_brief') %> </p>
+  </div>
+  <div class="adm-social adm-bg bdr clearfix">
+    <div class="row-fluid">
+      <div class="form-horizontal">
+        
+        <div class="control-group span12">
+          <%= link_to t('admin.social.twitter_streams.preview_stream'), "#previewFeeds", :rel => "freshdialog", 
+                        :id => "preview", :class => "pull-right", :title => "Preview stream", :"data-template-footer" => "", :style => "display:none" %>
+          <label><%= t('admin.social.twitter_streams.includes') %> <span class="field-important ">*</span></label>
+          <%= text_field :twitter_stream, :includes, :value => twitter_stream.search_keys_to_s, :class => 'text required twt-stream-name', :style => "width: 100%", :placeholder => t('admin.social.twitter_streams.include_helptext') %>
+          
+          <a href="#" class="key-handles"><%= t('admin.social.twitter_streams.exclude_title') %></a>
+        </div>
+        
+        <div class="key-handles-container">
+          <div class="control-group span6">
+            <label><%= t('admin.social.twitter_streams.exclude_keywords') %></label>
+            <div>
+              <%= text_field :twitter_stream, :excludes, :value => twitter_stream.excludes_to_s, :class => 'text span12', :placeholder => t('admin.social.twitter_streams.exclude_helptext')%>
+            </div>
+          </div>
+
+          <div class="control-group span6">
+            <label><%= t('admin.social.twitter_streams.exclude_handles') %></label>
+            <div>
+              <%= text_field :twitter_stream, :filter, :value => twitter_stream.exclude_handles_to_s, :class => 'text span12', :placeholder => t('admin.social.twitter_streams.handles_helptext')%>
+            </div>
+          </div>
+        </div>
+
+          <div>
+           
+          <div class="control-group span6">
+            <label><%= t('admin.social.twitter_streams.reply_handle') %></label>
+            <%= select(:twitter_stream ,:social_id, current_account.twitter_handles_from_cache.collect {|p| [ p.screen_name, p.id ] },  {:include_blank => '...'} , :class => 'select2-container select2 span12') %>
+          </div>
+          
+          <div class="control-group span6">
+            <label><%= t('admin.social.twitter_streams.edit.visible_to') %><span class="field-important "> *</span></label>
+             <%= visibility_options(twitter_stream) %>
+          </div>
+          </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  jQuery(function() {
+    if(jQuery("#twitter_stream_excludes").val() != "" || jQuery("#twitter_stream_filter").val() != ""){
+      jQuery('.key-handles-container').show();
+    }
+  });
+
+  jQuery('.key-handles-container').change( function (e) {
+    e.preventDefault();
+    if(jQuery("#twitter_stream_excludes").val() == "" && jQuery("#twitter_stream_filter").val() == ""){
+      jQuery('.key-handles-container').hide();
+    }
+  });
+
+  jQuery('.key-handles').click( function (e) {
+    e.preventDefault();
+    jQuery('.key-handles-container').toggle();
+  });
+
+  jQuery("#twitter_stream_includes").select2({
+      tags: [],
+      tokenSeparators: [","],
+      formatNoMatches: function () {
+          return "  ";
+      }
+  });
+
+  jQuery("#twitter_stream_excludes").select2({
+      tags: [],
+      tokenSeparators: [","],
+      formatNoMatches: function () {
+          return "  ";
+      }
+  });
+
+  jQuery("#twitter_stream_filter").select2({
+      tags: [],
+      tokenSeparators: [","],
+      formatNoMatches: function () {
+          return "  ";
+      }
+  });
+
+  function getFilterData(data){
+    var filterData = new Array();
+    for(i=0; i < data.length-1; i++){
+      keyWord = data[i].innerText;
+      filterData.push(keyWord.substr(0,keyWord.length-1));
+    }
+    return filterData;
+  }
+  jQuery(".twt-stream-name").click(function(){
+    var _val = jQuery(this).select2("val");
+    
+    if( _val.length != 0) {
+      jQuery("#preview").show();
+    } else {
+      jQuery("#preview").hide();
+    }
+  });
+
+  jQuery("#preview").live("click", function(e){
+      e.preventDefault();
+      jQuery('#previewFeeds .modal-body').empty();
+      jQuery('#previewFeeds .modal-body').addClass('sloading loading-block');
+
+      var includes        = jQuery("#twitter_stream_includes").select2("val"),
+          excludes        = jQuery("#twitter_stream_excludes").select2("val"),
+          exclude_handles = jQuery("#twitter_stream_filter").select2("val");
+
+      jQuery.ajax({
+        type: 'POST',
+        url : '/admin/social/twitter_streams/preview',
+        data: {
+          includes: includes,
+          excludes: excludes,
+          exclude_twitter_handles: exclude_handles
+        },
+        datatype:'json',
+        success: function(data){
+          var _container = jQuery('#previewFeeds .modal-body'),
+              _results   = [];
+          for( i = 0; i < data.length; i++ ){
+            _results.push(JST['social_tweet'](data[i]));            
+          }
+          jQuery('#previewFeeds .modal-body').removeClass('sloading loading-block');
+          _container.append('<div id="streamTemplate" class="tw-streams">' + _results.join("") + '</div>');
+        }
+      });
+  });
+
+</script>

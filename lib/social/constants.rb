@@ -17,8 +17,9 @@ module Social::Constants
   TICKET_RULE_TYPE_KEYS_BY_TOKEN = Hash[*TICKET_RULE_TYPE.map{ |i| [i[0], i[2]] }.flatten]
 
   STREAM_FEEDS_ACTION = [
-    [:old, "Show old tweets", 0],
-    [:new, "Fetch new tweets", 1]
+    [:index, "Initial Call", 0],
+    [:show_old, "Show old feeds", 1],
+    [:fetch_new, "Fetch new feeds", 2]
   ]
 
   STREAM_FEEDS_ACTION_KEYS = Hash[*STREAM_FEEDS_ACTION.map{ |i| [i[0], i[2]] }.flatten]
@@ -82,5 +83,7 @@ module Social::Constants
   }
 
   STREAM_VOLUME_RETENION_PERIOD = 28.days
+  
+  MAX_FEEDS_THRESHOLD = 700
 
 end

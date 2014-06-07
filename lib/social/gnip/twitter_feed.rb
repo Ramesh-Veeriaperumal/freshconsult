@@ -1,11 +1,11 @@
 class Social::Gnip::TwitterFeed
 
   include Redis::GnipRedisMethods
-  include Social::Twitter::Util
   include Social::Gnip::Util
   include Social::Util
   include Gnip::Constants
   include Social::Twitter::Constants
+  include Social::Twitter::TicketActions
 
   attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, :twitter_user_id, :source
 
@@ -16,7 +16,6 @@ class Social::Gnip::TwitterFeed
       @tweet_obj = JSON.parse(tweet).symbolize_keys!
       @queue  = queue
       @source = SOURCE[:twitter]
-
       unless @tweet_obj.nil?
         @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
         if @tweet_obj[:actor]
@@ -36,7 +35,7 @@ class Social::Gnip::TwitterFeed
   end
 
   def process
-    unless @matching_rules.blank?
+    unless @matching_rules.blank? or @matching_rules.nil?
       @matching_rules.each do |rule|
         tag_array = rule["tag"].to_s.split(DELIMITER[:tags])
         tag_array.each do |tag|
@@ -67,18 +66,18 @@ class Social::Gnip::TwitterFeed
       convert_args = can_convert(account, args)
       convert_args[:convert] = false if self_tweeted?
       user = set_user if convert_args[:convert]
-
+      
       if reply?
         tweet = account.tweets.find_by_tweet_id(@in_reply_to)
-        if tweet.blank?
+        unless tweet.blank?
+          ticket  = tweet.get_ticket
+          user = set_user unless user
+          notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+        else
           if convert_args[:convert]
             tweet_requeued = requeue(@tweet_obj)
             notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) if !tweet_requeued
           end
-        else
-          ticket  = tweet.get_ticket
-          user = set_user unless user
-          notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
         end
       else
         notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args) if convert_args[:convert]
@@ -87,9 +86,9 @@ class Social::Gnip::TwitterFeed
       if !tweet_requeued
         dynamo_feed_attr = fd_info(notable, user)
         update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
-        update_dynamo(args, convert_args, dynamo_feed_attr)
+        update_dynamo(args, convert_args, dynamo_feed_attr, @tweet_obj)
       end
-      
+
       User.reset_current_user
       Account.reset_current_account
     end

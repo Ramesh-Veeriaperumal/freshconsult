@@ -13,13 +13,13 @@
 			</div>
 			<div class="topic-details span8 clear-left-margin">
 				<div>
-					<%= link_to h(post.topic.title), category_forum_topic_path(post.topic.forum.forum_category_id,post.forum_id,post.topic_id), :title => h(post.topic.title)%>
+					<%= link_to h(post.topic.title), discussions_topic_path(post.topic_id), :title => h(post.topic.title)%>
 				</div>
 				<div class='details'>
 					<%= t('contacts.post_created', 
 							:time => time_ago_in_words(post.updated_at), 
 							:forum_name => h(post.topic.forum.name), 
-							:forum_url => category_forum_path(post.topic.forum.forum_category_id,post.forum_id)).html_safe %>
+							:forum_url => discussions_forum_path(post.forum_id)).html_safe %>
 				</div>
 			</div>
 			<div class="span2 text-right muted">

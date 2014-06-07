@@ -115,7 +115,7 @@ class Gnip::RuleClient
           :matching_rule => {:tag => matching_rule.tag, :value => matching_rule.value},          
           :replay => @replay 
         }
-        DevNotification.publish(@notification_topic, "Updating a rule not in gnip" , params.to_json)
+        DevNotification.publish(@notification_topic, "Updating the rule already present in Gnip" , params.to_json)
         response = construct_response(RULE_ACTION[:add], matching_rule.value, matching_rule.tag, true)
       end
       return response

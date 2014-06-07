@@ -1,0 +1,54 @@
+<div class="list-query-panel">
+	<ul>
+		<li class="lf-item">
+			<% if privilege?(:delete_topic) %>
+				<div class="item-checkbox"><input type="checkbox" id="topic-select-all" /></div>
+			<% end %>
+		</li>
+		<li class="lf-item lf-btns hide" id="topic-bulk-action-btn">
+		  <input class="btn" type="button" id="topic-delete"
+				value="<%=t('delete')%>"
+				data-action-url='<%= destroy_multiple_discussions_topics_path %>'
+				data-method='delete' />
+			<input class="btn" type="button" id="topic-spam"
+				data-action-url='<%= spam_multiple_discussions_moderation_path %>'
+				value="<%=t('topic.mark_as_spam')%>"
+				data-method='put' />
+		</li>
+		<li class="lf-item lf-hover" id="lf-item-sort">
+			<div class="item-sort">
+				<%= topic_sort %>
+			</div>
+		</li>
+		<% unless @forum.announcement? %>
+		<li class="lf-item lf-filter lf-hover" id="lf-item-filter">
+			<div class="item-filter item-filter-stamps">
+				<span class="filter-link">
+					<%= t('topic.filtered_by')%> :
+					<strong>
+						<a id="filter-link">
+							<% filters = (params[:filter] || '').split(",") %>
+							<%= filters.blank? ? 
+										t('topic.all') : 
+										filters.map{ |s| t("topic.filter_#{s}") }.join(', ') %>
+						</a>
+					</strong>
+				</span>
+
+				<span class="filter-stamps hide">
+					<select class="select2 filter-select" id="filtered_by" multiple placeholder="<%= t('topic.select_stamps') %>">
+						<% @forum.stamp_filter.each do |stamp| %>
+							<option value="<%= stamp['id'] %>" <%= 'selected' if filters.include?(stamp['id'].to_s) %> ><%= stamp['text'] %></option>
+						<% end %>
+					</select>
+				</span>
+			</div>
+		<li>
+		<% end %>
+		<li class="lf-item-right">
+			<div class="item-matches">
+				<%= t('topic.showing_topics', :count => @topics.total_entries )%>
+			</div>
+		</li>
+	</ul>
+</div>

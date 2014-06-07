@@ -1,0 +1,11 @@
+<% show_count ||= false %>
+<% if attachments.present? %>
+<div class="attachments-wrap clearfix">
+	<% if show_count %>
+		<h5><strong><%= pluralize(attachments.size, t('attachment'), t('attachments'))%></strong></h5>
+	<% end %>
+	<ul class="attachment_list">
+		<%= render :partial => '/discussions/shared/attachment', :collection => attachments, :locals => {:show_delete => true} %>
+	</ul>
+</div>
+<% end %>

@@ -111,7 +111,7 @@ class Subscription < ActiveRecord::Base
   #Monthly revenue in local currency
   def self.fetch_monthly_revenue(currency)
     subscriptions = paying_subscriptions.filter_with_currency(currency)
-    subscriptions.inject(0) { |sum, subscription| sum + cmrr_in_local_currency }
+    subscriptions.inject(0) { |sum, subscription| sum + subscription.cmrr_in_local_currency }
   end
 
   def self.free_agent_count
@@ -204,6 +204,14 @@ class Subscription < ActiveRecord::Base
   def sprout_classic?
     subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_classic]
   end
+  
+  def blossom?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom]
+  end
+  
+  def blossom_classic?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_classic]
+  end
 
   def classic?
     subscription_plan.classic
@@ -229,7 +237,7 @@ class Subscription < ActiveRecord::Base
       twitter_callback = "cleanup"
     elsif (old_state == "suspended" && state != "suspended") || !non_social_plans
       facebook_callback =  "subscribe_realtime"
-      twitter_callback = "subscribe_to_gnip"
+      twitter_callback = "build_default_streams"
     end
     update_gnip_subscription(twitter_callback) if twitter_callback
     update_facebook_subscription(facebook_callback) if facebook_callback

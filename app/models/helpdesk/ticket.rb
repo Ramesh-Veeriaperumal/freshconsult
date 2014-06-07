@@ -135,11 +135,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }            
 
   
-  named_scope :twitter_dm_tickets,
-              :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and 
+  named_scope :twitter_dm_tickets, lambda{ |twitter_handle_id| {
+    :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and 
                   helpdesk_tickets.account_id = social_tweets.account_id",
-              :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? ",
-                      'Helpdesk::Ticket','dm']
+              :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? and social_tweets.twitter_handle_id =?",
+                      'Helpdesk::Ticket','dm', twitter_handle_id] } 
+  }
               
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }

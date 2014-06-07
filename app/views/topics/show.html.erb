@@ -141,11 +141,10 @@
 						</div>
 					<% unless first_post.attachments.empty? %>
   					<span class="seperator"></span>
-					  <strong><%= first_post.attachments.size %> attachment(s)</strong>
-					  <ul class="attachment_list">
-              <%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments,
-                :locals => { :url => [first_post], :show_delete => privilege?(:edit_topic, @topic) } %>
- 					  </ul>
+					  <strong><%= first_post.attachments.size %> <%= t('attachments') %></strong> 
+					  
+					  <%= attachment_container(first_post.attachments, privilege?(:edit_topic, @topic), "article", nil) %>
+
  					<% end %>
 					<% if @topic.published? and  !@topic.forum.announcement? %>
 						<div class="status" id="voting_container">

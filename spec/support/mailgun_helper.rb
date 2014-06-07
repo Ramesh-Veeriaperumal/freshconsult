@@ -50,9 +50,9 @@ module MailgunHelper
 			if large
 				buffer = ("a" * 1024).freeze
 				file = File.open("spec/fixtures/files/temp/tmp15m.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment-#{i+1}"] = fixture_file_upload("files/temp/tmp15m.txt", 'text')
+				attach["attachment-#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/temp/tmp15m.txt", 'text')
 			else
-				file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+				file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
 				attach["attachment-#{i+1}"] = file
 			end
 		end

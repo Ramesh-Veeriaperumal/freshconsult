@@ -21,7 +21,9 @@
 		</h2>
 		{% if portal.user %}
 			<div class="toolbar-actions btn-group" id="topic-toolbar">
-				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">{% translate ticket.support.reply %}</a>
+				{% unless topic.locked? %}
+					<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">{% translate ticket.support.reply %}</a>
+				{% endunless %}
 				{{ topic | follow_topic_button }}
 				{{ topic | link_to_topic_edit }}				
 				{{ topic | link_to_mark_as_solved }}
@@ -46,23 +48,7 @@
 					{{ first_post.body_html }}
 				</div>
 
-				{% if first_post.attachments.size > 0 %}
-				<div class="cs-g-c attachments" id="post-{{first_post.id}}-attachments">
-					{% for attachment in first_post.attachments %}
-						<div class="cs-g-3 attachment">
-							<img src="{{ attachment.thumbnail }}" 
-								 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
-								 width="50px" height="50px" alt="{{ attachment.filename }}" />
-							<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
-								{{ attachment.filename }}
-							</a>
-							<div class="help-text file-size">
-								{{ attachment.size }}
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-				{% endif %}
+				{{ first_post | post_attachments }}
 
 				{% assign best_answer = topic.best_answer %}
 				{% if best_answer != nil %}
@@ -86,24 +72,7 @@
 										{{ best_answer.body_html }}
 									</div>
 
-									{% if best_answer.attachments.size > 0 %}
-									<hr />
-									<div class="cs-g-c attachments" id="post-{{best_answer.id}}-attachments">
-										{% for attachment in best_answer.attachments %}
-											<div class="cs-g-3 attachment">
-												<img src="{{ attachment.thumbnail }}" 
-													 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
-													 width="50px" height="50px" alt="{{ attachment.filename }}" />
-												<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
-													{{ attachment.filename }}
-												</a>
-												<div class="help-text file-size">
-													{{ attachment.size }}
-												</div>
-											</div>
-										{% endfor %}
-									</div>
-									{% endif %}
+									{{ best_answer | post_attachments }}
 								</div>
 							<div>
 						</section>
@@ -144,24 +113,7 @@
 							{{ post.body_html }}
 						</div>
 
-						{% if post.attachments.size > 0 %}
-						<hr />
-						<div class="cs-g-c attachments" id="post-{{post.id}}-attachments">
-							{% for attachment in post.attachments %}
-								<div class="cs-g-3 attachment">
-									<img src="{{ attachment.thumbnail }}" 
-										 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
-										 width="50px" height="50px" alt="{{ attachment.filename }}" />
-									<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
-										{{ attachment.filename }}
-									</a>
-									<div class="help-text file-size">
-										{{ attachment.size }}
-									</div>
-								</div>
-							{% endfor %}
-						</div>
-						{% endif %}
+						{{ post | post_attachments }}
 					</div>
 					<div class="p-content hide" id="post-{{post.id}}-edit">
 						<div class="sloading loading-small loading-block"></div>

@@ -5,11 +5,12 @@
 
 <div class="body">
 	<div class="mail_content">
-		<b>New Topic</b> in forum <%= link_to @topic.forum.name, category_forum_url(@topic.forum.forum_category.id, @topic.forum.id, :host => @user.account.host) %>
+		<b>New Topic</b> in forum <%= link_to @topic.forum.name, 
+		discussions_forum_url(@topic.forum.id, :host => @user.account.host) %>
 	</div>
 	<div class="forum_content">
 
-		<%= link_to @topic.title, category_forum_topic_url(@topic.forum.forum_category.id, @topic.forum.id, @topic.id, :host => @user.account.host), :class => "topic_title" %><br><br>
+		<%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @user.account.host), :class => "topic_title" %><br><br>
 		<div class="profile_img">
 			<img src="<%= profile_image_user_url(@user.id, :host => @user.account.host)%>" rel="lazyloadimage" width="30" height="30" />
 		</div> 
@@ -23,7 +24,7 @@
 		<br />
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", category_forum_topic_url(@topic.forum.forum_category.id, @topic.forum.id, @topic.id, :host => @user.account.host)<<"#reply-to-post", :class => "reply" %>
+		<%= link_to "Reply", discussions_topic_url(@topic.id, :host => @user.account.host)<<"#reply-to-post", :class => "reply" %>
 		<%= link_to "Follow Topic", toggle_monitorship_url("topic", @topic.id, "follow", :host => @user.account.host), :class =>"follow_topic" %>
 		<div class="footer-text">
 			<%= link_to "Turn Off", toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @user.account.host) %>

@@ -165,12 +165,7 @@
 <% end %>
 
 <script type="text/javascript">
-    jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){ 
-          if(!jQuery('#fwd_include_cc_<%=cntid%>').is(':checked'))
-            jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
-          if(!jQuery('#fwd_include_bcc_<%=cntid%>').is(':checked'))
-            jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');  
-          }).validate()
+    jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){}).validate()
 </script>
 
 <% end %>

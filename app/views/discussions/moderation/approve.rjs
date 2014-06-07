@@ -1,2 +1,8 @@
-page << "jQuery(jQuery('##{dom_id(@post)} .tooltip').data('twipsy').$tip).remove();"
-page << "jQuery('##{dom_id(@post)}').fadeOut(500, function(){ jQuery(this).remove() });"
+page << "if(jQuery('##{dom_id(@post)}').data('user') != null){
+				jQuery('##{dom_id(@post)}').html('#{escape_javascript( render :partial => 'after_approve')}');
+				App.Discussions.Moderation.approvePost(#{@post.id}, 5);
+			}else{
+				jQuery('.spam_#{dom_id(@post)}').replaceWith('#{escape_javascript( render :partial => 'discussions/topics/post', :locals => { :post => @post })}')
+			}"
+
+page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"

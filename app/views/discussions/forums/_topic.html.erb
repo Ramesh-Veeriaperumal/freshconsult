@@ -1,0 +1,56 @@
+<div class="comm-item row-fluid clear-left-margin">
+	<div class="topic-list-checkbox">
+		<% if privilege?(:delete_topic) %>
+				<input type="checkbox" id="topic-<%= topic.id %>" name="ids[]" value="<%= topic.id %>"/>
+		<% end %>
+	</div>
+	<div class="comm-item-main span8 clear-left-margin <%= 'no-checkbox' unless privilege?(:delete_topic) %>">
+		<%= user_avatar(topic.user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+		<div class="comm-item-title">
+			<%= pjax_link_to(h(topic.title), discussions_topic_path(topic), :class => "latest_reply", :"data-tip-url" => latest_reply_discussions_topic_path(topic.id))%>
+			<% if topic.sticky? %>
+				<span class="label"><%= t('topic.sticky') %></span>
+			<% end %>
+		</div>
+		<div class="comm-item-details muted">
+			<%= t('topic.details',
+					:user_path => link_to_user(topic.user, :class => 'hover-link'),
+					:created_time => topic.created_at.to_i,
+					:time_ago => formated_date(topic.created_at) ).html_safe %>
+
+			<% if topic.posts_count > 1 %>
+				<%= t('topic.last_post',
+							:user_path => link_to_user(topic.last_post.user, :class => 'hover-link'),
+							:created_time => topic.last_post.created_at.to_i,
+							:time_ago => formated_date(topic.last_post.created_at),
+							:last_reply => pjax_link_to("#{t('topic.last_reply')}", "#{discussions_topic_path(topic)}/page/last#post_#{topic.last_post.id}")
+					).html_safe %>
+			<% end %>
+		</div>
+	</div>
+	<div class="span3 pull-right mt6 pr15">
+		<% if !@forum.announcement? && topic.stamp.present?  %>
+			<div class="span6 stamp-badge pull-right align-right">
+					<span class="stamp stamp_type_<%=topic.stamp_type%> align-right">
+						<%= topic.stamp %>
+					</span>
+			</div>
+		<% end %>
+		<div class="span6 pr15">
+			<% unless @forum.announcement? %>
+			<span class="span6 align-right pull-right">
+				<span class="meta-component <%= 'faded' if topic.user_votes == 0 %>">
+					<%= font_icon "like", :size => 18 %>
+					<%= topic.user_votes %>
+				</span>
+			</span>
+			<% end %>
+			<span class="span6 align-right pull-right">
+				<span class="meta-component <%= 'faded' if topic.reply_count == 0 %>">
+					<%= font_icon "comment-multi", :size => 18 %>
+					<%= topic.reply_count %>
+				</span>
+			</span>
+		</div>
+	</div>
+</div>

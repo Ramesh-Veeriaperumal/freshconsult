@@ -1,0 +1,34 @@
+<% post = topic.last_post %>
+<% post_type = topic.posts_count < 2 ? 'new_topic' : 'reply' %>
+<div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.id %>">
+	<div class="pull-left ml5">
+		<%= user_avatar(post.user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+	</div>
+	<div class="comm-item-main row-fluid">
+		<div class="comm-item-main-content">
+			<div>
+				<span class="label <%= post_type %>">
+								<%= t(".tags.#{post_type}") %></span>
+				<span class='muted'>
+					<abbr data-livestamp='<%= post.created_at.to_i %>'><%= formated_date(post.created_at) %></abbr>,
+					In <%= pjax_link_to topic.forum.name, discussions_forum_path(topic.forum_id), :class => 'cl50' %>
+				</span>
+			</div>
+			<div class="comm-item-details">
+				<strong><%= link_to_user(post.user, :class => 'hover-link') %></strong>
+				<%= t(".actions.#{post_type}") %>
+				
+				<%= pjax_link_to topic.title, "#{discussions_topic_path(topic.id)}/page/last/##{dom_id(post)}" %>
+			</div>
+			<div class="post-desc pl20 mt5">
+				<%= truncate( post.body, :length => 400 )%>
+			</div>
+		</div>
+	</div>
+	<div class="post-action-bar">
+			<a class="<%= font_class('reply', 24) %> tooltip"
+					href="<%= discussions_topic_path(topic.id) %>/page/last/#reply-to-post"
+					data-track="Reply from Activities"
+					data-pjax="#body-container" title="<%= t('discussions.shared.topic.tags.reply')%>" ></a>
+	</div>
+</div>

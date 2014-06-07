@@ -99,6 +99,7 @@ Ext.application({
                         timerContainer
         ]);
 
+
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_portal = data[0].raw.portal;
             FD.current_account = data[0].raw.account;
@@ -106,6 +107,11 @@ Ext.application({
             if(FD.current_user && FD.current_user.is_customer) {
                 FD.Util.initCustomer();
             }
+            Ext.Ajax.setDefaultHeaders({
+                'X-CSRF-Token' : unescape(FD.Util.getCookie("csrf_token"))
+            });
+            FD.Util.create_meta_tag(unescape(FD.Util.getCookie("csrf_token")));
+            FD.Util.deleteCookie("csrf_token",FD.Util.getCookie("csrf_token"));
             document.title = FD.current_portal && FD.current_portal.name+' : Helpdesk';
             Ext.fly('appLoadingIndicator').destroy();
         }});
@@ -114,6 +120,9 @@ Ext.application({
         Ext.getStore('InitReplyEmails').load({callback:function(data, operation, success){
             FD.reply_emails = data;
         }});
+
+
+
 
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
