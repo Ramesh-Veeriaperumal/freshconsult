@@ -50,7 +50,7 @@ def execute_sla(task_name)
       puts "Error occured #{e}"  
       FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rake",:recipients => "pradeep.t@freshdesk.com"})      
     end
-    rake_logger.info "rake=SLA" unless rake_logger.nil?
+    rake_logger.info "rake=#{task_name} SLA" unless rake_logger.nil?
     current_time = Time.now.utc
     queue_name = SLA_TASK[task_name][:queue_name]
     if sla_should_run?(queue_name)
