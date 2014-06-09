@@ -11,6 +11,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                        "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
 
+  WIDTH = 10000
+  HEIGHT = 10000
+  MAX_DIMENSIONS = 16000000 
+
   set_table_name "helpdesk_attachments"
   belongs_to_account
 
@@ -36,7 +40,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
  
-  
     #before_validation_on_create :set_random_secret
     before_post_process :image?
     #before_post_process :set_content_dispositon
@@ -69,14 +72,31 @@ class Helpdesk::Attachment < ActiveRecord::Base
     options.reverse_merge! :expires => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
     AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
+
+  def valid_image?
+    begin
+      file_path = content.queued_for_write[:original].path
+      dimensions = Paperclip::Geometry.from_file(file_path)
+      puts 'File Path: '+file_path
+      puts 'Detected Size: '+dimensions.width.to_s+'x'+dimensions.height.to_s
+      #errors.add('Width is higher than expected.') unless (dimensions.width <= WIDTH)
+      #errors.add('Height is higher than expected.') unless (dimensions.height <= HEIGHT)
+      #errors.add('Pixels are higher than expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+      (dimensions.width <= WIDTH) and (dimensions.height <= HEIGHT) and ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+    rescue Exception => e
+      puts 'Validation Error Occured: '
+      puts e
+      false
+    end
+  end
  
   def image?
-    (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
+    (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880) and (valid_image?)
   end
 	
-	def audio?
-		(!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
-	end
+  def audio?
+    (!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
+  end
 
   def attachment_sizes
    if self.description == "logo"
