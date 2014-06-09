@@ -1,0 +1,22 @@
+<% content_for :layoutType do %>community<% end %>
+<div class="row-fluid hamburger">
+  <%= sidebar_toggle("mt4") %>
+  <h3 class="lead"><%= t('topic.edit') %></h3>
+</div>
+<%= error_messages_for :topic %>
+<% form_for @topic,
+     :url  => discussions_topic_path(@topic),
+    :html => {:multipart => true, :method => :put } do |f| -%>
+
+  <%= render :partial => "form", :object => f %>
+
+  <div class="button-container">
+    <% if privilege?(:delete_topic, @topic) %>
+      <div class="pull-left">
+        <%= link_to(t('delete'), discussions_topic_path(@topic) , :class => "btn" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %>
+      </div>
+    <% end %>
+    <%= pjax_link_to(t('cancel') , discussions_topic_path(@topic), :class => "btn" ) %>
+    <%= f.submit t('save'), :class => "btn btn-primary" %>
+  </div>
+<% end -%>

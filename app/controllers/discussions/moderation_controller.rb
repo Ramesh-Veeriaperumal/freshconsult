@@ -1,20 +1,41 @@
 class Discussions::ModerationController < ApplicationController
 
+	helper DiscussionsHelper
 
 	before_filter :set_selected_tab
-	before_filter :load_post, :only => [:approve, :mark_as_spam]
+	before_filter :fetch_counts, :only => :index
+	before_filter :default_scope, :only => :index
+	before_filter :load_posts, :only => :index
+	before_filter :load_post, :only => [:approve, :mark_as_spam, :ban, :restore_contact]
 	before_filter { |c| c.requires_feature :forums }
 
 	REPORT = { :ham => true, :spam => false }
 
 	def index
-		@posts = current_account.posts.unpublished_spam.paginate(:page => (params[:page] || 1))
+		@page_title = t('discussions.moderation.page_title')
 	end
 
 	def approve
+		redirect_filter = @post.spam? ? :spam : :waiting
+		report_post(@post, REPORT[:ham]) if @post.spam?
 		@post.approve!
 
-		report_post(@post, REPORT[:ham])
+		respond_back(discussions_moderation_filter_path(:filter => redirect_filter))
+	end
+
+	def ban
+		# Remove Contact
+		@post.user.update_attribute(:deleted, true)
+
+		# Mark other posts by the same user as spam
+		@post.user.posts.each do |p|
+			unless p.spam?
+				p.mark_as_spam!
+				report_post(p, REPORT[:spam])
+			end
+		end
+
+		respond_back
 	end
 
 	def empty_folder
@@ -24,14 +45,15 @@ class Discussions::ModerationController < ApplicationController
 		Resque.enqueue(Workers::Community::EmptyModerationTrash, {:account_id => current_account.id, :user_id => current_user.id })
 
 		flash[:notice] = t('discussions.moderation.flash.empty_folder')
-		redirect_to categories_path
+		redirect_to discussions_path
 	end
 
 	def mark_as_spam
 		@post.mark_as_spam!
-
 		report_post(@post, REPORT[:spam])
-		redirect_to :back
+
+		respond_back
+
 	end
 
 	def spam_multiple
@@ -40,17 +62,52 @@ class Discussions::ModerationController < ApplicationController
 				item.posts.first.mark_as_spam!
 				report_post(item.posts.first, REPORT[:spam])
 			end
-		  	flash[:notice] = I18n.t('topic.bulk_spam')
-	    end
+	  	flash[:notice] = I18n.t('topic.bulk_spam')
+    end
 		redirect_to :back
 	end
 
 	private
 
+		def default_scope
+			if params[:filter].blank?
+				if current_account.features?(:moderate_all_posts) || current_account.features?(:moderate_posts_with_links)
+					params[:filter] = :waiting
+				else
+					params[:filter] = :spam
+				end
+			end
+		end
+
+		def respond_back(html_redirect = :back)
+			fetch_counts
+
+			respond_to do |format|
+				format.html { redirect_to html_redirect}
+				format.js
+			end
+		end
+
 		def set_selected_tab
 			@selected_tab = :forums
 			@page_title = t('discussions.moderation.spam_folder')
 		end
+
+		def fetch_counts
+			@counts = {}
+			Post::SPAM_SCOPES.each do |key, filter|
+				@counts[key] = current_account.posts.send(filter).count
+			end
+		end
+
+		def load_posts
+			@posts = current_account.posts.send(filter_scope).include_topics_and_forums.paginate(:page => [params[:page].to_i, 1].max )
+		end
+
+		def filter_scope
+			@moderation_scope ||= Post::SPAM_SCOPES.fetch(params[:filter].to_s.downcase.to_sym, Post::SPAM_SCOPES[:waiting])
+		end
+
 
 		def load_post
 			@post = current_account.posts.find(params[:id])

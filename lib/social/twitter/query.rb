@@ -14,7 +14,6 @@ class Social::Twitter::Query
   end
 
   private
-
   def includes_string
     includes = @includes.map { |q| q.split(" ").length > 1 ? "(#{q.strip})" : q.strip }
     includes.join("#{TWITTER_RULE_OPERATOR[:or]}").strip
@@ -29,7 +28,7 @@ class Social::Twitter::Query
   end
 
   def filter_params(params)
-    (params || []).delete_if {|param| param.eql?("")}.sort!
+    (params || []).delete_if { |param| param.eql?("")}.sort!
   end
 
 end

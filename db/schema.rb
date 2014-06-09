@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
     t.text     "supported_languages"
     t.integer  "api_limit",           :default => 1000
     t.integer  "date_format",                       :default => 1
+    t.text     "additional_settings"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -907,6 +908,17 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
 
   add_index "google_domains", ["domain"], :name => "index_google_domains_on_domain", :unique => true
 
+
+  create_table "group_accesses", :id => false, :force => true do |t|
+    t.integer "group_id",   :limit => 8, :null => false
+    t.integer "access_id",  :limit => 8, :null => false
+    t.integer "account_id", :limit => 8, :null => false
+  end
+
+  add_index "group_accesses", ["access_id"], :name => "index_group_accesses_on_access_id"
+  add_index "group_accesses", ["account_id"], :name => "index_group_accesses_on_account_id"
+  add_index "group_accesses", ["group_id"], :name => "index_group_accesses_on_group_id"
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -922,6 +934,17 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
+
+  create_table "helpdesk_accesses", :force => true do |t|
+    t.string   "accessible_type"
+    t.integer  "accessible_id",   :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "access_type",                  :default => 0
+  end
+
+  add_index "helpdesk_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_helpdesk_accesses_on_accessibles"
 
   create_table "helpdesk_activities", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8, :null => false
@@ -2400,6 +2423,17 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
+  create_table "user_accesses", :id => false, :force => true do |t|
+    t.integer "user_id",    :limit => 8, :null => false
+    t.integer "access_id",  :limit => 8, :null => false
+    t.integer "account_id", :limit => 8, :null => false
+  end
+
+  add_index "user_accesses", ["access_id"], :name => "index_user_accesses_on_access_id"
+  add_index "user_accesses", ["account_id"], :name => "index_user_accesses_on_account_id"
+  add_index "user_accesses", ["user_id"], :name => "index_user_accesses_on_user_id"
+  
 
   create_table "user_emails", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false

@@ -1,0 +1,34 @@
+<% remote_form_for @post, 
+			:url => discussions_topic_post_path(:topic_id => @post.topic_id, :id => @post),
+			:before => "if (!jQuery(this).valid()) { return false; }",
+			:html => { 
+				:method => :put, 
+				:rel=> "post-update", 
+				:class => 'cnt' 
+			} do |f| -%>
+	<%= f.rich_editor 	:body_html, 
+						:class => "required_redactor", :height => "150px", 
+						:index => @post.id, 'editor-type' => :forum  %>
+	<% if is_application_installed?("screenr") %>
+		<br>
+			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+		<% end %>
+	<div class="button-container">
+		<%= submit_tag t('cancel'), {
+					:name => 'reset',
+					:rel => 'post-edit-cancel',
+					'data-id' => @post.id,
+					:id => "reset_button_#{@post.id}",
+					:type => "reset",
+					:class => "btn btn-small"
+				} %>
+		<%= submit_tag(t("save"), :class => "btn btn-primary btn-small", 'data-id' => @post.id, :id => "save_button_#{@post.id}") %>
+	</div>
+<% end -%>
+<% javascript_tag do %>
+	(function($) {
+		$("#reset_button_" + <%= @post.id.to_s %>).data('html',
+							$('#post_' + <%= @post.id.to_s %> +'_body_html').val());
+		$('#post_<%= @post.id %>_body_html').getEditor().focus();
+	})(jQuery)
+<% end %>

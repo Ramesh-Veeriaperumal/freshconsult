@@ -1,0 +1,46 @@
+<% content_for :layoutType do %>community discussions topic-show<% end %>
+
+<% content_for :sticky_right do %>
+	<% if @topic.published? %>
+		<% unless @topic.locked? %>
+			<%= render :partial => 'discussions/topics/components/default_actions' %>
+		<% else %>
+			<%= render :partial => 'discussions/topics/components/locked_actions' %>
+		<% end %>
+	<% else %>
+		<%= render :partial => 'discussions/topics/components/spam_actions' %>
+	<% end %>
+<% end %>
+
+<%= render :partial => '/discussions/shared/sticky', :locals => { :page => :topic } %>
+
+<div class="community-wrapper">
+	<%= render :partial => 'sidebar' %>
+	<div class="maincontent">
+		<%= render :partial => 'title_meta' %>
+
+		<div class="conversation_thread <%= 'topic-locked' unless @topic.published? %>" id="topic_thread">
+			<% if @topic.published? %>
+				<%= render :partial => 'post', :collection => @posts %>
+			<% else %>
+				<%= render :partial => 'post', :object => @first_post %>
+			<% end %>
+		</div>
+		<% if @topic.published?  %>
+		<div class="conversation_thread" id="new-reply">
+			<%= render :partial => 'reply_form' %>
+		</div>
+
+		<%= will_paginate @posts, :renderer => BootstrapPaginationRenderer,
+															:previous_label => "<b class='arrow-left'></b>",
+															:next_label => "<b class='arrow-right'></b>",
+															:class => "pagination pagination-centered" %>
+		<% end %>
+
+	</div>
+</div>
+<script type="text/javascript">
+jQuery('body').one('assetLoaded.fjax', function() {
+	App.Discussions.Sidebar.setActiveForumAs(<%= @forum.id %>);
+})
+</script>

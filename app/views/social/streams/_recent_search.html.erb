@@ -1,0 +1,14 @@
+<% unless @recent_search.blank? %>
+  <h4 class="title pane-title"><%= t('social.streams.recent_searches')%></h4>
+  <% @recent_search.each do |search| %>
+    <p class="query-list">
+        
+      <a href="#" id="query" data-exclude-handles="<%= search['handles'].join(',') %>" 
+          data-exclude-keywords ="<%= search['keywords'].join(',') %>" 
+          data-query="<%=search['query'].join(',')%>">
+          <%= truncate(search["query"].join(" OR ").strip, :length => 60)%> 
+      </a>
+       
+    </p>
+  <% end %>
+<% end %>

@@ -21,7 +21,9 @@
 		</h2>
 		{% if portal.user %}
 			<div class="toolbar-actions btn-group" id="topic-toolbar">
-				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">{% translate ticket.support.reply %}</a>
+				{% unless topic.locked? %}
+					<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">{% translate ticket.support.reply %}</a>
+				{% endunless %}
 				{{ topic | follow_topic_button }}
 				{{ topic | link_to_topic_edit }}				
 				{{ topic | link_to_mark_as_solved }}

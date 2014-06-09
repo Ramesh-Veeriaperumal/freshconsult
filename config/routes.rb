@@ -11,6 +11,7 @@
 
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
+  map.callback '/auth/google_login/callback', :controller => 'google_login', :action => 'create_account_from_google'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
@@ -38,7 +39,7 @@
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
-
+  
   map.resources :agents, :member => { :delete_avatar => :delete ,
                                       :toggle_shortcuts => :put,
                                       :restore => :put,
@@ -70,7 +71,7 @@
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
 
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
-
+  
   map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
@@ -109,7 +110,7 @@
   map.resources :email, :only => [:new, :create]
   map.resources :mailgun, :only => :create
   map.resources :password_resets, :except => [:index, :show, :destroy]
-  map.resources :sso, :collection => {:login => :get, :facebook => :get}
+  map.resources :sso, :collection => {:login => :get, :facebook => :get, :google_login => :get}
   map.resource :account_configuration
 
   map.namespace :integrations do |integration|
@@ -178,7 +179,12 @@
       freshfone.resources :numbers, :collection => { :purchase => :post }
       freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
     end
-    admin.resources :roles
+    admin.resources :roles    
+    admin.namespace :social do |social|
+      social.resources :streams, :controller => 'streams', :only => :index
+      social.resources :twitter_streams, :controller => 'twitter_streams', :member => {:delete_ticket_rule => :post}
+      social.resources :twitters, :controller => 'twitter_handles', :collection => {:authdone => :any}
+    end
     admin.resources :mailboxes
     admin.namespace :mobihelp do |mobihelp|
       mobihelp.resources :apps
@@ -252,11 +258,21 @@
 
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
+                :collection =>  { :show => :any, :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :gnip, :controller => 'gnip_twitter',
                 :collection => {:reconnect => :post}
+                
+    social.resources :streams, 
+                :collection => { :stream_feeds => :get, :show_old => :get, :fetch_new => :get, :interactions => :any }
+    
+    social.resources :welcome, :controller => 'welcome',
+                :only => :index, :collection => { :get_stats => :get, :enable_feature => :post }
+                
+    social.resources :twitter,
+                :collection => {  :twitter_search => :get, :show_old => :get, :fetch_new => :get, :create_fd_item => :post,
+                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post  }
   end
 
   #SAAS copy starts here
@@ -396,6 +412,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get,
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
 
+
       ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post, :mobihelp => :post}
@@ -470,7 +487,7 @@
   end
 
   map.resources :api_webhooks, :as => 'webhooks/subscription'
-
+  
   map.namespace :solution do |solution|
     solution.resources :categories, :collection => {:reorder => :put}  do |category|
       category.resources :folders, :collection => {:reorder => :put}  do |folder|
@@ -486,9 +503,29 @@
   map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
   map.resources :topics, :posts, :monitorship
 
-  map.namespace :discussions do |discussions|
-    discussions.resources :moderation, :collection => { :empty_folder => :delete, :spam_multiple => :put }, :member => {:approve => :put, :mark_as_spam => :put }
+  map.namespace :discussions do |discussion|
+    discussion.resources :forums, :collection => {:reorder => :put}, :except => :index
+    discussion.resources :topics,
+        :except => :index,
+        :member => { :toggle_lock => :put, :latest_reply => :get, :update_stamp => :put,:remove_stamp => :put, :vote => :put, :destroy_vote => :delete },
+        :collection => {:destroy_multiple => :delete } do |topic|
+      discussion.connect "/topics/:id/page/:page", :controller => :topics, :action => :show
+      discussion.topic_component "/topics/:id/component/:name", :controller => :topics, :action => :component
+
+      topic.resources :posts, :except => :new, :member => { :toggle_answer => :put }
+      topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
+
+    end
+    discussion.resources :moderation,
+      :collection => { :empty_folder => :delete, :spam_multiple => :put },
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
+
+    discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
   end
+
+  map.resources :discussions, :collection => { :your_topics => :get, :sidebar => :get, :categories => :get, :reorder => :put }
+
+  map.resources :discussions
 
   %w(forum).each do |attr|
     map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
@@ -542,12 +579,12 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
+      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put }
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
         :action => :show
-      discussion.resources :forums, :only => :show
-      discussion.resources :topics, :except => :index, :member => { :like => :put,
+      discussion.resources :topics, :except => :index, :member => { :like => :put, :hit => :get,
           :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put },
           :collection => {:my_topics => :get} do |topic|
         discussion.connect "/topics/my_topics/page/:page", :controller => :topics,
@@ -616,6 +653,9 @@
     mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
+
+  map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   map.root :controller => "home"
   #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'

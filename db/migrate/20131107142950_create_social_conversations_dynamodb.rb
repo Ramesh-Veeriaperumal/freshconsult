@@ -9,7 +9,7 @@ class CreateSocialConversationsDynamodb < ActiveRecord::Migration
       properties = DYNAMO_DB_CONFIG[table]
       name = Social::DynamoHelper.select_table(table, time)
 
-      Social::DynamoHelper.create_table(name, schema[:hash], schema[:range], properties["read_capacity"], properties["write_capacity"])
+      Social::DynamoHelper.create_table(name, schema[:hash], schema[:range], properties["start_read_capacity"], properties["write_capacity"])
     end
   end
 

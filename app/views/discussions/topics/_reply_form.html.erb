@@ -1,0 +1,38 @@
+<div class="conversation">
+	<%= link_to_function user_avatar(current_user), "return false;" , :class => 'avatar-wrap' %>
+	<div class="post">
+		<div id="pseudo-reply" rel="topic-reply" class="sub-lead vertical-alignment">
+			<a><%=t('reply')%></a>
+		</div>
+		<div id="reply-box">
+			<% form_for @post, :url => discussions_topic_posts_path(@topic), :html => {:multipart => true, :rel => :validate} do |f| %>
+			<div class="row-fluid topic-reply">
+				<h5 class="sub-lead"><%=t('reply')%></h5>
+				<ul class="unstyled form-inline flow-form">
+					<li class="control-group">
+						<div class="controls">
+							<%= f.rich_editor  :body_html, :height => "200px", :class=>"required_redactor", 'editor-type' => :forum %>
+						</div>
+					</li>
+					<li class="control-group">
+						<div class="controls">
+							<%= render :partial=> "discussions/shared/attachment_form" %>
+						</div>
+					</li>
+
+				</ul>
+				<% if is_application_installed?("screenr") %>
+				<div class="pt10 pull-left">
+						<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
+				</div>
+				<% end %>
+
+				<div class="button-container pull-right">
+					<%= content_tag :button, t('cancel'), :rel => 'topic-reply-cancel' , :class => "btn cancel_btn" %>
+					<%= f.submit t('reply'), { :class => "btn  btn-primary", 'data-loading-text' => t('saving') } %>
+				</div>
+			</div>
+			<% end %>
+		</div>
+	</div>
+</div>

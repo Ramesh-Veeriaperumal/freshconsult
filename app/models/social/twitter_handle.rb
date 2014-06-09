@@ -11,7 +11,8 @@ class Social::TwitterHandle < ActiveRecord::Base
   named_scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
   named_scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
 
-  def search_keys_string
+
+  def search_keys_to_s
     search_keys.blank? ? "" : search_keys.join(",")
   end
 
@@ -26,10 +27,40 @@ class Social::TwitterHandle < ActiveRecord::Base
   def check_ticket_rules # @ARV@ TODO REMOVE_AFTER_MIGRATION
     {:convert => capture_mention_as_ticket? }
   end
-  
+
   def default_stream_id
     stream = self.default_stream
     stream_id = stream.id if stream
+  end
+
+  def update_ticket_rules(dm_group_id=nil, includes=[], mention_group_id = nil)
+    streams = self.twitter_streams
+    changes = previous_changes.symbolize_keys!
+
+    unless streams.empty?
+      default_stream = self.default_stream
+      unless changes[:capture_mention_as_ticket].nil?
+        if changes[:capture_mention_as_ticket][0] and !changes[:capture_mention_as_ticket][1]
+          default_stream.ticket_rules.first.destroy unless (default_stream.ticket_rules.empty?)
+        else
+          default_stream.populate_ticket_rule(mention_group_id, ["#{formatted_handle}"])
+        end
+      else
+        default_stream.update_ticket_action_data(mention_group_id) unless default_stream.ticket_rules.empty?
+      end
+
+      dm_stream = self.dm_stream
+      unless changes[:capture_dm_as_ticket].nil?
+        if changes[:capture_dm_as_ticket][0] and !changes[:capture_dm_as_ticket][1]
+          dm_stream.ticket_rules.first.destroy unless (dm_stream.ticket_rules.empty?)
+          
+        else
+          dm_stream.populate_ticket_rule(dm_group_id, includes)
+        end
+      else
+        dm_stream.update_ticket_action_data(dm_group_id) unless dm_stream.ticket_rules.empty?
+      end
+    end
   end
 
   def default_stream
@@ -48,6 +79,22 @@ class Social::TwitterHandle < ActiveRecord::Base
     return nil
   end
   
+  def find_custom_stream(keyword)
+    streams = self.twitter_streams
+    streams.each do |stream|
+      return stream if (stream.data[:kind] == STREAM_TYPE[:custom] && stream.includes.include?(keyword))
+    end
+    return nil
+  end
+
+  def dm_stream
+    streams = self.twitter_streams
+    streams.each do |stream|
+      return stream if stream.data[:kind] == STREAM_TYPE[:dm]
+    end
+    return nil
+  end
+
   def find_custom_stream(keyword)
     streams = self.twitter_streams
     streams.each do |stream|

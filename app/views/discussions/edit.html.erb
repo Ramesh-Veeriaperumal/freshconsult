@@ -1,0 +1,19 @@
+<% content_for :layoutType do %>community<% end %>
+<% content_for :helpcard do -%>
+	<%= render :partial => 'helpnote' %>
+<%-end %>
+<div class="row-fluid hamburger">
+	<%= sidebar_toggle("mt4") %>
+	<h3 class="lead"><%= t('edit_forum_category')%></h3>
+</div>
+<% form_for :forum_category,@forum_category, :url => discussion_url , :html=>{:method=>:put}  do |f| -%>
+  <%= f.error_messages %>
+  <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
+	<div class="button-container">
+		<div class="floatl">
+			<%= link_to( t('delete'), discussion_path(@forum_category), :method => 'delete', :class => "btn", :confirm => t('forum_confirm_msg1')  ) %>
+		</div>
+		<%= pjax_link_to(t('cancel'), discussion_path(@forum_category), :class => "btn" ) -%>
+	    <%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
+	 </div>
+<% end %>

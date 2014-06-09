@@ -66,13 +66,10 @@ class PostObserver < ActiveRecord::Observer
 			:account 		=> post.account,
 			:user 			=> post.user,
 			:activity_data 	=> {
-								 :path => category_forum_topic_path(post.forum.forum_category_id,
-										 post.forum_id, post.topic_id),
+								 :path => discussions_topic_path(post.topic_id),
 								 :url_params => {
-												 :category_id => post.forum.forum_category_id,
-												 :forum_id => post.forum_id,
 												 :topic_id => post.topic_id,
-												 :path_generator => 'category_forum_topic_path'
+												 :path_generator => 'discussions_topic_path'
 												},
 								 :title => h(post.to_s)
 								}

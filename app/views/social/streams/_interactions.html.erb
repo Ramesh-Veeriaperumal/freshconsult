@@ -1,0 +1,13 @@
+<!-- conversation right pane starts -->
+<% unless @interactions.blank? %>
+  <div class="conv-wrapper">
+    <div class="conversations">
+      <div id='current_interaction'>
+        <%= render :partial => 'current_interaction' %>
+      </div>
+      <%= render :partial => 'other_interactions', :locals => { :user_info_page => false } %>
+    </div>
+  </div>
+<% else %>
+  <div><h3><strong>Sorry no conversation</strong></h3></div>
+<% end %>

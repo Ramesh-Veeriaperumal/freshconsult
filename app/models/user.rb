@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   include Redis::OthersRedis
   include Authority::Rails::ModelHelpers
   include ApiWebhooks::Methods
+  include Social::Ext::UserMethods
 
   USER_ROLES = [
      [ :admin,       "Admin",            1 ],

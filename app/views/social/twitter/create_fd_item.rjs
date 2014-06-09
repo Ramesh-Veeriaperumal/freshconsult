@@ -1,0 +1,25 @@
+if @items_info.blank?
+  page << "jQuery('body,html').animate({scrollTop: 0}, 800);"
+  show_ajax_flash page
+else
+  @items_info.each do |item|
+    feed_id = item[:feed_id]
+    item_link = item[:link]
+    # For converting the ticket icon to tick icon in conv right panel
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').removeClass('sloading loading-tiny loading-align')"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').removeClass('convert_as_ticket')"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt i').show()"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').addClass('tw-tkt-link')"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('data-original-title','Go to ticket ##{item_link.split('#').first}');"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('title','Go to ticket ##{item_link.split('#').first}');"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').attr('href', '#{helpdesk_tickets_url}/#{item_link}');"
+    page << "jQuery('#conv_div_#{feed_id} .icon-lst a.current_interaction_ctt').removeClass('current_interaction_ctt')"
+
+    # For converting the ticket icon to ticket number in unified feeds
+    page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_not_ticket').hide();"
+    page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('href', '#{helpdesk_tickets_url}/#{item_link}');"
+    page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('title','Go to ticket ##{item_link.split('#').first}');"
+    page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('data-original-title','Go to ticket ##{item_link.split('#').first}');"
+    page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').show();"
+  end
+end

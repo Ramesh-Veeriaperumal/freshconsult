@@ -1,19 +1,16 @@
-!function ($) {
 
+!function ($) {
 "use strict";
 
-window.FreshdeskPjax = function() {
-	this.beforeNextPage = null,
-	this.afterNextPage = null,
-	this.unload = null,
-	this._prevAfterNextPage = null,
-	this.bodyClass = null,
-	this._prevBodyClass = null;
-}
+window.Fjax = {
+		beforeNextPage: null,
+		afterNextPage: null,
+		unload: null,
 
-FreshdeskPjax.prototype = {
+		bodyClass: null,
 
-    constructor: FreshdeskPjax,
+		_prevAfterNextPage: null,
+		_prevBodyClass: null,
 
     callBeforeSend: function(evnt,xhr,settings,options) {
       this._FayeCleanUp();
@@ -125,14 +122,14 @@ FreshdeskPjax.prototype = {
       Fjax.callAfterReceive();
 
       sticky.destroy();
-      
+
       if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
       window.pjaxPrevUnload = null;
       Fjax.callAtEnd();
       var options = jQuery(document).data();
       jQuery(document).data("requestDone",true);
       if(options.parallelData && $(evnt.relatedTarget).data()){
-        $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
+        $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData)
       }
       else if(options.parallelData && settings.data)
       {
@@ -164,11 +161,12 @@ FreshdeskPjax.prototype = {
       if(window.FreshdeskNode.getValue('faye_realtime').fayeClient)
       {
         for(var i=0;i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
-        { 
+        {
           window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
         }
         window.FreshdeskNode.clearClients();
         window.FreshdeskNode.clearReplyOnLoad();
+        window.FreshdeskNode.clearPolling();
         window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions = [];
         window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
         window.FreshdeskNode.getValue('faye_realtime').faye_channels = [];
@@ -196,21 +194,21 @@ FreshdeskPjax.prototype = {
 
       jQuery(document).data("requestDone",false);
       jQuery(document).data("parallelData",undefined);
-      
+
       if((!target.data('parallelUrl')) && (!data)){
         return;
       }
       var options ;
       if(target.data('parallelUrl')) {
-        options = target.data();  
+        options = target.data();
       } else {
         options = data;
       }
-      console.log('the parallelUrl is '+options.parallelUrl);
+			
       if(options.parallelUrl !== undefined)
       {
         jQuery.get(options.parallelUrl, function(data){
-          if(jQuery(document).data("requestDone")){ 
+          if(jQuery(document).data("requestDone")){
             jQuery(options.parallelPlaceholder).html(data);
           }
           else{
@@ -251,8 +249,10 @@ var PJAX_DEFAULTS = {timeout: -1,
                   container: '#body-container'}
 
 window.pjaxify = function(url) {
+	if ($.browser.msie) {
+		return window.location = url;
+	}
   $.pjax($.extend({}, PJAX_DEFAULTS, {url : url} ));
 }
 
 }(window.jQuery);
-Fjax = new FreshdeskPjax();

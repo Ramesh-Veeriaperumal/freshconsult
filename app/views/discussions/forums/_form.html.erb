@@ -1,0 +1,65 @@
+<% content_for :helpcard do -%>
+	<%= render :partial => 'helpnote' %>
+<%-end %>
+<%= form.error_messages %>
+<div class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label"><%=t('title')%></label>
+		<div class="controls">
+			<%= form.text_field :name, :class => "primary input-xxlarge" %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label"><%=t('description')%></label>
+		<div class="controls">
+			<%= form.text_area :description, :rows => 7, :class => "input-xxlarge" %>
+		</div>
+	</div>
+	<% if @forum.new_record? %>
+	<div class="control-group">
+		<%= form.label :forum_category_id, t('forum.category'), :class => "control-label" %>
+		<div class="controls">
+			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+		</div>
+	</div>
+	<% end %>
+	<% unless @forum.topics_count > 0 %>
+	<div class="control-group">
+		<%= form.label :forum_type, t('forum.type'), :class => "control-label" %>
+		<div class="controls">
+			<%= form.select :forum_type, Forum::TYPE_OPTIONS, {}, {:class => "select2 input-xlarge"} %>
+		</div>
+	</div>
+	<% end %>
+	<div class="control-group">
+		<%= form.label :forum_visibility, t('forum.visible_to'), :class => "control-label" %>
+		<div class="controls">
+			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
+			<br/><br/>
+			<% form.fields_for :customer_forums_attributes do |cust| %>
+    	    	<span id="company_forums">
+      			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "select2 input-xxlarge" ,
+      				"data-placeholder" => t('solutions.visibility.select_company')}) %>
+      			</span>
+      		<%end%>
+		</div>
+	</div>
+</div>
+<% javascript_tag do %>
+	jQuery(document).ready(function(){
+		jQuery('#forum_forum_visibility').bind("change", show_hide_customers);
+		
+		function show_hide_customers(){
+			var visiblity = jQuery('#forum_forum_visibility').val();
+			if (visiblity == <%= Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>) {
+			   jQuery('#company_forums').show();
+			} else {
+			  jQuery('#customer_id').val("");
+			  jQuery("#customer_id").trigger("liszt:updated");
+			  jQuery('#company_forums').hide();
+			}
+		};
+  	show_hide_customers();
+  	jQuery("#forum_forum_category_id").val(<%= params[:forum_category_id] || @forum.forum_category_id %>)
+	});
+<% end %>

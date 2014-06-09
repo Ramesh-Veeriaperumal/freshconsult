@@ -6,4 +6,8 @@ module Cache::Memcache::Twitter
   	MemcacheKeys.delete_from_cache(TWITTER_REAUTH_CHECK % { :account_id =>self.account_id })
   end
   
+  def clear_handles_cache
+    MemcacheKeys.delete_from_cache(ACCOUNT_TWITTER_HANDLES % {:account_id => self.account_id })
+  end
+  
 end

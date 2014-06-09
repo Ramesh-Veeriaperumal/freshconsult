@@ -23,7 +23,8 @@ module Redis::RedisKeys
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
 	AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
-	
+	GOOGLE_OAUTH_SSO = "GOOGLE_OAUTH_SSO:%{domain}:%{uid}"
+
 	NEW_QUEUE_MEMBER = "FRESHFONE:NEW_QUEUE_MEMBER:%{account_id}:%{queue_id}"
 	AGENT_AVAILABILITY = "FRESHFONE:AGENT_AVAILABILITY:%{account_id}"
 	NEW_CALL = "FRESHFONE:NEW_CALL:%{account_id}"
@@ -47,6 +48,7 @@ module Redis::RedisKeys
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}" 
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
 	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}" 
+	STREAM_RECENT_SEARCHES = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}"
 	STREAM_VOLUME = "STREAM_VOLUME:%{account_id}:%{stream_id}"
 	USER_OTP_KEY = "USER_OTP_KEY:%{email}" 
 	MOBILE_NOTIFICATION_MESSAGE_CHANNEL = "MOBILE_NOTIFICATION_MESSAGE_CHANNEL_%{channel_id}"

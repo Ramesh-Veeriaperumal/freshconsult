@@ -1,0 +1,41 @@
+<% content_for :layoutType do %>community<% end %>
+<% content_for :sticky_title do %>
+	<div class="list-panel-main">
+		<% if privilege?(:manage_forums) %>
+			<ul class="list-actions-left">
+				<li class="edit-item">
+					<%= pjax_link_to(font_icon("edit", :size => 24),
+										edit_discussion_path(@forum_category),
+										:class => "tooltip", :title => "Edit")%>
+				</li>
+			</ul>
+		<% end %>
+		<%= list_discussions_panel(:forum) %>
+		<h2 class="list-title ellipsis"><%= h(@forum_category.name) %></h2>
+	</div>
+<% end %>
+<%= render :partial => '/discussions/shared/sticky', :locals => { :page => :category } %>
+
+<% if @forums.blank? %>
+	<div class="no-data">
+		<%= t('topic.no_forums') %>
+		<div class="mt20">
+			<%= pjax_link_to(t("topic.add_forum"),
+						new_discussions_forum_path(:forum_category_id => @forum_category.id),
+						:class => "btn btn-primary") %>
+		</div>
+	</div>
+<% else %>
+	<div class="clearfix mb20">
+			<%= render :partial => "reorder_list", :locals => {
+							:items => @forum_category.send("#{@content_scope}forums"),
+							:action_url => reorder_discussions_forums_path,
+							:title => :name, :container_id => "forums_sort",
+							:reorder_id => "forums_reorder_button",
+							:list_id => "forums_list"} %>
+	</div>
+	<%= will_paginate @forums, :renderer => BootstrapPaginationRenderer,
+        				:previous_label => "<b class='arrow-left'></b>",
+        				:next_label => "<b class='arrow-right'></b>",
+        				:class => "pagination pagination-centered" %>
+<% end %>

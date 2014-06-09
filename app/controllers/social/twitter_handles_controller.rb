@@ -8,6 +8,7 @@ class Social::TwitterHandlesController < ApplicationController
   prepend_before_filter :load_product, :only => [:signin, :authdone]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]
+  before_filter :check_social_revamp_feature, :only => [:index, :feed]
   before_filter :twitter_wrapper, :only => [:signin, :authdone, :index]
   before_filter :check_if_handles_exist, :only => [:feed]
 
@@ -26,19 +27,18 @@ class Social::TwitterHandlesController < ApplicationController
       begin
         twitter = wrapper.get_twitter
         if params[:max_id]
-          response = twitter.search(params[:q],:max_id => params[:max_id])
+          response = twitter.search(params[:q], {:max_id => params[:max_id], :count => params[:count].to_i})
         elsif params[:since_id]
-          response = twitter.search(params[:q],:since_id => params[:since_id])
+          response = twitter.search(params[:q], {:since_id => params[:since_id], :count => params[:count].to_i})
         else
-          response = twitter.search(params[:q])
+          response = twitter.search(params[:q], {:count => params[:count].to_i})
         end
       rescue Twitter::Error::TooManyRequests => e
         response = { :err => e.to_s }
         NewRelic::Agent.notice_error(e)
       end
     end
-    render :json => response.to_json, :callback => params[:callback]
-
+    render :json => response.attrs.to_json, :callback => params[:callback]
   end
 
   def tweet_exists
@@ -135,6 +135,7 @@ class Social::TwitterHandlesController < ApplicationController
     params[:social_twitter_handle][:search_keys] = [] if(params[:social_twitter_handle][:search_keys].blank?)
 
     if @item.update_attributes(params[:social_twitter_handle])
+      @item.update_ticket_rules
       flash[:notice] = I18n.t(:'flash.twitter.updated')
       redirect_to social_twitters_url
     else
@@ -276,6 +277,21 @@ class Social::TwitterHandlesController < ApplicationController
 
   protected
 
+  def update_ticket_action_data
+    dm_rule = @item.dm_stream.ticket_rules.first
+    dm_rule.update_attributes(
+      :action_data => {
+        :product_id => @item.product_id,
+        :group_id   => nil
+    }) unless dm_rule.nil?
+    default_rule = @item.default_stream.ticket_rules.first
+    default_rule.update_attributes(
+      :action_data => {
+        :product_id => @item.product_id,
+        :group_id   => nil
+    }) unless default_rule.nil?
+  end
+
   def twitter_wrapper
     @wrapper = TwitterWrapper.new(@item ,{
                                     :product         => @current_product,
@@ -306,6 +322,12 @@ class Social::TwitterHandlesController < ApplicationController
 
   def human_name
     'Twitter'
+  end
+  
+  def check_social_revamp_feature
+    if current_account.features?(:social_revamp)
+      action_name == "index" ? (redirect_to :admin_social_streams) : (redirect_to :social_streams)
+    end
   end
 
 end

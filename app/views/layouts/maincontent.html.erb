@@ -52,3 +52,6 @@
 		}, 50);
 	<% end %>
 <% end %>
+<script type="text/javascript">
+	App.namespace = "<%= escape_javascript "#{params[:controller]}/#{params[:action]}" %>";
+</script>

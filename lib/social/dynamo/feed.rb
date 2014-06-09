@@ -5,6 +5,16 @@ module Social::Dynamo::Feed
 
   TABLE = "feeds"
   SCHEMA = TABLES[TABLE][:schema]
+  
+  
+  def has_parent_feed?(posted_time, args, attributes, feed_obj)
+    table_name = Social::DynamoHelper.select_table(TABLE, posted_time)
+    range_key = SCHEMA[:range][:attribute_name]
+    hash = "#{args[:account_id]}_#{args[:stream_id]}"
+    attributes_to_get = [range_key, "parent_feed_id", "in_conversation", "source"]
+    parent = Social::DynamoHelper.get_item(table_name, hash, feed_obj.in_reply_to, SCHEMA, attributes_to_get)
+    parent[:item] ? true : false
+  end
 
   def insert_feed(posted_time, args, attributes, feed_obj, options = {})
     source = feed_obj.source
@@ -22,6 +32,7 @@ module Social::Dynamo::Feed
 
         attributes.merge!(:parent_feed_id => parent_feed_id)
         if options[:live_feed]
+          attributes.merge!(:fd_link => options[:ticket_id]) if options[:ticket_id]
           feed_data = twitter_tweet_hash(options, posted_time)
         else
           feed_data = return_specific_keys(feed_obj.feed_hash, DYNAMO_KEYS[source][TABLE])
@@ -39,11 +50,11 @@ module Social::Dynamo::Feed
 
   def update_feed_reply(stream_id, posted_time, reply_params, note)
     times = [posted_time, posted_time + 7.days]
-    parent_feed_id_hash = parent_data = {}
+    parent_feed_id_hash = parent_data =  {}
     in_reply_to = reply_params[:in_reply_to_id]
     times.each do |time|
-      item_hash  = feeds_hash(stream_id, in_reply_to, "", 1, 1, "", reply_params[:source])
       table_name = Social::DynamoHelper.select_table(TABLE, time)
+      item_hash  = feeds_hash(stream_id, in_reply_to, "", 1, 1, "", reply_params[:source])
       response   = Social::DynamoHelper.update(table_name, item_hash, SCHEMA)
 
       if response[:attributes]["parent_feed_id"]
@@ -117,7 +128,7 @@ module Social::Dynamo::Feed
       attributes_to_get = [range_key, "parent_feed_id", "in_conversation", "source"]
 
       parent = Social::DynamoHelper.get_item(table_name, hash, in_reply_to, SCHEMA, attributes_to_get)
-      if parent[:item]
+      if parent[:item] and parent[:item]["parent_feed_id"]
         parent_feed_id  = parent[:item]["parent_feed_id"][:ss]
         in_conversation = 1
         parent_conversation = parent[:item]["in_conversation"][:n].to_i
@@ -148,7 +159,7 @@ module Social::Dynamo::Feed
 
   def construct_agent_reply_hash(reply_params, posted_time, parent_feed_id, note)
     dynamo_posted_time = Time.parse(reply_params[:posted_at])
-    data = twitter_tweet_hash(reply_params, dynamo_posted_time)
+    data = twitter_tweet_hash(reply_params, dynamo_posted_time, true)
     fd_attributes = {
       :posted_time    => "#{(posted_time.to_f * 1000).to_i}",
       :replied_by     => reply_params[:agent_name] ,
@@ -158,19 +169,22 @@ module Social::Dynamo::Feed
     return { :data => data, :fd_attributes => fd_attributes }
   end
 
-  def twitter_tweet_hash(reply_params, dynamo_posted_time)
+  def twitter_tweet_hash(reply_params, dynamo_posted_time, reply = false)
     data = {
       "body"  => reply_params[:body],
       "actor" => {
         "displayName"       => reply_params[:user][:name],
         "preferredUsername" => reply_params[:user][:screen_name] ,
         "image"             => reply_params[:user][:image],
-        "id"                => reply_params[:in_reply_to_user_id]
+        "id"                => (reply ? reply_params[:in_reply_to_user_id] : reply_params[:user][:id])
       },
       "id"         => reply_params[:id],
-      "postedTime" => dynamo_posted_time.strftime("%FT%T"),
+      "postedTime" => dynamo_posted_time.strftime("%FT%T.000Z"),
       "inReplyTo"  => {
         "link" => reply_params[:in_reply_to_id]
+      },
+      "twitter_entities" => {
+        "user_mentions" => reply_params[:user_mentions]
       }
     }
   end

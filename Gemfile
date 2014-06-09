@@ -5,8 +5,9 @@ gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
-gem "json", "~> 1.7.7"
+gem "json", "~> 1.8"
 gem "json-compare", "0.1.8"
+
 gem "mysql2", "~> 0.2.7"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
@@ -69,8 +70,8 @@ gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.6.0.83"
 
 gem "faraday" , "0.8.7"
-gem "twitter" , "~> 4.6.2"
-gem "gnip-rule", "~> 0.4.0"
+gem "twitter", "~> 5.5.1"
+gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.4"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.6.0"
@@ -161,8 +162,15 @@ group :test do
 end
 
 group :assets do
-   gem "sass", "3.2.1"
-   gem "compass-rails", "1.0.3"
-   gem "susy"  # Portal grid system is done using susy grids
-   gem "oily_png" # To optimize sprite generation
+  gem "sass",          "3.2.19"
+  gem "compass-rails", "1.0.3"
+
+  # Portal grid system is done using susy grids
+  gem "susy",          "1.0.9"
+
+  # To optimize sprite generation
+  gem "oily_png",     "1.1.1"
+
+  # Building custom font icons inside the application
+  gem "fontcustom",   "1.3.3"
 end

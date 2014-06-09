@@ -90,14 +90,14 @@ module Search::SearchResultJson
 
 	def topic_json topic
 		return suggest_json(%{#{topic.es_highlight('title')}},
-				category_forum_topic_path(topic.forum.forum_category_id, topic.forum, topic), topic) if @suggest
+				discussions_topic_path(topic), topic) if @suggest
 		to_ret = {
 			:id => topic.id,
 			:result_type => 'topic',
 			:title => topic.es_highlight('title'),
-			:path => category_forum_topic_path(topic.forum.forum_category_id, topic.forum, topic),
+			:path => discussions_topic_path(topic),
 			:forum_name => h(topic.forum.name),
-			:forum_path => category_forum_path(topic.forum.forum_category_id, topic.forum),
+			:forum_path => discussions_forum_path(topic.forum),
 			:category_name => h(topic.forum.forum_category.name),
 			:user_name => h(topic.user.name),
 			:user_path => user_path(topic.user),

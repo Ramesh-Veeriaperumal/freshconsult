@@ -11,6 +11,9 @@ class Support::TicketsController < SupportController
 
   before_filter :clean_params, :only => [:update]
 
+  skip_before_filter :verify_authenticity_token
+  before_filter :verify_authenticity_token, :unless => :public_request?
+  
   before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
 
@@ -169,5 +172,9 @@ class Support::TicketsController < SupportController
   
     def clean_params
       params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT_PROTECTED_ATTRIBUTES.exclude? k }
+    end
+
+    def public_request?
+      current_user.nil?
     end
 end

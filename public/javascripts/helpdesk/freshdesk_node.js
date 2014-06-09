@@ -158,21 +158,30 @@
         }
 
         var collisionMessageHandlerShow = function (message) {
-
             agents.replying = [];
             agents.viewing = [];
             var client_list = message.data;
-            client_list = removeUnwantedData.call(this, message).data;
-            for (var i = 0; i < client_list.length; i++) {
-                if(client_list[i]){
-                    if ((client_list[i].reply) && (client_list[i].reply == 'true')) {
-                        checkUniq(agents.replying, client_list[i], 'viewing', agents.viewing);
-                    } else if ((client_list[i].view) && (client_list[i].view == 'true')) {
-                        checkUniq(agents.viewing, client_list[i], 'replying', agents.replying);
+            if(!((typeof message.data == 'string' || message.data instanceof String))){
+                client_list = removeUnwantedData.call(this, message).data;
+                if(client_list.length == 1){
+                    window.FreshdeskNode.clearPolling();
+                }
+                else if(client_list.length > 1 ){
+                    if(!window.FreshdeskNode.getValue('interval')){
+                        window.FreshdeskNode.initPolling();
                     }
                 }
+                for (var i = 0; i < client_list.length; i++) {
+                    if(client_list[i]){
+                        if ((client_list[i].reply) && (client_list[i].reply == 'true')) {
+                            checkUniq(agents.replying, client_list[i], 'viewing', agents.viewing);
+                        } else if ((client_list[i].view) && (client_list[i].view == 'true')) {
+                            checkUniq(agents.viewing, client_list[i], 'replying', agents.replying);
+                        }
+                    }
+                }
+                update_notification_ui_ticket(agents);
             }
-            update_notification_ui_ticket(agents);
         };
 
         var collisionMessageHandlerIndex = function (message) {
@@ -310,12 +319,19 @@
             }
         };
 
+        var refreshShowCallBack = function(message){
+            if(message.ticket_id == window.FreshdeskNode.getValue('agent_collision_show_data').ticket_id){
+                 jQuery('.source-badge-wrap .source').addClass('collision_refresh').attr('title', 'Click here to refresh the ticket');
+            }
+        }
+
         return {
             collisionMessageHandlerShow: collisionMessageHandlerShow,
             collisionMessageHandlerIndex: collisionMessageHandlerIndex,
             setInstanceVariables: setInstanceVariables,
             getAgents: getAgents,
-            refreshCallBack: refreshCallBack
+            refreshCallBack: refreshCallBack,
+            refreshShowCallBack: refreshShowCallBack
         };
 
 
@@ -356,6 +372,8 @@
             retry: 10,
             timeout: 120
         };
+        var initial_opts = null;
+        var channels = null;
         var common_variables = {
             faye_auth_params: null,
             agent_names: null,
@@ -367,6 +385,11 @@
             agent_collision_show_data: null,
             channel_obj: null,
             clients : [],
+            interval : null,
+            interval_time : 0.1,
+            index_interval_time : 0.1,
+            index_needed : true,
+            needed : true,
             faye_realtime: {
                 faye_subscriptions: [],
                 fayeClient: null,
@@ -382,6 +405,10 @@
         common_variables.faye_realtime.addChannel = function (channel) {
             if (window.FreshdeskNode.getValue('faye_realtime').faye_channels.indexOf(channel) == -1) {
                 window.FreshdeskNode.getValue('faye_realtime').faye_channels.push(channel);
+                return true;
+            }
+            else{
+                return false;
             }
         }
         var host = '';
@@ -405,6 +432,19 @@
             }
         };
 
+        var initPolling = function(){
+            if(common_variables.needed){
+                for (var i = 0; i < common_variables.clients.length; i++) {
+                    try{
+                        common_variables.clients[i].setLongPolling(common_variables.interval_time);
+                    }
+                    catch(e){
+                        // console.log('does not have a poller ');
+                    }
+                }
+            }
+        }
+
         var replyOnLoad = function(){
             common_variables.reply_on_load = true;
         }
@@ -420,6 +460,8 @@
         var clearClient = function(){
             common_variables.clients = [];
         }
+
+
 
         var setEvents = function () {
             if($.browser.mozilla){
@@ -439,7 +481,9 @@
                             window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
                         }
                     }
-                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    if(window.FreshdeskNode.getValue('faye_realtime').fayeClient){
+                        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    }
                 });
             }
             else{
@@ -449,12 +493,44 @@
                             window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
                         }
                     }
-                    window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    if(window.FreshdeskNode.getValue('faye_realtime').fayeClient){
+                        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
+                    }
                 });
+            }
+        };
+
+        var setPollingInterval = function(interval){
+            common_variables.interval = interval;
+        }
+
+        var clearPolling = function(){
+            if(common_variables.interval){
+                window.clearInterval(common_variables.interval);
+                common_variables.interval = null;
+            }
+        }
+
+        var setPollingInfo = function(interval,needed){
+            if(!((common_variables.interval_time == interval) && (common_variables.needed == needed))){
+                common_variables.interval_time = interval;
+                common_variables.needed = needed;
+                clearPolling();
+                initPolling();
+            }
+        }
+
+        var setPollingInfoIndex = function(interval,needed){
+            if(!((common_variables.index_interval_time == interval) && (common_variables.needed == needed))){
+                common_variables.index_interval_time = interval;
+                common_variables.needed = needed;
+                clearPolling();
+                initPolling();
             }
         }
 
         var data = function (opts) {
+            initial_opts = opts;
             initClient(opts.faye_host, opts.client_opts);
             common_variables.faye_auth_params = opts.faye_auth_params;
             common_variables.current_user_id = opts.current_user_id;
@@ -491,8 +567,10 @@
 
         var addSubscriptions = function () {
             for (var channel in common_variables.channel_obj) {
-                window.FreshdeskNode.getValue('faye_realtime').addChannel(channel);
-                var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
+                var added = window.FreshdeskNode.getValue('faye_realtime').addChannel(channel);
+                if(added){
+                    var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
+                }
                 // faye_utils.then(subscription,function(){console.log('successfull subsction',subscription);},function(err){console.log('The subscription was not successfull',err);})
             }
         };
@@ -509,12 +587,28 @@
 
         return {
             addChannels: function (obj) {
+                channels = obj
                 var extensions = {};
                 extensions['outgoing'] = function (message, callback) {
                     message.ext = common_variables.faye_auth_params;
                     message.ext['channel'] = window.FreshdeskNode.getValue('faye_realtime').faye_channels;
                     callback(message);
                 };
+                extensions['incoming'] = function(message,callback){
+                    if((message.interval == 0) || (message.interval == false)){
+                         window.FreshdeskNode.setPollingInfo(message.interval,false);
+                    }
+                    else{
+                        window.FreshdeskNode.setPollingInfo(message.interval,true);
+                    }
+                    if((message.index_interval == 0) || (message.index_interval == false)){
+                         window.FreshdeskNode.setPollingInfoIndex(message.index_interval,false);
+                    }
+                    else{
+                        window.FreshdeskNode.setPollingInfoIndex(message.index_interval,true);
+                    }
+                    callback(message);
+                }
                 addExtension(extensions)
                 setEvents();
                 common_variables.channel_obj = obj
@@ -538,7 +632,12 @@
             clearClients : clearClient,
             getValue: getValue,
             replyOnLoad: replyOnLoad,
-            clearReplyOnLoad: clearReplyOnLoad
+            clearReplyOnLoad: clearReplyOnLoad,
+            setPollingInterval: setPollingInterval,
+            clearPolling: clearPolling,
+            initPolling: initPolling,
+            setPollingInfo: setPollingInfo,  
+            setPollingInfoIndex: setPollingInfoIndex 
         };
     })(faye_utilies, message_utilities);
 
@@ -568,8 +667,16 @@
             interval = window.setInterval(reply_event_interval,500);  
         }
 
-        var setEvents = function () {  
-                       
+        var pollingEvent = function(){
+            window.FreshdeskNode.getValue('faye_realtime').fayeClient.publish(freshdesk_node.getValue('agent_collision_show_data').ticket_channel,{data : 'polling' , channel : freshdesk_node.getValue('agent_collision_show_data').ticket_channel , 'domainName' : window.FreshdeskNode.getValue('faye_auth_params').domainName  });
+        }
+
+        var setLongPolling = function(interval){
+            var interval = window.setInterval(pollingEvent,interval*1000);
+            window.FreshdeskNode.setPollingInterval(interval);
+        }
+
+        var setEvents = function () {           
             $('[data-note-type]').on("click.agent_collsion",function (e) {
                 // window.replySubscription = faye_utils.subscribe(freshdesk_node.getValue('agent_collision_show_data').ticket_reply_channel, function (message) {});
                 // window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.push(window.replySubscription);
@@ -639,19 +746,30 @@
 
         var init = function () {
             $('#agent_collision_placeholder').append($('#agent_collision_show').detach());
-            setEvents();
+            setEvents();       
         };
         return {
             init: init,
             ticketChannelCallback: ticketChannelCallback,
             viewChannelCallback: viewChannelCallback,
-            reply_event: reply_event
+            reply_event: reply_event,
+            setLongPolling: setLongPolling
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 
     window.AgentCollisionShow = AgentCollisionShow;
 
     var AgentCollisionIndex = (function (freshdesk_node, msg_utilites, faye_utils) {
+
+        var pollingEvent = function(){
+            window.FreshdeskNode.getValue('faye_realtime').fayeClient.publish(freshdesk_node.getValue('agent_collision_index_data').collision_channel,{data : 'index_polling' , channel : freshdesk_node.getValue('agent_collision_index_data').collision_channel , 'domainName' : window.FreshdeskNode.getValue('faye_auth_params').domainName  });
+        };
+
+        var setLongPolling = function(interval){
+            var interval = window.setInterval(pollingEvent,window.FreshdeskNode.getValue('index_interval_time')*1000);
+            window.FreshdeskNode.setPollingInterval(interval);
+
+        };
 
         var setEvents = function () {
             $('#agent_collision_placeholder').append($('#agent_collision_show').detach());
@@ -662,11 +780,12 @@
         };
 
         var init = function () {
-            setEvents();
+            setEvents();   
         };
         return {
             init: init,
-            callback: callback
+            callback: callback,
+            setLongPolling: setLongPolling
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 
@@ -674,6 +793,9 @@
 
     var AutoRefreshIndex = (function (freshdesk_node, msg_utilites, faye_utils) {
 
+        var setLongPolling = function(){
+            //console.log('can set poller if you want');
+        }
         var setEvents = function () {
 
             $("#index_refresh_alert").bind("click", function (ev) {
@@ -698,15 +820,43 @@
         };
 
         var init = function () {
-            setEvents();
+            setEvents();  
         };
 
         return {
             init: init,
-            callback: callback
+            callback: callback,
+            setLongPolling: setLongPolling
         }
     })(FreshdeskNode, message_utilities, faye_utilies);
 
     window.AutoRefreshIndex = AutoRefreshIndex;
+
+    var AutoRefreshShow = (function (freshdesk_node, msg_utilites, faye_utils) {
+
+        var setLongPolling = function(){
+            //console.log('can set poller if you want');
+        }
+        var setEvents = function () {
+            // console.log('I am setting events for auto_refresh show');
+        };
+
+
+        var callback = function (message) {
+            this.refreshShowCallBack(message);
+        };
+
+        var init = function () {
+            setEvents();  
+        };
+
+        return {
+            init: init,
+            callback: callback,
+            setLongPolling: setLongPolling
+        }
+    })(FreshdeskNode, message_utilities, faye_utilies);
+
+    window.AutoRefreshShow = AutoRefreshShow;
 
 }(window.jQuery);

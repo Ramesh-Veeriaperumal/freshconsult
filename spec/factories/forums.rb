@@ -14,7 +14,6 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :topic do |t|
     t.sequence(:title) { |n| "Test Topic #{n}"}
-    t.sequence(:body_html) { |n| "<p>This is a new topic #{n}.</p>"}
   end
 
   Factory.define :post do |p|

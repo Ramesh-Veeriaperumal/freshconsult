@@ -220,6 +220,31 @@
         expand = function () {
             $('#show_more:visible').trigger('click');
         },
+        /* the following are for Social Streams */
+        socialOpenStream = function(e){
+            console.log('socialOpenStream triggered ');
+            $('.twt-list-item.selected-tweet').trigger("click");
+            _preventDefault(e);
+        },
+        socialReply = function(e){
+            console.log('socialReply triggered ');
+            _preventDefault(e);
+            
+            $('.selected-tweet').find('.sharer_reply_button').trigger("click");
+            
+        },
+        socialRetweet = function(e){
+            console.log('socialRetweet triggered ');
+            _preventDefault(e);
+            $('.selected-tweet').find('.sharer_retweet_button').trigger("click");
+        },
+        socialStreamClose = function(e){
+            $('.conv-closebtn').trigger("click");
+        },
+        socialFocusOnSearchInput = function(e){
+            $('.tw-search ul li input').focus();
+            _preventDefault(e);
+        },
         ticketStatusDialog = function(){
             if(!$('.blockUI:visible').get(0)){
                 var id = getConversationId();
@@ -263,6 +288,13 @@
                 silent_close        : closeTicket,
                 expand              : expand,
                 select_watcher      : selectWatcher              
+            },
+            social_stream   : {
+                open_stream         : socialOpenStream,
+                reply               : socialReply,
+                retweet             : socialRetweet,
+                close               : socialStreamClose,
+                search              : socialFocusOnSearchInput
             },
             portal_customizations : {
                 preview             : saveAndPreview

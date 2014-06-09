@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   before_filter :persist_user_agent
   before_filter :set_cache_buster
   before_filter :logging_details 
+  before_filter :remove_pjax_param 
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -158,6 +159,10 @@ class ApplicationController < ActionController::Base
       logger.level = @bak_log_level 
     end
 
+    def remove_pjax_param
+      params.delete('_pjax')
+    end
+
   private
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
@@ -185,11 +190,16 @@ class ApplicationController < ActionController::Base
 
     def handle_unverified_request
       super
+      Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
       cookies.delete 'user_credentials'     
       current_user_session.destroy unless current_user_session.nil? 
       @current_user_session = @current_user = nil
       portal_redirect_url = root_url
-      portal_redirect_url = portal_redirect_url + "support/home" if params[:portal_type] == "facebook"
+      if params[:portal_type] == "facebook"
+        portal_redirect_url = portal_redirect_url + "support/home"
+      else
+        portal_redirect_url = portal_redirect_url + "support/login"
+      end
       respond_to do |format|
         format.html  {
           redirect_to portal_redirect_url

@@ -17,7 +17,7 @@ module Admin::HomeHelper
         :privilege                     =>   can_view_freshfone_admin? && privilege?(:admin_tasks)
       },
       :"twitter-setting"               =>   {
-        :url                           =>   "/social/twitters",
+        :url                           =>   (feature?(:social_revamp) ? "/admin/social/streams" : "/social/twitters"),
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   {
@@ -170,6 +170,9 @@ module Admin::HomeHelper
       },
       :add_new_agent_role              =>   {
         :url                           =>   "/admin/roles/new"
+      },
+      :forum_moderation                =>   {
+        :privilege                     =>   feature?(:forums)
       }
     }
   end
@@ -222,7 +225,8 @@ module Admin::HomeHelper
           :open_keywords          =>      [:customize_new_ticket_form]
       },
       :"customer-portal"          =>      {
-          :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions]
+          :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions],
+          :closed_keywords        =>      [:forum_moderation]
       },
       :"agent"                    =>      {
           :open_keywords          =>      [:occasional_agent, :daypass_agent],

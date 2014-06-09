@@ -7,15 +7,15 @@
 
 .symbols-article-list{
 	@include inline-block;
-	width: 20px; height: 20px;	
+	width: 20px; height: 20px;
 	/* Hack to be removed later */
 	margin-top: -2px;
 }
 .symbols-issue{
 	@include inline-block;
-	width: 20px; height: 16px;	
+	width: 20px; height: 16px;
 }
-.private-icon{	
+.private-icon{
 	width:16px;
 	height:16px;
 	display:inline-block;
@@ -24,7 +24,7 @@
   margin:0 0;
   display:inline-block;
   width:31px;
-  height:14px;  
+  height:14px;
 }
 
 .setting_bottom{
@@ -32,7 +32,7 @@
    right:7px;
    bottom:10px;
    width:16px;
-   height:16px;   
+   height:16px;
 }
 
 .sort_handle{
@@ -47,13 +47,13 @@
 	@include border-radius(none);
 }
 
-/* %% inside */ 
+/* %% inside */
 .symbols-article-list{ 	@include symbols-sprite(article-list); }
 .quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
 .private-icon{ 			@include symbols-sprite(private-lock-grey); /* %% inside */ }
 .setting_bottom{ 		@include symbols-sprite(setting); }
 .sort_handle{  		@include symbols-sprite(sort_handle); }
-/* %% app-bootstrap */ 
+/* %% app-bootstrap */
 .searchicon{ 				 	@include symbols-sprite(search); }
 .clock{ 						@include symbols-sprite(clock-inactive); }
 .time_running .clock{ 			@include symbols-sprite(clock); }
@@ -93,11 +93,11 @@
 .search-keys li .icon{ @include symbols-sprite(search); }
 .view_filters .link-item.active:after{ @include symbols-sprite(arrow-selected-right); }
 .ticksymbol{ @include symbols-sprite(selected); }
-.fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{ 	
+.fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
 	a:hover, a.selected{ @include symbols-sprite(selected-negtive); }
 }
 
-#index_refresh_alert .reload_icon{	
+#index_refresh_alert .reload_icon{
 	background-color: #888;
 	/*background: #888 url(/images/ac-refresh-details.png) no-repeat center;*/
 	width: 24px;
@@ -115,8 +115,8 @@
 	}
 }
 
-#resp-icon{ 
-	@include symbols-sprite(bullet-folder1); 
+#resp-icon{
+	@include symbols-sprite(bullet-folder1);
 }
 .pick-response, .recently_used{
  	a:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
@@ -140,6 +140,23 @@
 	}
 }
 
+.mark_answer{
+	@include symbols-sprite(resp-icon-clicked);
+}
+
+.unmark_answer{
+	@include symbols-sprite(close-delete);
+}
+
+.mark_spam{
+	@include symbols-sprite(close-delete);
+}
+
+
+// .best-answer{
+// 	@include symbols-sprite(best-answer);
+// }
+
 .merge_results li #resp-icon.clicked, .match_results li #resp-icon.clicked:hover{@include symbols-sprite(resp-icon-clicked); }
 #cont-chosen:hover #resp-icon{ @include symbols-sprite(email_config_active); }
 #contact-area #resp-icon{ @include symbols-sprite(removeButton); }
@@ -153,15 +170,15 @@
 
 /* %% tkt_details  */
 // Fix!!! - Remove content controls
-.content .controls, .ticket_details .sticky_right {
+.content .controls, .ticket_details .sticky_right, .community {
 	.monitor{ @include symbols-sprite(tkt-not-monitoring); }
 	.monitor_active{ @include symbols-sprite(tkt-monitoring); }
 }
-.source-badge-wrap .source{ 
-	&.collision_refresh{ 
+.source-badge-wrap .source{
+	&.collision_refresh{
 		@include symbols-sprite(collision_refresh);
 		&.status_4, &.status_5 {
-			@include symbols-sprite(collision_refresh_closed);		
+			@include symbols-sprite(collision_refresh_closed);
 		}
 	}
 
@@ -211,7 +228,7 @@ span.fb_add { @include symbols-sprite(add); }
 #duration .error{ @include symbols-sprite(warning); }
 .due-date-dialog .right_pointer{ @include symbols-sprite(calender-pointer-right); }
 .due-date-dialog .ui-datepicker-prev .ui-icon{ @include symbols-sprite(calender-left); }
-.due-date-dialog .ui-datepicker-next .ui-icon{ @include symbols-sprite(calender-right); } 
+.due-date-dialog .ui-datepicker-next .ui-icon{ @include symbols-sprite(calender-right); }
 
 .nav_search .searchIcon{ @include symbols-sprite(search); }
 .nav_search .search-icon-inactive{ @include symbols-sprite(search-white); }

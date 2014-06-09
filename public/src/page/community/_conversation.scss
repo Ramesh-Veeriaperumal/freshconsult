@@ -1,0 +1,205 @@
+
+	.conversation_thread {
+		padding: 0 0px 15px 0;
+		margin-left: 20px;
+
+		&.topic-locked {
+			padding-bottom: 0;
+		}
+		.conversation{
+			margin: 0;
+			padding-bottom: 0;
+			padding-top: 10px;
+			border-bottom: solid 1px #EEE;
+
+			&.agent {
+				background-color: #f8f9f9;
+			}
+			&.spam{
+				padding-top: 0;
+			  background: linear-gradient(-45deg, rgba(248,248,248,1) 25%,
+			                             transparent 25%, transparent 50%,
+																	rgba(248,248,248,1) 50%, rgba(248,248,248,1) 75%,
+																	transparent 2%, transparent);
+	      background-size:40px 40px ;
+				.spam_info {
+					position: relative;
+					background: #fefbdf;
+					border-bottom: 1px solid #eae8c8;
+					margin-bottom: 30px;
+					padding: 7px;
+					text-indent: 31px;
+					box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.1);
+					p{margin: 0;}
+					&:after, &:before{
+						top: 100%;
+						left: 70px;
+						border: solid transparent;
+						content: " ";
+						height: 0;
+						width: 0;
+						position: absolute;
+						pointer-events: none;
+					}
+					&:after{
+						border-color: rgba(254, 251, 223, 0);
+						border-top-color: #fefbdf;
+						border-width: 10px;
+						margin-left: -10px;
+					}
+					&:before{
+						border-color: rgba(219, 217, 187, 0);
+						border-top-color: #dbd9bb;
+						border-width: 11px;
+						margin-left: -11px;
+					}
+				}
+				.post{
+					opacity: 0.6;
+				}
+			}
+		}
+
+		.post {
+			margin: 10px 0 0 36px;
+			display: block;
+			padding: 5px 30px 0 0px;
+			line-height: 150%;
+			min-height: 30px;
+			overflow: hidden;
+		}
+
+		.post-content {
+			margin: 10px 0 15px;
+			overflow-x: auto;
+		}
+
+		.actions {
+			float: right;
+			width: 200px;
+			clear: right;
+			opacity: 0;
+			@include transition(opacity .2s linear);
+			a {
+				display: block;
+				float: right;
+				width: 20px;
+				height: 17px;
+				margin-left: 20px;
+			}
+		}
+
+		.conversation:hover .actions {
+			opacity: 1;
+		}
+
+		.avatar-wrap {
+			margin-top: 13px;
+			width: $avatar_size;
+			height: $avatar_size;
+			z-index: 100;
+			margin-left: -23px;
+			@include border-radius(50%);
+			border: 1px solid #eee;
+			text-align: center;
+			float: left;
+			.preview_pic {
+				display: inline-block;
+				margin: 0;
+				float:none;
+				img {
+					@include border-radius(50%);
+					position: relative;
+					top: 0;
+					height: $avatar_size;
+					width: $avatar_size;
+				}
+			}
+			.avatar {
+				@include border-radius(50%);
+				position: relative;
+				top: 2px;
+			}
+			&:hover{
+				text-decoration: none;
+			}
+		}
+	}
+	.topic-reply{
+		.flow-form{ border-radius: 0 0 3px 3px; }		
+	}
+
+	.flow-form{
+		border: solid 1px #CCC;
+		border-radius: 3px;
+
+		.redactor_box {
+			border: none;
+			border-bottom: solid 1px #F2f2f2;
+		}
+
+		.redactor_toolbar {
+			background: none;
+			border: none;
+		}
+
+		.redactor_separator {
+			opacity: 0.3;
+		}
+
+		.attachments-wrap {
+			padding: 0 5px;
+		}
+
+	}
+
+
+	#new-reply {
+
+		border: none;
+		margin-top: -15px;
+
+		.avatar-wrap {
+			margin-left: -19px;
+			margin-top: 0;
+		}
+
+		.conversation {
+			margin-top: 0;
+			border-bottom: none;
+		}
+
+		.post {
+			border-bottom: none;
+			padding-top: 0;
+		}
+
+		#reply-box {
+			display: none;
+		}
+
+		#pseudo-reply {
+			cursor: pointer;
+			margin-left: 4px;
+		}
+
+		&.replying {
+			#reply-box {
+				display: block;
+			}
+			#pseudo-reply {
+				display: none;
+			}
+
+			h5 {
+				border-bottom: solid 2px #7f7f7f;
+				padding: 0 4px 10px;
+				display: inline-block;
+			}
+		}
+
+		.control-group {
+			margin-bottom: 0;
+		}
+
+	}

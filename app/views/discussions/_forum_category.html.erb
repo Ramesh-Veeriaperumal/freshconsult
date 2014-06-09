@@ -1,0 +1,47 @@
+<div class="categories-list-page comm-items" id="<%= container_id %>" data-menu-hover-in='li.comm-item' >
+	<% form_for :reorder, items, :url => action_url, :html => { :method => :put, :class => "form-reorder" } do |f| %>
+	  <input name="reorderlist" type="hidden" value="" />
+	  <ul class="row-fluid" rel="sortlist">
+		  <% items.each do |forum_category| %>
+		  	<% disabled ||= nil %>
+		  	<% content_tag :li, :item_id => forum_category.id, :class => "comm-item" do %>
+		  		<% if privilege?(:manage_forums) %>
+			  		<div class="reorder-icon vertical-alignment handle-reorder">
+							<!-- <i class="community-reorder-icon" id="sortable-icon"></i> -->
+							<%= font_icon "reorder", :size => 15, :id => "sortable-icon" %>
+						</div>
+					<% end %>
+				<div class="vertical-alignment reorder-content row-fluid">
+			  		<div class="comm-item-main span9 ">
+						<div class="comm-item-title">
+							<%= pjax_link_to(forum_category.name, discussion_path(forum_category))%>
+						</div>
+						<div class="comm-item-details muted">
+							<%= truncate(forum_category.description, :length => 100)%>
+						</div>
+					</div>
+					<% portal_names = @portals.select{ |p| p.forum_category_id == forum_category.id }.map { |p| h(p.name) } %>
+					<% if portal_names.present? %>
+						<div class="span1 pt2 muted">
+							<%= t('topic.visible_in')%>:
+						</div>
+						<div class="span2 pt2 portal-list clear-left-margin">
+
+							<%= portal_names.first(2).join('<br />').html_safe %>
+
+							<% if portal_names.size > 2 %>
+							<div>
+								<span class='show-portals'><span>...</span></span>
+								<span class='portals'>
+									<%= portal_names[2..-1].join('<br />').html_safe %>
+								</span>
+							</div>
+							<% end %>
+
+					<% end %>
+				</div>
+		  	<% end %>
+		  <% end %>
+	  </ul>
+	<% end %>
+</div>

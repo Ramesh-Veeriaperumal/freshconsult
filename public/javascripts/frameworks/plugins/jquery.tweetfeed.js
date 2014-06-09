@@ -21,47 +21,47 @@
   };
   
   populateTweets = function(response, status, xhr){
-
-    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+    
+    if($.param({q:settings.query}) == ("q="+response["search_metadata"].query)){
         self.removeClass(loadingClass);
         var newTweets = $(tweetsettings.template) 
-                           .tmpl( response.attrs["statuses"] )
+                           .tmpl( response["statuses"] )
                            .appendTo("<div />");
                            
         newTweets.appendTo(tweetlist);
         newTweets.find(".autolink").autoLink();
  
-        tweetsettings.next_page   = response.attrs["search_metadata"].next_results;
-        tweetsettings.refresh_url = response.attrs["search_metadata"].refresh_url;
-        hasresults = response.attrs["statuses"].length==0  ? false:true;
+        tweetsettings.next_page   = response["search_metadata"].next_results;
+        tweetsettings.refresh_url = response["search_metadata"].refresh_url;
+        hasresults = response["statuses"].length==0  ? false:true;
         settings.onafterload(settings, hasresults, newTweets);
      }
   }
   populateOldTweets = function(response, status, xhr){
 
-    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+    if($.param({q:settings.query}) == ("q="+response["search_metadata"].query)){
         self.removeClass(loadingClass);
         var newTweets = $(tweetsettings.template) 
-                           .tmpl( response.attrs["statuses"] )
+                           .tmpl( response["statuses"] )
                            .appendTo("<div />");
                            
         newTweets.appendTo(tweetlist);
         newTweets.find(".autolink").autoLink();
  
-        tweetsettings.next_page   = response.attrs["search_metadata"].next_results;
-        hasresults = response.attrs["statuses"].length==0  ? false:true;
+        tweetsettings.next_page   = response["search_metadata"].next_results;
+        hasresults = response["statuses"].length==0  ? false:true;
         settings.onafterload(settings, hasresults, newTweets);
      }
   }
   
   refreshData = function(response){  
   
-    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+    if($.param({q:settings.query}) == ("q="+response["search_metadata"].query)){
       
-        fresh_results = fresh_results.concat(response.attrs["statuses"]);
-        tweetsettings.refresh_url = response.attrs["search_metadata"].refresh_url;
+        fresh_results = fresh_results.concat(response["statuses"]);
+        tweetsettings.refresh_url = response["search_metadata"].refresh_url;
      
-        if(response.attrs["statuses"].length){
+        if(response["statuses"].length){
           counter.html(fresh_results.length + " new tweets");
           new_result.show();
         }
@@ -95,7 +95,7 @@
      new_result.hide();
      tweetsettings.next_page = null;
      tweetsettings.refresh_url = null;
-     getData(settings.searchurl, populateTweets, { 'q': settings.query, 'rpp': settings.resultsperpage, 'handle' : settings.twitter_handle });
+     getData(settings.searchurl, populateTweets, { 'q': settings.query, 'count': settings.resultsperpage, 'handle' : settings.twitter_handle });
   }
  
   var methods = {

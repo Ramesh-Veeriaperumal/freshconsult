@@ -1,0 +1,2 @@
+page.replace dom_id(@post), render(:partial => "/discussions/topics/post.html.erb", :object => @post)
+page << "jQuery('##{dom_id(@post)}').unblock();"

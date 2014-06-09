@@ -153,6 +153,8 @@ class Account < ActiveRecord::Base
 
   has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
   
+  has_many :accesses, :class_name => 'Helpdesk::Access'
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 

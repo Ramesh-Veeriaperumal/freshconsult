@@ -3,12 +3,10 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 module GnipHelper
 
-  def sample_gnip_feed(rule_hash=nil, reply=nil)
-    begin
-      tweet_id = (Time.now.utc.to_f*100000).to_i
-    end until reply != tweet_id
+  def sample_gnip_feed(rule_hash=nil, reply=nil, time = Time.now.utc.iso8601)
+    tweet_id = (Time.now.utc.to_f*100000).to_i
     feed_hash = {
-      "body" => "@TestingGnip Testing Gnip",
+      "body" => "@TestingGnip #{Faker::Lorem.words(20).join(" ")}",
       "retweetCount" => 2,
       "gnip" => {
         "matching_rules" => [{
@@ -20,11 +18,11 @@ module GnipHelper
       "actor" => {
         "preferredUsername" => "GnipTestUser",
         "image" => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
-        "id" => "id:twitter.com:612609996",
+        "id" => "id:twitter.com:#{(Time.now.utc.to_f*100000).to_i}",
         "displayName" => "Gnip Test User"
       },
       "verb" => "post",
-      "postedTime" => Time.now.utc.iso8601,
+      "postedTime" => time,
       "id" => "tag:search.twitter.com,2005:#{tweet_id}"
     }
 
@@ -40,17 +38,16 @@ module GnipHelper
       feed_hash["inReplyTo"] = {
         "link" => "http://twitter.com/FreshArvind/statuses/#{reply}"
       }
-      feed_hash["body"] = "@TestingGnip Replying to tweet"
+      feed_hash["body"] = "@TestingGnip #{Faker::Lorem.words(20).join(" ")}"
     end
 
     return feed_hash
   end
 
-  def verify_mention_rule(mention=nil)
-    #mention = "@TestingGnip" if mention.nil?
-    ticket_rule = @stream.ticket_rules.first
+  def verify_mention_rule(stream,mention=nil)
+    ticket_rule = stream.ticket_rules.first
     ticket_rule.should_not be_nil
-    ticket_rule.filter_data[:includes].should include(mention)
+    ticket_rule.filter_data[:includes].should be_empty
   end
 
   def gnip_rule(rule)

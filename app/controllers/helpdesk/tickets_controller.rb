@@ -884,7 +884,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_autorefresh_feature
-      @is_auto_refresh_feature = current_account.features_included?(:auto_refresh)
+      @is_auto_refresh_feature = current_account.features?(:auto_refresh)
     end
 
     def get_cached_filters

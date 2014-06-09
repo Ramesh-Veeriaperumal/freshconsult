@@ -426,8 +426,8 @@ hr.content-divider{
 
 /* Recapcha hack fixes */
 .recaptcha_only_if_privacy{
-	float: none !important;
-	display: block;
+	position: relative !important;
+	top: -4px !important;
 }
 
 @if $nonResponsive == false {

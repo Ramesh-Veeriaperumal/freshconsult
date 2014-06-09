@@ -1,0 +1,23 @@
+page.replace_html "recent_search", :partial => 'recent_search'
+
+if @sorted_feeds.length == 0 && @social_error_msg.blank?
+  page << "jQuery('#tweet_noresults').show();"
+end
+
+unless @sorted_feeds.blank?
+  page.insert_html :bottom, "streamTemplate", :partial => "stream_feeds"
+  page << "jQuery('#social_meta_info #stream_ids').val('#{@stream_ids}')"
+
+  page << "jQuery('#social_meta_info #first_ids').val('#{@first_feed_ids}')"
+  page << "jQuery('#social_meta_info #last_ids').val('#{@last_feed_ids}')"
+  
+  # Must add css for this - as parsu suggested
+  page << "jQuery('#no_old_results').hide();"
+  page << "jQuery('#more_stream_feeds').show();"
+  page << "jQuery('#show_more_feeds').show();"
+  page << "jQuery('#tweet_noresults').hide();"
+end
+
+ # Must add css for this - as parsu suggested
+page << "jQuery('#more_stream_feeds').removeClass('sloading loading-block');"
+page << "jQuery('#streamTemplate').removeClass('sloading loading-block');"

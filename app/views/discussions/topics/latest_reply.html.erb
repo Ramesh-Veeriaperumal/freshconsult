@@ -1,0 +1,17 @@
+<% post = @topic.recent_post %>
+<div class='topic_overlay'>
+	<% if post.original_post? %>
+		<div>
+		<%= truncate(post.body, :length => 300 )%>
+		</div>
+	<% else %>
+
+		<%= user_avatar(post.user) %>
+			<div class="text">
+				<strong><%= h(post.user.name) %></strong><%= t( "topic.replied_time", :time_in_words => time_ago_in_words(post.created_at)) %> (<%= formated_date(post.created_at) %>)
+				<div class="note">
+					<%= h(truncate(post.body, { :length => 150, :omission => "..." })) %>
+				</div>
+			</div>
+	<% end %>
+</div>

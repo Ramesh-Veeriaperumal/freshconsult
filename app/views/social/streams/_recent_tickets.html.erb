@@ -1,0 +1,20 @@
+<% if @user_tickets.length > 0 %>
+  <div id="recent-tkts-box" class="o-converse">
+    <div id="recent-tkts-contents">
+      <% @user_tickets.each do |ticket| %>
+        <div class="rtkt-dtl clear">
+          <div class="ticket_subject">
+            <%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, :target => "_blank") %>
+          </div>
+          <div class="info-data">
+            <% sentence_type = "ticket_user_list_status_" %>
+            <span class="emphasize"> From: <%= h(ticket.requester.display_name) %></span> &nbsp;
+            <%= t("ticket." + sentence_type + ticket.ticket_states.current_state,
+              :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))).html_safe
+            %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

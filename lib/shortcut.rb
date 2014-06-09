@@ -61,8 +61,22 @@ class Shortcut
 			:go_to_previous		=> ['k', 'up'],
 			:scenario			=> "s"
 		},
+		:social_stream 			=> {
+			:search				=> "s",
+			:go_to_next			=> ['j', 'down'],
+			:go_to_previous		=> ['k', 'up'],
+			:open_stream		=> ["space", "return"],
+			:close 				=> "esc",
+			:reply				=> "r",
+			:retweet			=> "shift+r"
+		},
 		:portal_customizations  => {
 			:preview			=> "mod+shift+p"
+		},
+		:community_actions => {
+			:monitor_topic => "w",
+			:monitor_forum => "w",
+			:reply_topic => "r"
 		}
 	}
 

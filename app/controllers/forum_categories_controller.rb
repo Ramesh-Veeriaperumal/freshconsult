@@ -13,11 +13,15 @@ class ForumCategoriesController < ApplicationController
   before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab
   before_filter :content_scope
+
+  def new
+    redirect_to new_discussion_path
+  end
   
   def index
     @forum_categories = current_portal.forum_categories
     respond_to do |format|
-      format.html { @page_canonical = categories_url }
+      format.html { redirect_to discussions_path }
       format.xml  { render :xml => @forum_categories }
       format.json  { render :json => @forum_categories }
       format.atom 
@@ -29,8 +33,8 @@ class ForumCategoriesController < ApplicationController
       flash[:notice] = create_flash
       respond_to do |format|
         format.html { redirect_back_or_default redirect_url }
-        format.xml { render :xml => @obj, :status => :created, :location => category_url(@obj) }
-        format.json { render :json => @obj, :status => :created, :location => category_url(@obj) }
+        format.xml { render :xml => @obj, :status => :created, :location => discussion_path(@obj) }
+        format.json { render :json => @obj, :status => :created, :location => discussion_path(@obj) }
       end
     else
       create_error
@@ -47,7 +51,7 @@ class ForumCategoriesController < ApplicationController
     @forums = @forum_category.forums.paginate :page => params[:page]
 
     respond_to do |format|
-      format.html { @page_canonical = category_url(@forum_category) }
+      format.html { redirect_to discussion_path(@forum_category) }
       format.xml  { render :xml => @forum_category.to_xml(:include => fetch_forum_scope) }
       format.json  { render :json => @forum_category.to_json(
                               :except => [:account_id,:import_id],
@@ -64,7 +68,7 @@ class ForumCategoriesController < ApplicationController
       wants.html do
         if @result
           flash[:notice] = t(:'flash.general.destroy.success', :human_name => human_name)
-          redirect_to categories_path
+          redirect_to discussions_path
         else
           render :action => 'show'
         end
@@ -73,7 +77,11 @@ class ForumCategoriesController < ApplicationController
       wants.json { render :json =>@result}
     end
   end  
-    
+
+  def edit
+    redirect_to edit_discussion_path(@forum_category)
+  end
+      
   protected
   
     def content_scope
@@ -89,7 +97,7 @@ class ForumCategoriesController < ApplicationController
     end
     
     def reorder_redirect_url
-      categories_path
+      discussions_path
     end
     
     def portal_category?
@@ -107,7 +115,7 @@ class ForumCategoriesController < ApplicationController
 
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
-      redirect_to categories_path
+      redirect_to discussions_path
     end
     
   private

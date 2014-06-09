@@ -1,4 +1,4 @@
-<% if (!(ticket.nil?) && current_account.features_included?(:collision) && current_account.agents_from_cache.count > 1 ) %>
+<% if (!(ticket.nil?) && current_account.features?(:collision) && current_account.agents_from_cache.count > 1 ) %>
     <!-- **** Agent Collision flip animation start **** -->
   <div class="ticket-notifications" id="agent_collision_show">
     <div class="view-flip" rel="notice-popover"  id="agents_viewing" data-object="viewing" data-placement="right" title="Currently viewing">
@@ -50,7 +50,7 @@
         };
         channels[ "<%= auto_refresh_channel %>"] = window.AutoRefreshIndex.callback 
       <% end %>
-      <% if current_account.features_included?(:collision) && current_account.agents_from_cache.count > 1 %>  
+      <% if current_account.features?(:collision) && current_account.agents_from_cache.count > 1 %>  
         data['agent_collision_index'] = {
           collision_channel : "<%= agent_collision_index_channel %>"
         };
@@ -59,10 +59,13 @@
     <% else %>
       data['agent_collision_show'] = {
         ticket_path : "<%= helpdesk_ticket_path(ticket.display_id) %>",
-        ticket_reply_channel : "<%= agent_collision_ticket_reply_channel(ticket.display_id) %>"
+        ticket_id : "<%= ticket.display_id %>",
+        ticket_reply_channel : "<%= agent_collision_ticket_reply_channel(ticket.display_id) %>",
+        ticket_channel : "<%= agent_collision_ticket_channel(ticket.display_id) %>"
       }
       channels["<%= agent_collision_ticket_channel(ticket.display_id) %>"] = window.AgentCollisionShow.ticketChannelCallback;
       channels["<%= agent_collision_ticket_view_channel(ticket.display_id) %>"] = window.AgentCollisionShow.viewChannelCallback;
+      channels[ "<%= auto_refresh_channel %>"] = window.AutoRefreshShow.callback 
     <% end %>
     window.channels = channels;
     window.FreshdeskNode.data(data).addChannels(channels).init();

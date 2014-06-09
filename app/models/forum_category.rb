@@ -15,38 +15,44 @@ class ForumCategory < ActiveRecord::Base
   end
 
   has_many :forums, :dependent => :destroy, :order => "position"
-  has_many :customer_forums , :class_name => "CustomerForum", :through => :forums 
-  has_many :portal_forums, :class_name => 'Forum', :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} , :order => "position" 
-  has_many :customer_editable_forums,  :class_name => "Forum", :conditions => ['forum_visibility = ? AND forum_type != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::TYPE_KEYS_BY_TOKEN[:announce]], :order => "position" 
+  has_many :customer_forums , :class_name => "CustomerForum", :through => :forums
+  has_many :portal_forums, :class_name => 'Forum', :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} , :order => "position"
+  has_many :customer_editable_forums,  :class_name => "Forum", :conditions => ['forum_visibility = ? AND forum_type != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::TYPE_KEYS_BY_TOKEN[:announce]], :order => "position"
   has_many :user_forums, :class_name => 'Forum',:conditions => ['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] , :order => "position"
   has_many :portal_topics, :through => :portal_forums
   has_many :user_topics, :through => :user_forums
   has_many :topics , :through => :forums
 
-  has_many :activities, 
-    :class_name => 'Helpdesk::Activity', 
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
   attr_accessible :name,:description , :import_id
   belongs_to :account
-  
-  acts_as_list :scope => :account  
-  
-  def after_create 
+
+  acts_as_list :scope => :account
+
+  def after_create
     create_activity('new_forum_category')
+    account.clear_forum_categories_from_cache
   end
-  
-  def after_destroy 
+
+  def after_destroy
     create_activity('delete_forum_category')
+    account.clear_forum_categories_from_cache
+  end
+
+  def after_update
+    account.clear_forum_categories_from_cache if (self.changes.key?("name") or self.changes.key?("position"))
   end
 
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
     find :all, options.update(:conditions => {:account_id => account}, :order => 'name')
   end
-  
+
   def self.forum_names(account)
-    account.forum_categories.map { |category| 
+    account.forum_categories.map { |category|
       [ category.name, category.user_forums.map {|forum| [forum.id, forum.name] } ]
     }
   end
@@ -56,7 +62,7 @@ class ForumCategory < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+    super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end
 
   def as_json (options = {})
@@ -79,8 +85,8 @@ class ForumCategory < ActiveRecord::Base
       :short_descr => "activities.forums.#{type}.short",
       :account => account,
       :user => User.current,
-      :activity_data => { 
-                          :path => category_path(id),
+      :activity_data => {
+                          :path => discussion_path(id),
                           :url_params => {
                                            :category_id => id,
                                            :path_generator => 'category_path'
@@ -89,5 +95,5 @@ class ForumCategory < ActiveRecord::Base
                         }
     )
   end
-  
- end
+
+end

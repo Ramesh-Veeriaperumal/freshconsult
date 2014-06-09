@@ -1,0 +1,90 @@
+<h3 class="lead"><%= t('social.welcome.title')%></h3>
+
+<% content_for :sidebar do -%><%-end %>
+
+<div class="row-fluid scl-welcome">
+  <div class="span14">
+    <div style="float:left" class="span2 image-lazy-load">
+      <img src="http://placehold.it/1/ffffff/ffffff" data-src="/images/cdn-ignored/inline-images/social/social-welcome.png" alt="" data-src-retina="/images/cdn-ignored/inline-images/social/social-welcome-2x.png">
+    </div>
+    <div class="span10">
+      <h4><%= t('social.welcome.helptext_title1')%></h4>
+        <p><%= t('social.welcome.helptext1')%></p>
+        <p><%= t('social.welcome.helptext2')%></p>
+        <p> <%= t('social.welcome.helptext3')%></p> 
+        
+        <div class="scl-btn-group">
+          <ul class="unstyled row">
+            <li class="span6" style="text-align:right;">
+              <button class="btn social-toggle-button"><%= t('social.welcome.turn_off')%></button>
+              <span class="help-block"><%= t('social.welcome.off_helptext_html')%></span></li>
+            <li class="span6" style="text-align:left;"><%= link_to(t('social.welcome.get_started'), :admin_social_streams , :class => "btn btn-primary" ) %></li>
+          </ul>
+          </div>
+        </div>    
+        
+    </div>               
+  </div>    
+</div>
+
+<% content_for :sidebar do %>
+  <div class="scl-welcome">
+    <h5><%= t('social.welcome.helptext_title2')%></h5>
+      <div class="row-fluid scl-statinput">
+        <input type="text" id="twitter_handle" name="twitter_handle" placeholder="Your company's twitter handle">
+        <input class="uiButton special medium" id="getStats" name="commit" type="submit" value="Go">
+      </div>
+    <div id="twitterStats"></div>
+  </div>
+<% end %>
+
+<% content_for :onload_script do %>
+  <% unless @twitter_enable %>
+    jQuery('.social-toggle-button').text('Turn ON Social');
+  <% end %>
+<% end %>
+
+<script type="text/javascript">
+
+  jQuery("#twitter_handle").keyup(function(event){
+    if(event.keyCode == 13){
+        jQuery("#getStats").click();
+    }
+  });
+
+  jQuery("#getStats").live("click", function(e){
+    e.preventDefault();
+    if(jQuery("#twitter_handle").val() == ""){
+      return;
+    }
+    jQuery('#twitterStats').empty();
+    jQuery('#twitterStats').addClass('sloading loading-block');
+    data = {twitter_handle: jQuery("#twitter_handle").val()}
+    jQuery.ajax({
+      type: 'GET',
+      url : '/social/welcome/get_stats',
+      data: data,
+      datatype:'json',
+      success: function(data){
+        //success
+      }
+    });
+  });
+
+  jQuery(".social-toggle-button").live("click", function(e){
+    e.preventDefault();
+    feature = (jQuery(this).text() == 'Turn OFF Social' ? false : true)
+    data = {twitter: feature}
+    jQuery.ajax({
+      type: 'POST',
+      url : '/social/welcome/enable_feature',
+      data: data,
+      datatype:'json',
+      success: function(data){
+        jQuery(this).text('Turn ON Social');
+        location.replace('/admin/home')
+      }
+    });
+  })
+
+</script>

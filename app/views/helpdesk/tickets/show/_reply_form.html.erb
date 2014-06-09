@@ -231,13 +231,7 @@
   <% javascript_tag do %>
 
     jQuery("#HelpdeskReply")      
-      .bind("submit", function(ev){
-      if(!jQuery('#include_cc').is(':checked'))
-          jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
-      if(!jQuery('#include_bcc').is(':checked'))
-          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-          isDirty = false;
-      })
+      .bind("submit", function(ev){})
       .validate();  
 
     jQuery('#HelpdeskReply select#reply_email_id').live('change',function(e){

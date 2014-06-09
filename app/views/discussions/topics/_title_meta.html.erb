@@ -1,0 +1,47 @@
+<div class="content-meta">
+	<i class="forum-type-<%= @forum.type_symbol %> type-icon tooltip" title="<%= @forum.type_name%>"></i>
+	<div class="info ml10">
+		<h1 class="title">
+			<% unless @topic.published? %>
+				<span class="label label-topic">
+						<%= t(@first_post.spam? ? 'discussions.topics.spam' : 'discussions.topics.waiting_for_approval') %>
+				</span>
+			<% end %>
+			<% if @topic.locked? %>
+				<span class="label label-topic">
+					<%= t('discussions.topics.locked') %>
+				</span>
+			<% end %>
+			<%= @topic.title %>
+		</h1>
+		<% if @topic.published? %>
+			<div class="tooltip ml20 view_on_portal pull-right" title='<%= t('topic.view_on_portal')%>'>
+				<%= link_to '<i class="agent-preview"></i>'.html_safe, support_discussions_topic_path(@topic.id), :target => "_blank" %>
+			</div>
+			<div class="sub-action-list">
+				<ul>
+					<li class="meta-component <%= 'faded' if @topic.reply_count == 0 %>">
+						<%= font_icon "comment-multi" %>
+						<%= t(".replies", :count => @topic.reply_count) %>
+					</li>
+
+					<% unless @forum.announcement? %>
+						<li class="meta-component <%= 'faded' if @topic.user_votes == 0 %>">
+							<%= font_icon "like" %>
+							<span id="topic-vote">
+								<%= t(".vote_info.#{@forum.type_symbol}", :count => @topic.user_votes) %>
+							</span>
+						</li>
+					<% end %>
+
+					<li class="meta-component <%= 'faded' if @topic.hits == 0 %>">
+						<%= font_icon "file-visible" %>
+						<%= t(".hits", :count => @topic.hits) %>
+					</li>
+				</ul>
+			</div>
+
+		<% end %>
+
+	</div>
+</div>

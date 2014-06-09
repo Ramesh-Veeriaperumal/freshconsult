@@ -1,0 +1,273 @@
+class Discussions::TopicsController < ApplicationController
+
+	helper DiscussionsHelper
+
+	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
+	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
+	before_filter :find_topic, :except => [:index, :create, :new, :destroy_multiple]
+	before_filter :portal_check, :only => :show
+	before_filter :fetch_monitorship, :only => :show
+	before_filter :set_page, :only => :show
+	before_filter :after_destroy_path, :only => :destroy
+
+	before_filter { |c| c.requires_feature :forums }
+	before_filter { |c| c.check_portal_scope :open_forums }
+
+	before_filter :set_selected_tab
+
+	COMPONENTS = [:voted_users, :participating_users, :following_users]
+	POSTS_PER_PAGE = 10
+
+	def new
+		@topic = current_account.topics.new
+	end
+
+	def create
+		topic_saved, post_saved = false, false
+		# this is icky - move the topic/first post workings into the topic model?
+		Topic.transaction do
+			forum = current_account.forums.find(params[:topic][:forum_id])
+			@topic  = forum.topics.build(topic_param)
+			assign_protected
+			@post       = @topic.posts.build(post_param)
+			@post.topic = @topic
+			if privilege?(:view_admin)
+				@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
+			end
+			@post.user  ||= current_user
+			@post.account_id = current_account.id
+			# only save topic if post is valid so in the view topic will be a new record if there was an error
+			@topic.body_html = @post.body_html # incase save fails and we go back to the form
+			build_attachments
+			topic_saved = @topic.save if @post.valid?
+			post_saved = @post.save if topic_saved
+		end
+
+		if topic_saved && post_saved
+			respond_to do |format|
+				format.html { redirect_to discussions_topic_path(@topic) }
+				format.xml  { render  :xml => @topic }
+				format.json  { render  :json => @topic }
+			end
+		else
+			respond_to do |format|
+				format.html { render :action => "new" }
+				format.xml  { render  :xml => @topic.errors }
+				format.json  { render  :json => @topic.errors }
+			end
+		end
+	end
+
+	def update
+		topic_saved, post_saved = false, false
+		Topic.transaction do
+			@topic.attributes = topic_param
+			assign_protected
+			@post = @topic.posts.first
+			@post.attributes = post_param
+			@topic.body_html = @post.body_html
+			build_attachments
+			topic_saved = @topic.save
+			post_saved = @post.save
+		end
+
+		if topic_saved && post_saved
+			respond_to do |format|
+				format.html { redirect_to discussions_topic_path(@topic) }
+				format.xml  { head 200 }
+				format.json { head 200 }
+			end
+		else
+			respond_to do |format|
+				format.html { render :action => "edit" }
+			end
+		end
+	end
+
+	def destroy
+		@topic.destroy
+		flash[:notice] = (I18n.t('flash.topic.deleted')[:topic_deleted_message, h(@topic.title)]).html_safe
+		respond_to do |format|
+			format.html do
+				redirect_to  @after_destroy_path 
+			end
+			format.xml  { head 200 }
+			format.json  { head 200 }
+		end
+	end
+
+	def show
+		respond_to do |format|
+			format.html do
+
+				if @topic.published?
+					@posts = @topic.posts.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
+					@post  = Post.new
+				end
+
+				@first_post = @topic.posts.first
+
+				@page_title = @topic.title
+			end
+			format.xml do
+				render :xml => @topic.to_xml(:include => :posts)
+			end
+			format.json do
+				render :json => @topic.to_json(:include => :posts)
+			end
+			format.rss do
+				@posts = @topic.posts.published.find(:all, :order => 'created_at desc', :limit => 25)
+				render :action => 'show', :layout => false
+			end
+		end
+	end
+
+	def destroy_multiple
+		if params[:ids].present?
+			current_account.topics.find(params[:ids]).each do |item|
+				item.destroy
+			end
+
+			flash[:notice] = I18n.t('topic.bulk_delete')
+		end
+		redirect_to :back
+	end
+
+	def component
+		if COMPONENTS.include? (params[:name] || "").to_sym
+			render :partial => "discussions/topics/components/#{params[:name]}"
+		else
+			render_404
+		end
+	end
+
+	def toggle_lock
+		@topic.locked = !@topic.locked
+		@topic.save!
+		respond_to do |format|
+			format.html { redirect_to discussions_topic_path(@topic) }
+			format.xml  { head 200 }
+			format.json  { head 200 }
+		end
+	end
+
+
+	def update_stamp
+		if  @topic.update_attributes(:stamp_type => params[:stamp_type])
+			respond_to do |format|
+				format.js
+				format.html { redirect_to discussions_topic_path(@topic) }
+				format.xml  { head 200 }
+			end
+		end
+	end
+
+	def latest_reply
+		render :layout => false
+	end
+
+	def vote
+		unless @topic.voted_by_user?(current_user)
+			@vote = Vote.new(:vote => params[:vote] == "for")
+			@vote.user_id = current_user.id
+			@topic.votes << @vote
+			@topic.reload
+		end
+		respond_to do |format|
+			format.js
+			format.html { redirect_to discussions_topic_path(@topic) }
+			format.xml  { head 200 }
+		end
+	end
+
+	def destroy_vote
+		@votes = @topic.votes.find(:all, :conditions => ["user_id = ?", current_user.id] )
+		@votes.first.destroy
+		@topic.reload
+		respond_to do |format|
+			format.js { render "vote.rjs" }
+			format.html { redirect_to discussions_topic_path(@topic) }
+			format.xml  { head 200 }
+		end
+	end
+
+	private
+
+		def assign_protected
+			if @topic.new_record?
+				if privilege?(:view_admin)
+					@topic.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
+				end
+				@topic.user ||= current_user
+			end
+			@topic.account_id = current_account.id
+			# admins and moderators can sticky and lock topics
+			return unless privilege?(:view_admin) or current_user.moderator_of?(@topic.forum)
+			@topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked]
+			# only admins can move
+			return unless privilege?(:view_admin)
+			@topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
+		end
+
+		def build_attachments
+			return unless @post.respond_to?(:attachments)
+			unless params[:post].nil?
+				(params[:post][:attachments] || []).each do |a|
+					@post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+				end
+			end
+		end
+
+		def after_destroy_path
+			first_post = @topic.posts.first
+			if first_post.spam?
+				@after_destroy_path = discussions_moderation_filter_path(:filter => :spam)
+			elsif !first_post.published?
+				@after_destroy_path = discussions_moderation_filter_path(:filter => :waiting)
+			else
+				@after_destroy_path = discussions_forum_path(@forum)
+			end
+		end
+
+		def find_topic
+			@topic = current_account.topics.find(params[:id], :include => [:user, :forum])
+			@forum = @topic.forum
+			@category = @forum.forum_category
+		end
+
+		def portal_check
+			if current_user.nil? || current_user.customer?
+				return redirect_to support_discussions_topic_path(@topic)
+			elsif !privilege?(:view_forums)
+				access_denied
+			end
+		end
+
+		def set_page
+			params[:page] = ([(@topic.posts.count.to_f / POSTS_PER_PAGE).ceil, 1].max) if params[:page] == 'last'
+		end
+
+
+		def fetch_monitorship
+			@monitorship = @topic.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+		end
+
+
+		def RecordNotFoundHandler
+			flash[:notice] = I18n.t(:'flash.topic.page_not_found')
+			redirect_to discussions_path
+		end
+
+		def set_selected_tab
+			@selected_tab = :forums
+		end
+
+		def topic_param
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html].include? k }
+		end
+
+		def post_param
+			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked].include? k }
+		end
+end

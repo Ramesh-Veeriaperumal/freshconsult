@@ -36,10 +36,29 @@ module Social::DynamoHelper
     table = $social_dynamoDb.create_table(table_options)
 
     #Checking status of the table
-    table_data = $social_dynamoDb.describe_table(:table_name => name)
-    while table_data[:table][:table_status] == "CREATING"
-      sleep 1
-      table_data = $social_dynamoDb.describe_table(:table_name => name)
+    wait_for_table_resource(name, "CREATING")
+  end
+
+
+  def self.update_rw_table(name, hash, range, start_read, final_read, write)
+    current_read = start_read
+
+    while current_read < final_read
+      current_read = current_read*2
+      if current_read > final_read
+        current_read = final_read
+      end
+
+      table_options = {
+        :table_name => name,
+        :provisioned_throughput => {
+          :read_capacity_units  => current_read,
+          :write_capacity_units => write
+        }
+      }
+
+      table = $social_dynamoDb.update_table(table_options)
+      wait_for_table_resource(name, "UPDATING")
     end
   end
 
@@ -51,11 +70,7 @@ module Social::DynamoHelper
     begin
       $social_dynamoDb.delete_table(:table_name => name)
 
-      table_data = $social_dynamoDb.describe_table(:table_name => name)
-      while table_data[:table][:table_status] == "DELETING"
-        sleep 1
-        table_data = $social_dynamoDb.describe_table(:table_name => name)
-      end
+      wait_for_table_resource(name, "DELETING")
     rescue AWS::DynamoDB::Errors::ResourceNotFoundException => e
       return true
     rescue => e
@@ -66,7 +81,7 @@ module Social::DynamoHelper
 
   # Added the default_argument expected=true for the race condition.
   # Race happens when reply to a tweet from portal is inserted into dynamo and the same tweet
-  # comes as a part of the gnip stream(cos of the rule value from:screenname). 
+  # comes as a part of the gnip stream(cos of the rule value from:screenname).
   # For inserting into feeds table , "false" is passed - feed wil be inserted only once and wont be updated
   # For inserting replies made from portal and interactions table insert, it takes the default argument "true"
   def self.insert(table, item, schema, expected=true)
@@ -127,7 +142,7 @@ module Social::DynamoHelper
     $social_dynamoDb.update_item(options)
   end
 
-
+  # Eventually consistent read
   def self.query(table, hash, range, schema, limit, sort_type)
     hash_key = schema[:hash][:attribute_name]
 
@@ -135,7 +150,6 @@ module Social::DynamoHelper
       :table_name         => table,
       :select             => "ALL_ATTRIBUTES",
       :limit              => limit,
-      :consistent_read    => true,
       :scan_index_forward => sort_type,
       :key_conditions => {
         hash_key => hash
@@ -147,11 +161,10 @@ module Social::DynamoHelper
       query_options[:key_conditions][range_key] = range
     end
 
-    #puts query_options.inspect
     response = $social_dynamoDb.query(query_options)
   end
 
-
+  # Strongly consistent read
   def self.get_item(table, hash, range, schema, attributes_to_get)
     hash_key = schema[:hash][:attribute_name]
     range_key = schema[:range][:attribute_name]
@@ -164,13 +177,14 @@ module Social::DynamoHelper
           range_key => {
             :s => "#{range}"
           }
-      }
+      },
+      :consistent_read    => true
     }
     query_options.merge!(:attributes_to_get => attributes_to_get) if attributes_to_get
     response = $social_dynamoDb.get_item(query_options)
   end
 
-
+  # Eventually consistent read
   def self.batch_get(*tables_info)
     requested_items = {}
     response_arr = []
@@ -214,6 +228,16 @@ module Social::DynamoHelper
       return true
     rescue AWS::DynamoDB::Errors::ResourceNotFoundException => e
       return false
+    end
+  end
+
+  private
+  def self.wait_for_table_resource(name, status)
+    #Checking status of the table
+    table_data = $social_dynamoDb.describe_table(:table_name => name)
+    while table_data[:table][:table_status] == status
+      sleep 1
+      table_data = $social_dynamoDb.describe_table(:table_name => name)
     end
   end
 

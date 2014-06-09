@@ -14,7 +14,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
   TRIAL_END = "0"
 
-  PLANS = [ :sprout, :blossom, :garden, :estate, :sprout_classic, :blossom_classic, :garden_classic,
+  PLANS = [ :sprout, :blossom, :garden, :estate, :forest, :sprout_classic, :blossom_classic, :garden_classic,
             :estate_classic, :basic, :pro, :premium ]
 
   BILLING_PERIOD  = { 1 => "monthly", 3 => "quarterly", 6 => "half_yearly", 12 => "annual" }
@@ -91,7 +91,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end  
 
   def cancel_subscription(account)
-    account.active? ? super(account.id) : true
+    cancelled_subscription?(account.id) ? true : super(account.id) 
   end
 
   def reactivate_subscription(subscription, data = {})

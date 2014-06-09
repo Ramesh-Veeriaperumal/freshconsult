@@ -54,9 +54,6 @@ stylesheets:
   tkt_details_print:
     - public/stylesheets/page/tkt_details/tkt_details_print.css
 
-  survey:
-    - public/stylesheets/support/rating.css
-
   gadget:
     - public/stylesheets/common.css
     - public/stylesheets/pages.css
@@ -67,6 +64,10 @@ stylesheets:
     - public/stylesheets/page/tkt_details/tkt_details.css
     - public/stylesheets/page/tkt_details/tkt_details_sprites.css
     - public/stylesheets/page/gadget.css
+
+  google_signup:
+    - public/stylesheets/common.css
+    - public/stylesheets/page/google-signup.css
 
   reports:
     - public/stylesheets/page/reports.css
@@ -92,6 +93,9 @@ stylesheets:
   preview:
     - public/stylesheets/portal/preview.css
 
+  community:
+    - public/stylesheets/page/community/community.css
+
   widget:
     - public/stylesheets/portal/widget.css
 
@@ -101,11 +105,11 @@ stylesheets:
   facebook:
     - public/stylesheets/portal/facebook.css
 
+  social: 
+    - public/stylesheets/social/social.css
+
   rating:
     - public/stylesheets/portal/rating.css
-
-  icomoon:
-    - public/stylesheets/chat/icomoon.css
 
   freshfone:
     - public/stylesheets/freshfone/freshfone.css
@@ -173,7 +177,7 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
-    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js    
+    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
     - public/javascripts/app/ticket_details.js
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/base64.js
@@ -214,21 +218,26 @@ javascripts:
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
-    - public/javascripts/dyn_menu.js    
+    - public/javascripts/dyn_menu.js
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/dates.js
     - public/javascripts/globalinit.js
+    - public/javascripts/app/app.js
     - public/javascripts/security.js
     - public/javascripts/fjax.js
+    - public/javascripts/fjax/config.js
+    - public/javascripts/fjax/assets.js
+    - public/javascripts/fjax/manager.js
     - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - app/views/shared/spotlight_result.jst
     - public/javascripts/report/date.js
     - public/javascripts/freshfone/global.js
+    - public/javascripts/app/metrics.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -243,10 +252,19 @@ javascripts:
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
     #- public/javascripts/pattern/bootstrap-tooltip.js
-    # - public/javascripts/pattern/bootstrap-popover.js
+    #- public/javascripts/pattern/bootstrap-popover.js
     - public/javascripts/jquery.pageslide.js
     - public/javascripts/pattern/sticky.js
     - public/javascripts/pattern/stickyinit.js
+
+  discussions:
+    - public/javascripts/app/discussions/discussions.js
+    - public/javascripts/app/discussions/sidebar.js
+    - public/javascripts/app/discussions/reorder.js
+    - public/javascripts/app/discussions/category.js
+    - public/javascripts/app/discussions/topic_list.js
+    - public/javascripts/app/discussions/topic.js
+    - public/javascripts/app/discussions/moderation.js
 
   search:
     - public/javascripts/app/search.js
@@ -280,7 +298,7 @@ javascripts:
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/plugins/select2.js
-    - public/javascripts/feedback_widget_form.js    
+    - public/javascripts/feedback_widget_form.js
     - public/javascripts/security.js
 
   custom_widget:
@@ -348,7 +366,7 @@ javascripts:
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/preview.js
 
-  portal_bottom:    
+  portal_bottom:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
@@ -427,6 +445,13 @@ javascripts:
   excanvas:
     - public/javascripts/excanvas.js
 
+  social_tab:
+    - public/javascripts/social/stream_manager.js
+    - public/javascripts/social/twitter_actions.js
+
+  social_admin:
+    - app/views/admin/social/streams/social_tweet.jst
+
   getting_started:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/utils.js
@@ -464,7 +489,7 @@ javascripts:
   admin:
     - public/javascripts/admin/ui_search.js
 
-<% 
+<%
   # Adding specific javascript assets to the package list
   # Add new lang lib to /public/javascripts/lang/{framework name}/es.js etc.
   # The supported language name should be with the corresponding I18n ruby locale key in lowercase

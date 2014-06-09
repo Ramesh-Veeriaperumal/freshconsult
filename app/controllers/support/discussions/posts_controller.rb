@@ -32,8 +32,8 @@ class Support::Discussions::PostsController < SupportController
 		  format.html do
 		    redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
 		  end
-		  format.xml { 
-		  	return render :xml => @post 
+		  format.xml {
+		  	return render :xml => @post
 		  }
 		end
 		rescue ActiveRecord::RecordInvalid
@@ -42,8 +42,8 @@ class Support::Discussions::PostsController < SupportController
 		  format.html do
 		  	redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
 		  end
-		  format.xml { 
-		  	return render :xml => @post.errors.to_xml, :status => 400 
+		  format.xml {
+		  	return render :xml => @post.errors.to_xml, :status => 400
 		  }
 		end
 	end
@@ -112,7 +112,7 @@ private
 		end
 	end
 
-	def find_post     
+	def find_post
 		@post = Post.find_by_id_and_topic_id(params[:id], params[:topic_id]) || raise(ActiveRecord::RecordNotFound)
 		(raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
 		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
@@ -125,7 +125,7 @@ private
 	def post_request_params
 		{
 			:request_params => {
-				:user_ip => request.env['CLIENT_IP'],
+				:user_ip => request.remote_ip,
 				:referrer => request.referrer,
 				:user_agent => request.env['HTTP_USER_AGENT']
 			}
