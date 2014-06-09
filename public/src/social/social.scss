@@ -230,7 +230,7 @@ $bdr-color:#e1e1e1;
 			border-top-right-radius: 4px;
 			&.white{
 				background: #fff;
-				border-bottom:none; 
+				border-bottom:none;
 				padding-bottom: 0;
 			}
 
@@ -349,6 +349,7 @@ $bdr-color:#e1e1e1;
 .conversations{
 	background: #fafafa;
 	color:#333333;
+	padding-bottom: 50px;
 	.highlight{
 		background:#ffffe5;
 		border: solid #eaeaea;
@@ -1142,7 +1143,7 @@ slideRight
 	}
 	.tc >div {
 		display:none;
-		
+
 		a{
 			color: #333;
 		}
