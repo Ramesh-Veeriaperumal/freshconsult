@@ -85,7 +85,7 @@ describe Freshfone::UsersController do
 
   it 'should set user presence as busy and return a call SID for outgoing call' do
     create_freshfone_call
-    @freshfone_call.update_attributes(:call_status => Freshfone::Call::CALL_STATUS_HASH[:'in-progress'])
+    @freshfone_call.update_attributes(:call_status => Freshfone::Call::CALL_STATUS_HASH[:default])
     post :in_call, {:outgoing => "true"}
     json.should be_eql({:update_status => true, :call_sid => "CA9cdcef5973752a0895f598a3413a88d5"})
   end

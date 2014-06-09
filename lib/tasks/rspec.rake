@@ -24,6 +24,7 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/contacts_controller_spec.rb",
              "spec/controllers/contact_merge_controller_spec.rb",
              "spec/controllers/user_emails_controller_spec.rb",
+             "spec/controllers/activations_controller_spec.rb",
              "spec/controllers/customers_controller_spec.rb",
              "spec/controllers/profiles_controller_spec.rb",
              "spec/controllers/ticket_fields_controller_spec.rb",
@@ -62,8 +63,12 @@ MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb",
                 ]
 IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
 		  "spec/controllers/integrations/google_accounts_controller_spec.rb" ]
-FreshfoneTest = ["spec/controllers/freshfone/*_spec.rb"]
+FreshfoneTest = ["spec/controllers/freshfone/*_spec.rb",
+                 "spec/lib/freshfone/*_spec.rb"]
 
+APITest = [ "spec/controllers/api/json/*_spec.rb",
+            "spec/controllers/api/xml/*_spec.rb"]
+  
 AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
 AllTest.flatten!.uniq!
 
@@ -235,7 +240,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
 
     namespace :freshfone do
       desc "Running all Freshfone Tests"
-      Spec::Rake::SpecTask.new(:controllers) do |t|
+      Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
         t.spec_files = FileList.new(FreshfoneTest)
       end
@@ -275,6 +280,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
     
+    namespace :api do
+      desc "Running all api tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(APITest)
+      end
+    end
+
     namespace :all do
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|

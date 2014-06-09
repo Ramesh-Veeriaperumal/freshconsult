@@ -12,16 +12,51 @@
       </li>
     <% end %>
   </ul>
-  <div class="button-container">
+
+  <div class="btn-toolbar pull-right">
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
-    <%= f.submit t('save'), :class => "btn btn-primary pull-right ml3" %>
-    <%= submit_tag t('save_and_close'), :name => "save_and_close", :class => "btn", :id => "save_and_close" %>
-    <%= submit_tag t('save_and_new'), :name => "save_and_create", :class => "btn" %>
+
+    <span class="btn-group dropup">
+      <button class="btn btn-primary">
+        <%= t('save') %>
+        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="caret"></span>
+        </button>
+      </button>
+
+      <ul class="dropdown-menu pull-right">
+        <li>
+          <%= link_to t('save_and_close').html_safe, '#', :name => "action_save", :id => "save_and_close" %>
+        </li>
+        <li>
+          <%= link_to t('save_and_new').html_safe, '#', :name => "action_save" %>
+        </li>
+      </ul>
+    </span>  
   </div>
 <% end %>
 <% javascript_tag do %>
-  jQuery('#save_and_close').bind('click', function(){
-    jQuery('#helpdesk_ticket_status').val('5')
-    jQuery('#helpdesk_ticket_status').trigger('change')
-  })
+  jQuery('a[name="action_save"]').bind('click', function(ev){
+    preventDefault(ev);
+    var _form = jQuery(this).parents("form");
+    if(jQuery(this).prop('id') == 'save_and_close') {
+      jQuery('#helpdesk_ticket_status').val('<%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>')
+      jQuery('#helpdesk_ticket_status').trigger('change')
+    }
+    else {
+      _form.append(new Element('input', {
+                     type: 'hidden',
+                     name: 'save_and_create',
+                     value: true
+                   }));
+    }
+
+    _form.submit();
+  });
+
+  jQuery('#NewTicket').bind("submit", function(){
+    var _form = jQuery(this);
+    if(_form.valid())
+      _form.find("button, a.btn").attr('disabled',true);
+  });
 <% end %>

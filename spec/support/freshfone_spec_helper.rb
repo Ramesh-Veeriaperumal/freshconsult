@@ -2,6 +2,7 @@ module FreshfoneSpecHelper
 
   def create_test_freshfone_account
     Freshfone::Account.any_instance.stubs(:close)
+    Freshfone::Account.any_instance.stubs(:update_twilio_subaccount_state).returns(true)
     freshfone_account = Freshfone::Account.new( 
                           :twilio_subaccount_id => "AC626dc6e5b03904e6270f353f4a2f068f", 
                           :twilio_subaccount_token => "9440b022c423b59a8339715b6e7d4f80", 
@@ -44,13 +45,25 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid } )
   end
 
+  def build_freshfone_caller
+      number = "+12345678900"
+      account = @freshfone_call.account
+      caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
+      caller.update_attributes({:number => number})
+      @freshfone_call.update_attributes(:caller => caller)
+    end
+
   def create_freshfone_user(presence = 0)
-    @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
-    @freshfone_user.save!
+    # @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
+    @freshfone_user = Freshfone::User.find_by_user_id(@agent.id)
+    if @freshfone_user.blank?
+      @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => @agent })
+    end
   end
 
   def create_online_freshfone_user
-    create_freshfone_user(1)
+    create_freshfone_user
+    @freshfone_user.update_attributes(:presence => 1)
   end
 
   def create_call_family

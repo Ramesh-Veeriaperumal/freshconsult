@@ -55,4 +55,12 @@ if ENV["RAILS_ENV"] == "test"
     note.incoming 0
     note.private 1
   end
+
+  Factory.define :sla_policies, :class => Helpdesk::SlaPolicy do |f|
+    f.name "Test Sla Policy"
+    f.conditions HashWithIndifferentAccess.new({ :source =>["3"],:company_id =>"" })
+  end
+
+  Factory.define :sla_details, :class => Helpdesk::SlaDetail do |f|
+  end
 end

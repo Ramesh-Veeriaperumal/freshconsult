@@ -1,0 +1,36 @@
+defaults: &defaults
+  :verbose: true
+  :require: ./config/environment.rb
+  :concurrency: 25
+  :logfile: ./log/sidekiq.log
+  :queues:
+    - [sla]
+    - [premium_supervisor]
+    - [supervisor]
+    - [trial_supervisor]
+    - [free_supervisor]
+    - [facebook]
+    - [premium_facebook]
+    - [facebook_comments]
+    - [twitter]
+    - [premium_twitter]
+    - [sla_scheduler]
+    - [supervisor_scheduler]
+    - [facebook_scheduler]
+    - [premium_facebook_scheduler]
+    - [facebook_comments_scheduler]
+    - [twitter_scheduler]
+    - [premium_twitter_scheduler]
+    - [default]
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults

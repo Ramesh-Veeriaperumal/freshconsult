@@ -195,7 +195,7 @@ class AgentsController < ApplicationController
     redirect_to :back
   end
 
- def restore  
+ def restore  # Possible dead code(restore)
    @agent = current_account.all_agents.find(params[:id])
    if @agent.user.update_attributes(:deleted => false,
        :role_ids => [current_account.roles.find_by_name("Agent").id]
@@ -238,7 +238,7 @@ class AgentsController < ApplicationController
      current_account.all_agents
   end
 
-  def cname
+  def cname # Possible dead code(cname)
     @cname ||= controller_name.singularize
   end
 

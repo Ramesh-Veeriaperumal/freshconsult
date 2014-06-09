@@ -990,8 +990,8 @@ def article_attachments article
 	end
 
 	def page_tracker
-		case @current_page_token.to_sym
-		when :topic_view
+		case @current_page_token
+		when "topic_view"
 			"<img src='#{hit_support_discussions_topic_path(@topic)}' />".html_safe
 		else
 			""

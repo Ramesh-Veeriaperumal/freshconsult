@@ -62,4 +62,15 @@ module UsersHelper
     new_user.save(false)
     new_user
   end
+
+  def fake_a_contact
+    @params = { :user=> { 
+                          :name => Faker::Name.name, 
+                          :email => Faker::Internet.email,
+                          :time_zone => "Chennai",
+                          :delta => 1, 
+                          :language => "en"
+                        }
+              }
+  end
 end

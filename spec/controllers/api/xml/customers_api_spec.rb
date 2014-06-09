@@ -23,7 +23,6 @@ describe CustomersController do
     post :create, @params.merge!(:format => 'xml')
     @comp = @account.customers.find_by_name(@company_name)
     response.status.should be_eql '201 Created'
-    response.location.should be_eql "http://localhost.freshpo.com/customers/#{@comp.id}"
     @company_params.should be_eql(xml SKIPPED_KEYS)
   end
 

@@ -18,7 +18,12 @@ module GoogleLoginHelper
   end
 
   def request_domain
-    @request_domain ||= auth_hash['extra']['raw_info']['hd'] || params[:state]
+    return @request_domain if @request_domain.present?
+    if auth_hash['extra'].present?
+      @request_domain = auth_hash['extra']['raw_info']['hd']
+    else
+      @request_domain = params[:state]
+    end
   end
 
   def construct_google_auth_url(portal_url)

@@ -50,6 +50,8 @@ Rails::Initializer.run do |config|
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
   config.autoload_paths += %W( #{RAILS_ROOT}/app/drops )
+  config.autoload_paths += %W( #{RAILS_ROOT}/app/lib )
+  config.autoload_paths += %W( #{RAILS_ROOT}/app/workers )
   
   #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
   config.autoload_paths += %W(#{RAILS_ROOT}/app/observers)
@@ -99,6 +101,20 @@ Rails::Initializer.run do |config|
   
   config.action_controller.allow_forgery_protection = false
   #config.middleware.use 'ResqueWeb'
+  if defined?(::Sidekiq)
+    puts "enabling threadsafe!"
+    config.eager_load_paths += %W( #{RAILS_ROOT}/app/drops )
+    config.eager_load_paths += %W( #{RAILS_ROOT}/app/workers )
+      
+    #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
+    config.eager_load_paths += %W(#{RAILS_ROOT}/app/observers)
+    config.eager_load_paths += %W(#{RAILS_ROOT}/lib)
+    config.eager_load_paths += Dir.glob("vendor/plugins/*/app/{models,controllers,helpers,metal}")
+    config.eager_load_paths += Dir.glob("vendor/plugins/*/init.rb")
+    config.cache_classes = true
+    config.threadsafe!
+  end
+
 end
 
 ActiveRecord::ConnectionAdapters::Mysql2Adapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY" 

@@ -297,7 +297,8 @@ private
                 :status_name => status_name,
                 :requester => requester_name,
                 :subject => truncate(subject, :length => 100),
-                :priority => priority
+                :priority => priority,
+                :time => updated_at.to_i
               }
 	send_mobile_notification(type,message)
   end 

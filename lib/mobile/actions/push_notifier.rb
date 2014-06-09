@@ -19,7 +19,8 @@ module Mobile::Actions::Push_Notifier
         message = {
             :account_id => current_account.id,
             :user_id => current_user.id,
-			:delete_axn => :user
+      			:delete_axn => :device,
+            :clean_up => params[:registration_key]
         }.to_json
         Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
 
@@ -50,6 +51,7 @@ module Mobile::Actions::Push_Notifier
       end
 		
     elsif action == :response then
+        message.merge!(:agent => User.current.agent?) if User.current
         user_ids = notable.subscriptions.map(&:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }

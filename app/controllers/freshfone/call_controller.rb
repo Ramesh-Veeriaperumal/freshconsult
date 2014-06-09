@@ -88,6 +88,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def handle_missed_calls
 			update_call
+			call_initiator.missed_call = true
 			render :xml =>  call_initiator.non_availability if missed_call?
 		end
 

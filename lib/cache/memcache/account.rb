@@ -72,7 +72,7 @@ module Cache::Memcache::Account
 
   def twitter_handles_from_cache
     key = handles_memcache_key
-    MemcacheKeys.fetch(key) { self.twitter_handles }
+    MemcacheKeys.fetch(key) { self.twitter_handles.all }
   end
   
   def twitter_reauth_check_from_cache

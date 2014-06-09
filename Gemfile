@@ -6,6 +6,8 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.8"
+gem "json-compare", "0.1.8"
+
 gem "mysql2", "~> 0.2.7"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
@@ -36,6 +38,8 @@ gem "google-api-client", "~> 0.6.3"
 gem "ipaddress", "0.8.0"
 gem 'omniauth-shopify-oauth2', "1.0.0"
 
+gem "sidekiq", :git => "git://github.com/PratheepV/sidekiq.git", :branch => "master"
+
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
@@ -63,7 +67,7 @@ gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.gi
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","3.5.8.72"
+gem "newrelic_rpm","3.6.0.83"
 
 gem "faraday" , "0.8.7"
 gem "twitter", "~> 5.5.1"

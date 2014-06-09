@@ -41,6 +41,10 @@ module ChatHelper
     return Base64.strict_encode64(freshchat_setting)
   end
 
+  def prechat_form_input_value(value, name)
+    value.blank? ?  name : value
+  end
+
   def freshchat_setting
     chat_setting = current_account.chat_setting
     business_calendar = chat_setting.business_calendar.to_json({:only => [:time_zone, :business_time_data, :holiday_data]})
@@ -90,9 +94,9 @@ module ChatHelper
       :connecting_msg => t("freshchat.connecting_msg") ,
       :non_availability_message => non_availability_message,
       :me => t("freshchat.me") ,
-      :name_place =>  t("freshchat.name"), 
-      :mail_place => t("freshchat.mail") ,
-      :phone_place => t("freshchat.phone"), 
+      :name_label =>  prechat_form_input_value(chat_setting.prechat_form_name, t("freshchat.name")),
+      :mail_label => prechat_form_input_value(chat_setting.prechat_form_mail, t("freshchat.mail")),
+      :phone_label => prechat_form_input_value(chat_setting.prechat_form_phoneno, t("freshchat.phone")),
       :text_place => t("freshchat.text_placeholder") ,
       :begin_chat => t("freshchat.begin_chat"), 
       :color => window_color,

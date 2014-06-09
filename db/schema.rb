@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140506120037) do
+ActiveRecord::Schema.define(:version => 20140526110914) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -244,6 +244,9 @@ ActiveRecord::Schema.define(:version => 20140506120037) do
     t.boolean  "portal_login_required",              :default => false
     t.integer  "business_calendar_id", :limit => 8
     t.text     "non_availability_message"
+    t.string   "prechat_form_name"
+    t.string   "prechat_form_mail"
+    t.string   "prechat_form_phoneno"
   end
 
   create_table "conversion_metrics", :force => true do |t|
