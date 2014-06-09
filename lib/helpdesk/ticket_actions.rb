@@ -133,9 +133,14 @@ module Helpdesk::TicketActions
                                 
                                }  
     unless @note.tweet.nil?
-      tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id,
-                                          :twitter_handle_id => @note.tweet.twitter_handle_id }}
+      tweet_hash = {  :twitter_id => @note.user.twitter_id,
+                      :tweet_attributes => {
+                        :tweet_id => @note.tweet.tweet_id,
+                        :twitter_handle_id => @note.tweet.twitter_handle_id,
+                        :tweet_type => @note.tweet.tweet_type.to_s,
+                        :stream_id => @note.tweet.stream_id 
+                      }
+                   }
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
