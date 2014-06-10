@@ -35,9 +35,24 @@ Spork.prefork do
 
   # Requires supporting files with custom matchers and macros, etc,
   # in ./support/ and its subdirectories.
-  Dir[File.expand_path(File.join(File.dirname(__FILE__),'support', '**', '*.rb'))].each {|f| require f}
+  Dir[File.expand_path(File.join(File.dirname(__FILE__),'support',  '*.rb'))].each {|f| require f}
   Dir[File.expand_path(File.join(File.dirname(__FILE__),'factories','*.rb'))].each {|f| require f}
 
+ ['spec/support/controller_data_fetcher.rb',
+  'spec/support/va/operator_helper/dispatcher.rb',
+  'spec/support/va/operator_helper/supervisor.rb',
+  'spec/support/va/random_case/action.rb',
+  'spec/support/va/random_case/condition/dispatcher.rb',
+  'spec/support/va/random_case/condition/supervisor.rb',
+  'spec/support/va/random_case/event.rb',
+  'spec/support/va/tester.rb',
+  'spec/support/va/tester/action.rb',
+  'spec/support/va/tester/condition.rb',
+  'spec/support/va/tester/condition/dispatcher.rb',
+  'spec/support/va/tester/condition/supervisor.rb',
+  'spec/support/va/tester/event.rb',
+  'spec/support/va/rule_helper.rb',
+  'spec/support/va/test_case.rb'].each do |file_path| require "#{RAILS_ROOT}/#{file_path}" end
 
 
   Spec::Runner.configure do |config|
