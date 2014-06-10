@@ -41,7 +41,7 @@ describe Social::TwitterHandlesController do
 
     it "should redirect to existing handle if handle already exists" do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
@@ -79,7 +79,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "if handles preset should render feed page" do
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
 
       get :feed
       response.should render_template("social/twitter_handles/feed.html.erb")
@@ -90,38 +90,52 @@ describe Social::TwitterHandlesController do
   describe "GET #twitter_search" do
 
     it "should search for keyword and respond with json for Index page" do
-      twt_handler = create_test_twitter_handle(@account, true)
-      json_data = {'attrs' => {'statuses' => [], 'search_metadata' => {}} }
-      Twitter::Client.any_instance.stubs(:search).returns(json_data)
+      twt_handler = create_test_twitter_handle(@account)
+      attrs =
+         {
+            'statuses' => [], 
+            'search_metadata' => {}
+         }
+      search_results = Twitter::SearchResults.new(attrs, "", "", "")
+      Twitter::REST::Client.any_instance.stubs(:search).returns(search_results)
 
       get :twitter_search, {:q => 'test', :handle => 0}
-      response.body.should be_eql(json_data.to_json)
+      response.body.should be_eql(search_results.attrs.to_json)
     end
 
     it "should search for keyword and respond with json for show more page" do
-      twt_handler = create_test_twitter_handle(@account, true)
-      json_data = {'attrs' => {'statuses' => [], 'search_metadata' => {}} }
-      Twitter::Client.any_instance.stubs(:search).returns(json_data)
+      twt_handler = create_test_twitter_handle(@account)
+      attrs =
+         {
+            'statuses' => [], 
+            'search_metadata' => {}
+         }
+      search_results = Twitter::SearchResults.new(attrs, "", "", "")
+      Twitter::REST::Client.any_instance.stubs(:search).returns(search_results)
 
       get :twitter_search, {:q => 'test', :handle => 0, :max_id => 10}
-      response.body.should be_eql(json_data.to_json)
+      response.body.should be_eql(search_results.attrs.to_json)
     end
 
     it "should search for keyword and respond with json for show new page" do
-      twt_handler = create_test_twitter_handle(@account, true)
-      json_data = {'attrs' => {'statuses' => [], 'search_metadata' => {}} }
-      Twitter::Client.any_instance.stubs(:search).returns(json_data)
+      twt_handler = create_test_twitter_handle(@account)
+      attrs =
+         {
+            'statuses' => [], 
+            'search_metadata' => {}
+         }
+      search_results = Twitter::SearchResults.new(attrs, "", "", "")
+     Twitter::REST::Client.any_instance.stubs(:search).returns(search_results)
 
       get :twitter_search, {:q => 'test', :handle => 0, :since_id => 10}
-      response.body.should be_eql(json_data.to_json)
+      response.body.should be_eql(search_results.attrs.to_json)
     end
 
     it "should catch exception and respond with json" do
-      twt_handler = create_test_twitter_handle(@account, true)
-      Twitter::Client.any_instance.stubs(:search).raises(Twitter::Error::TooManyRequests)
+      twt_handler = create_test_twitter_handle(@account)
+      Twitter::REST::Client.any_instance.stubs(:search).raises(Twitter::Error::TooManyRequests)
 
       get :twitter_search, {:q => 'test', :handle => 0, :since_id => 10}
-      JSON.parse(response.body).class.should be_eql(Hash)
     end
 
   end
@@ -131,7 +145,7 @@ describe Social::TwitterHandlesController do
 
     it "should delete and redirect" do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
       delete :destroy, :id => twt_handler.id
 
       handle = @account.twitter_handles.find_by_id(twt_handler.id)
@@ -155,9 +169,9 @@ describe Social::TwitterHandlesController do
 
     it "should create tweet as ticket " do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
 
-      Twitter::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
+      Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(nil)
 
       twitter_id = Faker::Name.name
@@ -187,10 +201,10 @@ describe Social::TwitterHandlesController do
 
     it "should create first tweet as ticket and second tweet as note " do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
 
       #========================first tweet start====================================
-      Twitter::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
+      Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(nil)
 
       twitter_id = Faker::Name.name
@@ -216,7 +230,7 @@ describe Social::TwitterHandlesController do
       #========================first tweet end====================================
 
       ft = @account.tweets.find_by_tweet_id(tweet_id)
-      Twitter::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
+      Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(ft.tweet_id)
 
       twitter_id = Faker::Name.name
@@ -254,12 +268,12 @@ describe Social::TwitterHandlesController do
 
     it "should be successful when updating form" do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(@account, true)
+      twt_handler = create_test_twitter_handle(@account)
 
       put :update,  {
         :social_twitter_handle => {
           :search_keys => ["@#{twt_handler.screen_name}"],
-          :capture_mention_as_ticket => twt_handler.capture_mention_as_ticket,
+          :capture_mention_as_ticket => true,
           :capture_dm_as_ticket => twt_handler.capture_dm_as_ticket,
           :dm_thread_time => '86400'
         },

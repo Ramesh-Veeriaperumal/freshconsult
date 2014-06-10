@@ -45,8 +45,8 @@ describe Social::StreamsController do
   
    it "should fetch the top tweets from all the handles with latest first from dynamo when" do
     tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(@first_rule, Time.now.utc.iso8601)
-    tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(@first_rule, Time.now.ago(1.hour).utc.iso8601)
-    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(@sec_rule, Time.now.ago(30.minutes).utc.iso8601)
+    tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(@first_rule, Time.now.ago(5.minutes).utc.iso8601)
+    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(@sec_rule, Time.now.ago(2.minutes).utc.iso8601)
     
     get :stream_feeds, {
                           :social_streams => 

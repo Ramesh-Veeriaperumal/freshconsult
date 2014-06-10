@@ -6,7 +6,7 @@ class Social::TwitterController < Social::BaseController
   include Social::Twitter::TicketActions
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
-  before_filter :set_screen_names, :only => [:reply, :retweet]
+  before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
 
   def twitter_search
     @recent_search = current_user.agent.recent_social_searches
@@ -35,7 +35,8 @@ class Social::TwitterController < Social::BaseController
       fd_items.compact!
       @items_info = fd_items.inject([]) do |arr, item|
                     arr << {:feed_id => item.tweet.tweet_id,
-                          :link => helpdesk_ticket_link(item) }
+                          :link => helpdesk_ticket_link(item),
+                          :user_in_db => db_user?(item)  }
                     arr
                 end
       flash.now[:notice] = t('twitter.tkt_err_save') if fd_items.empty?
@@ -105,7 +106,7 @@ class Social::TwitterController < Social::BaseController
   def retweet
     @feed_id   = params[:tweet][:feed_id]
     if has_permissions?(params[:search_type], params[:stream_id])
-      twt_handle = current_account.twitter_handles_from_cache.find_by_id(params[:twitter_handle_id])
+      twt_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
       retweet_status, @social_error_msg = Social::Twitter::Feed.retweet(twt_handle, @feed_id)
       unless retweet_status.blank?
         flash.now[:notice] = t('social.streams.twitter.retweet_success')
@@ -123,7 +124,7 @@ class Social::TwitterController < Social::BaseController
   def post_tweet
     if privilege?(:reply_ticket)
       handle_id = params[:twitter_handle_id]
-      handle = current_account.twitter_handles_from_cache.find_by_id(handle_id)
+      handle = current_account.twitter_handles.find_by_id(handle_id)
       @tweet_obj, @social_error_msg = Social::Twitter::Feed.post_tweet(handle, params[:tweet][:body])
       unless @tweet_obj.blank?
         flash.now[:notice] = t('social.streams.twitter.tweeted')
@@ -210,7 +211,7 @@ class Social::TwitterController < Social::BaseController
       :body           => tweet_text,
       :in_reply_to_id => in_reply_to
     }
-    reply_handle = current_account.twitter_handles_from_cache.find_by_id(params[:twitter_handle_id])
+    reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
     return_value, @sandbox_error_msg = twt_sandbox(reply_handle) {
       twt = tweet_to_twitter(reply_handle, tweet_params)
       @interactions[:current] << recent_agent_reply(twt, nil) if twt
@@ -253,5 +254,10 @@ class Social::TwitterController < Social::BaseController
   def set_screen_names
     @all_handles      = current_account.twitter_handles_from_cache
     @all_screen_names = @all_handles.map {|handle| handle.screen_name }
+  end
+  
+  def db_user?(item)
+    item_screen_name = item.is_a?(Helpdesk::Ticket) ? item.requester.twitter_id : item.user.twitter_id
+    !@all_screen_names.include?(item_screen_name)
   end
 end
