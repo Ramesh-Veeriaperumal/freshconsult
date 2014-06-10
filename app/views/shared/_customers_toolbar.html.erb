@@ -2,23 +2,13 @@
 	function delete_customer(){
 		var confirm_text
 		var checked_items = jQuery('.customers_selector:checked')
-						
-		if(checked_items.length == 1){
-			checked_items
-				.closest('tr')
-				.find('.icon-trash')
-				.trigger('click')
-
-			return
-		}
-		else{
+		 
 			if(jQuery("#contacts-table").get(0) != undefined)
 				confirm_text = "<%= t('company.info11')%> " +
 					checked_items.size() + " <%= t('contacts.contacts')%>?"
 			else
 				confirm_text = "<%= t('company.info11')%> " + 
 				checked_items.size() + " <%= t('company.title1')%>" + "\n" + "<%= t('company.info10')%>"
-		}
 
 		var is_user = <%= type.eql?('user') %>
 		if (confirm(confirm_text)) {
