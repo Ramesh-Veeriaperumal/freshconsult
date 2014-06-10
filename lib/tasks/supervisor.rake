@@ -37,7 +37,7 @@ namespace :supervisor do
   task :premium => :environment do
     queue_name = "premium_supervisor_worker"
     if supervisor_should_run?(queue_name)
-        Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
+        #Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
         Sharding.execute_on_all_shards do
           Account.active_accounts.premium_accounts.each do |account|
             if account.supervisor_rules.count > 0 
