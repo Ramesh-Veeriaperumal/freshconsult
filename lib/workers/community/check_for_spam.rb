@@ -62,7 +62,7 @@ class Workers::Community::CheckForSpam
     end
 
     def post_content(post)
-      content = post.body_html
+      content = post.body_html.clone
       content.prepend "#{post.topic.title} " if post.original_post?
       content
     end
