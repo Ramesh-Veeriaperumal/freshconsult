@@ -18,6 +18,7 @@ class DiscussionsController < ApplicationController
 
 	def index
 		@topics = current_account.topics.as_activities.paginate(:page => params[:page])
+		respond_back
 	end
 
 	def new
@@ -61,8 +62,8 @@ class DiscussionsController < ApplicationController
 	end
 
 	def your_topics
-		@topics = current_user.monitored_topics.as_activities.paginate(:page => params[:page], :per_page => 10)
-		render :action => :index
+		@topics = current_user.monitored_topics.as_activities.paginate(:page => params[:page])
+		respond_back
 	end
 
 	def categories
@@ -141,6 +142,14 @@ class DiscussionsController < ApplicationController
 				return redirect_to support_discussions_path
 			elsif !privilege?(:view_forums)
 				access_denied
+			end
+		end
+
+		def respond_back
+			if request.xhr? and !request.headers['X-PJAX']
+				render :partial => 'discussions/shared/topic', :collection => @topics
+			else
+				render :action => :index
 			end
 		end
 

@@ -3,5 +3,6 @@ unless flash.empty?
   show_ajax_flash page
 else
   page.insert_html :bottom, "current_interaction", :partial => "social/streams/current_interaction"
+  page << "jQuery('#tweet_div_#{@in_reply_to} span.replied-icon').removeClass('hide')"
 end
 page << "jQuery('#reply_box_#{@in_reply_to}').hide();"

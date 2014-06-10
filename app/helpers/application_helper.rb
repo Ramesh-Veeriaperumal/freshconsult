@@ -912,10 +912,11 @@ module ApplicationHelper
  
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
+    link = current_account.features?(:social_revamp) ? "<a href='/admin/social/streams' target='_blank'>" : "<a href='/social/twitters' target='_blank'>"
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
         It looks like username or password has been changed recently. Kindly 
-        <a href='/social/twitters' target='_blank'> fix </a> it.  ".html_safe, :class => 
+        #{link} fix </a> it.  ".html_safe, :class => 
         "alert-message block-message warning full-width")
     end
     return

@@ -701,7 +701,7 @@ en:
         creating_survey: "Creating your satisfaction survey:"
         creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
        1.Enable the Customer Satisfaction Surveys checkbox<br>
-       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
        <br>
        <b>Choose which emails have the satisfaction survey link:</b><br>
        You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -744,7 +744,7 @@ en:
      <b>Creating your satisfaction survey:</b><br>
      The following steps let you collect feedback from your customers through a link in your response emails:<br>
      1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
      <br>
      <b>Choose which emails have the satisfaction survey link:</b><br>
      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -757,7 +757,7 @@ en:
      satisfaction_settings:
         enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please let us know your opinion on our support experience.
+        link_text_input: Please tell us what you think of your support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
         send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
@@ -2707,7 +2707,7 @@ en:
     submit_new_ticket: "...or Submit a new ticket"
     login: Login
     login_portal: "Login to the support portal"
-    login_details: "Enter the login details you gave when you registered with us"
+    login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup

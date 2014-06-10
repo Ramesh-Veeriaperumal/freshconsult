@@ -230,7 +230,7 @@ $bdr-color:#e1e1e1;
 			border-top-right-radius: 4px;
 			&.white{
 				background: #fff;
-				border-bottom:none; 
+				border-bottom:none;
 				padding-bottom: 0;
 			}
 
@@ -349,6 +349,7 @@ $bdr-color:#e1e1e1;
 .conversations{
 	background: #fafafa;
 	color:#333333;
+	padding-bottom: 50px;
 	.highlight{
 		background:#ffffe5;
 		border: solid #eaeaea;
@@ -547,7 +548,6 @@ $bdr-color:#e1e1e1;
 				font-weight:500;
 			}
 			.more-links{
-				margin:0 10px 0 0;
 				font-size:11px;
 			}
 			.prettydate{
@@ -635,7 +635,12 @@ $bdr-color:#e1e1e1;
 			display: inline-block;
 			&.tw-tkt-link{
 				opacity: .5;
-				padding-right: 3px;
+				padding: 0;
+				margin-left: 12px;
+			}
+			&.convert_as_ticket{
+				margin-left: 2px;
+				padding-right: 0;
 			}
 		}
 	}
@@ -669,16 +674,17 @@ $bdr-color:#e1e1e1;
 		height: 18px;
 		line-height: 18px;
 		background: transparent;
-		&:last-child{
-			border-left: solid 1px rgb(235, 235, 235);
-		}
 		a{
 			display: inline-block;
 			padding: 0 5px;
-			opacity: .5;
 			color: #333;
 			&:hover{
 				opacity:1;
+			}
+			&.tw-tkt-link{
+				padding: 0;
+				opacity: .5;
+				margin-left:12px; 
 			}
 		}
 		.convert_as_ticket{
@@ -694,13 +700,16 @@ $bdr-color:#e1e1e1;
 	}
 }
 .tweets-conv{
-	.action-el{
+	.action-el a{
 		opacity: 0;
 		@include transition(all .5s);
 	}
 	&:hover{
-		.action-el{
-			opacity: 1;
+		.action-el a{
+			opacity: .5;
+			&:hover{
+				opacity:1;
+			}
 		}
 	}
 }
@@ -908,7 +917,7 @@ a.tw-tkt-link{
 		background: #fff;
 		border-radius: 30px;
 		bottom: 0;
-		right: 0;
+		right: -2px;
 		font-size: 8px;
 		width: 10px;
 		height: 10px;
@@ -1142,7 +1151,7 @@ slideRight
 	}
 	.tc >div {
 		display:none;
-		
+
 		a{
 			color: #333;
 		}

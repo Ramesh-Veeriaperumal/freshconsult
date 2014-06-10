@@ -84,9 +84,11 @@
               <% end %>
             </li>
           <% elsif feed.ticket_id %>
-            <a href="<%= helpdesk_tickets_url %>/<%=feed.ticket_id %>" target="_blank" class="ctt-btn tooltip tw-tkt-link" data-original-title="Go to ticket #<%=feed.ticket_id.split("#").first %> " twipsy-content-set="true" data-placement="left">
+            <li class="icon-lst">
+              <a href="<%= helpdesk_tickets_url %>/<%=feed.ticket_id %>" target="_blank" class="ctt-btn tooltip tw-tkt-link" data-original-title="Go to ticket #<%=feed.ticket_id.split("#").first %> " twipsy-content-set="true" data-placement="left">
                 <%= font_icon "ticket", :size => 18 %>
-            </a>
+              </a>
+            </li>
           <% end %>
         </ul>
       </div>
