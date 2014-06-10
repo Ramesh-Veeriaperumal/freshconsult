@@ -67,7 +67,7 @@ module FreshfoneSpecHelper
   end
 
   def create_call_family
-    @parent_call = @account.freshfone_calls.create( :freshfone_number_id => 1, 
+    @parent_call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
                                                     :call_status => 0, :call_type => 1,
                                                     :params => { :CallSid => "CABCDEFGHIJK" } )
     @parent_call.build_child_call({ :agent => @agent, 
@@ -147,7 +147,7 @@ module FreshfoneSpecHelper
   def record_params
     { "RecordingUrl" => "http://api.twilio.com/2010-04-01/Accounts/AC626dc6e5b03904e6270f353f4a2f068f/Recordings/REa618f1f9d5cbf4117cb4121bc2aa5a0b",
       "agent" => @agent.id,
-      "number_id" => 1 }
+      "number_id" => @number.id }
   end
 
 end

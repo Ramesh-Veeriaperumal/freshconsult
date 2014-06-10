@@ -4,8 +4,8 @@ module FreshfoneCallSpecHelper
   CLIENT_CALL = "FRESHFONE:CLIENT_CALLS:1"
   def setup_caller_data
     Faker::Base.numerify('(###)###-####')
-    @number = Faker::PhoneNumber.phone_number
-    @agent.update_attributes(:phone => @number)
+    @caller_number = Faker::PhoneNumber.phone_number
+    @agent.update_attributes(:phone => @caller_number)
     Freshfone::Search.stubs(:search_user_with_number).returns(@agent)
     create_call_with_caller_and_meta
   end
@@ -16,7 +16,7 @@ module FreshfoneCallSpecHelper
   end
 
   def setup_call_for_transfer
-    controller.send(:call_action)
+    # controller.send(:call_action)
     controller.set_key(TRANSFER_KEY, [@agent.id.to_s].to_json)
   end
 
@@ -30,7 +30,7 @@ module FreshfoneCallSpecHelper
   end
 
   def create_call_for_status
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => 1, 
+    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
                                       :params => { :CallSid => "CA904f175a4e625a045e3270720dd195dd" } )
   end
@@ -78,9 +78,9 @@ module FreshfoneCallSpecHelper
 
   private
     def create_call_with_caller_and_meta
-      call = @account.freshfone_calls.create( :freshfone_number_id => 1, 
+      call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
                :call_status => 0, :call_type => 1, :agent => @agent,
-               :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :From => @number } )
+               :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :From => @caller_number } )
       call.create_meta( :account => @account, :group_id => Group.first)
     end
 
