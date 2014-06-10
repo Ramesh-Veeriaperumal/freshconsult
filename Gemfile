@@ -118,8 +118,11 @@ gem "pg"
 gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
 # Please do not update Paperclip unless you can get it Monkey Patched for Imagemagick DoS Bug.
+# Please see https://hackerone.com/reports/390 
 gem "paperclip", "~> 2.8.0"
+
 gem "aws-sdk", "~> 1.11.3"
 gem "xml-simple", "~> 1.1.2"
 

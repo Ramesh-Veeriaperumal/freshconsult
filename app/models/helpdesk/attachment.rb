@@ -11,8 +11,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                        "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
 
-  WIDTH = 10000
-  HEIGHT = 10000
   MAX_DIMENSIONS = 16000000 
 
   set_table_name "helpdesk_attachments"
@@ -73,22 +71,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
 
-  def valid_image?
-    begin
-      file_path = content.queued_for_write[:original].path
-      dimensions = Paperclip::Geometry.from_file(file_path)
-      puts 'File Path: '+file_path
-      puts 'Detected Size: '+dimensions.width.to_s+'x'+dimensions.height.to_s
-      #errors.add('Width is higher than expected.') unless (dimensions.width <= WIDTH)
-      #errors.add('Height is higher than expected.') unless (dimensions.height <= HEIGHT)
-      #errors.add('Pixels are higher than expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
-      (dimensions.width <= WIDTH) and (dimensions.height <= HEIGHT) and ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
-      false
-    end
-  end
- 
   def image?
     (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
@@ -144,6 +126,20 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
   private
   
+  def valid_image?
+    begin
+      file_path = content.queued_for_write[:original].path
+      dimensions = Paperclip::Geometry.from_file(file_path)
+      Rails.logger.info 'File Path: '+file_path
+      Rails.logger.info 'Detected Size: '+dimensions.width.to_s+'x'+dimensions.height.to_s
+      # errors.add('Dimensions are higher than Expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+      ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
+      false
+    end
+  end
+ 
   def set_random_secret
     self.random_secret = ActiveSupport::SecureRandom.hex(8)
   end
