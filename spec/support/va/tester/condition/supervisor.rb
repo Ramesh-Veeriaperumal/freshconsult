@@ -16,7 +16,6 @@ class VA::Tester::Condition::Supervisor < VA::Tester::Condition
       picked = fetched?(ticket, joins, filter_query, negation_query)
 
       unless should_pick == picked
-        debugger
         raise "Discrepancy between should_pick? #{should_pick} and picked? #{picked} for va_rule #{va_rule} and ticket #{ticket.inspect}"
       end
     else # EXCEPTIONS
