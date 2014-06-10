@@ -1,6 +1,11 @@
 // File to make the single point of initialization of redactor editor. Please make sure you add further initializations through the same function.
     function invokeRedactor(element_id,type){
     	switch(type){
+    		case 'ticket':
+         	jQuery('#'+element_id).redactor({ 
+         		focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
+         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
+         	break;
     		case 'forum':
     			jQuery('#'+element_id).redactor({autoresize:false,convertDivs: false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;
