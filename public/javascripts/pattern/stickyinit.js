@@ -5,6 +5,7 @@
     $("[rel=sticky]").each(function(){
       var prev_ele = $(this).data( "stickyPrevious" );
       var scroll_top = $(this).data( "scrollTop" );
+      var scroll_bottom = $(this).data( "stickyBottom" );
       var parent_selector = $(this).data( "parentSelector" ) || void(0);
 
       if($(this).data("collapsed"))
@@ -14,12 +15,14 @@
         var prev_ele_height = $('#'+prev_ele).outerHeight(true);
         $(this).stick_in_parent({
           "offset_top" :  prev_ele_height,
-          "parent_selector": parent_selector
+          "parent_selector": parent_selector,
+          "elm_bottom": scroll_bottom
         });
         $(this).addClass('sticky-child');
       }else{
         $(this).stick_in_parent({
-            "parent_selector": parent_selector
+            "parent_selector": parent_selector,
+            "elm_bottom": scroll_bottom
           })
           .on("sticky_kit:stick", function(e){
             if(scroll_top){
