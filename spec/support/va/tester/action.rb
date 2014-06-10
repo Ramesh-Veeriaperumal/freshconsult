@@ -1,5 +1,11 @@
 class VA::Tester::Action < VA::Tester
 
+  def fetch_random_unique_choice option
+    sub_rule = test_variable[option]
+    random_choice = sub_rule['choices'].reject{|choice| ['', '--', 0, -2].include? choice[0]}.sample
+    random_choice_value = random_choice[0]
+  end
+
   def check_working va_rule, ticket, option_name, option_hash
     unless exception?(option_hash)
       rule_value = option_hash[:feed_data][:value]

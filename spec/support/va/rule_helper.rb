@@ -13,6 +13,7 @@ module VA::RuleHelper
     @account.features.multi_product.create
     @user = add_test_agent(@account)
     @user.make_current
+    @product = @account.products.create(Factory.attributes_for(:product)) # to make it multi product
     @to_email = @account.email_configs.first.to_email
     @ticlet_cc = Faker::Internet.email
     define_required_accessors

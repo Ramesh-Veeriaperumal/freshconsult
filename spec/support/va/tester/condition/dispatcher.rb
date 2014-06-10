@@ -8,7 +8,6 @@ class  VA::Tester::Condition::Dispatcher < VA::Tester::Condition
       send_key   = option_name
       return_value = (compare ticket.send(send_key), rule_value, operator, option_name)
       unless va_rule.matches(ticket) == return_value
-        debugger
         raise "matches for va_rule #{va_rule} should be_eql return_value #{return_value}"
       end
     else # EXCEPTIONS
