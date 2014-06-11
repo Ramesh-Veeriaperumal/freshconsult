@@ -57,6 +57,7 @@ describe Discussions::ModerationController do
 			post.reload
 			post.trash.should be_true
 		end
+		response.should redirect_to discussions_path
 	end
 
 	it "should mark as spam multiple posts when 'put 'spam_multiple''" do
