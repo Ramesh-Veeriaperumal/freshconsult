@@ -64,6 +64,6 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
 
     def filter_query_negation(field_key,field_value)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value.to_s}"
     end
 end
