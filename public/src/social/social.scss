@@ -642,6 +642,9 @@ $bdr-color:#e1e1e1;
 				margin-left: 2px;
 				padding-right: 0;
 			}
+			&.sloading.loading-align{
+				margin-top: 0;
+			}
 		}
 	}
 }
