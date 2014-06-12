@@ -212,9 +212,9 @@ namespace :scheduler do
         puts "Twitter Queue is empty... queuing at #{Time.zone.now}"
         Sharding.run_on_all_slaves do
          Account.active_accounts.non_premium_accounts.each do |account|  
-          next if account.twitter_handles.empty?
           Account.reset_current_account
           account.make_current
+          next if account.twitter_handles.empty?
           Social::TwitterWorker.perform_async({:account_id => account.id })
          end
         end
