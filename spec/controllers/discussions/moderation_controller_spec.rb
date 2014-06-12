@@ -28,7 +28,13 @@ describe Discussions::ModerationController do
 	it "should publish a post on 'approve'" do
 		unpublished_post = mark_as_spam(create_test_post(@topic))
 		spam_value = unpublished_post.spam
+
+		Resque.inline = true
+
 		put :approve, :id => unpublished_post.id
+
+		Resque.inline = false
+
 		unpublished_post.reload
 		unpublished_post.published.should be_true
 		unpublished_post.spam.should eql spam_value
@@ -37,7 +43,13 @@ describe Discussions::ModerationController do
 	it "should unpublish a post when 'put 'mark_as_spam''" do
 		published_topic = publish_topic(create_test_topic(@forum))
 		published_post = publish_post(create_test_post(published_topic))
+
+		Resque.inline = true
+
 		put :mark_as_spam, :id => published_post.id
+
+		Resque.inline = false
+
 		published_post.reload
 		published_post.published.should be_false
 		published_post.spam.should be_true
