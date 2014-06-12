@@ -170,4 +170,142 @@ describe Support::Discussions::PostsController do
 
 	    response.should render_template "support/discussions/posts/best_answer.html.erb"
 	end
+
+	describe "should check for spam" do
+
+		after(:each) do
+			@account.features.moderate_all_posts.destroy
+			@account.features.moderate_posts_with_links.destroy
+			@account.reload
+		end
+
+		it "with 'do not moderate feature' and should mark as published" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+			post.published.should eql true
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+
+		it "with 'moderate all posts' feature and should mark as unpublished" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+
+			@account.features.moderate_all_posts.create
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+			post.published.should eql false
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+
+		it "with 'moderate posts with link' feature and with email" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+			email = Faker::Internet.email
+
+			@account.features.moderate_posts_with_links.create
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body}#{email}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body}#{email}</p>")
+			post.published.should eql false
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+
+		it "with 'moderate posts with link' feature and with phone number" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+			phone = Faker::PhoneNumber.phone_number
+
+			@account.features.moderate_posts_with_links.create
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body} #{phone}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body} #{phone}</p>")
+			post.published.should eql false
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+
+		it "with 'moderate posts with link' feature and with link" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+			link = Faker::Internet.url
+
+			@account.features.moderate_posts_with_links.create
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body} #{link}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body} #{link}</p>")
+			post.published.should eql false
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+
+		it "with 'moderate posts with link' feature and with whitelisted link" do
+			topic = publish_topic(create_test_topic(@forum))
+			post_body = Faker::Lorem.paragraph
+			whitelisted_link = "https://www.youtube.com/watch?v=lbJO8MBCyp4"
+
+			@account.features.moderate_posts_with_links.create
+			Resque.inline = true
+
+			post :create, 
+						:post => {
+								:body_html =>"<p>#{post_body} #{whitelisted_link}</p>"
+								},
+						:topic_id => topic.id
+
+			Resque.inline = false
+
+			post = @account.posts.find_by_body_html("<p>#{post_body} #{whitelisted_link}</p>")
+			post.published.should eql true
+
+			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
+		end
+	end
 end

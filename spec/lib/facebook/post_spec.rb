@@ -66,25 +66,8 @@ describe Facebook::Core::Post do
     note.user.id.should eql user_id
   end
   
-  it "should not create a ticket when a post/status arrives and convert to ticket is not enabled" do
-    @fb_page.update_attributes(:import_company_posts => false, :import_visitor_posts => false)
-    feed_id = "#{(Time.now.utc.to_f*100000).to_i}_#{(Time.now.utc.to_f*100000).to_i}"
-    realtime_feed = sample_realtime_feed(feed_id)
-    facebook_feed = sample_facebook_feed(feed_id)
-    facebook_feed[:message] = "Not me"
-    
-    #stub the api call for koala
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
-    
-    Facebook::Core::Parser.new(realtime_feed).parse
-    
-    post = Social::FbPost.find_by_post_id(feed_id)
-    post.should be_nil
-  end
-  
   it "raise an api limit exception for koala and check if it is reenqueued into sqs" do
-    @fb_page.update_attributes(:import_company_posts => true, :import_visitor_posts => true)
-    feed_id = "#{(Time.now.utc.to_f*100000).to_i}_#{(Time.now.utc.to_f*100000).to_i}"
+    feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
     realtime_feed = sample_realtime_feed(feed_id)
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is requeued"))
@@ -97,7 +80,7 @@ describe Facebook::Core::Post do
   
   
   it "authentication error check if it is pushed into dynamo db" do
-    feed_id = "#{(Time.now.utc.to_f*100000).to_i}_#{(Time.now.utc.to_f*100000).to_i}"
+    feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
     realtime_feed = sample_realtime_feed(feed_id)
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
@@ -108,5 +91,6 @@ describe Facebook::Core::Post do
     Social::FacebookPage.first.reauth_required.should be_true
     Social::FacebookPage.first.enable_page.should be_false
   end
+  
   
 end

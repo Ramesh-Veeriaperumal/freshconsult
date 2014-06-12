@@ -17,10 +17,10 @@ module Social::Twitter::ErrorHandler
         return_value = false
         if handle.blank?
           @social_error_msg = "#{I18n.t('social.streams.twitter.feeds_blank')}"
-          puts "*************** Blank Handle *****************"
+          Rails.logger.debug "*************** Blank Handle *****************"
         elsif handle.reauth_required?
           @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
-          puts "************** Reauth Required ***************"
+          Rails.logger.debug "************** Reauth Required ***************"
         end
         return_value = yield unless @social_error_msg
       rescue Twitter::Error::Unauthorized => exception
@@ -54,16 +54,16 @@ module Social::Twitter::ErrorHandler
     end
 
     def notify_error(error)
-      puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-      puts error.inspect
-      puts error.backtrace.join(",")
-      puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+      Rails.logger.debug "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+      Rails.logger.debug error.inspect
+      Rails.logger.debug error.backtrace.join(",")
+      Rails.logger.debug "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
       if @sandbox_handle
         error_params = { :account_id => @sandbox_handle.account_id , 
                           :handle_id => @sandbox_handle.id, 
                           :exception_type => error 
         }
-        puts error_params.inspect
+        Rails.logger.debug error_params.inspect
         notify_social_dev("Twitter REST API Exception", error_params)
       end
     end

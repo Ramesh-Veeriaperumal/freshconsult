@@ -3,7 +3,7 @@ require 'spec_helper'
 include FacebookHelper
 include Facebook::Core::Util
 
-describe Facebook::Core::Post do
+describe Facebook::Core::Comment do
   
   before(:all) do
     @account = create_test_account

@@ -16,7 +16,7 @@ elsif File.exist?(rspec_plugin_dir)
 end
 
 
-FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
+FacebookTest = ["spec/lib/facebook/comment_spec.rb", "spec/lib/facebook/post_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb", "spec/controllers/social/*_spec.rb"]
 
 UnitTest = [ "spec/controllers/agents_controller_spec.rb",
@@ -52,7 +52,10 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/lib/*_email_spec.rb",
              "spec/controllers/email_controller_spec.rb",
              "spec/controllers/mailgun_controller_spec.rb",
-             "spec/controllers/freshfone/*_spec.rb"]
+             "spec/controllers/freshfone/*_spec.rb",
+             "spec/lib/facebook/post_spec.rb",
+             "spec/lib/facebook/comment_spec.rb"
+           ]
 
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 EmailTest = ["spec/lib/*_email_spec.rb"]

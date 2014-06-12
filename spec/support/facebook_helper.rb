@@ -12,7 +12,7 @@ module FacebookHelper
   def sample_realtime_feed(feed_id)
     realtime_feed = {
       "entry" => {
-          "id" => "532218423476440",
+          "id" => "#{@fb_page.page_id}",
           "time" => 1374146491,
           "changes" => [{
               "field" => "feed", 
@@ -66,12 +66,10 @@ module FacebookHelper
     }
     
     fb_feed.symbolize_keys!
-    
     if comments
       comments = sample_comment_feed(page_id, post_id, "Testing Comment")
       fb_feed.merge!(comments.symbolize_keys!)
     end
-    
     
     if reply_to_comments
       reply_to_comments = sample_comment_feed(page_id, post_id, "Testing Reply to Comment")
