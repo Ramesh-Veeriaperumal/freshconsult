@@ -31,11 +31,22 @@ module Social::Stream::Interaction
   private
 
   def build_user_interactions(user_id, visible_stream_ids, interactions_table, search_type)
-    interactions_table[:keys] = batch_get_interaction_params("user:#{user_id}", visible_stream_ids)
-    results = Social::DynamoHelper.batch_get(interactions_table)
-    interaction_results = results.map {|result| result[:responses][interactions_table[:name]]}.flatten
-    interactions =  process_results(interaction_results, nil,false)
-    all_interactions = interactions.select{ |feed| feed.ticket_id.blank? }
+    all_interactions = []
+    begin
+      interactions_table[:keys] = batch_get_interaction_params("user:#{user_id}", visible_stream_ids)
+      results = Social::DynamoHelper.batch_get(interactions_table)
+      interaction_results = results.map {|result| result[:responses][interactions_table[:name]]}.flatten
+      interactions =  process_results(interaction_results, nil,false)
+      all_interactions = interactions.select{ |feed| feed.ticket_id.blank? }
+    rescue Exception => e
+      error_params = {
+        :error => e.inspect,
+        :account_id => Account.current.id,
+        :stream_id => visible_stream_ids
+      }
+      notify_social_dev("Exception in building user interactions", error_params)
+    end
+    all_interactions
   end
 
   def batch_get_interaction_params(user_id, streams_ids)

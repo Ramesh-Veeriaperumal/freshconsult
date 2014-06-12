@@ -21,7 +21,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     }
     @user_mentions = process_twitter_entities(data[:twitter_entities])
     @in_reply_to = data[:inReplyTo]["link"].split("/").last if data[:inReplyTo] && data[:inReplyTo]["link"]
-    @posted_time = data[:postedTime]
+    @posted_time = Time.at(@dynamo_posted_time.to_i/1000).utc.strftime("%FT%T.000Z")
     @body        = data[:body]
     @user_in_db  = true unless feed_obj[:fd_user].nil?
     @in_conv     = feed_obj[:in_conversation][:n].to_i

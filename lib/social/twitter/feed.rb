@@ -16,8 +16,8 @@ class Social::Twitter::Feed
     @stream_id      = feed_obj[:stream_id]
     @feed_id        = feed_obj[:id_str]
     @parent_feed_id = feed_obj[:id_str]
-    @posted_time    = feed_obj[:created_at]
     @dynamo_posted_time = Time.parse("#{feed_obj[:created_at]}").to_i
+    @posted_time = Time.at(@dynamo_posted_time).utc.strftime("%FT%T.000Z")
     @user = {
       :name            => feed_obj[:user][:name],
       :screen_name     => feed_obj[:user][:screen_name],

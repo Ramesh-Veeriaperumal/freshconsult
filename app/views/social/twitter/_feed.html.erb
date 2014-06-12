@@ -56,9 +56,9 @@
         <div class="info-data">
           <div class="pull-left">
             <a class="tooltip tw-link" href="http://twitter.com/<%=feed.user[:screen_name]%>/status/<%=feed.feed_id%>" target="_blank" data-original-title="View on Twitter" data-placement="right" twipsy-content-set="true"><%= font_icon "twitter", :size => 16 %></a>
-            <% parsed_time = formated_date(Time.parse(feed.posted_time)) %>
+            <% parsed_time = formated_date(Time.parse(feed.posted_time).utc) %>
             <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= parsed_time %>">
-              <%= time_ago_in_words(Time.parse(feed.posted_time)) %> ago
+              <%= time_ago_in_words(Time.parse(feed.posted_time).utc) %> ago
             </span>
           </div>
 
