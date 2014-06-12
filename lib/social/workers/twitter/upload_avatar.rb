@@ -40,7 +40,7 @@ class Social::Workers::Twitter::UploadAvatar
         avatar.save
       end
     rescue Exception => e
-      puts "Exception in UploadAvatarWorker :: #{e.to_s} :: #{e.backtrace.join("\n")}"
+      Rails.logger.debug "Exception in UploadAvatarWorker :: #{e.to_s} :: #{e.backtrace.join("\n")}"
       custom_params = {
         :description => "Exception in UploadAvatarWorker",
         :params => hash[:item].id

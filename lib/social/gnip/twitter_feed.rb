@@ -30,7 +30,7 @@ class Social::Gnip::TwitterFeed
       end
     rescue TypeError, JSON::ParserError => e
       @tweet_obj = nil
-      puts "Error in parsing gnip feed json"
+      Rails.logger.debug "Error in parsing gnip feed json"
     end
   end
 
