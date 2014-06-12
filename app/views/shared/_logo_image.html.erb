@@ -1,4 +1,6 @@
-<%= image_tag logo_url(item), :alt => t('logo') %>
+	<%= image_tag logo_url(item), :alt => t('logo'),
+								:onerror => "default_image_error(this)",
+								:"data-type" => "logo" %>
 	<div class="thumb-file-upload">
 		<% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
 			<div class="file-upload-wrap">

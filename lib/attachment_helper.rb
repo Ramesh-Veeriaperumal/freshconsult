@@ -45,7 +45,7 @@
         output << link_to( h(truncate(filename,15)), attached.url , :popup => true, :title => h(filename))
         output << %(<span class="file-size">( #{h("dropbox link")} )</span>)
       else
-        size = number_to_human_size attached.content_file_size 
+        size = number_to_human_size attached.content_file_size
         output << content_tag( :div,link_to(truncate(h(attached.content_file_name), { :length => 23 }), attached, :popup => true),:class => "ellipsis")
         output << %(<span class="file-size">( #{size} )</span>)
       end
@@ -61,9 +61,13 @@
     output = ""
       if (page == "dropbox")
           output << content_tag(:div, '', :class => "file-types-dropbox")
-      else    
+      else
         if attached.image?
-          output << image_tag(attached.expiring_url(:thumb), :class => "image", :alt => attached.content_file_name)
+          output << image_tag(attached.expiring_url(:thumb), :class => "image",
+                                :alt => attached.content_file_name,
+                                :onerror => "default_image_error(this)",
+                                :"data-type" => "attachment"
+                                )
         else
           extname = attached.content_file_name.split('.')[-1] || ""
 
@@ -73,22 +77,22 @@
             output << content_tag( :div, content_tag( :span ), :class => 'attachment-type')
           end
 
-        end 
+        end
       end
       output.html_safe
   end
 
   def attachment_delete_link path_url
-    link_to_remote("", :url => path_url, 
+    link_to_remote("", :url => path_url,
                   :method => 'delete',
                   :html => { :class =>"delete mr10" },
-                  :confirm => t('attachment_delete')) 
+                  :confirm => t('attachment_delete'))
   end
 
   def attachment_unlink_path(attachment, note_id = nil)
     (attachment.attachable_type != "Account" or note_id.blank?) ?
-            helpdesk_attachment_path(attachment) : 
+            helpdesk_attachment_path(attachment) :
             unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
   end
 
-end  
+end

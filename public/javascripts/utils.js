@@ -26,7 +26,7 @@ function rgb2hex(rgb) {
 
 function hex(x) {
   var hexDigits = new Array
-        ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"); 
+        ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
   return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
  }
 
@@ -37,7 +37,7 @@ function textColor(val)
   return (parseInt(val.substr(1, 2), 16) + parseInt(val.substr(3, 2), 16) + parseInt(val.substr(5, 2), 16) < 400)? 'white': 'black';
 }
 
-// Utility methods for FreshWidget  
+// Utility methods for FreshWidget
 function catchException(fn, message) {
   try {
     return fn();
@@ -96,13 +96,13 @@ function totalTime(listClass, updateId){
  total_hours = $$(listClass)
                 .collect(function(t){ return jQuery(t).data('runningTime'); })
                 .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
- 
- updateElement.html(time_in_hhmm(total_hours));    
+
+ updateElement.html(time_in_hhmm(total_hours));
 }
 
 function time_in_hhmm(seconds) {
   var hh = parseInt(seconds/3600), mm = Math.round((seconds % 3600) / 60), ss = seconds % 60;
-  return pad2(hh) + ":" + pad2(mm); 
+  return pad2(hh) + ":" + pad2(mm);
 }
 
 function pad2(number) {
@@ -113,7 +113,7 @@ function pad2(number) {
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
   if (document.all) source.onselectstart = function () { return false; }; // Internet Explorer
-  
+
   source.onmousedown = function () { return false; };           // Other browsers
 };
 
@@ -128,13 +128,25 @@ function imgerror(source){
     return true;
 }
 
+
+function default_image_error(source){
+  // The various types are attachment | logo | favicon
+  var type_class = source.dataset['type'] || "attachment",
+      class_name = ['', 'no-image-placeholder', 'no-image-'.concat(type_class) ];
+  source.src = SPACER_IMAGE_PATH;
+
+  source.onerror = "";
+  source.className += class_name.join(" ");
+  return true;
+}
+
 // Adding leading zeros to a number
-function pad(number, length) {   
+function pad(number, length) {
     var length = length || 2;
     var str = '' + number;
     while (str.length < length) {
         str = '0' + str;
-    }   
+    }
     return str;
 }
 
@@ -143,7 +155,7 @@ function normalizeHours(value){
    return value.split( new RegExp( "\\s*:\\s*", "gi" ) ).collect(function(s) {
      return pad(s);
    }).join(':')
-   
+
 }
 
 // Getting Paramater Value
@@ -167,7 +179,7 @@ function showSortableForm(buttonid, listid, formid){
   jQuery("#"+formid).fadeIn(300);
 }
 
-function hideSortableForm(buttonid, listid, formid){    
+function hideSortableForm(buttonid, listid, formid){
   jQuery("#"+listid).fadeIn(300);
   jQuery("#"+buttonid).show();
   jQuery("#"+formid).hide();
@@ -177,8 +189,8 @@ function hideSortableForm(buttonid, listid, formid){
 function get_short_url(long_url, callback)
 {
     jQuery.getJSON(
-        "http://api.bitly.com/v3/shorten?callback=?", 
-        { 
+        "http://api.bitly.com/v3/shorten?callback=?",
+        {
             "format": "json",
             "apiKey": "R_8ae5a67d8d9930440f0d1d4b794332f0",
             "login": "freshdesk",
@@ -216,7 +228,7 @@ function insertTextAtCursor(el, text) {
     }
 }
 
-function helpdesk_submit(url, method, params){ 
+function helpdesk_submit(url, method, params){
    var form = $("tickets-expanded");
    if(method) form.down('input[name=_method]').value = method;
 
@@ -234,7 +246,7 @@ function helpdesk_submit(url, method, params){
    form.submit();
 }
 
-function reply_multiple_submit( url, method, params){ 
+function reply_multiple_submit( url, method, params){
   var form = $("replymultiple");
 
   (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
@@ -253,7 +265,7 @@ function reply_multiple_submit( url, method, params){
   form.submit();
 }
 
-function canned_response_submit(url, method, params){ 
+function canned_response_submit(url, method, params){
    var form = $("ca_res_form");
    if(method) form.down('input[name=_method]').value = method;
    var source  = $('move_folder_id');
@@ -274,21 +286,21 @@ function canned_response_submit(url, method, params){
     {
       form.appendChild(field);
       form.action = url;
-      form.submit(); 
+      form.submit();
     }
 }
 
-function setSelRange(inputEl, selStart, selEnd) { 
-   if (inputEl.setSelectionRange) { 
-    inputEl.focus(); 
-    inputEl.setSelectionRange(selStart, selEnd); 
-   } else if (inputEl.createTextRange) { 
-    var range = inputEl.createTextRange(); 
-    range.collapse(true); 
-    range.moveEnd('character', selEnd); 
-    range.moveStart('character', selStart); 
-    range.select(); 
-   } 
+function setSelRange(inputEl, selStart, selEnd) {
+   if (inputEl.setSelectionRange) {
+    inputEl.focus();
+    inputEl.setSelectionRange(selStart, selEnd);
+   } else if (inputEl.createTextRange) {
+    var range = inputEl.createTextRange();
+    range.collapse(true);
+    range.moveEnd('character', selEnd);
+    range.moveStart('character', selStart);
+    range.select();
+   }
 }
 
 function setCaretToPos(input, pos) {
@@ -304,7 +316,7 @@ function construct_reply_url(to_email, account_full_domain){
    reply_email  = "@"+account_full_domain;
 
    if(email_domain.toLowerCase() == account_full_domain){
-      reply_email = email_name + reply_email;   
+      reply_email = email_name + reply_email;
    }
    else{
       reply_email = email_domain.replace(/\./g,'') + email_name + reply_email;
@@ -317,7 +329,7 @@ function setPostParam(form, name, value){
   var paramDom = jQuery(form).find("[name="+name+"]")
   if(!paramDom.get(0))
     paramDom = jQuery("<input type='hidden' name='"+name+"' />").appendTo(form)
-  
+
   paramDom.val(value)
 }
 
@@ -325,15 +337,15 @@ function setPostParam(form, name, value){
    // Quoted Addition show hide
    function quote_text(item){
       if (!jQuery(item).attr("data-quoted")) {
-         var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""), 
+         var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""),
             child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote").hide();
-            
+
             show_hide.bind("click", function(ev){
                ev.preventDefault();
                child_quote.toggle();
             });
             jQuery(item).removeClass("request_mail");
-            jQuery(item).attr("data-quoted", true); 
+            jQuery(item).attr("data-quoted", true);
       }
    }
 
@@ -348,7 +360,7 @@ active_dialog = null;
             var dialog = null;
             curItem.click(function(e){
               e.preventDefault();
-            
+
               var $this = $(this),
                   dialog = $this.data("dialog2"),
                   width = $this.data("width") || '750px',
@@ -393,7 +405,7 @@ active_dialog = null;
           })
         },
         show : function( ) { },
-        hide : function( ) { 
+        hide : function( ) {
           return this.each(function(){
             console.log('Calling hide event');
           });
@@ -412,9 +424,9 @@ active_dialog = null;
         }
    };
 
-   
-   
-  $.fn.dialog2 = function( method ) {    
+
+
+  $.fn.dialog2 = function( method ) {
     // Method calling logic
     if ( methods[method] ) {
       return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -424,7 +436,7 @@ active_dialog = null;
       $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
     }
   };
-     
+
   // usage: $('p').autoLink()
   $.fn.autoLink = function() {
     this.contents()
@@ -446,20 +458,20 @@ active_dialog = null;
 			var twipsy = $(this).data('twipsy');
 			if (twipsy) {
 				twipsy.$tip.remove();
-			} 
-				
-		} catch(e) {}
-	} 
+			}
 
- $(document).bind('mousedown', function(e) {       
+		} catch(e) {}
+	}
+
+ $(document).bind('mousedown', function(e) {
    if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
   if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
-      else setTimeout(hideActiveMenu, 500);         
-    } 
+      else setTimeout(hideActiveMenu, 500);
+    }
  });
- 
+
  hideActiveMenu = function (){
     $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
     $($(document).data("active-menu-parent")).removeClass("selected");
@@ -468,12 +480,12 @@ active_dialog = null;
 
  $.fn.showAsMenu = function(id){
     this.each(function(i, node){
-       if($(node).data("showAsMenu")) return; 
-       
+       if($(node).data("showAsMenu")) return;
+
        $(node).bind("click", function(ev){
-           ev.preventDefault(); 
+           ev.preventDefault();
            elementid = id || node.getAttribute("menuid");
-           element = $(elementid).show().css("visibility", "visible"); 
+           element = $(elementid).show().css("visibility", "visible");
            $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
            $(element).find("a, li").data("menu-active", true);
            $(node).addClass("selected");
@@ -510,7 +522,7 @@ active_dialog = null;
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
               $('#menu_' + menuid).removeClass('sloading loading-small');
-              $('#menu_' + menuid + ' .contents').html(data);  
+              $('#menu_' + menuid + ' .contents').html(data);
 
               //Setting the Active Element
               match_found = false;
@@ -554,7 +566,7 @@ active_dialog = null;
                           .addClass('sloading fd-ajaxmenu')
                           .html('<div class="contents"></div>')
                           .data('parent',$(node));
-                          
+
           menu_container.find('.contents').append($($(node).data('options')).html());
           menu_container.insertAfter($(node));
           $(node).data('menuid',"menu_" + menuid);
@@ -584,15 +596,15 @@ active_dialog = null;
   // jQuery autoGrowInput plugin by James Padolsey
   // See related thread: http://stackoverflow.com/questions/931207/is-there-a-jquery-autogrow-plugin-for-text-fields
   $.fn.autoGrowInput = function(o) {
-  
+
     o = $.extend({
         maxWidth: 1000,
         minWidth: 0,
         comfortZone: 70
     }, o);
-    
+
     this.filter('input:text').each(function(){
-        
+
         var minWidth = o.minWidth || $(this).width(),
             val = '',
             input = $(this),
@@ -608,13 +620,13 @@ active_dialog = null;
                 whiteSpace: 'nowrap'
             }),
             check = function() {
-                
+
                 if (val === (val = input.val())) {return;}
-                
+
                 // Enter new content into testSubject
                 var escaped = val.replace(/&/g, '&amp;').replace(/\s/g,'&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 testSubject.html(escaped);
-                
+
                 // Calculate new width + whether to change
                 var testerWidth = testSubject.width(),
                     newWidth = (testerWidth + o.comfortZone) >= minWidth ? testerWidth + o.comfortZone : minWidth,
@@ -645,22 +657,22 @@ active_dialog = null;
           return this.each(function(){
             $this = $(this);
             dialogid = this.id + "_dialog";
-            dialogcontent = this.id + "_dialogcontent";            
+            dialogcontent = this.id + "_dialogcontent";
             var dialog = null;
             $("body").prepend('<div id="'+dialogid+'" class="modal hide fade"><div class="modal-header"><a href="#" class="close"></a><h3 class="title">'+ this.title +'</h3></div><div id="'+dialogcontent+'"><p class="sloading loading-small loading-block" ></p></div></div>');
-            
+
             $("#"+dialogid).data({"content": dialogcontent, "href": $this.attr("href")});
             $this.attr("data-controls-modal", dialogid);
             $this.attr("data-backdrop", true);
             $this.attr("data-keyboard", true);
-            
+
             $this.modal();
-            
+
             $("#"+dialogid).bind('shown', function(){
                self = $(this)
                if(!self.attr("ajax-loaded")){
-                  $("#"+self.data("content")).load(self.data("href"), {}, function(responseText, textStatus, XMLHttpRequest) { 
-                     self.attr("ajax-loaded", true);                     
+                  $("#"+self.data("content")).load(self.data("href"), {}, function(responseText, textStatus, XMLHttpRequest) {
+                     self.attr("ajax-loaded", true);
                      self.find('.close-dialog').click(function(){
                         self.modal("hide");
                      });
@@ -670,8 +682,8 @@ active_dialog = null;
           });
         }
    };
-   
-  $.fn.modalAjax = function( method ) {    
+
+  $.fn.modalAjax = function( method ) {
     // Method calling logic
     if ( methods[method] ) {
       return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -682,7 +694,7 @@ active_dialog = null;
     }
   };
 
-  
+
   $.fn.animateHighlight = function(originalBg, highlightColor, duration) {
     var highlightBg = highlightColor || "#FFFF9C";
     var animateMs = duration || 1500;
@@ -693,7 +705,7 @@ active_dialog = null;
       element_animated.css({'background-color':''});
     });
   };
- 
+
 
 })( jQuery );
 
@@ -721,7 +733,7 @@ getCookie = function(name)
   }
 }
 
-deleteCookie = function(name, path) 
+deleteCookie = function(name, path)
 {
   setCookie(name,'',-1,path);
 }
@@ -743,8 +755,8 @@ function simpleTimedSearch(element, url, time){
       search_string = jQuery(element).val();
       setTimeout(function(){
         if(key_now == keyed_up){
-          new Ajax.Request(url+"&search_string="+search_string, 
-          { 
+          new Ajax.Request(url+"&search_string="+search_string,
+          {
               asynchronous: true,
               evalScripts: true,
               method: 'get'
@@ -946,8 +958,8 @@ function hashTabSelect(){
     hash = window.location.hash.split('/');
     jQuery.each(hash, function(index, value){
       setTimeout(function(){
-        catchException(function(){ 
-          jQuery(value + "-tab").trigger('click') 
+        catchException(function(){
+          jQuery(value + "-tab").trigger('click')
         }, "Error in File globalinit.js");
       }, ((index+1)*10) )
     })
@@ -972,7 +984,7 @@ function highlight_code() {
         }
         jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
     })
-    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled 
+    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled
     if( jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 11){
         SyntaxHighlighter.defaults['quick-code'] = false;
     }
@@ -985,4 +997,3 @@ function preventDefault(event) {
   else
     event.returnValue = false;
 }
-

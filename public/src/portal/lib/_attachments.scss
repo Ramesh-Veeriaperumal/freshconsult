@@ -1,6 +1,5 @@
-
 .attachments{
-	@include clearfix;	
+	@include clearfix;
 	.attachment{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
@@ -30,10 +29,6 @@
 				background-size: 26px 30px;
 				margin-top: -4px;
 			}
-			img{
-				width: 26px;
-				height: 30px;
-			}
 			.file-type{
 				position: absolute;
 				top: 10px;
@@ -61,9 +56,13 @@
 		}
 		img.image{
 				margin:0;
-				width:50px; 
+				width:50px;
 				height:42px;
 				vertical-align: middle;
+		}
+		img, img.no-image-attachment{
+			width: 26px;
+			height: 30px;
 		}
 		.attach_content{
 			display: inline-block;
@@ -87,7 +86,7 @@
 				text-decoration: none;
 			}
 		}
-	} 
+	}
 }
 
 
@@ -111,10 +110,39 @@
 			}
 			img.image{
 				margin:0;
-				width:32px; 
+				width:32px;
 				height:32px;
 			}
 		}
 	}
 }
 
+
+// ------------------------------------------------------------------ //
+// -------------------- NO IMAGE CLASS ------------------------------ //
+// ------------------------------------------------------------------ //
+
+@mixin no-image-class($image) {
+	background-image: inline-image($image);
+	width: image-width($image);
+	height: image-height($image);
+}
+
+.no-image-placeholder{
+	background-repeat: no-repeat;
+	@include opacity(0.5);
+}
+
+.no-image-attachment{
+	background-image: inline-image("cdn-ignored/inline-images/page.png");
+	background-size: 20px 25px;
+	background-position: 2px 3px;
+}
+
+.no-image-logo{
+	@include no-image-class("logo.png");
+}
+
+.no-image-favicon{
+	@include no-image-class("favicon-preview.png");
+}

@@ -17,6 +17,28 @@ function log() {
   }
 }
 
+// Image error issues
+function imgerror(source){
+    if (source.width <= 50) {
+      source.src = portal['image_placeholders']['profile_thumb'];
+    } else {
+      source.src = portal['image_placeholders']['profile_medium'];
+    }
+    source.onerror = "";
+    return true;
+}
+
+function default_image_error(source){
+  // The various types are attachment | logo | favicon
+  var type_class = source.dataset['type'] || "attachment",
+      class_name = ['', 'no-image-placeholder', 'no-image-'.concat(type_class) ];
+  source.src = portal['image_placeholders']['spacer'];
+
+  source.onerror = "";
+  source.className += class_name.join(" ");
+  return true;
+}
+
 // Additional util methods for support helpdesk
 // Extending the string protoype to check if the entered string is a valid email or not
 String.prototype.isValidEmail = function(){
@@ -59,14 +81,14 @@ function layoutResize(layoutClass1, layoutClass2){
     if (!$j.trim(sidebar.html())) sidebar.remove()
 
     sidebar = $j(layoutClass2).get(0)
-    
+
     // If no sidebar is present make the main content to stretch to full-width
     if (!sidebar) {
         $j(mainbar).removeClass("main")
     }
 
     // If no mainbar is present make the sidebar content to stretch to full-width
-    if (!mainbar) { 
+    if (!mainbar) {
         $j(sidebar).removeClass("sidebar")
     }
 
@@ -86,7 +108,7 @@ Number.prototype.toTime = function(format) {
 
 window.highlight_code = function() {
     jQuery('[rel="highlighter"]').each(function(i,element){
-        var brush, 
+        var brush,
             attr = jQuery(element).attr('code-brush');
 
         if(attr == 'html'){
@@ -96,7 +118,7 @@ window.highlight_code = function() {
         }
         jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
     })
-    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled 
+    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled
     if( jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 11){
         SyntaxHighlighter.defaults['quick-code'] = false;
     }
