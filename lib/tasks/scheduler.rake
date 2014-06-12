@@ -183,6 +183,7 @@ namespace :scheduler do
         shard_sym = shard_name.to_sym
         puts "shard_name is #{shard_name}"
         Sharding.run_on_shard(shard_name) do
+          Account.reset_current_account
           Sharding.run_on_slave do
             Social::FacebookPage.active.find_in_batches( 
               :joins => %(
