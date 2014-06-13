@@ -420,7 +420,7 @@ var StreamManager = Class.create({
     e.stopPropagation();
     var feed_id = j(e.currentTarget).attr("data-feed-id");
     j("[data-feed-id="+feed_id+"] .convert_as_ticket").addClass("sloading loading-tiny loading-align");
-    j("[data-feed-id="+feed_id+"] .convert_as_ticket i").hide();
+    j("[data-feed-id="+feed_id+"] .convert_as_ticket i").css("opacity","0");
     this.createFdItem(feed_id, "#tweet_div_");
   },
   viewOnTwitter: function(e){
