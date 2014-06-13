@@ -38,13 +38,13 @@ module Social::Stream::Interaction
       interaction_results = results.map {|result| result[:responses][interactions_table[:name]]}.flatten
       interactions =  process_results(interaction_results, nil,false)
       all_interactions = interactions.select{ |feed| feed.ticket_id.blank? }
-    rescue Exception => e
+    rescue AWS::DynamoDB::Errors::ValidationException => e
       error_params = {
-        :error => e.inspect,
         :account_id => Account.current.id,
-        :stream_id => visible_stream_ids
+        :stream_id => visible_stream_ids,
+        :user_id => user_id
       }
-      notify_social_dev("Exception in building user interactions", error_params)
+      notify_social_dev("Validation exception in building user interactions", error_params)
     end
     all_interactions
   end
