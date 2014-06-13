@@ -30,6 +30,10 @@ describe Social::Gnip::TwitterFeed do
   before(:each) do
     @handle.reload
     @default_stream.reload
+    unless GNIP_ENABLED
+      Social::DynamoHelper.stubs(:insert).returns({})
+      Social::DynamoHelper.stubs(:update).returns({})
+    end
   end
 
   it "should create a ticket when a DM arrives" do
@@ -135,7 +139,7 @@ describe Social::Gnip::TwitterFeed do
     tweet_body = feed["body"]
     body = tweet.tweetable.ticket_body.description
     tweet_body.should eql(body)
-    dynamo_feed_for_tweet(@handle, feed, true)
+    dynamo_feed_for_tweet(@handle, feed, true) if GNIP_ENABLED
   end
 
   it "should create a note when a tweet is replied to" do
@@ -146,7 +150,7 @@ describe Social::Gnip::TwitterFeed do
     ticket_tweet.should_not be_nil
     ticket_tweet.is_ticket?.should be_true
     ticket_tweet.stream_id.should_not be_nil
-    dynamo_feed_for_tweet(@handle, ticket_feed, true)
+    dynamo_feed_for_tweet(@handle, ticket_feed, true) if GNIP_ENABLED
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
@@ -186,7 +190,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
     reply_tweet.stream_id.should_not be_nil
-    dynamo_feed_for_tweet(@handle, reply_feed, true)
+    dynamo_feed_for_tweet(@handle, reply_feed, true) if GNIP_ENABLED
 
     reply_body = reply_feed["body"]
     body = reply_tweet.tweetable.ticket_body.description
@@ -235,7 +239,7 @@ describe Social::Gnip::TwitterFeed do
     feed["gnip"]["matching_rules"] = []
     tweet = send_tweet_and_wait(feed)
     tweet.should be_nil
-    dynamo_feed_for_tweet(@handle, feed, false)
+    dynamo_feed_for_tweet(@handle, feed, false) if GNIP_ENABLED
   end
 
   # it "should not convert a share/retweet to a ticket" do
@@ -254,7 +258,7 @@ describe Social::Gnip::TwitterFeed do
 
     tweet = send_tweet_and_wait(feed)
     tweet.should be_nil
-    dynamo_feed_for_tweet(nil, feed, false, 0, @default_stream.id)
+    dynamo_feed_for_tweet(nil, feed, false, 0, @default_stream.id) if GNIP_ENABLED
   end
 
   it "should not convert tweet with an invalid stream_id in tag" do
@@ -265,7 +269,7 @@ describe Social::Gnip::TwitterFeed do
 
     tweet = send_tweet_and_wait(feed)
     tweet.should be_nil
-    dynamo_feed_for_tweet(nil, feed, false, @handle.account_id, 0)
+    dynamo_feed_for_tweet(nil, feed, false, @handle.account_id, 0) if GNIP_ENABLED
   end
 
   it "should not convert tweet with an invalid twitter_handle_id in tag" do
@@ -276,7 +280,7 @@ describe Social::Gnip::TwitterFeed do
 
     tweet = send_tweet_and_wait(feed)
     tweet.should be_nil
-    dynamo_feed_for_tweet(nil, feed, false, @handle.account_id, 0)
+    dynamo_feed_for_tweet(nil, feed, false, @handle.account_id, 0) if GNIP_ENABLED
   end
 
 

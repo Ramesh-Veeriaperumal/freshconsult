@@ -124,7 +124,7 @@ function imgerror(source){
     } else {
       source.src = PROFILE_BLANK_MEDIUM_PATH;
     }
-    source.onerror = "";
+    // source.onerror = "";
     return true;
 }
 

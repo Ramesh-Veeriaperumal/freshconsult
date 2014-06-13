@@ -15,17 +15,23 @@ module Mobile::Actions::Push_Notifier
         publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
 	end
 	
-    def remove_logged_out_user_mobile_registrations
-        message = {
-            :account_id => current_account.id,
-            :user_id => current_user.id,
-      			:delete_axn => :device,
-            :clean_up => params[:registration_key]
-        }.to_json
-        Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
+  def remove_logged_out_user_mobile_registrations
+    return if(params[:registration_key] == "")
+    
+    message = {
+          :account_id => current_account.id,
+          :user_id => current_user.id
+      }
 
-        publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
+    if (params[:registration_key]) 
+      message.merge!(:delete_axn => :device, :clean_up => params[:registration_key])
+    elsif (!params[:registration_key])
+      message.merge!(:delete_axn => :user, :clean_up => 1)
     end
+
+    Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message.to_json}"
+    publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message.to_json
+  end
 	
   def send_mobile_notification(action=:new, message)
     notification_types = Hash.new()
