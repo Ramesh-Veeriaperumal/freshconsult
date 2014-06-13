@@ -38,15 +38,19 @@ describe Social::StreamsController do
   
   before(:each) do
     @request.host = @account.full_domain
+    @account.make_current
     @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
                                         (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     log_in(@user)
   end
   
    it "should fetch the top tweets from all the handles with latest first from dynamo when" do
-    tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(@first_rule, Time.now.utc.iso8601)
-    tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(@first_rule, Time.now.ago(5.minutes).utc.iso8601)
-    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(@sec_rule, Time.now.ago(2.minutes).utc.iso8601)
+    tweet_id1 = (Time.now.utc.to_f*100000).to_i
+    tweet_id2 = (Time.now.utc.to_f*100000).to_i
+    tweet_id3 = (Time.now.utc.to_f*100000).to_i
+    tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
+    tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(tweet_id2, @first_rule, Time.now.ago(5.minutes).utc.iso8601)
+    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, @sec_rule, Time.now.ago(2.minutes).utc.iso8601)
     
     get :stream_feeds, {
                           :social_streams => 
@@ -64,10 +68,15 @@ describe Social::StreamsController do
   end
   
   it "should show the entire current interaction on clicking on a tweet feed" do
-    tweet_id1, sample_gnip_feed1, sender1 = push_tweet_to_dynamo(@first_rule, Time.now.utc.iso8601)
-    tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(@first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)
-    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(@first_rule,  Time.now.advance(:hours => +2).utc.iso8601, tweet_id2, sender1)
-    tweet_id4, sample_gnip_feed4 = push_tweet_to_dynamo(@first_rule,  Time.now.advance(:hours => +3).utc.iso8601, tweet_id3, sender2)
+    tweet_id1 = (Time.now.utc.to_f*100000).to_i
+    tweet_id2 = (Time.now.utc.to_f*100000).to_i
+    tweet_id3 = (Time.now.utc.to_f*100000).to_i
+    tweet_id4 = (Time.now.utc.to_f*100000).to_i
+    
+    tweet_id1, sample_gnip_feed1, sender1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
+    tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(tweet_id2, @first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)
+    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, @first_rule,  Time.now.advance(:hours => +2).utc.iso8601, tweet_id2, sender1)
+    tweet_id4, sample_gnip_feed4 = push_tweet_to_dynamo(tweet_id4, @first_rule,  Time.now.advance(:hours => +3).utc.iso8601, tweet_id3, sender2)
 
     sample_gnip_feed3.deep_symbolize_keys!
     
@@ -101,9 +110,13 @@ describe Social::StreamsController do
   end
   
   it "should show the the other interactions on clicking on a  tweet feed" do
-    tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(@first_rule, Time.now.utc.iso8601)
-    tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(@first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)
-    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(@first_rule,  Time.now.advance(:hours => +2).utc.iso8601, nil, sender2)
+    tweet_id1 = (Time.now.utc.to_f*100000).to_i
+    tweet_id2 = (Time.now.utc.to_f*100000).to_i
+    tweet_id3 = (Time.now.utc.to_f*100000).to_i
+    
+    tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
+    tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(tweet_id2, @first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)
+    tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, @first_rule,  Time.now.advance(:hours => +2).utc.iso8601, nil, sender2)
     
     sample_gnip_feed2.deep_symbolize_keys!
     

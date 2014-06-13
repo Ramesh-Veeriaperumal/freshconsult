@@ -34,16 +34,33 @@ describe Social::TwitterController do
     @request.host = @account.full_domain
     @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
                                         (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+    unless GNIP_ENABLED
+      Social::DynamoHelper.stubs(:insert).returns({})
+      Social::DynamoHelper.stubs(:update).returns({})
+    end
     @account.make_current                                       
     log_in(@user)
   end
   
    it "should create a ticket and update dynamo for a tweet(in_reply_to.blank?) whose search type is saved" do
-    #Push a tweet into dynamo that is to be converted to ticket
-    tweet_id, sample_gnip_feed = push_tweet_to_dynamo
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["fd_user"].should be_nil
-    feed_entry["fd_link"].should be_nil
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+    
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+    tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+    
+  
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["fd_user"].should be_nil
+      feed_entry["fd_link"].should be_nil
+    end
     
     #Pushed tweet should not be a ticket
     tweet = Social::Tweet.find_by_tweet_id(tweet_id)
@@ -58,9 +75,13 @@ describe Social::TwitterController do
     tweet = Social::Tweet.find_by_tweet_id(tweet_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
-    feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
+      feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    end
+    
   end
   
  
@@ -102,12 +123,25 @@ describe Social::TwitterController do
   
    it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
     #Push a tweet into dynamo (parent tweet to reply to)
-    tweet_id, sample_gnip_feed = push_tweet_to_dynamo
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["fd_user"].should be_nil
-    feed_entry["fd_link"].should be_nil
-    feed_entry["in_conversation"][:n].should eql("0")
-    feed_entry["is_replied"][:n].should eql("0")
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+    
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+    tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["fd_user"].should be_nil
+      feed_entry["fd_link"].should be_nil
+      feed_entry["in_conversation"][:n].should eql("0")
+      feed_entry["is_replied"][:n].should eql("0")
+    end
     
     @stream_id = "#{@account.id}_#{@default_stream.id}"
     fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:saved], "#{tweet_id}")
@@ -117,9 +151,12 @@ describe Social::TwitterController do
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
-    feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
+      feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    end
     
     #Stubing reply call
     twitter_object = sample_twitter_object(tweet_id)
@@ -131,17 +168,34 @@ describe Social::TwitterController do
     
     tweet = Social::Tweet.find_by_tweet_id(tweet_id)
     tweet.should_not be_nil
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("1")
-    feed_entry["is_replied"][:n].should eql("1")
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("1")
+      feed_entry["is_replied"][:n].should eql("1")
+    end
   end
 
  it "should reply to twitter if it is a saved stream and is a non ticket tweet should update dynamo" do   
     #Push a tweet into dynamo (parent tweet to reply to)
-    tweet_id, sample_gnip_feed = push_tweet_to_dynamo
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("0")
-    feed_entry["is_replied"][:n].should eql("0")
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+    
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+    tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+    tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("0")
+      feed_entry["is_replied"][:n].should eql("0")
+    end
     
     #Stubing reply call
     twitter_object = sample_twitter_object(tweet_id)
@@ -152,19 +206,24 @@ describe Social::TwitterController do
     post :reply, reply_params
     
     #Check update of parent feed
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("1")
-    feed_entry["is_replied"][:n].should eql("1")
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("1")
+      feed_entry["is_replied"][:n].should eql("1")
+    end
     
     hash_key = "#{@account.id}_#{@default_stream.id}"
     reply_tweet_id = "#{twitter_object.attrs[:id]}"
     reply_user_id = "#{twitter_object.attrs[:user][:id_str]}"
-    reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
-    reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
-    
-    reply_feed_entry["in_conversation"][:n].should eql("1")
-    reply_feed_entry["is_replied"][:n].should eql("0")
-    reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+   
+    if GNIP_ENABLED
+       reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
+       reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
+        
+       reply_feed_entry["in_conversation"][:n].should eql("1")
+       reply_feed_entry["is_replied"][:n].should eql("0")
+       reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+    end
   end  
   
   it "should reply to twitter if it is a live stream" do   
@@ -179,10 +238,21 @@ describe Social::TwitterController do
   
   it "should reply to twitter if it is a saved stream and is a non ticket tweet should update dynamo" do   
     #Push a tweet into dynamo (parent tweet to reply to)
-    tweet_id, sample_gnip_feed = push_tweet_to_dynamo
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("0")
-    feed_entry["is_replied"][:n].should eql("0")
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+    
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("0")
+      feed_entry["is_replied"][:n].should eql("0")
+    end
     
     #Stubing reply call
     twitter_object = sample_twitter_object(tweet_id)
@@ -194,27 +264,41 @@ describe Social::TwitterController do
     
     
     #Check update of parent feed
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("1")
-    feed_entry["is_replied"][:n].should eql("1")
-    
-    hash_key = "#{@account.id}_#{@default_stream.id}"
-    reply_tweet_id = "#{twitter_object.attrs[:id]}"
-    reply_user_id = "#{twitter_object.attrs[:user][:id_str]}"
-    reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
-    reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
-    
-    reply_feed_entry["in_conversation"][:n].should eql("1")
-    reply_feed_entry["is_replied"][:n].should eql("0")
-    reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("1")
+      feed_entry["is_replied"][:n].should eql("1")
+      
+      hash_key = "#{@account.id}_#{@default_stream.id}"
+      reply_tweet_id = "#{twitter_object.attrs[:id]}"
+      reply_user_id = "#{twitter_object.attrs[:user][:id_str]}"
+      reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
+      reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
+      
+      reply_feed_entry["in_conversation"][:n].should eql("1")
+      reply_feed_entry["is_replied"][:n].should eql("0")
+      reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+    end
   end  
   
   it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
-    #Push a tweet into dynamo (parent tweet to reply to)
-    tweet_id, sample_gnip_feed = push_tweet_to_dynamo
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["in_conversation"][:n].should eql("0")
-    feed_entry["is_replied"][:n].should eql("0")
+    # Push a tweet into dynamo (parent tweet to reply to)
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+    
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["in_conversation"][:n].should eql("0")
+      feed_entry["is_replied"][:n].should eql("0")
+    end
     
     #Create ticket
     @stream_id = "#{@account.id}_#{@default_stream.id}"
@@ -226,9 +310,12 @@ describe Social::TwitterController do
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
-    feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
-    feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
-    feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
+      feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
+    end
     
     #Stubing reply call
     twitter_object = sample_twitter_object(tweet_id)
@@ -244,49 +331,49 @@ describe Social::TwitterController do
     hash_key = "#{@account.id}_#{@default_stream.id}"
     reply_tweet_id = "#{twitter_object.attrs[:id]}"
     reply_user_id = "#{twitter_object.attrs[:user][:id_str]}"
-    reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
-    reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
     
-    reply_feed_entry["in_conversation"][:n].should eql("1")
-    reply_feed_entry["is_replied"][:n].should eql("0")
-    reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+    if GNIP_ENABLED
+      reply_feed_entry = dynamo_feeds_for_tweet("feeds", hash_key, reply_tweet_id, twitter_object.attrs[:created_at])
+      reply_user_entry = dynamo_feeds_for_tweet("interactions", hash_key, "user:#{reply_user_id}", twitter_object.attrs[:created_at])
+      
+      reply_feed_entry["in_conversation"][:n].should eql("1")
+      reply_feed_entry["is_replied"][:n].should eql("0")
+      reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
+    end
   end
   
   it "should show all the user interactions and tickets of the user accross streams on click of user profile" do
-    unless GNIP_ENABLED
-      GnipRule::Client.any_instance.stubs(:list).returns([])
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
-    end   
-    
-    Resque.inline = true   
-    sec_handle = create_test_twitter_handle(@account)
-    Resque.inline = false
-    
-    sec_default_stream = sec_handle.default_stream
-    data = sec_default_stream.data
-    sec_rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
-    
-    tweet_id1, sample_gnip_feed1, sender1 = push_tweet_to_dynamo(@rule, Time.now.utc.iso8601)
-    tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(sec_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1, sender1)
-   
-    sample_gnip_feed2.deep_symbolize_keys!
-    
-    Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user(sender1)])
-    
-    get :user_info,  {
-                        :user => 
-                            {
-                              :screen_name => "GnipTesting",
-                              :name => "GnipTesting", 
-                              :id => "#{sender1}", 
-                              :klout_score => "", 
-                              :normal_img_url => "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png"
-                            }
-                    }
-    
-    user_interactions = response.template_objects["interactions"][:others]
-    user_interactions.length.should eql(2)
-    user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
+    if GNIP_ENABLED 
+      Resque.inline = true   
+      sec_handle = create_test_twitter_handle(@account)
+      Resque.inline = false
+      
+      sec_default_stream = sec_handle.default_stream
+      data = sec_default_stream.data
+      sec_rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
+      
+      tweet_id1, sample_gnip_feed1, sender1 = push_tweet_to_dynamo(@rule, Time.now.utc.iso8601)
+      tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(sec_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1, sender1)
+     
+      sample_gnip_feed2.deep_symbolize_keys!
+      
+      Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user(sender1)])
+      
+      get :user_info,  {
+                          :user => 
+                              {
+                                :screen_name => "GnipTesting",
+                                :name => "GnipTesting", 
+                                :id => "#{sender1}", 
+                                :klout_score => "", 
+                                :normal_img_url => "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png"
+                              }
+                      }
+      
+      user_interactions = response.template_objects["interactions"][:others]
+      user_interactions.length.should eql(2)
+      user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
+    end
   end
  
  
