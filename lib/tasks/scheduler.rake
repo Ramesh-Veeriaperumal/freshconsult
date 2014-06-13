@@ -40,7 +40,7 @@ namespace :scheduler do
 
   }
 
-  PREMIUM_ACCOUNT_IDS = {:staging => [390], :production => [18685,39190]}
+  PREMIUM_ACCOUNT_IDS = {:staging => [390,1010001453,1010001456], :production => [18685,39190,19063,86336,34388,126077]}
 
 
   def log_file
@@ -148,7 +148,7 @@ namespace :scheduler do
     if empty_queue?(Social::FacebookWorker.get_sidekiq_options["queue"])
       puts "Facebook Worker initialized at #{Time.zone.now}"
       Sharding.run_on_all_slaves do
-        Account.active_accounts.non_premium_accounts.each do |account|
+        Account.active_accounts.each do |account|
           Account.reset_current_account
           account.make_current
           next if account.facebook_pages.empty?
@@ -165,9 +165,11 @@ namespace :scheduler do
     premium_acc_ids = Rails.env.production? ? PREMIUM_ACCOUNT_IDS[:production] : PREMIUM_ACCOUNT_IDS[:staging]
     if empty_queue?(Social::PremiumFacebookWorker.get_sidekiq_options["queue"])
       premium_acc_ids.each do |account_id|
-        Account.reset_current_account
-        Account.find(account_id).make_current
-        Social::PremiumFacebookWorker.perform_async({:account_id => account_id })
+        Sharding.select_shard_of(account_id) do
+          Account.reset_current_account
+          Account.find(account_id).make_current
+          Social::PremiumFacebookWorker.perform_async({:account_id => account_id })
+        end
       end
     else
       puts "Premium Facebook Worker is already running . skipping at #{Time.zone.now}" 
@@ -197,7 +199,8 @@ namespace :scheduler do
                   Social::FbCommentsWorker.perform_async({
                     :account_id => page.account_id, 
                     :fb_page_id => page.id
-                  }) 
+                  })
+                Account.reset_current_account 
               end          
             end
           end
@@ -212,7 +215,7 @@ namespace :scheduler do
     if empty_queue?(Social::TwitterWorker.get_sidekiq_options["queue"])
         puts "Twitter Queue is empty... queuing at #{Time.zone.now}"
         Sharding.run_on_all_slaves do
-         Account.active_accounts.non_premium_accounts.each do |account|  
+         Account.active_accounts.each do |account|  
           Account.reset_current_account
           account.make_current
           next if account.twitter_handles.empty?
@@ -238,7 +241,7 @@ namespace :scheduler do
     end
   end
 
-  task :gnip_reply => :environment do
+  task :gnip_replay => :environment do
     disconnect_list = Social::Twitter::Constants::GNIP_DISCONNECT_LIST
     $redis_others.lrange(disconnect_list, 0, -1).each do |disconnected_period|
       period = JSON.parse(disconnected_period)
