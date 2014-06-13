@@ -28,7 +28,10 @@
 
 		 			<label class="control-label span2"><b><%=t('group.info1').html_safe%></b></label>
 		 			<div class="span10"><input type="hidden" id="agent_list" name="group[agent_list]" class="span12"
-		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/></div>
+		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
+		 			<input type="hidden" id="added_list" name="group[added_list]"/>
+		 			<input type="hidden" id="removed_list" name="group[removed_list]"/>
+		 			</div>
 				</li>
 		 			 
 		 			 <% 
@@ -85,6 +88,8 @@
 <script type="text/javascript">
 
 jQuery(document).ready(function() {
+var old_list = [], 
+	new_list = [];
 
 <%
 all_agents = []
@@ -117,6 +122,7 @@ jQuery('#agent_list').select2({
 	
 });
 jQuery("#agent_list").select2("val",[]);
+old_list = jQuery("#agent_list").val().split(",");
 
 <%
 	technicians = []
@@ -180,6 +186,24 @@ jQuery('#business_calendar').select2({
         callback(data);
     }
 });
+
+jQuery("#group_form").on("submit", function(e) {
+	new_list = jQuery("#agent_list").val().split(",");
+	var added_agents = []
+	var removed_agents = []
+	make_agent_list(new_list,old_list,added_agents);
+	make_agent_list(old_list,new_list,removed_agents);
+
+	jQuery("#added_list").val(String(added_agents));
+	jQuery("#removed_list").val(String(removed_agents));
+
+});
+
+	make_agent_list = function(array1,array2,result_array) {
+		jQuery.grep(array1, function(el) {
+			if (jQuery.inArray(el, array2) == -1) result_array.push(el);
+		});
+	}
 
 jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>");
 

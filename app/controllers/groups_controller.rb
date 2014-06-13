@@ -72,10 +72,18 @@ class GroupsController < Admin::AdminController
      @group.business_calendar_id = params[:group][:business_calendar]
      respond_to do |format|      
       if @group.update_attributes(params[nscname])
-        update_agents        
-        format.html { redirect_to(groups_url, :notice => 'Group was successfully updated.') }
-        format.xml  { head :ok }
-        format.json { head :ok }
+        format.html do
+          update_agent_list
+          redirect_to(groups_url, :notice => 'Group was successfully updated.')
+        end    
+        format.xml do
+          update_agents
+          head :ok
+        end  
+        format.json do
+          update_agents
+          head :ok
+        end
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
@@ -129,5 +137,19 @@ protected
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
   end 
+
+private
+  
+  def update_agent_list
+    to_be_added = params[:group][:added_list].split(",")
+    to_be_removed = params[:group][:removed_list].split(",")
+
+    unless to_be_added.blank?
+      valid_agents = current_account.agents.find(:all, :conditions => {:user_id => to_be_added})
+      valid_agents.each { |agent| current_account.agent_groups.create(:user_id => agent.user_id, :group_id =>  params[:id]) }
+    end
+
+    AgentGroup.destroy_all(:user_id => to_be_removed, :account_id => current_account.id, :group_id => params[:id]) unless to_be_removed.blank?
+  end
   
 end
