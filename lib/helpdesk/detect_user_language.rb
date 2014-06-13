@@ -1,6 +1,17 @@
 require 'google/api_client'
 
 class Helpdesk::DetectUserLanguage
+
+  # https://developers.google.com/translate/v2/using_rest#language-params
+  GOOGLE_LANGUAGES = {
+    :ja      => "ja-JP",
+    :no      => "nb-NO",
+    :pt      => "pt-PT",
+    :ru      => "ru-RU",
+    :sv      => "sv-SE",
+    :"zh-TW" => "zh-CN"
+  }
+
 	def self.set_user_language!(user, text)
     begin
       client = Google::APIClient.new(:application_name => "Helpkit")
@@ -10,6 +21,10 @@ class Helpdesk::DetectUserLanguage
       client.key = oauth_keys["api_key"]
       response = client.execute(:api_method => translate.detections.list,:parameters => {'q' => text})
       language = JSON.parse(response.body)["data"]["detections"].flatten.last["language"]
+
+      # Hack for hypenated language codes
+      language = GOOGLE_LANGUAGES.has_key?(language.to_sym) ? GOOGLE_LANGUAGES[language.to_sym] : language
+
       user.language = (I18n.available_locales_with_name.map{
      		|lang,sym| sym.to_s }.include? language) ? language : user.account.language
     rescue Exception => e

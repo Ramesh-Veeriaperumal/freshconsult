@@ -392,11 +392,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         signup_status = user.signup!({:user => {:user_emails_attributes => { "0" => {:email => from_email[:email], :primary_role => true}}, :name => from_email[:name], 
           :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-        args = [user, params[:text][0..20]]  
+        args = [user, text_for_detection]  
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
       end
       user.make_current
       user
+    end
+
+    def text_for_detection
+      text = params[:text][0..100]
+      text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
     end
 
     def build_attachments(ticket, item)
