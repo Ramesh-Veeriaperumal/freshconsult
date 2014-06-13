@@ -1,4 +1,6 @@
 require 'spec_helper'
+load 'spec/support/freshfone_spec_helper.rb'
+include FreshfoneSpecHelper
 
 describe FreshfoneController do
   setup :activate_authlogic
@@ -73,6 +75,63 @@ describe FreshfoneController do
     post :voice, modified_params
     response.body.should_not be_blank
     xml.should have_key(:Response)
+  end
+
+  it 'should add a call note to an existing ticket' do
+    log_in(@agent)
+    ticket = create_ticket({:status => 2})
+    freshfone_call = create_freshfone_call
+    create_freshfone_user if @agent.freshfone_user.blank?
+    params = { :id => ticket.id, :ticket => ticket.display_id, :call_log => "Sample freshfone note", 
+               :CallSid => freshfone_call.call_sid, :private => false, :call_history => "false" }
+    post :create_note, params
+    assigns[:current_call].note.notable.id.should be_eql(ticket.id) 
+    assigns[:current_call].note.body.should =~ /Sample freshfone note/
+  end
+
+  it 'should create a new call ticket' do
+    log_in(@agent)
+    freshfone_call = create_freshfone_call
+    build_freshfone_caller
+    create_freshfone_user if @agent.freshfone_user.blank?
+    customer = create_dummy_customer
+    params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
+               :custom_requester_id => customer.id, :ticket_subject => "Call with Oberyn", :call_history => "false"}
+    post :create_ticket, params
+    assigns[:current_call].ticket.subject.should be_eql("Call with Oberyn")
+  end
+
+  it 'should not add a call note to an existing ticket on failed ticket creation' do
+    log_in(@agent)
+    ticket = create_ticket({:status => 2})
+    freshfone_call = create_freshfone_call
+    create_freshfone_user if @agent.freshfone_user.blank?
+    params = { :id => ticket.id, :ticket => ticket.display_id, :call_log => "Sample freshfone note", 
+               :CallSid => freshfone_call.call_sid, :private => false, :call_history => "false" }
+    
+    save_note = stub()
+    save_note.stubs(:save).returns(false)
+    controller.stubs(:build_note).returns(save_note)
+
+    post :create_note, params
+    Freshfone::Call.find(freshfone_call.id).note.should be_nil
+  end
+
+  it 'should not create a new call ticket on failed ticket creation' do
+    log_in(@agent)
+    freshfone_call = create_freshfone_call
+    build_freshfone_caller
+    create_freshfone_user if @agent.freshfone_user.blank?
+    customer = create_dummy_customer
+    params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
+               :custom_requester_id => customer.id, :ticket_subject => "Call with Oberyn", :call_history => "false"}
+    
+    save_ticket = stub()
+    save_ticket.stubs(:save).returns(false)
+    controller.stubs(:build_ticket).returns(save_ticket)
+
+    post :create_ticket, params
+    Freshfone::Call.find(freshfone_call.id).ticket.should be_nil
   end
 
 end

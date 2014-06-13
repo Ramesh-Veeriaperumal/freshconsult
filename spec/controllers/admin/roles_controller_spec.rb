@@ -60,7 +60,7 @@ describe Admin::RolesController do
 	    response.body.should =~ /"#{@test_role.name}"/
 	end
 
-	it "should edit a Role" do
+	it "should show a Role" do
 		get :show, :id => @test_role.id
 	    response.body.should =~ /redirected/
 	end

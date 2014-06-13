@@ -15,12 +15,18 @@
          <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= normal_twt_avatar(feed.user[:image])%>" data-src-retina="<%= bigger_twt_avatar(feed.user[:image])%>">
       </div>
       <div class="tweet-box span11">
-        <p class="twh">
+        <p class="twh">  
+          
           <% if feed.user_in_db %>
-          <span class="tooltip active-cust" data-original-title="<%=t('social.streams.tooltip.db_contact') %>" twipsy-content-set="true">
-              <%= font_icon "crown", :size => 14 %>
-            </span>
+            <% crown_icon_class = "" %>
+          <% else %>
+            <% crown_icon_class = "hide" %>
           <% end %>
+          
+          <span class="tooltip active-cust <%= crown_icon_class%>" data-original-title="<%=t('social.streams.tooltip.db_contact') %>" twipsy-content-set="true">
+            <%= font_icon "crown", :size => 14 %>
+          </span>
+             
           <strong id="name"> <%= feed.user[:name]%> </strong>
           <span class="tw-handle">@<%= feed.user[:screen_name]%></span>
           
@@ -50,9 +56,9 @@
         <div class="info-data">
           <div class="pull-left">
             <a class="tooltip tw-link" href="http://twitter.com/<%=feed.user[:screen_name]%>/status/<%=feed.feed_id%>" target="_blank" data-original-title="View on Twitter" data-placement="right" twipsy-content-set="true"><%= font_icon "twitter", :size => 16 %></a>
-            <% parsed_time = formated_date(Time.parse(feed.posted_time)) %>
+            <% parsed_time = formated_date(Time.parse(feed.posted_time).utc) %>
             <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= parsed_time %>">
-              <%= time_ago_in_words(Time.parse(feed.posted_time)) %> ago
+              <%= time_ago_in_words(Time.parse(feed.posted_time).utc) %> ago
             </span>
           </div>
 

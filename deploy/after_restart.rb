@@ -12,6 +12,8 @@ if node[:opsworks]
     run "sudo monit restart all -g helpkit_facebook_realtime"
   elsif (node[:opsworks][:instance][:hostname]).include?("twitter-utility")
     run "sudo monit restart all -g helpkit_twitter_realtime"
+  elsif (node[:opsworks][:instance][:hostname]).include?("sidekiq")
+    run "sudo monit restart all -g helpkit_sidekiq"
   end
 else
   def all_instances_of(engine)

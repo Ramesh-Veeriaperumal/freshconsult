@@ -35,7 +35,7 @@ describe Freshfone::CallHistoryController do
   end
 
   it 'should not return any children for a non transferred call' do
-    get :children, {"id" => 1, "number_id" => 1}
+    get :children, {"id" => @freshfone_call.id, "number_id" => @number.id}
     assigns[:calls].should be_empty
   end
 

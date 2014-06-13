@@ -19,6 +19,8 @@ class Social::FacebookPagesController < Admin::AdminController
       begin
         @new_fb_pages = @fb_client.auth(params[:code])
       rescue Exception => e
+        Rails.logger.error(e.inspect)
+        Rails.logger.error(e.backtrace)
         flash[:error] = t('facebook.not_authorized')
       end
     end

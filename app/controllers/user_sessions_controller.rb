@@ -27,7 +27,7 @@ include Mobile::Actions::Push_Notifier
   
   def new
     # Login normal supersets all login access (can be used by agents)
-    if request.request_uri == "/login/normal"
+    if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new
     elsif current_account.sso_enabled?
       sso_login_page_redirect

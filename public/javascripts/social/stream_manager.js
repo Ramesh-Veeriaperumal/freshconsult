@@ -238,6 +238,11 @@ var StreamManager = Class.create({
     }
     j(".scl-search-here").hide();
     j(".no-stream").hide();
+    
+    /* Remove if any selected class in brand or custom streams */
+    j('#customSearches li a').removeClass('active');
+    j('#streams li a').removeClass('active');
+    
     /* remove the highlight if its not clicked - i.e - newer feeds */
     j("#streamHighlight a.new-tweets").html(0);
     j("#streamHighlight").hide();

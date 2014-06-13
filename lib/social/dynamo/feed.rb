@@ -158,7 +158,7 @@ module Social::Dynamo::Feed
   end
 
   def construct_agent_reply_hash(reply_params, posted_time, parent_feed_id, note)
-    dynamo_posted_time = Time.parse(reply_params[:posted_at])
+    dynamo_posted_time = Time.parse(reply_params[:posted_at]).utc
     data = twitter_tweet_hash(reply_params, dynamo_posted_time, true)
     fd_attributes = {
       :posted_time    => "#{(posted_time.to_f * 1000).to_i}",

@@ -14,6 +14,7 @@ module TicketHelper
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
                                          :subject => subject,
+                                         :cc_email => {:cc_emails => [], :fwd_emails => []},
                                          :created_at => params[:created_at],
                                          :account_id => account_id)
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)

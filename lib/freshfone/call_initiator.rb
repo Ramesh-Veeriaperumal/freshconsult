@@ -7,7 +7,7 @@ class Freshfone::CallInitiator
 	BATCH_SIZE = 10
 
 	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_call,
-								:below_safe_threshold, :queued
+								:below_safe_threshold, :queued, :missed_call
 	delegate :available_agents, :busy_agents, :welcome_menu, :root_call,
 					 :outgoing_transfer, :numbers, :read_welcome_message,:transfered, :register_call_transfer,
 					 :calls_count, :outgoing?, :non_business_hour_calls?, :to => :call_flow, :allow_nil => true
@@ -227,7 +227,7 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 		end
 
 		def primary_leg?
-			transfered or queued or params[:batch_call]
+			transfered or queued or missed_call or params[:batch_call]
 		end
 		
 		def calculate_calls_count

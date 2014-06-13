@@ -8,6 +8,7 @@ class AgentGroup < ActiveRecord::Base
 
   validates_presence_of :user_id
 
-  after_commit_on_destroy :clear_cache
-  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache_agent_group
+  after_commit_on_create :clear_cache_agent_group
+
 end

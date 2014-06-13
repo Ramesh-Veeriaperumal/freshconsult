@@ -119,10 +119,11 @@
 	}
 	.available_agents_name {
 		margin: 7px 0 0 7px;
-		float: left;
-		width: 185px;
+		width: 190px;
 		font-weight: 600;
 		color: $available-agent-name;
+		padding-left: 35px;
+		
 	}
 	.transfering_call {
 		@include box-sizing(border-box);

@@ -1448,7 +1448,7 @@ it:
     tickets:
       assigned_to_nobody:
         short: Assegnato a &apos;Nessuno&apos; da {{user_path}}
-        long: "{{user_path}} ha assegnato il ticket {{notable_path}} a &apos;Nessuno&apos;"
+        long: "{{user_path}} ha assegnato il ticket {{notable_path}} a 'Nessuno'"
         without_user: assegnato a <strong>&apos;Nessuno&apos;</strong>
       reassigned:
         long: "{{user_path}} ha riassegnato il ticket {{notable_path}} a {{responder_path}}"
@@ -2999,7 +2999,7 @@ it:
   new_ticket_created: Nuovo ticket creato
   recent_forum_posts: Post recenti del forum
   description: Descrizione
-  tkt_assigned_to_agent: Ticket assegnato all&apos;agente
+  tkt_assigned_to_agent: Ticket assegnato all"agente
   is: è
   helpdesk_title: Helpdesk
   monitorships:

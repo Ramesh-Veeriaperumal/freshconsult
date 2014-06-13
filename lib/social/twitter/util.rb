@@ -45,7 +45,7 @@ module Social::Twitter::Util
 
   def select_reply_handle(stream)
     handle = stream.twitter_handle unless stream.nil?
-    handle = Account.current.random_twitter_handle if stream.nil? || handle.nil?
+    handle = Account.current.twitter_handles.first if stream.nil? || handle.nil?
     handle
   end
 

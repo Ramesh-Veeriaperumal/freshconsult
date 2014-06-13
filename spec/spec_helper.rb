@@ -69,6 +69,8 @@ Spork.prefork do
     config.include RolesHelper
     config.include ApplicationsHelper
     config.include FreshfoneSpecHelper
+    config.include APIAuthHelper, :type => :controller
+    config.include SlaPoliciesHelper
 
     config.before(:all, :type => :controller) do
       @account = create_test_account

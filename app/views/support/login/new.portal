@@ -28,7 +28,7 @@
 		{% if portal.has_alternate_login %}
 			<div class="alt-login-button">
 				<h2 class="heading">{% translate portal.login_options %}</h2>
-				{{ "Google" | login_via_google_plus }}
+				{{ "Google" | login_via_google }}
 				{{ "Facebook" | login_via_facebook }}
 				{{ "Twitter" | login_via_twitter }}
 			</div>

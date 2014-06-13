@@ -701,7 +701,7 @@ en:
         creating_survey: "Creating your satisfaction survey:"
         creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
        1.Enable the Customer Satisfaction Surveys checkbox<br>
-       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
        <br>
        <b>Choose which emails have the satisfaction survey link:</b><br>
        You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -744,7 +744,7 @@ en:
      <b>Creating your satisfaction survey:</b><br>
      The following steps let you collect feedback from your customers through a link in your response emails:<br>
      1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
      <br>
      <b>Choose which emails have the satisfaction survey link:</b><br>
      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -757,7 +757,7 @@ en:
      satisfaction_settings:
         enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please let us know your opinion on our support experience.
+        link_text_input: Please tell us what you think of your support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
         send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
@@ -1696,8 +1696,8 @@ en:
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   f_request: Feature Request
   save_and_create: Save and Create Another
-  save_and_new: Save and New
-  save_and_close: Save and Close
+  save_and_new: Save and <strong>New<strong>
+  save_and_close: Save and <strong>Close</strong>
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
@@ -2707,7 +2707,7 @@ en:
     submit_new_ticket: "...or Submit a new ticket"
     login: Login
     login_portal: "Login to the support portal"
-    login_details: "Enter the login details you gave when you registered with us"
+    login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
@@ -5517,7 +5517,7 @@ en:
     maximized_title: "Chat in progress"
     welcome_message: "Hi! How can we help you today?"
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
-    wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
+    wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
@@ -5562,6 +5562,7 @@ en:
     message_archives: "Message archives"
     see_all: "See all"
     says: "says"
+    incoming_chat: "Incoming Chat"
     tag_msg: "Tag this Conversation"
     transfer_to_agent: "Transfer to agent"
     block: "Block"
@@ -5664,13 +5665,13 @@ en:
     agent_joined_msg: "$ has joined the chat"
     agent_left_msg: "$ has left the chat"
     connecting_msg: "Waiting for an agent"
-    non_availability_message: "Looks like all our agents are tied up right now :( Sorry about that, but please # leave us a message # and we'll get right back."
+    non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
     installation: "Installation"
     intro_title: "Why Freshchat?"
-    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, your agents can not only chat with each other without leaving Freshdesk (finally!), they can also provide instant answers to your prospective customers. It’s another feather in your quiver, a channel designed to bring you closer to your users and visitors."
-    enable_chat: "Enable freshchat"
-    learn_freshchat: "Learn more about freshchat"
+    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, not only can your agents chat with each other without leaving Freshdesk, but they can also engage with your visitors real-time and provide instant answers. It's another arrow in your quiver, a channel designed especially to bring you closer to your users."
+    enable_chat: "Enable Freshchat"
+    learn_freshchat: "Learn more about Freshchat"
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: "Everyone"

@@ -568,9 +568,7 @@
         var addSubscriptions = function () {
             for (var channel in common_variables.channel_obj) {
                 var added = window.FreshdeskNode.getValue('faye_realtime').addChannel(channel);
-                if(added){
-                    var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
-                }
+                var subscription = faye_utils.subscribe(channel, common_variables.channel_obj[channel]);
                 // faye_utils.then(subscription,function(){console.log('successfull subsction',subscription);},function(err){console.log('The subscription was not successfull',err);})
             }
         };

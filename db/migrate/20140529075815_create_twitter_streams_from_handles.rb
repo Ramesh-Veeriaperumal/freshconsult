@@ -10,8 +10,8 @@ class CreateTwitterStreamsFromHandles < ActiveRecord::Migration
           next if handle.default_stream
           handle.populate_streams
           streams = handle.twitter_streams
-          streams.each do  |stream|
-            stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]) if stream.custom_stream?
+          streams.each do |stream|
+            stream.create_global_access unless stream.send(:dm_stream?)
           end
         end  
       end

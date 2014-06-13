@@ -140,7 +140,8 @@ module Helpdesk::Email::ParseEmailData
 			:user_emails_attributes => { "0" => {:email => from_email[:email], :primary_role => true}},
 			:name => from_email[:name],
 			:helpdesk_agent => false,
-			:language => set_language
+			:language => set_language,
+			:created_from_email => true
 		}
 	end
 
@@ -149,7 +150,13 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def detect_user_language signup_status
-		Helpdesk::DetectUserLanguage.send_later(:set_user_language!, user, params['body-plain'][0..20]) if user.language.nil? and signup_status
+		args = [user, text_for_detection]  
+		Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
+	end
+
+	def text_for_detection
+	  text = params['body-plain'][0..100]
+	  text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
 	end
 
 	def get_portal email_config

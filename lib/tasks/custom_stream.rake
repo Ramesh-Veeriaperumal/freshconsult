@@ -7,7 +7,6 @@ namespace :custom_stream do
       Sharding.run_on_all_shards do
         Account.active_accounts.each do |account|
           next if account.twitter_handles.empty?
-          puts "Gonna enqueue jobs into #{queue_name} at #{Time.zone.now} "
           Resque.enqueue(Social::Workers::Stream::Twitter, {:account_id => account.id})
         end
       end

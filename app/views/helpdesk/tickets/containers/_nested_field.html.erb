@@ -53,9 +53,9 @@
       jQuery('#<%=category_id%>')
         .nested_select_tag({
           initValues: { 
-            item_val: '<%= item_val %>',
-            subcategory_val: '<%= current_options[sub_category[:condition].to_s].to_s %>',
-            category_val: '<%= selected_val %>'            
+            item_val: '<%= CGI.unescapeHTML(item_val) %>',
+            subcategory_val: '<%= CGI.unescapeHTML(current_options[sub_category[:condition].to_s].to_s) %>',
+            category_val: '<%= selected_val.map { |val| CGI.unescapeHTML(val) } %>'            
           },
           include_blank: "Any",
           data_tree: <%= options.to_json.html_safe %>,

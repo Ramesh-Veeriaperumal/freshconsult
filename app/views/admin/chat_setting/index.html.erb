@@ -252,7 +252,7 @@
 				  	<div class="fields">
 					  	<ul>
 					  		<li class="inline-field">
-								 <label class="caption"><%=t('freshchat.name')%></label>
+					  			<input type="text" class="prechat_input" id="prechat_form_name" name="prechat_form_name" maxlength="20" value="<%= @chat.prechat_form_name %>" placeholder="<%= t('freshchat.name')%>">
 								 <div class="fields">
 								 	<div class="ff_item">
 										  <label class="item"> 
@@ -268,7 +268,7 @@
 							  </li>
 
 							  <li class="inline-field">
-								 <label class="caption"><%=t('freshchat.phone')%></label>
+								 <input type="text" class="prechat_input" id="prechat_form_phoneno" name="prechat_form_phoneno" maxlength="20" value="<%= @chat.prechat_form_phoneno %>" placeholder="<%=t('freshchat.phone')%>">
 								 <div class="fields">
 								 	<div class="ff_item">
 										  <label class="item"> 
@@ -284,7 +284,7 @@
 							  </li>
 
 							  <li class="inline-field">
-								 <label class="caption"><%=t('freshchat.mail')%></label>
+								<input type="text" class="prechat_input" id="prechat_form_mail" name="prechat_form_mail" maxlength="20" value="<%= @chat.prechat_form_mail %>" placeholder="<%=t('freshchat.mail')%>">
 								 <div class="fields">
 								 	<div class="ff_item">
 										  <label class="item"> 
