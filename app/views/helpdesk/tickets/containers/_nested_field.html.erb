@@ -53,7 +53,7 @@
       jQuery('#<%=category_id%>')
         .nested_select_tag({
           initValues: { 
-            item_val: '<%= CGI.unescapeHTML(item_val) %>',
+            item_val: '<%= CGI.unescapeHTML(item_val.to_s) %>',
             subcategory_val: '<%= CGI.unescapeHTML(current_options[sub_category[:condition].to_s].to_s) %>',
             category_val: '<%= selected_val.map { |val| CGI.unescapeHTML(val) } %>'            
           },
