@@ -12,7 +12,7 @@ describe Admin::BusinessCalendarsController do
   end
 
   before(:each) do
-    log_in(@user)
+    log_in(@agent)
   end
 
   it "should go to the index page" do

@@ -222,7 +222,6 @@ describe AgentsController do
     response.session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
-
   it "should restrict_current_user for update" do
     user = add_test_agent(@account)
     agent = user.agent

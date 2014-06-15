@@ -7,9 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::TwitterController do
-  
   setup :activate_authlogic
-  
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -42,7 +40,7 @@ describe Social::TwitterController do
     log_in(@user)
   end
   
-   it "should create a ticket and update dynamo for a tweet(in_reply_to.blank?) whose search type is saved" do
+  it "should create a ticket and update dynamo for a tweet(in_reply_to.blank?) whose search type is saved" do
     tweet_id = (Time.now.utc.to_f*100000).to_i
     
     #Push a tweet into dynamo that is to be converted to ticket  
@@ -53,9 +51,7 @@ describe Social::TwitterController do
     end
     
     tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
-    
-  
-    
+
     if GNIP_ENABLED
       feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
       feed_entry["fd_user"].should be_nil
@@ -80,11 +76,9 @@ describe Social::TwitterController do
       feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
       feed_entry["fd_link"][:ss].first.should eql("#{helpdesk_ticket_link(tweet.tweetable)}")
       feed_entry["fd_user"][:ss].first.should eql("#{@account.all_users.find_by_twitter_id("GnipTestUser",:select => "id").id}")
-    end
-    
+    end  
   end
-  
- 
+
   it "should create a ticket for a tweet whose search type is custom" do
     @stream_id = "#{@account.id}_#{@custom_stream.id}"
     fd_item_params = sample_params_fd_item("#{(Time.now.utc.to_f*100000).to_i}", @stream_id, SEARCH_TYPE[:custom])
@@ -95,7 +89,7 @@ describe Social::TwitterController do
     tweet.is_ticket?.should be_true
   end
   
-   it "should create a note for a replied tweet whose search type is custom" do
+  it "should create a note for a replied tweet whose search type is custom" do
     @stream_id = "#{@account.id}_#{@custom_stream.id}"
     fd_item_params = sample_params_fd_item("#{(Time.now.utc.to_f*100000).to_i}", @stream_id, SEARCH_TYPE[:custom])
     post :create_fd_item, fd_item_params
@@ -121,7 +115,7 @@ describe Social::TwitterController do
     tweet.is_note?.should be_true
   end
   
-   it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
+  it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
     #Push a tweet into dynamo (parent tweet to reply to)
     tweet_id = (Time.now.utc.to_f*100000).to_i
     
@@ -176,7 +170,7 @@ describe Social::TwitterController do
     end
   end
 
- it "should reply to twitter if it is a saved stream and is a non ticket tweet should update dynamo" do   
+  it "should reply to twitter if it is a saved stream and is a non ticket tweet should update dynamo" do   
     #Push a tweet into dynamo (parent tweet to reply to)
     tweet_id = (Time.now.utc.to_f*100000).to_i
     
