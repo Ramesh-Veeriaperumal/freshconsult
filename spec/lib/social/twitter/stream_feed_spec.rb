@@ -169,8 +169,7 @@ describe Social::Gnip::TwitterFeed do
   it "should convert a reply to a ticket if the 'replied-to' tweet doesnt come in the next 2 minutes" do
     #Send Tweet
     ticket_feed = sample_gnip_feed(@rule)
-    sleep 2 #to ensure that the 'tweet' and 'reply' get different tweet_ids
-
+    
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
     reply_feed = sample_gnip_feed(@rule, ticket_tweet_id)
@@ -180,10 +179,8 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    fd_counter = 30
-
     while reply_tweet.nil?
-      fd_counter = fd_counter + 30
+      fd_counter = 120
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
     end
 

@@ -3,20 +3,20 @@ require 'spec_helper'
 include FacebookHelper
 include Facebook::Core::Util
 
-describe Facebook::Core::Post do
+describe Facebook::Core::Status do
   
   before(:all) do
     @account = create_test_account
     @account.features.send(:facebook_realtime).create
     @account.make_current
     @fb_page = create_test_facebook_page(@account)
-    @fb_page.update_attributes(:import_visitor_posts => true)
+    @fb_page.update_attributes(:import_company_posts => true)
   end
   
-  it "should create a ticket when a post(without comments) arrives and import visitor post is enabled" do
+  it "should create a ticket when a post(without comments) arrives and import company post is enabled" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
-    realtime_feed = sample_realtime_feed(feed_id)
-    facebook_feed = sample_facebook_feed(feed_id)
+    realtime_feed = sample_realtime_feed(feed_id, "status")
+    facebook_feed = sample_facebook_feed(feed_id, false, false, true)
     
     #stub the api call for koala
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
@@ -34,10 +34,10 @@ describe Facebook::Core::Post do
     ticket.requester_id.should eql user_id
   end
   
-   it "should create a ticket and notes to the ticket when a post(with comments) arrives and import visitor post is enabled" do
+   it "should create a ticket and notes to the ticket when a post(with comments) arrives and import company post is enabled" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
-    realtime_feed = sample_realtime_feed(feed_id)
-    facebook_feed = sample_facebook_feed(feed_id, true)
+    realtime_feed = sample_realtime_feed(feed_id, "status")
+    facebook_feed = sample_facebook_feed(feed_id, true, false, true)
     
     #stub the api call for koala
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
@@ -69,7 +69,7 @@ describe Facebook::Core::Post do
   
   it "raise an api limit exception for koala and check if it is reenqueued into sqs" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
-    realtime_feed = sample_realtime_feed(feed_id)
+    realtime_feed = sample_realtime_feed(feed_id, "status")
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is requeued"))
     Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(4)
@@ -82,7 +82,7 @@ describe Facebook::Core::Post do
   
   it "authentication error check if it is pushed into dynamo db" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
-    realtime_feed = sample_realtime_feed(feed_id)
+    realtime_feed = sample_realtime_feed(feed_id, "status")
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
     Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(190)
@@ -93,11 +93,11 @@ describe Facebook::Core::Post do
     Social::FacebookPage.first.enable_page.should be_false
   end
   
-  it "should not create a ticket when a post arrives and import visitor post is not enabled" do
-     @fb_page.update_attributes(:import_visitor_posts => false)
+  it "should not create a ticket when a post arrives and import company post is not enabled" do
+     @fb_page.update_attributes(:import_company_posts => false)
      feed_id = "#{(Time.now.utc.to_f*100000).to_i}_#{(Time.now.utc.to_f*100000).to_i}"
-     realtime_feed = sample_realtime_feed(feed_id)
-     facebook_feed = sample_facebook_feed(feed_id)
+     realtime_feed = sample_realtime_feed(feed_id, "status")
+     facebook_feed = sample_facebook_feed(feed_id, false, false, true)
      facebook_feed[:message] = "Not me"
      
      #stub the api call for koala

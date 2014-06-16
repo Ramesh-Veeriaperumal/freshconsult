@@ -5,8 +5,8 @@ if ENV["RAILS_ENV"] == "test"
     f.page_token "123456"
     f.access_token "123456"
     f.enable_page true
-    f.import_visitor_posts true
-    f.import_company_posts true
+    f.import_visitor_posts false
+    f.import_company_posts false
     f.realtime_subscription true
   end
 

@@ -9,7 +9,7 @@ module FacebookHelper
     fb_page
   end
   
-  def sample_realtime_feed(feed_id)
+  def sample_realtime_feed(feed_id, clazz = "post")
     realtime_feed = {
       "entry" => {
           "id" => "#{@fb_page.page_id}",
@@ -17,7 +17,7 @@ module FacebookHelper
           "changes" => [{
               "field" => "feed", 
               "value" => { 
-                    "item" => "post", 
+                    "item" => "#{clazz}", 
                     "verb" => "add", 
                     "post_id" => "#{feed_id}"
                   }
@@ -45,8 +45,8 @@ module FacebookHelper
     realtime_feed.to_json
   end
   
-  def sample_facebook_feed(feed_id, comments = false, reply_to_comments = false)
-    page_id = "#{feed_id.split('_').first}"
+  def sample_facebook_feed(feed_id, comments = false, reply_to_comments = false, status = false)
+    page_id = status ? "#{feed_id.split('_').first}" : "#{(Time.now.utc.to_f*100000).to_i}"
     post_id = "#{feed_id.split('_').second}"
     fb_feed = {
       "id" => "#{feed_id}", 

@@ -276,7 +276,6 @@ module TwitterHelper
     while wait_for <= wait
       tweet = Social::Tweet.find_by_tweet_id(tweet_id)
       if tweet.nil?
-        sleep 1
         wait_for = wait_for + 1
       else
         break
