@@ -730,7 +730,7 @@ $bdr-color:#e1e1e1;
 		padding-bottom: 6px;
 	}
 	.mrt{
-    	@include margin-right:(10px !important);
+    	@include margin-right(10px !important);
     }
 	.twt-area{
 		margin: 0;
