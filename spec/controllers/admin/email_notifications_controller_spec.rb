@@ -39,7 +39,7 @@ describe Admin::EmailNotificationsController do
 
 	it "should edit an requester email_notification" do
 		get :edit, :id => @test_notification.id, :type => "requester_template"
-    response.body.should =~ /Requestor Notification/
+    response.body.should =~ /Requester Notification/
     put :update, :id => @test_notification.id, :requester => "1",
       :email_notification => { :requester_subject_template => @sample_subject,
                                :requester_template => @sample_message
