@@ -16,67 +16,84 @@ elsif File.exist?(rspec_plugin_dir)
 end
 
 
-FacebookTest = ["spec/lib/facebook/comment_spec.rb", "spec/lib/facebook/post_spec.rb"]
-TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb", "spec/controllers/social/*_spec.rb"]
+FacebookTests = [
+  "spec/lib/facebook/comment_spec.rb", 
+  "spec/lib/facebook/post_spec.rb"
+]
 
-UnitTest = [ "spec/controllers/agents_controller_spec.rb",
-             "spec/controllers/groups_controller_spec.rb",
-             "spec/controllers/contacts_controller_spec.rb",
-             "spec/controllers/contact_merge_controller_spec.rb",
-             "spec/controllers/users_controller_spec.rb",
-             "spec/controllers/user_emails_controller_spec.rb",
-             "spec/controllers/activations_controller_spec.rb",
-             "spec/controllers/customers_controller_spec.rb",
-             "spec/controllers/profiles_controller_spec.rb",
-             "spec/controllers/ticket_fields_controller_spec.rb",
-             "spec/controllers/password_resets_controller_spec.rb",
-             "spec/controllers/discussions_controller_spec.rb",
-             "spec/controllers/discussions/*_spec.rb",
-             "spec/controllers/helpdesk/*_spec.rb",
-             "spec/controllers/admin/**/*_spec.rb",
-             "spec/controllers/support/*_spec.rb",
-             "spec/controllers/support/**/*_spec.rb",
-             "spec/controllers/social/gnip_twitter_controller_spec.rb",
-             "spec/controllers/social/twitter_handles_controller_spec.rb",
-             "spec/controllers/negative/**/*_spec.rb",
-             "spec/models/helpdesk/mysql_*_spec.rb",
-             "spec/lib/social/twitter/*_spec.rb",
-             "spec/models/social/twitter_*_spec.rb",
-             "spec/models/va_rule_spec.rb",
-             "spec/controllers/api/xml/*_api_spec.rb",
-             "spec/controllers/api/json/*_api_spec.rb",
-             "spec/controllers/integrations/logmein_controller_spec.rb",
-             "spec/controllers/integrations/jira_issue_controller_spec.rb",
-             "spec/controllers/integrations/applications_controller_spec.rb",
-             "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-             "spec/controllers/sso_controller_spec.rb",
-             "spec/lib/*_email_spec.rb",
-             "spec/controllers/email_controller_spec.rb",
-             "spec/controllers/mailgun_controller_spec.rb",
-             "spec/controllers/freshfone/*_spec.rb",
-             "spec/lib/facebook/post_spec.rb",
-             "spec/lib/facebook/comment_spec.rb"
-           ]
+TwitterTests = [
+  "spec/lib/social/twitter/*_spec.rb", 
+  "spec/models/social/twitter_*_spec.rb", 
+  "spec/controllers/social/*_spec.rb"
+]
 
-ModelTest = ["spec/models/helpdesk/*_spec.rb"]
-EmailTest = ["spec/lib/*_email_spec.rb"]
-MobihelpTest = ["spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
-                "spec/controllers/mobihelp/devices_controller_spec.rb",
-                "spec/controllers/mobihelp/solutions_controller_spec.rb",
-                "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
-                "spec/models/mobihelp/app_spec.rb",
-                "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
-                ]
-IntegrationTest = ["spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
-		  "spec/controllers/integrations/google_accounts_controller_spec.rb" ]
-FreshfoneTest = ["spec/controllers/freshfone/*_spec.rb",
-                 "spec/lib/freshfone/*_spec.rb"]
+ModelTests = ["spec/models/helpdesk/*_spec.rb"]
 
-APITest = [ "spec/controllers/api/json/*_spec.rb",
-            "spec/controllers/api/xml/*_spec.rb"]
+EmailTests = [ 
+  "spec/lib/*_email_spec.rb", 
+  "spec/controllers/email_controller_spec.rb",
+  "spec/controllers/mailgun_controller_spec.rb"
+]
+
+MobihelpTests = [
+  "spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
+  "spec/controllers/mobihelp/devices_controller_spec.rb",
+  "spec/controllers/mobihelp/solutions_controller_spec.rb",
+  "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
+  "spec/models/mobihelp/app_spec.rb",
+  "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
+]
+
+IntegrationTests = [ 
+  "spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
+  "spec/controllers/integrations/google_accounts_controller_spec.rb",
+  "spec/controllers/integrations/logmein_controller_spec.rb",
+  "spec/controllers/integrations/jira_issue_controller_spec.rb",
+  "spec/controllers/integrations/applications_controller_spec.rb",
+  "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
+  "spec/controllers/sso_controller_spec.rb"
+]
+
+FreshfoneTests = [
+  "spec/controllers/freshfone/*_spec.rb",
+  "spec/lib/freshfone/*_spec.rb"
+]
+
+APITests = [ 
+  "spec/controllers/api/json/*_spec.rb",
+  "spec/controllers/api/xml/*_spec.rb"
+]
+
+ForumTests = [
+  "spec/controllers/discussions_controller_spec.rb",
+  "spec/controllers/discussions/*_spec.rb"
+]
+
+HelpdeskTests = [ 
+  "spec/controllers/agents_controller_spec.rb",
+  "spec/controllers/groups_controller_spec.rb",
+  "spec/controllers/contacts_controller_spec.rb",
+  "spec/controllers/contact_merge_controller_spec.rb",
+  "spec/controllers/users_controller_spec.rb",
+  "spec/controllers/user_emails_controller_spec.rb",
+  "spec/controllers/activations_controller_spec.rb",
+  "spec/controllers/customers_controller_spec.rb",
+  "spec/controllers/profiles_controller_spec.rb",
+  "spec/controllers/ticket_fields_controller_spec.rb",
+  "spec/controllers/password_resets_controller_spec.rb",
+  "spec/controllers/helpdesk/*_spec.rb",
+  "spec/controllers/admin/**/*_spec.rb",
+  "spec/controllers/support/**/*_spec.rb",
+  "spec/controllers/negative/**/*_spec.rb",
+  "spec/models/helpdesk/mysql_*_spec.rb",
+  "spec/models/va_rule_spec.rb"
+]            
   
-AllTest = [FacebookTest,UnitTest,TwitterTest,ModelTest,EmailTest, MobihelpTest, IntegrationTest]
-AllTest.flatten!.uniq!
+UnitTests = [FacebookTests, TwitterTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, APITests, ForumTests, HelpdeskTests]
+UnitTests.flatten!.uniq!
+
+AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
+AllTests.flatten!.uniq!
 
 # Don't load rspec if running "rake gems:*"
 unless ARGV.any? {|a| a =~ /^gems/}
@@ -235,20 +252,20 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Runs all twitter tests"
       Spec::Rake::SpecTask.new(:twitter) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(TwitterTest)
+        t.spec_files = FileList.new(TwitterTests)
       end
 
       Spec::Rake::SpecTask.new(:facebook) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(FacebookTest)
+        t.spec_files = FileList.new(FacebookTests)
       end
     end
 
     namespace :freshfone do
-      desc "Running all Freshfone Tests"
+      desc "Running all Freshfone Testss"
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(FreshfoneTest)
+        t.spec_files = FileList.new(FreshfoneTests)
       end
     end    
 
@@ -257,7 +274,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(UnitTest)
+        t.spec_files = FileList.new(UnitTests)
       end
     end
 
@@ -266,7 +283,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(EmailTest)
+        t.spec_files = FileList.new(EmailTests)
       end
     end
 
@@ -274,7 +291,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all freshdesk integrations tests"
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(IntegrationTest)
+        t.spec_files = FileList.new(IntegrationTests)
       end
     end
 
@@ -282,7 +299,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all mobihelp tests"
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(MobihelpTest)
+        t.spec_files = FileList.new(MobihelpTests)
       end
     end
     
@@ -290,7 +307,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all api tests"
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(APITest)
+        t.spec_files = FileList.new(APITests)
       end
     end
 
@@ -298,12 +315,12 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(AllTest)
+        t.spec_files = FileList.new(AllTests)
       end
 
       Spec::Rake::SpecTask.new(:model) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(ModelTest)
+        t.spec_files = FileList.new(ModelTests)
       end
     end
 
