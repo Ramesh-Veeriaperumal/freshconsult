@@ -61,41 +61,6 @@ module Integrations::GoogleContactsUtil
     return primary_email, second_email
   end
   
-  # While exporting the db data into google, db will not contain correct google_id.  For this update_google_id will be useful. 
-  def remove_discrepancy_and_set_google_data(google_account, db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
-    Rails.logger.debug "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
-    google_contacts.each { |goog_cnt|
-      db_contacts.each { |db_cnt|
-        if is_matched(google_account, goog_cnt, db_cnt)
-#          puts "Found a discrepancy. Db contact = #{db_cnt.inspect} Google contact , #{goog_cnt.inspect}"
-          if precedence == "LATEST"
-            if goog_cnt.updated_at == db_cnt.updated_at
-              precedence = "BOTH"
-            elsif db_cnt.updated_at > goog_cnt.updated_at
-              precedence = "DB"
-            else
-              precedence = "GOOGLE"
-            end
-          end
-          pre_google_cnts = goog_cnt.google_contacts
-          if precedence == "DB"
-            copy(db_cnt, goog_cnt)
-            goog_cnt.google_contacts = pre_google_cnts
-            db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
-          elsif precedence == "GOOGLE"
-            db_contacts.delete(db_cnt)
-          elsif precedence == "BOTH"
-            copy(db_cnt, goog_cnt)
-            goog_cnt.google_contacts = pre_google_cnts
-            db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
-            db_contacts.delete(db_cnt)
-          end
-          break;
-        end
-      }
-    }
-    Rails.logger.debug "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
-  end
 
   def is_matched(google_account, goog_cnt, db_cnt)
     if !goog_cnt.blank? and !db_cnt.blank?
