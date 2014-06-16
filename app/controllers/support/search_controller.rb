@@ -288,9 +288,9 @@ class Support::SearchController < SupportController
         }
         format.json{ 
           if (params.has_key?(:need_count) && params[:need_count].to_s == "true")
-            render :json => {:count => @items.total_entries,:item => @search_results}.to_json
+            render :json => {:count => @items.total_entries,:item => @search_results}.to_json, :callback => params[:callback]
           else
-            render :json => @search_results.to_json 
+            render :json => @search_results.to_json, :callback => params[:callback]
           end
         }
       end
