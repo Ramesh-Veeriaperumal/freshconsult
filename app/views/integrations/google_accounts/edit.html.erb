@@ -3,9 +3,7 @@
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
   form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f| 
-	sync_types = [[t("integrations.google_contacts.MERGE_LATEST"), SyncType::MERGE_LATEST], [t("integrations.google_contacts.OVERWRITE_LOCAL"), SyncType::OVERWRITE_LOCAL], 
-					[t("integrations.google_contacts.OVERWRITE_REMOTE"), SyncType::OVERWRITE_REMOTE], [t("integrations.google_contacts.MERGE_LOCAL"), SyncType::MERGE_LOCAL], 
-					[t("integrations.google_contacts.MERGE_REMOTE"), SyncType::MERGE_REMOTE]]
+	
 	%>
 	<ul class="ui-form google_accounts">
 			
@@ -56,26 +54,7 @@
 			</div>
 		</li>
 		
-		<% if @omniauth_origin == "import" %>
-			<%if @db_google_account.blank?%>
-				<li class="inline-field">
-					<div class="fields">
-						<label>
-						    <%=check_box_tag :enable_integration, 1, true%>
-							<%=t("integrations.google_contacts.enable_integration")%>
-						</label>
-					</div>
-				</li>
-			<%end%>
-		<%else%>
-			<li class="inline-field" style="display :none">
-				<label class="caption"><%=t("integrations.google_contacts.sync_type")%></label>
-				<div class="fields">
-					<%=f.select :sync_type, options_for_select(sync_types, SyncType::MERGE_LATEST) %><br/>
-				</div>
-			</li>
-		<%end%>
-	</ul>
+		
 
 	<%=f.hidden_field :sync_group_id%>
 	<%=f.hidden_field :sync_group_name%>
