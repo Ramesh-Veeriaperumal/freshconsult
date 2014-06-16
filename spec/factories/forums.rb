@@ -22,4 +22,7 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :ticket_topic do |tt|
   end
+
+  Factory.define :monitorship, :class => Monitorship do |m|
+  end
 end

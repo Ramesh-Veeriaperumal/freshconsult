@@ -22,5 +22,13 @@ class Social::FbPost < ActiveRecord::Base
  def message?
    msg_type == 'dm'
  end
+ 
+ def is_ticket?
+  postable_type.eql?('Helpdesk::Ticket')
+ end
+
+ def is_note?
+  postable_type.eql?('Helpdesk::Note')
+ end
   
 end

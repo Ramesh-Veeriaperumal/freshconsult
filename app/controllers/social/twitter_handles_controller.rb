@@ -27,18 +27,18 @@ class Social::TwitterHandlesController < ApplicationController
       begin
         twitter = wrapper.get_twitter
         if params[:max_id]
-          response = twitter.search(params[:q], {:max_id => params[:max_id], :count => params[:count].to_i})
+          response = twitter.search(params[:q], {:max_id => params[:max_id], :count => params[:count].to_i}).attrs
         elsif params[:since_id]
-          response = twitter.search(params[:q], {:since_id => params[:since_id], :count => params[:count].to_i})
+          response = twitter.search(params[:q], {:since_id => params[:since_id], :count => params[:count].to_i}).attrs
         else
-          response = twitter.search(params[:q], {:count => params[:count].to_i})
+          response = twitter.search(params[:q], {:count => params[:count].to_i}).attrs
         end
       rescue Twitter::Error::TooManyRequests => e
         response = { :err => e.to_s }
         NewRelic::Agent.notice_error(e)
       end
     end
-    render :json => response.attrs.to_json, :callback => params[:callback]
+    render :json => response.to_json, :callback => params[:callback]
   end
 
   def tweet_exists

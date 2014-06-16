@@ -87,7 +87,7 @@ adv_grid_report.prototype = {
       return;
     var text      = this.value,
         formatted = text.length > 25 ? text.substring(0, 25) + '...' : text;
-    return '<div class="tooltip" style="width:50px; overflow:hidden; cursor:pointer" title="' + text + '">' + formatted.replace(' ','<br/>') + '</div>'; 
+    return '<div class="tooltip" style="width:72px; overflow:hidden; left:-22px; cursor:pointer" title="' + text + '">' + formatted.replace(' ','<br/>') + '</div>'; 
   }
 }
 

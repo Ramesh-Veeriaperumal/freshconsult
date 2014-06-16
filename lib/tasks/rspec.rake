@@ -16,18 +16,20 @@ elsif File.exist?(rspec_plugin_dir)
 end
 
 
-FacebookTest = ["spec/lib/facebook/parser_spec.rb"]
+FacebookTest = ["spec/lib/facebook/comment_spec.rb", "spec/lib/facebook/post_spec.rb"]
 TwitterTest = ["spec/lib/social/twitter/*_spec.rb", "spec/models/social/twitter_*_spec.rb", "spec/controllers/social/*_spec.rb"]
 
 UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/controllers/groups_controller_spec.rb",
              "spec/controllers/contacts_controller_spec.rb",
              "spec/controllers/contact_merge_controller_spec.rb",
+             "spec/controllers/users_controller_spec.rb",
              "spec/controllers/user_emails_controller_spec.rb",
              "spec/controllers/activations_controller_spec.rb",
              "spec/controllers/customers_controller_spec.rb",
              "spec/controllers/profiles_controller_spec.rb",
              "spec/controllers/ticket_fields_controller_spec.rb",
+             "spec/controllers/password_resets_controller_spec.rb",
              "spec/controllers/discussions_controller_spec.rb",
              "spec/controllers/discussions/*_spec.rb",
              "spec/controllers/helpdesk/*_spec.rb",
@@ -40,6 +42,7 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/models/helpdesk/mysql_*_spec.rb",
              "spec/lib/social/twitter/*_spec.rb",
              "spec/models/social/twitter_*_spec.rb",
+             "spec/models/va_rule_spec.rb",
              "spec/controllers/api/xml/*_api_spec.rb",
              "spec/controllers/api/json/*_api_spec.rb",
              "spec/controllers/integrations/logmein_controller_spec.rb",
@@ -50,7 +53,10 @@ UnitTest = [ "spec/controllers/agents_controller_spec.rb",
              "spec/lib/*_email_spec.rb",
              "spec/controllers/email_controller_spec.rb",
              "spec/controllers/mailgun_controller_spec.rb",
-             "spec/controllers/freshfone/*_spec.rb"]
+             "spec/controllers/freshfone/*_spec.rb",
+             "spec/lib/facebook/post_spec.rb",
+             "spec/lib/facebook/comment_spec.rb"
+           ]
 
 ModelTest = ["spec/models/helpdesk/*_spec.rb"]
 EmailTest = ["spec/lib/*_email_spec.rb"]
