@@ -14,4 +14,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       "Supervisor rule"
     end
 
+    def get_event_performer
+      []
+    end
+
 end

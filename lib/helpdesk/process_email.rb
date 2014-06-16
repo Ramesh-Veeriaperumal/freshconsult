@@ -400,8 +400,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_for_detection
-      text = params[:text].gsub("\n","").squeeze
-      text[0..(text.index(" ",20))].strip
+      text = params[:text][0..100]
+      text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
     end
 
     def build_attachments(ticket, item)

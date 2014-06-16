@@ -11,6 +11,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                        "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
 
+  MAX_DIMENSIONS = 16000000 
+
   set_table_name "helpdesk_attachments"
   belongs_to_account
 
@@ -36,9 +38,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
  
-  
     #before_validation_on_create :set_random_secret
-    before_post_process :image?
+    before_post_process :image?, :valid_image?
     #before_post_process :set_content_dispositon
     before_create :set_content_type
     before_save :set_account_id
@@ -69,14 +70,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     options.reverse_merge! :expires => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
     AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
- 
+
   def image?
     (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
 	
-	def audio?
-		(!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
-	end
+  def audio?
+    (!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
+  end
 
   def attachment_sizes
    if self.description == "logo"
@@ -125,6 +126,20 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
   private
   
+  def valid_image?
+    begin
+      file_path = content.queued_for_write[:original].path
+      dimensions = Paperclip::Geometry.from_file(file_path)
+      Rails.logger.info 'File Path: '+file_path
+      Rails.logger.info 'Detected Size: '+dimensions.width.to_s+'x'+dimensions.height.to_s
+      # errors.add('Dimensions are higher than Expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+      ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
+      false
+    end
+  end
+ 
   def set_random_secret
     self.random_secret = ActiveSupport::SecureRandom.hex(8)
   end

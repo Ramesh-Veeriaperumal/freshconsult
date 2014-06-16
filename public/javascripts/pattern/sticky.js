@@ -12,11 +12,13 @@
   win = $(window);
 
   $.fn.stick_in_parent = function(opts) {
-    var elm, inner_scrolling, offset_top, parent_selector, sticky_class, _fn, _i, _len;
+    var elm, inner_scrolling, offset_top, parent_selector, sticky_class, _fn, _i, _len, elm_bottom;
     if (opts == null) {
       opts = {};
     }
     sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, parent_selector = opts.parent, offset_top = opts.offset_top;
+    elm_bottom = opts.elm_bottom;
+
     if (offset_top == null) {
       offset_top = 0;
     }
@@ -28,6 +30,9 @@
     }
     if (sticky_class == null) {
       sticky_class = "is_stuck";
+    }
+    if (elm_bottom == null) {
+      elm_bottom = false;
     }
     _fn = function(elm, padding_bottom, parent_top, parent_height, top, height, el_float) {
       var bottomed, detach, fixed, last_pos, offset, parent, recalc, recalc_and_tick, spacer, tick;
@@ -144,7 +149,7 @@
           if (will_bottom == null) {
             will_bottom = scroll + height + offset > parent_height + parent_top;
           }
-          if (!bottomed && will_bottom) {
+          if (!bottomed && will_bottom && !elm_bottom) {
             bottomed = true;
             if (parent.css("position") === "static") {
               parent.css({

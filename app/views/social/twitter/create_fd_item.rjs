@@ -21,5 +21,8 @@ else
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('data-original-title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').show();"
+    if item[:user_in_db]
+        page << "jQuery('#tweet_div_#{feed_id} span.active-cust').removeClass('hide');"
+    end
   end
 end

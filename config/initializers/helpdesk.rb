@@ -45,7 +45,7 @@ I18n.fallbacks.map('sk' => 'en')
 I18n.fallbacks.map('ca' => 'en')
 I18n.fallbacks.map('id' => 'en')
 I18n.fallbacks.map('vi' => 'en')
-I18n.fallbacks.map('ko-KR' => 'en')
+I18n.fallbacks.map('ko' => 'en')
 I18n.fallbacks.map('hu' => 'en')
 
 #For importing google contacts lazily from delayed jobs and also using rails recipes.

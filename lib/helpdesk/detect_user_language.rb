@@ -5,7 +5,6 @@ class Helpdesk::DetectUserLanguage
   # https://developers.google.com/translate/v2/using_rest#language-params
   GOOGLE_LANGUAGES = {
     :ja      => "ja-JP",
-    :ko      => "ko-KR",
     :nb      => "nb-NO",
     :pt      => "pt-PT",
     :ru      => "ru-RU",

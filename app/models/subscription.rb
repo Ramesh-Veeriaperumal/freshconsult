@@ -232,10 +232,12 @@ class Subscription < ActiveRecord::Base
 
   def update_social_subscription
     old_state = @old_subscription.state
-    if (old_state != "suspended" && state == "suspended") || non_social_plans
+    old_plan = @old_subscription.subscription_plan.name
+    current_plan = subscription_plan.name
+    if (old_state != "suspended" && state == "suspended") || (old_plan != current_plan && non_social_plans)
       facebook_callback = "cleanup"
       twitter_callback = "cleanup"
-    elsif (old_state == "suspended" && state != "suspended") || !non_social_plans
+    elsif (old_state == "suspended" && state != "suspended") || (old_plan != current_plan && !non_social_plans)
       facebook_callback =  "subscribe_realtime"
       twitter_callback = "build_default_streams"
     end
