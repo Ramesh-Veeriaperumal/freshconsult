@@ -12,14 +12,14 @@ overflow: hidden;
 z-index : 0;
 }
 .ui-form .textfield .ghostwriter_info {
-padding: 5px 14px 5px 0;
+@include padding(5px 14px 5px 0);
 background:white;
 z-index:0;
 font-size: 13px;
 position: relative;
 color: #999999;
 position: absolute;
-left: 0;
+@include left(0);
 top: 1px;
 @include border-radius(5px);
 border: 0;
@@ -27,7 +27,7 @@ width: 97%;
 }
 .ui-form .textfield .ghostwriter_hide {
 visibility: hidden;
-padding-left:7px;
-padding-right: 2px
+@include padding-left(7px);
+@include padding-right(2px)
 }
 		

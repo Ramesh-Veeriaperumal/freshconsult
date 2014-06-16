@@ -1,6 +1,7 @@
 // Base settings for portal styles
 @import "lib/settings";
 @import "lib/mixins";
+@import "lib/rtl-styles";
 
 // CSS Reset
 @import "lib/reset";
@@ -32,9 +33,9 @@ body{
 	@include clearfix;
 	span{ @include inline-block; } 
 	a{ 
-		float: left;
-		border-left:1px solid rgba(#fff, 0.1); 
-		border-right:1px solid rgba(#000, 0.1); 
+		@include float(left);
+		@include border-left(1px solid rgba(#fff, 0.1)); 
+		@include border-right(1px solid rgba(#000, 0.1)); 
 		padding:5px 4px 5px 6px;
 		span{ @include opacity(0.4); }
 		&:last-child{
@@ -61,6 +62,6 @@ body{
 .preview-exit{
 	margin-top: 10px;
 	@include border-radius(2em);
-	padding-left: 20px;
-	padding-right: 20px;
+	@include padding-left(20px);
+	@include padding-right(20px);
 }

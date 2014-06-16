@@ -30,7 +30,7 @@ $walkthru-spacing: 40px;
 	}
 
 	.tourmyapp-close {
-		margin: 14px 17px 0 0;
+		@include margin(14px 17px 0 0);
 	}
 
 	.tourmyapp-pointer-border {
@@ -42,13 +42,13 @@ $walkthru-spacing: 40px;
 	.tourmyapp-pointer-top {
 		height: 25px;
 		width: 31px;
-		left: 184px;
+	 	@include left(184px);
 	}
 
 	.tourmyapp-pointer-bottom {
 		height: 21px;
 		width: 26px;
-		left: 184px;
+	 	@include left(184px);
 	}
 
 	.tourmyapp-pointer-right, .tourmyapp-pointer-left {
@@ -60,14 +60,14 @@ $walkthru-spacing: 40px;
 	.tourmyapp-pointer-bottom{ top: -18px; }
 	
 	.tourmyapp-pointer-right{
-		left: -25px;
+	 	@include left(-25px);
 		height: 32px;
 		width: 27px;
 		margin-top:-3px;
 	}
 
 	.tourmyapp-pointer-top{ margin-top: -14px; }
-	.tourmyapp-pointer-left{ left: 387px; }
+	.tourmyapp-pointer-left{ @include left(387px); }
 	.tourmyapp-pointer-fill{ display:none; }
     .tourmyapp-content, .tourmyapp-toolbar {
 		padding: 10px;
@@ -83,14 +83,14 @@ $walkthru-spacing: 40px;
             color: #FFF;
             font-size: 16px;
             font-weight: bold;
-            padding:0 0 20px 29px;
+            @include padding(0 0 20px 29px);
             margin: -1px 2px;
             text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.4);
             line-height: 23px;
         }
 
         p {
-        	padding: 0px 10px 0px 10px;
+        	@include padding(0px 10px 0px 10px);
         	margin-bottom: 10px;
         }
 
@@ -129,10 +129,10 @@ $walkthru-spacing: 40px;
 	.next_button_arrow:after{
 		content: "";		
 		border: 5px solid transparent;
-		float: right;
-		border-left-color: #faf9f6;
+		@include float(right);
+		@include border-left-color(#faf9f6);
 		position: relative;
-		left: 8px;
+	 	@include left(8px);
 		top: 3px;
 	}
 

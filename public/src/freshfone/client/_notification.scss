@@ -4,7 +4,7 @@
 		z-index: 1000;
 		position: fixed;
 		bottom: 40px;
-		right: 10px;
+	 	@include right(10px);
 		-webkit-animation: fadeInDownBig 0.5s linear 1;
 		-moz-animation: fadeInDownBig 0.5s linear 1;
 		-ms-animation: fadeInDownBig 0.5s linear 1;
@@ -23,12 +23,12 @@
 			box-shadow: 0px 0px 20px #999;
 		}
 		.notifier img {
-			float: left;
+			@include float(left);
 			top: 2px;
 			position: relative;
 			@include border-radius(4px);
 			border: 1px #7f7e78 solid;
-			left: 12px;
+		 	@include left(12px);
 			width: 42px;
 			height: 42px;
 			z-index: 1;
@@ -38,19 +38,19 @@
 			max-height: 86px;
 			overflow: auto;
 			span{
-				float: left;
+				@include float(left);
 				font-size: 15px;
 			}
 			p{
 				font-style: italic;
 				color: #333;
-				padding-left: 10px;
+				@include padding-left(10px);
 			}
 		}
 		.accept, .ignore{
-			float: left;
+			@include float(left);
 			padding: 10px 0;
-			text-align: center;
+			@include text-align(center);
 			width: 148px;
 			border: 1px #fff solid;
 			font-weight: bold;
@@ -64,7 +64,7 @@
 		.action{
 			background: #FFFDF1;
 			position: relative;
-			clear: both;
+			@include clear(both);
 		}
 		.notifier_number{
 			font-size: 12px;
@@ -75,20 +75,20 @@
 
 		.ignore{
 			color: #c53f42;
-			border-right: 1px solid #000;
+			@include border-right(1px solid #000);
 		}
 		.customer {
 			display: inline-block;
-      padding: 0px 0px 5px 10px;
-      width: 225px;
-      float: right;
-      color: #FFF;
-      b{
-      	font-size: 14px;
-        width: 100%;
-        display: inline-block;
-        padding-top: 0px;
-      }
+			@include padding(0px 0px 5px 10px);
+			width: 225px;
+			@include float(right);
+			color: #FFF;
+			b{
+				font-size: 14px;
+				width: 100%;
+				display: inline-block;
+				padding-top: 0px;
+			}
 		}
 		.call-meta{
 			text-align: center;
@@ -108,13 +108,13 @@
 			width: 200px;
 			padding: 6px 0px !important;
 			i{
-				float: left;
+				@include float(left);
 				position: relative;
-				left: -2px;
+			 @include left(-2px);
 			}    
 			a{
 				width: 180px;
-				float: left;
+				@include float(left);
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
@@ -135,12 +135,12 @@
 		z-index: 1000;
 		position: fixed;
 		bottom: 30px;
-		right: 10px;
+	 @include right(10px);
 		.notifier {
 			@include box-sizing(border-box);
 			width: 300px;
 			height: 56px;
-//			padding: 10px 10px 10px 20px;
+//			@include padding(10px 10px 10px 20px);
 			margin-bottom: 15px;
 
 			background-color: #747474;
@@ -155,7 +155,7 @@
 			display: inline-block;
 			padding: 12px;
 			width: 120px;
-			float: left;
+			@include float(left);
 			color: #FFF;
 			b {
 				width: 100%;
@@ -165,11 +165,11 @@
 		}
 		.action {
 			width: 90px;
-			float: left;
+			@include float(left);
 			padding-top: 8px;
 		}
 		.ignore, .accept {
-			float:left;
+			@include float(left);
 			width:34px;
 			height:34px;
 			border: 2px solid #F6F6F6;
@@ -183,7 +183,7 @@
 			background-color:#ECEBEA;
 		}
 		.accept {
-			margin-left:10px;
+			@include margin-left(10px);
 			background-color:#547C3C;
 		}
 		.primary {
@@ -195,11 +195,11 @@
 			height: 40px;
 			z-index: 1;
 			margin: 8px;
-			margin-right:0;
+			@include margin-right(0);
 			@include border-radius(4px);
 		}
 		.avatar {
-			float:left;
+			@include float(left);
 		}
 	}
 

@@ -26,14 +26,14 @@
 .article-list, .topic-list, .ticket-list{	
 	ul{ 
 		margin-bottom: 0; 
-		margin-left: 0; 
+		@include margin-left(0); 
 		margin-top: 10px;
 	}	
 }
 
 .user-thumb-image{
 	@include border-radius(5px);
-	float: left;
+	@include float(left);
 	overflow: hidden;
 	border: none;
 	img{
@@ -43,16 +43,16 @@
 }
 
 .best-answer-info{
-	margin: -11px -13px -11px -13px;
-	padding: 11px 14px 1px 14px;
+	@include margin(-11px -13px -11px -13px);
+	@include padding(11px 14px 1px 14px);
 	background: #fffffa;
 	@include border-radius(0px 0px 5px 5px);
 	.answer-comment{
-		border-left: 1px solid #E2E2E2;
-		margin-left: 34px;
-		padding-left: 12px;
+		@include border-left(1px solid #E2E2E2);
+		@include margin-left(34px);
+		@include padding-left(12px);
 		.user-info .user-details{
-			margin-left: 34px;
+			@include margin-left(34px);
 			margin-top: 5px;
 		}
 		.answer-desc hr{
@@ -67,14 +67,14 @@
 	height: 23px;
 	border-radius: 50px;
 	.icon-best-answer{
-		margin: 1px 3px 3px 4px;
+		@include margin(1px 3px 3px 4px);
 	}
 }
 
 .best-badge{
 	background: #FEFFDA;
 	display: inline-block;
-	padding: 0px 8px 0px 8px;
+	@include padding(0px 8px 0px 8px);
 	border: 1px solid #F1F0D4;
 	border-radius: 14px;
 	margin-bottom: 10px;
@@ -95,9 +95,9 @@
 li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	list-style: none;	
 	position: relative;
-	padding-left: 30px;
+	@include padding-left(30px);
 	&:before{
-		left: 0;
+		@include left(0);
 		content:"";
 		position: absolute;			
 		vertical-align: text-top;
@@ -107,7 +107,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	margin-bottom: 6px;
 }
 li.article-item, li.topic-item, li.ticket-item, li.note-item {
-	padding-right: 10px;
+	@include padding-right(10px);
 }
 .article-list, .topic-list{ margin-bottom: 20px; }
 .article-list li, li.article-item{ &:before{ @extend .icon-article-list; } }
@@ -115,13 +115,13 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list; } }
 
 .start-topic{
-	float:right;
+	@include float(right);
 	font-weight: bold;
 	margin-top: -35px;
 }
 
 .tabbed{
-	margin-left: 15px;
+	@include margin-left(15px);
 }
 
 .see-more{
@@ -131,7 +131,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		@include inline-block;
 		vertical-align: text-top;
 		@extend .icon-dual-arrow;
-		margin-right: 8px;
+		@include margin-right(8px);
 	}
 }
 
@@ -146,6 +146,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 .item-count{ 
+	display: inline-block; // Needed for RTL
 	color: lighten($helpTextColor, 10%);
 	&:before{ content: "("; }
 	&:after{ content: ")"; }
@@ -153,7 +154,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .help-text{	font-size: 12px;  }
 .p-info strong{ color: $grayDark; }
-.list-noinfo{ text-align: center; }
+.list-noinfo{ @include text-align(center); }
 
 .topic-stamp{ margin-top: 10px; }
 
@@ -166,13 +167,13 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 /* A small colen is added in front of the 
    up-vote button if its next to atleast one user voted label */
 #topic-vote-up-button:nth-child(3){
-	margin-left: 10px;
+	@include margin-left(10px);
 	position: relative;
 	&:before{
 		content: " : ";
 		color: $textColor;
 		position: absolute;
-		margin-left: -8px;
+		@include margin-left(-8px);
 		top: -3px;
 	}
 }
@@ -183,7 +184,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .user-comment{
 	margin:5px 0 20px;
 	.user-pic-thumb{
-		clear: none;
+		@include clear(none);
 		margin: 0;
 		z-index: 3;
 	}	
@@ -192,7 +193,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .user-info{
 	@include clearfix;
 	margin-bottom: 10px;
-	.user-details{ margin-left: 55px; margin-top: 2px; }
+	.user-details{ @include margin-left(55px); margin-top: 2px; }
 }
 
 .p-content{
@@ -208,8 +209,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	hr{
 		margin-top: 10px;
 		margin-bottom: 10px;
-		margin-left: -$comments-padding-side;
-		margin-right: -$comments-padding-side;
+		@include margin-left(-$comments-padding-side);
+		@include margin-right(-$comments-padding-side);
 		border-top: 1px solid #efefef;
 	}
 }
@@ -229,8 +230,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .freshdesk_quote{ display: none; }
 
 .freshdesk_quote blockquote{ 
-	border-left-width:1px;
-	border-left-style:dotted;
+	@include border-left-width(1px);
+	@include border-left-style(dotted);
 }
 
 .comment-by-agent .p-content{
@@ -254,8 +255,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
 }
 
-.c-user-thumb{ padding-left: 60px; } 
-.uv-user-thumb{ padding-left: 45px; } 
+.c-user-thumb{ @include padding-left(60px); } 
+.uv-user-thumb{ @include padding-left(45px); } 
 
 .c-link{ 
 	font-size: 1.16em; 
@@ -264,17 +265,17 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 /* Solutions table row */
 .c-article-row{
-	padding-left: 38px;
+	@include padding-left(38px);
 	.icon-article-table-row{
-		margin-left: -38px;
-		float: left;
+		@include margin-left(-38px);
+		@include float(left);
 	}	
 }
 
 /* Solution voting button */
 .vote-up, .vote-down{
 	font-weight: bold;
-	margin-left: 10px;
+	@include margin-left(10px);
 	&:hover{
 		text-decoration: none;
 	}
@@ -282,7 +283,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .vote-down:before{
 	content: "-";
 	color: #e5e5e5;
-	margin-right: 10px;
+	@include margin-right(10px);
 }
 
 /* User voted list in topic details page */
@@ -321,11 +322,11 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .user-pointer-bottom{	
 	&:before, &:after{
 		bottom: -12px;
-		right: 14px;
+		@include right(14px);
 		border-bottom-color: #ebebeb;
 	}
 	&:after{ 
-		right: 15px; 
+		@include right(15px); 
 		border-bottom-color: #fafafa;
 	}
 }
@@ -333,13 +334,13 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .user-pointer-right{	
 	&:before{
 		top: 14px;
-		right: -18px;
-		border-right-color: #ebebeb;
+		@include right(-18px);
+		@include border-right-color(#ebebeb);
 	}
 	&:after{ 
 		top: 15px;
-		right: -19px; 
-		border-right-color: #fafafa;
+		@include right(-19px); 
+		@include border-right-color(#fafafa);
 	}
 }
 
@@ -349,16 +350,16 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		&:after{ border-bottom-color:#fffdf8; }
 	}
 	.user-pointer-right{
-		&:before{ border-right-color:#cccccc; }
-		&:after{ border-right-color:#fffdf8; }	
+		&:before{ @include border-right-color(#cccccc); }
+		&:after{ @include border-right-color(#fffdf8); }	
 	}
 }
 
 hr.content-divider{
 	margin-top: 30px;
 	margin-bottom: 20px;
-	margin-left: -$content-padding-side;
-	margin-right: -$content-padding-side; 
+	@include margin-left(-$content-padding-side);
+	@include margin-right(-$content-padding-side); 
 	border-bottom-color:#f6f6f6;
 }
 
@@ -383,17 +384,17 @@ hr.content-divider{
 .avatar-span{ margin-bottom: 15px; }
 .attach-wrapper, .attachments-list-form{ margin-top: 5px; }
 .dropbox_div{
-	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
+	@include border-left(1px solid #AAAAAA); @include float(left); margin: 10px; @include padding-left(20px); margin-top:1px;
 	.db-chooser .dropbox_button{ cursor: pointer; }
 }
-.attach_file{ float:left; padding-right:20px }
+.attach_file{ @include float(left); @include padding-right(20px) }
 
 .db-chooser{
-	label{ margin-right: 50%; }
+	label{ @include margin-right(50%); }
 	.dropbox_button{
 		background: image-url("/images/portal/dropbox-attach.png") no-repeat left -11px #f3f2f2;
 	    height: 26px;
-	    padding-left:90px;
+	    @include padding-left(90px);
 	    border:1px solid #d6d6d6;
 	    border-radius:4px;
 		cursor:pointer;
@@ -403,25 +404,25 @@ hr.content-divider{
 }
 
 .toolbar-actions{
-	float: right;
+	@include float(right);
 	margin-bottom: -50px;
 	margin-top: 15px;
 }
 
-.topic-list .topic-labels{ float: right; }
+.topic-list .topic-labels{ @include float(right); }
 
 @include at-breakpoint($break-desktop){
 	.sidebar .community-sidebar{
 		.cs-s{ border-top:0; margin: 0; }
 		h3.heading{ display: none; }
 		.topic-list:nth-child(n+3) ul{ display: none; }
-		.start-topic{ margin-top: 0; float: none; }
+		.start-topic{ margin-top: 0; @include float(none); }
 	}
 }
 
 .help-text .my_topics_right{
-	border-left: 1px dotted #999;
-	padding-left: 10px;
+	@include border-left(1px dotted #999);
+	@include padding-left(10px);
 }
 
 /* Recapcha hack fixes */
@@ -435,11 +436,11 @@ hr.content-divider{
 		
 		.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
 	
-		.toolbar-actions, .topic-list .topic-labels{ float: none; }
+		.toolbar-actions, .topic-list .topic-labels{ @include float(none); }
 
 		#topic-toolbar .btn{ 
-			padding-left: 10px; 
-			padding-right: 10px; 
+			@include padding-left(10px); 
+			@include padding-right(10px); 
 		}
 		.cs-s{
 			margin:0.5em 0;
@@ -450,12 +451,12 @@ hr.content-divider{
 			padding: $content-padding-mobile;
 		}
 		.user-comment .user-pic-thumb{
-			clear: right;
+			@include clear(right);
 		}
-		.c-user-thumb{ padding-left: 55px; }
+		.c-user-thumb{ @include padding-left(55px); }
 		hr.content-divider{ 
-			margin-left: 0;
-			margin-right: 0;
+			@include margin-left(0);
+			@include margin-right(0);
 		}
 
 	}
@@ -471,7 +472,7 @@ hr.content-divider{
 	overflow: hidden;
 	margin-top: 15px;
 	.user-details{
-		margin-left: 10px;
+		@include margin-left(10px);
 	}
 }
 
@@ -481,8 +482,9 @@ hr.content-divider{
 		top: 250px;
 		background: #FAFAFA;
 		border: 1px solid #CCC;
-		border-left: none;
-		border-radius: 0px 5px 5px 0px;
+		@include border-left(none);
+		border-radius: 0 5px 5px 0;
+		@if $rtl == true{ border-radius: 5px 0 0 5px ; }
 		padding: 3px 10px;
 		cursor: pointer;
 		z-index: 10;
@@ -494,23 +496,23 @@ hr.content-divider{
 		position: fixed;
 		background: #fff;
 		top: 250px;
-		left: 47px;
+		@include left(47px);
 		z-index: 10;
 		border-radius: 5px;
-		padding: 10px 15px 8px 15px;
+		@include padding(10px 15px 8px 15px);
 		font-weight: 200;
-		box-shadow: -1px 2px 10px rgba(0, 0, 0, 0.1);
+		@include box-shadow(-1px 2px 10px rgba(0, 0, 0, 0.1));
 		.action_title{
 			color: #CCC;
 		}
 		.agent_options{
-			margin: 3px -15px 0 -15px;
-			padding: 5px 15px 0 15px;
+			@include margin(3px -15px 0 -15px);
+			@include padding(5px 15px 0 15px);
 			display: block;
 			color: #000;
 			text-decoration: none;
 			.icon-agent-edit, .icon-agent-preview{
-				margin: -8px 0px 0px -8px;;
+				@include margin(-8px 0px 0px -8px);
 			}
 
 			&:hover {
@@ -519,7 +521,7 @@ hr.content-divider{
 		}
 	}
 	.agent_actions:after, .agent_actions:before {
-		right: 100%;
+		@include right(100%);
 		top: 20px;
 		border: solid transparent;
 		content: " ";
@@ -531,13 +533,13 @@ hr.content-divider{
 
 	.agent_actions:after {
 		border-color: rgba(243, 243, 243, 0);
-		border-right-color: #fff;
+		@include border-right-color(#fff);
 		border-width: 8px;
 		margin-top: -8px;
 	}
 	.agent_actions:before {
 		border-color: rgba(153, 153, 153, 0);
-		border-right-color: #999;
+		@include border-right-color(#999);
 		border-width: 9px;
 		margin-top: -9px;
 	}
@@ -556,7 +558,7 @@ hr.content-divider{
 	}
 	.topic-title{
 		margin-top: 10px;
-		padding-left: 25px;
+		@include padding-left(25px);
 	}
 	.desc{
 		color: #7E7E7E;
@@ -576,7 +578,7 @@ hr.content-divider{
 //----------------------------------------------------------------------------------------------------------
 
 .suggestions .popover{
-	margin-left: 0;
+	@include margin-left(0);
 	width: 400px;
 	.arrow{ top: 34px; }
 	.popover-title { display: none; }
@@ -587,10 +589,10 @@ hr.content-divider{
 		background-color: #000;
 		border-radius: 50px;
 		cursor:pointer;
-		margin: -2px 4px 0 0;
+		@include margin(-2px 4px 0 0);
 		&:after{
 			position: absolute;
-			margin: -1px 0 0 6px;
+			@include margin(-1px 0 0 6px);
 			color: #fff;
 			content: "\00d7";
 			font-size: 14px;
@@ -607,17 +609,17 @@ hr.content-divider{
 		position: fixed;
 		width: 100%;
 		height: 100%;
-		margin-left: 100%;
+		@include margin-left(100%);
 		top: 0 !important;
-		left: 0 !important;
+		@include left(0 !important);
 		padding: 0;
-		padding-left: 25px;
+		@include padding-left(25px);
 		.popover-title { display: none; }
 		.popover-inner{
 			height: 100%;
 			padding: 0;
 			border-radius: 0;
-			box-shadow: -5px 0 20px 0 rgba(0, 0, 0, 0.2);
+			@include box-shadow(-5px 0 20px 0 rgba(0, 0, 0, 0.2));
 		}
 		.popover-content{
 			padding: 0 15px;
@@ -631,9 +633,9 @@ hr.content-divider{
 			display: block;
 			width: 25px;
 			height: 25px;
-			margin: 10px 0 0 0;
+			@include margin(10px 0 0 0);
 			&:after{
-				margin:1px 0 0 8px;
+				@include margin(1px 0 0 8px);
 			}
 		}
 	}
@@ -642,4 +644,3 @@ hr.content-divider{
 //----------------------------------------------------------------------------------------------------------
 //											Fresh Suggestions styles end
 //----------------------------------------------------------------------------------------------------------
-

@@ -17,7 +17,7 @@
 		height:auto !important;
 		width: auto;
 		min-width: 180px;
-		margin-left:0;	
+		@include margin-left(0);	
 		.attachment-type{
 			margin: 0;
 			padding: 3px 0px;
@@ -51,12 +51,12 @@
 				min-width: 16px;
 				text-align: center;
 				letter-spacing: -0.01em;
-				left: 3px;					
+				@include left(3px);					
 			}
 		}
 		.file-types-dropbox{
 			margin: 0;
-			padding: 3px 0px 3px 25px;
+			@include padding(3px 0px 3px 25px);
 			width: auto;
 			height: 13px;
 			display: inline-block;
@@ -72,7 +72,7 @@
 		.attach_content{
 			display: inline-block;
 			vertical-align: middle;
-			margin-left: 10px;
+			@include margin-left(10px);
 			width: 110px;
 			.file-size{
 				display: block;

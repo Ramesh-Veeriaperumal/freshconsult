@@ -4,7 +4,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 // -------------------------------
 
 .banner{
-	text-align:left;
+	@include text-align(left);
 	background-color: $header_color;
 	padding: $header-padding;
 	color: $header_text_color;
@@ -21,9 +21,12 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	.banner-nav{ 
 		@include span-columns(3 omega);
 		margin-top: 5px;
+        @if $rtl == true{
+            @include float(left);
+        }
 		.welcome{ display: block; }
 	}
-	nav{ text-align: right; }
+	nav{ @include text-align(right); }
 }
 
 .banner-title .heading{ color: inherit;}
@@ -44,9 +47,9 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	@include border-bottom-radius($content-border-radius);
 	&, .nav-link a{ border: 1px solid rgba($tab_text_color, 0.2); }
 	.nav-link a{
-		float: left;
+		@include float(left);
 		border-width: 0 1px 0 0;
-		text-align: center;
+		@include text-align(center);
 		padding: 0 15px;
 		color: inherit;
 		@include min-width(100px);
@@ -62,9 +65,9 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
 .logo, .portal-logo{
 	display: inline;
-	float: left;
-	margin: -3px 10px 0 -5px;
-	text-align:center;
+	@include float(left);
+	@include margin(-3px 10px 0 -5px);
+	@include text-align(center);
 	width: auto;
 }
 
@@ -89,27 +92,28 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 }
 
 .footer-links{
-    a{ @include opacity(0.6); }
+    a{ @include opacity(0.6); @if $rtl == true{@include float(right);}}
     a:hover{ @include opacity(1); }
 	a:before{ 
 		content: "-";
 		position: absolute;
-		margin-left: -15px;
+		@include margin-left(-15px);
 	}
 	a:first-child:before{ content: none; }
-	a:last-child{ margin-right: 0; }
+	a:last-child{ @include margin-right(0); }
 }
 
 .copyright{
 	padding: $content-padding-mobile;
-	text-align: center;
+	@include text-align(center);
 	color: $gray;
 }
 @include at-breakpoint($break-tablet){
     .footer-links {
-        .privacy-link{float:right; margin-left:25px;}
+        .privacy-link{
+            @include float(right); @include margin-left(25px);}
         .cookie-link{
-            float:right;
+            @include float(right);
             &:before{content: "";}
         }
     }
@@ -126,7 +130,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
         	@include border-top-radius(0);        	
             border:0;
             box-shadow:none;
-			text-align:center;
+			@include text-align(center);
             display: table;
             width: 100%;
             .banner-wrapper{
@@ -137,7 +141,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
             .banner-title, .banner-nav{ 
             	@include reset-columns; 
-            	text-align:center;
+            	@include text-align(center);
             }
             .banner-title .heading{ 
                 max-width:275px;
@@ -168,7 +172,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
         .page-tabs{
             padding: 5px 10px;             
-            text-align: right;
+            @include text-align(right);
             cursor: pointer;
             position:relative; // fix for bottom box shadow
             z-index:2; // fix for bottom box shadow     
@@ -178,8 +182,8 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
             &, .nav-link a:first-child{ @include border-bottom-radius(0); }
             .mobile-icon-nav-menu{
                 z-index: 3;
-                padding-right: 6px;
-                padding-left: 6px;
+                @include padding(6px);
+                @include padding-left(6px);
                 &:before{
                     content:"";
                     @include inline-block;
@@ -190,14 +194,14 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
                 margin-top: 10px;
                 &, a.active, a:hover{ background-color:$tab_color; }
                 a{	
-                	float: none;
+                	@include float(none);
                     font-weight: 300;
-                    padding-left: $content-padding-mobile;
+                    @include padding-left($content-padding-mobile);
                     border-width: 1px 0 0 0;
                     display: block;
                     @include min-width(auto);
                     padding: 5px 10px;
-                    text-align: left;
+                    @include text-align(left);
                     font-size: $baseFontSize * 1.26;
                     &:last-child{ padding-bottom:0; }
                 }
@@ -205,9 +209,9 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
         }   
         .logo, .portal-logo{
             display:block;
-            float:none;
+            @include float(none);
             margin: 0 auto; 
-            text-align:center;
+            @include text-align(center);
         }
 
         .footer{ 
@@ -217,17 +221,17 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
                 @include box-shadow(inset 0 1px 3px $footer_color, 0 0 2px darken($footer_color, 30%));
                 @include border-radius(20px);
                 background: $footer_text_color;                
-                padding-left: 10px;
-                padding-right: 10px;
-                margin-right: 4px;
-                margin-left: 4px;
+                @include padding-left(10px);
+                @include padding(10px);
+                @include margin-right(4px);
+                @include margin-left(4px);
                 line-height: 24px;
                 display: inline-block;
                 margin-bottom:10px;
                 &, &:hover{ color:$footer_color; }
             }
         }
-        .footer-links{text-align:center;}
+        .footer-links{@include text-align(center);}
         .footer-links a:before{ content: none; }
     }
 }

@@ -9,7 +9,7 @@
 	min-height:25px;
 	display: inline-table;
 	vertical-align: middle;
-	margin:0 5px 5px 0;
+	@include margin(0 5px 5px 0);
 	&.non-primary-tag{
 		@include opacity(0.4);
 	}
@@ -38,7 +38,7 @@
 	min-height: 110px;
 	.connecting-image{
 		position: absolute;
-		left:0px;
+	 @include left(0px);
 		top:0px;
 	}
 }
@@ -48,8 +48,8 @@
 
 	.ui-icon {
       display: inline-block;
-	  float: left;
-	  margin: 0 7px 20px 0;
+	  @include float(left);
+	  @include margin(0 7px 20px 0);
 	}
 }
 
@@ -58,7 +58,7 @@
 	.count:hover .removetag, .name:hover .edittag { display: inline-block; } 
 	#tags-merge-confirm-content input.sloading {
 	  padding: initial;
-	  padding-left: 6px;
+	  @include padding-left(6px);
 	}
 	.tags-merge{
 	  .merge-cont{
@@ -76,18 +76,18 @@
 	  }
 	}
   .list-page-table-header .bulk-action{
-    left: 3px;
+    @include left(3px);
     top: -2px;
     position: relative;
   }
   .tags-checkbox-label{
-    left: 3px;
+    @include left(3px);
     top: 2px;
     position: relative;
   }
   .removetag, .edittag{
     position: relative;
-    left: 10px;
+    @include left(10px);
     top:8px;
     i{
       width: 26px;
@@ -97,7 +97,7 @@
     }
   }
   .edittag{
-    left:5px;
+    @include left(5px);
   }
   .tags-total-counter{
     padding: 0 8px;
@@ -118,14 +118,14 @@
     border: 1px solid #aaa;
     background: #fff;
     @include border-radius(20px);
-    margin-right: -10px;
+    @include margin-right(-10px);
     position: relative;
-    padding-right: 50px;
+    @include padding-right(50px);
     min-width:63px;
     >span{
       background: #888;
       padding: 0 8px;
-      right: 3px;
+      @include right(3px);
       position: absolute;
       font-size: 90%;
       font-weight: 500;
@@ -148,18 +148,18 @@
 
 #tags-merge-confirm-content input.sloading {
   padding: initial;
-  padding-left: 6px;
+  @include padding-left(6px);
 }
 .clear-text-wrap{
   position:relative;
     .input-padding{
-      padding-right:35px;
+      @include padding-right(35px);
     }
   .clear-text{
     position: absolute;
-    right: 2px;
+    @include right(2px);
     top: 50%;
     margin-top: -7px;
-    margin-right:5px;
+    @include margin-right(5px);
   }
 }

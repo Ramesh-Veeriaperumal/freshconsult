@@ -120,7 +120,7 @@ h6 {
 // Unordered and Ordered lists
 ul, ol {
   padding: 0;
-  margin: 5px 0 5px 22px;
+  @include margin(5px 0 5px 22px);
 }
 ul ul,
 ul ol,
@@ -139,7 +139,7 @@ li {
 }
 ul.unstyled,
 ol.unstyled {
-  margin-left: 0;
+  @include margin-left(0);
   list-style: none;
 }
 
@@ -156,19 +156,19 @@ dt {
   line-height: $baseLineHeight - 1; // fix jank Helvetica Neue font bug
 }
 dd {
-  margin-left: $baseLineHeight / 2;
+  @include margin-left($baseLineHeight / 2);
 }
 // Horizontal layout (like forms)
 .dl-horizontal {
   dt {
-    float: left;
+    @include float(left);
     width: 120px;
-    clear: left;
-    text-align: right;
+    @include clear(left);
+    @include text-align(right);
     @include text-overflow();
   }
   dd {
-    margin-left: 130px;
+    @include margin-left(130px);
   }
 }
 
@@ -206,9 +206,9 @@ abbr.initialism {
 
 // Blockquotes
 blockquote {
-  padding: 0 0 0 15px;
+  @include padding(0 0 0 15px);
   margin: 0 0 $baseLineHeight;
-  border-left: 5px solid $grayLighter;
+  @include border-left(5px solid $grayLighter);
 }
 
 // Quotes

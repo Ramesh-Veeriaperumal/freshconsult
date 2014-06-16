@@ -1,0 +1,11 @@
+@if $rtl == true {
+	.redactor_editor{
+		direction:rtl !important;
+	}
+	.redactor_toolbar li,.redactor_toolbar li.redactor_separator{
+		float: right;
+	}
+	#tickets-expanded .subject_style{
+		margin-left:8px;
+	}
+}

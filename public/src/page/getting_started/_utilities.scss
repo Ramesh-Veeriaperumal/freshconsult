@@ -25,7 +25,7 @@
 }
 
 .cf {
-  clear: both;
+  @include clear(both);
 }
 
 .cf:before,
@@ -35,7 +35,7 @@
 }
 
 .cf:after {
-  clear: both;
+  @include clear(both);
 }
 
 .cf {

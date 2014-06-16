@@ -6,13 +6,13 @@
 .folder_list
 {
 	width: 40%;
-	float: left;
+	@include float(left);
 }
 
 .newclass
 {
 	width: 60%;
-	float: right;
+	@include float(right);
 }
 
 .response-list{
@@ -29,20 +29,20 @@
 }
 
 .response-top{
-	padding: 10px 0 10px 10px;
+	@include padding(10px 0 10px 10px);
 	background-color: #e8e8e8;
 }
 
 .response-boxes{
 	width: 3%;
-	float: left;
-	padding-left: 10px;
+	@include float(left);
+	@include padding-left(10px);
 }
 
 .response-items{
 	width: 93%;
-	float: right;
-	padding-left: 10px;
+	@include float(right);
+	@include padding-left(10px);
 	padding-bottom: 10px;
 }
 
@@ -61,7 +61,7 @@
 
 .list-toolbar{
 	background:url('/images/ticket_list_head_bg.png');
-	padding:5px 8px 8px 10px;
+	@include padding(5px 8px 8px 10px);
 	border-bottom:1px solid #dfdfdf;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .center{
-	text-align: center;
+	@include text-align(center);
 }
 
 #new_canned_response_folder .uiButton[disabled]{
@@ -113,13 +113,13 @@
 }
 
 .spacing_right{
-	padding-right: 10px;
-	border-right: 1px solid #ccc;
+	@include padding-right(10px);
+	@include border-right(1px solid #ccc);
 }
 
 .spacing_left{
-    margin-left: 10px;
-	border-left: 1px solid #ccc;
+    @include margin-left(10px);
+	@include border-left(1px solid #ccc);
 }
 
 .create_new_folder{
@@ -129,7 +129,7 @@
 		background:none;
 		&:before{
 			content:"+";
-			padding-right: 3px;
+			@include padding-right(3px);
 			font-size:22px;
 			font-weight:bold;		
 			line-height:0;
@@ -140,7 +140,7 @@
 }
 
 #folder-controls a{
-	padding-left: 10px;
+	@include padding-left(10px);
 }
 
 #create-folder, #edit-ca-folder, #del{
@@ -149,7 +149,7 @@
 }
 
 .ca-page{
-	float: right;
+	@include float(right);
 }
 
 .can-res-menu{
@@ -157,7 +157,7 @@
 	cursor: pointer;
 	font-size: 15px;
 	font-weight: bold;
-	padding-left: 15px;
+	@include padding-left(15px);
 }
 
 #moves{
@@ -167,7 +167,7 @@
 }
 .load{
 	min-height: 40px;
-	margin: 0 0 0 0;
+	@include margin(0 0 0 0);
 }
 
 #folder_edit_form{
@@ -200,8 +200,8 @@
 
 .can-res-menu::after{
 	border-top: 10px solid #888;
-	border-left: 5px solid transparent;
-	border-right: 5px solid transparent;
+	@include border-left(5px solid transparent);
+	@include border-right(5px solid transparent);
 }
 
 .table-grid table{
@@ -215,11 +215,11 @@
 }
 
 .response-table{
-	padding-left: 0 !important;
+	@include padding-left(0 !important);
 }
 
 .adjust-margin{
-	margin-right: 17px;
+	@include margin-right(17px);
 }
 
 #folders-panel{
@@ -231,7 +231,7 @@
 
 		}
 		.selected-folder{
-				padding-left: 2px;
+				@include padding-left(2px);
 		}
 		&:before{
 			content:"";
@@ -242,8 +242,8 @@
 		    width:0;
 		    top:-6px; 
 			bottom:auto;
-			left:auto;
-			right:123px;
+		 @include left(auto);
+		 @include right(123px);
 		    border-width:0 6px 6px;
 		    z-index:16000;
 		}
@@ -257,8 +257,8 @@
 		    width:0;
 		    top:-5px;
 			bottom:auto;
-			left:auto;
-			right:124px;
+		 @include left(auto);
+		 @include right(124px);
 		    border-width:0 5px 5px;
 		    z-index:16001;
 		}
@@ -267,24 +267,24 @@
 
 #move_folder_id{
 	display: block;
-	margin-left: 85px;
+	@include margin-left(85px);
 	min-width: 130px;
 	margin-top: 13px;
 }
 
 #ca_new_menu .ticksymbol{ 
-	padding-right: 19px;
-	margin-left: -18px;
+	@include padding-right(19px);
+	@include margin-left(-18px);
 }
 
 p.imp{
 	color: white;
 	background-color: #900;
-	padding: 0 4px 0 6px;
+	@include padding(0 4px 0 6px);
 	@include border-radius(10px);
 	font-weight: bold;
 	margin-bottom: 2px;
-	margin-right: 4px;
+	@include margin-right(4px);
 	display: inline-block;
 }
 
@@ -299,12 +299,12 @@ p.imp{
 }
 
 .delete-buttons{
-	margin-left: 170px;
+	@include margin-left(170px);
 	margin-top: 10px;
 }
 
 #edit_form #admin_canned_responses_folder_name{
-	margin-left: 5px;
+	@include margin-left(5px);
 	margin-top: 10px;
 	width: 478px;
 }
@@ -328,8 +328,8 @@ p.imp{
 // ------------------------------------------------------------------------------------------------------------
 .recently_used{
     background: #f3f3f3;
-    border-right: 1px #dbdbdb solid;
-    float: left;
+    @include border-right(1px #dbdbdb solid);
+    @include float(left);
     font-size: 12px;
     color: #333;
     height: 328px;
@@ -343,7 +343,7 @@ p.imp{
 }
 
 #recently_used_list{
-	padding-left: 10px;
+	@include padding-left(10px);
 	min-height: 50px;
 }
 
@@ -351,7 +351,7 @@ p.imp{
 	background-color: #fafafa;
 	@include border-right-radius(5px);
 	border: 1px #eaeaea solid;
-	margin-right: 7px;
+	@include margin-right(7px);
 }
 .recently_used ul li a{
 	padding-bottom: 3px;
@@ -361,31 +361,31 @@ p.imp{
     display: block;
     #resp-icon{
     	display: block;
-    	float: left;
+    	@include float(left);
     }
     #resp-text{
     	display: block;
-    	padding-left: 27px;
+    	@include padding-left(27px);
     }
 }
 
 .pick-response-outer{
     width: 452px;
-    float: right;
+    @include float(right);
 }
 
 
 
 .pick-response-header{
     width: 442px;
-    padding: 15px 0 0 10px;
-    clear: both;
+    @include padding(15px 0 0 10px);
+    @include clear(both);
     display: inline-block;
 }
 
 
 .pick-response-header h3{
-    float: left;
+    @include float(left);
     width: 220px;
     font-size: 14px;
     margin-top: 3px;
@@ -399,18 +399,18 @@ p.imp{
     
     input[type="text"]{
     width: 187px;
-    clear: both;
-	margin: 0 0 3px 0;
-	padding-right: 18px}
+    @include clear(both);
+	@include margin(0 0 3px 0);
+	@include padding-right(18px)}
 }
 
 .clear-search{
 	background: url(/images/close-search.png) no-repeat;
 	position: absolute;
 	top: 9px;
-	right: 14px;
+ @include right(14px);
 	display: none;
-	float: left;
+	@include float(left);
 	width: 12px;
 	height: 10px;
 	background-color: white;
@@ -418,12 +418,12 @@ p.imp{
 
 #bulk_canned_response_holder #clear-search {
 	top: 9px;
-	right: 14px;
+ @include right(14px);
 }
 
 .canned-icons a{
-    float: right;
-    margin-right: 10px;
+    @include float(right);
+    @include margin-right(10px);
 }
 
 #search-list{
@@ -439,8 +439,8 @@ p.imp{
     margin-bottom: 10px;
     height: 266px;
     border: 1px #b7b7b7 solid;
-    clear: both;
-    margin-left: 10px;
+    @include clear(both);
+    @include margin-left(10px);
     @include box-shadow(inset 1px 1px 2px #dad9d9);
     @include border-radius(5px);
 }
@@ -449,7 +449,7 @@ p.imp{
     max-height: 250px;
     @include border-radius(5px 0 0 5px);
     width: 216px;
-    float: left;
+    @include float(left);
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
@@ -457,7 +457,7 @@ p.imp{
 
 .pick-response ul.small-list-left li{
     padding: 0 0;
-    margin-left: 0;
+    @include margin-left(0);
 }
 
 .pick-response ul.small-list-left li a{
@@ -479,7 +479,7 @@ p.imp{
     @include border-radius(0 5px 5px 0);
     max-height: 250px;
     width: 215px;
-    float: left;
+    @include float(left);
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
@@ -487,15 +487,15 @@ p.imp{
 
 .pick-response ul.small-list-right li{
     padding: 2px 2px;
-    margin-left: 0;
+    @include margin-left(0);
     background: none;
     border: none;
-    padding-left: 10px;
-    float: left;
+    @include padding-left(10px);
+    @include float(left);
 }
 
 .pick-response ul.small-list-right li span{
-    float: left;
+    @include float(left);
     top: 0;
 }
 
@@ -503,9 +503,9 @@ p.imp{
     width: 200px;
     color: #333;
     font-size: 12px;
-    padding-right: 5px;
+    @include padding-right(5px);
     margin-top: 6px;
-    float: left;
+    @include float(left);
     #resp-text{
     	display: block;
     	width: 150px;
@@ -515,8 +515,8 @@ p.imp{
 #resp-icon{
 	height: 17px;
 	width:17px;
-	margin-right: 10px;
-	float: left;
+	@include margin-right(10px);
+	@include float(left);
 }
 
 .pick-response ul.small-list-right li a:hover{ color: #000; }
@@ -525,7 +525,7 @@ p.imp{
     @include border-radius(0 5px 5px 0);
     max-height: 250px;
     width: 425px;
-    float: left;
+    @include float(left);
     position: relative;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -533,12 +533,12 @@ p.imp{
 
 .pick-response ul.big-list li{
     padding: 2px 2px;
-    margin-left: 0;
-    float: left;
+    @include margin-left(0);
+    @include float(left);
 }
 
 .pick-response ul.big-list li span{
-    float: left;
+    @include float(left);
     top: 0;
 }
 
@@ -547,29 +547,29 @@ p.imp{
     color: #333;
     font-size: 12px;
     padding: 7px 6px;
-    float: left;
+    @include float(left);
 }
 
 .canned-searchbox input[type="text"]{
     display: none;
     width: 45%;
-    clear: both;
+    @include clear(both);
     border: 1px #b7b7b7 solid;
     @include border-radius(5px);
-    float:left;
+    @include float(left);
 }
 
 #canned_response_list{
-	border-right: 1px solid #b7b7b7;
+	@include border-right(1px solid #b7b7b7);
 	width: 216px;
 	height: 266px;
-	float: left;
+	@include float(left);
 }
 
 .list2{
 	width:214px;
 	height: 266px;
-	float:right;
+	@include float(right);
 }
 
 .folderSelected{
@@ -580,7 +580,7 @@ p.imp{
 
 #bulk_canned_response_holder{
 	overflow: hidden;
-	float: left;
+	@include float(left);
 	width: 650px;
 	min-height: 100px;
 	margin-top: 10px;
@@ -588,7 +588,7 @@ p.imp{
 
 #bulk-response-group{
 	overflow: hidden;
-	float: left;
+	@include float(left);
 	width: 650px;
 }
 
@@ -598,9 +598,9 @@ p.imp{
 }
 
 #bulktickets{
-	float: left;
+	@include float(left);
 	width: 667px;
-	margin-right: 32px;
+	@include margin-right(32px);
 }
 
 #bulkfull{
@@ -620,7 +620,7 @@ height: auto;
 	z-index: 1000;
 	font-size: 13px;
 	font-weight: bold;
-	margin-left: 7px;
+	@include margin-left(7px);
 	cursor: pointer;
 	text-decoration: none;
 }
@@ -639,7 +639,7 @@ height: auto;
 	.caption{
 		display: inline-block;
 		width: 62px;
-		margin-right: 140px;
+		@include margin-right(140px);
 	}
 }
 
@@ -665,13 +665,13 @@ height: auto;
 		@include border-left-radius(5px);
 		.pick-response-header{
 			.canned-icons{
-    		float: right;
+    		@include float(right);
     		#clear-search{
-					right:6px !important;
+				 @include right(6px !important);
 				}
 				#searchbox{
 					top: 31px;
-					right: 22px;	
+				 @include right(22px);	
 				}
 			}
 		}
@@ -687,7 +687,7 @@ height: auto;
 			width: 622px;
 			.list2{
 				width: 395px;
-				float: left;
+				@include float(left);
 				.small-list-right{
 						width: 394px;
 				}
@@ -708,7 +708,7 @@ height: auto;
 #bulk_canned_response_holder{
 	.no_recently_used{
 		#clear-search{
-			right:36px !important;
+		 @include right(36px !important);
 		}
 	}
 }

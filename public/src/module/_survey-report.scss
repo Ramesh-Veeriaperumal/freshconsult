@@ -15,18 +15,18 @@ margin:10px;
  
 .usercomment { border-bottom: 1px dotted #e5e5e5; margin: 0; }
  
-.agentreport > ul { margin: 0 0 0 25px; padding: 0; }
+.agentreport > ul { @include margin(0 0 0 25px); padding: 0; }
  
-.agentreport > ul > li { list-style: none; padding: 0; float: left; overflow: hidden; }
+.agentreport > ul > li { list-style: none; padding: 0; @include float(left); overflow: hidden; }
 
 .agentreport > ul > li.sub_rating{margin-top:-8px;}
 
 .agentreport{
-	.floatleft { float: left; }
+	.floatleft { @include float(left); }
 	 
-	.floatright { float: right; }
+	.floatright { @include float(right); }
 	 
-	.photo { box-sizing: border-box; width: 46px; height: 46px; background-color: grey; margin-right: 5px; }
+	.photo { box-sizing: border-box; width: 46px; height: 46px; background-color: grey; @include margin-right(5px); }
 	 
 	.smallphoto { width: 30px !important; height: 30px !important; }
 	 
@@ -34,15 +34,15 @@ margin:10px;
 	 
 	.agentname > div { font-weight: normal; font-size: 12px; }
 	 
-	.happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; margin-right: 5px; }
+	.happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; @include margin-right(5px); }
 	 
-	.bignum { font-size: 20px; margin: 2px 0 0 7px;}
+	.bignum { font-size: 20px; @include margin(2px 0 0 7px);}
 	 
 	.bignum > span { font-size: 16px; font-weight: normal; }
 	 
-	.bottomtext { font-size: 12px; font-weight: normal; margin: -1px 0 0 8px;}
+	.bottomtext { font-size: 12px; font-weight: normal; @include margin(-1px 0 0 8px);}
 	 
-	.nospace { margin-left: 0 !important; }
+	.nospace { @include margin-left(0 !important); }
 	 
 	.noborder { border-bottom: none; }
 	 
@@ -52,7 +52,7 @@ margin:10px;
 	 
 	.titlebar > div { margin-bottom: 5px; font-size: 13px; text-transform: none; word-spacing: 4px; }
 	 
-	.comment { margin-left: 10px; font-size: 13px; line-height: 18px; word-spacing: 2px; width: 90%; }
+	.comment { @include margin-left(10px); font-size: 13px; line-height: 18px; word-spacing: 2px; width: 90%; }
 	 
 	.comment > div { margin-bottom: 5px; line-height: 14px; }
 	 
@@ -63,7 +63,7 @@ margin:10px;
 
 #report_list {
 	.table-list {
-		margin:10px 0 0 0;
+		@include margin(10px 0 0 0);
 	}
 }
  
@@ -87,14 +87,14 @@ margin:10px;
  
 .unhappysmallsmiley { background-image: url(/images/unhappy-smily-small.png); }
  
-.smileytext { margin: 8px 0 0 5px; }
+.smileytext { @include margin(8px 0 0 5px); }
  
 .all_link .all_link, .happy_link .happy_link, .unhappy_link .unhappy_link, .neutral_link .neutral_link { color: black; font-weight: bold; }
  
 .no-feedback{
 	font-size:16px;
 	font-weight:bold;
-	text-align:center;
+	@include text-align(center);
 }
 
 .satisfaction-head{

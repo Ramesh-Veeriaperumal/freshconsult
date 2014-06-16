@@ -25,8 +25,8 @@
 	color:#666;
 	margin-top:15%;
 	border: 1px solid #CCC;
-	padding: 8px 5px 8px 10px;
-	text-align: center;
+	@include padding(8px 5px 8px 10px);
+	@include text-align(center);
 	background-repeat: no-repeat;
 	background-position: center;
 	background-position-x: 8px;
@@ -35,7 +35,7 @@
 	@include box-shadow(0px 0px 10px rgba(0, 0, 0, 0.2));
 	font-size: 18px;
 	font-weight: 200;
-	text-indent: 12px;
+	@include text-indent(12px);
 }
 .loading-box{  
   background-position:center center;
@@ -44,19 +44,19 @@
 .redactor-loading-bg{
 	@include border-radius(3px);
 	border:2px solid #eee;
-	border-right:25px solid #eee;
+	@include border-right(25px solid #eee);
 	padding:2px 12px;
 	width:0px;
 	height:17px;
 	background:#fff;
 	position:relative;
-	left:0;
+ @include left(0);
 	display: block;
 	background:url(/images/cdn-ignored/sprites/symbols/redactor-loading.png) no-repeat left;
 	cursor:none;
 	.sloading{
 		position: relative;
-		left: 15px;
+	 @include left(15px);
 		top: -11px;
 	}
 }
@@ -161,7 +161,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 		width:18px;
 		background-repeat: no-repeat;
 		background-position: center 3px;
-		padding-left: 5px;
+		@include padding-left(5px);
 	}
 }
 
@@ -202,7 +202,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 }
 
 .leftFilter .tkt-filter-loading{
-	padding: 7px 10px 8px 18px;
+	@include padding(7px 10px 8px 18px);
 	.spinner{top:0 !important;} //To resolve problem in mozila spinner top
 }
 

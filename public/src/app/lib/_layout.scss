@@ -23,21 +23,26 @@ body{
 	_width: $container-min-width;
 	@include pie-clearfix;
 	overflow: visible;
-	text-align: left;
+	@include text-align(left);
 	.wrapper-shadow{
 		width:100%;
 		position:relative;
-		float:left;
+		@include float(left);
 		&:before{
 			content:"";
 			// needs latest Compass, add '@import "compass"' to your scss
 			@include filter-gradient(#330000, #000000, horizontal); // IE6-9
-			@include background-image(linear-gradient(left,  rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0) 100%));
+			@if $rtl { 
+				@include background-image(linear-gradient(right,  rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0) 100%));
+			}
+  			@else    { 
+  				@include background-image(linear-gradient(left,  rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0) 100%));
+  			}			
 			width: 8px;
-			border-left: 1px solid rgba(0, 0, 0, 0.4);
+			@include border-left(1px solid rgba(0, 0, 0, 0.4));
 			height: 100%;
 			position: absolute;
-			right: -9px;
+		 	@include right(-9px);
 			top:0;
 			opacity: 0.4;
 		}
@@ -45,11 +50,16 @@ body{
 			content:"";
 			// needs latest Compass, add '@import "compass"' to your scss
 			@include filter-gradient(#000000, #300000, horizontal); // IE6-9
-			@include background-image(linear-gradient(left,  rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0) 30%,rgba(0, 0, 0, 0.1) 70%,rgba(0,0,0,0.2) 100%));
+			@if $rtl { 
+				@include background-image(linear-gradient(right,  rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0) 30%,rgba(0, 0, 0, 0.1) 70%,rgba(0,0,0,0.2) 100%));
+			}
+  			@else    { 
+  				@include background-image(linear-gradient(right,  rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0) 30%,rgba(0, 0, 0, 0.1) 70%,rgba(0,0,0,0.2) 100%));
+  			}
 			position: absolute;
 			width: 8px;
-			border-right: 1px solid rgba(0, 0, 0, 0.4);
-			left: -9px;
+			@include border-right(1px solid rgba(0, 0, 0, 0.4));
+		 	@include left(-9px);
 			top:0;
 			height: 100%;
 			opacity: 0.4;
@@ -73,24 +83,24 @@ label.overlabel{
 	background:$sidebar-bg;
 	@include pie-clearfix;
 	position:relative;
+	z-index:1; 
+	margin:0;	
+	@include padding-right($sidebar-width);   
 	.leftcontent{
-		float:left;
+		@include float(left);
 		width:100%;
 		background:$content-color;
-		border-right:1px solid $sidebar-border;
+		@include border-right(1px solid $sidebar-border);
 		padding-bottom:$common-padding;
 		@include box-sizing(border-box);
 
 	}
-	z-index:1;
-	margin:0;
-	padding-right:$sidebar-width;
-	.sidebar{
+	.sidebar{ 
 		background: transparent;
 		width:$sidebar-width;
-		float:right;
-		margin-right:-($sidebar-width);
-	}
+		@include float(right);
+		@include margin-right(-($sidebar-width));
+	}  
 }
 .index-page-content{
 	@include min-height(1100px);
@@ -120,7 +130,7 @@ label.overlabel{
 // 											Layout without sidebar styles
 // --------------------------------------------------------------------------------------------
 .single #inner{
-	padding-right:0px;
+	@include padding-right(0px);	
 	.pagearea{
 		border:0;
 	}
@@ -128,8 +138,8 @@ label.overlabel{
 		display:none;
 	}
 	.leftcontent{
-		margin-right:0px;
-		border-right:0px;
+		@include margin-right(0px);
+		@include border-right(0px);
 	}
 }
 // --------------------------------------------------------------------------------------------
@@ -146,14 +156,14 @@ label.overlabel{
 	border: 1px solid #999999;
     -webkit-background-clip: padding-box; /* for Safari */
     background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
-	float:right;
+	@include float(right);
 	margin: 10px ($common-padding);
-	margin-left:0;
+	@include margin-left(0);
 	height:35px;
 	overflow:hidden;
 	@include border-radius(3px);
 	a{
-		float:left;
+		@include float(left);
 		background-color:#000;
 		background-color:rgba(#000, 0.2);
 		img{
@@ -166,7 +176,7 @@ label.overlabel{
 		}
 	}
 	div.preview_pic{
-		float: right;
+		@include float(right);
 		margin: 0;
 		img {
 			@include border-radius(0);
@@ -179,24 +189,24 @@ label.overlabel{
 .brand{
 	@include pie-clearfix;
 	position:absolute;
-	left:10px;
+ 	@include left(10px);       
 	top:5px;
 	text-decoration:none;
 	a{ text-decoration:none; }
-	.logo, .logo_text{ float:left; position:relative; z-index:5; }
+	.logo, .logo_text{ @include float(left); position:relative; z-index:5; }
 	.logo-image{ height: 50px; }
 	.logo_text{
      	color:#ffffff;
 		font-size: 20px;
-     	padding: 0 0 0 15px;
+     	@include padding(0 0 0 15px);
      	margin-top: 12px;
      	font-weight: 200;
    }
 }
 
 .header_links{
-	float:right;
-	text-align:right;
+	@include float(right);
+	@include text-align(right);
 	height:46px;
 	margin:2px 12px;
 	a{
@@ -210,7 +220,7 @@ label.overlabel{
 		text-decoration:none;
 	}
 	a.nav-trigger{
-	 	padding:0px 12px 0px 6px;
+	 	@include padding(0px 12px 0px 6px);
 	 	font-weight:bold;
 	}
 	a.nav-trigger:before{
@@ -218,15 +228,15 @@ label.overlabel{
 		position:absolute;
 		border:4px solid transparent;
 		border-top-color:#fff;
-		width:0;
-		top:9px;
-		right:9px;
+		width:0;        
+		top:9px; 
+	 	@include right(9px);
 	}
 }
 .profile_info{
 	visibility:hidden;
-	right:0;
-	margin-top:45px;
+ 	@include right(0);     
+	margin-top:45px;     
 	position:absolute;
   	font-size:13px;
   	background:#ffffff;
@@ -241,9 +251,9 @@ label.overlabel{
 		position:absolute;
 		border:6px solid transparent;
 		border-bottom-color:#eee;
-		width:1px;
-		top:-12px;
-		right:32px;
+		width:1px;        
+		top:-12px; 
+	 	@include right(32px);
 	}
 	&:before{
 		content:"";
@@ -252,7 +262,7 @@ label.overlabel{
 		border-bottom-color: #AAA;
 		width: 1px;
 		top: -16px;
-		right: 30px;
+	 	@include right(30px);
 	}
 	.seperator{
 		border-color:#e0e0e0;
@@ -269,9 +279,9 @@ label.overlabel{
 			height: 0;
 			border-top: 5px solid transparent;
 			border-bottom: 5px solid transparent;
-			border-left: 5px solid #909090;
-			margin-right:10px;
-			margin-left:-5px;
+			@include border-left(5px solid #909090);
+			@include margin-right(10px);
+			@include margin-left(-5px);
 	}
 	.user{
 		margin:0;
@@ -289,7 +299,7 @@ label.overlabel{
 	h5{ padding-bottom:6px; }
 	a.link{
 		display:block;
-		padding:10px 12px 10px 24px;
+		@include padding(10px 12px 10px 24px);
 		color:$default_txt_color;
 		text-decoration:none;
 	}
@@ -297,8 +307,8 @@ label.overlabel{
 		background: #999;
 		color:#ffffff;
 		.header-arrow-right {
-			border-left-color:#fff;
-		}
+			@include border-left-color(#fff);
+		}   
 	}
 	.info{
 		padding:4px 24px;
@@ -320,7 +330,7 @@ label.overlabel{
 		border-color:rgba(#000, 0.1);
 		background-image:none;
 		background-color: transparent;
-		padding-left:5px;
+		@include padding-left(5px);
 	}
 	.header-agent-select{
 	 width:235px;
@@ -350,16 +360,16 @@ label.overlabel{
 ul.header-tabs{
 	list-style:none;
 	li{
-		float:left;
-		position:relative;
-		padding-top:1px;
+		@include float(left); 
+		position:relative;	
+		padding-top:1px; 
 		a{
 			position:relative;
 			z-index:5;
 			text-decoration:none;
 			color:#ffffff;
-			text-align:center;
-			display:block;
+			@include text-align(center);
+			display:block;                          
 			padding: 8px 20px;
 			font-size: $default-font-size;
 			font-weight: 500;
@@ -375,7 +385,7 @@ ul.header-tabs{
 	}
 }
 a.new_ticket, .nav_search{
-	float:left;
+	@include float(left);
 }
 a.new_ticket{
 	@include text-shadow(rgba(0, 0, 0, 0.1) 1px 1px 1px);
@@ -384,14 +394,14 @@ a.new_ticket{
 	font-weight: 500;
 	text-decoration:none;
 	color:#fff;
-	position:relative;
-	margin-right:80px;
-	span{
+	position:relative; 
+	@include margin-right(80px);
+	span{ 
 		background:none;
 		&:before{
 			content:"+";
-			position:absolute;
-			left:0;
+			position:absolute; 
+		 	@include left(0); 
 			font-size:22px;
 			top:6px;
 			font-weight:bold;
@@ -405,23 +415,23 @@ a.new_ticket{
 .nav_search{
 	height:33px;
 	position:relative;
-	margin:0 0 0 6px;
-	div.search_bar{
+	@include margin(0 0 0 6px);
+	div.search_bar{ 
 		height:100%;
 		width:90px;
 		background:none;
 		padding:0;
 		position:absolute;
 		top:0;
-		right:0;
+	 	@include right(0);
 		@include transition(width ease-out 200ms, background ease-in 200ms);
 		.nav-search-icon, .search-icon-inactive{
 		   position:absolute;
-		   right:0;
+		   @include right(0);
 		   width:15px;
 		   height:15px;
 		   top:9px;
-		   left:3px;
+		   @include left(3px);
 		}
 		.searchIcon{display: none}
 		label.overlabel{
@@ -429,7 +439,7 @@ a.new_ticket{
 		 	font-size: $default-font-size;
 		 	color:#fff;
 		 	padding:9px;
-		 	padding-left:25px;
+		 	@include padding-left(25px);
 		 	font-weight:500;
 		}
 		input{
@@ -440,9 +450,9 @@ a.new_ticket{
 			width:100%;
 			padding:1px 10px;
 			height:100%;
-			padding-left:25px;
+			@include padding-left(25px);
 			background:none;
-			float:right;
+			@include float(right);	
 			@include box-sizing(border-box);
 		}
 		input:focus{ @include box-shadow(#ffffff 0 0 0); }
@@ -460,15 +470,15 @@ a.new_ticket{
 			background:#fff;
 			font-weight:500;
 			.search-icon-inactive{ display: none }
-			.searchIcon{display: block; left:8px;}
+			.searchIcon{display: block; @include left(8px);}
 	   	}
 	}
 }
 
 .nav_right{
 	position:relative;
-	z-index:10;
-	float:right;
+	z-index:10; 
+	@include float(right); 
 }
 // --------------------------------------------------------------------------------------------
 // 												Footer styles
@@ -478,8 +488,8 @@ a.new_ticket{
 	@include box-shadow(0px -5px 5px 0px rgba(0, 0, 0, 0.5), 0px 70px+$footer-padding 5px 0px rgba(0, 0, 0, 0.5));
 }*/
 .footer-content{
-	padding:20px 0;
-	text-align: center;
+	padding:20px 0; 
+	@include text-align(center);
 	padding-bottom: 80px;
 	background-color:$footer-bg;
 	border-top: 1px solid $footer-border;
@@ -496,7 +506,7 @@ a.new_ticket{
 	    border-radius: 50%;
 	    width: 21px;
 		height: 21px;
-		margin: 7px 7px 8px 7px;
+		@include margin(7px 7px 8px 7px);
 	    background: #FF4F72;
 	    background-repeat: no-repeat;
 	    @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
@@ -512,7 +522,7 @@ a.new_ticket{
 		    height: 50%;
 		    position: absolute;
 		    top: 25%;
-		    left: 25%;
+		    @include left(25%);
 		    border: .12em solid rgba(255,255,255,0.3);
 		    border-radius: inherit;
 		}

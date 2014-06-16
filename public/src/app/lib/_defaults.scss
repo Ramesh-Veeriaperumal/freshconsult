@@ -26,10 +26,10 @@ h3.sub_title{ font-size:1.1em; }
 h6{ font-size:13px; text-transform:uppercase; line-height:24px; font-weight:bold; }
 
 .sub-title{ font-size:18px; }
-.floatl{ @include float-left; }
-.floatr{ @include float-right; }
-.alignright{text-align:right;}
-.aligncenter{text-align:center;}
+.floatl{ @include float(left); }
+.floatr{ @include float(right); }
+.alignright{@include text-align(right);}
+.aligncenter{@include text-align(center);}
 .info_data, .info-data{
 	color:#888888;
 	font-size:12px;
@@ -66,7 +66,7 @@ textarea.auto-height{
 }
 
 .center{
-   text-align:center;
+   @include text-align(center);
 }
 
 label.error, div.error{

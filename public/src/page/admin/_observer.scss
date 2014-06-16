@@ -17,9 +17,9 @@
 		padding:10px;
 		margin-top:5px;
 
-		> *{ margin-left: 5px; }
+		> *{ @include margin-left(5px); }
 
-		.choicelist input[type=radio]{margin-left: 1%;}
+		.choicelist input[type=radio]{@include margin-left(1%);}
 		.performer_data_members_container{
 			margin-top: 10px;
 			.select2{
@@ -30,22 +30,22 @@
 	}
 
 	.select2-container a{
-		margin-left: 0;
-		margin-right: 0;
-		span{ color: #444; padding-right: 12px;} /* Hack for setting the placeholder color as normal one 
+		@include margin-left(0);
+		@include margin-right(0);
+		span{ color: #444; @include padding-right(12px);} /* Hack for setting the placeholder color as normal one 
 														since  its considering option with value null as placeholders*/
 	}
 
 	
 	#filterDOM, #actionDOM{
 		.select2-container{width:150px;}
-		.dependent .select2-container{ margin-left: 3px; }
+		.dependent .select2-container{ @include margin-left(3px); }
 	}
 
 	>li{
 		width:100%;
 		margin-bottom:0px;
-		padding-left:0;
+		@include padding-left(0);
 		h3 label{	margin-bottom: 10px;	}
 	}
 
@@ -55,13 +55,13 @@
 
 	.conditionset fieldset {
 
-		padding-left: 0;
+		@include padding-left(0);
 
-		&.addchoice img{left:9px;}
+		&.addchoice img{@include left(9px);}
 
 		.controls {
-			margin-left: 25px;
-      float: none;
+			@include margin-left(25px);
+      @include float(none);
       display: inline-block;
       width: 93%;
 
@@ -74,23 +74,23 @@
 					margin:2px 4px;
 				}
 				.select2-container{
-					margin-left: 3px;
+					@include margin-left(3px);
 		    	width:150px;
 		    }
 		    	.select2-container-multi{
 		    		.select2-choices .select2-search-choice{
-		    			float: left;
+		    			@include float(left);
 		    		}
 		    		.select2-search-choice-close{
-						float: left;
-						margin: 0 0 0 8px;	
+						@include float(left);
+						@include margin(0 0 0 8px);	
 					}
 		    	}
 			}
 
       .nested_field{
       	min-width: 400px;
-      	.select2-container{margin-right:0px;}
+      	.select2-container{@include margin-right(0px);}
       }
 
 			.event_nested_field{
@@ -99,19 +99,19 @@
 
 				>div{
 					&:first-child{
-						padding-left:0;
+						@include padding-left(0);
 						border:0;
 						width:150px;
 					}
-					padding-left:5px;
-					margin-left:10px;
-					border-left:1px dotted #ccc;
+					@include padding-left(5px);
+					@include margin-left(10px);
+					@include border-left(1px dotted #ccc);
 	      	.select2-container{width:134px;}
 	      }
 			}
 
 			.fromto_text{
-			 	margin-left: 8px;
+			 	@include margin-left(8px);
 			 	padding-top: 4px;
 			 	width: 35px;
 			}

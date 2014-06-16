@@ -34,7 +34,7 @@
 .free-plan{
 	h4{
 		display: inline-block;
-		padding-right: 20px;
+		@include padding-right(20px);
 	}
 	label{ display: inline-block; }
 	.free-plan-payment{
@@ -63,14 +63,14 @@
 		font-size: 16px;
 		width: 100%;
 		b, .classic-account{
-			margin-left: 20px;
+			@include margin-left(20px);
 		}
 	}
 	.big-text{
-		margin-left: 20px;
+		@include margin-left(20px);
 	}
 	.subscribed-plan-details, .billing-details{
-		float: left;
+		@include float(left);
 		width: 50%;
 		margin-top: 5px; 
 	}
@@ -81,14 +81,14 @@
 		}
 		td > label{
 			display: inline-block;
-			padding-right: 7px;
+			@include padding-right(7px);
 		}
 	}
 	.billing-details{
 		.sub-end{ color: red; }
 	}
 	#billing-template{ 
-		float: left;
+		@include float(left);
 	}
 	.agents-split{
 		background: rgba(238, 238, 238, 0.44) !important;
@@ -108,7 +108,7 @@
 		margin: 5px auto;
 		display: block;
 		margin-top: -17px;
-		margin-left: 34px;
+		@include margin-left(34px);
 		border-bottom-color: #EACB54;
 		border-bottom-width: 7px;
 	}
@@ -128,8 +128,8 @@
 			}
 		}
 		dt{
+			@include text-align(center);
 			width: 28%;
-			text-align: center;
 			font-weight: bold;
 		}
 		.agents-split{
@@ -138,7 +138,7 @@
 			margin: 0 auto;
 			margin-top: 14px;
 			padding-bottom: 8px;
-			text-align: center;
+			@include text-align(center);
 			background: rgba(245, 245, 178, 0.44);
 			@include box-shadow(0 0 10px 0 #EEE);
 			#cost-per-agent{ 
@@ -153,7 +153,7 @@
 			input[type=submit]{
 				margin: 10px;
 			}
-			dl{ text-align: center; }
+			dl{ @include text-align(center); }
 		}
 	}
 }
@@ -182,7 +182,7 @@
 }
 
 .trial-info{
-	text-align: center;
+	@include text-align(center);
 	.trial-message{
 		margin-top: 25px;
 		font-size: 20px;
@@ -193,13 +193,13 @@
 		line-height: 1.5;
 	}
 	.plan-name{
-		margin-left: 15px;
+		@include margin-left(15px);
 	}
 	.caption{
 		font-size: 16px;
 		width: 100%;
-		float: none !important;
-		text-align: left;
+		@include float(none !important);
+		@include text-align(left);
 	}
 }
 
@@ -219,7 +219,7 @@
 
 	.downgrade-actions{
 		margin: 10px;
-		text-align: right;
+		@include text-align(right);
 		#confirm-cancel{
 			font-weight: normal;
 		}
@@ -235,7 +235,7 @@
 		display: block;
 		border-top: 1px solid #EFEFEF;
 		padding-top: 8px;
-		text-align: center;
+		@include text-align(center);
 		margin-top: 8px;
 		div{ padding: 5px;}
 		h2{
@@ -257,7 +257,7 @@
 	}
 	.currency-note{
 		span{
-			margin-left: 65px;
+			@include margin-left(65px);
 		}
 	}
 }
@@ -269,12 +269,12 @@
 	table{ width:100%; }
 	td{ 
 		vertical-align:top;
-		border-right:1px solid #dadada;
+		@include border-right(1px solid #dadada);
 		padding:8px 13px;
 		overflow: hidden;
 		position: relative;
 		&:last-child{
-			border-right:0;
+			@include border-right(0);
 		}
 	}
 		.pricelist:hover{
@@ -310,7 +310,7 @@
 	}
 	.discount-info-text{
 		color:#990000;		
-		padding:0 0 3px 0;
+		@include padding(0 0 3px 0);
 		font-size:13px; 
 	}
 	.info-data{
@@ -319,7 +319,7 @@
 	.active{
 		border:0px;
 		background-color:#FFFFDD;
-		top:0; right:0;
+		top:0; @include right(0);
 		@include box-shadow(0 0 14px 4px #DADADA);
 		overflow: visible;
 		&:hover{
@@ -332,7 +332,7 @@
 			height: 6px;
 			position:absolute;
 			top: -7px;
-			left:0;
+		 	@include left(0);
 			background: #4D3636;
 			width: 100%;
 		}

@@ -61,7 +61,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	margin-top: -20px;
 	position: relative;
 	top: 12px;
-	margin-right: 5px;
+	@include margin-right(5px);
 	
 	@include freshfone-sprite(call-agent);
 }

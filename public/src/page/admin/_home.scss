@@ -20,9 +20,9 @@ $hover_boxshadow_final: 0 0 0 5px;
 $animation_timing: .2s;
 
 .admin {
-	padding:0 0 5px 0;
+	@include padding(0 0 5px 0);
 	&.blur {
-		opacity : .2;
+		@include opacity (.2);
 	}
 	h3{
 		&.title{
@@ -38,20 +38,20 @@ $animation_timing: .2s;
 		}
 	}
 	ul{
-		margin-left:-32px;
+		@include margin-left(-32px);
 		&.admin_icons{
 			@include clearfix;
 			list-style:none;
 			li{
-				float:left;
+				@include float(left);
 				padding: 0 18px;
 				position:relative;
 				@include min-height(130px);
 				a{
 					position:relative;
 					display:block;
-					padding:8px 0 2px 0;
-					text-align:center; 
+					@include padding(8px 0 2px 0);
+					@include text-align(center); 
 					text-decoration:none;
 					color:#666;
 					width:100px;
@@ -228,7 +228,7 @@ input[type=text].as-input {
 	width:250px;
 	position: absolute;
 	z-index: 3;
-	right: $common-padding;
+	@include right($common-padding);
 	background: transparent;
 	padding: 5px;
 	&::-ms-clear {
@@ -259,7 +259,7 @@ input[type=text].as-hint {
 .as-suggestions-container {
 	position: absolute;
 	top: 47px;
-	right: 282px;
+	@include right(282px);
 }
 // .as-more {
 // 	-webkit-animation-duration: 1s;
@@ -301,7 +301,7 @@ input[type=text].as-hint {
 .is_stuck.admin-header {
 	background-color: #fff;
 	padding: $common-padding $common-padding 0;
-	margin-left: -($common-padding);
+	@include margin-left(-($common-padding));
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }

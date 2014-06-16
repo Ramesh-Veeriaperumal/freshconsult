@@ -39,7 +39,7 @@ $bdr-color:#e1e1e1;
 		color:$txt-color;
 	}
 	.intro a{
-		float:right;
+		@include float(right);
 	}
 	.intro i{
 		margin-top: 4px;
@@ -65,7 +65,7 @@ $bdr-color:#e1e1e1;
 			span{
 				display: inline-block;
 				vertical-align: middle;
-				padding-left: 5px;
+				@include padding-left(5px);
 				text-overflow:ellipsis;
 				width: 70%;
 				overflow: hidden;
@@ -73,7 +73,7 @@ $bdr-color:#e1e1e1;
 			img{
 				width: 24px;
 				height: 24px;
-				float: left;
+				@include float(left);
 				@include border-radius(4px);
 			}
 			&.active, &.active:hover, &:hover{
@@ -96,7 +96,7 @@ $bdr-color:#e1e1e1;
 				color: #aaa;
 				position: absolute;
 				top:50%;
-				right:7px;
+				@include right(7px);
 				margin-top: -10px;
 				font-size: 18px;
 			}
@@ -113,9 +113,9 @@ $bdr-color:#e1e1e1;
 	.tw-header{
 		background:$head-bg;
 		border-bottom: solid 1px #d5d5d5;
-		border-top-left-radius: 3px;
+		@include border-top-left-radius(3px);
 		form{
-			padding: 7px 10px 7px 10px;
+			@include padding(7px 10px 7px 10px);
 			position: relative;
 			display: block;
 		}
@@ -139,7 +139,6 @@ $bdr-color:#e1e1e1;
 			}
 			.ignore-inputs{
 				margin-bottom: 0;
-				//padding: 7px 10px 8px 10px;
 				width: 100%;
 			}
 			.frm-ctrl{
@@ -154,9 +153,9 @@ $bdr-color:#e1e1e1;
 	}
 	.searchico{
 		position: absolute;
-		right: 10%;
+		@include right(10%);
 		top: 12px;
-		opacity: 0.3;
+		@include opacity(0.3);
 		width: 16px;
 		padding: 0;
 		border: none;
@@ -167,12 +166,12 @@ $bdr-color:#e1e1e1;
 		}
 	}
 	.select2-container-multi .select2-choices{
-		padding-left: 30px;
+		@include padding-left(30px);
 	}
 	.advsearch-box{
 		overflow: auto;
 		.select2 .select2-choices{
-			padding-left: 0;
+			@include padding-left(0);
 		}
 	}
 	.settingsico{
@@ -183,7 +182,7 @@ $bdr-color:#e1e1e1;
 		letter-spacing: 1px;
 		background: transparent;
 		border: none;
-		box-shadow: none;
+		@include box-shadow(none);
 		&:focus, &:active{
 			outline:none;
 			background: transparent;
@@ -192,21 +191,21 @@ $bdr-color:#e1e1e1;
 	.tw-inside{
 		position: absolute;
 		top: 7px;
-		margin-left: 56px;
+		@include margin-left(56px);
 		height: 11px;
 	}
 	.center-pane{
 		width:62%;
-		float:left;
-		border-right: solid 1px #e1e1e1;
+		@include float(left);
+		@include border-right(solid 1px #e1e1e1);
 		min-height: 540px;
 	}
 	.tw-explorer{
 		width:37.87%;
-		float:left;
+		@include float(left);
 		.fs-notify{
 			padding: 13px;
-			text-align: left;
+			@include text-align(left);
 		}
 		.bb-box{
 			height:100%;
@@ -214,7 +213,7 @@ $bdr-color:#e1e1e1;
 			text-align: center;
 			&.head{
 				padding: 7px 15px;
-				text-align: left;
+				@include text-align(left);
 			}
 			p{
 				line-height:20px;
@@ -227,7 +226,7 @@ $bdr-color:#e1e1e1;
 			background: #fafafa;
 			padding: 8px 12px;
 			border-bottom: solid 1px #eee;
-			border-top-right-radius: 4px;
+			@include border-top-right-radius(4px);
 			&.white{
 				background: #fff;
 				border-bottom:none;
@@ -250,7 +249,7 @@ $bdr-color:#e1e1e1;
 			.ph{
 				font-size:1.4em;
 				padding-top: 2px;
-				float: left;
+				@include float(left);
 				text-align:center;
 				font-weight:300;
 				width: 100%;
@@ -259,14 +258,14 @@ $bdr-color:#e1e1e1;
 				&#backtoconv-btn{
 					margin-top:2px;
 					color: #333;
-					left: 10px;
+					@include left(10px);
 				}
 				cursor: pointer;
 				position:absolute;
 			}
 			.conv-closebtn{
 				position: absolute;
-				right: 10px;
+				@include right(10px);
 				top: 7px;
 			}
 			.conv-title{
@@ -319,7 +318,7 @@ $bdr-color:#e1e1e1;
 	.info-highlight{
 		margin:0;
 		border-radius:0;
-		border-right: 0;
+		@include border-right(0);
 		&.no-stream{
 			text-align: center;
 			padding-top: 100px;
@@ -329,8 +328,8 @@ $bdr-color:#e1e1e1;
 		}
 	}
 	.scl-search-here{
-		float: right;
-		padding-right: 60px;
+		@include float(right);
+		@include padding-right(60px);
 		img{
 			vertical-align: text-bottom;
 			margin-top: -5px;
@@ -406,10 +405,10 @@ $bdr-color:#e1e1e1;
 			.more-links{
 				color:#333;
 				font-size:1em;
-				padding-left:10px;
+				@include padding-left(10px);
 			}
 			.c-tw-link{
-				padding-right: 3px;
+				@include padding-right(3px);
 			}
 		}
 	}
@@ -431,7 +430,7 @@ $bdr-color:#e1e1e1;
 }
 
 .ticket-no{
-	padding-left:10px;
+	@include padding-left(10px);
 }
 .o-converse{
 	color: #333333;
@@ -500,12 +499,12 @@ $bdr-color:#e1e1e1;
 					width:1px;
 					display: inline-block;
 					position: relative;
-					left: -1px;
+					@include left(-1px);
 				}
 			}
 		}
 		.cursor{
-			float: left;
+			@include float(left);
 			position:absolute;
 			height: 100%;
 			&.active{
@@ -520,7 +519,7 @@ $bdr-color:#e1e1e1;
 			overflow: auto;
 		}
 		.preview-pic{
-			float: left;
+			@include float(left);
 			margin: 0.5% 1%;
 			padding: 0;
 			position: relative;
@@ -536,8 +535,8 @@ $bdr-color:#e1e1e1;
 			margin-bottom:2px;
 		}
 		.tweet-box{
-			margin-left: 0;
-			padding-right: 14px;
+			@include margin-left(0);
+			@include padding-right(14px);
 			.twh{
 				margin-bottom:2px;
 				strong{
@@ -575,21 +574,21 @@ $bdr-color:#e1e1e1;
 		padding-bottom: 0;
 		height: 18px;
 		.tw-link{
-			padding-right: 3px;
+			@include padding-right(3px);
 		}
 	}
 }
 .convo-up{
 	.tw-header{
-		opacity:0.6;
+		@include opacity(0.6);
 	}
 	.twt-list-item{
-		opacity:0.6;
+		@include opacity(0.6);
 		&:hover{
-			opacity:1;
+			@include opacity(1);
 		}
 		&.active{
-			opacity:1;
+			@include opacity(1);
 		}
 	}
 }
@@ -612,37 +611,37 @@ $bdr-color:#e1e1e1;
 	z-index: 2;
 	position: absolute;
 	top:20px;
-	left: 60% !important;
+	@include left(60% !important);
 	height: 100%;
 	display: none;
 	background:#f9f9f9;
 	border: 1px solid #ccc;
 	border-bottom:none;
-	border-left-color:#ccc;
-	border-right:0;
+	@include border-left-color(#ccc);
+	@include border-right(0);
 }
 .sharer{
-	float: right;
+	@include float(right);
 	li{
-		margin-left: 3px;
-		float: left;
+		@include margin-left(3px);
+		@include float(left);
 		display: inline-block;
 		position: relative;
 		a{
-			margin-right: 0 !important;
 			margin-top: 0;
-			opacity: .5;
+			@include margin-right(0 !important);
+			@include opacity(0.5);
 			padding: 0 5px;
 			color: #333;
 			display: inline-block;
 			&.tw-tkt-link{
-				opacity: .5;
+				@include opacity(.5);
 				padding: 0;
-				margin-left: 12px;
+				@include margin-left(12px);
 			}
 			&.convert_as_ticket{
-				margin-left: 2px;
-				padding-right: 0;
+				@include margin-left(2px);
+				@include padding-right(0);
 			}
 			&.sloading.loading-align{
 				margin-top: 0px;
@@ -661,7 +660,7 @@ $bdr-color:#e1e1e1;
 		opacity:1;
 		li{
 			a{
-				opacity: .5;
+				@include opacity(0.5);
 				&:hover{
 					opacity:1;
 				}
@@ -674,7 +673,7 @@ $bdr-color:#e1e1e1;
 	margin: 0;
 	.icon-lst{
 		display: inline-block;
-		margin-right: 0;
+		@include margin-right(0);
 		width: inherit;
 		height: 18px;
 		line-height: 18px;
@@ -689,14 +688,14 @@ $bdr-color:#e1e1e1;
 			&.tw-tkt-link{
 				padding: 0;
 				opacity: .5;
-				margin-left:12px; 
+				@include margin-left(12px); 
 			}
 		}
 		.convert_as_ticket{
 			width: 17px;
 			display: inline-block;
 			i::before{
-				float:left;
+				@include float(left);
 			}
 			.spinner{
 				top:8px;
@@ -731,7 +730,7 @@ $bdr-color:#e1e1e1;
 		padding-bottom: 6px;
 	}
 	.mrt{
-    		margin-right: 10px !important
+    	@include margin-right:(10px !important);
     }
 	.twt-area{
 		margin: 0;
@@ -747,9 +746,9 @@ $bdr-color:#e1e1e1;
 	}
 	.twt-profile{
 		position: relative;
-	    border-right: 1px solid #ddd;
+	    @include border-right(1px solid #ddd);
     	background: #f9f9f9;
-    	float: left;
+    	@include float(left);
     	width: 32px;
     	img{
     		display: block;
@@ -782,11 +781,11 @@ $bdr-color:#e1e1e1;
 
 	}
 	.twt-as{
-		float: left;
-	    padding-left: 10px;
+		@include float(left);
+	    @include padding-left(10px);
 	    vertical-align: middle;
 	    i{
-	    	margin-left: 5px;
+	    	@include margin-left(5px);
 	    }
 	    &:hover{
 	    	opacity: 1;
@@ -828,10 +827,10 @@ $bdr-color:#e1e1e1;
 	}
 	.tweet-counter{
 		line-height: 32px;
-		margin-right: 10px;
+		@include margin-right(10px);
 		position: static;
 		top: inherit;
-		right: inherit;
+		@include right(inherit);
 	}
 }
 .conv-panel{
@@ -851,10 +850,10 @@ $bdr-color:#e1e1e1;
 }
 .tweets-conv{
 	.prof-pic{
-		float: left;
+		@include float(left);
 		margin-top: 3px;
 		width: 8%;
-		margin-left: 14px;
+		@include margin-left(14px);
 		img{
 			width: 100%;
 			border-radius: 4px;
@@ -864,8 +863,8 @@ $bdr-color:#e1e1e1;
 		}
 	}
 	.tweet-box{
-		margin-right: 0;
-		padding-right: 0;
+		@include margin-right(0);
+		@include padding-right(0);
 		width: 89.8%;
 	}
 }
@@ -889,17 +888,17 @@ $bdr-color:#e1e1e1;
 	width: 24px;
 	margin: 0 auto;
 	bottom: 0;
-	right: -10px;
+	@include right(-10px);
 	text-align: center;
 	display: inline-block;
     &:after{
     	content: "";
 		position: absolute;
 		display: inline-block;
-		border-right: 8px solid #e65210;
+		@include border-right(8px solid #e65210);
 		border-bottom: 7px solid transparent;
 		bottom: -4px;
-		right: 0;
+		@include right(0);
     }
 }
 #previewFeeds{
@@ -922,7 +921,7 @@ a.tw-tkt-link{
 		background: #fff;
 		border-radius: 30px;
 		bottom: 0;
-		right: -2px;
+		@include right(-2px);
 		font-size: 8px;
 		width: 10px;
 		height: 10px;
@@ -1063,17 +1062,17 @@ slideRight
   }
 
   20% {
-    padding-right: 0px;
+    @include padding-right(0px);
     -webkit-transform: translateX(0%);
     transform: translateX(0%);
   }
 
   60% {
-    padding-right: 0px;
+    @include padding-right(0px);
   }
 
   100% {
-    padding-right: 0px;
+    @include padding-right(0px);
   }
 }
 
@@ -1084,17 +1083,17 @@ slideRight
   }
 
   20% {
-    padding-right: 0px;
+    @include padding-right(0px);
     -o-transform: translateX(0%);
     transform: translateX(0%);
   }
 
   60% {
-    padding-right: 0px;
+    @include padding-right(0px);
   }
 
   100% {
-    padding-right: 0px;
+    @include padding-right(0px);
   }
 }
 
@@ -1107,7 +1106,7 @@ slideRight
   }
 
   20% {
-    padding-right: 0px;
+    @include padding-right(0px);
     -webkit-transform: translateX(0%);
     -ms-transform: translateX(0%);
     -o-transform: translateX(0%);
@@ -1115,11 +1114,11 @@ slideRight
   }
 
   60% {
-    padding-right: 20px;
+    @include padding-right(20px);
   }
 
   100% {
-    padding-right: 0px;
+    @include padding-right(0px);
   }
 }
 
@@ -1165,7 +1164,7 @@ slideRight
 
 .twt-tabs input#t-1:checked~.tc .tab-1,.twt-tabs input#t-2:checked~.tc .tab-2{
 	position:relative;
-	float:left;
+	@include float(left);
 	z-index:10;
 	opacity:1;
 	display:block;

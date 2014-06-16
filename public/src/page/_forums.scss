@@ -29,7 +29,7 @@
 	border:1px solid #efefef;
 	td{
 		border:1px solid #f0f0f0;
-		text-align:left;
+		@include text-align(left);
 	}
 	td.c1{
 		background:#efefef;
@@ -44,7 +44,7 @@
 	a{ text-decoration:none; }
 	a.title{ @include link-colors(#545454, #527EAA, #545454, #545454); }
 	.item_actions{
-		float:right;
+		@include float(right);
 		font-size:10px;
 		background-color:#F3F1EC;
 		@include border-radius(6px);
@@ -65,13 +65,13 @@
 		margin:0;
 		padding:5px $common-padding;
 		li{
-			float:left;
+			@include float(left);
 			width:44%;
 			padding:0;
-			margin:0 3% 0 0;
+			@include margin(0 3% 0 0);
 			h4.forum_title{
-				margin:8px 0 0 0;
-				padding:6px 0 8px 33px;
+				@include margin(8px 0 0 0);
+				@include padding(6px 0 8px 33px); 
 				font-size:16px;
 				a{
 					font-weight:normal;
@@ -80,12 +80,12 @@
 			}
 			span.icon{
 	            position:absolute;
-	            left:-3px; top:-1px;
+	            @include left(-3px); top:-1px;
 	            width:32px; height:32px;
 			}
 			.topic-list{
 				padding:6px 0 12px;
-				margin-left:$common-padding+10px;
+				@include margin-left($common-padding + 10px);
 				margin-bottom:8px;
 				border-top:1px solid #efefef;
 				a.topic{
@@ -97,10 +97,10 @@
 			}
 		}
 		li.odd{
-			clear:left;
+			@include clear(left);
 		}
 		li.even{
-			margin-right:0;
+			@include margin-right(0);
 			width:46%;
 		}
 	}
@@ -117,7 +117,7 @@
 		li{
 			.topic_icon{
 			 	@include float-left;
-			 	margin-right:10px;
+			 	@include margin-right(10px);
 			}
 			img{
 				width: 36px;
@@ -146,7 +146,7 @@
 		li{
 			@include clearfix;
 			border-bottom:1px dotted #eaeaea;
-			padding:14px 25px 10px 70px;
+			@include padding(14px 25px 10px 70px);
 			position:relative;
 			a{
 				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
@@ -157,27 +157,27 @@
 				font-weight:500;
 			}
 			.info_data{
-				padding:6px 0 4px 0;
+				@include padding(6px 0 4px 0);
 				font-size:12px;
 				color:#888888;
 			}
 			.preview_pic{
 				border-color:#d2d2d2;
 				position:absolute;
-				left:20px;
+			 	@include left(20px);
 				top:16px;
 				img{ width:36px; height:36px; padding:0; border:0; }
 			}
 			.bulk-check{
 				position: absolute;
-				left: 20px;
+				@include left(20px);
 				top: 26px;
 			}
 		}
 		li.with-checkbox{
-			padding-left: 90px;
+			@include padding-left(90px);
 			.preview_pic{
-				left: 43px;
+				@include left(43px);
 			}
 		}
 		li:hover{
@@ -192,8 +192,8 @@
 }
 .mark_action{
 	a, .stamp{
-		padding:2px 6px;
-		margin:0 0 6px 0;
+		padding:2px 6px; 
+		@include margin(0 0 6px 0);
 		@include border-radius(4px);
 		@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
 		text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
@@ -210,7 +210,7 @@
 	.stamp{
 		margin:0 8px;
 		@include min-width(80px);
-		text-align:center;
+		@include text-align(center);
 	}
 
 	a.hover, a.active{
@@ -275,10 +275,10 @@
 
 }
 .folder_section{
-	float:left;
+	@include float(left);
 	width:200px;
-	padding:10px 10px 10px 20px;
-	margin-left: -20px;
+	@include padding(10px 10px 10px 20px);
+	@include margin-left(-20px);
 	overflow: hidden;
 	h3.lead{
 		border-bottom:1px dotted #DCDCDC;
@@ -289,7 +289,7 @@
 	      @include link-colors($default_txt_color, $default_txt_color, $default_txt_color, $default_txt_color); }
 	}
 	.sortable{
-		margin:0 -10px 0 -20px;
+		@include margin(0 -10px 0 -20px);
 		padding:5px 20px;
 	}
 	.sort-list li{
@@ -297,17 +297,17 @@
 	}
 }
 .artical_section{
-	margin-left:210px;
-	border-left:1px solid darken(#E2E2E2, 5%);
-	@include min-height(450px);
+	@include margin-left(210px);
+	@include border-left(1px solid darken(#E2E2E2, 5%));
+	@include min-height(450px); 
 	padding: $common-padding;
 	margin-top:-$common-padding;
-	margin-right:-$common-padding;
-	text-align: left;
-	.info_data{ margin-top:-10px; padding:0; }
-	.search-grey-box{
-	   margin:-10px (-$common-padding) 12px (-$common-padding);
-	   border-bottom:1px solid #E2E2E2; border-top:0;
+	@include margin-right(-$common-padding);
+	@include text-align(left);
+	.info_data{ margin-top:-10px; padding:0; } 
+	.search-grey-box{ 
+		margin:-10px (-$common-padding) 12px; 
+		border-bottom:1px solid #E2E2E2; border-top:0;
 	}
 	.agent-preview{
 		top: 2px;
@@ -353,7 +353,7 @@
 }
 
 .article-desc{
-	margin-left: 33px;
+	@include margin-left(33px);
 	.article-user{
 		color: #444;
 	}
@@ -382,9 +382,9 @@
 
 
 .list-badge{
-	float:right;
+	@include float(right);
 	position:relative;
-	right:0;
+ 	@include right(0);
 	top:-5px;
 	@include clearfix;
 	.stamp{
@@ -392,7 +392,7 @@
 		margin:0;
 		font-size:12px;
 		font-weight:bold;
-		float:left;
+		@include float(left);
 		@include border-radius(6px);
 	}
 
@@ -402,11 +402,11 @@
 	}
 	.stamp{
 		@include min-width(80px);
-		text-align:center;
+		@include text-align(center); 
 		color:#ffffff;
 		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
 		text-decoration:none;
-		border-right-width:0;
+		@include border-right-width(0);  
 		position:relative;
 	}
 	.stamp.stamp_type_1{
@@ -494,7 +494,7 @@
 	@include pie-clearfix;
 	margin:5px 0;
 	padding:10px 0;
-	float:left;
+	@include float(left);
 	width:49%;
 	h4 a{ color: #333; }
 	li{
@@ -506,25 +506,25 @@
 			width: 20px;
 			height: 20px;
 			margin-top: -3px;
-			margin-right: 3px;
+			@include margin-right(3px);
 		}
 	}
 }
 .solution-list .odd{
-	margin-right:2%;
+	@include margin-right(2%);
 }
 
 .solution_title{
 	position:relative;
 	.topic_icon{
 		position:absolute;
-		left:20px;
+	 	@include left(20px);
 		top:10px;
-		text-align:center;
+		@include text-align(center);
 		.locked{
 			position:absolute;
 			top:13px;
-			left:10px;
+		 	@include left(10px);
 		}
 	}
 }
@@ -538,7 +538,7 @@
 .topic-list-view.spam {
 
 	li {
-		padding-right: 70px;
+		@include padding-right(70px);
 
 		&:hover {
 			background: #FCFCFC;
@@ -558,11 +558,11 @@
 	}
 	.actions {
 		width: 30px;
-		margin-right: -55px;
+		@include margin-right(-55px);
 	}
 
 	.content {
-		border-right: dotted 1px #888;
+		@include border-right(dotted 1px #888);
 	}
 
 	.post-info {
@@ -581,7 +581,7 @@
 	}
 
 	blockquote {
-		border-left: dotted 1px #888;
+		@include border-left(dotted 1px #888);
 	}
 
 }
@@ -599,7 +599,7 @@
 #forum-activity{
 	.activity-details{
 		border-bottom: 1px solid #EEE;
-		padding: 10px 5px 7px 5px;
+		@include padding(10px 5px 7px 5px);
 		display: inline-block;
 	}
     .topic-details{
@@ -622,8 +622,7 @@
 		width: 85px;
 		padding: 2px 0;
 		margin-top: 2px;
-		text-align: center;
-
+		@include text-align(center);
 		&.reply {
 			background-color: #a378a6;
 		}
