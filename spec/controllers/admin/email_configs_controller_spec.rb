@@ -54,7 +54,6 @@ describe Admin::EmailConfigsController do
   it "should create an email config with custom IMAP and SMTP mailboxes" do
     mailbox_username = Faker::Internet.email
     mailbox_password = Faker::Lorem.characters(10)
-    clear_sqs_messages
     post :create, { :email_config => {:name => Faker::Name.name, 
                                       :reply_email => mailbox_username, 
                                       :group_id => "", 
@@ -83,13 +82,6 @@ describe Admin::EmailConfigsController do
     email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)
-    
-    new_message = $sqs_mailbox.receive_message
-    message_body = JSON.parse(new_message.body)
-    message_body["action"].should be_eql("create")
-    message_body["mailbox_attributes"]["user_name"].should be_eql(mailbox_username)
-    new_message.delete
-    
     email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
     delayed_job = Delayed::Job.last
     delayed_job.handler.should include("deliver_activation_instructions")
@@ -172,7 +164,6 @@ describe Admin::EmailConfigsController do
     smtp_mailbox.save
     mailbox_username = Faker::Internet.email
     mailbox_password = Faker::Lorem.characters(10)
-    clear_sqs_messages
 
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
@@ -205,13 +196,6 @@ describe Admin::EmailConfigsController do
     email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)
-    
-    new_message = $sqs_mailbox.receive_message
-    message_body = JSON.parse(new_message.body)
-    message_body["action"].should be_eql("update")
-    message_body["mailbox_attributes"]["user_name"].should be_eql(mailbox_username)
-    new_message.delete
-
     email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
     delayed_job = Delayed::Job.last
     delayed_job.handler.should include("deliver_activation_instructions")
@@ -261,7 +245,6 @@ describe Admin::EmailConfigsController do
     imap_mailbox.save
     smtp_mailbox = Factory.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
-    clear_sqs_messages
 
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
@@ -294,12 +277,6 @@ describe Admin::EmailConfigsController do
     email_config = @account.all_email_configs.find_by_reply_email(email_config.reply_email)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_nil
-
-    new_message = $sqs_mailbox.receive_message
-    message_body = JSON.parse(new_message.body)
-    message_body["action"].should be_eql("delete")
-    new_message.delete
-
     email_config.smtp_mailbox.should be_nil
   end
 
@@ -355,10 +332,4 @@ describe Admin::EmailConfigsController do
     email_config.smtp_mailbox.should be_nil
   end
 
-  def clear_sqs_messages
-    $sqs_mailbox.approximate_number_of_messages.times do
-      old_messages = $sqs_mailbox.receive_message
-      old_messages.delete if old_messages
-    end
-  end
 end

@@ -14,16 +14,16 @@ class ImapMailboxObserver < ActiveRecord::Observer
   end
 
   def after_commit_on_create mailbox
-    $sqs_mailbox.send_message(mailbox.imap_params("create"))
+    $sqs_mailbox.send_message(mailbox.imap_params("create")) unless Rails.env.test?
   end
 
   def after_commit_on_update mailbox
-    $sqs_mailbox.send_message(mailbox.imap_params("update"))
+    $sqs_mailbox.send_message(mailbox.imap_params("update")) unless Rails.env.test?
   end
 
   def after_commit_on_destroy mailbox
     params = { :mailbox_id => mailbox.id, :account_id => mailbox.account_id, :action => "delete" }
-    $sqs_mailbox.send_message(params.to_json)
+    $sqs_mailbox.send_message(params.to_json) unless Rails.env.test?
   end
 
   private
