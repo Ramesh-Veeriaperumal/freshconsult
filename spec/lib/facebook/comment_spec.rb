@@ -10,6 +10,7 @@ describe Facebook::Core::Comment do
     @account.features.send(:facebook_realtime).create
     @account.make_current
     @fb_page = create_test_facebook_page(@account)
+    @fb_page.update_attributes(:import_visitor_posts => true, :import_company_posts => true)
   end
   
   it "should create a note when a commmet arrives and the parent post is converted to a ticket" do

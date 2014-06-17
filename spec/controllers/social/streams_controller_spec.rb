@@ -44,6 +44,52 @@ describe Social::StreamsController do
     log_in(@user)
   end
   
+  it "should fetch all the streams(default/custom) on rendering the page" do
+    get :index
+    response.should render_template("social/streams/index.html.erb")
+    response.template_objects["streams"].should eql(@account.twitter_streams.select { |stream| stream.default_stream? })
+    response.template_objects["custom_streams"].should eql(@account.twitter_streams.select { |stream| stream.custom_stream? })
+  end
+  
+  it "should show all the old tweets on clicking on show maore" do
+    get :show_old, {
+                          :social_streams => 
+                              {
+                                :stream_id => "#{@first_default_stream.id}", 
+                                :first_feed_id => "0,0", 
+                                :last_feed_id => "0,0"
+                              }
+                        }
+   
+    response.should render_template("social/streams/show_old.rjs")
+  end
+  
+  it "should show all the old tweets on clicking on show maore" do
+    get :fetch_new, {
+                          :social_streams => 
+                              {
+                                :stream_id => "#{@first_default_stream.id}", 
+                                :first_feed_id => "0,0", 
+                                :last_feed_id => "0,0"
+                              }
+                        }
+   
+    response.should render_template("social/streams/fetch_new.rjs")
+  end
+  
+  it "should show all the old tweets on clicking on show maore" do
+    get :show_old, {
+                          :social_streams => 
+                              {
+                                :stream_id => "#{@first_default_stream.id}", 
+                                :first_feed_id => "0,0", 
+                                :last_feed_id => "0,0"
+                              }
+                        }
+   
+    response.should render_template("social/streams/show_old.rjs")
+  end
+  
    it "should fetch the top tweets from all the handles with latest first from dynamo when" do
     tweet_id1 = (Time.now.utc.to_f*100000).to_i
     tweet_id2 = (Time.now.utc.to_f*100000).to_i
@@ -66,7 +112,7 @@ describe Social::StreamsController do
     order = sorted_feeds.map{|a| a.stream_id if (a.stream_id == "#{@account.id}_#{@sec_default_stream.id}" or a.stream_id == "#{@account.id}_#{@first_default_stream.id}")}.compact
     order[0..2].should eql(["#{@account.id}_#{@first_default_stream.id}", "#{@account.id}_#{@sec_default_stream.id}", "#{@account.id}_#{@first_default_stream.id}"])
   end
-  
+
   it "should show the entire current interaction on clicking on a tweet feed" do
     tweet_id1 = (Time.now.utc.to_f*100000).to_i
     tweet_id2 = (Time.now.utc.to_f*100000).to_i
@@ -108,7 +154,7 @@ describe Social::StreamsController do
     current_interactions[2].feed_id.should eql("#{tweet_id3}")
     current_interactions[3].feed_id.should eql("#{tweet_id4}")
   end
-  
+
   it "should show the the other interactions on clicking on a  tweet feed" do
     tweet_id1 = (Time.now.utc.to_f*100000).to_i
     tweet_id2 = (Time.now.utc.to_f*100000).to_i
@@ -146,6 +192,17 @@ describe Social::StreamsController do
     other_interactions[0].feed_id.should eql("#{tweet_id3}")
   end
   
+  it "should redirect to admin page if non handles are present" do
+    Resque.inline = true
+    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
+    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    @account.twitter_handles.destroy_all
+    Resque.inline = false
+    
+    get :index
+    response.should redirect_to admin_social_streams_url
+  end
+
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true

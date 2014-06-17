@@ -369,9 +369,39 @@ describe Social::TwitterController do
       user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
     end
   end
+  
+  it "should return older results on  live search" do
+      Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
+      
+      get :show_old, {
+                              :search => {
+                                :q => ["show old"], 
+                                :type => "live_search", 
+                                :next_results => "", 
+                                :refresh_url => ""
+                              }
+                            }
+                            
+      response.should render_template("social/twitter/show_old.rjs")
+    end
+    
+    it "should newer results on  live search" do
+      Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
+      
+      get :fetch_new, {
+                              :search => {
+                                :q => ["new results"], 
+                                :type => "live_search", 
+                                :next_results => "", 
+                                :refresh_url => ""
+                              }
+                            }
+      response.should render_template("social/twitter/fetch_new.rjs")
+    end
  
  
     it "should return the live search results and five recent searches by live search stored in redis" do
+      $redis_others.del("STREAM_RECENT_SEARCHES:#{@account.id}:#{@user.id}")
       Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
       
       5.times do |n|
@@ -401,6 +431,18 @@ describe Social::TwitterController do
       recent_search.fifth["query"].should eql(["1"])     
     end
     
+    it "should fetch retweet when retweeting a particular tweet" do
+      Twitter::REST::Client.any_instance.stubs(:retweet).returns("")
+      
+        get :retweet, {
+            :tweet => {
+              :feed_id => "#{(Time.now.utc.to_f*100000).to_i}"
+            }
+          }
+          
+      response.should render_template("social/twitter/retweet.rjs")
+    end
+    
     it "should fetch retweets from twitter when clicking on a particular tweet" do
       Twitter::REST::Client.any_instance.stubs(:status).returns(sample_twitter_tweet_object)
       Twitter::REST::Client.any_instance.stubs(:retweets).returns([sample_twitter_tweet_object])
@@ -419,6 +461,17 @@ describe Social::TwitterController do
                             },
                           :twitter_handle_id => "10"
                         }
+    end
+    
+    it "should retrieve all user info on clicking on the user link" do
+      get :user_info, {
+          :user => {
+            :name => "GnipTesting", 
+            :screen_name => "@GnipTesting",
+            :normal_img_url => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png"
+          }
+      }
+      response.should render_template("social/twitter/user_info.rjs")
     end
 
   after(:all) do
