@@ -39,7 +39,7 @@ describe CustomersController do
   end
 
   it "should list all the created companies on the index page" do
-    company = create_company
+    company = @account.customers.find(:all, :order=>'name').first
     get :index
     response.should render_template 'customers/index'
     response.body.should =~ /#{company.name}/

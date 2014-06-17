@@ -52,6 +52,7 @@ describe Integrations::GmailGadgetsController do
     def @env.production? 
       true;
     end
+    @account.update_attributes(:ssl_enabled => false)
     get :spec, :format => "xml"
     response.body.should have_tag("Module", /script/)
   end

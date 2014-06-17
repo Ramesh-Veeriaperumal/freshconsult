@@ -245,7 +245,7 @@ describe Support::Discussions::PostsController do
 		it "with 'moderate posts with link' feature and with phone number" do
 			topic = publish_topic(create_test_topic(@forum))
 			post_body = Faker::Lorem.paragraph
-			phone = PHONE_NUMBERS.sample
+			phone = ForumHelper::PHONE_NUMBERS.sample
 
 			@account.features.moderate_posts_with_links.create
 			Resque.inline = true
