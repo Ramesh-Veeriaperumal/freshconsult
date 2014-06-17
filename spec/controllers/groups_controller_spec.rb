@@ -55,7 +55,9 @@ describe GroupsController do
 			:id => @test_group.id,
 			:group => {:name => "Updated: Spec Testing Grp #{@now}",
 				:description => Faker::Lorem.paragraph, :business_calendar => 1,
-				:agent_list => "#{@agent.id},#{@user_1.id}", :ticket_assign_type=> 0,
+				:added_list => "",
+				:removed_list => "", 
+				:ticket_assign_type=> 0,
 		        :assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
@@ -65,19 +67,43 @@ describe GroupsController do
 		new_group.ticket_assign_type.should eql 0
 	end
 
-	it "should update agent group" do
+	it "should add agents to the group" do
 		put :update, {
 			:id => @test_group.id,
 			:group => {:name => "Updated: Spec Testing Grp #{@now}",
 				:description => Faker::Lorem.paragraph, :business_calendar => 1,
-				:agent_list => "#{@agent.id}", :ticket_assign_type=> 0,
+				:added_list => "#{@agent.id} , #{@user_1.id}",
+				:removed_list => "",
+				:ticket_assign_type=> 0,
 		        :assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
-		new_group = Group.find_by_id(@test_group.id)
-		new_group.name.should eql("Updated: Spec Testing Grp #{@now}")
-		new_group.escalate_to.should eql(@agent.id)
-		new_group.ticket_assign_type.should eql 0
+		updated_group = Group.find_by_id(@test_group.id)
+		updated_group.name.should eql("Updated: Spec Testing Grp #{@now}")
+		updated_group.escalate_to.should eql(@agent.id)
+		updated_group.ticket_assign_type.should eql 0
+		agent_list = [ @agent.id, @user_1.id ]
+		agents_in_group = updated_group.agent_groups.map { |agent| agent.user_id }
+		(agent_list.sort == agents_in_group.sort).should be_true
+	end
+
+	it "should remove agents from the group" do
+		put :update, {
+			:id => @test_group.id,
+			:group => {:name => "Updated: Spec Testing Grp #{@now}",
+				:description => Faker::Lorem.paragraph, :business_calendar => 1,
+				:added_list => "",
+				:removed_list => "#{@agent.id}",
+				:ticket_assign_type=> 0,
+		        :assign_time => "2500", :escalate_to => @agent.id
+			}
+		}
+		updated_group = Group.find_by_id(@test_group.id)
+		updated_group.name.should eql("Updated: Spec Testing Grp #{@now}")
+		updated_group.escalate_to.should eql(@agent.id)
+		updated_group.ticket_assign_type.should eql 0
+		agents_in_group = updated_group.agent_groups.map { |agent| agent.user_id }
+		agents_in_group.include?(@agent.id).should be_false
 	end
 
 	it "should not update the Group without a name" do
