@@ -105,6 +105,8 @@ Spork.prefork do
 
     config.before(:each) do |x|
       name = "#{x.class.description} #{x.description}"
+      Rails.logger.info "*"*100
+      Rails.logger.info name
       @test_start_time = Time.now
     end
 
