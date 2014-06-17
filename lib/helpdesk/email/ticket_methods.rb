@@ -5,7 +5,7 @@ module Helpdesk::Email::TicketMethods
 
   def get_original_user
     e_email = orig_email_from_text
-    get_user(e_email , email[:email_config]) unless e_email.nil?
+    get_user(e_email , email[:email_config], email[:text]) unless e_email.nil?
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
