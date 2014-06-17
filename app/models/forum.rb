@@ -250,11 +250,11 @@ class Forum < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
+    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id }) if ES_ENABLED
   end
 
   def remove_topics_from_es
-    Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids })
+    Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
   end
 
   def backup_forum_topic_ids
