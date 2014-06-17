@@ -54,7 +54,7 @@ class Facebook::Core::Comment
             @fan_page.update_attribute(:fetch_since, @koala_comment.created_at.to_i)
           end
         else
-          puts "error while saving the note #{@note.errors.to_json}"
+          Rails.logger.debug "error while saving the note #{@note.errors.to_json}"
         end
       ensure
         User.reset_current_user
