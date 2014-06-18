@@ -2291,6 +2291,7 @@ nl:
             see_all_articles: "Alle %{count} artikelen weergeven"
             more_articles: "Meer artikelen in <span class='folder-name'> %{article_name} </span>"
             modified_on: "Gewijzigd op:"
+            related_articles: "Gerelateerde artikelen"
         folder: 
             filler_text: "Houd deze ruimte in de gaten voor artikelen over %{folder_name}"
         topic: 
