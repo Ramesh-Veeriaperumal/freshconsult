@@ -67,6 +67,15 @@ describe Social::TwitterHandlesController do
     end
 
   end
+  
+  describe "POST #tweet" do
+    it "should tweet to twitter" do
+      Twitter::REST::Client.any_instance.stubs(:update).returns("")
+      post :tweet, {
+        :tweet => "Tweet to twitter"
+      }
+    end
+  end
 
 
   describe "GET #feed" do

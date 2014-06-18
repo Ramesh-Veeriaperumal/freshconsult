@@ -24,7 +24,8 @@ FacebookTests = [
 TwitterTests = [
   "spec/lib/social/twitter/*_spec.rb", 
   "spec/models/social/twitter_*_spec.rb", 
-  "spec/controllers/social/*_spec.rb"
+  "spec/controllers/social/*_spec.rb",
+  "spec/controllers/admin/social/*_spec.rb"
 ]
 
 ModelTests = ["spec/models/helpdesk/*_spec.rb"]
