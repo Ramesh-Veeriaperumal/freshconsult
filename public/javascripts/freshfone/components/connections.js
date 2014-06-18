@@ -11,6 +11,7 @@ var FreshfoneConnection;
 		init: function () {
 		},
 		createNotification: function () {
+			self = this;
 			var $incomingCallWidget = $('#incomingWidget').clone().tmpl();
 			$incomingCallWidget.attr('id', this.callSid());
 
@@ -20,7 +21,6 @@ var FreshfoneConnection;
 			this.freshfoneNotification.setRequestObject(this);
 			this.freshfoneNotification.prefillContactTemplate(this.customerNumber);
 			this.bindEventHandlers();
-			
 			freshfoneNotification.userInfo(this.customerNumber, this);
 		},
 		bindEventHandlers: function () {
@@ -56,6 +56,9 @@ var FreshfoneConnection;
 					self.$userInfoContainer = null;
 				});
 			}
+			if(this.notification) {
+				this.notification.closeWebNotification();
+			}
 		},
 		canAcceptCall: function () {
 			var self = this;
@@ -74,6 +77,18 @@ var FreshfoneConnection;
 				},
 				error: function () { }
 			});
+		},
+
+		createDesktopNotification: function () {
+			if ( freshfonewidget.isSupportWebNotification() ) {
+				try {
+					this.notification = new FreshfoneDesktopNotification(this);
+				}
+				catch (e) {
+					console.log(e);
+				}
+			}
+
 		}
 	};
 

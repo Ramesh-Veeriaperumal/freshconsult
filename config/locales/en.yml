@@ -5337,6 +5337,7 @@ en:
       new_requester: "New requester"
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
+      desktop_notification: "Turn on desktop notification"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"

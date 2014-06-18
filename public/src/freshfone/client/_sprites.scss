@@ -43,6 +43,10 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	.accept { @include freshfone-sprite(accept-call); }
 	.ignore { @include freshfone-sprite(ignore-call); }
 }
+.ff_desktop_notification {
+	.desktopNotifier { @include freshfone-sprite(desktop-notifier); }
+}
+
 .recent_calls_call_user .can-make-calls,
 .fresfone-call-history .call_user .can-make-calls {
 	@include freshfone-sprite(recentcall);
