@@ -153,9 +153,9 @@ describe Social::TwitterHandle do
     #Destroy the twitter handle
     GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
     Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
-    @handle.destroy
-    Social::Stream.destroy_all
-    Social::Tweet.destroy_all
+    #@handle.destroy
+    # Social::Stream.destroy_all
+    # Social::Tweet.destroy_all
     Resque.inline = false
   end
 

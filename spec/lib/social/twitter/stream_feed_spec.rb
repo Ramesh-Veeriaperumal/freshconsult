@@ -51,7 +51,7 @@ describe Social::Gnip::TwitterFeed do
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
-    tweet.tweetable.destroy
+    # tweet.tweetable.destroy
   end
 
   it "should create a note when a DM arrives and if dm threaded time is greater than zero" do
@@ -92,7 +92,7 @@ describe Social::Gnip::TwitterFeed do
     ticket.notes.first.id.should eql tweet.tweetable.id
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm[:text])
-    ticket.destroy
+    # ticket.destroy
   end
   
   it "should create a tickets and notes in the order of creation time when a DMs arrive" do
@@ -124,7 +124,7 @@ describe Social::Gnip::TwitterFeed do
     tweet.is_note?.should be_true
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm2[:text])
-    ticket.destroy
+    # ticket.destroy
   end
   
   it "should create a ticket when a tweet arrives" do
@@ -352,8 +352,8 @@ describe Social::Gnip::TwitterFeed do
     GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
     Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
     @handle.destroy
-    Social::Stream.destroy_all
-    Social::Tweet.destroy_all
+    # Social::Stream.destroy_all
+    # Social::Tweet.destroy_all
     Resque.inline = false
   end
 end

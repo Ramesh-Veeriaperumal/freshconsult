@@ -40,7 +40,7 @@ describe Social::TwitterHandlesController do
   describe "GET #authdone" do
 
     it "should redirect to existing handle if handle already exists" do
-      Social::TwitterHandle.destroy_all
+      # Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
@@ -49,7 +49,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "should redirect to new handle if it doesn't exists" do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
       twt_handler = Factory.build(:twitter_handle, :screen_name => Faker::Name.name.downcase, :access_token => Faker::Lorem.characters(10),
                                   :access_secret => Faker::Lorem.characters(10), :capture_dm_as_ticket => 1, :capture_mention_as_ticket => 1,
                                   :twitter_user_id => rand(100000000))
@@ -81,7 +81,7 @@ describe Social::TwitterHandlesController do
   describe "GET #feed" do
 
     it "if no handles present should redirect to /admin/twitter" do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
 
       get :feed
       response.should redirect_to 'social/twitters'
@@ -134,7 +134,7 @@ describe Social::TwitterHandlesController do
             'search_metadata' => {}
          }
       search_results = Twitter::SearchResults.new(attrs, "", "", "")
-     Twitter::REST::Client.any_instance.stubs(:search).returns(search_results)
+      Twitter::REST::Client.any_instance.stubs(:search).returns(search_results)
 
       get :twitter_search, {:q => 'test', :handle => 0, :since_id => 10}
       response.body.should be_eql(search_results.attrs.to_json)
@@ -153,7 +153,7 @@ describe Social::TwitterHandlesController do
   describe "DELETE #destroy" do
 
     it "should delete and redirect" do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
       delete :destroy, :id => twt_handler.id
 
@@ -177,7 +177,7 @@ describe Social::TwitterHandlesController do
   describe "GET #create_twicket" do
 
     it "should create tweet as ticket " do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
 
       Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
@@ -209,7 +209,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "should create first tweet as ticket and second tweet as note " do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
 
       #========================first tweet start====================================
@@ -276,7 +276,7 @@ describe Social::TwitterHandlesController do
   describe "GET #edit" do
 
     it "should be successful when updating form" do
-      Social::TwitterHandle.destroy_all
+      #Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
 
       put :update,  {
