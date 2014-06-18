@@ -14,10 +14,12 @@ class AccountsController < ApplicationController
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :marketplace_login, :portal_login, :create_account_from_google]
+  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                         :marketplace_login, :portal_login, :create_account_from_google,
+                                         :associate_google_account,:associate_local_to_google]
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:associate_google_account,:associate_local_to_google]
-   
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
