@@ -89,9 +89,10 @@ Spork.prefork do
     config.include ProductsHelper
     config.include WfFilterHelper, :type => :controller
 
-    config.before(:all, :type => :controller) do
+    config.before(:all) do
       @account = create_test_account
       @agent = get_admin
+      @timings = []
     end
 
     config.before(:each, :type => :controller) do
@@ -99,10 +100,6 @@ Spork.prefork do
       @request.env['HTTP_REFERER'] = '/sessions/new'
       @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    end
-
-    config.before(:all) do |x|
-      @timings = []
     end
 
     config.before(:each) do |x|
@@ -119,6 +116,7 @@ Spork.prefork do
         :name => name,
         :duration => @test_end_time - @test_start_time
       })
+      Rails.logger.info "^"*100
     end
 
     config.after(:all) do |x|

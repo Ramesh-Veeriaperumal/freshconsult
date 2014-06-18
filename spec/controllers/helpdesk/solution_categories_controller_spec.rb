@@ -8,10 +8,10 @@ describe Solution::CategoriesController do
   before(:all) do
     @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
-  @test_category = create_category( {:name => "test category #{Faker::Lorem.word}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_category2 = create_category( {:name => "test category #{Faker::Lorem.word}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_category3 = create_category( {:name => "test category #{Faker::Lorem.word}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_default_category = create_category( {:name => "test default category #{Faker::Lorem.word}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => true} )
+    @test_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    @test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    @test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    @test_default_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => true} )
   end
 
   before(:each) do

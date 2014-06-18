@@ -407,7 +407,7 @@ describe Social::TwitterController do
         "keywords"     => [],
         "query_string" => ""
       }
-      @agent.add_social_search(search_hash)
+      @agent.agent.add_social_search(search_hash)
     end
     
     get :twitter_search, {

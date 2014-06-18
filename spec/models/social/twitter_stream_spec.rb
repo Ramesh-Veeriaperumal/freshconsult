@@ -12,11 +12,11 @@ describe Social::TwitterStream do
       Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
     end
     Resque.inline = true
-    @handle = create_test_twitter_handle(account)
+    @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
     update_db(@default_stream) unless GNIP_ENABLED
     @dm_stream = @handle.dm_stream
-    @custom_stream = create_test_custom_twitter_stream(account)
+    @custom_stream = create_test_custom_twitter_stream(@account)
     @rule = @default_stream.gnip_rule
   end
 

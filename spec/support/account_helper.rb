@@ -4,7 +4,7 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 module AccountHelper
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
-    @acc = Account.last
+    @acc = Account.first
     unless @acc.nil?
       @acc.make_current
       create_dummy_customer

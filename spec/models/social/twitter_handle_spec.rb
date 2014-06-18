@@ -12,7 +12,7 @@ describe Social::TwitterHandle do
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
       Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
     end
-    @handle = create_test_twitter_handle(account)
+    @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
     update_db(@default_stream) unless GNIP_ENABLED
     @dm_stream = @handle.dm_stream
