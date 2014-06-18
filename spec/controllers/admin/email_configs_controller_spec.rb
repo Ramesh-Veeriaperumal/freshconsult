@@ -290,7 +290,7 @@ describe Admin::EmailConfigsController do
                     :email_config => {:name => Faker::Name.name, 
                                       :reply_email => email_config.reply_email, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
+                                      :to_email => email_config.to_email, 
                                       :smtp_mailbox_attributes => { :_destroy => "1",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
