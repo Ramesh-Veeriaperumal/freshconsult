@@ -6,23 +6,9 @@ describe Admin::ProductsController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@test_product = Factory.build(:product, :name => Faker::Name.name, :description => Faker::Lorem.paragraph, :account_id => @account.id)
-		@test_product.save(false)
-		test_email_config = Factory.build(:email_config, :to_email => "test_product@localhost.freshpo.com", :reply_email => "test_product@localhost.freshpo.com",
-			                                             :primary_role =>"true", :name => @test_product.name, :product_id => @test_product.id,
-			                                             :account_id => @account.id,:active=>"true")
-		test_email_config.save(false)
-		test_portal = Factory.build(:portal, :name=> "New test_product portal", :portal_url => "test.product.com", :language=>"en",
-			                                 :product_id => @test_product.id, :forum_category_id=>"", :solution_category_ids=>[""],:account_id => @account.id,
-			                                 :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#252525", :tab_color=>"#006063", 
-                                     		            :bg_color=>"#efefef" })
-		test_portal.save(false)
-		@test_product_1 = Factory.build(:product, :name => "New Product without Portal", :description => Faker::Lorem.paragraph, :account_id => @account.id)
-		@test_product_1.save(false)
-		email_config = Factory.build(:email_config, :to_email => "pdt_without_portal@localhost.freshpo.com", :reply_email => "pdt_without_portal@localhost.freshpo.com",
-			                                             :primary_role =>"true", :name => @test_product_1.name, :product_id => @test_product_1.id,
-			                                             :account_id => @account.id,:active=>"true")
-		email_config.save(false)
+		@test_product = create_product({:email => "test_product@localhost.freshpo.com",:portal_name=> "New test_product portal", 
+			                            :portal_url => "test.product.com"})
+		@test_product_1 = create_product({:name => "New Product without Portal", :email => "pdt_without_portal@localhost.freshpo.com"})
 	end
 
 	before(:each) do
@@ -42,18 +28,9 @@ describe Admin::ProductsController do
 	end
 
 	it "should create Product" do
-		post :create, { :product =>{ :name =>"Fresh Product", :description => "new innovation for service world", 
-			                         :email_configs_attributes=>{ 
-			                         	"0"=>{ :reply_email =>"newproduct@localhost.freshpo.com", :primary_role =>"true", :_destroy=>"false", 
-			                         		   :to_email=>"newproduct@localhost.freshpo.com",:group_id=>"" }
-                                     }, 
-                                     :enable_portal=>"1", 
-                                     :portal_attributes=>{ :name=>"Fresh Portal", :portal_url=>"support.product.com", :language=>"en", 
-                                     	:forum_category_id=>"", :solution_category_ids=>[""], 
-                                        :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#252525", :tab_color=>"#006063", 
-                                     		            :bg_color=>"#efefef" }
-                                     }
-                        }
+		post :create, { :product => product_params({:name =>"Fresh Product", :description => "new innovation for service world", 
+													:email =>"newproduct@localhost.freshpo.com", :portal_name=>"Fresh Portal", 
+													:portal_url=>"support.product.com"})
 		}
 		response.session[:flash][:notice].should eql "The product has been created."
 		new_product = Product.find_by_name("Fresh Product")
@@ -67,19 +44,8 @@ describe Admin::ProductsController do
 		response.body.should =~ /redirected/
 	end
 
-	it "should not create Product" do
-		post :create, { :product =>{ :name =>"Fresh Org", :description => Faker::Lorem.paragraph, 
-			                         :email_configs_attributes=>{ 
-			                         	"0"=>{ :reply_email =>"", :primary_role =>"true", :_destroy=>"false", 
-			                         		   :to_email=>"",:group_id=>"" }
-                                     }, 
-                                     :enable_portal=>"0", 
-                                     :portal_attributes=>{ :name=>"", :portal_url=>"", :language=>"en", :forum_category_id=>"", 
-                                     	:solution_category_ids=>[""], 
-                                        :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#252525", :tab_color=>"#006063", 
-                                     		            :bg_color=>"#efefef" }
-                                     }
-                        }
+	it "should not create Product without reply_email" do
+		post :create, { :product => product_params({:name =>"Fresh Org",:enable_portal=>"0"})
 		}
 		new_product = Product.find_by_name("Fresh Org")
 		new_product.should be_nil
@@ -88,30 +54,19 @@ describe Admin::ProductsController do
 	end
 
 
-	it "should not update a product" do
+	it "should not update a product without reply_email" do
 		put :update, {
 			:id => @test_product.id,
-			:product =>{ :name =>"Updated: Fresh test Product", :description => @test_product.description,
-				         :email_configs_attributes=>{ 
-			                "0"=>{ :id => @test_product.email_configs.first.id,:reply_email => "", 
-			                       :primary_role =>"true", :_destroy=>"false", :to_email=> "",
-			                       :group_id=>"" }
-                         },
-                         :enable_portal =>"1",
-                         :portal_attributes=>{ :name=>@test_product.portal.name, :portal_url=>"support.product.test.com", 
-                         	:language=> @test_product.portal.language, :forum_category_id=>"", :solution_category_ids=>[""], 
-                            :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#009999", :tab_color=>"#006063", 
-                                     		            :bg_color=>"#FFCCFF" },
-                            :id => @test_product.portal.id         
-                          }
-                        }
+			:product => product_params({:name =>"Updated: Fresh test Product", :description => @test_product.description,
+													:portal_name=>@test_product.portal.name, :portal_url=>"support.product.test.com",
+													:email_configs_id => @test_product.email_configs.first.id, :portal_id => @test_product.portal.id,
+													:header_color=>"#009999" })
 		}
 		@test_product.reload
 		@test_product.name.should_not eql "Updated: Fresh test Product"
 		@test_product.email_configs.should_not be_nil
 		@test_product.portal.portal_url.should eql "test.product.com"
 		@test_product.portal.preferences[:header_color].should eql "#252525"
-		@test_product.portal.preferences[:bg_color].should_not eql "#FFCCFF"
 		response.body.should =~ /Edit Product/
 		response.should be_success
 	end
@@ -128,11 +83,11 @@ describe Admin::ProductsController do
                          :enable_portal =>"0"
                         }
 		}
-    @test_product_1.reload
-    response.session[:flash][:notice].should eql "The product has been updated."
-    @test_product_1.name.should eql "Updated: Product without Portal(disabled)"
-    @test_product_1.portal.should be_nil
-    response.body.should =~ /redirected/
+	    @test_product_1.reload
+	    response.session[:flash][:notice].should eql "The product has been updated."
+	    @test_product_1.name.should eql "Updated: Product without Portal(disabled)"
+	    @test_product_1.portal.should be_nil
+	    response.body.should =~ /redirected/
 	end
 
 	it "should update product without portal(enabled)" do
@@ -147,30 +102,19 @@ describe Admin::ProductsController do
                          :enable_portal =>"1"
                         }
 		}
-    @test_product_1.reload
-    response.session[:flash][:notice].should eql "The product has been updated."
-    @test_product_1.name.should eql "Updated: Product without Portal(enabled)"
-    @test_product_1.portal.should_not be_nil
-    response.body.should =~ /redirected/
+	    @test_product_1.reload
+	    response.session[:flash][:notice].should eql "The product has been updated."
+	    @test_product_1.name.should eql "Updated: Product without Portal(enabled)"
+	    @test_product_1.portal.should_not be_nil
+	    response.body.should =~ /redirected/
 	end
 
-	it "should update product with portal disabled" do
+	it "should destory portal when portal is disabled" do
 		put :update, {
 			:id => @test_product_1.id,
-			:product =>{ :name =>"Updated: Product with portal disabled", :description => @test_product_1.description,
-				         :email_configs_attributes=>{ 
-			                "0"=>{ :id => @test_product_1.email_configs.first.id,:reply_email =>@test_product_1.email_configs.first.reply_email, 
-			                       :primary_role =>"true", :_destroy=>"false", :to_email=>@test_product_1.email_configs.first.to_email,
-			                       :group_id=>"" }
-                         },
-                         :enable_portal =>"0",
-                         :portal_attributes=>{ :name=>"new Portal", :portal_url=>"new.support.product.com", :language=>"en", 
-                                     	:forum_category_id=>"", :solution_category_ids=>[""], 
-                                        :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#252525", :tab_color=>"#006063", 
-                                     		            :bg_color=>"#efefef" },
-                                        :id => @test_product_1.portal.id
-                                     }
-                        }
+			:product => product_params({:name =>"Updated: Product with portal disabled", :description => @test_product_1.description,:enable_portal =>"0",
+										:portal_name=>"new Portal", :portal_url=>"new.support.product.com", :email =>@test_product_1.email_configs.first.reply_email,
+										:email_configs_id => @test_product_1.email_configs.first.id, :portal_id => @test_product_1.portal.id})
 
 		}
 		@test_product_1.reload

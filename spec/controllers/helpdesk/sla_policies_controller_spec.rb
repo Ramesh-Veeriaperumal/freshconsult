@@ -28,26 +28,8 @@ describe Helpdesk::SlaPoliciesController do
 		response.body.should =~ /New SLA Policy/
 		response.should be_success
 		post :create, { 
-			 :helpdesk_sla_policy =>{ :name =>"Sla Policy - Test Spec", 
-			 	                      :id=>"", 
-			 	                      :description => Faker::Lorem.paragraph,
-			 	                      :datatype => {:ticket_type => "text"}, 
-			 	                      :conditions =>{ :ticket_type =>["Question"], :company_id =>""}, 
-			 	                      :escalations =>{:response=>{"1"=>{:time =>"0", :agents_id =>["#{@agent.id}"]}}, 
-			 	                                      :resolution=>{"1"=>{:time=>"0", :agents_id=>["#{@agent_1.id}"]},
-			 	                                                    "2"=>{:time=>"1800", :agents_id=>["#{@agent_2.id}"]}
-			 	                                                }
-			 	                                    }
-			 	                      },
-			 :SlaDetails =>{ "0"=> { :name=>"SLA for urgent priority", :priority=>"4", :id=>"", :response_time=>"900", :resolution_time=>"900", 
-			 	                     :override_bhrs=>"false", :escalation_enabled=>"1"},
-                             "1"=> { :name=>"SLA for high priority", :priority=>"3", :id=>"", :response_time=>"3600", :resolution_time=>"7200 ", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"}, 
-                             "2"=> { :name=>"SLA for medium priority", :priority=>"2", :id=>"", :response_time=>"86400", :resolution_time=>"172800", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"},
-							 "3"=> { :name=>"SLA for low priority", :priority=>"1", :id=>"", :response_time=>"2592000", :resolution_time=>"5184000", 
-							 	     :override_bhrs=>"false", :escalation_enabled=>"1"}
-							},
+			 :helpdesk_sla_policy => sla_policies(@agent_1.id,@agent_2.id,{:name => "Sla Policy - Test Spec", :ticket_type => "Question"}),
+			 :SlaDetails => sla_details                      
         }
         response.session[:flash][:notice].should eql "The SLA Policy has been created."
         sla_policy = Helpdesk::SlaPolicy.find_by_name("Sla Policy - Test Spec")
@@ -63,26 +45,8 @@ describe Helpdesk::SlaPoliciesController do
 
 	it "should not create a new Sla Policy without a name or conditions" do
 		post :create, { 
-			 :helpdesk_sla_policy =>{ :name =>"", 
-			 	                      :id=>"", 
-			 	                      :description => Faker::Lorem.paragraph,
-			 	                      :datatype => {:ticket_type => "text"}, 
-			 	                      :conditions =>{:company_id =>""}, 
-			 	                      :escalations =>{:response=>{"1"=>{:time =>"0", :agents_id =>["#{@agent.id}"]}}, 
-			 	                                      :resolution=>{"1"=>{:time=>"0", :agents_id=>["#{@agent_1.id}"]},
-			 	                                                    "2"=>{:time=>"1800", :agents_id=>["#{@agent_2.id}"]}
-			 	                                                }
-			 	                                    }
-			 	                      },
-			 :SlaDetails =>{ "0"=> { :name=>"SLA for urgent priority", :priority=>"4", :id=>"", :response_time=>"900", :resolution_time=>"900", 
-			 	                     :override_bhrs=>"false", :escalation_enabled=>"1"},
-                             "1"=> { :name=>"SLA for high priority", :priority=>"3", :id=>"", :response_time=>"3600", :resolution_time=>"7200 ", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"}, 
-                             "2"=> { :name=>"SLA for medium priority", :priority=>"2", :id=>"", :response_time=>"86400", :resolution_time=>"172800", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"},
-							 "3"=> { :name=>"SLA for low priority", :priority=>"1", :id=>"", :response_time=>"2592000", :resolution_time=>"5184000", 
-							 	     :override_bhrs=>"false", :escalation_enabled=>"1"}
-							},
+			 :helpdesk_sla_policy => sla_policies(@agent_1.id,@agent_2.id),
+             :SlaDetails => sla_details
         }
         response.session[:flash][:notice].should eql "Unable to save SLA Policy"
         response.body.should =~ /New SLA Policy/
@@ -97,67 +61,34 @@ describe Helpdesk::SlaPoliciesController do
 		ids = sla_detail_ids(@sla_policy_1)
 		put :update, {
 			:id =>  @sla_policy_1.id,
-			:helpdesk_sla_policy =>{ :name =>"Updated - Sla Policy", 
-			 	                      :id=> @sla_policy_1.id, 
-			 	                      :description => @sla_policy_1.description,
-			 	                      :datatype => {:ticket_type => "text"}, 
-			 	                      :conditions =>{ :ticket_type =>["Feature Request"], :company_id =>""}, 
-			 	                      :escalations =>{:response=>{"1"=>{:time =>"0", :agents_id =>["#{@agent_1.id}"]}}, 
-			 	                                      :resolution=>{"1"=>{:time=>"0", :agents_id=>["#{@agent.id}"]},
-			 	                                                    "2"=>{:time=>"1800", :agents_id=>["#{@agent_2.id}"]}
-			 	                                                }
-			 	                                    }
-			 	                      },
-	        :SlaDetails =>{ "0"=> { :name=>"SLA for urgent priority", :priority=>"4", :id=> ids[0], :response_time=>"900", :resolution_time=>"1800", 
-			 	                     :override_bhrs=>"false", :escalation_enabled=>"1"},
-                             "1"=> { :name=>"SLA for high priority", :priority=>"3", :id=> ids[1], :response_time=>"7200", :resolution_time=>"8400", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"}, 
-                             "2"=> { :name=>"SLA for medium priority", :priority=>"2", :id=> ids[2], :response_time=>"86400", :resolution_time=>"172800", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"},
-							 "3"=> { :name=>"SLA for low priority", :priority=>"1", :id=> ids[3], :response_time=>"2592000", :resolution_time=>"5184000", 
-							 	     :override_bhrs=>"false", :escalation_enabled=>"1"}
-							},
+			:helpdesk_sla_policy => sla_policies(@agent_2.id,@agent_1.id,{:id=> @sla_policy_1.id, :name => "Updated - Sla Policy", 
+				:description => @sla_policy_1.description, :ticket_type => "Feature Request"}),	                      
+            :SlaDetails => sla_details(ids)
         }
         @sla_policy_1.reload
         response.session[:flash][:notice].should eql "The SLA Policy has been updated."
         @sla_policy_1.name.should eql "Updated - Sla Policy"
         @sla_policy_1.conditions[:ticket_type].should eql ["Feature Request"]
         @sla_policy_1.conditions[:company_id].should be_nil
-        @sla_policy_1.escalations[:response]["1"][:agents_id].should eql [@agent_1.id]
-        @sla_policy_1.escalations[:resolution]["2"][:agents_id].should eql [@agent_2.id]
+        @sla_policy_1.escalations[:resolution]["1"][:agents_id].should eql [@agent_2.id]
+        @sla_policy_1.escalations[:resolution]["2"][:agents_id].should eql [@agent_1.id]
         sla_details = Helpdesk::SlaDetail.find_by_id(ids[1])
-        sla_details.resolution_time.should eql(8400)
+        sla_details.resolution_time.should eql(7200)
 	end
 
-	it "should not update a Sla Policy" do
+	it "should not update a Sla Policy without conditions" do
 		ids = sla_detail_ids(@sla_policy_1)
 		put :update, {
 			:id =>  @sla_policy_1.id,
-			:helpdesk_sla_policy =>{ :name =>"Update Sla Policy without conditions", 
-			 	                      :id=> @sla_policy_1.id, 
-			 	                      :description => @sla_policy_1.description,
-			 	                      :datatype => {:ticket_type => "text"}, 
-			 	                      :conditions =>{:company_id =>""}, 
-			 	                      :escalations =>{:response=>{"1"=>{:time =>"0", :agents_id =>["#{@agent.id}"]}}, 
-			 	                                      :resolution=>{"1"=>{:time=>"0", :agents_id=>["#{@agent_2.id}"]},
-			 	                                                    "2"=>{:time=>"1800", :agents_id=>["#{@agent.id}"]}
-			 	                                                }
-			 	                                    }
-			 	                      },
-	        :SlaDetails =>{ "0"=> { :name=>"SLA for urgent priority", :priority=>"4", :id=> ids[0], :response_time=>"900", :resolution_time=>"1800", 
-			 	                     :override_bhrs=>"false", :escalation_enabled=>"1"},
-                             "1"=> { :name=>"SLA for high priority", :priority=>"3", :id=> ids[1], :response_time=>"7200", :resolution_time=>"8400", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"}, 
-                             "2"=> { :name=>"SLA for medium priority", :priority=>"2", :id=> ids[2], :response_time=>"86400", :resolution_time=>"172800", 
-                             	     :override_bhrs=>"false", :escalation_enabled=>"1"},
-							 "3"=> { :name=>"SLA for low priority", :priority=>"1", :id=> ids[3], :response_time=>"2592000", :resolution_time=>"5184000", 
-							 	     :override_bhrs=>"false", :escalation_enabled=>"1"}
-							},
+			:helpdesk_sla_policy => sla_policies(@agent_1.id,@agent.id,{:id=> @sla_policy_1.id, :name => "Update Sla Policy without conditions", 
+				:description => @sla_policy_1.description}),
+            :SlaDetails => sla_details(ids)
         }
         @sla_policy_1.reload
         @sla_policy_1.name.should_not eql "Update Sla Policy without conditions"
         @sla_policy_1.conditions[:ticket_type].should eql ["Feature Request"]
-        @sla_policy_1.escalations[:response]["1"][:agents_id].should eql [@agent_1.id]
+        @sla_policy_1.escalations[:response]["1"][:agents_id].should eql [@agent.id]
+        @sla_policy_1.escalations[:resolution]["1"][:agents_id].should eql [@agent_2.id]
         @sla_policy_1.escalations[:resolution]["2"][:agents_id].should_not eql [@agent.id]
     end
     
