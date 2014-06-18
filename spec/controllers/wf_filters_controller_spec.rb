@@ -62,7 +62,6 @@ describe Wf::FilterController do
   it "should not save a new filter with errors" do
     params = WfFilterHelper::PARAMS1.merge('filter_name' => nil)
     post :save_filter, params
-    debugger
     flash[:error].should_not be_nil
   end
 
