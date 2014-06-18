@@ -25,10 +25,10 @@ class VA::Tester
   end
 
   def perform ticket, option_name, option_hash, op_types = nil
-    p "Testing option #{option_name}"
     va_rule = create_va_rule(rule_data(option_name, option_hash[:feed_data]))
     execute_va_rule va_rule, ticket
     check_working va_rule, ticket, option_name, option_hash
+    print_progress_dot
   end
 
   def create_va_rule data
@@ -48,6 +48,10 @@ class VA::Tester
 
   def exception? option_hash
     option_hash[:exception] == true
+  end
+
+  def print_progress_dot
+    print "\e[32m.\e[0m"
   end
 
 end

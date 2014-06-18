@@ -19,7 +19,7 @@ module VA::RandomCase
           :responder_id => { :feed_data => { :value => fetch_random_unique_choice(:responder_id) } },
           :group_id     => { :feed_data => { :value => fetch_random_unique_choice(:group_id) } },
           :contact_name => { :feed_data => { :value => [Faker::Name.name, @ticket.requester.name].sample } },
-          :company_name => { :feed_data => { :value => [Faker::Company.name, @ticket.requester.customer.name].sample } },
+          :company_name => { :feed_data => { :value => [Faker::Company.name, @company.name].sample } },
           :inbound_count  => { :feed_data => { :value => [0,1].sample } },
           :outbound_count => { :feed_data => { :value => [0,1].sample } }
         }
