@@ -259,12 +259,18 @@ class Va::Action
 
     def substitute_placeholders act_on, content_key     
       content = act_hash[content_key].to_s
-      content = RedCloth.new(content.gsub(/\n/, '<br />'), [ :hard_breaks ]).to_html unless content_key == :email_subject
+      content = generate_html_content(content, content_key)
       Liquid::Template.parse(content).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.last)
     end
 
     def assign_custom_field act_on, field, value
       act_on.send "#{field}=", value if act_on.ff_aliases.include? field
+    end
+
+    def generate_html_content content, content_key
+      content = content.gsub(/\n/, '<br />') if content_key == :comment
+      content = RedCloth.new(content).to_html unless content_key == :email_subject
+      content
     end
 end
