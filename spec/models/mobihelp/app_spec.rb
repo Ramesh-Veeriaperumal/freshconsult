@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Mobihelp::App do
   before(:all) do 
-      @account = create_test_account
       @mobihelp_app = create_mobihelp_app
   end
 

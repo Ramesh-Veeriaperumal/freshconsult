@@ -5,22 +5,13 @@ describe Admin::Social::TwitterHandlesController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
-  before(:all) do
-    @account = create_test_account
-    @agent_role = @account.roles.find_by_name("Agent")
-    @user = add_test_agent(@account)
-  end
-  
   before(:each) do
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
       Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
       Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
     end
-    @request.host = @account.full_domain
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
-                                      (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    log_in(@user)
+    login_admin
   end
   
   describe "GET #authdone" do

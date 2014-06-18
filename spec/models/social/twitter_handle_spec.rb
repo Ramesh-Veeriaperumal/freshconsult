@@ -7,7 +7,6 @@ describe Social::TwitterHandle do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    account = create_test_account
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 

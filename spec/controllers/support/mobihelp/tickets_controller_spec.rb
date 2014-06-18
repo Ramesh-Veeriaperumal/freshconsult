@@ -6,7 +6,6 @@ describe Support::Mobihelp::TicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @user_email = "mobihelpuser@customer.in"
     @user_device_id = "11111-22222-3333333-312312312"
     @user = create_mobihelp_user(@account , @user_email, @user_device_id)
@@ -17,8 +16,6 @@ describe Support::Mobihelp::TicketsController do
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
     log_in(@user)
   end
 

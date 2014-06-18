@@ -3,7 +3,6 @@ include MailgunHelper
 
 describe Helpdesk::Email::Process do
 	before(:all) do
-		@account = create_test_account
 		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
 		EmailConfig.delete_all "active=0"
 		@account.email_configs.first.update_attributes({:primary_role => true})

@@ -5,8 +5,6 @@ describe Helpdesk::Ticket do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @account.make_current
     @user = User.find_by_account_id(@account.id)
     $primary_cluster = "riak"
     $secondary_cluster = "mysql"

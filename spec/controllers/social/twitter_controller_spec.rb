@@ -11,7 +11,6 @@ describe Social::TwitterController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
@@ -24,20 +23,14 @@ describe Social::TwitterController do
     update_db(@default_stream) unless GNIP_ENABLED
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
     Resque.inline = false
-    @user = add_test_agent(@account)
-    @user.make_current
   end
   
   before(:each) do
-    @request.host = @account.full_domain
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
-                                        (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     unless GNIP_ENABLED
       Social::DynamoHelper.stubs(:insert).returns({})
       Social::DynamoHelper.stubs(:update).returns({})
     end
-    @account.make_current                                       
-    log_in(@user)
+    log_in(@agent)
   end
   
   describe "POST #fd_item" do
@@ -116,7 +109,6 @@ describe Social::TwitterController do
       tweet.is_note?.should be_true
     end
   end
-  
   
   describe "POST #reply " do
     it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
@@ -338,8 +330,7 @@ describe Social::TwitterController do
         reply_feed_entry["is_replied"][:n].should eql("0")
         reply_feed_entry["parent_feed_id"][:ss].first.should eql("#{tweet_id}")
       end
-    end
-    
+    end   
   end
   
   it "should show all the user interactions and tickets of the user accross streams on click of user profile" do
@@ -389,96 +380,97 @@ describe Social::TwitterController do
                             }
                             
       response.should render_template("social/twitter/show_old.rjs")
-    end
+  end
+  
+  it "should newer results on  live search" do
+    Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
     
-    it "should newer results on  live search" do
-      Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-      
-      get :fetch_new, {
-                              :search => {
-                                :q => ["new results"], 
-                                :type => "live_search", 
-                                :next_results => "", 
-                                :refresh_url => ""
-                              }
+    get :fetch_new, {
+                            :search => {
+                              :q => ["new results"], 
+                              :type => "live_search", 
+                              :next_results => "", 
+                              :refresh_url => ""
                             }
-      response.should render_template("social/twitter/fetch_new.rjs")
-    end
- 
- 
-    it "should return the live search results and five recent searches by live search stored in redis" do
-      $redis_others.del("STREAM_RECENT_SEARCHES:#{@account.id}:#{@user.id}")
-      Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-      
-      5.times do |n|
-        search_hash  = {
-          "query"        => ["#{n}"],
-          "handles"      => [],
-          "keywords"     => [],
-          "query_string" => ""
-        }
-        User.current.agent.add_social_search(search_hash)
-      end
-      
-      get :twitter_search, {
-                              :search => {
-                                :q => ["hello world"], 
-                                :type => "live_search", 
-                                :next_results => "", 
-                                :refresh_url => ""
-                              }
-                            }
-                              
-      recent_search = response.template_objects["recent_search"]
-      recent_search.first["query"].should eql(["hello world"])
-      recent_search.second["query"].should eql(["4"])
-      recent_search.third["query"].should eql(["3"])
-      recent_search.fourth["query"].should eql(["2"])
-      recent_search.fifth["query"].should eql(["1"])     
-    end
+                          }
+    response.should render_template("social/twitter/fetch_new.rjs")
+  end
+
+  it "should return the live search results and five recent searches by live search stored in redis" do
+    $redis_others.del("STREAM_RECENT_SEARCHES:#{@account.id}:#{@agent.id}")
+    Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
     
-    it "should fetch retweet when retweeting a particular tweet" do
-      Twitter::REST::Client.any_instance.stubs(:retweet).returns("")
-      
-        get :retweet, {
-            :tweet => {
-              :feed_id => "#{(Time.now.utc.to_f*100000).to_i}"
-            }
-          }
-          
-      response.should render_template("social/twitter/retweet.rjs")
-    end
-    
-    it "should fetch retweets from twitter when clicking on a particular tweet" do
-      Twitter::REST::Client.any_instance.stubs(:status).returns(sample_twitter_tweet_object)
-      Twitter::REST::Client.any_instance.stubs(:retweets).returns([sample_twitter_tweet_object])
-        get :retweets, {
-            :retweeted_id => "472324358761750530"
-          }
-      response.should render_template("social/twitter/retweets.rjs")
-    end
-    
-    it "should post a tweet to twitter" do
-      Twitter::REST::Client.any_instance.stubs(:update).returns(sample_twitter_tweet_object)
-      post :post_tweet, {
-                          :tweet => 
-                            {
-                              :body => "Text"
-                            },
-                          :twitter_handle_id => "10"
-                        }
-    end
-    
-    it "should retrieve all user info on clicking on the user link" do
-      get :user_info, {
-          :user => {
-            :name => "GnipTesting", 
-            :screen_name => "@GnipTesting",
-            :normal_img_url => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png"
-          }
+    5.times do |n|
+      search_hash  = {
+        "query"        => ["#{n}"],
+        "handles"      => [],
+        "keywords"     => [],
+        "query_string" => ""
       }
-      response.should render_template("social/twitter/user_info.rjs")
+      @agent.add_social_search(search_hash)
     end
+    
+    get :twitter_search, {
+                            :search => {
+                              :q => ["hello world"], 
+                              :type => "live_search", 
+                              :next_results => "", 
+                              :refresh_url => ""
+                            }
+                          }
+    Rails.logger.info response
+    Rails.logger.info "%"*100
+    Rails.logger.info response.template_objects["recent_search"]                        
+    recent_search = response.template_objects["recent_search"]
+    recent_search.first["query"].should eql(["hello world"])
+    recent_search.second["query"].should eql(["4"])
+    recent_search.third["query"].should eql(["3"])
+    recent_search.fourth["query"].should eql(["2"])
+    recent_search.fifth["query"].should eql(["1"])     
+  end
+  
+  it "should fetch retweet when retweeting a particular tweet" do
+    Twitter::REST::Client.any_instance.stubs(:retweet).returns("")
+    
+      get :retweet, {
+          :tweet => {
+            :feed_id => "#{(Time.now.utc.to_f*100000).to_i}"
+          }
+        }
+        
+    response.should render_template("social/twitter/retweet.rjs")
+  end
+  
+  it "should fetch retweets from twitter when clicking on a particular tweet" do
+    Twitter::REST::Client.any_instance.stubs(:status).returns(sample_twitter_tweet_object)
+    Twitter::REST::Client.any_instance.stubs(:retweets).returns([sample_twitter_tweet_object])
+      get :retweets, {
+          :retweeted_id => "472324358761750530"
+        }
+    response.should render_template("social/twitter/retweets.rjs")
+  end
+  
+  it "should post a tweet to twitter" do
+    Twitter::REST::Client.any_instance.stubs(:update).returns(sample_twitter_tweet_object)
+    post :post_tweet, {
+                        :tweet => 
+                          {
+                            :body => "Text"
+                          },
+                        :twitter_handle_id => "10"
+                      }
+  end
+  
+  it "should retrieve all user info on clicking on the user link" do
+    get :user_info, {
+        :user => {
+          :name => "GnipTesting", 
+          :screen_name => "@GnipTesting",
+          :normal_img_url => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png"
+        }
+    }
+    response.should render_template("social/twitter/user_info.rjs")
+  end
 
   after(:all) do
     #Destroy the twitter handle

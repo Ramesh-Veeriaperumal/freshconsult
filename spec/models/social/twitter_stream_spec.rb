@@ -7,7 +7,6 @@ describe Social::TwitterStream do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    account = create_test_account
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
       Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)

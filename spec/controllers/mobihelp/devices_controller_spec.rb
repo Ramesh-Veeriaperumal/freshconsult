@@ -7,13 +7,10 @@ describe Mobihelp::DevicesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     @mobihelp_app = create_mobihelp_app
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
     @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(@mobihelp_app) 
     @request.params['format'] = "html"
   end
