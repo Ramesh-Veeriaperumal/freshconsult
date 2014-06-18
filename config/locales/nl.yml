@@ -4144,7 +4144,7 @@ nl:
                 feedback_widgets_knowledge_base: "Kennisbank "
                 feedback_widgets_help_articles: "of Helpartikelen zoeken"
                 show_all_results: "Alle resultaten weergeven"
-                no_results_for: "Geen resultaten voor %{term}"
+                no_results: "Geen resultaten voor "
     reorder: "Volgorde wijzigen"
     reports: 
         no_data: "Geen gegevens om weer te geven."
