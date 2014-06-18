@@ -14,6 +14,7 @@ var FreshfoneNotification;
 		this.bindPjaxTitleChange();
 		this.alertTitle="Incoming Call..";
 		this.originalTitle = document.title;
+		this.desktopNotification = false;
 	};
 
 	FreshfoneNotification.prototype = {

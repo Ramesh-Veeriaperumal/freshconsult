@@ -34,9 +34,9 @@ describe Admin::BusinessCalendarsController do
       :morning=>{"range_1"=>"am", "range_2"=>"am", "range_3"=>"am", "range_4"=>"am", "range_5"=>"am"},
       :evening=>{"range_1"=>"pm", "range_2"=>"pm", "range_3"=>"pm", "range_4"=>"pm", "range_5"=>"pm"},
       :business_time_data=>{:working_hours=>
-                            {"1"=>{"beginning_of_workday"=>"8:00 am", "end_of_workday"=>"5:00 pm"},
-                             "2"=>{"beginning_of_workday"=>"8:00 am", "end_of_workday"=>"5:00 pm"},
-                             "3"=>{"beginning_of_workday"=>"8:00 am", "end_of_workday"=>"5:00 pm"},
+                            {"1"=>{"beginning_of_workday"=>"3:00 pm", "end_of_workday"=>"12:00 am"},
+                             "2"=>{"beginning_of_workday"=>"3:00 pm", "end_of_workday"=>"12:00 am"},
+                             "3"=>{"beginning_of_workday"=>"3:00 pm", "end_of_workday"=>"12:00 am"},
                              "4"=>{"beginning_of_workday"=>"8:00 am", "end_of_workday"=>"5:00 pm"},
                              "5"=>{"beginning_of_workday"=>"8:00 am", "end_of_workday"=>"5:00 pm"},
                              "6"=>{"beginning_of_workday"=>"", "end_of_workday"=>""},
@@ -79,6 +79,30 @@ describe Admin::BusinessCalendarsController do
     business_hours.save(false)
     delete :destroy, {:id=>business_hours.id}
     @account.business_calendar.find_by_id(business_hours.id).should be_nil
+  end
+
+  #cases when feature is disabled
+
+  it "should go to default business hour edit page " do
+    @account.features.multiple_business_hours.destroy
+    default_id=@account.business_calendar.default.first.id
+    get 'index'
+    response.should redirect_to "/admin/business_calendars/#{default_id}/edit"
+    @account.features.multiple_business_hours.create
+  end
+
+  it "should go to default business hour edit page while creating new hour" do
+    @account.features.multiple_business_hours.destroy
+    default_id=@account.business_calendar.default.first.id
+    get 'new'
+    response.should redirect_to "/admin/business_calendars/#{default_id}/edit"
+    @account.features.multiple_business_hours.create
+  end
+
+  it "should not destroy default business hour" do
+    delete :destroy, {:id=>@account.business_calendar.default.first.id}
+    response.session["flash"][:notice].should eql "The Business Calendar could not be deleted"
+    response.should redirect_to('/admin/business_calendars')
   end
 
 end

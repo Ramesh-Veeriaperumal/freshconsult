@@ -84,7 +84,7 @@ module TwitterHelper
       {
         :responses => 
             {
-              "fd_social_feeds_test_20140611"=>[
+              "#{Social::DynamoHelper.select_table("feeds", Time.now)}"=>[
                 {
                   "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
                   "feed_id"=>{:s=>"#{tweet_id}"}, 

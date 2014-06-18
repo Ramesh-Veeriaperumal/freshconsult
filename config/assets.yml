@@ -317,6 +317,7 @@ javascripts:
     - public/javascripts/freshfone/components/user_info.js
     - public/javascripts/freshfone/components/connections.js
     - public/javascripts/freshfone/components/notifications.js
+    - public/javascripts/freshfone/components/desktop_notification.js
     - public/javascripts/freshfone/components/user.js
     - public/javascripts/freshfone/components/widget.js
     - public/javascripts/freshfone/components/timer.js

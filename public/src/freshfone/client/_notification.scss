@@ -21,6 +21,13 @@
 			padding-top: 10px;
 			@include border-radius(4px);
 			box-shadow: 0px 0px 20px #999;
+			.deskNotifier {
+				width: 30px;
+				height: 20px;
+				float: right;
+				z-index: 2;
+				cursor: pointer;
+			}
 		}
 		.notifier img {
 			@include float(left);

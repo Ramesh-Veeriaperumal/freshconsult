@@ -4703,7 +4703,7 @@ en:
         feedback_widgets_knowledge_base: "Knowledge base "
         feedback_widgets_help_articles: "or Browse help articles"
         show_all_results: "Show all results"
-        no_results_for: "No results for %{term}"
+        no_results: "No results for "
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -5337,6 +5337,7 @@ en:
       new_requester: "New requester"
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
+      desktop_notification: "Turn on desktop notification"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
