@@ -41,7 +41,7 @@ module Mobile::MobileHelperMethods
     end
 
     def is_native_mobile?
-      @native_mobile_agent ||= request.env["HTTP_USER_AGENT"] && !request.env["HTTP_USER_AGENT"][/Native/].nil?
+      @native_mobile_agent ||= request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/#{AppConfig['app_name']}_Native/].present? 
     end
 
     def set_mobile      
