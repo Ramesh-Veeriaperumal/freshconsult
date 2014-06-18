@@ -87,9 +87,16 @@ HelpdeskTests = [
   "spec/controllers/negative/**/*_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb"
-]            
+]    
+
+BillingTests = [
+  "spec/controllers/subscriptions_controller_spec.rb",
+  "spec/controllers/billing/billing_controller_spec.rb",
+  "spec/controllers/partner_admin/affiliates_controller_spec.rb"
+]        
   
-UnitTests = [FacebookTests, TwitterTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, APITests, ForumTests, HelpdeskTests]
+UnitTests = [ FacebookTests, TwitterTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
+              APITests, ForumTests, HelpdeskTests, BillingTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]

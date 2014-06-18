@@ -13,20 +13,34 @@ module AccountHelper
     ENV["SEED"]="002_subscription_plans"
     SeedFu::PopulateSeed.populate
     ENV["SEED"] = nil
+    
+    create_new_account
+    update_currency
+    @acc
+  end
+
+  def create_test_billing_acccount
+    auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
+    ActiveRecord::Base.connection.execute(auto_increment_query)
+
+    create_new_account("test#{Time.now.to_i}", "sample+#{Time.now.to_i}@freshdesk.com")
+  end
+
+  def create_new_account(domain = "localhost", user_email = Helpdesk::EMAIL[:sample_email])
     signup = Signup.new(  
       :account_name => 'Test Account',
-      :account_domain => 'localhost',
+      :account_domain => domain,
       :locale => I18n.default_locale,
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
-      :user_email => Helpdesk::EMAIL[:sample_email],
+      :user_email => user_email,
       :user_helpdesk_agent => true
     )
     signup.save
+    
     PopulateGlobalBlacklistIpsTable.create_default_record
     @acc = signup.account
-    update_currency
     @acc.make_current
     create_dummy_customer
     @acc
@@ -55,7 +69,7 @@ module AccountHelper
     currency = Subscription::Currency.find_by_name("USD")
     if currency.blank?
       currency = Subscription::Currency.create({ :name => "USD", :billing_site => "freshpo-test", 
-          :billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"})
+          :billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e", :exchange_rate => 1})
     end
     
     subscription = @acc.subscription
