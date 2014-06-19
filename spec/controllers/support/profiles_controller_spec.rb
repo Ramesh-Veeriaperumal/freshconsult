@@ -23,4 +23,20 @@ describe Support::ProfilesController do
     edited_customer.time_zone.should be_eql("Arizona")
     edited_customer.language.should be_eql("fr")
   end
+
+  it "should delete user avatar" do
+    get :edit, :id => @user.id
+    avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg').open
+    put :update, :id => @user.id, :user => {:avatar_attributes => {:content => avatar_file},
+                                            :name => @user.name,
+                                            :job_title => @user.job_title,
+                                            :phone => @user.phone,
+                                            :time_zone => @user.time_zone,
+                                            :language => @user.language }
+    @user.reload
+    @user.avatar.should_not be_nil
+    delete :delete_avatar
+    @user.reload
+    @user.avatar.should be_nil
+  end
 end
