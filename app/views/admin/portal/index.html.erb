@@ -51,6 +51,19 @@
 	<br/>
 	<% if current_account.features?(:forums) %>
 	<hr />
+	<div class="control-group row checkbox">
+	<%= content_tag( :div, t('.forums'), :class => "span2 lead" ) %>
+		<div class="align-right">
+    		<input name="account[features][hide_portal_forums]" type="hidden" value="1" />
+     		<input 	id="account_hide_portal_forums" name="account[features][hide_portal_forums]"
+     				rel="toggle" type="checkbox"
+     				data-checked-label="<%= t('.enable') %>"
+     				data-unchecked-label="<%= t('.disable') %>"
+     				<%= ' checked ' unless current_account.features?(:hide_portal_forums) %> 
+     				value="0" />
+  		</div>
+  	</div>
+  	<hr />
 	<%= content_tag( :h3,  t('.moderation'),	   :class => "lead" ) %>
 	<div class="radio">
 		<input type="radio" name="moderation" value="1" <%= 'checked' if @forum_moderation == :links %>/> <%= t('.moderate_links') %>
