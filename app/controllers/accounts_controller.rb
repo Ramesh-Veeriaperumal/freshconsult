@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :signup_google,
                       :create_account_google, :openid_complete, :associate_google_account,
-                      :associate_local_to_google, :create, :rebrand, :dashboard]
+                      :associate_local_to_google, :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
   skip_before_filter :set_time_zone, :set_current_account,

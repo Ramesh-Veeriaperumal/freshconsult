@@ -311,6 +311,10 @@ class Account < ActiveRecord::Base
     self.sso_options = set_sso_options_hash
   end
 
+  def rabbit_mq_exchange
+    $rabbitmq_shards[id%($rabbitmq_shards).count]
+  end
+
   protected
   
     def external_url_is_valid?(url) 

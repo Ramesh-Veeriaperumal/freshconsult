@@ -117,6 +117,15 @@ Rails::Initializer.run do |config|
 
 end
 
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+       RABBIT_MQ_ENABLED = !Rails.env.development?
+       RabbitMq::Init.start if RABBIT_MQ_ENABLED
+    end
+  end
+end
+
 ActiveRecord::ConnectionAdapters::Mysql2Adapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY" 
 
 

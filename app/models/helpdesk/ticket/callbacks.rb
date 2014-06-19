@@ -27,6 +27,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
+  after_commit_on_create :publish_new_ticket_properties_to_rabbitmq
+  after_commit_on_update :publish_updated_ticket_properties_to_rabbitmq
   after_commit_on_update :update_group_escalation, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
