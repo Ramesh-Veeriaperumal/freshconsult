@@ -17,6 +17,11 @@ describe Helpdesk::SlaPoliciesController do
 		log_in(@agent)
 	end
 
+    after(:all) do
+        @sla_policy_1.destroy
+        @sla_policy_2.destroy
+    end
+
 	it "should go to the Sla_policies index page" do
 		get :index 
 		response.body.should =~ /SLA Policies/
@@ -134,8 +139,9 @@ describe Helpdesk::SlaPoliciesController do
 	end
 
     it "should delete a Sla Policy" do
-		delete :destroy, :id => @sla_policy_2.id
-		sla_policy = Helpdesk::SlaPolicy.find_by_id(@sla_policy_2.id)
+        sla_policy = Helpdesk::SlaPolicy.find_by_name("Sla Policy - Test Spec")
+		delete :destroy, :id => sla_policy.id
+		sla_policy = Helpdesk::SlaPolicy.find_by_id(sla_policy.id)
 		sla_policy.should be_nil
 	end
 end
