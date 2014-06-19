@@ -5,13 +5,38 @@ describe Support::LoginController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  it "should display login page" do
+  it "should display portal login page" do
+    @account.sso_enabled = false
+    @account.save(false)
   	get :new
   	response.body.should =~ /Login to the support portal/
+    response.body.should =~ /...or login using/
+    response.body.should =~ /Google/
+    response.body.should =~ /Facebook/
+    response.body.should =~ /Sign up with us/
   	response.should be_success
   end
 
-  it "should display login page for sso_enabled account" do
+  it "should not display the restricted features in portal login page" do
+    @account.sso_enabled = false
+    @account.save(false)
+    @account.features.send(:facebook_signin).destroy
+    @account.features.send(:signup_link).destroy
+    get :new
+    @account.features.reload
+    facebook_signin = @account.features.find_by_type("FacebookSigninFeature")
+    facebook_signin.should be_nil
+    signup_link = @account.features.find_by_type("SignupLinkFeature")
+    signup_link.should be_nil
+    response.body.should =~ /Google/
+    response.body.should_not =~ /Facebook/
+    response.body.should_not =~ /Sign up with us/
+    response.body.should_not =~ /Once you sign up, you will have complete access to our solutions and FAQs/
+    response.body.should =~ /Twitter/
+    response.should be_succes
+  end
+
+  it "should display portal login page for sso_enabled account" do
   	@account.sso_enabled = true
   	@account.save(false)
   	get :new
