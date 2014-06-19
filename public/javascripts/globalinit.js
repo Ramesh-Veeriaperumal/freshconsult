@@ -388,11 +388,9 @@ window.xhrPool = [];
 
       $(".image-lazy-load img").livequery(function(ev){
           $(this).unveil(200, function() {
-            $(this).load(function() {
               this.style.opacity = 1;
-            });
           });
-      })
+      });
       $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate();
       })
