@@ -289,6 +289,7 @@ javascripts:
   fdwidget:
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/widgetinit.js
     - public/javascripts/utils.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
