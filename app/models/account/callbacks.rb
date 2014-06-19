@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
   after_destroy :remove_shard_mapping
 
   after_commit_on_create :add_to_billing, :enable_elastic_search
-  after_commit_on_update :clear_cache, :clear_api_limit_cache
+  after_commit_on_update :clear_cache, :clear_api_limit_cache, :update_redis_display_id
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
 
 
@@ -18,6 +18,17 @@ class Account < ActiveRecord::Base
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
        self.ticket_display_id = dis_max_id
+    end
+  end
+
+  def update_redis_display_id
+    if features?(:redis_display_id) && @all_changes.key?(:ticket_display_id) 
+      key = TICKET_DISPLAY_ID % { :account_id => self.id }
+      display_id_increment = @all_changes[:ticket_display_id][1] - get_tickets_redis_key(key).to_i
+      if display_id_increment > 0
+        success = increment_tickets_redis_key(key, display_id_increment)
+        set_tickets_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID) unless success
+      end
     end
   end
 

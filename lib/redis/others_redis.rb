@@ -10,6 +10,10 @@ module Redis::OthersRedis
 	  end
 	end
 
+	def set_others_redis_with_expiry(key, value, options)
+		newrelic_begin_rescue { $redis_others.set(key, value, options) }
+	end
+
 	def remove_others_redis_key key
 		newrelic_begin_rescue { $redis_others.del(key) }
 	end

@@ -6,6 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
+  before_create :assign_display_id, :if => :set_display_id?
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -277,6 +279,40 @@ class Helpdesk::Ticket < ActiveRecord::Base
       }.to_json
     
     $sqs_autorefresh.send_message(body) unless Rails.env.test?
+  end
+
+  def set_display_id?
+    account.features?(:redis_display_id)
+  end
+
+  def assign_display_id
+    #not taking care of decrementing the counter on rollback
+
+    key      = TICKET_DISPLAY_ID % { :account_id => account_id }
+    lock_key = DISPLAY_ID_LOCK % { :account_id => account_id }
+
+    TicketConstants::TICKET_DISPLAY_ID_MAX_LOOP.times do
+      computed_display_id = increment_tickets_redis_key(key).to_i
+      #computed_display_id will be 0 if the redis command fails,
+      #in which case we will keep retrying till we timeout
+
+      #normal workflow
+      if computed_display_id > 1
+        self.display_id = computed_display_id.to_i
+        return
+      #first time, when the key is a huge -ve value
+      elsif computed_display_id < 0
+        if set_others_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
+                                                       :nx => true })
+          computed_display_id = account.get_max_display_id
+          set_tickets_redis_key(key, computed_display_id)
+          self.display_id = computed_display_id
+          return
+        end
+      end
+    end
+    Rails.logger.debug "Redis Display ID - Retry limit exceeded in #{account_id}"
+    NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
 private 

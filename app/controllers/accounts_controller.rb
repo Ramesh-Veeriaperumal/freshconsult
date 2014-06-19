@@ -1,6 +1,8 @@
 class AccountsController < ApplicationController
 
   include ModelControllerMethods
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   
   layout :choose_layout 
   
@@ -36,6 +38,12 @@ class AccountsController < ApplicationController
    
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages 
+    @ticket_display_id = current_account.get_max_display_id
+    if current_account.features?(:redis_display_id)
+      key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
+      redis_display_id = get_tickets_redis_key(key).to_i
+      @ticket_display_id = redis_display_id if redis_display_id > @ticket_display_id
+    end
   end
   
   def check_domain

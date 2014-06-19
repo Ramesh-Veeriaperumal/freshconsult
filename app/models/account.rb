@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   include ErrorHandle
   include AccountConstants
 
@@ -112,7 +114,7 @@ class Account < ActiveRecord::Base
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')
     unless max_dis_id.nil?
-      return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id 
+      return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id+1
     end
     return 0
   end
