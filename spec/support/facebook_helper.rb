@@ -30,7 +30,7 @@ module FacebookHelper
   def sample_realtime_comment_feed(feed_id)
     realtime_feed = {
       "entry" => {
-          "id" => "532218423476440",
+          "id" => "#{@fb_page.page_id}",
           "time" => 1374146491,
           "changes" => [{
               "field" => "feed", 

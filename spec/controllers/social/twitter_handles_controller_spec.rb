@@ -80,8 +80,8 @@ describe Social::TwitterHandlesController do
 
   describe "GET #feed" do
 
-    it "if no handles present should redirect to /admin/twitter" do
-      #Social::TwitterHandle.destroy_all
+    it "if no handles present should redirect" do
+      Social::TwitterHandle.destroy_all
 
       get :feed
       response.should redirect_to 'social/twitters'
@@ -153,7 +153,7 @@ describe Social::TwitterHandlesController do
   describe "DELETE #destroy" do
 
     it "should delete and redirect" do
-      #Social::TwitterHandle.destroy_all
+      Social::TwitterHandle.destroy_all
       twt_handler = create_test_twitter_handle(@account)
       delete :destroy, :id => twt_handler.id
 

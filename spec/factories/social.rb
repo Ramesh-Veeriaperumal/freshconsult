@@ -1,6 +1,6 @@
 if ENV["RAILS_ENV"] == "test"
   Factory.define :facebook_pages, :class => Social::FacebookPage do |f|
-    f.page_id "532218423476440"
+    f.page_id {(Time.now.utc.to_f*100000).to_i}
     f.profile_id 123456
     f.page_token "123456"
     f.access_token "123456"
