@@ -17,14 +17,6 @@ describe Helpdesk::Note do
     @ticket.save_ticket
   end
 
-  after(:each) do
-    Helpdesk::Note.destroy_all
-  end
-
-  after(:all) do
-    Helpdesk::Ticket.destroy_all
-  end
-
   describe "Note Creation" do
     context "creats note_body both in riak and mysql" do
       it "without body" do

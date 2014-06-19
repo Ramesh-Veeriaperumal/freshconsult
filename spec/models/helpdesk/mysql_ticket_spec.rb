@@ -11,11 +11,6 @@ describe Helpdesk::Ticket do
     $backup_cluster = "none"
   end
 
-  after(:each) do
-    Helpdesk::Ticket.destroy_all
-    Helpdesk::Note.destroy_all
-  end
-
   describe "Ticket Creation" do
     context "creats ticket mysql" do
       it "without description" do
