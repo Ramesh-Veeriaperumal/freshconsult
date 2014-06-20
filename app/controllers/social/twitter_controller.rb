@@ -31,6 +31,7 @@ class Social::TwitterController < Social::BaseController
   def create_fd_item
     if has_permissions?(params[:search_type], params[:item][:stream_id])
       current_feed = create_fd_item_params
+      @current_feed_id = current_feed[:feed_id]
       fd_items = tweet_to_fd_item(current_feed, params[:search_type])
       fd_items.compact!
       @items_info = fd_items.inject([]) do |arr, item|

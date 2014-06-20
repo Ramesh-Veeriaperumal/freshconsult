@@ -35,8 +35,6 @@ module Social::Util
     message = {} unless message
     message.merge!(:environment => Rails.env)
     topic = SNS["social_notification_topic"]
-    puts subject
-    puts message.inspect
     DevNotification.publish(topic, subject, message.to_json) unless (Rails.env.development? or Rails.env.test?)
   end
 

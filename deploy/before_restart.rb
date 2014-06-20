@@ -1,7 +1,5 @@
 if node[:opsworks] 
-  if node[:opsworks][:instance][:hostname].include?("-app-") && ::File.exists?("#{release_path}/config/database.yml")
-    run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake cloudfront_assets:upload"
-  end
+  # Nothing is done just a empty case moved to before symlink
 else
   #delayed_job monit has some problem with file permissions.
   #refer http://community.engineyard.com/discussions/problems/1485-delayed_job-worker-not-starting-permission-denied

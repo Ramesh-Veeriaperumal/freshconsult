@@ -3345,7 +3345,7 @@ a.pill.help{
  /*lazy loader */
 .image-lazy-load img{
   opacity: .5;
-  transition: all .4s ease-in;
+  @include transition(opacity .1s ease-in);
 }
 
 //------------------------------------------------------------------------------------

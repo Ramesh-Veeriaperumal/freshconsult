@@ -4,6 +4,7 @@ class Admin::AutomationsController < Admin::AdminController
   before_filter :escape_html_entities_in_json  
   before_filter :load_config, :only => [:new, :edit]
   before_filter :check_automation_feature
+  attr_accessor :action_defs, :filter_defs, :op_types, :event_defs if Rails.env.test?
   def index
     @va_rules = all_scoper
     @va_rules

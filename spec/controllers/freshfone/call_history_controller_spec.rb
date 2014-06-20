@@ -22,14 +22,14 @@ describe Freshfone::CallHistoryController do
 
   it 'should return no results in search for calls made yesterday' do
     get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
-                          "page"=>"1", "number_id"=>"1", "wf_c0"=>"created_at", 
+                          "page"=>"1", "number_id"=>@number.id, "wf_c0"=>"created_at", 
                           "wf_o0"=>"is_greater_than", "wf_v0_0"=>"yesterday" }
     assigns[:calls].should be_empty
   end
 
   it 'should return valid results in search for calls made today' do
     get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
-                          "page"=>"1", "number_id"=>"1", "wf_c0"=>"created_at", 
+                          "page"=>"1", "number_id"=>@number.id, "wf_c0"=>"created_at", 
                           "wf_o0"=>"is_greater_than", "wf_v0_0"=>"today" }
     assigns[:calls].should_not be_empty
   end
@@ -41,7 +41,7 @@ describe Freshfone::CallHistoryController do
 
   it 'should return valid children for a transferred call' do
     create_call_family
-    get :children, {"id" => @parent_call, "number_id" => 1}
+    get :children, {"id" => @parent_call, "number_id" => @number.id}
     assigns[:parent_call].should_not be_blank
     assigns[:calls].should_not be_empty
     assigns[:calls].count.should == 1

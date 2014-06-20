@@ -44,7 +44,7 @@ class Social::FacebookPosts
   def add_wall_post_as_ticket(feed)
 
     group_id = @fb_page.product.primary_email_config.group_id unless @fb_page.product.blank?
-    puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]} :time: #{feed[:created_time]}"
+    Rails.logger.debug "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]} :time: #{feed[:created_time]}"
     profile_id = feed[:actor_id]
     requester = get_facebook_user(profile_id)
     unless feed[:message].blank?
@@ -61,18 +61,18 @@ class Social::FacebookPosts
 
       if @ticket.save_ticket
         if feed[:comments]["count"] > 0
-          puts"ticket is saved and it has more comments :: #{feed[:comments]["count"]}"
+          Rails.logger.debug "ticket is saved and it has more comments :: #{feed[:comments]["count"]}"
           add_comment_as_note feed
         end
-        puts "This ticket has been saved"
+        Rails.logger.debug "This ticket has been saved"
       else
-        puts "error while saving the ticket:: #{@ticket.errors.to_json}"
+        Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
       end
     end
   end
 
   def get_html_content post_id
-    puts "get_html_content"
+    Rails.logger.debug "get_html_content"
     post = @rest.get_object(post_id)
     post.symbolize_keys!
     html_content =  CGI.escapeHTML(post[:message]).to_s
@@ -106,7 +106,7 @@ class Social::FacebookPosts
                                  :active => true,
                                  :helpdesk_agent => false}})
       else
-        puts "unable to save the contact:: #{user.errors.inspect}"
+        Rails.logger.debug "unable to save the contact:: #{user.errors.inspect}"
       end
     end
     user
@@ -148,7 +148,7 @@ class Social::FacebookPosts
           if @note.save_note
 
           else
-            puts "error while saving the note #{@note.errors.to_json}"
+            Rails.logger.debug "error while saving the note #{@note.errors.to_json}"
           end
         ensure
           User.reset_current_user
@@ -158,7 +158,7 @@ class Social::FacebookPosts
   end
 
   def truncate_subject(subject , count)
-    puts "truncate subject #{subject}"
+    Rails.logger.debug "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
 
@@ -194,7 +194,7 @@ class Social::FacebookPosts
           begin
             user.make_current
             unless @note.save_note
-              puts "error while saving the note :: #{@note.errors.to_json}"
+              Rails.logger.debug "error while saving the note :: #{@note.errors.to_json}"
             end
           rescue
             User.reset_current_user

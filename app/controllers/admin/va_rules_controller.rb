@@ -164,6 +164,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
 
     def ticket_state_filters
+      # operatortype should not be named hours for a count type.. need to change
       [
         { :name => -1, :value => "-----------------------"  },
         { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",

@@ -55,6 +55,20 @@ module DynamoHelper
     dynamodb_entry(table, hash_key, range_key, postedTime)
   end
 
+  def sample_dynamo_get_item_params
+    {
+      :item => 
+          { 
+            "stream_id" => {:s=>"#{@account.id}_#{@default_stream.id}"}, 
+            "feed_ids"=>{:ss=>["140264973268266"]
+          }, 
+          "object_id" => {
+            :s =>"feed:140264973268266"
+            }
+          }
+    }
+  end
+
   private
     def dynamodb_entry(table, hash_value, range_value, postedTime)
       

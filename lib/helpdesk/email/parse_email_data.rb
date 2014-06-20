@@ -123,13 +123,13 @@ module Helpdesk::Email::ParseEmailData
 		account.email_configs.find_by_to_email(to_email[:email])
 	end
 
-	def get_user from_email, email_config
+	def get_user from_email, email_config, email_body
 		self.user = account.all_users.find_by_email(from_email[:email])
 	    unless user
 	      self.user = account.contacts.new
 	      signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
 	      															get_portal(email_config))
-	      detect_user_language(signup_status)
+	      detect_user_language(signup_status, email_body)
 	    end
 	    user.make_current
 	  user
@@ -149,13 +149,13 @@ module Helpdesk::Email::ParseEmailData
 		(account.features?(:dynamic_content)) ? nil : account.language
 	end
 
-	def detect_user_language signup_status
-		args = [user, text_for_detection]  
+	def detect_user_language signup_status, email_body
+		args = [user, text_for_detection(email_body)]  
 		Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
 	end
 
-	def text_for_detection
-	  text = params['body-plain'][0..100]
+	def text_for_detection email_body
+	  text = email_body[0..100]
 	  text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
 	end
 

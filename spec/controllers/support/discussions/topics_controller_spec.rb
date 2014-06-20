@@ -28,12 +28,9 @@ describe Support::Discussions::TopicsController do
 
 	it "should render show page on get 'show'" do
 		topic = publish_topic(create_test_topic(@forum))
-		hit_count = topic.hits
 
 		get :show, :id => topic.id
 
-		topic.reload
-		topic.hits.should be_eql(hit_count + 1)
 		response.should render_template 'support/discussions/topics/show.portal'
 	end
 
@@ -41,6 +38,16 @@ describe Support::Discussions::TopicsController do
 		get :new
 
 		response.should render_template 'support/discussions/topics/new.portal'
+	end
+
+	it "should increase hit count on get 'hit'" do
+		topic = publish_topic(create_test_topic(@forum))
+		hit_count = topic.hits
+
+		get :hit, :id => topic.id
+		
+		topic.reload
+		topic.hits.should be_eql(hit_count + 1)
 	end
 
 	it "should render edit page on get 'edit'" do

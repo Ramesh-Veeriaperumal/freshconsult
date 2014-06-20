@@ -85,7 +85,12 @@ class Freshfone::CallActions
 		end
 		
 		def search_customer_with_number(phone_number)
-			Freshfone::Search.search_user_with_number(phone_number)
+			# Freshfone::Search.search_user_with_number(phone_number)
+			users_scoper.find_by_phone(phone_number) || users_scoper.find_by_mobile(phone_number)
+		end
+
+		def users_scoper
+			current_account.users
 		end
 
 end

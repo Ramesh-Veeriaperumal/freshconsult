@@ -22,18 +22,17 @@ class GoogleLoginController < AccountsController
     end
   end
 
-  def select_shard(&block)
-    account_domain_or_id = request.host
-    if integrations_url?
-      account_domain_or_id = actual_domain ||
-        find_account_by_google_domain(request_domain)
-    end
-    Sharding.select_shard_of(account_domain_or_id || request.host) do
-      yield
-    end
-  end
-
   private
+    def select_shard(&block)
+      account_domain_or_id = request.host
+      if integrations_url?
+        account_domain_or_id = actual_domain ||
+          find_account_by_google_domain(request_domain)
+      end
+      Sharding.select_shard_of(account_domain_or_id || request.host) do
+        yield
+      end
+    end
 
     def integrations_url?
       request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or

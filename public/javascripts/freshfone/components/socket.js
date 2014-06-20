@@ -80,17 +80,17 @@ var FreshfoneSocket;
 			var self = this;
 			// if (!this.freshfone_socket_channel) { this.connect(); }
 			
-				this.freshfone_socket_channel.on('turn_on_incoming_sound', function () {
-					if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
-						Twilio.Device.sounds.incoming(true);
-					}
-				});
+				// this.freshfone_socket_channel.on('turn_on_incoming_sound', function () {
+				// 	if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
+				// 		Twilio.Device.sounds.incoming(true);
+				// 	}
+				// });
 
-				this.freshfone_socket_channel.on('turn_off_incoming_sound', function () {
-					if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
-						Twilio.Device.sounds.incoming(false);
-					}
-				});
+				// this.freshfone_socket_channel.on('turn_off_incoming_sound', function () {
+				// 	if (typeof Twilio !== "undefined" && Twilio.Device.sounds) {
+				// 		Twilio.Device.sounds.incoming(false);
+				// 	}
+				// });
 
 				this.freshfone_socket_channel.on('agent_available', function (data) {
 					data = JSON.parse(data) || {};

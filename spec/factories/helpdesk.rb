@@ -5,11 +5,25 @@ if ENV["RAILS_ENV"] == "test"
     t.deleted 0
     t.to_email Faker::Internet.email
     t.ticket_type "Question"
-    t.display_id 1
+    t.sequence(:display_id) { |n| n }
     t.trained 0
     t.isescalated 0
     t.priority 1
     t.subject Faker::Lorem.sentence(3)
+    t.description Faker::Lorem.paragraph(3)
+    t.cc_email({:cc_emails => [], :fwd_emails => []}.with_indifferent_access)
+  end
+
+  Factory.define :note, :class => Helpdesk::Note do |n|
+    n.body Faker::Lorem.paragraph(3)
+    n.notable_id 1
+    n.notable_type 'Helpdesk::Ticket'
+    n.private false
+  end
+
+  Factory.define :product, :class => Product do |p|
+    p.name {Faker::Company.name}
+    p.description {Faker::Lorem.paragraph(3)}
   end
 
   Factory.define :time_sheet, :class => Helpdesk::TimeSheet do |t|
