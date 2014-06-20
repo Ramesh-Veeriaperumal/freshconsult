@@ -4,7 +4,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include ActionView::Helpers::TextHelper
   include ParserUtil
   include HelpdeskControllerMethods
-  include Helpdesk::TagMethods
 
   before_filter :filter_params_ids, :only => :update_multiple
   before_filter :load_multiple_items, :only => :update_multiple
@@ -17,7 +16,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
       ticket.save_ticket
-      update_tags(params[:helpdesk_tags][:tags], false, ticket) unless params[:helpdesk_tags].blank?
     end
     flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
                                       :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })

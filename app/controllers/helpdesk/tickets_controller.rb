@@ -13,7 +13,6 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::ToggleEmailNotification
   include ApplicationHelper
   include Mobile::Controllers::Ticket
-  include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -303,7 +302,7 @@ class Helpdesk::TicketsController < ApplicationController
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_ticket_attributes(params[nscname])
 
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -339,7 +338,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update_ticket_properties
     old_item = @item.clone
     if @item.update_ticket_attributes(params[nscname])
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
@@ -646,7 +645,6 @@ class Helpdesk::TicketsController < ApplicationController
     build_attachments @item, :helpdesk_ticket
 
     if @item.save_ticket
-      create_tags(params[:helpdesk][:tags], @item) unless params[:helpdesk][:tags].blank?
       post_persist
       notify_cc_people cc_emails unless cc_emails.blank? 
     else
@@ -1050,7 +1048,47 @@ class Helpdesk::TicketsController < ApplicationController
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
       :ticket_id => @ticket.id}
   end
-  
+
+  def update_tags
+    new_tag_list= params[:helpdesk][:tags].split(",").map { |tag| tag.strip}
+    old_tag_list = @item.tags.map{|tag| tag.name.strip }
+
+    add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) })
+    #Choosing the ones that are not in the old list.
+
+    remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) }) 
+    #Choosing the ones that are in the old list and not in the new ones.
+
+  end
+
+  def add_ticket_tags(tags_to_be_added)
+
+    begin
+      tags_to_be_added.each do |tag_string|
+        tag = Helpdesk::Tag.find_by_name_and_account_id(tag_string, current_account) || Helpdesk::Tag.new(:name => tag_string, :account_id => current_account.id)
+        @item.tags << tag
+      end
+    rescue ActiveRecord::RecordInvalid => e
+    end
+
+  end
+
+  def remove_ticket_tags(tags_to_be_removed)
+
+    tags = current_account.tags.find_all_by_name(tags_to_be_removed)  
+    unless tags.blank?
+
+      # Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type().destroy is not working - Hence trying a different route.
+      tag_uses = Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type(@item.id, tags.map{ |tag| tag.id } ,"Helpdesk::Ticket" ).collect(&:id)
+      Helpdesk::TagUse.destroy tag_uses
+
+      #Decrementing Tag Uses Count (on multiple items)
+      # Helpdesk::Tag.update_all("tag_uses_count = tag_uses_count -1", {:id => tags.collect(&:id)})
+
+    end
+
+  end
+
   def set_selected_tab
     @selected_tab = :tickets
   end

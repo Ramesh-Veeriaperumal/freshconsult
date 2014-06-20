@@ -191,7 +191,6 @@ class Account < ActiveRecord::Base
 
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
-  has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   

@@ -19,11 +19,6 @@
   
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
-<!-- Adding "Tags" field to ticket creation form -->
-<li class="field">
-  <label for="ticket_tags"><%=t('tag.title')%></label>
-  <input type="text" class="select2 input-xxlarge" id="helpdesk_ticket_tags" name="helpdesk[tags]" />
-</li>
 
 <%= ci_fields(ticket_form)%>
 
@@ -45,9 +40,4 @@
                      }
       });
     });
-
-jQuery("#helpdesk_ticket_tags").select2({  
-      tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-      tokenSeparators: [',']
-  });
 <%- end %>
