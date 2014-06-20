@@ -1,5 +1,10 @@
-<% topic = post.topic %>
-<% post_type = post.original_post? ? 'new_topic' : 'reply' %>
+<%
+topic = post.topic
+post_type = post.original_post? ? 'new_topic' : 'reply'
+entry_delete_path = "/discussions/topics/#{topic.id}"
+entry_delete_path.append("/posts/#{post.id}") if post_type=='reply'
+%>
+
 <div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.id %>" data-user="<%= post.user_id %>">
 	<div class="pull-left">
 		<%= user_avatar(post.user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
@@ -38,7 +43,7 @@
 			</div>
 		<% unless post.spam? %>
 			<div class="action-icon">
-				<%= link_to_remote('', :url =>"/discussions/topics/#{topic.id}/posts/#{post.id}",
+				<%= link_to_remote('', :url => entry_delete_path,
 						:method => :delete,
 						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
 						:html => {

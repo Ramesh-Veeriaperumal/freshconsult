@@ -70,6 +70,7 @@
 		}
 
 		.post-content {
+			@include text-formatting();
 			margin: 10px 0 15px;
 			overflow-x: auto;
 			ul{

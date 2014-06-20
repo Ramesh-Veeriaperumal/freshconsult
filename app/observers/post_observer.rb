@@ -22,7 +22,7 @@ class PostObserver < ActiveRecord::Observer
 
 	def after_destroy(post)
 		update_cached_fields(post)
-		create_activity(post, 'delete_post') unless post.trash
+		create_activity(post, 'delete_post', User.current) unless post.trash
 	end
 
 	def monitor_reply(post)
@@ -59,12 +59,12 @@ class PostObserver < ActiveRecord::Observer
       post.topic.update_cached_post_fields(post)
   	end
 
-	def create_activity(post, type)
+	def create_activity(post, type, user = post.user)
 		post.activities.create(
 			:description => "activities.forums.#{type}.long",
 			:short_descr => "activities.forums.#{type}.short",
 			:account 		=> post.account,
-			:user 			=> post.user,
+			:user 			=> user,
 			:activity_data 	=> {
 								 :path => discussions_topic_path(post.topic_id),
 								 :url_params => {

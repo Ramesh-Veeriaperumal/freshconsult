@@ -34,8 +34,12 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_create(topic)
     topic.account.clear_forum_categories_from_cache
+    after_publishing(topic) if topic.published?
+  end
+
+  def after_publishing(topic)
     monitor_topic(topic)
-    create_activity(topic, 'new_topic') if topic.published?
+    create_activity(topic, 'new_topic')
   end
 
   def monitor_topic topic
