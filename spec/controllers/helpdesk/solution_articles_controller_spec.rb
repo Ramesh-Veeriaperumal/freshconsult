@@ -8,17 +8,18 @@ describe Solution::ArticlesController do
   before(:all) do
     @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
-    @test_category = create_category( {:name => "new category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_folder = create_folder( {:name => "new folder #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+    @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
       :category_id => @test_category.id } )
-    @test_article = create_article( {:title => "new article #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+    @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    @test_article2 = create_article( {:title => "new article2 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+    @test_article2 = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
   end
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
   end
 
   it "should redirect to folder show if article index is hit" do 
@@ -58,12 +59,12 @@ describe Solution::ArticlesController do
   end
 
   it "should reorder articles" do
-    folder = create_folder( {:name => "new folder #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+    folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
       :category_id => @test_category.id } )
     position_arr = (1..4).to_a.shuffle
     reorder_hash = {}
     for i in 0..3
-      article = create_article( {:title => "new article #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
       reorder_hash[article.id] = position_arr[i] 
     end

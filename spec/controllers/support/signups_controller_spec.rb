@@ -5,6 +5,10 @@ describe Support::SignupsController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
+  before(:all) do
+    @account.features.send(:signup_link).create
+  end
+
   it "should display new signup page" do
   	get :new
   	response.should render_template 'support/signups/new.portal'

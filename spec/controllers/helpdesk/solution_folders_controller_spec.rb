@@ -9,11 +9,11 @@ describe Solution::FoldersController do
     @user = create_dummy_customer
     time = (Time.now.to_f*1000).to_i
     @now = (Time.now.to_f*1000).to_i
-    @test_category = create_category( {:name => "new category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )       
+    @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )       
 
-    @test_folder = create_folder( {:name => "new folder #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+    @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @test_category.id } )
-    @test_folder2 = create_folder( {:name => "new folder2 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+    @test_folder2 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @test_category.id } )
   end
 

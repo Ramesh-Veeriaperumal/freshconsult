@@ -399,6 +399,9 @@ describe Social::TwitterController do
   it "should return the live search results and five recent searches by live search stored in redis" do
     $redis_others.del("STREAM_RECENT_SEARCHES:#{@account.id}:#{@agent.id}")
     Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
+
+    @account.twitter_handles.update_all(:last_error => nil) # to avoid re-auth errors from cropping up
+    @account.make_current
     
     5.times do |n|
       search_hash  = {
@@ -409,7 +412,7 @@ describe Social::TwitterController do
       }
       @agent.agent.add_social_search(search_hash)
     end
-    
+
     get :twitter_search, {
                             :search => {
                               :q => ["hello world"], 
@@ -420,7 +423,7 @@ describe Social::TwitterController do
                           }
     Rails.logger.info response
     Rails.logger.info "%"*100
-    Rails.logger.info response.template_objects["recent_search"]                        
+    Rails.logger.info response.template_objects["recent_search"].inspect                        
     recent_search = response.template_objects["recent_search"]
     recent_search.first["query"].should eql(["hello world"])
     recent_search.second["query"].should eql(["4"])

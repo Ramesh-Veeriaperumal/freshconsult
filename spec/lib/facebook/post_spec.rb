@@ -74,7 +74,7 @@ describe Facebook::Core::Post do
     
     AwsWrapper::Sqs.any_instance.expects(:requeue).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse   
-    Social::FacebookPage.first.last_error.should_not be_nil
+    Social::FacebookPage.find_by_id(@fb_page.id).last_error.should_not be_nil
   end
   
   
@@ -87,8 +87,8 @@ describe Facebook::Core::Post do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    Social::FacebookPage.first.reauth_required.should be_true
-    Social::FacebookPage.first.enable_page.should be_false
+    Social::FacebookPage.find_by_id(@fb_page.id).reauth_required.should be_true
+    Social::FacebookPage.find_by_id(@fb_page.id).enable_page.should be_false
   end
   
   it "should not create a ticket when a post arrives and import visitor post is not enabled" do

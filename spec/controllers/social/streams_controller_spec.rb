@@ -33,15 +33,19 @@ describe Social::StreamsController do
   end
   
   before(:each) do
-    login_admin
+    log_in(@agent)
   end
   
   describe "#stream_feeds" do
     it "should fetch all the streams(default/custom) on rendering the page" do
+      all_streams = @agent.visible_social_streams
+      default_streams = all_streams.select { |stream| stream.default_stream? }
+      custom_streams  = all_streams.select { |stream| stream.custom_stream? }
+
       get :index
       response.should render_template("social/streams/index.html.erb")
-      response.template_objects["streams"].should eql(@account.twitter_streams.select { |stream| stream.default_stream? })
-      response.template_objects["custom_streams"].should eql(@account.twitter_streams.select { |stream| stream.custom_stream? })
+      response.template_objects["streams"].should eql(default_streams)
+      response.template_objects["custom_streams"].should eql(custom_streams)
     end
     
     it "should show all the old tweets on clicking on show more" do

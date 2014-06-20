@@ -20,8 +20,9 @@ module SolutionsHelper
 
   def create_article(params = {})
     test_article = Factory.build(:solution_articles, :title => params[:title], :description => params[:description],
-      :folder_id => params[:folder_id], :user_id => params[:user_id], :status => params[:status], :art_type => params[:art_type])
+      :folder_id => params[:folder_id], :status => params[:status], :art_type => params[:art_type])
     test_article.account_id = @account.id
+    test_article.user_id = params[:user_id] || @agent.id
     test_article.save(false)
     test_article
   end
