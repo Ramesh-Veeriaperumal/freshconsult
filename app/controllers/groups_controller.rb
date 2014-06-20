@@ -130,7 +130,7 @@ class GroupsController < Admin::AdminController
   
 protected
 
-  def cname
+  def cname # Possible dead code
     @cname ||= controller_name.singularize
   end
 
