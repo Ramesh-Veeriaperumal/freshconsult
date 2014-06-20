@@ -5,11 +5,11 @@ module TicketHelper
   def create_ticket(params = {}, group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
-      user = add_new_user(Account.first)
+      user = add_new_user(@account)
       requester_id = user.id
     end
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
-    account_id =  group ? group.account_id : Account.first.id
+    account_id =  group ? group.account_id : @account.id
     test_ticket = Factory.build(:ticket, :status => params[:status],
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
