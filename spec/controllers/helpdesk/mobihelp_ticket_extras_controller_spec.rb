@@ -13,6 +13,7 @@ describe Helpdesk::MobihelpTicketExtrasController do
 
   before(:each) do
     login_admin
+    stub_s3_writes
   end
 
   it "should display ticket data" do

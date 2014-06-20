@@ -13,6 +13,7 @@ describe Admin::ProductsController do
 
 	before(:each) do
 		login_admin
+		stub_s3_writes
 	end
 
 	it "should list all products" do

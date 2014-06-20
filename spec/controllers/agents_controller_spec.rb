@@ -13,6 +13,7 @@ describe AgentsController do
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
     # Delayed::Job.destroy_all
   end
 

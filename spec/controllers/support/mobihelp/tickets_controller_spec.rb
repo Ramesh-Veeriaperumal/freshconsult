@@ -12,11 +12,11 @@ describe Support::Mobihelp::TicketsController do
 
     ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket", @user_device_id, @user)
     @test_ticket = create_mobihelp_ticket(ticket_attributes)
-
   end
 
   before(:each) do
     log_in(@user)
+    stub_s3_writes
   end
 
   describe "Ticket creation" do

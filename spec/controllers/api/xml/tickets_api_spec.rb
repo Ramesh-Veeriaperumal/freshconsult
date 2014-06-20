@@ -8,6 +8,7 @@ describe Helpdesk::TicketsController do
   before(:each) do
     request.host = @account.full_domain
     http_login(@agent)
+    stub_s3_writes
   end
 
   it "should create a ticket" do

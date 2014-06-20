@@ -9,6 +9,10 @@ describe Support::ProfilesController do
     @user = create_dummy_customer
   end
 
+  before(:each) do
+    #stub_s3_writes
+  end
+
   it "should edit an existing contact" do
     get :edit, :id => @user.id
     response.should render_template :edit

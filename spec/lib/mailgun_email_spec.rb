@@ -14,6 +14,7 @@ describe Helpdesk::Email::Process do
 		@note_size = Helpdesk::Note.all.size
 		@article_size = Solution::Article.all.size
 		@account.make_current
+		stub_s3_writes
 	end
 
 	after(:each) do
