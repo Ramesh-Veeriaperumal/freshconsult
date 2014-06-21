@@ -64,7 +64,8 @@ class SsoController < ApplicationController
 
     def create_user_session(protocol)
       @user_session = current_account.user_sessions.new(@current_user)
-      if @user_session.save && grant_day_pass
+      if @user_session.save
+        return unless grant_day_pass
         cookies["mobile_access_token"] = { :value => @current_user.single_access_token, :http_only => true, :email => @current_user.email } if is_native_mobile?
         redirect_url = protocol+"://"+portal_url
         Rails.logger.info "google_login redirect_url #{redirect_url}"
