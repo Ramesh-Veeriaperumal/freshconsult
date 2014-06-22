@@ -271,7 +271,6 @@ module ApplicationHelper
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_social? && !feature?(:social_revamp) && handles_associated?],
       ['/social/streams', :social,     can_view_social? && feature?(:social_revamp) && handles_associated?],
-      ['/social/welcome', :social,     can_view_welcome_page?],
       solutions_tab,
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
