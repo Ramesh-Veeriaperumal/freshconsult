@@ -63,6 +63,34 @@ class Topic < ActiveRecord::Base
     }
   }
 
+  named_scope :following, lambda { |ids|
+    {
+      :conditions => following_conditions(ids),
+      :order => "#{Topic.table_name}.replied_at DESC"
+    }
+  }
+
+
+  # The below namescope might be used later. DO NOT DELETE. @Thanashyam
+  # named_scope :followed_by, lambda { |user_id|
+  #   {
+  #     :joins => %(  LEFT JOIN `forums` ON `forums`.`id` = `topics`.`forum_id`
+  #                   INNER JOIN `monitorships` ON 
+  #                       ( `monitorships`.`monitorable_id`=`topics`.`id` AND 
+  #                         `monitorships`.`monitorable_type`="Topic" AND
+  #                         `monitorships`.`account_id`=`topics`.`account_id`
+  #                       ) 
+  #                     OR 
+  #                       ( 
+  #                         `monitorships`.`monitorable_id`=`forums`.`id` AND
+  #                         `monitorships`.`monitorable_type`="Forum" AND
+  #                         `monitorships`.`account_id`=`forums`.`account_id`
+  #                       )),
+  #     :conditions => ["monitorships.user_id=? AND monitorships.active=?", user_id, true],
+  #     :order => "#{Topic.table_name}.replied_at DESC"
+  #   }
+  # }
+
   # Popular topics in forums
   # Filtered based on last replied and user_votes
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
@@ -100,6 +128,15 @@ class Topic < ActiveRecord::Base
         :include =>[:forum],:conditions => ["forums.forum_visibility = ?" , Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
       }
     end
+  end
+
+  def self.following_conditions(ids)
+    return "" if ids.blank?
+    sql = []
+    sql << "`#{Topic.table_name}`.`id` IN (?)" unless ids[:topic].blank?
+    sql << "`#{Topic.table_name}`.`forum_id` IN (?)" unless ids[:forum].blank?
+
+    [sql.join(" OR ")] | ([ids[:topic], ids[:forum]] - [[]])
   end
 
   named_scope :for_forum, lambda { |forum|
