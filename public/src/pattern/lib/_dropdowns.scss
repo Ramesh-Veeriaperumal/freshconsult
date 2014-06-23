@@ -30,15 +30,15 @@
   height: 0;
   vertical-align: top;
   border-top:   4px solid $black;
-  border-right: 4px solid transparent;
-  border-left:  4px solid transparent;
+  @include border-right(4px solid transparent);
+  @include border-left(4px solid transparent);
   content: "";
 }
 
 // Place the caret
 .dropdown .caret {
   margin-top: 6px;
-  margin-left: 4px;
+  @include margin-left(4px);
 }
 
 // Place the caret
@@ -52,10 +52,10 @@
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  @include left(0);
   z-index: $zindexDropdown;
   display: none; // none by default, but block on "open" of the menu
-  float: left;
+  @include float(left);
   min-width: 195px;
   padding: 4px 0;
   margin: 1px 0 0; // override default ul
@@ -63,7 +63,7 @@
   background-color: $dropdownBackground;
   border: 1px solid #ccc; // Fallback for IE7-8
   border: 1px solid $dropdownBorder;
-  *border-right-width: 2px;
+  *border-right-width:2px;
   *border-bottom-width: 2px;
   @include border-radius(6px);
   @include box-shadow(0 5px 10px rgba(0,0,0,.2));
@@ -73,8 +73,8 @@
 
   // Aligns the dropdown menu to right
   &.pull-right {
-    right: 0;
-    left: auto;
+    @include right(0);
+    @include left(auto);
   }
 
   // Dividers (basically an hr) within the dropdown
@@ -85,7 +85,7 @@
   a {
     display: block;
     padding: 3px 24px;
-    clear: both;
+    @include clear(both);
     font-weight: normal;
     line-height: $baseLineHeight;
     color: $dropdownLinkColor;
@@ -145,8 +145,8 @@
 // Right aligned dropdowns
 // ---------------------------
 .pull-right > .dropdown-menu {
-  right: 0;
-  left: auto;
+  @include right(0);
+  @include left(auto);
 }
 
 // Allow for dropdowns to go bottom up (aka, dropup-menu)
@@ -176,12 +176,10 @@
 }
 .dropdown-submenu > .dropdown-menu {
   top: 0;
-  left: 100%;
+  @include left(100%);
   margin-top: -6px;
-  margin-left: -1px;
-  -webkit-border-radius: 0 6px 6px 6px;
-     -moz-border-radius: 0 6px 6px 6px;
-          border-radius: 0 6px 6px 6px;
+  @include margin-left(-1px);
+  @include border-radius(0 6px 6px 6px);
 }
 .dropdown-submenu:hover > .dropdown-menu {
   display: block;
@@ -191,18 +189,18 @@
 .dropdown-submenu > a:after {
   display: block;
   content: " ";
-  float: right;
+  @include float(right);
   width: 0;
   height: 0;
   border-color: transparent;
   border-style: solid;
   border-width: 5px 0 5px 5px;
-  border-left-color: darken($dropdownBackground, 20%);
+  @include border-left-color(darken($dropdownBackground, 20%));
   margin-top: 5px;
-  margin-right: -10px;
+  @include margin-right(-10px);
 }
 .dropdown-submenu:hover > a:after {
-  border-left-color: $dropdownLinkColorHover;
+  @include border-left-color($dropdownLinkColorHover);
   @extend .hover-color-animation;
 }
 
@@ -211,8 +209,8 @@
 // -----------------
 // Increase padding from 15px to 20px on sides
 .dropdown .dropdown-menu .nav-header {
-  padding-left: 20px;
-  padding-right: 20px;
+  @include padding-left(20px);
+  @include padding-right(20px);
 }
 
 // Typeahead

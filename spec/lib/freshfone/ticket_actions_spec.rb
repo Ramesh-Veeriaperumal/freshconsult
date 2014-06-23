@@ -5,7 +5,6 @@ include FreshfoneSpecHelper
 describe Freshfone::TicketActions do
   include Freshfone::TicketActions
   before(:all) do
-    @account = create_test_account
     @agent = get_admin
   end
 

@@ -2,30 +2,30 @@
 #gritter-notice-wrapper {
 	position:fixed;
 	bottom:15px;
-	right:20px;
+ @include right(20px);
 	z-index:9999;
 	width:301px;
 	&.top-right{
 		bottom: auto;
-		left: auto;
+	 @include left(auto);
 		top: 20px;
-		right: 6%;
+	 @include right(6%);
 	}
 	&.top-left{
-		left: 20px;
-    	right: auto;
+	 @include left(20px);
+     @include right(auto);
 	}
 	&.bottom-right{
 		top: auto;
-	    left: auto;
+	    @include left(auto);
 	    bottom: 20px;
-	    right: 20px;
+	    @include right(20px);
 	}
 	&.bottom-left {
 	    top: auto;
-	    right: auto;
+	    @include right(auto);
 	    bottom: 20px;
-	    left: 20px;
+	    @include left(20px);
 	}
 	.gritter-item-wrapper {
 		border: #4d525d solid 1px;
@@ -33,7 +33,7 @@
 		@include box-shadow(inset 0px 1px 0px #D0D0D0);
 		background: #707070;
 		position:relative;
-		margin:0 0px 10px 0;
+		@include margin(0 0px 10px 0);
 		.gritter-top {
 			height:10px;
 		}
@@ -46,7 +46,7 @@
 		.gritter-item {
 			display:block;
 			color:#FFF;
-			padding:2px 11px 0px 3px;
+			@include padding(2px 11px 0px 3px);
 			p {
 				padding:0;
 				margin:0;
@@ -56,7 +56,7 @@
 				width:16px;
 				height:20px;
 				position: absolute;
-				right: 8px;
+			 @include right(8px);
 				top: 5px;
 				background:url('/images/square-close.png') no-repeat center 3px;
 				cursor:pointer;
@@ -64,14 +64,14 @@
 			.gritter-title {
 				font-size:14px;
 				font-weight:bold;
-				padding:0 0 7px 0;
+				@include padding(0 0 7px 0);
 				display:block;
 				text-shadow:1px 1px 0 #000; /* Not supported by IE :( */
 			}
 			.gritter-image {
 				width:50px;
 				height:50px;
-				float:left;
+				@include float(left);
 				margin-top:-8px;
 			}
 			.gritter-with-image,
@@ -80,10 +80,10 @@
 			}
 			.gritter-with-image {
 				width: 70%;
-				margin-left: 65px;
+				@include margin-left(65px);
 			}
 			.gritter-without-image{
-				margin-left: 10px;
+				@include margin-left(10px);
 				margin-bottom: 2px;
 			}
 		}
@@ -119,7 +119,7 @@
 .styled-v-bar{ /* sample CSS class for a different vertical scrollbar look */
 	background:	url(custom-scroll-bar.png) center top no-repeat;
 	width: 10px;
-	margin-right: 0;
+	@include margin-right(0);
 	margin-bottom: 4px;
 	ins{ /* Style for the "ins" inner element, or bottom of the scrollbar */ 
 		display: block;

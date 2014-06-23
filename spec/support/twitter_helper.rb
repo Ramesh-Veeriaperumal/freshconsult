@@ -84,7 +84,7 @@ module TwitterHelper
       {
         :responses => 
             {
-              "fd_social_feeds_test_20140611"=>[
+              "#{Social::DynamoHelper.select_table("feeds", Time.now)}"=>[
                 {
                   "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
                   "feed_id"=>{:s=>"#{tweet_id}"}, 
@@ -276,7 +276,6 @@ module TwitterHelper
     while wait_for <= wait
       tweet = Social::Tweet.find_by_tweet_id(tweet_id)
       if tweet.nil?
-        sleep 1
         wait_for = wait_for + 1
       else
         break

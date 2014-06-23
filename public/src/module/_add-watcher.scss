@@ -13,7 +13,7 @@ div.monitor_div{
 div.watchers_tooltip{
     position: absolute;
     border: 1px solid #aaa;
-    margin: 6px 0 0 -9px;
+    @include margin(6px 0 0 -9px);
     @include min-height(84px);
     height: auto;
     width: 275px;
@@ -25,7 +25,7 @@ div.watchers_tooltip{
     z-index: 10000;
     .watcher-close{
     	position: absolute;
-		right: 11px;
+	 @include right(11px);
 		@include border-radius(20px);
 		background: #666;
 		width: 17px;
@@ -34,7 +34,7 @@ div.watchers_tooltip{
 		font-weight: bold;
 		font-size:16px;
 		line-height: 11px;
-		text-align: center;
+		@include text-align(center);
 		padding-top: 1px;
 		cursor: pointer;
     }
@@ -49,10 +49,10 @@ div.watchers_tooltip{
 		position: absolute;
 		margin-top: 16px;
 		z-index: 9999999;
-		margin-left: 5px;
+		@include margin-left(5px);
 	}
     #watcherlist{
-    	clear: both;
+    	@include clear(both);
     	border: 1px solid #CCC;
 		@include border-radius(4px);
 		padding: 3px 6px 1px;
@@ -99,11 +99,11 @@ div.watchers_tooltip{
 	    &.add_watcher_text,&.view_watcher_text{
 			position: absolute;
 			top: 23px;
-			right: -2px;
+		 @include right(-2px);
 			margin-top: -14px;
-	        margin-right: 16px;
-	        float: right;
-	        text-align: right;
+	        @include margin-right(16px);
+	        @include float(right);
+	        @include text-align(right);
 	        font-size: 13px;
 	        width: 100px;
 		}
@@ -119,7 +119,7 @@ div.watchers_tooltip{
     .no_watcher_text{
         font-size: 13px;
         padding-top: 18px;
-        text-align: center;
+        @include text-align(center);
         color: #777;
     }
 
@@ -130,23 +130,23 @@ div.watchers_tooltip{
     }
 
     .watcher_list{
-    	float: left;
+    	@include float(left);
         padding-top: 4px;
         font-size: 13px;
 
         b{
-        	float: left;
+        	@include float(left);
         }
     }
 
     .user_image{
-    	float: left;
+    	@include float(left);
 	    .preview_pic{
 	       	border: 2px solid #CCC;
 	        @include border-radius(100%);
 	        width: 20px;
 	        height: 20px;
-	        margin-right: 6px;
+	        @include margin-right(6px);
 
 	       img{
 	           width: 20px;
@@ -157,9 +157,9 @@ div.watchers_tooltip{
 	}
 
 	.unwatch{
-		float: left;
+		@include float(left);
 		margin-top: 5px;
-		margin-right: 5px;
+		@include margin-right(5px);
 		cursor: pointer;
 		img{
 			height: 16px;
@@ -169,33 +169,33 @@ div.watchers_tooltip{
 
 	.arrow-top{
 		position: absolute;
-		left: 22px;
+	 @include left(22px);
 		top: -12px;
 		border-bottom-color: #999;
 		border-bottom: 10px solid #999;
 		border-width: 10px;
 		&:before{
-			border-left: 9px solid transparent;
+			@include border-left(9px solid transparent);
 			border-bottom: 9px solid #999;
-			border-right: 9px solid transparent;
+			@include border-right(9px solid transparent);
 			height: 0;
 			width: 0;
 			content: " ";
 			position: absolute;
 			top: 1px;
-			left: -9px;
+		 @include left(-9px);
 		}
 	}
 
 	.select_agents{
-		clear: both;
+		@include clear(both);
 	}
 
     .watcher_input{
-    	margin: 10px 0 0 0;
+    	@include margin(10px 0 0 0);
 		width: 100%;
     	.select2-choices{
-    		padding-left:20px;
+    		@include padding-left(20px);
     	}
 	}
 
@@ -208,12 +208,12 @@ div.watchers_tooltip{
 	}
 
 	.add_cancel_buttons{
-		float: right;
-		margin-right: -4px;
+		@include float(right);
+		@include margin-right(-4px);
 	}
 
 	.submit_watcher{
-		margin-left: 2px;
+		@include margin-left(2px);
 	}
 }
 

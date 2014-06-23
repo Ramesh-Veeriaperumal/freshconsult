@@ -1,7 +1,7 @@
 .tkt-details-sticky {
 	border-bottom: solid 1px #DADADA;
-	margin-left: -$common-padding;
-	margin-right: -$common-padding;
+	@include margin-left(-$common-padding);
+	@include margin-right(-$common-padding);
 	padding: 10px $common-padding;
 	background: #FFF;
 }
@@ -13,7 +13,7 @@
 	height: 37px;
 	width: 37px;
 	position: fixed;
-	right: 20px;
+ 	@include right(20px);
 	bottom: -40px;
 	@include opacity(0.2);
 	@include border-radius(50%);
@@ -35,7 +35,7 @@
 .fixed_wrap {
 	position: fixed;
 	top: 0;
-	left: 0;
+ 	@include left(0);
 	width: 100%;
 	z-index: 99;
 }

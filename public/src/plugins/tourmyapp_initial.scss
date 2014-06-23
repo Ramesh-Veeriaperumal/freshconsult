@@ -1,3 +1,4 @@
+@import "../settings/settings";
 #tourmyapp {
     z-index: 9999;
 }
@@ -13,16 +14,14 @@
     border: 1px solid #336699;
     color: #2e2e2e;
     width: 300px;
-    border-radius: 5px 5px 5px 5px;
-    -moz-border-radius: 5px 5px 5px 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px;
     box-shadow: 2px 2px 12px #888888;
     -moz-box-shadow: 2px 2px 12px #888888;
     -webkit-box-shadow: 2px 2px 12px #888888;
 }
 
 .tourmyapp .tourmyapp-close {
-    float: right;
+    @include float(right);
     margin: 10px;
     background: url("/static/images/close.png");
     width: 15px;
@@ -31,7 +30,7 @@
 
 .tourmyapp .tourmyapp-content {
     padding: 10px;
-    text-align: left;
+    @include text-align(left);
 }
 
 .tourmyapp .tourmyapp-toolbar, .tourmyapp .tourmyapp-branding {
@@ -41,7 +40,7 @@
 }
 
 .tourmyapp .tourmyapp-branding{
-    float:left;
+    @include float(left);
     width:50px;
     height:30px;
     line-height: 10px;
@@ -53,15 +52,15 @@
 }
 
 .tourmyapp .tourmyapp-toolbar {
-    text-align: right;
-    float: right;
+    @include text-align(right);
+    @include float(right);
 }
 
 .tourmyapp button {
     background-color: #336699;
     border: 1px solid #2d3032;
     color: white;
-    margin-left: 10px;
+    @include margin-left(10px);
     padding: 5px;
     font-weight: bold;
 }
@@ -81,7 +80,7 @@
 .tourmyapp-overlay {
     z-index: 1000;
     background: black;
-    opacity: 0.5;
+    @include opacity(0.5);
 }
 
 /* Pointer styles */
@@ -90,47 +89,47 @@
     position: absolute;
     width: 0;
     height: 0;
-    left: 135px;
+    @include left(135px);
     border-color: white;
 }
 
 .tourmyapp .tourmyapp-pointer-top {
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
+    @include border-left(15px solid transparent);
+    @include border-right(15px solid transparent);
     border-top-width: 15px;
     border-top-style: solid;
 }
 
 .tourmyapp .tourmyapp-pointer-bottom {
     top: -14px;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
+    @include border-left(15px solid transparent);
+    @include border-right(15px solid transparent);
     border-bottom-width: 15px;
     border-bottom-style: solid;
 }
 
 .tourmyapp .tourmyapp-pointer-left {
-    left: 260px;
+    @include left(260px);
 }
 
 .tourmyapp .tourmyapp-pointer-right {
-    left: 10px;
+    @include left(10px);
 }
 
 .tourmyapp .tourmyapp-pointer-center.tourmyapp-pointer-left {
-    left:301px;
+    @include left(301px);
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
-    border-left-width: 15px;
-    border-left-style: solid;
+    @include border-left-width(15px);
+    @include border-left-style(solid);
 }
 
 .tourmyapp .tourmyapp-pointer-center.tourmyapp-pointer-right {
-    left:-14px;
+    @include left(-14px);
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
-    border-right-width: 15px;
-    border-right-style: solid;
+    @include border-right-width(15px);
+    @include border-right-style(solid);
 }
 
 /* Pointer border styles */
@@ -139,46 +138,46 @@
     position: absolute;
     width: 0;
     height: 0;
-    left: 134px;
+    @include left(134px);
     border-color: #336699;
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-top {
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
+    @include border-left(16px solid transparent);
+    @include border-right(16px solid transparent);
     border-top-width: 16px;
     border-top-style: solid;
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-bottom {
     top: -15px;
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
+    @include border-left(16px solid transparent);
+    @include border-right(16px solid transparent);
     border-bottom-width: 16px;
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-left {
-    left: 259px;
+    @include left(259px);
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-right {
-    left: 9px;
+    @include left(9px);
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-center.tourmyapp-pointer-left {
-    left:301px;
+    @include left(301px);
     border-top: 16px solid transparent;
     border-bottom: 16px solid transparent;
-    border-left-width: 16px;
-    border-left-style: solid;
+    @include border-left-width(16px);
+    @include border-left-style(solid);
 }
 
 .tourmyapp .tourmyapp-pointer-border.tourmyapp-pointer-center.tourmyapp-pointer-right {
-    left:-15px;
+    @include left(-15px);
     border-top: 16px solid transparent;
     border-bottom: 16px solid transparent;
-    border-right-width: 16px;
-    border-right-style: solid;
+    @include border-right-width(16px);
+    @include border-right-style(solid);
 }
 
 /* Default content styles */

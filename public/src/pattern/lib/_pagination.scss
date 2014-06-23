@@ -14,7 +14,7 @@
   ul {
     display: inline-block;
     @include ie7-inline-block();
-    margin-left: 0;
+    @include margin-left(0);
     margin-bottom: 0;
     @include border-radius(3px);
     //@include box-shadow(0 1px 2px rgba(0,0,0,.05));
@@ -23,23 +23,23 @@
       display: inline;
 
       > a, > span{
-        float: left;
+        @include float(left);
         padding: 0 14px;
         line-height: ($baseLineHeight * 2) - 6;
         text-decoration: none;
         background-color: rgba($paginationNoBackground, 0.4);
         border: 1px solid rgba($paginationBorder , 0.4);
-        border-left-width: 0;
+        @include border-left-width(0);
         color: #333;
         @include text-shadow(1px 1px 0 #fff);
 
         .arrow-right, .arrow-left, .arrow-up, .arrow-down{
           font-size:8px;
         }     
-        .arrow-left{border-right-color: $paginationTextColor;}
-        .arrow-right{border-left-color: $paginationTextColor;}
+        .arrow-left{@include border-right-color($paginationTextColor);}
+        .arrow-right{@include border-left-color($paginationTextColor);}
         .arrow-up{border-bottom-color: $paginationTextColor;}
-        .arrow-down{border-top-color: $paginationTextColor;}
+        .arrow-down{border-top-color:$paginationTextColor;}
       }
     }
   }
@@ -47,8 +47,8 @@
 .pagination ul > li > a:hover{
   background-color: $paginationNoHover;
   border-color:$paginationBorder;
-  margin-left: -1px;
-  border-left-width: 1px;
+  @include margin-left(-1px);
+  @include border-left-width(1px);
   @extend .hover-color-animation;
 
 }
@@ -71,15 +71,15 @@
   color: $grayLight;
   background-color: rgba(#e6e6e6, 0.4);
   cursor: default;
-  .arrow-left{border-right-color: rgba($paginationTextColor, 0.4);}
-  .arrow-right{border-left-color: rgba($paginationTextColor, 0.4);}
+  .arrow-left{@include border-right-color(rgba($paginationTextColor, 0.4));}
+  .arrow-right{@include border-left-color(rgba($paginationTextColor, 0.4));}
   .arrow-up{border-bottom-color: rgba($paginationTextColor, 0.4);}
   .arrow-down{border-top-color: rgba($paginationTextColor, 0.4);}
 }
 .pagination ul > li:first-child > a,
 .pagination ul > li:first-child > span {
-  border-left-width: 1px;
-  margin-left:0;
+  @include border-left-width(1px);
+  @include margin-left(0);
   @include border-radius(3px 0 0 3px);
 }
 .pagination ul > li:last-child > a,
@@ -89,10 +89,10 @@
 
 // Centered
 .pagination-centered {
-  text-align: center;
+  @include text-align(center);
 }
 .pagination-right {
-  text-align: right;
+  @include text-align(right);
 }
 
 /*.pagination{

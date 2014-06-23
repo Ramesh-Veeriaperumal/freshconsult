@@ -152,7 +152,7 @@
 		    	jQuery("#subject-mobile-counter").addClass("subject-mobile-counter")
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
-					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'><%= t('widgets.feedback_widgets.new.show_all_results') %></a></li>")
 				jQuery("#panel-content").show()
 
 		    }else if(searchInputFrom == "Subject") {
@@ -160,7 +160,7 @@
 		    	jQuery("#fs-input").val("");
 		    }
 		    else {
-		    	jQuery("#ws-results").html("No results for " + escapeHtml(term))
+		    	jQuery("#ws-results").html("<%= t('widgets.feedback_widgets.new.no_results') %>" + escapeHtml(term))
 		    	jQuery("#panel-content").show()
 		    }
 

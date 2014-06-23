@@ -8,7 +8,6 @@ describe Helpdesk::Note do
     $primary_cluster = "mysql"
     $secondary_cluster = "none"
     $backup_cluster = "none"
-    @account = create_test_account
     @account.make_current
     @user = User.find_by_account_id(@account.id)
     @ticket =  Helpdesk::Ticket.new(
@@ -20,14 +19,6 @@ describe Helpdesk::Note do
       }
     )
     @ticket.save_ticket
-  end
-
-  after(:each) do
-    Helpdesk::Note.destroy_all
-  end
-
-  after(:all) do
-    Helpdesk::Ticket.destroy_all
   end
 
   describe "Note Creation" do

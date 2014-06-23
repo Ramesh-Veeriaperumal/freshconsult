@@ -9,6 +9,10 @@ if ENV["RAILS_ENV"] == "test"
     a.available 1
   end
 
+  Factory.define :portal, :class => Portal do |p|
+    p.preferences "something"
+  end
+
   Factory.define :portal_template, :class => Portal::Template do |p|
     p.preferences "something"
   end

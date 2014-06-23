@@ -23,7 +23,7 @@ body{
 }
 
 .failed_heading{ font-size: 24px; }
-#redirect_button, #resque_btn{ float:right; padding-left: 10px; }
+#redirect_button, #resque_btn{ @include float(right); @include padding-left(10px); }
 #worker_time{ font-size: 9px; }
 
 .failed_category{
@@ -55,7 +55,7 @@ h1{ color: #336633;font-size: 24px; line-height: 30px; }
 }
 
 .queues-wrapper dd{
-	padding-left: 25px;
+	@include padding-left(25px);
 }
 
 .queues-wrapper th{

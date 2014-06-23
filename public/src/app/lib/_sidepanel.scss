@@ -5,7 +5,7 @@
 	background-color:#ffffff;
 	border:1px solid #b3b3b3;
 	padding:6px 12px 12px;
-	margin:0 10px 10px 0;
+	@include margin(0 10px 10px 0);
 	@include box-shadow(rgba(0,0,0, 0.2) 0 0 3px);
 }
 .sidepanel{
@@ -15,7 +15,7 @@
 	}
 	p{
 		line-height:1.5em;
-		margin:0 0 14px 0;
+		@include margin(0 0 14px 0);
 		color:#444;
 	}  
 	h4{
@@ -25,7 +25,7 @@
 	}
 	
 	.element{
-		padding:4px 16px 16px 16px;
+		@include padding(4px 16px 16px 16px);
 		margin:0 -20px; 
 		font-size:$default-font-size;
 		h4{
@@ -34,7 +34,7 @@
 			margin-bottom:6px;
 		} 
 		.edit{
-			float:right;
+			@include float(right);
 			margin-top:4px;
 			a{ font-size: 12px; text-decoration:none; }
 		}
@@ -46,9 +46,9 @@
 		border-bottom:0;
 	}
 	.actions{
-		float:right;
+		@include float(right);
 		position:relative;
-		left:5px;
+	 	@include left(5px);
 		top:3px;			
 	}
 } 
@@ -100,11 +100,11 @@
 			display: block;
 			height: 100%;
 			.arrow-right{
-				border-left-color:#ccc;
+				@include border-left-color(#ccc);
 				font-size:8px;
-				float: right;
+				@include float(right);
 				margin-top: 4px;
-				margin-right: 0px
+				@include margin-right(0px)
 			}
 		}
 		:hover{
@@ -112,7 +112,7 @@
 				font-weight: bold;
 			}
 			.arrow-right{
-				border-left-color: #fff;
+				@include border-left-color(#fff);
 			}
 		}
 	}
@@ -123,7 +123,7 @@
 		display: inline-block;
 		position: absolute;
 		top: 4px;
-		right: 0;
+	 	@include right(0);
 	}
 .more_than_ten{
 	h3{ color: #337035;}
@@ -143,7 +143,7 @@
    background-color:#ffffe2; 
 	label{ font-size:14px; }
 	h3.title{
-	   padding:1px 0 5px 0;
+	   @include padding(1px 0 5px 0);
 	}
 }
 
@@ -160,18 +160,18 @@
 		display:block;
 		border-top:1px dotted #ddd;
 		li{
-			padding:8px 0 0 20px;
+			@include padding(8px 0 0 20px);
 			border-bottom:1px dotted #ddd;
 			position:relative;
 			input{
-			   float:left;
-			   margin-left:-16px;
+			   @include float(left);
+			   @include margin-left(-16px);
 			   position:absolute;
 			}
 			label{
 				font-size: $default-font-size;
 				font-weight:normal;
-				margin-left:5px;
+				@include margin-left(5px);
 				line-height:18px;	
 				padding-top:0;
 				display:block;
@@ -191,13 +191,13 @@
 				}
 			}
 			.delete{
-				float:right;
+				@include float(right);
 				width:16px; height:16px; 
 				overflow:hidden;
-				text-indent:-99999px;				
+				@include text-indent(-99999px);				
 				visibility:hidden;
 				position:relative;
-				left:-3px;
+			 	@include left(-3px);
 			}
 		}  
 		li:hover, li.active{
@@ -223,14 +223,14 @@ div.addReminder{
 			@include box-shadow(none);
 			font-size:14px;
 			display:block;
-			margin:2px 0 0 0;
+			@include margin(2px 0 0 0);
 			padding:0 5px;
 			width: 245px;
 			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include box-shadow(none); @include border-radius(0); }
 		label.overlabel{
-			margin:2px 5px 4px 10px;
+			@include margin(2px 5px 4px 10px);
 			padding:0;
 		}
 	}
@@ -239,13 +239,13 @@ div.addReminder{
 //							Gamification 
 // -----------------------------------------------------------
 .sidepanel .action-right{
-	float: right;
+	@include float(right);
 	font-size: 13px;
 	line-height: 24px;
 	margin-top: 4px;
 }
 .common-icon-help{
 	position:absolute;
-	right:0;
+ 	@include right(0);
 	top:$common-padding / 2;
 }

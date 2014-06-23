@@ -5,7 +5,7 @@
 }
 .redactor_toolbar li.redactor_separator {
 	height: 23px;
-	border-left-color:#f6f6f6;
+	@include border-left-color(#f6f6f6);
 	margin-top: 3px !important;
 }
 .redactor_box{
@@ -24,7 +24,7 @@
 // Attachment overrides
 .attach-wrapper{
 	background: #fafafa;
-    @include border-bottom-radius($inputBorderRadius);
+    border-bottom-radius:$inputBorderRadius;
     padding: 10px 12px 3px;
     border: 1px solid #c6c6c6;
     margin-top: -3px;
@@ -34,19 +34,19 @@
     	width: 16px;
     	height: 16px;
 		position: absolute;
-		left: 0;
+	 	@include left(0);
 		top: 1px;
     }
-    .attach-link{ padding-left: 18px; position: relative; }
-    .dropdown-menu a { padding-left: 15px; padding-right: 15px; } 
+    .attach-link{ @include padding-left(18px); position: relative; }
+    .dropdown-menu a { @include padding-left(15px); @include padding(15px); } 
     .dropdown-menu{ @include min-width(155px); }
 }
 
 .attach-close{
 	color: #afafaf;
 	font-weight: 400;
-	margin-right: 6px;
+	@include margin-right(6px);
 	margin-top: -3px;
-	margin-left: 0px;
-	float:left;
+	@include margin-left(0px);
+	@include float(left);
 }

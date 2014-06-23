@@ -11,7 +11,7 @@
   color: $white;
   vertical-align: middle;
   white-space: nowrap;
-  margin-right: 5px;  
+  @include margin-right(5px);  
   background-color: $grayLight;
   @include text-shadow(1px 1px 0 rgba(0, 0, 0, 0.5));  
   @include border-radius(16px);
@@ -28,7 +28,7 @@
 // Small label sizes
 .label-small{
   font-size: 10px;
-  margin-right: 15px;
+  @include margin-right(15px);
   padding: 1px 10px;
 }
 

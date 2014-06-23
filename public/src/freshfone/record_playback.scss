@@ -6,7 +6,7 @@
 		.sm2-360ui .sm2-360btn:hover + .sm2-timing,
 		.sm2-360ui.sm2_paused .sm2-timing {
 			position: relative;
-			left: 37px;
+		 @include left(37px);
 			font-size: 13px;
 			color: #666;
 			top: -4px;

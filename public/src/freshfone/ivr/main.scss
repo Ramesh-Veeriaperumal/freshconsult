@@ -5,7 +5,7 @@
 	.sm2-360ui .sm2-360btn:hover + .sm2-timing,
 	.sm2-360ui.sm2_paused .sm2-timing {
 		position: relative;
-		left: 37px;
+	 @include left(37px);
 		font-size: 13px;
 		color: $ivr-360ui-playing-text;
 		top: -4px;
@@ -34,20 +34,20 @@
 		background: #FAFAFA;
 		padding: 15px;
 		@include border-radius(4px);
-		.select2-container { margin-left: 0; }
+		.select2-container { @include margin-left(0); }
 	}
 	.welcome_message {
 		margin-top: -20px;
-		.message-container { padding-left: 125px; }
+		.message-container { @include padding-left(125px); }
 	}
 	.settings-label {
-		margin-right: 15px;
+		@include margin-right(15px);
 		margin-bottom: 20px;
 		font-weight: 600;
 		width: 150px;
 	}
 	.form-header {
-		margin-left: 600px;
+		@include margin-left(600px);
 		position: absolute;
 		top: 0;
 		width: 200px;
@@ -69,11 +69,11 @@
 		border-top: 1px solid $ivr-menu-header-border;
 		background-color: $ivr-menu-header-background;
 		@include border-top-radius(6px);
-		clear: both;
+		@include clear(both);
 	}
 	fieldset:last-child {
 		background-color: $ivr-add-keypress-background;
-		@include border-bottom-radius(6px);
+		border-bottom-radius: 6px;
 	}
 	.ivr-menu {
 		margin-bottom: 5px;
@@ -85,7 +85,7 @@
 		position: absolute;
 		cursor: pointer;
 		top: 17px;
-		left: 15px;
+	 @include left(15px);
 		&:hover{
 			@include opacity(0.8);
 		}
@@ -100,17 +100,17 @@
 		margin: 0;
 	}
 	.menu-title {
-		padding: 10px 10px 10px 15px;
+		@include padding(10px 10px 10px 15px);
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 500;
 		width: auto;
 		border: none;
-		margin-right: 10px;
+		@include margin-right(10px);
 		text-overflow: ellipsis;
 		@include box-shadow(none);
 		@include border-radius(0);
-		border-top-left-radius: 4px;
+		@include border-top-left-radius(4px);
 		background-repeat: no-repeat;
 		background-color: $ivr-menu-title-background;
 		background-position: 7px 10px;
@@ -139,21 +139,21 @@
 		margin-bottom: 10px;
 		display: inline-block;
 		padding-top: 0;
-		margin-left: 5px;
+		@include margin-left(5px);
 	}
 	.record_voice {
-		margin-left: 15px;
+		@include margin-left(15px);
 	}
 	// message selector overrides ends
 	.action-type {
 		width: 150px;
 	}
 	.options-keypad {
-		float: left;
+		@include float(left);
 		padding: 10px;
 		background: none;
 		border: none;
-		margin-left: 15px;
+		@include margin-left(15px);
 		// Keypad design starts
 //		span {
 //			display: inline-block;
@@ -162,7 +162,7 @@
 //			font-weight: bold;
 //			color: #3F3F3F;
 //			
-//			margin-right: -2px;
+//			@include margin-right(-2px);
 //			margin-top: 1px;
 //			border: 1px solid #E3E3E3;
 //			background-color: #F6F6F6;
@@ -190,14 +190,14 @@
 	}
 	.message-container {
 		margin-top: 20px;
-		padding-right: 10px;
+		@include padding-right(10px);
 	}
 	.options-keypad-container {
-		float: left;
-		margin-left: 0;
+		@include float(left);
+		@include margin-left(0);
 	}
 	.performer-container {
-		float: left;
+		@include float(left);
 		padding:10px;
 		min-width: 500px;
 	}
@@ -205,17 +205,17 @@
 		font-weight: 600;
 	}
 	.keypad-label {
-		margin-left: 15px;
+		@include margin-left(15px);
 		margin-top: 5px;
 	}
 	.performer {
-		float: left;
+		@include float(left);
 		margin-top: 5px;
-		margin-right: 10px;
-		margin-left: 20px
+		@include margin-right(10px);
+		@include margin-left(20px)
 	}
 	.action_performer_container {
-		margin-left: 5px;
+		@include margin-left(5px);
 		width: 260px;
 		@include box-sizing(border-box);
 		height: 27px;
@@ -227,7 +227,7 @@
 		margin-top: 10px;
 	}
 	.close-btn {
-		float: right;
+		@include float(right);
 	}
 	.add-new {
 		padding: 12px;
@@ -236,22 +236,22 @@
 		border-top: none;
 		cursor: pointer;
 		background-color: $ivr-add-new-background;
-		@include border-bottom-radius(6px);
+		border-bottom-radius:6px;
 		&:hover {
 			color: $ivr-add-new-hover-text;
 		};
 	}
 	.add_new_menu_from_option {
-		margin-left: 30px;
+		@include margin-left(30px);
 		display: inline-block;
 		margin-top: 5px;
 	}
 	.voice-label {
-		margin: 4px 20px 5px 220px;
+		@include margin(4px 20px 5px 220px);
 	}
 	form {
 		min-width:730px;
-		clear: both;
+		@include clear(both);
 	}
 	// Add Symbol Starts
 	.symbols-add {
@@ -260,7 +260,7 @@
 	}
 	.icon-detail {
 		padding: 0;
-		padding-right: 7px;
+		@include padding-right(7px);
 		vertical-align: top;
 	}
 	// Add Symbol ends
@@ -271,17 +271,17 @@
 	}
 	.ivr-message {
 		display: block;
-		clear: both;
+		@include clear(both);
 	}
 	.activate_ivr {
-		margin-right: 5px;
+		@include margin-right(5px);
 	}
 	.ivr-disabled-message, .ivr-enabled-message {
 		vertical-align: middle;
-		margin-left: 5px;
+		@include margin-left(5px);
 	}
 	.number_performer_input {
-		margin-left: 20px;
+		@include margin-left(20px);
 		width: 212px;
 	}
 	.number_performer {
@@ -306,6 +306,6 @@
 	padding: 8px 12px;
 	width: 471px;
 	color: #a90329;
-	left: -423px;
+	@include left(-423px);
 	position: relative;
 }

@@ -53,6 +53,21 @@ def self.plan_price
 	}
 end
 
+def self.currencies
+	[
+		{ :name => "BRL", :billing_site => "freshpo-brl-test", :exchange_rate => 0.45,
+			:billing_api_key => "test_usPCevjp1KFcrWcdHE3fw4pe8MHKzEdFu" },
+		{ :name => "EUR", :billing_site => "freshpo-eur-test", :exchange_rate => 1.38,
+			:billing_api_key => "test_GCXuNzYMPmyZYsAubdiFNG59Ac5uW63s"},
+		{ :name => "INR", :billing_site => "freshpo-inr-test", :exchange_rate => 0.016,
+			:billing_api_key => "test_ZMFdEgIWilqkxJiCQYLhqQ1HWoNwlsSV"},
+		{ :name => "USD", :billing_site => "freshpo-test", :exchange_rate => 1,
+			:billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"}, 	
+		{ :name => "ZAR", :billing_site => "freshpo-zar-test", :exchange_rate => 0.095,
+			:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"}
+	]
+end
+
 unless Account.current
 	addon_types = Subscription::Addon::ADDON_TYPES
 	agent_collision = Subscription::Addon.seed(:name) do |a|
@@ -139,4 +154,6 @@ unless Account.current
 	garden_addons = all_addons - [ multiple_business_hours, custom_domain, custom_slas ]
 	blossom_addons = all_addons - [ custom_domain ]
   SubscriptionPlan.seed_many(:name, plan_list(all_addons, garden_addons, blossom_addons))
+
+  Subscription::Currency.seed_many(:name, currencies)
 end

@@ -22,7 +22,7 @@ describe CustomersController do
   end
 
   it "should not create a new company with the same name" do
-    company_name = Faker::Lorem.sentence(3)
+    company_name = Faker::Company.name
     post :create, :customer => {  :name => company_name, 
                                   :description => Faker::Lorem.sentence(3), 
                                   :note => "", 
@@ -34,6 +34,14 @@ describe CustomersController do
                                   :domains => ""
                                  }
     response.body.should =~ /Name has already been taken/
+  end
+
+  it 'should not quick-create a company with same name' do
+    company_name = Faker::Company.name
+    post :quick, :customer => {:name => company_name}
+    flash[:notice].should =~ /The company has been created/
+    post :quick, :customer => {:name => company_name}
+    flash[:notice].should =~ /Name has already been taken/
   end
 
   it "should update a company ensuring unique name" do

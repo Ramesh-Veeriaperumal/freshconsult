@@ -2,71 +2,99 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 # Tests may fail if test db is not in sync with Chargebee account.
 
+
 describe SubscriptionsController do
+  integrate_views
+  self.use_transactional_fixtures = false
+  setup :activate_authlogic
 
-  before(:all) do
-    5.times do |n|
-      @agent = add_agent_to_account(@account, {:name => "Test#{n}", :active => 1, 
-        :email => "vijayaraj+00#{n}@freshdesk.com", :token => "xtoQaHDQ7TtTLQ3OKt9#{n}", :role => 1})
-      @agent.available = 1
-      @agent.save!
-    end
-  end
-
-  describe "plan changes" do
-    it "should update plan" do
-      @request.env["HTTP_ACCEPT"] = "application/json"
-      post "plan", :plan_id => 3, :agent_limit => 5, :billing_cycle => 1
+  before(:all) do    
+    if @billing_account.blank?
+      Account.reset_current_account
+      User.current = nil
       
-      plan = SubscriptionPlan.find(3)
-      @account.subscription.subscription_plan.should eql plan
-      @account.subscription.renewal_period.should eql 1
-      @account.subscription.agent_limit.should eql 5
-      @account.subscription.free_agents.should eql plan.free_agents
-    end
-
-    it "should not update plan if agent_limit < full time agents" do      
-      @request.env["HTTP_ACCEPT"] = "application/json"
-      post "plan", :plan_id => 3, :agent_limit => 2, :billing_cycle => 1
-      
-      response.body.should eql "Agent Limit exceeded"
-    end
-
-    it "should not update plan if unable to collect charges" do
-      plan = @account.subscription.subscription_plan
-      agent_limit = @account.subscription.agent_limit
-      renewal_period = @account.subscription.renewal_period
-
-      @request.env["HTTP_ACCEPT"] = "application/json"
-      post "plan", :plan_id => 3, :agent_limit => 2, :billing_cycle => 1
-
-      @account.subscription.subscription_plan.should eql plan
-      @account.subscription.renewal_period.should eql renewal_period
-      @account.subscription.agent_limit.should eql agent_limit
+      Resque.inline = true
+      @billing_account = create_test_billing_acccount
+      Resque.inline = false               
+    
+      @account = Account.find(@billing_account.id)
+      @user = @account.account_managers.first
+      2.times { add_test_agent(@account) }  
     end
   end
 
-
-  describe "card updates and activation" do
-    it "should update valid card and activate subscription" do
-      @request.env["HTTP_ACCEPT"] = "application/json"
-      post "billing", card_info(:valid, false)
-
-      @account.subscription.card_number.should be_present
-      @account.subscription.card_expiration.should be_present
-      @account.subscription.state.should eql "active"
-    end
-
-    it "should not update invalid card and should not activate" do
-      @request.env["HTTP_ACCEPT"] = "application/json"
-      post "billing", card_info(:invalid, true)
-
-      @account.subscription.card_number.should_not be_present
-      @account.subscription.card_expiration.should_not be_present
-      @account.subscription.state.should_not eql "active"
-    end
+  before(:each) do
+    log_in(@user)
   end
 
+  it "should update plan" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "plan", :plan_id => 3, :agent_limit => 10, :billing_cycle => 1, :currency => "USD"
+    
+    plan = SubscriptionPlan.find(3)
+    @account.subscription.reload
+
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 10
+    @account.subscription.free_agents.should eql plan.free_agents
+  end
+
+  it "should not update plan if agent_limit < full time agents" do      
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "plan", :plan_id => 3, :agent_limit => 1, :billing_cycle => 1, :currency => "USD"
+    
+    @account.subscription.agent_limit.should_not eql 2
+  end
+
+  it "should switch currency to EUR" do    
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "plan", :plan_id => 3, :agent_limit => 5, :billing_cycle => 1, :currency => "EUR"
+
+    plan = SubscriptionPlan.find(3)
+    currency = Subscription::Currency.find_by_name("EUR")
+    @account.subscription.reload
+
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 5
+    @account.subscription.currency.should eql currency
+  end
+
+  it "should update free plan" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "plan", :plan_id => 1, :agent_limit => 3, :billing_cycle => 1, :currency => "USD"
+
+    plan = SubscriptionPlan.find(1)
+    currency = Subscription::Currency.find_by_name("USD")
+    @account.subscription.reload
+
+    @account.subscription.state.should eql "free"
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 3
+    @account.subscription.currency.should eql currency
+  end
+
+  it "should not update invalid card and should not activate" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "billing", card_info(:invalid, true)
+
+    @account.subscription.reload
+    @account.subscription.card_number.should_not be_present
+    @account.subscription.card_expiration.should_not be_present
+    @account.subscription.state.should_not eql "active"
+  end
+
+  it "should update valid card and activate subscription" do      
+    @request.env["HTTP_ACCEPT"] = "application/json"      
+    post "billing", card_info(:valid, false)
+
+    @account.subscription.reload
+    @account.subscription.card_number.should be_present
+    @account.subscription.card_expiration.should be_present
+    @account.subscription.state.should eql "active"
+  end
 
 
 end

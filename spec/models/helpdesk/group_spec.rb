@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe Group do
 	before(:all) do 
-    	@account = create_test_account
     	@group = create_group(@account,{:ticket_assign_type => 1, :name =>  "dummy group0"})
-
  	end
 
  	it "should belong to an account" do

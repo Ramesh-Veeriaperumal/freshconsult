@@ -55,7 +55,7 @@
 	.plus{
     	@include border-radius(100%);
 	    background: green;
-	    text-align: center;
+	    @include text-align(center);
 	    color: #fff;
 	    margin: 0;
 	    font-weight: bold;
@@ -71,10 +71,10 @@
 		.plus{
 			cursor: pointer;
 		}
-		margin-left: 190px;
+		@include margin-left(190px);
 		font-weight: bold;
 		a{
-			padding-left: 5px;
+			@include padding-left(5px);
 			cursor: pointer;
 		}
 	}
@@ -83,16 +83,16 @@
 		background-color: white;
 	}
 	.portal-favicon, .portal-logo{
-		float:none;
+		@include float(none);
 	}
 	.portal-favicon{
 		height:16px;
 	}
 	.overlabel{
-		margin-left: 5px;
+		@include margin-left(5px);
 	}
 	.rebranding-header{
-		margin-left: -$common-padding;	
+		@include margin-left(-$common-padding);	
 	}
 	.control-group{
 		.configure-email-form{
@@ -108,7 +108,7 @@
 	}
 	.product-email-configuration{
 		margin-bottom: 0;
-		border-right: 0;
+		@include border-right(0);
 		.un-verified-product{
 			text-decoration: line-through;
 		} 
@@ -128,14 +128,14 @@
 			position: absolute;
 			width: 30px;
 			background: #f2f2f2;
-			left: 0;
+		 @include left(0);
 			top: 0;
 			height: 98%;
 			margin-top: 1px;
 			div{
 				@include border-radius(100%);
 			    background: #e67c7c;
-			    text-align: center;
+			    @include text-align(center);
 			    color: #fff;
 			    margin: 6px;
 			    font-weight: bold;
@@ -160,9 +160,9 @@
 			width: 98%;
 			height:100%;
 			border: 1px solid #ccc;
-			border-right: 0;
-			border-left:0px;
-			padding: 5px 0 5px 50px;
+			@include border-right(0);
+			@include border-left(0);
+			@include padding(5px 0 5px 50px);
 			padding-bottom: 5px;
 		}	
 		div.text{

@@ -1,6 +1,21 @@
 var hideDelay=10000;
 var $J = jQuery.noConflict();
 
+//Copyright 2010 Nicholas C. Zakas. All rights reserved.
+//MIT Licensed. RTL Script
+function getDirection(element){
+    var result = null;
+    if (element){
+        if (window.getComputedStyle){
+            result = window.getComputedStyle(element,null).direction;
+        } else if (element.currentStyle){
+            result = element.currentStyle.direction;
+        }
+    }
+    return result;
+}
+//RTL Script End
+
 var GettingStarted = {
 	i18n:{},
 	translate:function(key){
@@ -219,8 +234,16 @@ jQuery(document).ready(function(){
 	jQuery("#slide1-1, #slide1-2, #slide1-3, #slide1-4").click(function(ev) {
 		jQuery(this).siblings().removeClass("active");
 		jQuery(this).addClass("active");
-		jQuery("#content").css("left", jQuery(this).data("translate"));
-		jQuery("#indicator-arrow").css("left", jQuery(this).data("translateArrow"));
+		//Based on Rtl 
+		if (getDirection(document.body) == "rtl"){
+		    jQuery("#content").css("right", jQuery(this).data("translate"));
+			jQuery("#indicator-arrow").css("right", jQuery(this).data("translateArrow"));
+		}
+		else{
+			jQuery("#content").css("left", jQuery(this).data("translate"));
+			jQuery("#indicator-arrow").css("left", jQuery(this).data("translateArrow"));
+		}
+
 		activeSlide = parseInt(this.id.split("-")[1]);
 		if(activeSlide>1){
 			jQuery("#back").removeClass("inactive");

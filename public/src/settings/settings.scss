@@ -1,10 +1,17 @@
-// Initialize
-@import "../pattern/lib/mixins";
-@import "../pattern/lib/custom_mixin.scss";
-
 @import "compass";                      // Load Compass plugins     http://compass-style.org/
 @import "susy";
 
 // Base settings for app
 @import "default";
 @import "freshdesk-variable";
+
+// Initialize
+// @if custom_color(main) == "true"{
+$rtl: false;
+// }@else{
+// 	$rtl: false;
+// }
+
+@import "../pattern/lib/mixins";
+@import "../pattern/lib/custom_mixin.scss";
+@import "../pattern/lib/rtl-mixins";

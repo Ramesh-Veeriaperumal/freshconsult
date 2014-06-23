@@ -4,10 +4,7 @@ describe Integrations::GoogleAccountsController do
 	setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
-    
+  before(:all) do    
     @new_application = Factory.build(:application, :name => "google_contacts", :display_name => "integrations.google_contacts.label", 
       :description => "integrations.google_contacts.desc", :listing_order => 24,  :options => {
         :keys_order=>[:account_settings], :account_settings=> {
@@ -32,7 +29,7 @@ describe Integrations::GoogleAccountsController do
   end
 
   before(:each) do
-    log_in(@user)
+    login_admin
     @request.host = @account.full_domain
   end
 

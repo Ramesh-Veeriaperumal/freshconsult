@@ -5,20 +5,20 @@
 
 	.search {
 		position: relative;
-		right:10px;
+	 @include right(10px);
 		top: 0;
 	}
 	ul.table-list {
-		margin: 15px 0 0 0;
+		@include margin(15px 0 0 0);
 	}
 
 	.tabs {
 		margin-bottom: 10px;
-		padding: 2px 9px 0 20px
+		@include padding(2px 9px 0 20px)
 	}
 
 	.new_custom_app {
-		margin-right:10px;
+		@include margin-right(10px);
 	}
 }
 //-------------------------------------------------------------------------------------------
@@ -61,17 +61,17 @@
 		background:none;
 		border:none;
 		div.field {
-			float:left;
+			@include float(left);
 			margin:5px 0;
 
 			width:100%;
 
 			&.half_width {
 				width:45%;
-				padding: 0 5% 0 0;
+				@include padding(0 5% 0 0);
 
 				&.right {
-					padding: 0 0 0 5%;
+					@include padding(0 0 0 5%);
 				}
 			}
 
@@ -90,9 +90,9 @@
 			overflow:hidden;
 		border-bottom: dotted 1px #CCC;
 			#jira-view {
-				float:right;
+				@include float(right);
 				font-size:10px;
-				text-align:right;
+				@include text-align(right);
 				width:100px;
 			}
 		}
@@ -107,7 +107,7 @@
 			label {
 				font-size:11px;
 				color:#666;
-				float:left;
+				@include float(left);
 				padding:0;
 				width: 100px;
 
@@ -150,7 +150,7 @@
 	}
 
 	div.field {
-		float:left;
+		@include float(left);
 		margin:5px 0;
 		line-height:18px;
 
@@ -158,10 +158,10 @@
 
 		&.half_width {
 			width:45%;
-			padding: 0 5% 0 0;
+			@include padding(0 5% 0 0);
 
 			&.right {
-				padding: 0 0 0 5%;
+				@include padding(0 0 0 5%);
 			}
 		}
 	}
@@ -176,7 +176,7 @@
 	}
 
 	.external_link {
-		clear: both;
+		@include clear(both);
 	}
 
 	div.bottom_div{ 
@@ -207,7 +207,7 @@
 		}
 		
 		.name{
-			padding: 7px 0 10px 0;  
+			@include padding(7px 0 10px 0);  
 			width: 218px;
 			min-height:30px;
 		}
@@ -248,7 +248,7 @@
 
 	#multiple-contacts {
 		width: 55px;
-		float:right;
+		@include float(right);
 	}
 	#contact-name {
 		color: #000;
@@ -272,7 +272,7 @@
 
 	.contact-location{ 
 	  font-size: 8pt; 
-	  margin-left: 5px; 
+	  @include margin-left(5px); 
 	  color: #888; 
 	  font-weight: 300; 
 	} 
@@ -285,7 +285,7 @@
 
 	div.field {
 		label {
-			float: left;
+			@include float(left);
 			height: inherit;
 			width: 65px;
 			font-size: 100%;
@@ -294,7 +294,7 @@
 			padding: 0 0;
 		}
 		div > span {
-			float: left;
+			@include float(left);
 			width: 193px;
 
 			#contact-address{
@@ -304,7 +304,7 @@
 	}
 
 	#crm-view {
-		float:right;
+		@include float(right);
 		width: auto;
 	}
 
@@ -312,7 +312,7 @@
 		font-size:9px;
 		color:#fff;
 		text-transform:uppercase; 
-		text-align:center;
+		@include text-align(center);
 		padding:8px 3px 0;
 		line-height:0;
 		height:9px;      
@@ -320,7 +320,7 @@
 		position:absolute;
 	  	@include right-pointer-title(#0C8AAE,8px);	      
 		@include min-width(48px); 
-		right:-4px;	
+	 @include right(-4px);	
 		top:3px;
 	}
 
@@ -339,7 +339,7 @@
 //-------------------------------------------------------------------------------------------
 
 #capsule-title{
-	padding-right:33px;
+	@include padding-right(33px);
 	position:relative;
 	margin-bottom:5px;
 	.searchicon{
@@ -356,7 +356,7 @@
 // --------------------------------------------------------------------------------------------------
 .screenr-table{
 	td{
-		padding: 10px 0 0 0;
+		@include padding(10px 0 0 0);
 	}
 }
 
@@ -375,16 +375,16 @@
 // --------------------------------------------------------------------------------------------------
 
 .campaign-details{
-	margin: 8px 0 8px 0;
+	@include margin(8px 0 8px 0);
 	.activity{
-		padding-left: 10px;
-		margin: 8px 0 8px 0;
+		@include padding-left(10px);
+		@include margin(8px 0 8px 0);
 		.action{
 			background-color: #DDD;
 			font-weight: bold;
 			@include border-radius(6px);
 			padding: 3px 7px;
-			margin-right: 5px;
+			@include margin-right(5px);
 			text-transform: capitalize;
 		}
 	}
@@ -402,7 +402,7 @@
 		-webkit-text-overflow: ellipsis;
 		margin: 5px 95px;
 		background: url(/images/integrations/campaign-link.png) left -2px no-repeat;
-		padding-left: 20px;
+		@include padding-left(20px);
 	}
 	
 }
@@ -410,8 +410,8 @@
 .custom_app_preview_link {
 	margin-top:8px;
 	width: 300px;
-	float: right;
-	text-align: right;
+	@include float(right);
+	@include text-align(right);
 
 	.toggle_preview {
 		background: #FFF;
@@ -432,7 +432,7 @@
 			font-size:1.2em;
 			font-weight:bold;
 			display:inline-block;
-			margin-left: 10px;
+			@include margin-left(10px);
 		}
 	}
 
@@ -445,19 +445,19 @@
 	background:#FFF;
 	border: solid 1px #c9c9c9;
 	@include box-shadow(#c2c2c2 0 0 6px);
-	margin: 0 10px 10px 0;
+	@include margin(0 10px 10px 0);
 	.titlebar {
 		font-weight:bold;
 		background: url(/images/integrations/custom_app_preview_title_bar.gif);
-		padding: 10px 5px 10px 15px;
+		@include padding(10px 5px 10px 15px);
 		border-bottom: solid 1px #c9c9c9;
 		font-size:13px;
 		.preview_link {
-			float:right;
+			@include float(right);
 			width:60px;
 			background: url(/images/integrations/refresh_preview.png) right no-repeat;
-			padding: 10px 30px 10px 5px;
-			text-align:right;
+			@include padding(10px 30px 10px 5px);
+			@include text-align(right);
 			color:#AAA;
 			margin-top:-10px;
 			font-weight:normal;
@@ -477,7 +477,7 @@
 // --------------------------------------------------------------------------------------------------
 .remote_support{
 	.session_data{
-		text-align: center;
+		@include text-align(center);
 		.pin_submit{
 			margin-top: 15px;
 		}
@@ -490,7 +490,7 @@
 	}
 	.active_session_pin{
 		border: 1px solid #D4D4D4;
-		text-align: center;
+		@include text-align(center);
 		margin-top: 5px;
 		@include border-radius(4px);
 		padding: 15px 10px;
@@ -525,7 +525,7 @@
 }
 
 .email_marketing_apps{
-	float: right;
+	@include float(right);
 	margin: 10px;
 }
 
@@ -550,14 +550,14 @@
 }
 
 .emailCampaigns, .emailLists{
-	clear: both;
+	@include clear(both);
 	margin-top: -15px;
 	min-height: 90px;
 	
 	.empty-response{
 		color: #A5A5A5;
 		font-size: 20px;
-		text-align: center;
+		@include text-align(center);
 		font-weight: 200;
 		padding-top: 30px;
 	}
@@ -576,7 +576,7 @@
 	}
 
 	.campaign-activity{
-		padding-left: 35px;
+		@include padding-left(35px);
 		font-weight: bold;
 		border-bottom: 1px solid #DDD;
 		background-color: #EEE;
@@ -585,7 +585,7 @@
 		.activity-toggle{
 			color: black;
 			font-weight: bold;
-			padding-right: 8px;
+			@include padding-right(8px);
 			text-decoration: none;
 		}
 		&:hover{

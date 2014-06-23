@@ -8,7 +8,7 @@
 		.list-item{
 			@include clearfix;
 			border-bottom:1px dotted #eaeaea;
-			padding:14px 25px 6px 70px;
+			@include padding(14px 25px 6px 70px);
 			position:relative;
 			.primary-text{  
 				font-size:13px; 
@@ -17,19 +17,19 @@
 				color:#444;
 			}
 			.info-text{
-				padding:6px 0 4px 0;
+				@include padding(6px 0 4px 0);
 				font-size:12px;
 				color:#888888;
 			}
 			.preview-pic{
 				border-color:#d2d2d2;
 				position:absolute;
-				left:20px;
+			 @include left(20px);
 				top:16px;
 				img{ width:36px; height:36px; padding:0; border:0; }
 			}
 			.username{ 
-				padding:0 0 3px 0;
+				@include padding(0 0 3px 0);
 				font-weight:bold;
 				font-size:13px;
 			}
@@ -89,13 +89,13 @@
 }
 
 .search-keys{
-	margin:0 0 8px 0;
+	@include margin(0 0 8px 0);
 	li{
-		padding:3px 8px 5px 18px;
+		@include padding(3px 8px 5px 18px);
 		position:relative;
 		.icon{		   
 			position:absolute;
-			left:0;
+		 @include left(0);
 			width:15px; height:15px;
 		}
 		a{
@@ -126,7 +126,7 @@
 	font-size:12px; 
 	position:relative;
 	top:6px;
-	right:5px;
+ 	@include right(5px);
 	color:$default_txt_color;
 }
 
@@ -134,7 +134,7 @@
    	color:#FF0000;
 }
 .more-tweets{
-	text-align:center;
+	@include text-align(center);
 	cursor:pointer;
 	text-transform:lowercase;
 	color:$default_txt_color;
@@ -180,14 +180,14 @@
 		line-height: 1.8em;
 	}
 	.scl-desc{
-		padding-right: 20px;
-		border-right: 1px solid #ddd;
+		@include padding-right(20px);
+		@include border-right(1px solid #ddd);
 	}
 	.scl-statinput{
 		border: 1px solid #ddd;
-			@include border-radius(5px);
+		@include border-radius(5px);
 		input{
-			float: left;
+			@include float(left);
 			border: none;
 			@include box-shadow(none);
 			margin: 0;
@@ -200,7 +200,7 @@
 			width: 79.5%;
 		}
 		input[type=submit]{
-			float: right;
+ 			@include float(right);
 			@include border-top-left-radius(0);
 			@include border-bottom-left-radius(0);
 			background: #999;

@@ -13,10 +13,10 @@ module ControllerHelper
   end
 
   def get_admin()
-    agent = @account.account_managers.first
-    unless agent
-      agent = add_test_agent(@account)
+    agents = @account.account_managers
+    agents.each do |agent|
+      return agent if agent.can_view_all_tickets?
     end
-    agent
+    add_test_agent(@account)
   end
 end

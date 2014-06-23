@@ -13,6 +13,7 @@ describe AgentsController do
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
     # Delayed::Job.destroy_all
   end
 
@@ -46,7 +47,7 @@ describe AgentsController do
     # Delayed::Job.last.handler.should include("A new agent was added in your helpdesk")
   end
 
-  it "should not create a new agent" do
+  it "should not create a new agent more than the subscriped agent limit" do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     test_email = Faker::Internet.email
@@ -167,7 +168,7 @@ describe AgentsController do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
   end
 
-  it "should not update an agent" do
+  it "should not update an agent when user_id is nil" do
     user = add_test_agent(@account)
     agent = user.agent
     get :edit, :id => agent.id
@@ -448,7 +449,7 @@ describe AgentsController do
     get :info_for_node, :user_id => user.id, :hash => hash
   end
 
-  it "should info_for_node" do
+  it "should not send info_for_node when hash is different" do
     user = add_test_agent(@account)
     get :info_for_node, :user_id => user.id, :hash => "2fe70832f759a712cfd1947aa778"
     response.body.should =~ /Access denied!/

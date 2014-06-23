@@ -108,7 +108,7 @@ class Discussions::ForumsController < ApplicationController
 		end
 
 		def reorder_scoper
-			current_account.forums
+			current_account.forum_categories.find(params[:category_id]).forums
 		end
 
 		def fetch_monitorship

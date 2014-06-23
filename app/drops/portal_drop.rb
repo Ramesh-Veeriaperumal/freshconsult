@@ -42,6 +42,16 @@ class PortalDrop < BaseDrop
   def login_url
     @login_url ||= support_login_path(url_options)
   end
+
+  def topic_reply_url
+    @topic_reply_url ||= begin
+      if @context['topic'].present?
+        reply_support_discussions_topic_path(@context['topic'].id)
+      else
+        login_url
+      end
+    end
+  end
   
   def can_signup_feature
     allowed_in_portal? :signup_link
@@ -127,7 +137,7 @@ class PortalDrop < BaseDrop
 
   # Access to Discussions
   def has_forums
-    @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && forums.present?)
+    @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums) && forums.present?)
   end
 
   def forum_categories

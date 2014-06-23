@@ -7,8 +7,8 @@
 	}
 	.contact-append{
 		margin-bottom: 5px;
-    margin-left: -35px;
-    clear: both;
+    @include margin-left(-35px);
+    @include clear(both);
     color: #333333;
     .add-on, .hover-contact-box{
     	font-size: 12px;
@@ -16,14 +16,14 @@
     	vertical-align: top;
     }
 		.add-on{
-			text-align:center;
+			@include text-align(center);
       width: 20px;
-      margin-right: 6px;
+      @include margin-right(6px);
       padding: 2px;
 		} 
 		.hover-contact-box{
 			color:inherit;
-			padding:2px 10px 2px 0;
+			@include padding(2px 10px 2px 0);
 		}
   }
   .product-email-logo, .product-call, .product-phone{
@@ -45,7 +45,7 @@
 		height: 13px;
 		margin-top: -2px;
 		top: 2px;
-		left:2px;
+	 @include left(2px);
 	}
   .user_name{ font-size:1.25em; display: inline-block; font-weight: 200}
   .user_design{
@@ -56,14 +56,14 @@
   }
   .user_phone, .user_mobile, .user_fb, .user_twitter{
     padding: 1px 20px;
-    margin: 5px 5px 0 0;
+    @include margin(5px 5px 0 0);
     height: 14px;
     display: inline-block;
     background-color: #ffffff;
   }
-  .user_mobile{ margin-left:10px; }
+  .user_mobile{ @include margin-left(10px); }
   .user_fb, .user_twitter{ padding: 0 20px; height:11px; }
-  .infoblock{ padding-left:35px; }
+  .infoblock{ @include padding-left(35px); }
 }
 
 .requester-details .hover-contact-box{

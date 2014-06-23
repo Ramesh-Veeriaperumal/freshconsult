@@ -53,7 +53,9 @@ module RabbitMq::Utils
 
   #made this as a function, incase later we want to compress the data before sending
   def send_message(message, key)
-    account.rabbit_mq_exchange.publish(message.to_json, :routing_key => key, :persistant => true) if key.include?("1")
+    self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
+      account.rabbit_mq_exchange.publish(message.to_json, :routing_key => key, :persistant => true) if key.include?("1")  
+    end    
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")

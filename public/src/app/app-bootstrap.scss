@@ -12,8 +12,8 @@
   height: 40px;
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  @include left(0);
+  @include right(0);
   z-index: 10000;
   overflow: visible;
 }
@@ -31,10 +31,10 @@
   position: relative;
 }
 .topbar h3 a, .topbar .brand {
-  float: left;
+  @include float(left);
   display: block;
   padding: 8px 20px 12px;
-  margin-left: -20px;
+  @include margin-left(-20px);
   color: #ffffff;
   font-size: 20px;
   font-weight: 200;
@@ -49,8 +49,8 @@
   color: #ffffff;
 }
 .topbar form {
-  float: left;
-  margin: 5px 0 0 0;
+  @include float(left);
+  @include margin(5px 0 0 0);
   position: relative;
   filter: alpha(opacity=100);
   -khtml-opacity: 1;
@@ -58,7 +58,7 @@
   opacity: 1;
 }
 .topbar form.pull-right {
-  float: right;
+  @include float(right);
 }
 .topbar input {
   background-color: #444;
@@ -122,18 +122,18 @@
 }
 .topbar div > ul, .nav {
   display: block;
-  float: left;
-  margin: 0 10px 0 0;
+  @include float(left);
+  @include margin(0 10px 0 0);
   position: relative;
-  left: 0;
+  @include left(0);
 }
 .topbar div > ul > li, .nav > li {
   display: block;
-  float: left;
+  @include float(left);
 }
 .topbar div > ul a, .nav a {
   display: block;
-  float: none;
+  @include float(none);
   padding: 10px 10px 11px;
   line-height: 19px;
   text-decoration: none;
@@ -147,15 +147,15 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 .topbar div > ul.secondary-nav, .nav.secondary-nav {
-  float: right;
-  margin-left: 10px;
-  margin-right: 0;
+  @include float(right);
+  @include margin-left(10px);
+  @include margin-right(0);
 }
 .topbar div > ul.secondary-nav .menu-dropdown,
 .nav.secondary-nav .menu-dropdown,
 .topbar div > ul.secondary-nav .dropdown-menu,
 .nav.secondary-nav .dropdown-menu {
-  right: 0;
+  @include right(0);
   border: 0;
 }
 .topbar div > ul a.menu:hover,
@@ -243,12 +243,12 @@ a.menu:after, .dropdown-toggle:after {
   height: 0;
   display: inline-block;
   content: "&darr;";
-  text-indent: -99999px;
+  @include text-indent(-99999px);
   vertical-align: top;
   margin-top: 8px;
-  margin-left: 4px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
+  @include margin-left(4px);
+  @include border-left(4px solid transparent);
+  @include border-right(4px solid transparent);
   border-top: 4px solid #ffffff;
   filter: alpha(opacity=50);
   -khtml-opacity: 0.5;
@@ -257,7 +257,7 @@ a.menu:after, .dropdown-toggle:after {
 }
 .menu-dropdown, .dropdown-menu {
   background-color: #ffffff;
-  float: left;
+  @include float(left);
   display: none;
   position: absolute;
   top: 40px;
@@ -265,17 +265,15 @@ a.menu:after, .dropdown-toggle:after {
   min-width: 160px;
   max-width: 350px;
   _width: 160px;
-  margin-left: 0;
-  margin-right: 0;
+  @include margin-left(0);
+  @include margin-right(0);
   padding: 6px 0;
   zoom: 1;
   border-color: #999;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: solid;
   border-width: 0 1px 1px;
-  -webkit-border-radius: 0 0 6px 6px;
-  -moz-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
+  @include border-radius(0 0 6px 6px);
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -284,7 +282,7 @@ a.menu:after, .dropdown-toggle:after {
   background-clip: padding-box;
 }
 .menu-dropdown li, .dropdown-menu li {
-  float: none;
+  @include float(none);
   display: block;
   background-color: none;
 }
@@ -298,7 +296,7 @@ a.menu:after, .dropdown-toggle:after {
 .topbar .dropdown-menu a, .dropdown-menu a {
   display: block;
   padding: 4px 15px;
-  clear: both;
+  @include clear(both);
   font-weight: normal;
   line-height: 18px;
   color: #808080;
@@ -353,10 +351,10 @@ a.menu:after, .dropdown-toggle:after {
   zoom: 1;
 }
 .tabs:after, .pills:after {
-  clear: both;
+  @include clear(both);
 }
 .tabs > li, .pills > li {
-  float: left;
+  @include float(left);
 }
 .tabs > li > a, .pills > li > a {
   display: block;
@@ -365,10 +363,10 @@ a.menu:after, .dropdown-toggle:after {
   border-color: #ddd;
   border-style: solid;
   border-width: 0 0 1px;
-  margin-left:-20px;
-  margin-right:-20px;
-  padding-left:20px;
-  padding-right:20px;
+  @include margin-left(-20px);
+  @include margin-right(-20px);
+  @include padding-left(20px);
+  @include padding-right(20px);
 }
 .tabs > li {
   position: relative;
@@ -376,12 +374,10 @@ a.menu:after, .dropdown-toggle:after {
 }
 .tabs > li > a {
   padding: 0 15px;
-  margin-right: 2px;
+  @include margin-right(2px);
   line-height: 34px;
   border: 1px solid transparent;
-  -webkit-border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
+  @include border-radius(4px 4px 0 0);
   border: 1px solid #ddd;
   background-color: #F9F9F9;
 }
@@ -399,14 +395,12 @@ a.menu:after, .dropdown-toggle:after {
 .tabs .menu-dropdown, .tabs .dropdown-menu {
   top: 35px;
   border-width: 1px;
-  -webkit-border-radius: 0 6px 6px 6px;
-  -moz-border-radius: 0 6px 6px 6px;
-  border-radius: 0 6px 6px 6px;
+  @include border-radius(0 6px 6px 6px);
 }
 .tabs a.menu:after, .tabs .dropdown-toggle:after {
   border-top-color: #999;
   margin-top: 15px;
-  margin-left: 5px;
+  @include margin-left(5px);
 }
 .tabs li.open.menu .menu, .tabs .open.dropdown .dropdown-toggle {
   border-color: #999;
@@ -417,19 +411,19 @@ a.menu:after, .dropdown-toggle:after {
 
 .right-tabs{
   margin:0px -20px; 
-  padding:17px 9px 0 50px;
+  @include padding(17px 9px 0 50px);
   a{ font-weight:bold; }
   @include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 }
 .right-tabs > li{
-  float: right;
+  @include float(right);
 }
 .right-tabs .active > a, .right-tabs .active > a:hover {
   color: #000;
 }
 
 .pills a {
-  margin: 5px 3px 5px 0;
+  @include margin(5px 3px 5px 0);
   padding: 0 15px;
   line-height: 20px;
   border:1px solid #eeeeee;
@@ -450,7 +444,7 @@ a.menu:after, .dropdown-toggle:after {
   background-color: #878787;
 }
 .pills-vertical > li {
-  float: none;
+  @include float(none);
 }
 .tab-content > .tab-pane,
 .pill-content > .pill-pane,
@@ -478,7 +472,7 @@ footer {
   margin-bottom: 8px;
 }
 .alert-message .alert-actions-right{
-	float:right;
+	@include float(right);
 	margin-top:-8px;
 }
 .alert-message {
@@ -528,11 +522,11 @@ footer {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   padding: 14px;
   border-color: #f4f4e9;
-	margin:0px 10px 4px 0;
+	@include margin(0px 10px 4px 0);
 	@include box-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 .alert-message.block-message ul, .alert-message.block-message p {
-  margin-right: 30px;
+  @include margin-right(30px);
 }
 .alert-message.block-message ul {
   margin-bottom: 0;
@@ -595,50 +589,50 @@ footer {
   &.above{
       .twipsy-arrow {
         bottom: 0;
-        left: 50%;
-        margin-left: -5px;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
+        @include left(50%);
+        @include margin-left(-5px);
+        @include border-left(5px solid transparent);
+        @include border-right(5px solid transparent);
         border-top: 5px solid #000000;
       }
   }
   &.below{
     .twipsy-arrow {
       top: 0;
-      left: 50%;
-      margin-left: -5px;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
+      @include left(50%);
+      @include margin-left(-5px);
+      @include border-left(5px solid transparent);
+      @include border-right(5px solid transparent);
       border-bottom: 5px solid #000000;
     }
   }
   &.left{
     .twipsy-arrow {
       top: 50%;
-      right: 0;
+      @include right(0);
       margin-top: -5px;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      border-left: 5px solid #000000;
+      @include border-left(5px solid #000000);
     }
   }
   &.right{
     .twipsy-arrow {
       top: 50%;
-      left: 0;
+      @include left(0);
       margin-top: -5px;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      border-right: 5px solid #000000;
+      @include border-right(5px solid #000000);
     }
   }
   &.belowLeft{
     .twipsy-arrow {
       top: 0;
-      left: 90%;
-      margin-left: -5px;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
+      @include left(90%);
+      @include margin-left(-5px);
+      @include border-left(5px solid transparent);
+      @include border-right(5px solid transparent);
       border-bottom: 5px solid #000000;
     }
   }
@@ -647,7 +641,7 @@ footer {
   padding: 3px 8px 4px;
   background-color: #000000;
   color: white;
-  text-align: center;
+  @include text-align(center);
   max-width: 400px;
   text-decoration: none;
   -webkit-border-radius: 4px;
@@ -667,24 +661,24 @@ $popover-radius: 3px;
 .popover {
   position: absolute;
   top: 0;
-  left: 0;
+  @include left(0);
   z-index: 1000;
   padding: 6px;
   display: none;
   &.above{
     .arrow {
       bottom: -1px;
-      left: 50%;
-      margin-left: -$popover-arrow-size;
-      border-left: $popover-arrow-size solid transparent;
-      border-right: $popover-arrow-size solid transparent;
+      @include left(50%);
+      @include margin-left(-$popover-arrow-size);
+      @include border-left($popover-arrow-size solid transparent);
+      @include border-right($popover-arrow-size solid transparent);
       border-top: $popover-arrow-size solid $popover-stroke;
       &:after {
         bottom: 1px;
-        left: 50%;
-        margin-left: -$popover-arrow-size;
-        border-left: $popover-arrow-size solid transparent;
-        border-right: $popover-arrow-size solid transparent;
+        @include left(50%);
+        @include margin-left(-$popover-arrow-size);
+        @include border-left($popover-arrow-size solid transparent);
+        @include border-right($popover-arrow-size solid transparent);
         border-top: $popover-arrow-size solid $popover-arrow-color;
         z-index: 2000;
       }
@@ -693,10 +687,10 @@ $popover-radius: 3px;
   &.below{
     .arrow {
       top: -2px;
-      left: 50%;
-      margin-left: -$popover-arrow-size;
-      border-left: $popover-arrow-size solid transparent;
-      border-right: $popover-arrow-size solid transparent;
+      @include left(50%);
+      @include margin-left(-$popover-arrow-size);
+      @include border-left($popover-arrow-size solid transparent);
+      @include border-right($popover-arrow-size solid transparent);
       border-bottom: $popover-arrow-size solid $popover-stroke;
       border-bottom: $popover-arrow-size solid rgba($popover-stroke, 0.8);
     }
@@ -704,10 +698,10 @@ $popover-radius: 3px;
   &.belowLeft{
     .arrow {
       top: -2px;
-      left: 90%;
-      margin-left: -$popover-arrow-size;
-      border-left: $popover-arrow-size solid transparent;
-      border-right: $popover-arrow-size solid transparent;
+      @include left(90%);
+      @include margin-left(-$popover-arrow-size);
+      @include border-left($popover-arrow-size solid transparent);
+      @include border-right($popover-arrow-size solid transparent);
       border-bottom: $popover-arrow-size solid $popover-stroke;
       border-bottom: $popover-arrow-size solid rgba($popover-stroke, 0.8);
     }
@@ -715,18 +709,18 @@ $popover-radius: 3px;
   &.left{
     .arrow {
       top: 50%;
-      right: -1px;
+      @include right(-1px);
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
-      border-left: $popover-arrow-size solid  $popover-stroke;
+      @include border-left($popover-arrow-size solid  $popover-stroke);
       &:after {
         top: 0px;
-        right: 1px;
+        @include right(1px);
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
-        border-left: $popover-arrow-size solid $popover-arrow-color;
+        @include border-left($popover-arrow-size solid $popover-arrow-color);
         z-index: 2000;
       }
     }
@@ -734,18 +728,18 @@ $popover-radius: 3px;
   &.topLeft{
     .arrow {
       top: 30px;
-      right: -1px;
+      @include right(-1px);
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
-      border-left: $popover-arrow-size solid  $popover-stroke;
+      @include border-left($popover-arrow-size solid  $popover-stroke);
       &:after {
         top: 0px;
-        right: 1px;
+        @include right(1px);
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
-        border-left: $popover-arrow-size solid $popover-arrow-color;
+        @include border-left($popover-arrow-size solid $popover-arrow-color);
         z-index: 2000;
       }
     }
@@ -753,18 +747,18 @@ $popover-radius: 3px;
   &.right{
     .arrow {
       top: 50%;
-      left: -2px;
+      @include left(-2px);
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
-      border-right: $popover-arrow-size solid $popover-stroke;
+      @include border-right($popover-arrow-size solid $popover-stroke);
       &:after {
         top: 0px;
-        left: 1px;
+        @include left(1px);
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
-        border-right: $popover-arrow-size solid $popover-arrow-color;
+        @include border-right($popover-arrow-size solid $popover-arrow-color);
         z-index: 2000;
       }
     }
@@ -772,18 +766,18 @@ $popover-radius: 3px;
   &.topRight{
     .arrow {
       top: 30px;
-      left: -2px;
+      @include left(-2px);
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
-      border-right: $popover-arrow-size solid $popover-stroke;
+      @include border-right($popover-arrow-size solid $popover-stroke);
       &:after {
         top: 0px;
-        left: 1px;
+        @include left(1px);
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
-        border-right: $popover-arrow-size solid $popover-arrow-color;
+        @include border-right($popover-arrow-size solid $popover-arrow-color);
         z-index: 2000;
       }
     }
@@ -843,26 +837,26 @@ $popover-radius: 3px;
   .arrow.dbl_left {
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
-    border-right: 8px solid #AAA;
-    left:-2px;
+    @include border-right(8px solid #AAA);
+    @include left(-2px);
     &:after {
       content:" ";
       display:block;
       position: absolute;
       width:0; height:0;
       top: 0px;
-      left: 2px;
+      @include left(2px);
       margin-top: -14px;
       border-top: 14px solid transparent;
       border-bottom: 14px solid transparent;
-      border-right: 14px solid white;
+      @include border-right(14px solid white);
       z-index: 2000;
 
     }
   }
   .arrow.dbl_up{
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
+    @include border-left(8px solid transparent);
+    @include border-right(8px solid transparent);
     border-bottom: 8px solid #AAA;
     top: -2px;
     &:after {
@@ -871,9 +865,9 @@ $popover-radius: 3px;
       position: absolute;
       width: 0;
       height: 0;
-      margin-left: -8px;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
+      @include margin-left(-8px);
+      @include border-left(8px solid transparent);
+      @include border-right(8px solid transparent);
       border-bottom: 8px solid white;
       z-index: 2000;
       top: 2px;
@@ -911,7 +905,7 @@ $popover-radius: 3px;
   padding:1px 3px;
 }
 .media-grid {
-  margin-left: -20px;
+  @include margin-left(-20px);
   margin-bottom: 0;
   zoom: 1;
 }
@@ -921,18 +915,16 @@ $popover-radius: 3px;
   zoom: 1;
 }
 .media-grid:after {
-  clear: both;
+  @include clear(both);
 }
 .media-grid li {
   display: inline;
 }
 .media-grid a {
-  float: left;
+  @include float(left);
   padding: 4px;
-  margin: 0 0 18px 20px;
+  @include margin(0 0 18px 20px);
   border: 1px solid #ddd;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
   border-radius: 4px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);

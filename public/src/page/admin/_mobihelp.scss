@@ -1,11 +1,11 @@
 .mobiapp-form{
   margin-top : 20px;
 	.app-image{
-		float: right;
+		@include float(right);
 		width: 70px;
 		height: 70px;
 		border: 1px solid #B4B4B4;
-		margin-right: 20px;
+		@include margin-right(20px);
 		border-radius: 5px;
 		.app-icon{
 			margin: auto;
@@ -17,13 +17,13 @@
 		margin-bottom: 20px;
 	}
 	.toggle-button{
-		margin-left: 20px;
+		@include margin-left(20px);
 	}
 	.codetextarea{
-		margin-left: -20px;
+		@include margin-left(-20px);
 	}
   .info-data {
-    margin-left: 0px !important;
+    @include margin-left(0px !important);
   }
 }
 
@@ -32,9 +32,9 @@
 	.sdk-downloads{
 		margin-bottom: 30px;
 		.text-info{
-			border-left: 1px solid #CACACA;
-			padding-left: 10px;
-			margin-left: 10px;
+			@include border-left(1px solid #CACACA);
+			@include padding-left(10px);
+			@include margin-left(10px);
 			min-height: 40px;
 		}
 		p{
@@ -53,7 +53,7 @@
 	td{
 		p{
 			margin: 0;
-			margin-left: 5px;
+			@include margin-left(5px);
 			font-weight: 500;
 		}
 	}
@@ -71,7 +71,7 @@
 	.index-app-container{
 		margin-top: 60px;
 		.index-app-span{
-			border-right: 1px solid #D2D2D2;
+			@include border-right(1px solid #D2D2D2);
 			text-align: center;
 			min-height: 160px;
 			&:nth-child(3){
@@ -94,7 +94,7 @@
 			.app-image{
 		    	display: inline-block;
 				vertical-align: middle;
-				margin-right: 5px;
+				@include margin-right(5px);
 				margin-top: -3px;
 			}
 		}
@@ -104,7 +104,7 @@
 .create-container{
 	margin-top: 50px;
 	&:nth-child(1){
-		margin-left:0;
+		@include margin-left(0);
 	}
 	.create-btn{
 		margin: 0 auto !important;

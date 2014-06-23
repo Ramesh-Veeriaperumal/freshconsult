@@ -1,3 +1,4 @@
+@import "../settings/settings";
 @import "variables";
 #local-numbers{
   width: 250px;
@@ -14,16 +15,16 @@
     display: inline-block;
     .search-lbl{
       display: inline-block;
-      margin-right: 5px;
-      margin-left: 10px;
+      @include margin-right(5px);
+      @include margin-left(10px);
     }
   }
 }
 
-.new_search{ text-align: center; }
+.new_search{ @include text-align(center); }
 
 .buy-new{
-  text-align: right;
+  @include text-align(right);
 }
 
 .toll-free-list{
@@ -35,13 +36,13 @@
     margin-top: 15px;
   }
   .toll-free-prefixes{
-    float: left;
+    @include float(left);
   }
 }
 
 .select-country{
   display: inline-block;
-  margin-right: 5px;
+  @include margin-right(5px);
 }
 
 .instruct{
@@ -51,7 +52,7 @@
 }
 
 .search-inputs-number, .search-inputs-location{
-  clear: both;
+  @include clear(both);
   .area-code-search{
     display: inline-block;
     margin-top: 13px;
@@ -62,13 +63,13 @@
 .search-phrase{
   width: 250px;
   display: inline-block;
-  margin-left: 20px;
+  @include margin-left(20px);
 }
 
 .search-inputs-location{
   display: none;
   .search-phrase{ 
-    margin: 13px 0 0 0; 
+    @include margin(13px 0 0 0); 
   }
 }
 
@@ -77,7 +78,7 @@
   #s2id_supported_countries, #s2id_toll_free_supported_countries{
     width: 125px;
     vertical-align: middle;
-    margin-left: 5px;
+    @include margin-left(5px);
   }
 }
 
@@ -100,7 +101,7 @@
   }
   .buy_available_number{
     display: inline-block;
-    float: right;
+    @include float(right);
   }
   .purchase_number{
     display: none;
@@ -126,12 +127,12 @@
     font-size: 11px;
     font-weight: normal;
     display: inline;
-    margin-left: 70px;
+    @include margin-left(70px);
     text-transform: uppercase;
     color: $fa-phone-location-text;
   }
   .no-numbers-available{
-    text-align: center;
+    @include text-align(center);
     font-size: 16px;
     color: $fa-no-number-available-text;
   }
@@ -143,15 +144,15 @@
 
 
 .search-number{
-  text-align: right;
+  @include text-align(right);
 }
 
 .nested_ivrs {
-  margin-left: 20px;
+  @include margin-left(20px);
   margin-top: 15px;
   list-style-type: decimal-leading-zero;
   .nested_ivrs .nested_ivrs .nested_ivrs {
-    margin-left: 0;
+    @include margin-left(0);
   }
 }
 
@@ -159,33 +160,31 @@
 
 .phone-search-bar{
   background: $fa-phone-search-background;
-  -webkit-border-radius: 5px 5px 0px 0px;
-  -moz-border-radius: 5px 5px 0px 0px;
-  border-radius: 5px 5px 0px 0px;
+  @include border-radius(5px 5px 0px 0px);
   border: 1px solid $fa-phone-search-border;
-  padding: 10px 20px 10px 9px;
+  @include padding(10px 20px 10px 9px);
 	min-height: 40px;
   #search_input{
     height: 28px;
   }
   .search-input-sec{
     width: 250px;
-    float:right;
+    @include float(right);
     position: relative;
     #search_input{
       margin-bottom: 0;
     }
     .searchicon{
       top: 11px;
-      right: 0;
+      @include right(0);
     }
   }
   .search-primary{
-    float: left;
+    @include float(left);
   }
   .search-bar-country, .search-bar-state, .search-bar-prefix{
     display: inline-block;
-    margin-right: 5px;
+    @include margin-right(5px);
 		.select2-container {
 			width: 120px;
 		}
@@ -218,7 +217,7 @@
 }
 .ui-form li.current-balance{
   width: 30%;
-  text-align: center;
+  @include text-align(center);
 }
 .current-balance-text{
   color: black;
@@ -236,7 +235,7 @@
   width: 50%;
   position: relative;
   top: 3px;
-  border-left: 1px solid $fa-recharge-now-border;
+  @include border-left(1px solid $fa-recharge-now-border);
 }
 .enabled-auto-recharge{
   .recharge-amt-lbl{
@@ -245,11 +244,11 @@
   .recharge-amt{
     font-weight: bold;
     font-size: 15px;
-    margin-left: 10px;
+    @include margin-left(10px);
   }
   .action-links{
     display: inline-block;
-    margin-left: 15px;
+    @include margin-left(15px);
   }
 }
 .cancel_edit_auto_recharge{
@@ -268,17 +267,17 @@
     margin: 8px;
     .number-message{
       display: inline-block;
-      margin-left: 15px;
+      @include margin-left(15px);
       .address-required-alert{
         margin-top: 9px;
       }
       .label-important{
-        margin-right: 8px;
+        @include margin-right(8px);
       }
 
     }
     .purchase-actions{
       margin-top: 30px;
-      text-align: right;
+      @include text-align(right);
     }
   }

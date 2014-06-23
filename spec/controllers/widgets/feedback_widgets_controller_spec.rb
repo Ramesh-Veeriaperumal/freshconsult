@@ -6,14 +6,11 @@ describe Widgets::FeedbackWidgetsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @account.make_current
     @user = add_test_agent(@account)
   end
 
   before(:each) do
     login_admin
-    @request.host = @account.full_domain
   end
 
   it "renders the widgets new html template" do

@@ -1,14 +1,15 @@
 .login-form input.special{ width: 100%; }
-.login-form{ width:65%; float: left; max-width: 400px; }
+.login-form{ width:65%; @include float(left); max-width: 400px; }
 .alt-login-button{ 
 	width:32%;
-	padding-left: 3%;
-	float: right;
-	border-left:1px solid #dadada;
+	@include padding-left(3%);
+	@include float(right);
+	@include border-left(1px solid #dadada);
 	@include min-height(230px);	
-	@include box-shadow(#fff -1px 0 0);
+	@if $rtl == true { @include box-shadow(#fff 1px 0 0); }
+	@else { @include box-shadow(#fff -1px 0 0); }
 	.btn{
-		text-align:left;
+		@include text-align(left);
 		display:block;
 		margin:$baseLineHeight 0;
 	} 
@@ -20,7 +21,7 @@
 }
 .btn-login, .btn-signup, .btn-newticket{ width: auto; }
 .btn-newticket, .btn-signup{ font-weight: bold; }
-.btn-login, .btn-newticket{ float: right; }
+.btn-login, .btn-newticket{ @include float(right); }
 .btn-signup{ margin: 16px 0; }
 
 .btn-google:before, .btn-facebook:before, .btn-twitter:before{
@@ -28,7 +29,7 @@
 	display: inline-block;
 	@include ie7-restore-right-whitespace();
 	vertical-align: text-top;
-	margin:-2px 5px 0 -8px;
+	@include margin(-2px 5px 0 -8px);
 }
 
 .btn-google:before{ @extend .icon-sign-in-google; }
@@ -38,9 +39,13 @@
 @if $nonResponsive == false {
 	@include at-breakpoint($media-mobile){
 		.btn-signup, .btn-newticket, .btn-login{ width: 100%; }
-		.btn-login{ float: none; margin-top: 4px; margin-bottom: 4px; }
+		.btn-login{ @include float(none); margin-top: 4px; margin-bottom: 4px; }
 		.login-form{ max-width: none; }
-		.alt-login-button{ border-left: 0; padding-left: 0; @include box-shadow(none); }
-		.login-form, .alt-login-button{ width:auto; float: none; }
+		.alt-login-button{ 
+			@include border-left(0); 
+			@include padding-left(0); 
+			@include box-shadow(none); 
+		}
+		.login-form, .alt-login-button{ width:auto; @include float(none); }
 	}
 }

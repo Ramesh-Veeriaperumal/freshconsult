@@ -13,14 +13,14 @@
 		min-height: 20px;
 		height:auto !important;
 		width: 270px;
-		margin-left:0;	
+		@include margin-left(0);	
 		.attachment-type{
 			margin: 0;
 			width: 25px;
 			height: 13px;
 			display: inline-block;
 			position: relative;
-			margin-left: 5px;
+			@include margin-left(5px);
 			&:before{
 				position: absolute;
 				content: "";
@@ -48,12 +48,12 @@
 				min-width: 16px;
 				text-align: center;
 				letter-spacing: -0.01em;
-				left: 3px;					
+				@include left(3px);
 			}
 		}
 		.file-types-dropbox{
 			margin: 0;
-			padding: 3px 0px 3px 25px;
+			@include padding(3px 0px 3px 25px);
 			width: auto;
 			height: 13px;
 			display: inline-block;
@@ -68,14 +68,14 @@
 		.attach_content{
 			display: inline-block;
 			vertical-align: middle;
-			margin-left: 10px;
+			@include margin-left(10px);
 			width: 160px;
 			.file-size{
 				display: block;
 			}
 		}
 		.delete{
-			margin-right: 10px;
+			@include margin-right(10px);
 			vertical-align: middle;
 			&:before{
 				content: "\00d7";

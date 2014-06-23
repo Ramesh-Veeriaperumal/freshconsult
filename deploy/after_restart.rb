@@ -1,6 +1,5 @@
 if node[:opsworks]
   require 'aws-sdk'
-  Chef::Log.debug("************ inside after restart ************* ")
   # establishing connection with aws to run custom restart of nginx
   awscreds = {
     :access_key_id    => node[:opsworks_access_keys][:access_key_id],
