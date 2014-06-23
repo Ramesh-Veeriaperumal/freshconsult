@@ -747,7 +747,7 @@ HTML
 			</span>
 			<div class="ticket-brief">
 				<div class="ellipsis">
-					<a href="#{ ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
+					<a href="#{ ticket['current_portal']['facebook_portal'] ? ticket['full_domain_url'] : ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
 						#{ ticket['subject'] } ##{ ticket['id'] }
 					</a>
 				</div>
