@@ -17,7 +17,10 @@ module Social::Gnip::Util
         end
       else
         @twitter_handle = account.twitter_handles.find_by_id(args[:stream_id])
-        convert_hash = @twitter_handle.check_ticket_rules if @twitter_handle
+        if @twitter_handle
+          convert_hash = @twitter_handle.check_ticket_rules 
+          notify_social_dev("Received a rule tag without tag prefix S", args )
+        end
       end
     end
     convert_hash.merge!(:tweet => true)

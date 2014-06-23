@@ -2,6 +2,7 @@ class Social::GnipTwitterController < ApplicationController
 
   include Redis::GnipRedisMethods
   include Social::Twitter::Constants
+  include Social::Util
 
   skip_before_filter :check_privilege, :verify_authenticity_token
 
@@ -14,7 +15,7 @@ class Social::GnipTwitterController < ApplicationController
          :text => "Reconnect time successfully updated"
       }
     else
-      NewRelic::Agent.notice_error("Reconnect time updation failed",
+      notify_social_dev("Reconnect time updation failed",
                           					:custom_params => params.inspect)
       render :json => {
       	:success => false,

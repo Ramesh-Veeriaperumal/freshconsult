@@ -269,8 +269,7 @@ module ApplicationHelper
       ['/home',               :home,        !privilege?(:manage_tickets) ],
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
-      ['/social/twitters/feed', :social,     can_view_social? && !feature?(:social_revamp) && handles_associated?],
-      ['/social/streams', :social,     can_view_social? && feature?(:social_revamp) && handles_associated?],
+      social_tab,
       solutions_tab,
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
@@ -871,9 +870,24 @@ module ApplicationHelper
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
-
+    
+    def social_tab
+      feature_enabled = feature?(:social_revamp)
+      view_social_tab = can_view_social?
+      handles_present = handles_associated?
+      if !feature_enabled && handles_present
+        ['/social/twitters/feed', :social,     view_social_tab ]
+      elsif feature_enabled && handles_present
+        ['/social/streams', :social,     view_social_tab]
+      elsif feature_enabled  && !handles_present
+        ['/social/welcome', :social,     can_view_welcome_page?]
+      else
+        ['#', :social, false]
+      end
+    end
+    
     def can_view_social?
-      privilege?(:manage_tickets) && feature?(:twitter)
+      feature?(:twitter) && privilege?(:manage_tickets)
     end
 
     def additional_settings?
@@ -886,7 +900,7 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && feature?(:social_revamp)  && !handles_associated? && additional_settings?
+      privilege?(:view_admin) && can_view_social? && additional_settings?
     end
 
   def tour_button(text, tour_id)

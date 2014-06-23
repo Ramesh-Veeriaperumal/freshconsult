@@ -2,6 +2,7 @@ class Social::WelcomeController < ApplicationController
   
   include Social::Twitter::Constants
   
+  before_filter { |c| c.requires_feature :twitter }
   before_filter :can_view_welcome_page?, :only => [:index]
   
   def index
