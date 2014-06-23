@@ -60,6 +60,8 @@ module Redis::RedisKeys
 	RIAK_FAILED_NOTE_DELETION = "RIAK:FAILED_NOTE_DELETION"
 	
 	REPORT_TICKET_FILTERS = "REPORT_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}:%{report_type}"
+	TICKET_DISPLAY_ID = "TICKET_DISPLAY_ID:%{account_id}"
+	DISPLAY_ID_LOCK = "DISPLAY_ID_LOCK:%{account_id}"
 
 	def newrelic_begin_rescue
 	    begin

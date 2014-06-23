@@ -120,6 +120,7 @@ GEM
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
+    amq-protocol (1.9.2)
     ancestry (1.3.0)
       activerecord (>= 2.3.14)
     arel (2.0.7)
@@ -148,6 +149,8 @@ GEM
       builder
     buftok (0.2.0)
     builder (3.0.0)
+    bunny (1.2.1)
+      amq-protocol (>= 1.9.2)
     celluloid (0.15.2)
       timers (~> 1.1.0)
     chargebee (1.2.9)
@@ -513,6 +516,7 @@ DEPENDENCIES
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.11.3)
   braintree (= 2.10.0)
+  bunny (= 1.2.1)
   carmen!
   chargebee (~> 1.2.9)
   clockwork (= 0.4.1)

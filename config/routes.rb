@@ -654,6 +654,8 @@
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
 
+  map.resources :rabbit_mq, :only => [ :index ]
+
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 

@@ -14,6 +14,10 @@ module Redis::TicketsRedis
 		newrelic_begin_rescue { $redis_tickets.del(key) }
 	end
 
+  def increment_tickets_redis_key key, value = 1
+    newrelic_begin_rescue { $redis_tickets.INCRBY(key, value) }
+  end
+
 	def tickets_list_push(key,values,direction = 'right', expires = 3600)
 			command = direction == 'right' ? 'rpush' : 'lpush'
 			unless values.is_a?(Array)

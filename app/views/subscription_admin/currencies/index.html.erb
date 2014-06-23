@@ -12,9 +12,9 @@
       <% Subscription::Currency.all.each do |currency|%>
         <tr>
            <td><%= currency.name %></td>
-           <td><%= instance_variable_get("@#{currency.name}_revenue") %></td>
+           <td><%= format_float_value(instance_variable_get("@#{currency.name}_revenue")) %></td>
            <td><%= currency.exchange_rate %></td>
-           <td>$<%= instance_variable_get("@#{currency.name}_revenue_in_usd") %></td>
+           <td>$<%= format_float_value(instance_variable_get("@#{currency.name}_revenue_in_usd")) %></td>
          </tr>
       <%end%>
     </table>

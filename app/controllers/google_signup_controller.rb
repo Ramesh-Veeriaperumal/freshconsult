@@ -4,6 +4,7 @@ class GoogleSignupController < AccountsController
   include GoogleSignupHelper
   include GoogleOauth
 
+  around_filter :select_shard
   skip_before_filter :check_privilege
   before_filter :initialize_user, :load_account, :only =>[:associate_google_account, :associate_local_to_google]
 
@@ -27,18 +28,18 @@ class GoogleSignupController < AccountsController
     end
   end
 
-  def select_shard(&block)
-    if full_domain.blank?
-      flash.now[:error] = t(:'flash.g_app.no_subdomain')
-      render :signup_google and return
-    end
-
-    Sharding.select_shard_of(full_domain) do
-      yield
-    end
-  end
-
   private
+    def select_shard(&block)
+      if full_domain.blank?
+        flash.now[:error] = t(:'flash.g_app.no_subdomain')
+        render :signup_google and return
+      end
+
+      Sharding.select_shard_of(full_domain) do
+        yield
+      end
+    end
+
     def initialize_user
       @name = params[:user][:name]
       @email = params[:user][:email]

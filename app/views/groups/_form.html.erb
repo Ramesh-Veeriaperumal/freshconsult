@@ -187,6 +187,11 @@ jQuery('#business_calendar').select2({
     }
 });
 
+
+jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>");
+
+<% end %>
+
 jQuery("#group_form").on("submit", function(e) {
 	new_list = jQuery("#agent_list").val().split(",");
 	var added_agents = []
@@ -204,10 +209,6 @@ jQuery("#group_form").on("submit", function(e) {
 			if (jQuery.inArray(el, array2) == -1) result_array.push(el);
 		});
 	}
-
-jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>");
-
-<% end %>
 
 });
 

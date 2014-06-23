@@ -79,6 +79,17 @@ var FreshfoneConnection;
 			});
 		},
 
+		incomingAlert: function () {
+			var self = this;
+			var key = self.connection.parameters.CallSid + ":sound";
+			if($.cookie(key)){
+	        self.connection.device.soundcache.stop("incoming");
+	      }
+	      var expire = new Date();
+	      expire.setTime(expire.getTime() + (10 * 1000));
+	      $.cookie(key, true, {path:'/', expires: expire});
+		},
+
 		createDesktopNotification: function () {
 			if ( freshfonewidget.isSupportWebNotification() ) {
 				try {
@@ -88,8 +99,6 @@ var FreshfoneConnection;
 					console.log(e);
 				}
 			}
-
-		}
 	};
 
 }(jQuery));

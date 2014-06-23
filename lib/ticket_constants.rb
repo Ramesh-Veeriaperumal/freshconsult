@@ -154,6 +154,10 @@ module TicketConstants
     :customer_resolved  => :"helpdesk_ticket_states.resolved_at"
   }
 
+  # Used in redis_display_id feature
+  TICKET_START_DISPLAY_ID = -100000000
+  TICKET_DISPLAY_ID_MAX_LOOP = 10
+  TICKET_ID_LOCK_EXPIRY = 5 #5 seconds
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])

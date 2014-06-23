@@ -16,6 +16,7 @@ window.App.Discussions = window.App.Discussions || {};
 			this.bindHandlers();
 			this.setCurrentPage();
 			this.sidebarActive = false;
+			$('#cm-sb-list').trigger('afterShow');
 		},
 
 		setupStaticSidebar: function () {
@@ -104,8 +105,9 @@ window.App.Discussions = window.App.Discussions || {};
 		
 		bindSidebarLoaded: function () {
 			var $this = this;
-			$('#cm-sb-categories').on('remoteLoaded', function () {
+			$('#cm-sb-list').on('remoteLoaded', function () {
 				$this.setCurrentPage();
+				$this.categoriesLoaded = true;
 			});
 		},
 
@@ -150,7 +152,7 @@ window.App.Discussions = window.App.Discussions || {};
 		
 		show: function () {
 			if (!this.categoriesLoaded) {
-				$('#cm-sb-categories').trigger('afterShow');
+				$('#cm-sb-list').trigger('afterShow');
 			}
 			$("#community-sidebar").show();
 			$('body').addClass('cs-show');
@@ -175,7 +177,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 		
 		reload: function () {
-			$('#cm-sb-categories').trigger('reload');
+			$('#cm-sb-list').trigger('reload');
 		},
 
 		leave: function (data) {
