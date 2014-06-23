@@ -57,7 +57,8 @@ IntegrationTests = [
 
 FreshfoneTests = [
   "spec/controllers/freshfone/*_spec.rb",
-  "spec/lib/freshfone/*_spec.rb"
+  "spec/lib/freshfone/*_spec.rb",
+  "spec/models/freshfone/*_spec.rb"
 ]
 
 APITests = [ 

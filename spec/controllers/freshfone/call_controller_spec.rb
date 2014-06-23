@@ -1,5 +1,6 @@
 require 'spec_helper'
 include FreshfoneCallSpecHelper
+include APIHelper
 
 describe Freshfone::CallController do
   setup :activate_authlogic
