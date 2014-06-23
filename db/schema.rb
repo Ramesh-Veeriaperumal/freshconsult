@@ -1491,10 +1491,11 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "deleted",                 :default => false
   end
 
   add_index "mobihelp_apps", ["account_id", "app_key", "app_secret"], :name => "index_mobihelp_apps_on_account_id_and_app_key_and_app_secret", :unique => true
-  add_index "mobihelp_apps", ["account_id", "name", "platform"], :name => "index_mobihelp_apps_on_account_id_and_name_and_platform", :unique => true
+  add_index "mobihelp_apps", ["account_id", "name", "platform"], :name => "index_mobihelp_apps_on_account_id_and_name_and_platform"
   add_index "mobihelp_apps", ["account_id"], :name => "index_mobihelp_apps_on_account_id"
 
   create_table "mobihelp_devices", :force => true do |t|

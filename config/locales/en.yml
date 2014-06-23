@@ -571,6 +571,7 @@ en:
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
+          should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a solution category
           enable_push_notification: Enable Push Notification

@@ -2,8 +2,8 @@ class Mobihelp::App < ActiveRecord::Base
 
   validate :validates_config
   validates_presence_of :name
-  validates_uniqueness_of :name, :case_sensitive => false, :scope => [:account_id, :platform]
   validates_inclusion_of :platform, :in => PLATFORM_ID_BY_KEY.values
+
 
   #Validates if the config has valid hash values before saving
   def validates_config
@@ -19,4 +19,5 @@ class Mobihelp::App < ActiveRecord::Base
       end
     end
   end
+
 end
