@@ -1396,6 +1396,10 @@ en:
         inapp_support: "In App Support"
         ios_sdk: "iOS SDK"
         android_sdk: "Android SDK"
+        trusted_ip: IP Whitelisting
+        trusted_ip_meta: Private Helpdesk
+        custom_mailbox: Custom Mail Server
+        custom_mailbox_meta: Custom Mailboxes
   ends_with: Ends with
   last_name: Last Name
   forum:
