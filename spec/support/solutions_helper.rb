@@ -27,4 +27,9 @@ module SolutionsHelper
     test_article
   end
 
+  def solutions_incremented? article_size
+    @account.reload
+    @account.solution_articles.size.should eql article_size+1
+  end
+
 end

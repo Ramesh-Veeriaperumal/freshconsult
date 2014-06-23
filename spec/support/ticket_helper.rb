@@ -23,4 +23,9 @@ module TicketHelper
     test_ticket.save_ticket
     test_ticket
   end
+
+  def ticket_incremented? ticket_size
+    @account.reload
+    @account.tickets.size.should eql ticket_size+1
+  end
 end
