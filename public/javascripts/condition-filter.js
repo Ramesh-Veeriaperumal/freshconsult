@@ -38,14 +38,14 @@ function getFilterInOptgroupFormat(filter){
 	var _filter_group = [], _filter_children = []
 	jQuery.each(filter, function(i, item){
 		if(i == 0){
-			_filter_group.push([item.name, item.value])
+			_filter_group.push([escapeHtml(item.name), escapeHtml(item.value)])
 			return
 		}
 		if(item.name == -1 || i == filter.length){
 			_filter_group.push(["------------------", _filter_children])
 			_filter_children = []
 		}else{
-			_filter_children.push([item.name, item.value, item['unique_action']])
+			_filter_children.push([escapeHtml(item.name), escapeHtml(item.value), escapeHtml(item['unique_action'])])
 		} 
 	});
 	_filter_group.push(["------------------", _filter_children]);
