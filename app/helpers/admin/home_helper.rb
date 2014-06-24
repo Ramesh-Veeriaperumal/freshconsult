@@ -172,8 +172,7 @@ module Admin::HomeHelper
         :privilege                     =>   feature?(:forums)
       },
       :trusted_ip                      =>   {
-        :privilege                     =>    current_account.features?(:whitelisted_ips),
-        :url                           =>   "/admin/security"
+        :privilege                     =>    current_account.features?(:whitelisted_ips)
       },
       :custom_mailbox                  =>   {
         :privilege                     =>    current_account.features?(:mailbox)
@@ -305,7 +304,7 @@ module Admin::HomeHelper
       :"billing"                              =>    [:choose_plan],
       :import                                 =>    [:zendesk_import],
       :"day_pass"                             =>    [:occasional_agent],
-      :security                               =>    [:custom_mailbox_meta]
+      :custom_mailbox                         =>    [:custom_mailbox_meta]
     }
 
   ######### Constructing Admin Page ########
