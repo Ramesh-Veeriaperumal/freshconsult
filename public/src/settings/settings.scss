@@ -1,3 +1,5 @@
+@import "../pattern/lib/mixins";
+
 @import "compass";                      // Load Compass plugins     http://compass-style.org/
 @import "susy";
 
@@ -12,6 +14,5 @@ $rtl: false;
 // 	$rtl: false;
 // }
 
-@import "../pattern/lib/mixins";
 @import "../pattern/lib/custom_mixin.scss";
 @import "../pattern/lib/rtl-mixins";
