@@ -69,7 +69,8 @@
 				"data-loading-text" => t('ticket.submit_loading') %>
 			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-			<%= hidden_field_tag "meta[referrer]", request.referrer %>
+			<% referrer = h(request.referrer) %>
+			<%= hidden_field_tag "meta[referrer]", referrer %>
 		</div>
 	</div>
 </div>
