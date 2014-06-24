@@ -21,6 +21,10 @@ FacebookTests = [
   "spec/lib/facebook/post_spec.rb"
 ]
 
+GnipTests = [
+  "spec/lib/social/gnip/rule_client_spec.rb"
+]
+
 TwitterTests = [
   "spec/lib/social/twitter/*_spec.rb", 
   "spec/models/social/twitter_*_spec.rb", 
@@ -262,13 +266,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Runs all twitter tests"
       Spec::Rake::SpecTask.new(:twitter) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(TwitterTests)
+        t.spec_files = FileList.new(TwitterTests+GnipTests)
       end
 
       Spec::Rake::SpecTask.new(:facebook) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
         t.spec_files = FileList.new(FacebookTests)
       end
+  
     end
 
     namespace :freshfone do

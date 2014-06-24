@@ -75,9 +75,9 @@ describe Social::StreamsController do
     end
   
     it "should fetch the top tweets from all the handles with latest first from dynamo when" do
-      tweet_id1 = (Time.now.utc.to_f*100000).to_i
-      tweet_id2 = (Time.now.utc.to_f*100000).to_i
-      tweet_id3 = (Time.now.utc.to_f*100000).to_i
+      tweet_id1 = (Time.now.utc.to_f*100000).to_i + 1
+      tweet_id2 = (Time.now.utc.to_f*100000).to_i + 2
+      tweet_id3 = (Time.now.utc.to_f*100000).to_i + 3
       tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
       tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(tweet_id2, @first_rule, Time.now.ago(5.minutes).utc.iso8601)
       tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, @sec_rule, Time.now.ago(2.minutes).utc.iso8601)
@@ -100,10 +100,10 @@ describe Social::StreamsController do
   
   describe "interactions" do
     it "should show the entire current interaction on clicking on a tweet feed" do
-      tweet_id1 = (Time.now.utc.to_f*100000).to_i
-      tweet_id2 = (Time.now.utc.to_f*100000).to_i
-      tweet_id3 = (Time.now.utc.to_f*100000).to_i
-      tweet_id4 = (Time.now.utc.to_f*100000).to_i
+      tweet_id1 = (Time.now.utc.to_f*100000).to_i + 1
+      tweet_id2 = (Time.now.utc.to_f*100000).to_i + 2
+      tweet_id3 = (Time.now.utc.to_f*100000).to_i + 3
+      tweet_id4 = (Time.now.utc.to_f*100000).to_i + 4
       
       tweet_id1, sample_gnip_feed1, sender1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
       tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(tweet_id2, @first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)
@@ -142,9 +142,9 @@ describe Social::StreamsController do
     end
 
     it "should show the the other interactions on clicking on a  tweet feed" do
-      tweet_id1 = (Time.now.utc.to_f*100000).to_i
-      tweet_id2 = (Time.now.utc.to_f*100000).to_i
-      tweet_id3 = (Time.now.utc.to_f*100000).to_i
+      tweet_id1 = (Time.now.utc.to_f*100000).to_i + 1
+      tweet_id2 = (Time.now.utc.to_f*100000).to_i + 2
+      tweet_id3 = (Time.now.utc.to_f*100000).to_i + 3
       
       tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, @first_rule, Time.now.utc.iso8601)
       tweet_id2, sample_gnip_feed2, sender2 = push_tweet_to_dynamo(tweet_id2, @first_rule,  Time.now.advance(:hours => +1).utc.iso8601, tweet_id1)

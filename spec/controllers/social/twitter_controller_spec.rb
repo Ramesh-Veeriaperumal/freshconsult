@@ -26,6 +26,7 @@ describe Social::TwitterController do
   end
   
   before(:each) do
+    @account.make_current
     unless GNIP_ENABLED
       Social::DynamoHelper.stubs(:insert).returns({})
       Social::DynamoHelper.stubs(:update).returns({})
