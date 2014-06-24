@@ -38,7 +38,7 @@
 		top: 1px;
     }
     .attach-link{ @include padding-left(18px); position: relative; }
-    .dropdown-menu a { @include padding-left(15px); @include padding(15px); } 
+    .dropdown-menu a { @include padding-left(15px); @include padding-right(15px); } 
     .dropdown-menu{ @include min-width(155px); }
 }
 
