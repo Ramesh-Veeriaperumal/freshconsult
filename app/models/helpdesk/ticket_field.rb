@@ -136,7 +136,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_group" then
          account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
        when "default_product" then
-         account.products.collect { |e| [e.name, e.id] }
+         account.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }
        when "nested_field" then
          picklist_values.collect { |c| [c.value, c.value] }
        else
