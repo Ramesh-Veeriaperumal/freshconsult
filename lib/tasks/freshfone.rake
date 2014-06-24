@@ -48,8 +48,10 @@ namespace :freshfone do
 	desc "Freshfone account suspension"
 	task :suspend => :environment do
 		Sharding.execute_on_all_shards do
-			Freshfone::Account.find_due.each do |account|
-				account.process_subscription
+			Freshfone::Account.find_due.each do |ff_account|
+				# ff_account.process_subscription
+				account = ff_account.account
+				FreshfoneNotifier.deliver_freshfone_account_closure(account)
 				#should we collect negative balance amounts here?
 			end
 		end
