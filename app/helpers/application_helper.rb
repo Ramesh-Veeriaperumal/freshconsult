@@ -891,8 +891,8 @@ module ApplicationHelper
     end
 
     def additional_settings?
-      additional_settings = current_account.account_additional_settings
-      additional_settings.attributes.keys.include?("additional_settings") && (additional_settings.additional_settings.nil? || additional_settings.additional_settings[:enable_social])
+      settings = current_account.account_additional_settings.additional_settings
+      settings.nil? || settings[:enable_social]
     end
 
     def handles_associated?
