@@ -90,6 +90,8 @@ ShopifyWidget.prototype= {
             line_items += orders[i]["line_items"].length>1 ? '<div>'+(orders[i]["line_items"].length-1)+' more... </div>' : '';
             orders[i].line_items_html = line_items
 
+            orders[i].shipping_address_html = orders[i].shipping_address ? _.template(cw.ADDRESS, orders[i].shipping_address) : "<span class='no_address'>No Address</span>"
+            orders[i].billing_address_html =  orders[i].billing_address ? _.template(cw.ADDRESS, orders[i].billing_address) : "<span class='no_address'>No Address</span>"
 
             order_html =  _.template(cw.ORDER, orders[i]);
 
@@ -150,10 +152,13 @@ ShopifyWidget.prototype= {
             '<div class="line_items"> <%= line_items_html %> </div>'+
             '<div class="address hide">'+
             '<div class="notes">Notes: <%= notes %> </div>'+
-            'Shipping:<%= shipping_address.address1 %> <div class="shipping_address"> <%= shipping_address.address2 %> , <%= shipping_address.city %> <br> <%= shipping_address.country %>  <%= shipping_address.zip %> </div>'+
-            'Billing: <span class="address_1"> <%= billing_address.address1 %></span><div class="shipping_address"> <%= billing_address.address2 %> , <%= billing_address.city %> <br> <%= billing_address.country %>  <%= billing_address.zip %> </div>'+
+            '<div>Shipping: <%= shipping_address_html %></div>'+
+            '<div><span class="bill_address">Billing:</span><%= billing_address_html %></div>'+
             '</div>'+
             '</div>',
+
+    ADDRESS:
+        '<%= address1 %> <div class="shipping_address"> <%= address2 %> , <%= city %> <br> <%= country %>  <%= zip %> </div>',
 
     NO_ORDERS:
         '<div class="shopify_orders"><span class="empty_orders" >No Shopify orders</span></div>',
