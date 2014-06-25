@@ -131,7 +131,7 @@ function imgerror(source){
 
 function default_image_error(source){
   // The various types are attachment | logo | favicon
-  var type_class = source.dataset['type'] || "attachment",
+  var type_class = source.getAttribute('data-type') || "attachment",
       class_name = ['', 'no-image-placeholder', 'no-image-'.concat(type_class) ];
   source.src = SPACER_IMAGE_PATH;
   source.className += class_name.join(" ");
