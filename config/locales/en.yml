@@ -4169,6 +4169,7 @@ en:
     welcome:
       title: Social Support
       turn_off: Turn OFF Social
+      turn_on: Turn ON Social
       off_helptext_html: To Turn ON, add your <br /> twitter handle from admin
       get_started: Get Started
       customer_tweets: "Customer tweets:"
