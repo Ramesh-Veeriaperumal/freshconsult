@@ -82,4 +82,13 @@ class FreshfoneNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
+  def freshfone_email_template(account, params)
+    subject      params[:subject]
+    recipients   params[:recipients]
+    from         params[:from]
+    body         :account => account, :message => params[:message]
+    sent_on      Time.now
+    content_type "text/html"
+  end
+
 end
