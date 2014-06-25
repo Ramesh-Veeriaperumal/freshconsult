@@ -38,10 +38,11 @@ class PostObserver < ActiveRecord::Observer
 	def after_update(post)
 		update_cached_fields(post) if post.published_changed?
 		if post.published_changed?
-			monitor_reply(post) if post.published
 			if post.original_post?
 				post.topic.published = post.published
 				post.topic.save
+			elsif post.published?
+				monitor_reply(post)
 			end
 		end
 		create_activity(post, 'published_post') if post.published_changed? and post.published? and !post.topic.new?
