@@ -522,18 +522,6 @@ private
     @custom_field = nil
   end
 
-  def increment_ticket_counter
-    time = Time.now.utc
-    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}"
-    if value == 1
-      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}", 144000
-    end
-
-  rescue Exception => e
-    NewRelic::Agent.notice_error(e)
-  end
-
-
   def update_group_escalation
     if @model_changes.key?(:group_id)
       ticket_states.group_escalated = false
