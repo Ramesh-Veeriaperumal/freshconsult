@@ -45,9 +45,9 @@ describe Social::TwitterController do
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
       end
       
-      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
 
       if GNIP_ENABLED
+        tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["fd_user"].should be_nil
         feed_entry["fd_link"].should be_nil
@@ -124,9 +124,9 @@ describe Social::TwitterController do
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
       end
       
-      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
       
       if GNIP_ENABLED
+        tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["fd_user"].should be_nil
         feed_entry["fd_link"].should be_nil
@@ -179,10 +179,9 @@ describe Social::TwitterController do
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
       end
       
-      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
-      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
       
       if GNIP_ENABLED
+        tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["in_conversation"][:n].should eql("0")
         feed_entry["is_replied"][:n].should eql("0")
@@ -240,6 +239,7 @@ describe Social::TwitterController do
       end
       
       if GNIP_ENABLED
+        tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["in_conversation"][:n].should eql("0")
         feed_entry["is_replied"][:n].should eql("0")
@@ -283,9 +283,9 @@ describe Social::TwitterController do
         Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
       end
-      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
       
       if GNIP_ENABLED
+        tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["in_conversation"][:n].should eql("0")
         feed_entry["is_replied"][:n].should eql("0")
@@ -361,7 +361,8 @@ describe Social::TwitterController do
                                 :normal_img_url => "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png"
                               }
                       }
-      
+                  
+                  
       user_interactions = response.template_objects["interactions"][:others]
       user_interactions.length.should eql(2)
       user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
