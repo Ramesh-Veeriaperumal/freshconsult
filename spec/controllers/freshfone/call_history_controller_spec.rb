@@ -16,6 +16,9 @@ describe Freshfone::CallHistoryController do
     get :index
     freshfone_number = @account.all_freshfone_numbers.first(:order => "deleted ASC")
     freshfone_call = freshfone_number.freshfone_calls.roots.filter(:filter => "Freshfone::Filters::CallFilter").first
+    @account.freshfone_calls.create(  :freshfone_number_id => freshfone_number.id, 
+                                      :call_status => 0, :call_type => 1, :agent => @agent,
+                                      :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5" } )
     assigns[:all_freshfone_numbers].first.number.should be_eql(freshfone_number.number)
     assigns[:calls].first.call_sid.should be_eql(freshfone_call.call_sid)
     response.should render_template("freshfone/call_history/index.html.erb")
