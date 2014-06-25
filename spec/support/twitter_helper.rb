@@ -155,6 +155,7 @@ module TwitterHelper
   def sample_twitter_feed
     text = Faker::Lorem.words(10).join(" ")
     tweet_id = (Time.now.utc.to_f*100000).to_i
+    in_reply_to_status_id_str = (1.days.ago.utc.to_f*100000).to_i
     twitter_feed = {
       "query" => "",
       "next_results" => "",
@@ -163,7 +164,7 @@ module TwitterHelper
       "created_at" => "#{Time.now.strftime("%a %b %d %T %z %Y")}",
       "id" => tweet_id,
       "id_str" => "#{tweet_id}",
-      "in_reply_to_status_id_str" => "",
+      "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
           "id" => 2341632074,
           "id_str" => "2341632074",

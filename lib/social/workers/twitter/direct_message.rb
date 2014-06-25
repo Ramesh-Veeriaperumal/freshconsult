@@ -22,6 +22,7 @@ class Social::Workers::Twitter::DirectMessage
     end
   end
 
+  # Possible dead code
   def self.fetch_twt_mentions twt_handle
     twt_sandbox(twt_handle) do
       Timeout.timeout(60) do
