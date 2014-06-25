@@ -8,8 +8,9 @@ describe Freshfone::Account do
   end
 
   it 'should find all accounts that are suspended' do
-    @freshfone_account.update_attributes(:expires_on => Time.now, :state => 2)
-    suspended_accounts = Freshfone::Account.find_due(Time.now)
+    expiry_date = Time.now
+    @freshfone_account.update_attributes(:expires_on => expiry_date, :state => 2)
+    suspended_accounts = Freshfone::Account.find_due(expiry_date)
     suspended_accounts.should be_present
     suspended_accounts.first.friendly_name.should match("RSpec Test")
     @freshfone_account.update_attributes(:expires_on => nil, :state => 1)
