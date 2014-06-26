@@ -153,7 +153,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         uri = google_contact_batch_uri(self)
         access_token = prepare_access_token(self.token, self.secret)
         batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
-        stats = handle_batch_response(batch_response, stats)
+        stats = handle_batch_response(batch_response, stats, db_contacts_slice)
         slice_no += 1
       rescue => e
         Rails.logger.error "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -186,7 +186,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   private
-    def handle_batch_response(batch_response, stats)
+    def handle_batch_response(batch_response, stats, db_contacts_slice)
+      inc=0
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
         batch_response_hash = XmlSimple.xml_in(batch_response_xml)
@@ -198,21 +199,26 @@ class Integrations::GoogleAccount < ActiveRecord::Base
             id = response['id']
             operation = id[0]
             if status_code == "200" || status_code == "201"
-              if operation == CREATE 
-                email = response['email'][0]['address']
+              if operation == CREATE
+                stats[0][0]+=1
                 # If create contact is successful update the id in the database.
                 goog_id = Integrations::GoogleContactsUtil.parse_id([id[1]])
-                db_contact = find_user_by_email(email)
-                updated = update_google_contact_id(db_contact, goog_id) if db_contact
-                stats[0][0]+=1
-                Rails.logger.info "Newly added contact id #{goog_id} and status #{updated} #{stats}"
+                if db_contacts_slice[inc].google_contacts.blank?
+                   update_google_contact_id(db_contacts_slice[inc], goog_id) 
+                else
+                  db_contacts_slice[inc].google_contacts.first["google_id"] = goog_id
+                end
+                inc +=1
+                Rails.logger.info "Newly added contact id #{goog_id} and status  #{stats}"
               else
                 update_google_contact_id(db_contact, goog_id)
+                inc +=1
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
                 Rails.logger.info "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
             elsif status_code == "404" && operation == UPDATE
               goog_id = Integrations::GoogleContactsUtil.parse_id([id[1]])
+              inc +=1
               db_contact = find_user_by_google_id(goog_id)
               Rails.logger.info "Contact does not exist. Adding the contact #{db_contact} with google id #{goog_id}"
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
@@ -423,7 +429,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       end
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
-      gcnt.google_group_ids = goog_contact_detail[:google_group_ids]
 
       # orgName would be considered as customer name.  If the name is removed then the customer will not be associated
       orgName = goog_contact_detail[:orgName]

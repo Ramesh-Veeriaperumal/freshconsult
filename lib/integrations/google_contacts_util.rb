@@ -126,7 +126,7 @@ module Integrations::GoogleContactsUtil
 
       # group
       entry_element.elements.each("gContact:groupMembershipInfo") {|element|
-        group_id = Integrations::GoogleContactsUtil.parse_id([element.attribute('href').value])
+        group_id = self.sync_group_id
         delete(entry_element,element) unless group_id.blank? or group_id != sync_group_id
       }
 
@@ -193,10 +193,10 @@ module Integrations::GoogleContactsUtil
     #google_group_ids
     google_group_ids = []
     entry_element.elements.each("gContact:groupMembershipInfo") {|element|
-      group_id = Integrations::GoogleContactsUtil.parse_id([element.attribute('href').value])
+      group_id = self.sync_group_id
       google_group_ids.push(group_id) unless group_id.blank?
     }
-    goog_contact_detail[:google_group_ids] = google_group_ids
+    goog_contact_detail[:google_group_ids] = self.sync_group_id
     goog_contact_detail[:updated_at] = Time.parse(entry_element.get_text('updated').value) #updated
     goog_contact_detail
   end

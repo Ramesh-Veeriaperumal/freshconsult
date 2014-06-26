@@ -4438,7 +4438,7 @@ en:
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
-      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
             <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
             A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:

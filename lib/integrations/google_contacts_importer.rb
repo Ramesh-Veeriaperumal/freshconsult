@@ -125,6 +125,7 @@ class Integrations::GoogleContactsImporter
                 if sync_tag_id.blank? || user.tagged?(sync_tag_id)
                   updated = user.save
                   updated ? (user.deleted ? stats[2] += 1 : stats[1] += 1) : (user.deleted ? err_stats[2] += 1 : err_stats[1] += 1) 
+                  GoogleContact.find(:first,:conditions => ["user_id = ? AND google_account_id = ?",user.id,@google_account.id]).destroy if user.deleted
                   Rails.logger.info "User #{user.email} update successful :: #{updated}, errors: #{user.errors.full_messages}"
                 end
               end
