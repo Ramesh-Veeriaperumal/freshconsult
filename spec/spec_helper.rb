@@ -14,7 +14,9 @@ SimpleCov.start do
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
   add_group 'libs', 'lib/'
-end 
+end
+
+SimpleCov.coverage_dir 'tmp/coverage'
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
