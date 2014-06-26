@@ -3,6 +3,8 @@ load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
 describe Freshfone::CallInitiator do
+  self.use_transactional_fixtures = false
+  
   before(:all) do
     @account = create_test_account
     @agent = get_admin

@@ -3,6 +3,8 @@ load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
 describe Freshfone::TicketActions do
+  self.use_transactional_fixtures = false
+  
   include Freshfone::TicketActions
   before(:all) do
     @agent = get_admin
