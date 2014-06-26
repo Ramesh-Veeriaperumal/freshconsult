@@ -262,6 +262,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
 
+    namespace :helpdesk do
+      desc "Runs all twitter tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(HelpdeskTests)
+      end
+    end    
+
     namespace :social do
       desc "Runs all twitter tests"
       Spec::Rake::SpecTask.new(:twitter) do |t|
