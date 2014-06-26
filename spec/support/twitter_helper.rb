@@ -133,7 +133,7 @@ module TwitterHelper
                     :user_image => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
                     :parent_feed_id => "#{parent_tweet_id}",
                     :user_mentions => "",
-                    :posted_time => "#{Time.now.strftime("%a %b %d %T %z %Y")}"
+                    :posted_time => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}"
                   },
                 :search_type => search_type
       }
@@ -161,7 +161,7 @@ module TwitterHelper
       "next_results" => "",
       "refresh_url" => "",
       "next_fetch_id" => "", 
-      "created_at" => "#{Time.now.strftime("%a %b %d %T %z %Y")}",
+      "created_at" => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}",
       "id" => tweet_id,
       "id_str" => "#{tweet_id}",
       "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",

@@ -51,6 +51,9 @@ describe Social::TwitterController do
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
         feed_entry["fd_user"].should be_nil
         feed_entry["fd_link"].should be_nil
+      else
+        sample_gnip_feed = sample_gnip_feed(@rule, nil, Time.now.utc.iso8601)
+        sample_gnip_feed["id"] = "tag:search.twitter.com,2005:#{tweet_id}"
       end
       
       #Pushed tweet should not be a ticket
@@ -112,6 +115,66 @@ describe Social::TwitterController do
   end
   
   describe "POST #reply " do
+    it "should reply to twitter and should push to dynamo if it is a custom stream and is a ticket tweet" do   
+      #Push a tweet into dynamo (parent tweet to reply to)
+      tweet_id = (Time.now.utc.to_f*100000).to_i
+      
+      #Push a tweet into dynamo that is to be converted to ticket  
+      unless GNIP_ENABLED 
+        AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+        Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+        Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+        Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+      end
+      
+      
+      @stream_id = "#{@account.id}_#{@default_stream.id}"
+      fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:custom], "#{tweet_id}")
+      post :create_fd_item, fd_item_params
+      tweet_id = fd_item_params[:item][:feed_id]
+      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet.should_not be_nil
+      tweet.is_ticket?.should be_true
+      ticket = tweet.tweetable
+      
+      #Stubing reply call
+      twitter_object = sample_twitter_object(tweet_id)
+      Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
+      
+      @stream_id = "#{@account.id}_#{@default_stream.id}"
+      reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
+      post :reply, reply_params
+      
+      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet.should_not be_nil
+    end
+    
+    it "should reply to twitter and should push to dynamo if it is a custom stream and is a non ticket tweet" do   
+      #Push a tweet into dynamo (parent tweet to reply to)
+      tweet_id = (Time.now.utc.to_f*100000).to_i
+      
+      #Push a tweet into dynamo that is to be converted to ticket  
+      unless GNIP_ENABLED 
+        AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+        Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
+        Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+        Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+      end
+      
+      
+      @stream_id = "#{@account.id}_#{@default_stream.id}"
+      fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:custom], "#{tweet_id}")
+      
+      #Stubing reply call
+      twitter_object = sample_twitter_object(tweet_id)
+      Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
+      
+      @stream_id = "#{@account.id}_#{@default_stream.id}"
+      reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
+      post :reply, reply_params
+    end
+    
+    
     it "should reply to twitter and should update dynamo if it is a saved stream and is a ticket tweet" do   
       #Push a tweet into dynamo (parent tweet to reply to)
       tweet_id = (Time.now.utc.to_f*100000).to_i
