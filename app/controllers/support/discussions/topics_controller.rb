@@ -8,6 +8,7 @@ class Support::Discussions::TopicsController < SupportController
 
   before_filter :load_agent_actions, :only => :show
   before_filter { |c| c.requires_feature :forums }
+  before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => [:edit, :update]
 
@@ -223,6 +224,9 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
 
+  def reply
+    redirect_to support_discussions_topic_path(params[:id], :anchor => 'reply-to-post')
+  end
 
   protected
     def assign_protected

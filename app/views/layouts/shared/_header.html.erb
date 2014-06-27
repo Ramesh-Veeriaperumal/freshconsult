@@ -3,22 +3,24 @@
   <div class="wrapper">
   	<div class="wrapper-shadow">
 		<div class="brand">
-			<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>	
+			<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
 				<span class="vertical-align logo-image">
 					<i></i>
-					<%=image_tag logo_url, :alt => t('logo') %>
+					<%= image_tag logo_url, :alt => t('logo'),
+                    :onerror => "default_image_error(this)",
+                    :"data-type" => "logo" %>
 				</span>
-			<% end %>      
+			<% end %>
 			<%= link_to(h(current_portal.name), "/home", :class => "logo_text") %>
-			<%= link_to_function("Switch to mobile version", 
-								"jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
+			<%= link_to_function("Switch to mobile version",
+								"jQuery.cookie('classic_view','false',{path:'/'});location.href='/';",
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
-		</div>	
-		<% if current_user then %>  
+		</div>
+		<% if current_user then %>
 		  	<div class="header-link-wrapper">
 		  		<% if current_account.freshfone_active? %>
 						<a href="#" id="freshfone-presence-toggle" class="tooltip"
-							data-placement="below"  
+							data-placement="below"
 						 	title="<%= current_user.freshfone_user_online? ? "You are available to take calls" : "You are unavailable to take calls" %>" data-html="true">
 						 	<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
 		  			</a>
@@ -32,7 +34,7 @@
 		  				availabilty_tooltip = t('header.user_not_available').html_safe
 		  			end
 		  		%>
-			  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
+			  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"
 			  		title="<%= availabilty_tooltip %>" data-html="true">
 			  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
 			  		</a>
@@ -46,9 +48,9 @@
 		        <%= link_to( t('header.login').html_safe , login_path) %>
 				<%= link_to( t('signup').html_safe , current_portal.support_signup_path ) if feature?(:signup_link) %>
 			</div>
-	    <% end %>    
-		<% if current_user then %>                        
-			<div class="profile_info" id="LoggedOptions">                          
+	    <% end %>
+		<% if current_user then %>
+			<div class="profile_info" id="LoggedOptions">
 				<div class="info user clearfix">
 					<span><%= truncate(h(current_user.name), :length => 30) %></span>
 				</div>
@@ -65,8 +67,8 @@
 				</div>
 
 				<% if is_assumed_user? %>
-					<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
-				<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
+					<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>
+				<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>
 					<span class="seperator"></span>
 					<div class="info">
 						<input type="hidden" id="assumed_select_id" class="header-agent-select"
@@ -77,23 +79,23 @@
 						  }
 						<%end%>
 					</div>
-				<% end %>                    
-				<span class="seperator"></span>			
+				<% end %>
+				<span class="seperator"></span>
 				<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
-			</div>                                                             
+			</div>
 		<% end %>
 	</div>
   </div>
-	<div class="top_nav_bg"> 
+	<div class="top_nav_bg">
 		<div class="wrapper">
 			<div class="wrapper-shadow">
-				 <div class="top_nav"> 	
+				 <div class="top_nav">
 					<div class="nav_right">
 						<% if privilege?(:manage_tickets) then %>
-							<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path, 
-									:class => "new_ticket tooltip" , 
-									:title => t("header.new_ticket_tip").html_safe, 
-									'data-placement' => "below", 
+							<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path,
+									:class => "new_ticket tooltip" ,
+									:title => t("header.new_ticket_tip").html_safe,
+									'data-placement' => "below",
 									"data-keybinding" => shortcut('app_nav.ticket_new') ) %>
 						<% else %>
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
@@ -111,12 +113,12 @@
 						<% end %>
 					</div>
 					<ul class="header-tabs">
-						<%= navigation_tabs %> 
+						<%= navigation_tabs %>
 					</ul>
 				</div>
-			</div>			
+			</div>
 		</div>
-	</div>	
+	</div>
 </div>
 <script type="text/javascript">
 	jQuery(document).ready(function() {
@@ -124,7 +126,7 @@
 		assume_agent = []
 		if privilege?(:manage_users)
 			@allowed_to_assume = current_user.agent.assumable_agents
-			
+
 			if @allowed_to_assume
 				@allowed_to_assume.each do |req|
 					assume_agent << "{id: '#{req.id}',
@@ -139,7 +141,7 @@
 		jQuery('#assumed_select_id').select2({
 		multiple: false,
 		data: [<%=assume_agent.join(",").html_safe%>]
-		
+
 	});
 
 	jQuery('#toggle_shortcut').bind('change', function(){
@@ -181,8 +183,8 @@
 	 function toggleAgent() {
 		var user_id = '<%= current_user.id %>'
 	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )
-	 
-	  	new Ajax.Request('/agents/toggle_availability', 
+
+	  	new Ajax.Request('/agents/toggle_availability',
 	                   { parameters: {value: !value, id: user_id},
 	                      onLoading: function() {
 	                        jQuery('#available_icon').addClass('header-spinner')
@@ -204,7 +206,7 @@
 
 
 	                     } });
-	    
+
 	}
 
 	<% end %>

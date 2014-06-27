@@ -1,7 +1,7 @@
 #errorExplanation, .errorExplanation { 
   @include clearfix; 
   padding: 14px 20px;
-  margin: 0px 0px 10px 0px; 
+  @include margin(0px 0px 10px 0px); 
   background-color: #feefd6;
   h2 {  display: none; }
   p {
@@ -14,7 +14,7 @@
   ul li {
   	font-size: 13px;
   	list-style: disc;
-  	margin:8px 8px 5px 18px;
+  	@include margin(8px 8px 5px 18px);
   }
 }
 
@@ -28,7 +28,7 @@
 		ul {
 		  font-size: 13px;
 		  list-style: disc;
-		  margin:0px 8px 0px 18px;
+		  @include margin(0px 8px 0px 18px);
 		}
 	}
 }

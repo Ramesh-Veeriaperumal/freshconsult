@@ -55,7 +55,11 @@ class FreshfoneController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except :menu_id
+			if params[:action] == 'preview_ivr'
+				@callback_params = params.except(*[:menu_id, :id, :preview])
+			else
+				@callback_params = params.except :menu_id
+			end
 			super
 		end
 

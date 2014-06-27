@@ -43,17 +43,17 @@ $forum-neutral-color: #888888;
 .page-stamp{
 	position: absolute;
 	width: 26px;
-	left: -6px;
-	padding:4px 0 5px 2px;
+	@include left(-6px);
+	@include padding(4px 0 5px 2px);
 	margin-top:5px;	
 	&:after{
 		content: "";
 		position: absolute;
 		bottom: -6px;
-		left: 0;
+		@include left(0);
 		border: 3px solid transparent;
 		border-top-color: #333333;
-		border-right-color: #333333;
+		@include border-right-color(#333333);
 	}
 }
 
@@ -78,12 +78,12 @@ $forum-neutral-color: #888888;
 
 .badge-announcement, .badge-ideas, .badge-problems, .badge-questions{
 	position: relative;
-	margin-left: 30px;
+	@include margin-left(30px);
 	&:before, &:after{
 		content:"";	
 		vertical-align: text-top;
 		position: absolute;		
-		left: -32px;
+		@include left(-32px);
 		top: 1px;
 	}
 	&:before{			
@@ -92,7 +92,8 @@ $forum-neutral-color: #888888;
 		@include border-radius(2em);
 	}	
 	&:after{
-		margin: 3px 4px;
+		@if $rtl == true{ margin: 3px 2px; }
+		@else {	margin: 3px 4px;	}
 	}
 }
 

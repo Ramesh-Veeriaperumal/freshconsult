@@ -94,7 +94,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   #      responsibility to call this method again to fetch the next page.
   #      If 'import_groups' is used then the imported group will be removed.  In that case it is calling methods 
   #      responsibility to call this method again until the 'import_groups' is empty.
-  def fetch_latest_google_contacts(max_results=1000, group_id=nil, last_sync_time=nil)
+  def fetch_latest_google_contacts(max_results=1000, group_id=nil,sync_type)
     query_params = ""
     last_sync_time = self.last_sync_time if last_sync_time.blank?
     if group_id.blank?
@@ -105,14 +105,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     # While syncing first ever time, the time would be 1970:01:01.
-    show_deleted = false ? "&showdeleted" : ""  # deletion handling is Disabled for now. Remove this check to enable it.
+    show_deleted = (sync_type == SyncType::IMPORT_EXPORT) ? false : true
     agg_g_cnts = []
     self.last_sync_index = 0 if self.last_sync_index.blank?
     if self.import_groups.blank?
       sync_time_str = last_sync_time.gmtime.strftime("%Y-%m-%dT%H:%M:%S")
-      query_params = "?updated-min="+ sync_time_str  # url to fetch only the modified contacts since last sync time. showdeleted fetches the deleted user as well. 
+      query_params = "?updated-min="+ sync_time_str + "&showdeleted=#{show_deleted}"  # url to fetch only the modified contacts since last sync time. showdeleted fetches the deleted user as well. 
       query_params = query_params + "&group=#{google_group_uri(self.email, group_id)}" unless group_id.blank?
-      query_params = "#{query_params}#{show_deleted}&max-results=#{max_results+1}&start-index=#{self.last_sync_index+1}"
+      query_params = "#{query_params}&max-results=#{max_results+1}&start-index=#{self.last_sync_index+1}"
       agg_g_cnts = fetch_google_contacts(query_params)
       self.last_sync_index += agg_g_cnts.length
     else
@@ -123,7 +123,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         if agg_g_cnts.length > max_results
           false
         else
-          query_params = "?group=#{google_group_uri(self.email, g_group_id)}#{show_deleted}&max-results=#{remaining_results+1}&start-index=#{start_index+1}"
+          query_params = "?group=#{google_group_uri(self.email, g_group_id)}&showdeleted=#{show_deleted}&max-results=#{remaining_results+1}&start-index=#{start_index+1}"
           fetched_g_cnts = fetch_google_contacts(query_params, new_company_list)
           self.last_sync_index += fetched_g_cnts.length
           start_index = 0
@@ -140,20 +140,20 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     agg_g_cnts
   end
 
-  def batch_update_google_contacts(db_contacts)
+  def batch_update_google_contacts(db_contacts,sync_type)
     stats = [[0,0,0],[0,0,0]]
     db_contacts_slices = db_contacts.each_slice(100).to_a # Batch requests are limited to 100 operations at a time by Google.
     slice_no = 1
     db_contacts_slices.each { |db_contacts_slice|
       begin
         batch_operation_xml = "<?xml version='1.0' encoding='UTF-8'?> <feed xmlns='http://www.w3.org/2005/Atom' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:gd='http://schemas.google.com/g/2005' xmlns:batch='http://schemas.google.com/gdata/batch'>"
-        batch_operation_xml << update_google_contacts(db_contacts_slice, true)
+        batch_operation_xml << update_google_contacts(db_contacts_slice, true,sync_type)
         batch_operation_xml << "</feed>"
         # puts "batch_operation_xml #{batch_operation_xml}"
         uri = google_contact_batch_uri(self)
         access_token = prepare_access_token(self.token, self.secret)
         batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
-        stats = handle_batch_response(batch_response, stats)
+        stats = handle_batch_response(batch_response, stats, db_contacts_slice)
         slice_no += 1
       rescue => e
         Rails.logger.error "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -163,15 +163,15 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   # If batch true is passed, only the xml will be returned.
-  def update_google_contacts(db_contacts, batch=false)
+  def update_google_contacts(db_contacts, batch=false,sync_type)
     batch_xml = ""
     db_contacts.each do |db_contact|
       begin
         if db_contact.deleted and self.overwrite_existing_user # deleted
           Rails.logger.debug "Deleting contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = delete_google_contact(db_contact, batch)
-        elsif !fetch_current_account_contact(db_contact)
-          Rails.logger.debug "Adding contact #{db_contact.email} in google for account #{db_contact.account_id}."
+        elsif (sync_type == SyncType::IMPORT_EXPORT) || (db_contact.google_contacts.length == 0 && self.created_at == self.updated_at)
+          Rails.logger.debug "Adding 1  contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = add_google_contact(db_contact, batch)
         else self.overwrite_existing_user# updated
           Rails.logger.debug "Updating contact #{db_contact.email} in google for account #{db_contact.account_id}."
@@ -186,7 +186,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   private
-    def handle_batch_response(batch_response, stats)
+    def handle_batch_response(batch_response, stats, db_contacts_slice)
+      inc=0
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
         batch_response_hash = XmlSimple.xml_in(batch_response_xml)
@@ -196,23 +197,28 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           begin
             status_code = response['status'][0]['code']
             id = response['id']
-            operation = id[1]
+            operation = id[0]
             if status_code == "200" || status_code == "201"
               if operation == CREATE
-                email = response['email'][0]['address']
-                # If create contact is successful update the id in the database.
-                goog_id = Integrations::GoogleContactsUtil.parse_id(id)
-                db_contact = find_user_by_email(email)
-                updated = update_google_contact_id(db_contact, goog_id)
                 stats[0][0]+=1
-                Rails.logger.info "Newly added contact id #{goog_id} and status #{updated} #{stats}"
+                # If create contact is successful update the id in the database.
+                goog_id = Integrations::GoogleContactsUtil.parse_id([id[1]])
+                if db_contacts_slice[inc].google_contacts.blank?
+                   update_google_contact_id(db_contacts_slice[inc], goog_id) 
+                else
+                  db_contacts_slice[inc].google_contacts.first["google_id"] = goog_id
+                end
+                inc +=1
+                Rails.logger.info "Newly added contact id #{goog_id} and status  #{stats}"
               else
                 update_google_contact_id(db_contact, goog_id)
+                inc +=1
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
                 Rails.logger.info "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
             elsif status_code == "404" && operation == UPDATE
-              goog_id = Integrations::GoogleContactsUtil.parse_id(id)
+              goog_id = Integrations::GoogleContactsUtil.parse_id([id[1]])
+              inc +=1
               db_contact = find_user_by_google_id(goog_id)
               Rails.logger.info "Contact does not exist. Adding the contact #{db_contact} with google id #{goog_id}"
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
@@ -294,6 +300,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           access_token = prepare_access_token(google_account.token, google_account.secret)
           response = access_token.delete(goog_contacts_url, {"If-Match" => "*"})
           Rails.logger.info "Deleted contact #{db_contact}, response #{response.inspect}"
+          if response.code == "200"
+            goog_cnt = GoogleContact.find_by_user_id(db_contact.id)
+            goog_cnt.destroy
+            return "true"
+          end
         end
       end
     end
@@ -418,7 +429,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       end
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
-      gcnt.google_group_ids = goog_contact_detail[:google_group_ids]
 
       # orgName would be considered as customer name.  If the name is removed then the customer will not be associated
       orgName = goog_contact_detail[:orgName]

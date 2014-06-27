@@ -23,6 +23,7 @@ describe CustomersController do
   it "should quick-create a company" do
     quick_company_name = Faker::Company.name
     post :quick, :customer => { :name => quick_company_name }
+    flash[:notice].should =~ /The company has been created/
     created_company = @account.customers.find_by_name(quick_company_name)
     created_company.should be_an_instance_of(Customer)
     created_company.name.should be_eql(quick_company_name)
@@ -38,7 +39,7 @@ describe CustomersController do
   end
 
   it "should list all the created companies on the index page" do
-    company = create_company
+    company = @account.customers.find(:all, :order=>'name').first
     get :index
     response.should render_template 'customers/index'
     response.body.should =~ /#{company.name}/

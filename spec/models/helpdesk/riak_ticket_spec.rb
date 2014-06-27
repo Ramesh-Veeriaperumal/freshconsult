@@ -5,17 +5,10 @@ describe Helpdesk::Ticket do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @account.make_current
     @user = User.find_by_account_id(@account.id)
     $primary_cluster = "riak"
     $secondary_cluster = "mysql"
     $backup_cluster = "none"
-  end
-
-  after(:each) do
-    Helpdesk::Ticket.destroy_all
-    Helpdesk::Note.destroy_all
   end
 
   describe "Ticket Creation" do

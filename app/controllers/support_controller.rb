@@ -164,6 +164,12 @@ class SupportController < ApplicationController
       params[:portal_type] == "facebook"
     end
 
+    def check_forums_state
+      unless current_user && current_user.agent?
+        redirect_to support_home_path if current_account.features?(:hide_portal_forums)
+      end
+    end
+
     protected
 
     def render_tracker

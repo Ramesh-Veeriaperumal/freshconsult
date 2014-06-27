@@ -47,8 +47,8 @@ ul.multi_value_field {
 
 ul.multi_value_field li, ul.multi_value_field input {
   display: block;
-  float: left;
-  margin: 3px 5px 2px 0;
+  @include float(left);
+  @include margin(3px 5px 2px 0);
   list-style-type: none;
   -x-system-font: none;
   font-size:13px;
@@ -74,13 +74,13 @@ ul.multi_value_field li.choice {
   @include border-radius(12px);
   background: $choicebg none repeat scroll 0 0;
   border: 1px solid darken($choicebg, 10%);
-  padding: 0 4px 2px 12px;
+  @include padding(0 4px 2px 12px);
 }
 
 ul.multi_value_field li.choice a.close-link {
   font-family:arial;
   color: desaturate(darken($choicebg, 30%), 40%);
-  padding: 0 4px 0 8px;
+  @include padding(0 4px 0 8px);
   position:relative;
   font-size: 13px;
   cursor: pointer;

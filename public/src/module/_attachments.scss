@@ -1,9 +1,9 @@
 .attachment_list, .ui-form .attachment_list{
 	@include no-bullets;
-	color:#888987; 
+	color:#888987;
 	margin-top:3px;
 	padding:0;
-	@include clearfix;	
+	@include clearfix;
 	.list_element{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
@@ -17,7 +17,7 @@
 		height:auto !important;
 		width: auto;
 		min-width: 180px;
-		margin-left:0;	
+		@include margin-left(0);
 		.attachment-type{
 			margin: 0;
 			padding: 3px 0px;
@@ -51,12 +51,12 @@
 				min-width: 16px;
 				text-align: center;
 				letter-spacing: -0.01em;
-				left: 3px;					
+				@include left(3px);
 			}
 		}
 		.file-types-dropbox{
 			margin: 0;
-			padding: 3px 0px 3px 25px;
+			@include padding(3px 0px 3px 25px);
 			width: auto;
 			height: 13px;
 			display: inline-block;
@@ -65,14 +65,14 @@
 		}
 		img.image{
 				margin:0;
-				width:32px; 
+				width:32px;
 				height:32px;
 				vertical-align: middle;
 		}
 		.attach_content{
 			display: inline-block;
 			vertical-align: middle;
-			margin-left: 10px;
+			@include margin-left(10px);
 			width: 110px;
 			.file-size{
 				display: block;
@@ -101,8 +101,34 @@
 				text-decoration: line-through;
 			}
 		}
-	} 
+	}
 }
 
+// ------------------------------------------------------------------ //
+// -------------------- NO IMAGE CLASS ------------------------------ //
+// ------------------------------------------------------------------ //
 
+@mixin no-image-class($image) {
+	background-image: inline-image($image);
+	width: image-width($image);
+	height: image-height($image);
+}
 
+.no-image-placeholder{
+	background-repeat: no-repeat;
+	@include opacity(0.5);
+}
+
+.no-image-attachment{
+	background-image: inline-image("cdn-ignored/inline-images/page.png");
+	background-size: 20px 25px;
+	background-position: 2px 3px;
+}
+
+.no-image-logo{
+	@include no-image-class("logo.png");
+}
+
+.no-image-favicon{
+	@include no-image-class("favicon-preview.png");
+}

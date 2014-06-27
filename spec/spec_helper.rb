@@ -86,10 +86,14 @@ Spork.prefork do
     config.include FreshfoneSpecHelper
     config.include APIAuthHelper, :type => :controller
     config.include SlaPoliciesHelper
+    config.include ProductsHelper
+    config.include WfFilterHelper, :type => :controller
+    config.include S3Helper
 
-    config.before(:all, :type => :controller) do
+    config.before(:all) do
       @account = create_test_account
       @agent = get_admin
+      @timings = []
     end
 
     config.before(:each, :type => :controller) do
@@ -99,12 +103,10 @@ Spork.prefork do
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     end
 
-    config.before(:all) do |x|
-      @timings = []
-    end
-
     config.before(:each) do |x|
       name = "#{x.class.description} #{x.description}"
+      Rails.logger.info "*"*100
+      Rails.logger.info name
       @test_start_time = Time.now
     end
 
@@ -115,6 +117,7 @@ Spork.prefork do
         :name => name,
         :duration => @test_end_time - @test_start_time
       })
+      Rails.logger.info "^"*100
     end
 
     config.after(:all) do |x|
@@ -140,7 +143,7 @@ Spork.prefork do
 
     config.after(:suite) do
       Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
-        File.delete(file)
+        File.delete(file) unless file.include?("placeholder.txt")
       end
     end
 

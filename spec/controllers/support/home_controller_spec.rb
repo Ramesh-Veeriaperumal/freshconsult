@@ -16,9 +16,9 @@ describe Support::HomeController do
     @test_folder3 = create_folder( {:name => "folder3 visible to logged in customers - #{now}", :description => "new folder", :visibility => 2,
       :category_id => @test_category.id } )
     @test_article1 = create_article( {:title => "article1 - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" } )
+      :status => "2", :art_type => "1", :user_id => @agent.id } )
     @test_article2 = create_article( {:title => "article2 with status as draft - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
-      :status => "1", :art_type => "1" } )
+      :status => "1", :art_type => "1", :user_id => @agent_id } )
   end
 
   before(:each) do

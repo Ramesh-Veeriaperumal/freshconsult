@@ -1,7 +1,7 @@
 
 	.conversation_thread {
-		padding: 0 0px 15px 0;
-		margin-left: 20px;
+		@include padding(0 0px 15px 0);
+		@include margin-left(20px);
 
 		&.topic-locked {
 			padding-bottom: 0;
@@ -17,7 +17,7 @@
 			}
 			&.spam{
 				padding-top: 0;
-			  background: linear-gradient(-45deg, rgba(248,248,248,1) 25%,
+			  	background: linear-gradient(-45deg, rgba(248,248,248,1) 25%,
 			                             transparent 25%, transparent 50%,
 																	rgba(248,248,248,1) 50%, rgba(248,248,248,1) 75%,
 																	transparent 2%, transparent);
@@ -28,12 +28,12 @@
 					border-bottom: 1px solid #eae8c8;
 					margin-bottom: 30px;
 					padding: 7px;
-					text-indent: 31px;
-					box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.1);
+					@include text-indent(31px);
+					@include box-shadow(0px 1px 5px 0px rgba(0,0,0,0.1));
 					p{margin: 0;}
 					&:after, &:before{
 						top: 100%;
-						left: 70px;
+						@include left(70px);
 						border: solid transparent;
 						content: " ";
 						height: 0;
@@ -45,13 +45,13 @@
 						border-color: rgba(254, 251, 223, 0);
 						border-top-color: #fefbdf;
 						border-width: 10px;
-						margin-left: -10px;
+						@include margin-left(-10px);
 					}
 					&:before{
 						border-color: rgba(219, 217, 187, 0);
 						border-top-color: #dbd9bb;
 						border-width: 11px;
-						margin-left: -11px;
+						@include margin-left(-11px);
 					}
 				}
 				.post{
@@ -61,31 +61,32 @@
 		}
 
 		.post {
-			margin: 10px 0 0 36px;
+			@include margin(10px 0 0 36px);
 			display: block;
-			padding: 5px 30px 0 0px;
+			@include padding(5px 30px 0 0);
 			line-height: 150%;
 			min-height: 30px;
 			overflow: hidden;
 		}
 
 		.post-content {
+			@include text-formatting();
 			margin: 10px 0 15px;
 			overflow-x: auto;
 		}
 
 		.actions {
-			float: right;
+			@include float(right);
 			width: 200px;
-			clear: right;
+			@include clear(right);
 			opacity: 0;
 			@include transition(opacity .2s linear);
 			a {
 				display: block;
-				float: right;
+				@include float(right);
 				width: 20px;
 				height: 17px;
-				margin-left: 20px;
+				@include margin-left(20px);
 			}
 		}
 
@@ -98,11 +99,11 @@
 			width: $avatar_size;
 			height: $avatar_size;
 			z-index: 100;
-			margin-left: -23px;
+			@include margin-left(-23px);
 			@include border-radius(50%);
 			border: 1px solid #eee;
 			text-align: center;
-			float: left;
+			@include float(left);
 			.preview_pic {
 				display: inline-block;
 				margin: 0;
@@ -126,7 +127,7 @@
 		}
 	}
 	.topic-reply{
-		.flow-form{ border-radius: 0 0 3px 3px; }		
+		.flow-form{ @include border-radius(0 0 3px 3px); }		
 	}
 
 	.flow-form{
@@ -160,7 +161,7 @@
 		margin-top: -15px;
 
 		.avatar-wrap {
-			margin-left: -19px;
+			@include margin-left(-19px);
 			margin-top: 0;
 		}
 
@@ -180,7 +181,7 @@
 
 		#pseudo-reply {
 			cursor: pointer;
-			margin-left: 4px;
+			@include margin-left(4px);
 		}
 
 		&.replying {

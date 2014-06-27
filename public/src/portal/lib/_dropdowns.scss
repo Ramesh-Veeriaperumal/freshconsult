@@ -31,8 +31,8 @@
 // Place the caret
 .dropdown .caret {
   margin-top: 6px;
-  margin-left: 5px;
-  margin-right: -4px;
+  @include margin-left(5px);
+  @include margin-right(-4px);
 }
 .dropdown:hover .caret,
 .open .caret {
@@ -44,10 +44,10 @@
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  @include left(0);
   z-index: $zindexDropdown;
   display: none; // none by default, but block on "open" of the menu
-  float: left;
+  @include float(left);
   min-width: 195px;
   padding: 4px 0;
   margin: 1px 0 0; // override default ul
@@ -65,8 +65,8 @@
 
   // Aligns the dropdown menu to right
   &.pull-right {
-    right: 0;
-    left: auto;
+    @include right(0);
+    @include left(auto);
   }
 
   // Dividers (basically an hr) within the dropdown
@@ -78,7 +78,7 @@
   a {
     display: block;
     padding: 3px 24px;
-    clear: both;
+    @include clear(both);
     font-weight: normal;
     line-height: $baseLineHeight;
     color: $dropdownLinkColor;
@@ -100,7 +100,7 @@
     content:"";
     position: absolute;
     vertical-align: text-top;
-    margin-left: -20px;
+    @include margin-left(-20px);
     @extend .icon-dd-tick-dark; 
   }
 }
@@ -120,8 +120,8 @@
 // Right aligned dropdowns
 // ---------------------------
 .pull-right .dropdown-menu {
-  right: 0;
-  left: auto;
+  @include right(0);
+  @include left(auto);
 }
 
 // Allow for dropdowns to go bottom up (aka, dropup-menu)

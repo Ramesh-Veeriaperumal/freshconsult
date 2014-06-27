@@ -33,13 +33,4 @@ class BaseWorker
         })  
       end
     end
-
-    def stats_redis_data(key,value,expiry)
-      begin
-        $stats_redis.set(key, value)
-        $stats_redis.expire(key, 144000)
-      rescue => e
-        logger.info "Error while recording SLA stats : #{e.message}"          
-      end
-    end
 end

@@ -15,8 +15,9 @@ describe Freshfone::CallHistoryController do
   it 'should get all calls for the default number' do
     get :index
     freshfone_number = @account.all_freshfone_numbers.first(:order => "deleted ASC")
+    freshfone_call = freshfone_number.freshfone_calls.roots.filter(:filter => "Freshfone::Filters::CallFilter").first
     assigns[:all_freshfone_numbers].first.number.should be_eql(freshfone_number.number)
-    assigns[:calls].first.call_sid.should be_eql(@freshfone_call.call_sid)
+    assigns[:calls].first.call_sid.should be_eql(freshfone_call.call_sid)
     response.should render_template("freshfone/call_history/index.html.erb")
   end
 

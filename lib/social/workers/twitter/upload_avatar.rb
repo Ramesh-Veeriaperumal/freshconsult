@@ -18,7 +18,7 @@ class Social::Workers::Twitter::UploadAvatar
       handle  = account.twitter_handles.find(args[:twitter_handle_id])
       wrapper = TwitterWrapper.new handle
       twitter = wrapper.get_twitter
-      prof_img_url = twitter.user.profile_image_url
+      prof_img_url = twitter.user.profile_image_url.to_s
       {:item => handle , :profile_image_url => prof_img_url}
     end
   end

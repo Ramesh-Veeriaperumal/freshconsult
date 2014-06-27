@@ -2,10 +2,10 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
 
 
   before_filter :load_app, :only => [:edit, :update, :destroy]
-  before_filter :load_app_review_launches, :only => [:new, :edit, :create]
+  before_filter :load_app_review_launches, :only => [:new, :edit, :update, :create]
 
   def index
-    @applist = current_account.mobihelp_apps
+    @applist = current_account.mobihelp_apps.find_all_by_deleted(false)
   end
 
   def new
@@ -41,8 +41,12 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
   end
 
   def destroy
-    #@app.destroy
-    flash[:notice] = t(:'flash.general.destroy.success', :human_name => t('admin.mobihelp.human_name'))
+    @app.deleted = true
+    if @app.save
+      flash[:notice] = t(:'flash.general.destroy.success', :human_name => t('admin.mobihelp.human_name'))
+    else
+      flash[:error] = t(:'flash.general.destroy.failure', :human_name => t('admin.mobihelp.human_name'))
+    end
     respond_to do |format|
       format.html { redirect_to(admin_mobihelp_apps_path) }
       format.xml  { head :ok }

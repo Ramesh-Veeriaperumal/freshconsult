@@ -18,11 +18,12 @@ describe UsersController do
                                     :blocked => 0,
                                     :customer_id => nil,
                                     :language => "en")
-        @new_user.save(false)
+    @new_user.save(false)
 	end
 
 	before(:each) do
 		login_admin
+		stub_s3_writes
 	end
 
 	it "should list all users" do

@@ -219,7 +219,7 @@ Helpkit.reports_util = {
     filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
     var filter_html = "<li>Filtered by:</li>";
     jQuery.each(filter_obj,function(index,value){
-      filter_html += "<li>"+value['name']+" : <strong>"+value['value']+"</strong></li>";
+      filter_html += "<li>"+value['name']+" : <strong>"+escapeHtml(value['value'])+"</strong></li>";
     });
     filter_html += "<li>Time Period : <strong>"+jQuery("#date_range").val()+"</strong></li>";
     jQuery("#filter_container").html(filter_html);

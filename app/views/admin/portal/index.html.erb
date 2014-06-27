@@ -51,20 +51,39 @@
 	<br/>
 	<% if current_account.features?(:forums) %>
 	<hr />
+	<div class="control-group row checkbox">
+	<%= content_tag( :div, t('.forums'), :class => "span2 lead" ) %>
+		<div class="align-right">
+    		<input name="account[features][hide_portal_forums]" type="hidden" value="1" />
+     		<input 	id="account_hide_portal_forums" name="account[features][hide_portal_forums]"
+     				rel="toggle" type="checkbox"
+     				data-checked-label="<%= t('.enable') %>"
+     				data-unchecked-label="<%= t('.disable') %>"
+     				<%= ' checked ' unless current_account.features?(:hide_portal_forums) %> 
+     				value="0" />
+  		</div>
+  	</div>
+  	<hr />
 	<%= content_tag( :h3,  t('.moderation'),	   :class => "lead" ) %>
 	<div class="radio">
-		<input type="radio" name="moderation" value="1" <%= 'checked' if @forum_moderation == :links %>/> <%= t('.moderate_links') %>
+		<input type="radio" name="moderation"
+						value="<%= CommunityConstants::MODERATE[:moderate_posts_with_links] %>"
+						<%= 'checked' if @forum_moderation == :moderate_posts_with_links %>/> <%= t('.moderate_links') %>
 		<%= content_tag( :div, t('.moderate_links_help'), :class => "muted" ) %>
 		<%= content_tag( :div, t('.moderate_links_help_2'), :class => "muted" ) %>
 		<br/>
 	</div>
 	<div class="radio">
-		<input type="radio" name="moderation" value="2" <%= 'checked' if @forum_moderation == :all %>/> <%= t('.moderate_all') %>
+		<input type="radio" name="moderation"
+						value="<%= CommunityConstants::MODERATE[:moderate_all_posts] %>"
+						<%= 'checked' if @forum_moderation == :moderate_all_posts %>/> <%= t('.moderate_all') %>
 		<%= content_tag( :div, t('.moderate_all_help'), :class => "muted" ) %>
 		<br/>
 	</div>
 	<div class="radio">
-		<input type="radio" name="moderation" value="0" <%= 'checked' if @forum_moderation == :none %>/> <%= t('.moderate_none') %>
+		<input type="radio" name="moderation"
+						value="0"
+						<%= 'checked' if @forum_moderation == :none %>/> <%= t('.moderate_none') %>
 		<%= content_tag( :div, t('.moderate_none_help'), :class => "muted" ) %>
 		<br/>
 	</div>

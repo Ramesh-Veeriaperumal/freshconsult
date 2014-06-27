@@ -34,24 +34,24 @@
   }
   // Account for brand name
   .navbar .brand {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin: 0 0 0 -5px;
+    @include padding-left(10px);
+    @include padding-right(10px);
+    @include margin(0 0 0 -5px);
   }
 
   // COLLAPSIBLE NAVBAR
   // ------------------
   // Nav collapse clears brand
   .nav-collapse {
-    clear: both;
+    @include clear(both);
   }
   // Block-level the nav
   .nav-collapse .nav {
-    float: none;
+    @include float(none);
     margin: 0 0 ($baseLineHeight / 2);
   }
   .nav-collapse .nav > li {
-    float: none;
+    @include float(none);
   }
   .nav-collapse .nav > li > a {
     margin-bottom: 2px;
@@ -97,8 +97,8 @@
   .nav-collapse .dropdown-menu {
     position: static;
     top: auto;
-    left: auto;
-    float: none;
+    @include left(auto);
+    @include float(none);
     display: block;
     max-width: none;
     margin: 0 15px;
@@ -124,7 +124,7 @@
   // Forms in navbar
   .nav-collapse .navbar-form,
   .nav-collapse .navbar-search {
-    float: none;
+    @include float(none);
     padding: ($baseLineHeight / 2) 15px;
     margin: ($baseLineHeight / 2) 0;
     border-top: 1px solid $navbarBackground;
@@ -138,8 +138,8 @@
   }
   // Pull right (secondary) nav content
   .navbar .nav-collapse .nav.pull-right {
-    float: none;
-    margin-left: 0;
+    @include float(none);
+    @include margin-left(0);
   }
   // Hide everything in the navbar save .brand and toggle button */
   .nav-collapse,
@@ -155,8 +155,8 @@
   // STATIC NAVBAR
   // -------------
   .navbar-static .navbar-inner {
-    padding-left:  10px;
-    padding-right: 10px;
+    @include padding-left(10px);
+    @include padding-right(10px);
   }
 
 

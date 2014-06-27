@@ -6,14 +6,14 @@ describe Helpdesk::BulkTicketActionsController do
   self.use_transactional_fixtures = false
 
   before do
-    @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Bulk"}))
+    @test_ticket = create_ticket({ :status => 2, :responder_id => @agent.id }, create_group(@account, {:name => "Bulk"}))
     @group = @account.groups.first
     log_in(@agent)
   end
 
   it "should perform bulk actions on selected tickets" do
-    test_ticket1 = create_ticket({ :status => 2 }, @group)
-    test_ticket2 = create_ticket({ :status => 2 }, @group)
+    test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id }, @group)
+    test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id }, @group)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "" },
                                                 :private => "0",
@@ -36,8 +36,8 @@ describe Helpdesk::BulkTicketActionsController do
   end
 
   it "should add attachment to reply using bulk reply" do
-    test_ticket1 = create_ticket({ :status => 2 })
-    test_ticket2 = create_ticket({ :status => 2 })
+    test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id })
+    test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id })
     @request.env['HTTP_REFERER'] = 'sessions/new'
     buffer = ("b" * 1024).freeze
     att_file = Tempfile.new('bulk_att')

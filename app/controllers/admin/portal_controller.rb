@@ -1,11 +1,11 @@
 class Admin::PortalController < Admin::AdminController
 
+  before_filter :get_moderation_setting, :only => :index
   before_filter :set_moderation_setting, :only => :update
   before_filter :filter_feature_list, :only => :update
 
   def index
     @account = current_account
-    @forum_moderation = @account.features?(:moderate_all_posts) ? :all : (@account.features?(:moderate_posts_with_links) ? :links : :none) if @account.features?(:forums)
   end
 
   def update
@@ -19,9 +19,19 @@ class Admin::PortalController < Admin::AdminController
 
   def set_moderation_setting
     return unless current_account.features?(:forums)
-    params[:account][:features][:moderate_all_posts] = (params[:moderation] === '2') ? "1" : "0"
-    params[:account][:features][:moderate_posts_with_links] = (params[:moderation] === '1') ? "1" : "0"
+    CommunityConstants::MODERATE.keys.each do |f|
+      params[:account][:features][f] = (params[:moderation] === CommunityConstants::MODERATE[f].to_s) ? "1" : "0"
+    end
   end
+
+  def get_moderation_setting
+    return unless current_account.features_included?(:forums)
+    CommunityConstants::MODERATE.keys.each do |f|
+      @forum_moderation = f if current_account.features_included?(f)
+    end
+    @forum_moderation ||= :none
+  end
+
 
   # move this method to middleware layer. by Suman
   def filter_feature_list

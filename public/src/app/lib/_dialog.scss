@@ -27,9 +27,9 @@ $modal_heading_color: #000;
 
 	.ui-dialog-titlebar-close {
 		background:#7b7b7b;
-		left:-43px;
+	 @include left(-43px);
 		top: 15px;
-		right:auto;
+	 @include right(auto);
 		height: 8px;
 		width: 8px;
 		padding: 9px;

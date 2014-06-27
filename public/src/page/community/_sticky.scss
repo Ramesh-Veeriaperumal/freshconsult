@@ -1,7 +1,7 @@
 &.moderation, &.topic-show{
 	#sticky_header {
-		margin: 0px -20px 0 -20px;
-		padding: 15px 20px 0 20px;
+		@include margin(0px -20px 0 -20px);
+		@include padding(15px 20px 0 20px);
 		border-bottom: 1px solid #CCC;
 	}	
 }
@@ -24,15 +24,20 @@
 	}
 
 	.sticky_left {
-		float: left;
+		@include float(left);
 		font-size: 14px;
 	}
 
 	.sticky_right {
-		float: right;
+		@include float(right);
 		.guided-tour-button{
 			display: inline;
 			padding: 8px 8px 8px 33px;
+			@if $rtl { 
+				padding: 5px 8px 5px 33px;
+				margin-right:15px;
+				display: inline-block;
+			}
 		}
 	}
 
@@ -44,6 +49,6 @@
 		width: 16px;
 		height: 16px;
 		display: inline-block;
-		margin: -2px 5px -3px 0px;
+		@include margin(-2px 5px -3px 0px);
 	}
 }

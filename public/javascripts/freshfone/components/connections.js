@@ -11,6 +11,7 @@ var FreshfoneConnection;
 		init: function () {
 		},
 		createNotification: function () {
+			var self = this;
 			var $incomingCallWidget = $('#incomingWidget').clone().tmpl();
 			$incomingCallWidget.attr('id', this.callSid());
 
@@ -20,7 +21,6 @@ var FreshfoneConnection;
 			this.freshfoneNotification.setRequestObject(this);
 			this.freshfoneNotification.prefillContactTemplate(this.customerNumber);
 			this.bindEventHandlers();
-			
 			freshfoneNotification.userInfo(this.customerNumber, this);
 		},
 		bindEventHandlers: function () {
@@ -56,6 +56,9 @@ var FreshfoneConnection;
 					self.$userInfoContainer = null;
 				});
 			}
+			if(this.notification) {
+				this.notification.closeWebNotification();
+			}
 		},
 		canAcceptCall: function () {
 			var self = this;
@@ -75,16 +78,32 @@ var FreshfoneConnection;
 				error: function () { }
 			});
 		},
+		createDesktopNotification: function () {
+			if ( this.canCreateDesktopNotification() ) {
+				try {
+					this.notification = new FreshfoneDesktopNotification(this);
+				}
+				catch (e) {
+					console.log(e);
+				}
+			}
+		},
 		incomingAlert: function () {
 			var self = this;
 			var key = self.connection.parameters.CallSid + ":sound";
 			if($.cookie(key)){
         self.connection.device.soundcache.stop("incoming");
+        freshfoneNotification.desktopNotification = false;
+      } else {
+      	freshfoneNotification.desktopNotification = true;
       }
       var expire = new Date();
       expire.setTime(expire.getTime() + (10 * 1000));
       $.cookie(key, true, {path:'/', expires: expire});
+		},
+		canCreateDesktopNotification: function () {
+			return (freshfonewidget.isSupportWebNotification() 
+				&& freshfoneNotification.desktopNotification );
 		}
 	};
-
 }(jQuery));

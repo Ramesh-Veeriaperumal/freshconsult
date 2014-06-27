@@ -10,5 +10,6 @@
   <td class="text-center"><%= Mobihelp::App::PLATFORM_NAMES_BY_ID[app.platform] %></td>
   <td class="text-right">
     <%= link_to t('edit'), edit_admin_mobihelp_app_path(app), :class => "btn btn-mini" %>
+    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_mobihelp_app_path(app), :confirm => t('confirm_delete_message', :human_name => t('admin.mobihelp.human_name')), :method => :delete, :class => "btn btn-mini"%>
   </td>
 </tr>

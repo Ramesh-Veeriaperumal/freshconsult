@@ -30,33 +30,33 @@ body.community {
 	@import "topic_list";
 
 	&.forms .controls .toggle-button {
-		margin-left:0;
+		@include margin-left(0);
 	}
 	a.cl50{
-		opacity: 0.5;
+		@include opacity(0.5);
 		&:hover{
-			opacity: 1;
+			@include opacity(1);
 		}
 	}
 	.label-topic{
 		position: relative;
-		margin-right: 6px;
+		@include margin-right(6px);
 		top: -3px;
 		text-transform: uppercase;
 		font-size: 10px;
-		padding: 2px 5px 3px 7px;
+		@include padding(2px 5px 3px 7px);
 		background-color: #333;
 	}
 
 	.breadcrumb{
 		// border:1px solid red;
-		float:left;
+		@include float(left);
 		margin-top: -7px;
 		margin-bottom: 0;
 		li:after{
 			content: "\002F";
-			padding-left: 8px;
-			padding-right: 7px;
+			@include padding-left(8px);
+			@include padding-right(7px);
 		}
 		li:last-child:after{
 			content: none;
@@ -72,13 +72,13 @@ body.community {
 	@include pie-clearfix;
 	margin-top: 3px;
 	& > ul > li{
-		float:left;
-		margin-right: 18px;
+		@include float(left);
+		@include margin-right(18px);
 		[class*="ficon-"] {
 			font-size: 18px;
-			float: left;
+			@include float(left);
 			margin-top: -2px;
-			margin-right: 5px;
+			@include margin-right(5px);
 		}
 	}
 }
@@ -99,14 +99,14 @@ body.community {
 }
 
 .list-actions-left{
-	float:left;
-	margin-left: 5px;
+	@include float(left);
+	@include margin-left(5px);
 	li{
-		float:left;
+		@include float(left);
 		text-align: center;
 		height: 35px;
 		width: 35px;
-		padding-left: 5px;
+		@include padding-left(5px);
 		padding-top: 12px;
 	}
 }
@@ -115,14 +115,14 @@ body.community {
 	font-size: 20px;
 	line-height: 2.4;
 	font-weight: 200;
-	padding-left: 15px;
+	@include padding-left(15px);
 }
 
 .list-actions-right{
-	float:right;
-	margin-right: 12px;
+	@include float(right);
+	@include margin-right(12px);
 	margin-top: 10px;
-	margin-left: 15px;
+	@include margin-left(15px);
 }
 
 .list-query-panel{
@@ -130,25 +130,25 @@ body.community {
 	border-top: 1px solid #FFF;
 	background-color: #F2F5F5;
 	.lf-item{
-		float: left;
+		@include float(left);
 		min-height: 20px;
 		.item-sort{
 			.dropdown-toggle{
-				padding: 10px 0px 10px 15px;
+				@include padding(10px 0px 10px 15px);
 				margin: -10px 0px;
 			}
 			.caret{
-				margin-right: 15px;
+				@include margin-right(15px);
 			}
 		}
 	}
 	.lf-item-right{
-		float: right;
+		@include float(right);
 	}
 	.lf-item, .lf-item-right{
 		.item-checkbox, .item-sort, .item-filter, .item-matches{
-			border-right: 1px solid #FFF;
-			padding: 10px 16px 10px 17px;
+			@include border-right(1px solid #FFF);
+			@include padding(10px 16px 10px 17px);
 		}
 		.item-sort{
 			padding: 10px 0;	
@@ -163,22 +163,22 @@ body.community {
 	
 	.lf-item-right{
 		.item-checkbox, .item-sort, .item-filter, .item-matches{
-			border-right: 0;
+			@include border-right(0);
 		}
 	}
 	.dropdown-menu{
 		margin-top: 9px;
 		width: 220px;
-		border-top-left-radius: 0px;
-		border-top-right-radius: 0px;
-		border-bottom-right-radius: 5px;
-		border-bottom-left-radius: 5px;
+		@include border-top-left-radius(0px);
+		@include border-top-right-radius(0px);
+		@include border-bottom-right-radius(5px);
+		@include border-bottom-left-radius(5px);
 		li.active > a{
 			background: none;
 			color: #333;
 			&:before{
 				position: absolute;
-				left: 10px;
+				@include left(10px);
 			}
 		}
 		li > a:hover,
@@ -209,13 +209,13 @@ body.community {
 			width: 250px;
 		}
 		.filter-stamps{
-			margin-left: 5px;
+			@include margin-left(5px);
 			position: relative;
 			z-index: 1;
 		}
 		.select2-container{
 			position: absolute;
-			left: 0;
+			@include left(0);
 		}
 		.select2-choices{
 			border-radius: 2px;
@@ -226,7 +226,7 @@ body.community {
 			background-image: none;
 			background-color: #efefef;
 			margin: 3px 2px;
-			padding: 3px 3px 4px 6px;
+			@include padding(3px 3px 4px 6px);
 			border: 1px solid #afafaf;
 			box-shadow: none;
 			font-weight: 600;
@@ -235,5 +235,5 @@ body.community {
 }
 
 .categories-list-page .reorder-content{
-		margin-left:15px;
+		@include margin-left(15px);
 }

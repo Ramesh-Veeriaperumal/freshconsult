@@ -44,6 +44,7 @@ window.Fjax = {
       if (typeof soundManager != "undefined"){
         soundManager.stopAll();
       }
+      $(window).unbind('.pageless');
     },
 
     callAfterReceive: function() {
@@ -58,7 +59,6 @@ window.Fjax = {
     },
 
     callAtEnd: function() {
-      $(window).unbind('.pageless');
       if(typeof(this.end) == 'function') this.end();
       this.end = null;
 

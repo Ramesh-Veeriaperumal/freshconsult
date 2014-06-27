@@ -6,11 +6,16 @@ body {
 	min-width:1140px; 
 	-webkit-font-smoothing: antialiased;
 }
+@if $rtl == true {
+  html,body{
+    direction:rtl;
+  }
+}
 .margin-bottom{ margin-bottom:10px; }
-.margin-right,.mrt{ margin-right: 10px; }
-.margin-left{ margin-left: 10px; }
-.margin-left-zero,.mlt{ margin-left: 0px; }
-.margin-left-two{margin-left: 2px}
+.margin-right,.mrt{ @include margin-right(10px)}
+.margin-left{ @include margin-left(10px) }
+.margin-left-zero,.mlt{ @include margin-left(0px) }
+.margin-left-two{@include margin-left(2px)}
 
 //Used in Announcement
 .alert-message {
@@ -50,14 +55,15 @@ ul.summary{
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
-		@include float-left; 
+		display:inline;
+		@include float(left);
 		width:19.5%;
 		margin:2px 0;
-		padding:0 0 4px 0;
-		border-right:1px solid #e8e8e8; 
-		text-align:center;
+		@include padding(0 0 4px 0);
+		@include border-right(1px solid #e8e8e8); 
+		@include text-align(center);
 		a{ 
-			text-decoration:none; color:$default_txt_color; text-align:center;
+			text-decoration:none; color:$default_txt_color; @include text-align(center);
 			span{
 				display:block;
 				position:relative;
@@ -79,12 +85,12 @@ ul.summary{
 
 ul.activityfeed li{ 
 	border-bottom:1px solid #f7f7f7;
-	padding:10px 20px 8px 56px;
+	@include padding(10px 20px 8px 56px);
 	display:block; 
 	color:#666666;
 	font-size:1.1em; line-height:1.6;
 	.preview_pic{
-		margin-left:-52px;
+		@include margin-left(-52px);
 		margin-top:3px; 
 	}
 	.username{
@@ -105,8 +111,8 @@ ul.activityfeed li{
 
 .no-helpdesk{
 	margin:50px auto;
-	padding:18px 20px 30px 20px;
-	text-align:center;
+	@include padding(18px 20px 30px 20px);
+	@include text-align(center);
 	max-width:700px; 
 }
 
@@ -114,7 +120,7 @@ ul.activityfeed li{
 	font-size:15px; 
 	line-height:1.5em; 
 	margin:0;
-	text-align:center;
+	@include text-align(center);
 } 
 
 .ui-list_with_icon{	
@@ -123,13 +129,13 @@ ul.activityfeed li{
 	margin:0;
 	padding:0; 
 	li{ 
-		padding:4px 0 4px 18px; 
+		@include padding(4px 0 4px 18px); 
 		color:#41658a;
 		position:relative;
 	}
 	li img{
 		position:absolute;
-		left:0; top:4px;
+	 @include left(0); top:4px;
 	}
 	li a{
 		@include link-colors(#527eaa, #527EAA, #527eaa, #527eaa);
@@ -149,8 +155,9 @@ ul.activityfeed li{
 }
 .preview_pic{
 	padding:0;
-	@include float-left;
-	margin-right:10px;
+	@include float(left);
+	display: inline; // double-margin bug in IE5/6
+	@include margin-right(10px);
 	position:relative;
 	img{			
 		background:#ffffff;
@@ -163,7 +170,7 @@ ul.activityfeed li{
 	   width:18px;
 	   height:18px;
 	   bottom:3px;
-	   right:0;
+	   @include right(0);
 	}	
 }
 
@@ -178,18 +185,18 @@ div.profile_pic img{
 h3.content_title, h2.content_title{
 		color:$default_txt_color;
 		font-size:1.50em; 
-		padding:14px 0 2px 0;			
+		@include padding(14px 0 2px 0);			
 		margin:0; 
 		img{
-			float:left;
+			@include float(left);
 			position:relative;
 			top:-8px;
-			left:-2px;			
+		 @include left(-2px);			
 		}
 }
 
 h3.content_title.withPadding{
-	margin:2px 0 4px 25px;
+	@include margin(2px 0 4px 25px);
 }
 
 h2.content_title{	
@@ -224,7 +231,7 @@ ul.secondary-actions{
 div.checkbox{
 	@include clearfix;
 	input{
-		float:left;
+		@include float(left);
 	}
 }
 
@@ -233,7 +240,7 @@ div.leader-left{
 }
 
 div.leader-right{
-    float: right; 
+    @include float(right); 
     font-weight: normal; 
     margin-top: 3px;
 
@@ -243,15 +250,15 @@ div.leader-right{
 	font-size:9px;
 	color:#fff;
 	text-transform:uppercase; 
-	text-align:center;
-	padding:9px 3px 0 6px;
+	@include text-align(center);
+	@include padding(9px 3px 0 6px);
 	line-height:0;
 	height:9px;
 	@include min-width(48px); 
-	left:-4px;	
+ @include left(-4px);	
 }
 .status-pointer{  
-	float:right;  
+	@include float(right);  
 	@include border-radius(3px);
 }			                     
 .priority-pointer{
@@ -262,7 +269,7 @@ div.leader-right{
 
 .request-title{
 	background-color:#f6f6f6; 
-	padding:7px 20px 8px 70px;
+	@include padding(7px 20px 8px 70px);
 	border-bottom:1px solid #e9e9e9;
 	color:#000000;
 	font-size:13px;
@@ -271,20 +278,20 @@ div.leader-right{
 	.subject{ line-height:20px; }
 	.ticket-id{	color:#999999; }        	
 	.low{ background-color: $COL_PRI_LOW; }
-	.low:before{ border-left-color: $COL_PRI_LOW; }
+	.low:before{ @include border-left-color($COL_PRI_LOW); }
 	.medium{ background-color: $COL_PRI_MEDIUM; }
-	.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
+	.medium:before{ @include border-left-color($COL_PRI_MEDIUM); }
 	.high{ background-color: $COL_PRI_HIGH; }
-	.high:before{ border-left-color: $COL_PRI_HIGH; }
+	.high:before{ @include border-left-color($COL_PRI_HIGH); }
 	.urgent{ background-color: $COL_PRI_URGENT; }
-	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+	.urgent:before{ @include border-left-color($COL_PRI_URGENT); }
 
 	#adjacents {
 		margin:4px 6px;
 		position: absolute;
-		right: 0;
+	 	@include right(0);
 		top: 0;
-		left:auto;
+	 	@include left(auto);
 		bottom:auto;
 	}
 }
@@ -296,17 +303,17 @@ h4.title{
 	margin:(-$common-padding) (-$common-padding) 20px (-$common-padding);
 	.ticket_actions{
 		position:absolute;
-		right:18px; 
+	 	@include right(18px); 
 		top:10px;
 		.action_buttons{ margin-top:0; } 
 		.item-right-actions{
 		   margin-top:8px;
-		   margin-left:6px;
+		   @include margin-left(6px);
 		}
 	} 
 	.tabs{   /* Overwriting app-bootstrap class*/
-		margin-left:0;
-		margin-right:0;
+		@include margin-left(0);
+		@include margin-right(0);
 	}
 	.bookmark{
 		display:none;
@@ -326,16 +333,16 @@ h4.title{
 		div.description{
 			.app-link{
 			   position:absolute;
-			   margin-left:-20px;
+			   @include margin-left(-20px);
 			   margin-top:38px;
 			}
 			.user_details{
 				color:#777777;
-				padding:13px 20px 0 25px;
-				.preview_pic{ left:-5px; }
+				@include padding(13px 20px 0 25px);
+				.preview_pic{ @include left(-5px); }
 				.info{
 					margin-top:3px;
-					margin-left:46px;
+					@include margin-left(46px);
 				}    
 				.light{
 					font-style:italic;
@@ -347,18 +354,18 @@ h4.title{
 	
 	.facebook_post{
 		@include clearfix;
-		.thumbnail{ float:left; margin-right:10px; } 
+		.thumbnail{ @include float(left); @include margin-right(10px); } 
 	}
 	
 	.actions{
 		@include clearfix;
-		float:right; 
-		margin-right:0;
+		@include float(right); 
+		@include margin-right(0);
 		margin-top:-4px;
 		visibility:hidden;
 		a{
-			float:left;
-			margin-right:5px;
+			@include float(left);
+			@include margin-right(5px);
 		}
 	}
 	
@@ -369,7 +376,7 @@ h4.title{
 	} 
 	
 	.request-wrapper{
-		margin:0 20px 20px 70px;
+		@include margin(0 20px 20px 70px);
 		.seperator{
 			margin:10px 0;
 		}
@@ -390,7 +397,7 @@ h4.title{
 						display: inline-block;
 						height: 15px;
 						vertical-align: middle;
-						padding-right: 3px;
+						@include padding-right(3px);
 						opacity: 0.3;
 					}
 					a{
@@ -404,12 +411,12 @@ h4.title{
 				line-height:18px;
 				table, table td, table th { border: 0; padding:0; }
 				p{
-				   margin-right:2em; 
+				   @include margin-right(2em); 
 				}
 				.ui-form{
 					@include border-radius(0);
-					border-left:0;
-					border-right:0;
+					@include border-left(0);
+					@include border-right(0);
 					padding:0;
 					padding-top:16px;
 					margin: -1px -12px;
@@ -444,12 +451,12 @@ h4.title{
 			@include pie-clearfix;
 			position:relative;
 			margin:0;
-			padding:8px 25px 8px 70px;
+			@include padding(8px 25px 8px 70px);
 			border-bottom:1px solid #f3f3f3;
 			.preview_pic{
-				margin-left:-50px;
+				@include margin-left(-50px);
 				margin-top:1px;
-				margin-right:5px;
+				@include margin-right(5px);
 			}
 			.user_details{
 				font-style:italic;
@@ -461,7 +468,7 @@ h4.title{
 	}
 		
 	.request_desp { 
-		margin:0 10px 0 10px;
+		@include margin(0 10px 0 10px);
 		@include clearfix;		
 		.sub_title{
 			color:#454545; 
@@ -512,7 +519,7 @@ h4.title{
 	font-weight:normal;	
 	color:#aaaaaa;
 	font-size:12px;
-	padding:2px 0 6px 0;
+	@include padding(2px 0 6px 0);
 	a{ 
 		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 		text-decoration:none;
@@ -525,7 +532,7 @@ h4.title{
  }
  
 .big-info{
-	text-align:center;
+	@include text-align(center);
 	padding:12px 8px;
 	.no-info-text{
 		font-size:22px;
@@ -539,15 +546,15 @@ h4.title{
 	list-style:none;
 	display:block;	
 	background: #fff;
-	float:right;	
+	@include float(right);	
 	li{
-		float:left;
+		@include float(left);
 		a{
 			font-weight:bold;
 			text-decoration:none;
 			color: #909090;
 			padding: 0  4px 0 4px;
-			margin-left:2px;
+			@include margin-left(2px);
 		}
 	}
 	li.active a, li a:hover{ 
@@ -565,14 +572,14 @@ h4.title{
 	background:#f5f5f5;
 	border:1px solid #cfcfcf;
 	border-width:1px 0;
-	padding:2px 20px 10px 20px;
+	@include padding(2px 20px 10px 20px);
 	margin:0 (-$common-padding);	
 }
 
 .sort-list{
 	margin:0 -16px;	
 	.sort_handle{
-		margin: 0 31px 0 0;
+		@include margin(0 31px 0 0);
 		position: relative;
 		top: 2px;
 	}
@@ -592,18 +599,18 @@ h4.title{
 }
 
 .company{
-	margin:12px 19px 12px 50px;
+	@include margin(12px 19px 12px 50px);
 	.building_pic{
 		position:absolute;
-		left:-40px;
+	 @include left(-40px);
 	}
 }
 
 .contact{
-	margin:12px 19px 12px 170px;
+	@include margin(12px 19px 12px 170px);
 	.profile_pic{
 		position:absolute; 
-		left:-150px;
+	 @include left(-150px);
 	}
 }
 
@@ -636,10 +643,10 @@ ul.user_list{
 	padding:0;
 	li{
 	  height:100px;
-		float:left;
+		@include float(left);
 		width:120px;
 		
-		text-align:center;
+		@include text-align(center);
 		.preview_pic{
 			margin:2px 34px;
 			img{
@@ -660,10 +667,10 @@ ul.user_list{
 
 .placeholder-info{ 
 	position:fixed;
-	text-align:left; 
+	@include text-align(left); 
 	width:600px;
 	top:2%;
-	right:40px;
+ @include right(40px);
 	@include box-shadow(#888888 0 0 2px);
 	@include border-radius(6px);
 	margin:0 0;
@@ -679,7 +686,7 @@ ul.user_list{
 		font-size:1.6em;
 	}
 	p{
-		margin:0 0 8px 0;
+		@include margin(0 0 8px 0);
 		font-size:10px;
 		a{
 			font-size:11px;
@@ -693,13 +700,13 @@ ul.user_list{
 			padding:0;margin:0;
 			
 			dd{
-				padding:0 0 8px 0;margin:0;
+				@include padding(0 0 8px 0);margin:0;
 			}
 			dt{	
-				float:left;
+				@include float(left);
 				a.uiButton{
 					width:170px; 
-					text-align:left;
+					@include text-align(left);
 				} 
 			}
 		}
@@ -765,30 +772,30 @@ h4.border_title{
 	@include clearfix;
 	padding:0;
 	.left_col, .right_col{
-		float:left;
+		@include float(left);
 		padding-top:12px;	 
 	}
 	.left_col{
 		width:47%;
 		@include min-height(300px);
-		border-right:1px solid #efefef;
-		padding-right:2%;
+		@include border-right(1px solid #efefef);
+		@include padding-right(2%);
 	}
 	.right_col{
 		width:47%;
-		padding-left:2%;
-		border-left:1px solid #efefef;
+		@include padding-left(2%);
+		@include border-left(1px solid #efefef);
 		position:relative;
-		left:-1px;
+	 @include left(-1px);
 	}	
 }
 
 .ssp_category_list{
 	@include clearfix;
-	margin:0 0 8px 0;
+	@include margin(0 0 8px 0);
 	padding:0; 
 	div.odd, div.even{ 
-		margin:0 2% 6px 0; 
+		@include margin(0 2% 6px 0); 
 		padding:1% 0;  
 		a{			 
 			font-size:16px; 
@@ -822,7 +829,7 @@ h4.border_title{
 	padding:10px;
 	.result{
 		border-top:1px solid #efefef;
-		padding:8px 10px 10px 10px;
+		@include padding(8px 10px 10px 10px);
 	}
 	h2{
 		font-size:16px; color:$default_txt_color;
@@ -837,8 +844,8 @@ h4.border_title{
 }
 
 .link_placeholder{
-	float:right;
-	margin-right:15px;
+	@include float(right);
+	@include margin-right(15px);
 	text-decoration:none;
 	border-bottom:1px dotted #9f9f9f;
 }
@@ -850,10 +857,10 @@ h4.border_title{
 		@include no-bullets;
 		background: #f5f5f5;
 		@include border-radius(6px);
-		border-right:1px solid #dfdfdf;
+		@include border-right(1px solid #dfdfdf);
 		border-bottom:1px solid #dfdfdf;
 		@include box-shadow(#cfcfcf 0 2px 1px);
-		padding:10px 10px 5px 10px;
+		@include padding(10px 10px 5px 10px);
 		margin:3px 0;
 	}
 }
@@ -878,7 +885,7 @@ h4.border_title{
 
 div.survey_check{
 	padding:0 10px;
-	text-align:right;	
+	@include text-align(right);	
 }
 
 
@@ -889,7 +896,7 @@ div.survey_check{
 }
 
 .page_title{
-	padding:4px 4px 4px 0;
+	@include padding(4px 4px 4px 0);
 	margin:0 0;
 	font-size:14px;
 	color:$default_txt_color;
@@ -922,8 +929,8 @@ a.page_title{
 
 .meta_icon, .icon_info{
 	color:#999999;
-	text-align:center;
-	padding:1px 5px 2px 5px;
+	@include text-align(center);
+	@include padding(1px 5px 2px 5px);
 	@include border-radius(6px);
 	font-size:9px; 
 }
@@ -936,8 +943,8 @@ a.page_title{
 	div{
 		@include clearfix;
 		span{
-			float:left;
-			padding-right:5px;
+			@include float(left);
+			@include padding-right(5px);
 			color:#999999;
 			width:50px;
 		}
@@ -955,7 +962,7 @@ a.page_title{
 		padding:5px 0;
 		span{
 			width:160px;
-			float:left;
+			@include float(left);
 			text-transform:capitalize;
 			font-weight:bold;
 			color:#666666;
@@ -974,7 +981,7 @@ a.page_title{
 		}
 		li{
 			@include clearfix;
-			padding:10px 0 5px 0;
+			@include padding(10px 0 5px 0);
 			margin:0 0;
 			border-bottom:1px solid #f3f3f3;
 			font-size:12px;
@@ -983,7 +990,7 @@ a.page_title{
 				font-weight:normal;
 				font-size:13px;
 				margin:0;
-				padding:0 0 3px 0;
+				@include padding(0 0 3px 0);
 			} 
 			
 			a{
@@ -1007,7 +1014,7 @@ a.page_title{
 }
 
 .private{
-	padding-left:20px;
+	@include padding-left(20px);
 	background:url(/images/private_lock_grey.gif) no-repeat left;
 }
 
@@ -1016,7 +1023,7 @@ a.page_title{
 }
 
 .big_results{
-	padding:8px 14px 12px 14px;
+	@include padding(8px 14px 12px 14px);
 }
 
 .folder-2col{
@@ -1040,20 +1047,20 @@ a.page_title{
 	}
 }
 .front_page_title{
-	float: left;
+	@include float(left);
 	margin-bottom: 10px;
 }
 
 .force_signup{
-	float: right;
+	@include float(right);
 	display: inline-block;
-	margin-right: -7px;
+	@include margin-right(-7px);
 	margin-bottom: 10px;
 	border: 1px solid #F5F6D3;
 	background-color: #FEFFF1;
 	padding: 8px;
-	padding-right: 12px;
-	padding-left: 12px;
+	@include padding-right(12px);
+	@include padding-left(12px);
 	@include border-radius(4px);
 	font-weight: lighter;
 }
@@ -1065,14 +1072,14 @@ a.page_title{
 	background-image:url("/images/private_lock.gif"); 
 	background-position:3px 0;
 	background-repeat: no-repeat;
-	padding-left:20px !important;
+	@include padding-left(20px !important);
 } 
 	
 .status_text{
 	background-color:#888888;
 	@include border-radius(6px);
 	color:#ffffff;
-	padding:4px 8px 2px 8px;
+	@include padding(4px 8px 2px 8px);
 	text-transform:uppercase;
 	font-weight:bold;
 	font-size:10px;
@@ -1080,8 +1087,8 @@ a.page_title{
 }
 
 .ignore-margin-20{
-	margin-left:-$common-padding;
-	margin-right:-$common-padding;
+	@include margin-left(-$common-padding);
+	@include margin-right(-$common-padding);
 }
 
 #pageless-loader .msg{
@@ -1095,7 +1102,7 @@ a.page_title{
 
 .full-width{
 	display:block !important;
-	text-align:center;
+	@include text-align(center);
 }
 
 .tab-pane {
@@ -1112,15 +1119,15 @@ a.page_title{
 	position:relative;
 	padding:0;	
 	div.item{
-		float:left;
+		@include float(left);
 		@include border-radius(5px);
 		height:17px;
 		background-color:#e7e7e7;
 		color:#666666;
-		padding:3px 0 0 8px;
-		margin:0 4px 4px;
+		@include padding(3px 0 0 8px);
+		@include margin(0 4px 4px);
 		.tag_delete{
-			float:right;
+			@include float(right);
 			visibility:hidden;
 		}
 	}	
@@ -1146,10 +1153,10 @@ a.page_title{
 }
 
 .icon-image{
-   float:left;
+   @include float(left);
    width:18px;
    height:18px;
-   margin-right:6px;
+   @include margin-right(6px);
 }
 
 .social_nw_link_error {
@@ -1166,10 +1173,10 @@ a.page_title{
 	position:relative;
 	display:inline;
 	margin-top:-8px;
-	left:-3px;
-	float:right;
+ @include left(-3px);
+	@include float(right);
 	.image {
-		float:right;
+		@include float(right);
 	    content: ""; 
 	    width: 32px;
 	    height: 32px;
@@ -1185,16 +1192,16 @@ a.page_title{
 }
 
 .contact-box-additional{
-	padding-left:150px;
+	@include padding-left(150px);
 }
 .contact-box{
-	padding-left:170px;
+	@include padding-left(170px);
 	div.profile_pic{
-		float:left;
-		margin-left:-150px;
+		@include float(left);
+		@include margin-left(-150px);
 		width:127px;
 		margin-top:5px;
-		text-align:center; 
+		@include text-align(center); 
 		img{
 		   max-width:130px;
 		   min-width: 90px;
@@ -1202,10 +1209,10 @@ a.page_title{
 		}
 	}
 	.info-highlight{
-		margin: 15px 0 0 -171px;
-		padding-left: 165px;
+		@include margin(15px 0 0 -171px);
+		@include padding-left(165px);
 		width: 100%;
-		padding-right: 25px;
+		@include padding-right(25px);
 	}
 }
 
@@ -1249,7 +1256,7 @@ a.page_title{
 }
 
 .info-highlight-deleted{
-	padding:15px 18px 18px 18px;
+	@include padding(15px 18px 18px 18px);
 	font-size:15px;
 } 
 
@@ -1259,16 +1266,16 @@ a.page_title{
 
 .sort{   
    position:relative;
-	padding:0 35px 0 0;
+	@include padding(0 35px 0 0);
 	.label{
-	   float:left;
+	   @include float(left);
 	   padding:6px 10px;
 	   font-size:12px;
 	   text-transform:uppercase;
 	}
 	.sort_order .image{
 		position:absolute;
-		right:0;
+	 @include right(0);
 		top:-2px;
 		width:32px; height:32px;
 	}
@@ -1289,16 +1296,16 @@ a.page_title{
 		color:#656565;
 		position:relative;
 		.customers_selector{
-		 	float:left;
+		 	@include float(left);
 		 	margin-top:8px;
-		 	margin-right:8px;
+		 	@include margin-right(8px);
 		 }
 		.preview_pic{
-			float:left;
-			margin-right:10px;
+			@include float(left);
+			@include margin-right(10px);
 			margin-top:-4px;
 			img{
-			   margin:6px 3px 0 3px;
+			   @include margin(6px 3px 0 3px);
 				 width:36px; height: 36px;
 			}
 		}
@@ -1308,7 +1315,7 @@ a.page_title{
 			padding-bottom: 5px;
 		}
 		div.item_actions{
-			float:right;
+			@include float(right);
 			padding:2px 0;
 			position:relative;
 			top:-4px;
@@ -1338,7 +1345,7 @@ a.page_title{
 		}
 		div.item_information{
 			@include clearfix;
-			float:left;
+			@include float(left);
 			width:70%;
 			.info_data{
 				padding:2px 2px;
@@ -1348,7 +1355,7 @@ a.page_title{
 				width:60%;
 			}
 			.col1, .col2{
-				float:left;
+				@include float(left);
 				padding:0;
 			}
 			.col2{
@@ -1367,7 +1374,7 @@ a.page_title{
 		 }
 		 input.checkbox{
 		 	position:absolute;
-		 	left:8px;
+		  @include left(8px);
 		 	top:10px;
 		 }		 
 	}
@@ -1383,12 +1390,12 @@ a.page_title{
 	} 
 	
 	.application {
-	   padding:10px 10px 10px 130px;
+	   @include padding(10px 10px 10px 130px);
 	   .logo{
-	   	   float:left;
+	   	   @include float(left);
 	   	   width:110px;
 	   	   /*height:27px;*/
-	   	   margin-left:-130px;
+	   	   @include margin-left(-130px);
 	   	   margin-top:0;
 	   }
 
@@ -1438,8 +1445,8 @@ a.page_title{
 	border-bottom:1px solid #dfdfdf;
 	@include clearfix;
 	a.first{
-		padding-left:0;
-		border-left:0;
+		@include padding-left(0);
+		@include border-left(0);
 	}
 	a.active{
 		font-weight:bold;
@@ -1449,14 +1456,14 @@ a.page_title{
 		font-size:12px;
 		color:#666666;
 		text-decoration:none;
-		border-left:1px solid #d6d6d6;
-		border-right:1px solid #ebebeb;
+		@include border-left(1px solid #d6d6d6);
+		@include border-right(1px solid #ebebeb);
 		padding:0 10px;
 		margin:0;
-		float:left;
+		@include float(left);
 	}
 	#select-all{
-		margin-right: 10px; 
+		@include margin-right(10px); 
 		margin-top: 7px;
 	}
 	#filters{
@@ -1477,12 +1484,12 @@ a.page_title{
 	font-weight:bold;
 	color:#666666;
 	border-color:#dadada;
-	padding-left:24px;
+	@include padding-left(24px);
 	@include border-radius(6px);
 	position:relative;
 	background-color:#f4f4f4;
 	.like-image{
-		left:3px;
+	 @include left(3px);
 		top: 1px;
 		position:absolute;		
 		width:18px;
@@ -1491,8 +1498,8 @@ a.page_title{
 }
 
 .ui-form .info-highlight{
-	margin:0 -10px 6px -10px;
-	padding:0 10px 8px 10px;
+	@include margin(0 -10px 6px -10px);
+	@include padding(0 10px 8px 10px);
 	font-size:14px;
 	line-height:22px;
 }
@@ -1505,19 +1512,19 @@ a.page_title{
 p.info-text{
 	font-size:13px;
 	line-height:22px;
-	margin:2px 0 4px 0;
-	padding:2px 0 4px 0;
+	@include margin(2px 0 4px 0);
+	@include padding(2px 0 4px 0);
 }
 
 .cvv-help-text{
 	background-color:#ece6e1;
 	border:1px solid darken(#ece6e1, 10%);
 	position:absolute;
-	padding:0 8px 0 8px;
+	@include padding(0 8px 0 8px);
 	width:200px;
-	margin-left:280px;
+	@include margin-left(280px);
 	margin-top:-130px;
-	text-align:center;
+	@include text-align(center);
 	z-index:9999;
 	@include border-radius(8px);
 }
@@ -1532,32 +1539,32 @@ p.info-text{
 	width:0;
 	height:0;
 	&.up {	
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
+		@include border-left(5px solid transparent);
+		@include border-right(5px solid transparent);
 		border-bottom: 5px solid black;
 	}
 
 	&.down {
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
+		@include border-left(5px solid transparent);
+		@include border-right(5px solid transparent);
 		border-top: 5px solid #f00;
 	}
 
 	&.right {
 		border-top: 5px solid transparent;
 		border-bottom: 5px solid transparent;
-		border-left: 5px solid green;
+		@include border-left(5px solid green);
 	}
 
 	&.left {
 		border-top: 5px solid transparent;
 		border-bottom: 5px solid transparent; 
-		border-right:5px solid blue;
+		@include border-right(5px solid blue);
 	}
 }
 .placeholder-info a.close{
    position: absolute;
-   right: 5px;
+   @include right(5px);
    top: 5px;
    width: 28px;
    height: 28px;
@@ -1567,14 +1574,14 @@ p.info-text{
 .list_with_icon{
 	padding-top:3px;	
 	li, div.list-item{
-		margin:0 0 8px 0;
-		padding-left:24px;
+		@include margin(0 0 8px 0);
+		@include padding-left(24px);
 		position:relative;
 		display:inline-block;
 		width:100%;
 		span.forum-bullet{			
 			position:absolute;
-			left:0;
+		 @include left(0);
 			top:1px;
 			width:16px;
 			height:16px;
@@ -1594,7 +1601,7 @@ p.info-text{
 	}
 	div.list-item{
 		margin-bottom:4px;
-		margin-left:-22px;
+		@include margin-left(-22px);
 	}
 }
 
@@ -1602,21 +1609,21 @@ p.info-text{
    margin:30px 15px;
    @include clearfix;
    .help_image{
-      float:left;
+      @include float(left);
    }
    .content{
-      margin:0 0 0 230px;
+      @include margin(0 0 0 230px);
       p.info-data{
          font-size:15px;
          line-height:26px;
-         padding-right:8%;
+         @include padding-right(8%);
       }
    }
 }
 
 .admin_icon_image{ 
 	margin:-$common-padding;
-	padding:20px 0 35px 0;
+	@include padding(20px 0 35px 0);
 	border-bottom: 1px solid $common-border-color;
 	.content{
 	   margin:0 40px 0 $common-padding;
@@ -1637,8 +1644,8 @@ p.info-text{
 .greyImage{ background-color:#F1F1F1; }
 
 .drop-right{
-   padding:2px 18px 2px 6px;
-   margin-left:-6px;
+   @include padding(2px 18px 2px 6px);
+   @include margin-left(-6px);
    color:#666666;
    @include border-radius(4px);
    text-decoration:none;
@@ -1649,11 +1656,11 @@ p.info-text{
 	content: "";
 	width: 0;
 	height: 0;
-	border-left: 4px solid rgba(0, 0, 0, 0);
-	border-right: 4px solid rgba(0, 0, 0, 0);
+	@include border-left(4px solid rgba(0, 0, 0, 0));
+	@include border-right(4px solid rgba(0, 0, 0, 0));
 	border-top: 4px solid #888;
 	position: absolute;
-	margin: 5px 0 0 5px;
+	@include margin(5px 0 0 5px);
 	}
 }
 .drop-right.selected{
@@ -1664,15 +1671,15 @@ p.info-text{
 }
 
 .hasRightCol{
-   margin-left:231px;
+   @include margin-left(231px);
 } 
 
 .page_info{
-   float:right;
+   @include float(right);
    width:250px;
    position:relative;
    top: -7px;
-   text-align: right;
+   @include text-align(right);
    .toolbar_pagination{
    		height:1px;
    		margin-top:2px;
@@ -1680,20 +1687,20 @@ p.info-text{
 }
 
 .customers-toolbar{
-	padding: 10px 0 0 0 ;
-	float:left;
+	@include padding(10px 0 0 0) ;
+	@include float(left);
 	width: 400px;
 	input{
-		float:left;
+		@include float(left);
 		margin-top: 10px;
-		margin-right: 8px;
+		@include margin-right(8px);
 	}
 	.bulk-action{
-		float:left;
+		@include float(left);
 		margin-top : -8px;
 		a{
 			&.uiButton{
-				margin-right: 4px;
+				@include margin-right(4px);
 			}
 		}
 	}
@@ -1704,7 +1711,7 @@ p.info-text{
 	border:none;
 	font-size:11px;
 	color:#777777;
-	padding: 5px 0 5px 0;
+	@include padding(5px 0 5px 0);
 	margin-bottom:5px;
 
 	.nav-trigger {
@@ -1737,14 +1744,14 @@ p.info-text{
    .seperator{ border-color:#e0e0e0; }
    a{
       display:block;
-      padding:3px 10px 3px 25px;
+      @include padding(3px 10px 3px 25px);
       color:$default_txt_color;
       text-decoration:none;
       position:relative;
       &.active { font-weight:bold; }      
       .icon{
          position:absolute;
-         left:5px;
+         @include left(5px);
          top:2px;
          width:16px;
          height:16px;
@@ -1760,7 +1767,7 @@ p.info-text{
    h4.title{
    		font-size: 13px;
    		background: none;
-   		padding:2px 12px 2px 24px;
+   		@include padding(2px 12px 2px 24px);
    		color: #888;
    }
 }
@@ -1769,7 +1776,7 @@ p.info-text{
 		width: auto;
 		min-width:250px;
 		margin-top: 5px;
-		right:15px;
+	 @include right(15px);
 		@include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 1px, 8px );
 		a, li {
 			padding: 2px 20px;
@@ -1789,7 +1796,7 @@ p.info-text{
 			}
 
 			.ticksymbol {
-				margin-left:-4px;
+				@include margin-left(-4px);
 			}
 		}
 
@@ -1800,7 +1807,7 @@ p.info-text{
 		}
 
 		.no_results {
-			text-align:center;
+			@include text-align(center);
 			font-style:italic;
 		}		
 		
@@ -1852,8 +1859,8 @@ p.info-text{
 		    width:0;
 		    top:-6px; 
 			bottom:auto;
-			left:auto;
-			right:98px;
+		 @include left(auto);
+		 @include right(98px);
 		    border-width:0 6px 6px;
 		    z-index:16000;
 		}
@@ -1868,8 +1875,8 @@ p.info-text{
 		    width:0;
 		    top:-5px;
 			bottom:auto;
-			left:auto;
-			right:99px;
+		 @include left(auto);
+		 @include right(99px);
 		    border-width:0 5px 5px;
 		    z-index:16001;
 		}
@@ -1883,8 +1890,8 @@ p.info-text{
 		    width:0;
 		    top:-5px;
 			bottom:auto;
-			left:auto;
-			right:99px;
+		 @include left(auto);
+		 @include right(99px);
 		    border-width:0 5px 5px;
 		    z-index:16001;
 		}
@@ -1893,23 +1900,23 @@ p.info-text{
 }
 
 .list_view td .fd-ajaxmenu {
-	margin-right:0;
-	right:auto;
+	@include margin-right(0);
+ @include right(auto);
 
 	&:before {
-		left:10px;
-		right:auto;
+	 @include left(10px);
+	 @include right(auto);
 	}
 
 	&:after {
-		left:11px;
-		right:auto;
+	 @include left(11px);
+	 @include right(auto);
 	}
 }
 .list-noinfo{
 	padding:60px 0; 
 	font-size:1.4em;
-	text-align:center;
+	@include text-align(center);
 	color:#666666;
 	@include text-shadow(#ffffff, 0, 1px, 1px);
 	.small{ font-size: 0.8em; }
@@ -1932,8 +1939,8 @@ p.info-text{
 
 #timeentry_add, .timeentry_edit {
 	margin-bottom: 25px;
-	padding-left: 40px;
-	padding-right: 30px;
+	@include padding-left(40px);
+	@include padding-right(30px);
 }
 
 .label-locked-feature{
@@ -1941,10 +1948,10 @@ p.info-text{
 		font-weight: bold;
 		background: url(/images/lock.png) no-repeat center right;
 		background-size: 10px 12px;
-		padding-right: 16px;
+		@include padding-right(16px);
 	}
 	.info-data{
-		clear: both;
+		@include clear(both);
 	}
 }
 
@@ -1984,11 +1991,11 @@ p.info-text{
 }
 
 .export-user{
-	text-align: center;
+	@include text-align(center);
 	margin-top: 15px;
 	.contact-add{
 		margin-top: 15px;
-		margin-left: 18px;
+		@include margin-left(18px);
 	}
 }
 
@@ -1997,7 +2004,7 @@ p.info-text{
 	.mailing-msg{
 		display: inline-block;
 		padding-top: 5px;
-		margin-left: 5px;
+		@include margin-left(5px);
 		font-size: 13px;
 	}
 	.all-lists{
@@ -2019,31 +2026,31 @@ p.info-text{
 			div{
 				display: inline;
 				font-size: 13px;
-				padding-left: 5px;
+				@include padding-left(5px);
 			}
 		} 
 	}
 }
 
 .mailing-lists{
-	clear: both;
+	@include clear(both);
 }
 
 .lists-submit, .newlists-submit{
-	padding-left: 18px;
-	padding-right: 18px;
+	@include padding-left(18px);
+	@include padding-right(18px);
 }
 
 .listsExportAll{
 	display: inline-block;
-	float: right;
+	@include float(right);
 }
 
 
 .modal_error{
 	border: 1px solid #B9B9B9;
 	@include border-radius(3px);
-	text-align: center;
+	@include text-align(center);
 	padding: 5px;
 	background: #F0F0F0;
 	color: red;
@@ -2055,7 +2062,7 @@ p.info-text{
 	font-size:110%;
 	font-weight:normal;
 	line-height:160%;
-	text-align:left;
+	@include text-align(left);
 }
 
 .strikethrough {
@@ -2102,7 +2109,7 @@ a.submit_link:hover{
 
 .hovercard {
 	font-size: 14px;
-	float: left;
+	@include float(left);
 	margin-bottom: 2px;
  	.smalltext{
 		color: #999;
@@ -2125,7 +2132,7 @@ a.submit_link:hover{
 
 .locked{
 	background: #EEE url(/images/lock.png) no-repeat 5px 8px !important;
-	padding: 6px 6px 6px 22px !important;
+	@include padding(6px 6px 6px 22px !important);
 	background-size: 10px 12px !important;
 	cursor: default;
 }
@@ -2134,13 +2141,13 @@ a.submit_link:hover{
 	position: relative;
 	label{
 		font-size: 14px;
-		padding: 0 5px 0 0;
+		@include padding(0 5px 0 0);
 	}
 	a{
 		font-size: 14px;
 		color: #0c74d7;
 		font-weight: 500;
-		padding-right: 25px;
+		@include padding-right(25px);
 	}
 	.tool-tip{
 		position: absolute;
@@ -2148,7 +2155,7 @@ a.submit_link:hover{
 		width: 18px;
 		height: 18px;
 		top: 1px;
-		right: 0;
+	 	@include right(0);
 	}
 }
 
@@ -2163,7 +2170,7 @@ a.submit_link:hover{
 }
 
 .upgrade-message{
-	float: right;
+	@include float(right);
 	clear : both;
 	color: #369;
 }
@@ -2172,13 +2179,13 @@ a.submit_link:hover{
 	position: relative;
 	label{
 		font-size: 14px;
-		padding: 0 5px 0 0;
+		@include padding(0 5px 0 0);
 	}
 	a{
 		font-size: 14px;
 		color: #0c74d7;
 		font-weight: 500;
-		padding-right: 25px;
+		@include padding-right(25px);
 	}
 	.tool-tip{
 		position: absolute;
@@ -2186,7 +2193,7 @@ a.submit_link:hover{
 		width: 18px;
 		height: 18px;
 		top: 1px;
-		right: 0;
+	 	@include right(0);
 	}
 }
 
@@ -2206,16 +2213,16 @@ a.submit_link:hover{
 	dl {
 		margin-bottom: 0;
 		dt{
-				float:left;
-				margin-left: 0;
+				@include float(left);
+				@include margin-left(0);
 				color: #AAA;
-				padding-right: 0 5px 10px 0;
+				@include padding-right(0 5px 10px 0);
 				min-width: 60px;
-				text-align: right;
+				@include text-align(right);
 				font-weight: normal;
 		}
 		dd {
-			margin-left: 65px;
+			@include margin-left(65px);
 			padding-bottom: 10px;
 		}
 	}
@@ -2225,12 +2232,12 @@ a.submit_link:hover{
 // ------------------------------------------------------------------------------------------------------------
 .ssp_export {
 	position:absolute;
-	right:5px;
-	left:auto;
+ 	@include right(5px);
+ 	@include left(auto);
 	width: 60px;
 	font-size: 12px;
-	padding:5px 0 5px 5px ;
-	text-align: right;
+	@include padding(5px 0 5px 5px) ;
+	@include text-align(right);
 
 	&:hover {
 		color:$default_txt_color;
@@ -2238,7 +2245,7 @@ a.submit_link:hover{
 }
 
 .ssportal_filters {
-	margin:(-$common-padding) 0 0 (-$common-padding);
+	@include margin((-$common-padding) 0 0 (-$common-padding));
 }
 
 a.mobile_switchBtn {
@@ -2249,9 +2256,9 @@ a.mobile_switchBtn {
 	padding: 2px 8px;
 	font-size:11px;
 	font-weight:bold;
-	float:left;
-	float: left;
-	margin: 15px 0 0 10px;
+	@include float(left);
+	@include float(left);
+	@include margin(15px 0 0 10px);
 	z-index:5;
 	position:relative;
 	&:active, &:hover{
@@ -2266,7 +2273,7 @@ a.mobile_switchBtn {
 	display:none;
 	position:fixed;
 	bottom:1px;
-	left:1px;
+ @include left(1px);
 	z-index:4;
 	background-color:#FFF1A8;
 	border:1px solid #CCC;
@@ -2275,10 +2282,10 @@ a.mobile_switchBtn {
 }
 .rate-again{
     width: 140px;
-    float: left;
-    border-left: 1px #fff solid;
+    @include float(left);
+    @include border-left(1px #fff solid);
     margin-top: 10px;
-    padding: 5px 3px 0 5px;
+    @include padding(5px 3px 0 5px);
     line-height: 20px;
 } 
 
@@ -2289,7 +2296,7 @@ a.mobile_switchBtn {
 //														 Custom SSL 
 // ------------------------------------------------------------------------------------------------------------
 .security-form{
-	margin-left: -10px;
+	@include margin-left(-10px);
 
 	li{
 		padding-top: 15px;
@@ -2307,11 +2314,11 @@ a.mobile_switchBtn {
 }
 
 .extra_tabbed{
-	padding-left: 80px;
+	@include padding-left(80px);
 }
 
 .enable_heading{
-	margin-left: 5px;
+	@include margin-left(5px);
 	font-weight: bold;
 	font-size: 15px;
 	margin-top: 3px;
@@ -2339,7 +2346,7 @@ a.mobile_switchBtn {
 }
 
 .ssl_enabled_info{
-	text-align: center;
+	@include text-align(center);
 	background-color: #fdfde5;
 }
 
@@ -2355,17 +2362,17 @@ a.mobile_switchBtn {
 // ------------------------------------------------------------------------------------------------------------
 .count-label{
 	position: relative;
-	right: 3px;
+ @include right(3px);
 	&:before{
 		content: attr(data-count);
 		color: #fff;
 		background: #888;
 		@include border-radius(9px);
 		font-weight: bold;
-		margin-left: 20px;
-		padding: 0 8px 2px 6px;
+		@include margin-left(20px);
+		@include padding(0 8px 2px 6px);
 		margin-top: -2px;
-		margin-right: 5px;
+		@include margin-right(5px);
 		font-size: 12px;
 		position: relative;
 		bottom: 2px;
@@ -2392,8 +2399,8 @@ a.mobile_switchBtn {
 	.reload_link{
 	    color: #06C;
 		font-weight: bold;
-		padding-right: 10px;
-		float: right;
+		@include padding-right(10px);
+		@include float(right);
 	}	
 }
 .ticket_highlight {
@@ -2412,7 +2419,7 @@ a.mobile_switchBtn {
 .nested-ul{
 	li label{
 		padding:0;
-		padding-left:20px;
+		@include padding-left(20px);
 		margin-top:15px;
 		margin-bottom:0;
 	}
@@ -2420,18 +2427,18 @@ a.mobile_switchBtn {
 .new-role{
 	padding:15px 0;
 	.role-section{
-		border-left:1px solid #bebebe;
-		padding-left:20px;
+		@include border-left(1px solid #bebebe);
+		@include padding-left(20px);
 		margin-bottom:40px;
 	}
 }
 .role-nav{
 	li{
-		padding:0 0 30px 10px;
-		float:left;
+		@include padding(0 0 30px 10px);
+		@include float(left);
 		background:#fff;
 		&:first-child{
-			padding-left:0;
+			@include padding-left(0);
 		}
 		&:last-child{
 			a{
@@ -2439,8 +2446,8 @@ a.mobile_switchBtn {
 			}
 		}
 		a{
-			padding-right:10px;
-			border-right:1px solid #f6f6f6;
+			@include padding-right(10px);
+			@include border-right(1px solid #f6f6f6);
 			&:hover{
 				text-decoration:underline;
 			}
@@ -2485,7 +2492,7 @@ a.mobile_switchBtn {
 
 	.more_results{
 		margin-top: 10px;
-		text-align: center;
+		@include text-align(center);
 		background-color: white;
 		font-size: 14px;
 		#show_more{
@@ -2500,10 +2507,10 @@ a.mobile_switchBtn {
 	width:49%;
 	padding: 2px;
 	border: 1px;
-	float:left;
+	@include float(left);
 	.selector{
-		margin-right: 5px;
-		float:left;
+		@include margin-right(5px);
+		@include float(left);
 	}
 }
 
@@ -2518,8 +2525,8 @@ a.mobile_switchBtn {
 	.edit_helpdesk_ticket{
 		.checkbox input[type="checkbox"]{
 			margin-top: 5px;
-			margin-right: 5px;
-			margin-left: 0;
+			@include margin-right(5px);
+			@include margin-left(0);
 		}
 		.checkbox{
 			label{
@@ -2565,7 +2572,7 @@ a.mobile_switchBtn {
 .business_hours_form{
 	.muted{
 		padding-top: 5px;
-		padding-right: 5px;
+		@include padding-right(5px);
 	}
 }
 // ------------------------------------------------------------------------------------------------------------
@@ -2573,17 +2580,17 @@ a.mobile_switchBtn {
 // ------------------------------------------------------------------------------------------------------------
 .gamecriteria{
 	#questDOM .select2-container{width: 140px;}
-	#quest_data_value{margin-right: 0;}
+	#quest_data_value{@include margin-right(0);}
 
 	.conditionset {
 		.rule_list .controls{
 			position: relative;
-			left : 27px;
+			@include left (27px);
 		}
 
 		fieldset {
 			div.select2 {
-				margin-right: 7px;
+				@include margin-right(7px);
 				a{margin: 0;}
 			}
 		}
@@ -2598,14 +2605,14 @@ a.mobile_switchBtn {
 .error-text{ color: #D00; }
 
 .group-management .toggle-button{
-	margin-left:0;
+	@include margin-left(0);
 }
 .group-ticket-assign{
 	li{
 		padding-bottom:5px;
 		.group-text-align{
 			padding-top:5px;
-			text-align: right;
+			@include text-align(right);
 		}
 	}
 }
@@ -2617,7 +2624,7 @@ a.mobile_switchBtn {
 .email-tip{ width:50px; }
 
 .link_agents{
-	margin-left: 94px;
+	@include margin-left(94px);
 }
 
 .error-text {
@@ -2632,7 +2639,7 @@ a.mobile_switchBtn {
 	z-index: 999;
 	background: #DFDFDF;
 	bottom: 10px;
-	right: 10px;
+ 	@include right(10px);
 	border: 1px solid gainsboro;
 	padding: 10px;
 	box-shadow: 2px 2px #AAA;
@@ -2644,7 +2651,7 @@ a.mobile_switchBtn {
 
 //Temp.. Should be removed from this place
 .new_freshfone_number_search{
-	text-align: center;
+	@include text-align(center);
 	line-height: 3;
 }
 // -----------------------------------------------------------------------------------------------
@@ -2656,7 +2663,7 @@ a.mobile_switchBtn {
 .fb_tab_pic{
 	background: url("/images/helpimages/fb-tab.png") no-repeat;
 	height: 192px;
-	margin-left: 20px;
+	@include margin-left(20px);
 }
 
 .fb_info_text{
@@ -2673,7 +2680,7 @@ a.mobile_switchBtn {
 	width: 17px;
 	display: inline-block;
 	vertical-align: text-top;
-	margin-right: 4px;
+	@include margin-right(4px);
 }
 
 #tab_config{
@@ -2682,9 +2689,9 @@ a.mobile_switchBtn {
 
 #after_config{
 	.control-label, .fb_field{
-		margin: 5px 0 0 0;
+		@include margin(5px 0 0 0);
 		.no_tab{
-			margin-left: 10px;
+			@include margin-left(10px);
 		}
 
 		label{
@@ -2694,7 +2701,7 @@ a.mobile_switchBtn {
 }
 
 .remove_fb{
-	margin-left: 15%;
+	@include margin-left(15%);
 }
 
 .fb_tab_container{
@@ -2704,7 +2711,7 @@ a.mobile_switchBtn {
 .widget_options {
 	margin-top: 8px;
 	div{
-		border-left: 1px solid #E4E4E4;
+		@include border-left(1px solid #E4E4E4);
 		padding: 5px 10px;
 	}
 }
@@ -2718,11 +2725,11 @@ a.mobile_switchBtn {
 .thumb-file-upload {
   position: relative;
   display:inline-block;
-  text-align: left;
+  @include text-align(left);
   cursor:pointer;
   vertical-align:top;
   >div{
-  	margin:0 5px 18px 0;
+  	@include margin(0 5px 18px 0);
   }
   input[type='file']{
   	position:absolute;
@@ -2756,7 +2763,7 @@ a.mobile_switchBtn {
 		user-select: none;
 		cursor: default;
 		max-width: 300px;
-		padding-left: 10px;
+		@include padding-left(10px);
 		display: inline-block;
 		margin-top: 5px;
 	}
@@ -2766,14 +2773,14 @@ a.mobile_switchBtn {
 //-------------------------------------------------------------------------------------------------
 
 .user-details{
-	padding-left:60px;
+	@include padding-left(60px);
 	position:relative;
 	font-size:1.1em;
 	@include min-width(220px);
-	padding-right:15px;
+	@include padding-right(15px);
 	.preview_pic{
 		position:absolute;
-		left:0;
+	 	@include left(0);
 		top:0;
 	}
 	a{	text-decoration:none; }
@@ -2809,7 +2816,7 @@ a.mobile_switchBtn {
 
 .searchicon{
 	position:absolute;
-	right:35px;
+ 	@include right(35px);
 	top:10px;
 	height:15px;
 	width:15px;
@@ -2820,7 +2827,7 @@ a.mobile_switchBtn {
 	background:none;
 	border:0;
 	.inline-field div.fields{
-		margin-left:120px;
+		@include margin-left(120px);
 	}
 }
 
@@ -2834,14 +2841,14 @@ label.small{
 	.action_buttons{
 		position:relative;
 		top:8px;
-		right:25px;
+	 	@include right(25px);
 	}
 	.tabs{
-		padding:2px 9px 0 50px;
+		@include padding(2px 9px 0 50px);
 		a{ font-weight:bold; }
 		span.pill{
 			position:relative;
-			left:8px; top:-1px;
+		 	@include left(8px); top:-1px;
 		}
 	} 
 }
@@ -2866,7 +2873,7 @@ a.pill.help{
 } 
 .clock{ 
 	top:0;
-	right:0;
+ 	@include right(0);
 	position:absolute;
 	z-index:3;	
 	cursor: pointer;
@@ -2879,13 +2886,13 @@ a.pill.help{
 	width:26px;
 	height:22px;
 	top:3px;
-	left:0;
+ 	@include left(0);
 	background:url("/images/animated/timer.gif") no-repeat center;
 	@include opacity(0.5);
 }
 .time{
 	font-size:1.46em;
-	padding-left:10px;  
+	@include padding-left(10px);  
 	.small{
 		font-size:0.80em;
 		color:#888;
@@ -2900,18 +2907,18 @@ a.pill.help{
 }
 
 .total_time{
-	text-align:right;
+	@include text-align(right);
 	width:87%;
 	padding:14px 0;
 	color:#888;
 }
 
-.ui-form, .timeentry{ .agent, .timespent, .user_details, .note{	float:left; position:relative; } }
+.ui-form, .timeentry{ .agent, .timespent, .user_details, .note{	@include float(left); position:relative; } }
 
 .ui-form{ 
-	.agent{ width: 25%;  margin-right:4%;}
+	.agent{ width: 25%;  @include margin-right(4%);}
 	.timespent{ width: 20%; }
-	.note{ width:50%; float:right; }
+	.note{ width:50%; @include float(right); }
 }
 
 .timeentry_edit{
@@ -2927,17 +2934,17 @@ a.pill.help{
 	.started_time{
 		font-size:10px;
 		font-style:italic;
-		text-align:right;
+		@include text-align(right);
 		margin-top:2px;
 	}	
 	.actions{ margin-top:3px; }
-	.user_details{	width:24%; margin-right: 2%;	}	
+	.user_details{	width:24%; @include margin-right(2%);	}	
 	.user_name{ padding-bottom:3px;  display:block; }
-	.timespent{	width:16%; text-align:right; margin-right: 2%; }
-	.note{ width:40%; padding-left: 4%; em{ color:#336666; font-style:italic; } }
+	.timespent{	width:16%; @include text-align(right); @include margin-right(2%); }
+	.note{ width:40%; @include padding-left(4%); em{ color:#336666; font-style:italic; } }
 	.billable{		
 		position:absolute;
-		left:0;
+	 @include left(0);
 		top:1px;
 		width:19px;
 		height:18px;
@@ -2962,7 +2969,7 @@ a.pill.help{
 
 .ticket-notifications{
   position:fixed;   
-  margin-left:-54px;
+  @include margin-left(-54px);
   margin-top:23px;    
   li{
     width:33px; height:30px;
@@ -2983,7 +2990,7 @@ a.pill.help{
     cursor: default;
     @include inline-block;
     width:24px;height:24px;  
-    margin-left:5px;
+    @include margin-left(5px);
     margin-top:3px;
     position: absolute;
   }          
@@ -2996,7 +3003,7 @@ a.pill.help{
     border:2px solid #fff;
     position:absolute;
     top:6px;    
-    left:-8px;      
+    @include left(-8px);      
     line-height:12px;
     height:12px;       
     display:none;
@@ -3015,7 +3022,7 @@ a.pill.help{
   display: inline-block;
   position: relative;
   top: -5px;
-  padding-left: 22px;
+  @include padding-left(22px);
 
   [rel=view_collision], [rel=reply_collision] {
     display:none;
@@ -3030,7 +3037,7 @@ a.pill.help{
     height: 18px;
     width: 18px;
     position: relative;
-    padding-left: 25px;
+    @include padding-left(25px);
     span{
       position: relative;
       top: 2px;
@@ -3045,7 +3052,7 @@ a.pill.help{
   @include min-width(160px);
   max-width: 320px;
   @include border-radius(5px);
-  .title, .content{ background:none; font-size:13px; font-weight:normal; text-align:left; border:0; 
+  .title, .content{ background:none; font-size:13px; font-weight:normal; @include text-align(left); border:0; 
     @include text-shadow(#3d3d3d -1px 0 1px); 
    }  
   .title{ color:#aeaeae; padding:7px 10px 1px;  }
@@ -3053,9 +3060,9 @@ a.pill.help{
 }                                               
 
 .popover.right .notice-arrow{
-  border-right-color: #5f5f5f;  
+  @include border-right-color(#5f5f5f);  
   &:after{
-    border-right-color: #5f5f5f;
+    @include border-right-color(#5f5f5f);
   }
 }
 
@@ -3079,7 +3086,7 @@ a.pill.help{
   100% { transform: scale(1)}
 }
 .marginr10 {
-  margin-right: 10px;
+  @include margin-right(10px);
 }
 
 .quest-desc{
@@ -3094,7 +3101,7 @@ a.pill.help{
 
 /* Have to check and remove this lines
 .rtCnt{
-	padding:0px 0px 0px 0px;
+	@include padding(0px 0px 0px 0px);
 	border:0px !important;
 	.local_activities{
 		a{
@@ -3109,7 +3116,7 @@ a.pill.help{
 	
 	.rtDetails_forum{
 		@include border-radius(6px);
-		padding:14px 14px 6px 14px;
+		@include padding(14px 14px 6px 14px);
 		h4.title{
 			font-size:13px; 
 			color:#afafaf;
@@ -3124,7 +3131,7 @@ a.pill.help{
 		@include min-height(550px);       
 		@include pie-clearfix;
 	  	@include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
-		margin:0px 78px 0px 0px;  
+		@include margin(0px 78px 0px 0px);  
 		padding-top:5px; 
 		z-index:99; 
 		background-color:#ffffff;
@@ -3132,7 +3139,7 @@ a.pill.help{
 		position:relative;
 		h3.title{
 			font-size:14px;
-			padding:0px 10px 3px 10px;
+			@include padding(0px 10px 3px 10px);
 			display:block;
 			margin:0px;
 			margin-top:5px;
@@ -3151,7 +3158,7 @@ a.pill.help{
 		.cnt{
 			@include no-bullets;
 			margin-top:-6px;
-			padding:0px 10px 8px 10px;
+			@include padding(0px 10px 8px 10px);
 			li{
 				border-bottom:1px solid #f3f3f3;
 				padding:0px;
@@ -3182,12 +3189,12 @@ a.pill.help{
 	}	
 	
 	.rtPanel{
-		float:right;
+		@include float(right);
 		width:75px;
 		position:relative;
 		z-index:9;
 		padding-top:6px;
-		text-align:center;
+		@include text-align(center);
 		a{
 			display:block;
 			font-size:11px;
@@ -3196,13 +3203,13 @@ a.pill.help{
 			color:#9aa2a9;
 			padding:34px 2px 6px;
 			margin-bottom:10px;
-			text-align:center; 
+			@include text-align(center); 
 			position:relative; 
 			span{                                         
 				width:44px;
 				height:32px;
 				position:absolute;
-				left:13px;
+			 @include left(13px);
 				top:0;
 				background-repeat: no-repeat;
 			}
@@ -3238,23 +3245,23 @@ a.pill.help{
 {
 	height: 22px;
 	width: 22px;
-	margin-right: 5px;
+	@include margin-right(5px);
 	display: inline-block;
 }
 
 .forum_title_block
 {
-	margin: 0 15px 0 15px;
+	@include margin(0 15px 0 15px);
 }
 
 .position_forum_title
 {
-	margin: 16px 0 16px 0;
+	@include margin(16px 0 16px 0);
 }
 
 .topic_head
 {
-	padding: 0 25px 0 20px;
+	@include padding(0 25px 0 20px);
 }
 
 .request_details.bottom_fix{
@@ -3285,12 +3292,12 @@ a.pill.help{
 	}
 
 	#cancel_email{
-		margin-left: 9px;
+		@include margin-left(9px);
 	}
 
 	label.error{
 		position: absolute;
-		margin-left: 112px;
+		@include margin-left(112px);
 	}
 
 	p.primary_text{
@@ -3310,11 +3317,11 @@ a.pill.help{
 	}
 
 	div.span9{
-		margin-left: 7px;
+		@include margin-left(7px);
 	}
 
 	.user-email-bullet{
-			margin-left:12px;
+			@include margin-left(12px);
 			li:before{
 				content:"";
 				@include border-radius(100%);
@@ -3323,7 +3330,7 @@ a.pill.help{
 				height: 0px;
 				border: 3px solid #666;
 				margin-top: 6px;
-				margin-left:-12px;
+				@include margin-left(-12px);
 				margin-bottom:5px;
 			}
 			li{
@@ -3355,20 +3362,20 @@ a.pill.help{
 .execute_scenario{
 	.scenario-search{
 		.searchicon{
-	    	left: 10px;
+	    	@include left(10px);
 		}
 		input[type="text"]{
 			border: 0;
 			box-shadow: none;
 			margin: 4px;
-			padding-left: 20px;
+			@include padding-left(20px);
 			width: 95%;
 		}
 		position: relative;
 		background: #fff;
 		border-bottom: 1px solid #ccc;
 		margin: 1px;
-		border-radius: 5px 5px 1px 0px;
+		@include border-radius(5px 5px 1px 0px);
 	}
 	.dialog-well{
 		margin-top: -36px;
@@ -3410,7 +3417,7 @@ $adm-bdr:#F0F0F0;
 		padding: 0 5px 20px;
 	}
 	&.sm-acc{
-		padding-left:0;
+		@include padding-left(0);
 		.acc-box{
 			background: #FAFAFA;
 			border: solid 1px #F7F7F7;
@@ -3418,12 +3425,12 @@ $adm-bdr:#F0F0F0;
 			margin-bottom: 15px;
 		}
 		.acc-box:nth-child(3n+1){
-			margin-left:0;
+			@include margin-left(0);
 		}
 	}
 	.form_data{
 		.control-group .select2{
-			margin-left: 0;
+			@include margin-left(0);
 		}
 	}
 	.social-brand{
@@ -3467,7 +3474,7 @@ $adm-bdr:#F0F0F0;
 		}
 		.profile-name{
 			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			margin-left: 42px;
+			@include margin-left(42px);
 			font-size: 18px;
 			a{
 				font-weight: bold;
@@ -3477,7 +3484,7 @@ $adm-bdr:#F0F0F0;
 				font-weight:400;
 			}
 			&.streams-home{
-				margin-left: 13px;
+				@include margin-left(13px);
 				font-size: 15px;
 			}
 			p{
@@ -3508,27 +3515,27 @@ $adm-bdr:#F0F0F0;
 			width: 100%;
 		}
 		.checkbox{
-			margin: 0px 5px 3px 0;
+			@include margin(0px 5px 3px 0);
 		}
 		.label-offset{
-			margin-left: 187px;
+			@include margin-left(187px);
 		}
 		.msg{
 			font-size: 11px;
 			margin-top: 5px;
 		}
 		.adm-radio{
-			float: left;
-			margin-right: 20px;
+			@include float(left);
+			@include margin-right(20px);
 		}
 	}
 	.title-bar{
 		height: 30px;
 	}
 	.options-dm .row{
-		margin-left: 0px !important;
+		@include margin-left(0px !important);
 		&:last-child{
-			margin-left: 2.12766%;
+			@include margin-left(2.12766%);
 		}
 	}
 	&.sts{
@@ -3538,19 +3545,19 @@ $adm-bdr:#F0F0F0;
 			margin-bottom: 18px;
 			border-bottom: 1px solid #ddd;
 			.select2,.text{
-				margin-left: 0;
+				@include margin-left(0);
 			}
-			.mlt{ margin-left: 0px; }
+			.mlt{ @include margin-left(0px); }
 		}
 		.control-group{
-			margin-left: 0px;
+			@include margin-left(0px);
 			min-height: 53px;
 			overflow: inherit;
 			&:last-child{
-				margin-left: 2.12766%;
+				@include margin-left(2.12766%);
 			}
 			.select2{
-				margin-left: 0;
+				@include margin-left(0);
 			}
 		}
 		&.c-tkt{
@@ -3575,8 +3582,8 @@ $adm-bdr:#F0F0F0;
 	.add-another{
 		display: block;
 		background: #ffffff;
-		padding: 12px 0 12px 8px;
-		margin: -21px 0 0;
+		@include padding(12px 0 12px 8px);
+		@include margin(-21px 0 0);
 		color: #000;
 		border-top:1px solid #ddd;
 	}
@@ -3585,7 +3592,7 @@ $adm-bdr:#F0F0F0;
 		background: none;
 		position: relative;
 		top: 0px;
-		left: 4px;
+		@include left(4px);
 		margin: 0;
 		padding: 0;
 	}
@@ -3593,8 +3600,8 @@ $adm-bdr:#F0F0F0;
 		td{
 			vertical-align: middle;
 			&.adm-options{
-				text-align: right;
-				padding-right: 30px;
+				@include text-align(right);
+				@include padding-right(30px);
 			}
 		}
 		.stream-pic{
@@ -3644,26 +3651,26 @@ $adm-bdr:#F0F0F0;
 		.form_data{
 			label.error{
 				display: block;
-				clear: left;
+				@include clear(left);
 			}
 			.control-group{
 				.select2-container{
-					margin-left: 0;
+					@include margin-left(0);
 				}
 				&:last-child{
-					margin-left: 2.12766%;	
+					@include margin-left(2.12766%);	
 				}
 			}
 		}
 		#dm-option {
 			.control-group,
 			.control-group:last-child{
-				margin-left: 0;	
+				@include margin-left(0);	
 			}
 		}
 		.head{
 			position: relative;
-			padding: 15px 15px 10px;
+			@include padding(15px 15px 10px);
 			border-bottom: 1px solid #ddd;
 			.label-bold{
 				font-weight: bold;
@@ -3673,7 +3680,7 @@ $adm-bdr:#F0F0F0;
 		.dm-options{
 			padding-bottom:8px;
 			label{
-				margin-left: 15px;
+				@include margin-left(15px);
 			}
 		}
 		.dm-label{
@@ -3685,8 +3692,29 @@ $adm-bdr:#F0F0F0;
 	}
 	.error{
 		display: block;
-		clear: left;
+		@include clear(left);
 		padding-top: 4px;
+	}
+	.ctkt-help{
+		padding: 0 5px;
+		span{
+			font-family: sans-serif;
+			border: 1px solid #666;
+			display: inline-block;
+			padding: 1px 4px 0;
+			font-size: 11px;
+			border-radius: 50%;
+			font-weight: bold;
+			line-height: 13px;
+			background: rgba(255,255,255,0.6);
+			color: #666;
+		}
+		&:hover{
+			span{
+				color: rgba(255,255,255,1);
+				background: #666;
+			}
+		}
 	}
 }
 

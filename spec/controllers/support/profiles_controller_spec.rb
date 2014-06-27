@@ -9,6 +9,10 @@ describe Support::ProfilesController do
     @user = create_dummy_customer
   end
 
+  before(:each) do
+    #stub_s3_writes
+  end
+
   it "should edit an existing contact" do
     get :edit, :id => @user.id
     response.should render_template :edit
@@ -22,5 +26,21 @@ describe Support::ProfilesController do
     edited_customer.phone.should be_eql(phone_no)
     edited_customer.time_zone.should be_eql("Arizona")
     edited_customer.language.should be_eql("fr")
+  end
+
+  it "should delete user avatar" do
+    get :edit, :id => @user.id
+    avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg').open
+    put :update, :id => @user.id, :user => {:avatar_attributes => {:content => avatar_file},
+                                            :name => @user.name,
+                                            :job_title => @user.job_title,
+                                            :phone => @user.phone,
+                                            :time_zone => @user.time_zone,
+                                            :language => @user.language }
+    @user.reload
+    @user.avatar.should_not be_nil
+    delete :delete_avatar
+    @user.reload
+    @user.avatar.should be_nil
   end
 end

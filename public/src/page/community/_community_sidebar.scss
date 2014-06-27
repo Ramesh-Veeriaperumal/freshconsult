@@ -2,22 +2,22 @@
 $sidebar-width: 284px;
 
 .cm-sb-toggle{
-	float:left;
+	@include float(left);
 	cursor:pointer;
 	width: 20px;
 	height: 20px;
-	padding-right: 8px;
-	margin-right: 20px;
+	@include padding-right(8px);
+	@include margin-right(20px);
 }
 .sticky_panel, .hamburger{ 
 	position:relative;
 	.cm-sb-toggle:before {
 		background: #666;
 		position: relative;
-		left: -28px;
-		padding: 6px 10px 3px 30px;
+		@include left(-28px);
+		@include padding(6px 10px 3px 30px);
 		top: -6px;
-		border-radius: 0px 5px 5px 0;
+		@include border-radius(0px 5px 5px 0);
 		color: #FFF;
 		text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 	}
@@ -26,9 +26,9 @@ $sidebar-width: 284px;
 		position: absolute;
 		border: 4px solid rgba(0, 0, 0, 0);
 		border-bottom-color: #333;
-		border-right-color: #333;
+		@include border-right-color(#333);
 		top: -13px;
-		left: -28px;
+		@include left(-28px);
 	}
 }
 .hamburger {
@@ -64,19 +64,18 @@ $sidebar-width: 284px;
 	&:after{
 		content:"";
 		position:absolute;
-		right: 0px;
+		@include right(0px);
 		top: 0;
 		width: 0;
 		height: 100%;
-		border-left:1px solid #afafaf;
+		@include border-left(1px solid #afafaf);
 		background: transparent;
 		@include box-shadow(2px 1px 3px rgba(0, 0, 0, 0.4));
 	}
 }
 .cm-sb-list{
-	margin-right:2px;
+	@include margin-right(2px);
 	overflow:auto;
-
 	.disabled a {
 		color: #EEE;
 	}
@@ -84,7 +83,7 @@ $sidebar-width: 284px;
 	a{
 		color: #333;
 		text-decoration: none;
-		padding-left: 50px;
+		@include padding-left(50px);
 		padding-top: 8px;
 		padding-bottom: 8px;
 		display: block;
@@ -98,9 +97,9 @@ $sidebar-width: 284px;
 			content: "\2013"; // en dash -
 			font-size: 16px;
 			font-weight: bold;
-	    position: absolute;
-	    top: 6px;
-			left: 23px;
+	    	position: absolute;
+	    	top: 6px;
+			@include left(23px);
 		}
 	}
 	.cm-sb-cat-item{
@@ -113,23 +112,23 @@ $sidebar-width: 284px;
 		width: 34px;
 		height: 34px;
 		position: absolute;
-		left: 5px;
+		@include left(5px);
 		top: 0;
 		z-index: 10;
 		cursor:pointer;
 		&:before{
 			content:"";
 			border:6px solid transparent;
-			border-left-color:#858585;
+			@include border-left-color(#858585);
 			width:0;
 			height:0;
 			position:absolute;
-			left: 20px;
+			@include left(20px);
 			top: 10px;
 			@include box-shadow(-1px 0 0 rgba(0, 0, 0, 0.2));
 		}
 		&:hover:before{
-			border-left-color:#333;
+			@include border-left-color(#333);
 		}
 	}
 	li.toggle-open{
@@ -137,7 +136,7 @@ $sidebar-width: 284px;
 			border-color:transparent;
 			border-top-color: #858585;
 			@include box-shadow(0 -1px 0 rgba(0, 0, 0, 0.2));
-			left: 17px;
+			@include left(17px);
 			top: 14px;
 		}
 		.forum_expand:hover:before{
@@ -162,12 +161,12 @@ $sidebar-width: 284px;
 	li.active{
 		.forum_expand:before,
 		.forum_expand:hover:before{
-			border-left-color:#fff;
+			@include border-left-color(#fff);
 		}
 
 		&.toggle-open .forum_expand:before,
 		&.toggle-open .forum_expand:hover:before{
-			border-left-color:transparent;
+			@include border-left-color(transparent);
 			border-top-color:#fff;
 		}
 	}
@@ -179,7 +178,7 @@ $sidebar-width: 284px;
   	height: 40px;
   	line-height: 1.6;
   	position: absolute;
-  	left: -40px;
+  	@include left(-40px);
   	text-align: center;
   	top: 5px;
   	width: 40px;
@@ -194,11 +193,11 @@ $sidebar-width: 284px;
 }
 
 .forum_list a{
-	padding-left: 65px;
+	@include padding-left(65px);
 	font-weight:400;
 	&:before{
 		top: 7px;
-		left: 50px;
+		@include left(50px);
 		font-size:10px;
 	}
 }

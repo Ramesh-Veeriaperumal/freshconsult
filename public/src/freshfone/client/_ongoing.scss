@@ -4,7 +4,7 @@
 	@include border-radius(6px);
 	background-color: $ongoing-background;
 	li {
-		margin-right: 1px;
+		@include margin-right(1px);
 		a, a.active { @include box-shadow(0px 1px 0px $ongoing-tabs-shadow inset);	}
 		a {
 			background-color:$ongoing-tabs-background;
@@ -17,14 +17,14 @@
 		background-color:$ongoing-end-call-background;
 		font-size: 20px;
 		color: $end-call-text;
-		padding-left: 7px;
+		@include padding-left(7px);
 		line-height: 31px;
 	}
 	.call_details {
 		width: 104px;
 		height: 30px;
 		a {
-			padding: 9px 0 0 45px;
+			@include padding(9px 0 0 45px);
 			color: $call-details-text;
 			width: 100%;
 			background-color: $call-details-background;
@@ -62,7 +62,7 @@
 	.header_text {
 		font-size: 15px;
 		font-weight: 600;
-		padding: 8px 0 0 10px;
+		@include padding(8px 0 0 10px);
 		color: $popup-content-header-text;
 	}
 	.ffone-add-notes { height: 200px; width: 350px; }
@@ -84,11 +84,11 @@
 			height: 46px;
 			border: none;
 			border-bottom: 1px solid $transfer-search-border;
-			padding-left: 40px;
+			@include padding-left(40px);
 		}
 	}
 	.available_agents_avatar {
-		float:left;
+		@include float(left);
 		height: 100%;
 		border: 0;
 		img {
@@ -104,7 +104,7 @@
 		overflow: auto;
 		max-height: 315px;
 		li {
-			clear: both;
+			@include clear(both);
 			border-bottom: 1px solid $available-agent-border;
 			height: 45px;
 			padding: 7px;
@@ -113,16 +113,16 @@
 		}
 	}
 	.available_agents_searchicon {
-		right:0;
-		left: 10px;
+	 @include right(0);
+	 @include left(10px);
 		top: 15px;
 	}
 	.available_agents_name {
-		margin: 7px 0 0 7px;
+		@include margin(7px 0 0 7px);
 		width: 190px;
 		font-weight: 600;
 		color: $available-agent-name;
-		padding-left: 35px;
+		@include padding-left(35px);
 		
 	}
 	.transfering_call {
@@ -136,7 +136,7 @@
 
 		color: $transfering-call-text;
 		font-weight: 500;
-		text-align: center;
+		@include text-align(center);
 
 		z-index: 2;
 		opacity: 1;
@@ -144,7 +144,7 @@
 	.no_available_agents {
 		height: 19px;
 		font-size: 14px;
-		padding: 14px 12px 12px 12px;
+		@include padding(14px 12px 12px 12px);
 		font-weight: 400;
 	}
 //	transfer call ends
@@ -154,7 +154,7 @@
 		width: 100%;
 		height: 155px;
 		margin: 0;
-		padding-left: 10px;
+		@include padding-left(10px);
 		padding-top: 10px;
 		font-size:14px;
 		background-color: $call-notes-background;
@@ -172,19 +172,19 @@
 	margin-top: 12px;
 	@include border-radius(4px);
 	.searchticket {
-		float: left;
-		margin-left: 4px;
+		@include float(left);
+		@include margin-left(4px);
 	}
 	.search_input {
 		height: 18px;
 		width: 260px;
 	}
 	.search-type {
-		margin-left:10px;
+		@include margin-left(10px);
 	}
 	.searchicon {
 		top: 113px;
-		right: 45px;
+	 	@include right(45px);
 	}
 	.search_header {
 		border-bottom: 1px solid $ec-ticket-header-border;
@@ -196,18 +196,16 @@
 	}
 	.ticket_search_results {
 		background-color: $ec-search-results-background;
-		@include border-bottom-radius(4px);
+		border-bottom-radius:4px;
 	}
 	.autocompletepane {
 		height: 249px;
 		overflow:auto;
 		.selected, li {
 			font-size: 13px;
-			padding: 8px 8px 0 8px;
-
+			@include padding(8px 8px 0 8px);
 			color: $ec-autocomplete-result-color;
 			background-color: transparent;
-
 			border: none;
 			border-bottom: 1px solid $ec-autocomplete-result-border;
 			&:hover {
@@ -222,7 +220,7 @@
 		}
 	}
 	.save_to_ticket {
-		float: right;
+		@include float(right);
 	}
 // ticket search ends
 }
@@ -266,7 +264,7 @@
 		}
 	}
 	.controls {
-		margin-left:0;
+		@include margin-left(0);
 	}
 	.back {
 		font-weight: 700;
@@ -274,7 +272,7 @@
 		cursor: pointer;
 	}
 	.save_ticket {
-		float:right;
+		@include float(right);
 		margin-top: 10px;
 	}
 	.requester_name_container {
@@ -291,8 +289,8 @@
 		min-height: 35px;
 		font-size: 14px;
 		font-weight: 400;
-		text-align: left;
-		padding-left: 10px;
+		@include text-align(left);
+		@include padding-left(10px);
 	}
 	.end_call_cancel, .end_call_save, .save_to_existing {
 		width: 99%;
@@ -300,7 +298,7 @@
 	}
 	.end_call_cancel {
 		height: 55px;
-		padding-right: 0px;
+		@include padding-right(0px);
 	}
 	.end_call_cancel {
 		margin-top:10px;
@@ -312,7 +310,7 @@
 	}
 	.arrow-right {
 		color: $ec-btn-right-arrow;
-		float: right;
+		@include float(right);
 		font-size: 9px;
 		@include border-radius(3px);
 		margin-top: 2px;
@@ -320,9 +318,9 @@
 }
 .contact_hover{
 	.recent_tickets {
-		clear: both;
+		@include clear(both);
 		display: block;
-		margin-left: 65px;
+		@include margin-left(65px);
 	}
 }
 // Call notes and end call notes ends

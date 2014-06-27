@@ -25,7 +25,7 @@
 .ticket-leftcol .leftFilter .ff_item #created_date_range{ width: 186px; } // Its based on the select2 width[ Above line ] 
 .ff_item.level_2 .select2, .ff_item.level_3 .select2 { width: 179px; }
 .align_options .select2-results ul.select2-result-sub > li .select2-result-label { 
-	padding-left: 7px; 
+	@include padding-left(7px); 
 }
 
 .select2-drop{
@@ -61,8 +61,8 @@
 			background: #f0f0f0;
 			position: absolute;
 			bottom: 0px;
-			right: 0;
-			text-align: center;
+		 @include right(0);
+			@include text-align(center);
 			font-size: 20px;
 			line-height: 0.5;
 			border-top: 1px solid #f7f7f7;
@@ -75,8 +75,8 @@
 }
 
 #redactor_modal .redactorInsertCode label{
-	margin: 3px 0 0 0 !important;
-	float: left !important;
+	@include margin(3px 0 0 0 !important);
+	@include float(left !important);
 }
 
 #redactor_modal .redactorInsertCode textarea{

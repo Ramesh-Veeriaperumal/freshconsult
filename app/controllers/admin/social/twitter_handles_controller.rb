@@ -4,8 +4,8 @@ class Admin::Social::TwitterHandlesController < ApplicationController
 
   before_filter :build_item, :twitter_wrapper, :only => [:authdone]
   before_filter :load_item, :only => [:destroy]
-  after_filter :session_cleanup, :only => [:add_to_db]
-
+  
+  
   def authdone
     add_to_db
   end
@@ -32,6 +32,7 @@ class Admin::Social::TwitterHandlesController < ApplicationController
         redirect_to edit_admin_social_twitter_stream_url(twitter_handle.default_stream)
       end
     }
+    session_cleanup
     if returned_value == 0
       flash[:notice] = t('twitter.not_authorized')
       redirect_to admin_social_streams_url

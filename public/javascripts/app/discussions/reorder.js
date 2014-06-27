@@ -60,7 +60,10 @@ window.App.Discussions = window.App.Discussions || {};
 					url: $('.comm-items ul').parents('form').attr('action'),
 					type: 'PUT',
 					dataType: 'script',
-					data: { reorderlist: $this.positionHash() },
+					data: { 
+						reorderlist: $this.positionHash(),
+						category_id: $('#reorder_category_id').val()
+					},
 					success: function () {
 						App.Discussions.Sidebar.reload();
 					}

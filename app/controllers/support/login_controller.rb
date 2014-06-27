@@ -70,7 +70,7 @@ class Support::LoginController < SupportController
      	end
     end      
 
-    def decide_smart_sso_login_page
+    def decide_smart_sso_login_page # Possible dead code
       # If the user logged as an agent then assume redirection to SSO  - TODO use a cookie may
       # if customer portal has any other login option enabled then customer need to be able to login
       # If not redirect customer to SSO portal .

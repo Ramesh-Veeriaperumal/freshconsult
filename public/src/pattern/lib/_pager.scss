@@ -6,7 +6,7 @@
 .pager {
   margin: $baseLineHeight 0;
   list-style: none;
-  text-align: center;
+  @include text-align(center);
   @include clearfix();
 }
 .pager li {
@@ -26,10 +26,10 @@
 }
 .pager .next a,
 .pager .next span {
-  float: right;
+  @include float(right);
 }
 .pager .previous a {
-  float: left;
+  @include float(left);
 }
 .pager .disabled a,
 .pager .disabled a:hover,

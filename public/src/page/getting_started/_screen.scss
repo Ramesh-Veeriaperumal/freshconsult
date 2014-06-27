@@ -3,14 +3,20 @@ body{
   min-height: 700px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
+
+}
+@if $rtl == true {
+  html,body{
+    direction:rtl;
+  }
 }
 
 .f-left {
-  float: left;
+  @include float(left);
 }
 
 .f-right {
-  float: right;
+  @include float(right);
 }
 
 .wrapper {
@@ -21,13 +27,13 @@ body{
   width: 960px;
   margin:12px auto;
   min-height: 230px;
-  clear: both;
+  @include clear(both);
 }
 
 .header-left {
   width: 630px;
-  float: left;
-  padding: 35px 0 0 0;
+  @include float(left);
+  @include padding(35px 0 0 0);
 }
 
 .header-left h3{
@@ -36,9 +42,9 @@ body{
 }
 
 .header-right {
-  float: left;
+  @include float(left);
   width: 330px;
-  padding: 45px 0 0 0;
+  @include padding(45px 0 0 0);
 }
 
 .getting-started-header h1 {
@@ -56,7 +62,7 @@ a.skip-link {
   text-decoration: none;
   color: #1272de;
   font-size: 16px;
-  float: right;
+  @include float(right);
   padding: 0 5px;
 }
 
@@ -67,7 +73,7 @@ a.skip-link:hover {
 .controls {
   padding: 20px 5px;
   margin-top: 80px;
-  float: right;
+  @include float(right);
 }
 
 .controls a {
@@ -92,7 +98,7 @@ a.skip-link:hover {
   color: #7f7f7f;
   cursor: pointer;
   text-decoration: none;
-  margin: 0 0 0 15px;
+  @include margin(0 0 0 15px);
   cursor: pointer;
 }
 
@@ -131,14 +137,14 @@ a.skip-link:hover {
 }
 
 .controls .back{ 
-  border-right-color: #c1c1c1;
-  margin-right: 2px;
-  margin-left: -10px;
+  @include border-right-color(#c1c1c1);
+  @include margin-right(2px);
+  @include margin-left(-10px);
 }
 .controls .next{
-  border-left-color: #c1c1c1;
-  margin-left: 2px;
-  margin-right: -10px;
+  @include border-left-color(#c1c1c1);
+  @include margin-left(2px);
+  @include margin-right(-10px);
 }
 
 .controls #back.active{
@@ -160,6 +166,12 @@ a.skip-link:hover {
   cursor: default;
 }
 
+@if $rtl == true{
+  .controls a{
+    display:inline-block;
+    height:22px;
+  }
+}
 .arrow {
   background: url(/images/gs/pattern-top.png) no-repeat;
   height: 12px;
@@ -173,7 +185,7 @@ a.skip-link:hover {
   background: #fff;
   height: 85px;
   width: 85px;
-  float: left;
+  @include float(left);
   @include box-shadow(0 0 4px #eceae9);
   @include transition(all 0.2s ease);
   font-size: 12px;
@@ -181,8 +193,8 @@ a.skip-link:hover {
   text-decoration: none;
   white-space: nowrap;
   display: table;
-  text-align: center;
-  margin-right: 20px;
+  @include text-align(center);
+  @include margin-right(20px);
   vertical-align: middle;
 }
 
@@ -246,7 +258,8 @@ a.skip-link:hover {
 
 .slide-left-panel {
   width: 500px;
-  float: left;
+  @include float(left);
+  @include text-align(left);
 }
 
 .slide-left-panel h4 {
@@ -268,7 +281,7 @@ a.skip-link:hover {
   font-size: 15px;
   margin-top: 9px;
   @include box-shadow(inset 1px 1px 2px #cccccc);
-  float: left;
+  @include float(left);
   z-index: 100;
   position: relative;
 }
@@ -301,7 +314,7 @@ a.skip-link:hover {
 
 .slide-right-panel {
   width: 406px;
-  float: right;
+  @include float(right);
 }
 
 .slide-right-panel h4 {
@@ -327,7 +340,7 @@ a.skip-link:hover {
   background-color: rgba(19, 78, 79, 0.5);
   @include border-radius(4px);
   @include box-shadow(inset 0 -10px 10px #1b5b5b);
-  padding: 5px 20px 4px 20px;
+  @include padding(5px 20px 4px 20px);
 }
 
 .forward-mail {
@@ -360,14 +373,14 @@ a.skip-link:hover {
   font-size: 13px;
   color: #dadada;
   width: 200px;
-  float: left;
+  @include float(left);
 }
 
 #content {
   position: absolute;
   overflow: hidden;
   width: 3840px;
-  left: 0;
+  @include left(0);
   @include transition(all 0.4s ease);
   -webkit-transition: all 0.4s ease;
   -moz-transition: all 0.4s ease;
@@ -377,7 +390,7 @@ a.skip-link:hover {
 #content .slide {
   padding: 0;
   margin: 0;
-  float: left;
+  @include float(left);
   min-height: 240px;
   color: #fff;
   width: 950px;
@@ -389,7 +402,7 @@ a.skip-link:hover {
   width: 960px;
   margin: 0 auto;
   height: 12px;
-  clear: both;
+  @include clear(both);
   position: relative;
   top: -12px;
 }
@@ -401,6 +414,10 @@ a.skip-link:hover {
   height: 12px;
   position: relative;
   @include transition(all 0.4s ease-out);
+  @if $rtl == true {
+   background-position:right 1px;   
+  @include margin-right(25px);
+  }
 }
 
 .submit-btn-wrap {
@@ -408,7 +425,7 @@ a.skip-link:hover {
 }
 
 .submit-btn-wrap .forward-textbox-note {
-  float: left;
+  @include float(left);
   width: 564px;
   /*width: 260px;*/
   line-height: 20px;
@@ -416,7 +433,7 @@ a.skip-link:hover {
 
 input.submit-btn {
   color: #fafafa;
-  float: right;
+  @include float(right);
   @include text-shadow(-1px -1px 2px #333333);
   background-color: #005a5b;
   border: 1px #66a1a2 solid;
@@ -451,7 +468,7 @@ input.submit-btn:active {
   background-color: #005a5b;
   border: 1px #66a1a2 solid;
   cursor: pointer;
-  padding: 15px 15px 15px 170px;
+  @include padding(15px 15px 15px 170px);
   font-size: 20px;
   background-repeat: no-repeat;
   background-position: 20px 13px;
@@ -477,6 +494,11 @@ input.submit-btn:active {
   background-image: inline-image("cdn-ignored/inline-images/gs/twitter.png");
   margin-top: -6px;
 }
+@if $rtl == true{
+  .social a.facebook,.social a.twitter {
+    background-position:190px center;
+  }
+}
 
 .custom-upload {
   position: relative;
@@ -484,12 +506,16 @@ input.submit-btn:active {
   height: 70px;
   width: 300px;
   background-repeat: no-repeat;
+  @if $rtl == true{
+    background-position: right;
+    @include float(right);
+  }
 }
 
 .custom-upload input[type="file"] {
   outline: none;
   position: relative;
-  text-align: right;
+  @include text-align(right);
   opacity: 0; 
   width: 80%;
   height: 100%;
@@ -503,12 +529,15 @@ input.submit-btn:active {
   margin: 0;
   z-index: 1;
   line-height: 100%;
+  @if $rtl == true{
+      float:right;
+  }
 }
 
 .custom-upload .fake-file input {
-  float: right;
+  @include float(right);
   width: 110px;
-  float: left;
+  @include float(left);
   color: #fafafa;
   @include text-shadow(-1px -1px 2px #333333);
   background-color: #005a5b;
@@ -548,24 +577,32 @@ input.submit-btn:active {
 .colorpicker {
   position: absolute;
   top: 3px;
-  left: -118px;
+  @include left(-118px);
   height: 28px;
   width: 100px;
   background: #fff;
   border: 1px solid #ffffff;
-  @include border-radius(20px 0 0 20px);
+  @if $rtl == true {
+    border-radius: 0 20px 20px 0;
+  }@else{
+    border-radius: 20px 0 0 20px;  
+  }
 }
 
 .colorpicker input {
   width: 71px;
   border: none;
-  padding: 0 0 0 9px;
+  @include padding(0 0 0 9px);
   line-height: 25px;
   font-size: 13px;
   height:27px;
-  float: right;
+  @include float(right);
   color: #a5a5a5;
-  @include border-radius(20px 0 0 20px);
+  @if $rtl == true {
+    border-radius: 0 20px 20px 0;
+  }@else{
+    border-radius: 20px 0 0 20px;  
+  }
 }
 
 .colorpicker input , x:-moz-any-link, x:default   { 
@@ -577,7 +614,7 @@ input.submit-btn:active {
 }
 
 .colorpicker:after, .colorpicker:before {
-  left: 100%;
+  @include left(100%);
   border: solid transparent;
   content: " ";
   height: 0;
@@ -588,7 +625,7 @@ input.submit-btn:active {
 
 .colorpicker:after {
   border-color: rgba(136, 183, 213, 0);
-  border-left-color: #fff;
+  @include border-left-color(#fff);
   border-width: 15px;
   top: 50%;
   margin-top: -15px;
@@ -596,7 +633,7 @@ input.submit-btn:active {
 
 .colorpicker:before {
   border-color: rgba(255, 255, 255, 0);
-  border-left-color: #ffffff;
+  @include border-left-color(#ffffff);
   border-width: 15px;
   top: 50%;
   margin-top: -15px;
@@ -622,12 +659,15 @@ input.submit-btn:active {
 }
 
 .uploaded-logo-wrap {
-  float: left;
+  @include float(left);
   padding: 1px 10px;
+  @if $rtl == true{
+    margin-right: 38px;
+  }
 }
 
 .uploaded-company-name {
-  float: left;
+  @include float(left);
   padding: 15px 10px;
   font-size: 16px;
   vertical-align: middle;
@@ -644,9 +684,9 @@ input.submit-btn:active {
 .gs_failure{color:#B10000;}
 
 .colorpicker .mColorPickerTrigger {
-  float:left;
+  @include float(left);
   position: absolute;
-  left: 0;
+  @include left(0);
   top: 4px;
 }
 
@@ -698,12 +738,12 @@ input.submit-btn:active {
   }
 
   #email_config_box{
-    float: left;
-    margin-left: 10px;
+    @include float(left);
+    @include margin-left(10px);
     position: absolute;
   }
   #agent_box{
-    padding-right: 2px;
+    @include padding-right(2px);
   }
  
  #agents_invite_email .chzn-container,#agents_invite_email .search-field   input{
@@ -716,8 +756,8 @@ input.submit-btn:active {
 
   #agents_invite_email .multi_value_field {
   width:200px;
-  padding-left:5px;
-  padding-right:5px;
+  @include padding-left(5px);
+  @include padding-right(5px);
   border-color:#C6C6C6;
   @include box-shadow(#DFDFDF 1px 1px 2px inset);
   @include border-radius(5px);
@@ -746,7 +786,7 @@ input.submit-btn:active {
 }
 
 #status_update{
-    float: left;
+    @include float(left);
     width: 250px;
     background: #E6E6E0;
     margin-top: 9px;
@@ -777,7 +817,7 @@ p{
 
 .gs_no .submit-btn{
   margin-top: 17px;
-  float: right;
+  @include float(right);
 }
 
 .gs_response .yesno{
@@ -799,8 +839,12 @@ p{
 .panel-divider-left{
   width: 470px;
   min-height: 143px;
-  border-right: 1px rgba(0, 133, 133, 0.5) solid;
-  @include box-shadow(1px 0 0 0 rgba(1, 57, 57, 0.5));
+  @include border-right(1px rgba(0, 133, 133, 0.5) solid);
+  @if $rtl == true{
+    @include box-shadow(-1px 0 0 0 rgba(1, 57, 57, 0.5));
+  }@else{
+    @include box-shadow(1px 0 0 0 rgba(1, 57, 57, 0.5));  
+  }
 }
 
 #email_config_submit{
@@ -812,7 +856,7 @@ p{
   position: relative;
   z-index: 999999;
   border: none;
-  left: 345px;
+  @include left(345px);
   padding: 6px 16px;
   width: 63px;
   height: 28px;
@@ -844,8 +888,8 @@ p{
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #eaeaea;
   top: -22px;
-  left: 321px;
-  text-align: center;
+  @include left(321px);
+  @include text-align(center);
   z-index: 200;
 }
 
@@ -863,15 +907,15 @@ p{
   border-color: rgba(222, 78, 82, 0);
   border-top-color: #333;
   border-width: 6px;
-  left: 50%;
-  margin-left: -6px;
+  @include left(50%);
+  @include margin-left(-6px);
 }
 .warning-tip:before {
   border-color: rgba(194, 225, 245, 0);
   border-top-color: rgba(0, 0, 0, 0.5);
   border-width: 7px;
-  left: 50%;
-  margin-left: -7px;
+  @include left(50%);
+  @include margin-left(-7px);
 }
 
 .email-textbox{

@@ -50,7 +50,7 @@ jQuery(document).ready(function() {
         results: function (data) {
           var results = [];
           jQuery.each(data.results, function(i, item){
-            results.push({id: item.id, value: item.value, info: item.details});
+            results.push({id: item.id, value: escapeHtml(item.value), info: item.details});
           });
           return { results: results }
 

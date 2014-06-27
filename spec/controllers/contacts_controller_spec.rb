@@ -8,6 +8,7 @@ describe ContactsController do
   before(:each) do
     login_admin
     @user_count = @account.users.all.size
+    stub_s3_writes
   end
 
   before(:all) do
