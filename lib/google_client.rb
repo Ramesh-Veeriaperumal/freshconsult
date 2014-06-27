@@ -1,6 +1,7 @@
 #Contacts google api through google-api-client gem, gets calendar list for a user
 #gets all subscribed holidays calendar. 
 require 'google/api_client'
+include Integrations::OauthHelper
 module GoogleClient
 
 	FILE_PATH = "#{RAILS_ROOT}/config/google_api.yml"
@@ -73,18 +74,8 @@ module GoogleClient
       client.authorization.client_secret = @@client_secret
       client.authorization.scope = @@scope
       client.authorization.refresh_token = @@refresh_token
-      client.authorization.access_token = @@access_token
-
-      if client.authorization.refresh_token && client.authorization.expired?
-        client.authorization.fetch_access_token!
-        new_auth_token = client.authorization.access_token
-        config = YAML.load_file(FILE_PATH)
-        config[Rails.env]["google_oauth2"]["access_token"] = new_auth_token
-        File.open(FILE_PATH, 'w'){|f| YAML.dump(config, f) }
-        @@access_token = new_auth_token
-      else
-        client.authorization.access_token = @@access_token
-      end
+      client.authorization.access_token = get_oauth2_access_token("google_oauth2", @@refresh_token,'').token
+      
       client
     end
 
