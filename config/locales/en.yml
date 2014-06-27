@@ -3323,9 +3323,6 @@ en:
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
     add_time: Add time
-    quoted_text:
-      wrote_on: 'On'
-      wrote: wrote
     support:
       reply: "Reply"
       reply_and_open: "Reply"
