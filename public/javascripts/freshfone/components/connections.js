@@ -11,7 +11,7 @@ var FreshfoneConnection;
 		init: function () {
 		},
 		createNotification: function () {
-			self = this;
+			var self = this;
 			var $incomingCallWidget = $('#incomingWidget').clone().tmpl();
 			$incomingCallWidget.attr('id', this.callSid());
 

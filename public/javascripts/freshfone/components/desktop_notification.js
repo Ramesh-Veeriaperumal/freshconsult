@@ -14,7 +14,7 @@ var FreshfoneDesktopNotification;
       if(Notification.permission == 'default') { 
         this.bindDeskNotifierButton();
       }
-      self = this;
+      var self = this;
       callMeta = this.callConnection.ffNumberName;
       title = "Incoming call to";
       title = callMeta ? title+ " " + callMeta : title;
@@ -33,7 +33,7 @@ var FreshfoneDesktopNotification;
       }
     },
     bindDeskNotifierButton: function () {
-      self = this;
+      var self = this;
       freshfonewidget.desktopNotifierWidget.on("click", function () {
         Notification.requestPermission( function () {
           freshfonewidget.desktopNotifierWidget.hide();

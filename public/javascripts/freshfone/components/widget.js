@@ -170,7 +170,7 @@ var FreshfoneWidget;
 			state ? this.widget.addClass('in_active_ongoing_widget') :  this.widget.removeClass('in_active_ongoing_widget');
 		},
 		isSupportWebNotification: function () { 
-			return (typeof(Notification) != undefined)? true : false;
+			return (typeof(Notification) != (undefined || "undefined") )? true : false;
 		},
 		bindDeskNotifierButton: function () {
 				if(this.isSupportWebNotification && Notification.permission == 'default') {
