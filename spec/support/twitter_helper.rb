@@ -239,23 +239,11 @@ module TwitterHelper
   end
   
   def add_response
-    {
-      "add" => {
-                  :response=>true, 
-                  :rule_value=> "", 
-                  :rule_tag=> ""
-          }
-    }
+    Net::HTTPResponse.new("http",201,"")
   end
   
   def delete_response
-    {
-      "delete" => {
-        :response=>true, 
-        :rule_value => "",
-        :rule_tag => ""
-      }
-    }
+    Net::HTTPResponse.new("http",200,"")
   end
   
   def sample_twitter_object(parent_id = "")

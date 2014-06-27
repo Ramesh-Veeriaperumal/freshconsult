@@ -8,8 +8,8 @@ describe Admin::Social::TwitterHandlesController do
   before(:each) do
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
-      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
     end
     login_admin
   end
@@ -78,7 +78,7 @@ describe Admin::Social::TwitterHandlesController do
   after(:all) do
     Resque.inline = true
     GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
     Social::TwitterHandle.destroy_all
     Resque.inline = false
   end

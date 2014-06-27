@@ -400,7 +400,7 @@ class User < ActiveRecord::Base
     if !no_multiple_user_emails and defined?(additional_email)
       [additional_email.split(",").map{|x| {:id => id, :details => "#{name} <#{x}>", :value => name}}]
     else
-      [{:id => id, :details => self.name_details, :value => name}]
+      [{:id => id, :details => self.name_details, :value => name, :email => email}]
     end
   end
   ##Authorization copy ends here
