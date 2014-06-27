@@ -39,6 +39,15 @@ describe Admin::Social::TwitterStreamsController do
     end
   end
   
+  describe "GET #edit" do
+    it "should render the create stream page when create a new stream is clicked" do
+      get :edit, {
+        :id => @default_stream.id
+      }
+      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+    end
+  end
+  
   
   describe "GET #preview" do
     it "should show a preview of the feeds matching the filter criteria specified" do
