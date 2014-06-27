@@ -10,7 +10,7 @@ describe Social::Gnip::TwitterFeed do
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
     @handle.update_attributes(:capture_dm_as_ticket => true)
@@ -352,7 +352,7 @@ describe Social::Gnip::TwitterFeed do
 
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
     end
 
     Social::TwitterHandle.destroy_all
