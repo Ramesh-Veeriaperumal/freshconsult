@@ -77,4 +77,9 @@ if ENV["RAILS_ENV"] == "test"
 
   Factory.define :sla_details, :class => Helpdesk::SlaDetail do |f|
   end
+
+  Factory.define :data_export, :class => DataExport do |d|
+    d.status 4
+    d.token Digest::SHA1.hexdigest "#{Time.now.to_f}"
+  end
 end

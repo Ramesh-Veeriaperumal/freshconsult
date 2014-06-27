@@ -19,6 +19,11 @@ module TicketHelper
                                          :created_at => params[:created_at],
                                          :account_id => account_id)
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
+    if params[:attachments]
+      test_ticket.attachments.build(:content => params[:attachments][:resource], 
+                                    :description => params[:attachments][:description], 
+                                    :account_id => test_ticket.account_id)
+    end
     test_ticket.group_id = group ? group.id : nil
     test_ticket.save_ticket
     test_ticket
