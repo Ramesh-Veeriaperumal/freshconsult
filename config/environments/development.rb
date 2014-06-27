@@ -34,5 +34,4 @@ end
 # File.copy('config/redis_development.yml', 'config/redis.yml', true)
 
 FileUtils.cp('config/redis_development.yml', 'config/redis.yml')
-FileUtils.cp('config/stats_redis_development.yml', 'config/stats_redis.yml')
 FileUtils.cp('config/elasticsearch_development.yml', 'config/elasticsearch.yml')
