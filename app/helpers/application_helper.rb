@@ -975,9 +975,9 @@ module ApplicationHelper
 		if call.blocked?
 			"blocked_call_icon"
 		elsif call.incoming?
-			call.completed? ? "incoming_call_icon" : "incoming_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "incoming_call_icon" : "incoming_missed_call_icon"
 		elsif call.outgoing?
-			call.completed? ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
 		end
 	end
 # helpers for fresfone callable links -- ends
