@@ -1475,7 +1475,7 @@ en:
           spam_check: "We're checking your topic for spam. It will appear once it has been approved."
       tickets:
         create:
-          success: Your ticket has been created and a copy has been sent to you via email.
+          success: Your ticket has been created.
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
