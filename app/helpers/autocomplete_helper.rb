@@ -4,7 +4,7 @@ module AutocompleteHelper
 	#View method
 	def render_customer_autocomplete
 		render(:partial => "helpdesk/shared/autocomplete_select", :locals => { 
-																																						:url => customer_helpdesk_autocomplete_path, 
+																																						:url => companies_search_autocomplete_path, 
 																																						:selected_values => @selected_customers, 
 																																						:container => "customers" 
 																																					})
