@@ -89,6 +89,7 @@ class FreshfoneNotifier < ActionMailer::Base
     body         :account => account, :message => params[:message]
     sent_on      Time.now
     content_type "text/html"
+  end
 
   def freshfone_account_closure(account)
     subject       "Process Account closure for account #{account.id}"
