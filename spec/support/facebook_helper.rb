@@ -242,4 +242,76 @@ module FacebookHelper
     [ticket, comment_id]
   end
   
+  def sample_fql_feed(post_id, status, count = 0)
+    actor_id = status ? @fb_page.page_id : (Time.now.utc.to_f*100000).to_i
+    [{  "post_id"=> post_id, 
+        "message" => Faker::Lorem.sentence(3),
+        "actor_id" => actor_id, 
+        "updated_time" => (Time.now.utc.to_f * 1000).to_i, 
+        "created_time" => (Time.now.ago(6.minutes).utc.to_f*100000).to_i,
+        "comments" => {
+          "can_remove" => true, 
+          "can_post" => true, 
+          "count" => count, 
+          "comment_list" => [
+          ]
+        }
+    }]
+  end
+  
+  def sample_fql_comment_feed(post_id)
+    [{
+      "id" => "#{post_id.split("_").last}_#{(Time.now.utc.to_f * 1000).to_i}", 
+      "from" => { "category" => Faker::Lorem.sentence(1), 
+                  "name" => Faker::Lorem.sentence(1), 
+                  "id" => (Time.now.utc.to_f * 1000).to_i
+                }, 
+      "message" => Faker::Lorem.sentence(3), 
+      "can_remove" => true,
+      "created_time" => Time.now.utc.iso8601
+    }]
+  end
+  
+  def sample_user_profile(profile_id)
+    name = Faker::Name.name
+    { "id" => profile_id, 
+      "email" => Faker::Internet.email(name.split.last),
+      "name" => name, 
+      "username" => Faker::Internet.user_name(name.split.last) ,
+      "verified"=>true
+    }
+  end
+  
+  def sample_dm_threads(thread_id, actor_id, msg_id)
+    [{   "id" => thread_id, 
+        "snippet"=> Faker::Lorem.sentence(1), 
+        "updated_time"=> "#{Time.now.utc.iso8601}", 
+        "message_count" => 1, 
+        "messages" => {
+          "data" => [sample_dm_msg(actor_id, msg_id)]
+        }
+    }]
+  end
+  
+  def sample_dm_msg(actor_id, msg_id)
+    name = Faker::Name.name
+    { "id" =>  msg_id, 
+      "created_time" => "#{Time.now.utc.iso8601}", 
+      "from" => {
+        "name" => name,
+        "email"=> Faker::Internet.email(name.split.last) , 
+        "id"=> "#{actor_id}" 
+      }, 
+      "message"=> Faker::Lorem.sentence(4)
+    } 
+  end
+  
+  def generate_thread_id
+    "t_id.#{(Time.now.utc.to_f * 1000).to_i}"
+  end
+  
+  def generate_msg_id
+    "m_mid.#{(Time.now.utc.to_f * 1000).to_i}:#{rand(36**15).to_s(36)}"
+  end
+  
 end
