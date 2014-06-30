@@ -10,7 +10,7 @@ describe Social::Twitter::Feed do
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
     @custom_stream = create_test_custom_twitter_stream
@@ -132,7 +132,7 @@ describe Social::Twitter::Feed do
 
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([])
-      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
     end
 
     Social::TwitterHandle.destroy_all
