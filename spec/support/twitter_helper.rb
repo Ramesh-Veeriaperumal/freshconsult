@@ -54,6 +54,36 @@ module TwitterHelper
     }
   end
   
+  def sample_tweets_array(feeds = true)
+    tweet_array = {
+      "statuses" => []
+    }
+    tweets = []
+    
+    if feeds
+      #Customer tweets
+      10.times do |n|
+        tweet =  sample_twitter_feed
+        tweet["text"] = "http://helloworld.com" if n == 8
+        tweet["user"]["description"] = "TestingGnip" if n == 9
+        tweets << tweet 
+      end
+      
+      #Brand tweet
+      10.times do |n|
+        tweet = sample_twitter_feed
+        tweet["user"]["screen_name"] = "TestingGnip"
+        tweet["in_reply_to_status_id"] = tweets[n]["id"] if n==2
+        tweets << tweet
+      end   
+      
+      tweet_array["statuses"] = tweets
+    end
+    response = {:body => tweet_array.to_json}
+    faraday_response = Faraday::Response.new(response)
+    OAuth2::Response.new(faraday_response)
+  end
+  
   def sample_dynamo_query_params
     {
       :member =>
