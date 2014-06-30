@@ -86,6 +86,7 @@ class FreshfoneNotifier < ActionMailer::Base
     subject      params[:subject]
     recipients   params[:recipients]
     from         params[:from]
+    cc           params[:cc] if params[:cc].present?
     body         :account => account, :message => params[:message]
     sent_on      Time.now
     content_type "text/html"
