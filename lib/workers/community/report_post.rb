@@ -7,11 +7,13 @@ class Workers::Community::ReportPost
 
   class << self
 	  def perform(params)
+	  	current_post = build_post(params[:id])
 	  	if params[:report_type]
-	  		Akismetor.submit_ham(akismet_params(build_post(params[:id])))
+	  		Akismetor.submit_ham(akismet_params(current_post))
 	  	else
-	  		Akismetor.submit_spam(akismet_params(build_post(params[:id])))
+	  		Akismetor.submit_spam(akismet_params(current_post))
 	  	end
+	  	SpamAnalysis.push(current_post, {:user_action => params[:report_type]})
 	  end
 
 	  private
