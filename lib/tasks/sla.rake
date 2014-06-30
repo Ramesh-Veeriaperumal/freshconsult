@@ -42,7 +42,7 @@ namespace :sla do
 end
 
 def execute_sla(task_name)
-  begin
+    begin
       puts "Check for SLA violation initialized at #{Time.zone.now}"
       path = log_file
       rake_logger = custom_logger(path)
@@ -56,25 +56,10 @@ def execute_sla(task_name)
     if sla_should_run?(queue_name)
       accounts_queued = 0
       Sharding.execute_on_all_shards do
-         Account.send(SLA_TASK[task_name][:account_method]).each do |account|        
+        Account.send(SLA_TASK[task_name][:account_method]).each do |account|        
           Resque.enqueue(SLA_TASK[task_name][:class_name].constantize, { :account_id => account.id})
           accounts_queued += 1
         end
-      end
-      begin
-        redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-        $stats_redis.set(redis_key, accounts_queued)
-        $stats_redis.expire(redis_key, 144000)
-      rescue => e
-        puts "Error while recording SLA stats : #{e.message}"          
-      end
-    else
-      begin
-        redis_key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-        $stats_redis.set(redis_key, "skipped")
-        $stats_redis.expire(redis_key, 144000)
-      rescue => e
-        puts "Error while recording SLA stats : #{e.message}"          
       end
     end
     puts "SLA rule check finished at #{Time.zone.now}."

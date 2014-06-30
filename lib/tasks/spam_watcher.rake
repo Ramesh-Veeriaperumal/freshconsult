@@ -2,7 +2,7 @@ SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
 def get_redis_values(key)
-  $stats_redis.get("#{key}")
+  $redis_others.get("#{key}")
 end
 
 

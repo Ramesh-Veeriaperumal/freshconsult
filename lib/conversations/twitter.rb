@@ -6,7 +6,7 @@ module Conversations::Twitter
   def send_tweet_as_mention(ticket = @parent, note = @item)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
-    @reply_handle = current_account.twitter_handles.find(reply_handle_id)
+    @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
     twt = nil
 
     unless @reply_handle.nil?
@@ -42,7 +42,7 @@ module Conversations::Twitter
   def send_tweet_as_dm(ticket = @parent, note = @item)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
-    @reply_handle = current_account.twitter_handles.find(reply_handle_id)
+    @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
     resp = nil
 
     unless @reply_handle.nil?

@@ -358,9 +358,10 @@ body, .feedback-wrapper{
 }
 
 // IE hacks
-
-.ie .portal-attach .attach-file{ display:block !important; }
-.ie .portal-attach .attach-proxy{ display:none !important; }
+.ie7, .ie8, .ie9, .ie10{
+	.portal-attach .attach-file{ display:block !important; }
+	.portal-attach .attach-proxy{ display:none !important; }
+}
 .ie8{	overflow: hidden !important; }
 .ie7{
 	position: relative;

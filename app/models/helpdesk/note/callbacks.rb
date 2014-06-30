@@ -195,17 +195,6 @@ class Helpdesk::Note < ActiveRecord::Base
       end
     end
 
-    def increment_notes_counter
-      time = Time.now.utc
-      value = $stats_redis.incr "stats:tickets:#{time.day}:notes:#{time.hour}:#{self.user_id}:#{self.account_id}"
-      if value == 1
-        $stats_redis.expire "stats:tickets:#{time.day}:notes:#{time.hour}:#{self.user_id}:#{self.account_id}", 144000
-      end
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-    end
-
-
     def api_webhook_note_check
       (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook?
     end

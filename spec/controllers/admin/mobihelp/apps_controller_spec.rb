@@ -110,7 +110,13 @@ describe Admin::Mobihelp::AppsController do
   it "should delete a mobihelp_app" do
     mobihelp_app = create_mobihelp_app
     delete :destroy, :id => mobihelp_app.id
-    Mobihelp::App.find_by_id(mobihelp_app.id).should_not be_nil
+    Mobihelp::App.find_by_id(mobihelp_app.id).deleted.should be_true
+  end
+
+  it "should not delete a mobihelp_app" do
+    id = Mobihelp::App.last.id + 1
+    delete :destroy, :id => id
+    Mobihelp::App.find_by_id(id).should be_nil
   end
 
 end

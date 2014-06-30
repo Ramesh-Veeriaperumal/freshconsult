@@ -21,10 +21,10 @@ class TopicObserver < ActiveRecord::Observer
     update_post_user_counts(topic)
 	end
 
-	def after_save(topic)
-		update_forum_counter_cache(topic)
-    create_activity(topic, 'published_topic') if topic.published_changed? and topic.published?
-	end
+  def after_save(topic)
+    update_forum_counter_cache(topic)
+    after_publishing(topic) if topic.published_changed? and topic.published?
+  end
 
   def after_update(topic)
     topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
@@ -34,7 +34,6 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_create(topic)
     topic.account.clear_forum_categories_from_cache
-    after_publishing(topic) if topic.published?
   end
 
   def after_publishing(topic)

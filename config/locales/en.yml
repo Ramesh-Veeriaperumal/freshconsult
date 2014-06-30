@@ -571,6 +571,7 @@ en:
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
+          should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a solution category
           enable_push_notification: Enable Push Notification
@@ -1396,6 +1397,10 @@ en:
         inapp_support: "In App Support"
         ios_sdk: "iOS SDK"
         android_sdk: "Android SDK"
+        trusted_ip: IP Whitelisting
+        trusted_ip_meta: Private Helpdesk
+        custom_mailbox: Custom Mail Server
+        custom_mailbox_meta: Custom Mailboxes
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -4117,7 +4122,7 @@ en:
     streams:
       interactions: Interactions
       other_interactions: Other Interactions
-      recent_searches: Recent Searches
+      recent_searches: Your Recent Searches
       recent_tickets: Recent Tickets
       social_accounts: Social Accounts
       custom_streams: Social Streams
@@ -4161,6 +4166,7 @@ en:
     welcome:
       title: Social Support
       turn_off: Turn OFF Social
+      turn_on: Turn ON Social
       off_helptext_html: To Turn ON, add your <br /> twitter handle from admin
       get_started: Get Started
       customer_tweets: "Customer tweets:"
@@ -4429,7 +4435,7 @@ en:
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
-      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
             <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
             A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:

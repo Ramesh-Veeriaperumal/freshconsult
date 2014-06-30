@@ -4,6 +4,7 @@ class Social::StreamsController < Social::BaseController
   include Social::Dynamo::Twitter
   include Social::Stream::Interaction
   
+  before_filter { |c| c.requires_feature :twitter }
   before_filter :check_if_handles_exist, :only => [:index]
 
   def index

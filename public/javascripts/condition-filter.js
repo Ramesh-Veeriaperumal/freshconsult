@@ -46,7 +46,7 @@ function getFilterInOptgroupFormat(filter){
 			_filter_group.push(["------------------", _filter_children])
 			_filter_children = []
 		}else{
-			_filter_children.push([item.name, item.value, item['unique_action']])
+			_filter_children.push([item.name, escapeHtml(item.value), item['unique_action']])
 		} 
 	});
 	_filter_group.push(["------------------", _filter_children]);
@@ -158,7 +158,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 
 				$filter_select_list = FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', 
-					  										{'minimumResultsForSearch':'10'}).data('dropdownCssClass', "align_options")
+					  										{'minimumResultsForSearch':'10', 'specialFormatting': true}).data('dropdownCssClass', "align_options")
 				if(parentDom=='#actionDOM')
 					jQuery($filter_select_list).data('formatResult', disableSingleSelectOnly);
 
@@ -226,7 +226,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						filterList = filter_data;
 					}				
 									$filter_list_select = FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', 
-                     											{'minimumResultsForSearch':'10'})
+                     											{'minimumResultsForSearch':'10', 'specialFormatting': true})
 																					.val(rule.name).data('dropdownCssClass', "align_options");
 									if(parentDom=='#actionDOM')
 										jQuery($filter_list_select).data('formatResult', disableSingleSelectOnly);

@@ -89,23 +89,8 @@ namespace :scheduler do
           accounts_queued +=1
         end
       end
-      key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-      stats_redis_data(key,accounts_queued,144000)
-    else
-      key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-      stats_redis_data(key,"skipped",144000)
     end
   end
-
-  def stats_redis_data(key,value,expiry)
-    begin
-      $stats_redis.set(key, value)
-      $stats_redis.expire(key, 144000)
-    rescue => e
-      puts "Error while recording SLA stats : #{e.message}"          
-    end
-  end
-
 
   task :supervisor, [:type] => :environment do |t,args|
     account_type = args.type || "paid"
@@ -134,11 +119,6 @@ namespace :scheduler do
           accounts_queued += 1
         end
       end
-      key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-      stats_redis_data(key,accounts_queued,144000)
-    else
-      key = "stats:rake:sla:#{current_time.day}:#{current_time}"
-      stats_redis_data(key,"skipped",144000)
     end
     puts "SLA rule check completed at #{Time.zone.now}."
   end

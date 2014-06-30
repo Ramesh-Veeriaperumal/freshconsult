@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
     :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false, :social_revamp => false,
+    :facebook_realtime => false, :chat => false, :social_revamp => true,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, :hide_portal_forums => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features

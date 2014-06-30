@@ -235,13 +235,11 @@ class Forum < ActiveRecord::Base
       :account => account,
       :user => User.current,
       :activity_data => {
-                          :path => discussion_path(forum_category_id,
-                                    id),
+                          :path => discussions_forum_path(id),
                           'category_name' => h(forum_category.to_s),
                           :url_params => {
-                                           :category_id => forum_category_id,
-                                           :forum_id => id,
-                                           :path_generator => 'discussion_path'
+                                           :id => id,
+                                           :path_generator => 'discussions_forum_path'
                                           },
                           :title => h(to_s),
                           :version => 2

@@ -1,9 +1,9 @@
 <% javascript_tag do %>
 	function changeProfilePic(){
 		jQuery('#AvatarPic').toggle();
-		jQuery('#AvatarInput').toggle();	
+		jQuery('#AvatarInput').toggle();
 	}
-	
+
 	deletePic = function() {
 	    jQuery("#AvatarControls").remove();
 		jQuery('#AvatarPic').remove();
@@ -13,29 +13,30 @@
 <% end %>
 
 <%#= label(:user, :photo, t('user.photo')) %>
-<% if(type == "edit" &&  user.avatar) %>				
+<% if(type == "edit" &&  user.avatar) %>
 	<div class="profile_pic" id="AvatarPic">
-		<%= image_tag user.avatar.expiring_url(:medium), :alt => user.name %>
+		<%= image_tag user.avatar.expiring_url(:medium), :alt => user.name,
+									:onerror => "imgerror(this)" %>
 	</div>
 	<div id="AvatarInput" style="display:none;">
-		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>	
+		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 			<div class="info-data"><%=t('user.info1')%></div>
-			  <%= avatar_form.file_field :content, :size => 10 , :class => 'upload_size_validity'  %>				
+			  <%= avatar_form.file_field :content, :size => 10 , :class => 'upload_size_validity'  %>
 		<% end %>
 	</div>
 	<div id="AvatarControls" class="avatar-controls">
 		<%= link_to_function("Change Photo", "changeProfilePic()") %>
-		<%#= link_to_remote('Delete', 
+		<%#= link_to_remote('Delete',
 				:url => { :action => "delete_avatar", :id => user.id },
 				:success => "deletePic()",
 				:confirm => 'Are you sure you want to delete this Profile Photo',
-				:method => 'delete', 
+				:method => 'delete',
 				:html => { :class => "button" }) %>
-	</div>				
+	</div>
 	<br />
-<% else %>		
+<% else %>
 	<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 		<div class="info-data"><%=t('user.info1')%></div>
-		  <%= avatar_form.file_field :content, :size => 10, :class => 'upload_size_validity'%>				
+		  <%= avatar_form.file_field :content, :size => 10, :class => 'upload_size_validity'%>
 	<% end %>
 <% end %>

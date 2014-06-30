@@ -11,17 +11,27 @@ namespace :gnip_stream do
         :conditions => " subscriptions.state != 'suspended' "
       ) do |stream_block|
         stream_block.each do |stream|
-          if stream.data[:gnip] == true 
-            unless stream.data[:rule_value].nil?
-              db_set << {:rule_value => stream.data[:rule_value],
-                          :rule_tag => stream.data[:rule_tag] }
-            else
-              error_params = {
-                :stream_id => stream.id,
-                :account_id => stream.account_id,
-                :rule_state => stream.data[:gnip_rule_state]
-              }
-              notify_social_dev("Default Stream rule value is NIL", error_params)
+          account = stream.account
+          if !account.features?(:twitter)
+            error_params = {
+              :stream_id => stream.id,
+              :account_id => stream.account_id,
+              :data => stream.data
+            }
+            notify_social_dev("Twitter Streams present for non social plans", error_params)
+          else
+            if stream.data[:gnip] == true 
+              unless stream.data[:rule_value].nil?
+                db_set << {:rule_value => stream.data[:rule_value],
+                            :rule_tag => stream.data[:rule_tag] }
+              else
+                error_params = {
+                  :stream_id => stream.id,
+                  :account_id => stream.account_id,
+                  :rule_state => stream.data[:gnip_rule_state]
+                }
+                notify_social_dev("Default Stream rule value is NIL", error_params)
+              end
             end
           end
         end

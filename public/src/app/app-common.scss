@@ -3695,6 +3695,27 @@ $adm-bdr:#F0F0F0;
 		@include clear(left);
 		padding-top: 4px;
 	}
+	.ctkt-help{
+		padding: 0 5px;
+		span{
+			font-family: sans-serif;
+			border: 1px solid #666;
+			display: inline-block;
+			padding: 1px 4px 0;
+			font-size: 11px;
+			border-radius: 50%;
+			font-weight: bold;
+			line-height: 13px;
+			background: rgba(255,255,255,0.6);
+			color: #666;
+		}
+		&:hover{
+			span{
+				color: rgba(255,255,255,1);
+				background: #666;
+			}
+		}
+	}
 }
 
 // Admin Social styles end

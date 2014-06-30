@@ -5,7 +5,7 @@
 <div class="row-fluid scl-welcome">
   <div class="span14">
     <div style="float:left" class="span2 image-lazy-load">
-      <img src="http://placehold.it/1/ffffff/ffffff" data-src="/images/cdn-ignored/inline-images/social/social-welcome.png" alt="" data-src-retina="/images/cdn-ignored/inline-images/social/social-welcome-2x.png">
+      <img src="http://placehold.it/1/ffffff/ffffff" data-src="/images/cdn-ignored/inline-images/social/social-welcome.png" alt="" data-src-retina="/images/cdn-ignored/inline-images/social/social-welcome-2x.png" style="width:100%">
     </div>
     <div class="span10">
       <h4><%= t('social.welcome.helptext_title1')%></h4>
@@ -16,7 +16,11 @@
         <div class="scl-btn-group">
           <ul class="unstyled row">
             <li class="span6" style="text-align:right;">
-              <button class="btn social-toggle-button"><%= t('social.welcome.turn_off')%></button>
+              <% if @twitter_enable %>
+                <%= button_to t('social.welcome.turn_off'), {:controller => :welcome, :action => 'enable_feature', :twitter => false}, :method => :post, :class => "btn social-toggle-button" %>
+              <% else %>
+                <%= button_to t('social.welcome.turn_on'), {:controller => :welcome, :action => 'enable_feature', :twitter => true}, :method => :post, :class => "btn social-toggle-button" %>
+              <% end %>
               <span class="help-block"><%= t('social.welcome.off_helptext_html')%></span></li>
             <li class="span6" style="text-align:left;"><%= link_to(t('social.welcome.get_started'), :admin_social_streams , :class => "btn btn-primary" ) %></li>
           </ul>
@@ -36,12 +40,6 @@
       </div>
     <div id="twitterStats"></div>
   </div>
-<% end %>
-
-<% content_for :onload_script do %>
-  <% unless @twitter_enable %>
-    jQuery('.social-toggle-button').text('Turn ON Social');
-  <% end %>
 <% end %>
 
 <script type="text/javascript">
@@ -70,21 +68,5 @@
       }
     });
   });
-
-  jQuery(".social-toggle-button").live("click", function(e){
-    e.preventDefault();
-    feature = (jQuery(this).text() == 'Turn OFF Social' ? false : true)
-    data = {twitter: feature}
-    jQuery.ajax({
-      type: 'POST',
-      url : '/social/welcome/enable_feature',
-      data: data,
-      datatype:'json',
-      success: function(data){
-        jQuery(this).text('Turn ON Social');
-        location.replace('/admin/home')
-      }
-    });
-  })
 
 </script>

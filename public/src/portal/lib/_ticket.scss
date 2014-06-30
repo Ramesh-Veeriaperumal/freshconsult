@@ -7,7 +7,7 @@
 	@include padding(8px 5px 8px 45px);
 	.status-source{ 
 		@include float(left);
-		@include margin-left(45px);
+		@include margin-left(-45px);
 	}
 	.label{ 
 		@include float(right);

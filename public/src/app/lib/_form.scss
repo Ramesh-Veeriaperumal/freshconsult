@@ -1156,7 +1156,6 @@ input.search{
 }
 
 .ui-dialog-form{
-	font-size:80%;
 	.info-data{
 		@include padding-left(18px);
 		font-size:1.2em;
@@ -1165,15 +1164,6 @@ input.search{
 	.button-panel{ padding:8px 0; }
 	.primary{ font-weight:bold; }
     a.button-link{ @include inline-block; font-size:13px; margin-top:6px; @include margin-right(3px); }
-	a.close{
-    	position:absolute;
-     @include right(5px);
-    	top:5px;
-    	width:28px;
-    	height:28px;
-    	background:url("/images/close_delete.png") no-repeat center;
-    	z-index:999;
-    }
     .ctrlHolder{
     	margin-bottom:10px;
     }

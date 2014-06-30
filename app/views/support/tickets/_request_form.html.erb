@@ -26,7 +26,10 @@
   <% end %>
   <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-  <%= hidden_field_tag "meta[referrer]", request.referrer %>
+  <%
+    referrer = h(request.referrer)
+  %>
+  <%= hidden_field_tag "meta[referrer]", referrer %>
 
   <div class="form-actions">
 		<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>		
@@ -37,7 +40,7 @@
 <% javascript_tag do %>
   (function($){
     jQuery(document).ready(function(){      
-      jQuery('#meta_referrer').val(document.referrer);
+      jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/support/search/solutions?max_matches=4&term="+string, 

@@ -12,7 +12,7 @@ function ContactFormInitializer(confirm_text, tags_options) {
                   response(jQuery.map(data.results,
                   function(item) {
                       return {
-                          label: item.value,
+                          label: escapeHtml(item.value),
                           value: item.value
                       }
                   }));
