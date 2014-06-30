@@ -166,6 +166,54 @@ module FacebookHelper
     [ticket, post_id]
   end
   
+   def sample_user_profile(profile_id)
+     name = Faker::Name.name
+     { "id" => profile_id, 
+       "email" => Faker::Internet.email(name.split.last),  
+       "name" => "#{name}", 
+       "username" => Faker::Internet.user_name(name.split.last),
+       "verified"=>true
+     }
+   end
+  
+  def sample_fql_feed(feed_id, status = true, comment_count = 0)
+    actor_id = status ? @fb_page.page_id : (Time.now.utc.to_f*100000).to_i
+    [
+      {
+        "post_id" =>  "#{feed_id}", 
+        "message" => "Test local 123", 
+        "actor_id" => "#{actor_id}", 
+        "updated_time" => (Time.now.utc.to_f).to_i, 
+        "created_time" => (Time.now.utc.to_f).to_i, 
+        "comments" => {
+          "can_remove" => true, 
+          "can_post" => true, 
+          "count" => comment_count, 
+          "comment_list" => [
+          ]
+        }
+      }
+    ]
+  end
+  
+  def sample_comment_feed(comment_id)
+    [
+      {
+        "id" => "#{comment_id}", 
+        "from" => {
+          "category" => "Book", 
+          "name" => "3states", 
+          "id" => "515939601786665"
+        }, 
+        "message" => "lol", 
+        "can_remove" => true, 
+        "created_time" => "2014-06-30T06:22:23+0000", 
+        "like_count" => 0, 
+        "user_likes" => false
+      }
+    ]
+  end
+  
   def sample_comment_and_ticket
     data = @default_stream.data.merge({:replies_enabled => true})
     @default_stream.update_attributes(:data => data)
