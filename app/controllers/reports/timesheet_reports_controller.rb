@@ -2,6 +2,8 @@ class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
   include ReadsToSlave
+  include AutocompleteHelper
+  helper AutocompleteHelper
   
   before_filter :check_permission, :set_selected_tab
   before_filter :build_item ,  :only => [:index,:export_csv,:report_filter,:time_sheet_list]
