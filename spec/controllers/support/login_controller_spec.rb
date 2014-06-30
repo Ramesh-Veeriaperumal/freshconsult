@@ -60,7 +60,10 @@ describe Support::LoginController do
   end
 
   it "should allow user to login" do
-  	post :create, :user_session=>{:email=>"sample@freshdesk.com", :password=>"test", :remember_me=>"0"}
+    user = add_new_user(@account)
+    user.password = "test"
+    user.save
+  	post :create, :user_session=>{:email=> user.email, :password=>"test", :remember_me=>"0"}
   	response.body.should =~ /redirected/
   	response.body.should_not =~ /Login to the support portal/
   	response.redirected_to.should eql "/"
