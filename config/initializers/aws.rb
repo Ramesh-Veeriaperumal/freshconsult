@@ -1,5 +1,5 @@
-config = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/s3.yml")).result)
-sqs_config = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/sqs.yml")).result)
+config = YAML::load(ERB.new(File.read("#{Rails.root}/config/s3.yml")).result)
+sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
 sns_config = File.join(Rails.root,"config","sns.yml")
 dynamodb_config = File.join(Rails.root,"config","dynamo_db.yml")
 

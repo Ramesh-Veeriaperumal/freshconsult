@@ -8,12 +8,12 @@ class User < ActiveRecord::Base
   include Mobile::Actions::User
   include Users::Activator
   include Users::Preferences
-  include Authority::Rails::ModelHelpers
+  include Authority::FreshdeskRails::ModelHelpers
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include Authority::Rails::ModelHelpers
+  include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
 

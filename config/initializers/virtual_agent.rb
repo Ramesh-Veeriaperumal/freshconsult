@@ -40,11 +40,11 @@ module VAConfig
   private
 
     def self.fetch_handler(field, account, handler_type)
-      RAILS_DEFAULT_LOGGER.debug "The field is : #{field}, handler_type is :#{handler_type},"
+      Rails.logger.debug "The field is : #{field}, handler_type is :#{handler_type},"
       field_key = fetch_field_key field, account, handler_type
       handler_key = FIELDS[handler_type][field_key]
 
-      RAILS_DEFAULT_LOGGER.debug "field_key is : #{field_key}  handler_key is : #{handler_key}"
+      Rails.logger.debug "field_key is : #{field_key}  handler_key is : #{handler_key}"
       VA_HANDLERS[handler_type][handler_key.to_sym]
     end
 
@@ -67,9 +67,9 @@ end
 
 
 
-YAML.load_file("#{RAILS_ROOT}/config/virtual_agent.yml").each do |k, v|
+YAML.load_file("#{Rails.root}/config/virtual_agent.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
 end
-YAML.load_file("#{RAILS_ROOT}/config/va_handlers.yml").each do |k, v|
+YAML.load_file("#{Rails.root}/config/va_handlers.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
 end

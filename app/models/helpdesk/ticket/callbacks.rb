@@ -220,7 +220,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_time_zone
@@ -229,7 +229,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     end 
   end
   #end of SLA

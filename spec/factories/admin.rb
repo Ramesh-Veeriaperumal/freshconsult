@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :group do |g|
     g.name "group1"
     g.description "test group one"

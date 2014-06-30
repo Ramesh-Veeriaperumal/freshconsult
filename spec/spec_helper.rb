@@ -54,7 +54,7 @@ Spork.prefork do
   'spec/support/va/tester/condition/supervisor.rb',
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
-  'spec/support/va/test_case.rb'].each do |file_path| require "#{RAILS_ROOT}/#{file_path}" end
+  'spec/support/va/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
   Spec::Runner.configure do |config|
@@ -64,7 +64,7 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.mock_with :mocha
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    config.fixture_path = Rails.root + '/spec/fixtures/'
     config.include AccountHelper
     config.include AgentHelper
     config.include TicketHelper
@@ -165,7 +165,7 @@ Spork.prefork do
     #
     # You can also declare which fixtures to use (for example fixtures for test/fixtures):
     #
-    # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    # config.fixture_path = Rails.root + '/spec/fixtures/'
     #
     # == Mock Framework
     #

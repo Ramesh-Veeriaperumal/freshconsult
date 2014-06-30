@@ -109,7 +109,7 @@ describe Helpdesk::AttachmentsController do
                                                :description => Faker::Lorem.characters(10) 
                                               } })
     get :text_content, :id => ticket.attachments.first.id
-    response.body.force_encoding("UTF-8").should be_eql(File.read("#{RAILS_ROOT}/spec/fixtures/files/image.gif"))
+    response.body.force_encoding("UTF-8").should be_eql(File.read("#{Rails.root}/spec/fixtures/files/image.gif"))
   end
 
   

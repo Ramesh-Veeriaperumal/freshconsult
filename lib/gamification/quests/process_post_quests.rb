@@ -13,7 +13,7 @@ module Gamification
 
 			def self.evaluate_post_quests(post)
 				return if (post.user.customer? or post.user_id == post.topic.user_id)
-				RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_post_quests)
+				Rails.logger.debug %(INSIDE evaluate_post_quests)
 				post.user.available_quests.answer_forum_quests.each do |quest|
 					is_a_match = quest.matches(post)
 					if is_a_match and evaluate_query(quest,post)
