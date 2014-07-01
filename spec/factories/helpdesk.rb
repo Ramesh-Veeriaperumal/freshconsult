@@ -82,4 +82,8 @@ if Rails.env.test?
     d.status 4
     d.token Digest::SHA1.hexdigest "#{Time.now.to_f}"
   end
+  
+  Factory.define :achieved_quest, :class => AchievedQuest do |d|
+    d.quest_id 1
+  end
 end
