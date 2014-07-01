@@ -18,7 +18,9 @@ end
 
 FacebookTests = [
   "spec/lib/facebook/comment_spec.rb", 
-  "spec/lib/facebook/post_spec.rb"
+  "spec/lib/facebook/post_spec.rb",
+  "spec/lib/facebook/facebook_post_spec.rb",
+  "spec/lib/facebook/facebook_core_message_spec.rb"
 ]
 
 GnipTests = [

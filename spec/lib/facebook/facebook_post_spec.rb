@@ -37,8 +37,7 @@ describe Social::FacebookPosts do
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))  
     
-    comment_id = "#{feed_id.split('_').last}_#{(Time.now.utc.to_f*10000).to_i}"
-    comment_feed = sample_comment_feed(comment_id)
+    comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
@@ -91,9 +90,9 @@ describe Social::FacebookPosts do
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
     
-    comment_id = "#{feed_id.split('_').last}_#{(Time.now.utc.to_f*10000).to_i}"
-    comment_feed = sample_comment_feed(comment_id)
+    comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
+    
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
