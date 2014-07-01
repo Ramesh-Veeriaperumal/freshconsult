@@ -8,6 +8,7 @@ class Freshfone::UsersController < ApplicationController
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
+	before_filter :validate_freshfone_state
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
@@ -63,6 +64,11 @@ class Freshfone::UsersController < ApplicationController
 
 	
 	private
+		def validate_freshfone_state
+			render :json => { :update_status => false } if 
+				current_account.freshfone_account && current_account.freshfone_account.suspended?
+		end
+
 		def load_or_build_freshfone_user
 			return node_user if requested_from_node?
 			@freshfone_user = current_user.freshfone_user || build_freshfone_user
