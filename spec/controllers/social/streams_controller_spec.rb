@@ -30,6 +30,7 @@ describe Social::StreamsController do
     update_db(@sec_default_stream) unless GNIP_ENABLED
     @sec_rule = {:rule_value => @sec_data[:rule_value], :rule_tag => @sec_data[:rule_tag]}
     Resque.inline = false
+    AgentGroup.destroy_all
   end
   
   before(:each) do
@@ -188,6 +189,50 @@ describe Social::StreamsController do
     
     get :index
     response.should redirect_to admin_social_streams_url
+  end
+
+  describe "#index" do
+    it "should fetch all the streams that are visible to the user" do
+      all_streams = @agent.visible_social_streams
+      default_streams = all_streams.select { |stream| stream.default_stream? }
+      custom_streams  = all_streams.select { |stream| stream.custom_stream? }
+
+      get :index
+      response.should render_template("social/streams/index.html.erb")
+      response.template_objects["streams"].should eql(default_streams)
+      response.template_objects["custom_streams"].should eql(custom_streams)
+    end
+    
+    it "should fetch all the streams that are visible to the where the stream is visible to marketing" do
+      @first_default_stream.accessible.update_attributes(:access_type => 2)
+      @first_default_stream.accessible.create_group_accesses([1])
+      @sec_default_stream.accessible.update_attributes(:access_type => 2)
+      @sec_default_stream.accessible.create_group_accesses([2])
+      
+      all_streams = @agent.visible_social_streams
+      default_streams = all_streams.select { |stream| stream.default_stream? }
+      custom_streams  = all_streams.select { |stream| stream.custom_stream? }
+
+      get :index
+      response.should render_template("social/streams/index.html.erb")
+      response.template_objects["streams"].include?(@first_default_stream).should be_false
+      response.template_objects["streams"].include?(@sec_default_stream).should be_false
+      response.template_objects["custom_streams"].should eql(custom_streams)
+    end
+    
+    it "should fetch all the streams that are visible to the user belonging to marketing" do
+      AgentGroup.create(:user_id =>@agent.id, :group_id => 1)
+      all_streams = @agent.visible_social_streams
+      default_streams = all_streams.select { |stream| stream.default_stream? }
+      custom_streams  = all_streams.select { |stream| stream.custom_stream? }
+
+      get :index
+      response.should render_template("social/streams/index.html.erb")
+      response.template_objects["streams"].should eql(default_streams)
+      response.template_objects["streams"].include?(@first_default_stream).should be_true
+      response.template_objects["streams"].include?(@sec_default_stream).should be_false
+      response.template_objects["custom_streams"].should eql(custom_streams)
+    end
   end
 
   after(:all) do
