@@ -2,6 +2,7 @@ require 'spec_helper'
 include FreshfoneQueueHelper
 
 describe Freshfone::QueueController do
+  include Freshfone::Queue
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -71,5 +72,43 @@ describe Freshfone::QueueController do
     Twilio::REST::Member.any_instance.stubs(:dequeue)
     post :quit_queue_on_voicemail, dequeue_params
     response.body.should be_eql("Dequeued Call CAb5ce7735068c8cd04a428ed9a57ef64e from QU629430fd5b8d41769b02abfe7bfbe3a9")
+  end
+
+  it 'should fetch the calls waiting in queue for an agent: agent hunted call' do
+    log_in @agent
+    
+    agent_key = "FRESHFONE:AGENT_QUEUE:#{@account.id}"
+    controller.remove_key agent_key
+    controller.set_key(agent_key, {@agent.id => ["CAGENTHUNTEDCALL"]}.to_json)
+
+    controller.stubs(:bridge_priority_call)
+    list = stub()
+    list.stubs(:list).returns(["dummy queued member"])
+    controller.stubs(:queued_members).returns(list)
+    
+    post :bridge
+    assigns[:priority_call].should match("CAGENTHUNTEDCALL")
+
+    controller.remove_key agent_key
+  end
+
+  it 'should fetch the calls waiting in queue for a group: group hunted call' do
+    log_in @agent
+    group = create_group @account, {:name => "Freshfone Group"}
+    AgentGroup.new(:user_id => @agent.id , :account_id => @account.id, :group_id => group.id).save!    
+    
+    group_key = "FRESHFONE:GROUP_QUEUE:#{@account.id}"
+    controller.remove_key group_key
+    controller.set_key(group_key, {group.id => ["CGROUPHUNTEDCALL"]}.to_json)
+
+    controller.stubs(:bridge_priority_call)
+    list = stub()
+    list.stubs(:list).returns(["dummy queued member"])
+    controller.stubs(:queued_members).returns(list)
+    
+    post :bridge
+    assigns[:priority_call].should match("CGROUPHUNTEDCALL")
+
+    controller.remove_key group_key
   end
 end
