@@ -54,6 +54,7 @@ class Account < ActiveRecord::Base
       self.helpdesk_name = name if helpdesk_name.nil?
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
+      self.ssl_enabled = true
     end
 
     def backup_changes
