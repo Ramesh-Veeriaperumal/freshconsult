@@ -12,14 +12,14 @@ var CS_URL = "<%=comm_url%>";
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 var CHAT_ENV = "<%= Rails.env -%>";
+var ASSET_URL = JSON.parse('<%=asset%>');
 
 (function($){
     $(document).ready(function(){
-        var asset_url = JSON.parse('<%=asset%>');
-        var url = asset_url.js;
-        var css_url = asset_url.css;
+        var url = ASSET_URL.js;
+        var css_url = ASSET_URL.css;
         if(window.location && window.location.protocol=='https:'){
-            url = css_url = asset_url.cloudfront;
+            url = css_url = ASSET_URL.cloudfront;
         }
         var fc_CSS=document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');
@@ -30,7 +30,7 @@ var CHAT_ENV = "<%= Rails.env -%>";
                 var path = window.location.pathname.split('/');
                 if(path[path.length - 1] == "chat_setting"){
                     if(window.behaviour){
-                        behaviour.initialize({setting:<%=freshchat_setting%>,asset:asset_url});
+                        behaviour.initialize({setting:<%=freshchat_setting%>,asset:ASSET_URL});
                     }
                 }
             });
