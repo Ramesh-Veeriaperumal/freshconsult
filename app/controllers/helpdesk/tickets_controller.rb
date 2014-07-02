@@ -13,7 +13,6 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::ToggleEmailNotification
   include ApplicationHelper
   include Mobile::Controllers::Ticket
-  include AutocompleteHelper
   helper AutocompleteHelper
 
   before_filter :redirect_to_mobile_url  

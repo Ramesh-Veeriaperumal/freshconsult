@@ -19,7 +19,7 @@
 		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
 	    	</div>
 	    	<div id="company_folders" class="row-fluid">
-  				<%= render_customer_autocomplete %>
+  				<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
   			</div>
 	  	</div>
     </li>
@@ -38,8 +38,8 @@
 				}
 				else
 				{
-				  jQuery('#customer_id').val("");
-				  jQuery("#customer_id").trigger("liszt:updated");
+				  jQuery('#customers_filter').val("");
+				  jQuery("#customers_filter").trigger("liszt:updated");
 				  jQuery('#company_folders').hide();
 
 				}

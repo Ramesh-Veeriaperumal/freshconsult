@@ -2,7 +2,6 @@ class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
   include ReadsToSlave
-  include AutocompleteHelper
   helper AutocompleteHelper
   
   before_filter :check_permission, :set_selected_tab

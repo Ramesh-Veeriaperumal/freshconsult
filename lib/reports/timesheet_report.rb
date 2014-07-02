@@ -68,7 +68,6 @@ module Reports::TimesheetReport
     @start_date = start_date
     @end_date = end_date
     @customer_id = params[:customers] ? params[:customers].split(',') : []
-    @selected_customers = selected_customers(@customer_id)
     @user_id = params[:user_id] || []
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }
     @billable = billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool]

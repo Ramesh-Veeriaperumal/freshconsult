@@ -15,7 +15,7 @@
   		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
 			
-			<%= render_customer_autocomplete %>
+			<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
      
       <label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>	
 			<%= select_tag :user_id, 

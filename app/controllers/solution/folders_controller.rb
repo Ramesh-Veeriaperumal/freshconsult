@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
-  include AutocompleteHelper
   helper AutocompleteHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -36,8 +35,7 @@ class Solution::FoldersController < ApplicationController
 
   def edit
     @folder = @category.folders.find(params[:id])      
-    customer_ids = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
-    @selected_customers = selected_customers(customer_ids)
+    @customer_id = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
       if @folder.is_default?
         flash[:notice] = I18n.t('folder_edit_not_allowed')

@@ -1,17 +1,26 @@
 # encoding: utf-8
 module AutocompleteHelper
 
-	#View method
-	def render_customer_autocomplete
-		render(:partial => "helpdesk/shared/autocomplete_select", :locals => { 
-																																						:url => companies_search_autocomplete_path, 
-																																						:selected_values => @selected_customers, 
-																																						:container => "customers" 
-																																					})
+	MAX_SELECTION_SIZE = 100
+	AUTOCOMPLETE_DEFAULTS = 	{ 
+								:customers => {
+																:url => "/search/autocomplete/companies",
+																:container => "customers",
+																:max_limit => MAX_SELECTION_SIZE
+								},
+								:requesters => {
+																	:url => "/search/autocomplete/requesters",
+																	:container => "requester",
+																	:max_limit => 3
+								}
+							} 
+
+	def render_autocomplete args={}
+		render(:partial => "helpdesk/shared/autocomplete_select", :locals => AUTOCOMPLETE_DEFAULTS[args[:type]].merge(args))
 	end
 
 	#For customers repopulation
 	def selected_customers customer_ids
-		Account.current.customers_from_cache.select { |c| customer_ids.include?(c.id.to_s) }
+		Account.current.customers_from_cache.select { |c| customer_ids.include?(c.id.to_s) } if customer_ids
 	end
 end
