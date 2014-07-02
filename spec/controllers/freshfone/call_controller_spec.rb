@@ -1,5 +1,6 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
+load 'spec/support/freshfone_call_spec_helper.rb'
 include FreshfoneCallSpecHelper
 include APIHelper
 
@@ -7,10 +8,12 @@ describe Freshfone::CallController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  before(:all) do
+    @account.freshfone_calls.delete_all
+  end
+
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     @request.host = @account.full_domain
-    
     create_test_freshfone_account
     create_freshfone_user
   end
@@ -100,7 +103,7 @@ describe Freshfone::CallController do
   it 'should populate call details for normal end call' do  
     set_twilio_signature('freshfone/call/status', status_params)
     status_call = create_call_for_status
-    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA67b4b4052a6c79d662a27edda3615449"
+    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
     controller.set_key(key, {:agent => @agent.id}.to_json)
     post :status, status_params
     freshfone_call = @account.freshfone_calls.find(status_call)
@@ -110,7 +113,7 @@ describe Freshfone::CallController do
   it 'should update call status on force termination' do
     set_twilio_signature('freshfone/call/status?force_termination=true', status_params)
     status_call = create_call_for_status
-    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA67b4b4052a6c79d662a27edda3615449"
+    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
     controller.set_key(key, {:agent => @agent.id}.to_json)
     post :status, status_params.merge(:force_termination => true)
     freshfone_call = @account.freshfone_calls.find(status_call)
@@ -118,15 +121,17 @@ describe Freshfone::CallController do
   end
 
   it 'should render twiml with batched clients ids for batched calls' do
-    set_twilio_signature('freshfone/call/status?batch_call=true', status_params.merge({"DialCallStatus" => 'busy'}))
+    set_twilio_signature('freshfone/call/status?batch_call=true&call_back=false&outgoing=false', status_params.merge({"DialCallStatus" => 'busy'}))
+    controller.stubs(:call_transferred?).returns(false)
     status_call = create_call_for_status
     setup_batch
-    post :status, status_params.merge({:batch_call => true, "DialCallStatus" => 'busy'}) 
+    post :status, status_params.merge({:batch_call => true, :outgoing => "false", "DialCallStatus" => 'busy'}) 
     tear_down BATCH_KEY
     xml[:Response][:Dial][:Client].should be_eql(@dummy_users.map{|u| u.id.to_s})
   end
 
   it 'should clear any batch key for non batched calls' do
+    controller.stubs(:call_transferred?).returns(false)
     set_twilio_signature('freshfone/call/status?batch_call=true', status_params.merge({"DialCallStatus" => 'busy'}))
     status_call = create_call_for_status
     post :status, status_params.merge({:batch_call => true, "DialCallStatus" => 'busy'}) 
@@ -134,6 +139,7 @@ describe Freshfone::CallController do
   end
 
   it 'should render non availability message for missed calls' do
+    controller.stubs(:call_transferred?).returns(false)
     set_twilio_signature('freshfone/call/status', status_params.merge({"DialCallStatus" => 'busy'}))
     status_call = create_call_for_status
     post :status, status_params.merge({"DialCallStatus" => 'busy'})
