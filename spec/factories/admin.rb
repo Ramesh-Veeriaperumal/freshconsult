@@ -73,4 +73,7 @@ if Rails.env.test?
     t.name "TestingRoles"
   end
   
+  Factory.define :quest, :class => Quest do |t|
+    t.name "TestingQuest"
+  end
 end
