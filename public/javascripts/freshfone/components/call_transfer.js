@@ -22,7 +22,7 @@ var FreshfoneCallTransfer
                 "outgoing": this.freshfone_call.isOutgoing() },
         error: function () { self.freshfone_call.transfered = false; freshfonewidget.toggleWidgetInactive(false);},
         success: function () {
-          $(".transfer_call").trigger("click");
+          $("#freshfone_available_agents").hide();
           freshfonewidget.toggleWidgetInactive(true);
         }
       });
