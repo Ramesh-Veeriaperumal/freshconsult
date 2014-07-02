@@ -39,14 +39,14 @@ describe Freshfone::Number do
     @number.update_attributes(:next_renewal_at => Time.now)
     numbers_for_due = Freshfone::Number.find_due
     numbers_for_due.should_not be_empty
-    numbers_for_due.first.number.should be_eql("+18433534240")
+    numbers_for_due.first.number.should be_eql(@number.number)
   end
 
   it 'should return all numbers that are due today' do
     @number.update_attributes(:next_renewal_at => Time.now)
     numbers_for_due = Freshfone::Number.find_trial_account_due
     numbers_for_due.should_not be_empty
-    numbers_for_due.first.number.should be_eql("+18433534240")
+    numbers_for_due.first.number.should be_eql(@number.number)
   end
 
   it 'should return false for insufficient renewal amount check with new recharge' do
