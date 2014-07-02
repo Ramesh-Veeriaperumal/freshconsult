@@ -9,7 +9,7 @@ describe Helpdesk::AttachmentsController do
   before(:each) do
     log_in(@agent)
     stub_s3_writes
-    file = fixture_file_upload('files/image.gif', 'image/gif')
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
     @test_ticket = create_ticket({ :status => 2, 
                                    :attachments => { :resource => file,
                                                      :description => Faker::Lorem.characters(10) 
@@ -20,39 +20,39 @@ describe Helpdesk::AttachmentsController do
     get :show, :id => @test_ticket.attachments.first.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
   it "should show an attachment to a customer" do
     user = add_new_user(@account)
     ticket = create_ticket({ :status => 2, 
                              :requester_id => user.id,
-                             :attachments => { :resource => fixture_file_upload('files/image.gif', 'image/gif'),
+                             :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
                                                :description => Faker::Lorem.characters(10) 
                                               } })
     log_in(user)
     get :show, :id => ticket.attachments.first.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
   it "should show a solution article's attachment" do
     category = create_category
     folder = create_folder(:category_id => category.id)
     article = create_article(:folder_id => folder.id)
-    attachment = article.attachments.build(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    attachment = article.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                             :description => Faker::Name.first_name, 
                                             :account_id => article.account_id)
     attachment.save
     get :show, :id => attachment.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
   it "should show an account's logo" do
-    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
                                :description => "logo", 
                                :account_id => @account.id)
     logo.save
@@ -64,19 +64,19 @@ describe Helpdesk::AttachmentsController do
 
   it "should show a forum post's attachment" do
     post = quick_create_post
-    attachment = post.attachments.create(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    attachment = post.attachments.create(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                         :description => Faker::Lorem.characters(10), 
                                         :account_id => @account.id)
     get :show, :id => attachment.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
   it "should show a freshfone call's attachment" do
     create_test_freshfone_account
     call = create_freshfone_call
-    attachment = call.create_recording_audio(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    attachment = call.create_recording_audio(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                             :description => Faker::Lorem.characters(10), 
                                             :account_id => @account.id)
     user = add_new_user(@account)
@@ -86,36 +86,36 @@ describe Helpdesk::AttachmentsController do
     get :show, :id => attachment.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
   it "should show a data export's attachment" do
     data_export = Factory.build(:data_export, :account_id => @account.id, :user_id => @agent.id)
-    data_export.create_attachment(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    data_export.create_attachment(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                   :description => Faker::Lorem.characters(10), 
                                   :account_id => @account.id)
     data_export.save
     get :show, :id => data_export.attachment.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /image.gif/
+    response.body.should =~ /attachment.txt/
   end
 
 
   it "should render the content of an attached file" do
     unstub_s3_writes
     ticket = create_ticket({ :status => 2, 
-                             :attachments => { :resource => fixture_file_upload('files/image.gif', 'image/gif'),
+                             :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
                                                :description => Faker::Lorem.characters(10) 
                                               } })
     get :text_content, :id => ticket.attachments.first.id
-    response.body.force_encoding("UTF-8").should be_eql(File.read("#{Rails.root}/spec/fixtures/files/image.gif"))
+    response.body.force_encoding("UTF-8").should be_eql(File.read("#{Rails.root}/spec/fixtures/files/attachment.txt"))
   end
 
   
   # Delete actions
   it "should delete a shared attachment" do
-    canned_response = create_response( :attachments => { :resource => fixture_file_upload('files/image.gif', 'image/gif'), 
+    canned_response = create_response( :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                                          :description => Faker::Lorem.characters(10)
                                                         })
     shared_attachment = canned_response.shared_attachments.first
@@ -137,7 +137,7 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should delete a solution article's attachment" do
-    article = create_article( :attachments => { :resource => fixture_file_upload('files/image.gif', 'image/gif'), 
+    article = create_article( :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                                  :description => Faker::Lorem.characters(10)
                                                 })
     delete :destroy, :id => article.attachments.first.id
@@ -146,7 +146,7 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should delete an account's logo" do
-    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
                                :description => "logo", 
                                :account_id => @account.id)
     logo.save
@@ -157,7 +157,7 @@ describe Helpdesk::AttachmentsController do
 
   it "should delete a forum post's attachment" do
     post = quick_create_post
-    attachment = post.attachments.build(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
+    attachment = post.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                         :description => Faker::Lorem.characters(10), 
                                         :account_id => @account.id)
     attachment.save

@@ -88,7 +88,7 @@ describe Helpdesk::TicketsController do
     result.length.should be <= 30
   end
   it "should create a ticket with attachments" do
-  	 file = fixture_file_upload('./files/image33kb.jpg', 'image/jpeg',:binary)
+  	 file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
   	 post :create, ticket_params(file).merge!(:format => 'json')
   	 response.should be_success
   end

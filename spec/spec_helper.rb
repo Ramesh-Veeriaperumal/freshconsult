@@ -64,7 +64,7 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.mock_with :mocha
-    config.fixture_path = Rails.root + '/spec/fixtures/'
+    config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.include AccountHelper
     config.include AgentHelper
     config.include TicketHelper

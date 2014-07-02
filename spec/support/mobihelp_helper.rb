@@ -21,7 +21,7 @@ module MobihelpHelper
   end
 
   def create_mobihelp_app
-    @mh_app = Mobihelp::App.first;
+    @mh_app = Mobihelp::App.find(:all, :conditions => ["deleted != 1"]).first;
     return @mh_app unless @mh_app.nil?
 
     @mh_app = Factory.build(:mobihelp_app)
