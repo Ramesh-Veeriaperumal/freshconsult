@@ -7,6 +7,9 @@ SimpleCov.start do
   add_filter 'config/'
   add_filter 'test/'
   add_filter 'app/controllers/subscription_admin'
+  add_filter 'reports'
+  add_filter 'search'
+
   #add_filter '/vendor/'
   add_group 'mailgun', 'lib/helpdesk/email'
   add_group 'email', 'lib/helpdesk/process_email.rb'
@@ -14,6 +17,8 @@ SimpleCov.start do
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
   add_group 'libs', 'lib/'
+  # add_group 'reports', 'reports'
+  # add_group 'search', 'search'
 end
 
 SimpleCov.coverage_dir 'tmp/coverage'
