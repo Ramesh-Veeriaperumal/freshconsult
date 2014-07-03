@@ -1,7 +1,6 @@
 class Discussions::ForumsController < ApplicationController
 
 	helper DiscussionsHelper
-	helper AutocompleteHelper
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]
@@ -16,8 +15,6 @@ class Discussions::ForumsController < ApplicationController
 	before_filter :set_selected_tab
 	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]
 	before_filter :fetch_monitorship, :load_topics, :only => :show
-	before_filter :set_customer_forum_params, :only => [:create, :update]
-	before_filter :fetch_selected_customers, :only => :edit
 
 
 	def new
@@ -147,15 +144,6 @@ class Discussions::ForumsController < ApplicationController
 			elsif !privilege?(:view_forums)
 				access_denied
 			end
-		end
-
-		def set_customer_forum_params
-			params[:forum][:customer_forums_attributes] = {}
-			params[:forum][:customer_forums_attributes][:customer_id] = (params[:customers] ? params[:customers].split(',') : [])
-		end
-
-		def fetch_selected_customers
-			@customer_id = @forum.customer_forums.collect { |cf| cf.customer_id.to_s }
 		end
 
 end

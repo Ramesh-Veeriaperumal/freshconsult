@@ -36,9 +36,12 @@
 		<div class="controls">
 			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
 			<br/><br/>
-				<span id="company_forums">
-    			<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
-  			</span>
+			<% form.fields_for :customer_forums_attributes do |cust| %>
+    	    	<span id="company_forums">
+      			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "select2 input-xxlarge" ,
+      				"data-placeholder" => t('solutions.visibility.select_company')}) %>
+      			</span>
+      		<%end%>
 		</div>
 	</div>
 </div>
@@ -51,8 +54,8 @@
 			if (visiblity == <%= Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>) {
 			   jQuery('#company_forums').show();
 			} else {
-			  jQuery('#customers_filter').val("");
-			  jQuery("#customers_filter").trigger("liszt:updated");
+			  jQuery('#customer_id').val("");
+			  jQuery("#customer_id").trigger("liszt:updated");
 			  jQuery('#company_forums').hide();
 			}
 		};
