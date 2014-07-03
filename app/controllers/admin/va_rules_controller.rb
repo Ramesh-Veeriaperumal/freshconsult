@@ -73,7 +73,7 @@ class Admin::VaRulesController < Admin::AutomationsController
       filter_hash   = [
         { :name => -1, :value => t('click_to_select_filter') },
         { :name => "from_email", :value => t('from_email'), :domtype => "autocompelete", 
-          :data_url => requesters_search_autocomplete_path, :operatortype => "email" },
+          :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
         { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
         { :name => "ticlet_cc", :value => t('ticket_cc'), :domtype => "text",

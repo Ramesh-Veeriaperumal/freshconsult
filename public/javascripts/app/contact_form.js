@@ -4,9 +4,9 @@ function ContactFormInitializer(confirm_text, tags_options) {
   jQuery("#contact_customer").autocomplete({
       source: function(request, response) {
           jQuery.ajax({
-              url: "/search/autocomplete/companies",
+              url: "/contacts/autocomplete",
               data: {
-                  q: request.term
+                  v: request.term
               },
               success: function(data) {
                   response(jQuery.map(data.results,

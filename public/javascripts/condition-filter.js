@@ -1,4 +1,3 @@
-
 /**
  * @author venom
  */
@@ -7,7 +6,7 @@ function postProcessCondition(filter, id){
 	if(filter && filter.domtype === 'autocompelete'){
 		new bsn.AutoSuggest(id, {
 			script: filter.data_url+"?",
-			varname: "q",
+			varname: "v",
 			json: true,
 			maxresults: 10,
 			timeout: 3600000, 
