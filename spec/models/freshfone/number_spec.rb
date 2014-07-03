@@ -36,15 +36,15 @@ describe Freshfone::Number do
   end
 
   it 'should return all numbers that are due today' do
-    @number.update_attributes(:next_renewal_at => Time.now)
-    numbers_for_due = Freshfone::Number.find_due
+    @number.update_attributes(:next_renewal_at => Time.zone.now)
+    numbers_for_due = Freshfone::Number.find_due Time.zone.now
     numbers_for_due.should_not be_empty
     numbers_for_due.first.number.should be_eql(@number.number)
   end
 
   it 'should return all numbers that are due today' do
-    @number.update_attributes(:next_renewal_at => Time.now)
-    numbers_for_due = Freshfone::Number.find_trial_account_due
+    @number.update_attributes(:next_renewal_at => Time.zone.now)
+    numbers_for_due = Freshfone::Number.find_trial_account_due Time.zone.now
     numbers_for_due.should_not be_empty
     numbers_for_due.first.number.should be_eql(@number.number)
   end

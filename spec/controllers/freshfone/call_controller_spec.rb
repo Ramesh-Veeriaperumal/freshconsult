@@ -8,7 +8,7 @@ describe Freshfone::CallController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
+  before(:each) do
     @account.freshfone_calls.delete_all
   end
 
