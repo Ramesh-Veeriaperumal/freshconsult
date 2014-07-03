@@ -90,7 +90,7 @@ class Discussions::TopicsController < ApplicationController
 		@topic.destroy
 		respond_to do |format|
 			format.html do
-				flash[:notice] = (I18n.t('flash.topic.deleted')[:topic_deleted_message, h(@topic.title)]).html_safe
+				flash[:notice] = I18n.t('flash.topic.deleted', :title => h(@topic.title)).html_safe
 				redirect_to  @after_destroy_path 
 			end
 			format.js
