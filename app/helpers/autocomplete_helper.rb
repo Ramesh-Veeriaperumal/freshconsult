@@ -4,12 +4,12 @@ module AutocompleteHelper
 	MAX_SELECTION_SIZE = 100
 	AUTOCOMPLETE_DEFAULTS = 	{ 
 								:customers => {
-																:url => "/search/autocomplete/companies",
+																:url => "/helpdesk/autocomplete/customer",
 																:container => "customers",
 																:max_limit => MAX_SELECTION_SIZE
 								},
 								:requesters => {
-																	:url => "/search/autocomplete/requesters",
+																	:url => "/helpdesk/autocomplete/requester",
 																	:container => "requester",
 																	:max_limit => 3
 								}
