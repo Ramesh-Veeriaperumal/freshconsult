@@ -292,14 +292,14 @@ module TwitterHelper
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    while wait_for <= wait
+    #while wait_for <= wait
       tweet = Social::Tweet.find_by_tweet_id(tweet_id)
-      if tweet.nil?
-        wait_for = wait_for + 1
-      else
-        break
-      end
-    end
+      # if tweet.nil?
+      #   wait_for = wait_for + 1
+      # else
+      #   break
+      # end
+    #end
     return tweet
   end
 

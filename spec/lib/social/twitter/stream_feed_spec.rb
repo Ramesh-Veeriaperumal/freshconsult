@@ -178,10 +178,10 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    while reply_tweet.nil?
+    #while reply_tweet.nil?
       fd_counter = 120
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    end
+    #end
 
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
@@ -209,10 +209,10 @@ describe Social::Gnip::TwitterFeed do
 
     fd_counter = 30
 
-    while fd_counter != 60
+    #while fd_counter != 60
       fd_counter = fd_counter + 30
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    end
+    #end
 
     #Send 'replied-to' tweet
     tweet = send_tweet_and_wait(ticket_feed)
