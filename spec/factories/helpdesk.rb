@@ -91,4 +91,7 @@ if Rails.env.test?
   Factory.define :tag, :class => Helpdesk::Tag do |t|
     t.name { Faker::Name.name }
   end
+
+  Factory.define :agent_group, :class => AgentGroup do |d|
+  end
 end
