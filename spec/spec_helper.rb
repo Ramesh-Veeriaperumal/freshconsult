@@ -59,7 +59,12 @@ Spork.prefork do
   'spec/support/va/tester/condition/supervisor.rb',
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
-  'spec/support/va/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
+  'spec/support/va/test_case.rb',
+  'spec/support/wf/filter_helper.rb',
+  'spec/support/wf/test_case_generator.rb',
+  'spec/support/wf/operator_helper.rb',
+  'spec/support/wf/option_selector.rb',
+  'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
   Spec::Runner.configure do |config|

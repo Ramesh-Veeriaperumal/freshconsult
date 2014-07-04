@@ -94,6 +94,7 @@ HelpdeskTests = [
   "spec/controllers/support/**/*_spec.rb",
   "spec/controllers/negative/**/*_spec.rb",
   "spec/controllers/wf_filters_controller_spec.rb",
+  "spec/controllers/helpdesk/tickets_filter_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb"
 ]    

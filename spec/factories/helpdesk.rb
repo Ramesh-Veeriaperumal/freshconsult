@@ -12,6 +12,7 @@ if Rails.env.test?
     t.subject Faker::Lorem.sentence(3)
     t.description Faker::Lorem.paragraph(3)
     t.cc_email({:cc_emails => [], :fwd_emails => []}.with_indifferent_access)
+    t.created_at Time.now
   end
 
   Factory.define :note, :class => Helpdesk::Note do |n|
@@ -85,5 +86,9 @@ if Rails.env.test?
   
   Factory.define :achieved_quest, :class => AchievedQuest do |d|
     d.quest_id 1
+  end
+
+  Factory.define :tag, :class => Helpdesk::Tag do |t|
+    t.name { Faker::Name.name }
   end
 end
