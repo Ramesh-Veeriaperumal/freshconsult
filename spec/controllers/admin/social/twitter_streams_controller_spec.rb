@@ -11,12 +11,12 @@ describe Admin::Social::TwitterStreamsController do
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
-
+  
   before(:all) do
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
@@ -38,6 +38,16 @@ describe Admin::Social::TwitterStreamsController do
       response.should render_template("admin/social/twitter_streams/new.html.erb") 
     end
   end
+  
+  describe "GET #edit" do
+    it "should render the create stream page when create a new stream is clicked" do
+      get :edit, {
+        :id => @default_stream.id
+      }
+      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+    end
+  end
+  
   
   describe "GET #preview" do
     it "should show a preview of the feeds matching the filter criteria specified" do
@@ -98,6 +108,7 @@ describe Admin::Social::TwitterStreamsController do
   
   describe "PUT #update" do
     it "should update a default handle" do
+      
       put :update, {
                       :id => @default_stream.id,
                       :social_twitter_handle => {
@@ -235,7 +246,7 @@ describe Admin::Social::TwitterStreamsController do
     #Destroy the twitter handle
     Resque.inline = true
     GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all

@@ -3,19 +3,19 @@ development:
     consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
     consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
     options:
-      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
     base_calendar_id: admin@freshpo.com
-    access_token: ya29.AHES6ZSHb0TrdvsMgp03C0dgcCURHHFKeSJoevLQUY9R57U
-    refresh_token: 1/7OYtqEQdm4DoUvtDs9pz0mP_d4MO8ZWGJfNeL69aiDA
+    access_token: ya29.MQCaNDpScfft5BoAAABJfbxzipRw4pK2paPTOJt68f-J5dGt-shyYvfrUAY61A
+    refresh_token: 1/B8DqnjAXZ1utmNh1mzpuFb5ec3zTAJOeN1DqmHYdpO0
 production: 
   google_oauth2:
     consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
     consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
     options:
-      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
     base_calendar_id: admin@freshpo.com
-    access_token: ya29.AHES6ZSHb0TrdvsMgp03C0dgcCURHHFKeSJoevLQUY9R57U
-    refresh_token: 1/7OYtqEQdm4DoUvtDs9pz0mP_d4MO8ZWGJfNeL69aiDA
+    access_token: ya29.NAAgWqMcjTskQBoAAAAF2754QXBFoiPYmiV4GFoLYlLKxwLyz4CNipj_DqhMmQ
+    refresh_token: 1/HdUwbytP5gn1OnX4m-bIzTAmKP3a34D4ktHdm3I7kOM
 test: 
   google_oauth2: *id001
 slave: 
@@ -25,9 +25,9 @@ staging:
     consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
     consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
     options:
-      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
     base_calendar_id: admin@freshpo.com
-    access_token: ya29.AHES6ZSHb0TrdvsMgp03C0dgcCURHHFKeSJoevLQUY9R57U
-    refresh_token: 1/7OYtqEQdm4DoUvtDs9pz0mP_d4MO8ZWGJfNeL69aiDA
+    access_token: ya29.MQCaNDpScfft5BoAAABJfbxzipRw4pK2paPTOJt68f-J5dGt-shyYvfrUAY61A
+    refresh_token: 1/B8DqnjAXZ1utmNh1mzpuFb5ec3zTAJOeN1DqmHYdpO0
 defaults: 
   google_oauth2: *id001

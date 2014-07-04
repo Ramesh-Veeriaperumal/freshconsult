@@ -345,6 +345,9 @@ javascripts:
     - public/javascripts/freshfone/ivr/ivr_main.js
     - public/javascripts/frameworks/plugins/jquery.form.js
 
+  freshfone_welcome_page:
+    - public/javascripts/freshfone/freshfone_admin_welcome_page.js
+
   soundmanager:
     - public/javascripts/sound/soundmanager2-jsmin.js
 
@@ -405,6 +408,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/security.js
 
   observer_event:
     - public/javascripts/observer_events.js

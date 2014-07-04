@@ -5,6 +5,11 @@ module CannedResponsesHelper
 	       :visibility => {:user_id => params[:user_id], :visibility => params[:visibility], :group_id => params[:group_id]}, 
 	       :folder_id => params[:folder_id])
 	    test_response.account_id = Account.first.id
+      if params[:attachments]
+        test_response.shared_attachments.build.build_attachment(:content => params[:attachments][:resource], 
+                                                                :description => params[:attachments][:description], 
+                                                                :account_id => test_response.account_id)
+      end
 	    test_response.save(false)
 	    test_response
     end

@@ -10,7 +10,7 @@ describe Social::TwitterHandle do
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
@@ -22,8 +22,8 @@ describe Social::TwitterHandle do
   before(:each) do
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([])
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
-      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
     end
     @handle.reload
   end
@@ -61,6 +61,8 @@ describe Social::TwitterHandle do
 
 
   it "should delete the default gnip rule and the default streams if account is suspended" do
+    GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
+    Resque.inline = true
     current_state = @handle.account.subscription.state
     handle_id = @handle.id
 
@@ -79,6 +81,7 @@ describe Social::TwitterHandle do
       stream = Social::TwitterStream.find_by_social_id handle_id
       stream.should be_nil
     end
+    Resque.inline = false
   end
 
 
@@ -122,6 +125,7 @@ describe Social::TwitterHandle do
 
   it "should destroy the gnip rule default_stream dm_stream and associated rules with the default 
         stream and the dm stream on twitter handle destroy and set social id to nil for associated custom streams" do
+    Resque.inline = true
     handle_id = @handle.id
     #Destroy the handle
     @handle.destroy
@@ -145,7 +149,8 @@ describe Social::TwitterHandle do
     handle = Social::TwitterHandle.find_by_id(handle_id)
     handle.should be_nil
     custom_streams = Social::TwitterStream.find(:all).map{|stream| stream.social_id if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
-    custom_streams.should_not include(handle_id)    
+    custom_streams.should_not include(handle_id) 
+    Resque.inline = false   
   end
   
 
@@ -153,7 +158,7 @@ describe Social::TwitterHandle do
     #Destroy the twitter handle
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
     end
     
     Social::TwitterHandle.destroy_all

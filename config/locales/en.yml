@@ -1480,7 +1480,7 @@ en:
           spam_check: "We're checking your topic for spam. It will appear once it has been approved."
       tickets:
         create:
-          success: Your ticket has been created and a copy has been sent to you via email.
+          success: Your ticket has been created.
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
@@ -5507,6 +5507,22 @@ en:
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"
         invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
+      welcome_page:
+        title: "Welcome to Freshfone"
+      feature_request_content:
+        title: "Freshfone"
+        heading: "Support your customers with Freshfone"
+        about_numbers: "Purchase support numbers from across the globe"
+        about_ivr: "Create IVR's and route calls to the right agents"
+        about_recording: "Record customer conversations and access it anywhere"
+        read_more: "Read more"
+        pricing: "See all call rates and supported countries"
+        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_message: "Need Freshfone Feature"
+        success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
+        error_message: "Sorry we can not make your request right now. Try again later."
+        additional_note: "Freshfone request will take two business days"
+        button_label: "Request for Freshfone"
   freshchat:
     title: "Freshchat"
     widget: "Widget"

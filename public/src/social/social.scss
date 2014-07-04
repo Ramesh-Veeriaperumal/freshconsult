@@ -547,6 +547,7 @@ $bdr-color:#e1e1e1;
 				font-weight:500;
 			}
 			.more-links{
+				margin-right:10px;
 				font-size:11px;
 			}
 			.prettydate{
@@ -640,7 +641,7 @@ $bdr-color:#e1e1e1;
 				@include margin-left(12px);
 			}
 			&.convert_as_ticket{
-				@include margin-left(2px);
+				@include margin-left(7px);
 				@include padding-right(0);
 			}
 			&.sloading.loading-align{
@@ -694,6 +695,7 @@ $bdr-color:#e1e1e1;
 		.convert_as_ticket{
 			width: 17px;
 			display: inline-block;
+			margin-left: 7px;
 			i::before{
 				@include float(left);
 			}
@@ -707,13 +709,13 @@ $bdr-color:#e1e1e1;
 	.action-el a{
 		opacity: 0;
 		@include transition(all .5s);
+		&.tw-tkt-link{
+			opacity: .5;
+		}
 	}
 	&:hover{
 		.action-el a{
-			opacity: .5;
-			&:hover{
-				opacity:1;
-			}
+			opacity: 1;
 		}
 	}
 }

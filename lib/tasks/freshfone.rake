@@ -5,7 +5,7 @@ namespace :freshfone do
 		Sharding.execute_on_all_shards do
 			Account.active_accounts.each do |account| 
 				if account.features?(:freshfone)
-					account.freshfone_calls.find_failed_calls(9.hours.ago .. 3.hours.ago).each do |call|
+					account.freshfone_calls.unbilled.each do |call|
 						call.calculate_cost
 					end
 				end

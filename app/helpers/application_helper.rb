@@ -683,7 +683,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_helpdesk_autocomplete_path, :object_name => object_name }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_helpdesk_autocomplete_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
@@ -989,9 +989,9 @@ module ApplicationHelper
 		if call.blocked?
 			"blocked_call_icon"
 		elsif call.incoming?
-			call.completed? ? "incoming_call_icon" : "incoming_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "incoming_call_icon" : "incoming_missed_call_icon"
 		elsif call.outgoing?
-			call.completed? ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
 		end
 	end
 # helpers for fresfone callable links -- ends

@@ -5,6 +5,21 @@ describe Support::LoginController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  before(:all) do
+    create_features
+  end
+
+  after(:all) do
+    create_features
+  end
+
+  def create_features
+    @account.features.send(:google_signin).create
+    @account.features.send(:facebook_signin).create
+    @account.features.send(:twitter_signin).create
+    @account.features.send(:signup_link).create
+  end
+
   it "should display portal login page" do
     @account.sso_enabled = false
     @account.save(false)

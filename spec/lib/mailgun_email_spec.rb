@@ -10,17 +10,19 @@ describe Helpdesk::Email::Process do
 	end
 
 	before(:each) do
-		@ticket_size = Helpdesk::Ticket.all.size
-		@note_size = Helpdesk::Note.all.size
-		@article_size = Solution::Article.all.size
 		@account.make_current
+		@account.reload
+		@ticket_size = @account.tickets.size
+		@note_size = @account.notes.size
+		@article_size = @account.solution_articles.size
 		stub_s3_writes
 	end
 
 	after(:each) do
-		@ticket_size = Helpdesk::Ticket.all.size
-		@note_size = Helpdesk::Note.all.size
-		@article_size = Solution::Article.all.size
+		@account.reload
+		@ticket_size = @account.tickets.size
+		@note_size = @account.notes.size
+		@article_size = @account.solution_articles.size
 	end
 
 	#All exception handling has been left out except attachment
@@ -36,8 +38,8 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			reply_to = email["Reply-To"]
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			@account.tickets.last.requester.email.downcase.should eql reply_to.downcase
   	end
 
@@ -45,8 +47,8 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			email["Reply-To"] = nil
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
   	end
 
@@ -54,40 +56,40 @@ describe Helpdesk::Email::Process do
   		email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
   		@account.features.reply_to_based_tickets.destroy
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
   		@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
 		end
 
 		it "with kbase in cc by requester" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => @account.kbase_email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Solution::Article.all.size.should eql @article_size
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.solution_articles.size.should eql @article_size
 		end
 
 		it "by agent with kbase in cc", :focus => true do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => @account.kbase_email, :reply => @account.agents.first.user.email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Solution::Article.all.size.should eql @article_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.solution_articles.size.should eql @article_size+1
 		end
 
 		it "with attachments" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :attachments => 1})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.attachments.size.should eql 1
 		end
 
 		it "with attachments above 15 mb" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :attachments => 1, :large => 1})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.attachments.size.should eql 0
 		end
 
@@ -95,8 +97,8 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :attachments => 1, :inline => 1})
 			email["body-html"] = email["body-html"] + "<img src=\"#{content_id}\" alt=\"Inline image 1\"><br>"
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.attachments.size.should eql 1
 		end
 
@@ -105,8 +107,8 @@ describe Helpdesk::Email::Process do
 			email["body-plain"] = add_forward_content+email["body-plain"]
 			email["body-html"] = add_forward_content+email["body-html"]
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.requester.email.should_not eql @account.primary_email_config.to_email
 		end
 
@@ -114,39 +116,39 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			email["body-html"] = ""
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 		end
 
 		it "to other account with no domain mapping" do
 			email = new_mailgun_email({:email_config => "support@localhost2.freshdesk-dev.com"})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size
+			ticket = @account.tickets.last
+			@account.tickets.size.should eql @ticket_size
 		end
 
 		it "with only html" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			email.delete(:text)
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 		end
 
 		it "with charset" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			email[:charsets] = charset_hash
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 		end
 
 		it "from snapengage for chat" do
 			email_id = "sample1234@snapengage.com"
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.source.should eql 7
 		end
 
@@ -154,16 +156,16 @@ describe Helpdesk::Email::Process do
 			user1 = add_new_user(@account, {:blocked => true, :email => "sampleone@shdjsjdsd.ccc"})
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size
+			ticket = @account.tickets.last
+			@account.tickets.size.should eql @ticket_size
 		end
 
 		it "from deleted user" do
 			user1 = add_new_user(@account, {:deleted => true, :email => "sampleone@shdjsjdsd.ccc"})
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.spam.should eql true
 		end
 
@@ -173,35 +175,35 @@ describe Helpdesk::Email::Process do
 			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
 			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-html"]
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
 			ticket.priority.should eql 2
 		end
 
 		it "with unknown email_config" do
 			email = new_mailgun_email({:email_config => "abcde234fg@localhost.freshpo.com"})
 			Helpdesk::Email::Process.new(email).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket_incremented?(@ticket_size)
 		end
 
 		it "with unknown and actual email_config" do
 			email = new_mailgun_email({:email_config => "abcde234fg@localhost.freshpo.com", :another_config => @account.primary_email_config.to_email})
 			Helpdesk::Email::Process.new(email).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket_incremented?(@ticket_size)
 		end
 
 		it "with an additional TO email" do
 			new_to_email = Faker::Internet.email
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_to => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Ticket.last.to_emails.should include new_to_email
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.to_emails.should include new_to_email
 		end
 
 		it "from auto responders" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :auto => true})
 			Helpdesk::Email::Process.new(email).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
+			ticket_incremented?(@ticket_size)
 		end
 
 	end
@@ -211,13 +213,13 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.kbase_email, :reply => @account.agents.first.user.email})
 			email[:from] = @account.agents.first.user.email
 			Helpdesk::Email::Process.new(email).perform
-			Solution::Article.all.size.should eql @article_size+1
+			solutions_incremented?(@article_size)
 		end
 
 		it "article failure - non agent" do
 			email = new_mailgun_email({:email_config => @account.kbase_email})
 			Helpdesk::Email::Process.new(email).perform
-			Solution::Article.all.size.should eql @article_size
+			@account.solution_articles.size.should eql @article_size
 		end
 
 		it "with inline attachments" do
@@ -226,7 +228,7 @@ describe Helpdesk::Email::Process do
 			email[:from] = @account.agents.first.user.email
 			Helpdesk::Email::Process.new(email).perform
 			solution = Solution::Article.last
-			Solution::Article.all.size.should eql @article_size+1
+			solutions_incremented?(@article_size)
 			solution.attachments.size.should eql 1
 		end
 	end
@@ -237,11 +239,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -253,28 +255,28 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			user1.blocked = true
 			user1.save(false)
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size
 		end
 
 		it "with email_commands" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			another[:from] = @account.agents.first.user.email
 			another["body-plain"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+another["body-plain"]
 			another["body-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			ticket = Helpdesk::Ticket.last
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.priority.should eql 2
 		end
 
@@ -283,11 +285,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end 
 
@@ -296,11 +298,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{style_span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end 
 
@@ -309,10 +311,10 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :m_id => email["Message-Id"], :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -321,11 +323,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -334,11 +336,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_to => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -347,11 +349,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -359,11 +361,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => "sample1@#{@comp.domains}"})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => "sample2@#{@comp.domains}"})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -372,11 +374,11 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+"----original message----"+another["body-html"]+" #{span_gen(ticket.display_id)} "
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -384,12 +386,12 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = @account.tickets.last
-			Helpdesk::Ticket.update_all(:cc_email => nil)
+			@account.tickets.update_all(:cc_email => nil)
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 		end
 
@@ -406,8 +408,9 @@ describe Helpdesk::Email::Process do
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+2
-			Helpdesk::Note.all.size.should eql @note_size+1
+			@account.reload
+			@account.tickets.size.should eql @ticket_size+2
+			@account.notes.size.should eql @note_size+1
 			@account.notes.last.notable.id.should eql ticket2.id
 		end
 
@@ -417,12 +420,12 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+1
-			Helpdesk::Ticket.last.cc_email_hash[:cc_emails].should include new_to_email
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
+			@account.tickets.last.cc_email_hash[:cc_emails].should include new_to_email
 		end
 
 		it "as reply from a CC email" do
@@ -432,13 +435,13 @@ describe Helpdesk::Email::Process do
 			first_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_to_email})
 			second_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => new_to_email})
 			Helpdesk::Email::Process.new(email).perform
-			ticket = Helpdesk::Ticket.last
+			ticket = @account.tickets.last
 			first_reply["subject"] = first_reply["subject"]+" [##{ticket.display_id}]"
 			second_reply["subject"] = second_reply["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(first_reply).perform
 			Helpdesk::Email::Process.new(second_reply).perform
-			Helpdesk::Ticket.all.size.should eql @ticket_size+1
-			Helpdesk::Note.all.size.should eql @note_size+2
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+2
 		end
 	end
 

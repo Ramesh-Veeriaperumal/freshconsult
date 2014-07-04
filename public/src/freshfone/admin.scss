@@ -280,4 +280,37 @@
       margin-top: 30px;
       @include text-align(right);
     }
+}
+.content_footer {
+  font-size: 14px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+.freshfone_admin_content {
+  margin: 0 0 0 150px;
+  .info-data {
+    font-size: 15px;
+    li {
+      line-height: 1.8;
+    }
   }
+}
+.fresfhone_flash_message {
+  display: block;
+  position: relative;
+  margin-top: 10px;
+  p {
+    font-size: 14px;  
+  } 
+}
+.success_flash, .error_flash {
+  text-align: center;
+  padding: 5px 10px 4px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  background: #fefcea;
+  @include border-radius(4px);
+}
+.error_flash {
+ color: #a90329;
+}

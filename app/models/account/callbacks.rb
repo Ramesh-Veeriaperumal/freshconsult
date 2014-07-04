@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
       display_id_increment = @all_changes[:ticket_display_id][1] - get_tickets_redis_key(key).to_i - 1
       if display_id_increment > 0
         success = increment_tickets_redis_key(key, display_id_increment)
-        set_tickets_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID) unless success
+        set_tickets_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID, nil) unless success
       end
     end
   end
@@ -54,6 +54,7 @@ class Account < ActiveRecord::Base
       self.helpdesk_name = name if helpdesk_name.nil?
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
+      self.ssl_enabled = true
     end
 
     def backup_changes

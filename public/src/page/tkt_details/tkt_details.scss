@@ -2956,8 +2956,12 @@ $collision_delay: 1s;
   .address{
     color: #5C5C5C;
   }
-  .address_1{
-    @include padding-left(12px);
+  .bill_address{
+    padding-right: 19px;
+  }
+
+  .no_address{
+    color:#999999;
   }
 
   .line_items{

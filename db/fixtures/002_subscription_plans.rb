@@ -15,36 +15,31 @@ end
 
 def self.plan_price
 	{
-		:sprout => {
-			"BRL" => 36.0,
+		:sprout => {			
 			"EUR" => 12.0,
 			"INR" => 899.0,
 			"USD" => 15.0,
 			"ZAR" => 169.0
 		},
-		:blossom => {
-			"BRL" => 49.0,
+		:blossom => {			
 			"EUR" => 16.0,
 			"INR" => 1199.0,
 			"USD" => 19.0,
 			"ZAR" => 229.0
 		},
-		:garden => {
-			"BRL" => 69.0,
+		:garden => {			
 			"EUR" => 25.0,
 			"INR" => 1799.0,
 			"USD" => 29.0,
 			"ZAR" => 349.0
 		},
-		:estate => {
-			"BRL" => 119.0,
+		:estate => {			
 			"EUR" => 40.0,
 			"INR" => 2999.0,
 			"USD" => 49.0,
 			"ZAR" => 549.0
 		},
-		:forest => {
-			"BRL" => 189.0,
+		:forest => {			
 			"EUR" => 62.0,
 			"INR" => 4999.0,
 			"USD" => 79.0,
@@ -55,8 +50,6 @@ end
 
 def self.currencies
 	[
-		{ :name => "BRL", :billing_site => "freshpo-brl-test", :exchange_rate => 0.45,
-			:billing_api_key => "test_usPCevjp1KFcrWcdHE3fw4pe8MHKzEdFu" },
 		{ :name => "EUR", :billing_site => "freshpo-eur-test", :exchange_rate => 1.38,
 			:billing_api_key => "test_GCXuNzYMPmyZYsAubdiFNG59Ac5uW63s"},
 		{ :name => "INR", :billing_site => "freshpo-inr-test", :exchange_rate => 0.016,

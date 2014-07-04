@@ -1,4 +1,8 @@
 <%
+
+max_limit ||= 3
+container ||= 'customers'
+
 hash_val = []
 if selected_values
   selected_values.each do |item|
@@ -39,7 +43,7 @@ jQuery(document).ready(function() {
     minimumInputLength: 2,
     multiple: true,
     allowClear: true,
-    maximumSelectionSize: 3,
+    maximumSelectionSize: <%= max_limit %>,
     data: [<%=hash_val.join(",").html_safe%>],
     ajax: { 
         url: '<%= url %>',
