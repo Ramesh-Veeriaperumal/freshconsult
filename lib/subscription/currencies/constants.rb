@@ -1,11 +1,10 @@
 module Subscription::Currencies::Constants
 	
-	BILLING_CURRENCIES = [ "BRL", "EUR", "INR", "USD", "ZAR" ]
+	BILLING_CURRENCIES = [ "EUR", "INR", "USD", "ZAR" ]
 	DEFAULT_CURRENCY = "USD"
 
   COUNTRY_MAPPING = 	{
 		"INDIA" => "INR",
-		"BRAZIL" => "BRL",
 		"SOUTH AFRICA" => "ZAR"
 	}
 	
@@ -18,7 +17,6 @@ module Subscription::Currencies::Constants
 	COUNTRY_MAPPING.merge!(EUR_CURRENCY_MAPPING)
 
 	CURRENCY_UNITS = { 
-    "BRL" => "R$", 
     "EUR" => "\u20AC", 
     "INR" => "\u20B9", 
     "USD" => "$",
