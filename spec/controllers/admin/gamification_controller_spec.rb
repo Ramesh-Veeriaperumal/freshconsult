@@ -55,13 +55,6 @@ describe Admin::GamificationController do
         @account.features.find_by_type("GamificationEnableFeature").should be_nil
     end
 
-    it "should activate the Gamification" do
-    	@account.features.gamification_enable.destroy
-    	post :toggle
-    	@account.features.reload
-        @account.features.find_by_type("GamificationEnableFeature").should_not be_nil
-    end
-
     it "should display arcade page with gamification_disabled" do
 		@account.features.gamification_enable.destroy
 		get :index
@@ -69,5 +62,11 @@ describe Admin::GamificationController do
 		response.body.should =~ /Enable freshdesk arcade/
 		response.body.should =~ /winning awesome satisfaction ratings from customers./
 		response.should be_success
+    end
+
+    it "should activate the Gamification" do
+    	post :toggle
+    	@account.features.reload
+        @account.features.find_by_type("GamificationEnableFeature").should_not be_nil
     end
 end

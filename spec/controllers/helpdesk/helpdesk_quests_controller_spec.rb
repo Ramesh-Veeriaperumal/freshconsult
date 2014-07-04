@@ -30,7 +30,7 @@ describe Helpdesk::QuestsController do
 
   it "should display the unachieved quests" do
     quest = Quest.find_by_name(@all_quests[0])
-    achieved_quest = Factory.build(:achieved_quest, :user_id => @agent.id, :account_id => @account. id, :quest_id => quest.id)
+    achieved_quest = Factory.build(:achieved_quest, :user_id => @agent.id, :account_id => @account.id, :quest_id => quest.id)
     achieved_quest.save(false)
     xhr :get, :unachieved
     response.body.should_not =~ /#{quest.name}/
