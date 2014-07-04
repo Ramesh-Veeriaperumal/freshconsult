@@ -1,6 +1,5 @@
 require 'core_ext/active_record/default_scope_with_proc.rb'
 require 'core_ext/active_record/association_preload.rb'
-require 'belongs_to_account'
 
 
 ActiveRecord::Base.send :include, BelongsToAccount

@@ -1,8 +1,5 @@
 task_name = Rake::Task.task_defined?("db:seed") ? "seed_fu" : "seed"
 
-task :environment
-task :merb_env
-
 namespace :db do
   desc <<-EOS
     Loads seed data for the current environment. It will look for

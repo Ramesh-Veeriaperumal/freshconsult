@@ -9,6 +9,3 @@ require 'rake/rdoctask'
 
 require 'tasks/rails'
 require "resque/tasks"
-require File.dirname(__FILE__)+"/lib/plugins/delayed_job/tasks/tasks"
-require File.dirname(__FILE__)+"/lib/plugins/seed-fu/tasks/tasks"
-require File.dirname(__FILE__)+"/lib/plugins/facebook/lib/tasks/facebook"

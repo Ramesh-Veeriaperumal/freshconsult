@@ -17,7 +17,7 @@ gem "country_select", github: "stefanpenner/country_select", :tag => 'v1.1.2'
 gem "activemerchant", github: "Shopify/active_merchant", :tag => 'v1.7.0'
 gem "acts_as_list", "0.1.4"
 
-group :development, :test do
+group :development do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :branch => "rails-2-3"
 end
 
