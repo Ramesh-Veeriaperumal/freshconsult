@@ -18,7 +18,7 @@ describe Mobihelp::DevicesController do
     @device_attr = {
       "user" => {
         "name" => "Mobihelp User",
-        "email" => "mobihelp@ff.com",
+        "email" => Faker::Internet.email,
         "external_id" => "device_id_uu_id"
       },
       "device_info" => {
@@ -51,7 +51,7 @@ describe Mobihelp::DevicesController do
 
   it "should accept a user registration" do
     device_id = SecureRandom.hex
-    email_id = "mobihelp@ffemail.com"
+    email_id = Faker::Internet.email
     @device_attr["user"].merge!("email" => email_id)
     @device_attr["user"].merge!("external_id" => device_id)
     @device_attr["device_info"].merge!("device_uuid" => device_id)

@@ -15,7 +15,7 @@ describe Support::TicketsController do
 
   it "should create a new ticket" do
     test_subject = Faker::Lorem.sentence(4)
-    post :create, { :helpdesk_ticket => { :email => "rachel@freshdesk.com", 
+    post :create, { :helpdesk_ticket => { :email => Faker::Internet.email, 
                                           :subject => test_subject, 
                                           :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
                                         }, 

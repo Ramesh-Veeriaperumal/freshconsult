@@ -24,7 +24,7 @@ describe Helpdesk::TicketsController do
 
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
-    post :create, :helpdesk_ticket => {:email => "rachel@freshdesk.com",
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Ticket #{now}",
                                        :ticket_type => "Question",
@@ -46,7 +46,7 @@ describe Helpdesk::TicketsController do
       get :edit, :id => @test_ticket.display_id
       response.body.should =~ /Edit ticket/
       put :update, :id => @test_ticket.display_id,
-                   :helpdesk_ticket => { :email => "rachel@freshdesk.com",
+                   :helpdesk_ticket => { :email => Faker::Internet.email,
                                          :requester_id => "",
                                          :subject => "Edit Ticket #{now}",
                                          :ticket_type => "Question",

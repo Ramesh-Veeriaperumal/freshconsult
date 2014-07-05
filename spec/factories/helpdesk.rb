@@ -22,6 +22,9 @@ if Rails.env.test?
     n.private false
   end
 
+  Factory.define :subscription, :class => Helpdesk::Subscription do |s|
+  end
+
   Factory.define :product, :class => Product do |p|
     p.name {Faker::Company.name}
     p.description {Faker::Lorem.paragraph(3)}
