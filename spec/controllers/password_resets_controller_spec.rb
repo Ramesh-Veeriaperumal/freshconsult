@@ -6,7 +6,8 @@ describe PasswordResetsController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@test_email = @account.users.first.email
+		test_user = add_test_agent(@account)
+		@test_email = test_user.email
 	end
 
 	before(:each) do
