@@ -184,7 +184,7 @@ module FacebookHelper
         "message" => Faker::Lorem.sentence(3), 
         "actor_id" => "#{actor_id}", 
         "updated_time" => (Time.now.utc.to_f).to_i, 
-        "created_time" => (Time.now.ago(6.minutes).utc.to_f).to_i,
+        "created_time" => (Time.now.utc.to_f).to_i,
         "comments" => {
           "can_remove" => true, 
           "can_post" => true, 
