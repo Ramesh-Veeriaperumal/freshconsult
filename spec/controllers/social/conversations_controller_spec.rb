@@ -72,7 +72,7 @@ describe Helpdesk::ConversationsController do
                         :ticket_status => "",
                         :format => "js"
                       }
-        tweet_note = Social::Tweet.find_by_tweet_id(twitter_object[:id])
+        tweet_note = @account.tweets.find_by_tweet_id(twitter_object[:id])
         tweet_note.should_not be_nil
         tweet_note.is_note?.should be_true
         note_body = tweet_note.tweetable.note_body.body
@@ -90,7 +90,7 @@ describe Helpdesk::ConversationsController do
         twitter_dm_array = [twitter_dm]
         Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
         Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
-        tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+        tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
         tweet.should_not be_nil
         tweet.is_ticket?.should be_true
         
@@ -119,7 +119,7 @@ describe Helpdesk::ConversationsController do
                         :ticket_status => "",
                         :format => "js"
                       }        
-        dm = Social::Tweet.find_by_tweet_id(reply_id)
+        dm = @account.tweets.find_by_tweet_id(reply_id)
         dm.should_not be_nil
         dm.is_note?.should be_true
         note_body = dm.tweetable.note_body.body
