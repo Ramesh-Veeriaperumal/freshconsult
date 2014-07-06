@@ -205,6 +205,10 @@ input[type="button"] {
 .btn-inverse {
   @include buttonBackground($btnInverseBackground, $btnInverseBackgroundHighlight);
 }
+// Flat Button
+.btn-flat {
+  background:none;
+}
 // Cross-browser Jank
 // --------------------------------------------------
 
