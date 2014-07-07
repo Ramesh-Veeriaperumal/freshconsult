@@ -196,7 +196,7 @@ module TwitterHelper
       "id_str" => "#{tweet_id}",
       "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
-          "id" => 2341632074,
+          "id" => "2341632074",
           "id_str" => "2341632074",
           "name" => "Save the Hacker",
           "screen_name" => "savethehacker",
@@ -278,7 +278,7 @@ module TwitterHelper
   
   def sample_twitter_object(parent_id = "")
     attrs = sample_twitter_feed.deep_symbolize_keys
-    attrs[:in_reply_to_user_id_str] = 2341632074
+    attrs[:in_reply_to_user_id_str] = "2341632074"
     twitter_feed = Twitter::Tweet.new(attrs)
   end
   
@@ -293,7 +293,7 @@ module TwitterHelper
     wait_for = 1
     tweet = nil
     #while wait_for <= wait
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       # if tweet.nil?
       #   wait_for = wait_for + 1
       # else

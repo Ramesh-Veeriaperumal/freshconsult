@@ -2,6 +2,8 @@ require 'rubygems'
 require 'spork'
 
 require 'simplecov'
+require 'simplecov-csv'
+
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
@@ -22,6 +24,11 @@ SimpleCov.start do
 end
 
 SimpleCov.coverage_dir 'tmp/coverage'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::CSVFormatter,
+]
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,

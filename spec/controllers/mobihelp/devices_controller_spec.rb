@@ -8,8 +8,7 @@ describe Mobihelp::DevicesController do
 
   before(:all) do
     @account = create_test_account
-    @mobihelp_app = Factory.build(:mobihelp_app, :name => "Freshdesk #{Time.now.nsec}")
-    @mobihelp_app.save
+    @mobihelp_app = create_mobihelp_app
   end
 
   before(:each) do

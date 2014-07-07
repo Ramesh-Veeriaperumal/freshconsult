@@ -9,10 +9,6 @@ describe Freshfone::CallController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @account.freshfone_calls.delete_all
-  end
-
-  before(:each) do
     @request.host = @account.full_domain
     create_test_freshfone_account
     create_freshfone_user
@@ -20,6 +16,7 @@ describe Freshfone::CallController do
 
   after(:each) do
     @account.freshfone_users.find(@freshfone_user).destroy
+    @account.freshfone_calls.delete_all
   end
 
   it 'should retrieve caller data for the phone number' do
