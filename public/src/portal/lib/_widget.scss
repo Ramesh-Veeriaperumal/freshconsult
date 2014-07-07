@@ -7,8 +7,8 @@ body, .feedback-wrapper{
 	background:transparent;
 }
 .feedback-wrapper{
-	margin-left: 20px;
-	margin-right: 20px;
+	@include margin-left(20px);
+	@include margin-right(20px);
 	&.embedded-wrapper{
 		margin:0;
 	}
@@ -28,7 +28,7 @@ body, .feedback-wrapper{
 	// Reseting existing widget modal dialog
 	position: relative;
 	@include box-shadow(0 5px 10px rgba(0, 0, 0, 0.4), white 0 0 1px inset);
-	left: 0;
+ @include left(0);
 	top: 0;
 	margin: 0;
 	.modal-header{
@@ -43,9 +43,9 @@ body, .feedback-wrapper{
 	.modal-header-bg{
 		background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
 		background-repeat: repeat-x;
-		padding: 9px 40px 0 15px;
+		@include padding(9px 40px 0 15px);
 		@media (min-width: 45em) {
-			padding: 9px 15px 0 15px;
+			@include padding(9px 15px 0 15px);
 		}
 	}
 	.modal-footer{
@@ -53,14 +53,14 @@ body, .feedback-wrapper{
 		width:100%;
 		position: absolute;
 		bottom: 0;
-		left:0;
+	 @include left(0);
 		height:50px;
 		padding: 5px 15px 4px;
 		background:#fff;
-		border-right: 1px solid #e8e8e8;
+		@include border-right(1px solid #e8e8e8);
 		border-radius: 0;
-		text-align:left;
-		border-bottom-left-radius: 6px;
+		@include text-align(left);
+		@include border-bottom-left-radius(6px);
 		.btn{
 			margin-top: 5px;
 		}
@@ -91,7 +91,7 @@ body, .feedback-wrapper{
 			position: absolute;
 			border-top:1px solid #ddd;
 			top: 100%;
-			left: 0;
+		 @include left(0);
 			width: 100%;
 			height: 5px;
 			@include background-image(linear-gradient(to bottom, rgba(0,0,0,0.1) 0,rgba(0,0,0,0) 100%));
@@ -110,7 +110,7 @@ body, .feedback-wrapper{
 	.modal-panel{ width: 40%; display: block; }
 	&.modal-scroll .modal-header{
 		width:60%;
-		border-right: 1px solid #e8e8e8;
+		@include border-right(1px solid #e8e8e8);
 	}
 }
 .mobile-search-icon{
@@ -124,7 +124,7 @@ body, .feedback-wrapper{
 /* Embedded Widget styles */
 .embedded-wrapper{
 	#feedback-suggest input.special {
-		padding:4px 15px 4px 35px;
+		@include padding(4px 15px 4px 35px);
 		margin-top: 4px;
 		border-color: $inputBorder;
 		@include border-radius(3px);
@@ -159,7 +159,7 @@ body, .feedback-wrapper{
 }
 .fw-thankyou-page .embedded-footer .copyright{
 	width: 100%;
-	text-align: center;
+	@include text-align(center);
 }
 
 //Search Panel Style
@@ -173,13 +173,13 @@ body, .feedback-wrapper{
 	position: absolute;
 	height: 100%;
 	top: 0;
-	right: 0;
+ 	@include right(0);
 	@include border-right-radius(6px);
 	z-index: 9;
 	@include box-shadow(-1px 0 0 #e8e8e8);
 }
 .panel-info {
-	text-align: center;
+	@include text-align(center);
  	padding-top: 1.5em;
 	.lead{
 		font-size: 28px;
@@ -203,13 +203,13 @@ body, .feedback-wrapper{
 
 //Form Controls Style
 #feedback-suggest input.special{
-	padding:8px 15px 6px 35px;
+	@include padding(8px 15px 6px 35px);
 	border-color: $inputBorder;
 }
 
 .form-widget{
-	.select2-container{ width:100%; vertical-align:baseline; } 
-	.custom_checkbox .controls{ margin-left: 0; }
+	.select2-container{ width:100%; vertical-align:baseline; margin-bottom:9px} 
+	.custom_checkbox .controls{ @include margin-left(0); }
 }
 
 .form-placeholder{
@@ -217,7 +217,7 @@ body, .feedback-wrapper{
 	.control-label{
 		position: absolute;
 		color: #d0d0d0;
-		margin-left: 33px;
+		@include margin-left(33px);
 		margin-top: 4px;
 		cursor: text;
 		font-size: $baseFontSize;
@@ -227,9 +227,9 @@ body, .feedback-wrapper{
 	.description-label{
 		z-index: 1;
 		top: 34px;
-		margin-left: 13px;
+		@include margin-left(13px);
 	}
-	.email, .text{ padding-left: 32px; }
+	.email, .text{ @include padding-left(32px); }
 	.html_paragraph{ resize: none; }
 	.control-group{ margin-bottom: 0; }
 	.control-group.error-group > label{ color: #d0d0d0; }
@@ -239,7 +239,7 @@ body, .feedback-wrapper{
 		margin-bottom:15px;
 	}
 	.default_description div.error {
-		margin-left: 10px;
+		@include margin-left(10px);
 		margin-bottom: 0;
 	}
 }
@@ -256,7 +256,7 @@ body, .feedback-wrapper{
 	}
 	// Float the labels left
 	.control-label {
-	  float: left;
+	  @include float(left);
 	  width: 140px;
 	  padding-top: 5px;
 	}
@@ -265,9 +265,9 @@ body, .feedback-wrapper{
 	  // Super jank IE7 fix to ensure the inputs in .input-append and input-prepend
 	  // don't inherit the margin of the parent, in this case .controls
 	  *display: inline-block;
-	  *padding-left: 20px;
-	  margin-left: 160px;
-	  *margin-left: 0;
+	  *padding-left:20px;
+	  @include margin-left(160px);
+	  *margin-left:0;
 	  &:first-child {
 	    *padding-left: 160px;
 	  }
@@ -279,7 +279,7 @@ body, .feedback-wrapper{
 	}
 	// Move over buttons in .form-actions to align with .controls
 	.form-actions {
-	  padding-left: 160px;
+	  @include padding-left(160px);
 	}
 }
 
@@ -287,11 +287,11 @@ body, .feedback-wrapper{
 .level_2, .level_3{ margin: 10px 0; }
 
 .copyright{
-	float: left;
+	@include float(left);
 	margin-top: 2px;
 	font-size: 12px;
 	line-height:18px;
-	text-align: left;
+	@include text-align(left);
 	a{ text-decoration: underline; }
 	a:hover{ text-decoration: none; }
 	a, a:hover{ color: inherit;  }
@@ -300,12 +300,12 @@ body, .feedback-wrapper{
 .screenshot-remove{
 	color: #afafaf;
 	font-weight: 400;
-	margin-right: 6px;
+	@include margin-right(6px);
 	margin-top: -3px;
-	margin-left: 0px;
+	@include margin-left(0px);
 	position: absolute;
 	top: -1px;
-	left: -18px;
+ 	@include left(-18px);
 }
 .screenshot-wrap{
 	position: relative;
@@ -317,7 +317,7 @@ body, .feedback-wrapper{
 
 .attach-wrapper{
 	.attach-link{
-		padding-left: 18px; position: relative;
+		@include padding-left(18px); position: relative;
 		cursor: pointer;
 		color: $linkColor; // for feedback widget screenr
 		&:hover{
@@ -326,16 +326,16 @@ body, .feedback-wrapper{
 	}
 	.screenr-dropdown{
 		.btn-record:before{
-			margin:3px 4px 0 -6px;
+			@include margin(3px 4px 0 -6px);
 		}
 		.portal-attach{
 			.wicon-camera {
 				position: absolute;
-				left: 5px;
+			 @include left(5px);
 				top:5px;
 			}
 			a{
-				padding-left: 27px;
+				@include padding-left(27px);
 				display: inline-block;
 				width: 100%;
 				margin: 0;
@@ -354,13 +354,14 @@ body, .feedback-wrapper{
 }
 .alert-invalid-text{
 	color:#b94a48;
-	float:left;
+	@include float(left);
 }
 
 // IE hacks
-
-.ie .portal-attach .attach-file{ display:block !important; }
-.ie .portal-attach .attach-proxy{ display:none !important; }
+.ie7, .ie8, .ie9, .ie10{
+	.portal-attach .attach-file{ display:block !important; }
+	.portal-attach .attach-proxy{ display:none !important; }
+}
 .ie8{	overflow: hidden !important; }
 .ie7{
 	position: relative;
@@ -376,7 +377,7 @@ body, .feedback-wrapper{
 				padding: 45px 0 0;
 				.form-placeholder {
 					.email, .text{
-						padding-left:0;
+						@include padding-left(0);
 					}
 				}
 				.extra-space{
@@ -392,7 +393,7 @@ body, .feedback-wrapper{
 				width:58%;
 				margin:0 auto;
 				padding: 0;
-				border-right:0;
+				@include border-right(0);
 				input[type="submit"].btn{
 					margin:10px 15px;
 				}
@@ -402,12 +403,12 @@ body, .feedback-wrapper{
 }
 
 .accomadate-screenr-padding{
-	padding: 40px 0 0 0;
+	@include padding(40px 0 0 0);
 }
 
 .modify-screenr-bar{
 	width: 55.25% !important;
 	height: 35px !important;
 	position: absolute !important;
-	margin: 41px 0 0 20px !important;
+	@include margin(41px 0 0 20px !important);
 }

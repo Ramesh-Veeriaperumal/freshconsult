@@ -133,11 +133,11 @@
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
     admin.resources :chat_setting, :collection => { :toggle => :post }
-    admin.resources :automations, :collection => { :reorder => :put }
-    admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put },
+    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
+    admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
-    admin.resources :observer_rules, :member => { :activate_deactivate => :put },
+    admin.resources :observer_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
     :collection => { :existing_email => :get, 
@@ -460,8 +460,8 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
-    helpdesk.visitor '/visitor/:filter', :controller => 'visitor', :action => 'index'
-    helpdesk.chat_archive '/chat/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
 #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
@@ -585,7 +585,7 @@
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
         :action => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, :hit => :get,
-          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put },
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put, :reply => :get },
           :collection => {:my_topics => :get} do |topic|
         discussion.connect "/topics/my_topics/page/:page", :controller => :topics,
           :action => :my_topics
@@ -653,6 +653,8 @@
     mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
+
+  map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'

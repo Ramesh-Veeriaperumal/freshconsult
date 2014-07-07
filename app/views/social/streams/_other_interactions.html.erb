@@ -27,9 +27,9 @@
 
               <div class="info-data">
                 <%= font_icon "twitter", :size => 13 %> 
-                <% parsed_time = formated_date(Time.parse(feed.posted_time)) %>
+                <% parsed_time = formated_date(Time.parse(feed.posted_time).utc) %>
                 <span class="timestamp" data-livestamp="<%= feed.posted_time %>" title="<%= parsed_time %>">
-                  <%= time_ago_in_words(Time.parse(feed.posted_time)) %> ago
+                  <%= time_ago_in_words(Time.parse(feed.posted_time).utc) %> ago
                 </span>
                 <% if feed.agent_name %>
                   <span>&nbsp; by <%= feed.agent_name %></span>

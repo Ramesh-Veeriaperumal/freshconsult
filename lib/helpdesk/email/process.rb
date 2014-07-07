@@ -41,7 +41,7 @@ class Helpdesk::Email::Process
     return if mail_from_email_config?
     # encode_stuffs
     construct_html_param
-    self.user = get_user(common_email_data[:from], common_email_data[:email_config]) #In parse_email_data
+    self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
     return if (user.nil? or user.blocked?)
     get_necessary_details
     assign_to_ticket_or_kbase

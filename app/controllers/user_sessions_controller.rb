@@ -27,7 +27,7 @@ include Mobile::Actions::Push_Notifier
   
   def new
     # Login normal supersets all login access (can be used by agents)
-    if request.request_uri == "/login/normal"
+    if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new
     elsif current_account.sso_enabled?
       sso_login_page_redirect
@@ -86,7 +86,7 @@ include Mobile::Actions::Push_Notifier
   def opensocial_google
     begin
       Account.reset_current_account
-      cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
+      cert_file  = "#{Rails.root}/config/cert/#{params['xoauth_public_key']}"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
       container = params['opensocial_container']
@@ -238,7 +238,7 @@ include Mobile::Actions::Push_Notifier
   end
 
   def openid_google
-    base_domain = AppConfig['base_domain'][RAILS_ENV]
+    base_domain = AppConfig['base_domain'][Rails.env]
     domain_name = params[:domain] 
     signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
     account_id = find_account_by_google_domain(domain_name)
@@ -267,7 +267,7 @@ include Mobile::Actions::Push_Notifier
       account_id = nil
       gm = GoogleDomain.find_by_domain(google_domain_name)
       if gm.blank?
-        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][Rails.env]}"
         sm = ShardMapping.fetch_by_domain(full_domain)
         account_id = sm.account_id if sm
       else

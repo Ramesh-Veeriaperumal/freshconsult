@@ -2,7 +2,7 @@
 // -----------
 
 .close {
-  float: right;
+  @include float(right);
   font-size: 20px;
   font-weight: bold;
   line-height: $baseLineHeight;

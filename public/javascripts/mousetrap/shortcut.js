@@ -369,8 +369,8 @@
                         activeClass: 'sc-item-selected',
                         onHoverActive:false,
                         scrollInDocument:true,
-                        additionUpKeys:74, // key j : 74
-                        additionDownKeys:75 // key k : 75
+                        additionUpKeys:75, // key k : 75
+                        additionDownKeys:74 // key j : 74
                 })
             },
             destroy: function(){

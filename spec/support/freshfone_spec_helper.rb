@@ -3,11 +3,13 @@ module FreshfoneSpecHelper
   def create_test_freshfone_account
     Freshfone::Account.any_instance.stubs(:close)
     Freshfone::Account.any_instance.stubs(:update_twilio_subaccount_state).returns(true)
+    Twilio::REST::IncomingPhoneNumber.any_instance.stubs(:delete).returns(true)
+    HTTParty.stubs(:post)
     freshfone_account = Freshfone::Account.new( 
-                          :twilio_subaccount_id => "AC626dc6e5b03904e6270f353f4a2f068f", 
-                          :twilio_subaccount_token => "9440b022c423b59a8339715b6e7d4f80", 
-                          :twilio_application_id => "APca64694c6df44b0bbcfb34058c567555", 
-                          :queue => "QU629430fd5b8d41769b02abfe7bfbe3a9",
+                          :twilio_subaccount_id => "AC9fa514fa8c52a3863a76e2d76efa2b8e", 
+                          :twilio_subaccount_token => "58aacda85de70e5cf4f0ba4ea50d78ab", 
+                          :twilio_application_id => "AP932260611f4e4830af04e4e3fed66276", 
+                          :queue => "QU81f8b9ad56f44a62a3f6ef69adc4d7c7",
                           :account_id => @account.id, 
                           :friendly_name => "RSpec Test" )
     freshfone_account.send(:create_without_callbacks)
@@ -22,24 +24,26 @@ module FreshfoneSpecHelper
     if @credit.present?
       @credit.update_attributes(:available_credit => 25)
     else
-      @account.create_freshfone_credit(:available_credit => 25)
+      @credit = @account.create_freshfone_credit(:available_credit => 25)
     end
   end
 
   def create_freshfone_number
     if @account.freshfone_numbers.blank?
-      @number ||= @account.freshfone_numbers.create( :number => "+18062791926", 
-                                      :display_number => "+18062791926", 
+      @number ||= @account.freshfone_numbers.create( :number => "+12407433321", 
+                                      :display_number => "+12407433321", 
                                       :country => "US", 
                                       :region => "Texas", 
                                       :voicemail_active => true,
-                                      :number_type => 1 )
+                                      :number_type => 1,
+                                      :state => 1,
+                                      :deleted => false )
     else
       @number ||= @account.freshfone_numbers.first
     end
   end
 
-  def create_freshfone_call(call_sid = "CA9cdcef5973752a0895f598a3413a88d5")
+  def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
                                       :params => { :CallSid => call_sid } )
@@ -107,21 +111,21 @@ module FreshfoneSpecHelper
 
   def incoming_params
     { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", 
-      "Called"=>"+18062791926", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
+      "Called"=>"+12407433321", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
       "Direction"=>"inbound", "FromCity"=>"BAKERSFIELD", "CalledCountry"=>"US", "CallerState"=>"CA", 
-      "CallSid"=>"CA9cdcef5973752a0895f598a3413a88d5", "CalledState"=>"TX", "From"=>"+16617480240", 
+      "CallSid"=>"CA2db76c748cb6f081853f80dace462a04", "CalledState"=>"TX", "From"=>"+16617480240", 
       "CallerZip"=>"93307", "FromZip"=>"93307", "ApplicationSid"=>"APca64694c6df44b0bbcfb34058c567555", 
-      "CallStatus"=>"ringing", "ToCity"=>"WHITE DEER", "ToState"=>"TX", "To"=>"+18062791926", "ToCountry"=>"US", 
+      "CallStatus"=>"ringing", "ToCity"=>"WHITE DEER", "ToState"=>"TX", "To"=>"+12407433321", "ToCountry"=>"US", 
       "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER" }
   end
 
   def ivr_flow_params
     {"AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", 
-      "Called"=>"+18062791926", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
+      "Called"=>"+12407433321", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
       "Direction"=>"inbound", "FromCity"=>"BAKERSFIELD", "CalledCountry"=>"US", "CallerState"=>"CA", 
-      "CallSid"=>"CA1d4ae9fae956528fdf5e61a64084f191", "CalledState"=>"TX", "From"=>"+16617480240", 
+      "CallSid"=>"CA2db76c748cb6f081853f80dace462a04", "CalledState"=>"TX", "From"=>"+16617480240", 
       "CallerZip"=>"93307", "FromZip"=>"93307", "ApplicationSid"=>"APca64694c6df44b0bbcfb34058c567555", 
-      "CallStatus"=>"in-progress", "ToCity"=>"WHITE DEER", "ToState"=>"TX", "To"=>"+18062791926", "Digits"=>"1", 
+      "CallStatus"=>"in-progress", "ToCity"=>"WHITE DEER", "ToState"=>"TX", "To"=>"+12407433321", "Digits"=>"1", 
       "ToCountry"=>"US", "msg"=>"Gather End", "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", 
       "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER", "menu_id"=>"0"}
   end
@@ -132,13 +136,13 @@ module FreshfoneSpecHelper
 
   def voicemail_params
     { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", 
-      "Called"=>"+18062791926", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
+      "Called"=>"+12407433321", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
       "Direction"=>"inbound", "FromCity"=>"BAKERSFIELD", "CalledCountry"=>"US", "CallerState"=>"CA", 
-      "CallSid"=>"CA9cdcef5973752a0895f598a3413a88d5", "CalledState"=>"TX", "From"=>"+16617480240", 
+      "CallSid"=>"CA2db76c748cb6f081853f80dace462a04", "CalledState"=>"TX", "From"=>"+16617480240", 
       "CallerZip"=>"93307", "FromZip"=>"93307", "ApplicationSid"=>"APca64694c6df44b0bbcfb34058c567555", 
       "CallStatus"=>"completed", "ToCity"=>"WHITE DEER", "ToState"=>"TX", 
       "RecordingUrl"=>"http://api.twilio.com/2010-04-01/Accounts/AC626dc6e5b03904e6270f353f4a2f068f/Recordings/REa618f1f9d5cbf4117cb4121bc2aa5a0b", 
-      "To"=>"+18062791926", "Digits"=>"hangup", "ToCountry"=>"US", "RecordingDuration"=>"5", 
+      "To"=>"+12407433321", "Digits"=>"hangup", "ToCountry"=>"US", "RecordingDuration"=>"5", 
       "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER", 
       "RecordingSid"=>"REa618f1f9d5cbf4117cb4121bc2aa5a0b"}
 
@@ -148,6 +152,11 @@ module FreshfoneSpecHelper
     { "RecordingUrl" => "http://api.twilio.com/2010-04-01/Accounts/AC626dc6e5b03904e6270f353f4a2f068f/Recordings/REa618f1f9d5cbf4117cb4121bc2aa5a0b",
       "agent" => @agent.id,
       "number_id" => @number.id }
+  end
+
+  def twimlify(body)
+    twiml = Hash.from_trusted_xml body
+    twiml.deep_symbolize_keys if twiml.present?
   end
 
 end

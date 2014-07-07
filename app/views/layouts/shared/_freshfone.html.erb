@@ -5,6 +5,10 @@
 	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
 </div>
 <div class="freshfone_widget">
+	<div class="ff_desktop_notification hide tooltip" 
+		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
+		<div class="desktopNotifier"></div>
+	</div>
 	<%= render 'layouts/shared/freshfone/freshfone_popup_tabs' %>
 </div>
 <div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>

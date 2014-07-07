@@ -1,5 +1,5 @@
-config = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/s3.yml")).result)
-sqs_config = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/sqs.yml")).result)
+config = YAML::load(ERB.new(File.read("#{Rails.root}/config/s3.yml")).result)
+sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
 sns_config = File.join(Rails.root,"config","sns.yml")
 dynamodb_config = File.join(Rails.root,"config","dynamo_db.yml")
 
@@ -29,6 +29,8 @@ begin
 	$sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
 
 	$social_dynamoDb = AWS::DynamoDB::ClientV2.new()
+
+	$sqs_spam_analysis = AWS::SQS.new.queues.named(SQS[:forum_spam_analysis_queue])
 rescue => e
 	puts "AWS::SQS connection establishment failed."
 end

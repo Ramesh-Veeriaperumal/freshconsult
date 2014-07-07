@@ -28,7 +28,7 @@ ol, ul, li{
 }
 
 .ticket_show .clearfix:after {
-    clear:both;
+    @include clear(both);
 }
 
 .ticket_show .clearfix {
@@ -44,11 +44,11 @@ ol, ul, li{
 .tkt-wrapper-inner{
 	width: 98%; /* It must be adjust the width for ".leftcontent .at_the_top" class*/
 	margin: 0 auto;
-	padding-left: 25px;
+	@include padding-left(25px);
 }
 
 .tkt-wrap{
-	clear: both;
+	@include clear(both);
 	@include min-width(1102px);
 	width: 80%;
 	margin: 0 auto;
@@ -58,7 +58,7 @@ ol, ul, li{
 	margin:0 auto;
 	overflow:visible;
 	position:relative;
-	text-align: left;
+	@include text-align(left);
 	padding-bottom: 20px;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #333;
@@ -67,15 +67,15 @@ ol, ul, li{
 #tkt-inner{
 	position:relative;
 	z-index:1;
-	margin: 8px 0 0 0;
-	padding-right: 318px;
+	@include margin(8px 0 0 0);
+	@include padding-right(318px);
 	.tkt-sidebar{
 		width:320px;
-		float:right;
-		margin-right:-318px;
+		@include float(right);
+		@include margin-right(-318px);
 	}
 	.leftcontent{
-		float: left;
+		@include float(left);
 		width: 99%;
 	}
 }
@@ -83,7 +83,7 @@ ol, ul, li{
 .priority_block {
 	height: 10px;
 	width: 10px;
-	margin-right: 10px;
+	@include margin-right(10px);
 	display: inline-block;
 	@include border-radius(2px);
 
@@ -121,7 +121,7 @@ ol, ul, li{
 		@include border-radius(5px);
 		display: inline-block;
 		padding: 3px 10px 0;
-		margin: 0 10px 0 0;
+		@include margin(0 10px 0 0);
 		height: 18px;
 		position: relative;
 		top: -3px;
@@ -132,17 +132,17 @@ ol, ul, li{
 		}
 
 		a {
-			float: right;
+			@include float(right);
 			width: 7px;
 			background: #FEFEFE;
 			display: block;
 			margin: 1px 1px 0;
 			height: 19px;
 			position: relative;
-			right: -10px;
+		 @include right(-10px);
 			top: -3px;
 			@include border-radius(0 4px 4px 0);
-			padding: 0 7px 0 5px;
+			@include padding(0 7px 0 5px);
 			color: #333;
 			text-transform: lowercase;
 			font-size: 15px;
@@ -206,7 +206,7 @@ ol, ul, li{
 					@include border-radius(5px);
 					display: inline-block;
 					padding: 0 10px;
-					margin: 0 10px 0 0;
+					@include margin(0 10px 0 0);
 					position: relative;
 					top: -3px;
 					@include box-shadow(1px 1px 0 #FFF);
@@ -216,16 +216,16 @@ ol, ul, li{
 					}
 
 					a {
-						float: right;
+						@include float(right);
 						width: 7px;
 						background: #FEFEFE;
 						display: block;
 						margin: 1px 1px 0;
 						height: 19px;
 						position: relative;
-						right: -10px;
+					 	@include right(-10px);
 						@include border-radius(0 4px 4px 0);
-						padding: 0 7px 0 5px;
+						@include padding(0 7px 0 5px);
 						color: #333;
 						text-transform: lowercase;
 						font-size: 15px;
@@ -243,7 +243,7 @@ ol, ul, li{
 				@include hide-text();
 				width: 23px;
 				height: 21px;
-				margin-right: 10px;
+				@include margin-right(10px);
 				display: inline-block;
 				margin-bottom:  -4px;
 			}
@@ -257,7 +257,7 @@ ol, ul, li{
 	padding: 5px 0;
 	border: solid 1px #CCC;
 	margin-bottom: 20px;
-	@include border-radius(4px, 4px);
+	@include border-radius(4px 4px);
 	h4{
 		font-size: 18px;
 		padding: 0 10px;
@@ -267,7 +267,7 @@ ol, ul, li{
 
 	p{
 		font-size: 13px;
-		padding-left: 10px;
+		@include padding-left(10px);
 		line-height: 16px;
 		color: #999;
 	}
@@ -279,9 +279,9 @@ ol, ul, li{
 	width: 38px;
 	height: 38px;
 	@include border-radius(32px);
-	text-align: center;
+	@include text-align(center);
 	display: table;
-	float: left;
+	@include float(left);
 
 	.source{
 		@include border-radius(32px);
@@ -336,26 +336,26 @@ ol, ul, li{
 
 #toggle-note-visibility {
 	display: inline-block;
-	float: left;
+	@include float(left);
 	position: relative;
 	margin: 10px 0 0;
 	width: 210px;
 
 	label {
-		float: left;
+		@include float(left);
 		position: relative;
 		top: 3px;
 	}
 }
 
 .ticket-actions{
-	float: right;
+	@include float(right);
 	margin: 10px 0 0;
 	.forward, .reply{
-		float: left;
+		@include float(left);
 		font-size: 12px;
 		color: #333;
-		margin-right: 10px;
+		@include margin-right(10px);
 		padding: 0 10px;
 		&:hover{ background: #fafafa;}
 		&:active{ background: #fff;}
@@ -364,7 +364,7 @@ ol, ul, li{
 		border: 1px #ccc solid;
 		background-color: #fafafa;
 		@include border-radius(4px);
-		padding-right: 10px;
+		@include padding-right(10px);
 		background-color: #ffffff; 
 		@include filter-gradient(#ffffff, #e5e5e5, vertical);
 		$experimental-support-for-svg: true;
@@ -372,10 +372,10 @@ ol, ul, li{
 		@include box-shadow(0 0 1px #fff);
 	}
 	.menu-dropdown, .dropdown-menu { 
-		float: left;
+		@include float(left);
 		position: absolute;
 		top: 30px;
-		left: 0;
+	 	@include left(0);
 		z-index: 900;
 		margin: 2px 0 0;
 		padding: 5px 0;
@@ -385,18 +385,18 @@ ol, ul, li{
 	}
 
 	.ticket-btns{
-		float: left;
-		margin-right: 6px;
+		@include float(left);
+		@include margin-right(6px);
 
 		#spamicon img{ display: none; }
-		& > .btn { margin-right: 0; }
+		& > .btn { @include margin-right(0); }
 		.btn { padding: 4px 12px; }
 	}
 
 	.ticket-btn{
-		float: left;
+		@include float(left);
 		@include border-radius(4px);
-		margin-right: 10px;
+		@include margin-right(10px);
 		color: #333;
 		font-size: 13px;
 		padding: 7px 10px;
@@ -413,16 +413,16 @@ ol, ul, li{
         }
 	}
 
-	.forward{ padding: 10px 0 10px 25px; }
+	.forward{ @include padding(10px 0 10px 25px); }
 
 	.reply .down-arrow{
 		position: relative;
 		top: 10px;
-		left: 5px;
+	 	@include left(5px);
 		width: 0; 
 		height: 0; 
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
+		@include border-left(6px solid transparent);
+		@include border-right(6px solid transparent);
 		border-top: 6px solid #6f6f6f;
 		margin: 5px;
 	}
@@ -508,9 +508,9 @@ ol, ul, li{
 .hidden_upload {
 	display: block;
 	width: 120px;
-	margin-left: 3px;
-	float: left;
-	clear: both;
+	@include margin-left(3px);
+	@include float(left);
+	@include clear(both);
 	overflow: hidden;
 	margin-top: -10px;
 
@@ -524,7 +524,7 @@ ol, ul, li{
 		width: 120px;
 		position:relative;
 		top: -10px;
-		right: 0;
+	 	@include right(0);
 		@include opacity(0);
 		cursor: pointer;
 		z-index: 10;
@@ -549,7 +549,7 @@ ol, ul, li{
 		color: #1272de;
 		font-size: 22px;
 		font-weight: bold;
-		margin-right: 0;
+		@include margin-right(0);
 	}
 }
 
@@ -572,7 +572,7 @@ ol, ul, li{
 	@include box-shadow(none);
 
     .avatar-wrap:before{
-    	left: 200px;
+     @include left(200px);
  	    width: 300px;
     	height: 20px;
     	background: #000;
@@ -585,12 +585,12 @@ ol, ul, li{
 	}
 
     #reply-draft {
-    	float: none;
+    	@include float(none);
     	padding:5px 0;
     	font-size: 12px;
     	position: relative;
 		top: 3px;
-		margin-right: 30px;
+		@include margin-right(30px);
 		display: inline-block;
 
     	.sav {
@@ -598,7 +598,7 @@ ol, ul, li{
     		border: solid 1px #ccc;
     		@include border-radius(4px);
     		color: #333;
-    		float:left;
+    		@include float(left);
     		margin:0;
     		padding: 1px 7px 0;
     	}
@@ -609,10 +609,10 @@ ol, ul, li{
 
     	.close-img {
     		background: #b3b3b3;
-    		margin:0 1px 0 0;
-    		padding: 2px 7px 2px 3px;
+    		@include margin(0 1px 0 0);
+    		@include padding(2px 7px 2px 3px);
     		border: solid 1px #999;
-    		float:left;
+    		@include float(left);
     		@include border-radius(4px 0 0 4px);
     	}
     }
@@ -630,7 +630,7 @@ ol, ul, li{
 .search_text_box{	
 	input {
 		@include border-radius(5px);
-		padding: 5px 20px 5px 10px;
+		@include padding(5px 20px 5px 10px);
 		border: solid 1px #CCC;
 		@include box-shadow(rgba(0,0,0,0.1) 0 0 5px inset);
 	}
@@ -640,12 +640,12 @@ ol, ul, li{
 		width: 15px;
 		position: absolute;
 		top: 3px;
-		right: 2px;		
+	 	@include right(2px);		
 	}
 }
 
 .list_agents_replying {
-	float: right;
+	@include float(right);
 	margin-top: -25px;
 	margin-bottom: -10px;
 	background: #fcfcf9;
@@ -659,16 +659,16 @@ ol, ul, li{
 }
 #not_following_message {
 	padding:8px 10px;
-	margin-left:10px;
+	@include margin-left(10px);
 	display: inline-block;
 }
 
 .conversation_thread, .content .controls .control-left {
-	border-left: 4px #f2f2f2 solid;
+	@include border-left(4px #f2f2f2 solid);
 }
 	
 .conversation_thread {
-	padding: 0 30px 15px 7px;
+	@include padding(0 30px 15px 7px);
 	margin-top:-10px;
 	list-style: none;
      
@@ -693,23 +693,23 @@ ol, ul, li{
 			}
 
 			.commentbox:before {
-				border-right-color: #bbb;
+				@include border-right-color(#bbb);
 			}
 		}
 	}
 
 
     .btn-toolbar {
-    	float: right;
-    	clear: right;
+    	@include float(right);
+    	@include clear(right);
     	width: 400px;
-    	text-align: right;
+    	@include text-align(right);
     	margin-bottom:0;
     	> span {
-    		text-align: left;
+    		@include text-align(left);
     	}
     	.btn-group {
-    		margin:0 0 0 10px;
+    		@include margin(0 0 0 10px);
     	}
 
     	&.draft_saved > span {
@@ -766,24 +766,24 @@ ol, ul, li{
 		display: none;
 		position: relative;
 		top: 5px;
-		right: 15px;
+	 	@include right(15px);
 		width: 150px;
 		select { height: 25px; }
 	}
 
 
 	.post_in_forum {
-		float: left; 
+		@include float(left); 
 		width: 200px;
 		label {
 			display: block;
-			margin-right: 25px;
+			@include margin-right(25px);
 			padding: 0;
 			font-size: 12px;
-			clear: both;
+			@include clear(both);
 
 			[type="checkbox"] {
-				margin: 0 5px 0 0;
+				@include margin(0 5px 0 0);
 			}
 		}
 	}
@@ -797,16 +797,16 @@ ol, ul, li{
     	border-bottom: solid 1px #F3F3F3;
     	padding: 7px 15px;
     	@include border-radius(6px 6px 0 0);
-    	float: none;
+    	@include float(none);
     	width: auto;
-		clear: both;
+		@include clear(both);
 
     	label {
-    		float: none;
+    		@include float(none);
     		display: inline-block;
     		width: auto;
     		font-weight: bold;
-    		margin-right: 15px;
+    		@include margin-right(15px);
 
     	}
 
@@ -852,7 +852,7 @@ ol, ul, li{
 				background: $message_window_bg_color;					
 			}
 			.select2-choice, .select2-search-choice {
-				float: none;
+				@include float(none);
 				width: auto;
 				display: inline-block;
 			}
@@ -862,14 +862,14 @@ ol, ul, li{
     	&.cc_fields {
     		overflow: hidden;
     		label {
-				float:left;
+				@include float(left);
 				width: 50px;
 				position:relative;
 				z-index:2;
     		}
 
     		.clear_emails {
-    			float:right;
+    			@include float(right);
     			width: 30px;
     			margin-top: 5px;
     			position: relative;
@@ -877,8 +877,8 @@ ol, ul, li{
     		}
     		.email_container {
     			width: 100%;
-				float: right;
-				padding: 0 90px 0 50px;
+				@include float(right);
+				@include padding(0 90px 0 50px);
 				margin-top: -30px;
 				display: inline-block;
 				zoom: 1;
@@ -891,7 +891,7 @@ ol, ul, li{
 					li.choice {
 						background: rgba(240,240,240,0.3);
 						border: solid 1px #EEE;
-						padding: 2px 4px 3px 12px;
+						@include padding(2px 4px 3px 12px);
 						margin-top: 10px;
 					}
 				}
@@ -900,7 +900,7 @@ ol, ul, li{
     		input[type=text] {
 	    		display: inline-block;
 	    		width: 100%;
-	    		float: none;
+	    		@include float(none);
     		}
     	}
 
@@ -913,12 +913,12 @@ ol, ul, li{
 				position: static;
     		}
     		input[type=checkbox] {
-    			float: none;
+    			@include float(none);
     		}
     	}
 
     	ul.multi_value_field li.search_field_item {
-    		float: left;
+    		@include float(left);
     		margin-top: 10px;
     	}
     	&.notify_agent{
@@ -935,7 +935,7 @@ ol, ul, li{
 				display: inline-block;
 				zoom: 1;
 				vertical-align: top;
-				padding: 0 0 0 110px;
+				@include padding(0 0 0 110px);
 				margin-top: -27px;
 				width: 100%;
 				@include box-sizing(border-box);
@@ -950,7 +950,7 @@ ol, ul, li{
 					li.choice {
 						background: rgba(240,240,240,0.3);
 						border: solid 1px #EEE;
-						padding: 2px 4px 3px 12px;
+						@include padding(2px 4px 3px 12px);
 					}
 				}
 			}
@@ -962,7 +962,7 @@ ol, ul, li{
 					background: $message_window_bg_color;					
 				}
     			.select2-choice, .select2-search-choice {
-    				float: none;
+    				@include float(none);
     				width: auto;
     				display: inline-block;
     			}
@@ -971,7 +971,7 @@ ol, ul, li{
     		input[type=text] {
 	    		display: inline-block;
 	    		width: 100%;
-	    		float: none;
+	    		@include float(none);
 	    		cursor: pointer;
     		}
     	}
@@ -1001,7 +1001,7 @@ ol, ul, li{
     	}
 
     	&.attachment-options {
-    		float:none;
+    		@include float(none);
     		width: auto;
 
     		padding: 0 10px;
@@ -1010,8 +1010,8 @@ ol, ul, li{
     		overflow: hidden;
 
     		label{
-    			float: left;
-    			margin: 13px 15px 0 8px;
+    			@include float(left);
+    			@include margin(13px 15px 0 8px);
     		}
 
     		.file-types-def {
@@ -1020,8 +1020,8 @@ ol, ul, li{
     		}
 
     		.attachment_list {
+    			@include float(left);
     			margin: 8px 0 0;
-    			float: left;
     			display: block;
     			width: auto;
     		}
@@ -1041,12 +1041,12 @@ ol, ul, li{
     		}
 
     		.dropbox_div {
-				float: left;
+				@include float(left);
 				width: 300px;
 				label {
 					width: auto;
 					margin: 8px 5px 0;					
-					padding:0 0 0 25px;
+					@include padding(0 0 0 25px);
 					cursor: pointer;
 					color: #1272de;
 					font-weight: normal;
@@ -1060,7 +1060,7 @@ ol, ul, li{
 
     .mailaddr-label {
 		margin-top: 5px;
-		float: left;
+		@include float(left);
 		&.from{
 			margin-top: 10px;
 		}
@@ -1094,12 +1094,12 @@ ol, ul, li{
 
     .request_panel .ui-form .request_form_options  {
     	position: relative;
-    	float: right;
-    	text-align: right;
+    	@include float(right);
+    	@include text-align(right);
     	top: 8px;
-    	right: 0;
+    	@include right(0);
     	a {
-    		margin: 10px 0 10px 10px;
+    		@include margin(10px 0 10px 10px);
     	}
     }
 
@@ -1127,7 +1127,7 @@ ol, ul, li{
 	position: relative;
 	margin-top: 10px;
 	display: block;
-	margin-left: 29px;
+	@include margin-left(29px);
 	padding: 10px;
 	line-height: 150%;
 	background: #fefef0;
@@ -1137,7 +1137,7 @@ ol, ul, li{
 	@include box-shadow(0px 4px 6px rgba(130,130,130,0.1));
 
 	&:after, &:before {
-		right: 100%;
+	 @include right(100%);
 		border: solid transparent;
 		content: " ";
 		height: 0;
@@ -1148,7 +1148,7 @@ ol, ul, li{
 
 	&:after {
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #fffdf8;
+		@include border-right-color(#fffdf8);
 		border-width: 8px;
 		top: 25px;
 		margin-top: -8px;
@@ -1156,7 +1156,7 @@ ol, ul, li{
 
 	&:before {
 		border-color: rgba(204, 204, 204, 0);
-		border-right-color: #bbb;
+		@include border-right-color(#bbb);
 		border-width: 9px;
 		top: 25px;
 		margin-top: -9px;
@@ -1167,31 +1167,31 @@ ol, ul, li{
 		line-height: 18px;
 		margin: 10px 3px 5px;
 		color: #666;
-		border-left: 1px dotted #999;
-		padding: 0 0 0 7px;
+		@include border-left(1px dotted #999);
+		@include padding(0 0 0 7px);
 	}
 
 	.actions {
-		float: right;
+		@include float(right);
 		display: block;
 		width: auto;
 		visibility: hidden;
 		@include opacity(0);
 		@include transition(opacity .5s linear); 
 
-		margin: -9px -10px 0 0;
+		@include margin(-9px -10px 0 0);
 	}
 
 	a.conv-action-icon {
 		height:32px;
 		width: 50px;
 		@include hide-text();
-		float: right;
+		@include float(right);
 		display: block;
-		border-right: solid 1px #ebebeb;
+		@include border-right(solid 1px #ebebeb);
 
 		&:first-child {
-			border-right: none;
+			@include border-right(none);
 			@include border-radius(0 4px 0 0);
 		}
 
@@ -1210,29 +1210,29 @@ ol, ul, li{
 	}
 
 	.commentbox-menu{
-		float: right;
-		margin-left: 10px;
+		@include float(right);
+		@include margin-left(10px);
 	}
 	
 	.author-mail-detail{
 		margin: 0;
 		color: #a2a19f;
-		text-align: left;
+		@include text-align(left);
 		padding: 0;
 		line-height: 130%;
 		a{ font-weight:bold; }
 
 		.ticket-details-twitter {
 			width: 200px;
-			float: right;
+			@include float(right);
 			margin: 0 10px;
-			text-align: right;
+			@include text-align(right);
 
 			.twitter-logo{				
 				display: inline-block;
 				width: 17px;
 				height: 16px;
-				margin-right: 5px;
+				@include margin-right(5px);
 				position: relative;
 				top: 3px;
 			}
@@ -1255,7 +1255,7 @@ ol, ul, li{
 	}
 
 	.tag {
-		float:right;
+		@include float(right);
 		background: #aaa;
 		color: #FFF;
 		border: solid 1px #FFF;
@@ -1273,25 +1273,25 @@ ol, ul, li{
 	}
 
 	&.private-note .helpdesk_note {
-		border-left: solid 1px #e9e9e9;
+		@include border-left(solid 1px #e9e9e9);
 		display: block;
-		margin: -20px 0 0 20px;
-		padding-left: 10px;
+		@include margin(-20px 0 0 20px);
+		@include padding-left(10px);
 	}
 
 	.survey-note {
-		border-left: solid 1px #e9e9e9;
+		@include border-left(solid 1px #e9e9e9);
 		display: inline-block;
-		padding-left: 15px;
+		@include padding-left(15px);
 	}
 
 	.details .smiley{
 		position: static;
-		float: left;
+		@include float(left);
 		display: inline-block;
 		width: 20px;
 		height: 20px;
-		margin-right: 10px;
+		@include margin-right(10px);
 	}
 
 	.details .survey-text {
@@ -1331,7 +1331,7 @@ ol, ul, li{
 	line-height: 100%;
 	font-size: 14px;
 	color: #fff;
-	text-align: center;
+	@include text-align(center);
 	@include text-shadow(-1px -1px 0 #093b73);
 
 	&:hover {
@@ -1340,13 +1340,13 @@ ol, ul, li{
 
 	&:after{
 		border-color: rgba(#1272de, 0);
-		border-right-color: #1272de;
+		@include border-right-color(#1272de);
 		margin-top: -15px;
 	}
 
 	&:before{
 		border-color: rgba(#1272de, 0);
-		border-right-color: #1272de;
+		@include border-right-color(#1272de);
 		margin-top: -16px;
 	}
 
@@ -1368,12 +1368,12 @@ ol, ul, li{
 
 	&:after{
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #fafafa;
+		@include border-right-color(#fafafa);
 	}
 
 	&:before{
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #eee;
+		@include border-right-color(#eee);
 	}
 }
 
@@ -1381,13 +1381,13 @@ ol, ul, li{
 	border: 1px #eee solid;
 
 	&:before {
-		border-right-color: #eee;
+		@include border-right-color(#eee);
 	}
 }
 
 .commentbox-yellow {
 	position: relative;
-	margin-left: 40px;
+	@include margin-left(40px);
 	padding: 10px 10px 0;
 	background: #f8f4e9;
 	border: 1px solid #cccccc;
@@ -1395,11 +1395,11 @@ ol, ul, li{
 	@include border-radius(4px);
 
 	.ticket-subject{
-		padding-right: 320px;
+		@include padding-right(320px);
 	}
 
 	&:after, &:before {
-		right: 100%;
+	 @include right(100%);
 		border: solid transparent;
 		content: " ";
 		height: 0;
@@ -1410,7 +1410,7 @@ ol, ul, li{
 
 	&:after {
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #f8f4e9;
+		@include border-right-color(#f8f4e9);
 		border-width: 8px;
 		top: 25px;
 		margin-top: -8px;
@@ -1418,7 +1418,7 @@ ol, ul, li{
 
 	&:before {
 		border-color: rgba(204, 204, 204, 0);
-		border-right-color: #cccccc;
+		@include border-right-color(#cccccc);
 		border-width: 9px;
 		top: 25px;
 		margin-top: -9px;
@@ -1431,21 +1431,21 @@ ol, ul, li{
 	background: #e9e9e9;
 	border: 1px #eee solid;
 	@include box-shadow(none);
-	float:none;
+	@include float(none);
 	&:after{
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #e9e9e9;
+		@include border-right-color(#e9e9e9);
 	}
 	 
 	&:before{
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #eee;
+		@include border-right-color(#eee);
 	}
 }
 
 .commentbox-info{
 	position: relative;
-	margin-left: 40px;
+	@include margin-left(40px);
 	padding: 10px 10px 0;
 	background: #f7f7f7;
 	border: 1px solid #cccccc;
@@ -1453,11 +1453,11 @@ ol, ul, li{
 	@include border-radius(4px);
 
 	.ticket-subject{
-		padding-right: 320px;
+		@include padding-right(320px);
 	}
 
 	&:after, &:before {
-		right: 100%;
+	 @include right(100%);
 		border: solid transparent;
 		content: " ";
 		height: 0;
@@ -1468,7 +1468,7 @@ ol, ul, li{
 
 	&:after {
 		border-color: rgba(255, 253, 248, 0);
-		border-right-color: #f7f7f7;
+		@include border-right-color(#f7f7f7);
 		border-width: 8px;
 		top: 25px;
 		margin-top: -8px;
@@ -1476,7 +1476,7 @@ ol, ul, li{
 
 	&:before {
 		border-color: rgba(204, 204, 204, 0);
-		border-right-color: #cccccc;
+		@include border-right-color(#cccccc);
 		border-width: 9px;
 		top: 25px;
 		margin-top: -9px;
@@ -1493,7 +1493,7 @@ ol, ul, li{
 		background: #1272de;
 		border:3px solid #EEE;
 		color: #FFF;
-		left: -40px;
+	 	@include left(-40px);
 		@include box-shadow(-8px 0 12px 8px white);
 		@include transition(all 0.2s linear);
 	}
@@ -1557,15 +1557,15 @@ ol, ul, li{
 	background: #fff;
 	position: absolute;
 	border: 1px solid #eee;
-	margin: 0 0 3px 0;
+	@include margin(0 0 3px 0);
 	padding: 2px;
-	text-align: center;
-	float: left;
-	left: -35px;
+	@include text-align(center);
+	@include float(left);
+ 	@include left(-35px);
 	.preview_pic {
 		display: inline-block;
 		margin: 0;
-		float:none;
+		@include float(none);
 		img {
 			@include border-radius(50%);
 			position: relative;
@@ -1594,7 +1594,7 @@ ol, ul, li{
 		line-height: 110%;
 		.count_number{
 			font-size: 16px;
-			clear: both;
+			@include clear(both);
 			font-weight: bold;
 			display: block;
 			@include text-shadow(-1px -1px 0 #093b73);
@@ -1608,7 +1608,7 @@ ol, ul, li{
 
 .tkt-sidebar{
 	.requester-avatar-wrap{
-		float: left;
+		@include float(left);
 		width: 50px;
 		
 		.requester-avatar{
@@ -1626,13 +1626,13 @@ ol, ul, li{
 		span{
 			font-size: 13px;
 			color: #777;			
-			padding: 12px 12px 12px 38px;
+			@include padding(12px 12px 12px 38px);
 			display: block;
 		}
 	}
 
 	.crm_contact_widget .contact-type {
-		right: 0;
+	 @include right(0);
 		top: auto;
 	}
 
@@ -1664,12 +1664,12 @@ ol, ul, li{
 
 		.details {
 			display: block;
-			float: left;
+			@include float(left);
 			width: 270px;
 		}
 
 		.requester-avatar-wrap {
-			padding: 0 10px 10px  0;
+			@include padding(0 10px 10px  0);
 			width: 30px;
 		}
 
@@ -1682,7 +1682,7 @@ ol, ul, li{
 		}
 
 		.info {
-			clear: both;
+			@include clear(both);
 			overflow: hidden;
 			width: 270px;
 			color: #777;
@@ -1690,13 +1690,13 @@ ol, ul, li{
 
 			.time_stamp {
 				width: 125px;
-				float: left;
+				@include float(left);
 			}
 
 			.is_billable {
 				width: 125px;
-				float: right;
-				text-align: right;
+				@include float(right);
+				@include text-align(right);
 			}
 		}
 
@@ -1707,8 +1707,8 @@ ol, ul, li{
 				font-size: 13px;
 			}
 			.tracked_time{
-				float: right;
-				text-align: right;
+				@include float(right);
+				@include text-align(right);
 			}
 
 			.time_unit {
@@ -1725,18 +1725,18 @@ ol, ul, li{
 
 			.timer_box {
 				position: relative;
-				left: -70px;
+			 	@include left(-70px);
 				top: -6px;
 				@include opacity(0.3);
 			}
 		}
 
 		.actions {
-			clear: both;
+			@include clear(both);
 			font-size: 13px;
 			margin-bottom: 10px;
 			a {
-				margin: 5px 10px 5px 0;
+				@include margin(5px 10px 5px 0);
 			}
 
 			.toggle_timer {
@@ -1780,13 +1780,13 @@ ol, ul, li{
 		overflow:hidden;
 		li.field{
 			width: 100%;
-			float: left;
+			@include float(left);
 			padding: 0 0 5px;
-			clear:both;
+			@include clear(both);
 			label{
 				width: 100%;
 				display: block;
-				clear: both;
+				@include clear(both);
 				height:19px;
 				font-size: 13px;
 				padding: 5px 0;
@@ -1802,7 +1802,7 @@ ol, ul, li{
 				}
 
 				input[type="checkbox"] {
-					padding-left: 0;
+					@include padding-left(0);
 				}
 			}
 
@@ -1826,7 +1826,7 @@ ol, ul, li{
 			.select2-container{ width: 310px; }
 
 			.select2-container-multi .select2-choices .select2-search-choice {
-				float: none;
+				@include float(none);
 				display: inline-block;
 				width: auto;
 			}
@@ -1861,9 +1861,9 @@ ol, ul, li{
 
 		li.default_source, li.default_status, li.default_ticket_type, li.default_priority{
 			width: 50%;
-			float: left;
+			@include float(left);
 			padding-bottom: 5px;
-			clear:none;
+			@include clear(none);
 			min-height: 60px;
 			.customSelect, select, .select2-container{
 				width: 152px;
@@ -1895,11 +1895,11 @@ ol, ul, li{
 		border-top: 2px #AAA solid;
 		width: 100%;
 		@include min-height(60px);
-		clear: both;
+		@include clear(both);
 		margin-bottom: 20px;
 		position: relative;
 		.content{
-			padding-left:3px;
+			@include padding-left(3px);
 		}
 		&.dialog-widget {
 			cursor: pointer;
@@ -1914,14 +1914,14 @@ ol, ul, li{
 		}
 
 		& > h3 {
-			padding-left: 20px;
+			@include padding-left(20px);
 			display: inline-block;			
 			cursor: pointer;
 			z-index: 2;
 			position: relative;
 
 			.subtitle {
-				float: right;
+				@include float(right);
 				font-size: 0.7em;
 				color: #0066cc;
 				font-weight: 500;
@@ -1931,7 +1931,7 @@ ol, ul, li{
 			&:before {
 				@include triangle(down, #000, 6px);
 				content: "";
-				margin: 6px 0 0 -19px;
+				@include margin(6px 0 0 -19px);
 				padding: 0;
 				position: absolute;
 			}
@@ -1958,11 +1958,11 @@ ol, ul, li{
 			min-height: 30px;
 			cursor: pointer;
 			h3 {
-				padding-left: 15px;
+				@include padding-left(15px);
 				&:before {
 					@include triangle(right, #000, 6px);
 					content: "";
-					margin: 6px 0 0 -14px;
+					@include margin(6px 0 0 -14px);
 					padding: 0;
 					position: absolute;
 				}
@@ -1975,31 +1975,31 @@ ol, ul, li{
 
 		#jira_issue_icon {
 			display: block;
-			float: left;
+			@include float(left);
 			width: 24px;
-			margin: 2px 10px 0 0;
+			@include margin(2px 10px 0 0);
 		}
 
 		.tkt-tabs-wrap{
 			width: 100%;
 			ul{
 				display: block;
-				clear: both;
+				@include clear(both);
 				width: 100%;
 
 				top: 1px;
 				position: absolute;
 
 				li{
-					float: right;
-					text-align: center;
+					@include float(right);
+					@include text-align(center);
 					position: relative;
 					top: -0px;
-					margin-left: 5px;
+					@include margin-left(5px);
 					padding: 2px 3px;
 					border-bottom: 1px #fff solid;
-					border-left: 1px #fff solid;
-					border-right: 1px #fff solid;
+					@include border-left(1px #fff solid);
+					@include border-right(1px #fff solid);
 					@include border-radius(0px 0 5px 5px);
 				}
 
@@ -2007,7 +2007,7 @@ ol, ul, li{
 					display: inline-block;
 					height: 16px;
 					width: 23px;
-					text-align: center;
+					@include text-align(center);
 					position: relative;
 					z-index: 200;
 				}
@@ -2015,14 +2015,14 @@ ol, ul, li{
 				li:hover{
 					opacity: 0.7;
 					border-bottom: 1px #ccc solid;
-					border-left: 1px #ccc solid;
-					border-right: 1px #ccc solid;
+					@include border-left(1px #ccc solid);
+					@include border-right(1px #ccc solid);
 				}
 
 				li.active{ 
 					border-bottom: 1px #ccc solid;
-					border-left: 1px #ccc solid;
-					border-right: 1px #ccc solid;
+					@include border-left(1px #ccc solid);
+					@include border-right(1px #ccc solid);
 				}
 			}
 		}
@@ -2037,12 +2037,12 @@ ol, ul, li{
 			.requester-avatar-wrap{
 				border: 1px #ccc solid;
 				@include border-radius(4px);
-				float: left;
+				@include float(left);
 				width: 42px;
 				height: 42px;
 				display: inline-block !important;
 				padding: 2px;
-				text-align: center;
+				@include text-align(center);
 				img{
 					@include border-radius(3px);
 					width: 42px;
@@ -2086,11 +2086,11 @@ ol, ul, li{
 
 		form {
 			display: inline-block;
-			float: left;
+			@include float(left);
 			width: 35px;
 			margin-top: 5px;
-			margin-left: 0;
-			text-align: center;
+			@include margin-left(0);
+			@include text-align(center);
 
 			label{
 				cursor: pointer;
@@ -2101,12 +2101,12 @@ ol, ul, li{
 		}
 
 		.reminder {
-			float: right;
+			@include float(right);
 			width: 250px;
-			padding: 5px 5px 10px 0;
+			@include padding(5px 5px 10px 0);
 			margin: 0;
 
-			border-right: solid 25px transparent;
+			@include border-right(solid 25px transparent);
 
 			&.checked {
 				text-decoration: line-through;
@@ -2116,7 +2116,7 @@ ol, ul, li{
 
 		.delete_black {
 			position: absolute;
-			right: 2px;
+		 	@include right(2px);
 			width: 16px;
 			height: 16px;
 			margin-top: 5px;
@@ -2130,7 +2130,7 @@ ol, ul, li{
 			}
 
 			.reminder {
-				border-right-color:#fbf8e8;
+				@include border-right-color(#fbf8e8);
 			}
 		}
 
@@ -2148,10 +2148,10 @@ ol, ul, li{
 .ticket_details #timeentry_add, .ticket_details .timeentry_edit {
 	margin: 5px;
 	padding: 0;
-	clear: both;
+	@include clear(both);
 
 	#timeentry_apps_add {
-		clear: both;
+		@include clear(both);
 	}
 }
 
@@ -2190,13 +2190,13 @@ ol, ul, li{
 }
 
 #time_integration fieldset.integration .app-logo {
-	padding-left: 25px;
+	@include padding-left(25px);
 	background-color:transparent;
 	border: none;
 
 	input[type=checkbox] {
-		right: auto;
-		left: 2px;
+	 @include right(auto);
+	 @include left(2px);
 		top: 4px;
 	}
 }
@@ -2206,17 +2206,17 @@ ol, ul, li{
 
 	dd, dt {
 		display: block;
-		float: left;
+		@include float(left);
 		width: 70px;
 		margin-bottom: 10px;
 	}
 
 	dt {
-		clear: both;
+		@include clear(both);
 	}
 
 	dd {
-		float: right;
+		@include float(right);
 		width: 290px;
 	}
 
@@ -2248,7 +2248,7 @@ ol, ul, li{
 	.attachments-container { display: inline; }
 
 	.attachment_contents {
-		float: left;
+		@include float(left);
 		width: auto;
 		.alert-text{
 			color:red;
@@ -2262,7 +2262,7 @@ ol, ul, li{
 		display: inline;
 	}
 	span{
-		margin-right: 0;
+		@include margin-right(0);
 		b{
 			color: #999999;
 		}
@@ -2275,7 +2275,7 @@ ol, ul, li{
 
 	.attachment-type {
 		margin: 0;
-		padding: 3px 0 3px 25px;
+		@include padding(3px 0 3px 25px);
 		width: auto;
 		height: 14px;
 		display: inline-block;
@@ -2285,7 +2285,7 @@ ol, ul, li{
 		display: inline-block;
 		width: 9px;
 		height: 9px;
-		margin-right: 10px;
+		@include margin-right(10px);
 	}
 
 	ul{
@@ -2301,12 +2301,12 @@ ol, ul, li{
 		font-size: 12px;
 		margin: 5px;
 		display: inline-block;
-		float: none;
+		@include float(none);
 		min-height: 20px;
 		height:auto !important;
 		width: auto;
 		min-width: 100px;
-		margin-left:0;
+		@include margin-left(0);
 		margin-bottom: 0;
 		span{
 			color: #999999;
@@ -2339,13 +2339,13 @@ ol, ul, li{
 	display: block;
 	
 	.bread-crumb{
-		float: left;
+		@include float(left);
 		padding-top: 6px;
 		padding-bottom: 5px;
 		position: relative;
-		left: -28px;
+	 @include left(-28px);
 		li{
-			float: left;
+			@include float(left);
 			font-size: 13px;
 			padding: 5px 3px;
 			color: #505050;
@@ -2358,13 +2358,13 @@ ol, ul, li{
 }
 
 .activity_toggle {
-	float: right;
+	@include float(right);
 	padding: 2px 2px  2px 4px ;
 	margin: 10px 15px 0;
 
 	span {
 		display:block;
-		float: right;
+		@include float(right);
 		padding: 2px;
 		@include border-radius(0 2px 2px 0);
 		text-transform:uppercase;
@@ -2373,7 +2373,7 @@ ol, ul, li{
 		color:#fff;
 		font-weight: bold;
 		@include text-shadow(none);
-		text-align:center;
+		@include text-align(center);
 		background: #777;
 		border:1px solid rgba(0, 0, 0, 0.1); 
 	}
@@ -2392,28 +2392,32 @@ ol, ul, li{
 	}
 
 	.text {
-		float: left;
-		margin: 3px 10px 0 3px;
+		@include float(left);
+		@include margin(3px 10px 0 3px);
 	}
 }
 
 .pagination-link{
-	float: right;
+	@include float(right);
 	li{
-		float: right;
+		@include float(right);
 		font-size: 13px;
 		padding: 10px 0 5px;
 	}
 	.page-btn{
-		margin-right: 0;
+		@include margin-right(0);
 		@include border-radius(0px);
 		padding: 5px 10px 3px;
 		&.prev_page {
-			@include border-radius(4px 0 0 4px);
-			border-right: none;
+			@include border-radius(0);
+			@include border-top-left-radius(4px);
+			@include border-bottom-left-radius(4px);
+			@include border-right(none);
 		}
 		&.next_page {
-			@include border-radius(0 4px 4px 0);
+			@include border-radius(0);
+			@include border-top-right-radius(4px);
+			@include border-bottom-right-radius(4px);
 		}
 		span.arrow-next, span.arrow-previous{
 			width: 7px;
@@ -2450,21 +2454,21 @@ ol, ul, li{
 
 .redactor-ribbon-wrap{
 	font-size: 13px;
-	float: left;
+	@include float(left);
 	width: 100px;
 	position: absolute;
 	height: 100px;
 	top: 12px;
 
 	p{
-		padding-left: 20px;
+		@include padding-left(20px);
 		margin-bottom: 4px;
 	}
 
 	.redactor-ribbon{
 		background: #ccc;
 		padding: 3px 0;
-		padding-left: 20px;
+		@include padding-left(20px);
 		display: block;
 		color: #fff;
 	}
@@ -2476,17 +2480,17 @@ ol, ul, li{
 	font-size: 13px;
 	.attachments-wrap{
 		margin-top: 10px;
-		float: left;
+		@include float(left);
 		width: 78%;
 		.addnew{
 			padding: 2px 0;
-			margin-left: 10px;
-			padding-left: 25px;
+			@include margin-left(10px);
+			@include padding-left(25px);
 		}
 	}
 	input[type="text"]{
 		width: 80%;
-		float: right;
+		@include float(right);
 		@include border-radius(5px);
 		border: 1px #c6c6c6 solid;
 		@include box-shadow(inset 0 0 3px #ccc);
@@ -2495,8 +2499,8 @@ ol, ul, li{
 
 	input[type="button"]{
 		padding: 5px 10px;
-	    margin-left: 5px;
-	    float: left;
+	    @include margin-left(5px);
+	    @include float(left);
 	    display: inline-block;
 	    border: 1px #8a8a8a solid;
 	    color: #fff;
@@ -2542,7 +2546,7 @@ ol, ul, li{
 
 	&.at_the_top {
 		top:0;
-		left:0;
+	 @include left(0);
 		display: block;
 	}
 
@@ -2594,7 +2598,7 @@ ol, ul, li{
 /* Agent Collision CSS */
 
 .reply-flip, .view-flip {
-    float: left;
+    @include float(left);
     display: inline-block;
     color: #fff;
     @include perspective(1000);
@@ -2607,7 +2611,7 @@ ol, ul, li{
 	.flip-front, .flip-back{
 	    position: absolute;
 	    top: 0;
-	    left: 0;
+	    @include left(0);
 	    @include transform-style(preserve-3d);
 	    @include backface-visibility(hidden);
 		-webkit-transition-property: -webkit-transform;
@@ -2636,7 +2640,7 @@ ol, ul, li{
 		font-size: 15px;
 		font-weight: bold;
 		vertical-align: middle;
-		text-align: center;
+		@include text-align(center);
 		padding: 0;
 		border: solid 4px #efefef;
 		color: #fff;
@@ -2699,23 +2703,23 @@ $collision_delay: 1s;
 .redactor_insert_btns {
 	position: absolute;
 	z-index:5;
-	right: 10px;
+ 	@include right(10px);
 }
 
 
 #revert_details_view {
-	clear: both;
+	@include clear(both);
 	margin: 0 0 20px;
 	padding: 5px 0;
 	border: solid 1px #DEDEDE;
 	@include border-radius(5px);
-	text-align: center;
+	@include text-align(center);
 
 	a.switch {
 		width:140px;
-		border-right: solid 1px #CCC;
+		@include border-right(solid 1px #CCC);
 		display: inline-block;
-		margin-right: 10px;
+		@include margin-right(10px);
 	}
 
 	div {
@@ -2727,7 +2731,7 @@ $collision_delay: 1s;
 // Overriding common elements for new details page
 .ticket_details {
 	div.watchers_tooltip {
-		//margin: 34px 0 0 -5px;
+		//@include margin(34px 0 0 -5px);
 	}
 
 	#view_tickets .assign ul {
@@ -2743,14 +2747,14 @@ $collision_delay: 1s;
 	}
 
 	.content {
-		clear: both;
+		@include clear(both);
 		padding: 5px 5px 15px;
 	}
 }
 
 .requester_tab {
 	.content {
-		clear: both;
+		@include clear(both);
 		padding: 5px 5px 15px;
 	}
 }
@@ -2774,7 +2778,7 @@ $collision_delay: 1s;
 // !PATTERN ? Whether to move this to pattern or not?
 .modal .searchmoreform {
 	position: absolute;
-	right: 20px;
+ 	@include right(20px);
 	display: block;
 	width: 300px;
 	top: 20px;
@@ -2786,7 +2790,7 @@ $collision_delay: 1s;
 
 	.searchicon {
 		top: 7px;
-		right: 7px;
+	 	@include right(7px);
 	}
 
 }
@@ -2800,7 +2804,7 @@ $collision_delay: 1s;
 	margin-bottom: -4px;
 	position: static;
 	display: inline-block;
-	float: none;
+	@include float(none);
 
 }
 
@@ -2809,20 +2813,20 @@ $collision_delay: 1s;
 	display: inline-block;
 	.ticket-notifications {
 		position: static;
-		margin: 10px 0 0 5px;
+		@include margin(10px 0 0 5px);
 	}
 }
 .ticket_details .sticky_right {
-	float: right;
+	@include float(right);
 	width: auto;
 
 	.status_info {
-		text-align: right;
+		@include text-align(right);
 		visibility: hidden;
 	}
 
 	#adjacents {
-		float: right;
+		@include float(right);
 	}
 
 	.btn.monitor_div {
@@ -2839,7 +2843,7 @@ $collision_delay: 1s;
 	}
 
 	div.watchers_tooltip {
-		margin: 32px 0 0 -7px;
+		@include margin(32px 0 0 -7px);
 	}
 
 	.show_on_collapse { display: none; }
@@ -2865,7 +2869,7 @@ $collision_delay: 1s;
 }
 
 .meta-info {
-	div {clear: both; overflow: hidden; width: 100%;}
+	div {@include clear(both); overflow: hidden; width: 100%;}
 	
 	span {
 		display: inline-block;
@@ -2877,7 +2881,7 @@ $collision_delay: 1s;
 
 	label {
 		display: block;
-		padding: 5px 0 10px 30px;
+		@include padding(5px 0 10px 30px);
 	}
 }
 
@@ -2899,14 +2903,14 @@ $collision_delay: 1s;
     padding-bottom: 6px;
     padding-top: 10px;
     .shipping_status{
-      float: left;
+      @include float(left);
       background: #eee;
       color: #333;
       font-weight: inherit;
     }
     .payment_status{
-      float: right;
-      text-align: right;
+      @include float(right);
+      @include text-align(right);
       background: #eee;
       color: #333;
       font-weight: inherit;
@@ -2917,14 +2921,14 @@ $collision_delay: 1s;
   .price{
     padding-bottom: 5px;
     .amount{
-      float: right;
-      text-align: right;
+      @include float(right);
+      @include text-align(right);
     }
 
   }
 
   .order_details{
-    float: left;
+    @include float(left);
     .number{
       font-weight: bold;
       color: #0066cc;
@@ -2946,14 +2950,18 @@ $collision_delay: 1s;
   }
 
   .shipping_address{
-    padding-left: 56px;
+    @include padding-left(56px);
   }
 
   .address{
     color: #5C5C5C;
   }
-  .address_1{
-    padding-left: 12px;
+  .bill_address{
+    padding-right: 19px;
+  }
+
+  .no_address{
+    color:#999999;
   }
 
   .line_items{
@@ -2981,7 +2989,7 @@ $collision_delay: 1s;
 		div.attach-error {
 			margin:10px auto 0;
 			width: 65%;
-			text-align: center;
+			@include text-align(center);
 			padding: 5px;
 			position: relative;
 			border: 1px solid #efefef;
@@ -3004,7 +3012,7 @@ $collision_delay: 1s;
     margin-top: 10px;
    .rsltmsg{
        border-top: 1px #eee solid;
-       padding: 11px 0px 9px 8px;
+       @include padding(11px 0px 9px 8px);
 	   display: block;
    }
 }
@@ -3022,14 +3030,14 @@ $collision_delay: 1s;
 .fc_guest_expanded, .fc_self_expanded{
     .rsltdata{
         width: 95%;
-        padding-left: 9px;
+        @include padding-left(9px);
     }
     .rsltavatar{
         width: 30px;
     }
     .rslttime{
         visibility: hidden;
-        float: right;
+        @include float(right);
     }
     &:hover{
         .rslttime{
@@ -3040,19 +3048,19 @@ $collision_delay: 1s;
 }
  
 .rsltavatar{
-    float: left;
+    @include float(left);
     width: 100px;
     border-radius: 4px;
     height: 31px;
     img{
         border-radius: 4px;
         width: 26px;
-        float: left;
+        @include float(left);
         border: 1px #eaeaea solid;
     }
     .icon-arrow-left, .icon-arrow-right{
         background: none;
-        float: left;
+        @include float(left);
         margin: 0px 10px;
         position: relative;
         line-height: 27px;
@@ -3072,7 +3080,7 @@ $collision_delay: 1s;
     }
     .time{
         font-size: 10px;
-        float: right;
+        @include float(right);
     }
 }
  
@@ -3094,14 +3102,14 @@ $collision_delay: 1s;
 	cursor: pointer;
 	line-height: 3px;
 	letter-spacing: -3px;
-	text-align: center;
+	@include text-align(center);
 	font-size: 14px;
 	font-family: monospace;
 	border-radius: 2px;	
 	&:before{
 		content: "...";
-		text-align: center;
-		margin-left: -3px;
+		@include text-align(center);
+		@include margin-left(-3px);
 	}
 	&:hover{
 		background-color: #dfdfdf;
@@ -3109,7 +3117,7 @@ $collision_delay: 1s;
 }
 
 .wrap-marker{
-	padding-left: 15px;
+	@include padding-left(15px);
 	padding-bottom: 10px;
 	padding-top: 5px;
 }
@@ -3152,7 +3160,7 @@ $collision_delay: 1s;
 		max-height: 350px;
 		overflow: scroll;
 		background-color: #F6F6F6;
-		padding-left: 10px;
+		@include padding-left(10px);
 		border: 1px solid #E0E0E0;
 		td.app-info-data{
 			width: 50%;
@@ -3178,6 +3186,6 @@ $collision_delay: 1s;
 .code-view{
 	textarea.mobihelpcode{
 		height:60px;
-		margin-left: -20px;
+		@include margin-left(-20px);
 	}
 }

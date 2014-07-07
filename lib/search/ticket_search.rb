@@ -143,7 +143,7 @@ module Search::TicketSearch
       if @current_options && @current_options.has_key?("users.customer_id")
         customer_id = @current_options["users.customer_id"].split(',')
       end
-      @selected_customers = Account.current.customers_from_cache.reject { |c| !customer_id.include?(c.id.to_s) } if customer_id
+      @selected_customers = Account.current.customers_from_cache.select { |c| customer_id.include?(c.id.to_s) } if customer_id
       return @selected_customers || [[1,""]]
     end
 

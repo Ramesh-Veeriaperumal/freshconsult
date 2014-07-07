@@ -8,6 +8,7 @@ class Support::Discussions::TopicsController < SupportController
 
   before_filter :load_agent_actions, :only => :show
   before_filter { |c| c.requires_feature :forums }
+  before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => [:edit, :update]
 
@@ -145,7 +146,7 @@ class Support::Discussions::TopicsController < SupportController
 
   def destroy
     @topic.destroy
-    flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, h(@topic.title)].html_safe
+    flash[:notice] = I18n.t('flash.topic.deleted', :title => h(@topic.title)).html_safe
     respond_to do |format|
       format.html { redirect_to support_discussions_path }
     end
@@ -223,6 +224,9 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
 
+  def reply
+    redirect_to support_discussions_topic_path(params[:id], :anchor => 'reply-to-post')
+  end
 
   protected
     def assign_protected

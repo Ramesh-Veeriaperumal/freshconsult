@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<!-- Adding meta tag for CSRF token -->
+	    <%= csrf_meta_tag %>
+	    <!-- End meta tag for CSRF token -->
 		<meta charset="utf-8">                       
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
   	<title><% h(@page_title.to_s) %></title>

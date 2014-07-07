@@ -34,6 +34,8 @@ ActionController::Base.asset_host =  Proc.new { |source, request|
 }
 
 config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
+  r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 20,:per_ip => true ,:per_url => true )
+  r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
   r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
   r.set_cache(store) if store.present?

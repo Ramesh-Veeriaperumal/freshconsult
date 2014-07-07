@@ -14,7 +14,7 @@ class Va::Handlers::NestedField < Va::RuleHandler
           to_ret = send(condition.operator, evaluate_on.send(nested_rule[:name]),nested_rule[:value])
           return to_ret unless to_ret
         else
-          RAILS_DEFAULT_LOGGER.debug "############### The ticket did not respond to #{nested_rule[:name]} property"
+          Rails.logger.debug "############### The ticket did not respond to #{nested_rule[:name]} property"
         end
       end
     end
@@ -30,7 +30,7 @@ class Va::Handlers::NestedField < Va::RuleHandler
     return '' if value == "--"
     query_conditions = send("filter_query_#{condition.operator}", condition.key, (query_value value))
     (nested_rules || []).each do |nested_rule|
-      return '' if nested_rule[:value] == "--"
+      return ["(#{query_conditions})"] if nested_rule[:value] == "--"
       query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{query_condition}"
     end
@@ -64,6 +64,6 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
 
     def filter_query_negation(field_key,field_value)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value.to_s}"
     end
 end

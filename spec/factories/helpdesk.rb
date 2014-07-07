@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :ticket, :class => Helpdesk::Ticket do |t|
     t.status 2
     t.urgent 0
@@ -12,6 +12,7 @@ if ENV["RAILS_ENV"] == "test"
     t.subject Faker::Lorem.sentence(3)
     t.description Faker::Lorem.paragraph(3)
     t.cc_email({:cc_emails => [], :fwd_emails => []}.with_indifferent_access)
+    t.created_at Time.now
   end
 
   Factory.define :note, :class => Helpdesk::Note do |n|
@@ -19,6 +20,9 @@ if ENV["RAILS_ENV"] == "test"
     n.notable_id 1
     n.notable_type 'Helpdesk::Ticket'
     n.private false
+  end
+
+  Factory.define :subscription, :class => Helpdesk::Subscription do |s|
   end
 
   Factory.define :product, :class => Product do |p|
@@ -76,5 +80,21 @@ if ENV["RAILS_ENV"] == "test"
   end
 
   Factory.define :sla_details, :class => Helpdesk::SlaDetail do |f|
+  end
+
+  Factory.define :data_export, :class => DataExport do |d|
+    d.status 4
+    d.token Digest::SHA1.hexdigest "#{Time.now.to_f}"
+  end
+  
+  Factory.define :achieved_quest, :class => AchievedQuest do |d|
+    d.quest_id 1
+  end
+
+  Factory.define :tag, :class => Helpdesk::Tag do |t|
+    t.name { Faker::Name.name }
+  end
+
+  Factory.define :agent_group, :class => AgentGroup do |d|
   end
 end

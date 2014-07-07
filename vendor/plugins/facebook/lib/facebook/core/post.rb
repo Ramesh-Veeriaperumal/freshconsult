@@ -51,7 +51,7 @@ class Facebook::Core::Post
           end
         end
       else
-        puts "error while saving the ticket:: #{@ticket.errors.to_json}"
+        Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
       end
     end
   end

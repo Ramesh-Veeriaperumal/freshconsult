@@ -7,7 +7,7 @@
 // ----------
 
 .nav {
-  margin-left: 0;
+  @include margin-left(0);
   margin-bottom: $baseLineHeight;
   list-style: none;
 }
@@ -23,7 +23,7 @@
 
 // Redeclare pull classes because of specifity
 .nav > .pull-right {
-  float: right;
+  @include float(right);
 }
 
 // Nav headers (for dropdowns and lists)
@@ -47,14 +47,14 @@
 // --------
 
 .nav-list {
-  padding-left: 15px;
-  padding-right: 15px;
+  @include padding-left(15px);
+  @include padding-right(15px);
   margin-bottom: 0;
 }
 .nav-list > li > a,
 .nav-list .nav-header {
-  margin-left:  -15px;
-  margin-right: -15px;
+  @include margin-left(-15px);
+  @include margin-right(-15px);
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 .nav-list > li > a {
@@ -67,7 +67,7 @@
   background-color: $linkColor;
 }
 .nav-list [class^="icon-"] {
-  margin-right: 2px;
+  @include margin-right(2px);
 }
 // Dividers (basically an hr) within the dropdown
 .nav-list .divider {
@@ -86,13 +86,13 @@
 }
 .nav-tabs > li,
 .nav-pills > li {
-  float: left;
+  @include float(left);
 }
 .nav-tabs > li > a,
 .nav-pills > li > a {
-  padding-right: 12px;
-  padding-left: 12px;
-  margin-right: 2px;
+  @include padding-right(12px);
+  @include padding-left(12px);
+  @include margin-right(2px);
   line-height: 14px; // keeps the overall height an even number
 }
 
@@ -156,10 +156,10 @@
 
 // Stacked tabs and pills
 .nav-stacked > li {
-  float: none;
+  @include float(none);
 }
 .nav-stacked > li > a {
-  margin-right: 0; // no need for the gap between nav items
+  @include margin-right(0); // no need for the gap between nav items
 }
 
 // Tabs
@@ -316,23 +316,23 @@
 // Common styles
 .tabs-left > .nav-tabs > li,
 .tabs-right > .nav-tabs > li {
-  float: none;
+  @include float(none);
 }
 .tabs-left > .nav-tabs > li > a,
 .tabs-right > .nav-tabs > li > a {
   min-width: 74px;
-  margin-right: 0;
+  @include margin-right(0);
   margin-bottom: 3px;
 }
 
 // Tabs on the left
 .tabs-left > .nav-tabs {
-  float: left;
-  margin-right: 19px;
-  border-right: 1px solid #ddd;
+  @include float(left);
+  @include margin-right(19px);
+  @include border-right(1px solid #ddd);
 }
 .tabs-left > .nav-tabs > li > a {
-  margin-right: -1px;
+  @include margin-right(-1px);
   @include border-radius(4px 0 0 4px);
 }
 .tabs-left > .nav-tabs > li > a:hover {
@@ -346,12 +346,12 @@
 
 // Tabs on the right
 .tabs-right > .nav-tabs {
-  float: right;
-  margin-left: 19px;
-  border-left: 1px solid #ddd;
+  @include float(right);
+  @include margin-left(19px);
+  @include border-left(1px solid #ddd);
 }
 .tabs-right > .nav-tabs > li > a {
-  margin-left: -1px;
+  @include margin-left(-1px);
   @include border-radius(0 4px 4px 0);
 }
 .tabs-right > .nav-tabs > li > a:hover {

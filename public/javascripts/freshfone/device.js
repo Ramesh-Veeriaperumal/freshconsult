@@ -47,6 +47,7 @@
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
+			freshfonesocket.bindTransfer();
 		});
 
 		/* Log a message when a call disconnects. */
@@ -85,7 +86,10 @@
 		Twilio.Device.incoming(function (conn) {
 			$("#log").text("Incoming connection from " + conn.parameters.From);
 			// freshfonecalls.disableCallButton();
+			
 			freshfoneNotification.anyAvailableConnections(conn);
+			var freshfoneConnection = new FreshfoneConnection(conn);
+			freshfoneConnection.incomingAlert();
 		});
 
 		Twilio.Device.presence(function (pres) {

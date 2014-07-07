@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Helpdesk::Ticket do
 
   before(:all) do
-    clear_data
     setup_data
     @new_agent = add_agent_to_account(@account, {:name => "testing", :email => "unit@testing.com",
                                         :token => "xtoQaHDQ7TtTLQ5OKt9", :active => 1, :role => 4,

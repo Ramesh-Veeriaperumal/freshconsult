@@ -7,17 +7,18 @@ describe Support::HomeController do
 
   before(:all) do
     @user = create_dummy_customer
-    @test_category = create_category( {:name => "category", :description => "new category", :is_default => false} )
-    @test_folder1 = create_folder( {:name => "folder1", :description => "new folder", :visibility => 1,
+    now = "#{Time.now.to_f}"
+    @test_category = create_category( {:name => "category - #{now}", :description => "new category", :is_default => false} )
+    @test_folder1 = create_folder( {:name => "folder1 - #{now}", :description => "new folder", :visibility => 1,
       :category_id => @test_category.id } )
-    @test_folder2 = create_folder( {:name => "folder2 visible to agents", :description => "new folder", :visibility => 3,
+    @test_folder2 = create_folder( {:name => "folder2 visible to agents - #{now}", :description => "new folder", :visibility => 3,
       :category_id => @test_category.id } )
-    @test_folder3 = create_folder( {:name => "folder3 visible to logged in customers", :description => "new folder", :visibility => 2,
+    @test_folder3 = create_folder( {:name => "folder3 visible to logged in customers - #{now}", :description => "new folder", :visibility => 2,
       :category_id => @test_category.id } )
-    @test_article1 = create_article( {:title => "article1", :description => "new test article", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" } )
-    @test_article2 = create_article( {:title => "article2 with status as draft", :description => "new test article", :folder_id => @test_folder1.id, 
-      :status => "1", :art_type => "1" } )
+    @test_article1 = create_article( {:title => "article1 - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1", :user_id => @agent.id } )
+    @test_article2 = create_article( {:title => "article2 with status as draft - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
+      :status => "1", :art_type => "1", :user_id => @agent_id } )
   end
 
   before(:each) do

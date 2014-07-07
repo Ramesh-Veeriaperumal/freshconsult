@@ -55,14 +55,14 @@ $single_stackbar_chart_height: 120px;
 }
 
 .noinfo-bar {
-	text-align: center;
+	@include text-align(center);
 	margin: 30px 0 0;
 	font-size: 16px;
 	font-weight: bold;
 }
 
 #sla_gauge_container .noinfo-bar, #fcr_gauge_container .noinfo-bar{
-	text-align: left;
+	@include text-align(left);
 }
 
 .nested-wrapper {
@@ -70,29 +70,29 @@ $single_stackbar_chart_height: 120px;
     @include border-radius(5px);
     @include box-shadow(0 0 6px #BBBBBB inset);
     background-color: #ffffff;
-    margin: 0 20px 30px 20px;
+    @include margin(0 20px 30px 20px);
     padding: 0;
 
     .nested-unit .noinfo{
     	color: #666666;
-	  	text-align:center;
+	  	@include text-align(center);
 		font-size: 1.4em;
 	  	padding:110px 0;
 	    @include text-shadow(0 1px 1px white);
     }
 }
  
-.nested-unit {overflow-y: scroll;overflow-x: hidden;   margin-right:2px; margin-left: 10px;	padding: 0 0 0 0;@include border-radius(6px);position:static; }
+.nested-unit {overflow-y: scroll;overflow-x: hidden;   @include margin-right(2px); @include margin-left(10px);	@include padding(0 0 0 0);@include border-radius(6px);position:static; }
  
  .nested-title {
- 	h3 { font-size: 12px; color: #333; font-weight: bold; line-height: 18px; padding: 20px 25px 40px 25px;}
+ 	h3 { font-size: 12px; color: #333; font-weight: bold; line-height: 18px; @include padding(20px 25px 40px 25px);}
 
- 	.sub-title{ float:left;	position:relative; margin-right:10px; }
+ 	.sub-title{ @include float(left);	position:relative; @include margin-right(10px); }
 	.nested_column div{ background-color: #AA4643; }
 	.nested_column_category div{ background-color:#89A54E; }
 	.nested_column_sub_category div{ background-color:#4572A7; }
 
-	.nested_column, .nested_column_category, .nested_column_sub_category{ float:left; }
+	.nested_column, .nested_column_category, .nested_column_sub_category{ @include float(left); }
 
 	.nested_column div, .nested_column_category div,  .nested_column_sub_category div{	 	
 		margin-top:3px;
@@ -103,8 +103,8 @@ $single_stackbar_chart_height: 120px;
  	}
 
 	.nested_column span, .nested_column_category span,  .nested_column_sub_category span{	
-	 	margin-left:15px;
-	 	padding:0 10px 0 0;
+	 	@include margin-left(15px);
+	 	@include padding(0 10px 0 0);
 	 	position:relative;
 	} 	
 }
@@ -135,7 +135,7 @@ $single_stackbar_chart_height: 120px;
 	.hours span{
 		height: 10px;
 		width: 10px;
-		margin-right: 10px;
+		@include margin-right(10px);
 		display: inline-block;
 		margin-top:1px;
 		-webkit-border-radius: 2px;
@@ -165,14 +165,14 @@ $single_stackbar_chart_height: 120px;
  
 #dateRange{
 	font-size:12px;
-	margin: 0 20px 0 0;
+	@include margin(0 20px 0 0);
 	@include border-radius(0);
 	/*@include vertical-gradient(#eeeeee, #ffffff);*/
 } 
 
 .report-container{
   .tickets-summary, .sla-compliance{
-    float:left;            
+    @include float(left);            
   }
   .tickets-summary{ width:50%;  }
   .sla-compliance{ width:25%; }
@@ -190,12 +190,12 @@ $single_stackbar_chart_height: 120px;
 }
 #pie-charts {
 	width:100%;
-	float:none;
+	@include float(none);
 	@include clearfix;
 }
 .report-unit.report-pie-chart {
 	width:50%;
-	float:left;
+	@include float(left);
 	margin-bottom:5px;
 	.chart-container {
 		height:$pie_chart_size - 30;
@@ -204,7 +204,7 @@ $single_stackbar_chart_height: 120px;
 	}
 	.noinfo{ 
 	  width:250px;
-	  text-align:center;
+	  @include text-align(center);
 	  margin:10px 0 0;
 	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
 	  font-size:16px;
@@ -223,7 +223,7 @@ $single_stackbar_chart_height: 120px;
 
 .single-line-bar {
 	width:47%;
-	float:left;
+	@include float(left);
 }
 .single-line-bar .graph-container{
 	height: 350px;
@@ -232,7 +232,7 @@ $single_stackbar_chart_height: 120px;
 	overflow-y:auto;
 	.noinfo{ 
 	  width:250px;
-	  text-align:center;
+	  @include text-align(center);
 	  margin:10px 0 0;
 	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
 	  font-size:16px;
@@ -245,16 +245,16 @@ $single_stackbar_chart_height: 120px;
 	width:$gauge_chart_size;
 	display: inline;
 }
-.center-by-margin {margin-left:auto; margin-right:auto;}
+.center-by-margin {@include margin-left(auto); @include margin-right(auto);}
 .sla-compliance, .summary {                
 	h4.percent-diff,h1.percent-diff {
 		width:75px;
 		margin: 0;
 		font-size: 14px;
 		background: url(/images/reports/report_arrow-up.png) right no-repeat;
-		padding-right: 20px;
+		@include padding-right(20px);
 		color:$report-number-positive-color;
-		text-align:right;
+		@include text-align(right);
 		.percent {
 			color:lighten($report-number-positive-color, 5%);
 			font-size:10px;
@@ -271,7 +271,7 @@ $single_stackbar_chart_height: 120px;
 	}
 }
 .report-unit {
-    margin: 0 0 20px 0;	              
+    @include margin(0 0 20px 0);	              
 		h3 {
 			margin-bottom: 16px;
 			font-size: 20px;
@@ -287,10 +287,10 @@ $single_stackbar_chart_height: 120px;
         
         li{
             width: auto;
-            margin: 15px 1% 0 0;
-            text-align:left;
+            @include margin(15px 1% 0 0);
+            @include text-align(left);
             width:38%;                             
-            border-right:0px dotted #dfdfdf;
+            @include border-right(0px dotted #dfdfdf);
             span{
                 display:inline-block;
                 font-size:11px;
@@ -307,7 +307,7 @@ $single_stackbar_chart_height: 120px;
             }
         }
         li.last { margin:15px 0 0; border:0; }
-        li.first { margin:15px 0 0 1%;}
+        li.first { @include margin(15px 0 0 1%);}
         li.big {
         	margin: 10px inherit;
         	font-size:1.4em;
@@ -318,7 +318,7 @@ $single_stackbar_chart_height: 120px;
     } 
 
     .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
-        padding-left:10px;
+        @include padding-left(10px);
         .preview_pic {
             display:none;
         }
@@ -345,9 +345,9 @@ $single_stackbar_chart_height: 120px;
 .toolbar {
 	padding: 10px 20px 0;
 	h3 span {
-    float:right;
+    @include float(right);
 		top: 15px;
-		right: 10px;
+	 @include right(10px);
 		font-size: 80%;
 		font-weight: normal;
 		color: #777;
@@ -363,7 +363,7 @@ $single_stackbar_chart_height: 120px;
 	display: inline-block;
 }
 .margin_left{
-	margin: 0 100px 30px 100px; 
+	@include margin(0 100px 30px 100px); 
 }
 .multiBox {
 	border: 1px solid #C6C6C6;
@@ -397,13 +397,13 @@ $single_stackbar_chart_height: 120px;
 	.report-filter-slide-btn{ 
 		width: 6%;
 		.btn{
-			margin-right:10px;
+			@include margin-right(10px);
 		}
 	}
 	.report-filter-details{ width: 60%; }
 }
 .report-content-wrapper{
-	padding: 10px 2px 10px 2px;
+	@include padding(10px 2px 10px 2px);
 }
 .report-left-filter{
 	.control-label{
@@ -419,11 +419,11 @@ $single_stackbar_chart_height: 120px;
 	.report-header-content{
 		padding:10px 20px;
 		.report-header-icon{
-			margin-right:20px;
+			@include margin-right(20px);
 		}
 		div.preview_pic{
-			margin-right: 0;
-			margin-left: 5px;
+			@include margin-right(0);
+			@include margin-left(5px);
 		}
 	}
 	.report-inner-heading{
@@ -452,13 +452,13 @@ $single_stackbar_chart_height: 120px;
 		}
 		.report_filters {
 			width:25%;
-			border-left:1px solid #ccc;
-			text-align: left;
+			@include border-left(1px solid #ccc);
+			@include text-align(left);
 			a{
 				margin-top:6px;
 				position: relative;
 				&.drop-right:after{
-					right:0;
+				 @include right(0);
 					top:3px;
 				}
 			}
@@ -466,8 +466,8 @@ $single_stackbar_chart_height: 120px;
 				position:absolute;
 				display: block; 
 				visibility: visible;
-				float: left;
-				text-align: left;
+				@include float(left);
+				@include text-align(left);
 				top: 40px;
 				@include border-top-left-radius(0);
 				@include border-top-right-radius(0);
@@ -477,8 +477,8 @@ $single_stackbar_chart_height: 120px;
 					font-weight:bold;
 				}
 				li{
-					float: left;
-					clear: both;
+					@include float(left);
+					@include clear(both);
 					width: 84%;
 					padding: 0 8%;
 					cursor: pointer;
@@ -490,7 +490,7 @@ $single_stackbar_chart_height: 120px;
 			}
 			&:hover .delete-filter, .delete-filter{
 				color:#444444;
-				border-left:1px solid #ccc;
+				@include border-left(1px solid #ccc);
 			}
 		}
 		[class*="span"]{
@@ -509,7 +509,7 @@ $single_stackbar_chart_height: 120px;
 	.report-filter-details{
 		position: relative;
 		top: 4px;
-		float:left;
+		@include float(left);
 		display: table !important;
 		ul{
 			display: table-cell;
@@ -518,8 +518,8 @@ $single_stackbar_chart_height: 120px;
 
 	}
 	.report-user-details{
-		float:right;
-		text-align: right;
+		@include float(right);
+		@include text-align(right);
 		padding-top:12px;
 		.lead{
 			margin:0;
@@ -538,15 +538,15 @@ $single_stackbar_chart_height: 120px;
 				@include span-columns(6);
 				ul{
 					width:100%;
-					float:left;
+					@include float(left);
 					li{
 						@include span-columns(1);
-						margin-right: 0.899%;
+						@include margin-right(0.899%);
 						display:inline-block;
-			            float:none;
+			            @include float(none);
 			            vertical-align:top;
 						&:last-child{
-							margin-right:0;
+							@include margin-right(0);
 						}
 					}
 				}
@@ -606,7 +606,7 @@ $single_stackbar_chart_height: 120px;
 				width: 14px;
 				height: 14px;
 				display: inline-block;
-				margin-right: 5px;
+				@include margin-right(5px);
 				vertical-align: middle;
 				&.reports-icon-download{
 					vertical-align: top;
@@ -620,7 +620,7 @@ $single_stackbar_chart_height: 120px;
 		    content: " ";
 		    position: absolute;
 		    @include box-shadow(1px 8px 14px 0 rgba(#000, 0.3), 0 10px 1px rgba(#000,0.5));
-		    left:100%;
+		    @include left(100%);
 		    top:0;
 		    width:3px;
 		    height:97%; 
@@ -640,12 +640,12 @@ $single_stackbar_chart_height: 120px;
 			}
 			.nested-input{
 				width:95%;
-				padding-left: 8px;
-				border-left: 1px dotted #CCC;
-				margin-left: 2px;
+				@include padding-left(8px);
+				@include border-left(1px dotted #CCC);
+				@include margin-left(2px);
 			}
 			input{
-				padding-right:0;
+				@include padding-right(0);
 				min-height: 30px;
 				width: 100%;
 				@include box-sizing(border-box);
@@ -657,12 +657,12 @@ $single_stackbar_chart_height: 120px;
 /* Reports arrow */
 .report-arrow{
 	display:inline-block;
-	margin-right: 5px;
+	@include margin-right(5px);
 	width:0;
 	height:0;
 	&.report-arrow-up{
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
+		@include border-left(5px solid transparent);
+		@include border-right(5px solid transparent);
 		border-bottom: 5px solid;
 		&.report-arrow-green{
 		border-bottom-color:#009900;
@@ -672,8 +672,8 @@ $single_stackbar_chart_height: 120px;
 		}
 	}
 	&.report-arrow-down{
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
+		@include border-left(5px solid transparent);
+		@include border-right(5px solid transparent);
 		border-top: 5px solid;
 		&.report-arrow-green{
 		border-top-color:#009900;
@@ -697,7 +697,7 @@ li.bargraph-icon-dark{
 ul.showHideDiv_container{
 	padding-top:5px;
 	li {
-		float: left;
+		@include float(left);
 		padding: 2px 5px;
 		border: 1px solid #EFEFEF;
 		&:first-child{
@@ -705,7 +705,7 @@ ul.showHideDiv_container{
 		}
 		&:last-child{
 			@include border-radius(0 3px 3px 0);
-			margin-left: 1px;
+			@include margin-left(1px);
 		}
 		&.active{
 			background: #bfbfbf;
@@ -743,7 +743,7 @@ $animation_timing: .1s;
 		 	comparison #b2a39d,
 		 	topn #9f9db2;
 .report-home {
-	padding:0px 0 5px 0;
+	@include padding(0px 0 5px 0);
 	.report-separation{
 		border-top: 2px solid #d9d9d9;
 		margin-bottom: 15px;
@@ -771,13 +771,13 @@ $animation_timing: .1s;
 	ul{
 		width:80%;
 		display: table-cell;
-		margin-left:-32px;
+		@include margin-left(-32px);
 		&.report_icons{
 			@include clearfix;
 			list-style:none;
 			padding-top:8px;
 			li{
-				float:left;
+				@include float(left);
 				padding: 0 18px;
 				position:relative;
 				@include min-height(130px);
@@ -790,13 +790,13 @@ $animation_timing: .1s;
 					font-weight: bold;
 					position: absolute;
 					top: 56%;
-					left: 30%;
+				 @include left(30%);
 				}
 				a{
 					position:relative;
 					display:block;
-					padding:8px 0 2px 0;
-					text-align:center; 
+					@include padding(8px 0 2px 0);
+					@include text-align(center); 
 					text-decoration:none;
 					color:#666;
 					width:100px;
@@ -895,7 +895,7 @@ $animation_timing: .1s;
 	width:100%;
 	height:82%;
 	background-color:#fff; 
-	left:0px;
+ @include left(0px);
 }
 #loading-box{
 	height:110%;
@@ -922,7 +922,7 @@ $animation_timing: .1s;
 	}
 }
 .twipsy.below .twipsy-arrow{
-	left:12%;	
+ @include left(12%);	
 }
 
 .reports_page{
@@ -931,15 +931,15 @@ $animation_timing: .1s;
 	}
 }
 .twipsy.below .twipsy-arrow{
-	left:12%;	
+ @include left(12%);	
 }
 .report-help-icon{
 	border: 0;
-	float: right;
+	@include float(right);
 	width: 24px;
 	height: 24px;
 	background-color: #c7c7c7;
-	text-align: center;
+	@include text-align(center);
 	color: #fff;
 	@include text-shadow(none);
 	font-weight: bold;
@@ -949,12 +949,12 @@ $animation_timing: .1s;
 	}
 }
 .reports-icon-save, .icon-trash{
-	margin-left: 10px;
+	@include margin-left(10px);
 }
 .row-fluid .span6 {
 	width: 45.93617%;
 }
-#graphs_container [class*="span"] { margin-left: 2.12766%; *margin-left: 2.07447%; }
+#graphs_container [class*="span"] { @include margin-left(2.12766%); *margin-left: 2.07447%; }
 
 .reports-icon-topN, .reports-icon-bottomN {
 	height: 21px;
@@ -969,10 +969,10 @@ $animation_timing: .1s;
 }
 .sort {
 	position: relative;
-	padding: 0 2px 0 0;
+	@include padding(0 2px 0 0);
 	background-color: #f8f8f8;
 	border: 1px solid #efefef;
-	margin-right: 1px;
+	@include margin-right(1px);
 	&:hover {
 		background-color: #eee;
 		border: 1px solid #ccc;

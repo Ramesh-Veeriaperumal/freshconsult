@@ -8,6 +8,7 @@ describe Helpdesk::TicketsController do
   before(:each) do
     request.host = @account.full_domain
     http_login(@agent)
+    stub_s3_writes
   end
 
   it "should create a ticket" do
@@ -42,7 +43,7 @@ describe Helpdesk::TicketsController do
   end
   it "should assign a ticket to the agent" do
   	new_ticket = create_ticket({:status => 2})
-  	new_agent = add_agent_to_account(@account, {:name => "testing21", :email => "unit12@testing.com",
+  	new_agent = add_agent_to_account(@account, {:name => "testing21", :email => Faker::Internet.email,
                                         :token => "wn3ujqf2pwlxjzgl30p7", :active => 1, :role => 1
                                         })
   	put :assign, {:id => new_ticket.display_id,:responder_id => new_agent.user_id,:format => 'xml'}
@@ -84,7 +85,7 @@ describe Helpdesk::TicketsController do
     result.length.should be <= 30
   end
   it "should create a ticket with attachments" do
-  	 file = fixture_file_upload('./files/image33kb.jpg', 'image/jpeg',:binary)
+  	 file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
   	 post :create, ticket_params(file).merge!(:format => 'xml')
   	 response.should be_success
   end

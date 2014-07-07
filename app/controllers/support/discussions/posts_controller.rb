@@ -1,5 +1,6 @@
 class Support::Discussions::PostsController < SupportController
 	before_filter { |c| c.requires_feature :forums }
+	before_filter :check_forums_state
  	before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :require_user
  	before_filter :load_topic
@@ -12,11 +13,11 @@ class Support::Discussions::PostsController < SupportController
 		if @topic.locked? and !@topic.published?
 			respond_to do |format|
 				format.html do
-					flash[:notice] = 'This topic is locked.'[:locked_topic]
+					flash[:notice] = 'This topic is locked.'
 					redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
 				end
 				format.xml do
-					return render :text => 'This topic is locked.'[:locked_topic], :status => 400
+					return render :text => 'This topic is locked.', :status => 400
 				end
 			end
 			return
@@ -37,7 +38,7 @@ class Support::Discussions::PostsController < SupportController
 		  }
 		end
 		rescue ActiveRecord::RecordInvalid
-		flash[:bad_reply] = 'Please post a valid message...'[:post_something_message]
+		flash[:bad_reply] = 'Please post a valid message...'
 		respond_to do |format|
 		  format.html do
 		  	redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
@@ -63,7 +64,7 @@ class Support::Discussions::PostsController < SupportController
 	    @post.attributes = params[:post]
 	    @post.save!
 		rescue ActiveRecord::RecordInvalid
-			flash[:error] = 'An error occurred'[:error_occured_message]
+			flash[:error] = 'An error occurred'
 		ensure
 		respond_to do |format|
 		  format.html do
@@ -74,7 +75,7 @@ class Support::Discussions::PostsController < SupportController
 
 	def destroy
 	    @post.destroy
-	    flash[:notice] = (I18n.t('flash.post.deleted')[:post_deleted_message, h(@post.topic.title)]).html_safe
+	    flash[:notice] = (I18n.t('flash.topic.deleted', :title => h(@post.topic.title))).html_safe
 	    respond_to do |format|
 	      format.html do
 	        redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')

@@ -29,7 +29,7 @@ class Integrations::GoogleContactsImporter
   end
 
   def import_google_contacts(options = {})
-    options[:sync_type] = SyncType::OVERWRITE_REMOTE
+    options[:sync_type] = SyncType::IMPORT_EXPORT
     sync_google_contacts options
   end
 
@@ -37,7 +37,7 @@ class Integrations::GoogleContactsImporter
     @google_account.account.make_current
     Rails.logger.info "###### Inside sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     overwrite_existing_user = options[:overwrite_existing_user].blank? ? @google_account.overwrite_existing_user : options[:overwrite_existing_user]
-    sync_type = options[:sync_type].blank? ? @google_account.sync_type : options[:sync_type]
+    sync_type = options[:sync_type].blank? ? SyncType::SYNC_CONTACTS : options[:sync_type]
     sync_stats = {:status=>:error} # If no exception occurs then the status will be reset with proper status else it will say in error status.
     begin
       # Do not proceed further if the status is still in 'progress'.
@@ -48,31 +48,20 @@ class Integrations::GoogleContactsImporter
       @google_account.save! unless @google_account.new_record?
       # Disbale notification before doing any other operations.
       disable_notification(@google_account.account)
+      group_ids = options[:group_ids].blank? ? @google_account.sync_group_id.to_a : options[:group_ids]
+      db_stats = handle_import_and_remove_discrepancy(sync_type, overwrite_existing_user, group_ids) 
       case sync_type
-        when SyncType::OVERWRITE_LOCAL # Export
+        when SyncType::IMPORT_EXPORT
+          db_contacts = find_non_google_contacts
+          google_stats = @google_account.batch_update_google_contacts(db_contacts, sync_type) 
+        when SyncType::SYNC_CONTACTS
           db_contacts = find_updated_db_contacts
-          # Fetch the contact in Google first
-          goog_contacts = @google_account.fetch_latest_google_contacts
-          # Remove discrepancy method also updates google_id in the db_contacts. This is will be useful in deciding update or add of a contact while exporting.
-          remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, "DB", true)
-          google_stats = @google_account.batch_update_google_contacts(db_contacts)
-        when SyncType::OVERWRITE_REMOTE # Import
-          db_stats = handle_import_and_remove_discrepancy(nil, overwrite_existing_user, nil)
-        when SyncType::MERGE_LOCAL # Merge Freshdesk precedence  
-          db_contacts = find_updated_db_contacts
-          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "DB")
-          google_stats = @google_account.batch_update_google_contacts(db_contacts)
-        when SyncType::MERGE_REMOTE # Merge Google precedence
-          db_contacts = find_updated_db_contacts
-          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "GOOGLE")
-          google_stats = @google_account.batch_update_google_contacts(db_contacts)
-        when SyncType::MERGE_LATEST # Take latest record as precedence
-          db_contacts = find_updated_db_contacts
-          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "LATEST")
-          google_stats = @google_account.batch_update_google_contacts(db_contacts)
-      end 
+          @google_account.update_google_contacts(db_contacts, false, sync_type)
+      end
+      
       # Update the sync time and status
-      @google_account.last_sync_time = DateTime.now+0.0001 unless @google_account.donot_update_sync_time # Storing 8secs forward.
+      @google_account.last_sync_time = DateTime.now+0.0001  # Storing 8secs forward.
+      
       sync_stats = {:status=>:success, :db_stats => db_stats, :google_stats => google_stats}
     ensure
       # Enable notification before doing any other operations.
@@ -92,28 +81,35 @@ class Integrations::GoogleContactsImporter
     unless sync_tag_id.blank?
       # If sync tag is not specified then users in db will not be pushed back to Google.
       # deletion handling is Disabled for now. Remove the deleted check in the query to enable it.
-      users = @google_account.account.all_users.find(:all, :include=>:google_contacts, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
-                        :conditions => ["updated_at > ? and helpdesk_tag_uses.tag_id=? and deleted=?", last_sync_time, sync_tag_id, false])
+      users = @google_account.account.all_users.find(:all, :conditions => ["updated_at > ?  and active=?", last_sync_time, true])
     end
     Rails.logger.debug "#{users.length} users in db has been fetched. #{@google_account.email}"
     users.blank? ? [] : users
   end
 
+  def find_non_google_contacts
+    google_user_ids=GoogleContact.find(:all,:select=>'user_id').map {|i| i.user_id }
+    users = User.find(:all, :conditions=>['id NOT IN (?) AND active = ? AND deleted = ?',google_user_ids, true, false])
+    users.blank? ? [] : users
+  end
+
   private
   
-    def handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, discre_precedence)
+    def handle_import_and_remove_discrepancy(sync_type, overwrite_existing_user, group_ids)
       goog_contacts = []
       agg_db_stats = [[0,0,0],[0,0,0]]
       begin
-        goog_contacts = @google_account.fetch_latest_google_contacts(MAX_RESULTS)
-        remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, discre_precedence) unless db_contacts.blank?
-        fetched_db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
+        group_ids.each do |id|
+          goog_contacts << @google_account.fetch_latest_google_contacts(1000, id, sync_type)
+        end
+        @google_account.batch_update_google_contacts(goog_contacts.first,sync_type) if sync_type == SyncType::IMPORT_EXPORT
+        fetched_db_stats = update_db_contacts(goog_contacts.first, overwrite_existing_user)
         fetched_db_stats.each_index { |i|
           fetched_db_stats[i].each_index { |j|
             agg_db_stats[i][j] = agg_db_stats[i][j] + fetched_db_stats[i][j]
           }
         }
-      end while goog_contacts.length > MAX_RESULTS
+      end 
       agg_db_stats
     end
 
@@ -129,6 +125,7 @@ class Integrations::GoogleContactsImporter
                 if sync_tag_id.blank? || user.tagged?(sync_tag_id)
                   updated = user.save
                   updated ? (user.deleted ? stats[2] += 1 : stats[1] += 1) : (user.deleted ? err_stats[2] += 1 : err_stats[1] += 1) 
+                  GoogleContact.find(:first,:conditions => ["user_id = ? AND google_account_id = ?",user.id,@google_account.id]).destroy if user.deleted
                   Rails.logger.info "User #{user.email} update successful :: #{updated}, errors: #{user.errors.full_messages}"
                 end
               end
@@ -168,6 +165,4 @@ class Integrations::GoogleContactsImporter
         Rails.logger.error "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
-
-    MAX_RESULTS = 200
 end

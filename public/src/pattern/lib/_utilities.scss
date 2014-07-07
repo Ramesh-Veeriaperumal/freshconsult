@@ -8,15 +8,15 @@
 // Quick floats
 
 .pull-right {
-  float: right;
+  @include float(right);
 }
 .pull-left {
-  float: left;
+  @include float(left);
 }
 
 ul.disc{
   list-style: disc;
-  margin-left: 20px;
+  @include margin-left(20px);
 }
 
 // --------------------------------------------------
@@ -38,11 +38,11 @@ ul.disc{
 //                  Alignment options
 // --------------------------------------------------
 .align-right{
-  text-align:right;
+  @include text-align(right);
 }
 
 .align-left{
-  text-align:left;
+  @include text-align(left);
 }
 
 .align-top{
@@ -67,9 +67,9 @@ ul.disc{
 .clearfix {
   @include clearfix();
 }
-.clearBoth{ clear:both; }
-.clearLeft{ clear:left; }
-.clearRight{ clear:right; }
+.clearBoth{ @include clear(both); }            
+.clearLeft{ @include clear(left); }            
+.clearRight{ @include clear(right); }    
 
 // --------------------------------------------------
 //          Accessible yet invisible text
@@ -82,7 +82,7 @@ ul.disc{
 //          Faded text
 // --------------------------------------------------
 .faded {
-  opacity: 0.4;
+  @include opacity(0.4);
 }
 // --------------------------------------------------
 //  Uses box-sizing mixin, so must be defined here
@@ -127,14 +127,14 @@ ul.disc{
   .m#{$i}{margin:#{$i}px;}            //Margin
   .mt#{$i}{margin-top:#{$i}px;}       //Margin-top
   .mb#{$i}{margin-bottom:#{$i}px;}    //Margin-bottom
-  .mr#{$i}{margin-right:#{$i}px;}     //Margin-right
-  .ml#{$i}{margin-left:#{$i}px;}      //Margin-left
+  .mr#{$i}{@include margin-right(#{$i}px);}     //Margin-right
+  .ml#{$i}{@include margin-left(#{$i}px);}      //Margin-left
 
   .p#{$i}{padding:#{$i}px;}           //padding
   .pt#{$i}{padding-top:#{$i}px;}      //padding-top
   .pb#{$i}{padding-bottom:#{$i}px;}   //padding-bottom
-  .pr#{$i}{padding-right:#{$i}px;}    //padding-right
-  .pl#{$i}{padding-left:#{$i}px;}     //padding-left
+  .pr#{$i}{@include padding-right(#{$i}px);}    //padding-right
+  .pl#{$i}{@include padding-left(#{$i}px);}     //padding-left
 }
 
 // --------------------------------------------------
@@ -175,10 +175,10 @@ ul.disc{
 }
 
 .arrow-right {
-  border-left-width: 1em;
-  border-left-style: solid;
-  border-left-color: #666;
-  left: 0.35em;
+  @include border-left-width(1em);
+  @include border-left-style(solid);
+  @include border-left-color(#666);
+  @include left(0.35em);
 }
 
 .arrow-down {
@@ -189,8 +189,8 @@ ul.disc{
 }
 
 .arrow-left {
-  border-right-width: 1em;
-  border-right-style: solid;
-  border-right-color: #666;
-  right: 0.35em;
+  @include border-right-width(1em);
+  @include border-right-style(solid);
+  @include border-right-color(#666);
+  @include right(0.35em);
 }

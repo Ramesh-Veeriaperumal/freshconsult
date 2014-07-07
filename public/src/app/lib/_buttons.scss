@@ -1,4 +1,5 @@
 @import "compass/css3/pie";
+@import "../../pattern/lib/rtl-mixins";
 
 .ui-datepicker{
    background:#ffffff;
@@ -20,7 +21,7 @@
  * http://docs.jquery.com/UI/Button#theming
  */
 
-.ui-button { display: inline-block; position: relative; padding: 0; margin-right: .1em; text-decoration: none !important; cursor: pointer; text-align: center; zoom: 1; overflow: visible; } /* the overflow property removes extra width in IE */
+.ui-button { display: inline-block; position: relative; padding: 0; @include margin-right(.1em); text-decoration: none !important; cursor: pointer; @include text-align(center); zoom: 1; overflow: visible; } /* the overflow property removes extra width in IE */
 .ui-button-icon-only { width: 2.2em; } /* to make room for the icon, a width needs to be set here */
 button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a little more width */
 .ui-button-icons-only { width: 3.4em; } 
@@ -29,29 +30,29 @@ button.ui-button-icons-only { width: 3.7em; }
 /*button text element */
 .ui-button .ui-button-text { display: block; line-height: 1.4; font-family:inherit; }
 .ui-button-text-only .ui-button-text { padding: .4em 1em; }
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
-.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
-.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 2.1em .4em 1em; }
-.ui-button-text-icons .ui-button-text { padding-left: 2.1em; padding-right: 2.1em; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; @include text-indent(-9999999px); }
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { @include padding(.4em 1em .4em 2.1em); }
+.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { @include padding(.4em 2.1em .4em 1em); }
+.ui-button-text-icons .ui-button-text { @include padding-left(2.1em); @include padding-right(2.1em); }
 /* no icon support for input elements, provide padding by default */
 input.ui-button { padding: .4em 1em; }
 
 /*button icon element(s) */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon { position: absolute; top: 50%; margin-top: -8px; }
-.ui-button-icon-only .ui-icon { left: 50%; margin-left: -8px; }
-.ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary { left: .5em; }
-.ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right: .5em; }
-.ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right: .5em; }
+.ui-button-icon-only .ui-icon { @include left(50%); @include margin-left(-8px); }
+.ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary { @include left(.5em); }
+.ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { @include right(.5em); }
+.ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { @include right(.5em); }
 
 /*button sets*/
-.ui-buttonset { margin-right: 7px; }
-.ui-buttonset .ui-button { margin-left: 0; margin-right: -.3em; }
+.ui-buttonset { @include margin-right(7px); }
+.ui-buttonset .ui-button { @include margin-left(0); @include margin-right(-.3em); }
 
 /* workarounds */
 button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
 
 .notif-button .uiButton{
-  margin-left:25px;
+  @include margin-left(25px);
 }
 
 .uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
@@ -70,7 +71,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	font-size:11px;
 	cursor: pointer;
 	@include border-radius(4px);
-	text-align:center;
+	@include text-align(center);
   font-family:inherit;
 }
 .uiButton:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
@@ -92,7 +93,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    font-size:11px;
    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
    background-image:url(/images/overlay-top-shadow.png);
-   padding-right:40px;
+   @include padding-right(40px);
    position:relative;
    span{
       position:absolute;
@@ -100,7 +101,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
       height:100%;
       border:1px solid #a2a2a2;
       @include background(linear-gradient(top, #d8d8d8, #f9f9f9));
-      right: -1px; 
+      @include right(-1px); 
       top: -1px;
       @include border-radius(4px);
       @include box-shadow(#ebebeb 0 0 0 1px inset);
@@ -108,10 +109,10 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .iphone-inactive.uiButton{
-   padding-left:40px;
-   padding-right:10px;
+   @include padding-left(40px);
+   @include padding-right(10px);
    span{
-      left:-1px;      
+      @include left(-1px);      
    }
 }
 
@@ -129,7 +130,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    background-image:url(/images/overlay-top-shadow.png);
    background-position:top left;
    background-repeat:repeat-x;
-   padding-right:40px;
+   @include padding-right(40px);
    position:relative;
    font-family:inherit;
 
@@ -139,7 +140,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
       height:100%;
       border:1px solid #a2a2a2;
       @include background(linear-gradient(top, #d8d8d8, #f9f9f9));
-      right: -1px; 
+      @include right(-1px); 
       top: -1px;
       @include border-radius(4px);
       @include box-shadow(#ebebeb 0 0 0 1px inset);
@@ -150,10 +151,10 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
     color: #7F7F7F;
     border-color: #A4A4A4;
     text-shadow: 0 0 0 transparent;
-    padding-left:40px;
-    padding-right:10px;
+    @include padding-left(40px);
+    @include padding-right(10px);
     span.other{
-      left:-1px;   
+      @include left(-1px);   
     }
  }
 }
@@ -198,40 +199,40 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 
 div.action_buttons{
 	position:relative;
-	float:right;
+	@include float(right);
 	@include border-radius(4px);
-	margin:-5px 6px 2px 5px;	
+	@include margin(-5px 6px 2px 5px);	
 	background-color:#f8f8f8;
 	background-repeat:repeat-x; 
   @include background(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
-	padding:2px 7px 3px 3px; 
+	@include padding(2px 7px 3px 3px); 
 	border:1px solid darken(#f2f2f2, 5%);
 	> a{
 		text-decoration:none;
-		float:left;
+		@include float(left);
 		margin:0px 0px;
 		font-size:11px;
 		font-weight:bold;
-		padding:2px 8px 2px 8px;
-		border-right:1px solid darken(#f2f2f2, 10%);
+		@include padding(2px 8px 2px 8px);
+		@include border-right(1px solid darken(#f2f2f2, 10%));
 		@include link-colors(#333333, #666666, #333333, #333333);
 		@include text-shadow(#ffffff, 0px, 1px, 1px);
 	}	
 	> a.last{ 
-		border-right:0px;
-		padding-right:4px;
+		@include border-right(0px);
+		@include padding-right(4px);
 	}
  	> a:last-child{ 
-		border-right:0px;
-		padding-right:4px;
+		@include border-right(0px);
+		@include padding-right(4px);
 	}	
 	a.icon{
-		padding-left:20px;
+		@include padding-left(20px);
     width: auto;
     height: 100%;
     display: block;
     position: static;
-    left: 0px;
+    @include left(0px);
 	}
 }
 
@@ -248,7 +249,7 @@ div.action_buttons:hover{
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
-  text-align: center;
+  @include text-align(center);
   overflow: hidden;
   padding: 4px 8px;
   margin: 2px;    
@@ -258,7 +259,7 @@ div.action_buttons:hover{
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0  1px 0, rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
   @include background(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 	background-color:#fff;
-	img{ width:auto; height:auto; margin: 0 3px -3px 0 !important; }	
+	img{ width:auto; height:auto; @include margin(0 3px -3px 0 !important); }	
   border: 1px solid #eee;
   position:relative; 
   font-family:inherit;  
@@ -273,10 +274,10 @@ div.action_buttons:hover{
 }
 
 .icon-detail{
-   padding-left:25px;
+   @include padding-left(25px);
    span{
       position:absolute;
-      left:4px;
+      @include left(4px);
       top:3px;
       width:16px; height:16px; 
    }   
@@ -333,29 +334,31 @@ div.action_buttons:hover{
 
 .request-title .toolbar_pagination{
   top:-2px;
-	left:65px;
+	@include left(65px);
 }
 
 .toolbar_pagination{
-   float:right;        
+   @include float(right);        
    .prev_page, .next_page{
-      float:left; font-size:1px; width:7px; height:9px;   
-      right:0px; 
+      @include float(left); font-size:1px; width:7px; height:9px;   
+      @include right(0px); 
       height:14px;
       position:absolute;    
   		width:11px;
       span{
-         left:2px; top:0px;
+         @include left(2px); top:0px;
          position:absolute; width:22px; height:22px;  
       }
    }      
    .prev_page{ 
-      @include border-radius(3px 0 0 3px); margin-right:0px; 
-      right:30px;      
+      @include border-radius(3px 0 0 3px); 
+      @include margin-right(0px); 
+      @include right(30px);      
    }
    .next_page{ 
-      @include border-radius(0 3px 3px 0); margin-left:0px;  
-      border-left:0;       
+      @include border-radius(0 3px 3px 0); 
+      @include margin-left(0px);  
+      @include border-left(0);       
    }   
 }
 
@@ -398,7 +401,7 @@ div.action_buttons:hover{
     border:none;
     cursor: default;
    }
-   text-align:center;
+   @include text-align(center);
 }
 .toolbar_pagination, .toolbar_pagination_full{
    position:relative;
@@ -425,11 +428,11 @@ div.action_buttons:hover{
   text-transform:uppercase;    
   font-size:12px;  
   position:relative;
-  margin-left:10px;
+  @include margin-left(10px);
   padding:0;
   height:18px;
   color:#fff;
-  text-align:center;
+  @include text-align(center);
   overflow:hidden;
   line-height: 0;
   background: #9d9d9d;
@@ -453,7 +456,7 @@ div.action_buttons:hover{
   .toggle-container{    
     width:200%;
     height:100%;
-    left:-100%;
+    @include left(-100%);
     overflow:hidden;
     @include clearfix;
     @include border-radius(16px);
@@ -461,7 +464,7 @@ div.action_buttons:hover{
     @include transition-duration(0.26s);    
   }  
   .toggle-handle{    
-    left:50%;
+    @include left(50%);
     span{
       @include inline-block;
       @include pie;
@@ -485,8 +488,8 @@ div.action_buttons:hover{
     @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset, rgba(0, 0, 0, 0.3) 0 0 3px);
   } 
   &.active{        
-    .toggle-container{ left:0; }
-    .toggle-handle{ margin-left:-18px; }
+    .toggle-container{ @include left(0); }
+    .toggle-handle{ @include margin-left(-18px); }
   }
   
   p{
@@ -495,7 +498,7 @@ div.action_buttons:hover{
     padding: 0 16px;
   }
   .on-label, .off-label{    
-    float:left;
+    @include float(left);
     width:50%;
     height:100%;
     @include pie;
@@ -509,9 +512,9 @@ div.action_buttons:hover{
     @include filter-gradient(#40894c, #4ea961, vertical); // IE6-9
     @include background(linear-gradient(top, hsla(130,36%,40%,1) 0%,hsla(133,37%,49%,1) 100%));
 
-    span{ padding-right:12px; }
+    span{ @include padding-right(12px); }
   }
-  .off-label span{ padding-left:12px; }
+  .off-label span{ @include padding-left(12px); }
 }
 
 /* Tourmyapp admin help button */
@@ -520,7 +523,7 @@ div.action_buttons:hover{
   display: block;
   @include border-radius(20px);
   height: auto;
-  padding: 6px 0 7px 33px;
+  @include padding(6px 0 7px 33px);
   background-image: inline-image("cdn-ignored/inline-images/tourmyapp-btn-arrow.png");
   background-repeat: no-repeat;
   background-position: 7px 6px;

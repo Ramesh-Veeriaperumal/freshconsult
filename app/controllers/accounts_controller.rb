@@ -1,12 +1,14 @@
 class AccountsController < ApplicationController
 
   include ModelControllerMethods
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   
   layout :choose_layout 
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :signup_google,
                       :create_account_google, :openid_complete, :associate_google_account,
-                      :associate_local_to_google, :create, :rebrand, :dashboard]
+                      :associate_local_to_google, :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
   skip_before_filter :set_time_zone, :set_current_account,
@@ -14,10 +16,12 @@ class AccountsController < ApplicationController
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :marketplace_login, :portal_login, :create_account_from_google]
+  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                         :marketplace_login, :portal_login, :create_account_from_google,
+                                         :associate_google_account,:associate_local_to_google]
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:associate_google_account,:associate_local_to_google]
-   
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
@@ -34,6 +38,12 @@ class AccountsController < ApplicationController
    
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages 
+    @ticket_display_id = current_account.get_max_display_id
+    if current_account.features?(:redis_display_id)
+      key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
+      redis_display_id = get_tickets_redis_key(key).to_i
+      @ticket_display_id = redis_display_id if redis_display_id > @ticket_display_id
+    end
   end
   
   def check_domain
@@ -56,7 +66,7 @@ class AccountsController < ApplicationController
   end
   
   def signup_google 
-    base_domain = AppConfig['base_domain'][RAILS_ENV]
+    base_domain = AppConfig['base_domain'][Rails.env]
     logger.debug "base domain is #{base_domain}"   
     return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
     #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
@@ -383,14 +393,14 @@ class AccountsController < ApplicationController
     end
 
     def get_account_for_sub_domain
-      base_domain = AppConfig['base_domain'][RAILS_ENV]    
+      base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
       @account =  Account.find_by_full_domain(@full_domain)    
     end
 
     def get_full_domain_for_google
-      base_domain = AppConfig['base_domain'][RAILS_ENV]    
+      base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
     end

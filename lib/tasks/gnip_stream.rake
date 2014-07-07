@@ -2,37 +2,37 @@ namespace :gnip_stream do
 
   desc "Check if number of rules is same in gnip and helpkit"
   task :maintenance => :environment do
+    include Social::Util
     db_set = Set.new #to be optimized
     Sharding.execute_on_all_shards do
-      Social::TwitterHandle.find_in_batches(:batch_size => 500,
-        :joins => %(
-          INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id),
-        :conditions => " subscriptions.state != 'suspended' "
-      ) do |twitter_block|
-        twitter_block.each do |twt_handle|
-          if twt_handle.capture_mention_as_ticket
-            unless twt_handle.rule_value.nil?
-              db_set << {:rule_value => twt_handle.rule_value,
-                           :rule_tag => twt_handle.rule_tag}
-            else
-              NewRelic::Agent.notice_error("Handle's rule value is NULL", :custom_params => {
-                :twitter_handle_id => twt_handle.id, :account_id => twt_handle.account_id})
-            end
-          end
-        end
-      end
       Social::TwitterStream.find_in_batches(:batch_size => 500,
         :joins => %(
           INNER JOIN `subscriptions` ON subscriptions.account_id = social_streams.account_id),
         :conditions => " subscriptions.state != 'suspended' "
       ) do |stream_block|
         stream_block.each do |stream|
-          unless stream.data[:rule_value].nil?
-            db_set << {:rule_value => stream.data[:rule_value],
-                        :rule_tag => stream.data[:rule_tag] }
+          account = stream.account
+          if !account.features?(:twitter)
+            error_params = {
+              :stream_id => stream.id,
+              :account_id => stream.account_id,
+              :data => stream.data
+            }
+            notify_social_dev("Twitter Streams present for non social plans", error_params)
           else
-             NewRelic::Agent.notice_error("Stream's rule value is NULL", :custom_params => {
-                :stream_id => stream.id, :account_id => stream.account_id})
+            if stream.data[:gnip] == true 
+              unless stream.data[:rule_value].nil?
+                db_set << {:rule_value => stream.data[:rule_value],
+                            :rule_tag => stream.data[:rule_tag] }
+              else
+                error_params = {
+                  :stream_id => stream.id,
+                  :account_id => stream.account_id,
+                  :rule_state => stream.data[:gnip_rule_state]
+                }
+                notify_social_dev("Default Stream rule value is NIL", error_params)
+              end
+            end
           end
         end
       end

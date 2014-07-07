@@ -13,6 +13,7 @@ describe AgentsController do
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
     # Delayed::Job.destroy_all
   end
 
@@ -46,7 +47,7 @@ describe AgentsController do
     # Delayed::Job.last.handler.should include("A new agent was added in your helpdesk")
   end
 
-  it "should not create a new agent" do
+  it "should not create a new agent more than the subscriped agent limit" do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     test_email = Faker::Internet.email
@@ -77,6 +78,7 @@ describe AgentsController do
   it "should not create a new agent without a Agent role or existing email ID" do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
+    user = add_new_user(@account)
     test_name = Faker::Name.name
     post :create, { :agent => { :occasional => "false",
                                 :scoreboard_level_id => "1",
@@ -86,7 +88,7 @@ describe AgentsController do
                                 },
                     :user => { :helpdesk_agent => true,
                                 :name => test_name,
-                                :user_emails_attributes => {"0" => {:email => "rachel@freshdesk.com"}},
+                                :user_emails_attributes => {"0" => {:email => user.email}},
                                 :time_zone => "Chennai",
                                 :job_title =>"Support Agent",
                                 :phone => Faker::PhoneNumber.phone_number,
@@ -167,7 +169,7 @@ describe AgentsController do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
   end
 
-  it "should not update an agent" do
+  it "should not update an agent when user_id is nil" do
     user = add_test_agent(@account)
     agent = user.agent
     get :edit, :id => agent.id
@@ -221,7 +223,6 @@ describe AgentsController do
     response.body.should_not =~ /Edit Agent/
     response.session[:flash][:notice].should eql "You cannot edit this agent"
   end
-
 
   it "should restrict_current_user for update" do
     user = add_test_agent(@account)
@@ -357,7 +358,7 @@ describe AgentsController do
                                         'image/png')},
                                     :helpdesk_agent => true,
                                     :name => "Spec test user",
-                                    :email => "testuser@spec.com",
+                                    :email => Faker::Internet.email,
                                     :time_zone => "Chennai",
                                     :job_title =>"Spec Agent",
                                     :phone => Faker::PhoneNumber.phone_number, 
@@ -430,15 +431,18 @@ describe AgentsController do
   end
 
   it "should invite multiple agents from getting_started page" do
-    put :create_multiple_items, :agents_invite_email => ["started@test.com", "invite_agents@spec.com"]
-    invited_user = @account.users.find_by_email("started@test.com")
+    invited_user_email = Faker::Internet.email
+    invited_user_email_1 = Faker::Internet.email
+    put :create_multiple_items, :agents_invite_email => [invited_user_email, invited_user_email_1]
+    invited_user = @account.users.find_by_email(invited_user_email)
     invited_user.should be_an_instance_of(User)
-    invited_user_1 = @account.users.find_by_email("invite_agents@spec.com")
+    invited_user_1 = @account.users.find_by_email(invited_user_email_1)
     invited_user_1.should be_an_instance_of(User)
   end
 
   it "should not invite multiple agents with existing email ID" do
-    put :create_multiple_items, :agents_invite_email => ["sample@freshdesk.com"]
+    user = add_test_agent(@account)
+    put :create_multiple_items, :agents_invite_email => [user.email]
     response.body.should =~ /Successfully sent/
   end
 
@@ -449,7 +453,7 @@ describe AgentsController do
     get :info_for_node, :user_id => user.id, :hash => hash
   end
 
-  it "should info_for_node" do
+  it "should not send info_for_node when hash is different" do
     user = add_test_agent(@account)
     get :info_for_node, :user_id => user.id, :hash => "2fe70832f759a712cfd1947aa778"
     response.body.should =~ /Access denied!/

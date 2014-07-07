@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140526110914) do
+ActiveRecord::Schema.define(:version => 20140704083458) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -248,6 +248,8 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
     t.string   "prechat_form_mail"
     t.string   "prechat_form_phoneno"
   end
+
+  add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -1491,10 +1493,11 @@ ActiveRecord::Schema.define(:version => 20140526110914) do
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "deleted",                 :default => false
   end
 
   add_index "mobihelp_apps", ["account_id", "app_key", "app_secret"], :name => "index_mobihelp_apps_on_account_id_and_app_key_and_app_secret", :unique => true
-  add_index "mobihelp_apps", ["account_id", "name", "platform"], :name => "index_mobihelp_apps_on_account_id_and_name_and_platform", :unique => true
+  add_index "mobihelp_apps", ["account_id", "name", "platform"], :name => "index_mobihelp_apps_on_account_id_and_name_and_platform"
   add_index "mobihelp_apps", ["account_id"], :name => "index_mobihelp_apps_on_account_id"
 
   create_table "mobihelp_devices", :force => true do |t|

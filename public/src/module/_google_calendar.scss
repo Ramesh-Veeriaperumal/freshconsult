@@ -3,10 +3,10 @@
 // 													Google Calendar Styles 
 // ------------------------------------------------------------------------------------------------------------
 #google_calendar_widget .content{
-	padding-left:0
+	@include padding-left(0)
 }
 #google_calendar_widget div.title{
-	padding-left: 30px;
+	@include padding-left(30px);
 	background-image: inline-image('cdn-ignored/inline-images/google-small.png');
 	background-position: 0 2px;
 	background-repeat: no-repeat;
@@ -30,7 +30,7 @@
 	    display: block;
 	    color: #999999;
 	    font-weight: normal;
-	    margin-left: -35px;
+	    @include margin-left(-35px);
 	    margin-top: -5px;
 	    a{font-weight: bold;}
 	}
@@ -69,7 +69,7 @@
 	}
 	div.day-month-year{
 		font-size: 11px;
-		margin-left: -2px;
+		@include margin-left(-2px);
 	}
 	.date-closeness{
 		font-size: 16px;
@@ -110,8 +110,8 @@ div.past-event{
 #gcal-other-events-link-container{
 	margin:10px 0;
 	.label.notice{
-		margin-right:5px;
-		margin-left: 5px;
+		@include margin-right(5px);
+		@include margin-left(5px);
 		background-color: #336699;
 	}
 }
@@ -126,7 +126,7 @@ div#google_calendar_add_event_modal{
 	.field-label{
 		position: relative;
 		top: 4px;
-		left: 8px;
+	 @include left(8px);
 	}
 
 	input.hasDatepicker[readonly]{
@@ -137,8 +137,8 @@ div#google_calendar_add_event_modal{
 	.hyphen-container{
 		position: relative;
 		top: -4px;
-		margin-left: 5px;
-		margin-right: 5px;
+		@include margin-left(5px);
+		@include margin-right(5px);
 	}
 
 	textarea{
@@ -154,17 +154,17 @@ div#google_calendar_add_event_modal{
 		overflow: hidden;
 
 		div{
-			width: 50%; float:left;
+			width: 50%; @include float(left);
 			div{
-				float: left;
+				@include float(left);
 				width: 100%;
 			}
 			div:first-child{
-				padding-right: 10px;
+				@include padding-right(10px);
 			}
 
 			#gcal-start-date-field, #end_date_field{ cursor: default!important; }
-			#gcal-start-date, #end_date {float: left;}
+			#gcal-start-date, #end_date {@include float(left);}
 		}
 	}
 
@@ -175,7 +175,7 @@ div#google_calendar_add_event_modal{
 	}
 
 	#gcal-event-duration{
-		margin-left: 0;
+		@include margin-left(0);
 		position: relative;
 		top: -5px;
 		color: #666666;
@@ -194,7 +194,7 @@ div#google_calendar_add_event_modal{
 	}
 
 	#gcal-add-update-modal-cancel-button{
-		margin-right: 10px;
+		@include margin-right(10px);
 	}
 
 	.gcal-form-contents{
@@ -204,8 +204,8 @@ div#google_calendar_add_event_modal{
 
 
 div.gcal-confirm-modal-content{ width: 100%; }
-.confirm-modal-yes-button{ margin-right: 10px; } 
-.confirm-modal-no-button{ margin-left: 7px !important;	 }
+.confirm-modal-yes-button{ @include margin-right(10px); } 
+.confirm-modal-no-button{ @include margin-left(7px !important);	 }
 
 /* Google Calendar Styles end */
 
@@ -217,7 +217,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .google_accounts, .google_analytics {
 
 	.buttons {
-		text-align:right;
+		@include text-align(right);
 		padding:0 35px 20px;
 	}
 	h4.title {
@@ -271,13 +271,13 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		.fields {
 			padding: 0 20px;
 			.checkwrapper {
-				margin:5px 10px 5px 0;
-				padding:0 5px 0 0;
-				float:left;
+				@include margin(5px 10px 5px 0);
+				@include padding(0 5px 0 0);
+				@include float(left);
 				width:200px;
 
 				input[type=checkbox] {
-					margin-right: 10px;
+					@include margin-right(10px);
 				}
 			}
 			input.mini {
@@ -294,7 +294,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 			color: $default_txt_color;
 			font-size: 12px;
 			line-height: 18px;
-			margin:15px 0 15px 25px;
+			@include margin(15px 0 15px 25px);
 			padding: 10px 20px;
 		}
 	}
@@ -313,7 +313,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		}
 
 		.fields {
-			margin: 0 0 10px 0;
+			@include margin(0 0 10px 0);
 			label.inline {
 				display: inline;
 				font-size:1em;
@@ -333,7 +333,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 			display: block;
 			margin: 0 0 10px;
 			li {
-				text-align:right;
+				@include text-align(right);
 				display: inline;
 				width: 100px;
 				padding:0 5px;

@@ -1,6 +1,6 @@
 
 .salesforce-wrapper{
-	float: right;
+	@include float(right);
 	width: 75%;
 	.select2-choices{
 		background:none;
@@ -12,7 +12,7 @@
 		}
 		.select2-search-choice-close{
 			background:none;
-			float: right;
+			@include float(right);
 			&:after{
 				content: "--";
 				background:#d30000;
@@ -20,8 +20,8 @@
 				color: #fff;
 				position: absolute;
 				bottom: 6px;
-				right: 16px;
-				padding: 2px 7px 4px 5px;
+			 @include right(16px);
+				@include padding(2px 7px 4px 5px);
 				font-size: 16px;
 				font-weight: bold;
 				line-height: 14px;
@@ -50,8 +50,8 @@
 			color: #fff;
 			position: absolute;
 			bottom: 8px;
-			right: 7px;
-			padding: 1px 5px 4px 5px;
+		 @include right(7px);
+			@include padding(1px 5px 4px 5px);
 			font-size: 16px;
 			font-weight: bold;
 			line-height: 14px;
@@ -72,7 +72,7 @@
 		}
 	}
 	.lead-fields{
-		float:right;
+		@include float(right);
 	}
 
 }
@@ -82,7 +82,7 @@
 .salesforce_widget_bg{
 	ul{
 		list-style:disc inside;
-		margin-left:1px;
+		@include margin-left(1px);
 		margin-top:5px;
 		color:#ccc;
 		li{
@@ -99,11 +99,11 @@
 		border: 1px solid #ccc;
 		@include border-radius(4px);
 		padding: 0 5px;
-		margin-right: 10px;
+		@include margin-right(10px);
 		.arrow-left{
 			font-size: 6px;
 			margin-top: -2px;
-			margin-left: -2px;
+			@include margin-left(-2px);
 		}
 		&.hide{
 			display: none;
@@ -124,18 +124,18 @@
 	}
 }
 .salesforce-widget{
-	clear: both;
+	@include clear(both);
 	div{
-		clear: both;
+		@include clear(both);
 		display: block;
 		span{
-			float: left;
+			@include float(left);
 			width:49%;
-			margin-right:1%;
+			@include margin-right(1%);
 			font-weight: 500;
 		}
 		label{
-			float: left;
+			@include float(left);
 			width:50%;
 			font-weight: 400;
 		}

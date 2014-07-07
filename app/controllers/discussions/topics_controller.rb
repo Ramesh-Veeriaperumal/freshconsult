@@ -86,12 +86,14 @@ class Discussions::TopicsController < ApplicationController
 	end
 
 	def destroy
+		@first_post = @topic.posts.first
 		@topic.destroy
-		flash[:notice] = (I18n.t('flash.topic.deleted')[:topic_deleted_message, h(@topic.title)]).html_safe
 		respond_to do |format|
 			format.html do
+				flash[:notice] = I18n.t('flash.topic.deleted', :title => h(@topic.title)).html_safe
 				redirect_to  @after_destroy_path 
 			end
+			format.js
 			format.xml  { head 200 }
 			format.json  { head 200 }
 		end

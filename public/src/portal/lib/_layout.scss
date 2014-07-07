@@ -43,13 +43,13 @@
   @include at-breakpoint($break-tablet){
     @include layout(4) {
       .cs-g{ @include span-columns(2); }
-      .cs-g:nth-child(even){ @include span-columns(2 omega); clear:right; }
+      .cs-g:nth-child(even){ @include span-columns(2 omega); @include clear(right); }
     }
 
     @include layout(3) {
       .cs-g-3{  @include span-columns(1); }
       .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
-      .cs-g-3:nth-child(3n+1){ clear:left; }
+      .cs-g-3:nth-child(3n+1){ @include clear(left); }
     }
   }
 

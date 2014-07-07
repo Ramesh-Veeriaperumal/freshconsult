@@ -15,6 +15,7 @@ class Workers::Community::CheckForSpam
 	  	params.symbolize_keys!
 	  	post = build_post(params[:id])
 	  	process(post, params[:request_params])
+	  	SpamAnalysis.push(post, {:request_params => params[:request_params]})
 	  end
 
 	  private
@@ -57,15 +58,22 @@ class Workers::Community::CheckForSpam
     end
 
     def suspicious?(post)
-      email_or_phone?(post.body_html.gsub(URI.regexp,'')) || unsafe_links?(post)
+      content = post_content(post)
+      email_or_phone?(content.gsub(URI.regexp,'')) || unsafe_links?(content)
+    end
+
+    def post_content(post)
+      content = post.body_html.clone
+      content.prepend "#{post.topic.title} " if post.original_post?
+      content
     end
 
     def email_or_phone?(content)
       content.scan(NUMBER_PATTERN).present? || content.scan(EMAIL_PATTERN).present?
     end
 
-    def unsafe_links?(post)
-      links = URI.extract(post.body_html)
+    def unsafe_links?(content)
+      links = URI.extract(content)
       links.present? && any_unsafe_link?(links, add_www(acceptable_domains))
     end
 

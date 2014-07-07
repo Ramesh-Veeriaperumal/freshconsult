@@ -2,8 +2,13 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 module ForumHelper
 
+	PHONE_NUMBERS = ["1-234-567-8901", "1-234-567-8901 x1234", "1-234-567-8901 ext1234", "1 (234) 567-8901", "12345678901",
+					 "+4112345678", "+44123456789", "9941751339", "+91-9941751339", "+91 9941751339", "1 (234) 567-8901",
+					 "12345678901x1234", "044 2656 7136", "(0055)(123)8575973", "1-234-567-8901 x1234", "+1 800 555-1234"]
+
 	def create_test_category
-		forum_category = Factory.build(:forum_category, :account_id => @account.id)
+    forum_category = Factory.build(:forum_category, :account_id => @account.id,
+                                                    :name => Faker::Lorem.sentence(2))
 		forum_category.save(false)
 		forum_category
 	end
@@ -50,6 +55,10 @@ module ForumHelper
 							)
 		post.save(true)
 		post			
+	end
+
+	def quick_create_post
+		create_test_post(create_test_topic(create_test_forum(create_test_category)))
 	end
 
 	def create_ticket_topic_mapping(topic,ticket)

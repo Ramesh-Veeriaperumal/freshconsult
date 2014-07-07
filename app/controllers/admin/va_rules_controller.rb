@@ -175,7 +175,8 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
 
     def add_custom_filters filter_hash
-      special_case = [['--', t('any_val.any_value')], ['', t('none')]]
+      special_case = [['', t('none')]]
+      nested_special_case = [['--', t('any_val.any_value')], ['', t('none')]]
       cf = current_account.ticket_fields.custom_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
@@ -188,7 +189,7 @@ class Admin::VaRulesController < Admin::AutomationsController
             :value => field.label,
             :field_type => field.field_type,
             :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-            :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
+            :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case nested_special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
             :action => "set_custom_field",
             :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
             :nested_fields => nested_fields(field)

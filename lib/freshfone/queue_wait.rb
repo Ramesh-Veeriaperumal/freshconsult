@@ -11,7 +11,7 @@ class Freshfone::QueueWait
 			queued_member = @account.freshfone_subaccount.queues.get(queue_sid).members.get(call_sid)
    		queued_member.dequeue(host)
 		rescue Exception => e
-			puts "Error in processing queued freshfone calls :: \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+			Rails.logger.debug "Error in processing queued freshfone calls :: \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			NewRelic::Agent.notice_error(e)
 		end
 	end

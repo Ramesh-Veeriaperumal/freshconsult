@@ -37,7 +37,7 @@ namespace :supervisor do
   task :premium => :environment do
     queue_name = "premium_supervisor_worker"
     if supervisor_should_run?(queue_name)
-        Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
+        #Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
         Sharding.execute_on_all_shards do
           Account.active_accounts.premium_accounts.each do |account|
             if account.supervisor_rules.count > 0 
@@ -68,23 +68,6 @@ def execute_supevisor(task_name)
           accounts_queued += 1
         end
       end
-    end
-    begin
-      current_time = Time.now.utc
-      redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-      $stats_redis.set(redis_key, accounts_queued)
-      $stats_redis.expire(redis_key, 144000)
-    rescue => e
-      puts "Error while recording Supervisor stats : #{e.message}"          
-    end
-  else
-    begin
-      current_time = Time.now.utc
-      redis_key = "stats:rake:supervisor_#{task_name}:#{current_time.day}:#{current_time}"
-      $stats_redis.set(redis_key,"skipped")
-      $stats_redis.expire(redis_key, 144000)
-    rescue => e
-      puts "Error while recording Supervisor stats : #{e.message}"          
     end
   end
 end

@@ -6,6 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
+  before_create :assign_display_id, :if => :set_display_id?
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -25,6 +27,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
+  after_commit_on_create :publish_new_ticket_properties_to_rabbitmq
+  after_commit_on_update :publish_updated_ticket_properties_to_rabbitmq
   after_commit_on_update :update_group_escalation, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
@@ -216,7 +220,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_time_zone
@@ -225,7 +229,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     end 
   end
   #end of SLA
@@ -277,6 +281,40 @@ class Helpdesk::Ticket < ActiveRecord::Base
       }.to_json
     
     $sqs_autorefresh.send_message(body) unless Rails.env.test?
+  end
+
+  def set_display_id?
+    account.features?(:redis_display_id)
+  end
+
+  def assign_display_id
+    #not taking care of decrementing the counter on rollback
+
+    key      = TICKET_DISPLAY_ID % { :account_id => account_id }
+    lock_key = DISPLAY_ID_LOCK % { :account_id => account_id }
+
+    TicketConstants::TICKET_DISPLAY_ID_MAX_LOOP.times do
+      computed_display_id = increment_tickets_redis_key(key).to_i
+      #computed_display_id will be 0 if the redis command fails,
+      #in which case we will keep retrying till we timeout
+
+      #normal workflow
+      if computed_display_id > 1
+        self.display_id = computed_display_id.to_i
+        return
+      #first time, when the key is a huge -ve value
+      elsif computed_display_id < 0
+        if set_others_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
+                                                       :nx => true })
+          computed_display_id = account.get_max_display_id
+          set_tickets_redis_key(key, computed_display_id, nil)
+          self.display_id = computed_display_id
+          return
+        end
+      end
+    end
+    Rails.logger.debug "Redis Display ID - Retry limit exceeded in #{account_id}"
+    NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
 private 
@@ -483,18 +521,6 @@ private
     assign_ff_values custom_field
     @custom_field = nil
   end
-
-  def increment_ticket_counter
-    time = Time.now.utc
-    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}"
-    if value == 1
-      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}", 144000
-    end
-
-  rescue Exception => e
-    NewRelic::Agent.notice_error(e)
-  end
-
 
   def update_group_escalation
     if @model_changes.key?(:group_id)

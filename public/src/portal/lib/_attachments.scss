@@ -1,6 +1,5 @@
-
 .attachments{
-	@include clearfix;	
+	@include clearfix;
 	.attachment{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
@@ -13,14 +12,14 @@
 		min-height: 20px;
 		height:auto !important;
 		width: 270px;
-		margin-left:0;	
+		@include margin-left(0);	
 		.attachment-type{
 			margin: 0;
 			width: 25px;
 			height: 13px;
 			display: inline-block;
 			position: relative;
-			margin-left: 5px;
+			@include margin-left(5px);
 			&:before{
 				position: absolute;
 				content: "";
@@ -29,10 +28,6 @@
 				background: inline-image('cdn-ignored/inline-images/page.png') no-repeat #ffffff;
 				background-size: 26px 30px;
 				margin-top: -4px;
-			}
-			img{
-				width: 26px;
-				height: 30px;
 			}
 			.file-type{
 				position: absolute;
@@ -48,12 +43,12 @@
 				min-width: 16px;
 				text-align: center;
 				letter-spacing: -0.01em;
-				left: 3px;					
+				@include left(3px);
 			}
 		}
 		.file-types-dropbox{
 			margin: 0;
-			padding: 3px 0px 3px 25px;
+			@include padding(3px 0px 3px 25px);
 			width: auto;
 			height: 13px;
 			display: inline-block;
@@ -61,21 +56,25 @@
 		}
 		img.image{
 				margin:0;
-				width:50px; 
+				width:50px;
 				height:42px;
 				vertical-align: middle;
+		}
+		img, img.no-image-attachment{
+			width: 26px;
+			height: 30px;
 		}
 		.attach_content{
 			display: inline-block;
 			vertical-align: middle;
-			margin-left: 10px;
+			@include margin-left(10px);
 			width: 160px;
 			.file-size{
 				display: block;
 			}
 		}
 		.delete{
-			margin-right: 10px;
+			@include margin-right(10px);
 			vertical-align: middle;
 			&:before{
 				content: "\00d7";
@@ -87,7 +86,7 @@
 				text-decoration: none;
 			}
 		}
-	} 
+	}
 }
 
 
@@ -111,10 +110,39 @@
 			}
 			img.image{
 				margin:0;
-				width:32px; 
+				width:32px;
 				height:32px;
 			}
 		}
 	}
 }
 
+
+// ------------------------------------------------------------------ //
+// -------------------- NO IMAGE CLASS ------------------------------ //
+// ------------------------------------------------------------------ //
+
+@mixin no-image-class($image) {
+	background-image: inline-image($image);
+	width: image-width($image);
+	height: image-height($image);
+}
+
+.no-image-placeholder{
+	background-repeat: no-repeat;
+	@include opacity(0.5);
+}
+
+.no-image-attachment{
+	background-image: inline-image("cdn-ignored/inline-images/page.png");
+	background-size: 20px 25px;
+	background-position: 2px 3px;
+}
+
+.no-image-logo{
+	@include no-image-class("logo.png");
+}
+
+.no-image-favicon{
+	@include no-image-class("favicon-preview.png");
+}

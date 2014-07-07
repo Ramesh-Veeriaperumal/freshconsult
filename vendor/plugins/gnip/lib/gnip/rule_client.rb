@@ -90,6 +90,8 @@ class Gnip::RuleClient
       puts "Mismatch of rules in #{stream} :::: #{error_params}"
       error_params.merge!(:environment => Rails.env, :gnip_env => stream)
       DevNotification.publish(SNS["social_notification_topic"], "Mismatch of rules in #{stream}", error_params.to_json)
+    else
+      DevNotification.publish(SNS["social_notification_topic"], "No mismatch of rules in #{stream}", {:environment => Rails.env}.to_json)
     end
   end
 

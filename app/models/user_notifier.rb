@@ -139,7 +139,7 @@ class UserNotifier < ActionMailer::Base
   def one_time_password(email_id,text = "")
     subject       "One time password instructions to login"
     recipients    email_id
-    from          AppConfig['from_email']
+    from          "admin@freshdesk.com"
     sent_on       Time.now
     content_type  "text/html"
     body           text

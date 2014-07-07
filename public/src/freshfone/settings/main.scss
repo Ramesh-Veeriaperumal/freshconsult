@@ -2,7 +2,7 @@
 @import "../variables";
 
 .number-settings .settings-label {
-	margin-right: 15px;
+	@include margin-right(15px);
 	font-weight: 600;
 	width:150px;
 }
@@ -21,7 +21,7 @@
 		margin-top: 8px;
 	}
 	.settings-label {
-		margin-right: 15px;
+		@include margin-right(15px);
 		margin-bottom: 20px;
 		font-weight: 600;
 		width:150px;
@@ -30,25 +30,25 @@
 		margin-bottom: 10px;
 		display: inline-block;
 		padding-top: 0;
-		margin-left: 5px;
+		@include margin-left(5px);
 	}
 	.recording-alert{
 		padding: 6px 0;
 		span{
-			margin-right: 7px;
+			@include margin-right(7px);
 			line-height: 1.4em;
 		}
 	}
 	.Message-alert{
 		padding: 6px 0;
-		text-align: center;
-		margin-left: 150px;		
+		@include text-align(center);
+		@include margin-left(150px);		
 	}
 	.freshfone-controls {
-		.select2-container { margin-left: 0; }
+		.select2-container { @include margin-left(0); }
 		.toggle-button {
 			margin-top: 3px;
-			margin-left: 0;
+			@include margin-left(0);
 		}
 	}
 }
@@ -89,7 +89,7 @@
 }
 .toggle_freshfone_form{
 	display: inline-block;
-	padding-right: 10px;
+	@include padding-right(10px);
 }
 .freshfone-disabled-alert{
 	margin-bottom: 25px;

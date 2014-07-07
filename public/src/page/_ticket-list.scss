@@ -8,7 +8,7 @@
 	}
 	.link-item.active, a.link-item:hover{
 		margin:0px -5px;
-		padding-left:13px;
+		@include padding-left(13px);
 		background: #e2f1fa;
 	}
 	.link-item.active{
@@ -19,7 +19,7 @@
 	.link-item.active:after{
 	   content:"";
 	   position:absolute;
-	   right:9px;
+	   @include right(9px);
 	   top:8px;
 	   width:11px;
 	   height:11px;	   
@@ -31,7 +31,7 @@
 		text-decoration:none;
 		width: auto;
 		position:relative;
-		padding-right: 15px;
+		@include padding-right(15px);
 		.nav-trigger {
 			font-size: 16px;
 			color:$default_txt_color;
@@ -67,15 +67,15 @@
 	#view_manage_links {
 		visibility: hidden;
 		display: inline-block;
-		margin-left:5px;
+		@include margin-left(5px);
 		@include transition(opacity 0.28s linear);
 		@include opacity(0);
 		a {
 			&.left-border {
-				border-left: 1px solid #e1e1e1;
+				@include border-left(1px solid #e1e1e1);
 			}
 			&.right-border {
-				border-right: 1px solid #e1e1e1;
+				@include border-right(1px solid #e1e1e1);
 			}
 			>*:hover {
 				opacity: 1;
@@ -96,7 +96,7 @@
 		.result {
 			background: rgba(119,119,119,0.2);
 			@include border-radius(3px);
-			padding-right:20px;
+			@include padding-right(20px);
 			z-index: 0;
 		}
 	}
@@ -105,23 +105,23 @@
 	content:"";
 	width: 0;
 	height: 0;
-	border-left: 5px solid transparent;
-	border-right: 5px solid transparent;
+	@include border-left(5px solid transparent);
+	@include border-right(5px solid transparent);
 	border-top: 5px solid #333;
 	margin: 4px 0 0; 
 	padding: 5px 0;
 	position: absolute;
-	right:36px;
+ @include right(36px);
 	display: inline-block;
 }
 #ticket_view_choices {
 	width:64px;
-	float:right;
+	@include float(right);
 	display: none;
 	.icon {
 		cursor: pointer;
-		float:left;
-		text-indent:-9999em;
+		@include float(left);
+		@include text-indent(-9999em);
 		display:inline-block;
 		zoom:1;
 		border:solid #aaa 1px;
@@ -129,7 +129,7 @@
 		width:24px;
 		height:18px;
 		padding:1px 3px;
-		border-right:#fff solid 1px;
+		@include border-right(#fff solid 1px);
 		@include background(linear-gradient(rgba(231,231,231,1), rgba(208,208,208,0.1)));
 		background-color:#e2e2e2;
 		&.active {
@@ -141,11 +141,11 @@
 
 		&.right {
 			@include border-radius(0 3px 3px 0);
-			border-right:#aaa solid 1px;
+			@include border-right(#aaa solid 1px);
 		}
 
 		a.ticket-view-choice {
-			float:left;
+			@include float(left);
 			width:24px;
 			height:18px;
 		}
@@ -182,13 +182,13 @@
 		}
 
 		td.check {
-			padding-left:5px;
+			@include padding-left(5px);
 		}
 
 	}	
 	.quick-action .result {
 		position: static;
-		padding-right:0px;
+		@include padding-right(0px);
 	}
 	.quick-action:hover:after, .quick-action.selected:after {
 		position: static;
@@ -200,7 +200,7 @@
 		font-weight:normal;
 	}
 	.name, .name-user {
-		padding-left:10px;
+		@include padding-left(10px);
 		width: 50%;
 		h3 a {
 			font-size: 13px;
@@ -209,16 +209,16 @@
 	}
 }
 .ticketlist-total-count{
-	margin-right:70px;
+	@include margin-right(70px);
 }
 
 .contentCol{
-   border-left:1px solid #cfcfcf;
+   @include border-left(1px solid #cfcfcf);
    background-color:#ffffff;
 }
 .toolbar{
 	background:#f6f6f6;
-	padding:5px 8px 8px 0;
+	@include padding(5px 8px 8px 0);
 	.btn{
 		border-color: #CCC;
 		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
@@ -235,7 +235,7 @@
 			border: 1px solid #9a9a9a;
 		}
 
-		margin-right:5px;
+		@include margin-right(5px);
 	}
 	.text {
 		color:$default_txt_color;
@@ -243,7 +243,7 @@
 		display: inline-block;
 		width: 420px;
 		.user_and_time {
-			padding-left: 7px;
+			@include padding-left(7px);
 			min-height:13px;
 			.user {
 				font-weight:bold;
@@ -254,7 +254,7 @@
 			margin-top:0;
 			background-image: inline-image('cdn-ignored/inline-images/note_quote.png');
 			background-repeat: no-repeat;
-			padding-left: 27px;
+			@include padding-left(27px);
 			min-height:13px;
 			padding-top:5px;
 
@@ -278,7 +278,7 @@
 }
 .tickets {
 	th.toolbar_right{
-      text-align:right;
+      @include text-align(right);
       width: 130px;
       vertical-align:middle;
       padding:5px 0 0;
@@ -288,15 +288,15 @@
    }
 	.check{
 		width:25px;
-		padding: 7px 16px 0 2px; 
+		@include padding(7px 16px 0 2px); 
 	}
 
 	.headings td.check {
-		border-left: solid 6px #EEE;
+		@include border-left(solid 6px #EEE);
 	}
 	th.check{
-		padding: 7px 16px 0 2px;
-		text-align:right;
+		@include padding(7px 16px 0 2px);
+		@include text-align(right);
 		vertical-align: top;
 	}
 }
@@ -309,8 +309,8 @@
 		width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
 	}
 	td.ralign {
-		text-align: right;
-		padding-right: 0;
+		@include text-align(right);
+		@include padding-right(0);
 	}
 	
 	th{
@@ -341,16 +341,16 @@
 	}
 	.check{
 		width:25px;
-		padding:8px 16px 0 4px; 
-		text-align:right;
+		@include padding(8px 16px 0 4px); 
+		@include text-align(right);
 		vertical-align: top;
 	}
 
 	.headings td.check {
-		border-left: solid 6px #EEE;
+		@include border-left(solid 6px #EEE);
 	}
 	th.check{
-		padding:5px 10px 0 5px;
+		@include padding(5px 10px 0 5px);
 	}
 	// ------------------------------------------------------------------------------------------------------------
 	//													Priority Border 
@@ -379,7 +379,7 @@
 			}
 
 			.status-source {
-				text-align: right;
+				@include text-align(right);
 		   		width: 36px;
 		   		height: 36px;
 				padding: 20px 0 0;
@@ -387,7 +387,7 @@
 			}
 
 		   &.assign {
-		   		padding-left:0; padding-right:0;
+		   		@include padding-left(0); @include padding-right(0);
 		   		vertical-align:middle;
 		   		width:180px;
 		   		*width:200px;
@@ -396,7 +396,7 @@
 		   	&.source-icon {
 		   		width:30px;
 		   		vertical-align: middle;
-		   		padding-left: 0;
+		   		@include padding-left(0);
 		   	}
 		}
 
@@ -438,13 +438,28 @@
    		
 		@include text-shadow(1px  1px 0 rgba(255,255,255,0.7));
 
-		&.customer_responded, &.overdue  {
+		&.customer_responded, &.overdue,&.customer_responded_overdue  {
 			background: #698ee4;
 			color:#FFF;
 			@include text-shadow(-1px -1px 0 rgba(113,113,113,0.53));
 		}
-		&.overdue {
+		&.overdue, &.customer_responded_overdue {
 			background: #d26260;
+		}
+		&.customer_responded_overdue{
+			padding-left:20px;
+			position:relative;
+			&:before{
+				content: "";
+				background: #698ee4;
+				height: 10px;
+				width: 10px;
+				border-radius: 100%;
+				position: absolute;
+				margin-left: -17px;
+				margin-top: -1px;
+				box-shadow: inset 0px 0px 0px 1px #FFF;
+			}
 		}
 		&.new {
 			background: #ffd16d;
@@ -457,16 +472,16 @@
 	
 	.name, .name-user{
       width:auto;
-      padding-left:58px;
+      @include padding-left(58px);
       line-height:  16px;
       &.user-page {
-      	padding-left: 5px;
+      	@include padding-left(5px);
       }
       .preview_pic{
       	*position: static;
          margin:0px;
          margin-top:3px;
-         margin-left:-55px;         
+         @include margin-left(-55px);         
          @include border-radius(5px);
          border:1px solid #CCC;
          height:45px;
@@ -529,7 +544,7 @@
    }
 	
 	.name-user{
-		padding-left:20px;
+		@include padding-left(20px);
 	}
 	
 	.need-attention .name h3{
@@ -543,7 +558,7 @@
 				color:#888;
 				font-size:12px;
 				line-height: 16px;
-				padding-right:10px;
+				@include padding-right(10px);
 				margin-bottom: -2px;
 				.result {
 					color:$default_txt_color;
@@ -558,8 +573,8 @@
 					overflow:hidden;
 					white-space:nowrap;
 					width: 95px;
-					padding-right:20px;
-					padding-left: 5px;
+					@include padding-right(20px);
+					@include padding-left(5px);
 					vertical-align: bottom;
 				}
 
@@ -568,7 +583,7 @@
 					font-weight: normal;
 					display: inline-block;
 					width: 50px;
-					padding:0 2px 0 0;
+					@include padding(0 2px 0 0);
 					overflow: hidden;
 					white-space: nowrap;
 					text-overflow:ellipsis;
@@ -581,11 +596,11 @@
 
 	&.customer_tickets {
 		td.name {
-			padding-left: 6px;
+			@include padding-left(6px);
 		}
 
 		td.source-icon {
-			padding-left: 10px;
+			@include padding-left(10px);
 		}
 
 		.subject_style {
@@ -597,7 +612,7 @@
 			font-weight: bold;
 			font-size: 10px;
 			padding: 2px 5px;
-			margin-right: 15px;
+			@include margin-right(15px);
 			-webkit-font-smoothing:antialiased;
 			text-transform: uppercase;
 
@@ -612,27 +627,27 @@
 		content:"";
 		width: 0;
 		height: 0;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
+		@include border-left(6px solid transparent);
+		@include border-right(6px solid transparent);
 		border-top: 6px solid #888;
 		position: absolute;
-		margin: 6px 3px 0 8px; 
+		@include margin(6px 3px 0 8px); 
 	}
 
 .ticket-leftcol{
 	width:230px;
-	float:left;
+	@include float(left);
 	@include min-height(477px);
 	
    h3.title{
       color:$default_txt_color;
       font-size:16px;
       font-weight:normal;
-      padding:8px 8px 10px 0;
+      @include padding(8px 8px 10px 0);
       margin:0;
    }
    h4.title{
-		padding:0 6px 2px 0;
+		@include padding(0 6px 2px 0);
 		font-size:13px;
 		font-weight:500;
 		color:$default_txt_color;
@@ -646,14 +661,14 @@
 	   	}
 	   	.ff_item{
 	   		@include pie-clearfix;
-			margin:0 6px 0 0;
+			@include margin(0 6px 0 0);
 			padding:4px 2px 10px;
 		}
 		.ff_item.level_2, .ff_item.level_3{
-			padding-left:10px;
+			@include padding-left(10px);
 			padding-bottom:0;
 			padding-top:10px;
-			border-left:1px dotted #afafaf;
+			@include border-left(1px dotted #afafaf);
 		}
 	   	.item{
 			padding-bottom:2px;
@@ -661,7 +676,7 @@
 			font-size:12px;
 			color:#444444; 
 			cursor: pointer;
-			input{margin:0 4px 3px 0; }
+			input{@include margin(0 4px 3px 0); }
 	   	} 
 		.item:hover span{
 			color:#000000;
@@ -709,9 +724,9 @@
 }
 //Export modal
 .threecol-form .item{
-	float:left;
+	@include float(left);
 	width:33%;
 	.level{
-		margin-left: 11px;
+		@include margin-left(11px);
 	}
 }

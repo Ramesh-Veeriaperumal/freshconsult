@@ -10,9 +10,9 @@
 .ui-helper-hidden-accessible { position: absolute !important; clip: rect(1px 1px 1px 1px); clip: rect(1px,1px,1px,1px); }
 .ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
 .ui-helper-clearfix:before, .ui-helper-clearfix:after { content: ""; display: table; }
-.ui-helper-clearfix:after { clear: both; }
+.ui-helper-clearfix:after { @include clear(both); }
 .ui-helper-clearfix { zoom: 1; }
-.ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+.ui-helper-zfix { width: 100%; height: 100%; top: 0; @include left(0); position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
 
 
 /* Interaction Cues
@@ -21,19 +21,19 @@
 
 
 /* states and images */
-.ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+.ui-icon { display: block; @include text-indent(-99999px); overflow: hidden; background-repeat: no-repeat; }
 /* Misc visuals
 ----------------------------------*/
 
 /* Overlays */
-.ui-widget-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.ui-widget-overlay { position: absolute; top: 0; @include left(0); width: 100%; height: 100%; }
 .ui-autocomplete {
 	position: absolute;
 	top: 0;
-	left: 0;
+	@include left(0);
 	cursor: default;
 	list-style: none;
-	@include border-bottom-radius(6px);
+	border-bottom-radius:6px;
 	@include box-shadow(#aaaaaa 0 6px 10px);
 	border:1px solid #cdcccc;		
 	background:#f8f8f8;
@@ -61,42 +61,42 @@
 	&:before{  
 		content:"";
 		border:8px solid transparent;
-		left: 50%;
+		@include left(50%);
 		top: 50%;		
 		margin-top: -8px;
 		position: absolute;
 	}
 }
-.ui-datepicker-prev:before{	border-right-color:#666; margin-left: -12px; }
-.ui-datepicker-next:before{	border-left-color:#666; margin-left: -4px; }
-.ui-datepicker .ui-datepicker-prev { left:2px; }
-.ui-datepicker .ui-datepicker-next { right:2px; }
-.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; position: absolute; left: 50%; margin-left: -8px; top: 50%; margin-top: -8px;  }
-.ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
+.ui-datepicker-prev:before{	@include border-right-color(#666); @include margin-left(-12px); }
+.ui-datepicker-next:before{	@include border-left-color(#666); @include margin-left(-4px); }
+.ui-datepicker .ui-datepicker-prev { @include left(2px); }
+.ui-datepicker .ui-datepicker-next { @include right(2px); }
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; position: absolute; @include left(50%); @include margin-left(-8px); top: 50%; margin-top: -8px;  }
+.ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; @include text-align(center); }
 .ui-datepicker .ui-datepicker-title select { margin:1px 1%; }
 .ui-datepicker select.ui-datepicker-month-year {width: 100%;}
 .ui-datepicker select.ui-datepicker-month, 
 .ui-datepicker select.ui-datepicker-year { width: 48%;}
 .ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
-.ui-datepicker th { padding: .7em .3em; text-align: center; font-weight: 300; border: 0;  }
+.ui-datepicker th { padding: .7em .3em; @include text-align(center); font-weight: 300; border: 0;  }
 .ui-datepicker td { border: 0; padding: 0; background-color: #f6f6f6;  }
-.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .3em .5em; text-align: right; text-decoration: none; }
+.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .3em .5em; @include text-align(right); text-decoration: none; }
 .ui-datepicker .ui-datepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding:0 .2em; border-left: 0; border-right: 0; border-bottom: 0; }
-.ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
-.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float:left; }
+.ui-datepicker .ui-datepicker-buttonpane button { @include float(right); margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
+.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { @include float(left); }
 
 /* RTL support */
 .ui-datepicker-rtl { direction: rtl; }
-.ui-datepicker-rtl .ui-datepicker-prev { right: 2px; left: auto; }
-.ui-datepicker-rtl .ui-datepicker-next { left: 2px; right: auto; }
-.ui-datepicker-rtl .ui-datepicker-prev:hover { right: 1px; left: auto; }
-.ui-datepicker-rtl .ui-datepicker-next:hover { left: 1px; right: auto; }
-.ui-datepicker-rtl .ui-datepicker-buttonpane { clear:right; }
-.ui-datepicker-rtl .ui-datepicker-buttonpane button { float: left; }
-.ui-datepicker-rtl .ui-datepicker-buttonpane button.ui-datepicker-current { float:right; }
-.ui-datepicker-rtl .ui-datepicker-group { float:right; }
-.ui-datepicker-rtl .ui-datepicker-group-last .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
-.ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
+.ui-datepicker-rtl .ui-datepicker-prev { @include right(2px); @include left(auto); }
+.ui-datepicker-rtl .ui-datepicker-next { @include left(2px); @include right(auto); }
+.ui-datepicker-rtl .ui-datepicker-prev:hover { @include right(1px); @include left(auto); }
+.ui-datepicker-rtl .ui-datepicker-next:hover { @include left(1px); @include right(auto); }
+.ui-datepicker-rtl .ui-datepicker-buttonpane { @include clear(right); }
+.ui-datepicker-rtl .ui-datepicker-buttonpane button { @include float(left); }
+.ui-datepicker-rtl .ui-datepicker-buttonpane button.ui-datepicker-current { @include float(right); }
+.ui-datepicker-rtl .ui-datepicker-group { @include float(right); }
+.ui-datepicker-rtl .ui-datepicker-group-last .ui-datepicker-header { @include border-right-width(0); @include border-left-width(1px); }
+.ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header { @include border-right-width(0); @include border-left-width(1px); }
 
 
 /* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
@@ -105,7 +105,7 @@
     z-index: -1; /*must have*/
     filter: mask(); /*must have*/
     top: -4px; /*must have*/
-    left: -4px; /*must have*/
+    @include left(-4px); /*must have*/
     width: 200px; /*must have*/
     height: 200px; /*must have*/
 }

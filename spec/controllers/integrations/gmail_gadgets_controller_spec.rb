@@ -6,8 +6,6 @@ describe Integrations::GmailGadgetsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @user = add_test_agent(@account)
     @env = Rails.env
   end
 
@@ -28,7 +26,7 @@ describe Integrations::GmailGadgetsController do
   end
 
    before(:each) do
-    log_in(@user)
+    login_admin
     @request.host = @account.full_domain
   end
 
@@ -52,6 +50,7 @@ describe Integrations::GmailGadgetsController do
     def @env.production? 
       true;
     end
+    @account.update_attributes(:ssl_enabled => false)
     get :spec, :format => "xml"
     response.body.should have_tag("Module", /script/)
   end

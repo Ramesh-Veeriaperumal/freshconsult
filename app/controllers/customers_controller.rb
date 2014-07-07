@@ -124,7 +124,7 @@ class CustomersController < ApplicationController
         @selected_tab = :customers
     end
 
-    def get_domain(domains)
+    def get_domain(domains) # Possible dead code
       domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
     end
 

@@ -49,6 +49,7 @@ module Freshfone::Jobs
 				if @recording_duration.to_i < 5
 				 	@call.recording_url = nil
 				 	@call.save
+				 	@recording.delete
 				else
 					download_data 
 					build_recording_audio
@@ -58,10 +59,11 @@ module Freshfone::Jobs
 					NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
 						failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
 						recording_sid => #{@recording_sid} :: attempt #{args[:attempt]}"})
-					raise e unless e.code == 20404
+					raise e if (args[:attempt] == 2)
 				end				
-				Resque::enqueue_at(15.minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, 
-					args.merge!({:attempt => 1})) unless e.code == 20404 && args[:attempt].present?
+				attempt = args[:attempt].present? ? (args[:attempt]+1) : 1
+				Resque::enqueue_at((attempt * 15).minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, 
+					args.merge!({:attempt => attempt}))
 			ensure
 				release_data
 			end

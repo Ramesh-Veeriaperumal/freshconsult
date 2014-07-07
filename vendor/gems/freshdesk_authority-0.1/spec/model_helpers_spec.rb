@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe Authority::Rails::ModelHelpers do
+describe Authority::FreshdeskRails::ModelHelpers do
   before(:all) do
     load_schema_and_data
   end

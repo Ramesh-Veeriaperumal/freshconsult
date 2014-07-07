@@ -133,16 +133,21 @@ module Helpdesk::TicketActions
                                 
                                }  
     unless @note.tweet.nil?
-      tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id,
-                                          :twitter_handle_id => @note.tweet.twitter_handle_id }}
+      tweet_hash = {  :twitter_id => @note.user.twitter_id,
+                      :tweet_attributes => {
+                        :tweet_id => @note.tweet.tweet_id,
+                        :twitter_handle_id => @note.tweet.twitter_handle_id,
+                        :tweet_type => @note.tweet.tweet_type.to_s,
+                        :stream_id => @note.tweet.stream_id 
+                      }
+                   }
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
     build_item
-    move_attachments   
     move_dropboxes
     if @item.save_ticket
+      move_attachments
       @note.destroy
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
@@ -152,15 +157,7 @@ module Helpdesk::TicketActions
   end
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
-    @note.all_attachments.each do |attachment|
-      url = attachment.authenticated_s3_get_url
-      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
-      if io
-        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-      end
-      @item.attachments.build(:content => io, :description => "", 
-        :account_id => @item.account_id)
-    end
+    @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
   end
 
   def move_dropboxes #added to support dropbox while spliting tickets

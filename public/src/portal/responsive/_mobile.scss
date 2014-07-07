@@ -76,7 +76,7 @@
         // Unordered and Ordered lists
         ul, ol {
             padding: 0;
-            margin: 0 0 $baseLineHeightForMobile / 2 15px;
+            @include margin(0 0 $baseLineHeightForMobile / 2 15px);
         }
         li {
             line-height: $baseLineHeightForMobile;
@@ -93,7 +93,7 @@
             line-height: $baseLineHeightForMobile - 1; // fix jank Helvetica Neue font bug
         }
         dd {
-            margin-left: $baseLineHeightForMobile / 2;
+            @include margin-left($baseLineHeightForMobile / 2);
         }
         // MISC
         // ----
@@ -125,8 +125,8 @@
         /* Overriding position parameters to handle mobile sizing */    
         .ui-datepicker.ui-widget-content{
             width: auto !important;
-            left: 25px !important;
-            right: 25px !important;
+            @include left(25px !important);
+            @include right(25px !important);
         }
     }
 }

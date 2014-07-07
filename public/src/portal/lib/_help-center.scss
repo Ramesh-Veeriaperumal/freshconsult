@@ -42,13 +42,13 @@
 .hc-nav	nav{ @include clearfix;}
 .new-ticket, .check-status{ font-weight: bold; }
 .new-ticket, .check-status, .contact-info{ 	
-	padding: 3px 8px 3px 2px;
-	float: left;
-	margin-right: 15px;
+	@include padding(3px 8px 3px 2px);
+	@include float(left);
+	@include margin-right(15px);
 	&:before{
 		content:"";
 		@include inline-block;		
-		margin-right: 5px;
+		@include margin-right(5px);
 		@include border-radius(2em);
 		margin-top: -1px;
 		background-color: $help_center_icons_bg;
@@ -62,7 +62,8 @@
 @include mobile-icon(nav-status, $help_center_icons_bg);
 
 .hc-search-input{ 
-	width:84%; float:left;
+	width:84%; 
+    @include float(left);
 	input.special{
 		@include border-top-right-radius(0);
 		@include border-bottom-right-radius(0);
@@ -70,7 +71,8 @@
 }
 .hc-search-button{ 
 	position: relative;
-	width:16%; float:left; 		
+	width:16%; 
+    @include float(left); 		
 	.btn{
 		@include border-top-left-radius(0);
 		@include border-bottom-left-radius(0);
@@ -79,12 +81,12 @@
 
 .hc-search{ 
 	width: 68%;
-	padding-right: 2%;
-	border-right:1px solid $help_center_icons_bg;
+	@include padding-right(2%);
+	@include border-right(1px solid $help_center_icons_bg);
 }
 .hc-nav{
 	width: 30%;
-	padding-left: 1%;
+	@include padding-left(1%);
 	a, span{ @include inline-block; }
 }
 .hc-search, .hc-nav{
@@ -103,7 +105,7 @@
         .help-center{
             border:0;
             padding:0;
-            padding-left:$content-padding-mobile;
+            @include padding-left($content-padding-mobile);
             background-color: transparent;
             position: absolute;
             width: 90%;
@@ -122,22 +124,22 @@
                 @include border-radius(0px);
             }
             .hc-search{ position: absolute; 
-                border-right: 0; 
+                @include border-right(0); 
                 width: 62%; 
-                margin-left: -5px; 
+                @include margin-left(-5px); 
                 margin-top: 2px; 
             }
             .onfocus-mobile{ width:95%; }
             .hc-search-input{ width: 100%; }
             .hc-search-input input{
                 width: 100%;
-                padding-right:35px;
+                @include padding-right(35px);
                 @include border-radius(6px);
             }
             .hc-search-button{ 
                 width: 30px;
                 position: absolute;
-                right: 3px;
+                @include right(3px);
                 top: 0;
                 height: 35px;
             } 
@@ -147,7 +149,7 @@
                 height: 20px;
                 border: 0;
                 margin: 7px 0;
-                box-shadow: none;
+                @include box-shadow(none);
             }
             .mobile-icon-search{ display:none; }
         }
@@ -171,9 +173,9 @@
             nav{ 
                 span{ display:none; }
                 a{
-                    text-align:center;
+                    @include text-align(center);
                     padding:0.5em 0;
-                    border-right: 1px solid rgba($tab_text_color, 0.2);
+                    @include border-right(1px solid rgba($tab_text_color, 0.2));
                     @include box-shadow(1px 0px 0px rgba( invert($tab_text_color), 0.2));
                     width:45%; 
                 }
@@ -181,9 +183,9 @@
             &.nav-with-contact nav a{ width:32.5%; }
         }
         .new-ticket, .check-status, .contact-info {
-            margin-right: 0;
+            @include margin-right(0);
             &:before{   
-                margin-right: 0px;
+                @include margin-right(0px);
                 @include border-radius(0);
                 margin-top: 0px;
                 background-color: transparent;

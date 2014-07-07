@@ -123,6 +123,7 @@
   
   //
   var loading = function (bool) {
+    $(document.body).trigger('sticky_kit:recalc');
     (isLoading = bool)
     ? (loader && loader.fadeIn('normal'))
     : (loader && loader.css('display', "none"));
@@ -181,6 +182,7 @@
                loader ? loader.before(data) : element.append(data);
                loading(FALSE);
                // if there is a complete callback we call it
+            $(document.body).trigger('sticky_kit:recalc');
             if (settings.complete){
               if(typeof settings.complete == "string")
                 eval(settings.complete);

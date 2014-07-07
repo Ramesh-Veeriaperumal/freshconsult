@@ -1,10 +1,8 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
+
 describe Facebook::Core::Parser do
+
   before(:all) do
-    Helpdesk::Ticket.destroy_all
-    Helpdesk::Note.destroy_all
-    @account = create_test_account
-    @account.make_current
     ShardMapping.find_by_account_id(@account.id).update_attribute(:status,200)
     Social::FacebookPage.any_instance.stubs(:after_commit_on_create => true)
     Social::FacebookPage.any_instance.stubs(:after_commit_on_update => true)
@@ -15,19 +13,10 @@ describe Facebook::Core::Parser do
     fb_page.save(false)
   end
 
-  after(:each) do
-    Helpdesk::Ticket.destroy_all
-    Helpdesk::Note.destroy_all
-  end
-
   after(:all) do
     # FBClient.any_instance.stubs(:subscribe_for_page).returns(true)
     # Social::FacebookPosts.any_instance.stubs(:fetch).returns({})
     # Social::FacebookPage.destroy_all
-    Social::FacebookPage.destroy_all
-    FacebookPageMapping.destroy_all
-    User.destroy_all
-    UserEmail.destroy_all
   end
 
   describe "parse status" do

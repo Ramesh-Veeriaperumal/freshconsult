@@ -51,4 +51,11 @@ describe ProfilesController do
     # Delayed::Job.last.handler.should include("Your Password in #{@account.name} has been updated")
   end
 
+  it "should go to the edit page" do
+    @agent.reload
+    log_in(@agent)
+    get :edit, :id => @agent.id
+    response.should render_template "profiles/edit.html.erb"
+  end
+
 end

@@ -8,6 +8,8 @@ development:
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
+  freshfone_request:
+    to: "support@freshfone.freshdesk.com"
 test:
   node_url: "http://localhost:5000"
   secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
@@ -18,6 +20,8 @@ test:
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
+  freshfone_request:
+    to: "support@freshfone.freshdesk.com"
   twilio:
     account_sid: "AC369004863456a98511d7af236ecc1bfb"
-    auth_token: "e439d43561d2e48ad0c1927dac31e8b7"
+    auth_token: "12dba1c4dc371fe129cb478618832c3e"

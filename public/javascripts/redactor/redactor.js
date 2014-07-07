@@ -3486,6 +3486,7 @@ Redactor.prototype = {
 	_imageSet: function(json, link)
 	{		
 		var validupload = true;
+
 		if (json !== false)
 		{
 			var html = '', data = '';
@@ -3507,7 +3508,11 @@ Redactor.prototype = {
 					}
 				}
 				else {
-					alert(RLANG.invalid_image_file);
+					try{
+						alert((JSON.parse(json))['error'] || RLANG.invalid_image_file);
+					}catch(ev){
+						alert(RLANG.invalid_image_file)
+					}
 					this.$editor.find('img.image-loader').remove()
 					if (typeof this.opts.imageLoadedCallback === 'function'){
 						this.opts.imageLoadedCallback(this);

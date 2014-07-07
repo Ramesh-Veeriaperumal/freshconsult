@@ -86,7 +86,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     def schedule_or_import_contacts(params, goog_acc)
       unless goog_acc.import_groups.blank?
         pre_import_groups = goog_acc.import_groups.clone
-        latest_goog_cnts = goog_acc.fetch_latest_google_contacts(20)
+        latest_goog_cnts = goog_acc.fetch_latest_google_contacts(20,SyncType::IMPORT_EXPORT)
         goog_acc.reset_start_index # Reset the start index and import groups so the real import happens from the beginning.
         goog_acc.import_groups = pre_import_groups
         goog_acc.donot_update_sync_time = true
@@ -97,10 +97,10 @@ class Integrations::GoogleAccountsController < Admin::AdminController
           goog_acc.account = nil; goog_acc.account_id = current_account.id;  # This is needed because sometimes the to_yaml of account object (called by send_later for serializing into DB) fails due to some anonymous variables populated in the current_account object.  Also in a way this is little efficient for to_yaml. 
           # If more than 20 google contacts available for import add it to delayed jobs.
           user_email = current_user.email
-          goog_cnts_iptr.send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain})
+          goog_cnts_iptr.send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain, :group_ids => params["integrations_google_account"]["import_groups"]})
           flash[:notice] = t("integrations.google_contacts.import_later_success", :email => user_email)
         else
-          updated_goog_acc = goog_cnts_iptr.import_google_contacts
+          updated_goog_acc = goog_cnts_iptr.import_google_contacts({:group_ids => params["integrations_google_account"]["import_groups"]})
           if updated_goog_acc.last_sync_status[:status] == "error"
             flash[:error] = t("integrations.google_contacts.import_problem")
           else

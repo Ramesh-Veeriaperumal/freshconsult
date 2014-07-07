@@ -30,7 +30,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 			.#{$font-class-name}all-streams{
 				width: 24px;
 				height: 24px;
-				float: left;
+				@include float(left);
 				background: #333;
 				color: #fff;
 				text-align: center;
@@ -46,7 +46,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 	#search_social .#{$font-class-name}twitter{
 		position: absolute;
 		top: 12px;
-		left: 19px;
+		@include left(19px);
 		z-index: 1;
 		color: #aaa;
 	}
@@ -57,7 +57,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 					display: inline-block;
 					margin-top: 2px;
 					color: #333;
-					margin-right: 5px;
+					@include margin-right(5px);
 				}
 			}
 		}
@@ -81,7 +81,7 @@ a.tw-tkt-link{
 	&.tw-agent{
 		i.#{$font-class-name}ticket{
 			position: relative;
-			right: 3px;
+			@include right(3px);
 		}
 	}
 }

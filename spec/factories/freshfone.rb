@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :freshfone_call, :class => Freshfone::Call do |f|
     f.call_sid "CA5129fa990bff042e3e83cdd8a53832ef"
     f.call_duration "59"

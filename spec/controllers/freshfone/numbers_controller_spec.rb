@@ -5,16 +5,16 @@ describe Admin::Freshfone::NumbersController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     @request.host = @account.full_domain
     log_in(@agent)
   end
 
   it 'should return all freshfone numbers on index' do
+    number = @account.freshfone_numbers.first
     get :index
     assigns[:account].app_id.should be_eql(@account.freshfone_account.app_id)
-    assigns[:numbers].first.number.should be_eql(@number.number)
+    assigns[:numbers].first.number.should be_eql(number.number)
     response.should render_template "admin/freshfone/numbers/index"
   end
 

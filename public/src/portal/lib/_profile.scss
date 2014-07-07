@@ -1,7 +1,8 @@
 .user-pic-thumb, .user-pic-normal{
-	@include float-left;
-	margin-right:10px;
-	margin-left:-3px;
+	display:inline;
+	@include float(left);
+	@include margin-right(10px);
+	@include margin-left(-3px);
 	@include border-radius(3em);
 	border:1px solid #dddddd;
 	padding:3px;
@@ -27,10 +28,10 @@
 
 .c-user-thumb .user-pic-thumb {
 	padding: 2px;
-	margin-left: -53px;
+	@include margin-left(-53px);
 }
-.uv-user-thumb .user-pic-thumb { margin-left: -40px; }
+.uv-user-thumb .user-pic-thumb { @include margin-left(-40px); }
 .image-lazy-load img{
   opacity: .5;
-  transition: all .8s ease-in;
+  @include transition(opacity .1s ease-in);
 }

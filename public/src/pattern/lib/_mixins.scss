@@ -22,7 +22,7 @@
     line-height: 0;
   }
   &:after {
-    clear: both;
+    @include clear(both);
   }
 }
 
@@ -40,8 +40,8 @@
 // ----------------------------------
 @mixin center-block() {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  @include margin-left(auto);
+  @include margin-right(auto);
 }
 
 // IE7 inline-block
@@ -59,9 +59,8 @@
 // instead of the 1 space in other browsers.
 @mixin ie7-restore-left-whitespace() {
   *margin-left: .3em;
-
   &:first-child {
-    *margin-left: 0;
+    *margin-left:0;
   }
 }
 
@@ -269,7 +268,7 @@
 
 // Opacity
 @mixin opacity($opacity) {
-  opacity: $opacity / 100;
+  opacity: $opacity;
   filter: alpha(opacity=$opacity);
 }
 
@@ -428,27 +427,27 @@
 
 // Centered container element
 @mixin container-fixed() {
-  margin-right: auto;
-  margin-left: auto;
+  @include margin-right(auto);
+  @include margin-left(auto);
   @include clearfix();
 }
 
 // Table columns
 @mixin tableColumns($columnSpan: 1) {
-  float: none; // undo default grid column styles
+  @include float(none); // undo default grid column styles
   width: (($gridColumnWidth) * $columnSpan) + ($gridGutterWidth * ($columnSpan - 1)) - 16; // 16 is total padding on left and right of table cells
-  margin-left: 0; // undo default grid column styles
+  @include margin-left(0); // undo default grid column styles
 }
 
 // Make a Grid
 // Use .makeRow and .makeColumn to assign semantic layouts grid system behavior
 @mixin makeRow() {
-  margin-left: $gridGutterWidth * -1;
+  @include margin-left($gridGutterWidth * -1);
   @include clearfix();
 }
 @mixin makeColumn($columns: 1, $offset: 0) {
-  float: left;
-  margin-left: ($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2);
+  @include float(left);
+  @include margin-left(($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2));
   width: ($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns - 1));
 }
 
@@ -456,14 +455,14 @@
 // The Grid
 @mixin grid-core($gridColumnWidth, $gridGutterWidth) {
   .row {
-    margin-left: $gridGutterWidth * -1;
+    @include margin-left($gridGutterWidth * -1);
     @include clearfix();
   }
 
   [class*="span"] {
-    float: left;
+    @include float(left);
     min-height: 1px; // prevent collapsing columns
-    margin-left: $gridGutterWidth;
+    @include margin-left($gridGutterWidth);
   }
 
   // Set the container width, and override it for fixed navbars in media queries
@@ -498,7 +497,7 @@
 }
 
 @mixin grid-core-offset($columns, $gridColumnWidth, $gridGutterWidth) {
-  margin-left: ($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns + 1));
+  @include margin-left(($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns + 1)));
 }
 
 
@@ -508,12 +507,12 @@
     width: 100%;
     [class*="span"] {
       @include input-block-level();
-      float: left;
-      margin-left: $fluidGridGutterWidth;
+      @include float(left);
+      @include margin-left($fluidGridGutterWidth);
       *margin-left: $fluidGridGutterWidth - (.5 / $gridRowWidth * 100px * 1%);
     }
     [class*="span"]:first-child {
-      margin-left: 0;
+      @include margin-left(0);
     }
 
     // generate .spanX and .offsetX
@@ -543,27 +542,25 @@
 }
 
 @mixin grid-fluid-offset($columns, $fluidGridColumnWidth, $fluidGridGutterWidth) {
-  margin-left: ($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) + ($fluidGridGutterWidth * 2);
+  @include margin-left(($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) + ($fluidGridGutterWidth * 2));
   *margin-left: ($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) - (.5 / $gridRowWidth * 100px * 1%) + ($fluidGridGutterWidth * 2) - (.5 / $gridRowWidth * 100px * 1%);
 }
 
 @mixin grid-fluid-offset-first-child($columns, $fluidGridColumnWidth, $fluidGridGutterWidth) {
-  margin-left: ($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) + ($fluidGridGutterWidth);
+  @include margin-left(($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) + ($fluidGridGutterWidth));
   *margin-left: ($fluidGridColumnWidth * $columns) + ($fluidGridGutterWidth * ($columns - 1)) - (.5 / $gridRowWidth * 100px * 1%) + $fluidGridGutterWidth - (.5 / $gridRowWidth * 100px * 1%);
 }
-
-
 
 @mixin grid-input($gridColumnWidth, $gridGutterWidth) {
   input,
   textarea,
   .uneditable-input {
-    margin-left: 0; // override margin-left from core grid system
+    @include margin-left(0); // override margin-left from core grid system
   }
 
   // Space grid-sized controls properly if multiple per line
   .controls-row [class*="span"] + [class*="span"] {
-    margin-left: $gridGutterWidth;
+    @include margin-left($gridGutterWidth);
   }
 
   // generate .spanX

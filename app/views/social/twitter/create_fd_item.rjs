@@ -1,5 +1,7 @@
 if @items_info.blank?
   page << "jQuery('body,html').animate({scrollTop: 0}, 800);"
+  page << "jQuery('#tweet_div_#{@current_feed_id} .convert_as_ticket').removeClass('sloading loading-tiny loading-align')"
+  page << "jQuery('#tweet_div_#{@current_feed_id} .convert_as_ticket i').css('opacity','1')"
   show_ajax_flash page
 else
   @items_info.each do |item|
@@ -21,5 +23,8 @@ else
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').find('a').attr('data-original-title','Go to ticket ##{item_link.split('#').first}');"
     page << "jQuery('#tweet_div_#{feed_id} .sharer_twt_ticket').show();"
+    if item[:user_in_db]
+        page << "jQuery('#tweet_div_#{feed_id} span.active-cust').removeClass('hide');"
+    end
   end
 end

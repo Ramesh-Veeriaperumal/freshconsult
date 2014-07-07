@@ -117,7 +117,6 @@ end
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
-    # set_stats(account.id, total_tickets)
     log_format=logging_format(account,overdue_tickets,overdue_tickets_time_taken,froverdue_tickets,froverdue_tickets_time_taken)
     sla_logger.info "#{log_format}" unless sla_logger.nil?
   end
@@ -126,15 +125,6 @@ end
     Sharding.send(db_name.to_sym) do
       yield
     end
-  end
-
-  def self.set_stats(account_id, total_tickets)
-    current_time = Time.now.utc
-    redis_key = "stats:rake_tkts:sla:#{current_time.day}:#{account_id}:#{current_time}"
-    $stats_redis.set(redis_key, total_tickets)
-    $stats_redis.expire(redis_key,144000)
-  rescue => e
-    puts "Error while recording SLA stats : #{e.message}"
   end
 
 

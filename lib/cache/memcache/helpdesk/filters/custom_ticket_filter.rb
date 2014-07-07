@@ -3,10 +3,15 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   include MemcacheKeys
 
   def clear_cache
-    account.agents.each do |agent|
+    account.agents.find(:all, :include => :user).each do |agent|
       key = user_filters_memcache_key(agent.user,account)
       MemcacheKeys.delete_from_cache(key)
     end
+  end
+
+  def clear_cache_agent_group
+    key = user_filters_memcache_key(user,account)
+    MemcacheKeys.delete_from_cache(key)
   end
 
   def my_ticket_filters(user)

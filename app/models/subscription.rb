@@ -232,10 +232,10 @@ class Subscription < ActiveRecord::Base
 
   def update_social_subscription
     old_state = @old_subscription.state
-    if (old_state != "suspended" && state == "suspended") || non_social_plans
+    if (old_state != "suspended" && state == "suspended")
       facebook_callback = "cleanup"
       twitter_callback = "cleanup"
-    elsif (old_state == "suspended" && state != "suspended") || !non_social_plans
+    elsif (old_state == "suspended" && state != "suspended")
       facebook_callback =  "subscribe_realtime"
       twitter_callback = "build_default_streams"
     end
@@ -409,7 +409,7 @@ class Subscription < ActiveRecord::Base
     end
     
     def config_from_file(file)
-      YAML.load_file(File.join(RAILS_ROOT, 'config', file))[RAILS_ENV].symbolize_keys
+      YAML.load_file(File.join(Rails.root, 'config', file))[Rails.env].symbolize_keys
     end
     
     def set_free_plan_agnt_limit

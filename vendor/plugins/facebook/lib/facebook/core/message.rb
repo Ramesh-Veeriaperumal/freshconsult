@@ -70,7 +70,7 @@ class Facebook::Core::Message
         begin
           user.make_current
           unless @note.save_note
-            puts "error while saving the note #{@note.errors.to_json}"
+            Rails.logger.debug "error while saving the note #{@note.errors.to_json}"
           end
         ensure
           User.reset_current_user
@@ -112,7 +112,7 @@ class Facebook::Core::Message
           add_as_note thread , @ticket
         end
       else
-        puts "error while saving the ticket:: #{@ticket.errors.to_json}"
+        Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
       end
     end
 

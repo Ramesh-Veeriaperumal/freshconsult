@@ -1,10 +1,9 @@
 module FreshfoneCallSpecHelper
-  BATCH_KEY = "FRESHFONE:AGENTS_BATCH:1:CA904f175a4e625a045e3270720dd195dd"
-  TRANSFER_KEY = "FRESHFONE:TRANSFERS:1:CA904f175a4e625a045e3270720dd195dd"
+  BATCH_KEY = "FRESHFONE:AGENTS_BATCH:1:CA2db76c748cb6f081853f80dace462a04"
+  TRANSFER_KEY = "FRESHFONE:TRANSFERS:1:CA2db76c748cb6f081853f80dace462a04"
   CLIENT_CALL = "FRESHFONE:CLIENT_CALLS:1"
   def setup_caller_data
-    Faker::Base.numerify('(###)###-####')
-    @caller_number = Faker::PhoneNumber.phone_number
+    @caller_number = Faker::Base.numerify('(###)###-####')
     @agent.update_attributes(:phone => @caller_number)
     Freshfone::Search.stubs(:search_user_with_number).returns(@agent)
     create_call_with_caller_and_meta
@@ -21,7 +20,7 @@ module FreshfoneCallSpecHelper
   end
 
   def set_active_call_in_redis(additional_params = {})
-    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA67b4b4052a6c79d662a27edda3615449"
+    key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
     controller.set_key(key, {:agent => @agent.id}.merge(additional_params).to_json)
   end
 
@@ -32,22 +31,22 @@ module FreshfoneCallSpecHelper
   def create_call_for_status
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
-                                      :params => { :CallSid => "CA904f175a4e625a045e3270720dd195dd" } )
+                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
   end
 
   def in_call_params
-    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+18062791926", 
-      "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CAa908212d5ff226e1ce21670b41b6f6cc", 
+    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+12407433321", 
+      "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CA2db76c748cb6f081853f80dace462a04", 
       "FromCountry"=>"US", "CallerCountry"=>"US", "Direction"=>"outbound-dial", "CallerCity"=>"BAKERSFIELD", 
-      "ApiVersion"=>"2010-04-01", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+18062791926", "Caller"=>"+16617480240", 
+      "ApiVersion"=>"2010-04-01", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+12407433321", "Caller"=>"+16617480240", 
       "CallerState"=>"CA", "CallSid"=>"CSATH", "From"=>"+16617480240", "CallerZip"=>"93307", 
       "FromZip"=>"93307", "agent"=>"#{@agent.id}"}
   end
 
   def direct_dial_params
-    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CalledVia"=>"+18062791926", "FromState"=>"CA", "ToZip"=>"", 
+    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CalledVia"=>"+12407433321", "FromState"=>"CA", "ToZip"=>"", 
       "Called"=>"+919994269753", "ParentCallSid"=>"CDIRECTPARENT", "FromCountry"=>"US", 
-      "CallerCountry"=>"US", "CalledZip"=>"", "Direction"=>"outbound-dial", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+18062791926", 
+      "CallerCountry"=>"US", "CalledZip"=>"", "Direction"=>"outbound-dial", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+12407433321", 
       "CalledCountry"=>"IN", "CallerState"=>"CA", "CallSid"=>"CDIRECT", "CalledState"=>"Tamil Nadu", 
       "From"=>"+16617480240", "CallerZip"=>"93307", "FromZip"=>"93307", "CallStatus"=>"in-progress", "ToCity"=>"", 
       "ToState"=>"Tamil Nadu", "To"=>"+919994269753", "ToCountry"=>"IN", "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", 
@@ -55,24 +54,24 @@ module FreshfoneCallSpecHelper
   end
 
   def call_transfer_params
-    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+18062791926", 
-      "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CAa908212d5ff226e1ce21670b41b6f6cc", 
+    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+12407433321", 
+      "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CA2db76c748cb6f081853f80dace462a04", 
       "FromCountry"=>"US", "CallerCountry"=>"US", "Direction"=>"outbound-dial", "CallerCity"=>"BAKERSFIELD", 
-      "ApiVersion"=>"2010-04-01", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+18062791926", "Caller"=>"+16617480240", 
+      "ApiVersion"=>"2010-04-01", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+12407433321", "Caller"=>"+16617480240", 
       "CallerState"=>"CA", "CallSid"=>"CTRANSFER", "From"=>"+16617480240", "CallerZip"=>"93307", 
       "FromZip"=>"93307" }
   end
 
   def status_params
-    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", "Called"=>"+18062791926", 
+    { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", "Called"=>"+12407433321", 
       "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", "Direction"=>"inbound", "FromCity"=>"BAKERSFIELD", 
-      "CalledCountry"=>"US", "CallerState"=>"CA", "DialCallDuration"=>"6", "CallSid"=>"CA904f175a4e625a045e3270720dd195dd", 
-      "CalledState"=>"TX", "From"=>"+16617480240", "CallerZip"=>"93307", "FromZip"=>"93307", 
+      "CalledCountry"=>"US", "CallerState"=>"CA", "DialCallDuration"=>"6", "CallSid"=>"CA2db76c748cb6f081853f80dace462a04", 
+      "CalledState"=>"TX", "From"=>"+12407433321", "CallerZip"=>"93307", "FromZip"=>"93307", 
       "ApplicationSid"=>"APca64694c6df44b0bbcfb34058c567555", "CallStatus"=>"in-progress", 
-      "DialCallSid"=>"CA67b4b4052a6c79d662a27edda3615449", "ToCity"=>"WHITE DEER", "ToState"=>"TX", 
+      "DialCallSid"=>"CA2db76c748cb6f081853f80dace462a04", "ToCity"=>"WHITE DEER", "ToState"=>"TX", 
       "RecordingUrl"=>"http://api.twilio.com/2010-04-01/Accounts/AC626dc6e5b03904e6270f353f4a2f068f/Recordings/RE53fbb52943c5f44202005798d62b3e28", 
-      "To"=>"+18062791926", "ToCountry"=>"US", "DialCallStatus"=>"completed", "RecordingDuration"=>"3", 
-      "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", "Caller"=>"+16617480240", 
+      "To"=>"+12407433321", "ToCountry"=>"US", "DialCallStatus"=>"completed", "RecordingDuration"=>"3", 
+      "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", "Caller"=>"+12407433321", 
       "CalledCity"=>"WHITE DEER", "RecordingSid"=>"RE53fbb52943c5f44202005798d62b3e28" }
   end
 

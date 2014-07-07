@@ -1,7 +1,7 @@
 module Facebook::Core::Util
 
   def truncate_subject(subject, count)
-    #puts "truncate subject #{subject}"
+    #Rails.logger.debug "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
 
@@ -35,7 +35,7 @@ module Facebook::Core::Util
                         }
         })
       else
-        puts "unable to save the contact:: #{user.errors.inspect}"
+        Rails.logger.debug "unable to save the contact:: #{user.errors.inspect}"
       end
     end
     user
@@ -90,7 +90,7 @@ module Facebook::Core::Util
 
   #Parse the content from facebook
   def get_html_content_from_feed(feed)
-    #puts "get_html_content"
+    #Rails.logger.debug "get_html_content"
     html_content =  CGI.escapeHTML(feed[:message])
 
     if "video".eql?(feed[:type])
@@ -107,7 +107,7 @@ module Facebook::Core::Util
   end
 
   def get_html_content_from_message(message)
-    #puts "get_html_content"
+    #Rails.logger.debug "get_html_content"
     message = HashWithIndifferentAccess.new(message)
     html_content =  CGI.escapeHTML(message[:message])
     if message[:attachments]

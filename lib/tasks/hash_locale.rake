@@ -3,7 +3,7 @@ namespace :i18n do
   desc 'Add some random strings around values in en.yml'
   task :rumble,:replace, :needs => :environment do |t,args|
     replace = args[:replace] || 'Yes'
-    f_name = "#{RAILS_ROOT}/config/locales/en.yml"
+    f_name = "#{Rails.root}/config/locales/en.yml"
     en_content = File.open(f_name, 'r') { |f| f.read }
     en_data = YAML.load(en_content)
 

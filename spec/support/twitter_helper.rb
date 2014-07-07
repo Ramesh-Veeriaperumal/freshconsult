@@ -32,8 +32,9 @@ module TwitterHelper
     @ticket_rule
   end
   
-  def push_tweet_to_dynamo(rule = @rule, time = Time.now.utc.iso8601, reply = nil, sender_id = nil)
+  def push_tweet_to_dynamo(tweet_id, rule = @rule, time = Time.now.utc.iso8601, reply = nil, sender_id = nil)
     sample_gnip_feed = sample_gnip_feed(rule, reply, time)
+    sample_gnip_feed["id"] = "tag:search.twitter.com,2005:#{tweet_id}"
     tweet = sample_gnip_feed.to_json
     tweet_feed = Social::Gnip::TwitterFeed.new(tweet, $sqs_twitter)
     tweet_id = tweet_feed.tweet_id
@@ -41,6 +42,113 @@ module TwitterHelper
     sender_id = tweet_feed.twitter_user_id
     tweet_feed.process
     [tweet_id, sample_gnip_feed, sender_id]
+  end
+  
+  def sample_dynamo_query_params(tweet_id)
+    {
+      :item => {
+        "stream_id" => {:s=>"#{@account.id}_#{@default_stream.id}"}, 
+        "feed_ids" => {:ss=>["#{tweet_id}"]}, 
+        "object_id" => {:s=>"feed:#{tweet_id}"}
+      }
+    }
+  end
+  
+  def sample_tweets_array(feeds = true)
+    tweet_array = {
+      "statuses" => []
+    }
+    tweets = []
+    
+    if feeds
+      #Customer tweets
+      10.times do |n|
+        tweet =  sample_twitter_feed
+        tweet["text"] = "http://helloworld.com" if n == 8
+        tweet["user"]["description"] = "TestingGnip" if n == 9
+        tweets << tweet 
+      end
+      
+      #Brand tweet
+      10.times do |n|
+        tweet = sample_twitter_feed
+        tweet["user"]["screen_name"] = "TestingGnip"
+        tweet["in_reply_to_status_id"] = tweets[n]["id"] if n==2
+        tweets << tweet
+      end   
+      
+      tweet_array["statuses"] = tweets
+    end
+    response = {:body => tweet_array.to_json}
+    faraday_response = Faraday::Response.new(response)
+    OAuth2::Response.new(faraday_response)
+  end
+  
+  def sample_dynamo_query_params
+    {
+      :member =>
+            [
+              {
+                "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
+                "feed_id"=>{:s=>"140264336660376"}, 
+                "posted_time"=>{:ss=>["1402643366000"]}, 
+                "parent_feed_id"=>{:ss=>["140264336660376"]
+              }, 
+              "source" => {:s=>"Twitter"}, 
+              "in_conversation" => {:n=>"0"}, 
+              "data" => {
+                :ss=>[
+                        "{\"body\":\"@TestingGnip accusamus aut saepe sint voluptatem autem amet eaque suscipit eos qui consectetur delectus nesciunt dolore sed provident quasi consequuntur recusandae\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S22_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140264336660398\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T07:09:26Z\",\"id\":\"tag:search.twitter.com,2005:140264336660376\"}"
+                      ]
+                      }, 
+              "is_replied"=>{:n=>"0"}
+              }
+            ], 
+            :count=>1
+    }
+
+  end
+  
+  def sample_interactions_batch_get(tweet_id)
+    [
+      {
+        :responses => 
+            {
+              "#{Social::DynamoHelper.select_table("feeds", Time.now)}"=>[
+                {
+                  "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
+                  "feed_id"=>{:s=>"#{tweet_id}"}, 
+                  "posted_time"=>{:ss=>["#{tweet_id}"]
+                }, 
+              "parent_feed_id"=>{:ss=>["#{tweet_id}"]}, 
+              "source"=>{:s=>"Twitter"}, 
+              "in_conversation"=>{:n=>"0"}, 
+              "data"=>{:ss=>["{\"body\":\"@TestingGnip quae animi consequatur omnis repudiandae unde et cum molestiae nihil qui asperiores voluptas quibusdam quidem rerum aut vero eum fugit\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S46_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265255013396\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T09:42:30Z\",\"id\":\"tag:search.twitter.com,2005:140265255013371\"}"]}, 
+              "is_replied"=>{:n=>"0"}
+              }
+            ]
+            }, 
+            :unprocessed_keys=>{}
+      }
+    ]
+  end
+  
+  def dynamo_update_attributes(tweet_id)
+    {
+      :attributes=>{
+        "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
+        "fd_user"=>{:ss=>["6"]}, 
+        "feed_id"=>{:s=>"#{tweet_id}"}, 
+        "posted_time"=>{:ss=>["#{tweet_id}"]}, 
+        "parent_feed_id"=>{:ss=>["#{tweet_id}"]}, 
+        "source"=>{:s=>"Twitter"}, 
+        "in_conversation"=>{:n=>"1"}, 
+        "fd_link"=>{:ss=>["2"]}, 
+        "data"=>{:ss=>["{\"body\":\"@TestingGnip et aperiam ipsa assumenda neque sit non repellat deserunt natus dolorem perferendis magni dolores odio quo ab quia ut nam\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S67_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265655633631\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T10:49:16Z\",\"id\":\"tag:search.twitter.com,2005:140265655633605\"}"]}, 
+        "is_replied"=>{:n=>"1"}
+      }
+    }
+
   end
   
   def sample_params_fd_item(tweet_id, stream_id, search_type, parent_tweet_id = nil)
@@ -55,7 +163,7 @@ module TwitterHelper
                     :user_image => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
                     :parent_feed_id => "#{parent_tweet_id}",
                     :user_mentions => "",
-                    :posted_time => "#{Time.now.strftime("%a %b %d %T %z %Y")}"
+                    :posted_time => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}"
                   },
                 :search_type => search_type
       }
@@ -77,17 +185,18 @@ module TwitterHelper
   def sample_twitter_feed
     text = Faker::Lorem.words(10).join(" ")
     tweet_id = (Time.now.utc.to_f*100000).to_i
+    in_reply_to_status_id_str = (1.days.ago.utc.to_f*100000).to_i
     twitter_feed = {
       "query" => "",
       "next_results" => "",
       "refresh_url" => "",
       "next_fetch_id" => "", 
-      "created_at" => "#{Time.now.strftime("%a %b %d %T %z %Y")}",
+      "created_at" => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}",
       "id" => tweet_id,
       "id_str" => "#{tweet_id}",
-      "in_reply_to_status_id_str" => "",
+      "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
-          "id" => 2341632074,
+          "id" => "2341632074",
           "id_str" => "2341632074",
           "name" => "Save the Hacker",
           "screen_name" => "savethehacker",
@@ -160,28 +269,16 @@ module TwitterHelper
   end
   
   def add_response
-    {
-      "add" => {
-                  :response=>true, 
-                  :rule_value=> "", 
-                  :rule_tag=> ""
-          }
-    }
+    Net::HTTPResponse.new("http",201,"")
   end
   
   def delete_response
-    {
-      "delete" => {
-        :response=>true, 
-        :rule_value => "",
-        :rule_tag => ""
-      }
-    }
+    Net::HTTPResponse.new("http",200,"")
   end
   
   def sample_twitter_object(parent_id = "")
     attrs = sample_twitter_feed.deep_symbolize_keys
-    attrs[:in_reply_to_user_id_str] = 2341632074
+    attrs[:in_reply_to_user_id_str] = "2341632074"
     twitter_feed = Twitter::Tweet.new(attrs)
   end
   
@@ -195,15 +292,14 @@ module TwitterHelper
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    while wait_for <= wait
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
-      if tweet.nil?
-        sleep 1
-        wait_for = wait_for + 1
-      else
-        break
-      end
-    end
+    #while wait_for <= wait
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
+      # if tweet.nil?
+      #   wait_for = wait_for + 1
+      # else
+      #   break
+      # end
+    #end
     return tweet
   end
 

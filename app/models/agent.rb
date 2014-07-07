@@ -21,8 +21,7 @@ class Agent < ActiveRecord::Base
           :dependent => :delete_all
 
   has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet' , :through => :user , 
-          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
-          :dependent => :delete_all
+          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent
 
   has_many :achieved_quests, :foreign_key =>'user_id', :primary_key => "user_id",
           :dependent => :delete_all

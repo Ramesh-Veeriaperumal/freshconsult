@@ -15,17 +15,23 @@ module Mobile::Actions::Push_Notifier
         publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
 	end
 	
-    def remove_logged_out_user_mobile_registrations
-        message = {
-            :account_id => current_account.id,
-            :user_id => current_user.id,
-      			:delete_axn => :device,
-            :clean_up => params[:registration_key]
-        }.to_json
-        Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message}"
+  def remove_logged_out_user_mobile_registrations
+    return if(params[:registration_key] == "")
+    
+    message = {
+          :account_id => current_account.id,
+          :user_id => current_user.id
+      }
 
-        publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
+    if (params[:registration_key]) 
+      message.merge!(:delete_axn => :device, :clean_up => params[:registration_key])
+    elsif (!params[:registration_key])
+      message.merge!(:delete_axn => :user, :clean_up => 1)
     end
+
+    Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message.to_json}"
+    publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message.to_json
+  end
 	
   def send_mobile_notification(action=:new, message)
     notification_types = Hash.new()
@@ -51,7 +57,6 @@ module Mobile::Actions::Push_Notifier
       end
 		
     elsif action == :response then
-        message.merge!(:agent => User.current.agent?) if User.current
         user_ids = notable.subscriptions.map(&:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
@@ -69,8 +74,9 @@ module Mobile::Actions::Push_Notifier
 
     Rails.logger.debug "DEBUG :: send_mobile_notification hash : #{notification_types}"
 	return if notification_types.empty?
-	message.merge!(:notification_types => notification_types, :user => current_user_name, :user_id => current_user_id)
-	message.store(:account_id,self.account.id)
+	message.merge!(:agent =>  (!User.current || User.current.agent?));
+  message.merge!(:notification_types => notification_types, :user => current_user_name, :user_id => current_user_id)
+  message.store(:account_id,self.account.id)
 	
     Rails.logger.debug "DEBUG :: send_mobile_notification hash : #{message}"
 	channel_id = self.account.id%MOBILE_NOTIFICATION_CHANNEL_COUNT

@@ -3,6 +3,9 @@
 	<%= render :partial => "form" %>
 </section>
 <section class="sidebar content rounded-6">
+<br/>
+<% unless current_account.sso_enabled? %>
 	<h3 class="heading"><%= t('profile.change_password') %></h3>
 	<%= render :partial => "change_password" %>
+<% end %>
 </section>

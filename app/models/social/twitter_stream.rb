@@ -92,7 +92,7 @@ class Social::TwitterStream < Social::Stream
         stale_key  = select_valid_date(stale_date)
         $redis_others.hdel(stream_volume_redis_key, stale_key)
       end
-      raise_threshold_alert(incr_value, hash_key) if incr_value > MAX_FEEDS_THRESHOLD
+      raise_threshold_alert(incr_value, hash_key) if ((incr_value > MAX_FEEDS_THRESHOLD) && (incr_value % 100 == 0))
     end
   end
 

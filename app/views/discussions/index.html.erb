@@ -22,21 +22,17 @@
 
 
 <% if @topics.blank? %>
-<div class="no-data">
-	<%= t('topic.no_posts') %>
-</div>
+	<div class="no-data">
+		<%= t('topic.no_posts') %>
+	</div>
 <% else %>
-<div class="clearfix comm-items">
-	<%= render :partial => 'discussions/shared/topic', :collection => @topics %>
-</div>
+	<div class="clearfix comm-items" id="Pages">
+		<%= render :partial => 'discussions/shared/topic', :collection => @topics %>
+	</div>
+	<%= will_paginate @topics %>
+	<%= pageless(@topics.total_pages, url_for(:controller => params[:controller], :action => params[:action]), t("loading.activities")) unless @topics.empty?%>
 <% end %>
 
-
-<%= will_paginate @topics,
-				:renderer => BootstrapPaginationRenderer,
-				:previous_label => "<b class='arrow-left'></b>",
-				:next_label => "<b class='arrow-right'></b>",
-				:class => "pagination pagination-centered" if params[:action]=='my_topics' %>
 <script type="text/javascript">
 	jQuery('body').one('assetLoaded.fjax', function() {
 		App.Discussions.setSpamCounts(<%= @counts.to_json.html_safe %>);

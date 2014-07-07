@@ -22,6 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
+  include RabbitMq::Ticket
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -378,7 +379,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def included_in_to_emails?(from_email)
-    (self.to_emails || []).select{|email_id| email_id.include?(from_email.downcase) }.present?
+    (self.to_emails || []).select{|email_id| email_id.downcase.include?(from_email.downcase) }.present?
   end
 
   def ticket_id_delimiter
@@ -506,7 +507,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    RAILS_DEFAULT_LOGGER.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
@@ -516,7 +517,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError => e
-      RAILS_DEFAULT_LOGGER.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))

@@ -1,7 +1,7 @@
 module ChatHelper
 
   def chat_agents_list
-    Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id, :email=>c.user.email} }.to_json.html_safe )
+    Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id} }.to_json.html_safe )
   end
 
   def ticket_link_options

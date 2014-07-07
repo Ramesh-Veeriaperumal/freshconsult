@@ -529,6 +529,9 @@ en:
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
     portal:
       index:
+        forums: "Forums"
+        enable: "Enabled"
+        disable: "Disabled"
         moderation: "Moderate Forums"
         moderate_links: "Moderate only suspicious topics and replies"
         moderate_links_help: "Enable this feature for advanced spam protection. System will check all topics and replies for third party links and other spam activity."
@@ -568,6 +571,7 @@ en:
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
+          should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a solution category
           enable_push_notification: Enable Push Notification
@@ -701,7 +705,7 @@ en:
         creating_survey: "Creating your satisfaction survey:"
         creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
        1.Enable the Customer Satisfaction Surveys checkbox<br>
-       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
        <br>
        <b>Choose which emails have the satisfaction survey link:</b><br>
        You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -744,7 +748,7 @@ en:
      <b>Creating your satisfaction survey:</b><br>
      The following steps let you collect feedback from your customers through a link in your response emails:<br>
      1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
      <br>
      <b>Choose which emails have the satisfaction survey link:</b><br>
      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
@@ -757,7 +761,7 @@ en:
      satisfaction_settings:
         enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please let us know your opinion on our support experience.
+        link_text_input: Please tell us what you think of your support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
         send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
@@ -932,6 +936,9 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
+      clone_rule:
+        title: Supervisor - Clone Rule
+        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -955,6 +962,9 @@ en:
         title: Observer - New Rule
       edit:
         title: Observer - Edit Rule
+      clone_rule:
+        title: Observer - Clone Rule
+        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -979,6 +989,7 @@ en:
     va_rules:
       index:
         human_name: Dispatch’r Rule
+      remember_to_save: 'After updating, please remember to save it.'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -1020,6 +1031,9 @@ en:
         human_name: Scenario
       edit:
         title: Edit Scenario
+      clone_rule:
+        title: Clone Scenario
+        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -1393,6 +1407,10 @@ en:
         inapp_support: "In App Support"
         ios_sdk: "iOS SDK"
         android_sdk: "Android SDK"
+        trusted_ip: IP Whitelisting
+        trusted_ip_meta: Private Helpdesk
+        custom_mailbox: Custom Mail Server
+        custom_mailbox_meta: Custom Mailboxes
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -1472,7 +1490,7 @@ en:
           spam_check: "We're checking your topic for spam. It will appear once it has been approved."
       tickets:
         create:
-          success: Your ticket has been created and a copy has been sent to you via email.
+          success: Your ticket has been created.
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
@@ -1932,6 +1950,7 @@ en:
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
+  clone: Clone
   disable: Disable
   enable: Enable
   accounts:
@@ -2090,6 +2109,7 @@ en:
   dispatch:
     conditions: Conditions
     actions: Actions
+    clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
     cascade: all matching rules
@@ -2099,6 +2119,8 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
+    clone_of: This Dispatch'r is a clone of
+    copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
     rule_name: Rule Name
@@ -2707,7 +2729,7 @@ en:
     submit_new_ticket: "...or Submit a new ticket"
     login: Login
     login_portal: "Login to the support portal"
-    login_details: "Enter the login details you gave when you registered with us"
+    login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
@@ -3624,7 +3646,7 @@ en:
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
-  scenario_label: Scenario Label
+  scenario_label: Scenario Name
   email: Email
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
@@ -3818,6 +3840,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
+        customer_responded_overdue: "Overdue"
       tabular_view:
         title: "Title"
         posted: "Posted"
@@ -4114,7 +4137,7 @@ en:
     streams:
       interactions: Interactions
       other_interactions: Other Interactions
-      recent_searches: Recent Searches
+      recent_searches: Your Recent Searches
       recent_tickets: Recent Tickets
       social_accounts: Social Accounts
       custom_streams: Social Streams
@@ -4158,6 +4181,7 @@ en:
     welcome:
       title: Social Support
       turn_off: Turn OFF Social
+      turn_on: Turn ON Social
       off_helptext_html: To Turn ON, add your <br /> twitter handle from admin
       get_started: Get Started
       customer_tweets: "Customer tweets:"
@@ -4426,7 +4450,7 @@ en:
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
-      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
             <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
             A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:
@@ -4703,7 +4727,7 @@ en:
         feedback_widgets_knowledge_base: "Knowledge base "
         feedback_widgets_help_articles: "or Browse help articles"
         show_all_results: "Show all results"
-        no_results_for: "No results for %{term}"
+        no_results: "No results for "
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -5337,6 +5361,7 @@ en:
       new_requester: "New requester"
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
+      desktop_notification: "Turn on desktop notification"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
@@ -5497,6 +5522,22 @@ en:
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"
         invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
+      welcome_page:
+        title: "Welcome to Freshfone"
+      feature_request_content:
+        title: "Freshfone"
+        heading: "Support your customers with Freshfone"
+        about_numbers: "Purchase support numbers from across the globe"
+        about_ivr: "Create IVR's and route calls to the right agents"
+        about_recording: "Record customer conversations and access it anywhere"
+        read_more: "Read more"
+        pricing: "See all call rates and supported countries"
+        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_message: "Need Freshfone Feature"
+        success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
+        error_message: "Sorry we can not make your request right now. Try again later."
+        additional_note: "Freshfone request will take two business days"
+        button_label: "Request for Freshfone"
   freshchat:
     title: "Freshchat"
     widget: "Widget"

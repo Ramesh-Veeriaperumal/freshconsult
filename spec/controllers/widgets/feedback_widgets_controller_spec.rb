@@ -6,14 +6,11 @@ describe Widgets::FeedbackWidgetsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @account.make_current
     @user = add_test_agent(@account)
   end
 
   before(:each) do
     login_admin
-    @request.host = @account.full_domain
   end
 
   it "renders the widgets new html template" do
@@ -30,7 +27,7 @@ describe Widgets::FeedbackWidgetsController do
 
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
-    post :create, :helpdesk_ticket => {:email => "rachel@freshdesk.com",
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Ticket #{now}",
                                        :ticket_type => "Question",
@@ -45,7 +42,7 @@ describe Widgets::FeedbackWidgetsController do
     get 'new'
     now = (Time.now.to_f*1000).to_i
     Widgets::FeedbackWidgetsController.any_instance.stubs(:create_the_ticket => false)
-    post :create, :helpdesk_ticket => {:email => "rachel@freshdesk.com",
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Ticket #{now}",
                                        :ticket_type => "Question",

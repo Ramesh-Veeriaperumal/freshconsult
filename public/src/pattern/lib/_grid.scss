@@ -17,7 +17,7 @@
 
 [class*="span"].pull-right,
 .row-fluid [class*="span"].pull-right {
-  float: right;
+  @include float(right);
 }
 .row-fluid:before, .row-fluid:after {
 	display: table;
@@ -25,5 +25,5 @@
 	content: "";
 }
 .row-fluid:after {
-	clear: both;
+	@include clear(both);
 }

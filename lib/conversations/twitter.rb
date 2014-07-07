@@ -6,7 +6,7 @@ module Conversations::Twitter
   def send_tweet_as_mention(ticket = @parent, note = @item)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
-    @reply_handle = current_account.twitter_handles.find(reply_handle_id)
+    @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
     twt = nil
 
     unless @reply_handle.nil?
@@ -42,7 +42,7 @@ module Conversations::Twitter
   def send_tweet_as_dm(ticket = @parent, note = @item)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
-    @reply_handle = current_account.twitter_handles.find(reply_handle_id)
+    @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
     resp = nil
 
     unless @reply_handle.nil?
@@ -53,7 +53,7 @@ module Conversations::Twitter
 
       return_value, error_msg = twt_sandbox(@reply_handle) {
         twitter =  TwitterWrapper.new(@reply_handle).get_twitter
-        resp = twitter.direct_message_create(req_twt_id, note.body.strip)
+        resp = twitter.create_direct_message(req_twt_id, note.body.strip)
 
         #update dynamo
         unless latest_tweet.stream_id.nil?

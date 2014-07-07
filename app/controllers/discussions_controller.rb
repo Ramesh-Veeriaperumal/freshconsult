@@ -18,15 +18,27 @@ class DiscussionsController < ApplicationController
 
 	def index
 		@topics = current_account.topics.as_activities.paginate(:page => params[:page])
+		respond_back
+	end
+
+	def your_topics
+		@topics, ids = [], {:topic => [], :forum => []}
+		
+		current_user.monitorships.active_monitors.each do |m|
+			ids[m.monitorable_type.underscore.to_sym] << m.monitorable_id
+		end
+		unless ids[:topic].blank? and ids[:forum].blank?
+			@topics = current_account.topics.as_activities.following(ids).paginate(:page => params[:page])
+		end
+		respond_back
 	end
 
 	def new
-
 	end
 
 	def show
 
-		@forums = @forum_category.forums.all(:order => 'position').paginate(:page => params[:page])
+		@forums = @forum_category.forums.all(:order => 'position')
 		@page_title = @forum_category.name
 
 		respond_to do |format|
@@ -57,12 +69,6 @@ class DiscussionsController < ApplicationController
 	end
 
 	def edit
-
-	end
-
-	def your_topics
-		@topics = current_user.monitored_topics.as_activities.paginate(:page => params[:page], :per_page => 10)
-		render :action => :index
 	end
 
 	def categories
@@ -141,6 +147,14 @@ class DiscussionsController < ApplicationController
 				return redirect_to support_discussions_path
 			elsif !privilege?(:view_forums)
 				access_denied
+			end
+		end
+
+		def respond_back
+			if request.xhr? and !request.headers['X-PJAX']
+				render :partial => 'discussions/shared/topic', :collection => @topics
+			else
+				render :action => :index
 			end
 		end
 

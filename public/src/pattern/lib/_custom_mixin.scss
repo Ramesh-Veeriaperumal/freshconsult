@@ -5,7 +5,7 @@
      content:"";
      position:absolute;
      top:0px;
-     right:-($ht*2);
+     @include right(-($ht*2));
      display:block; width:0; /* Firefox 3.0 damage limitation */
      border:$ht solid transparent;   
      height:0px;
@@ -20,10 +20,10 @@
      content:"";
      position:absolute;
      top:0px;
-     left:-($ht*2);
+     @include left(-($ht*2));
      display:block; width:0; /* Firefox 3.0 damage limitation */
      border:$ht solid transparent;   
-     border-right-color: $bg;
+     @include border-right-color($bg);
      height:0px;
      font-size:0px;
   }
@@ -85,9 +85,9 @@
    cite {border-bottom:1px dashed blue}
    acronym {border-bottom:1px dotted #CCC; cursor:help}
    abbr {border-bottom:1px dashed #CCC; cursor:help}
-   ol, ul{ margin: 8px 0px 4px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+   ol, ul{ @include margin(8px 0px 4px 0px); @include padding(0px 0px 0px 40px); line-height: 17px;}
    ul{ list-style:disc outside;  }
-   blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; border-left: 1px dotted #999; padding:6px 6px 1px 1em; }
+   blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; @include border-left(1px dotted #999); @include padding(6px 6px 1px 1em); }
    del{ text-decoration:none; }
 }
 
@@ -102,9 +102,8 @@
 
 @mixin ie7-restore-left-whitespace() {
   *margin-left: .3em;
-
   &:first-child {
-    *margin-left: 0;
+    *margin-left:0;
   }
 }
 
@@ -112,13 +111,13 @@
   *margin-right: .3em;
 
   &:last-child {
-    *margin-left: 0;
+    *margin-left:0;
   }
 }
 
 
 @mixin hide-text() {
-  text-indent: 100%;
+  @include text-indent(100%);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -132,22 +131,22 @@
 @mixin triangle($direction: down, $color: black, $size: 6px) {
   @if $direction == left {
     border-bottom: $size solid transparent;
-    border-right: $size solid $color;
+    @include border-right($size solid $color);
     border-top: $size solid transparent;
   }
   @else if $direction == right {
     border-bottom: $size solid transparent;
-    border-left: $size solid $color;
+    @include border-left($size solid $color);
     border-top: $size solid transparent;
   }
   @else if $direction == up {
     border-bottom: $size solid $color;
-    border-left: $size solid transparent;
-    border-right: $size solid transparent;
+    @include border-left($size solid transparent);
+    @include border-right($size solid transparent);
   }
   @else if $direction == down {
-    border-right: $size solid transparent;
-    border-left: $size solid transparent;
+    @include border-right($size solid transparent);
+    @include border-left($size solid transparent);
     border-top: $size solid $color;
   }
   height: 0;
@@ -193,10 +192,10 @@
   background: $color;
   &:after {
     @if $direction == left {
-      border-right-color: $color;
+      @include border-right-color($color);
     }
     @else if $direction == right {
-      border-left-color: $color;
+      @include border-left-color($color);
     }
     @else if $direction == up {
       border-bottom-color: $color;
@@ -233,9 +232,9 @@
     height: 0;
     width: 0;
     bottom: -4px;
-    left: 5px;
+    @include left(5px);
     @if $background != none {
-      border-left-color: $background;
+      @include border-left-color($background);
     }
   }
 }
@@ -307,12 +306,12 @@
   color: #333;
   border: 1px solid #aaaaaa;
   line-height: 13px;
-  padding: 3px 5px 3px 8px;
-  margin: 3px 5px 3px 5px;
+  @include padding(3px 5px 3px 8px);
+  @include margin(3px 5px 3px 5px);
   position: relative;
   cursor: default;
   div {
-    float: left;
+    @include float(left);
   }
 }
 @mixin select2-drop {

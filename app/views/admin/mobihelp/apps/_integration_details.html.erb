@@ -17,7 +17,7 @@
   <div class="control-group">
     <label class="control-label" >Initialization code</label>
     <div class="controls code-view">
-      <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>Mobihelp.install(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));</textarea>
+      <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>Mobihelp.init(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));</textarea>
     </div>
   </div>
 <% end %>

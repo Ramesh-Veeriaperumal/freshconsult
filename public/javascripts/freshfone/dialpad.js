@@ -22,7 +22,7 @@
 		duration: 'fast',
 		showOn: 'none',
 		onKeypress: function (key, value, inst) {
-			if (freshfonecalls.tConn && freshfonecalls.tConn._status === "open") {
+			if (freshfonecalls.isOngoingCall()) {
 				freshfonecalls.tConn.sendDigits(key);
 			}
 			clearTimeout(timeout);
@@ -30,7 +30,9 @@
 		},
 		onMousedown: function (keypad, inst) {
 
-			if (freshfonecalls.isMaxSizeReached()) { return (keypad.preventDefault = true); }
+			if (!freshfonecalls.isOngoingCall() && freshfonecalls.isMaxSizeReached()) {
+			 return (keypad.preventDefault = true); 
+			}
 			freshfonecalls.toggleInvalidNumberText(false);
 
 			if ($(this).html() === "0") {

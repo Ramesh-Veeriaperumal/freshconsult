@@ -9,7 +9,7 @@ config.cache_classes = false
 config.whiny_nils = true
 config.action_controller.allow_forgery_protection = true
 
-# config.load_paths += %W( #{RAILS_ROOT}/lib )
+# config.load_paths += %W( #{Rails.root}/lib )
 
 # Show full error reports and disable caching
 config.action_controller.consider_all_requests_local = true
@@ -34,5 +34,4 @@ end
 # File.copy('config/redis_development.yml', 'config/redis.yml', true)
 
 FileUtils.cp('config/redis_development.yml', 'config/redis.yml')
-FileUtils.cp('config/stats_redis_development.yml', 'config/stats_redis.yml')
 FileUtils.cp('config/elasticsearch_development.yml', 'config/elasticsearch.yml')

@@ -25,7 +25,7 @@ module Workers
 				query = %(COPY #{REPORTS_TABLE}(#{REDSHIFT_COLUMNS.join(", ")})
 						from 's3://#{S3_CONFIG[:reports_bucket]}/#{@s3_folder}/redshift_' 
 						credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
-						delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100;)
+						delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
 				execute_redshift_query(query).clear
 				# vacuum_query = %(VACUUM SORT ONLY #{REPORTS_TABLE}) # sort only vacuum query to sort the newly added rows
 				# execute_redshift_query(vacuum_query).clear
