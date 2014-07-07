@@ -120,6 +120,8 @@ EMAIL:
           
         development:
           <<: *defaults
+        test:
+          <<: *defaults
         production:
           <<: *defaults
         staging:
