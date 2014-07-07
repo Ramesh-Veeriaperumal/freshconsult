@@ -7,7 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Admin::Social::TwitterStreamsController do
-  
+  integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -40,7 +40,7 @@ describe Admin::Social::TwitterStreamsController do
   end
   
   describe "GET #edit" do
-    it "should render the create stream page when create a new stream is clicked" do
+    it "should render the create stream page when create a new stream is clicked for global access type" do
       get :edit, {
         :id => @default_stream.id
       }
@@ -137,7 +137,15 @@ describe Admin::Social::TwitterStreamsController do
       @handle.dm_stream.ticket_rules.first.action_data[:group_id].should eql(2)
       @default_stream.accessible[:access_type].should eql(2)
     end
-  
+    
+    it "should render the create stream page when create a new stream is clicked for group access type" do
+      get :edit, {
+        :id => @default_stream.id
+      }
+      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+    end
+    
+
     it "should update a stream create/delete ticket rules if the includes is not empty and remove rules of deleted" do    
       stream_name = "#{Faker::Lorem.words(1)}"
       includes = Faker::Lorem.words(1)

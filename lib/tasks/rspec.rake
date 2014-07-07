@@ -119,7 +119,7 @@ BillingTests = [
 ]        
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, 
-              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
+              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests, GnipTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]

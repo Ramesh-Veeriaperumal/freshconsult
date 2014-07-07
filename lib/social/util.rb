@@ -56,6 +56,7 @@ module Social::Util
     }
   end
 
+  #Possible dead code
   def fetch_klout_score(screen_name)
     api_key = KloutConfig::API_KEY
     fetch_twitter_klout_score(api_key, screen_name)
@@ -63,7 +64,7 @@ module Social::Util
 
 
   private
-
+  #Possible dead code
   def fetch_twitter_klout_score(api_key, screen_name)
     klout_id_url =  URI.parse('http://api.klout.com/v2/identity.json/twitter?screenName='+screen_name+'&key='+api_key+'')
     klout_id_response = get_response(screen_name, api_key, klout_id_url)
