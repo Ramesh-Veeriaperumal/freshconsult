@@ -39,11 +39,13 @@ TwitterTests = [
   "spec/controllers/admin/social/*_spec.rb"
 ]
 
-ModelTests = ["spec/models/helpdesk/agent_spec.rb",
-              "spec/models/helpdesk/group_spec.rb",
-              "spec/models/helpdesk/mysql_note_spec.rb",
-              "spec/models/helpdesk/mysql_ticket_spec.rb",
-              "spec/models/helpdesk/ticket_spec.rb"]
+ModelTests = [
+  "spec/models/helpdesk/agent_spec.rb",
+  "spec/models/helpdesk/group_spec.rb",
+  "spec/models/helpdesk/mysql_note_spec.rb",
+  "spec/models/helpdesk/mysql_ticket_spec.rb",
+  "spec/models/helpdesk/ticket_spec.rb"
+]
 
 EmailTests = [ 
   "spec/lib/*_email_spec.rb", 
