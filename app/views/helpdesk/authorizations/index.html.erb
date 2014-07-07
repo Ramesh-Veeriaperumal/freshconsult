@@ -11,8 +11,8 @@
       });
 
       new bsn.AutoSuggest('usersearch', {
-        script: "<%= autocomplete_helpdesk_authorizations_path %>?",
-        varname: "v",
+        script: "/search/requesters/requester",
+        varname: "q",
         json: true,
         maxresults: 35,
         timeout: 3600000, 
