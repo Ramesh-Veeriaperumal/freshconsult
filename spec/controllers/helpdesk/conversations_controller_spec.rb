@@ -87,6 +87,26 @@ describe Helpdesk::ConversationsController do
       private_note.full_text_html.should be_eql("<div>#{now}</div>")
       private_note.private.should be_true
     end
+    
+    it "should add a private note to a ticket and change the status when showing activities" do
+      note_body = Faker::Lorem.sentence(3)
+      test_tkt = create_ticket({ :status => 2 })
+      post :note, {  :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{note_body}</div>"},
+                                          :private => "true",
+                                          :source => "2"
+                                        },
+                     :ticket_status => "6", # waiting on customer - 6
+                     :format => "js",
+                     :showing => "activities",
+                     :since_id => "197",
+                     :ticket_id => test_tkt.display_id
+                    }
+      response.should render_template "helpdesk/notes/create.rjs"
+      private_note = @account.tickets.find(test_tkt.id).notes.last
+      private_note.full_text_html.should be_eql("<div>#{note_body}</div>")
+      private_note.private.should be_true
+      test_tkt.status.eql?(6)
+    end
 
     it "should add a KBase article of ticket" do
      now = (Time.now.to_f*1000).to_i
