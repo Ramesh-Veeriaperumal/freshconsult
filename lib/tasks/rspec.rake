@@ -69,8 +69,6 @@ IntegrationTests = [
 FreshfoneTests = [
   "spec/controllers/freshfone/*_spec.rb",
   "spec/lib/freshfone/*_spec.rb",
-  "spec/lib/pulse_rate_incoming_spec.rb",
-  "spec/lib/pulse_rate_outgoing_spec.rb",
   "spec/models/freshfone/*_spec.rb"
 ]
 
