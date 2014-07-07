@@ -23,7 +23,7 @@ describe Helpdesk::TimeSheetsController do
 
   it "should render the add-time form" do
     ticket = create_ticket
-    get :new, :ticket_id => ticket.id
+    get :new, :ticket_id => ticket.display_id
     response.should render_template "helpdesk/time_sheets/new"
   end
 
@@ -51,7 +51,7 @@ describe Helpdesk::TimeSheetsController do
                                             :billable => 1,
                                             :note => "")
     time_sheet.save
-    get :edit, :ticket_id => ticket.id, :id => time_sheet.id
+    get :edit, :ticket_id => ticket.display_id, :id => time_sheet.id
     response.should render_template "helpdesk/time_sheets/edit"
   end
 

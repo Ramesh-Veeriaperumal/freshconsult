@@ -39,7 +39,11 @@ TwitterTests = [
   "spec/controllers/admin/social/*_spec.rb"
 ]
 
-ModelTests = ["spec/models/helpdesk/*_spec.rb"]
+ModelTests = ["spec/models/helpdesk/agent_spec.rb",
+              "spec/models/helpdesk/group_spec.rb",
+              "spec/models/helpdesk/mysql_note_spec.rb",
+              "spec/models/helpdesk/mysql_ticket_spec.rb",
+              "spec/models/helpdesk/ticket_spec.rb"]
 
 EmailTests = [ 
   "spec/lib/*_email_spec.rb", 
@@ -114,8 +118,8 @@ BillingTests = [
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
 ]        
   
-UnitTests = [ FacebookTests, TwitterTests, XssTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
-              APITests, ForumTests, HelpdeskTests, BillingTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, 
+              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]

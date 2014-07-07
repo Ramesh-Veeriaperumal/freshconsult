@@ -6,12 +6,12 @@ describe Admin::ProductsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @portal_url = Faker::Internet.url
-    @test_product = create_product({:email => Faker::Internet.email,
+    @portal_url = "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+    @test_product = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal", 
                                     :portal_url => @portal_url})
     @test_product_1 = create_product({:name => "New Product without Portal", 
-                                      :email => Faker::Internet.email})
+                                      :email => "#{Faker::Internet.domain_word}@#{@account.full_domain}"})
   end
 
   before(:each) do
@@ -32,8 +32,8 @@ describe Admin::ProductsController do
   end
 
   it "should create Product" do
-    product_email = Faker::Internet.email
-    portal_url = Faker::Internet.url
+    product_email = "#{Faker::Internet.domain_word}@#{@account.full_domain}"
+    portal_url = "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
     post :create, :product => product_params({:name => "Fresh Product", 
                                               :description => "new innovation for service world", 
                                               :email => product_email, 
@@ -139,7 +139,7 @@ describe Admin::ProductsController do
   end
 
   it "should update a product" do
-    portal_url = Faker::Internet.url
+    portal_url = "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
     put :update, 
         :id => @test_product.id,
         :product => { :name =>"Updated: Fresh test Product", 
