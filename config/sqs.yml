@@ -3,18 +3,23 @@ development:
   facebook_realtime_queue: social_fb_feed_dev
   auto_refresh_realtime_queue: auto_refresh_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
+  forum_spam_analysis_queue: spam_analysis_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
   auto_refresh_realtime_queue: auto_refresh_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
+  forum_spam_analysis_queue: spam_analysis_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
   auto_refresh_realtime_queue: auto_refresh_production
   custom_mailbox_realtime_queue: custom_mailbox_production
+  forum_spam_analysis_queue: spam_analysis_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   auto_refresh_realtime_queue: auto_refresh_test
   custom_mailbox_realtime_queue: custom_mailbox_test
+  forum_spam_analysis_queue: spam_analysis_test
+  

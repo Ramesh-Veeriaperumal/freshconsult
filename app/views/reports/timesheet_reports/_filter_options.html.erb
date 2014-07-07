@@ -14,12 +14,8 @@
 			
   		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
-      <%= select_tag :customer_id, 
-      		options_for_select(current_account.customers.collect{ |c| [c.name,c.id] },@customer_id.map(&:to_i)),
-					{ :multiple => true, 
-					  	:class => "select2 filter_item",
-					  	"data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_customer')
-					  } %>
+			
+			<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
      
       <label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>	
 			<%= select_tag :user_id, 

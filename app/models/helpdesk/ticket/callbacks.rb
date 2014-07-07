@@ -307,7 +307,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         if set_others_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
                                                        :nx => true })
           computed_display_id = account.get_max_display_id
-          set_tickets_redis_key(key, computed_display_id)
+          set_tickets_redis_key(key, computed_display_id, nil)
           self.display_id = computed_display_id
           return
         end

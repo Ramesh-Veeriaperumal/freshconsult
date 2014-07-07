@@ -408,6 +408,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/security.js
 
   observer_event:
     - public/javascripts/observer_events.js

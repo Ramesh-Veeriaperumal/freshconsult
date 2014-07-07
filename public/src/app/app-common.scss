@@ -3523,6 +3523,7 @@ $adm-bdr:#F0F0F0;
 		.msg{
 			font-size: 11px;
 			margin-top: 5px;
+			margin-left: 0;
 		}
 		.adm-radio{
 			@include float(left);
@@ -3632,6 +3633,7 @@ $adm-bdr:#F0F0F0;
 	.msg{
 		float: inherit;
 		margin-top: 5px;
+		margin-left: 0;
 		font-size: 12px;
 	}
 	.rules-wrapper{

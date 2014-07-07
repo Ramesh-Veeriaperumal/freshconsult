@@ -47,7 +47,7 @@ module Workers
 			query = %(COPY #{REPORTS_TABLE}(#{REDSHIFT_COLUMNS.join(", ")})
 					from 's3://#{S3_CONFIG[:reports_bucket]}/#{$st_env_name}/#{@s3_folder}/redshift_#{@s3_folder}.csv' 
 					credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
-					delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100;)	
+					delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)	
 			execute_redshift_query(query).clear
 			# deleting file from s3
 			AwsWrapper::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])

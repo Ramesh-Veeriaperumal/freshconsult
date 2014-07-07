@@ -3,7 +3,7 @@
   var $freshfone_feature_request = $('#freshfone_feature_request'),
       $freshfone_flash = $('#ff_feature_request');
   $freshfone_feature_request.on('click', function () {
-    self = this;
+    var self = this;
     $(self).addClass('disabled');
     $(".small_note").hide();
     $.ajax({

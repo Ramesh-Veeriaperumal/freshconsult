@@ -53,7 +53,7 @@ module Conversations::Twitter
 
       return_value, error_msg = twt_sandbox(@reply_handle) {
         twitter =  TwitterWrapper.new(@reply_handle).get_twitter
-        resp = twitter.direct_message_create(req_twt_id, note.body.strip)
+        resp = twitter.create_direct_message(req_twt_id, note.body.strip)
 
         #update dynamo
         unless latest_tweet.stream_id.nil?

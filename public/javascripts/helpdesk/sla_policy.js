@@ -9,7 +9,7 @@
 		if(!is_default) {
 			lookupCompany = function(searchString, suggest) {
 				new Ajax.Request(autocomplete_companies_url,
-													{ parameters: {q: $.trim(searchString)},
+													{ parameters: {name: $.trim(searchString)},
 														method: 'GET',
 														onSuccess: function(response) {
 															suggest(response.responseJSON);
@@ -63,11 +63,11 @@
 			minimumInputLength: 1,
 			multiple: true,
 			ajax: {
-					url: agent_autocomplete_path,
+					url: agent_autocomplete_helpdesk_authorizations_path,
 					quietMillis: 1000,
 					data: function (term) { 
 							return {
-								q: term
+								v: term
 							};
 					},
 					results: function (data) {

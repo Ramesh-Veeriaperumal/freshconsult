@@ -1,2 +1,1 @@
-<%= render(:partial => "helpdesk/shared/autocomplete_select", 
-	:locals => { :url => companies_search_autocomplete_path, :selected_values => @selected_customers, :container => container}) %>
+<%= render_autocomplete({ :selected_values => @selected_customers, :max_limit => 3, :type => :customers }) %>

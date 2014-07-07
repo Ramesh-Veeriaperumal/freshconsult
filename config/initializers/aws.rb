@@ -29,6 +29,8 @@ begin
 	$sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
 
 	$social_dynamoDb = AWS::DynamoDB::ClientV2.new()
+
+	$sqs_spam_analysis = AWS::SQS.new.queues.named(SQS[:forum_spam_analysis_queue])
 rescue => e
 	puts "AWS::SQS connection establishment failed."
 end
