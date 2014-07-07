@@ -42,7 +42,7 @@ TwitterTests = [
 ModelTests = ["spec/models/helpdesk/*_spec.rb"]
 
 EmailTests = [ 
-  #"spec/lib/*_email_spec.rb", 
+  "spec/lib/*_email_spec.rb", 
   "spec/controllers/email_controller_spec.rb",
   "spec/controllers/mailgun_controller_spec.rb"
 ]
