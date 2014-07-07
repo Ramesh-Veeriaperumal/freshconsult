@@ -36,7 +36,7 @@ describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{(Time.now.utc.to_f*100000).to_i}")
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should be_nil
   end
 
@@ -55,7 +55,7 @@ describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{(Time.now.utc.to_f*100000).to_i}")
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
@@ -80,7 +80,7 @@ describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{(Time.now.utc.to_f*100000).to_i}")
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
@@ -106,7 +106,7 @@ describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{(Time.now.utc.to_f*100000).to_i}")
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description

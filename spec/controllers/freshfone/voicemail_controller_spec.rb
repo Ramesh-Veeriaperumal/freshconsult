@@ -5,7 +5,6 @@ describe Freshfone::VoicemailController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     create_freshfone_call
     @request.host = @account.full_domain

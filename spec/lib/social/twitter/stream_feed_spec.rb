@@ -46,7 +46,7 @@ describe Social::Gnip::TwitterFeed do
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
@@ -71,7 +71,7 @@ describe Social::Gnip::TwitterFeed do
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
@@ -86,7 +86,7 @@ describe Social::Gnip::TwitterFeed do
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_note?.should be_true
     ticket.notes.first.id.should eql tweet.tweetable.id
@@ -112,14 +112,14 @@ describe Social::Gnip::TwitterFeed do
     
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm1[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm1[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm1[:text])
     
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm2[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm2[:id])
     tweet.should_not be_nil
     tweet.is_note?.should be_true
     note_body = tweet.tweetable.note_body.body
@@ -178,10 +178,10 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    while reply_tweet.nil?
+    #while reply_tweet.nil?
       fd_counter = 120
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    end
+    #end
 
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
@@ -209,10 +209,10 @@ describe Social::Gnip::TwitterFeed do
 
     fd_counter = 30
 
-    while fd_counter != 60
+    #while fd_counter != 60
       fd_counter = fd_counter + 30
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    end
+    #end
 
     #Send 'replied-to' tweet
     tweet = send_tweet_and_wait(ticket_feed)
@@ -304,7 +304,7 @@ describe Social::Gnip::TwitterFeed do
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
     
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable
@@ -336,7 +336,7 @@ describe Social::Gnip::TwitterFeed do
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
 
-    tweet = Social::Tweet.find_by_tweet_id(sample_dm[:id])
+    tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
     tweet.is_ticket?.should be_true
     ticket = tweet.tweetable

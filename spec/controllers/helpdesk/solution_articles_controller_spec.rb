@@ -129,6 +129,7 @@ describe Solution::ArticlesController do
                     :category_id => @test_category.id, 
                     :folder_id => @test_folder.id 
                   }
+    Resque.inline = false
     @test_article.reload
     @test_article.attachments.size.should eql 1                  
   end

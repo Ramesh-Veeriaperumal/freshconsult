@@ -2,7 +2,7 @@ class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
   before_filter :escape_html_entities_in_json  
-  before_filter :load_config, :only => [:new, :edit]
+  before_filter :load_config, :only => [:new, :edit, :clone_rule]
   before_filter :check_automation_feature
   attr_accessor :action_defs, :filter_defs, :op_types, :event_defs if Rails.env.test?
   def index
@@ -46,7 +46,13 @@ class Admin::AutomationsController < Admin::AdminController
       render :action => 'edit'
     end
   end
-  
+
+  def clone_rule
+    edit_data
+    @va_rule[:old_name] = @va_rule.name
+    @va_rule.name = "%s #{@va_rule.name}" % t('dispatch.copy_of')
+  end
+
   protected 
   
     def scoper

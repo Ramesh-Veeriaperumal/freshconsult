@@ -81,7 +81,7 @@ describe Support::Solutions::ArticlesController do
     log_in(@user)
     post :create_ticket, :id => @test_article1.id,
       :helpdesk_ticket=> {:subject=>"#{@test_article1.title}", 
-                          :email=>"feedback@supportarticle.com", 
+                          :email=> Faker::Internet.email, 
                           :ticket_body_attributes =>{:description=>""}}
     @acc.tickets.find_by_subject("#{@test_article1.title}").should  be_an_instance_of(Helpdesk::Ticket)
     response.code.should be_eql("200")

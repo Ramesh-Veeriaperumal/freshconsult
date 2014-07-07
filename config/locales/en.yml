@@ -936,6 +936,9 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
+      clone_rule:
+        title: Supervisor - Clone Rule
+        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -959,6 +962,9 @@ en:
         title: Observer - New Rule
       edit:
         title: Observer - Edit Rule
+      clone_rule:
+        title: Observer - Clone Rule
+        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -983,6 +989,7 @@ en:
     va_rules:
       index:
         human_name: Dispatch’r Rule
+      remember_to_save: 'After updating, please remember to save it.'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -1024,6 +1031,9 @@ en:
         human_name: Scenario
       edit:
         title: Edit Scenario
+      clone_rule:
+        title: Clone Scenario
+        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -1940,6 +1950,7 @@ en:
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
+  clone: Clone
   disable: Disable
   enable: Enable
   accounts:
@@ -2098,6 +2109,7 @@ en:
   dispatch:
     conditions: Conditions
     actions: Actions
+    clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
     cascade: all matching rules
@@ -2107,6 +2119,8 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
+    clone_of: This Dispatch'r is a clone of
+    copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
     rule_name: Rule Name
@@ -3632,7 +3646,7 @@ en:
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
-  scenario_label: Scenario Label
+  scenario_label: Scenario Name
   email: Email
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
@@ -3826,6 +3840,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
+        customer_responded_overdue: "Overdue"
       tabular_view:
         title: "Title"
         posted: "Posted"

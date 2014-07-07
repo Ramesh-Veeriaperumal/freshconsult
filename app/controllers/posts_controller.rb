@@ -49,11 +49,11 @@ class PostsController < ApplicationController
     if @topic.locked?
       respond_to do |format|
         format.html do
-          flash[:notice] = 'This topic is locked.'[:locked_topic]
+          flash[:notice] = 'This topic is locked.'
           redirect_to(category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id]))
         end
         format.xml do
-          render :text => 'This topic is locked.'[:locked_topic], :status => 400
+          render :text => 'This topic is locked.', :status => 400
         end
       end
       return
@@ -76,7 +76,7 @@ class PostsController < ApplicationController
       format.json { render :json => @post,:status=>:created}
     end
   rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'Please post a valid message...'[:post_something_message]
+    flash[:bad_reply] = 'Please post a valid message...'
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => 'reply-form', :page => params[:page] || '1')
@@ -100,7 +100,7 @@ class PostsController < ApplicationController
     @post.attributes = params[:post]
     @post.save
     rescue ActiveRecord::RecordInvalid
-      flash[:bad_reply] = 'An error occurred'[:error_occured_message]
+      flash[:bad_reply] = 'An error occurred'
     ensure
       respond_to do |format|
         format.html do

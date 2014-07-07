@@ -10,7 +10,7 @@ require 'resque_scheduler/server'
 
 Dir[File.join(Rails.root, 'app', 'jobs', '*.rb')].each { |file| require file }
 
-config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis.yml'))[Rails.env]
+config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 
 if config
 	Resque.redis = Redis.new(:host => config["host"], :port => config["port"])

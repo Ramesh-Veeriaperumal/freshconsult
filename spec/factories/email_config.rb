@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :email_config, :class => EmailConfig do |e|
     e.name Faker::Name.name
     e.primary_role false

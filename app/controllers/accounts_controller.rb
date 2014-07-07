@@ -66,7 +66,7 @@ class AccountsController < ApplicationController
   end
   
   def signup_google 
-    base_domain = AppConfig['base_domain'][RAILS_ENV]
+    base_domain = AppConfig['base_domain'][Rails.env]
     logger.debug "base domain is #{base_domain}"   
     return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
     #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
@@ -393,14 +393,14 @@ class AccountsController < ApplicationController
     end
 
     def get_account_for_sub_domain
-      base_domain = AppConfig['base_domain'][RAILS_ENV]    
+      base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
       @account =  Account.find_by_full_domain(@full_domain)    
     end
 
     def get_full_domain_for_google
-      base_domain = AppConfig['base_domain'][RAILS_ENV]    
+      base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
     end

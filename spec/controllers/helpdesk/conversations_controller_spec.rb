@@ -26,7 +26,7 @@ describe Helpdesk::ConversationsController do
                                         :bcc_emails => bcc_email,
                                         :private => "false",
                                         :source => "0",
-                                        :to_emails => "rachel@freshdesk.com",
+                                        :to_emails => Faker::Internet.email,
                                         :from_email => "support@#{@account.full_domain}"
                                       },
                    :ticket_status => "",
@@ -54,7 +54,7 @@ describe Helpdesk::ConversationsController do
                                         :bcc_emails => "",
                                         :private => "true",
                                         :source => "8",
-                                        :to_emails => "rachel@freshdesk.com",
+                                        :to_emails => Faker::Internet.email,
                                         :from_email => "support@#{@account.full_domain}"
                                       },
                    :ticket_status => "",

@@ -1,5 +1,5 @@
 # source :gemcutter
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
@@ -11,9 +11,18 @@ gem "json-compare", "0.1.8"
 gem "mysql2", "~> 0.2.7"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
+gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
+gem "will_paginate", "~> 2.3.16"
+gem "country_select", github: "stefanpenner/country_select", :tag => 'v1.1.2'
+gem "activemerchant", github: "Shopify/active_merchant", :tag => 'v1.7.0'
+gem "acts_as_list", "0.1.4"
+
+group :development do
+  gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :branch => "rails-2-3"
+end
 
 gem "mail"
-gem "i18n", "0.4.2"
+gem "i18n", "~> 0.6"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "2.1.6"
 gem "httparty", "0.10.0"
@@ -22,6 +31,7 @@ gem "omniauth-oauth"
 gem "tzinfo"
 
 gem 'debugger', "~> 1.6.8"
+
 gem 'test-unit', '1.2.3'
 
 gem "omniauth-oauth2", "1.0"
@@ -58,7 +68,6 @@ gem "riak-client", "1.4.2"
 gem "http_accept_language", "1.0.1"
 
 gem "riddle", "1.2.2"
-gem "delayed_job", "1.8.4"
 
 gem "jammit", "0.6.5"
 gem "uglifier", "~> 2.1.2"
@@ -164,6 +173,7 @@ group :test do
   gem "autotest-rails", "4.1.0"
   gem "faker", "~> 1.0.1"
   gem "simplecov", "~> 0.7.1"
+  gem "simplecov-csv"
   gem "database_cleaner"
 end
 

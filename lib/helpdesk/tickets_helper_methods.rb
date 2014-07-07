@@ -3,13 +3,33 @@ module Helpdesk::TicketsHelperMethods
   include Helpdesk::Ticketfields::TicketStatus  
   
   def subject_style(ticket,onhold_and_closed_statuses)
-    type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
-    type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now && ticket.active? 
+    cust_responded = customer_responded_to_ticket?(ticket)
+    overdue = ticket_overdue?(ticket,onhold_and_closed_statuses)
+    ticket_active = ticket.active?
+    type = "customer_responded" if cust_responded and ticket_active
+    type = "new" if new_ticket?(ticket,onhold_and_closed_statuses)
+    type = "elapsed" if ticket_elapsed?(ticket) and ticket_active
+    type = "overdue" if overdue and ticket_active
+    type = "customer_responded_overdue" if cust_responded and overdue and ticket_active
     type
   end
- 
+
+  def ticket_elapsed?(ticket)
+    ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now
+  end
+
+  def new_ticket?(ticket,onhold_and_closed_statuses)
+    ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
+  end
+
+  def customer_responded_to_ticket?(ticket)
+    ticket.ticket_states.customer_responded?
+  end
+
+  def ticket_overdue?(ticket,onhold_and_closed_statuses)
+    !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now 
+  end
+
   def sla_status(ticket,onhold_and_closed_statuses)
     if( ticket.active? )
       unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)

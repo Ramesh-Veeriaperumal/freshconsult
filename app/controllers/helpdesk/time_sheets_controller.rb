@@ -110,12 +110,14 @@ class Helpdesk::TimeSheetsController < ApplicationController
      respond_to_format @time_entry
   end
   
+  # possible dead code
   def time_sheets_for_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:id])
     @time_sheets = @ticket.time_sheets.group_by(&:group_by_day_criteria) || []
     render :partial => "helpdesk/time_sheets/time_sheets_for_ticket"
   end
   
+  # possible dead code
   def time_sheets_by_agents
      @ticket = current_account.tickets.find_by_display_id(params[:id])
      @items = @ticket.time_sheets.group_by(&:user) || [] 
@@ -141,6 +143,7 @@ private
     @nscname ||= controller_path.gsub('/', '_').singularize
   end 
      
+  # possible dead code
   def get_time_in_second time_hour
     s = time_hour.to_f * 60 * 60 
   end
@@ -165,6 +168,7 @@ private
     @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
   end
   
+  # possible dead code
   def total_time_spent time_sheets
     total_time_in_sec = time_sheets.collect{|t| t.time_spent}.sum
     hours = total_time_in_sec.div(60*60)
@@ -264,9 +268,8 @@ private
   end
 
   def create_permission
-    if(!privilege?(:edit_time_entries) &&
-      params[:time_entry][:user_id].to_i != current_user.id)
-      flash[:error] = t('flash.timesheet.create_error')
+    if(!privilege?(:edit_time_entries) && params[:time_entry][:user_id].to_i != current_user.id)
+      flash[:error] = t('flash.tickets.timesheet.create_error')
       respond_to do |format|
         format.js
       end
@@ -274,9 +277,8 @@ private
   end
 
   def timer_permission
-    if(!privilege?(:edit_time_entries) &&
-      @time_entry.user_id != current_user.id)
-      flash[:error] = t('flash.timesheet.create_error')
+    if(!privilege?(:edit_time_entries) && @time_entry.user_id != current_user.id)
+      flash[:error] = t('flash.tickets.timesheet.create_error')
       respond_to do |format|
         format.js
       end

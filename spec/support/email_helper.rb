@@ -45,9 +45,9 @@ module EmailHelper
 				attach["attachment#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/temp/tmp15.txt", 'text')
 				attachment_in["attachment#{i+1}"] = {:filename => "tmp15.txt", :name => "tmp15.txt", :type => 'text'}
 			else
-				file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')
+				file = Rack::Test::UploadedFile.new('spec/fixtures/files/attachment.txt', 'text/plain')
 				attach["attachment#{i+1}"] = file
-				attachment_in["attachment#{i+1}"] = {:filename => "image4kb.png", :name => "image4kb.png", :type => 'image/png'}
+				attachment_in["attachment#{i+1}"] = {:filename => "attachment.txt", :name => "attachment.txt", :type => 'text/plain'}
 			end
 		end
 		attach = con_ids(attach) if content_id

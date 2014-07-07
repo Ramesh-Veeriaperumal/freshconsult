@@ -16,8 +16,8 @@ module MapFields
                 self.class.read_inheritable_attribute(:map_fields_options)
               )
 
-    RAILS_DEFAULT_LOGGER.debug("session[:map_fields]: #{session[:map_fields]}")
-    RAILS_DEFAULT_LOGGER.debug("params[options[:file_field]]: #{params[options[:file_field]]}")
+    Rails.logger.debug("session[:map_fields]: #{session[:map_fields]}")
+    Rails.logger.debug("params[options[:file_field]]: #{params[options[:file_field]]}")
     if session[:map_fields].nil? || !params[options[:file_field]].blank?
       session[:map_fields] = {}
       if params[options[:file_field]].blank?
@@ -80,7 +80,7 @@ module MapFields
   end
 
   def content_of csv_file
-    csv_file.read.encode!('utf-8', :undef => :replace, :invalid => :replace, :replace => '')
+    csv_file.read.force_encoding('utf-8').encode('utf-16', :undef => :replace, :invalid => :replace, :replace => '').encode('utf-8')
   end
 
   def mapped_fields

@@ -1,4 +1,4 @@
-load RAILS_ROOT+'/app/models/user.rb'
+load "#{Rails.root}/app/models/user.rb"
 
 unless Account.current
   if Account.count == 0

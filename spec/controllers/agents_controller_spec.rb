@@ -78,6 +78,7 @@ describe AgentsController do
   it "should not create a new agent without a Agent role or existing email ID" do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
+    user = add_new_user(@account)
     test_name = Faker::Name.name
     post :create, { :agent => { :occasional => "false",
                                 :scoreboard_level_id => "1",
@@ -87,7 +88,7 @@ describe AgentsController do
                                 },
                     :user => { :helpdesk_agent => true,
                                 :name => test_name,
-                                :user_emails_attributes => {"0" => {:email => "rachel@freshdesk.com"}},
+                                :user_emails_attributes => {"0" => {:email => user.email}},
                                 :time_zone => "Chennai",
                                 :job_title =>"Support Agent",
                                 :phone => Faker::PhoneNumber.phone_number,
@@ -357,7 +358,7 @@ describe AgentsController do
                                         'image/png')},
                                     :helpdesk_agent => true,
                                     :name => "Spec test user",
-                                    :email => "testuser@spec.com",
+                                    :email => Faker::Internet.email,
                                     :time_zone => "Chennai",
                                     :job_title =>"Spec Agent",
                                     :phone => Faker::PhoneNumber.phone_number, 
@@ -430,15 +431,18 @@ describe AgentsController do
   end
 
   it "should invite multiple agents from getting_started page" do
-    put :create_multiple_items, :agents_invite_email => ["started@test.com", "invite_agents@spec.com"]
-    invited_user = @account.users.find_by_email("started@test.com")
+    invited_user_email = Faker::Internet.email
+    invited_user_email_1 = Faker::Internet.email
+    put :create_multiple_items, :agents_invite_email => [invited_user_email, invited_user_email_1]
+    invited_user = @account.users.find_by_email(invited_user_email)
     invited_user.should be_an_instance_of(User)
-    invited_user_1 = @account.users.find_by_email("invite_agents@spec.com")
+    invited_user_1 = @account.users.find_by_email(invited_user_email_1)
     invited_user_1.should be_an_instance_of(User)
   end
 
   it "should not invite multiple agents with existing email ID" do
-    put :create_multiple_items, :agents_invite_email => ["sample@freshdesk.com"]
+    user = add_test_agent(@account)
+    put :create_multiple_items, :agents_invite_email => [user.email]
     response.body.should =~ /Successfully sent/
   end
 

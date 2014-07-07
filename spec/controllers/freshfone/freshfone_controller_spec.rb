@@ -5,9 +5,11 @@ include FreshfoneSpecHelper
 describe FreshfoneController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
+  before(:all) do
+    @account.freshfone_calls.delete_all
+  end
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     @request.host = @account.full_domain
   end

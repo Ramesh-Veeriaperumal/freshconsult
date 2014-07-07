@@ -17,7 +17,7 @@ class Discussions::PostsController < ApplicationController
 		@post.attributes = params[:post]
 		@post.save!
 		rescue ActiveRecord::RecordInvalid
-			flash[:error] = 'An error occurred'[:error_occured_message]
+			flash[:error] = 'An error occurred'
 		ensure
 			respond_to do |format|
 				format.html { redirect_to :back }
@@ -82,7 +82,7 @@ class Discussions::PostsController < ApplicationController
 
 		unless (params[:post][:import_id].blank? || params[:email].blank?)
 			if @topic.locked?
-				render :text => 'This topic is locked.'[:locked_topic], :status => 400
+				render :text => 'This topic is locked.', :status => 400
 				return false
 			end
 		end
@@ -111,7 +111,7 @@ class Discussions::PostsController < ApplicationController
 	def invalid_message
 		respond_to do |format|
 			format.html do
-				flash[:error] = 'Please post a valid message...'[:post_something_message]
+				flash[:error] = 'Please post a valid message...'
 				redirect_to :back
 			end
 			format.xml { render :xml => @post.errors.to_xml, :status => 400 }
