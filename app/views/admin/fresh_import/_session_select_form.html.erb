@@ -1,0 +1,9 @@
+<div>
+  
+  <br><%= content_tag( :body, "Import a previous session into your freshdesk account") %><br>
+  <% form_for :select_session,
+     :url=>{:controller=>"admin/fresh_import", :action=>"import_freshdesk"} do |f| -%>
+  <%= f.select :name, options_for_select(@session_names) %><br>
+  <%= f.submit "Select session"%>
+  <% end %>
+</div>
