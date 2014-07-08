@@ -19,4 +19,17 @@ module ControllerHelper
     end
     add_test_agent(@account)
   end
+
+  def clear_email_config
+    unless @account.primary_email_config.to_email == "support@#{@account.full_domain}"
+      @account.email_configs.destroy_all
+      ec = @account.email_configs.build({:to_email => "support@#{@account.full_domain}", 
+                                    :reply_email => "support@#{@account.full_domain}", 
+                                    :active => true, 
+                                    :primary_role => true, 
+                                    :name => "Test Account"})
+      ec.save(false)
+      @account.reload
+    end
+  end
 end

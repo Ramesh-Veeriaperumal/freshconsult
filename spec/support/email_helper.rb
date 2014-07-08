@@ -41,8 +41,8 @@ module EmailHelper
 		number.times do |i|
 			if large
 				buffer = ("a" * 1024).freeze
-				file = File.open("spec/fixtures/files/temp/tmp15.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/temp/tmp15.txt", 'text')
+				file = File.open("spec/fixtures/files/tmp15.doc", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
+				attach["attachment#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/tmp15.doc", 'text')
 				attachment_in["attachment#{i+1}"] = {:filename => "tmp15.txt", :name => "tmp15.txt", :type => 'text'}
 			else
 				file = Rack::Test::UploadedFile.new('spec/fixtures/files/attachment.txt', 'text/plain')

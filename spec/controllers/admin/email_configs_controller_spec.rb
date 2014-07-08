@@ -13,8 +13,7 @@ describe Admin::EmailConfigsController do
   end
 
   after(:all) do
-    @account.email_configs.find_by_to_email("support@#{@account.full_domain}").update_attributes({:primary_role => true})
-    @account.reload
+    clear_email_config
   end
 
   # Creating new email configs with and without custom mailbox
