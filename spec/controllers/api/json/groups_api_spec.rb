@@ -11,13 +11,13 @@ describe GroupsController do
 	end
 
 	before(:each) do
-	    request.host = @account.full_domain
-	    http_login(@agent)
+		request.host = @account.full_domain
+		http_login(@agent)
 	end
 
 	after(:all) do
-        @test_group.destroy
-    end
+		@test_group.destroy
+	end
 
 	it "should go to the Groups index page" do
 		get :index, :format => 'json'
@@ -28,9 +28,10 @@ describe GroupsController do
 
 	it "should create a new Group" do
 		post :create, { :group => {:name => "Spec Testing Grp - json", :description => Faker::Lorem.paragraph, :business_calendar => 1,
-		                           :agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id},
-		                :format => 'json'
-		                }
+									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
+									},
+						:format => 'json'
+		}
 		Group.find_by_name("Spec Testing Grp - json").should_not be_nil
 	end
 
@@ -41,7 +42,7 @@ describe GroupsController do
 				:description => Faker::Lorem.paragraph, :business_calendar => 1,
 				:agent_list => "#{@agent.id} , #{@user_1.id}",
 				:ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:assign_time => "2500", :escalate_to => @agent.id
 			},
 			:format => 'json'
 		}
@@ -61,7 +62,7 @@ describe GroupsController do
 				:description => Faker::Lorem.paragraph, :business_calendar => 1,
 				:agent_list => "#{@user_1.id}",
 				:ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:assign_time => "2500", :escalate_to => @agent.id
 			},
 			:format => 'json'
 		}
@@ -72,10 +73,10 @@ describe GroupsController do
 		agent_list = [@user_1.id]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		(agent_list.sort == agents_in_group.sort).should be_true
-    end
+	end
 
-    it "should delete a Group" do
-    	group = Group.find_by_name("Spec Testing Grp - json")
+	it "should delete a Group" do
+		group = Group.find_by_name("Spec Testing Grp - json")
 		delete :destroy, :id => group.id, :format => 'json'
 		Group.find_by_id(group.id).should be_nil
 	end
