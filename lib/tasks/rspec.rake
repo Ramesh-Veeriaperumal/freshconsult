@@ -69,12 +69,12 @@ IntegrationTests = [
   "spec/controllers/integrations/jira_issue_controller_spec.rb",
   "spec/controllers/integrations/applications_controller_spec.rb",
   "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-  "spec/controllers/sso_controller_spec.rb"
-  "spec/controllers/authorizations_controller_spec.rb"
-  "spec/controllers/integrations/http_request_proxy_controller_spec.rb"
-  "spec/controllers/integrations/installed_applications_controller_spec.rb"
-  "spec/controllers/integrations/oauth_util_controller_spec.rb"
-  "spec/controllers/integrations/pivotal_tracker_controller_spec.rb"
+  "spec/controllers/sso_controller_spec.rb",
+  "spec/controllers/authorizations_controller_spec.rb",
+  "spec/controllers/integrations/http_request_proxy_controller_spec.rb",
+  "spec/controllers/integrations/installed_applications_controller_spec.rb",
+  "spec/controllers/integrations/oauth_util_controller_spec.rb",
+  "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
   "spec/controllers/integrations/user_credentials_controller_spec.rb"
 ]
 
@@ -127,8 +127,8 @@ BillingTests = [
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
 ]        
   
-UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, 
-              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests, GnipTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, GnipTests,
+              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
