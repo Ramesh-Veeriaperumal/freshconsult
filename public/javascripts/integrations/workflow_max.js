@@ -1,20 +1,25 @@
 var WorkflowMaxWidget = Class.create();
 WorkflowMaxWidget.prototype = {
-	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflowMaxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Client - Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflowMaxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+ jQuery('#workflowmax-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflowMaxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
+	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Client</label><select name="client-id" id="workflow-max-timeentry-client" onchange="workflowMaxWidget.clientChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-client-spinner"></div></div><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflowMaxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflowMaxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+ jQuery('#workflowmax-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflowMaxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
 	CREATE_TIMEENTRY_REQ:new Template('<Timesheet><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Minutes>#{hours}</Minutes></Timesheet>'),
+	CREATE_JOB:new Template('<div id="workflowmaxNewJob"><form id="workflow-max-jobentry-form" class="timesheet_form ui-form"><input type="hidden" name="selectedClient" value=#{client_id} id="selectedClient"><dl><dt class="jobName"><label>Job Name</label></dt><dd><input type="text" name="jobName" id="jobName"></dd><dt class="jobDesc"><label>Job Description</label></dt><dd><textarea name="jobDesc" id="jobDesc"></textarea></dd><dt></dt><dd pull-right><input type="button" id="workflow-max-jobentry-submit" value="Submit" onClick="workflowMaxWidget.logNewJob()";return false;" class="btn btn-mini btn-primary"> <input type="button" id="workflow-max-jobentry-cancel" value="Cancel" class="btn btn-mini" onClick="workflowMaxWidget.cancelNewJob()"; return false;"><dd></dl></form></div>'),
+	CREATE_JOBENTRY_REQ:new Template('<Job><Name>#{job_name}</Name><Description>#{job_desc}</Description><StartDate>#{start_date}</StartDate> <DueDate>#{due_date}</DueDate><ClientID>#{client_id}</ClientID></Job>'),
+	ASSIGN_STAFFENTRY_REQ:new Template('<Job><ID>#{job_id}</ID><add id="#{staff_id}"/></Job>'),
 
 	initialize:function(workflowMaxBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.jobData = ""; init_reqs = []; this.executed_date = new Date();
+		this.bundle_data = workflowMaxBundle;
 		workflowMaxBundle.workflowMaxNote = jQuery('#workflowmax-note').html();
 		this.auth_keys = "?apiKey="+workflowMaxBundle.k+"&accountKey="+workflowMaxBundle.a
+		
 		init_reqs = [null, {
 			accept_type: "application/xml",
 			method: "get", 
-			rest_url: "job.api/tasks"+this.auth_keys,
-			on_success: widgetInst.loadJobList.bind(this)
+			rest_url: "client.api/list"+this.auth_keys, 
+			on_success: widgetInst.loadClientList.bind(this) 
 		}]
 		if (workflowMaxBundle.remote_integratable_id)
 			init_reqs[0] = {
@@ -46,6 +51,26 @@ WorkflowMaxWidget.prototype = {
 			this.freshdeskWidget = new Freshdesk.Widget(workflowMaxOptions);
 		};
 		if(loadInline) this.convertToInlineWidget();
+		this.delegateAddTimeClick();
+	},
+
+	delegateAddTimeClick: function(){
+		jQuery(document).on('hidden.bs.modal', '#new_timeentry', function () {
+			if(jQuery('#workflowmaxNewJob').length){
+				widgetInst.cancelNewJob();
+			}
+		});
+	},
+
+	loadWorkflowmaxWidget: function(){
+		console.log("loadWorkflowmaxWidget")
+		this.freshdeskWidget.request({
+			entity_name: "request",
+			accept_type: "application/xml",
+			method: "get", 
+			rest_url: "client.api/list"+this.auth_keys,
+			on_success: widgetInst.loadClientList.bind(this),
+			on_failure: function(evt){} })
 	},
 
 	loadTimeEntry: function(resData) {
@@ -60,7 +85,7 @@ WorkflowMaxWidget.prototype = {
 		this.loadStaffList();
 	},
 
-	handleLoadJob:function(staff_id) {
+	/*handleLoadJob:function(staff_id) {
 		var searchTerm = this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Job", "ID"]) : null
 		filterBy = staff_id ? {"Staff,ID":staff_id} : null
 		if(this.isRespSuccessful(this.jobData)) {
@@ -70,11 +95,10 @@ WorkflowMaxWidget.prototype = {
 		UIUtil.hideLoading('workflow-max','jobs','-timeentry');
 		$("workflow-max-timeentry-jobs").enable();
 		this.jobChanged($("workflow-max-timeentry-jobs").value);
-	},
+	}, */
 
 	loadStaffList:function(){
-		searchTerm = this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Staff", "ID"]) : workflowMaxBundle.agentEmail
-
+		searchTerm = this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Staff", "ID"]) : workflowMaxBundle.agentEmail  
 		job_list = XmlUtil.extractEntities(this.jobData, "Job"); staffData=[];
 		for(var i=0;i<job_list.length;i++) {
 			job_node = job_list[i];
@@ -90,8 +114,8 @@ WorkflowMaxWidget.prototype = {
 					});
 			}
 		}
-		staffData = {"Staff": staffData}
 
+		staffData = {"Staff": staffData} 
 		UIUtil.constructDropDown(staffData, 'hash', "workflow-max-timeentry-staff", "Staff", "ID", ["Name"], null, searchTerm||"", false);
 		UIUtil.hideLoading('workflow-max','staff','-timeentry');
 		$("workflow-max-timeentry-staff").enable();
@@ -99,12 +123,41 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	jobChanged:function(job_id) {
-		selectedJobNode = this.get_job_node(this.jobData, job_id)
-		this.loadTaskList(selectedJobNode);
+		if(job_id == "newJob")
+		{
+			jQuery('#workflow_max-timeentry-enabled').attr('disabled','true')
+			jQuery('.integration_container').hide();
+			jQuery('#timeentry_apps_add').after(this.CREATE_JOB.evaluate({client_id: $("workflow-max-timeentry-client").value}));
+
+		} else if (job_id == "..") {
+			this.loadTaskEntry("");
+		}
+		else
+		{
+			//Taking tasklist with the job id
+			jQuery('#workflowmaxNewJob').hide();
+			this.freshdeskWidget.request({
+			entity_name: "request",
+			accept_type: "application/xml",
+			method: "get", 
+			rest_url: "job.api/get/"+job_id+this.auth_keys,
+			on_success: widgetInst.loadTaskEntry.bind(this),
+			on_failure: function(evt){} })
+		}
 	},
 
 	staffChanged:function(staff_id) {
-		this.handleLoadJob(staff_id);
+		jQuery('#workflow_max-timeentry-enabled').removeAttr("disabled")
+		jQuery('#workflow-max-timeentry-staff').addClass('header-spinner')
+
+		this.freshdeskWidget.request({
+		entity_name: "request",
+		accept_type: "application/xml",
+		method: "get", 
+		rest_url: "job.api/staff/"+staff_id+this.auth_keys,
+		on_success: widgetInst.loadJobEntry.bind(this),
+		on_failure: function(evt){} })
+
 	},
 
 	loadTaskList:function(resData) {
@@ -115,13 +168,7 @@ WorkflowMaxWidget.prototype = {
 		}
 		selectedTaskNode = UIUtil.constructDropDown(resData, 'xml', "workflow-max-timeentry-tasks", "Task", "ID", ["Name"], null, searchTerm||"", false);
 		UIUtil.hideLoading('workflow-max','tasks','-timeentry');
-
-		$("workflow-max-timeentry-tasks").enable();
-		$("workflow-max-timeentry-hours").enable();
-		$("workflow-max-timeentry-notes").enable();
-		$("workflow-max-timeentry-submit").enable();
-
-		jQuery(".workflow_max_timetracking_widget").removeClass('still_loading');
+		this.enableWfmVariables();
 	},
 
 	validateInput:function() {
@@ -132,6 +179,14 @@ WorkflowMaxWidget.prototype = {
 		}
 		if(!$("workflow-max-timeentry-jobs").value){
 			alert("Please select a job.");
+			return false;
+		}
+		if($("workflow-max-timeentry-jobs").value == "noJob"){
+			alert("Please select a job.");
+			return false;
+		}
+		if($("workflow-max-timeentry-tasks").value == "noTask"){
+			alert("No tasks available. Time entry will not be synced with Workflowmax");
 			return false;
 		}
 		if(!$("workflow-max-timeentry-tasks").value){
@@ -151,6 +206,8 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	createTimeEntry:function(resultCallback) {
+		if(jQuery('.integration_container').css('display') != "none")
+		{
 		if (workflowMaxWidget.validateInput()) {
 			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
 				staff_id: $("workflow-max-timeentry-staff").value,
@@ -160,6 +217,7 @@ WorkflowMaxWidget.prototype = {
 				hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
 				date: this.executed_date.toString("yyyyMMdd")
 			});
+
 			this.freshdeskWidget.request({
 				body: body,
 				content_type: "application/xml",
@@ -174,8 +232,9 @@ WorkflowMaxWidget.prototype = {
 					}
 				}.bind(this)
 			});
+			}
+			return false;
 		}
-		return false;
 	},
 
 	handleTimeEntrySuccess:function(resData) {
@@ -188,7 +247,7 @@ WorkflowMaxWidget.prototype = {
 			}
 		}
 	},
-
+	
 	// This method is for reusing same widget again and again in multiple time sheet entry forms.  So this will resets all the states of this form. 
 	resetIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, local_integratable_id, is_delete_request) {
 		workflowMaxBundle.integrated_resource_id = integrated_resource_id
@@ -284,7 +343,7 @@ WorkflowMaxWidget.prototype = {
 						}.bind(this)
 					});
 				}.bind(this)
-			});
+				});
 		}
 	},
 
@@ -421,6 +480,339 @@ WorkflowMaxWidget.prototype = {
 		m = (date.getMinutes()+add_mins)+""
 		return (h.length > 1 ? h : "0"+h)+":"+(m.length > 1 ? m : "0"+m)
 	}*/
+
+	
+	loadClientList:function(resData) {
+		this.clientData = resData.responseXML
+		this.loadClientDataList();
+	},
+
+	loadClientDataList:function() {
+		searchTerm = this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Contact","Email"]) : workflowMaxBundle.agentEmail
+		client_list = XmlUtil.extractEntities(this.clientData, "Client"); 
+		clientData=[];  //this will contain only the matching records
+		clientData_all=[]; //This will list all clients
+
+		for(var i=0;i<client_list.length;i++) 
+		{
+			client_node = client_list[i];
+			client_id = XmlUtil.getNodeValue(client_node, "ID");
+			client_name = XmlUtil.getNodeValue(client_node, "Name");
+			contact_list = XmlUtil.extractEntities(client_node, "Contact");
+			clientData_all.push({"ID":client_id,"Name":client_name});
+			for(var k=0;k<contact_list.length;k++)
+			{
+				contact_node = contact_list[k]
+				contact_email = XmlUtil.getNodeValue(contact_node, "Email");
+				if (workflowMaxBundle.agentEmail == contact_email){
+					clientData.push({"ID":client_id,"Name":client_name});
+				}
+			}
+		}
+	
+		if(clientData.length){
+			this.showClientDropDown({"Client": clientData }, searchTerm)
+		}
+		else if (clientData_all.length){
+			this.showClientDropDown({"Client": clientData_all }, searchTerm)
+		}
+		else 
+		{
+			jQuery('#workflow_max-timeentry-enabled').attr('disabled','true')
+			jQuery('.integration_container').hide()
+			jQuery('.workflow_max_timetracking_widget').after('<div class="alert error">No Clients available in workflowmax.</div>')
+			jQuery(".workflow_max_timetracking_widget").removeClass('still_loading');		
+		}
+			
+	},
+
+	showClientDropDown:function(clientData,searchTerm) {
+		UIUtil.constructDropDown(clientData, 'hash', "workflow-max-timeentry-client", "Client", "ID", ["Name"], null, searchTerm||"", false);
+		UIUtil.hideLoading('workflow-max','client','-timeentry');
+		$("workflow-max-timeentry-client").enable();
+		this.clientChanged($("workflow-max-timeentry-client").value);
+
+	},
+
+	clientChanged:function(client_id) {
+		this.loadStaffDetails(client_id);
+	},
+	
+	loadStaffDetails:function (client_id) {
+		var searchTerm =  this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Client", "ID"]) : client_id
+		filterBy = client_id ? {"Client ID":client_id} : null
+		
+		//Taking Stafflist with the client id
+		this.freshdeskWidget.request({
+		entity_name: "request",
+		accept_type: "application/xml",
+		method: "get", 
+		rest_url: "job.api/client/"+client_id+this.auth_keys,
+		on_success: widgetInst.loadStaffEntry.bind(this),
+		on_failure: function(evt){} })
+	},
+
+	removeDuplicates: function (array){
+	    var length = array.length;
+	    var ArrayWithUniqueValues = [];
+	    var objectCounter = {};
+	    for (i = 0; i < length; i++) {
+	        var currentMemboerOfArrayKey = JSON.stringify(array[i]);
+	        var currentMemboerOfArrayValue = array[i];
+	        if (objectCounter[currentMemboerOfArrayKey] === undefined){
+	            ArrayWithUniqueValues.push(currentMemboerOfArrayValue);
+	             objectCounter[currentMemboerOfArrayKey] = 1;
+	        }else{
+	            objectCounter[currentMemboerOfArrayKey]++;
+	        }
+	    }
+	    return ArrayWithUniqueValues;
+	},
+
+	loadStaffEntry:function(resData)
+	{
+		this.staffData = resData.responseXML
+		var searchTerm = null;
+		staffData=[]
+
+		staff_list = XmlUtil.extractEntities(this.staffData, "Staff"); staffData=[];
+
+		if(staff_list.length)
+		{
+			for(var i=0;i<staff_list.length;i++) 
+			{
+				staff_node = staff_list[i];
+				staff_id = XmlUtil.getNodeValue(staff_node, "ID");
+				staff_name = XmlUtil.getNodeValue(staff_node, "Name");
+				staffData.push({"ID":staff_id,"Name":staff_name});
+			}
+
+			//array = staffData;
+			finalStaffData = this.removeDuplicates(staffData)
+			staffData = {"Staff": finalStaffData}
+			UIUtil.constructDropDown(staffData, 'hash', "workflow-max-timeentry-staff", "Staff", "ID",  ["Name"], null, searchTerm||"", false);
+			UIUtil.sortDropdown("workflow-max-timeentry-staff");
+			UIUtil.hideLoading('workflow-max','staff','-timeentry');
+			$("workflow-max-timeentry-staff").enable();
+			this.staffChanged($("workflow-max-timeentry-staff").value);
+		}
+		else {
+			//listing all Staffs
+			this.freshdeskWidget.request({
+				entity_name: "request",
+				accept_type: "application/xml",
+				method: "get", 
+				rest_url: "staff.api/list"+this.auth_keys,
+				on_success: widgetInst.loadAllStaffData.bind(this),
+				on_failure: function(evt){} })
+			}
+	},
+
+	loadAllStaffData:function(resData){
+		this.staffsData = resData.responseXML
+		var searchTerm = null;
+
+		staff_list = XmlUtil.extractEntities(this.staffsData, "Staff"); staffsData=[];
+
+		if(staff_list.length)
+		{
+			for(var i=0;i<staff_list.length;i++) 
+			{
+				staff_node = staff_list[i];
+				staff_id = XmlUtil.getNodeValue(staff_node, "ID");
+				staff_name = XmlUtil.getNodeValue(staff_node, "Name");
+				//console.log ("staff_id " + staff_id + " - staff name " + staff_name);
+				staffsData.push({"ID":staff_id,"Name":staff_name});
+			}
+			staffsData = {"Staff": staffsData}
+			UIUtil.constructDropDown(staffsData, 'hash', "workflow-max-timeentry-staff", "Staff", "ID",  ["Name"], null, searchTerm||"", false);
+			UIUtil.sortDropdown("workflow-max-timeentry-staff");
+			UIUtil.hideLoading('workflow-max','staff','-timeentry');
+			$("workflow-max-timeentry-staff").enable();
+			this.staffChanged($("workflow-max-timeentry-staff").value);
+		} else {
+
+			jQuery('#workflow_max-timeentry-enabled').attr('disabled','true');
+			jQuery('.integration_container').hide();
+			jQuery('.workflow_max_timetracking_widget').after('<div class="alert error">No Staffs available in Workflowmax</div>')
+
+		}
+
+	},
+
+	loadJobEntry: function(resData){
+		jQuery('#workflow-max-timeentry-jobs').addClass('header-spinner')
+		this.jobData = resData.responseXML
+		var searchTerm = null;
+		job_list = XmlUtil.extractEntities(this.jobData, "Job"); jobData=[];
+		if(job_list.length)
+		{
+			for(var i=0;i<job_list.length;i++) 
+			{
+				job_node = job_list[i];
+				selected_client_list = XmlUtil.extractEntities(job_node, "Client");
+				selected_client_id = XmlUtil.getNodeValue(selected_client_list[0], "ID");
+				if(selected_client_id == $("workflow-max-timeentry-client").value)
+				{
+					job_id = XmlUtil.getNodeValue(job_node, "ID");
+					job_name = XmlUtil.getNodeValue(job_node, "Name");
+					jobData.push({"ID":job_id,"Name":job_name});
+				}
+			}
+		}
+	
+		jobData.push({"ID":"..","Name":"..."});
+		jobData.push({"ID": "newJob", "Name":"Create a new Job"});
+		jobData = {"Job": jobData}
+		UIUtil.constructDropDown(jobData, 'hash', "workflow-max-timeentry-jobs", "Job", "ID",  ["Name"], null, searchTerm||"", false);
+		//UIUtil.sortDropdown("workflow-max-timeentry-jobs");
+		UIUtil.hideLoading('workflow-max','jobs','-timeentry');
+		$("workflow-max-timeentry-jobs").enable();
+		this.jobChanged($("workflow-max-timeentry-jobs").value);
+	},
+
+	validateJobInput:function()
+	{
+		var jobName = $("jobName").value;
+		if(jobName == "..")
+		{
+			alert("Select a job");
+			return false;
+		}
+		return true;
+	},
+
+	loadTaskEntry: function(resData)  {
+		jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
+		this.taskData = resData.responseXML
+		var searchTerm = null;
+		taskData=[];
+		if(resData == "" || resData == null)
+		{
+			jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
+			taskData.push({"ID": "noTask", "Name":"No tasks available"});
+		}
+		else 
+		{
+			task_list = XmlUtil.extractEntities(this.taskData, "Task"); 
+
+			if(task_list.length)
+			{
+				for(var i=0;i<task_list.length;i++) 
+				{
+					task_node = task_list[i];
+					task_id = XmlUtil.getNodeValue(task_node, "ID");
+					task_name = XmlUtil.getNodeValue(task_node, "Name");
+					taskData.push({"ID":task_id,"Name":task_name});
+				}
+			}
+			else
+			{
+				jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
+				taskData.push({"ID": "noTask", "Name":"No tasks available"});
+			}
+		}
+		taskData = {"Task": taskData}
+		this.loadTaskComboBox(taskData,searchTerm);
+		
+	},
+
+	loadAllTasksData : function(resData) {
+		this.tasksData = resData.responseXML;
+		tasksData=[];
+		tasks_list = XmlUtil.extractEntities(this.tasksData, "Task"); 
+
+		if(tasks_list.length)
+			{
+				for(var i=0;i<tasks_list.length;i++) 
+				{
+					tasks_node = tasks_list[i];
+					task_id = XmlUtil.getNodeValue(tasks_node, "ID");
+					task_name = XmlUtil.getNodeValue(tasks_node, "Name");
+					console.log ("task_id " + task_id + " - task name " + task_name);
+					tasksData.push({"ID":task_id,"Name":task_name});
+				}
+				tasksData = {"Task": tasksData}
+				this.loadTaskComboBox(tasksData,null);
+			}
+	},
+
+
+	loadTaskComboBox :function(taskData,searchTerm) {
+		UIUtil.constructDropDown(taskData, 'hash', "workflow-max-timeentry-tasks", "Task", "ID",  ["Name"], null, searchTerm||"", false);
+		UIUtil.sortDropdown("workflow-max-timeentry-tasks");
+		UIUtil.hideLoading('workflow-max','tasks','-timeentry');
+		$("workflow-max-timeentry-tasks").enable();
+		this.enableWfmVariables();
+
+	},
+	enableWfmVariables:function () {
+		$("workflow-max-timeentry-hours").enable();
+		$("workflow-max-timeentry-notes").enable();
+		$("workflow-max-timeentry-submit").enable();
+		jQuery(".workflow_max_timetracking_widget").removeClass('still_loading');
+	},
+
+
+	logNewJob:function(){
+		var job_desc = $("jobDesc").value;
+
+		if (workflowMaxWidget.validateJobInput()) { 
+			var body = this.CREATE_JOBENTRY_REQ.evaluate({
+				client_id: $("selectedClient").value,
+				job_name: $("jobName").value,
+				job_desc: $("jobDesc").value,
+				start_date: this.executed_date.toString("yyyyMMdd"),
+				due_date: this.executed_date.toString("yyyyMMdd")
+			});
+			this.freshdeskWidget.request({
+					body: body,
+					content_type: "application/xml",
+					method: "post",
+					rest_url: "job.api/add"+this.auth_keys,
+					on_success: function(evt){
+						this.handleJobEntrySuccess(evt);
+						return false;
+					}.bind(this)
+				});
+		}
+	},	
+
+	cancelNewJob:function(){
+		jQuery('#workflowmaxNewJob').remove();
+  		jQuery('.integration_container').show();
+  		jQuery("#jobsuccessdiv").remove();
+  		jQuery('#workflow-max-timeentry-form').trigger("reset");
+  		jQuery('#workflow_max-timeentry-enabled').removeAttr("disabled")
+  		this.loadWorkflowmaxWidget();
+	},
+
+	handleJobEntrySuccess:function(resData) {
+		resXml = resData.responseText;
+		xmlDoc = jQuery.parseXML(resXml);
+		var node_value = xmlDoc.getElementsByTagName('Job')[0].childNodes[0];
+		console.log(node_value);
+		var newly_created_id = node_value.textContent;
+	
+		var body = this.ASSIGN_STAFFENTRY_REQ.evaluate({
+				job_id: newly_created_id,
+				staff_id: $("workflow-max-timeentry-staff").value
+			});
+			this.freshdeskWidget.request({
+					body: body,
+					content_type: "application/xml",
+					method: "put",
+					rest_url: "job.api/assign"+this.auth_keys,
+
+					on_success: function(evt){
+						window.setTimeout(function() {
+							jQuery('.workflow_max_timetracking_widget').after('<div id="jobsuccessdiv" class="alert sucess">Job added successfully</div>');
+				  			widgetInst.cancelNewJob();
+				         }, 2000);
+						//this.staffChanged($("workflow-max-timeentry-staff").value);
+					}.bind(this)
+				});
+	},
 }
 
 workflowMaxWidget = new WorkflowMaxWidget(workflowMaxBundle, workflow_maxinline);
