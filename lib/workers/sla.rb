@@ -107,7 +107,8 @@ end
                             :joins => "inner join helpdesk_ticket_states 
                             on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                             and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
-                            inner join groups on groups.id = helpdesk_tickets.group_id" ,
+                            inner join groups on groups.id = helpdesk_tickets.group_id and 
+                            groups.account_id =  helpdesk_tickets.account_id" ,
                           :readonly => false , 
                            :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND 
                             group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', 
