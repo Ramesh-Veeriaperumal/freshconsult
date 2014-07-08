@@ -46,6 +46,15 @@ describe Social::TwitterHandle do
     end
   end
   
+   
+  it "should requeue to gnip on calling on a encountering an error in gnip add or delete" do
+    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
+    error_response = Net::HTTPResponse.new("http",401,"")
+    GnipRule::Client.any_instance.stubs(:add).returns(error_response, add_response) unless GNIP_ENABLED   
+    handle = create_test_twitter_handle(@account)
+  end
+
+  
   it "should create ticket rule for the dm stream if 'capture_dm_as_ticket' is selected " do
     @handle.update_attributes(:capture_dm_as_ticket => true)
     @handle.update_ticket_rules

@@ -71,7 +71,8 @@
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
 				freshfoneendcall.showEndCallForm();
 			} else {
-				
+				freshfonecalls.init();
+				freshfoneuser.init();
 			}
 			freshfonecalls.lastAction = null;
 			freshfonewidget.hideTransfer();

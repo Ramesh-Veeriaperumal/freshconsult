@@ -22,8 +22,8 @@ describe PasswordResetsController do
 	it "should create new password" do
 		post :create, :email => @test_email
 		response.session[:flash][:notice].should eql "Instructions to reset your password have been emailed to you. Please check your email."
-        response.body.should =~ /redirected/
-        Delayed::Job.last.handler.should include("A request to change your password has been made.")
+		response.body.should =~ /redirected/
+		Delayed::Job.last.handler.should include("A request to change your password has been made.")
 	end
 
 	it "should create new password" do

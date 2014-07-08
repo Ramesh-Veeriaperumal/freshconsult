@@ -22,7 +22,7 @@ class Wf::TestCase
     success = []
     @filter_test_cases.each do |test_case|
       name = test_case[:name]
-      params = PARAMS.merge(:data_hash => [test_case].to_json)
+      params = PARAMS.merge(:filter_name => Faker::Name.name, :data_hash => [test_case].to_json)
       tickets = @account.tickets.filter(:filter => 'Helpdesk::Filters::CustomTicketFilter', 
                                         :params => params)
 

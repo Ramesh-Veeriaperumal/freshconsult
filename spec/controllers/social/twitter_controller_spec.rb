@@ -7,7 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::TwitterController do
-  
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -531,6 +531,7 @@ describe Social::TwitterController do
   end
   
   it "should retrieve all user info on clicking on the user link" do
+    Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user((Time.now.utc.to_f*100000).to_i)])
     get :user_info, {
         :user => {
           :name => "GnipTesting", 
