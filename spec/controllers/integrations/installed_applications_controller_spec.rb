@@ -29,17 +29,14 @@ describe Integrations::InstalledApplicationsController do
     @account.installed_applications.find_by_application_id(application_id).should_not be_nil
 
 
-    contacts_application_id = @installaling_applications.find_by_name("google_contacts").id
-    #p "contacts_application_id"
-    #p contacts_application_id
+    contacts_application_id = @installaling_applications.find_by_name("capsule_crm").id
 
     put :install, {
       :id => contacts_application_id
     }
 
     @account.installed_applications.find_by_application_id(contacts_application_id).should_not be_nil
-    response.should redirect_to 'auth/google?origin=install'
-    response.should have_text("Choose an account")
+    response.should redirect_to 'http://localhost.freshpo.com/integrations/applications'
   end
 
 

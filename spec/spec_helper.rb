@@ -108,6 +108,7 @@ Spork.prefork do
     config.include ProductsHelper
     config.include WfFilterHelper, :type => :controller
     config.include S3Helper
+    config.include IntegrationsHelper
 
     config.before(:all) do
       @account = create_test_account

@@ -60,21 +60,20 @@ defaults: &defaults
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
+ google_oauth2:
+  consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
+  consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
+  api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
+  options:
+    prompt: none
+    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+    name: google_login
 
 test:
  <<: *defaults
 
 slave:
  <<: *defaults
-
-
-defaults: &defaults
- salesforce:
-  consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
-  consumer_secret: 7977697105566556112
- google:
-  consumer_token: 663183371165.apps.googleusercontent.com
-  consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
 
 test:
  <<: *defaults

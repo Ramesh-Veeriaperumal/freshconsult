@@ -39,5 +39,15 @@ if Rails.env.test?
     t.application_id 1
     t.options HashWithIndifferentAccess.new({:display_in_pages => [:helpdesk_tickets_show_page_side_bar]})
   end
+
+  Factory.define :integration_user_credential, :class => Integrations::UserCredential do |t|
+    t.installed_application_id 1
+    t.user_id 1
+    t.auth_info HashWithIndifferentAccess.new({ :refresh_token => "1/tpO82YgF2AsCnQup7SCYN1hOlk6RBHL4iyaX-oaBkRw", 
+                      :oauth_token => "ya29.LgA1EMj53KSvWhoAAABtT8Nt-ZdsGJXa7bfxXn7pVkzOsLnFW9eFQCIArfLfjg", 
+                      :email => "sathish@freshdesk.com"})
+    t.account_id 1
+  end
+
   
 end
