@@ -46,6 +46,18 @@ module APIHelper
   
   CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
 
-  FORUM_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
+  FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
+
+  FORUM_ATTRIBS = ["description", "description_html", "forum_category_id", "forum_type", "forum_visibility", "id", "name", "position", "posts_count", "topics_count"]
+
+  TOPIC_ATTRIBS = ["account_id", "created_at", "delta", "forum_id", "hits", "id", "import_id", "last_post_id", "locked", "posts_count", "published", "replied_at", "replied_by", "stamp_type", "sticky", "title", "updated_at", "user_id", "user_votes"]
+
+  POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id"] 
+
+  SOLUTION_CATEGORY_ATTRIBS = ["created_at", "description", "id", "is_default", "name", "position", "updated_at"] 
+
+  SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "name", "position", "updated_at", "visibility"]
+
+  SOLUTION_ARTICLE_ATTRIBS = ["art_type", "created_at", "delta", "desc_un_html", "description", "folder_id", "id", "position", "seo_data", "status", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
 
 end
