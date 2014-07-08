@@ -1,6 +1,6 @@
 if Rails.env.test?
   Factory.define :facebook_pages, :class => Social::FacebookPage do |f|
-    f.page_id {(Time.now.utc.to_f*100000).to_i}
+    f.sequence(:page_id) { |n| n }
     f.profile_id 123456
     f.page_token "123456"
     f.access_token "123456"
@@ -12,10 +12,11 @@ if Rails.env.test?
   end
 
   Factory.define :facebook_mapping, :class => Social::FacebookPageMapping do |f|
-    f.facebook_page_id "532218423476440"
+    f.sequence(:facebook_page_id) { |n| n }
   end
 
   Factory.define :twitter_handle, :class => Social::TwitterHandle do |t|
+    t.sequence(:twitter_user_id) { |n| n }
     t.screen_name "TestingGnip"
     t.capture_dm_as_ticket true
     t.capture_mention_as_ticket false

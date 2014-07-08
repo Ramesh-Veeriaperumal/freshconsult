@@ -55,6 +55,10 @@ module FacebookHelper
         "name" => "Helloworld", 
         "id" => page_id
       }, 
+      "type" => "photo",
+      "picture" => "https://m.ak.fbcdn.net/sphotos-g.ak/hphotos-ak-xfa1/t1.0-9/p130x130/10492286_721289617907155_8502196072433838871_n.png",
+      "link" => "https://www.facebook.com/617864998249618/photos/a.632203713482413.1073741826.617864998249618/721289617907155/?type=1&relevant_count=1", 
+      "icon" => "https://m-static.ak.fbcdn.net/rsrc.php/v2/yz/r/StEh3RhPvjk.gif",
       "message" => "facebook post", 
       "privacy" => {
         "value" => ""
@@ -193,6 +197,19 @@ module FacebookHelper
           ]
         }
       }
+    ]
+  end
+  
+  def sample_fql_comment(post_id, comment_id)
+    [
+        {
+          "id" => "#{comment_id}", 
+          "post_fbid" => "#{post_id}.split('_').last", 
+          "post_id" => "#{post_id}", 
+          "text" => "COMMENT FQL TEXT", 
+          "time" => 1402580105, 
+          "fromid" => "617864998249618"
+        }
     ]
   end
   
