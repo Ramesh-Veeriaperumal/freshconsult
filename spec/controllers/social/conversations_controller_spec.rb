@@ -106,7 +106,7 @@ describe Helpdesk::ConversationsController do
           :created_at => "#{Time.zone.now}"
         }
         sample_dm_reply = Twitter::DirectMessage.new(dm_reply_params)
-        Twitter::REST::Client.any_instance.stubs(:direct_message_create).returns(sample_dm_reply)
+        Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
         post :twitter, { :helpdesk_note => {
                             :private => false, 
                             :source => 5, 
