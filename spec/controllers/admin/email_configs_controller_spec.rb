@@ -14,6 +14,7 @@ describe Admin::EmailConfigsController do
 
   after(:all) do
     clear_email_config
+    restore_default_feature("reply_to_based_tickets")
   end
 
   # Creating new email configs with and without custom mailbox
@@ -406,6 +407,11 @@ describe Admin::EmailConfigsController do
 
   it "should get already registered email" do
     email_config = @account.email_configs.first
+    if email_config.activator_token.nil?
+      email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config..reply_email + Time.now.to_f.to_s).downcase
+      email_config.save(false)
+      email_config.reload
+    end
     get :register_email, :activation_code => email_config.activator_token
     email_config.reload
     email_config.active.should eql true

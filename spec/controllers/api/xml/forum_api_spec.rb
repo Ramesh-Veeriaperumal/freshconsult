@@ -19,7 +19,7 @@ describe ForumsController do
     params.merge!(:category_id => @category.id)
     post :create, params.merge!(:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "201 Created") && (compare(result["forum"].keys,APIHelper::FORUM_ATTRIBS,{}).empty?)
+    expected = (response.status === "200 OK") && (compare(result["forum"].keys,APIHelper::FORUM_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a forum" do
