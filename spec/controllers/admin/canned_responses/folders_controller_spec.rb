@@ -8,7 +8,7 @@ describe Admin::CannedResponses::FoldersController do
 	before(:all) do
 		@cr_folder_1 = create_cr_folder({:name => "CR Folder"})
 		@cr_folder_2 = create_cr_folder({:name => "Additional CR Folder"})
-		@folder = Admin::CannedResponses::Folder.find_by_is_default(true)
+		@folder = @account.canned_response_folders.find_by_is_default(true)
 	end
 
 	before(:each) do
@@ -26,13 +26,13 @@ describe Admin::CannedResponses::FoldersController do
 		get :new
 		response.should_not be_nil
 		post :create, { :admin_canned_responses_folder => {:name => "New CR Folder #{@now}"} }
-		folder = Admin::CannedResponses::Folder.find_by_name("New CR Folder #{@now}")
+		folder = @account.canned_response_folders.find_by_name("New CR Folder #{@now}")
 		folder.should_not be_nil
 	end
 
 	it "should not create a new folder with less than 3 characters" do
 		post :create, { :admin_canned_responses_folder => {:name => "cr"} }
-		folder = Admin::CannedResponses::Folder.find_by_name("cr")
+		folder = @account.canned_response_folders.find_by_name("cr")
 		folder.should be_nil
 	end
 
@@ -42,7 +42,7 @@ describe Admin::CannedResponses::FoldersController do
 		put :update, { :id => @cr_folder_1.id,
 			:admin_canned_responses_folder => { :name => "Updated CR Folder #{@now}" }
 		}
-		folder = Admin::CannedResponses::Folder.find_by_name("Updated CR Folder #{@now}")
+		folder = @account.canned_response_folders.find_by_name("Updated CR Folder #{@now}")
 		folder.should_not be_nil
 	end
 
@@ -50,7 +50,7 @@ describe Admin::CannedResponses::FoldersController do
 		put :update, { :id => @cr_folder_1.id,
 			:admin_canned_responses_folder => { :name => "CR" }
 		}
-		folder = Admin::CannedResponses::Folder.find_by_id(@cr_folder_1.id)
+		folder = @account.canned_response_folders.find_by_id(@cr_folder_1.id)
 		folder.name.should_not eql "CR"
 	end
 
@@ -61,7 +61,7 @@ describe Admin::CannedResponses::FoldersController do
 
 	it "should delete a folder" do
 		delete :destroy, :id => @cr_folder_1.id
-		folder = Admin::CannedResponses::Folder.find_by_id(@cr_folder_1.id)
+		folder = @account.canned_response_folders.find_by_id(@cr_folder_1.id)
 		folder.should be_nil
 	end
 
@@ -71,7 +71,7 @@ describe Admin::CannedResponses::FoldersController do
 				:admin_canned_responses_folder => { :name => "Updated General #{@now}" }
 			}
 		rescue Exception => e
-			folder = Admin::CannedResponses::Folder.find_by_id(@folder.id)
+			folder = @account.canned_response_folders.find_by_id(@folder.id)
 			folder.name.should_not eql "Updated General #{@now}"
 		end
 	end
@@ -80,7 +80,7 @@ describe Admin::CannedResponses::FoldersController do
 		begin
 			delete :destroy, :id => @folder.id
 		rescue Exception => e
-			folder = Admin::CannedResponses::Folder.find_by_id(@folder.id)
+			folder = @account.canned_response_folders.find_by_id(@folder.id)
 			folder.should_not be_nil
 		end
 	end

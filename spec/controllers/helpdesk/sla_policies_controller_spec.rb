@@ -37,14 +37,15 @@ describe Helpdesk::SlaPoliciesController do
                         :SlaDetails => sla_details
         }
         response.session[:flash][:notice].should eql "The SLA Policy has been created."
-        sla_policy = Helpdesk::SlaPolicy.find_by_name("Sla Policy - Test Spec")
+        sla_policy = @account.sla_policies.find_by_name("Sla Policy - Test Spec")
         sla_policy.should_not be_nil
         sla_policy.conditions[:ticket_type].should eql ["Question"]
         sla_policy.escalations[:response]["1"][:agents_id].should eql [@agent.id]
         sla_policy.escalations[:resolution]["2"][:time].should eql(1800)
-        sla_details = Helpdesk::SlaDetail.find(:first,:conditions => [ "sla_policy_id = ? and priority = ?", sla_policy.id, 3 ])
+        sla_Detail = @account.sla_policies.find(sla_policy.id).sla_details
+        sla_details = sla_Detail.find(:first,:conditions => [ "priority = ?", 3 ])
         sla_details.resolution_time.should eql(7200)
-        sla_details = Helpdesk::SlaDetail.find(:first,:conditions => [ "sla_policy_id = ? and priority = ?", sla_policy.id, 1 ])
+        sla_details = sla_Detail.find(:first,:conditions => [ "priority = ?", 1 ])
         sla_details.response_time.should eql(2592000)
     end
 
@@ -75,7 +76,7 @@ describe Helpdesk::SlaPoliciesController do
         @sla_policy_1.conditions[:company_id].should be_nil
         @sla_policy_1.escalations[:resolution]["1"][:agents_id].should eql [@agent_2.id]
         @sla_policy_1.escalations[:resolution]["2"][:agents_id].should eql [@agent_1.id]
-        sla_details = Helpdesk::SlaDetail.find_by_id(ids[1])
+        sla_details = @account.sla_policies.find(@sla_policy_1.id).sla_details.find(ids[1])
         sla_details.resolution_time.should eql(7200)
     end
 
@@ -110,7 +111,7 @@ describe Helpdesk::SlaPoliciesController do
     end
 
     it "should not deactivate the Default Sla Policy" do
-        default_sla_policy = Helpdesk::SlaPolicy.find_by_is_default(1)
+        default_sla_policy = @account.sla_policies.find_by_is_default(1)
         put :activate, :helpdesk_sla_policy => {:active => "false"}, :id => default_sla_policy.id
         default_sla_policy.reload
         response.session[:flash][:notice].should eql "The SLA Policy could not be activated"
@@ -118,8 +119,8 @@ describe Helpdesk::SlaPoliciesController do
     end
 
     it "should reorder the Sla_policies" do
-        sla_policy_3 = Helpdesk::SlaPolicy.find_by_name("Sla Policy - Test Spec")
-        default = Helpdesk::SlaPolicy.find_by_is_default(1)
+        sla_policy_3 = @account.sla_policies.find_by_name("Sla Policy - Test Spec")
+        default = @account.sla_policies.find_by_is_default(1)
         reorder_list = {
             "#{default.id}" => 1,
             "#{@sla_policy_1.id}" => 4,
@@ -136,9 +137,9 @@ describe Helpdesk::SlaPoliciesController do
     end
 
     it "should delete a Sla Policy" do
-        sla_policy = Helpdesk::SlaPolicy.find_by_name("Sla Policy - Test Spec")
+        sla_policy = @account.sla_policies.find_by_name("Sla Policy - Test Spec")
         delete :destroy, :id => sla_policy.id
-        sla_policy = Helpdesk::SlaPolicy.find_by_id(sla_policy.id)
+        sla_policy = @account.sla_policies.find_by_id(sla_policy.id)
         sla_policy.should be_nil
     end
 end

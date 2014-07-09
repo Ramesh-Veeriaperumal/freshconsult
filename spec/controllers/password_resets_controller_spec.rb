@@ -46,7 +46,7 @@ describe PasswordResetsController do
 	end
 
 	it "should edit existing password" do
-		user = User.find_by_email(@test_email)
+		user = @account.users.find_by_email(@test_email)
 		token = user.perishable_token
 		get :edit, :id => token
 		response.body.should =~ /Change My Password/
@@ -60,7 +60,7 @@ describe PasswordResetsController do
 	end
 
 	it "should update existing password" do
-		user = User.find_by_email(@test_email)
+		user = @account.users.find_by_email(@test_email)
 		token = user.perishable_token
 		put :update, :id => token, :user =>{:password =>"[FILTERED]"}
 		response.session[:flash][:notice].should eql "Password successfully updated"

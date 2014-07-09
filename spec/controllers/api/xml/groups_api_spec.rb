@@ -32,7 +32,7 @@ describe GroupsController do
 									},
 						:format => 'xml'
 		}
-		Group.find_by_name("Spec Testing Grp - xml").should_not be_nil
+		@account.groups.find_by_name("Spec Testing Grp - xml").should_not be_nil
 	end
 
 	it "should update the group" do
@@ -76,8 +76,8 @@ describe GroupsController do
 	end
 
 	it "should delete a Group" do
-		group = Group.find_by_name("Spec Testing Grp - xml")
+		group = @account.groups.find_by_name("Spec Testing Grp - xml")
 		delete :destroy, :id => group.id, :format => 'xml'
-		Group.find_by_id(group.id).should be_nil
+		@account.groups.find_by_id(group.id).should be_nil
 	end
 end

@@ -40,7 +40,7 @@ describe Admin::ProductsController do
                                               :portal_name=> "Fresh Portal", 
                                               :portal_url=> portal_url})
     response.session[:flash][:notice].should eql "The product has been created."
-    new_product = Product.find_by_name("Fresh Product")
+    new_product = @account.products.find_by_name("Fresh Product")
     new_product.should_not be_nil
     new_product.portal.should_not be_nil
     new_product.email_configs.should_not be_nil
@@ -54,7 +54,7 @@ describe Admin::ProductsController do
   it "should not create Product without reply_email" do
     post :create, { :product => product_params({:name =>"Fresh Org",:enable_portal=>"0"})
     }
-    new_product = Product.find_by_name("Fresh Org")
+    new_product = @account.products.find_by_name("Fresh Org")
     new_product.should be_nil
     response.body.should =~ /New Product/
     response.should be_success
@@ -179,21 +179,21 @@ describe Admin::ProductsController do
     @test_product.portal.portal_url.should eql portal_url
     @test_product.portal.preferences[:header_color].should eql "#009999"
     @test_product.portal.preferences[:bg_color].should eql "#FFCCFF"
-    logo_icon = Helpdesk::Attachment.find(:all,:conditions=>["attachable_id = ? and attachable_type = ?", "#{@test_product.portal.id}", "Portal"])
+    logo_icon = @account.attachments.find(:all,:conditions=>["attachable_id = ? and attachable_type = ?", "#{@test_product.portal.id}", "Portal"])
     logo_icon.should_not be_nil
     response.body.should =~ /redirected/
   end
 
   it "should delete_logo of the product" do
     delete :delete_logo, :id => @test_product.portal.id
-    logo = Helpdesk::Attachment.first(:conditions=>["attachable_id = ? and attachable_type = ? and description = ?", 
+    logo = @account.attachments.first(:conditions=>["attachable_id = ? and attachable_type = ? and description = ?", 
                                                            "#{@test_product.portal.id}", "Portal", "logo"])
     logo.should be_nil
   end
 
   it "should delete_favicon of the product" do
     delete :delete_favicon, :id => @test_product.portal.id
-    fav_icon = Helpdesk::Attachment.first(:conditions=>["attachable_id = ? and attachable_type = ? and description = ?", 
+    fav_icon = @account.attachments.first(:conditions=>["attachable_id = ? and attachable_type = ? and description = ?", 
                                                            "#{@test_product.portal.id}", "Portal", "fav_icon"])
     fav_icon.should be_nil
   end
