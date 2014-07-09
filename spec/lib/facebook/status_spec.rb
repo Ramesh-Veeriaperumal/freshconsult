@@ -74,7 +74,7 @@ describe Facebook::Core::Status do
     
     AwsWrapper::Sqs.any_instance.expects(:requeue).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse   
-    Social::FacebookPage.first.last_error.should_not be_nil
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).last_error.should_not be_nil
   end
   
   
@@ -87,8 +87,8 @@ describe Facebook::Core::Status do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    Social::FacebookPage.first.reauth_required.should be_true
-    Social::FacebookPage.first.enable_page.should be_false
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be_true
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be_false
   end
   
   it "should not create a ticket when a post arrives and import company post is not enabled" do
