@@ -588,7 +588,7 @@ cs:
   contact_name: "Jméno pracovníka"
   import_step2_info: "Namapovat pole CSV souboru s poli databáze a importovat"
   eight: "8 hodin"
-  feedbackwidget_defaulttitle: "Pomoc &amp;amp; Podpora"
+  feedbackwidget_defaulttitle: "Pomoc &amp; Podpora"
   security_code: "Bezpečnostní kód"
   two: "2 hodiny"
   example: příklad
@@ -3477,9 +3477,9 @@ cs:
     reset_all_confirm_message: "Tato akce vyresetuje všechna vaše uživatelská nastavení na implicitní hodnoty. Jste si jisti, že chcete pokračovat?"
     publish_changes: "Uložit a publikovat"
     title: "Přizpůsobení portálu \"%{portal}\""
-    color_and_font_header: "Barva &amp;amp; písmo"
+    color_and_font_header: "Barva &amp; písmo"
     css_header: Stylesheet
-    layout_and_pages_header: "Rozvržení &amp;amp; stránky"
+    layout_and_pages_header: "Rozvržení &amp; stránky"
     editing: Úpravy
     reset_to_last_published: "Resetovat stránku do poslední publikované podoby"
     preview: "Náhled portálu"
@@ -4321,7 +4321,7 @@ cs:
   delete: Smazat
   message: Zpráva
   edit_forum_category: "Upravit kategorii fóra"
-  agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené &amp;amp; Čekající)"
+  agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené &amp; Čekající)"
   send_email_to_requester: "Poslat e-mail žadateli"
   feedbackwidget_btcustomize: "Přizpůsobení tlačítka"
   chatwidget_agentsonline: "Když je zástupce online"
