@@ -64,7 +64,7 @@ module ApplicationHelper
   end
 
   def logo_url(portal = current_portal)
-    MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
+    MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
         portal.logo.nil? ? "/images/logo.png?721013" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
@@ -72,7 +72,7 @@ module ApplicationHelper
   end
 
   def fav_icon_url(portal = current_portal)
-    MemcacheKeys.fetch(["v6","portal","fav_ico",portal]) do
+    MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
       portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
