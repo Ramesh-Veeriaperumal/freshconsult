@@ -21,7 +21,8 @@ FacebookTests = [
   "spec/lib/facebook/post_spec.rb",
   "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
-  "spec/lib/facebook/status_spec.rb"
+  "spec/lib/facebook/status_spec.rb",
+  "spec/controllers/social/facebook_pages_controller_spec.rb"
 ]
 
 GnipTests = [
