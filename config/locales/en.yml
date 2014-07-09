@@ -1637,6 +1637,7 @@ en:
       to_agent: The contact has been successfully converted to an Agent
       create:
         success: The contact has been created successfully.
+        view_contact: View Contact
       cancel: cancel
       info_select: Please select at least 1 user.
       unspamed: The contact(s) has been successfully marked as Unspam.
