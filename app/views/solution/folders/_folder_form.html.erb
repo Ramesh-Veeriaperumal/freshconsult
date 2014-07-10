@@ -16,15 +16,12 @@
     	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
     	<div class="controls">
     		<div class="row-fluid">
-	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
-	    
-	    	<% f.fields_for :customer_folders_attributes do |cust| %>
+		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
 	    	</div>
 	    	<div id="company_folders" class="row-fluid">
-  				<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @folder.customer_folders.map(&:customer_id)}, { :multiple => true, :class => "select2 span8" , "data-placeholder" => 'Select company'}) %>
+  				<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
   			</div>
 	  	</div>
-      <%end%> 
     </li>
 	</ul>	
     <% javascript_tag do %>  
@@ -41,8 +38,8 @@
 				}
 				else
 				{
-				  jQuery('#customer_id').val("");
-				  jQuery("#customer_id").trigger("liszt:updated");
+				  jQuery('#customers_filter').val("");
+				  jQuery("#customers_filter").trigger("liszt:updated");
 				  jQuery('#company_folders').hide();
 
 				}

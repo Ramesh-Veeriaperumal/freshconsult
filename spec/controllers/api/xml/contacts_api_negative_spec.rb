@@ -15,7 +15,7 @@ describe ContactsController do
   	contact_name = Faker::Lorem.sentence(3)
   	post :create, {:user => {:name => contact_name },:format => 'xml'}, :content_type => 'application/xml'
     # val = error_message(response) && error_status?(response.status)
-    puts "#{response.body} :: #{response.status} "
+    #puts "#{response.body} :: #{response.status} "
 
   	error_status?(response.status).should be_true
   end
@@ -34,7 +34,7 @@ describe ContactsController do
     contact = add_new_user(@account,{})
     check_name  = contact.name
     get :index, {:query=>"name is #{check_name}", :state=>:all, :format => 'xml'}
-    puts "#{response.body} :: #{response.status}"
+    #puts "#{response.body} :: #{response.status}"
     val = query_error(response)
     val.should be_true
   end
@@ -46,7 +46,7 @@ describe ContactsController do
 
    def error_message(message)
     result = parse_xml(message)
-    puts "#{result['errors']['error']}"
+    #puts "#{result['errors']['error']}"
     ["Email has already been taken","Email is invalid"].include?(result["errors"]["error"])
    end
 
@@ -54,7 +54,7 @@ describe ContactsController do
     result = parse_xml(message)
     # need to change this when we set this error msg under "error" root node
     # in the api impl.
-    puts "#{result["users"]["error"]}"
+    #puts "#{result["users"]["error"]}"
     ["Not able to parse the query."].include?(result["users"]["error"])
    end
 end

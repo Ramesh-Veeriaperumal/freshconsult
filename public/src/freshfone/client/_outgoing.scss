@@ -3,9 +3,9 @@
 	li {
 		padding: 6px 0;
 //		change it
-		margin-right: 1px;
+		@include margin-right(1px);
 		&:last-child{
-			margin-right:0;
+			@include margin-right(0);
 		}
 		.icon-headphones {
 			font-size: 22px;
@@ -51,16 +51,16 @@
 		top: 65px;
 		color: $info-text;
 		font-weight: 700;
-		text-align: center;
+		@include text-align(center);
 		width: 100%;
 	}
 	.outgoing_number, .outgoing_numbers_list {
 		position: absolute;
 		top: 0;
-		left: 45px;
+	 @include left(45px);
 	}
 	.outgoing_number {
-		left: 85px;
+	 @include left(85px);
 		color: $numbers-list-text;
 	}
 	.outgoing_numbers_list {
@@ -71,11 +71,11 @@
 			border: none;
 			@include box-shadow(none);
 			span {
-				margin-left: 15px;
+				@include margin-left(15px);
 			}
 		}
 		.select2-choice div {
-			left:0;
+		 @include left(0);
 		}
 	}
 	.keypad-key, .keypad-special {
@@ -97,7 +97,7 @@
 			background-color: $keydown-background;
 			color: $keydown-text;
 			border-bottom-color: $keydown-border;
-			padding: 10px 10px 10px 10px;
+			@include padding(10px 10px 10px 10px);
 			text-shadow: -1px -1px 0px $keydown-text-shadow;
 			@include box-shadow(0 1px 3px $keydown-shadow inset);
 			@include transition(all .1s ease);
@@ -123,11 +123,11 @@
 	.keypad-back {
 		position: absolute;
 		top: 36px;
-		left: 89%;
+	 @include left(89%);
 
 		width: 25px;
 		height: 16px;
-		padding: 0 0 0 7px;
+		@include padding(0 0 0 7px);
 		overflow: hidden;
 
 		background-color: $keypad-back-background;
@@ -140,22 +140,22 @@
 			content: "";
 			background-color: $keypad-triangle-background;
 			position: absolute;
-			left:0;
+		 @include left(0);
 			top: 0;
 			@include triangle(left, $keypad-triangle-border, 8px);
 		}
 	}
 	.keypad-row {
 		.keypad-key:nth-child(even) {
-			border-left: 1px solid #ccc;
-			border-right: 1px solid #ccc;
+			@include border-left(1px solid #ccc);
+			@include border-right(1px solid #ccc);
 		}
 	}
 	.keypad-key.zero:after {
 		content: "+";
 		color: $keypad-plus;
 		position: absolute;
-		margin-left: 10px;
+		@include margin-left(10px);
 	}
 	input.user_phone {
 		width: 100%;
@@ -168,12 +168,12 @@
 		@include box-sizing(border-box);
 
 		height: 90px;
-		text-align: center;
+		@include text-align(center);
 		font-size: 20px;
 		margin: 0;
 		
-		padding-right: 35px;
-		padding-left: 16px;
+		@include padding-right(35px);
+		@include padding-left(16px);
 	}
 	//	recent calls - starts
 	#recent_calls {
@@ -183,7 +183,7 @@
 	}
 	.recent_call_entry {
 		border-bottom: 1px solid $recent-call-border;
-		padding: 5px 0 5px 2%;
+		@include padding(5px 0 5px 2%);
 		height: auto;
 		font-size: 11px;
 		display: inline-block;
@@ -207,7 +207,7 @@
 		vertical-align: top;
 		.can-make-calls {
 			background-repeat: no-repeat;
-			text-indent: -9999px;
+			@include text-indent(-9999px);
 			display: block;
 			padding: 0;
 			width: 30px;
@@ -215,7 +215,7 @@
 		}
 	}
 	.no_call_history {
-		text-align: center;
+		@include text-align(center);
 		padding: 18px;
 		font-size: 16px;
 		color: $ch-no-call-log-text;
@@ -236,7 +236,7 @@
 		font-weight: 700;
 		color: $recent-call-duration;
 		margin-top: 3px;
-		margin-right: 15px;
+		@include margin-right(15px);
 	}
 	.recent_calls_time_ago {
 		display: inline-block;

@@ -54,7 +54,7 @@ class Wf::FilterController < ApplicationController
       wf_filter.save
       flash[:notice] = t(:'flash.filter.save_success')
     else
-      flash[:error] = t('admin.getting_started.index.problem_updating')
+      flash[:error] = t('admin.getting_started.index.problem_updating') #possible dead code- if wf_filter is nil, code below will error out
     end
     wf_filter.key = wf_filter.id.to_s 
     render :partial => "save_filter",  :locals => { :redirect_path => helpdesk_filter_view_custom_path(wf_filter.key) }

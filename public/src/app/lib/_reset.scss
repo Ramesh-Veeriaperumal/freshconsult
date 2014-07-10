@@ -42,7 +42,7 @@ table {
 }
 
 caption, th, td {
-  text-align: left;
+  @include text-align(left);
   font-weight: normal;
   vertical-align: middle;
 }
@@ -86,7 +86,7 @@ input, select { vertical-align:middle; font-family: $baseFontFamily; }
 
 textarea{ font-family: $baseFontFamily; }
 
-ol{ list-style:decimal outside; margin:3px 8px 3px 28px; }
+ol{ list-style:decimal outside; @include margin(3px 8px 3px 28px); }
 
 strong, b{ font-weight:bold; }
 
@@ -97,7 +97,7 @@ em, i{ font-style:italic; }
 /* END RESET CSS */
 
 #tag-list{
-	margin: 5px -5px 5px 0;
+	@include margin(5px -5px 5px 0);
 }
 #tag-list li {
     display: inline;
@@ -117,7 +117,7 @@ em, i{ font-style:italic; }
 }
 
 #tag-cloud{
-	margin: 5px -5px 5px 0;
+	@include margin(5px -5px 5px 0);
 }
 #tag-cloud li {
     display: inline;

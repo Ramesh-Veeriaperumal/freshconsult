@@ -20,7 +20,7 @@
         border:1px solid #eee; /* depands upon bootstrap table variable $tableBorder  */
         @include box-sizing(border-box);
         background:#f6f6f6;
-        padding:8px 0 8px 0;
+        @include padding(8px 0 8px 0);
         @include border-radius(5px);
         .checkbox.with-button{
           .btn.disabled, .btn[disabled]{
@@ -81,7 +81,7 @@
             }           
         }  
         .item_actions, .item-actions{
-            padding-right: 5px;
+            @include padding-right(5px);
         }
         .pagination{
             //border-top:1px solid $tableBorder; 
@@ -101,7 +101,7 @@
             img{
                 width:30px;
                 height:30px;  
-                    @include border-radius(100%);     
+                @include border-radius(100%);     
             }
         }
         .btn-mini{
@@ -122,7 +122,7 @@
             img{
                 width:30px;
                 height:30px;  
-                    @include border-radius(100%);     
+                @include border-radius(100%);     
             }
         }  
     }
@@ -130,9 +130,9 @@
 
 .canned-response-page{
     .list-page-body .list-page-table-header{
-        padding-left: 21px;
+        @include padding-left(21px);
         input[type="checkbox"]{
-            margin-right: 16px;
+            @include margin-right(16px);
         }
     }
 }
@@ -147,14 +147,14 @@
         }
 
         td.fb_page_info{
-            padding-left: 1px;
+            @include padding-left(1px);
             label{
                 display: inline-block;
             }
         }
 
         td.fb_list_pic{
-                padding-right: 1px;
+                @include padding(1px);
         }
     }
 }
@@ -177,7 +177,7 @@
       td{
         width:22%;
         height:35px;
-        padding-right:0;
+        @include padding-right(0);
         .tag_text{
           max-width:50%;
           top: 5px;

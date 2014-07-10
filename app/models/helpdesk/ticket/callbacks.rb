@@ -307,7 +307,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         if set_others_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
                                                        :nx => true })
           computed_display_id = account.get_max_display_id
-          set_tickets_redis_key(key, computed_display_id)
+          set_tickets_redis_key(key, computed_display_id, nil)
           self.display_id = computed_display_id
           return
         end
@@ -521,18 +521,6 @@ private
     assign_ff_values custom_field
     @custom_field = nil
   end
-
-  def increment_ticket_counter
-    time = Time.now.utc
-    value = $stats_redis.incr "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}"
-    if value == 1
-      $stats_redis.expire "stats:tickets:#{time.day}:tickets:#{time.hour}:#{self.requester_id}:#{self.account_id}", 144000
-    end
-
-  rescue Exception => e
-    NewRelic::Agent.notice_error(e)
-  end
-
 
   def update_group_escalation
     if @model_changes.key?(:group_id)

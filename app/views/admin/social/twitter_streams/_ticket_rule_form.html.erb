@@ -10,7 +10,9 @@
     </div>
     <div class='form_data span11 mlt'>
       <div class="control-group span12">
-        <label><%= t('admin.social.ticket_rules.includes')%></label>
+        <label><%= t('admin.social.ticket_rules.includes')%> 
+          <a href="https://support.freshdesk.com/support/solutions/articles/195565" class="ctkt-help tooltip" twipsy-content-set="true"  data-original-title="How to use Twitter keywords?" target = "blank"><span>?</span></a>
+        </label>
         <%= text_field_tag "social_ticket_rule[][includes]", ticket_rule.include_keys, :class => 'text span12 social_ticket_rule_includes', :placeholder => t('admin.social.ticket_rules.include_helptext') %>
       </div>
 

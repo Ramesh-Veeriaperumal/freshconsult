@@ -4,17 +4,17 @@
 }
 label{
    color: #323232;
-   padding:0 0 6px 0;
+   @include padding(0 0 6px 0);
 }                
 
 .help-text{
   font-size:13px;
   color:#888888;
   display: block;
-  padding:0 0 5px 0;
+  @include padding(0 0 5px 0);
 }
 input[type=text], input[type=password], select, input.text { 
-   margin:0 0 3px 0;
+   @include margin(0 0 3px 0);
    color:#3f3f3f;
 }
 
@@ -77,7 +77,7 @@ div.color{
 	.mColorPickerTrigger{ 
 		position:absolute;
 		top:4px;
-		left:73px;
+	 @include left(73px);
 		display: none !important;
 	}
 	input{
@@ -85,7 +85,7 @@ div.color{
 		font-size:14px;
 		border:1px solid #AFAFAF;
 		border-width: 0 20px 0 0;
-		border-right-color: #AFAFAF;
+		@include border-right-color(#AFAFAF);
 		color: #777;
 		text-transform: uppercase;
 		padding: 6px 8px;
@@ -126,7 +126,7 @@ form table {
 
 
 .auto_bcc_email{
-	padding-left: 10px !important;
+	@include padding-left(10px !important);
 	input.text{
 		width: 94%;
 	}	
@@ -148,7 +148,7 @@ ul.ui-form .ui-form-inline{
 	@include border-radius(0);
 	border-width:1px 0;
 	padding: 0; margin: 0;
-	li{ padding-left: 0; }
+	li{ @include padding-left(0); }
 }
 
 .ui-datepicker-trigger{	
@@ -157,7 +157,7 @@ ul.ui-form .ui-form-inline{
 	cursor:pointer;
 	width:18px;
 	height:20px;
-	text-indent:-9999px;
+	@include text-indent(-9999px);
 }
 
 a.addchoice{
@@ -167,7 +167,7 @@ a.addchoice{
 	border-width:1px 0;
 	text-decoration:none;
 	cursor:pointer;
-	padding:8px 10px 8px 28px;
+	@include padding(8px 10px 8px 28px);
 	font-weight:bold;
 	@include link-colors(#333333, #336699, #333333, #333333, #333333);
 	display:block;
@@ -184,24 +184,24 @@ a.addchoice:hover{
 .colsets{ 
 	fieldset{
 		@include pie-clearfix;
-		margin:1px 0 0 0;
+		@include margin(1px 0 0 0);
 		padding:2px 1px;
 		position:relative;
 		b{
 			font-size:11px;
 		}
 		.sort_handle{
-			left:-1px;
+		 @include left(-1px);
 			top:8px;
 		}
 		.dropchoice, .tags{
 			@include pie-clearfix;
-			float:left;
-			margin:0 20px 0 0;
+			@include float(left);
+			@include margin(0 20px 0 0);
 			padding:0;
 			width:30%;
 			input{
-				margin-right:5px;
+				@include margin-right(5px);
 				width:100%;
 			}				
 		}
@@ -210,13 +210,13 @@ a.addchoice:hover{
 			display:none;
 		}
 		img{	
-			float: left;
-			margin:5px 12px 0 5px;
+			@include float(left);
+			@include margin(5px 12px 0 5px);
 			cursor: pointer;
 		}
 		.deleteChoice{
-			float: left;
-			margin:5px 12px 0 5px;
+			@include float(left);
+			@include margin(5px 12px 0 5px);
 			cursor: pointer;			
 			width:16px; height:16px;
 		}
@@ -226,7 +226,7 @@ a.addchoice:hover{
 		background-color:transparent;
 		background-position:31px 7px; 
 		font-size:12px;
-		padding:8px 10px 6px 63px;			
+		@include padding(8px 10px 6px 63px);			
 	} 
 }	
 	
@@ -237,24 +237,24 @@ a.addchoice:hover{
 	}
 	label.radiolabel{
 		font-size:1em;
-		float:left; 
-		padding:0 5px 0 2px;	
-		margin-right:10px;
-		margin-left: 5px;	
+		@include float(left); 
+		@include padding(0 5px 0 2px);	
+		@include margin-right(10px);
+		@include margin-left(5px);	
 	}
 	input.radio{
-		float:left;
-		margin-left: 1px;
+		@include float(left);
+		@include margin-left(1px);
 	}
 }
 
 .ui-form{
-	padding:6px 0 12px 0;
+	@include padding(6px 0 12px 0);
 	position:relative;
 	border:1px solid #E4E4E4;
 	background-color:#F8F8F8;
 	div.field-box{
-		padding:6px 2% 10px 2%;
+		@include padding(6px 2% 10px 2%);
 		@include pie-clearfix; 		
 	}
 	li{
@@ -264,20 +264,20 @@ a.addchoice:hover{
 		label{
 			padding:0px;	
 		}
-		padding:8px 2% 8px 2%; 
+		@include padding(8px 2% 8px 2%); 
 		margin:0;
- 		float: left;
+ 		@include float(left);
 		width: 96%;
 		&.hide{
 			display: none;
 		}
 		div.field-box{
-			padding:4px 0 8px 0;
+			@include padding(4px 0 8px 0);
 		}
 	} 
 	/*li:nth-child(1),li:nth-child(2){
 		label{
-		float:left;	
+		@include float(left);	
 		}
 	}*/
 	li.search-choice, li.search-field{
@@ -306,12 +306,12 @@ a.addchoice:hover{
    	div.checkbox, label.checkbox{
    		@include inline-block;
 		padding-bottom:5px;
-		padding-left:18px;
+		@include padding-left(18px);
 		font-size:1.1em;
 		position:relative;
 		input[type="checkbox"] {
-			float:left;
-			margin-left:-18px;
+			@include float(left);
+			@include margin-left(-18px);
 		}
    	}
 	label, li.checkbox{
@@ -333,24 +333,24 @@ a.addchoice:hover{
 
 	label.overlabel{
 		color: #999;
-		margin-left: 7px;
+		@include margin-left(7px);
 		line-height: 28px;
 	}	 
 
 	li.checkbox{
 		@include clearfix;
-		padding-left: 18px;
+		@include padding-left(18px);
 		input{
-			float:left;
-			margin-right:6px;
+			@include float(left);
+			@include margin-right(6px);
 			margin-top:4px;
-			margin-left:0;
+			@include margin-left(0);
 		} 
 		label{
 			position:relative;
 			font-size:0.9em;
 			// top:-6px; 
-			left:1px;
+		 @include left(1px);
 		}
 	}	
 	
@@ -371,11 +371,11 @@ a.addchoice:hover{
 	.check_box{
 		@include clearfix;
 		label{
-			float:left;
+			@include float(left);
 			font-size:1.4em;		
 		}
 		input{
-			float:left;
+			@include float(left);
 			margin:5px;
 		}
 	}	
@@ -394,7 +394,7 @@ a.addchoice:hover{
 		border-bottom-color: #fff;
 	}
 	.inline_field{
-		margin:0 0 10px 10px;
+		@include margin(0 0 10px 10px);
 		input{		
 			width:45%;
 			margin:0;
@@ -405,9 +405,9 @@ a.addchoice:hover{
 	}
 	.inlineChecklist{
 		label{
-			float:left;
+			@include float(left);
 			font-size:1em; 
-			padding:5px 16px 0 0; 
+			@include padding(5px 16px 0 0); 
 		}
 		input{
 			top:0;
@@ -415,7 +415,7 @@ a.addchoice:hover{
 	}
 	
 	.inline-radio{
-		input.radio{ position:relative; top:-3px; margin-right:4px; }
+		input.radio{ position:relative; top:-3px; @include margin-right(4px); }
 		select{font-size:12px; margin-top:5px; }
 		padding:3px 0;
 		font-size:13px;
@@ -425,7 +425,7 @@ a.addchoice:hover{
 		position:relative;
 		label{
 			position:absolute;
-			left:6px;
+		 @include left(6px);
 			top:3px;
 			width:25%;
 		}		
@@ -447,7 +447,7 @@ a.addchoice:hover{
 		}
 		fieldset{
 			@include pie-clearfix;			
-			padding:8px 0 8px 4px;
+			@include padding(8px 0 8px 4px);
 			border:1px solid #DDD;
 			border-bottom: none;
 			position:relative;
@@ -457,25 +457,25 @@ a.addchoice:hover{
 
 			&.addchoice{ 
 				img{	
-					left:13px;
+				 @include left(13px);
 					opacity: 0.85;
 				}
 				p{
-					padding-left: 31px;
+					@include padding-left(31px);
 				}
-				padding: 8px 0 8px 4px;
+				@include padding(8px 0 8px 4px);
 				border-bottom: 1px solid #DDD;
 				@include border-radius(0px);
 				@include border-radius(0 0 5px 5px);
 			}
 
 			*{
-				float:left;
+				@include float(left);
 				margin:2px 4px;
 			}
 
 			.select2-choices, .select2-container a, .select2-choices, .select2-container a span{
-				float: none;
+				@include float(none);
 			}
 
 			.select2-container .select2-choice div b{
@@ -483,22 +483,22 @@ a.addchoice:hover{
 			}
 
 			label.error, label.warning{
-			   clear:left;
+			   @include clear(left);
 			}
 			.add, .delete{
 				position:absolute;
 				margin:0;
 				padding:0;
 				cursor:pointer;
-				right:10px;
+			 @include right(10px);
 				top:10px;
 			}
 			.add{
-				left:3px;
+			 @include left(3px);
 			}
 			.delete {
 				position:relative;
-				right:-10px;
+			 @include right(-10px);
 				top:8px;
 				opacity:0.5;
 			}
@@ -533,59 +533,59 @@ a.addchoice:hover{
 				.paragraph{ width:98%; }
 			}
 			input[type='radio']{ margin-top: 8px;}
-			.radiolabel{margin-right: 10px;}
+			.radiolabel{@include margin-right(10px);}
 			.webhook{
-				margin: 20px 0 10px 0px;
-				.credentials{padding-left: 15.2%; box-sizing: border-box; -moz-box-sizing: border-box;}
+				@include margin(20px 0 10px 0px);
+				.credentials{@include padding-left(15.2%); box-sizing: border-box; -moz-box-sizing: border-box;}
 				>div{
 					margin: 2px 0;
 					label{margin-top: 7px;}
-					.required_label{margin-left: 0}
-					.using_webhooks{font-weight: 600; float:right; margin-top: 8px; margin-right: 9%;}
+					.required_label{@include margin-left(0)}
+					.using_webhooks{font-weight: 600; @include float(right); margin-top: 8px; @include margin-right(9%);}
 					.usecases{margin:0}
-					.url_req_auth{width: 50%; font-size: 13px; margin-left: 15.4%;}
-					.change_password{margin-top: 7px; margin-left: 15px;}
+					.url_req_auth{width: 50%; font-size: 13px; @include margin-left(15.4%);}
+					.change_password{margin-top: 7px; @include margin-left(15px);}
 					.checkbox_label{height:25px; min-height:0; margin:0; padding-top: 8px;}
-					.content_label{margin-top:33px; margin-left: 0;}
+					.content_label{margin-top:33px; @include margin-left(0);}
 					input[type="text"], input[type="password"]{width:42.3%;}
 					input[type="text"].api_key{width:87%;}
-					.select2-container{left:1px;}	
+					.select2-container{@include left(1px);}	
 					.required_star{top: 15px; margin: 0;}
-					textarea.uri{width: 57%; padding-right: 17.3%; margin-left: 0.8%;}
-					.credentials_toggle{float:right; margin-right:10%; margin-top:-25px; display:inline-block;}
+					textarea.uri{width: 57%; @include padding-right(17.3%); @include margin-left(0.8%);}
+					.credentials_toggle{@include float(right); @include margin-right(10%); margin-top:-25px; display:inline-block;}
 					.username{height:18px;}
 					.params_div{
 						width: 90.5%; height: 158px; border-color: lightgray;
 						background-color: white; overflow-y: auto; 
 						@include border-radius(3px);
 						border-width: 1px; border-style: solid;
-						margin-left: 3.5px; margin-top: 1.5px;
+						@include margin-left(3.5px); margin-top: 1.5px;
 						.highlighted{background-color: rgba(#ff0,0.3);}
-						.checkbox{margin-left: 8px;}
+						.checkbox{@include margin-left(8px);}
 						}
-					.params{width:69%; min-height:146px; padding-right: 20.3%;}
+					.params{width:69%; min-height:146px; @include padding-right(20.3%);}
 					.tip{width: 92%; color: grey;}
 					.placeholder_div{position: relative; width: 75%;}
 					.body_div{width:90%;}
-					.l_placeholder{position: absolute; right:0px; margin-top: 12px; float:right;}
+					.l_placeholder{position: absolute; @include right(0px); margin-top: 12px; @include float(right);}
 				}
 			}
 
 			.dependent{
-				float:none;
+				@include float(none);
 			}
 
 			.s_email{
-				margin: 20px 0 10px 0px;
+				@include margin(20px 0 10px 0px);
 				width: 100%;
-				.select2-container{left:1px;}
+				.select2-container{@include left(1px);}
 				label{margin-top: 7px;}
 				label.error{ width:100%; }
 				.subject_div{
 				.sub_placeholder{
 					width: 78%; padding: 0px;
 					input[type='text']{width: 73%; height: 18px;}
-					.l_placeholder{position:relative; top:3px; right:3px;}
+					.l_placeholder{position:relative; top:3px; @include right(3px);}
 					}
 				}
 			}
@@ -604,7 +604,7 @@ a.addchoice:hover{
 			}
 		}
 		div{ margin:0; padding:0; }
-		.nested_field .select2-container{ margin-right:3px; }
+		.nested_field .select2-container{ @include margin-right(3px); }
 	}
 }
 
@@ -615,8 +615,8 @@ a.addchoice:hover{
 
 li.nested_field{
    	.level_2, .level_3{ 
-   		border-left:1px dotted #afafaf;
-   		padding-left:10px;
+   		@include border-left(1px dotted #afafaf);
+   		@include padding-left(10px);
    		display: none;    	
    	}
 	select{ @include min-width(90%); }
@@ -635,8 +635,8 @@ li.nested_field{
 }
 
 .portal-logo, .portal-favicon{
-	float:left;
-	margin-right:10px;
+	@include float(left);
+	@include margin-right(10px);
 }
 
 .portal-logo{ width: auto; }
@@ -646,13 +646,13 @@ li.nested_field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
 	.caption{
-		float:left;
+		@include float(left);
 		.logo{
-		   float:left;
+		   @include float(left);
 		   /*height:34px;*/
 		   width:150px;
-		   margin-left:-2px;
-		   clear:left;
+		   @include margin-left(-2px);
+		   @include clear(left);
 		}
 
 
@@ -673,12 +673,12 @@ li.nested_field{
 	.rightalign{
 		font-size:13px;
 		width:195px;
-		text-align:right;
+		@include text-align(right);
 	}
 
 	div.fields{
-		margin-left:180px;
-		clear:right;
+		@include margin-left(180px);
+		@include clear(right);
 		position:relative;
 		textarea.required{ height:200px; }
 		div.action_buttons{ margin-top:0; }
@@ -692,7 +692,6 @@ li.nested_field{
 	}
 }
 
-
 .business_hours{
 	.select2{
 		margin-top: -5px;
@@ -702,17 +701,17 @@ li.nested_field{
 	}
 	.working-days{
 		>li{
-			padding-left: 15px;
-			border-left: 1px solid #EEE;
+			@include padding-left(15px);
+			@include border-left(1px solid #EEE);
 			margin: 0;
-			margin-left: 20px;
-			padding: 6px 0px 4px 15px;	
+			@include margin-left(20px);
+			@include padding(6px 0px 4px 15px);	
 		}
 	}
 	.business_days{
 		padding-top: 7px;
 		input[type="checkbox"]{
-			margin-right: 10px;
+			@include margin-right(10px);
 			margin-top:-2px;
 		}
 		&.active{
@@ -755,17 +754,17 @@ li.nested_field{
 			li{
 				position:relative;
 				margin: 5px 0;
-				padding-left:25px;
+				@include padding-left(25px);
 				.month-spacing{
-					padding-left: 10px;
-					margin-left: -2px;
+					@include padding-left(10px);
+					@include margin-left(-2px);
 				}
 				.close{
 					position:absolute;
 					background:image-url("btn_close_icon.png") no-repeat;
 					width:18px;
 					height:18px;
-					left:5px;
+				 @include left(5px);
 					top:-2px;
 				}
 			}
@@ -774,7 +773,7 @@ li.nested_field{
 }
 .timerange{
 	padding: 4px;
-	margin: 4px 0px 4px 0px;
+	@include margin(4px 0px 4px 0px);
 }
 .morning_time, .evening_time{
 	margin-top :5px;
@@ -837,7 +836,7 @@ input.time{
 				color:#555555;
 				font-weight:bold;
    				font-size:1em;
-   				padding:8px 0 6px 0;
+   				@include padding(8px 0 6px 0);
 				em{
 					font-style:normal;
 					font-weight:bold;
@@ -852,7 +851,7 @@ input.time{
 			ul.chzn-choices li{ width:auto; }
 			.search-field{ @include min-width(500px); }
 			.search-field .default{ width:100% !important; }
-			ul.chzn-results li.active-result{ float:none; display:block; width:100%; }
+			ul.chzn-results li.active-result{ @include float(none); display:block; width:100%; }
 		}
 		tr.even{
 			td{
@@ -876,12 +875,12 @@ input.time{
 	.grid_form{	
 		td{
 			border:0;
-			padding:6px 10px 0 10px;
+			@include padding(6px 10px 0 10px);
 			background:#fafafa;
 		}
 		.button-container{
-			text-align:right;
-			padding:0 10px 10px 0;
+			@include text-align(right);
+			@include padding(0 10px 10px 0);
 		}
 	}
 }
@@ -905,7 +904,7 @@ input.time{
       }
       .hours{
         width:10%;
-        text-align:right;
+        @include text-align(right);
       }
    }  
 }
@@ -920,7 +919,7 @@ input.time{
       @include clearfix;
       li.list{
          margin:0; padding:0;
-         float:left;
+         @include float(left);
          width:33%;
       }
    }
@@ -928,14 +927,14 @@ input.time{
 
 .ui-custom-fields, .ui-custom-form{
    @include no-bullets;	
-   margin:0 0 0 0; 
+   @include margin(0 0 0 0); 
    padding:0;
 }
 
 .admin_form{
 	@include clearfix;
 	background-color:#f3f3f3; 
-	padding:8px 20px 0 20px;
+	@include padding(8px 20px 0 20px);
 	margin:0 (-$common-padding);
 	li{
 		position:relative;
@@ -944,15 +943,15 @@ input.time{
 		color:#555; 
 		font-weight:bold;
 		margin:0;
-		padding:8px 0 6px 0;
+		@include padding(8px 0 6px 0);
 	}
 }
 
 
 .button-container{
 	@include clearfix;
-	text-align:right;
-	padding:1em 0em 1em 0; 
+	@include text-align(right);
+	@include padding(1em 0em 1em 0); 
 	margin:-2px;
 }
 
@@ -965,10 +964,10 @@ input.time{
 	margin-bottom:10px;
 	@include pie-clearfix;
 	li{
-		float:left;
+		@include float(left);
 		position:relative;		
 		a{
-			margin:6px 6px 0 0;
+			@include margin(6px 6px 0 0);
 			font-size:13px;
 		}
 	}
@@ -988,7 +987,7 @@ input.time{
 }
 	
 .ui-custom-form{
-	padding:0 0 15px 0;	
+	@include padding(0 0 15px 0);	
 	position:relative;
 	li{         
 		@include pie-clearfix;
@@ -999,7 +998,7 @@ input.time{
 		input[type=text]{	width:90%; }
 	} 
 	.requester span{
-		margin-left: 3px;
+		@include margin-left(3px);
 	}
 	li:hover, li.hover, li.active{
 		background:#ffffff;
@@ -1038,7 +1037,7 @@ input.time{
 }
 
 .help_text{
-	padding:8px 0 4px 0;
+	@include padding(8px 0 4px 0);
 	a{
 		text-decoration:none;
 		color:#336699;
@@ -1058,7 +1057,7 @@ input.time{
 	margin:0;
 	.button-container{
 		width:96% !important;
-		padding-right:0 !important;
+		@include padding-right(0 !important);
 	}
 }
 
@@ -1086,15 +1085,15 @@ input.time{
  * http://docs.jquery.com/UI/Dialog#theming
  */
 .ui-dialog{ padding:8px; }
-.ui-dialog .ui-dialog-titlebar { padding:0; position: relative; color: #333333; padding: 6px 8px 6px 8px; }
-.ui-dialog .ui-dialog-title { float: left; margin:0em; color:#333333; font-size:18px; font-weight:normal; } 
-.ui-dialog .ui-dialog-titlebar-close { position: absolute; right:4px; top: 50%; width: 19px; margin: -14px 0 0 0; padding: 1px; height: 18px; }
+.ui-dialog .ui-dialog-titlebar { padding:0; position: relative; color: #333333; @include padding(6px 8px 6px 8px); }
+.ui-dialog .ui-dialog-title { @include float(left); margin:0em; color:#333333; font-size:18px; font-weight:normal; } 
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; @include right(4px); top: 50%; width: 19px; @include margin(-14px 0 0 0); padding: 1px; height: 18px; }
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
    position: relative; border: 0; padding: 0 0;  zoom: 1; margin-bottom:0; 
    .info-highlight{
-      margin:0 0 6px 0;
+      @include margin(0 0 6px 0);
       font-size:13px;
       padding:10px 12px;
 
@@ -1107,10 +1106,10 @@ input.time{
       padding:0 0;
    }  
 }
-.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 0 0 0 0; background-image: none; margin: 0; padding: 0; }
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
+.ui-dialog .ui-dialog-buttonpane { @include text-align(left); border-width: 0 0 0 0; background-image: none; margin: 0; padding: 0; }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { @include float(right); }
 .ui-dialog .ui-dialog-buttonpane button { margin: .5em 0 .5em 0; cursor: pointer; @include border-radius(3px); }
-.ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
+.ui-dialog .ui-resizable-se { width: 14px; height: 14px; @include right(3px); bottom: 3px; }
 .ui-draggable .ui-dialog-titlebar { cursor: move; }
  
 .requesteremail, .agentemail{
@@ -1119,7 +1118,7 @@ input.time{
 
 input.search{
    @include border-radius(3px);
-   margin-right: 10px;
+   @include margin-right(10px);
    background-color: #FFFFFF;
    border: 1px solid #C7C7C7;
    color: #747472;
@@ -1130,8 +1129,8 @@ input.search{
 }
 
 .live_search{
-    text-align:left;
-    padding:0 0 0 0;
+    @include text-align(left);
+    @include padding(0 0 0 0);
     margin:8px 0 0;
     .loading{
         background-position:right !important;
@@ -1153,28 +1152,18 @@ input.search{
 }
 
 .sidepanel{
-	.close{ right:14px; }
+	.close{ @include right(14px); }
 }
 
 .ui-dialog-form{
-	font-size:80%;
 	.info-data{
-		padding-left:18px;
+		@include padding-left(18px);
 		font-size:1.2em;
 		margin-top:-5px;
 	}                   
 	.button-panel{ padding:8px 0; }
 	.primary{ font-weight:bold; }
-    a.button-link{ @include inline-block; font-size:13px; margin-top:6px; margin-right:3px; }
-	a.close{
-    	position:absolute;
-    	right:5px;
-    	top:5px;
-    	width:28px;
-    	height:28px;
-    	background:url("/images/close_delete.png") no-repeat center;
-    	z-index:999;
-    }
+    a.button-link{ @include inline-block; font-size:13px; margin-top:6px; @include margin-right(3px); }
     .ctrlHolder{
     	margin-bottom:10px;
     }
@@ -1184,15 +1173,15 @@ input.search{
 .dialog-panel, .dialog-panel.sidepanel{
 	position: absolute;	
 	width:650px;
-	left:50%;
+ @include left(50%);
 	top:60px;
-	margin-left:-310px;
+	@include margin-left(-310px);
 	z-index:999999;
 	background:#f7f7f7;
 	border:1px solid #999999;
 	@include box-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
     @include border-radius(4px);
-    text-align:left;
+    @include text-align(left);
 }
 
 .border-top{
@@ -1227,9 +1216,9 @@ input.search{
 
 .due-date-dialog{
 	position:absolute;
-	left:-252px;
+ @include left(-252px);
 	top:25px;
-	margin-left:-20px;
+	@include margin-left(-20px);
 	margin-top:-6px;
 	z-index:99999;
 	width:250px;
@@ -1248,35 +1237,35 @@ input.search{
 	.due-date-calender{ 
 		@include vertical-gradient(#f5f5f5, #e9e9e9);
 	  	padding:4px 10px;
-	  	margin:4px 0 8px 0;	
+	  	@include margin(4px 0 8px 0);	
 	  	@include border-radius(4px);
 	  	border:#e0e0e0 1px solid;
 	}
 	.right_pointer{	 	
 		position:absolute;
 		width:10px; height:18px;
-		right:-10px;
+	 @include right(-10px);
 		top:10px;
 	}
 	.ui-datepicker{
 		@include box-shadow(none);
 	}
-	.ui-datepicker-inline{ margin:0 0 8px 0;}
+	.ui-datepicker-inline{ @include margin(0 0 8px 0);}
 	.ui-corner-all{	@include border-radius(0); }
 	.ui-widget-content, .ui-widget-header{ background:none; border:0; }
-	.ui-datepicker .ui-datepicker-title select, .due-date-calender select, #due-date-options{ font-size: 11px; width:auto; margin-right:4px; }
+	.ui-datepicker .ui-datepicker-title select, .due-date-calender select, #due-date-options{ font-size: 11px; width:auto; @include margin-right(4px); }
 	.ui-widget-content{ font-size: 13px; }
 	.ui-datepicker-prev, .ui-datepicker-next{ cursor:pointer; }
 	.ui-datepicker-prev:hover, .ui-datepicker-next:hover{ background:#f4f4f4; }		
 	.ui-datepicker th { font-weight: normal; }
-	.ui-datepicker-inline th, .ui-datepicker-inline td a{ text-align:center; color:#333333;  }
+	.ui-datepicker-inline th, .ui-datepicker-inline td a{ @include text-align(center); color:#333333;  }
 	.ui-datepicker-inline td .ui-state-default{ border:0; background:none; }
 	.ui-datepicker-inline td .ui-state-default:hover{ background-color:darken(#dde8ee, 5%); }	
 	.ui-datepicker-inline td .ui-priority-secondary{ color:#888888; }
 	.ui-datepicker-inline td .ui-state-highlight{ background:#FFFFCC; color:#333333;}
 	.ui-datepicker-inline td .ui-state-active, .ui-datepicker-inline td .ui-state-active:hover{ background:#3F3F3F; color:#ffffff; }
 	.due-date-info p{ 
-		text-align:center; 
+		@include text-align(center); 
 		font-size:13px; 
 		margin:0; 
 		padding:6px 0;
@@ -1288,15 +1277,15 @@ input.search{
 	}
 	.calender-buttons{
 		position:relative;
-		text-align:right;
-		padding:12px 5px 6px 5px;
+		@include text-align(right);
+		@include padding(12px 5px 6px 5px);
 		margin-top:10px;
 		border-top:1px solid #e0e0e0;
 		span.loading-item{
 			width:16px;
 			height:11px;
 			position:absolute;
-			right:15px;
+		 @include right(15px);
 			margin-top:12px;
 			visibility:hidden;
 			background-position: 0 0;
@@ -1308,14 +1297,14 @@ input.search{
 	}
 }
 
-.transparent-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index:99998; background:#ffffff; @include opacity(0); }
+.transparent-overlay { position: absolute; top: 0; @include left(0); width: 100%; height: 100%; z-index:99998; background:#ffffff; @include opacity(0); }
 
-.tabbed{ padding-left:20px; }
+.tabbed{ @include padding-left(20px); }
 
 table.summary{
 	width:100%;
 	td{ 
-		padding:8px 10px 2px 0;
+		@include padding(8px 10px 2px 0);
 	}
 }
 table.summary-report{
@@ -1335,18 +1324,18 @@ table.summary-report{
 	}
 	.sub-title{
 		background:#f1f1f1;
-		text-align:right;
+		@include text-align(right);
 		width:280px;
-		padding-right:10px;
+		@include padding-right(10px);
 		text-transform:capitalize;
 	}
 	thead{
-		margin:0 0 0 0;
+		@include margin(0 0 0 0);
 		color:#666666;
 		border:1px solid #f4f4e9;
 		background-color:#fffbee;	
 		td{
-			text-align:center;
+			@include text-align(center);
 			font-weight:bold;	
 			padding:12px 18px;
 		}
@@ -1413,7 +1402,7 @@ table.summary-report{
 
 .inactive_email{
 	padding:2px 5px;
-	margin-left:15px;
+	@include margin-left(15px);
 	border:1px solid darken(#f7e6e6, 5%);
 	background-color:#f7e6e6;
 	color:#b56e6e;
@@ -1442,7 +1431,7 @@ table.summary-report{
 	font-weight:400;
 	border:1px solid #CFCFCF;
 	background-color:#efefef;
-	padding:5px 3px 4px 5px;
+	@include padding(5px 3px 4px 5px);
 	height:18px;
 }
 
@@ -1466,12 +1455,12 @@ table.summary-report{
 }
  
 .request_panel{
-	padding: 0px 0px 10px 0px; margin:0;
+	@include padding(0px 0px 10px 0px); margin:0;
 	border-spacing: 0px 10px;
 	border-bottom: 1px solid #F3F3F3;
 
 	.button-container{ 
-		padding:0px 30px 15px 30px;
+		@include padding(0px 30px 15px 30px);
 		margin-top:10px;
 	}
 	.absolute-button-container{
@@ -1486,7 +1475,7 @@ table.summary-report{
 		.title{
 			padding-bottom:12px;
 		}            
-		/*li{ padding-left:0; padding-right:0; }*/
+		/*li{ @include padding-left(0); @include padding-right(0); }*/
 		li.field{
 			border:0; padding:0;
 		}
@@ -1496,15 +1485,15 @@ table.summary-report{
 		}
 		div.field{
 			width:23%;
-			float:left;
-			margin-left:2%;
+			@include float(left);
+			@include margin-left(2%);
 		}
 		div.field-35{
 			width:33%;
-			float:left;
-			margin-left:2%;
+			@include float(left);
+			@include margin-left(2%);
 		}
-		div.field.first{ margin-left:0; }
+		div.field.first{ @include margin-left(0); }
 
 		label.overlabel{
 			margin:2px 8px;
@@ -1520,10 +1509,10 @@ table.summary-report{
             width:80px;
          }
          div.fields{
-            margin-left:10px;
+            @include margin-left(10px);
             padding-top:4px;
             position:relative;
-            float:right;
+            @include float(right);
             width: 85%;
             .info-data{
                margin-top:8px;
@@ -1534,12 +1523,12 @@ table.summary-report{
          }
          div.action_buttons{
             top:-6px;
-            right:5px;
+            @include right(5px);
          }
       }
       .request_form_options{
          position:absolute;
-         right:30px;
+         @include right(30px);
          top:6px;
          .insert-canned-response{
             position:relative;
@@ -1557,24 +1546,24 @@ table.summary-report{
 		position:relative;
 		padding:0;
 		.integration_container {
-			padding:20px 0 10px 80px;
+			@include padding(20px 0 10px 80px);
 		}				
 		border-top:1px solid #e3e3e3;
 		.app-logo{
 			position:absolute;
 			width:64px;
 			top:0;
-			left:0;
-			padding-right:25px;
+		 @include left(0);
+			@include padding-right(25px);
 			height:20px;
 			background-color:#efefef;
-			@include border-bottom-radius(3px);
+			border-bottom-radius:3px;
 			border:1px solid #e3e3e3;
 
 			cursor: pointer;
 			input[type=checkbox] {
 				position: absolute;
-				right:5px;
+			 @include right(5px);
 				top:2px;
 			}
 		}
@@ -1607,7 +1596,7 @@ table.vmiddle {
 
 .item-right-actions{
 	@include pie-clearfix;
-	float:right;
+	@include float(right);
 	position:relative;
 	top:-6px;
 }
@@ -1615,7 +1604,7 @@ table.vmiddle {
 .menu-box{
 	border:1px solid #cecece;
 	background-color:#ffffff;
-	right:0;
+ @include right(0);
 	top:24px;
 	padding:6px 4px;
 	@include min-width(230px);
@@ -1640,13 +1629,13 @@ table.vmiddle {
 .nav-drop{ 
 	.nav-item-icon{
 		@include clearfix;
-		float:left;
+		@include float(left);
 		border:1px solid white;
 		span{
 			width:23px;
 			height:23px;
 			margin:0 3px;
-			float:left;
+			@include float(left);
 		}		
 	}	
 	.nav-item-icon:hover, a.selected{
@@ -1664,12 +1653,12 @@ table.vmiddle {
 }
 
 .dialog-special{
-   padding:8px 0 5px 0;
+   @include padding(8px 0 5px 0);
    margin:0 0;
    border:1px solid #cfcfcf;
    background-color:#f4f4f4;
    .content{
-      padding:6px 12px 4px 12px;
+      @include padding(6px 12px 4px 12px);
    }   
    .button{
       font-size:11px;
@@ -1679,7 +1668,7 @@ table.vmiddle {
       font-weight:bold;
    }
    .pagination{
-      margin:6px 0 0 0;
+      @include margin(6px 0 0 0);
       padding:10px 6px;
       color:#666666;
       a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); font-weight:normal; }
@@ -1717,12 +1706,12 @@ ul.ui-form .inputs-list{
 }
 .inputs-list label {
   display: block;
-  float: none;
+  @include float(none);
   width: auto;
   padding: 0;
-  margin-left: 20px;
+  @include margin-left(20px);
   line-height: 18px;
-  text-align: left;
+  @include text-align(left);
   white-space: normal;
 	span{
 		font-size:13px;
@@ -1736,7 +1725,7 @@ ul.ui-form .inputs-list{
   font-weight: normal;
 }
 .inputs-list .inputs-list {
-  margin-left: 25px;
+  @include margin-left(25px);
   margin-bottom: 10px;
   padding-top: 0;
 }
@@ -1748,8 +1737,8 @@ ul.ui-form .inputs-list{
 }
 .inputs-list input[type=radio], .inputs-list input[type=checkbox] {
   margin-bottom: 0;
-  margin-left: -20px;
-  float: left;
+  @include margin-left(-20px);
+  @include float(left);
 }                                   
 
 .nested-selectboxs{
@@ -1766,7 +1755,7 @@ ul.ui-form .inputs-list{
     position:absolute;
     height:16px;
     width:35px;
-    left:-38px;
+    @include left(-38px);
     top:-5px;
   }
   .subcategory{
@@ -1783,13 +1772,13 @@ ul.ui-form .inputs-list{
 	font-weight:bold;
 	position: relative;
 	top:5px;
-	margin-left: 3px;
-	margin-right: 1px;
+	@include margin-left(3px);
+	@include margin-right(1px);
 	line-height: 0;
 }
 
 .new_ticket_cc_button{
-	float:right;
+	@include float(right);
 	margin-top:5px;
 }
 
@@ -1830,11 +1819,11 @@ ul.ui-form .inputs-list{
 		}
 		select{ width: auto; }
 		.add-email{
-			margin-left: 210px;
+			@include margin-left(210px);
 			margin-top: -25px;
 			padding-bottom: 34px;
 			a.add-email-icon{
-				padding: 8px 8px 4px 35px;
+				@include padding(8px 8px 4px 35px);
 				font-size: 14px;
 				font-family: "Helvetica Neue", sans-serif;
 				font-weight: 300;
@@ -1844,7 +1833,7 @@ ul.ui-form .inputs-list{
 				@include inline-block;
 				span{
 					position: absolute;
-					left: 0px;
+				 @include left(0px);
 					top: 4px;
 					background: url("/images/email_config_add.png") no-repeat;
 					width: 25px;
@@ -1867,7 +1856,7 @@ ul.ui-form .inputs-list{
 			margin:5px 0px 12px;
 		}
 		.configure-email-form{
-			padding: 0 10px 12px 10px;
+			@include padding(0 10px 12px 10px);
 			margin-bottom: 11px;
 			border: 1px solid #dfdfdf;
 			background-color: #fbfbfb;
@@ -1876,7 +1865,7 @@ ul.ui-form .inputs-list{
 			width: 90%;
 			position:relative;
 			.column{
-				float: left;
+				@include float(left);
 				&.left-column{
 					width: 50%;
 					.text{
@@ -1890,7 +1879,7 @@ ul.ui-form .inputs-list{
 					width: 50%;
 					input.checkbox{
 						margin: 5px;
-						float: left;
+						@include float(left);
 					}
 					.set_primary{
 						padding-top: 27px;
@@ -1906,7 +1895,7 @@ ul.ui-form .inputs-list{
 				width: 25px; 
 				height: 25px;
 				position: absolute;
-				right: -28px;
+			 @include right(-28px);
 				&.disabled{
 					background: url(/images/email_config_delete_disabled.png) no-repeat;
 				}
@@ -1927,8 +1916,8 @@ ul.ui-form .inputs-list{
 }
 #cc_emails_sec .multi_value_field {
 	width:99%;
-	padding-left:5px;
-	padding-right:5px;
+	@include padding-left(5px);
+	@include padding-right(5px);
 	border-color:#C6C6C6;
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
@@ -1937,9 +1926,9 @@ ul.ui-form .inputs-list{
 #cc_emails_sec { padding-top: 30px;}
 
 .companies_select{
-	select{ float:left; }
+	select{ @include float(left); }
 	.customSelect{ width:550px; }
-	.chzn-container{ margin-left: 10px; margin-top:-5px; }
+	.chzn-container{ @include margin-left(10px); margin-top:-5px; }
 }
 
 #reset_password{
@@ -1955,21 +1944,21 @@ ul.ui-form .inputs-list{
 #reply-draft
 {
 padding:5px 10px 0;
-float: right;
+@include float(right);
 }
 
 #draft-time
 {
 padding-top: 5px;
-float: right;
-clear: both;
+@include float(right);
+@include clear(both);
 }
 
 .reply_box
 {
 	background-color: rgb(249,249,249);
 	margin: 0 10px;
-	padding: 10px 0 10px 20px;
+	@include padding(10px 0 10px 20px);
 	@include border-radius(8px);
     border: 1px #d0cfcf;
     @include box-shadow(0 1px 3px rgba(0, 0, 0, 0.1) inset);
@@ -1980,17 +1969,17 @@ clear: both;
 	background-color: #bababa;
 	@include border-radius(4px);
 	@include inline-block;
-    padding: 1px 15px 1px 7px;
-    margin-left: 10px;
+    @include padding(1px 15px 1px 7px);
+    @include margin-left(10px);
     cursor: default;
 }
 .close-img{	
-	padding: 0 5px 0 0;
+	@include padding(0 5px 0 0);
 	@include inline-block;
 	vertical-align: middle;
 	background-color: #959595;
 	@include border-right-radius(4px);
-	margin: 0 0 0 -12px;
+	@include margin(0 0 0 -12px);
 	height: 16px;
 	width:10px;
 	z-index: 3;
@@ -1998,7 +1987,7 @@ clear: both;
 	span{
 		position: absolute;
 		height: 12px; width: 12px;			
-		margin: 2px 0 0 1px;
+		@include margin(2px 0 0 1px);
 	}
 }
 
@@ -2033,7 +2022,7 @@ li.agents-field{ margin-top: 20px; }
 }
 
 .right-title{
-	float:right;
+	@include float(right);
 	font-weight: normal;
 	font-size: 13px;
 }
@@ -2048,12 +2037,12 @@ li.agents-field{ margin-top: 20px; }
 
 .radio-label,
 .checkbox-label {
-  padding-left: 20px;
+  @include padding-left(20px);
 }
 .radio-label input[type="radio"],
 .checkbox-label input[type="checkbox"] {
-  float: left;
-  margin: 2px 7px 0 -20px;
+  @include float(left);
+  @include margin(2px 7px 0 -20px);
 }
 
 h4.label-title{
@@ -2080,8 +2069,8 @@ input[type="text"].number{
 
 #takescreen-btn{
 	background: #f3f3f3 inline-image('cdn-ignored/inline-images/camera.png') no-repeat 10px 4px;
-	padding: 5px 10px 5px 40px;
-	float: right;
+	@include padding(5px 10px 5px 40px);
+	@include float(right);
 	border: 1px #ccc solid;
 	@include border-radius(3px);
 	cursor: pointer;
@@ -2095,8 +2084,8 @@ input[type="text"].number{
 
 .screenshotpop{
 	width: 200px;
-	float:right;
-	right: 12px;
+	@include float(right);
+ @include right(12px);
 	height: 100px;
 	border: 1px #f9f9f9 solid;
 	outline: 4px #595959 solid;
@@ -2105,9 +2094,9 @@ input[type="text"].number{
 
 .closeBtn{
 	font-size: 12px;
-	float: right;
+	@include float(right);
 	margin-top: 115px;
-	margin-right: -204px;
+	@include margin-right(-204px);
 	z-index: 100;
 	top: 27px;
 
@@ -2117,7 +2106,7 @@ input[type="text"].number{
 	width: 212px;
 	position: absolute;
 	top: 2px;
-	right: 0px;
+ @include right(0px);
 	height: 112px;
 	background: white;
 	z-index: 200;
@@ -2162,13 +2151,13 @@ input[type="text"].number{
 }
 
 .attachment{
-	float: left;
+	@include float(left);
 	width: 250px;
 	min-height: 100px;
 }
 
 .screenshot-wrap{
-	float: right;
+	@include float(right);
 	width: 250px;
 	min-height: 100px;
 }
@@ -2201,7 +2190,7 @@ input[type="text"].number{
     	margin-bottom: 18px;
     	color:#666666;	
     }
-    #enable-chat-button{ margin-right: 30px;}
+    #enable-chat-button{ @include margin-right(30px);}
 }
 
 // for Integrations
@@ -2210,9 +2199,9 @@ input[type="text"].number{
 }
 
 .button-container #loader{
-		float: left;
+		@include float(left);
         position: relative;
-        left: 480px;
+        @include left(480px);
         top: 1px;
     }
 .ui-widget-content {
@@ -2223,7 +2212,7 @@ input[type="text"].number{
  
 .account-content{
 	.ui-form{
-		padding: 6px 0 6px 0;
+		@include padding(6px 0 6px 0);
 		
 		.normal{
 				font-weight : normal;
@@ -2231,7 +2220,7 @@ input[type="text"].number{
 
 		.inline-field{
 			div.fields{
-				margin-left : 115px;
+				@include margin-left(115px);
 			}
 
 			#change-link{
@@ -2254,12 +2243,12 @@ input[type="text"].number{
 			}
 
 			label{
-				padding: 0 0 6px 0;
+				@include padding(0 0 6px 0);
 			}
 			
 			label.error{
 				@include border-radius(4px);
-				margin: 2px 250px 0px 1px;
+				@include margin(2px 250px 0px 1px);
 			}
 		}
 	}
@@ -2277,7 +2266,7 @@ input[type="text"].number{
 		}
 		
 		.contact-fields{
-			margin-left : 115px;
+			@include margin-left(115px);
 			input{
 				width: 56%;
 				margin : 2px;
@@ -2285,7 +2274,7 @@ input[type="text"].number{
 		}
 
 		#account_form_submit{
-			float: right;
+			@include float(right);
 		}
 	
 		.select2-container{
@@ -2317,7 +2306,7 @@ input[type="text"].number{
 		height: 30px; line-height: 30px;
 	}
 	.chzn-container-single .chzn-single div{
-		right: 3px;
+	 @include right(3px);
 		top: 2px;
 	}	
 	/*.chzn-container-single .chzn-search { display: none; }*/
@@ -2332,7 +2321,7 @@ input[type="text"].number{
 	.portal-pages-list{
 		margin:5px 0 15px;
 		li a{ color:#333333; }
-		li{ line-height: 24px; padding-left: 4px; }
+		li{ line-height: 24px; @include padding-left(4px); }
 		li.active{
 			background-color: #eee;
 			@include box-shadow(#888 0 0 1px inset);
@@ -2344,7 +2333,7 @@ input[type="text"].number{
 	padding-top: 30px;
 	p{ 
 		line-height: 22px;
-		padding-left: 2px;
+		@include padding-left(2px);
 		padding-top: 6px;
 	}
 	form{ margin-bottom: 0 }
@@ -2352,16 +2341,16 @@ input[type="text"].number{
 
 /* Dropbox attachment styles */
 div.db-chooser{
-	label{ margin-right: 50%; }
+	label{ @include margin-right(50%); }
 	.dropbox_button{
 		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
 	    height: 26px;
-	    padding-left:90px;
+	    @include padding-left(90px);
 	    border:1px solid #d6d6d6;
 	    @include border-radius(4px);
 		cursor:pointer;
 		@include text-shadow(1px 1px 0px #fff);
-		padding-right: 5px;
+		@include padding-right(5px);
 	    &:hover{
 			background-color:darken(#f2f2f2, 5%);
 		}
@@ -2370,10 +2359,10 @@ div.db-chooser{
 .attach_wrapper{
 	width:100%;
 	.dropbox_div{
-		border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
+		@include border-left(1px solid #AAAAAA); @include float(left); margin: 10px; @include padding-left(20px); margin-top:1px;
 		div.db-chooser .dropbox_button{ cursor: pointer; }
 	}
-	.attach_file{ float:left; padding-right:20px }
+	.attach_file{ @include float(left); @include padding-right(20px) }
 }
 
 /* account cancel form */
@@ -2405,20 +2394,20 @@ div.db-chooser{
 			&:focus { border-color: #ccc; box-shadow: none; } 
 		}
 	}
-	.reason-followup{ margin: 0 20px 15px 42px; }
+	.reason-followup{ @include margin(0 20px 15px 42px); }
 	input[type="radio"].cancel-reason{
-		margin-left: 0;
-		margin-right: 12px;
+		@include margin-left(0);
+		@include margin-right(12px);
 	}	
 }
 .reason-followup, .label-choice { font-size: 13px; line-height: 1.4; }
-.label-choice{ padding: 10px 20px 10px 15px; }
+.label-choice{ @include padding(10px 20px 10px 15px); }
 label.label-choice{ cursor: pointer; }
 
 .confirm-section{
-	margin-left: 19px;
-	.cancel-checkbox{ margin-right: 12px; margin-top: 3px;  }
-	.reason-followup{ margin-left: 22px; }
+	@include margin-left(19px);
+	.cancel-checkbox{ @include margin-right(12px); margin-top: 3px;  }
+	.reason-followup{ @include margin-left(22px); }
 }
 
 .cancel-form label.error{ font-weight: 500; }

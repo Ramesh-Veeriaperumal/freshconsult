@@ -48,6 +48,7 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
+						self.requestObject.ffNumberName = data.call_meta.number || "";
 					}
 					if (self.isOutgoing) {
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
@@ -122,6 +123,7 @@ var FreshfoneUserInfo;
 			} else {
 				this.setBlankProfileImage();
 			}
+			this.requestObject.createDesktopNotification();
 		},
 		setBlankProfileImage: function () {
 			this.requestObject.$userInfoContainer.find('.user_avatar')

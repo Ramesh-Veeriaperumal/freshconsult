@@ -3,10 +3,10 @@
 
 // Quick floats
 .pull-right {
-  float: right;
+  @include float(right);
 }
 .pull-left {
-  float: left;
+  @include float(left);
 }
 
 // Toggling content
@@ -24,11 +24,11 @@
 
 // Alignment options
 .align-right{
-  text-align:right;
+  @include text-align(right);
 }
 
 .align-left{
-  text-align:left;
+  @include text-align(left);
 }
 
 .inline-block{

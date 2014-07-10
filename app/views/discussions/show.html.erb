@@ -34,8 +34,4 @@
 							:reorder_id => "forums_reorder_button",
 							:list_id => "forums_list"} %>
 	</div>
-	<%= will_paginate @forums, :renderer => BootstrapPaginationRenderer,
-        				:previous_label => "<b class='arrow-left'></b>",
-        				:next_label => "<b class='arrow-right'></b>",
-        				:class => "pagination pagination-centered" %>
 <% end %>

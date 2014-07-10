@@ -18,7 +18,11 @@
         <div class="control-group span12">
           <%= link_to t('admin.social.twitter_streams.preview_stream'), "#previewFeeds", :rel => "freshdialog", 
                         :id => "preview", :class => "pull-right", :title => "Preview stream", :"data-template-footer" => "", :style => "display:none" %>
-          <label><%= t('admin.social.twitter_streams.includes') %> <span class="field-important ">*</span></label>
+          <label>
+            <%= t('admin.social.twitter_streams.includes') %> 
+            <span class="field-important ">*</span>
+            <a href="https://support.freshdesk.com/support/solutions/articles/195565" class="ctkt-help tooltip" twipsy-content-set="true" data-original-title="How to use Twitter keywords?" target="blank"><span>?</span></a>
+          </label>
           <%= text_field :twitter_stream, :includes, :value => twitter_stream.search_keys_to_s, :class => 'text required twt-stream-name', :style => "width: 100%", :placeholder => t('admin.social.twitter_streams.include_helptext') %>
           
           <a href="#" class="key-handles"><%= t('admin.social.twitter_streams.exclude_title') %></a>

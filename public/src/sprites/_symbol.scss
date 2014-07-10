@@ -29,7 +29,7 @@
 
 .setting_bottom{
    position:absolute;
-   right:7px;
+   @include right(7px);
    bottom:10px;
    width:16px;
    height:16px;
@@ -37,8 +37,8 @@
 
 .sort_handle{
 	position:relative;
-	float:left;
-	left: 18px;
+	@include float(left);
+ 	@include left(18px);
 	top: 10px;
 	width:10px;
 	height:10px;
@@ -102,9 +102,9 @@
 	/*background: #888 url(/images/ac-refresh-details.png) no-repeat center;*/
 	width: 24px;
 	height: 20px;
-	float: right;
-	padding: 6px 7px 2px 10px;
-	margin: -6px 15px 0px 0px;
+	@include float(right);
+	@include padding(6px 7px 2px 10px);
+	@include margin(-6px 15px 0px 0px);
 	border-radius: 5px;
 	&:before{
 		content:" ";
@@ -160,7 +160,7 @@
 .merge_results li #resp-icon.clicked, .match_results li #resp-icon.clicked:hover{@include symbols-sprite(resp-icon-clicked); }
 #cont-chosen:hover #resp-icon{ @include symbols-sprite(email_config_active); }
 #contact-area #resp-icon{ @include symbols-sprite(removeButton); }
-.rem_mail, #cancel_email, .remove_image { @include symbols-sprite(removeButton); padding: 0 0 2px 20px; margin-left: 5px; cursor: pointer; }
+x.rem_mail, #cancel_email, .remove_image { @include symbols-sprite(removeButton); @include padding(0 0 2px 20px); @include margin-left(5px); cursor: pointer; }
 
 #marker{ @include symbols-sprite(tickUnselect); }
 .cont-primary #marker{ @include symbols-sprite(tickSelect); }
@@ -244,5 +244,5 @@ span.fb_add { @include symbols-sprite(add); }
 /* Freshfone symbols */
 .phone-icons { @include symbols-sprite(phone); }
 .mobile-icons { @include symbols-sprite(mobile); }
-.phone-icons, .mobile-icons { padding-left: 20px; }
+.phone-icons, .mobile-icons { @include padding-left(20px); }
 #scroll-to-top { @include symbols-sprite(scroll-to-top); }

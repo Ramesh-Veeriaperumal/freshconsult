@@ -17,7 +17,7 @@
     content: "";
   }
   &:after {
-    clear: both;
+    @include clear(both);
   }
 }
 
@@ -39,8 +39,8 @@
 // ----------------------------------
 @mixin center-block() {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  @include margin-left(auto);
+  @include margin-right(auto);
 }
 
 // IE7 inline-block
@@ -58,9 +58,8 @@
 // instead of the 1 space in other browsers.
 @mixin ie7-restore-left-whitespace() {
   *margin-left: .3em;
-
   &:first-child {
-    *margin-left: 0;
+    *margin-left:0;
   }
 }
 
@@ -205,27 +204,27 @@
 
 // Centered container element
 @mixin container-fixed() {
-  margin-right: auto;
-  margin-left: auto;
+  @include margin-right(auto);
+  @include margin-left(auto);
   @include clearfix();
 }
 
 // Table columns
 @mixin tableColumns($columnSpan: 1) {
-  float: none; // undo default grid column styles
+  @include float(none); // undo default grid column styles
   width: (($gridColumnWidth) * $columnSpan) + ($gridGutterWidth * ($columnSpan - 1)) - 16; // 16 is total padding on left and right of table cells
-  margin-left: 0; // undo default grid column styles
+  @include margin-left(0); // undo default grid column styles
 }
 
 // Make a Grid
 // Use .makeRow and .makeColumn to assign semantic layouts grid system behavior
 @mixin makeRow() {
-  margin-left: $gridGutterWidth * -1;
+  @include margin-left($gridGutterWidth * -1);
   @include clearfix();
 }
 @mixin makeColumn($columns: 1, $offset: 0) {
-  float: left;
-  margin-left: ($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2);
+  @include float(left);
+  @include margin-left(($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2));
   width: ($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns - 1));
 }
 
@@ -239,7 +238,7 @@
   input,
   textarea,
   .uneditable-input {
-    margin-left: 0; // override margin-left from core grid system
+    @include margin-left(0); // override margin-left from core grid system
   }
 
   // generate .spanX
@@ -432,9 +431,9 @@
     cite {border-bottom:1px dashed blue}
     acronym {border-bottom:1px dotted #CCC; cursor:help}
     abbr {border-bottom:1px dashed #CCC; cursor:help}
-    ol, ul{ margin: 8px 0 4px 0; padding: 0 0 0 40px; line-height: 17px;}
+    ol, ul{ @include margin(8px 0 4px 0); @include padding(0 0 0 40px); line-height: 17px;}
     ul{ list-style:disc outside;  }
-    blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; border-left: 1px dotted #999; padding:6px 6px 1px 1em; }
+    blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; @include border-left(1px dotted #999); @include padding(6px 6px 1px 1em); }
     del{ text-decoration:none; }
 }
 
@@ -442,22 +441,22 @@
 @mixin triangle($direction: down, $color: black, $size: 6px) {
   @if $direction == left {
     border-bottom: $size solid transparent;
-    border-right: $size solid $color;
+    @include border-right($size solid $color);
     border-top: $size solid transparent;
   }
   @else if $direction == right {
     border-bottom: $size solid transparent;
-    border-left: $size solid $color;
+    @include border-left($size solid $color);
     border-top: $size solid transparent;
   }
   @else if $direction == up {
     border-bottom: $size solid $color;
-    border-left: $size solid transparent;
-    border-right: $size solid transparent;
+    @include border-left($size solid transparent);
+    @include border-right($size solid transparent);
   }
   @else if $direction == down {
-    border-right: $size solid transparent;
-    border-left: $size solid transparent;
+    @include border-right($size solid transparent);
+    @include border-left($size solid transparent);
     border-top: $size solid $color;
   }
   height: 0;

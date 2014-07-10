@@ -1,8 +1,7 @@
 //
 // Button groups
 // --------------------------------------------------
-
-
+@import "rtl-mixins";
 // Make the div behave like a button
 .btn-group {
   position: relative;
@@ -14,7 +13,7 @@
 
 // Space out series of button groups
 .btn-group + .btn-group {
-  margin-left: 5px;
+  @include margin-left(5px);
 }
 
 // Optional: Group multiple button groups together for a toolbar
@@ -29,7 +28,7 @@
   .btn + .btn,
   .btn-group + .btn,
   .btn + .btn-group {
-    margin-left: 5px;
+    @include margin-left(5px);
   }
 }
 
@@ -39,7 +38,7 @@
   @include border-radius(0);
 }
 .btn-group > .btn + .btn {
-  margin-left: -3px;
+  @include margin-left(-3px);
 }
 .btn-group > .btn,
 .btn-group > .dropdown-menu {
@@ -59,42 +58,26 @@
 
 // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
 .btn-group > .btn:first-child {
-  margin-left: 0;
-     -webkit-border-top-left-radius: 4px;
-         -moz-border-radius-topleft: 4px;
-             border-top-left-radius: 4px;
-  -webkit-border-bottom-left-radius: 4px;
-      -moz-border-radius-bottomleft: 4px;
-          border-bottom-left-radius: 4px;
+  @include margin-left(0);
+  @include border-top-left-radius(4px);
+  @include border-bottom-left-radius(4px);
 }
 // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
 .btn-group > .btn:last-child,
 .btn-group > .dropdown-toggle {
-     -webkit-border-top-right-radius: 4px;
-         -moz-border-radius-topright: 4px;
-             border-top-right-radius: 4px;
-  -webkit-border-bottom-right-radius: 4px;
-      -moz-border-radius-bottomright: 4px;
-          border-bottom-right-radius: 4px;
+  @include border-top-right-radius(4px);
+  @include border-bottom-right-radius(4px);
 }
 // Reset corners for large buttons
 .btn-group > .btn.large:first-child {
-  margin-left: 0;
-     -webkit-border-top-left-radius: 6px;
-         -moz-border-radius-topleft: 6px;
-             border-top-left-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-      -moz-border-radius-bottomleft: 6px;
-          border-bottom-left-radius: 6px;
+  @include margin-left(0);
+  @include border-top-left-radius(6px);
+  @include border-bottom-left-radius(6px);
 }
 .btn-group > .btn.large:last-child,
 .btn-group > .large.dropdown-toggle {
-     -webkit-border-top-right-radius: 6px;
-         -moz-border-radius-topright: 6px;
-             border-top-right-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
-      -moz-border-radius-bottomright: 6px;
-          border-bottom-right-radius: 6px;
+  @include border-top-right-radius(6px);
+  @include border-bottom-right-radius(6px);
 }
 
 // On hover/focus/active, bring the proper btn to front
@@ -118,15 +101,20 @@
 
 // Give the line between buttons some depth
 .btn-group > .btn + .dropdown-toggle {
-  padding-left: 8px;
-  padding-right: 8px;
+  @include padding-left(8px);
+  @include padding-right(8px);
   @include box-shadow(#{inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)});
   *padding-top: 5px;
   *padding-bottom: 5px;
+  @if $rtl {
+    float:right;
+    margin-left: -3px;
+    margin-right:0;
+  }
 }
 .btn-group > .btn-mini + .dropdown-toggle {
-  padding-left: 5px;
-  padding-right: 5px;
+  @include padding-left(5px);
+  @include padding-right(5px);
   *padding-top: 2px;
   *padding-bottom: 2px;
 }
@@ -135,8 +123,8 @@
   *padding-bottom: 4px;
 }
 .btn-group > .btn-large + .dropdown-toggle {
-  padding-left: 12px;
-  padding-right: 12px;
+  @include padding-left(12px);
+  @include padding-right(12px);
   *padding-top: 7px;
   *padding-bottom: 7px;
 }
@@ -178,7 +166,7 @@
 // Reposition the caret
 .btn .caret {
   margin-top: 8px;
-  margin-left: 0;
+  @include margin-left(0);
 }
 // Carets in other button sizes
 .btn-mini .caret,
@@ -187,8 +175,8 @@
   margin-top: 6px;
 }
 .btn-large .caret {
-  border-left-width:  5px;
-  border-right-width: 5px;
+  @include border-left-width(5px);
+  @include border-right-width(5px);
   border-top-width:   5px;
 }
 // Upside down carets for .dropup
@@ -223,12 +211,12 @@
 }
 .btn-group-vertical .btn {
   display: block;
-  float: none;
+  @include float(none);
   width: 100%;
   @include border-radius(0);
 }
 .btn-group-vertical .btn + .btn {
-  margin-left: 0;
+  @include margin-left(0);
   margin-top: -1px;
 }
 .btn-group-vertical .btn:first-child {

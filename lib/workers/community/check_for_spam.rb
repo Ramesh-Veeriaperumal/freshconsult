@@ -15,6 +15,7 @@ class Workers::Community::CheckForSpam
 	  	params.symbolize_keys!
 	  	post = build_post(params[:id])
 	  	process(post, params[:request_params])
+	  	SpamAnalysis.push(post, {:request_params => params[:request_params]})
 	  end
 
 	  private

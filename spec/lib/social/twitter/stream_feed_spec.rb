@@ -7,11 +7,10 @@ describe Social::Gnip::TwitterFeed do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
-      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+      GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
     @handle.update_attributes(:capture_dm_as_ticket => true)
@@ -52,7 +51,7 @@ describe Social::Gnip::TwitterFeed do
     tweet.is_ticket?.should be_true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
-    tweet.tweetable.destroy
+    # tweet.tweetable.destroy
   end
 
   it "should create a note when a DM arrives and if dm threaded time is greater than zero" do
@@ -93,7 +92,7 @@ describe Social::Gnip::TwitterFeed do
     ticket.notes.first.id.should eql tweet.tweetable.id
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm[:text])
-    ticket.destroy
+    # ticket.destroy
   end
   
   it "should create a tickets and notes in the order of creation time when a DMs arrive" do
@@ -125,7 +124,7 @@ describe Social::Gnip::TwitterFeed do
     tweet.is_note?.should be_true
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm2[:text])
-    ticket.destroy
+    # ticket.destroy
   end
   
   it "should create a ticket when a tweet arrives" do
@@ -169,8 +168,7 @@ describe Social::Gnip::TwitterFeed do
   it "should convert a reply to a ticket if the 'replied-to' tweet doesnt come in the next 2 minutes" do
     #Send Tweet
     ticket_feed = sample_gnip_feed(@rule)
-    sleep 2 #to ensure that the 'tweet' and 'reply' get different tweet_ids
-
+    
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
     reply_feed = sample_gnip_feed(@rule, ticket_tweet_id)
@@ -180,10 +178,8 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    fd_counter = 30
-
     while reply_tweet.nil?
-      fd_counter = fd_counter + 30
+      fd_counter = 120
       reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
     end
 
@@ -353,11 +349,16 @@ describe Social::Gnip::TwitterFeed do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
-    @handle.destroy
+
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response)
+    end
+
+    Social::TwitterHandle.destroy_all
     Social::Stream.destroy_all
-    Social::Tweet.destroy_all
+
+    # Social::Tweet.destroy_all
     Resque.inline = false
   end
 end

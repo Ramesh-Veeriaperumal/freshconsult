@@ -20,9 +20,10 @@ describe Helpdesk::TicketsController do
     expected = (response.status =~ /200 OK/ && result["errors"]['error'] == "Priority should be a valid priority")
     expected.should be(true)
   end
+  
   it "should update a ticket" do
   	new_ticket = create_ticket({:status => 2})
-  	put :update, { :helpdesk_ticket => {:status => 3, :priority => "Higher" },:format => 'xml',:id=>new_ticket.id }, :content_type => 'application/xml'
+  	put :update, { :helpdesk_ticket => {:status => 3, :priority => "Higher" },:format => 'xml',:id=>new_ticket.display_id }, :content_type => 'application/xml'
     result = parse_xml(response)
     expected = (response.status =~ /200 OK/ && result["errors"]['error'] == "Priority should be a valid priority")
     expected.should be(true)

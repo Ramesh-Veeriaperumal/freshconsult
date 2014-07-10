@@ -19,7 +19,7 @@ class ProfilesController < ApplicationController
 
   def update 
      if current_user.customer?
-       update_contact
+       update_contact # Possible dead code. We have a support profiles controller to do this.
      else
        update_agent
      end  

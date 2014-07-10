@@ -14,7 +14,7 @@ module Admin::HomeHelper
       },
       :freshfone                       =>   {
         :url                           =>   "/admin/freshfone",
-        :privilege                     =>   can_view_freshfone_admin? && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks)
       },
       :"twitter-setting"               =>   {
         :url                           =>   (feature?(:social_revamp) ? "/admin/social/streams" : "/social/twitters"),
@@ -156,9 +156,6 @@ module Admin::HomeHelper
       :set_businesshour_group          =>   {
         :privilege                     =>   feature?(:multiple_business_hours)
       },
-      :trusted_ip                      =>   {
-        :privilege                     =>   feature?(:custom_ssl)
-      },
       :create_new_sla                  =>   {
         :url                           =>   "/helpdesk/sla_policies/new",
         :privilege                     =>   feature?(:customer_slas)
@@ -177,6 +174,12 @@ module Admin::HomeHelper
       },
       :forum_moderation                =>   {
         :privilege                     =>   feature?(:forums)
+      },
+      :trusted_ip                      =>   {
+        :privilege                     =>    current_account.features?(:whitelisted_ips)
+      },
+      :custom_mailbox                  =>   {
+        :privilege                     =>    current_account.features?(:mailbox)
       }
     }
   end
@@ -209,7 +212,7 @@ module Admin::HomeHelper
     ADMIN_KEYWORDS = {
       :email                      =>      {
           :open_keywords          =>      [:configure_support_email, :Personalized_email_replies, :remove_ticket_id, :reply_to_email],
-          :closed_keywords        =>      [:multiple_mailboxes]
+          :closed_keywords        =>      [:multiple_mailboxes,:custom_mailbox]
       },
       :freshchat                  =>      {
           :open_keywords          =>      [:chat_integration]
@@ -244,8 +247,8 @@ module Admin::HomeHelper
           :closed_keywords        =>      [:add_new_agent_role]
       },
       :security                   =>      {
-          :open_keywords          =>      [:ssl_encryption, :single_signon]
-          # :closed_keywords        =>      [:trusted_ip]
+          :open_keywords          =>      [:ssl_encryption, :single_signon],
+          :closed_keywords        =>      [:trusted_ip]
       },
       :sla                        =>      {
           :open_keywords          =>      [:configure_escalation_emails],
@@ -293,7 +296,7 @@ module Admin::HomeHelper
       :set_businesshour_group                 =>    [:multiple_business_hours],
       :agent_roles_permissions                =>    [:custom_roles],
       :single_signon                          =>    [:sso],
-      # :trusted_ip                             =>    [:private_helpdesk],
+      :trusted_ip                             =>    [:trusted_ip_meta],
       :business_hours_multiple_locations      =>    [:multiple_business_hours],
       :"multi-product"                        =>    [:multi_brand],
       :ticket_creation_rules                  =>    [:automations, :workflows],
@@ -304,7 +307,8 @@ module Admin::HomeHelper
       :"canned-response"                      =>    [:predefined_responses],
       :"billing"                              =>    [:choose_plan],
       :import                                 =>    [:zendesk_import],
-      :"day_pass"                             =>    [:occasional_agent]
+      :"day_pass"                             =>    [:occasional_agent],
+      :custom_mailbox                         =>    [:custom_mailbox_meta]
     }
 
   ######### Constructing Admin Page ########

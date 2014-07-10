@@ -263,7 +263,8 @@ var FreshfoneSocket;
 
 		bindTransfer: function () {
 			var self = this;
-			$('#freshfone_available_agents .available_agents_list').on('click', 'li', function () {
+			$('#freshfone_available_agents .available_agents_list li').off('click');
+			$('#freshfone_available_agents .available_agents_list li').on('click', function () {
 				self.freshfonecalls.transferCall($(this).find('.id').html());
 			});
 		},

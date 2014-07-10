@@ -24,11 +24,11 @@ table {
   td {
     padding: 8px;
     line-height: $baseLineHeight;
-   // text-align: left;
+   // @include text-align(left);
     vertical-align: top;
     border-top: 1px solid $tableBorder;
     &.text-right{
-      text-align: right;
+      @include text-align(right);
     }
   }
   th {
@@ -60,8 +60,8 @@ table {
 table [class*=span],
 .row-fluid table [class*=span] {
   display: table-cell;
-  float: none; // undo default grid column styles
-  margin-left: 0; // undo default grid column styles
+  @include float(none); // undo default grid column styles
+  @include margin-left(0); // undo default grid column styles
 }
 
 // TABLE BACKGROUNDS

@@ -6,13 +6,12 @@ include Facebook::Core::Util
 describe Facebook::Core::Post do
   
   before(:all) do
-    @account = create_test_account
     @account.features.send(:facebook_realtime).create
-    @account.make_current
     @fb_page = create_test_facebook_page(@account)
+    @fb_page.update_attributes(:import_visitor_posts => true)
   end
   
-  it "should create a ticket when a post/status(without comments) arrives and convert to ticket is enabled" do
+  it "should create a ticket when a post(without comments) arrives and import visitor post is enabled" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
     realtime_feed = sample_realtime_feed(feed_id)
     facebook_feed = sample_facebook_feed(feed_id)
@@ -33,7 +32,7 @@ describe Facebook::Core::Post do
     ticket.requester_id.should eql user_id
   end
   
-   it "should create a ticket and notes to the ticket when a post/status(with comments) arrives and convert to ticket is enabled" do
+   it "should create a ticket and notes to the ticket when a post(with comments) arrives and import visitor post is enabled" do
     feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
     realtime_feed = sample_realtime_feed(feed_id)
     facebook_feed = sample_facebook_feed(feed_id, true)
@@ -75,7 +74,7 @@ describe Facebook::Core::Post do
     
     AwsWrapper::Sqs.any_instance.expects(:requeue).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse   
-    Social::FacebookPage.first.last_error.should_not be_nil
+    Social::FacebookPage.find_by_id(@fb_page.id).last_error.should_not be_nil
   end
   
   
@@ -88,9 +87,24 @@ describe Facebook::Core::Post do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    Social::FacebookPage.first.reauth_required.should be_true
-    Social::FacebookPage.first.enable_page.should be_false
+    Social::FacebookPage.find_by_id(@fb_page.id).reauth_required.should be_true
+    Social::FacebookPage.find_by_id(@fb_page.id).enable_page.should be_false
   end
   
+  it "should not create a ticket when a post arrives and import visitor post is not enabled" do
+     @fb_page.update_attributes(:import_visitor_posts => false)
+     feed_id = "#{(Time.now.utc.to_f*100000).to_i}_#{(Time.now.utc.to_f*100000).to_i}"
+     realtime_feed = sample_realtime_feed(feed_id)
+     facebook_feed = sample_facebook_feed(feed_id)
+     facebook_feed[:message] = "Not me"
+     
+     #stub the api call for koala
+     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
+     
+     Facebook::Core::Parser.new(realtime_feed).parse
+     
+     post = Social::FbPost.find_by_post_id(feed_id)
+     post.should be_nil
+   end
   
 end

@@ -6,14 +6,8 @@ describe DiscussionsController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
-	before(:all) do
-		@account = create_test_account
-		@user = add_test_agent(@account)
-	end
-
 	before(:each) do
-		@request.host = @account.full_domain
-		log_in(@user)
+		login_admin
 	end
 
 	# describe "Displaying recent published and monitored topics" do

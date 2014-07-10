@@ -16,10 +16,28 @@
 	bottom: 0;
 	height: 39px;
 	color: #FFF;
-	right: 10px;
+ @include right(10px);
 	z-index: 2;
 }
 
+.ff_desktop_notification {
+	position: fixed;
+	right: 350px;
+	bottom: 0;
+	background-color: #7B7B7B;
+	.desktopNotifier {
+		width: 40px;
+		height: 30px;
+		position: relative;
+		cursor: pointer;
+	}
+	border-radius: 5px;
+	margin-bottom: 1px;
+	@include box-sizing(border-box);
+	@include box-shadow(inset 0px 1px 0px 0px #333);
+	background-color: #6F6F6F;
+	background-repeat: no-repeat;
+}
 .popupbox-tabs {
 	max-width: 500px;
 	li {
@@ -58,7 +76,7 @@
 	.triangle {
 		@include triangle(down, $popup-content-border, 8px);
 		position: absolute;
-		right: 10px;
+	 @include right(10px);
 		top: 100%;
 		margin-top: 3px;
 	}	
@@ -88,12 +106,12 @@
 	width: 128px;
 	height: 51px;
 	@include box-sizing(border-box);
-	float: left;
+	@include float(left);
 
 	background-color: $dashboard-cells-background;
 	color: #666;
 	padding: 8px 9px 6px;
-	margin: 0 1px 1px 0;
+	@include margin(0 1px 1px 0);
 
 	h4 { font-size: 15px; }
 	.dash-lbl{ font-size: 12px; }
@@ -108,14 +126,14 @@
 	background-color: #E7E7E7;
 	color: $dashboard-cells-header;
 
-	margin-left: 1px;
+	@include margin-left(1px);
 	&:after {
 		content:"";
 		@include triangle(right, $dashboard-right-arrow, 4px);
 		display: inline-block;
 		margin-top: 4px;
-		margin-right: 10px;
-		float: right;
+		@include margin-right(10px);
+		@include float(right);
 	};
 	&:hover {
 		background-color: #EEE;

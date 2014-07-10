@@ -1,4 +1,6 @@
 @import "compass";
+@import "lib/rtl-mixins";
+
 @import "cdn-ignored/sprites/smiley/*.png";
 $smiley-layout:horizontal;
 $smiley-sprite-dimensions:true;
@@ -27,27 +29,27 @@ body{
   width:42px;
   height:40px;
   margin-top:3px;
-  float: left;
+  @include float(left);
 }
 
 .brand:after {
-    clear: both;
+    @include clear(both);
     content: "";
     display: table;
 }
 
 .brand{ text-decoration: none; }
 
-.brand .logo { margin-left: -5px; }
+.brand .logo { @include margin-left(-5px); }
 
 .brand .logo_text{
-	margin:15px 0 0 5px;
+	@include margin(15px 0 0 5px);
 	font-size:24px;
 	color:#f5f5f5;
 }
 
 .brand .logo, .brand .logo_text {
-    float: left;
+    @include float(left);
     position: relative;
     z-index: 5;
 }
@@ -89,7 +91,7 @@ a {
 .pointer{
   width:17px;
   height:10px;
-  margin-left:12px;
+  @include margin-left(12px);
   position: relative;
   top: -9px;
   &:before, &:after{
@@ -102,13 +104,13 @@ a {
     border-width: 11px;
     border-bottom-color:#a9a9a9; 
     top: -2px;
-    left: -1px;
+    @include left(-1px);
   }
 }
 
 .smily{
   padding: 14px;
-  float: left;
+  @include float(left);
 }
 
 h1{
@@ -128,16 +130,16 @@ h2{
 .search-bar{
   height: 210px;
   background-color: #f2f2f2;
-  @include border-bottom-radius(3px);
+  border-bottom-radius:3px;
   border:1px solid #a9a9a9;
   border-top: 0;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.05);
-  margin-left: 15px;
-  margin-right: 15px;
+  @include margin-left(15px);
+  @include margin-right(15px);
 }
 
 .error{
-	margin-left:5px;
+	@include margin-left(5px);
 	color:red;
 }
 
@@ -146,7 +148,7 @@ h2{
   color: #000;
   font-weight:normal;
   padding-top: 10px;
-  padding-left: 12px;
+  @include padding-left(12px);
   margin: 0;
 }
 
@@ -155,7 +157,7 @@ h2{
 }
 
 .clear{
-  clear: both;
+  @include clear(both);
 }
 
 .search-box{
@@ -168,7 +170,7 @@ h2{
   border:1px solid #a9a9a9;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.05);
   margin-top: -15px;
-  margin-left: 15px;
+  @include margin-left(15px);
 }
 
 .textfield{
@@ -178,7 +180,7 @@ h2{
   background-color: #fff;
   color: #666;
   border: 1px solid #C4C4C4;
-  border-right: 1px solid #E9E9E9;
+  @include border-right(1px solid #E9E9E9);
   border-bottom: 1px solid #E9E9E9;
   width:819px;
   height:124px;
@@ -188,7 +190,7 @@ h2{
   box-shadow: inset 0px 2px 6px #e4e4e4;
   position:relative;                   
   overflow:hidden;
-  margin-left: 10px;
+  @include margin-left(10px);
   display:block;
   resize:none;
 }
@@ -198,7 +200,7 @@ input{
     font-size:18px;
     background:none;    
     position:absolute;
-    left:0; top:0;
+    @include left(0); top:0;
     border:0;                            
     width:809px;
     height:40px;
@@ -211,10 +213,10 @@ input{
   border-radius: 5px;
   width:62px;
   height:26px;
-  float: right;
+  @include float(right);
   position: relative;
   top: -58px;
-  right: 10px;
+  @include right(10px);
   margin-top:25px;
 }
 
@@ -222,7 +224,7 @@ input{
   font-size:12px;
   color: #fff;
   position: relative;
-  left: -10px;
+  @include left(-10px);
   top: -54px;
   font-weight: bold;
   font-family: Helvetica;

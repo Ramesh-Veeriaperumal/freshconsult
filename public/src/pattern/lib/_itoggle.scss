@@ -5,11 +5,11 @@
   text-transform:uppercase;    
   font-size:13px;  
   position:relative;
-  margin-left:10px;
+  @include margin-left(10px);
   padding:0;
   height:20px;
   color:#fff;
-  text-align:center;
+  @include text-align(center);
   overflow:hidden;
   background: #9d9d9d;
   border:1px solid rgba(0, 0, 0, 0.1); 
@@ -30,7 +30,7 @@
   .toggle-container{    
     width:200%;
     height:100%;
-    left:-100%;
+    @include left(-100%);
     overflow:hidden;
     @include clearfix;
     @include border-radius(18px);
@@ -38,7 +38,7 @@
     /*@include transition-duration(0.1s);    */
   }  
   .toggle-handle{    
-    left:50%;    
+    @include left(50%);    
     span{
       @include inline-block;
       @include pie;
@@ -59,8 +59,8 @@
     border-color:darken(#738076, 20%);
   } 
   &.active{        
-    .toggle-container{ left:0; }
-    .toggle-handle{ margin-left:-20px; }
+    .toggle-container{ @include left(0); }
+    .toggle-handle{ @include margin-left(-20px); }
     .toggle-handle span{ @include box-shadow(#f2f2f2 0 0 0 1px inset); };
   }
   p{
@@ -68,7 +68,7 @@
     padding: 0 18px;
   }
   .on-label, .off-label{    
-    float:left;
+    @include float(left);
     width:50%;
     height:100%;
     @include pie;
@@ -83,7 +83,7 @@
     @include filter-gradient(#40894c, #4ea961, vertical); // IE6-9
     @include background(linear-gradient(top, hsla(130,36%,40%,1) 0%,hsla(133,37%,49%,1) 100%));
 
-    span{ padding-right:12px; }
+    span{ @include padding-right(12px); }
   }
-  .off-label span{ padding-left:12px; }
+  .off-label span{ @include padding-left(12px); }
 }

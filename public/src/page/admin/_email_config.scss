@@ -11,7 +11,7 @@
   border-radius: 5px;
   padding: 7px;
   background: #FEFDEE;
-  margin: -13px 0px 17px 0px;
+  @include margin(-13px 0px 17px 0px);
 }
 //------------------------------------------------------------------------------------------
                 // Custom Mailbox end

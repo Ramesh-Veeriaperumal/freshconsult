@@ -24,7 +24,7 @@ $badges-a-layout:smart;
 .gamesettings-badges {
 	width: 50px;
 	height: 50px;
-	margin-left: -5px;
+	@include margin-left(-5px);
 }
 
 .badge-set{
@@ -43,7 +43,7 @@ $badges-a-layout:smart;
 .select_badge{
 	border: 1px solid #DFDFDF;
 	width: 100px;
-	text-align: center;
+	@include text-align(center);
 	margin: 5px 0;
 	background-color: #EFEFEF;
 	@include border-radius(6px);
@@ -68,8 +68,8 @@ $badges-a-layout:smart;
 	@include inline-block;
 	width: 50px;
 	height: 50px;
-	margin: -5px 5px 18px 5px;
-	text-align: center;
+	@include margin(-5px 5px 18px 5px);
+	@include text-align(center);
 	.label.points {
   		position: relative;
   		top:53px;
@@ -77,17 +77,17 @@ $badges-a-layout:smart;
 }
 
 .badges.center{
-	margin-left: auto;
-	margin-right: auto;
+	@include margin-left(auto);
+	@include margin-right(auto);
 } 
 
 .badges.left{
-	margin: -2px 0 18px -5px;
+	@include margin(-2px 0 18px -5px);
 }
 
 .gamesettings h3{
 	color: #333;
-	margin: 0 0 3px 2px;
+	@include margin(0 0 3px 2px);
 	font-size: 20px;
 }
 
@@ -99,7 +99,7 @@ $badges-a-layout:smart;
 }
 
 .gamesettings .points-box{
-	margin-right: 0;
+	@include margin-right(0);
 	overflow: hidden;
 }
 
@@ -111,13 +111,13 @@ $badges-a-layout:smart;
 
 .gamesettings .points li{
 	list-style: none;
-	float: left;
-	margin-right: 0;	
+	@include float(left);
+	@include margin-right(0);	
 	width: 110px;
 	font-size: 11px;
 	font-weight: 500;
 	color: #333;
-	padding: 0 0 0 0;
+	@include padding(0 0 0 0);
 }
 
 .gamesettings .error{
@@ -147,14 +147,14 @@ $badges-a-layout:smart;
 }
 
 .gamesettings .trophies li.topLeft {
-	border-right: 1px solid #eaeaea;
+	@include border-right(1px solid #eaeaea);
 	border-bottom: 1px solid #eaeaea;
-	margin-right: 0;
+	@include margin-right(0);
 	padding: 10px;
 }
 
 .gamesettings .trophies li.topRight {
-	border-left: 1px solid #eaeaea;
+	@include border-left(1px solid #eaeaea);
 	border-bottom: 1px solid #eaeaea;
 	padding: 10px;
 }
@@ -162,14 +162,14 @@ $badges-a-layout:smart;
 
 .gamesettings .trophies li.bottomLeft{
 	border-top: 1px solid #eaeaea;
-	border-right: 1px solid #eaeaea;
+	@include border-right(1px solid #eaeaea);
 	padding: 10px;
-	margin-right: 0;
+	@include margin-right(0);
 
 }
 
 .gamesettings .trophies li.bottomRight {
-	border-left: 1px solid #eaeaea;
+	@include border-left(1px solid #eaeaea);
 	border-top: 1px solid #eaeaea;
 	padding: 10px;
 }
@@ -177,7 +177,7 @@ $badges-a-layout:smart;
 .gamesettings .quest{
 	min-height: 40px;
 	margin-bottom: 5px;
-	padding: 20px 50px 20px 20px;
+	@include padding(20px 50px 20px 20px);
 }
 
 
@@ -203,13 +203,13 @@ $badges-a-layout:smart;
 
 .gray-box-rounded select {
 	width: 200px;
-	margin-right: 10px;
+	@include margin-right(10px);
 } 
 
 .gray-box-rounded .smallinput{
 	width: 50px;
 	font-size: 14px;
-	margin-right: 10px;
+	@include margin-right(10px);
 	@include border-radius(4px);
 	border: 1px solid #d9d9d9;
 }
@@ -224,14 +224,14 @@ $badges-a-layout:smart;
 	overflow: hidden;
 }
  .badgelist li{
-   float: left;
-   margin: 10px 20px 20px 10px;
-   text-align: center;
+   @include float(left);
+   @include margin(10px 20px 20px 10px);
+   @include text-align(center);
    font-weight: bold;
  }
 
 .badgelist li div{
-	margin-left: 5px;
+	@include margin-left(5px);
 }
 
 
@@ -245,9 +245,9 @@ $badges-a-layout:smart;
   width: 30%;
   border-collapse: collapse;
   display: inline;
-  margin-right: 3%;
+  @include margin-right(3%);
   margin-top: 2%;
-  float: left;
+  @include float(left);
 }
 
  .leaderboard-big td, .leaderboard-big th, 
@@ -263,7 +263,7 @@ $badges-a-layout:smart;
  
  .leaderboard-small th{
 	background-color: #e5e5e5;
-	text-align: left;
+	@include text-align(left);
 }
  .alterRow td{
  	background-color: #f6f6f6;
@@ -281,21 +281,21 @@ $badges-a-layout:smart;
  	display: block;
  }
 li.dashboard-quest-points {
-	text-align:center;
+	@include text-align(center);
 	margin-top:5px;
 	font-weight:bold;
 }
 
 
 .report-nmleft{
-	margin-left: -20px;
-	margin-right: -20px;
+	@include margin-left(-20px);
+	@include margin-right(-20px);
 }
 
 .report-show-more{
 	border:1px solid #efefef;
 	border-width:2px 0;
-	text-align: center;
+	@include text-align(center);
 	padding: 8px 0;
 	margin:0 -20px; 
 	a{
@@ -308,7 +308,7 @@ li.dashboard-quest-points {
 	padding-top:1px;
 	margin-top: 10px;
 	.panel-row{
-		padding: 12px 20px 12px 13px;
+		@include padding(12px 20px 12px 13px);
 		position: relative;
 		border-top:0;
 		border-bottom:1px solid #E6E6E6;
@@ -325,10 +325,10 @@ li.dashboard-quest-points {
 		font-size: 12px;
 	}
 	.panel-row{
-		padding: 12px 20px 12px 13px;
+		@include padding(12px 20px 12px 13px);
 		position: relative;
 		border-top:0;
-		border-left: 7px solid transparent;
+		@include border-left(7px solid transparent);
 		@include min-height(43px);
 		.help-text{
 			color:#adadad;
@@ -336,7 +336,7 @@ li.dashboard-quest-points {
 	}	
 	.panel-row.lb-cu{
 		background-color:#f2f9e6;
-		border-left: 7px solid #dbe8c8;
+		@include border-left(7px solid #dbe8c8);
 	}
 }
 
@@ -347,9 +347,9 @@ li.dashboard-quest-points {
 }
 
 .lbr-trophy{
-	float: left;
-	margin-left: -5px;
-	margin-right: 5px;
+	@include float(left);
+	@include margin-left(-5px);
+	@include margin-right(5px);
 	margin-top: 3px;
 }
 
@@ -366,13 +366,13 @@ li.dashboard-quest-points {
 	@include border-radius(2em);
 	@include box-shadow(rgba(0, 0, 0, 0.5) 0 1px 1px inset);
 	position: absolute;
-	left: -50px;
+ @include left(-50px);
 	top: 15px;
 }
 
 .lb-sc{
 	.lb-report-row, .lb-report-title{
-		margin-left:1px;
+		@include margin-left(1px);
 	}		
 	.lb-report-title{
 		background-color: #efefef;
@@ -380,14 +380,15 @@ li.dashboard-quest-points {
 }
 
 .lb-report-row, .lb-report-title{
-	padding: 6px 9px 3px 15px;
+	@include padding(6px 9px 3px 15px);
 }
 
 .lb-report-col{
-	@include float-left;	
+	display:inline;
+	@include float(left);	
 	@include min-height(450px);
 	width:24.9%;
-	border-left: 1px solid #d5d5d5;
+	@include border-left(1px solid #d5d5d5);
 }
 
 .report-3-col .lb-report-col{
@@ -417,7 +418,7 @@ li.dashboard-quest-points {
 		position: absolute;
 		background-color: #e8f1f4;
 		top:0;
-		left:0;
+	 @include left(0);
 		height: 100%; 
 		@include border-left-radius(3px);
 		z-index: 0;
@@ -427,14 +428,14 @@ li.dashboard-quest-points {
 .badge-list{
 	@include clearfix;
 	.badges{
-		float:left;
+		@include float(left);
 		position: relative;
-		margin: 15px 18px 25px 0;
+		@include margin(15px 18px 25px 0);
 	}
 	.score{
 		position: absolute;
 		width: 100%;
-		text-align: center;
+		@include text-align(center);
 		bottom:-18px;
 		@include ellipsis;
 		color: #666666;
@@ -467,11 +468,11 @@ li.dashboard-quest-points {
 		font-weight:bold;
 	}
 	.panel-content{
-		padding-left:50px;
+		@include padding-left(50px);
 	}
 	.actions{ display:none; }
 	&:hover .actions{ display:block; }
-	.toggle-button { margin-left: 0; }
+	.toggle-button { @include margin-left(0); }
 }
 
 .admin-list .panel-row{ padding: 12px 0; }

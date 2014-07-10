@@ -1,7 +1,8 @@
 class Admin::Social::StreamsController < Admin::AdminController
 
   include Social::Twitter::Constants
-
+  
+  before_filter { |c| c.requires_feature :twitter }
   before_filter :twitter_wrapper, :only => [:index]
 
   def index

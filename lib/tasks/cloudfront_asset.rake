@@ -8,6 +8,7 @@ namespace :cloudfront_assets do
 
   task :upload => :environment do
     change_in_assets = change?
+    compile!
     upload! if change_in_assets
     puts "NO CHANGE IN assets.. So not uploading to cloudfront.
             VERSIONS are cloudfront::#{@cloudfront_version} Repo::#{@git_version}" unless change_in_assets
@@ -38,7 +39,6 @@ namespace :cloudfront_assets do
   end
 
   def upload!
-    Rake::Task["cloudfront_assets:compile"].execute
     puts "::::upload started:::#{Time.now}"
     CloudfrontAssetHost::Uploader.upload!(:verbose => true,
       :dryrun =>  !CloudfrontAssetHost.enabled,

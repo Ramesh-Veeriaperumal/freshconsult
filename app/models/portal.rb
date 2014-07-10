@@ -4,16 +4,16 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
 
   attr_protected  :account_id
-  
+
   xss_sanitize  :only => [:name]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
-  validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$", 
+  validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit_on_update :update_users_language, :if => :main_portal_language_changes? 
+  after_commit_on_update :update_users_language, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
-  
+
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
   include Redis::RedisKeys
@@ -24,23 +24,23 @@ class Portal < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :conditions =>  [' description = ? ', 'logo' ],
     :dependent => :destroy
-  
+
   has_one :fav_icon,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => [' description = ?', 'fav_icon' ], 
+    :conditions => [' description = ?', 'fav_icon' ],
     :dependent => :destroy
-  
+
   has_one :template, :class_name => 'Portal::Template'
-  
-  has_many :portal_solution_categories, 
-    :class_name => 'PortalSolutionCategory', 
-    :foreign_key => :portal_id, 
-    :order => "position", 
+
+  has_many :portal_solution_categories,
+    :class_name => 'PortalSolutionCategory',
+    :foreign_key => :portal_id,
+    :order => "position",
     :dependent => :delete_all
 
-  has_many :solution_categories, 
-    :class_name => 'Solution::Category', 
+  has_many :solution_categories,
+    :class_name => 'Solution::Category',
     :through => :portal_solution_categories,
     :order => "portal_solution_categories.position"
 
@@ -50,12 +50,12 @@ class Portal < ActiveRecord::Base
   belongs_to :product
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD56"
-  
+  APP_CACHE_VERSION = "FD60"
+
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
   end
-  
+
   def fav_icon_attributes=(icon_attr)
     handle_icon 'fav_icon', icon_attr
   end
@@ -63,13 +63,13 @@ class Portal < ActiveRecord::Base
   def fav_icon_url
     fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
   end
-  
+
   def forum_categories
     main_portal ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
-  
+
   def portal_forums
-    main_portal ? account.forums : 
+    main_portal ? account.forums :
       forum_category ? forum_category.forums : []
   end
 
@@ -83,12 +83,12 @@ class Portal < ActiveRecord::Base
   end
 
   def recent_articles
-    main_portal ? account.published_articles.newest(10) : 
+    main_portal ? account.published_articles.newest(10) :
       account.solution_articles.articles_for_portal(self).visible.newest(10)
   end
 
   def recent_portal_topics user
-    main_portal ? account.portal_topics.published.visible(user).newest.limit(6) : 
+    main_portal ? account.portal_topics.published.visible(user).newest.limit(6) :
         (forum_category ? forum_category.portal_topics.published.visible(user).newest.limit(6) : [])
   end
 
@@ -106,20 +106,20 @@ class Portal < ActiveRecord::Base
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)
   end
-  
+
   def customer_editable_ticket_fields
     filter_fields account.ticket_fields.customer_editable
   end
 
   def layout
-    self.template.layout    
+    self.template.layout
   end
-  
+
   def to_liquid
     @portal_drop ||= (PortalDrop.new self)
     # PortalDrop.new self
   end
-  
+
   def host
     portal_url.blank? ? account.full_domain : portal_url
   end
@@ -131,7 +131,7 @@ class Portal < ActiveRecord::Base
   def portal_name
     (name.blank? && product) ? product.name : name
   end
-  
+
   def logo_url
     logo.content.url(:logo) unless logo.nil?
   end
@@ -139,7 +139,7 @@ class Portal < ActiveRecord::Base
   def fav_icon_url
     fav_icon.content.url unless fav_icon.nil?
   end
-  
+
   def cache_prefix
     "#{APP_CACHE_VERSION}/v#{cache_version}/#{language}/#{self.id}"
   end
@@ -147,7 +147,7 @@ class Portal < ActiveRecord::Base
   private
 
     def update_users_language
-      account.all_users.update_all(:language => account.language) unless account.features.multi_language? 
+      account.all_users.update_all(:language => account.language) unless account.features.multi_language?
     end
 
     def main_portal_language_changes?
@@ -171,9 +171,9 @@ class Portal < ActiveRecord::Base
     end
 
     def downcase_portal_url
-      self.portal_url = portal_url.downcase if portal_url 
+      self.portal_url = portal_url.downcase if portal_url
     end
-    
+
     def filter_fields(f_list)
       to_ret = []
       checks = { 'product' => (main_portal && !account.products.empty?) }
@@ -182,7 +182,7 @@ class Portal < ActiveRecord::Base
       to_ret
     end
 
-    
+
 
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }

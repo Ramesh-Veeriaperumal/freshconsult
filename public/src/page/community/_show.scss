@@ -2,7 +2,7 @@
 	.community-wrapper {
 		margin: 0 -20px 0 -20px;
 		background-color: $sidebar_bg;
-		padding-right: $sidebar_width;
+		@include padding-right($sidebar_width);
 		overflow: hidden;
 		min-height: 450px;
 		@include min-height($page-min-height);
@@ -10,7 +10,7 @@
 		.maincontent {
 			background: white;
 			padding-top: 20px;
-			padding-left: 20px;
+			@include padding-left(20px);
 			box-sizing: border-box;
 			overflow: hidden;
 			@include min-height($page-min-height);
@@ -18,8 +18,8 @@
 
 		.rightcontent {
 			width: $sidebar_width;
-			float: right;
-			margin-right: -$sidebar_width;
+			@include float(right);
+			@include margin-right(-$sidebar_width);
 			box-sizing: border-box;
 			padding: 15px;
 		}
@@ -52,7 +52,7 @@
 
 				.more-users-link {
 					display: inline-block;
-					margin: 2px 14px 0 0;
+					@include margin(2px 14px 0 0);
 					background: #BBB;
 					color: white;
 					padding: 5px 0;
@@ -61,24 +61,24 @@
 					width: $widget_avatar_size;
 					height: $widget_avatar_size;
 					box-sizing: border-box;
-					float: right;
+					@include float(right);
 					font-weight: bold;
 				}
 			}
 			.like-toggle{
-				margin: 5px 0 0 -10px;
+				@include margin(5px 0 0 -10px);
 			}
 		}
 
 		.title {
 			display: inline-block;
-			padding-right: 34px;
+			@include padding-right(34px);
 		}
 	}
 
 	.content-meta {
 		overflow: hidden;
-		box-shadow: inset 20px 0px 0px 0px #FFF,inset 24px 0px 0px #F2F2F2;
+		@include box-shadow(inset 20px 0px 0px 0px #FFF,inset 24px 0px 0px #F2F2F2);
 		padding-bottom: 10px;
 
 		.view_on_portal {
@@ -86,21 +86,21 @@
 			position: relative;
 			position: absolute;
 			top: 5px;
-			right: 32px;
+			@include right(32px);
 		}
 
 		.info {
 			display: block;
-			padding: 0px 30px 0px 50px;
+			@include padding(0px 30px 0px 50px);
 			position: relative;
 
 			dt, dd {
-				float: left;
+				@include float(left);
 				margin:5px
 			}
 
 			dd {
-				margin-right: 15px;
+				@include margin-right(15px);
 				margin-top: 7px;
 			}
 		}
@@ -119,7 +119,7 @@
 		height: 22px;
 		width: 22px;
 		display: inline-block;
-		margin-right: 0;
+		@include margin-right(0);
 	}
 
 	.best-answer-info{
@@ -134,9 +134,9 @@
 			color: #0B8500;
 		}
 		.answer-comment{
-			border-left: 1px solid #EEE;
-			margin-left: 34px;
-			padding-left: 12px;
+			@include border-left(1px solid #EEE);
+			@include margin-left(34px);
+			@include padding-left(12px);
 		}
 		.best-badge{
 			background: #FEFFDA;

@@ -529,6 +529,9 @@ en:
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
     portal:
       index:
+        forums: "Forums"
+        enable: "Enabled"
+        disable: "Disabled"
         moderation: "Moderate Forums"
         moderate_links: "Moderate only suspicious topics and replies"
         moderate_links_help: "Enable this feature for advanced spam protection. System will check all topics and replies for third party links and other spam activity."
@@ -568,6 +571,7 @@ en:
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
           not_included: is not included in the list
+          should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a solution category
           enable_push_notification: Enable Push Notification
@@ -1394,6 +1398,10 @@ en:
         inapp_support: "In App Support"
         ios_sdk: "iOS SDK"
         android_sdk: "Android SDK"
+        trusted_ip: IP Whitelisting
+        trusted_ip_meta: Private Helpdesk
+        custom_mailbox: Custom Mail Server
+        custom_mailbox_meta: Custom Mailboxes
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -1473,7 +1481,7 @@ en:
           spam_check: "We're checking your topic for spam. It will appear once it has been approved."
       tickets:
         create:
-          success: Your ticket has been created and a copy has been sent to you via email.
+          success: Your ticket has been created.
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
@@ -4115,7 +4123,7 @@ en:
     streams:
       interactions: Interactions
       other_interactions: Other Interactions
-      recent_searches: Recent Searches
+      recent_searches: Your Recent Searches
       recent_tickets: Recent Tickets
       social_accounts: Social Accounts
       custom_streams: Social Streams
@@ -4159,6 +4167,7 @@ en:
     welcome:
       title: Social Support
       turn_off: Turn OFF Social
+      turn_on: Turn ON Social
       off_helptext_html: To Turn ON, add your <br /> twitter handle from admin
       get_started: Get Started
       customer_tweets: "Customer tweets:"
@@ -4427,7 +4436,7 @@ en:
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
-      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/>
             <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
             A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:
@@ -4704,7 +4713,7 @@ en:
         feedback_widgets_knowledge_base: "Knowledge base "
         feedback_widgets_help_articles: "or Browse help articles"
         show_all_results: "Show all results"
-        no_results_for: "No results for %{term}"
+        no_results: "No results for "
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -5338,6 +5347,7 @@ en:
       new_requester: "New requester"
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
+      desktop_notification: "Turn on desktop notification"
     call_history:
       title: "Call History"
       sort_by: "Sort by:"
@@ -5498,6 +5508,22 @@ en:
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"
         invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
+      welcome_page:
+        title: "Welcome to Freshfone"
+      feature_request_content:
+        title: "Freshfone"
+        heading: "Support your customers with Freshfone"
+        about_numbers: "Purchase support numbers from across the globe"
+        about_ivr: "Create IVR's and route calls to the right agents"
+        about_recording: "Record customer conversations and access it anywhere"
+        read_more: "Read more"
+        pricing: "See all call rates and supported countries"
+        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_message: "Need Freshfone Feature"
+        success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
+        error_message: "Sorry we can not make your request right now. Try again later."
+        additional_note: "Freshfone request will take two business days"
+        button_label: "Request for Freshfone"
   freshchat:
     title: "Freshchat"
     widget: "Widget"

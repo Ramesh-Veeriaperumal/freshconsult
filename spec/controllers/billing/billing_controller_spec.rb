@@ -3,19 +3,37 @@ require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe Billing::BillingController do
+  integrate_views
+  self.use_transactional_fixtures = false
 
-  it "should update subscription and adds(/removes) a feature as addon" do
-  	@request.host = @account.full_domain
+  before(:all) do
+    if @billing_account.blank?
+      Account.reset_current_account
+      User.current = nil
+      
+      Resque.inline = true
+      @billing_account = create_test_billing_acccount
+      Resque.inline = false               
+      @billing_account.reload      
+      @account = Account.find(@billing_account.id)      
+    end
+  end
+
+  before(:each) do
+    @account.make_current
+    @request.host = "billing.freshpo.com"
     @request.env["HTTP_ACCEPT"] = "application/json"
-    
-    billing_result = build_test_billing_result
-    controller.instance_variable_set(:@billing_data, billing_result) 
-    post "trigger", event_params("subscription_changed")
+    @request.env["HTTP_AUTHORIZATION"] = "Basic " + Base64::encode64("freshdesk:FDCB$6MUSD") 
+  end
+
+  it "should update subscription and adds(/removes) a feature as addon" do  	
+    billing_result = build_test_billing_result(@account.id)
+    post "trigger", event_params(@account.id, "subscription_changed")
 
     plan = retrieve_plan(billing_result.subscription.plan_id)
     renewal_period = Billing::Subscription.billing_cycle[billing_result.subscription.plan_id]
-
-    @account.subscription.state.should eql billing_result.subscription.status
+    
+    @account = Account.find_by_id(billing_result.subscription.id)
     @account.subscription.agent_limit.should eql billing_result.subscription.plan_quantity
     @account.subscription.subscription_plan.should eql plan
     @account.subscription.free_agents.should eql plan.free_agents
@@ -28,55 +46,45 @@ describe Billing::BillingController do
     end
   end
 
-  it "should not add agent collision to Estate" do
-  	@request.host = @account.full_domain
-    @request.env["HTTP_ACCEPT"] = "application/json"
+	it "should activate free subscription" do
+    plan = SubscriptionPlan.find_by_name("Sprout")
+    @account.subscription.subscription_plan = plan
+    @account.subscription.convert_to_free
+    Billing::Subscription.new.activate_subscription(@account.subscription)
+    @account.subscription.save!
+    @account.subscription.reload
+  
+    billing_result = build_test_billing_result(@account.id)
+    post "trigger", event_params(@account.id, "subscription_activated")
     
-    billing_result = build_test_billing_result
-    controller.instance_variable_set(:@billing_data, billing_result) 
-    post "trigger", event_params("subscription_changed")
-
-  	@account.subscription.state.should eql "active"
-  	@account.subscription.agent_limit.should eql billing_result.subscription.plan_quantity
-  	@account.subscription.subscription_plan.should eql plan
-  	@account.subscription.free_agents.should eql plan.free_agents
-  	puts @account.features
-  	@account.addons.should_not include(Subscription::Addon.find_by_name("Agent Collision"))
-  	@account.features?(:agent_collision).should be_true
+  	@account.subscription.agent_limit.should eql 3
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.free_agents.should eql plan.free_agents
 	end
 
-	it "should update card" do
-		@request.host = @account.full_domain
-    @request.env["HTTP_ACCEPT"] = "application/json"
-    
-    billing_result = build_test_billing_result
-    controller.instance_variable_set(:@billing_data, billing_result) 
-    post "trigger", event_params("card_added")
-    
-  	card = billing_result.card  	
-  	@account.subscription.card_number.should eql card.masked_number 
-  	@account.subscription.card_expiration.should eql "%02d-%d" % [card.expiry_month, card.expiry_year]
-	end
+  it "should suspend subscription" do    
+    Billing::Subscription.new.cancel_subscription(@account)    
+    post "trigger", event_params(@account.id, "subscription_cancelled")
 
-  it "should suspend subscription" do
-    @request.host = @account.full_domain
-    @request.env["HTTP_ACCEPT"] = "application/json"
-    
-    billing_result = build_test_billing_result
-    controller.instance_variable_set(:@billing_data, billing_result) 
-    post "trigger", event_params("subscription_cancelled")
-
+    @account.subscription.reload
     @account.subscription.state.should eql "suspended"
   end
 
-  it "should activate subscription" do
-    @request.host = @account.full_domain
-    @request.env["HTTP_ACCEPT"] = "application/json"
-    
-    billing_result = build_test_billing_result
-    controller.instance_variable_set(:@billing_data, billing_result) 
-    post "trigger", event_params("subscription_activated")
+  it "should reactivate subscription" do
+    Billing::Subscription.new.reactivate_subscription(@account.subscription) 
+    billing_result = build_test_billing_result(@account.id)    
+    post "trigger", event_params(@account.id, "subscription_reactivated")
 
-    @account.subscription.state.should eql "active"
+    @account.subscription.reload
+    @account.subscription.state.should_not eql "suspended"
+  end
+
+  it "should add payment record" do
+    Billing::Subscription.new
+    result = ChargeBee::Event.retrieve("ev_HvQquDQOfHPR48J6K")
+    transaction_id = result.event.content.transaction.id_at_gateway
+    post "trigger", result.as_json["response"][:event]
+
+    SubscriptionPayment.find_by_transaction_id(transaction_id).should be_present
   end
 end

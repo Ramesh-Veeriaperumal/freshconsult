@@ -211,8 +211,10 @@ class Freshfone::Call < ActiveRecord::Base
 		ticket_notable? ? ticket : note.notable
 	end
 
-	def self.find_failed_calls(range)
-		find(:all, :conditions => { :call_cost => nil, :updated_at => range })
+	def self.unbilled(from = 9.hours.ago, to = 3.hours.ago)
+		with_exclusive_scope { find(:all, :conditions => 
+			[ "call_cost IS NULL and call_status != ? and updated_at BETWEEN ? AND ?", 
+				CALL_STATUS_HASH[:blocked], from, to ]) }
 	end
 
 	def calculate_cost

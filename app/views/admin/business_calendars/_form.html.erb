@@ -57,11 +57,12 @@
 										
 										<% checked = weekdays.include?(cal_index) %>
 										<% if checked %>
+											<% workday_start = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday] %>
 											<% beginning_of_workday = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday].split(" ")[0] %>
 											<% beginning_of_workday_range = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday].split(" ")[1] %>
 											<% end_of_workday = @business_calendar.business_hour_data[:working_hours][cal_index][:end_of_workday].split(" ")[0] %>
 											<% end_of_workday_range = @business_calendar.business_hour_data[:working_hours][cal_index][:end_of_workday].split(" ")[1] %>
-											<% if (end_of_workday.eql?("11:59:59") and beginning_of_workday.eql?("00:00:00")) %>
+											<% if (end_of_workday.eql?("11:59:59") and (workday_start.eql?("12:00 am") or beginning_of_workday.eql?("00:00:00"))) %>
 												<% end_of_workday = beginning_of_workday = "12:00" %>
 												<% end_of_workday_range = beginning_of_workday_range = "am" %>
 											<% end %>
@@ -120,11 +121,11 @@
 						<%= link_to_function( t('add_holiday'), "addHoliday()", :class => "btn" ) %>
 					</span>
 					<span class="span2 import-link">
-						<!-- <a href="#importholiday" title="<%= t('business_hours.import_holiday') %>" data-submit-label="Import" rel="freshdialog" data-width="400"><%= t('business_hours.import_holiday') %></a> -->
+						<a href="#importholiday" title="<%= t('business_hours.import_holiday') %>" data-submit-label="Import" rel="freshdialog" data-width="400"><%= t('business_hours.import_holiday') %></a>
 					</span>
 				</div>
 			</div>
-			<%#= render :partial => "import_holiday" %>
+			<%= render :partial => "import_holiday" %>
 			<div class="holidaylist row-fluid">
 				<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
 				<ul class="unstyled hide" id="HolidayList"></ul>

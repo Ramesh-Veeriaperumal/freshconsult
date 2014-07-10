@@ -6,17 +6,14 @@ describe Helpdesk::MobihelpTicketExtrasController do
   self.use_transactional_fixtures = false
 
 	before(:all) do
-    @account = create_test_account
     @user_email = "mh_user@customer.in"
     @user_device_id = "11111-22222-3333333-31231"
     @user = create_mobihelp_user(@account , @user_email, @user_device_id)
-    @agent = add_test_agent(@account)
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = 'sessions/new'
-    log_in(@agent)
+    login_admin
+    stub_s3_writes
   end
 
   it "should display ticket data" do

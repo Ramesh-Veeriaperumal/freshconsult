@@ -3,7 +3,7 @@ module TwilioMaster
 	#All callback methods requested by Twilio are listed below. 
 	#Added request Validation and skipped privelege check for the these methods
 	PUBLIC_METHODS = {
-		:freshfone => [:voice, :ivr_flow, :voice_fallback],
+		:freshfone => [:voice, :ivr_flow, :voice_fallback, :preview_ivr],
 		:call => [:in_call, :status, :direct_dial_success, :call_transfer_success],
 		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call],
 		:device => [:record],

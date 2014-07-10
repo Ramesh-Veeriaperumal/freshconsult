@@ -5,7 +5,7 @@
 	.sm2-360ui .sm2-360btn:hover + .sm2-timing,
 	.sm2-360ui.sm2_paused .sm2-timing {
 		position: relative;
-		left: 37px;
+	 @include left(37px);
 		font-size: 13px;
 		color: #666;
 		top: -4px;
@@ -54,7 +54,7 @@
 		width:40px;
 		/* 2 */
 		&.user_details {
-			float:none;
+			@include float(none);
 		}
 		&.width1 {
 			width:20%;
@@ -76,12 +76,12 @@
 	.assigned_ticket {
 		color: $ch-assigned-ticket;
 		.spinner{
-			left: 12px !important;
+		 @include left(12px !important);
 		}
 	}
 	.call_user {
-		border-left: 1px solid $ch-call-user-border;
-		margin-right: -12px;
+		@include border-left(1px solid $ch-call-user-border);
+		@include margin-right(-12px);
 		.can-make-calls {
 			height: 30px;
 			width: 30px;
@@ -89,7 +89,7 @@
 			background-repeat: no-repeat;
 			cursor:pointer;
 			display: block;
-			text-indent: -9999px;
+			@include text-indent(-9999px);
 			padding: 0;
 		}
 	}
@@ -107,7 +107,7 @@
 	.blacklist-toggle {
 		position: absolute;
 		top: 20px;
-		left: 8px;
+	 	@include left(8px);
 		z-index: 3;
 		width: 16px;
 		height: 16px;
@@ -137,11 +137,11 @@
 		cursor: pointer;
 		display: block;
 		font-weight: 700;
-		text-align: center;
+		@include text-align(center);
 		color: $ch-child-call-text;
 	}
 	.no_call_history {
-		text-align: center;
+		@include text-align(center);
 		padding: 40px;
 		font-size: 22px;
 		color: $ch-no-call-log-text;
@@ -156,13 +156,13 @@
 	}
 	.create_freshfone_ticket,
 	.converted_ticket {
-		padding: 6px 0 6px 30px;
+		@include padding(6px 0 6px 30px);
 		background-repeat: no-repeat;
 		font-weight: 500;
 	}
 	.transfer_call {
 		td:first-child {
-			border-left: 4px solid $ch-transfered-call-border;
+			@include border-left(4px solid $ch-transfered-call-border);
 		}
 	}
 	.transfer_agent_pointer {
@@ -171,10 +171,10 @@
 		height: 15px;
 		display: inline-block;
 		top: -22px;
-		left: 10px;
+	 @include left(10px);
 	}
 	.callhistory_helpdesk_avatar {
-		margin-right: 10px;
+		@include margin-right(10px);
 		@include border-radius(6px);
 	}
 	.helpdesk_number {

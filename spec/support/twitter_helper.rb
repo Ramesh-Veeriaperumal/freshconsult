@@ -84,7 +84,7 @@ module TwitterHelper
       {
         :responses => 
             {
-              "fd_social_feeds_test_20140611"=>[
+              "#{Social::DynamoHelper.select_table("feeds", Time.now)}"=>[
                 {
                   "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
                   "feed_id"=>{:s=>"#{tweet_id}"}, 
@@ -133,7 +133,7 @@ module TwitterHelper
                     :user_image => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
                     :parent_feed_id => "#{parent_tweet_id}",
                     :user_mentions => "",
-                    :posted_time => "#{Time.now.strftime("%a %b %d %T %z %Y")}"
+                    :posted_time => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}"
                   },
                 :search_type => search_type
       }
@@ -155,15 +155,16 @@ module TwitterHelper
   def sample_twitter_feed
     text = Faker::Lorem.words(10).join(" ")
     tweet_id = (Time.now.utc.to_f*100000).to_i
+    in_reply_to_status_id_str = (1.days.ago.utc.to_f*100000).to_i
     twitter_feed = {
       "query" => "",
       "next_results" => "",
       "refresh_url" => "",
       "next_fetch_id" => "", 
-      "created_at" => "#{Time.now.strftime("%a %b %d %T %z %Y")}",
+      "created_at" => "#{Time.now.utc.strftime("%a %b %d %T %z %Y")}",
       "id" => tweet_id,
       "id_str" => "#{tweet_id}",
-      "in_reply_to_status_id_str" => "",
+      "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
           "id" => 2341632074,
           "id_str" => "2341632074",
@@ -238,23 +239,11 @@ module TwitterHelper
   end
   
   def add_response
-    {
-      "add" => {
-                  :response=>true, 
-                  :rule_value=> "", 
-                  :rule_tag=> ""
-          }
-    }
+    Net::HTTPResponse.new("http",201,"")
   end
   
   def delete_response
-    {
-      "delete" => {
-        :response=>true, 
-        :rule_value => "",
-        :rule_tag => ""
-      }
-    }
+    Net::HTTPResponse.new("http",200,"")
   end
   
   def sample_twitter_object(parent_id = "")
@@ -276,7 +265,6 @@ module TwitterHelper
     while wait_for <= wait
       tweet = Social::Tweet.find_by_tweet_id(tweet_id)
       if tweet.nil?
-        sleep 1
         wait_for = wait_for + 1
       else
         break

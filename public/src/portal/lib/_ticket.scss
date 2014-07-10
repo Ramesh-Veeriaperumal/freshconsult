@@ -1,16 +1,16 @@
 .ticket-filters{
 	margin-top:3px;
-	left:-2px;
+	@include left(2px);
 }
 
 .c-ticket-row{ 
-	padding: 8px 5px 8px 45px;
+	@include padding(8px 5px 8px 45px);
 	.status-source{ 
-		float:left;
-		margin-left:-45px;
+		@include float(left);
+		@include margin-left(-45px);
 	}
 	.label{ 
-		float:right;
+		@include float(right);
 		margin-top:6px; 
 	}
 }
@@ -21,7 +21,7 @@
 
 .widget{ margin-bottom: 20px; }
 
-#ticket-sort{ margin-right: 20px; }
+#ticket-sort{ @include margin-right(20px); }
 #user-list-dropdown .dropdown-menu{ 
 	max-height: 300px;
 	overflow: auto;
@@ -47,8 +47,8 @@
 	background-color: #fafafa;	
 	padding: $content-padding;
 	margin-top: -$content-padding-top;
-	margin-left: -$content-padding-side;
-	margin-right: -$content-padding-side;
+	@include margin-left(-$content-padding-side);
+	@include margin-right(-$content-padding-side);
 	@include border-top-radius($content-border-radius);
 	.lead{ margin-bottom: 10px; }
 }
@@ -58,12 +58,12 @@
 // Ticket list & detail styles
 @if $nonResponsive == false {
 	@include at-breakpoint($media-mobile){
-		.c-ticket-row .label{ float:none; }
+		.c-ticket-row .label{ @include float(none); }
 		.agent-details{
 			padding: $content-padding-mobile;
 			margin-top: -$content-padding-mobile;
-			margin-left: -$content-padding-mobile;
-			margin-right: -$content-padding-mobile;
+			@include margin-left(-$content-padding-mobile);
+			@include margin-right(-$content-padding-mobile);
 			@include border-top-radius(none);
 		}
 		.ticket-brief{ padding-top: 5px; }

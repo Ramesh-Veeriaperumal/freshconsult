@@ -18,7 +18,7 @@
 	.search-dark{
 		position: absolute;
 		top: 16px;
-		left: 16px;
+	 	@include left(16px);
 		opacity: 0.5;
 	}
 }
@@ -43,7 +43,7 @@
 	border-radius: 4px;
 }
 .search-input{	
-	padding: 15px 1% 15px 4%;
+	@include padding(15px 1% 15px 4%);
 	margin-top: 0;
 	width: 95%;
 	border: 0;
@@ -58,7 +58,7 @@
 .search-sorting-wrapper{
 	#search-sort-menu{ 
 		padding:15px 0;
-		margin-left: 14px;
+		@include margin-left(14px);
 	}
 	.menu-list{
 		.nav-tabs{
@@ -69,21 +69,21 @@
 				margin-bottom:-2px;
 				a, .title-text{
 					padding: 15px;
-					margin-left: -1px;
+					@include margin-left(-1px);
 					border:0;
 					margin:0;
-					border-left: 1px solid #e9e9e9;
+					@include border-left(1px solid #e9e9e9);
 					font-weight: 200;
 					font-size: 14px;
-					color: #333;;
+					color: #333;
 					background: transparent;
 					@include border-radius(0);
 				}
 				&:last-child a{
-						margin-right:0
+						@include margin-right(0)
 				}
 				.title-text{
-					border-left:0;
+					@include border-left(0);
 					color:#999;
 				}
 				&.active{
@@ -110,7 +110,7 @@
 	display:inline-block;	
 	width:100%;
 	.search-result-image, .avatar{
-		margin-right:-40px;
+		@include margin-right(-40px);
 	}
 }
 
@@ -118,7 +118,7 @@
 	.result-wrapper{ 
 		padding-bottom: 100px;
 		li{
-			padding: 15px 0 15px 15px;
+			@include padding(15px 0 15px 15px);
 			border-bottom:1px solid $tableBorder;
 			&:hover{
 				background:$tableBackgroundHover;
@@ -128,7 +128,7 @@
 				width: 30px;
 				min-height: 30px;
 				.preview_pic{
-					margin-right: 0;
+					@include margin-right(0);
 					img{
 						max-width: 30px;
 						max-height: 30px;
@@ -140,19 +140,19 @@
 				width:100%;
 				vertical-align:top;
 				.search-result-content{
-					padding-left:50px;
-					margin-right:$searchResultInfoWidth;
-					float: left;
+					@include padding-left(50px);
+					@include margin-right($searchResultInfoWidth);
+					@include float(left);
 					p.muted{
-						padding-left: 15px;
-						border-left: 1px dotted #ccc;
+						@include padding-left(15px);
+						@include border-left(1px dotted #ccc);
 						margin: 0 0 0px;
 					}
 				}
 				.search-result-info{
 					width:$searchResultInfoWidth - 30px;
 					padding: 0 15px 0;
-					margin-left:-($searchResultInfoWidth);
+					@include margin-left(-($searchResultInfoWidth));
 				}
 			}
 			.emphasize{
@@ -172,7 +172,7 @@
 	      		color: #0066cc;
 			}
 			.search-label{
-				float: left;
+				@include float(left);
 				width: 50px;
 			}
 			.search-label, .result-info{
@@ -180,7 +180,7 @@
 			}
 		}
 		.loadmore-wrap{
-			text-align:center;
+			@include text-align(center);
 			padding:10px;
 			min-height: 20px;
 		}
@@ -214,22 +214,22 @@
 
 // From app-common
 .search_results_bar{
-	@include border-bottom-radius(6px);
+	border-bottom-radius:6px;
 	@include box-shadow(#aaa 0px 10px 40px -10px);
 	border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
-	right:0px;
+ @include right(0px);
 	top:-1px;
 	border-top:1px solid #dddede;
-	padding-left:100px;
+	@include padding-left(100px);
 	z-index:9999999;
 	ul.results{
 		width:298px;
 		background:#f6f6f6;
-		border-left:1px solid #dedede;
-		padding:6px 0px 0px 0px;			
+		@include border-left(1px solid #dedede);
+		@include padding(6px 0px 0px 0px);			
 		border-bottom:1px solid #efefef;
 		li{
 			a:hover, a.active{
@@ -258,7 +258,7 @@
 			position:absolute;
 			width:16px;
 			height:16px;
-			margin-left:4px;
+			@include margin-left(4px);
 			margin-top:5px;
 		}
 		a{
@@ -269,7 +269,7 @@
 			background-repeat:no-repeat;
 			@include link-colors($default_txt_color, #ffffff, $default_txt_color, $default_txt_color);
 			span.info{
-				float:right;
+				@include float(right);
 				font-size:10px;
 				color:#888888;
 			}
@@ -282,7 +282,7 @@
 		a.big{
 			font-size:13px;
 			position:relative;
-			left:-25px;
+		 	@include left(-25px);
 			@include link-colors(#006699, #126d9b, #006699, #006699);
 		}
 		a.big:hover{
@@ -291,16 +291,16 @@
 		
 		h4{
 			position:absolute;
-			left:0px;
+		 	@include left(0px);
 			top:5px;
-			margin-left:-100px;
+			@include margin-left(-100px);
 			width:90px;
 			color:#888888;
 			font-size:12px;
-			text-align:right;
+			@include text-align(right);
 		}
 		div, a{
-			padding:4px 8px 4px 30px;
+			@include padding(4px 8px 4px 30px);
 		}
 		div.title{
 			background:#efefef;
@@ -319,14 +319,14 @@
 				padding:0px;
 				margin:0px;
 				position:relative;
-				margin-left:-28px;
+				@include margin-left(-28px);
 				img{
 					border:0px;
 					padding:6px;
 				}
 			}
 			span{
-				padding:0px 0px 4px 0px; 
+				@include padding(0px 0px 4px 0px); 
 			}
 			span.small{
 				font-size:11px;
@@ -336,7 +336,7 @@
 			}
 			span.icon{ 
 				padding:0px;
-				margin-left:-20px;
+				@include margin-left(-20px);
 			}
 		}
 	}

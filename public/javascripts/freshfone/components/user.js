@@ -130,7 +130,6 @@ var FreshfoneUser,
 					if (data.update_status) {
 						self.toggleAvailabilityOnPhoneClass();
 					} else {
-						alert('Sorry error in updating. Please try some time later');
 						self.availableOnPhone = !self.availableOnPhone;
 					}
 				},
@@ -155,7 +154,6 @@ var FreshfoneUser,
 						self.userPresenceDomChanges();
 					} else {
 						self.status = self.previous_status;
-						alert('Sorry error in updating. Please try some time later');
 					}
 				},
 				error: function (data) {

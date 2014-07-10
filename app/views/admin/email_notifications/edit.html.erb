@@ -172,13 +172,16 @@
 				 		description_help_template	= @email_notification.agent_template
 						description_help = description_help_template.html_safe unless description_help_template.nil?
 						subject_help_template = @email_notification.agent_subject_template
-						subject_help = subject_help_template.html_safe unless subject_help_template.nil?
+						subject_help = subject_help_template unless subject_help_template.nil?
 				 else	
 				 		description_help_template	= @email_notification.requester_template
 						description_help = description_help_template.html_safe unless description_help_template.nil?
 						subject_help_template = @email_notification.requester_subject_template
-						subject_help = subject_help_template.html_safe unless subject_help_template.nil?
+						subject_help = subject_help_template unless subject_help_template.nil?
 				 end	%>
+				 <%
+				 subject_help = h(subject_help)
+				 %>
 			</div>
 		</li>
 	</ul>

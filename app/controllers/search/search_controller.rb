@@ -121,7 +121,8 @@ class Search::SearchController < ApplicationController
 				search(search_in, options) 	
 			else
 				@current_page = options[:page]
-				@search_key = (params[:term] || params[:q] || params[:search_key]).gsub(/\\/,'')
+				search_key_value = (params[:term] || params[:q] || params[:search_key])
+				@search_key = search_key_value.gsub(/\\/,'') unless search_key_value.nil?
 				generate_result_json unless @suggest
 			end
 

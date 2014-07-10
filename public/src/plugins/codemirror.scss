@@ -1,4 +1,6 @@
 @import 'compass';
+$rtl: false;
+@import "../pattern/lib/rtl-mixins";
 
 .CodeMirror {
   line-height: 1em;
@@ -8,6 +10,7 @@
   position: relative;
   /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
   overflow: hidden;
+  @include text-align(left);
 }
 
 .CodeMirror-scroll {
@@ -22,7 +25,8 @@
 /* Vertical scrollbar */
 .CodeMirror-scrollbar {
   position: absolute;
-  right: 0; top: 0;
+  @include right(0); 
+  top: 0;
   overflow-x: hidden;
   overflow-y: scroll;
   z-index: 5;
@@ -37,8 +41,8 @@
      rather than sitting to the right of it. */
   position: absolute;
   z-index: 1;
-  float: none;
-  right: 0;
+  @include float(none);
+  @include right(0);
   min-width: 12px;
 }
 .CodeMirror-scrollbar.cm-sb-nonoverlap {
@@ -49,17 +53,17 @@
 }
 
 .CodeMirror-gutter {
-  position: absolute; left: 0; top: 0;
+  position: absolute; @include left(0); top: 0;
   z-index: 10;
   background-color: #f7f7f7;
-  border-right: 1px solid #eee;
+  @include border-right(1px solid #eee);
   min-width: 2em;
   height: 100%;
 }
 .CodeMirror-gutter-text {
   color: #aaa;
-  text-align: right;
-  padding: .4em .2em .4em .4em;
+  @include text-align(right);
+  @include padding(.4em .2em .4em .4em);
   white-space: pre !important;
   cursor: default;
 }
@@ -101,8 +105,8 @@
   z-index: 10;
   position: absolute;
   visibility: hidden;
-  border-left: 1px solid black;
-  border-right: none;
+  @include border-left(1px solid black);
+  @include border-right(none);
   width: 0;
 }
 .cm-keymap-fat-cursor pre.CodeMirror-cursor {
@@ -179,7 +183,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 #cm-fs-wrapper{
   position: fixed;
   top: 0;
-  left: 0;
+  @include left(0);
   height: 100%;
   background-color: #fafafa;
   z-index: 999;
@@ -200,13 +204,13 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
     z-index: 10;
     .cm-well{ 
       margin: 13px 20px;
-      text-align: center; 
+      @include text-align(center); 
     }
   }
 }
 /* Code mirror full screen mode */
 .CodeMirror-fullscreen {
-  top: 0; left: 0;
+  top: 0; @include left(0);
   height: 100%;
   overflow: auto;
   .cm-s-textmate{ 
@@ -220,7 +224,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   position: absolute;
   width: 21px; height: 21px;
   z-index: 999;
-  right: 10px;
+  @include right(10px);
   top: 9px;
   @include opacity(0.5);
   cursor: pointer;
@@ -236,7 +240,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 .CodeMirror-dialog > div {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0; @include left(0); @include right(0);
   background: white;
   z-index: 15;
   padding: .1em .8em;
@@ -244,7 +248,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   color: #333;
   border: 1px solid #dfdfdf;
   background-color: rgba(255, 255, 255, 0.9);
-  padding-left: 50px;
+  @include padding-left(50px);
   border-radius: 4px 4px 0 0;
 }
 
@@ -281,8 +285,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
   .CodeMirror-gutter {
     background-color: #fafafa;
-    padding-left: 8px;
-    margin-right: 4px;
+    @include padding-left(8px);
+    @include margin-right(4px);
     @include border-left-radius(6px);
     @include box-shadow(rgba(0, 0, 0, 0.1) 1px 0px 2px);
   }
@@ -294,7 +298,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   .CodeMirror-gutter-text {
     color:#d8d8d8;
     @include min-width(28px);
-    padding-right: 8px; 
+    @include padding-right(8px); 
   }  
 
   span.cm-keyword {color: #708;}

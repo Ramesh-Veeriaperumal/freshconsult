@@ -20,7 +20,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
           #requeue if api limit is reached
           $sqs_facebook.requeue(@feed.feed) if @intial_feed && !return_value
 
-          puts "API Limit reached - #{e.to_s} :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
+          Rails.logger.debug "API Limit reached - #{e.to_s} :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
           newrelic_custom_params =  {
             :custom_params => {
               :error_type => e.fb_error_type,
@@ -59,15 +59,15 @@ module Facebook::KoalaWrapper::ExceptionHandler
             }
           }
           NewRelic::Agent.notice_error(e, newrelic_custom_params)
-          puts "APIError while processing facebook - #{e.to_s}  :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
+          Rails.logger.debug "APIError while processing facebook - #{e.to_s}  :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
         end
         return_value = false
       rescue => e
-        puts e.to_s
+        Rails.logger.debug e.to_s
         $sqs_facebook.requeue(@feed.feed) if @intial_feed && !return_value
         SocialErrorsMailer.deliver_facebook_exception(e,@feed.feed) if @intial_feed
         NewRelic::Agent.notice_error(e)
-        puts "Error while processing facebook - #{e.to_s}"
+        Rails.logger.debug "Error while processing facebook - #{e.to_s}"
         return_value = false
       end
       return return_value

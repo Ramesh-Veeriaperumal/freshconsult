@@ -125,7 +125,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
         end
         f.symbolize_keys!
         unless f[:from_nested_rules].nil?
-          f[:nested_rule] = [{},{}]
+          f[:nested_rule] = []
           f[:from_nested_rules].each_with_index do |content, index|
             f[:nested_rule][index] = {
                                       :name => content[:name],

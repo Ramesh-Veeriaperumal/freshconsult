@@ -1,4 +1,5 @@
 @import "blueprint";
+@import "../pattern/lib/rtl-mixins";
 
 // Generate the blueprint print styles:
 @include blueprint-print;
@@ -15,7 +16,7 @@ h2, h3{ page-break-after: avoid;}
 p{ 
 	font-size:1.0em; 
    margin: 0 0 0;
-   text-align: left;
+   @include text-align(left);
 }
 
 body{
@@ -33,7 +34,7 @@ body{
     }
   }
   .header, .wrapper{
-     margin: 0 0 25px 0; 
+     @include margin(0 0 25px 0); 
   }
    
   .ticket-details{
@@ -43,8 +44,8 @@ body{
         padding:0;
         vertical-align:top;
      }
-     .left{ text-align:left; padding-right:1%; width:70%; }
-     .right{ text-align:right; padding-left:1%; width:30%; }
+     .left{ @include text-align(left); @include padding-right(1%); width:70%; }
+     .right{ @include text-align(right); @include padding-left(1%); width:30%; }
   }
   
   .seperator{
@@ -57,7 +58,7 @@ body{
   .properties{
      @include clearfix; 
      span{
-        float:left;
+        @include float(left);
         width:25%;
         margin-bottom:10px;
         b{ display:block; }

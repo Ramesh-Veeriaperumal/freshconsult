@@ -1,11 +1,13 @@
 # encoding: utf-8
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
+  helper AutocompleteHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_customer_folder_params, :only => [:create, :update]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -33,6 +35,7 @@ class Solution::FoldersController < ApplicationController
 
   def edit
     @folder = @category.folders.find(params[:id])      
+    @customer_id = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
       if @folder.is_default?
         flash[:notice] = I18n.t('folder_edit_not_allowed')
@@ -148,6 +151,11 @@ class Solution::FoldersController < ApplicationController
 
     def load_category
       @category = portal_scoper.find_by_id!(params[:category_id])
+    end
+
+    def set_customer_folder_params
+      params[nscname][:customer_folders_attributes] = {}
+      params[nscname][:customer_folders_attributes][:customer_id] = (params[:customers] ? params[:customers].split(',') : [])
     end
 
 end

@@ -47,6 +47,7 @@
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
+			freshfonesocket.bindTransfer();
 		});
 
 		/* Log a message when a call disconnects. */

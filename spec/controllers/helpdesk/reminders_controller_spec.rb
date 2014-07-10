@@ -26,6 +26,15 @@ describe Helpdesk::RemindersController do
     @test_ticket.reminders.first.body.should be_eql(test_body)
   end
 
+  it "should not create a new reminder without reminder_body" do
+    post :create, { :source => "ticket_view",
+                    :helpdesk_reminder => { :body => "" },
+                    :_ => "",
+                    :ticket_id => @test_ticket.display_id
+                  }
+    response.should redirect_to "sessions/new"
+  end
+
   it "should strike off a to-do entry" do
     reminder = Factory.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
@@ -33,6 +42,11 @@ describe Helpdesk::RemindersController do
     reminder.save
     put :complete, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
     @test_ticket.reminders.first.deleted.should be_true
+  end
+
+  it "should restore a to-do entry" do
+    put :restore, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
+    @test_ticket.reminders.first.deleted.should be_false
   end
 
   it "should delete a reminder" do

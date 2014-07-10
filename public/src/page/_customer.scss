@@ -33,7 +33,7 @@
 }
 .agent-list-count{
   padding: 1px 8px;
-  margin-left: 10px;
+  @include margin-left(10px);
   color: #888;
   font-size: 0.9em;
   background-color:#f1f1f1;
@@ -54,7 +54,7 @@
 }
 
 .agent-count-message{
-  margin-right:20px;
+  @include margin-right(20px);
 }
 .table-striped-body{
 	table td{
@@ -87,7 +87,7 @@
 	}
 	.avatar-controls{
 		color:#999;
-		text-align: center;
+		@include text-align(center);
 		margin-top:10px;
 		margin-bottom:5px;
 	}
@@ -98,10 +98,10 @@
 	}
 	.seperator{
 		padding-top:40px;
-		margin-left:0;
+		@include margin-left(0);
 		@include box-shadow(0px 1px 0 #fff);
 		width:100%;
-		clear:both;
+		@include clear(both);
 	}
 }
 .agent-role{
@@ -109,8 +109,8 @@
 	margin-bottom:30px;
 	li{	margin-bottom:10px; }
 	input[type="radio"]{
-		float: left;
-		margin-right: 10px;
+		@include float(left);
+		@include margin-right(10px);
 		margin-top: 8px;	
 	}
 }
@@ -170,10 +170,10 @@
 				}
 		}
 		.customers_selector{
-	    	margin-left: 5px;
+	    	@include margin-left(5px);
 	    }
 	    .sent-text{
-	    	margin-left: 7px;
+	    	@include margin-left(7px);
 			top: 2px;
 			position: relative;
 		}
@@ -209,16 +209,16 @@
 		border-bottom: 0;
 	}
 	.customers-toolbar{
-		padding: 7px 0 0 0;
+		@include padding(7px 0 0 0);
 	}
 	#customers-select-all{
-		margin-left: 17px;
+		@include margin-left(17px);
 		margin-top: 0;
 	}
 	.bulk-action{
 		padding: 8px;
 		margin-top: -24px;
-		margin-left: 9px;
+		@include margin-left(9px);
 	}
 }
 #customers-page{
@@ -235,7 +235,7 @@
 			    }
 		}
 		.customers_selector{
-	    	margin-left: 5px;
+	    	@include margin-left(5px);
 	    }
 	}
 }

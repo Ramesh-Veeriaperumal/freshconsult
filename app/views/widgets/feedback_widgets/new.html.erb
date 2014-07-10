@@ -69,7 +69,8 @@
 				"data-loading-text" => t('ticket.submit_loading') %>
 			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-			<%= hidden_field_tag "meta[referrer]", request.referrer %>
+			<% referrer = h(request.referrer) %>
+			<%= hidden_field_tag "meta[referrer]", referrer %>
 		</div>
 	</div>
 </div>
@@ -152,7 +153,7 @@
 		    	jQuery("#subject-mobile-counter").addClass("subject-mobile-counter")
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
-					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'><%= t('widgets.feedback_widgets.new.show_all_results') %></a></li>")
 				jQuery("#panel-content").show()
 
 		    }else if(searchInputFrom == "Subject") {
@@ -160,7 +161,7 @@
 		    	jQuery("#fs-input").val("");
 		    }
 		    else {
-		    	jQuery("#ws-results").html("No results for " + escapeHtml(term))
+		    	jQuery("#ws-results").html("<%= t('widgets.feedback_widgets.new.no_results') %>" + escapeHtml(term))
 		    	jQuery("#panel-content").show()
 		    }
 

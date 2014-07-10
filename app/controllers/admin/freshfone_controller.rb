@@ -4,7 +4,20 @@ class Admin::FreshfoneController < Admin::AdminController
 	before_filter :load_freshfone_account, :only => [:toggle_freshfone]
 
 	def index
-		redirect_to admin_freshfone_numbers_path
+		redirect_to admin_freshfone_numbers_path and return if can_view_freshfone_number_settings?
+	end
+
+	def request_freshfone_feature
+		email_params = {
+			:subject => t('freshfone.admin.feature_request_content.email_subject',
+				{:account_name => current_account.name}),
+			:recipients => FreshfoneConfig['freshfone_request']['to'],
+			:from => current_user.email,
+			:cc => current_account.admin_email,
+			:message => "A customer with the following account URL has requested for Freshfone"
+		}
+		FreshfoneNotifier.send_later(:deliver_freshfone_email_template, current_account, email_params)
+		render :json => { :status => :success }
 	end
 
 	def available_numbers
@@ -67,5 +80,9 @@ class Admin::FreshfoneController < Admin::AdminController
 		def address_required?
 			code = params[:country]
 			Freshfone::Cost::NUMBERS[code]["address_required"]
+		end
+
+		def can_view_freshfone_number_settings?
+			current_account.features?(:freshfone) or current_account.freshfone_numbers.any?
 		end
 end

@@ -31,7 +31,7 @@ unless extra_info.nil?
         <tr><th class="list-header">Date</th><th class="list-header">Activity</th></tr>
         <% info.each do |bc|
           begin 
-            time = Time.parse(DateTime.rfc3339(bc["time"]).to_s).strftime("%d %b %Y %I:%M %p %Z")
+           time = convert_rfc3339_to_account_timezone(bc["time"])
           rescue
             Rails.logger.warn "Exception occured when converting the date : #{bc["time"]}" 
           end%>
