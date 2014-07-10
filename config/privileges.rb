@@ -331,6 +331,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :account, :only => [:show, :cancel]
     resource :account_configuration
     resource :"admin/data_export"
+    resource :"admin/fresh_import"
     resource :subscription # plans and billing
     resource :"admin/zen_import"
     # new item day passes && getting started

@@ -1287,6 +1287,7 @@ en:
         canned-response: Canned Response
         multi-product: Multi-Product
         import: Import data from Zendesk
+        fresh-import: Import data from various other platforms
         agent: Agents
         feedback: Feedback widget
         freshchat: Freshchat

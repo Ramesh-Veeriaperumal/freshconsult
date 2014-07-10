@@ -1,0 +1,18 @@
+<% content_for :sidebar do -%><%- end %>
+<% unless @import_in_progress %> 
+    <% unless @vendor_chosen %>
+        <%= render :partial => "vendor_form" %>
+        <%= render :partial => "session_select_form" %>
+    <% else %> 
+        <% if @selected_vendor == "Kayako" %>
+            <%= render :partial => "kayako_form" %>
+        <% end %>
+        <% if @selected_vendor == "Desk" %>
+            <%= render :partial => "desk_form" %>
+        <% end %>
+        <% if @selected_vendor == "Zendesk" %>
+        <% end %>
+    <% end %>
+<% else %>
+    <%= content_tag( :body, "Please wait patiently until import is completed") %>
+<% end %>

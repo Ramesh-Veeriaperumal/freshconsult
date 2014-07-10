@@ -1,0 +1,73 @@
+<%= content_tag( :h3, "Desk") %>
+<% form_for :desk,
+    :url=>{:controller=>"admin/fresh_import", :action=>"export_desk"} do |f| -%>
+    <div class="control-group">
+        <label class="control-label"><%= "Subdomain" %></label>
+        <div class="controls">
+            <%= f.text_field :subdomain, :class => "text required" %>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label"><%= "Application Key" %></label>
+        <div class="controls">
+            <%= f.text_field :consumer_key, :class => "text required" %>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label"><%= "Application Secret Key" %></label>
+        <div class="controls">
+            <%= f.text_field :consumer_secret, :class => "text required" %>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label"><%= "User Key" %></label>
+        <div class="controls">
+            <%= f.text_field :oauth_token, :class => "text required" %>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label"><%= "User secret Key" %></label>
+        <div class="controls">
+            <%= f.text_field :oauth_token_secret, :class => "text required" %>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label"><%= 'Desk account email address (provide if you also wish to import attachments)' %></label>
+        <div class="controls">
+            <%= f.text_field :support_email, :class => "text url required" %>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label"><%= 'Desk password (provide if you also wish to import attachments)' %></label>
+        <div class="controls">
+            <%= f.password_field :desk_pass, :class => "text required" %>
+        </div>  
+    </div>
+    <div>
+        <label>
+            <%= check_box_tag(:users_companies, 1, true, disabled: true) %>
+            <body><%= "Users and Companies" %></body>
+        </label>
+    </div>
+    <div>
+        <label>
+            <%= check_box_tag(:tickets, 1, true, disabled: false) %>
+            <body><%= "Tickets, Posts and Notes" %></body>
+        </label>
+    </div>
+    <div>
+        <label>
+            <%= check_box_tag(:attachments, 1, false, disabled: false) %>
+            <body><%= "Attachments" %></body>
+        </label>
+    </div>
+    <div class="control-group">
+      <label>
+        <%= check_box_tag(:knowledgebase, 1, false, disabled: false) %>
+        <body><%= "Articles" %></body>
+      </label>
+    </div>
+    <%= f.submit "Start with import"%>
+<% end %>
