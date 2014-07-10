@@ -13,7 +13,7 @@ class Mobihelp::App < ActiveRecord::Base
       if !bread_crumbs
         errors.add(I18n.t('admin.mobihelp.apps.form.bread_crumbs'), I18n.t('admin.mobihelp.apps.form.not_included'))
       elsif !debug_log_count
-        errors.add(I18n.t('admin.mobihelp.form.debug_log_count'), I18n.t('admin.mobihelp.form.not_included'))
+        errors.add(I18n.t('admin.mobihelp.apps.form.debug_log_count'), I18n.t('admin.mobihelp.apps.form.not_included'))
       else
         {}
       end
