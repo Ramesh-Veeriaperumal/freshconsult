@@ -6,6 +6,7 @@ if Rails.env.test?
     f.access_token "123456"
     f.enable_page true
     f.fetch_since 0
+    f.page_img_url {Faker::Internet.url}
     f.import_visitor_posts false
     f.import_company_posts false
     f.realtime_subscription true

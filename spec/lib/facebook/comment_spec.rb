@@ -15,7 +15,7 @@ describe Facebook::Core::Comment do
     ticket, complete_post_id = sample_post_and_ticket
     
     post_id = complete_post_id.split("_").last
-    comment_id = "#{post_id}_#{(Time.now.utc.to_f*100000).to_i}"
+    comment_id = "#{post_id}_#{get_id}"
     realtime_feed = sample_realtime_comment_feed(comment_id)
     comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
     
@@ -35,9 +35,9 @@ describe Facebook::Core::Comment do
   end
   
   it "create note and ticket when ticket is not present for the comment and convert to ticket is enabled" do
-    feed_id = "#{@fb_page.page_id}_#{(Time.now.utc.to_f*100000).to_i}"
+    feed_id = "#{@fb_page.page_id}_#{get_id}"
     post_id = feed_id.split("_").last
-    comment_id = "#{post_id}_#{(Time.now.utc.to_f*100000).to_i}"
+    comment_id = "#{post_id}_#{get_id}"
     
     realtime_feed = sample_realtime_comment_feed(comment_id)
     
