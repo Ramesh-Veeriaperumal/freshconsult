@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Freshfone::IvrsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

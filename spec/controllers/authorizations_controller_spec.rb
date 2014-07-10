@@ -23,7 +23,7 @@ describe AuthorizationsController do
 		:image=>"https://lh3.googleusercontent.com/-gmWGnkpBsXU/AAAAAAAAAAI/AAAAAAAAACE/l4RmjyYB_z4/photo.jpg", 
 		:last_name=>"Babu", :name=>"Sathish Babu"},'provider'=>"google_oauth2",:uid=>"102416485588144939702"})	
 		get :create, {:code=>"4/AjFGM3kabI0u9GpZlIrA2MLyjNWr.AsBTJLpfhu8cdJfo-QBMszueosWGjQI", :controller=>"authorizations", :action=>"create", :provider=>"google_oauth2"}
-		response.location.should eql "http://localhost.freshpo.com/integrations/user_credentials/oauth_install/google_calendar"
+		response.location.should eql "#{portal_url}/integrations/user_credentials/oauth_install/google_calendar"
 	end
 
 	it "should create authorization for google contacts" do 
@@ -41,7 +41,7 @@ describe AuthorizationsController do
 				:api_endpoint=>"https://us8.api.mailchimp.com",:login_url=>"https://login.mailchimp.com",:role=>"owner",
 				:dc=>"us8"}},:provider=>"mailchimp",:uid=>"996f8bc50b4c6c88009934d6a"})
 		get :create, {:code=>"5e1f89f7246defb1586b31d12ddbadd5", :controller=>"authorizations", :action=>"create", :provider=>"mailchimp"}
-		response.location.should eql "http://localhost.freshpo.com/integrations/applications/oauth_install/mailchimp"
+		response.location.should eql "#{portal_url}/integrations/applications/oauth_install/mailchimp"
 	end
 
 	it "should create authorization for twitter" do
@@ -67,13 +67,13 @@ describe AuthorizationsController do
 		random_hash = Digest::MD5.hexdigest(curr_time)
 		get :create, {:code=>"AQDjdI9SsCgBO0lVW2rFkd2-9XS1tGSHOowIkWcX4B1d4gTKziwBJTjeLbSUwGTuVqbEUXWPL3mrOcaMkZexUO2PRPwJF1M5RprgrtdFjV_tL9RL5hzFgjpASsB2s3NVZFdE_n65jXA_webfRQ8GTv-08YBaajbNqGKDyCc7j9Jnupi_O9ADDUis6boEdBkYlc4XAgvXGCDbtzomAiSOu1C0IY8Gt_z0vu2CWLl93sPYMyk2c_Fq0dU1y0I1hWi_xb0GzRDeEFRx9rbCU43-VEwVTkwWfjPqBvTYOdochDnQqOn_A8UtnRhlFYMpE2ExlkU",
 		 :controller=>"authorizations", :action=>"create", :provider=>"facebook"}
-		 response.should redirect_to "https://localhost.freshpo.com/sso/login?provider=facebook&uid=100001393908238&s=#{random_hash}"
+		 response.should redirect_to "#{portal_url}/sso/login?provider=facebook&uid=100001393908238&s=#{random_hash}"
 	end
 
 	it "should fail for mailchimp" do 
 		@request.env["omniauth.origin"] = "id=1"
 		@request.env["omniauth.auth"] = OmniAuth::AuthHash.new()
 		get :create, {:code=>"5e1f89f7246defb1586b31d12ddbadd5", :controller=>"authorizations", :action=>"create", :provider=>"mailchimp"}
-		response.should redirect_to "http://localhost.freshpo.com/integrations/applications"
+		response.should redirect_to "#{portal_url}/integrations/applications"
 	end
 end

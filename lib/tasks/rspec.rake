@@ -99,6 +99,7 @@ ForumTests = [
 ]
 
 HelpdeskTests = [ 
+  "spec/controllers/accounts_controller_spec.rb",
   "spec/controllers/home_controller_spec.rb",
   "spec/controllers/account_configurations_controller_spec.rb",
   "spec/controllers/agents_controller_spec.rb",
