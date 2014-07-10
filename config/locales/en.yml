@@ -1691,10 +1691,10 @@ en:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
     post:
-      deleted: "Post of '{title}' was deleted."
+      deleted: "Post of %{title} was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
-      deleted: "Topic '{title}' was deleted."
+      deleted: "Topic %{title} was deleted."
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
