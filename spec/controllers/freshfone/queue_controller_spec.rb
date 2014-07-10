@@ -3,6 +3,8 @@ include FreshfoneQueueHelper
 
 describe Freshfone::QueueController do
   include Freshfone::Queue
+  
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

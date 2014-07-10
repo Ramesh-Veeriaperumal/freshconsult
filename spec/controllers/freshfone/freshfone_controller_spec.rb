@@ -3,8 +3,10 @@ load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
 describe FreshfoneController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
+  
   before(:all) do
     @account.freshfone_calls.delete_all
   end

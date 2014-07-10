@@ -2,8 +2,8 @@ require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
 
 describe Social::WelcomeController do
+  integrate_views
   setup :activate_authlogic
-  
   self.use_transactional_fixtures = false
   
   before(:all) do
