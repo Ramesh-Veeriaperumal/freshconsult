@@ -2,7 +2,7 @@
 <%= content_tag( :body, "Select the platform you wish to migrate from") %>
 <% form_for :vendor, 
    :url=>{:controller=>"admin/fresh_import", :action=>"select_vendor"} do |f| -%>
-<%= f.select :name, options_for_select(['Kayako', 'Desk']) %>
+<%= f.select :name, options_for_select(['Kayako', 'Desk', 'Zendesk']) %>
 <br>
 <%= f.submit "Select vendor"%>
 <% end %>

@@ -6,8 +6,11 @@
     <% else %> 
         <% if @selected_vendor == "Kayako" %>
             <%= render :partial => "kayako_form" %>
-        <% else %>
+        <% end %>
+        <% if @selected_vendor == "Desk" %>
             <%= render :partial => "desk_form" %>
+        <% end %>
+        <% if @selected_vendor == "Zendesk" %>
         <% end %>
     <% end %>
 <% else %>

@@ -58,9 +58,10 @@ module FreshImport::Jobs
   class Queue
     def initialize
       @sqs_instance = AWS::SQS.new(
-                                   :access_key_id => 'AKIAJ54GFKJ7GAZP7DXA',
-                                   :secret_access_key => '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')
-      @freshimport_queue = "https://sqs.us-east-1.amazonaws.com/213293927234/freshimport_dev"
+                                   :access_key_id => 'AKIAJABMV6ZXHCIX2CEA',
+                                   :secret_access_key => '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')
+      #@freshimport_queue = "https://sqs.us-east-1.amazonaws.com/213293927234/freshimport_dev"
+      @freshimport_queue = "https://sqs.us-east-1.amazonaws.com/451608133968/data_import"
     end
 
     def push params
