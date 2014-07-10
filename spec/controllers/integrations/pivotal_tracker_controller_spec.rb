@@ -16,13 +16,13 @@ describe Integrations::PivotalTrackerController do
                                     :application_type => "pivotal_tracker")
     new_application.save(false)
 
-    new_installed_application = Factory.build(:installed_application, :application_id => "23",
+    new_installed_application = Factory.build(:installed_application, :application_id => new_application.id,
                                               :account_id => @account.id,
                                               :configs => { :inputs => { 'api_key' => "c599b57edad0cb430d6fbf2543450c6c", "pivotal_update" => "1"} }
                                               )
     @new_installed = new_installed_application.save(false)
     integrated_res = Factory.build(:integrated_resource, :installed_application_id => new_installed_application.id,
-                    :remote_integratable_id => "1106038/stories/73687832", :local_integratable_id => @test_ticket.id,
+                    :remote_integratable_id => "1106038/stories/73687832", :local_integratable_id => @test_ticket.display_id,
                     :local_integratable_type => "issue-tracking", :account_id => @account.id)
     resp = integrated_res.save!
     @response = { :pivotal_message => "success"}

@@ -235,9 +235,10 @@ describe Admin::Social::TwitterStreamsController do
                           }
                         ]
                       }
-      
+                      
+      new_stream.reload
       new_stream.ticket_rules.count.should eql(2)
-      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule includes"])
+      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule updated"])
     end
   end
   

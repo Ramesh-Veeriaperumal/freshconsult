@@ -408,7 +408,7 @@ describe Admin::EmailConfigsController do
   it "should get already registered email" do
     email_config = @account.email_configs.first
     if email_config.activator_token.nil?
-      email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config..reply_email + Time.now.to_f.to_s).downcase
+      email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config.reply_email + Time.now.to_f.to_s).downcase
       email_config.save(false)
       email_config.reload
     end
