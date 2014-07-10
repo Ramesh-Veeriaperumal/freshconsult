@@ -18,6 +18,7 @@ describe Helpdesk::TicketsController do
           :priority => "Lower" },:format => 'json'}, :content_type => 'application/json'
     response.status.should be_eql('406 Not Acceptable')
   end
+
   it "should update a ticket" do
   	new_ticket = create_ticket({:status => 2})
   	put :update, { :helpdesk_ticket => {:status => 3, :priority => "Higher" },:format => 'json',:id => new_ticket.display_id }, :content_type => 'application/json'
@@ -26,4 +27,9 @@ describe Helpdesk::TicketsController do
     expected.should be(true)
  	end
 
+  it "should throw invalid domain error for an invalid request" do
+    get :show, {:id => 1000000000, :format => 'json'}, :content_type => 'application/json'
+    result =  parse_json(response)
+    result["errors"]["error"].should be_eql("Record Not Found")
+  end
 end
