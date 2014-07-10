@@ -38,7 +38,6 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
-
   # Ticket Updates
 
     it "should edit a ticket" do
@@ -333,6 +332,22 @@ describe Helpdesk::TicketsController do
       }
       (assigns(:items).include? ticket_created).should be_true
       (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should show the custom view save popup" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_week.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_week+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "week"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      get :custom_view_save, :operation => "save_as"
+      response.should render_template "helpdesk/tickets/customview/_new.html.erb"
     end
 
 end

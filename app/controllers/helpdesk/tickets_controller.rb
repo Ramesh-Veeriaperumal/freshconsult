@@ -178,7 +178,7 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
   end
 
-  def latest_ticket_count    
+  def latest_ticket_count # Possible dead code
     index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
     ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
 
