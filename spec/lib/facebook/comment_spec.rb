@@ -24,7 +24,7 @@ describe Facebook::Core::Comment do
     Facebook::Core::Parser.new(realtime_feed).parse
     
     user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
-    post_comment = Social::FbPost.find_by_post_id(comment[:id])
+    post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
     post_comment.should_not be_nil
     post_comment.is_note?.should be_true
     
@@ -47,7 +47,7 @@ describe Facebook::Core::Comment do
       
     Facebook::Core::Parser.new(realtime_feed).parse
     
-    post = Social::FbPost.find_by_post_id(feed_id)
+    post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     ticket = post.postable

@@ -6,8 +6,7 @@ module TwitterHelper
   def create_test_twitter_handle(test_account=nil)
     account = test_account.nil? ? Account.first : test_account
     account.make_current
-    last_handle_id = "#{(Time.now.utc.to_f*100000).to_i}"
-    @handle = Factory.build(:twitter_handle, :account_id => account.id, :twitter_user_id => last_handle_id)
+    @handle = Factory.build(:twitter_handle, :account_id => account.id)
     @handle.save()
     @handle.reload
     @handle

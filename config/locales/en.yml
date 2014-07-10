@@ -1637,6 +1637,7 @@ en:
       to_agent: The contact has been successfully converted to an Agent
       create:
         success: The contact has been created successfully.
+        view_contact: View Contact
       cancel: cancel
       info_select: Please select at least 1 user.
       unspamed: The contact(s) has been successfully marked as Unspam.
@@ -1690,10 +1691,10 @@ en:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
     post:
-      deleted: "Post of '{title}' was deleted."
+      deleted: "Post of %{title} was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
-      deleted: "Topic '{title}' was deleted."
+      deleted: "Topic %{title} was deleted."
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
@@ -5396,10 +5397,13 @@ en:
       block_number_title: "Block number"
     ticket:
       recording: "Play message"
-      ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}"
+      ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      ticket_desc: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
+      voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
-      dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
+      dial_a_number: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"

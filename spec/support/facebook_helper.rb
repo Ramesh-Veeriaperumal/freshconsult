@@ -27,6 +27,96 @@ module FacebookHelper
     realtime_feed.to_json
   end
   
+  def sample_enable_page_params(page_id)
+    pages = {
+      "profile_id" => "100005115430108",
+      "access_token" => "sdsdfdsf",
+      "page_id" => "#{page_id}",
+      "page_name" => "TEST",
+      "page_token" => "sdfsdf",
+      "page_img_url" => "https => //m-static.ak.fbcdn.net/rsrc.php/v2/yv/r/zxpGQEKWB25.png",
+      "page_link" => "https => //www.facebook.com/pages/TEST/1463329723913690",
+      "fetch_since" => 0,
+      "reauth_required" => false,
+      "last_error" => nil
+    }
+    pages = pages.to_json
+    {
+      "enable" => 
+        {
+          "pages" =>
+          [
+            pages
+          ]
+        }
+    }
+  end
+  
+  def sample_facebook_pages(page_id, name)
+    [
+      {
+        "category" => Faker::Name.name, 
+        "name" => "#{name}",
+        "access_token" => "#{(Time.now.utc.to_f*100000).to_i}",
+        "perms" => ["ADMINISTER", "EDIT_PROFILE", "CREATE_CONTENT", "MODERATE_CONTENT", "CREATE_ADS", "BASIC_ADMIN"], 
+        "id" => "#{page_id}"
+      }
+    ]
+  end
+  
+  def sample_facebook_profile
+    first_name = Faker::Name.name
+    last_name = Faker::Name.name
+    {
+      "id" => "#{(Time.now.utc.to_f*100000).to_i}", 
+      "email" => Faker::Internet.email , 
+      "first_name" => "#{first_name}", 
+      "gender" => "male", 
+      "last_name" => "#{last_name}", 
+      "link" => Faker::Internet.url, 
+      "locale" => "en_US", 
+      "name" => "#{first_name} #{last_name}", 
+      "timezone" => 5.5, 
+      "updated_time" => "2013-12-10T04:40:02+0000", 
+      "username" => "rikacho.paul", 
+      "verified" => true
+    }
+  end
+  
+  def sample_page_info(page_id, name)
+    {
+      "id" => "#{page_id}", 
+      "about" => Faker::Lorem.sentence(3), 
+      "can_post" => true, 
+      "category" => "Community", 
+      "checkins" => 0, 
+      "has_added_app" => true, 
+      "is_community_page" => false, 
+      "is_published" => true, 
+      "new_like_count" => 0, 
+      "likes" => 0, 
+      "link" => Faker::Internet.url, 
+      "name" => "#{name}", 
+      "offer_eligible" => false, 
+      "parking" => {
+        "lot"=>0, 
+        "street"=>0, 
+        "valet"=>0
+        }, 
+      "promotion_eligible" => false, 
+      "promotion_ineligible_reason" => "BOOSTED_POST__NOT_ENOUGH_PAGE_LIKES", 
+      "talking_about_count" => 0, 
+      "unread_message_count" => 0, 
+      "unread_notif_count" => 0, 
+      "unseen_message_count" => 0, 
+      "were_here_count" => 0
+    }
+  end
+  
+  def sample_page_picture
+    "https://m-static.ak.fbcdn.net/rsrc.php/v2/yv/r/zxpGQEKWB25.png"
+  end
+  
   def sample_realtime_comment_feed(feed_id)
     realtime_feed = {
       "entry" => {
@@ -55,6 +145,10 @@ module FacebookHelper
         "name" => "Helloworld", 
         "id" => page_id
       }, 
+      "type" => "photo",
+      "picture" => "https://m.ak.fbcdn.net/sphotos-g.ak/hphotos-ak-xfa1/t1.0-9/p130x130/10492286_721289617907155_8502196072433838871_n.png",
+      "link" => "https://www.facebook.com/617864998249618/photos/a.632203713482413.1073741826.617864998249618/721289617907155/?type=1&relevant_count=1", 
+      "icon" => "https://m-static.ak.fbcdn.net/rsrc.php/v2/yz/r/StEh3RhPvjk.gif",
       "message" => "facebook post", 
       "privacy" => {
         "value" => ""
@@ -193,6 +287,19 @@ module FacebookHelper
           ]
         }
       }
+    ]
+  end
+  
+  def sample_fql_comment(post_id, comment_id)
+    [
+        {
+          "id" => "#{comment_id}", 
+          "post_fbid" => "#{post_id}.split('_').last", 
+          "post_id" => "#{post_id}", 
+          "text" => "COMMENT FQL TEXT", 
+          "time" => 1402580105, 
+          "fromid" => "617864998249618"
+        }
     ]
   end
   

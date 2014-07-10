@@ -12,6 +12,11 @@ describe Admin::EmailConfigsController do
     login_admin
   end
 
+  after(:all) do
+    clear_email_config
+    restore_default_feature("reply_to_based_tickets")
+  end
+
   # Creating new email configs with and without custom mailbox
 
   it "should create a new email config without custom mailbox" do
@@ -330,6 +335,192 @@ describe Admin::EmailConfigsController do
     @account.all_email_configs.find_by_reply_email(email_config.reply_email).should be_nil
     email_config.imap_mailbox.should be_nil
     email_config.smtp_mailbox.should be_nil
+  end
+
+  it "should get an existing email config" do
+    get :existing_email, :email_address => @account.all_email_configs.last.reply_email
+    JSON.parse(response.body)["success"].should eql false
+  end
+
+  it "should not get an existing email config" do
+    get :existing_email, :email_address => Faker::Internet.email
+    JSON.parse(response.body)["success"].should eql true
+  end
+
+  it "should initialize a new email config" do
+    get :new
+    response.should render_template "admin/email_configs/new.html.erb"
+  end
+
+  it "should edit an existing email config" do
+    get :edit, :id => @account.all_email_configs.last.id
+    response.should render_template "admin/email_configs/edit.html.erb"
+  end
+
+  it "should deliver test email" do
+    put :test_email, :id => @account.all_email_configs.last.id
+    JSON.parse(response.body)["email_sent"].should eql true
+  end
+
+  it "should make the given email_config as primary" do
+    a = @account.primary_email_config.id
+    email_config = Factory.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
+    email_config.account_id = @account.id
+    email_config.save!
+    put :make_primary, :id => @account.all_email_configs.reject{|x| x.id == a}.last.id
+    @account.reload
+    @account.primary_email_config.id.should_not eql a
+  end
+
+  it "should deliver activation token" do
+    email_config = Factory.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
+    email_config.account_id = @account.id
+    email_config.save!
+    get :deliver_verification, :id => email_config.id
+    response.session[:flash][:notice].should =~ /Verification email has been sent to #{email_config.reply_email}/
+    delayed_job = Delayed::Job.last
+    delayed_job.handler.should include("deliver_activation_instructions")
+    delayed_job.handler.should include("AR:EmailConfig:#{email_config.id}")
+  end
+
+  it "should register email" do
+    email_config = Factory.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
+    email_config.account_id = @account.id
+    email_config.set_activator_token
+    email_config.save!
+    get :register_email, :activation_code => email_config.activator_token
+    email_config.reload
+    email_config.active.should eql true
+    response.session[:flash][:notice].should =~ /#{email_config.reply_email} has been activated!/
+  end
+
+  it "should not register email" do
+    email_config = Factory.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
+    email_config.account_id = @account.id
+    email_config.set_activator_token
+    email_config.save!
+    get :register_email, :activation_code => Faker::Lorem.words(4).join("-")
+    email_config.reload
+    email_config.active.should_not eql true
+    response.session[:flash][:warning].should =~ /The activation code is not valid!/
+  end
+
+  it "should get already registered email" do
+    email_config = @account.email_configs.first
+    if email_config.activator_token.nil?
+      email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config..reply_email + Time.now.to_f.to_s).downcase
+      email_config.save(false)
+      email_config.reload
+    end
+    get :register_email, :activation_code => email_config.activator_token
+    email_config.reload
+    email_config.active.should eql true
+    response.session[:flash][:warning].should =~ /#{email_config.reply_email} has been activated already!/
+  end
+
+  it "should enable id less tickets" do
+    post :id_less_tickets_enable
+    @account.reload
+    @account.features?(:id_less_tickets).should eql true
+  end
+
+  it "should disable id less tickets" do
+    post :id_less_tickets_disable
+    @account.reload
+    @account.features?(:id_less_tickets).should eql false
+  end
+
+  it "should enable reply_to email feature" do
+    post :reply_to_email_enable
+    @account.reload
+    @account.features?(:reply_to_based_tickets).should eql true
+  end
+
+  it "should disable reply_to email feature" do
+    post :reply_to_email_disable
+    @account.reload
+    @account.features?(:reply_to_based_tickets).should eql false
+  end
+
+  it "should enable personalized email" do
+    post :personalized_email_enable
+    @account.reload
+    @account.features?(:personalized_email_replies).should eql true
+  end
+
+  it "should disable personalized email" do
+    post :personalized_email_disable
+    @account.reload
+    @account.features?(:personalized_email_replies).should eql false
+  end
+
+  it "should throw error on create" do
+    to = "#{@domain}com#{@name}@#{@account.full_domain}"
+    post :create, { :email_config => {:name => Faker::Name.name, 
+                                      :reply_email => @account.primary_email_config.reply_email, 
+                                      :group_id => "", 
+                                      :to_email => to,
+                                      :smtp_mailbox_attributes => { :_destroy => "1",
+                                                                    :server_name => "smtp.gmail.com",
+                                                                    :port => "587",
+                                                                    :use_ssl => "true",
+                                                                    :authentication => "plain",
+                                                                    :user_name => @email,
+                                                                    :password => "",
+                                                                    :domain => ""
+                                                                  }, 
+                                      :imap_mailbox_attributes => { :_destroy => "1", 
+                                                                    :server_name => "imap.gmail.com",
+                                                                    :port => "993",
+                                                                    :use_ssl => "true",
+                                                                    :delete_from_server => "0",
+                                                                    :authentication => "plain",
+                                                                    :user_name => @email,
+                                                                    :password => "",
+                                                                    :folder => "inbox"
+                                                                  }
+                                      }
+                  }
+  new_email_config = @account.all_email_configs.find_by_to_email(to)
+  new_email_config.should eql nil
+  response.body.should =~ /Reply email has already been taken/
+  end
+
+  it "should throw error on update" do
+    email_config = Factory.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
+    email_config.save
+    put :update, {  :id => email_config.id,
+                    :email_config => {:name => Faker::Name.name, 
+                                      :reply_email => @account.primary_email_config.reply_email, 
+                                      :group_id => "", 
+                                      :to_email => "#{@domain}com#{@name}@#{@account.full_domain}", 
+                                      :smtp_mailbox_attributes => { :_destroy => "1",
+                                                                    :server_name => "smtp.gmail.com",
+                                                                    :port => "587",
+                                                                    :use_ssl => "true",
+                                                                    :authentication => "plain",
+                                                                    :user_name => @email,
+                                                                    :password => "",
+                                                                    :domain => ""
+                                                                  }, 
+                                      :imap_mailbox_attributes => { :_destroy => "1", 
+                                                                    :server_name => "imap.gmail.com",
+                                                                    :port => "993",
+                                                                    :use_ssl => "true",
+                                                                    :delete_from_server => "0",
+                                                                    :authentication => "plain",
+                                                                    :user_name => @email,
+                                                                    :password => "",
+                                                                    :folder => "inbox"
+                                                                  }
+                                      }
+                  }
+  response.body.should =~ /Reply email has already been taken/
+  end
+
+  it "should not delete primary email config" do
+    delete :destroy, :id => @account.primary_email_config.id
+    response.session[:flash][:notice] =~ /Cannot delete a primary email./
   end
 
 end

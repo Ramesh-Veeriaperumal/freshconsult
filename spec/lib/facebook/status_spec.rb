@@ -21,7 +21,7 @@ describe Facebook::Core::Status do
     
     feed_id = facebook_feed[:id]
     Facebook::Core::Parser.new(realtime_feed).parse
-    post = Social::FbPost.find_by_post_id(feed_id)
+    post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     
@@ -42,7 +42,7 @@ describe Facebook::Core::Status do
     
     Facebook::Core::Parser.new(realtime_feed).parse
     
-    post = Social::FbPost.find_by_post_id(feed_id)
+    post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     
@@ -55,7 +55,7 @@ describe Facebook::Core::Status do
     comments =  facebook_feed[:comments].symbolize_keys
     comment = comments[:data].first
     user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
-    post_comment = Social::FbPost.find_by_post_id(comment[:id])
+    post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
     post_comment.should_not be_nil
     post_comment.is_note?.should be_true
     
@@ -74,7 +74,7 @@ describe Facebook::Core::Status do
     
     AwsWrapper::Sqs.any_instance.expects(:requeue).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse   
-    Social::FacebookPage.first.last_error.should_not be_nil
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).last_error.should_not be_nil
   end
   
   
@@ -87,8 +87,8 @@ describe Facebook::Core::Status do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    Social::FacebookPage.first.reauth_required.should be_true
-    Social::FacebookPage.first.enable_page.should be_false
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be_true
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be_false
   end
   
   it "should not create a ticket when a post arrives and import company post is not enabled" do
@@ -103,7 +103,7 @@ describe Facebook::Core::Status do
      
      Facebook::Core::Parser.new(realtime_feed).parse
      
-     post = Social::FbPost.find_by_post_id(feed_id)
+     post = @account.facebook_posts.find_by_post_id(feed_id)
      post.should be_nil
    end
   

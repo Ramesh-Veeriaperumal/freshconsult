@@ -108,6 +108,7 @@ Spork.prefork do
     config.include ProductsHelper
     config.include WfFilterHelper, :type => :controller
     config.include S3Helper
+    config.include IntegrationsHelper
 
     config.before(:all) do
       @account = create_test_account
@@ -161,8 +162,8 @@ Spork.prefork do
     end
 
     config.after(:suite) do
-      Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
-        File.delete(file) unless file.include?("placeholder.txt")
+      Dir["#{Rails.root}/spec/fixtures/files/*"].each do |file|
+        File.delete(file) if file.include?("tmp15.doc")
       end
     end
 

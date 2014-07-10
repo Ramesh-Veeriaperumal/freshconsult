@@ -21,7 +21,8 @@ FacebookTests = [
   "spec/lib/facebook/post_spec.rb",
   "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
-  "spec/lib/facebook/status_spec.rb"
+  "spec/lib/facebook/status_spec.rb",
+  "spec/controllers/social/facebook_pages_controller_spec.rb"
 ]
 
 GnipTests = [
@@ -39,10 +40,16 @@ TwitterTests = [
   "spec/controllers/admin/social/*_spec.rb"
 ]
 
-ModelTests = ["spec/models/helpdesk/*_spec.rb"]
+ModelTests = [
+  "spec/models/helpdesk/agent_spec.rb",
+  "spec/models/helpdesk/group_spec.rb",
+  "spec/models/helpdesk/mysql_note_spec.rb",
+  "spec/models/helpdesk/mysql_ticket_spec.rb",
+  "spec/models/helpdesk/ticket_spec.rb"
+]
 
 EmailTests = [ 
-  #"spec/lib/*_email_spec.rb", 
+  "spec/lib/*_email_spec.rb", 
   "spec/controllers/email_controller_spec.rb",
   "spec/controllers/mailgun_controller_spec.rb"
 ]
@@ -63,14 +70,18 @@ IntegrationTests = [
   "spec/controllers/integrations/jira_issue_controller_spec.rb",
   "spec/controllers/integrations/applications_controller_spec.rb",
   "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-  "spec/controllers/sso_controller_spec.rb"
+  "spec/controllers/sso_controller_spec.rb",
+  "spec/controllers/authorizations_controller_spec.rb",
+  "spec/controllers/integrations/http_request_proxy_controller_spec.rb",
+  "spec/controllers/integrations/installed_applications_controller_spec.rb",
+  "spec/controllers/integrations/oauth_util_controller_spec.rb",
+  "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
+  "spec/controllers/integrations/user_credentials_controller_spec.rb"
 ]
 
 FreshfoneTests = [
   "spec/controllers/freshfone/*_spec.rb",
   "spec/lib/freshfone/*_spec.rb",
-  "spec/lib/pulse_rate_incoming_spec.rb",
-  "spec/lib/pulse_rate_outgoing_spec.rb",
   "spec/models/freshfone/*_spec.rb"
 ]
 
@@ -88,6 +99,7 @@ ForumTests = [
 ]
 
 HelpdeskTests = [ 
+  "spec/controllers/home_controller_spec.rb",
   "spec/controllers/account_configurations_controller_spec.rb",
   "spec/controllers/agents_controller_spec.rb",
   "spec/controllers/groups_controller_spec.rb",
@@ -116,8 +128,8 @@ BillingTests = [
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
 ]        
   
-UnitTests = [ FacebookTests, TwitterTests, XssTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
-              APITests, ForumTests, HelpdeskTests, BillingTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, GnipTests,
+              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]

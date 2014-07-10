@@ -4,9 +4,7 @@ module Wf::OptionSelecter
     case options
     when Array
       options.select { |option_value, option_name| 
-        return false if option_value == correct_option # trying to generate a negative test case
-        return true unless option_value.is_a? Fixnum
-        option_value > 0
+        validate_option option_value, correct_option
       }.sample[0]
     when Hash
       (options.keys - [correct_option]).sample  # trying to generate a negative test case
@@ -15,9 +13,15 @@ module Wf::OptionSelecter
     end
   end
 
-  def select_correct_option name, options
+  def validate_option current_option, correct_option # trying to generate a negative test case
+    return false if current_option == correct_option # skipping the correct option
+    return true unless current_option.is_a? Fixnum # selecting if its a string
+    current_option > 0 # IDs should be > 0
+  end
+
+  def select_correct_option name
     method = :"option_in_ticket_for_#{name}"
-    respond_to?(method) ? send(method, options) : @ticket.send(name)
+    respond_to?(method) ? send(method, options(name)) : @ticket.send(name)
   end
 
   def option_in_ticket_for_due_by options

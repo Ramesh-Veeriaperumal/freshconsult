@@ -69,11 +69,6 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     end
   end
 
-  def delete_ticket_rule
-    ticket_rule = Social::TicketRule.find_by_id(params[:id])
-    ticket_rule.destroy if ticket_rule and ticket_rule.stream.data[:kind] != STREAM_TYPE[:dm]
-    render :nothing => true
-  end
 
   def destroy
     unless @twitter_stream.data[:kind] == STREAM_TYPE[:default]

@@ -416,7 +416,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html {
         flash[:notice] = render_to_string(
             :inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count ))
-          redirect_to :back
+          redirect_to helpdesk_tickets_path
         }
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
         format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.tickets_closed", 
@@ -642,6 +642,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
+    @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
 
     build_attachments @item, :helpdesk_ticket
 

@@ -21,7 +21,7 @@ describe Facebook::Core::Post do
     
     feed_id = facebook_feed[:id]
     Facebook::Core::Parser.new(realtime_feed).parse
-    post = Social::FbPost.find_by_post_id(feed_id)
+    post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     
@@ -42,7 +42,7 @@ describe Facebook::Core::Post do
     
     Facebook::Core::Parser.new(realtime_feed).parse
     
-    post = Social::FbPost.find_by_post_id(feed_id)
+    post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     
@@ -55,7 +55,7 @@ describe Facebook::Core::Post do
     comments =  facebook_feed[:comments].symbolize_keys
     comment = comments[:data].first
     user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
-    post_comment = Social::FbPost.find_by_post_id(comment[:id])
+    post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
     post_comment.should_not be_nil
     post_comment.is_note?.should be_true
     
@@ -103,7 +103,7 @@ describe Facebook::Core::Post do
      
      Facebook::Core::Parser.new(realtime_feed).parse
      
-     post = Social::FbPost.find_by_post_id(feed_id)
+     post = @account.facebook_posts.find_by_post_id(feed_id)
      post.should be_nil
    end
   

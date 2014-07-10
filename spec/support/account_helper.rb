@@ -76,4 +76,8 @@ module AccountHelper
     subscription.set_billing_params("USD")
     subscription.save
   end
+
+  def restore_default_feature feature
+    @account.features.send(feature).create unless @account.features_included?(feature.to_sym)
+  end
 end

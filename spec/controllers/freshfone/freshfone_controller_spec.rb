@@ -41,7 +41,8 @@ describe FreshfoneController do
     response.should be_redirect
     response.should redirect_to('support/login')
   end
-  #End spec for freshfone base controller
+  #End spec for freshfone base controller. 
+  #Change this to contexts
 
 
   #Spec for actual freshfone_controller
