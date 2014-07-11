@@ -350,4 +350,14 @@ describe Helpdesk::TicketsController do
       response.should render_template "helpdesk/tickets/customview/_new.html.erb"
     end
 
+    it "should return new tickets page through topic" do
+      forum_category = create_test_category
+      forum = create_test_forum(forum_category)
+      topic = create_test_topic(forum)
+      publish_topic(topic)
+      get :new , {"topic_id" => topic.id }
+      response.should render_template "helpdesk/tickets/new.html.erb"
+      response.body.should =~ /"#{topic.title}"/
+    end
+
 end
