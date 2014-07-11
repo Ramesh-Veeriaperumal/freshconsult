@@ -3431,10 +3431,10 @@ cs:
         success: "Účet %{human_name} byl aktualizován."
         failure: "Nelze aktualizovat %{human_name}."
     post:
-      deleted: "Příspěvek {title} byl smazán."
+      deleted: "Příspěvek %{title} byl smazán."
       page_not_found: "Tento příspěvek nebyl nalezen. Buď byl smazán, nebo jste špatně zadali adresu."
     topic:
-      deleted: "Téma {title} bylo smazáno."
+      deleted: "Téma %{title} bylo smazáno."
       page_not_found: "Toto téma nebylo nalezeno. Buď bylo smazáno, nebo jste špatně zadali jeho adresu."
     forum:
       page_not_found: "Toto fórum nebylo nalezeno. Buď bylo smazáno, nebo jste se přepsali v adrese."

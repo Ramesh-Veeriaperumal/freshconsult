@@ -2118,7 +2118,7 @@ da:
         success: "%{human_name} er blevet opdateret"
         failure: "%{human_name} kunne ikke opdateres"
     topic:
-      deleted: "Emnet '{title}' er blevet slettet."
+      deleted: "Emnet '%{title}' er blevet slettet."
   date_invalid: "Ikke valid dato"
   freshfone:
     number: "Freshfone Nummer"

@@ -1310,10 +1310,10 @@ it:
         success: %{human_name} è stato aggiornato.
         failure: Non è stato possibile aggiornare %{human_name}
     post:
-      deleted: Il post &apos;{title}&apos; è stato eliminato.
+      deleted: Il post &apos;%{title}&apos; è stato eliminato.
       page_not_found: Impossibile trovare il post. Potrebbe essere stato eliminato oppure l&apos;URL potrebbe non essere stato digitato correttamente.
     topic:
-      deleted: L’argomento &apos;{title}&apos; è stato eliminato.
+      deleted: L’argomento &apos;%{title}&apos; è stato eliminato.
       page_not_found: Impossibile trovare l’argomento. Potrebbe essere stato eliminato oppure l&apos;URL potrebbe non essere stato digitato correttamente.
     forum:
       page_not_found: Impossibile trovare il forum. Potrebbe essere stato eliminato oppure l&apos;URL potrebbe non essere stato digitato correttamente.

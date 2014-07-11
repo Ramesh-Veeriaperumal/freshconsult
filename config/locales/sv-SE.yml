@@ -1310,10 +1310,10 @@ sv-SE:
         success: %{human_name} har uppdaterats.
         failure: %{human_name} kunde inte uppdateras.
     post:
-      deleted: Inlägget ‘{title}’ togs bort.
+      deleted: Inlägget ‘%{title}’ togs bort.
       page_not_found: Detta inlägg kunde inte hittas. Det kan ha blivit borttaget eller så är URL:en felskriven.
     topic:
-      deleted: Ämnet ‘{title}’ togs bort.
+      deleted: Ämnet ‘%{title}’ togs bort.
       page_not_found: Detta ämne kunde inte hittas. Det kan ha blivit borttaget eller så är URL:en felskriven.
     forum:
       page_not_found: Detta forum kunde inte hittas. Det kan ha blivit borttaget eller så är URL:en felskriven.

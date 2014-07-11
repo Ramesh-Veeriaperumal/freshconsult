@@ -1310,10 +1310,10 @@ ru-RU:
         success: %{human_name} обновлен.
         failure: Нельзя обновить %{human_name}.
     post:
-      deleted: Запись &apos;{title}&apos; удалена.
+      deleted: Запись &apos;%{title}&apos; удалена.
       page_not_found: Не удалось найти запись. Запись удалена, либо неправильно введен URL.
     topic:
-      deleted: Тема &apos;{title}&apos; удалена.
+      deleted: Тема &apos;%{title}&apos; удалена.
       page_not_found: Не удалось найти тему. Запись удалена, либо неправильно введен URL.
     forum:
       page_not_found: Не удалось найти форум. Запись удалена, либо неправильно введен URL.
