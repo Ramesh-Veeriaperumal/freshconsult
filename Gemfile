@@ -22,7 +22,7 @@ group :development do
 end
 
 gem "mail"
-gem "i18n", "~> 0.6"
+gem "i18n", "0.4.2"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "2.1.6"
 gem "httparty", "0.10.0"
