@@ -195,8 +195,10 @@ describe Social::StreamsController do
   
   it "should redirect to admin page if non handles are present" do
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response) 
+    end
     @account.twitter_handles.destroy_all
     Resque.inline = false
     
@@ -251,8 +253,10 @@ describe Social::StreamsController do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all
