@@ -15,6 +15,7 @@ module TicketHelper
                                          :requester_id =>  requester_id,
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
+                                         :source => params[:source] || 2,
                                          :cc_email => {:cc_emails => [], :fwd_emails => []},
                                          :created_at => params[:created_at],
                                          :account_id => account_id)
