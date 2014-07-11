@@ -27,14 +27,14 @@ namespace :cloudfront_assets do
   def compile!
     puts "::::Compile started:::#{Time.now}"
     sh "bundle exec compass compile -e production"
-    sh "bundle exec jammit --output #{Rails.root}/public/#{Jammit.package_path}"
-    sh "sudo rm -rf #{Rails.root}/public/#{Jammit.package_path}/images"
-    sh "sudo rm -rf #{Rails.root}/public/#{Jammit.package_path}/fonts"
-    sh "mkdir #{Rails.root}/public/#{Jammit.package_path}/images/"
-    sh "mkdir #{Rails.root}/public/#{Jammit.package_path}/fonts/"
-    sh "mkdir #{Rails.root}/public/#{Jammit.package_path}/images/sprites"
-    sh "cp -r #{Rails.root}/public/images/sprites/ #{Rails.root}/public/#{Jammit.package_path}/images/"
-    sh "cp -r #{Rails.root}/public/fonts/ #{Rails.root}/public/#{Jammit.package_path}/"
+    sh "bundle exec jammit --output #{RAILS_ROOT}/public/#{Jammit.package_path}"
+    sh "sudo rm -rf #{RAILS_ROOT}/public/#{Jammit.package_path}/images"
+    sh "sudo rm -rf #{RAILS_ROOT}/public/#{Jammit.package_path}/fonts"
+    sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
+    sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/fonts/"
+    sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/sprites"
+    sh "cp -r #{RAILS_ROOT}/public/images/sprites/ #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
+    sh "cp -r #{RAILS_ROOT}/public/fonts/ #{RAILS_ROOT}/public/#{Jammit.package_path}/"
     puts "::::Compile ended:::#{Time.now}"
   end
 

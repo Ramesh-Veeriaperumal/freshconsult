@@ -6,8 +6,8 @@ def extract_zendesk_zip(file_url,username,password)
     begin
       file = @current_account.zendesk_import.attachments.first.content.to_file 
       @upload_file_name = file.original_filename
-      zip_file_name = "#{Rails.root}/public/files/#{@upload_file_name}"
-      @out_dir = "#{Rails.root}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
+      zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+      @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
       FileUtils.mkdir_p @out_dir
       File.open(zip_file_name , "wb") do |f|
         f.write(file.read)
@@ -42,7 +42,7 @@ def extract_zendesk_zip(file_url,username,password)
 end
 
 def delete_zip_file
-    zip_file_name = "#{Rails.root}/public/files/#{@upload_file_name}"
+    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
     FileUtils.rm_rf zip_file_name
   end
   def import_files_from_zendesk base_dir      

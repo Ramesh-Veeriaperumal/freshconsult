@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :facebook_pages, :class => Social::FacebookPage do |f|
     f.page_id {(Time.now.utc.to_f*100000).to_i}
     f.profile_id 123456

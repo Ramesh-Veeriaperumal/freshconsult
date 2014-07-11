@@ -1,6 +1,6 @@
 class Role < ActiveRecord::Base
   
-  include Authority::FreshdeskRails::ModelHelpers
+  include Authority::Rails::ModelHelpers
   before_destroy :destroy_user_privileges
   after_update :update_user_privileges
 

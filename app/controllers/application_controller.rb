@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :unset_current_account, :set_current_account
   before_filter :set_default_locale, :set_locale
-  include Authority::FreshdeskRails::ControllerHelpers
+  include Authority::Rails::ControllerHelpers
   before_filter :freshdesk_form_builder
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_time_zone, :check_day_pass_usage 

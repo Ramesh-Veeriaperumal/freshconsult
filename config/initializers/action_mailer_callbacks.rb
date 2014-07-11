@@ -35,12 +35,12 @@ module ActionMailerCallbacks
           :domain               => smtp_mailbox.domain
         }
       else
-        self.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+        self.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
       end
     end
 
     def reset_smtp_settings
-      self.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+      self.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
     end   
   end
 

@@ -16,7 +16,7 @@ module Authority
     def map(privileges)
       # 1
       @data = {}
-      unless File.exist?("#{::Rails.root}/config/#{@file}")
+      unless File.exist?("#{RAILS_ROOT}/config/#{@file}")
         @data[:privileges] = build_data(privileges)
         @data[:max_value] = @data[:privileges].values.max
       else
@@ -47,13 +47,13 @@ module Authority
     private
 
       def write_file
-        File.open("#{::Rails.root}/config/#{@file}", "w") do |f|
+        File.open("#{RAILS_ROOT}/config/#{@file}", "w") do |f|
           f.write(@data.to_yaml)
         end  
       end
 
       def read_file
-        YAML.load_file("#{::Rails.root}/config/#{@file}")
+        YAML.load_file("#{RAILS_ROOT}/config/#{@file}")
       end
 
       def build_data(data)

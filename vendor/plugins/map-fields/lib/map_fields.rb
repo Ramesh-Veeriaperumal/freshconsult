@@ -16,8 +16,8 @@ module MapFields
                 self.class.read_inheritable_attribute(:map_fields_options)
               )
 
-    Rails.logger.debug("session[:map_fields]: #{session[:map_fields]}")
-    Rails.logger.debug("params[options[:file_field]]: #{params[options[:file_field]]}")
+    RAILS_DEFAULT_LOGGER.debug("session[:map_fields]: #{session[:map_fields]}")
+    RAILS_DEFAULT_LOGGER.debug("params[options[:file_field]]: #{params[options[:file_field]]}")
     if session[:map_fields].nil? || !params[options[:file_field]].blank?
       session[:map_fields] = {}
       if params[options[:file_field]].blank?

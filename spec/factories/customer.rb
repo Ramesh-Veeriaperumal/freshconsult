@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :user do |f|
     f.sequence(:name) { |n| "foo#{n}" }
     f.time_zone "Chennai"

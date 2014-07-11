@@ -9,13 +9,18 @@ module Helpdesk
   end
 end
 
-YAML.load_file("#{Rails.root}/config/helpdesk.yml").each do |k, v|
+YAML.load_file("#{RAILS_ROOT}/config/helpdesk.yml").each do |k, v|
   Helpdesk.const_set(k.upcase, Helpdesk::prepare(v))
 end
 
-if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
-  ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
+  ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
 end
+
+#For sending exception notifications 
+ExceptionNotification::Notifier.exception_recipients = Helpdesk::EMAIL[:from] if RAILS_ENV == "production"
+ExceptionNotification::Notifier.exception_recipients = Helpdesk::EMAIL[:staging_support_email] if RAILS_ENV == "staging"
+ExceptionNotification::Notifier.sender_address =  %("#{Helpdesk::APP_NAME} Error" <#{Helpdesk::EMAIL[:default_requester_email]}>)
 
 #I18n fallbacks if the it doesn't exists in a prticular language
 I18n.backend.class.send(:include, I18n::Backend::Fallbacks)

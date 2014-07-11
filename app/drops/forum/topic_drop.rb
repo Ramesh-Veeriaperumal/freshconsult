@@ -114,7 +114,7 @@ class Forum::TopicDrop < BaseDrop
   end
   
   def answered?
-    Rails.logger.debug "Checking for answered?"
+    RAILS_DEFAULT_LOGGER.debug "Checking for answered?"
     source.answered?
   end
 

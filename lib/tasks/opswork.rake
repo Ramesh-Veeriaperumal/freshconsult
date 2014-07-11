@@ -2,7 +2,7 @@ namespace :opswork do
   desc "opsworks scripts"
 
   def opsworks_config
-    YAML::load_file(File.join(Rails.root, 'config', 'opsworks.yml'))[Rails.env].symbolize_keys!
+    YAML::load_file(File.join(RAILS_ROOT, 'config', 'opsworks.yml'))[Rails.env].symbolize_keys!
   end
 
   task :deploy => :environment do

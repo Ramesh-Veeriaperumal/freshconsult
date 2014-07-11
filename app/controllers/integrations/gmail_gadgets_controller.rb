@@ -8,7 +8,7 @@ class Integrations::GmailGadgetsController < ApplicationController
     elsif Rails.env.development?
       spec_file_name = "development-gadget-spec.xml"
     end
-    cert_file  = "#{Rails.root}/config/google-apps/#{spec_file_name}"
+    cert_file  = "#{RAILS_ROOT}/config/google-apps/#{spec_file_name}"
     respond_to do |format|
       format.xml do
         render :xml => File.read(cert_file)

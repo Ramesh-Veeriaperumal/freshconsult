@@ -1,15 +1,15 @@
-AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml'))
+AppConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'config.yml'))
 
-NodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'node_js.yml'))[Rails.env]
+NodeConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'node_js.yml'))[RAILS_ENV]
 
-FreshfoneConfig = YAML.load_file(File.join(Rails.root, 'config', 'freshfone.yml'))[Rails.env]
+FreshfoneConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'freshfone.yml'))[RAILS_ENV]
 
-MailgunConfig = YAML.load_file(File.join(Rails.root, 'config', 'mailgun.yml'))[Rails.env]
+MailgunConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailgun.yml'))[RAILS_ENV]
 
-AddonConfig = YAML.load_file(File.join(Rails.root, 'config', 'addons.yml'))
+AddonConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'addons.yml'))
 
-MailboxConfig = YAML.load_file(File.join(Rails.root, 'config', 'mailbox.yml'))[Rails.env]
+MailboxConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'mailbox.yml'))[RAILS_ENV]
 
-BraintreeConfig = YAML.load_file(File.join(Rails.root, 'config', 'braintree.yml'))
+BraintreeConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'braintree.yml'))
 
-RateLimitConfig = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
+RateLimitConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'rate_limit.yml'))[RAILS_ENV]
