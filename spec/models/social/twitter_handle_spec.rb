@@ -48,9 +48,11 @@ describe Social::TwitterHandle do
   
    
   it "should requeue to gnip on calling on a encountering an error in gnip add or delete" do
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    error_response = Net::HTTPResponse.new("http",401,"")
-    GnipRule::Client.any_instance.stubs(:add).returns(error_response, add_response) unless GNIP_ENABLED   
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      error_response = Net::HTTPResponse.new("http",401,"")
+      GnipRule::Client.any_instance.stubs(:add).returns(error_response, add_response) 
+    end
     handle = create_test_twitter_handle(@account)
   end
 
@@ -72,6 +74,7 @@ describe Social::TwitterHandle do
   it "should delete the default gnip rule and the default streams if account is suspended" do
     GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
     Resque.inline = true
+    @handle.account.subscription.update_attributes(:state => "trial") 
     current_state = @handle.account.subscription.state
     handle_id = @handle.id
 

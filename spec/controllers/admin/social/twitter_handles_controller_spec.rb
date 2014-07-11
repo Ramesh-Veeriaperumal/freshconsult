@@ -77,8 +77,10 @@ describe Admin::Social::TwitterHandlesController do
   
   after(:all) do
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     Social::TwitterHandle.destroy_all
     Resque.inline = false
   end
