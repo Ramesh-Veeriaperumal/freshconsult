@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Admin::FreshfoneController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -20,14 +21,14 @@ describe Admin::FreshfoneController do
                     "in_region"=>"", "contains"=>""}, "country"=>"US"}
     assigns[:search_results].count.should be_eql(30)
     assigns[:search_results].map{|result| result[:iso_country]}.uniq.should be_eql(["US"])
-    response.should render_template ("/admin/freshfone/numbers/_freshfone_available_numbers")
+    response.should render_template ("admin/freshfone/numbers/_freshfone_available_numbers.html.erb")
   end
 
   it 'should return all available phone numbers on search with no search options' do
     get :available_numbers, {"country"=>"US"}
     assigns[:search_results].count.should be_eql(30)
     assigns[:search_results].map{|result| result[:iso_country]}.uniq.should be_eql(["US"])
-    response.should render_template ("/admin/freshfone/numbers/_freshfone_available_numbers")
+    response.should render_template ("admin/freshfone/numbers/_freshfone_available_numbers.html.erb")
   end
 
   it 'should not return any results when invalid pattern is provided for search' do

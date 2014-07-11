@@ -107,6 +107,15 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 .syntaxhighlighter code, .syntaxhighlighter pre {
 	display: initial;
 }
+
+.article-body .syntaxhighlighter table{
+	table-layout: auto;
+}
+
+.article-body .syntaxhighlighter div{
+	word-wrap: normal;
+}
+
 // Date picker Hack
 //-----------------
 .daterangepicker{

@@ -3,6 +3,7 @@ load 'spec/support/freshfone_transfer_spec_helper.rb'
 include FreshfoneTransferSpecHelper
 
 describe Freshfone::CallTransferController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

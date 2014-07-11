@@ -183,7 +183,7 @@ module TwitterHelper
   
   def sample_twitter_feed
     text = Faker::Lorem.words(10).join(" ")
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    tweet_id = get_id
     in_reply_to_status_id_str = (1.days.ago.utc.to_f*100000).to_i
     twitter_feed = {
       "query" => "",
@@ -237,7 +237,7 @@ module TwitterHelper
   
   def sample_twitter_tweet_object
     attrs = {
-      :id => (Time.now.utc.to_f*100000).to_i, 
+      :id => get_id, 
       :retweet_count => 1
     }
     twitter_tweet = Twitter::Tweet.new(attrs)
@@ -247,7 +247,7 @@ module TwitterHelper
   
    def sample_search_results_object
     attrs = {
-      :id => (Time.now.utc.to_f*100000).to_i,
+      :id => get_id,
       :statuses => [],
       :search_metadata => {
                 :max_id =>  250126199840518145,
@@ -320,7 +320,7 @@ module TwitterHelper
   end
   
   def sample_twitter_dm(twitter_id, screen_name, time)
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    tweet_id = get_id
     user_params = {
       :id => "#{twitter_id}", 
       :screen_name => "#{screen_name}", 
@@ -337,6 +337,10 @@ module TwitterHelper
       :sender => user_params
     }
     return dm_data
+  end
+
+  def get_id
+    (Time.now.utc.to_f*1000000).to_i
   end
 
 end

@@ -26,6 +26,7 @@ module IntegrationsHelper
 	     								:options => options[:options],:account_id => options[:account_id],
 	     								:application_type => options[:application_type])
 		application.save
+		application
 	end
 
 end

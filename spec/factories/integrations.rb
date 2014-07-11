@@ -12,7 +12,7 @@ if Rails.env.test?
   end
 
   Factory.define :installed_application, :class => Integrations::InstalledApplication do |t|
-    t.application_id 23
+    #t.application_id 23
     t.account_id 1
     t.configs HashWithIndifferentAccess.new({ :inputs => { :api_key => "f7e85279afcce3b6f9db71bae15c8b69", :updates => 1} })
   end

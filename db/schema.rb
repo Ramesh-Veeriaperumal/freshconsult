@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140704083458) do
+ActiveRecord::Schema.define(:version => 20140703065831) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2136,6 +2136,7 @@ ActiveRecord::Schema.define(:version => 20140704083458) do
   end
 
   add_index "survey_results", ["id"], :name => "survey_results_id"
+  add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id",   :limit => 8
@@ -2454,6 +2455,7 @@ ActiveRecord::Schema.define(:version => 20140704083458) do
   add_index "user_emails", ["email"], :name => "user_emails_email"
   add_index "user_emails", ["id"], :name => "user_emails_id"
   add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
+  add_index "user_emails", ["user_id", "primary_role"], :name => "index_user_emails_on_user_id_and_primary_role"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8

@@ -213,7 +213,7 @@ class TopicsController < ApplicationController
 		end
 
 		def find_forum_and_topic
-			wrong_portal unless(main_portal? ||
+			(wrong_portal and return) unless(main_portal? ||
 						(params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
 
 			@forum_category = scoper.find(params[:category_id])

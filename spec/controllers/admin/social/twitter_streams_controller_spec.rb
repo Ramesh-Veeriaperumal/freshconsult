@@ -235,9 +235,10 @@ describe Admin::Social::TwitterStreamsController do
                           }
                         ]
                       }
-      
+                      
+      new_stream.reload
       new_stream.ticket_rules.count.should eql(2)
-      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule includes"])
+      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule updated"])
     end
   end
   
@@ -253,8 +254,10 @@ describe Admin::Social::TwitterStreamsController do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all

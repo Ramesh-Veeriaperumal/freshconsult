@@ -119,6 +119,13 @@ class Helpdesk::NotesController < ApplicationController
     end
   end
 
+  def agents_autocomplete
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    respond_to do |format|
+      format.html { render :layout => false }
+    end
+  end
+
   protected
 
     def build_note_body_attributes

@@ -4,6 +4,8 @@ require 'spork'
 require 'simplecov'
 require 'simplecov-csv'
 
+Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
+
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
@@ -11,6 +13,7 @@ SimpleCov.start do
   add_filter 'app/controllers/subscription_admin'
   add_filter 'reports'
   add_filter 'search'
+  add_filter SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash. 
 
   #add_filter '/vendor/'
   add_group 'mailgun', 'lib/helpdesk/email'

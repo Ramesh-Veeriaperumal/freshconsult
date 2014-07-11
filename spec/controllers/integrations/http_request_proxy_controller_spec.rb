@@ -15,7 +15,7 @@ describe HttpRequestProxyController do
 														        :pivotal_update => { :type => :checkbox, :label => "integrations.pivotal_tracker.pivotal_updates"}
 																    },:account_id => @account.id,
 	     								:application_type => "pivotal_tracker"})
-  @new_installed_application = Factory.build(:installed_application, {:application_id => 23,
+  @new_installed_application = Factory.build(:installed_application, {:application_id => test.id,
                                               :account_id => @account.id, :configs => { :inputs => {'api_key' => "c599b57edad0cb430d6fbf2543450c6c", 'pivotal_update' => '1'}}})
 	@new_installed_application.save!
 	shopify_add = create_application({:name => "shopify",
@@ -28,7 +28,7 @@ describe HttpRequestProxyController do
         :application_type => "shopify",
         :account_id => 0
         })
-	@shopify = Factory.build(:installed_application, {:application_id => 24,:account_id => @account.id,
+	@shopify = Factory.build(:installed_application, {:application_id => shopify_add.id,:account_id => @account.id,
 		:configs=>{:inputs=>{"refresh_token"=>"", "oauth_token"=>"fbc1ea7dd7bef91e31078f079c08dbef", "shop_name"=>"freshdesk-3.myshopify.com"}}})
 	@shopify.save!
 
