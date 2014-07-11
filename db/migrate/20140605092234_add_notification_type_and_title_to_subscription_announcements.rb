@@ -1,5 +1,5 @@
 class AddNotificationTypeAndTitleToSubscriptionAnnouncements < ActiveRecord::Migration
-	shard :none
+	shard :shard_1
 	
   def self.up
     add_column :subscription_announcements, :title, :text, :null => false
