@@ -80,6 +80,8 @@ module MemcacheKeys
 
   ACCOUNT_API_WEBHOOKS_RULES = "v1/ACCOUNT_API_WEBHOOKS_RULES:%{account_id}"
   
+  PRODUCT_NOTIFICATION = "v1/PRODUCT_NOTIFICATION"
+
   class << self
 
     def newrelic_begin_rescue(&block)

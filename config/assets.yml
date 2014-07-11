@@ -238,6 +238,7 @@ javascripts:
     - public/javascripts/report/date.js
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
+    - public/javascripts/app/product_notifications.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -495,7 +496,7 @@ javascripts:
   admin:
     - public/javascripts/admin/ui_search.js
 
-<%
+<% 
   # Adding specific javascript assets to the package list
   # Add new lang lib to /public/javascripts/lang/{framework name}/es.js etc.
   # The supported language name should be with the corresponding I18n ruby locale key in lowercase
