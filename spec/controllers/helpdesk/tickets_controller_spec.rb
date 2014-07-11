@@ -221,6 +221,22 @@ describe Helpdesk::TicketsController do
       @account.tickets.find(@test_ticket.id).deleted.should be_true
     end
 
+    it "should unspam a ticket from spam view" do
+      tkt1 = create_ticket({ :status => 2, :spam => true }, @group)
+      tkt2 = create_ticket({ :status => 2, :spam => true }, @group)
+      spam_tkt_arr = []
+      spam_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+      put :spam, :id => "multiple", :ids => spam_tkt_arr
+      tkt1.reload
+      tkt2.reload
+      get :filter_options, :filter_name => "spam"
+      put :unspam, :id => "multiple", :ids => spam_tkt_arr
+      tkt1.reload
+      tkt2.reload
+      @account.tickets.find(tkt1.id).spam.should be_false
+      @account.tickets.find(tkt2.id).spam.should be_false
+    end
+
   # Tickets filter
     it "should return ticket for tickets created today in created at filter" do
       created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_day.to_i}"
