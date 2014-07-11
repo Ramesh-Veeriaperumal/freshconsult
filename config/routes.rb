@@ -417,7 +417,7 @@
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post, :mobihelp => :post}
 
-      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get, :agents_autocomplete => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post,
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,
