@@ -89,7 +89,7 @@ describe Social::StreamsController do
       update_db(sec_default_stream) unless GNIP_ENABLED
       sec_rule = {:rule_value => sec_data[:rule_value], :rule_tag => sec_data[:rule_tag]}
     
-      tweet_id1 = get_id
+      tweet_id1 = get_social_id
       tweet_id2 = tweet_id1 + 1
       tweet_id3 = tweet_id1 + 2
       tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, first_rule, Time.now.utc.iso8601)
@@ -114,7 +114,7 @@ describe Social::StreamsController do
   
   describe "interactions" do
     it "should show the entire current interaction on clicking on a tweet feed" do
-      tweet_id1 = get_id
+      tweet_id1 = get_social_id
       tweet_id2 = tweet_id1 + 1
       tweet_id3 = tweet_id1 + 2
       tweet_id4 = tweet_id1 + 3
@@ -156,7 +156,7 @@ describe Social::StreamsController do
     end
 
     it "should show the the other interactions on clicking on a  tweet feed" do
-      tweet_id1 = get_id
+      tweet_id1 = get_social_id
       tweet_id2 = tweet_id1 + 1
       tweet_id3 = tweet_id1 + 2
       
@@ -193,7 +193,7 @@ describe Social::StreamsController do
     end
   end
   
-  it "should redirect to admin page if non handles are present" do
+  it "should redirect to admin page if no handles are present" do
     Resque.inline = true
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([]) 

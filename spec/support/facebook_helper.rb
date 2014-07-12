@@ -57,7 +57,7 @@ module FacebookHelper
       {
         "category" => Faker::Name.name, 
         "name" => "#{name}",
-        "access_token" => "#{get_id}",
+        "access_token" => "#{get_social_id}",
         "perms" => ["ADMINISTER", "EDIT_PROFILE", "CREATE_CONTENT", "MODERATE_CONTENT", "CREATE_ADS", "BASIC_ADMIN"], 
         "id" => "#{page_id}"
       }
@@ -68,7 +68,7 @@ module FacebookHelper
     first_name = Faker::Name.name
     last_name = Faker::Name.name
     {
-      "id" => "#{get_id}", 
+      "id" => "#{get_social_id}", 
       "email" => Faker::Internet.email , 
       "first_name" => "#{first_name}", 
       "gender" => "male", 
@@ -136,7 +136,7 @@ module FacebookHelper
   end
   
   def sample_facebook_feed(feed_id, comments = false, reply_to_comments = false, status = false)
-    page_id = status ? "#{feed_id.split('_').first}" : "#{get_id}"
+    page_id = status ? "#{feed_id.split('_').first}" : "#{get_social_id}"
     post_id = "#{feed_id.split('_').second}"
     fb_feed = {
       "id" => "#{feed_id}", 
@@ -209,7 +209,7 @@ module FacebookHelper
   
   def sample_facebook_comment_feed(page_id, post_id, message = "Test message", reply_to_comments = false, comment_id = nil)
     comment = {
-      "id" => "#{post_id}_#{get_id}", 
+      "id" => "#{post_id}_#{get_social_id}", 
       "from" => {
         "category" => "Community", 
         "name" => "Helloworld", 
@@ -239,7 +239,7 @@ module FacebookHelper
   
   
   def sample_post_and_ticket
-    post_id = "#{@fb_page.page_id}_#{get_id}"
+    post_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(post_id)
     facebook_feed = sample_facebook_feed(post_id)
     
@@ -271,7 +271,7 @@ module FacebookHelper
    end
   
   def sample_fql_feed(feed_id, status = true, comment_count = 0)
-    actor_id = status ? @fb_page.page_id : get_id.to_i
+    actor_id = status ? @fb_page.page_id : get_social_id.to_i
     [
       {
         "post_id" =>  "#{feed_id}", 
@@ -325,7 +325,7 @@ module FacebookHelper
     data = @default_stream.data.merge({:replies_enabled => true})
     @default_stream.update_attributes(:data => data)
 
-    comment = sample_facebook_comment_feed(@fb_page.page_id, "#{get_id}", "Comment to post on facebook")
+    comment = sample_facebook_comment_feed(@fb_page.page_id, "#{get_social_id}", "Comment to post on facebook")
     comment_id = comment[:id]
     realtime_feed = sample_realtime_comment_feed(comment_id)
    
@@ -389,7 +389,7 @@ module FacebookHelper
     "m_mid.#{(Time.now.utc.to_f * 1000).to_i}:#{rand(36**15).to_s(36)}"
   end
   
-  def get_id
+  def get_social_id
     (Time.now.utc.to_f*1000000).to_i
   end
   

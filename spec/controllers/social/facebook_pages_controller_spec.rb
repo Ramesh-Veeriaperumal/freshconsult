@@ -20,7 +20,7 @@ describe Social::FacebookPagesController do
     
     
     it "should render the index page and render all the pages associated with the account on authorization" do
-      page_id = "#{get_id}"
+      page_id = "#{get_social_id}"
       name = Faker::Name.name
       
       facebook_pages = sample_facebook_pages(page_id, name)
@@ -41,7 +41,7 @@ describe Social::FacebookPagesController do
   end
   
   it "should add the selected pages from the user profile to the db" do
-    page_id = "#{get_id}"
+    page_id = "#{get_social_id}"
     enable_pages = sample_enable_page_params(page_id)
     
     put :enable_pages, enable_pages

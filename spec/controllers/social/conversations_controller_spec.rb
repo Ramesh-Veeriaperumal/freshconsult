@@ -85,7 +85,7 @@ describe Helpdesk::ConversationsController do
     context "For private DM's" do
       it "must send a reply to a DM ticket" do
         # create a DM ticket
-        sample_dm = sample_twitter_dm("#{get_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
+        sample_dm = sample_twitter_dm("#{get_social_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
         twitter_dm = Twitter::DirectMessage.new(sample_dm)
         twitter_dm_array = [twitter_dm]
         Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
@@ -97,7 +97,7 @@ describe Helpdesk::ConversationsController do
         # replying to a DM ticket
         ticket = tweet.get_ticket
         dm_text = Faker::Lorem.sentence(3)
-        reply_id = get_id
+        reply_id = get_social_id
         dm_reply_params = {
           :id => reply_id,
           :id_str => "#{reply_id}",

@@ -39,7 +39,7 @@ describe Social::Gnip::TwitterFeed do
     account = @handle.account
     account.make_current
     
-    sample_dm = sample_twitter_dm("#{get_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
+    sample_dm = sample_twitter_dm("#{get_social_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
@@ -61,7 +61,7 @@ describe Social::Gnip::TwitterFeed do
     account.make_current    
     
     # For creating ticket
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -99,7 +99,7 @@ describe Social::Gnip::TwitterFeed do
     account = @handle.account
     account.make_current
     
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     
     sample_dm1 = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -295,7 +295,7 @@ describe Social::Gnip::TwitterFeed do
     account.make_current    
     
     # For creating ticket
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
     # stub the twitter api call

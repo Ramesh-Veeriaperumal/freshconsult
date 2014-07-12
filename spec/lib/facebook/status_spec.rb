@@ -12,7 +12,7 @@ describe Facebook::Core::Status do
   end
   
   it "should create a ticket when a post(without comments) arrives and import company post is enabled" do
-    feed_id = "#{@fb_page.page_id}_#{get_id}"
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     facebook_feed = sample_facebook_feed(feed_id, false, false, true)
     
@@ -33,7 +33,7 @@ describe Facebook::Core::Status do
   end
   
    it "should create a ticket and notes to the ticket when a post(with comments) arrives and import company post is enabled" do
-    feed_id = "#{@fb_page.page_id}_#{get_id}"
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     facebook_feed = sample_facebook_feed(feed_id, true, false, true)
     
@@ -66,7 +66,7 @@ describe Facebook::Core::Status do
   end
   
   it "raise an api limit exception for koala and check if it is reenqueued into sqs" do
-    feed_id = "#{@fb_page.page_id}_#{get_id}"
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is requeued"))
@@ -79,7 +79,7 @@ describe Facebook::Core::Status do
   
   
   it "authentication error check if it is pushed into dynamo db" do
-    feed_id = "#{@fb_page.page_id}_#{get_id}"
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
@@ -93,7 +93,7 @@ describe Facebook::Core::Status do
   
   it "should not create a ticket when a post arrives and import company post is not enabled" do
      @fb_page.update_attributes(:import_company_posts => false)
-     feed_id = "#{get_id}_#{get_id}"
+     feed_id = "#{get_social_id}_#{get_social_id}"
      realtime_feed = sample_realtime_feed(feed_id, "status")
      facebook_feed = sample_facebook_feed(feed_id, false, false, true)
      facebook_feed[:message] = "Not me"

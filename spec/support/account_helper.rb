@@ -91,4 +91,5 @@ module AccountHelper
     portal    = @account.main_portal
     protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
   end
+  
 end
