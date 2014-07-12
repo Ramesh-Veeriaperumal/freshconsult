@@ -1,6 +1,3 @@
-<% (params[:filter] == "archive")? @page_title = "Chat Archive" : @page_title = "Visitors List" %>
+<% (params[:filter] == "agent" || params[:filter] == "returnVisitor" || params[:filter] == "online")? @page_title = "Visitors List" : @page_title = "Chat Archive" %>
 
 <div id="chat-splash" class="sloading loading-block"></div>
-<% javascript_tag do %>
-	window.chat_action = "<%=params[:filter]%>";
-<%end%>

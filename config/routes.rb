@@ -460,8 +460,8 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
-    helpdesk.visitor '/visitor/:filter', :controller => 'visitor', :action => 'index'
-    helpdesk.chat_archive '/chat/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
 #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
