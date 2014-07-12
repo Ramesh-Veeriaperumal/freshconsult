@@ -34,8 +34,8 @@ if Rails.env.test?
   end
   
   Factory.define :ticket_rule, :class => Social::TicketRule do |t|
-    t.filter_data HashWithIndifferentAccess.new({:includes => ['@TestingGnip']})
-    t.action_data HashWithIndifferentAccess.new({:group_id => nil, :product_id => 1})
+    #t.filter_data HashWithIndifferentAccess.new({:includes => ['@TestingGnip']})
+    t.action_data HashWithIndifferentAccess.new({:group_id => nil, :product_id => nil})
   end
   
 end

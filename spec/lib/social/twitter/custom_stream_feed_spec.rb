@@ -13,7 +13,7 @@ describe Social::Twitter::Feed do
       GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
     @handle = create_test_twitter_handle(@account)
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     update_db(@handle.default_stream) unless GNIP_ENABLED
     Resque.inline = false
   end

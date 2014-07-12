@@ -5,30 +5,28 @@ module TwitterHelper
   
   def create_test_twitter_handle(test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    @handle = Factory.build(:twitter_handle, :account_id => account.id)
-    @handle.save()
-    @handle.reload
-    @handle
+    handle = Factory.build(:twitter_handle, :account_id => account.id)
+    handle.save()
+    handle.reload
+    handle
   end
 
   
-  def create_test_custom_twitter_stream(test_account=nil)
-    account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    @custom_stream = Factory.build(:twitter_stream, :account_id => account.id, :social_id => @handle.id)
-    @custom_stream.save()
-    @custom_stream.reload
-    @custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
-    @custom_stream
+  def create_test_custom_twitter_stream(handle)
+    account = @account
+    custom_stream = Factory.build(:twitter_stream, :account_id => account.id, :social_id => handle.id)
+    custom_stream.save()
+    custom_stream.reload
+    custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
+    custom_stream
   end
   
   def create_test_ticket_rule(stream, test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    @ticket_rule = Factory.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
-    @ticket_rule.save
-    @ticket_rule
+    ticket_rule = Factory.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
+    ticket_rule.filter_data = {:includes => ['@TestingGnip']}
+    ticket_rule.save
+    ticket_rule
   end
   
   def push_tweet_to_dynamo(tweet_id, rule = @rule, time = Time.now.utc.iso8601, reply = nil, sender_id = nil)

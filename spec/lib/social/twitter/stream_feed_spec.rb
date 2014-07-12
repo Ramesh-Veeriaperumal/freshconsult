@@ -18,7 +18,7 @@ describe Social::Gnip::TwitterFeed do
     update_db(@default_stream) unless GNIP_ENABLED
     @default_stream.reload
     @ticket_rule = create_test_ticket_rule(@default_stream)
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
     @account = @handle.account

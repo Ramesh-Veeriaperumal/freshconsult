@@ -16,7 +16,7 @@ describe Social::TwitterStream do
     @default_stream = @handle.default_stream
     update_db(@default_stream) unless GNIP_ENABLED
     @dm_stream = @handle.dm_stream
-    @custom_stream = create_test_custom_twitter_stream(@account)
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @rule = @default_stream.gnip_rule
   end
 
