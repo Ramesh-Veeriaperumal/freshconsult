@@ -85,7 +85,8 @@ Rails::Initializer.run do |config|
   config.action_controller.session = {
     :session_key => '_helpkit_session',
     :secret      => '3f1fd135e84c2a13c212c11ff2f4b205725faf706345716efb6686f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f',
-    :secure      => is_ssl
+    :secure      => is_ssl,
+    :httponly    => true
   }
   
   ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'
