@@ -130,10 +130,15 @@ BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
-]        
+]       
+
+FunctionalTests = [
+  "spec/lib/gamification/quests/ticket_quest_spec.rb",
+  "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
+] 
   
-UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, GnipTests,
-              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
