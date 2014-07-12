@@ -26,7 +26,7 @@ if Rails.env.test?
   end
 
   Factory.define :product, :class => Product do |p|
-    p.name {Faker::Company.name}
+    p.sequence(:name) { |n| "Product#{n}" }
     p.description {Faker::Lorem.paragraph(3)}
   end
 
@@ -92,7 +92,7 @@ if Rails.env.test?
   end
 
   Factory.define :tag, :class => Helpdesk::Tag do |t|
-    t.name { Faker::Name.name }
+    t.sequence(:name) { |n| "HelpdeskTag#{n}" }
   end
 
   Factory.define :agent_group, :class => AgentGroup do |d|
