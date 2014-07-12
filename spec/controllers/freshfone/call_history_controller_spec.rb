@@ -21,7 +21,7 @@ describe Freshfone::CallHistoryController do
 
     get :index
     assigns[:all_freshfone_numbers].first.number.should be_eql(freshfone_number.number)
-    assigns[:calls].first.call_sid.should be_eql(freshfone_call.call_sid)
+    assigns[:calls].first.call_sid.should eql freshfone_call.call_sid
     response.should render_template("freshfone/call_history/index.html.erb")
   end
 

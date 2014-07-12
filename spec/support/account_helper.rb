@@ -82,8 +82,13 @@ module AccountHelper
   end
 
   def portal_url
-    portal = @account.main_portal
+    portal    = @account.main_portal
     protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
     return (protocol + portal.host)
+  end
+
+  def account_protocol
+    portal    = @account.main_portal
+    protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
   end
 end

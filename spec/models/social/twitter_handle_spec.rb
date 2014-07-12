@@ -75,6 +75,8 @@ describe Social::TwitterHandle do
     GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
     Resque.inline = true
     @handle.account.subscription.update_attributes(:state => "trial") 
+    @handle.reload
+    
     current_state = @handle.account.subscription.state
     handle_id = @handle.id
 

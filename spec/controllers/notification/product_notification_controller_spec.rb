@@ -11,6 +11,6 @@ describe Notification::ProductNotificationController do
 
   it "should render the index" do
     get :index
-    response.should render_template("notification/product_notification/index")
+    response.should render_template("notification/_product_notification.html.erb")
   end
 end
