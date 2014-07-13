@@ -40,7 +40,13 @@ class SpecFilter < SimpleCov::Filter
     "app/models/user_notifier.rb"
   ]
 
-  SPEC_FILTERS = [ FRESHFONE_FILTERS, DEAD_CODE, IGNORE_LIST, MAILER_MODELS ].flatten
+  BILLING_MODELS = [
+    "app/models/subscription_event.rb",
+    "app/models/subscription_notifier.rb",
+    "app/models/subscription_payment.rb"
+  ]
+
+  SPEC_FILTERS = [ FRESHFONE_FILTERS, DEAD_CODE, IGNORE_LIST, MAILER_MODELS, BILLING_MODELS ].flatten
 
   def matches?(src)
     SPEC_FILTERS.find {|file| src.filename =~ /#{file}/} 
