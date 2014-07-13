@@ -222,8 +222,8 @@ describe Helpdesk::TicketsController do
     end
 
     it "should unspam a ticket from spam view" do
-      tkt1 = create_ticket({ :status => 2, :spam => true }, @group)
-      tkt2 = create_ticket({ :status => 2, :spam => true }, @group)
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      tkt2 = create_ticket({ :status => 2 }, @group)
       spam_tkt_arr = []
       spam_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
       put :spam, :id => "multiple", :ids => spam_tkt_arr
@@ -374,6 +374,25 @@ describe Helpdesk::TicketsController do
       get :new , {"topic_id" => topic.id }
       response.should render_template "helpdesk/tickets/new.html.erb"
       response.body.should =~ /"#{topic.title}"/
+    end
+
+    it "should display latest note for ticket" do
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      body = "Latest note for the ticket is being displayed"
+      tkt1_note = create_note({:source => tkt1.source,
+                               :ticket_id => tkt1.id,
+                               :body => body,
+                               :user_id => @agent.id})
+      tkt1.reload
+      tkt1_note.reload
+      get :latest_note , :id => tkt1.display_id
+      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.body.should =~ /#{body}/
+      tkt2 = create_ticket({ :status => 2 }, @group)
+      tkt2.reload
+      get :latest_note , :id => tkt2.display_id
+      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.body.should =~ /#{tkt2.description}/
     end
 
 end
