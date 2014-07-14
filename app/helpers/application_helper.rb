@@ -473,7 +473,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v9","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
       content_tag( :div, image_tag("/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
@@ -507,7 +507,7 @@ module ApplicationHelper
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
-    handle_avatar = MemcacheKeys.fetch(["v1","twt_avatar", profile_size, handle], 30.days.to_i) do
+    handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
       handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/images/fillers/profile_blank_#{profile_size}.gif"
     end
     handle_avatar
