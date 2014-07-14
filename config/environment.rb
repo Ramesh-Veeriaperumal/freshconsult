@@ -72,7 +72,7 @@ Rails::Initializer.run do |config|
 
   is_ssl = false
   if ENV['HTTPS'] == 'on' || ENV['HTTP_X_FORWARDED_PROTO'] == 'https'
-    is_ssl
+    is_ssl = true
   end
 
   ActionController::Base.session_options[:secure] = true if is_ssl
