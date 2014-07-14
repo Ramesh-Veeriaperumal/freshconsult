@@ -44,4 +44,21 @@ describe SsoController do
     response.should redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{@account.id}%26portal_id%3D#{current_portal.id}&state="
   end
 
+  it "should redirect to google auth url" do
+    get :google_login
+    response.should redirect_to "http://" + @account.full_domain + "/login"
+  end
+
+  it "should create new user session if user hasn't logged in" do
+    curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
+    key_options = {:domain => @account.full_domain,:uid => "12345678"}
+    @google_oauth_key = Redis::KeySpec.new(Redis::RedisKeys::GOOGLE_OAUTH_SSO, key_options)
+    Redis::KeyValueStore.new(@google_oauth_key, @agent.email, {:group => :integration, :expire => 300}).set_key
+    get :google_login, {:domain => @account.full_domain, :uid => "12345678"}
+    kv_store = Redis::KeyValueStore.new(@google_oauth_key)
+    kv_store.group = :integration
+    kv_store.get_key.should be_nil
+    response.should redirect_to "https://" + @account.full_domain
+  end
+
 end

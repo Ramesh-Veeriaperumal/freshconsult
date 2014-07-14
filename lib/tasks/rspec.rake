@@ -76,7 +76,9 @@ IntegrationTests = [
   "spec/controllers/integrations/installed_applications_controller_spec.rb",
   "spec/controllers/integrations/oauth_util_controller_spec.rb",
   "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
-  "spec/controllers/integrations/user_credentials_controller_spec.rb"
+  "spec/controllers/integrations/user_credentials_controller_spec.rb",
+  "spec/controllers/google_login_controller_spec.rb",
+  "spec/controllers/google_signup_controller_spec.rb"
 ]
 
 FreshfoneTests = [
