@@ -2136,6 +2136,7 @@ ActiveRecord::Schema.define(:version => 20140703065831) do
   end
 
   add_index "survey_results", ["id"], :name => "survey_results_id"
+  add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id",   :limit => 8
