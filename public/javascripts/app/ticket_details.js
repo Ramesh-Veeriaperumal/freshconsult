@@ -52,13 +52,18 @@ var _clearDraftDom = function() {
 	$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
 	draftClearedFlag = true;
 }
-clearSavedDraft = function(){
+clearSavedDraft = function(editorId){
 	$.ajax({
 		url: TICKET_DETAILS_DATA['draft']['clear_path'],
 		type: 'delete'
 	});
 	TICKET_DETAILS_DATA['draft']['clearingDraft'] = true;
-	$('#cnt-reply-body').setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
+	if(editorId != "cnt-reply-body"){
+		$("#"+editorId).val("");
+	}
+	else{
+		$("#"+editorId).setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
+	}
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 	TICKET_DETAILS_DATA['draft']['saved'] = false;
 	_clearDraftDom();
@@ -171,9 +176,9 @@ swapEmailNote = function(formid, link){
 }
 
 insertIntoConversation = function(value,element_id){
-	tweet_area = $('#cnt-tweet');
+	var tweet_area = $('#cnt-tweet');
 	element_id = element_id || $('#canned_response_show').data('editorId');
-
+	$element = $("#" + element_id);
 	if(tweet_area.css("display") == 'block'){
 		get_short_url(value, function(bitly){
 				insertTextAtCursor( $('#send-tweet-cnt-tweet-body'), bitly || value );
@@ -185,11 +190,19 @@ insertIntoConversation = function(value,element_id){
 
 	$('#canned_responses').modal('hide');
 
-	if($("#" + element_id)){
-		$("#"+element_id).getEditor().focus();
-		$("#"+element_id).data('redactor').saveSelection();
-		$("#"+element_id).data('redactor').restoreSelection();
-		$("#"+element_id).insertHtml(value);
+	if($element){
+		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" ){
+			var textValue = jQuery("<div />").html(value).text();
+			$element.focus();
+			insertTextAtCursor($element.get(0), textValue);
+			$element.keyup(); // to update the SendTweetCounter value
+		}
+		else{
+			$element.getEditor().focus();
+			$element.data('redactor').saveSelection();
+			$element.data('redactor').restoreSelection();	
+			$element.insertHtml(value);
+		}
 	}    
 	return;
 }
@@ -714,7 +727,7 @@ var scrollToError = function(){
 		var _form = $('#' + btn.data('cntId') + " form");
 
 		if (btn.data('clearDraft')) {
-			clearSavedDraft();
+			clearSavedDraft(btn.data('editorId'));
 			stopDraftSaving();
 		}
 
@@ -1089,7 +1102,9 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
-		$('#'+editorId).data('redactor').saveSelection();
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body'){
+			$('#'+editorId).data('redactor').saveSelection();
+		}
 		$('#canned_response_show').trigger('click');
 	});
 
@@ -1097,7 +1112,9 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#suggested_solutions_show').data('editorId');
-		$('#'+editorId).data('redactor').saveSelection();
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body'){
+			$('#'+editorId).data('redactor').saveSelection();
+		}
 		$('#suggested_solutions_show').trigger('click');
 	});
 

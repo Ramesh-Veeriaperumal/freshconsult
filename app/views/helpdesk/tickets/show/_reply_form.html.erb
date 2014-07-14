@@ -193,7 +193,7 @@
 
       <div class="btn-toolbar">
         <span>
-          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn reply_agent_collision", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn reply_agent_collision", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => 'cnt-reply-body') %>
         </span>
 
         <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
