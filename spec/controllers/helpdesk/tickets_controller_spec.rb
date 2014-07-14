@@ -395,4 +395,18 @@ describe Helpdesk::TicketsController do
       response.body.should =~ /#{tkt2.description}/
     end
 
+    # Empty Trash
+    it "should empty(delete) all tickets in trash view" do
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      tkt2 = create_ticket({ :status => 2 }, @group)
+      delete_tkt_arr = []
+      delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+      delete :destroy, :id => "multiple", :ids => delete_tkt_arr
+      Resque.inline = true
+      delete :empty_trash
+      Resque.inline = false
+      @account.tickets.find_by_id(tkt1.id).should be_nil
+      @account.tickets.find_by_id(tkt2.id).should be_nil
+    end
+
 end
