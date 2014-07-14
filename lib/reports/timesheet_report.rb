@@ -48,7 +48,9 @@ module Reports::TimesheetReport
   end 
 
   def filter(start_date,end_date)
-      scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}))
+       scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}), 
+         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester => [:customer]]])
+
   end
 
   private
