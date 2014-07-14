@@ -1146,6 +1146,9 @@ var scrollToError = function(){
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
+		if($(this).data('note-type') === 'note'){
+			addNoteAgents();	
+		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
