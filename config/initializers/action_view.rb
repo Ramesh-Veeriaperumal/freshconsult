@@ -16,10 +16,19 @@ module ActionView
         when :back
           escape = false
           if @controller.request.env["HTTP_REFERER"] 
-		if @controller.request.env["HTTP_REFERER"].downcase.include? "javascript:"
-                  "javascript:alert('Invalid Referer Passed.')"
+		referer = @controller.request.env["HTTP_REFERER"]
+		if referer.downcase.include? "javascript:"
+                  "javascript:alert('Invalid Referer.')"
+		elsif referer.include? "&#"
+                  "javascript:alert('Invalid Referer.')"
+		elsif referer.downcase.start_with? 'http://'
+                  referer
+		elsif referer.downcase.start_with? 'https://'
+                  referer
+		elsif referer.downcase.start_with? '/'
+                  referer
 		else
-                  @controller.request.env["HTTP_REFERER"]
+                  "javascript:alert('Invalid Referer.')"
 		end
           else
             'javascript:history.back()'
