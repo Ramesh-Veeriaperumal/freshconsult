@@ -82,7 +82,7 @@ module EmailCommands
     ticket.responder = nil if value && (value.casecmp("none") == 0)
   end
   
-  def product(ticket, value, user, note)
+  def product(ticket, value, user, note) #possible dead code, reconsider for removing this command
     product = ticket.account.products.find_by_name(value)
     ticket.product = product unless product
   end
