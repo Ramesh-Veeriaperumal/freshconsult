@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10})\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
 
   # For preventing non-agents from updating inaccessible user attibutes
   PROTECTED_ATTRIBUTES = ["email", "password", "password_confirmation", "primary_email_attributes", 
