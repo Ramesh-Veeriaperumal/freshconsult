@@ -5564,6 +5564,11 @@ en:
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
+    msgbox_placeholder_title: "Reply box placeholder"
+    msg_waiting_agent_title: "Status Message while waiting for agent"
+    msg_joining_agent_title: "Message when agent joins chat"
+    msg_leaving_agent_title: "Message when agent leaves chat"
+    help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
@@ -5707,8 +5712,9 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
-    agent_joined_msg: "$ has joined the chat"
-    agent_left_msg: "$ has left the chat"
+    agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_left_msg: "{{agent_name}} has left the chat"
+    help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
