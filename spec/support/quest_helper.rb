@@ -8,7 +8,7 @@ module QuestHelper
     badge_id = rand(1..45)
     quest = Factory.build(:quest, { 
             :name => Gamification::Quests::Badges::BADGES_BY_ID[badge_id][:name], 
-            :description => "Resolve #{quest_data[:value]} tickets in #{quest_span} span ", 
+            :description => "Resolve #{quest_data[:value]} tickets in #{QUEST_TIME_SPAN_BY_KEY[quest_span]} with conditions - #{filter_data_hash[:actual_data]} ", 
             :category => GAME_TYPE_KEYS_BY_TOKEN[:ticket], 
             :active => true, 
             :points => SAMPLE_POINTS[rand(0..3)],
