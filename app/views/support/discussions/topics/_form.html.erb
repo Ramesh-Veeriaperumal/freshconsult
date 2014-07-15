@@ -34,8 +34,10 @@
 				{ :include_blank => t("portal.topic.default_select_option") },
 				{ :class => "required custom-select", 
 				  :disabled => !@topic.new_record? } %>
+			
+			<% topic_forum_id = h(params[:forum_id] || @topic.forum_id) %>
 			<% javascript_tag do %>
-				jQuery("#topic_forum_id").val(<%= params[:forum_id] || @topic.forum_id %>)
+				jQuery("#topic_forum_id").val("<%= topic_forum_id %>")
 			<% end %>
 		</div>
 	</div>
