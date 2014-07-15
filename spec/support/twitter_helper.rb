@@ -279,24 +279,17 @@ module TwitterHelper
     twitter_feed = Twitter::Tweet.new(attrs)
   end
   
-  def send_tweet_and_wait(feed, wait=2, fd_counter=nil)
+  def send_tweet_and_wait(feed, fd_counter=nil)
     #Moking send tweet to sqs
     tweet_id = feed["id"].split(":").last.to_i
-    tweet = wait_for_tweet(tweet_id, feed, wait, fd_counter)
+    tweet = wait_for_tweet(tweet_id, feed, fd_counter)
   end
 
-  def wait_for_tweet(tweet_id, feed, wait=2, fd_counter=nil)
+  def wait_for_tweet(tweet_id, feed, fd_counter=nil)
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    #while wait_for <= wait
-      tweet = @account.tweets.find_by_tweet_id(tweet_id)
-      # if tweet.nil?
-      #   wait_for = wait_for + 1
-      # else
-      #   break
-      # end
-    #end
+    tweet = @account.tweets.find_by_tweet_id(tweet_id)
     return tweet
   end
 

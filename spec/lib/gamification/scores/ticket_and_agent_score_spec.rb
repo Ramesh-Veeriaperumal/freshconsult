@@ -28,7 +28,7 @@ describe "Ticket and Agent score specs" do
       @ticket.reload
     end
     
-    it "must create the support scores for the tickets" do
+    it "must create the support scores for the ticket" do
       support_scores = @ticket.support_scores
       support_scores.should_not be_empty
       
@@ -40,7 +40,7 @@ describe "Ticket and Agent score specs" do
       sorted_scores.second.score.should eql(@first_call_rating.score)
     end
     
-    it "must assign the points for the agent" do
+    it "must add the points to the agent" do
       overall_support_score = @ticket.support_scores.sum(:score)
       @agent.points.should eql(overall_support_score.to_int)
     end
@@ -78,7 +78,7 @@ describe "Ticket and Agent score specs" do
       @ticket.reload
     end
     
-    it "must create the support scores for the tickets" do
+    it "must create the support scores for the ticket" do
       support_scores = @ticket.support_scores
       support_scores.should_not be_empty
       
@@ -87,7 +87,7 @@ describe "Ticket and Agent score specs" do
       sorted_scores.first.score.should eql(@on_time_rating.score)
     end
     
-    it "must assign the points for the agent" do
+    it "must add the points to the agent" do
       overall_support_score = @ticket.support_scores.sum(:score)
       @agent.points.should eql(overall_support_score.to_int)
     end
@@ -117,12 +117,12 @@ describe "Ticket and Agent score specs" do
       @ticket.reload
     end
     
-    it "must remove the existing support scores for the tickets" do
+    it "must remove the existing support scores for the ticket" do
       support_scores = @ticket.support_scores
       support_scores.should be_empty
     end
     
-    it "must remove the points for the agents" do
+    it "must remove the points assigned previously the agent" do
       @agent.points.should be_zero
     end
     
@@ -164,7 +164,7 @@ describe "Ticket and Agent score specs" do
       support_scores.first.score.should eql(@happy_rating.score)
     end
     
-    it "must add the points for the tables" do
+    it "must add the points to the agent" do
       overall_support_score = @ticket.support_scores.sum(:score)
       @agent.points.should eql(overall_support_score.to_int)
     end
@@ -175,7 +175,6 @@ describe "Ticket and Agent score specs" do
       @agent.user.destroy
     end
   end
-  
   
   context "For Unhappy customer" do
     before(:all) do
@@ -204,7 +203,7 @@ describe "Ticket and Agent score specs" do
       support_scores.first.score.should eql(@unhappy_rating.score)
     end
     
-    it "must add the points for the tables" do
+    it "must add the points to the agent" do
       overall_support_score = @ticket.support_scores.sum(:score)
       @agent.points.should eql(overall_support_score.to_int)
     end

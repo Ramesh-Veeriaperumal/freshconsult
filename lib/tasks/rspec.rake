@@ -50,6 +50,7 @@ ModelTests = [
 
 EmailTests = [ 
   "spec/lib/*_email_spec.rb", 
+  "spec/lib/email_commands_spec.rb",
   "spec/controllers/email_controller_spec.rb",
   "spec/controllers/mailgun_controller_spec.rb"
 ]

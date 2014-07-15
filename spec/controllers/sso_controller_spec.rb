@@ -46,7 +46,7 @@ describe SsoController do
 
   it "should redirect to google auth url" do
     get :google_login
-    response.should redirect_to "http://" + @account.full_domain + "/login"
+    response.should redirect_to "http://" + @account.host
   end
 
   it "should create new user session if user hasn't logged in" do
@@ -58,7 +58,7 @@ describe SsoController do
     kv_store = Redis::KeyValueStore.new(@google_oauth_key)
     kv_store.group = :integration
     kv_store.get_key.should be_nil
-    response.should redirect_to "https://" + @account.full_domain
+    response.should redirect_to @account.full_url
   end
 
 end
