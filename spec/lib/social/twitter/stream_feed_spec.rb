@@ -178,10 +178,8 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    #while reply_tweet.nil?
-      fd_counter = 120
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    #end
+    fd_counter = 120
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
@@ -196,7 +194,6 @@ describe Social::Gnip::TwitterFeed do
   it "should convert the reply tweet to a note if the 'replied-to' tweet arrives within 2 minutes" do
     #Ticket feed
     ticket_feed = sample_gnip_feed(@rule)
-    # sleep 1
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
@@ -209,22 +206,25 @@ describe Social::Gnip::TwitterFeed do
 
     fd_counter = 30
 
-    #while fd_counter != 60
-      fd_counter = fd_counter + 30
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    #end
+    fd_counter = fd_counter + 30
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     #Send 'replied-to' tweet
     tweet = send_tweet_and_wait(ticket_feed)
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
-    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     #Reply tweet should be converted to a note
     reply_tweet.should_not be_nil
     reply_tweet.is_note?.should be_true
     reply_tweet.stream_id.should_not be_nil
-
+    
+    tweet.should_not be_nil
+    tweet.is_ticket?.should be_true
+    tweet.stream_id.should_not be_nil
+    
+    
     reply_body = reply_feed["body"]
     body = reply_tweet.tweetable.note_body.body
     reply_body.should eql(body)

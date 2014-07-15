@@ -305,6 +305,17 @@ describe Social::TwitterHandlesController do
     end
   end
   
+  it "should check if the user who is responding follows the accout to which being replyed to" do
+    twt_handler = create_test_twitter_handle(@account)
+    
+    Twitter::REST::Client.any_instance.stubs(:friendship?).returns(true)
+    
+    post :user_following, {
+                            :twitter_handle => twt_handler.id, 
+                            :req_twt_id => "TestingTwitter", 
+                          }
+  end 
+  
   after(:all) do
     @account.features.send(:social_revamp).create
   end
