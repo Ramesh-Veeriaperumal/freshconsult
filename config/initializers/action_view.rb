@@ -17,10 +17,18 @@ module ActionView
           escape = false
           if @controller.request.env["HTTP_REFERER"] 
 		referer = @controller.request.env["HTTP_REFERER"]
+                invalid_referer = '/'
+                invalid_referer = "javascript:alert('Invalid Referer.')"
 		if referer.downcase.include? "javascript:"
-                  "javascript:alert('Invalid Referer.')"
+                  invalid_referer
+		elsif referer.downcase.include? "script"
+                  invalid_referer
 		elsif referer.include? "&#"
-                  "javascript:alert('Invalid Referer.')"
+                  invalid_referer
+		elsif referer.downcase.include? '&lt;'
+                  invalid_referer
+		elsif referer.downcase.include? '&gt;'
+                  invalid_referer
 		elsif referer.downcase.start_with? 'http://'
                   referer
 		elsif referer.downcase.start_with? 'https://'
@@ -28,7 +36,7 @@ module ActionView
 		elsif referer.downcase.start_with? '/'
                   referer
 		else
-                  "javascript:alert('Invalid Referer.')"
+                  invalid_referer
 		end
           else
             'javascript:history.back()'
