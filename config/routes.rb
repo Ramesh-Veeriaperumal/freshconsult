@@ -36,7 +36,7 @@
 
   map.resources :groups
 
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post, :notification_read => :put} do |profiles|
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
   

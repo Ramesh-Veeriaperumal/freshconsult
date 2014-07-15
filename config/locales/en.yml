@@ -6012,3 +6012,16 @@ en:
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."
+  notification:
+    whats_new_on_freshdesk: " What's New On Freshdesk "
+    see_all: "See All"
+    frequently_referred_articles: "Frequently referred "
+    browse: "Browse"
+    get_help: "Get Help"
+    have_question: "Have a question?"
+    submit_feedback: "Submit Feedback"
+    contact_support: " Contact Support "
+    search_articles: "Search Article"
+    contact_us: "Contact Us"
+    whats_new: "What's New"
+

@@ -100,6 +100,11 @@ def reset_password
     @user.save
 end
 
+def notification_read
+    current_user.agent.update_attribute(:notification_timestamp, Time.new.utc)
+    head 200
+end
+
 private
 
   def load_user

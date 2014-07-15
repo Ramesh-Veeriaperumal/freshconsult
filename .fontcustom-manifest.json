@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075",
-    "current": "bbfb9f24a61044853b08c55811fcccad3aeb01808d419bf7d7b69c595f226075"
+    "previous": "b8e9bcdd2eabb1d815baede203c764e47985a45045056d9665c597cde503c9b7",
+    "current": "b8e9bcdd2eabb1d815baede203c764e47985a45045056d9665c597cde503c9b7"
   },
   "fonts": [
-    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.ttf",
-    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.svg",
-    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.woff",
-    "public/fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.eot"
+    "public/fonts/glyphs_b8e9bcdd2eabb1d815baede203c764e4.ttf",
+    "public/fonts/glyphs_b8e9bcdd2eabb1d815baede203c764e4.svg",
+    "public/fonts/glyphs_b8e9bcdd2eabb1d815baede203c764e4.woff",
+    "public/fonts/glyphs_b8e9bcdd2eabb1d815baede203c764e4.eot"
   ],
   "glyphs": {
     "all-streams": {
@@ -118,6 +118,10 @@
       "codepoint": 61715,
       "source": "public/glyphs/vectors/facebook.svg"
     },
+    "file": {
+      "codepoint": 61762,
+      "source": "public/glyphs/vectors/file.svg"
+    },
     "file-edit": {
       "codepoint": 61746,
       "source": "public/glyphs/vectors/file-edit.svg"
@@ -174,6 +178,10 @@
       "codepoint": 61724,
       "source": "public/glyphs/vectors/lock-open.svg"
     },
+    "mail": {
+      "codepoint": 61763,
+      "source": "public/glyphs/vectors/mail.svg"
+    },
     "map-marker": {
       "codepoint": 61725,
       "source": "public/glyphs/vectors/map-marker.svg"
@@ -197,6 +205,10 @@
     "paperplane": {
       "codepoint": 61727,
       "source": "public/glyphs/vectors/paperplane.svg"
+    },
+    "phone": {
+      "codepoint": 61764,
+      "source": "public/glyphs/vectors/phone.svg"
     },
     "plus": {
       "codepoint": 61728,
@@ -290,6 +302,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

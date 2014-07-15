@@ -243,6 +243,15 @@ window.xhrPool = [];
       });
     });
 
+    $("[rel=mouse-wheel]").livequery(function(){
+      $(this).on('mousewheel DOMMouseScroll', function (ev) {
+          if (ev.originalEvent) { ev = ev.originalEvent; }
+          var delta = ev.wheelDelta || -ev.detail;
+          this.scrollTop += (delta < 0 ? 1 : -1) * parseInt($(this).data("scrollSpeed"));
+          ev.preventDefault();
+      });
+    })
+
     $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         var element = $(this);

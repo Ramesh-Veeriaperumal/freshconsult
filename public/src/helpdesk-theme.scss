@@ -76,7 +76,12 @@ body { background: $background; }
 }
 //.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
 .nav_search div.search_bar { border-color:darken($tab_color, 8%); } 
-
+.header-notification-wrapper .ficon-help{ 
+	color: $header_ctxt_color;
+}
+.header-notification-wrapper .product-notification-link{ 
+	border-color: rgba($header_ctxt_color, .2);
+}
 /* -------------------------------------------------------------------------------------------  */
 /* 										Tab color settings 										*/
 /* -------------------------------------------------------------------------------------------  */

@@ -1,0 +1,99 @@
+<div class="tabbable hide" id="popoverContent" >
+	<div class="popover-wrapper row-fluid">
+		<div class="tabs-left span2">
+		    <ul class="nav nav-tabs row-fluid" id="notification-tab-content">
+				<li class="active">
+					<a href="#whats-new"  class="tooltip" data-toggle="tab" title="<%= t('notification.whats_new')%>" data-placement="left"><%= font_icon "freshdesk", { :size => 30 } %></a>
+				</li>
+				<li >
+					<a href="#search-article" id="notify-remote-data" class="tooltip" data-toggle="tab"
+					title="<%= t('notification.search_articles')%>" data-placement="left">
+					<%= font_icon "search", { :size => 26 } %></a>
+				</li>
+				<li >
+					<a href="#get-help"  class="tooltip" data-toggle="tab" title="<%= t('notification.contact_us')%>" data-placement="left"><%= font_icon "mail", { :size => 26 } %></a>
+				</li>
+			</ul>
+		</div>
+		<div class="tab-content clear-left-margin span10">
+			<div class="tab-pane active" id="whats-new">
+			  	<div class="content-head header-border"><%= t('notification.whats_new_on_freshdesk') %></div>
+			  	<div id="content-notify" class="content-notify row-fluid">
+				  	<% object.each do |announcement| %>
+						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.updated_at.utc %>">
+							<a href="<%= announcement.url.to_s %>" target="_blank">
+								<p class="notify-title bold"> <%= announcement.title.to_s %></p>
+								<p class="notify-content" > <%= truncate(announcement.message.to_s, :length => 90) %> </p>
+							</a>
+						</div>
+					<% end %>
+				</div>
+				<!-- <div class="content-footer bold"> <a href="#">SeeAll</a> </div> -->
+			</div>
+		    <div class="tab-pane " id="search-article">
+		    	<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
+					<div class="search-head header-border">
+						<div class="notify-search-icon"><%= font_icon "search", { :size => 24 } %></div>
+						<a href="#" id="search-clear" class="search-clear hide" style="">×</a>
+		    			<input type="text" id="notification-article" class="notification-search span12" placeholder="Search Article"> 
+		    		</div>
+				</form>
+				<div id="notification-info" class="notification-list">
+					<div id="notify-search-content" class="notify-search-content">
+			    		<div id="fra-result" class="notify-fra bold">
+			    			<span><%= t('notification.frequently_referred_articles')%></span>
+			    			<a href="https://support.freshdesk.com/support/solutions" target="_blank"> <%= t('notification.browse')%></a>
+			    		</div>
+			    		<div id="search-result-header" class="notify-fra bold hide"></div>
+			    		<ul id="notify-result" rel="mouse-wheel" data-scroll-speed="10" class="search-list-wrapper">
+			    		</ul>
+			    	</div>
+				</div>
+		    </div>
+		    <div class="tab-pane " id="get-help">
+				<div class="notification-feedback row-fluid">
+					<div class="contact-header header-border">
+						<span class="contact-title"><%= t('notification.get_help')%></span>
+					</div>
+					<div class="">
+		                <div class="contact-feedback row-fluid">
+		                	<div class="feedback-wrapper span12">
+			                	<p class="question span6 bold"> <%= t('notification.have_question') %></p>
+			                	<a id="notify-feedback" class="feedback-btn bold span6" href="javascript:void(null);"> <%= t('notification.submit_feedback') %></a>
+			                </div>
+		                </div>
+		                <div class="contact-support clear-left-margin span12">
+		                	<p class="support bold"><%= t('notification.contact_support')%></p>
+		                	<div class="contact-wrap row-fluid">
+		                		<a class="phone-icon icons span2"><%= font_icon "phone", { :size => 26 } %></a>
+		                		<div id="help-us" class="contact-detail span8"></div>
+		                	</div>
+		                </div>
+		            </div>
+				</div>
+		    </div>
+		</div>
+	</div>
+</div>	
+
+<a href="#" id="notifiication-icon" class="product-notification-link tooltip" title="Whats new on freshdesk" data-placement="below">
+	<%= font_icon "help", { :size => 30 } %>
+</a>
+
+<script id="article-tmpl" type="text/x-jquery-tmpl">
+	<li class="search_list">
+		<div class="list_content bold">
+			<a href="https://support.freshdesk.com${url}" class="ellipsis" target="_blank">
+			<%= font_icon "file", { :size => 14 } %> <span class="searched_data ml15">{{html title}}</span>
+			</a>
+		</div>
+	</li>
+</script>
+
+<script id="help-us-tmpl" type="text/x-jquery-tmpl">
+	<p><span class="mr20">{{html country}}</span><span class="bold">{{html phone}}</span></p>
+</script>
+
+<script>
+	App.ProductNotification.initialize();
+</script>

@@ -65,7 +65,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
+    resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
+
 	end
 
   reply_ticket do

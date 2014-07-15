@@ -1973,6 +1973,9 @@ ActiveRecord::Schema.define(:version => 20140703065831) do
     t.datetime "ends_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "title",                            :null => false
+    t.integer  "notification_type", :default => 1, :null => false
+    t.text     "url",                              :null => false
   end
 
   create_table "subscription_currencies", :force => true do |t|
