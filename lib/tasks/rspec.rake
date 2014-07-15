@@ -137,6 +137,9 @@ BillingTests = [
 
 FunctionalTests = [
   "spec/lib/gamification/quests/ticket_quest_spec.rb",
+  "spec/lib/gamification/quests/process_solution_quests_spec.rb",
+  "spec/lib/gamification/quests/process_topic_quests_spec.rb",
+  "spec/lib/gamification/quests/process_post_quests_spec.rb",
   "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
 ] 
   
