@@ -199,6 +199,10 @@ class PortalDrop < BaseDrop
     @paid_account ||= portal_account.subscription.paid_account?
   end
   
+  def settings
+    @settings ||= source.template.preferences
+  end
+  
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],

@@ -42,6 +42,31 @@ module SupportHelper
 	    end
 	    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
+  
+  def default_meta meta
+    output = []
+    output << %( 
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+      <meta name="description" content="#{ meta['description'] }" />
+      <meta name="author" content="#{ meta['author'] }" /> )
+      
+    output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
+    output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
+      
+    output.join('')
+  end
+  
+  def default_responsive_settings portal
+    if( portal['settings']['nonResponsive'] != "true" )
+      %(<link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
+    	  <link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
+    	  <link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+    	  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" /> )
+    end
+  end
 
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal

@@ -20,7 +20,7 @@
     <% if feature?(:layout_customization) %>
     <li>
         <a id="layout-tab" href="#layout" data-toggle="tab" 
-            data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">
+            data-code-refresh="#portal_template_head, #portal_template_header, #portal_template_footer, #portal_template_layout">
           <%=t("portalcss.layout_and_pages_header").html_safe%>
         </a>
     </li>
@@ -112,8 +112,7 @@
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
     setTimeout(function(){
-      try
-      {
+      try{
         jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh");
       }
       catch(e)
