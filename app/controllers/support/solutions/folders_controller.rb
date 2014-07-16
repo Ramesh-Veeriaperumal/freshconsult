@@ -6,8 +6,9 @@ class Support::Solutions::FoldersController < SupportController
 		@page_title = @folder.name
 		respond_to do |format|
 	    	format.html { 
-				@page_canonical = support_solutions_folder_url(@folder)
-				set_portal_page :article_list}
+          load_page_meta
+				  set_portal_page :article_list
+        }
 	    	format.xml  { render :xml => @folder.to_xml(:include => :published_articles)}
 	    	format.json { render :json => @folder.as_json(:include => :published_articles)}
 	    end
@@ -20,8 +21,16 @@ class Support::Solutions::FoldersController < SupportController
 
 			@category = @folder.category
 		end
+    
+    def load_page_meta
+      @page_meta ||= {
+        :title => @folder.name,
+        :description => @folder.description,
+        :canonical => support_solutions_folder_url(@folder)
+      }
+    end
 
 		def check_folder_permission			
-	    	return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
-	  	end
+	    return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
+	  end
 end
