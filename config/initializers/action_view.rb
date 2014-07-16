@@ -29,6 +29,16 @@ module ActionView
                   invalid_referer
 		elsif referer.downcase.include? '&gt;'
                   invalid_referer
+		elsif referer.downcase.include? '&quot;'
+                  invalid_referer
+		elsif referer.downcase.include? '"'
+                  invalid_referer
+		elsif referer.downcase.include? "'"
+                  invalid_referer
+		elsif referer.downcase.include? '<'
+                  invalid_referer
+		elsif referer.downcase.include? '>'
+                  invalid_referer
 		elsif referer.downcase.start_with? 'http://'
                   referer
 		elsif referer.downcase.start_with? 'https://'
