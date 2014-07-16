@@ -337,7 +337,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(UnitTests)
+        t.spec_files = FileList.new(UnitTests).uniq
       end
     end
 
