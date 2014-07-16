@@ -123,7 +123,6 @@ HelpdeskTests = [
   "spec/controllers/wf_filters_controller_spec.rb",
   "spec/controllers/domain_search_controller_spec.rb",
   "spec/controllers/rabbit_mq_controller_spec.rb",
-  "spec/controllers/helpdesk/tickets_filter_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb",
   "spec/controllers/notification/product_notification_controller_spec.rb"

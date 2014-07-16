@@ -3,7 +3,7 @@ class Wf::TestCase
 
   include AccountHelper
   include UsersHelper
-  include Wf::FilterHelper
+  include Wf::FilterFunctionalTestsHelper
   include Wf::TestCaseGenerator
   include Wf::OperatorHelper
   include Wf::OptionSelecter
@@ -17,7 +17,7 @@ class Wf::TestCase
 
   def working
     before_all
-    prep_ticket
+    prep_a_ticket
     define_test_cases
     @filter_test_cases.each do |test_case|
       name = test_case[:name]

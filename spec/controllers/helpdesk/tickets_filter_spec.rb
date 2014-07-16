@@ -12,6 +12,7 @@ describe Helpdesk::TicketsController do
     @group = @account.groups.first
     @account.ticket_fields_with_nested_fields.custom_fields.each &:destroy
     create_filter_supported_custom_fields
+    3.times{ prep_a_ticket }
   end
 
   before(:each) do
@@ -26,8 +27,8 @@ describe Helpdesk::TicketsController do
 
   def create_filter_supported_custom_fields
     @invalid_fields = []
-    create_field(Wf::FilterHelper::NESTED_FIELD.dup, @account)
-    create_field(Wf::FilterHelper::DROPDOWN.dup, @account)
+    create_field(Wf::FilterFunctionalTestsHelper::NESTED_FIELD.dup, @account)
+    create_field(Wf::FilterFunctionalTestsHelper::DROPDOWN.dup, @account)
     if @invalid_fields.present?
       Rails.logger.debug @invalid_fields.inspect
       raise "Error creating ticket fields for Wf::Filter functionality testing

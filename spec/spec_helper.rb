@@ -70,7 +70,7 @@ Spork.prefork do
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
   'spec/support/va/test_case.rb',
-  'spec/support/wf/filter_helper.rb',
+  'spec/support/wf/filter_functional_tests_helper.rb',
   'spec/support/wf/test_case_generator.rb',
   'spec/support/wf/operator_helper.rb',
   'spec/support/wf/option_selector.rb',
@@ -113,6 +113,7 @@ Spork.prefork do
     config.include S3Helper
     config.include IntegrationsHelper
     config.include QuestHelper
+    config.include Wf::FilterFunctionalTestsHelper
 
     config.before(:all) do
       @account = create_test_account
