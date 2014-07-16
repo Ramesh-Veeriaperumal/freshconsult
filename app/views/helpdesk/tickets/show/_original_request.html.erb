@@ -75,10 +75,10 @@
 			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
 			    <% @ticket.attachments.each do |attached| %> 
-			    	<%= attachment_list(attached, true, "ticket",nil) %>
+			    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
 			    <% end %>
 			    <% @ticket.dropboxes.each do |dropbox| %> 
-					<%= attachment_list(dropbox, true, "dropbox",nil) %>
+					<%= attachment_list(dropbox, privilege?(:edit_ticket_properties), "dropbox",nil) %>
 				<% end %>
 			</ul>
 		</div>
