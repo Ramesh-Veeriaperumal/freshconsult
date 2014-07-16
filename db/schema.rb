@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140703065831) do
+ActiveRecord::Schema.define(:version => 20140716114821) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(:version => 20140703065831) do
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
-    t.integer  "accessible_id"
+    t.integer  "accessible_id",   :limit => 8
     t.integer  "user_id",         :limit => 8
     t.integer  "visibility",      :limit => 8
     t.integer  "group_id",        :limit => 8
