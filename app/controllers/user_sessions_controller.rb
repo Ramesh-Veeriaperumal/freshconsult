@@ -201,11 +201,12 @@ include Mobile::Actions::Push_Notifier
     session.delete :original_user if session.has_key?(:original_user)
 
     flash.clear if mobile?
-	remove_logged_out_user_mobile_registrations if is_native_mobile?
+   remove_logged_out_user_mobile_registrations if is_native_mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
-    if current_account.sso_enabled? and !current_account.sso_logout_url.blank?
-      return redirect_to current_account.sso_logout_url
+    if current_account.sso_enabled? and current_account.sso_logout_url.present?
+      sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
+      redirect_to sso_redirect_url and return
     end
     
     respond_to do |format|
