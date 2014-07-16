@@ -814,10 +814,10 @@ HTML
 	end
 
 	def link_to_cookie_law portal
-		%(	<a href="#portal-cookie-info" rel="freshdialog" class="cookie-link"
+		%(	<a href="#portal-cookie-info" rel="freshdialog" data-lazy-load="true" class="cookie-link"
 				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
 				#{ I18n.t('portal.cookie.cookie_policy') }
-			</a>).html_safe
+			</a> #{ cookie_law } ).html_safe
 	end
 
 	def link_to_privacy_policy portal
@@ -828,11 +828,11 @@ HTML
 
 	def cookie_law
 		privacy_link = %(<a href="http://freshdesk.com/privacy/" target="_blank">#{ I18n.t('portal.cookie.privacy_policy') }</a>)
-		%(  <div id="portal-cookie-info" class="hide">
+		%(<div id="portal-cookie-info" class="hide"><textarea>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info1') }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
-			</div>).html_safe
+			</textarea></div>).html_safe
 	end
 
 	def attach_a_file_link attach_id
