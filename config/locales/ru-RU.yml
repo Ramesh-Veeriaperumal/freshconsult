@@ -222,8 +222,8 @@ ru-RU:
     edit: Редактировать папку
     info1: Действительно удалить эту папку?
     add_folder: Добавить папку
-  amount_per_month: %{amount} долл. США %{period}
-  amount_for_annual: %{amount} долл. США ежегодно
+  amount_per_month: "%{amount} долл. США %{period}"
+  amount_for_annual: "%{amount} долл. США ежегодно"
   agent_deleted_message: Этот агент удален
   cancel: Отмена
   confirm: Подтвердить
@@ -233,7 +233,7 @@ ru-RU:
   last: последний
   agent_emailnotverified: Адрес электронной почты для этого агента не подтвержден!
   agent_assigned_info: У этого агента нет открытых или ожидающих заявок
-  basic_details: Ответственное управление электронной почтой, правила Dispatch&apos;r, политика SLA по умолчанию, база знаний, портал самообслуживания, сопоставление доменов, поддержка сообщества.
+  basic_details: Ответственное управление электронной почтой, правила Dispatch'r, политика SLA по умолчанию, база знаний, портал самообслуживания, сопоставление доменов, поддержка сообщества.
   choose_plan: Выберите тарифный план
   select_plan: Выбрать тарифный план
   create: Создать
@@ -478,7 +478,7 @@ ru-RU:
         enable_label: Игрофикация агентов
         title_points_configuration: Конфигурация баллов
         title_ticket_points: Баллы за заявки
-        fast_resolution: Быстро <span>(&lt; 1 ч)</span>
+        fast_resolution: Быстро <span>(< 1 ч)</span>
         ontime_resolution: Вовремя <span>(в рамках SLA)</span>
         late_resolution: Поздно <span>(не в срок)</span>
         bonus_points: Бонусные баллы
@@ -523,7 +523,7 @@ ru-RU:
             send_test_mail_confirm_yes: Да, я получил.
             send_test_mail_confirm_no: Нет, я не вижу ни одной заявки.
             send_test_mail_yes_response: Отлично! Вы успешно настроили адрес электронной почты службы поддержки для работы с Freshdesk. Удачи в работе!
-            send_test_mail_response_no1: Похоже, возникла проблема -&gt;
+            send_test_mail_response_no1: Похоже, возникла проблема ->
             send_test_mail_response_no2: Узнайте как
             send_test_mail_response_no_3: <strong>К сожалению, возникла проблема!</strong><br>Убедитесь в том, что правило переадресации задано правильно. Если в течение пары минут заявка не поступит, <a href="https://support.freshdesk.com/" target="_blank">свяжитесь с нами</a>.
         index:
@@ -580,7 +580,7 @@ ru-RU:
             rebrand_submit_label: Измените оформление
             admin_title: Все хорошо?
             admin_sub_title: Не забудьте ознакомиться со скрытыми функциями, которые можно настроить на вкладке «%{admin_tab}»
-            product_link_label: Перейти в вашу службу поддержки &gt;&gt;
+            product_link_label: Перейти в вашу службу поддержки >>
             validating: Подтверждение...
             updating: Обновление...
             successfully_updated: Успешно обновлено.
@@ -620,7 +620,7 @@ ru-RU:
         day_pass_pack: Комплект пропусков на %{quantity} сут. (%{currency}%{amount})
         day_pass_history: История платежей
         add_confirm: С вашей кредитной карты будет снята сумма оплаты 
-        daypass_quantity: %{quantity} суточн. проп.
+        daypass_quantity: "%{quantity} суточн. проп."
         order: Заказ №
         no_of_day_passes: Кол-во суточный пропусков
         auto_recharge: Автоматическое пополнение
@@ -721,7 +721,7 @@ ru-RU:
         deselected: Выбор отменен
     va_rules:
       index:
-        human_name: Правило Dispatch&apos;r
+        human_name: Правило Dispatch'r
     webhook:
       jira_hook_title: Создание задачи JIRA
       jira_hook_description: Для автоматического создания задачи в учетной записи JIRA при подаче заявки во Freshdesk можно использовать метод вебхука.
@@ -743,7 +743,7 @@ ru-RU:
         webhook_usecase_tooltip: Ознакомьтесь с несколькими примерами использования вебхука в Observer
         simple_webhook_tip: Выберите любое из перечисленных ниже свойств заявки, которое необходимо отправлять вместе с запросом. Если вы хотите создать собственный запрос API, используйте вариант «Расширенный».
         advanced_webhook_tip: В этом разделе можно создавать собственные запросы API. Нажмите кнопку «Вставить заполнители», чтобы добавить в запрос такие сведения о заявке, как имя автора, приоритет, статус и т. д.
-        how_to_use_webhook: Как использовать вебхуки &gt;
+        how_to_use_webhook: Как использовать вебхуки >
         api_key?: У меня есть API-ключ?
         user_pass?: У меня есть имя пользователя и пароль?
         username: Имя пользователя
@@ -995,7 +995,7 @@ ru-RU:
         operational_admin: Выполнять полномочия операционного администратора
         manage_users: Управлять агентами
         manage_canned_responses: Управлять шаблонными ответами
-        manage_dispatch_rules: Управлять правилами Dispatch&apos;r и Observer
+        manage_dispatch_rules: Управлять правилами Dispatch'r и Observer
         manage_supervisor_rules: Управлять правилами Supervisor
         manage_scenario_automation_rules: Управлять правилами автоматизации сценариев
         manage_email_settings: Управлять командами электронной почты
@@ -1020,7 +1020,7 @@ ru-RU:
         feedback: Виджет для отзывов
         freshchat: Freshchat
         integrations: Интегрируемые сервисы
-        dispatcher: Dispatch&apos;r
+        dispatcher: Dispatch'r
         supervisor: Supervisor
         observer: Observer
         sla: Политики SLA
@@ -1129,7 +1129,7 @@ ru-RU:
       number:
         success: Номер успешно добавлен в вашу учетную запись Freshfone
         error: Ошибка приобретения номера для вашей учетной записи Freshfone.
-        blank_message: %{num_type} не может быть пустым
+        blank_message: "%{num_type} не может быть пустым"
         add_blacklist_success: Номер успешно заблокирован
         add_blacklist_failure: Не удалось заблокировать номер
         remove_blacklist_success: Номер успешно разблокирован
@@ -1187,7 +1187,7 @@ ru-RU:
       no_file: Загрузите файл
       success: Импорт данных из CSV-файла начат. После его завершения вы получите уведомление по электронной почте. Процесс импорта может занять несколько минут в зависимости от объема ваших данных
       thank_user: Благодарим за отправку запроса на импорт.
-      details: Ваш CSV-файл обработан, и импорт данных успешно завершен. Чтобы просмотреть новую информацию, зайдите в службу поддержки и выберите %{customer}--&gt;%{users}. 
+      details: Ваш CSV-файл обработан, и импорт данных успешно завершен. Чтобы просмотреть новую информацию, зайдите в службу поддержки и выберите %{customer}-->%{users}. 
       help_desk: Свяжитесь с нами, если вам необходимо что-то еще.
       regards: С уважением,
       freshdesk: команда Freshdesk
@@ -1243,8 +1243,8 @@ ru-RU:
         success: Электронное письмо для подтверждения отправлено %{reply_email}!
       activation:
         invalid_code: Недействительный код активации!
-        success: %{reply_email} активирован!
-        already_activated: %{reply_email} уже активирован!
+        success: "%{reply_email} активирован!"
+        already_activated: "%{reply_email} уже активирован!"
       make_primary:
         success: <b>%{reply_email}</b> теперь является основным адресом электронной почты вашей службы поддержки!
     data_import:
@@ -1294,26 +1294,26 @@ ru-RU:
       login_not_needed: Для доступа к этой странице необходимо выйти из системы
       deactivation:
         failure: Нельзя отключить %{human_name}
-        success: %{human_name} отключен.
+        success: "%{human_name} отключен."
       activation:
         failure: Нельзя включить %{human_name}
-        success: %{human_name} включен.
+        success: "%{human_name} включен."
       destroy:
         failure: Нельзя удалить %{human_name}
-        success: %{human_name} удален.
+        success: "%{human_name} удален."
       restore:
         failure: Нельзя восстановить %{human_name}
       create:
         failure: Не удалось сохранить %{human_name}
-        success: %{human_name} создан.
+        success: "%{human_name} создан."
       update:
-        success: %{human_name} обновлен.
+        success: "%{human_name} обновлен."
         failure: Нельзя обновить %{human_name}.
     post:
-      deleted: Запись &apos;{title}&apos; удалена.
+      deleted: Запись '{title}' удалена.
       page_not_found: Не удалось найти запись. Запись удалена, либо неправильно введен URL.
     topic:
-      deleted: Тема &apos;{title}&apos; удалена.
+      deleted: Тема '{title}' удалена.
       page_not_found: Не удалось найти тему. Запись удалена, либо неправильно введен URL.
     forum:
       page_not_found: Не удалось найти форум. Запись удалена, либо неправильно введен URL.
@@ -1364,7 +1364,7 @@ ru-RU:
       assigned_to_nobody: Назначение агента отменено
       reassigned: Агент переназначен
       assigned: Агент назначен
-      priority_change: %{value}
+      priority_change: "%{value}"
       new_ticket: Новая заявка
       conversation:
         out_email:
@@ -1380,7 +1380,7 @@ ru-RU:
       execute_scenario: Сценарий выполнен
       ticket_merge: Заявка объединена
       ticket_split: Заявка разделена
-      status_change: %{value}
+      status_change: "%{value}"
       deleted: Заявка удалена
       restored: Заявка восстановлена
       product_change: Продукт обновлен
@@ -1720,15 +1720,15 @@ ru-RU:
   dispatch:
     conditions: Условия
     actions: Действия
-    new: Dispatch&apos;r — новое правило
+    new: Dispatch'r — новое правило
     cascade_text: Для каждой входящей заявки выполнять
     cascade: все подходящие правила
     no_cascade: первое подходящее правило
     add_new_choice: Добавить новый вариант выбора
     add_watcher: Добавить наблюдателя
     act_to_perform: Выполнить эти действия
-    edit: Dispatch&apos;r — редактировать правило
-    title: Dispatch&apos;r
+    edit: Dispatch'r — редактировать правило
+    title: Dispatch'r
     inactive_rules: Неактивные правила
     info1: Заявки, связанные с подпиской
     rule_name: Название правила
@@ -1740,12 +1740,12 @@ ru-RU:
     action_note: Выполнить эти действия
     info3: Когда заявка соответствует этим условиям
     helpcard:
-      tour: Помощь в создании нового правила Dispatch&apos;r
-      info1: Благодаря предустановленному набору действий для новых заявок Dispatch&apos;r позволяет установить для рабочего процесса службы поддержки ваши бизнес-правила. Например, на основе установленных вами условий Dispatch&apos;r может автоматически категоризировать поступающие заявки, распределять их приоритеты и назначать необходимым агентам вашей команды.
-      info2: Не забывайте, что порядок правил важен для Dispatch&apos;r. Для каждой входящей заявки Dispatch&apos;r запускает первое подходящее правило и останавливается. Можно изменить порядок правил и установить приоритет для самых важных.
+      tour: Помощь в создании нового правила Dispatch'r
+      info1: Благодаря предустановленному набору действий для новых заявок Dispatch'r позволяет установить для рабочего процесса службы поддержки ваши бизнес-правила. Например, на основе установленных вами условий Dispatch'r может автоматически категоризировать поступающие заявки, распределять их приоритеты и назначать необходимым агентам вашей команды.
+      info2: Не забывайте, что порядок правил важен для Dispatch'r. Для каждой входящей заявки Dispatch'r запускает первое подходящее правило и останавливается. Можно изменить порядок правил и установить приоритет для самых важных.
     reorder: Изменить порядок
     add_new_action: Добавить новое действие
-    dispatch_rules: Dispatch&apos;r — правила
+    dispatch_rules: Dispatch'r — правила
     match_all: Совпадение со <b>ВСЕМИ</b> из приведенных ниже
     match_any: Совпадение с <b>ЛЮБЫМ</b> из приведенных ниже
     add_condition: Добавить новое условие
@@ -1851,7 +1851,7 @@ ru-RU:
         inclusion: не включено в список
         user_role: Пользователь должен быть связан хотя бы с одной ролью
       full_messages:
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template:
         body: "Имеются проблемы со следующими полями:"
         one: Невозможно сохранить %{model} из-за 1 ошибки
@@ -1890,7 +1890,7 @@ ru-RU:
         vote_info_include_2: Вы и <a id='users-voted' href='#' title="Узнать, кто задал этот вопрос"> еще %{vote} пользователя(-ей)</a> задали этот вопрос
         voted_users_widget_title: Пользователи с этим вопросом
     post:
-      posted_on: %{user_name} в %{post_date}
+      posted_on: "%{user_name} в %{post_date}"
       edit_comment: Редактировать комментарий
       unmark_answer: Отменить выделение в качестве ответа
       post_accepted_as_a_good_answer: Эта запись принята как хороший ответ в этой теме
@@ -1954,7 +1954,7 @@ ru-RU:
     select_an_agent: Выбрать агента
     select_business_calendar: Выбрать рабочие часы
     learn_more: Узнать больше
-    round_robin_desc: Если включить эту функцию, назначаемые этой группе заявки будут распределяться между агентами по кругу. Если вы хотите назначать заявки вручную или автоматически распределять их с помощью Dispatch&apos;r или Supervisor, отключите эту функцию. 
+    round_robin_desc: Если включить эту функцию, назначаемые этой группе заявки будут распределяться между агентами по кругу. Если вы хотите назначать заявки вручную или автоматически распределять их с помощью Dispatch'r или Supervisor, отключите эту функцию. 
     assigntime:
       half: 30 минут
       one: 1 час
@@ -2112,7 +2112,7 @@ ru-RU:
     save_changes: Сохранить изменения
     save: Сохранить
     deleted_message: Этот контакт удален
-    contacts_in_companies: %{contacts}
+    contacts_in_companies: "%{contacts}"
     contact: контакт
     contacts: контакта(-ов)
     no_contacts: Нет контактов
@@ -2255,7 +2255,7 @@ ru-RU:
       cookie_policy: Политика файлов «cookie»
       why_we_love_cookies: Почему мы любим файлы «cookie»
       cookie_dialog_info1: Мы используем файлы «cookie» для того, чтобы сделать использование вами Freshdesk более комфортным. 
-      cookie_dialog_info2: "Вы можете узнать больше о причинах и способах использования нами файлов «cookie» здесь, а также их типах здесь: %{privacy_link}. Если вы не хотите использовать файлы «cookie», их также можно полностью отключить. При этом обратите внимание на то, что во Freshdesk файлы «cookie» используются довольно часто, поэтому в случае их отключения некоторые разделы Freshdesk могут работать ненадлежащим образом. "
+      cookie_dialog_info2: "Вы можете узнать больше о причинах и способах использования нами файлов «cookie» здесь, а также их типах здесь: %{privacy_link}. Если вы не хотите использовать файлы «cookie», их также можно полностью отключить. При этом обратите внимание на то, что во Freshdesk файлы «cookie» используются довольно часто, поэтому в случае их отключения некоторые разделы Freshdesk могут работать ненадлежащим образом."
       cookie_dialog_info3: Мы также надеемся, что вы согласны со способами использования нами файлов «cookie» и соответствующей информацией в нашей %{privacy_link}, если только вы не решите полностью отключить файлы «cookie» в вашем браузере. 
       privacy_policy: Политика конфиденциальности
     no_topics_in_this_view: ~ В этом представлении нет тем ~
@@ -2328,10 +2328,10 @@ ru-RU:
         other: Вы(вам, у вас) и еще
       more:
         one: 1 пользов.
-        other: %{count} пользов.
+        other: "%{count} пользов."
       people:
         one: 1 пользов.
-        other: %{count} пользов.
+        other: "%{count} пользов."
       ideas:
         one: нравится эта идея
         other: нравится эта идея
@@ -2406,7 +2406,7 @@ ru-RU:
     info2: Решения могут быть <b>общедоступными</b> и <b>личными</b>. Общедоступные решения видны в разделе портала самообслуживания и появляются в результатах поиска
     info3: Конфиденциальные решения видны только агентами и используются для внутреннего обмена знаниями
     no_solutions_info: В этой папке нет решений
-    info4: "Решения имеют трехуровневую иерархию: <b>категория --&gt; папка --&gt; статья</b>"
+    info4: "Решения имеют трехуровневую иерархию: <b>категория --> папка --> статья</b>"
     type: Тип решения
     info5: "Существует два типа решений: <b>временные</b> и <b>постоянные</b>"
     info6: Во время работы над решением оно имеет статус <b>Черновик</b>. После окончания работы и проверки статус меняется на <b>Опубликовано</b>
@@ -2453,7 +2453,7 @@ ru-RU:
   attach_files: Вложить файлы
   plan_amount: за агента в месяц
   free_plan_agents: "для такого количества агентов: %{free_agents}"
-  current_plan_details: %{plan_name}
+  current_plan_details: "%{plan_name}"
   free_plan_details: "План %{plan_name} с таким количеством агентов: %{agent_limit}"
   add_more_free: Необходимо добавить более %{free_agents} агента(-ов)?
   zendesk_backup: Файл резервной копии
@@ -2717,7 +2717,7 @@ ru-RU:
     set_bcc_email_text: Добавить автоматический адрес скрытой копии
     name_info_msg: Название электронного письма, которое будет использоваться в ответах на заявки
     Personalized_email_replies: Использовать имена агентов в личных ответах по электронной почте?
-    Personalized_email_replies_info: Если ДА, то в ответах агентов имя агента будет указываться как имя отправителя (в поле адреса будет указываться адрес электронной почты вашей службы поддержки). Например, «%{current_user_name} &lt;%{current_account_domain}&gt;».
+    Personalized_email_replies_info: Если ДА, то в ответах агентов имя агента будет указываться как имя отправителя (в поле адреса будет указываться адрес электронной почты вашей службы поддержки). Например, «%{current_user_name} <%{current_account_domain}>».
     Personalized_email_replies_yes: Да
     Personalized_email_replies_no: Нет
     config_saved_message: Ваши настройки успешно сохранены.
@@ -2730,7 +2730,7 @@ ru-RU:
   linkback_info: Вы можете установить переход обратно на собственный веб-сайт при нажатии логотипа в верхнем колонтитуле
   twitter:
     associate_twitter: Свяжите учетную запись Twitter со службой поддержки, чтобы осуществлять поддержку клиентов через Twitter.
-    success_signin: @%{twitter_screen_name} и %{helpdesk} связаны успешно.
+    success_signin: "@%{twitter_screen_name} и %{helpdesk} связаны успешно."
     user_exists: Учетная запись Twitter уже связана с другим продуктом.
     not_authorized: Вы не авторизованы в Twitter
     deleted: Учетная запись @%{twitter_screen_name} удалена.
@@ -2945,7 +2945,7 @@ ru-RU:
       user_not_following: Этот пользователь не является вашим читателем в Twitter
     activities: Действия
     activity_toggle: Показать действия
-    activity_timestamp: %{user_name} обновил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
+    activity_timestamp: "%{user_name} обновил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Информация об авторе заявки
     view_twitter: Просмотреть в Twitter
     reply_to: Ответить
@@ -2993,7 +2993,7 @@ ru-RU:
   recent_activities: Недавние действия
   forgot_password: Забыли пароль?
   change_plan: Изменить тарифный план
-  feedbackwidget_embed_code_intro: Скопируйте расположенный ниже код и вставьте его в любом месте перед тегом &lt;/body&gt; в html-шаблоне вашего сайта или на любой другой странице, где вы хотели бы разместить виджет Freshdesk.
+  feedbackwidget_embed_code_intro: Скопируйте расположенный ниже код и вставьте его в любом месте перед тегом </body> в html-шаблоне вашего сайта или на любой другой странице, где вы хотели бы разместить виджет Freshdesk.
   import_forum: Форумы
   title: Заголовок
   new_ticket_created: Электронное уведомление о создании новой заявки
@@ -3285,17 +3285,17 @@ ru-RU:
 
 
     flash:
-      assignedto: %{tickets} назначено пользователю %{username}.
-      tickets_closed: %{tickets} закрыто
-      tickets_update: %{tickets} обновлено
-      tickets_update_with_errors: %{tickets} обновлено, но вам следует обратить внимание на некоторые проблемы.
+      assignedto: "%{tickets} назначено пользователю %{username}."
+      tickets_closed: "%{tickets} закрыто"
+      tickets_update: "%{tickets} обновлено"
+      tickets_update_with_errors: "%{tickets} обновлено, но вам следует обратить внимание на некоторые проблемы."
       sending_failure : "Ошибка отправки ответов на следующие заявки: "
-      assigned_to_you: %{tickets} назначено вам
-      removed_from_spam: %{tickets} удалено из папки спама.
+      assigned_to_you: "%{tickets} назначено вам"
+      removed_from_spam: "%{tickets} удалено из папки спама."
       closing_the_ticket_failed: Не удалось закрыть заявку
-      assigned_reassigned: %{type} для %{username}
-      flagged_spam: %{tickets} помечено как спам. %{undo}
-      flagged_unspam: %{tickets} удалено из папки спама.
+      assigned_reassigned: "%{type} для %{username}"
+      flagged_spam: "%{tickets} помечено как спам. %{undo}"
+      flagged_unspam: "%{tickets} удалено из папки спама."
 
     shared:
       addcc: Добавить копию
@@ -3354,7 +3354,7 @@ ru-RU:
         assigned: Назначено
         status: Статус
         priority: Приоритет
-        time_ago: %{time_in_words} назад
+        time_ago: "%{time_in_words} назад"
         sla: Срок
       add_watcher:
         add_watcher_link: Добавить наблюдателя
@@ -3374,15 +3374,15 @@ ru-RU:
         all_agents_watching: За этой заявкой наблюдают все агенты
         mail:
           hi: Здравствуйте,
-          added_as_watcher: %{agent_name} добавил(-а) вас в качестве наблюдателя заявки
+          added_as_watcher: "%{agent_name} добавил(-а) вас в качестве наблюдателя заявки"
           added_as_watcher_by_automation: Вас добавили вас в качестве наблюдателя этой заявки
           new_activity: Новые действия по отношению к наблюдаемой заявке
           activity: Активность
           ticket: Заявка
           requester: Автор заявки
           customer: Клиент
-          status_change:  %{agent_name} %{status} заявку, за которой вы наблюдаете
-          response: %{responder} ответил(-а) на заявку, за которой вы наблюдаете
+          status_change: "%{agent_name} %{status} заявку, за которой вы наблюдаете"
+          response: "%{responder} ответил(-а) на заявку, за которой вы наблюдаете"
           ticket_details: Описание заявки
           customer_response: Ответ клиента
           agent_response: Ответ агента
@@ -3487,19 +3487,19 @@ ru-RU:
         resolved_or_closed: Решенные или закрытые
         no_tickets: У вас нет заявок в текущем представлении
       note:
-        posted_on: %{user_name} в %{note_date}
+        posted_on: "%{user_name} в %{note_date}"
         created_on:
-          private_note: %{user_name} добавил(-а) личное примечание в %{note_date}
-          public_note: %{user_name} добавил(-а) общедоступное примечание в %{note_date}
-          reply: %{user_name} ответил(-а) в %{note_date}
-          forward: %{user_name} перенаправил(-а) в %{note_date}
+          private_note: "%{user_name} добавил(-а) личное примечание в %{note_date}"
+          public_note: "%{user_name} добавил(-а) общедоступное примечание в %{note_date}"
+          reply: "%{user_name} ответил(-а) в %{note_date}"
+          forward: "%{user_name} перенаправил(-а) в %{note_date}"
         created_on_live:
-          private_note: %{user_name} добавил(-а) личное примечание <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          public_note: %{user_name} добавил(-а) общедоступное примечание <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          phone_note: %{user_name} добавил(-а) телефонный разговор <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          reply: %{user_name} ответил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          forward: %{user_name} перенаправил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          survey: %{user_name} установил(-а) рейтинг этой заявки <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
+          private_note: "%{user_name} добавил(-а) личное примечание <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} добавил(-а) общедоступное примечание <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          phone_note: "%{user_name} добавил(-а) телефонный разговор <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} ответил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} перенаправил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} установил(-а) рейтинг этой заявки <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Редактировать примечание
         split_this_as_new_ticket: Разделить и создать отдельную заявку
         delete_note: Удалить это из обсуждения заявки?
@@ -3761,7 +3761,7 @@ ru-RU:
         sign_in_using_google: Войти с помощью учетной записи Google
         help: Справка
   settings: настройки
-  updated_on: %{user_name} обновил(-а) в %{note_date}
+  updated_on: "%{user_name} обновил(-а) в %{note_date}"
   mobile:
     home:
       remember: Запомнить меня
@@ -3789,17 +3789,17 @@ ru-RU:
       contacts: Контактные сведения 
     capsule_crm:
       label: CRM-система Capsule
-      helptext: <h4>Обратный переход из Capsule во Freshdesk</h4><p><br/>В CRM-системе Capsule можно создать ссылку для просмотра заявок контакта во Freshdesk.</p> <p>Для этого выполните указанные действия. <br />Выберите <b>Настройки -&gt; Настраиваемые поля -&gt; для пользователей и организаций</b></p><p> Затем нажмите «Добавить новую...» и выберите <b>Созданная ссылка</b></p> <p>Скопируйте URL так, как это показано ниже, и вставьте его в CRM-систему Capsule как ссылку <span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
+      helptext: <h4>Обратный переход из Capsule во Freshdesk</h4><p><br/>В CRM-системе Capsule можно создать ссылку для просмотра заявок контакта во Freshdesk.</p> <p>Для этого выполните указанные действия. <br />Выберите <b>Настройки -> Настраиваемые поля -> для пользователей и организаций</b></p><p> Затем нажмите «Добавить новую...» и выберите <b>Созданная ссылка</b></p> <p>Скопируйте URL так, как это показано ниже, и вставьте его в CRM-систему Capsule как ссылку <span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
     capsule:
       label: CRM-система Capsule
       desc: Вы можете просматривать контактную информацию из CRM-системы Capsule непосредственно во Freshdesk. Эта информация доступна на страницах контактов и заявок.
       form:
         bcc_drop_box_mail: Адрес почтового ящика
-        bcc_drop_box_mail_info: Уникальный адрес почтового ящика Capsule указан в разделе <b>Настройки -&gt; Почтовый ящик</b><br /> (в правом верхнем углу страницы).<br /> Скопируйте адрес электронной почты и вставьте его в расположенное выше текстовое поле. <br /> Freshdesk будет автоматически добавлять этот адрес в качестве скрытой копии при ответах на заявки
+        bcc_drop_box_mail_info: Уникальный адрес почтового ящика Capsule указан в разделе <b>Настройки -> Почтовый ящик</b><br /> (в правом верхнем углу страницы).<br /> Скопируйте адрес электронной почты и вставьте его в расположенное выше текстовое поле. <br /> Freshdesk будет автоматически добавлять этот адрес в качестве скрытой копии при ответах на заявки
         domain: Домен
         domain_info: "Просто укажите домен без https. Например: пример.capsulecrm.com"
         api_key: API-ключ
-        api_key_info: Чтобы получит ваш уникальный API-ключ, войдите в учетную запись CRM-системы Capsule и выберите <br /> <b>Пользователь -&gt; Предпочтительные параметры</b> (в правом верхнем углу страницы).<br /> Чтобы получить уникальный API-ключ, нажмите <b>Токен аутентификации API</b>.<br /> Скопируйте ключ и вставьте его в расположенное выше текстовое поле.
+        api_key_info: Чтобы получит ваш уникальный API-ключ, войдите в учетную запись CRM-системы Capsule и выберите <br /> <b>Пользователь -> Предпочтительные параметры</b> (в правом верхнем углу страницы).<br /> Чтобы получить уникальный API-ключ, нажмите <b>Токен аутентификации API</b>.<br /> Скопируйте ключ и вставьте его в расположенное выше текстовое поле.
         widget_title: Заголовок виджета
     freshbooks:
       label: Freshbooks
@@ -3930,7 +3930,7 @@ ru-RU:
     jira:
       label: Atlassian JIRA
       desc: Преобразовывать заявки в задачи, которые можно обрабатывать в JIRA.
-      helptext: <h4>Справка по интеграции JIRA</h4><p><br/>Чтобы интегрировать JIRA во Freshdesk, введите имя администратора и пароль JIRA. Поддерживается интеграции как локальных, так и серверных версий, начиная с JIRA 4.2 и заканчивая последней версией JIRA 5.<br/><br/> Чтобы создать задачу или ссылку на существующую задачу из Freshdesk, перейдите на страницу заявок и нажмите <i class='jira-icon'></i><br/><br/> Чтобы просмотреть сведения о связанных заявках Freshdesk в JIRA или, наоборот, просмотреть сведения о задачах JIRA во Freshdesk, рекомендуем администратору JIRA создать настраиваемое поле для произвольного текста под названием «Заявки Freshdesk», как описано ниже. <br/><br/>Войдите в учетную запись JIRA, нажмите <b>Администрирование</b>, выберите <b>Задачи</b> -&gt; <b>Поля</b> и нажмите <b>Добавить настраиваемое поле</b>. На экране <b>Создать настраиваемое поле</b> выберите <b>Поле для произвольного текста</b> и нажмите <b>Далее</b>. В качестве названия поля введите <b>Заявки Freshdesk</b> и нажмите «Завершить». На странице <b>Связать поле с экранами</b> установите все флажки и нажмите «Обновить».<br/><br/>
+      helptext: <h4>Справка по интеграции JIRA</h4><p><br/>Чтобы интегрировать JIRA во Freshdesk, введите имя администратора и пароль JIRA. Поддерживается интеграции как локальных, так и серверных версий, начиная с JIRA 4.2 и заканчивая последней версией JIRA 5.<br/><br/> Чтобы создать задачу или ссылку на существующую задачу из Freshdesk, перейдите на страницу заявок и нажмите <i class='jira-icon'></i><br/><br/> Чтобы просмотреть сведения о связанных заявках Freshdesk в JIRA или, наоборот, просмотреть сведения о задачах JIRA во Freshdesk, рекомендуем администратору JIRA создать настраиваемое поле для произвольного текста под названием «Заявки Freshdesk», как описано ниже. <br/><br/>Войдите в учетную запись JIRA, нажмите <b>Администрирование</b>, выберите <b>Задачи</b> -> <b>Поля</b> и нажмите <b>Добавить настраиваемое поле</b>. На экране <b>Создать настраиваемое поле</b> выберите <b>Поле для произвольного текста</b> и нажмите <b>Далее</b>. В качестве названия поля введите <b>Заявки Freshdesk</b> и нажмите «Завершить». На странице <b>Связать поле с экранами</b> установите все флажки и нажмите «Обновить».<br/><br/>
       form:
         domain: Домен
         domain_info: Введите полный URL учетной записи JIRA, в том числе https/http. Например, https://пример.atlassian.net. <br /><span class='italics'> Примечание. Локальные версии JIRA необходимо выложить в Интернет. </span>
@@ -4007,7 +4007,7 @@ ru-RU:
       desc: Во Freshdesk можно просматривать контактную информацию из CRM-системы SugarCRM.
       form:
         domain: URL учетной записи SugarCRM
-        domain_info: Например, если ваш URL SugarCRM — <strong>http://моякомпания.абв/sugar/index.php?module=Administration&amp;action=index</strong>, введите <strong> http://моякомпания.абв/sugar</strong><br /><br /> Примечание. При использовании локальной версии SugarCRM необходимо подключение к Интернету. </span>
+        domain_info: Например, если ваш URL SugarCRM — <strong>http://моякомпания.абв/sugar/index.php?module=Administration&action=index</strong>, введите <strong> http://моякомпания.абв/sugar</strong><br /><br /> Примечание. При использовании локальной версии SugarCRM необходимо подключение к Интернету. </span>
         widget_title: Заголовок виджета
         username: Имя пользователя
         password: Пароль
@@ -4096,7 +4096,7 @@ ru-RU:
     logmein:
       label: LogMeIn Rescue
       desc: Предоставляйте мгновенную удаленную поддержку для ваших клиентов и сотрудников с помощью LogMeIn Rescue
-      helptext: <h4>Справка по интеграции LogMeIn Rescue</h4><p><br/> Чтобы интегрировать LogMeIn Rescue во Freshdesk, введите идентификатор компании и пароль SSO для LogMeIn Rescue, а затем нажмите «Обновить». <br/>После этого виджет LogMeIn Rescue станет доступен на странице заявок. <br/><br/>Для запуска консоли технического специалиста непосредственно из виджета Freshdesk нажмите «Запустить консоль технического специалиста». <br/>Теперь вы может создать PIN-код и предоставить инструкции автору заявки, чтобы продолжить оказывать поддержку в LogMeIn Rescue. <br/><br/> <b>Примечание.</b> Адрес электронной почты агента должен соответствовать идентификатору SSO технического специалиста LogMeIn Rescue. Чтобы установить идентификатор SSO, выберите Центр администрирования -&gt; Имя специалиста -&gt; Организация -&gt; SSOID
+      helptext: <h4>Справка по интеграции LogMeIn Rescue</h4><p><br/> Чтобы интегрировать LogMeIn Rescue во Freshdesk, введите идентификатор компании и пароль SSO для LogMeIn Rescue, а затем нажмите «Обновить». <br/>После этого виджет LogMeIn Rescue станет доступен на странице заявок. <br/><br/>Для запуска консоли технического специалиста непосредственно из виджета Freshdesk нажмите «Запустить консоль технического специалиста». <br/>Теперь вы может создать PIN-код и предоставить инструкции автору заявки, чтобы продолжить оказывать поддержку в LogMeIn Rescue. <br/><br/> <b>Примечание.</b> Адрес электронной почты агента должен соответствовать идентификатору SSO технического специалиста LogMeIn Rescue. Чтобы установить идентификатор SSO, выберите Центр администрирования -> Имя специалиста -> Организация -> SSOID
       note:
         header: Сведения о вашем сеансе LogMeIn Rescue
         session_id: Идентификатор сеанса
@@ -4110,8 +4110,8 @@ ru-RU:
         widget_title: Заголовок виджета
         company_id: Идентификатор компании
         password: Пароль SSO
-        logmein_company_info: Чтобы получить идентификатор компании, выберите Центр администрирования -&gt; Техническая группа -&gt; Общие настройки -&gt; пример выполняемого на сервере приложения ASP.Net C# 
-        logmein_sso_pwd_info: Чтобы задать пароль SSO, выберите Центр администрирования -&gt; Техническая группа -&gt; Общие настройки -&gt; Система единого входа -&gt; новый пароль SSO
+        logmein_company_info: Чтобы получить идентификатор компании, выберите Центр администрирования -> Техническая группа -> Общие настройки -> пример выполняемого на сервере приложения ASP.Net C# 
+        logmein_sso_pwd_info: Чтобы задать пароль SSO, выберите Центр администрирования -> Техническая группа -> Общие настройки -> Система единого входа -> новый пароль SSO
     mailchimp:
       label: MailChimp
       desc: Добавьте MailChimp во Freshdesk и управляйте своими подписками, экспортируйте списки клиентов и получайте необходимую информацию об их действиях от своей службы поддержки.  
@@ -4123,7 +4123,7 @@ ru-RU:
     campaignmonitor:
       label: Campaign Monitor
       desc: Выполняйте поиск подписок и управление ими в своей учетной записи Campaign Monitor, а также получайте статистические данные о действиях клиентов непосредственно во Freshdesk. 
-      helptext: <h4>Справка по интеграции Campaign Monitor</h4><br/>Чтобы интегрировать Campaign Monitor, необходимо ввести API-ключ и идентификатор клиента Campaign Monitor. <br/>&lt;/br/&gt; API-ключ можно найти в настройках учетной записи Campaign Monitor.<br/><br/> Для получения идентификатора клиента выполните инструкции на странице <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a>. <br/><br/>Теперь нажмите «Обновить», и Campaign Monitor будет интегрирован и готов к работе.
+      helptext: <h4>Справка по интеграции Campaign Monitor</h4><br/>Чтобы интегрировать Campaign Monitor, необходимо ввести API-ключ и идентификатор клиента Campaign Monitor. <br/></br/> API-ключ можно найти в настройках учетной записи Campaign Monitor.<br/><br/> Для получения идентификатора клиента выполните инструкции на странице <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a>. <br/><br/>Теперь нажмите «Обновить», и Campaign Monitor будет интегрирован и готов к работе.
       form:
         api_key: API-ключ
         api_key_info: Скопируйте API-ключ из настроек учетной записи.
@@ -4194,9 +4194,9 @@ ru-RU:
         show_report: Показать отчет
         tickets_resolved: Заявки <br> Решено
         on_time_resolution: Решение <br> в срок
-        on_time_resolution_percent: % РВС
+        on_time_resolution_percent: "% РВС"
         fcr_count: Решение <br> при первом ответе
-        fcr_percent: % РПО
+        fcr_percent: "% РПО"
         avg_1st_response_time: Среднее время <br> первого ответа
         avg_response_time: Среднее время <br> ответа
         avg_resolution_time: Среднее время <br> решения
@@ -4249,9 +4249,9 @@ ru-RU:
         list_content:
               rating_msg_none: никто не сказал %{rating}
               rating_msg_single: один пользователь сказал %{rating}
-              rating_msg_multiple: %{count} пользователя(-ей) сказали %{rating}
+              rating_msg_multiple: "%{count} пользователя(-ей) сказали %{rating}"
               rating_primary_msg_single: один клиент сказал %{rating}
-              rating_primary_msg_multiple: %{count} клиента(-ов) сказали %{rating}
+              rating_primary_msg_multiple: "%{count} клиента(-ов) сказали %{rating}"
               happy: отлично
               neutral: неплохо
               unhappy: так себе
@@ -4264,7 +4264,7 @@ ru-RU:
 
   delete_the_ticket: Удалить заявку
   mark_as_spam: Отметить как спам
-  bulk_actions: Общий объем действий
+  bulk_actions: Пакетные действия
   update_multiple_tickets: Обновить несколько заявок
   no_change: Без изменений
   select: Выбрать …
@@ -4506,7 +4506,7 @@ ru-RU:
     available_quests: Доступные квесты
     all: Все
     un_achieved: Не достигнуто
-    back_to_dashboard:  &lt; Назад к информационной панели
+    back_to_dashboard:  < Назад к информационной панели
     quests: Квесты
   close_this_ticket: Закрыть эту заявку
   ticket_deleted: Эта заявка удалена
@@ -4568,7 +4568,7 @@ ru-RU:
       avg_agent_intr: Средний объем взаимодействия агентов
       num_of_reopens: Количество повторных открытий
       num_of_reassigns: Количество переназначений
-      sla_percentage: % SLA
+      sla_percentage: "% SLA"
       select_customer_msg: Выбрать клиента
       select_agent_msg: Выбрать агента
       select_group_msg: Выбрать группу
@@ -4756,9 +4756,9 @@ ru-RU:
       block_number_title: Заблокировать номер
     ticket:
       recording: Проиграть сообщение
-      ticket_desc: Разговор с %{customer} из %{location} и <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      ticket_desc: Разговор с %{customer} из %{location} и <b>%{agent}</b> (%{agent_number})<br/ >
       voicemail_ticket_desc: Голосовое сообщение от %{customer} из %{location} 
-      agent_detail: и <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      agent_detail: и <b>%{agent}</b> (%{agent_number})<br/ >
       dial_a_number: Разговор с %{customer} из %{location}. Установлено соединение между IVR и номером %{direct_dial_number}
       default_subject: Разговор с %{customer}, дата %{call_date}
       voicemail_subject: Голосовое сообщение от %{customer}
@@ -4769,7 +4769,7 @@ ru-RU:
       view: Просмотр
     create:
       success:
-        with_link: %{human_name} создан %{link}
+        with_link: "%{human_name} создан %{link}"
     admin:
       important: Важно
       general: Общие
@@ -5055,7 +5055,7 @@ ru-RU:
     got_it: Да, сделано.
     reauth: Для доступа к вкладке страницы Facebook <a href='%{page_tab_url}' >выполните повторную авторизацию</a> на Facebook
     auth: Для доступа к вкладке страницы Facebook <a href='%{page_tab_url}' >выполните авторизацию</a> на Facebook
-    page_tab_auth: Из-за некоторых недавних изменений нашей вкладки страницы Facebook необходима повторная авторизация приложения. <b>Обратите внимание на то, что приложение на вашей странице Facebook будет отключено, если не выполнить повторную авторизацию до 12 октября</b> <br/> <a href='%{page_tab_url}' >Выполнить повторную авторизацию и включить &gt; </a> 
+    page_tab_auth: Из-за некоторых недавних изменений нашей вкладки страницы Facebook необходима повторная авторизация приложения. <b>Обратите внимание на то, что приложение на вашей странице Facebook будет отключено, если не выполнить повторную авторизацию до 12 октября</b> <br/> <a href='%{page_tab_url}' >Выполнить повторную авторизацию и включить > </a> 
     page_tab_info: Выполните повторную авторизацию для вкладки страницы Facebook
     no_contact: Не удалось связаться с серверами Facebook для вкладки страницы
     portal:

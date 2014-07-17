@@ -56,7 +56,7 @@ sv-SE:
   proceed_now: "\n\nFortsätt nu?"
   forward: Vidarebefordra
   apply: Verkställ
-  myself: Mig  
+  myself: Mig
   signup_complete_activate_info: Välkommen! Vi har skickat ett e-postmeddelande till dig som innehåller en länk till en sida där du kan ställa in ditt lösenord och aktivera ditt konto.
   attachment_help_info: Storleken på bilagor får vara högst 15 MB
   feedbackwidget_offset_info: Välj widget-position för din webbläsare. Förskjutningen kommer att vara avståndet från widgetknappen (pixlar) från vänster eller övre delen av skärmen, baserat på justeringen du väljer.
@@ -195,7 +195,7 @@ sv-SE:
       status_choices: Statusval
       display_to_customer: Visa meddelande för kunden
       sla_timer: Timer för servicenivåavtal
-      nestedfield_helptext_preview: Detta är &quot;Förhandsgranskningen&quot; av rullistans exempelelement. Använd frihandstextfältet i &quot;Ändra vy&quot; för att ändra element
+      nestedfield_helptext_preview: Detta är "Förhandsgranskningen" av rullistans exempelelement. Använd frihandstextfältet i "Ändra vy" för att ändra element
       delete_field: Ta bort fält
       field_label_agents: Fältetikett för representant
       field_label_customer: Fältetikett för kunder
@@ -457,11 +457,11 @@ sv-SE:
         trophies_info1: Representanten kan få fyra olika troféer som baseras på olika kriterier.
         quest: Målsättningar
         quest_info1: En målsättning motsvarar de prestationsmål som du sätter upp för representanterna. När en målsättning uppfylls erhåller representanten en utmärkelse.
-        quest_info2: Samtliga målsättningar är AKTIVA som standard. Du kan välja att AVAKTIVERA de målsättningar som du inte vill använda. Om du vill lägga till eller skapa fler målsättningar som har anknytning till dina egna mål kan du klicka på &quot;Ny målsättning&quot; för att skapa helt nya målsättningar med dina egna villkor.
+        quest_info2: Samtliga målsättningar är AKTIVA som standard. Du kan välja att AVAKTIVERA de målsättningar som du inte vill använda. Om du vill lägga till eller skapa fler målsättningar som har anknytning till dina egna mål kan du klicka på "Ny målsättning" för att skapa helt nya målsättningar med dina egna villkor.
         quest_form_info1: Välj den typ av målsättning som ska skapas för representanterna. Det kan vara en av tre <br /> a) lösa ärenden<br /> b) publicera lösningar och <br /> c) bidra i forum.
         quest_form_info2: Välj sedan kriterier för målsättningen (vad representanten måste göra) och lägg till de villkor som måste uppfyllas för att utmärkelsen ska erhållas.
         quest_form_info3: Ange antal poäng och den utmärkelse som representanten erhåller. Ange till sist ett namn på din målsättning, samt en kort beskrivning.
-        quest_form_info4: Klicka på &quot;Spara målsättning&quot; för att spara dina inställningar.
+        quest_form_info4: Klicka på "Spara målsättning" för att spara dina inställningar.
         creating_survey: "Skapar din nöjdhetsundersökning:"
         creating_survey_help: "Följande steg låter dig samla in feedback från dina kunder via en länk i dina svarsmeddelanden.<br> 1. Markera kryssrutan Aktivera kundnöjdhetsundersökningar.<br> 2. Ange länktexten för undersökningen. Standardtexten är ”Berätta gärna vad du tycker om vår support.”<br> <br> <b>Välj vilka e-postmeddelanden som ska innehålla undersökningslänken:</b><br> Du kan välja huruvida länken till nöjdhetsundersökningen ska inkluderas i alla e-postmeddelanden eller endast i det sista meddelandet efter att ärendet har lösts. <br><br> Du hittar mer information om nöjdhetsundersökningar på vår sida med lösningar. </p>"
       index:
@@ -478,7 +478,7 @@ sv-SE:
         enable_label: Representanters spelifiering
         title_points_configuration: Poänginställningar
         title_ticket_points: Ärendepoäng
-        fast_resolution: Snabb <span>(&lt; 1 tim)</span>
+        fast_resolution: Snabb <span>(< 1 tim)</span>
         ontime_resolution: I tid <span>(inom SLA)</span>
         late_resolution: Sen <span>(försenad)</span>
         bonus_points: Bonuspoäng
@@ -503,8 +503,8 @@ sv-SE:
         link_text_input: Berätta gärna vad du tycker om vår support.
         link_text_info: Denna text visas under din signatur i slutet av e-postmeddelandet som skickas till kunden
         send_while_option1: Alla svar som har skickats till kunden.
-        send_while_option2: Meddelanden som skickas efter att ett ärende är &quot;Löst&quot;.
-        send_while_option3: Meddelanden som skickas efter att ett ärende är &quot;Stängt&quot;.
+        send_while_option2: Meddelanden som skickas efter att ett ärende är "Löst".
+        send_while_option3: Meddelanden som skickas efter att ett ärende är "Stängt".
         send_while_option4: Låt representanter lägga till undersökningslänkar i specifika e-postmeddelanden.
         send_while_title: Välja vilka e-postmeddelanden som ska innehålla undersökningslänken
         enter_happy_text: Fyll i texten för en nöjd kund
@@ -523,7 +523,7 @@ sv-SE:
             send_test_mail_confirm_yes: Ja, jag har fått det.
             send_test_mail_confirm_no: Nej, jag kan inte se något ärende.
             send_test_mail_yes_response: Bra jobbat! Din support-e-post fungerar nu med Freshdesk. Lycka till!
-            send_test_mail_response_no1: Det verkar finnas ett problem -&gt;
+            send_test_mail_response_no1: Det verkar finnas ett problem ->
             send_test_mail_response_no2: Lär dig hur
             send_test_mail_response_no_3: <strong>Hoppsan! Det verkar finnas ett problem.</strong><br>Kontrollera din regel för vidarebefordring för att se till så att allting stämmer. Om du inte tar emot ett testärende inom några minuter ska du <a href="https://support.freshdesk.com/" target="_blank">kontakta oss</a>.
         index:
@@ -580,7 +580,7 @@ sv-SE:
             rebrand_submit_label: Omprofilera
             admin_title: Är allt bra?
             admin_sub_title: Glöm inte att kika på alla underliggande funktioner du kan anpassa under fliken ”%{admin_tab}”
-            product_link_label: Gå in i ditt hjälpcenter &gt;&gt;
+            product_link_label: Gå in i ditt hjälpcenter >>
             validating: Validerar ...
             updating: Uppdaterar ...
             successfully_updated: Uppdateringen klar.
@@ -617,10 +617,10 @@ sv-SE:
         current_balance: Du har %{balance} kvar!
         buy_pass: Köp flera pass
         buy_now: Köp nu
-        day_pass_pack: %{quantity} Paket med dagspass (%{currency}%{amount})
+        day_pass_pack: "%{quantity} Paket med dagspass (%{currency}%{amount})"
         day_pass_history: Inköpshistorik
         add_confirm: Ditt kreditkort debiteras 
-        daypass_quantity: %{quantity} Dagspass
+        daypass_quantity: "%{quantity} Dagspass"
         order: Ordernr
         no_of_day_passes: antal dagspass
         auto_recharge: Automatisk påfyllning
@@ -743,7 +743,7 @@ sv-SE:
         webhook_usecase_tooltip: Kolla ett par exempel på hur du kan använda webbhooks inom observatören
         simple_webhook_tip: Välj vilken egenskap som helst för ärendet från listan ovan för att skicka tillsammans med din förfrågan. Om du vill skriva dina egna API-förfrågningar ska du använda alternativet Avancerat.
         advanced_webhook_tip: Denna sektion ger dig möjligheten att skriva en anpassad API-begäran. Klicka på knappen Infoga platshållare för att inkludera ärendeinformation som Beställares Namn, Prioritet, Ärendestatus osv. tillsammans med din begäran.
-        how_to_use_webhook: Hur man använder webbhooks &gt;
+        how_to_use_webhook: Hur man använder webbhooks >
         api_key?: Har jag en API-nyckel?
         user_pass?: Har jag ett användarnamn och ett lösenord?
         username: Användarnamn
@@ -1088,7 +1088,7 @@ sv-SE:
       unknown_error: Okänt serverfel. Kontakta supporten.
       account_not_associated: Ditt Gmail-konto är inte associerat med något Freshdesk-konto än. Använd navigeringslänken för att associera kontot.
     daypass:
-      success: %{quantity} dagspass har lagts till på ditt konto.
+      success: "%{quantity} dagspass har lagts till på ditt konto."
       failed: Fel när dagspass lades till
     facebook:
       updated: Facebook-inställningen har uppdaterats
@@ -1129,7 +1129,7 @@ sv-SE:
       number:
         success: Numret har lagts till i ditt Freshfone-konto
         error: Det gick inte att lägga till numret i ditt Freshfone-konto
-        blank_message: %{num_type} får inte vara tomt
+        blank_message: "%{num_type} får inte vara tomt"
         add_blacklist_success: Numret har blockerats
         add_blacklist_failure: Numret kunde inte blockeras
         remove_blacklist_success: Numret har avblokerats
@@ -1180,14 +1180,14 @@ sv-SE:
       failure: Prova igen
       no_file: Ladda upp en fil
       wrong_format: CSV-filmformatet stöds inte. Kontrollera CSV-filformatet.
-      success: %{created_count} kontakter har nyligen importerats och %{updated_count} befintliga kontakter har uppdaterats!
+      success: "%{created_count} kontakter har nyligen importerats och %{updated_count} befintliga kontakter har uppdaterats!"
     import:
       already_running: En CSV-import pågår just nu. Prova igen senare.
       failure: Prova igen
       no_file: Ladda upp en fil
       success: Din CSV-import har påbörjats och du kommer att få ett e-postmeddelande när processen är klar. Importprocessen kan ta flera minuter, beroende på volymen av dina data.
       thank_user: Tack för att du skickat in en importförfrågan.
-      details: Din CSV-fil har bearbetats och importen är slutförd. Du kan öppna ditt hjälpcenter och gå till %{customer}--&gt;%{users} för att se ny information. 
+      details: Din CSV-fil har bearbetats och importen är slutförd. Du kan öppna ditt hjälpcenter och gå till %{customer}-->%{users} för att se ny information. 
       help_desk: Kontakta gärna oss om du behöver hjälp med någonting annat.
       regards: Hälsningar
       freshdesk: Freshdesk-teamet
@@ -1223,9 +1223,9 @@ sv-SE:
       empty_trash:
         success: Papperskorgen tömdes.
       delete_forever:
-        success: %{tickets} togs bort.
+        success: "%{tickets} togs bort."
       unwatch:
-        success: %{tickets} togs bort från bevakningslistan.
+        success: "%{tickets} togs bort från bevakningslistan."
         failure: Det gick inte att ta bort bevakningen av det här ärendet.
         unsubscribe_success: Ärendet har tagits bort från bevakningslistan.
       bulk_merge_success : Ärendena med ID-numren %{merged_tickets} slogs samman till <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> 
@@ -1243,8 +1243,8 @@ sv-SE:
         success: Ett verifieringsmeddelande har skickats till %{reply_email}.
       activation:
         invalid_code: Aktiveringskoden är ogiltig.
-        success: %{reply_email} har aktiverats.
-        already_activated: %{reply_email} har redan aktiverats.
+        success: "%{reply_email} har aktiverats."
+        already_activated: "%{reply_email} har redan aktiverats."
       make_primary:
         success: <b>%{reply_email}</b> är nu din primära e-postadress för support.
     data_import:
@@ -1293,22 +1293,22 @@ sv-SE:
         admin: Du har inte tillräcklig behörighet för att ändra detta. Logga in som administratör.
       login_not_needed: Du måste vara utloggad för att få åtkomst till denna sida.
       deactivation:
-        failure: %{human_name} kunden inte avaktiveras
-        success: %{human_name} har avaktiverats.
+        failure: "%{human_name} kunden inte avaktiveras"
+        success: "%{human_name} har avaktiverats."
       activation:
-        failure: %{human_name} kunde inte aktiveras
-        success: %{human_name} har aktiverats.
+        failure: "%{human_name} kunde inte aktiveras"
+        success: "%{human_name} har aktiverats."
       destroy:
-        failure: %{human_name} kunde inte tas bort
-        success: %{human_name} har tagits bort.
+        failure: "%{human_name} kunde inte tas bort"
+        success: "%{human_name} har tagits bort."
       restore:
-        failure: %{human_name} kunde inte återställas
+        failure: "%{human_name} kunde inte återställas"
       create:
         failure: Det gick inte att spara %{human_name}
-        success: %{human_name} har skapats.
+        success: "%{human_name} har skapats."
       update:
-        success: %{human_name} har uppdaterats.
-        failure: %{human_name} kunde inte uppdateras.
+        success: "%{human_name} har uppdaterats."
+        failure: "%{human_name} kunde inte uppdateras."
     post:
       deleted: Inlägget ‘{title}’ togs bort.
       page_not_found: Detta inlägg kunde inte hittas. Det kan ha blivit borttaget eller så är URL:en felskriven.
@@ -1364,7 +1364,7 @@ sv-SE:
       assigned_to_nobody: Representant ej tilldelad
       reassigned: Representant omtilldelad
       assigned: Representant tilldelad
-      priority_change: %{value}
+      priority_change: "%{value}"
       new_ticket: Nytt ärende
       conversation:
         out_email:
@@ -1380,7 +1380,7 @@ sv-SE:
       execute_scenario: Scenariot utfört
       ticket_merge: Ärendet sammanslaget
       ticket_split: Ärendet delat
-      status_change: %{value}
+      status_change: "%{value}"
       deleted: Ärendet har tagits bort
       restored: Ärendet har återställts
       product_change: Produkten har uppdaterats
@@ -1604,7 +1604,7 @@ sv-SE:
       begin_subscription_info: kommer att debitera ditt kort och påbörja din prenumeration omedelbart.
       billing: Fakturering
       save_billing_information: Spara faktureringsinformation
-      save_billing_information_info: kommer att spara din information gällande &quot;Abonnemang och fakturering&quot;. Vi kommer att debitera ditt kort och påbörja din prenumeration när din provperiod har löpt ut.
+      save_billing_information_info: kommer att spara din information gällande "Abonnemang och fakturering". Vi kommer att debitera ditt kort och påbörja din prenumeration när din provperiod har löpt ut.
       begin_subscription: Påbörja prenumeration nu.
     show:
       export_data: Exportera data
@@ -1851,11 +1851,11 @@ sv-SE:
         inclusion: inkluderas inte i listan
         user_role: En användare måste associeras med minst en roll.
       full_messages:
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template:
         body: "Ett problem uppstod med följande fält:"
         one: Ett fel förhindrade denna %{model} från att sparas
-        other: %{count} fel förhindrade denna %{model} från att sparas
+        other: "%{count} fel förhindrade denna %{model} från att sparas"
   top: Överst
   company_name: Företagsnamn
   expires: Löper ut
@@ -1890,7 +1890,7 @@ sv-SE:
         vote_info_include_2: Du och <a id='users-voted' href='#' title="Se vem som har denna"> %{vote} personer</a> har denna fråga
         voted_users_widget_title: Personer som har denna fråga
     post:
-      posted_on: %{user_name} den %{post_date}
+      posted_on: "%{user_name} den %{post_date}"
       edit_comment: Redigera kommentar
       unmark_answer: Avmarkera som svar
       post_accepted_as_a_good_answer: Detta inlägg har accepterats som ett bra svar för detta ämne
@@ -1927,8 +1927,8 @@ sv-SE:
     progress: Import pågår
     not_started: ""
     completed: Importen klar
-    tickets_completed: %{count} ärenden slutförda
-    ratio_tickets_completed: %{count}/%{total} ärenden slutförda
+    tickets_completed: "%{count} ärenden slutförda"
+    ratio_tickets_completed: "%{count}/%{total} ärenden slutförda"
   group:
     new: Ny grupp
     name: Gruppnamn
@@ -2001,13 +2001,13 @@ sv-SE:
     trial: I testversion
     account_suspended: kontot fryst
     buy: Köp fler
-    available_seats: %{count} återstående representantplatser
+    available_seats: "%{count} återstående representantplatser"
     available_seats_without_count: Återstående representantplatser
     no_seats: Inga återstående representantplatser
     last_logged_in: Senast inloggad för %{time} sedan.
     never_logged_in: Aldrig inloggad
-    day_pass_used: %{count} använda dagspass till dags dato
-    day_pass_available: %{count} dagspass tillgängliga
+    day_pass_used: "%{count} använda dagspass till dags dato"
+    day_pass_available: "%{count} dagspass tillgängliga"
     no_day_pass: Inga tillgängliga dagspass
     assign_role: Associera roller
     cannot_edit_roles: Du kan endast visa roller och omfattning, inte redigera dem
@@ -2112,7 +2112,7 @@ sv-SE:
     save_changes: Spara ändringar
     save: Spara
     deleted_message: Detta är en raderad kontakt
-    contacts_in_companies: %{contacts}
+    contacts_in_companies: "%{contacts}"
     contact: kontakt
     contacts: kontakter
     no_contacts: Inga kontakter
@@ -2328,10 +2328,10 @@ sv-SE:
         other: Du och
       more:
         one: 1 annan
-        other: %{count} andra
+        other: "%{count} andra"
       people:
         one: 1 person
-        other: %{count} personer
+        other: "%{count} personer"
       ideas:
         one: gillar denna idé
         other: gillar idén
@@ -2406,7 +2406,7 @@ sv-SE:
     info2: Lösningar kan vara <b>offentliga</b> eller <b>privata</b>. Offentliga lösningar är synliga i självserviceportalen och visas även i sökresultaten
     info3: Privata lösningar är endast för representanter och används för intern kunskapsdelning
     no_solutions_info: Inga lösningar i denna mapp
-    info4: Lösningar har en hierarki i tre nivåer – <b>Kategori --&gt; Mapp --&gt; Artikel</b>
+    info4: Lösningar har en hierarki i tre nivåer – <b>Kategori --> Mapp --> Artikel</b>
     type: Lösningstyp
     info5: En lösning kan vara av två olika typer – <b>Tillfällig</b> eller <b>Permanent</b>
     info6: En lösning kan ha statusen <b>Utkast</b> när du arbetar med den och kan sedan ändras till statusen <b>Publicerad</b> då den har slutförts och granskats
@@ -2453,8 +2453,8 @@ sv-SE:
   attach_files: Bifoga filer
   plan_amount: per representant/månad
   free_plan_agents: för %{free_agents} representanter
-  current_plan_details: %{plan_name}
-  free_plan_details: %{plan_name} abonnemang med %{agent_limit} representanter
+  current_plan_details: "%{plan_name}"
+  free_plan_details: "%{plan_name} abonnemang med %{agent_limit} representanter"
   add_more_free: Behöver du lägga till fler än %{free_agents} representanter?
   zendesk_backup: Säkerhetskopia
   twoday: 2 dagar
@@ -2474,9 +2474,9 @@ sv-SE:
   subject_or_description: Ämne eller beskrivning
   premium_details: Allting i abonnemanget Pro, plus support för flera produkter, support för flera tidszoner, användargrupper, e-post- och telefonsupport
   sprout_details: Svarshantering för e-post, alla automatiseringar, standard SLA-policy, kunskapsdatabas, självserviceportal, grundläggande rapportering.
-  blossom_details: Allting i abonnemanget &quot;Sprout&quot; plus Twitter-support, Facebook-support, forum för användargrupper, anpassad domänmappning och inkommande/utgående e-post.
-  garden_details: Allt i abonnemanget &quot;Blossom” plus support för flera produkter, och flera språk över flera tidszoner, flera SLA-policyer, anpassning av kundportaler på CSS-nivå och avancerad rapportering.
-  estate_details: Allt i kontotypen &quot;Garden&quot; samt spelifiering, representantkrock, anpassad kundportal, tillgång till temagalleri (s.k. FreshThemes), anpassade roller och företagsinsikter.
+  blossom_details: Allting i abonnemanget "Sprout" plus Twitter-support, Facebook-support, forum för användargrupper, anpassad domänmappning och inkommande/utgående e-post.
+  garden_details: Allt i abonnemanget "Blossom” plus support för flera produkter, och flera språk över flera tidszoner, flera SLA-policyer, anpassning av kundportaler på CSS-nivå och avancerad rapportering.
+  estate_details: Allt i kontotypen "Garden" samt spelifiering, representantkrock, anpassad kundportal, tillgång till temagalleri (s.k. FreshThemes), anpassade roller och företagsinsikter.
   zendesk_account: Kontoinformation för Zendesk
   zendesk_import_files: Vill du välja vad som ska importeras?
   file_url: URL till fullständig XML-export
@@ -2717,7 +2717,7 @@ sv-SE:
     set_bcc_email_text: Ställ in automatisk e-postadress för Bcc
     name_info_msg: E-postadress som kommer att användas i ärendesvar
     Personalized_email_replies: Vill du använda representantens namn för personliga e-postsvar?
-    Personalized_email_replies_info: Om du väljer JA kommer svaret från representanten att innehålla hans/hennes namn som avsändarnamn (din e-postadress för support kommer fortfarande att visas som avsändare). Till exempel ’%{current_user_name} &lt;%{current_account_domain}&gt;’.
+    Personalized_email_replies_info: Om du väljer JA kommer svaret från representanten att innehålla hans/hennes namn som avsändarnamn (din e-postadress för support kommer fortfarande att visas som avsändare). Till exempel ’%{current_user_name} <%{current_account_domain}>’.
     Personalized_email_replies_yes: Ja
     Personalized_email_replies_no: Nej
     config_saved_message: Dina inställningar har sparats.
@@ -2945,7 +2945,7 @@ sv-SE:
       user_not_following: Användaren följer inte ditt twitterkonto
     activities: Aktiviteter
     activity_toggle: Visa aktiviteter
-    activity_timestamp: %{user_name} uppdaterad <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
+    activity_timestamp: "%{user_name} uppdaterad <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Information om beställaren
     view_twitter: Visa på Twitter
     reply_to: Svara
@@ -2993,7 +2993,7 @@ sv-SE:
   recent_activities: Senaste aktiviteter
   forgot_password: Glömt lösenord
   change_plan: Ändra abonnemang
-  feedbackwidget_embed_code_intro: Kopiera och klistra in koden nedan var som helst före taggen &lt;/body&gt; i HTML-mallen av din webbplats eller på varje sida där du vill tillhandahålla Freshdesk-widgeten.
+  feedbackwidget_embed_code_intro: Kopiera och klistra in koden nedan var som helst före taggen </body> i HTML-mallen av din webbplats eller på varje sida där du vill tillhandahålla Freshdesk-widgeten.
   import_forum: Forum
   title: Rubrik
   new_ticket_created: Nytt ärende skapat
@@ -3036,7 +3036,7 @@ sv-SE:
     info10: Obs! Även om du tar bort ett företag raderas inte företagets kontakter.
     info2: Domännamn för detta företag
     info4: Anteckningar
-    info5: Lägg till specifika anteckningar om detta företag, exempelvis &quot;Vi förhandlar om ett större avtal med detta företag&quot;
+    info5: Lägg till specifika anteckningar om detta företag, exempelvis "Vi förhandlar om ett större avtal med detta företag"
     info6: Personer i %{name}
     info7: Inga ärenden har skapats av personer i detta företag
     info8: Mer information om detta företag, såsom adress, telefonnummer, webbplats osv.
@@ -3285,17 +3285,17 @@ sv-SE:
 
 
     flash:
-      assignedto: %{tickets} tilldelad till %{username}.
-      tickets_closed: %{tickets} stängd
-      tickets_update: %{tickets} uppdaterad
-      tickets_update_with_errors: %{tickets} uppdaterad, men du måste se över ett par problem
-      sending_failure : "Det gick inte att skicka svar till följande ärenden: "
-      assigned_to_you: %{tickets} tilldelad till dig
-      removed_from_spam: %{tickets} borttagen från skräppostmappen.
+      assignedto: "%{tickets} tilldelad till %{username}."
+      tickets_closed: "%{tickets} stängd"
+      tickets_update: "%{tickets} uppdaterad"
+      tickets_update_with_errors: "%{tickets} uppdaterad, men du måste se över ett par problem"
+      sending_failure : "Det gick inte att skicka svar till följande ärenden:"
+      assigned_to_you: "%{tickets} tilldelad till dig"
+      removed_from_spam: "%{tickets} borttagen från skräppostmappen."
       closing_the_ticket_failed: Det gick inte att stänga ärendet
-      assigned_reassigned: %{type} till %{username}
-      flagged_spam: %{tickets} flaggad som skräppost. %{undo}
-      flagged_unspam: %{tickets} borttagen från skräppostmappen.
+      assigned_reassigned: "%{type} till %{username}"
+      flagged_spam: "%{tickets} flaggad som skräppost. %{undo}"
+      flagged_unspam: "%{tickets} borttagen från skräppostmappen."
 
     shared:
       addcc: Lägg till cc
@@ -3354,7 +3354,7 @@ sv-SE:
         assigned: Tilldelat
         status: Status
         priority: Prioritet
-        time_ago: %{time_in_words} sedan
+        time_ago: "%{time_in_words} sedan"
         sla: Förfaller
       add_watcher:
         add_watcher_link: Lägg till bevakare
@@ -3374,15 +3374,15 @@ sv-SE:
         all_agents_watching: Samtliga representanter bevakar detta ärende
         mail:
           hi: Hej
-          added_as_watcher: %{agent_name} har lagt till dig som bevakare av ett ärende
+          added_as_watcher: "%{agent_name} har lagt till dig som bevakare av ett ärende"
           added_as_watcher_by_automation: Du har blivit tillagd som bevakare av det här ärendet
           new_activity: Ny aktivitet på ärendet du bevakar
           activity: Aktivitet
           ticket: Ärende
           requester: Beställare
           customer: Kunden
-          status_change:  %{agent_name} har %{status} på ett ärende som du bevakar
-          response: %{responder} har svarat på ett ärende som du bevakar
+          status_change:  "%{agent_name} har %{status} på ett ärende som du bevakar"
+          response: "%{responder} har svarat på ett ärende som du bevakar"
           ticket_details: Beskrivning av ärende
           customer_response: Svar från kunden
           agent_response: Svar från representanten
@@ -3487,19 +3487,19 @@ sv-SE:
         resolved_or_closed: Lösta eller stängda
         no_tickets: Du har inga ärenden i den aktuella vyn
       note:
-        posted_on: %{user} på %{note_date}
+        posted_on: "%{user} på %{note_date}"
         created_on:
-          private_note: %{user_name} la till en privat anteckning den %{note_date}
-          public_note: %{user_name} la till en offentlig anteckning den %{note_date}
-          reply: %{user_name} svarade den %{note_date}
-          forward: %{user_name} vidarebefordrade den %{note_date}
+          private_note: "%{user_name} la till en privat anteckning den %{note_date}"
+          public_note: "%{user_name} la till en offentlig anteckning den %{note_date}"
+          reply: "%{user_name} svarade den %{note_date}"
+          forward: "%{user_name} vidarebefordrade den %{note_date}"
         created_on_live:
-          private_note: %{user_name} la till en privat anteckning <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          public_note: %{user_name} la till en offentlig anteckning <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          phone_note: %{user_name} la till en telefonkonversation <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          reply: %{user_name} svarade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          forward: %{user_name} vidarebefordrade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          survey: %{user_name} betygsatte det här ärendet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
+          private_note: "%{user_name} la till en privat anteckning <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} la till en offentlig anteckning <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          phone_note: "%{user_name} la till en telefonkonversation <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} svarade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} vidarebefordrade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} betygsatte det här ärendet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Redigera anteckning
         split_this_as_new_ticket: Dela det här ärendet och skapa ett nytt
         delete_note: Ta bort detta från ärendekonversationen?
@@ -3761,7 +3761,7 @@ sv-SE:
         sign_in_using_google: Logga in med ditt Google-konto
         help: Hjälp
   settings: inställningar
-  updated_on: %{user_name} uppdaterades den %{note_date}
+  updated_on: "%{user_name} uppdaterades den %{note_date}"
   mobile:
     home:
       remember: Kom ihåg mig
@@ -3789,17 +3789,17 @@ sv-SE:
       contacts: Kontaktinformation för 
     capsule_crm:
       label: Capsule CRM
-      helptext: <h4>Länka tillbaka från Capsule till Freshdesk</h4><p><br/>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>För att göra detta, gå till <br /><b>Inställningar -&gt; Anpassade fält -&gt; För personer och organisation</b></p><p> Klicka sedan på ”Lägg till ny...” och välj <b>Genererad länk</b></p> <p>Kopiera URL-adressen precis som den visas nedan och klistra in den i Capsule CRM enligt definitionen <span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
+      helptext: <h4>Länka tillbaka från Capsule till Freshdesk</h4><p><br/>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>För att göra detta, gå till <br /><b>Inställningar -> Anpassade fält -> För personer och organisation</b></p><p> Klicka sedan på ”Lägg till ny...” och välj <b>Genererad länk</b></p> <p>Kopiera URL-adressen precis som den visas nedan och klistra in den i Capsule CRM enligt definitionen <span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
     capsule:
       label: Capsule CRM
       desc: Du kan visa kontaktinformation från Capsule CRM i Freshdesk. Du kan komma åt denna information via sidorna Ärendeinformation och Kontaktinformation.
       form:
         bcc_drop_box_mail: E-postadress för Drop Box
-        bcc_drop_box_mail_info: Du hittar din unika Capsule-adress för Drop Box under <b>Inställningar -&gt; E-post för Drop Box</b>.<br /> (Du hittar detta längst upp i det högra hörnet av sidan.)<br /> Kopiera e-postadressen och klistra in den i textfältet ovan. <br /> Freshdesk lägger automatiskt till den här e-postadressen i Bcc-fältet när du svarar på ett ärende
+        bcc_drop_box_mail_info: Du hittar din unika Capsule-adress för Drop Box under <b>Inställningar -> E-post för Drop Box</b>.<br /> (Du hittar detta längst upp i det högra hörnet av sidan.)<br /> Kopiera e-postadressen och klistra in den i textfältet ovan. <br /> Freshdesk lägger automatiskt till den här e-postadressen i Bcc-fältet när du svarar på ett ärende
         domain: Domän
         domain_info: Ange enbart domänen utan https. T.ex. capsulecrm.com
         api_key: API-nyckel
-        api_key_info: Hämta din unika API-nyckel genom att logga in på ditt Capsule CRM-konto och navigera till <br /> <b>Användare -&gt; Mina inställningar</b>. (Du hittar detta längst upp i det högra hörnet av sidan.)<br /> Klicka på <b>API-autentiseringstoken</b> för att hämta den unika API-nyckeln.<br /> Kopiera nyckeln och klistra in den i textfältet ovan.
+        api_key_info: Hämta din unika API-nyckel genom att logga in på ditt Capsule CRM-konto och navigera till <br /> <b>Användare -> Mina inställningar</b>. (Du hittar detta längst upp i det högra hörnet av sidan.)<br /> Klicka på <b>API-autentiseringstoken</b> för att hämta den unika API-nyckeln.<br /> Kopiera nyckeln och klistra in den i textfältet ovan.
         widget_title: Widgetrubrik
     freshbooks:
       label: Freshbooks
@@ -3930,7 +3930,7 @@ sv-SE:
     jira:
       label: Atlassian JIRA
       desc: Konvertera ärenden till ärenden som kan spåras i JIRA.
-      helptext: <h4>Hjälp med JIRA-integrering</h4><p><br/>För att integrera JIRA med Freshdesk, ange ditt administratörsnamn och lösenord för JIRA. Integreringen stöder två varianter, på begäran och på plats, från JIRA 4.2 till och med den senaste versionen – JIRA 5.<br/><br/> För att skapa ett ärende eller länka till ett befintligt problem från Freshdesk, gå till sidan för ärenden och klicka på <i class='jira-icon'></i><br/><br/> För att visa information om dina länkade Freshdesk-ärenden i JIRA, eller för att visa JIRA-ärenden i Freshdesk, rekommenderar vi att du använder JIRA-administratören för att skapa ett anpassat fält för fritext med namnet ”Freshdesk-ärenden”, enligt instruktionerna nedan. <br/><br/>Logga in på ditt JIRA-konto och klicka på <b>Administration</b>. Navigera till <b>Ärenden</b> -&gt; <b>Fält</b> och klicka sedan på <b>Lägg till anpassat fält</b>. På skärmen <b>Skapa anpassat fält</b> väljer du <b>Fält för fritext</b> och sedan klickar du på <b>Nästa</b>. Ange <b>”Freshdesk-ärenden”</b> i fältnamnet och klicka på Slutför. På sidan <b>Associera fält med skärmar</b> markerar du alla kryssrutor och klickar sedan på Uppdatera.<br/><br/>
+      helptext: <h4>Hjälp med JIRA-integrering</h4><p><br/>För att integrera JIRA med Freshdesk, ange ditt administratörsnamn och lösenord för JIRA. Integreringen stöder två varianter, på begäran och på plats, från JIRA 4.2 till och med den senaste versionen – JIRA 5.<br/><br/> För att skapa ett ärende eller länka till ett befintligt problem från Freshdesk, gå till sidan för ärenden och klicka på <i class='jira-icon'></i><br/><br/> För att visa information om dina länkade Freshdesk-ärenden i JIRA, eller för att visa JIRA-ärenden i Freshdesk, rekommenderar vi att du använder JIRA-administratören för att skapa ett anpassat fält för fritext med namnet ”Freshdesk-ärenden”, enligt instruktionerna nedan. <br/><br/>Logga in på ditt JIRA-konto och klicka på <b>Administration</b>. Navigera till <b>Ärenden</b> -> <b>Fält</b> och klicka sedan på <b>Lägg till anpassat fält</b>. På skärmen <b>Skapa anpassat fält</b> väljer du <b>Fält för fritext</b> och sedan klickar du på <b>Nästa</b>. Ange <b>”Freshdesk-ärenden”</b> i fältnamnet och klicka på Slutför. På sidan <b>Associera fält med skärmar</b> markerar du alla kryssrutor och klickar sedan på Uppdatera.<br/><br/>
       form:
         domain: Domän
         domain_info: Ange den kompletta URL:en för JIRA-kontot med https/http. T.ex. https://exempel.atlassian.net <br /><span class='italics'> Obs! På plats-varianterna av JIRA måste vara anslutna till internet. </span>
@@ -4007,7 +4007,7 @@ sv-SE:
       desc: Du kan visa kontaktinformation från SugarCRM i Freshdesk.
       form:
         domain: Konto-URL för SugarCRM
-        domain_info: Till exempel, om din SugarCRM-adress är <strong>http://mittföretag.xyz/sugar/index.php?module=Administration&amp;action=index</strong>, ange <strong>http://mittföretag.xyz/sugar</strong><br /><br /> Obs! På-plats-varianten av SugarCRM måste vara ansluten till internet. </span>
+        domain_info: Till exempel, om din SugarCRM-adress är <strong>http://mittföretag.xyz/sugar/index.php?module=Administration&action=index</strong>, ange <strong>http://mittföretag.xyz/sugar</strong><br /><br /> Obs! På-plats-varianten av SugarCRM måste vara ansluten till internet. </span>
         widget_title: Widgetrubrik
         username: Användarnamn
         password: Lösenord
@@ -4096,7 +4096,7 @@ sv-SE:
     logmein:
       label: LogMeIn Rescue
       desc: Tillhandahåll omedelbar fjärrsupport till dina kunder och anställda med LogMeIn Rescue
-      helptext: <h4>Hjälp med integrering av LogMeIn Rescue</h4><p><br/> För att integrera LogMeIn Rescue med Freshdesk, ange ditt företags-ID och SSO-lösenord för LogMeIn Rescue och klicka på Uppdatera. <br/>När programmet har aktiverats hittar du widgeten för LogMeIn Rescue på sidan för ärendeinformation. <br/><br/>Använd ”Starta teknikerns konsol” för att starta konsolen för tekniker direkt från widgeten i Freshdesk. <br/>Nu kan du generera en PIN-kod och dela instruktioner med beställaren för att fortsätta tillhandahålla support i LogMeIn Rescue. <br/><br/> <b>Obs!</b> Representantens e/postadress ska matcha teknikerns SSO-ID i LogMeIn Rescue. För att ange ditt SSO-ID går du till Administratörscenter -&gt; Representantens namn -&gt; Organisation -&gt; SSO-ID
+      helptext: <h4>Hjälp med integrering av LogMeIn Rescue</h4><p><br/> För att integrera LogMeIn Rescue med Freshdesk, ange ditt företags-ID och SSO-lösenord för LogMeIn Rescue och klicka på Uppdatera. <br/>När programmet har aktiverats hittar du widgeten för LogMeIn Rescue på sidan för ärendeinformation. <br/><br/>Använd ”Starta teknikerns konsol” för att starta konsolen för tekniker direkt från widgeten i Freshdesk. <br/>Nu kan du generera en PIN-kod och dela instruktioner med beställaren för att fortsätta tillhandahålla support i LogMeIn Rescue. <br/><br/> <b>Obs!</b> Representantens e/postadress ska matcha teknikerns SSO-ID i LogMeIn Rescue. För att ange ditt SSO-ID går du till Administratörscenter -> Representantens namn -> Organisation -> SSO-ID
       note:
         header: Information om din LogMeIn Rescue-session
         session_id: Sessions-ID
@@ -4110,8 +4110,8 @@ sv-SE:
         widget_title: Widgetrubrik
         company_id: Företags-ID
         password: SSO-lösenord
-        logmein_company_info: För att få ditt företags-ID går du till Administratörscenter -&gt; Representantgrupp -&gt; Globala inställningar -&gt; ASP.NET C# – exempel från serversidan 
-        logmein_sso_pwd_info: För att ställa in ditt SSO-lösenord går du till Administratörscenter -&gt; Representantgrupp -&gt; Globala inställningar -&gt; Enkel inloggning -&gt; Nytt SSO-lösenord
+        logmein_company_info: För att få ditt företags-ID går du till Administratörscenter -> Representantgrupp -> Globala inställningar -> ASP.NET C# – exempel från serversidan 
+        logmein_sso_pwd_info: För att ställa in ditt SSO-lösenord går du till Administratörscenter -> Representantgrupp -> Globala inställningar -> Enkel inloggning -> Nytt SSO-lösenord
     mailchimp:
       label: MailChimp
       desc: Lägg till MailChimp i Freshdesk och börja hantera dina prenumerationer, exportera kundlistor och hämta nödvändig information om deras aktiviteter från ditt hjälpcenter.  
@@ -4123,7 +4123,7 @@ sv-SE:
     campaignmonitor:
       label: Campaign Monitor
       desc: Hitta och hantera prenumerationer på ditt Campaign Monitor-konto och hämta information om kunders användningsstatistik direkt till Freshdesk. 
-      helptext: <h4>Hjälp med integrering av Campaign Monitor</h4><br/>För att integrera Campaign Monitor måste du ange din API-nyckel och ditt klient-ID från Campaign Monitor. <br/>&lt;/br/&gt; Du hittar API-nyckeln under Kontoinställningar på Campaign Monitor.<br/><br/> Du hittar instruktioner om hur du hämtar ditt klient-ID på <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'>http://www.campaignmonitor.com/api/getting-started/#clientid</a> <br/><br/>Klicka på Uppdatera för att börja integreringen med Campaign Monitor.
+      helptext: <h4>Hjälp med integrering av Campaign Monitor</h4><br/>För att integrera Campaign Monitor måste du ange din API-nyckel och ditt klient-ID från Campaign Monitor. <br/></br/> Du hittar API-nyckeln under Kontoinställningar på Campaign Monitor.<br/><br/> Du hittar instruktioner om hur du hämtar ditt klient-ID på <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'>http://www.campaignmonitor.com/api/getting-started/#clientid</a> <br/><br/>Klicka på Uppdatera för att börja integreringen med Campaign Monitor.
       form:
         api_key: API-nyckel
         api_key_info: Du hämtar din API-nyckel under Kontoinställningar
@@ -4249,9 +4249,9 @@ sv-SE:
         list_content:
               rating_msg_none: ingen sa %{rating}
               rating_msg_single: en person sa %{rating}
-              rating_msg_multiple: %{count} sa %{rating}
+              rating_msg_multiple: "%{count} sa %{rating}"
               rating_primary_msg_single: en kund sa %{rating}
-              rating_primary_msg_multiple: %{count} kunder sa %{rating}
+              rating_primary_msg_multiple: "%{count} kunder sa %{rating}"
               happy: utmärkt
               neutral: okej
               unhappy: inte bra
@@ -4506,7 +4506,7 @@ sv-SE:
     available_quests: Tillgängliga målsättningar
     all: Alla
     un_achieved: Ej uppnådda
-    back_to_dashboard:  &lt; Tillbaka till instrumentpanelen
+    back_to_dashboard:  < Tillbaka till instrumentpanelen
     quests: Målsättningar
   close_this_ticket: Stäng det här ärendet
   ticket_deleted: Det här ärendet har tagits bort
@@ -4756,9 +4756,9 @@ sv-SE:
       block_number_title: Blockera nummer
     ticket:
       recording: Spela upp meddelande
-      ticket_desc: Konversation med %{customer} från %{location} och <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      ticket_desc: Konversation med %{customer} från %{location} och <b>%{agent}</b> (%{agent_number})<br/ >
       voicemail_ticket_desc: Röstmeddelande från %{customer} från %{location} 
-      agent_detail: och <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      agent_detail: och <b>%{agent}</b> (%{agent_number})<br/ >
       dial_a_number: "Konversation med %{customer} från %{location} Samtalet kopplades från IVR till nummer: %{direct_dial_number}"
       default_subject: Samtal med %{customer} på %{call_date}
       voicemail_subject: Röstmeddelande från %{customer}
@@ -4769,7 +4769,7 @@ sv-SE:
       view: Visa
     create:
       success:
-        with_link: %{human_name} har skapats %{link}
+        with_link: "%{human_name} har skapats %{link}"
     admin:
       important: Viktigt
       general: Allmänna
@@ -4815,8 +4815,8 @@ sv-SE:
         recorded_voice: Inspelad röst
         audio_upload: Välj fil för överföring
         greeting_message: Ange ditt meddelande här
-        attachment_help_info: Accepterar ljudfiler &lt; 5 MB
-        recording_help_info: Sätt på mikrofonen. Längd &lt; 5 min.
+        attachment_help_info: Accepterar ljudfiler < 5 MB
+        recording_help_info: Sätt på mikrofonen. Längd < 5 min.
         cancel: Avbryt
         change: Ändra
         group: Spela upp meddelandet och ring representanter i 
@@ -5005,7 +5005,7 @@ sv-SE:
     edit_visitor_details: Redigera information om besökare
     new_ticket_tip: Spara som ett <b>nytt</b> ärende
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Installera skriptet</a> på din webbplats för att se dina besökare
-    window_offset_error_msg: Ange ett giltigt förskjutningsvärde (&lt; 500 px)
+    window_offset_error_msg: Ange ett giltigt förskjutningsvärde (< 500 px)
     nochat: Inga chatt tillgängliga
     chat_with_archive: <b>$1</b> och <b>$2</b>
     chat_loadmore: Läs in fler ...
@@ -5055,7 +5055,7 @@ sv-SE:
     got_it: Okej, jag förstår
     reauth: <a href='%{page_tab_url}' >Återauktorisera</a> med Facebook för tillgång till din sidflik
     auth: <a href='%{page_tab_url}' >Auktorisera</a> med Facebook för tillgång till din sidflik
-    page_tab_auth: På grund av några nya ändringar i vår sidflik för Facebook kräver vi att du återauktoriserar appen. <b>Appen på din Facebooksida kommer att avaktiveras om du inte återauktoriserar innan den 12 oktober</b> <br/> <a href='%{page_tab_url}' >Återauktorisera och aktivera &gt; </a> 
+    page_tab_auth: På grund av några nya ändringar i vår sidflik för Facebook kräver vi att du återauktoriserar appen. <b>Appen på din Facebooksida kommer att avaktiveras om du inte återauktoriserar innan den 12 oktober</b> <br/> <a href='%{page_tab_url}' >Återauktorisera och aktivera > </a> 
     page_tab_info: Återauktorisera din sidflik för Facebook
     no_contact: Det gick inte att kontakta Facebooks servrar för sidflikar just nu
     portal:
