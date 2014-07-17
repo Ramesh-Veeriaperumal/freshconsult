@@ -131,7 +131,9 @@ swapEmailNote = function(formid, link){
 	$.scrollTo('#'+formid, {offset: 100});
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
-		setCaretToPos($('#' + formid + ' textarea').get(0), 0);
+		$element = $('#' + formid + ' textarea').get(0);
+		$element.value = $(link).data('replytoHandle');
+		setCaretToPos($element, $element.value.length);
 	} else {
 		//For all other reply forms using redactor.
 		invokeRedactor(formid+"-body",formid);
