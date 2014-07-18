@@ -150,6 +150,10 @@ label.overlabel{
 	position:relative;
 	background:$header_color;
 }
+.header-wrapper{
+	float: right;
+	margin: 10px ($common-padding);
+}
 .header-link-wrapper *{ vertical-align: middle; }
 .header-link-wrapper{
 	border: 1px solid #000;
@@ -157,7 +161,6 @@ label.overlabel{
     -webkit-background-clip: padding-box; /* for Safari */
     background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
 	@include float(right);
-	margin: 10px ($common-padding);
 	@include margin-left(0);
 	height:35px;
 	overflow:hidden;
@@ -558,3 +561,5 @@ a.new_ticket{
     75%  { -moz-transform: rotate(360deg); }
     100% { -moz-transform: rotate(180deg); }
 }
+
+

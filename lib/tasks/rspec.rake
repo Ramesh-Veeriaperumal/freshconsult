@@ -18,11 +18,18 @@ end
 
 FacebookTests = [
   "spec/lib/facebook/comment_spec.rb", 
-  "spec/lib/facebook/post_spec.rb"
+  "spec/lib/facebook/post_spec.rb",
+  "spec/lib/facebook/facebook_post_spec.rb",
+  "spec/lib/facebook/facebook_core_message_spec.rb",
+  "spec/lib/facebook/status_spec.rb"
 ]
 
 GnipTests = [
   "spec/lib/social/gnip/rule_client_spec.rb"
+]
+
+XssTests = [
+  "spec/lib/xss_spec.rb"
 ]
 
 TwitterTests = [
@@ -62,6 +69,8 @@ IntegrationTests = [
 FreshfoneTests = [
   "spec/controllers/freshfone/*_spec.rb",
   "spec/lib/freshfone/*_spec.rb",
+  "spec/lib/pulse_rate_incoming_spec.rb",
+  "spec/lib/pulse_rate_outgoing_spec.rb",
   "spec/models/freshfone/*_spec.rb"
 ]
 
@@ -72,10 +81,14 @@ APITests = [
 
 ForumTests = [
   "spec/controllers/discussions_controller_spec.rb",
-  "spec/controllers/discussions/*_spec.rb"
+  "spec/controllers/discussions/*_spec.rb",
+  "spec/controllers/forum_categories_controller_spec.rb",
+  "spec/controllers/forums_controller_spec.rb",
+  "spec/controllers/topics_controller_spec.rb"
 ]
 
 HelpdeskTests = [ 
+  "spec/controllers/account_configurations_controller_spec.rb",
   "spec/controllers/agents_controller_spec.rb",
   "spec/controllers/groups_controller_spec.rb",
   "spec/controllers/contacts_controller_spec.rb",
@@ -92,8 +105,10 @@ HelpdeskTests = [
   "spec/controllers/support/**/*_spec.rb",
   "spec/controllers/negative/**/*_spec.rb",
   "spec/controllers/wf_filters_controller_spec.rb",
+  "spec/controllers/helpdesk/tickets_filter_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
-  "spec/models/va_rule_spec.rb"
+  "spec/models/va_rule_spec.rb",
+  "spec/controllers/notification/product_notification_controller_spec.rb"
 ]    
 
 BillingTests = [
@@ -102,7 +117,7 @@ BillingTests = [
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
 ]        
   
-UnitTests = [ FacebookTests, TwitterTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
+UnitTests = [ FacebookTests, TwitterTests, XssTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
               APITests, ForumTests, HelpdeskTests, BillingTests ]
 UnitTests.flatten!.uniq!
 

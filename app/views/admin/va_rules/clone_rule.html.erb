@@ -1,0 +1,12 @@
+<% content_for :helpcard do %>
+	<%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
+<h3 class="lead"><%=t('dispatch.clone')%></h3> 
+<div class="alert">
+	<%= (t('dispatch.clone_of') + " #{@va_rule.old_name}. " + t('admin.va_rules.remember_to_save')).html_safe%>
+</div>
+<hr>
+<% form_for :va_rule, @va_rule, :url => { :action => "create" }, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
+	<%= render :partial => "/admin/shared/rule_form", :locals => { :f => f } %>
+<% end %>

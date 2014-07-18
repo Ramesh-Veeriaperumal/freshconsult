@@ -1304,10 +1304,10 @@ nl:
                 success: "%{human_name} is bijgewerkt."
                 failure: "%{human_name} kan niet worden bijgewerkt."
         post: 
-            deleted: "Bericht van {title} is verwijderd."
+            deleted: "Bericht van %{title} is verwijderd."
             page_not_found: "Dit bericht is niet gevonden. Mogelijk is het verwijderd of hebt u de verkeerde URL ingevoerd."
         topic: 
-            deleted: "Onderwerp {title} is verwijderd."
+            deleted: "Onderwerp %{title} is verwijderd."
             page_not_found: "Dit onderwerp is niet gevonden. Mogelijk is het verwijderd of hebt u de URL verkeerd ingevoerd."
         forum: 
             page_not_found: "Dit forum is niet gevonden. Mogelijk is het verwijderd of hebt u de URL verkeerd ingevoerd."

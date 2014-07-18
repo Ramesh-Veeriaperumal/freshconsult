@@ -936,6 +936,9 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
+      clone_rule:
+        title: Supervisor - Clone Rule
+        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -959,6 +962,9 @@ en:
         title: Observer - New Rule
       edit:
         title: Observer - Edit Rule
+      clone_rule:
+        title: Observer - Clone Rule
+        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -983,6 +989,7 @@ en:
     va_rules:
       index:
         human_name: Dispatch’r Rule
+      remember_to_save: 'After updating, please remember to save it.'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -1024,6 +1031,9 @@ en:
         human_name: Scenario
       edit:
         title: Edit Scenario
+      clone_rule:
+        title: Clone Scenario
+        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -1627,6 +1637,7 @@ en:
       to_agent: The contact has been successfully converted to an Agent
       create:
         success: The contact has been created successfully.
+        view_contact: View Contact
       cancel: cancel
       info_select: Please select at least 1 user.
       unspamed: The contact(s) has been successfully marked as Unspam.
@@ -1680,10 +1691,10 @@ en:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
     post:
-      deleted: "Post of '{title}' was deleted."
+      deleted: "Post of '%{title}' was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
-      deleted: "Topic '{title}' was deleted."
+      deleted: "Topic '%{title}' was deleted."
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
@@ -1940,6 +1951,7 @@ en:
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
+  clone: Clone
   disable: Disable
   enable: Enable
   accounts:
@@ -2098,6 +2110,7 @@ en:
   dispatch:
     conditions: Conditions
     actions: Actions
+    clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
     cascade: all matching rules
@@ -2107,6 +2120,8 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
+    clone_of: This Dispatch'r is a clone of
+    copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
     rule_name: Rule Name
@@ -2396,7 +2411,7 @@ en:
       two: 2 Hours
       four: 4 Hours
       eight: 8 Hours
-      two: 12 Hours
+      twelve: 12 Hours
       day: 1 Day
       twoday: 2 Days
       threeday: 3 Days
@@ -3632,7 +3647,7 @@ en:
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
-  scenario_label: Scenario Label
+  scenario_label: Scenario Name
   email: Email
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
@@ -3826,6 +3841,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
+        customer_responded_overdue: "Overdue"
       tabular_view:
         title: "Title"
         posted: "Posted"
@@ -5996,3 +6012,16 @@ en:
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."
+  notification:
+    whats_new_on_freshdesk: " What's New On Freshdesk "
+    see_all: "See All"
+    frequently_referred_articles: "Frequently referred "
+    browse: "Browse"
+    get_help: "Get Help"
+    have_question: "Have a question?"
+    submit_feedback: "Submit Feedback"
+    contact_support: " Contact Support "
+    search_articles: "Search Article"
+    contact_us: "Contact Us"
+    whats_new: "What's New"
+

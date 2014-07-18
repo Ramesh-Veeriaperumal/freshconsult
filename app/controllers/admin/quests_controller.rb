@@ -126,7 +126,7 @@ class Admin::QuestsController < Admin::AdminController
       filter_hash
     end
 
-    def nested_fields ticket_field
+    def nested_fields ticket_field # possible dead code
       nestedfields = { :subcategory => "", :items => "" }
       if ticket_field.field_type == "nested_field"
         ticket_field.nested_ticket_fields.each do |field|

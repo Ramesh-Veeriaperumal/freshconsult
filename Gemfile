@@ -164,6 +164,7 @@ group :test do
   gem "autotest-rails", "4.1.0"
   gem "faker", "~> 1.0.1"
   gem "simplecov", "~> 0.7.1"
+  gem "simplecov-csv"
   gem "database_cleaner"
 end
 

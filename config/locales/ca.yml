@@ -2470,10 +2470,10 @@ ca:
         success: "El %{human_name} s'ha actualitzat."
         failure: "El %{human_name} no pot ser actualitzat."
     post: 
-      deleted: "El missatge de '{title}' ha estat eliminat."
+      deleted: "El missatge de '%{title}' ha estat eliminat."
       page_not_found: "No es pot trobar el missatge. Deu haver estat esborrat o la URL no és correcta."
     topic: 
-      deleted: "El tema '{title}' ha estat esborrat."
+      deleted: "El tema '%{title}' ha estat esborrat."
       page_not_found: "No es pot trobar aquest tema. Deu haver estat esborrat o la URL no és correcta."
     forum: 
       page_not_found: "No es pot trobar aquest fòrum. Deu haver estat esborrat o la URL no és correcta."

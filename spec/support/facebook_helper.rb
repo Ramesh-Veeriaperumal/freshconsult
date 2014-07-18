@@ -166,6 +166,54 @@ module FacebookHelper
     [ticket, post_id]
   end
   
+   def sample_user_profile(profile_id)
+     name = Faker::Name.name
+     { "id" => profile_id, 
+       "email" => Faker::Internet.email(name.split.last),  
+       "name" => "#{name}", 
+       "username" => Faker::Internet.user_name(name.split.last),
+       "verified"=>true
+     }
+   end
+  
+  def sample_fql_feed(feed_id, status = true, comment_count = 0)
+    actor_id = status ? @fb_page.page_id : (Time.now.utc.to_f*100000).to_i
+    [
+      {
+        "post_id" =>  "#{feed_id}", 
+        "message" => Faker::Lorem.sentence(3), 
+        "actor_id" => "#{actor_id}", 
+        "updated_time" => (Time.now.utc.to_f).to_i, 
+        "created_time" => (Time.now.utc.to_f).to_i,
+        "comments" => {
+          "can_remove" => true, 
+          "can_post" => true, 
+          "count" => comment_count, 
+          "comment_list" => [
+          ]
+        }
+      }
+    ]
+  end
+  
+  def sample_fql_comment_feed(post_id)
+    [
+      {
+        "id" => "#{post_id.split("_").last}_#{(Time.now.utc.to_f * 1000).to_i}",
+        "from" => {
+          "category" =>  Faker::Lorem.sentence(1), 
+          "name" => Faker::Lorem.sentence(1), 
+          "id" => (Time.now.utc.to_f * 1000).to_i
+        }, 
+        "message" => Faker::Lorem.sentence(3),
+        "can_remove" => true, 
+        "created_time" => Time.now.utc.iso8601, 
+        "like_count" => 0, 
+        "user_likes" => false
+      }
+    ]
+  end
+  
   def sample_comment_and_ticket
     data = @default_stream.data.merge({:replies_enabled => true})
     @default_stream.update_attributes(:data => data)
@@ -192,6 +240,46 @@ module FacebookHelper
     ticket.subject.should eql truncate_subject(comment[:message], 100)
     ticket.requester_id.should eql user_id
     [ticket, comment_id]
+  end
+  
+  def sample_dm_threads(thread_id, actor_id, msg_id)
+    [
+      {   
+        "id" => thread_id, 
+        "snippet"=> Faker::Lorem.sentence(1), 
+        "updated_time"=> "#{Time.now.utc.iso8601}", 
+        "message_count" => 1, 
+        "messages" => 
+          {
+            "data" => [
+              sample_dm_msg(actor_id, msg_id)
+            ]
+          }
+      }
+    ]
+  end
+  
+  def sample_dm_msg(actor_id, msg_id)
+    name = Faker::Name.name
+    { 
+      "id" =>  msg_id, 
+      "created_time" => "#{Time.now.utc.iso8601}", 
+      "from" => 
+        {
+          "name" => name,
+          "email"=> Faker::Internet.email(name.split.last) , 
+          "id"=> "#{actor_id}" 
+        }, 
+      "message"=> Faker::Lorem.sentence(4)
+    } 
+  end
+  
+  def generate_thread_id
+    "t_id.#{(Time.now.utc.to_f * 1000).to_i}"
+  end
+  
+  def generate_msg_id
+    "m_mid.#{(Time.now.utc.to_f * 1000).to_i}:#{rand(36**15).to_s(36)}"
   end
   
 end

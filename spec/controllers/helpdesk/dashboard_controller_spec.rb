@@ -6,6 +6,8 @@ describe Helpdesk::DashboardController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
+		@forum_category = create_test_category
+		@forum = create_test_forum(@forum_category)
 		@id = @account.activities.last.id
 	end
 
@@ -15,24 +17,26 @@ describe Helpdesk::DashboardController do
 
 	it "should display the Dashboard page" do
 		xhr :get, :index
-		response.body.should =~ /Announcements/
-		response.body.should =~ /This is a sample ticket/
-		response.body.should =~ /Test Account Forums/
+		response.body.should =~ /#{@forum.name}/
+		response.body.should =~ /#{@forum_category.name}/
 		response.should be_success
 	end
 
 	it "should display the activity_list without id" do
+		topic = create_test_topic(@forum)
 		get :activity_list
 		response.body.should =~ /Recent Activity/
-		response.body.should =~ /Feature Requests/
-		response.body.should =~ /Tips and Tricks/
+		response.body.should =~ /#{topic.title}/
+		response.body.should =~ /#{@forum.name}/
+		response.body.should =~ /#{@forum_category.name}/
 		response.should be_success
 	end
 
 	it "should display the activity_list with activity_id" do
+		cr_folder = create_cr_folder({:name => Faker::Name.name})
 		get :activity_list, :activity_id => @id
-		response.body.should =~ /Report a problem/
-		response.body.should =~ /Announcements/
+		response.body.should_not =~ /#{cr_folder.name}/
+		response.body.should =~ /#{@forum_category.name}/
 		response.should be_success
 	end
 

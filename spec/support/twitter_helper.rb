@@ -54,6 +54,36 @@ module TwitterHelper
     }
   end
   
+  def sample_tweets_array(feeds = true)
+    tweet_array = {
+      "statuses" => []
+    }
+    tweets = []
+    
+    if feeds
+      #Customer tweets
+      10.times do |n|
+        tweet =  sample_twitter_feed
+        tweet["text"] = "http://helloworld.com" if n == 8
+        tweet["user"]["description"] = "TestingGnip" if n == 9
+        tweets << tweet 
+      end
+      
+      #Brand tweet
+      10.times do |n|
+        tweet = sample_twitter_feed
+        tweet["user"]["screen_name"] = "TestingGnip"
+        tweet["in_reply_to_status_id"] = tweets[n]["id"] if n==2
+        tweets << tweet
+      end   
+      
+      tweet_array["statuses"] = tweets
+    end
+    response = {:body => tweet_array.to_json}
+    faraday_response = Faraday::Response.new(response)
+    OAuth2::Response.new(faraday_response)
+  end
+  
   def sample_dynamo_query_params
     {
       :member =>
@@ -166,7 +196,7 @@ module TwitterHelper
       "id_str" => "#{tweet_id}",
       "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
-          "id" => 2341632074,
+          "id" => "2341632074",
           "id_str" => "2341632074",
           "name" => "Save the Hacker",
           "screen_name" => "savethehacker",
@@ -248,7 +278,7 @@ module TwitterHelper
   
   def sample_twitter_object(parent_id = "")
     attrs = sample_twitter_feed.deep_symbolize_keys
-    attrs[:in_reply_to_user_id_str] = 2341632074
+    attrs[:in_reply_to_user_id_str] = "2341632074"
     twitter_feed = Twitter::Tweet.new(attrs)
   end
   
@@ -262,14 +292,14 @@ module TwitterHelper
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    while wait_for <= wait
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
-      if tweet.nil?
-        wait_for = wait_for + 1
-      else
-        break
-      end
-    end
+    #while wait_for <= wait
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
+      # if tweet.nil?
+      #   wait_for = wait_for + 1
+      # else
+      #   break
+      # end
+    #end
     return tweet
   end
 

@@ -7,6 +7,7 @@ describe Social::TwitterHandlesController do
 
   before(:all) do
     @agent_role = @account.roles.find_by_name("Agent")
+    @account.features.send(:social_revamp).destroy if @account.features?(:social_revamp)
   end
 
   before(:each) do
@@ -296,5 +297,9 @@ describe Social::TwitterHandlesController do
 
       handle.dm_thread_time.should be_eql(86400)
     end
+  end
+  
+  after(:all) do
+    @account.features.send(:social_revamp).create
   end
 end

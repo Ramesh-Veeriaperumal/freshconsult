@@ -41,7 +41,7 @@ describe "Social::Stream::Workers::Twitter" do
       posted_time = search_object.attrs[:statuses].first[:created_at]
       dynamo_entry = dynamo_feeds_for_tweet("feeds", hash_key, range_key, posted_time)
   
-      tweet = Social::Tweet.find_by_tweet_id(range_key)
+      tweet = @account.tweets.find_by_tweet_id(range_key)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       

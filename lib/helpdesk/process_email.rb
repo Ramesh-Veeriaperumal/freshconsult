@@ -10,7 +10,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
 
-  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
   attr_accessor :reply_to_email
@@ -63,6 +63,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     ticket = fetch_ticket(account, from_email, user)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+      ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
       add_email_to_ticket(ticket, from_email, user)
     else
       create_ticket(account, from_email, to_email, user, email_config)

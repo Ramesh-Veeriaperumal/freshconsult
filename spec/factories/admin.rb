@@ -1,7 +1,7 @@
 if ENV["RAILS_ENV"] == "test"
   Factory.define :group do |g|
-    g.name "group1"
-    g.description "test group one"
+    g.name { Faker::Company.name }
+    g.description { Faker::Lorem.sentence(10) }
   end
 
   Factory.define :agent do |a|
@@ -73,4 +73,7 @@ if ENV["RAILS_ENV"] == "test"
     t.name "TestingRoles"
   end
   
+  Factory.define :quest, :class => Quest do |t|
+    t.name "TestingQuest"
+  end
 end

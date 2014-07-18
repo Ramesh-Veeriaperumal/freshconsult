@@ -87,7 +87,7 @@ describe Freshfone::UsersController do
     create_freshfone_call
     @freshfone_call.update_attributes(:call_status => Freshfone::Call::CALL_STATUS_HASH[:default])
     post :in_call, {:outgoing => "true"}
-    json.should be_eql({:update_status => true, :call_sid => "CA9cdcef5973752a0895f598a3413a88d5"})
+    json.should be_eql({:update_status => true, :call_sid => "CA2db76c748cb6f081853f80dace462a04"})
   end
 
   it 'should build a new freshfone user if current user is not available' do 

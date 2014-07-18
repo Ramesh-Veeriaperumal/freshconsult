@@ -1310,10 +1310,10 @@ pl:
         success: Zaktualizowano użytkownika %{human_name}.
         failure: Nie można zaktualizować użytkownika %{human_name}.
     post:
-      deleted: Post pod tytułem ’{title}’ został usunięty.
+      deleted: Post pod tytułem ’%{title}’ został usunięty.
       page_not_found: Ten post nie został odnaleziony. Prawdopodobnie został usunięty lub wpisany adres jest niepoprawny.
     topic:
-      deleted: Temat &apos;{title}&apos; został usunięty.
+      deleted: Temat &apos;%{title}&apos; został usunięty.
       page_not_found: Nie można znaleźć tego wątku. Prawdopodobnie został usunięty lub wpisany adres jest niepoprawny.
     forum:
       page_not_found: Nie można znaleźć tego forum. Prawdopodobnie zostało usunięte lub wpisany adres jest niepoprawny.

@@ -2228,10 +2228,10 @@ es:
       update:
         success: "Se creó %{human_name}."
     post:
-      deleted: "La publicacion {title} fue eliminada"
+      deleted: "La publicacion %{title} fue eliminada"
       page_not_found: "La publicacion no fue encontrada. Puede estar mal escrita la direccion o fue eleminado"
     topic:
-      deleted: "El topico {title} fue borrado"
+      deleted: "El topico %{title} fue borrado"
       page_not_found: "No se encuentra el topico. puede estar mal escrito o fue eliminado"
     forum:
       page_not_found: "No se encuentra el Foro. Puede estar mal escrita la direccion o fue eleminado"

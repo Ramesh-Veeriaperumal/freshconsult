@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.eot");
-  src: font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.woff") format("woff"),
-       font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.ttf") format("truetype"),
-       font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.svg#glyphs") format("svg");
+  src: font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.eot");
+  src: font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.woff") format("woff"),
+       font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.ttf") format("truetype"),
+       font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_bbfb9f24a61044853b08c55811fcccad.svg#glyphs") format("svg");
+    src: font-url("glyphs_b8e9bcdd2eabb1d815baede203c764e4.svg#glyphs") format("svg");
   }
 }
 
@@ -50,6 +50,7 @@
 .ficon-ellipsis:before,
 .ficon-eye:before,
 .ficon-facebook:before,
+.ficon-file:before,
 .ficon-file-edit:before,
 .ficon-file-visible:before,
 .ficon-folder-o:before,
@@ -64,12 +65,14 @@
 .ficon-linkedin:before,
 .ficon-lock:before,
 .ficon-lock-open:before,
+.ficon-mail:before,
 .ficon-map-marker:before,
 .ficon-minus:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
 .ficon-open-in-new-window:before,
 .ficon-paperplane:before,
+.ficon-phone:before,
 .ficon-plus:before,
 .ficon-post-edit:before,
 .ficon-reorder:before,
@@ -129,6 +132,7 @@
 .ficon-ellipsis:before { content: "\f111"; }
 .ficon-eye:before { content: "\f112"; }
 .ficon-facebook:before { content: "\f113"; }
+.ficon-file:before { content: "\f142"; }
 .ficon-file-edit:before { content: "\f132"; }
 .ficon-file-visible:before { content: "\f133"; }
 .ficon-folder-o:before { content: "\f114"; }
@@ -143,12 +147,14 @@
 .ficon-linkedin:before { content: "\f11a"; }
 .ficon-lock:before { content: "\f11b"; }
 .ficon-lock-open:before { content: "\f11c"; }
+.ficon-mail:before { content: "\f143"; }
 .ficon-map-marker:before { content: "\f11d"; }
 .ficon-minus:before { content: "\f11e"; }
 .ficon-notice:before { content: "\f134"; }
 .ficon-notice-o:before { content: "\f135"; }
 .ficon-open-in-new-window:before { content: "\f13e"; }
 .ficon-paperplane:before { content: "\f11f"; }
+.ficon-phone:before { content: "\f144"; }
 .ficon-plus:before { content: "\f120"; }
 .ficon-post-edit:before { content: "\f136"; }
 .ficon-reorder:before { content: "\f137"; }

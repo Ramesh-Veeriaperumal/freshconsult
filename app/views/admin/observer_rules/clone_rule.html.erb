@@ -1,0 +1,13 @@
+<% content_for :helpcard do %>
+	<%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
+<h3 class="lead itil-hide"><%=t('.title')%></h3> 
+<div class="alert">
+	<%= (t('admin.observer_rules.clone_rule.clone_of') + " #{@va_rule.old_name}. " + t('admin.va_rules.remember_to_save')).html_safe%>
+</div>
+<hr>
+<% form_for :va_rule, @va_rule, :url => { :action => "create" }, :html => { :method => :post , :id => "ObserverForm" } do |f| %>
+	<%= generate_breadcrumbs(params, f, :extra_buttons_html => '<input type="hidden" name="save_json" id="savejson" value="" />'.html_safe) %>
+	<%= render :partial => "rule_form", :locals => { :f => f } %>
+<% end %>

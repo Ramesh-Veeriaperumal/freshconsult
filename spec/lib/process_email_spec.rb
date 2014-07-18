@@ -4,8 +4,8 @@ include EmailHelper
 describe Helpdesk::ProcessEmail do
 	before(:all) do
 		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
-		EmailConfig.delete_all "active=0"
-		@account.email_configs.first.update_attributes({:primary_role => true})
+		@account.email_configs.find_by_to_email("support@#{@account.full_domain}").update_attributes({:primary_role => true})
+		@account.reload
 		@comp = create_company
 	end
 

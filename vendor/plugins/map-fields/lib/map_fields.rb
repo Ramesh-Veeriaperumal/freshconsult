@@ -80,7 +80,7 @@ module MapFields
   end
 
   def content_of csv_file
-    csv_file.read.encode!('utf-8', :undef => :replace, :invalid => :replace, :replace => '')
+    csv_file.read.force_encoding('utf-8').encode('utf-16', :undef => :replace, :invalid => :replace, :replace => '').encode('utf-8')
   end
 
   def mapped_fields

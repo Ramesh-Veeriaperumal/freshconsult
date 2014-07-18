@@ -113,13 +113,14 @@ describe Social::TwitterHandle do
 
 
   it "should add custom streams if its search_keys are updated" do
+    @account.features.send(:social_revamp).destroy if @account.features?(:social_revamp)
     new_keys = ["freshservice", "freshchat"]
     @handle.update_attributes(:search_keys => new_keys)
     @handle.reload
     custom_stream_keys = @handle.twitter_streams.map{|stream| stream.name if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
     @handle.search_keys.delete(@handle.formatted_handle)
     custom_stream_keys.should == @handle.search_keys
-    
+    @account.features.send(:social_revamp).create
   end
 
 

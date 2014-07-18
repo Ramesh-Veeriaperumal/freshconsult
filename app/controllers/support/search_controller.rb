@@ -157,7 +157,7 @@ class Support::SearchController < SupportController
     end
 
     def filter_key(query = "")
-      email_regex  = Regexp.new('(\b[-a-zA-Z0-9.\'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)', nil, 'u')
+      email_regex  = Regexp.new('(\b[-a-zA-Z0-9.\'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)', nil, 'u')
       default_regex = Regexp.new('\w+', nil, 'u')
       enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
       unless enu.count > 0
