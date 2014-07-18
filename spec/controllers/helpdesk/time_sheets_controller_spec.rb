@@ -33,7 +33,7 @@ describe Helpdesk::TimeSheetsController do
                                      :user_id => @agent.id,
                                      :hhmm => "1:30",
                                      :billable => "1",
-                                     :executed_at => DateTime.now.strftime("%d/%m/%Y"),
+                                     :executed_at => DateTime.now.strftime("%d %b, %Y"),
                                      :timer_running => 1,
                                      :note => "#{now}"},
                     :_ => "",
