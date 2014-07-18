@@ -9,11 +9,11 @@ window.App = window.App || {};
     App.ProductNotification = {
         suggestDelay : null,
         url : "https://support.freshdesk.com",
-        articles: [{title : "Rebranding your support portal to reflect your theme", url : ""},
-                   {title : "Single Sign On / Remote Authentication in Freshdesk", url : ""},
-                   {title : "Customizing Ticket Form", url : ""},
-                   {title : "How to Publish your FreshTheme to the Themes Gallery?", url : ""}],
-        contacts: [{country : "America", phone : "+1 866 832-3090"},
+        articles: [{title : "Converting your Support Email into Freshdesk Tickets", url : "/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets"},
+                   {title : "Rebranding your Support Portal to reflect your Theme", url : "/support/solutions/articles/37563-rebranding-your-support-portal-to-reflect-your-theme"},
+                   {title : "Single Sign On / Remote Authentication in Freshdesk", url : "/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"},
+                   {title : "Using a Vanity Support URL and pointing the CNAME", url : "/support/solutions/articles/37590-using-a-vanity-support-url-and-pointing-the-cname"}],
+        contacts: [{country : "US / Canada", phone : "+1 866 832-3090"},
                    {country : "Europe", phone : "+44 800 808-5790"},
                    {country : "Australia", phone : "+61 894 687-228"}],    
         initialize: function () {
