@@ -5,8 +5,8 @@ module Delayed
     cattr_accessor :logger
     self.logger = if defined?(Merb::Logger)
       Merb.logger
-    elsif defined?(RAILS_DEFAULT_LOGGER)
-      RAILS_DEFAULT_LOGGER
+    elsif defined?(Rails.logger)
+      Rails.logger
     end
 
     def initialize(options={})

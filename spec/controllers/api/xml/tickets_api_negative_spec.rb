@@ -29,4 +29,9 @@ describe Helpdesk::TicketsController do
     expected.should be(true)
  	end
 
+  it "should throw invalid domain error for an invalid request" do
+    get :show, {:id => 1000000000, :format => 'xml'}, :content_type => 'application/xml'
+    result =  parse_xml(response)
+    result["errors"]["error"].should be_eql("Record Not Found")
+  end
 end

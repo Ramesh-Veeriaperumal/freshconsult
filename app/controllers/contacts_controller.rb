@@ -19,7 +19,7 @@ class ContactsController < ApplicationController
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
    
   def check_demo_site
-    if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
+    if AppConfig['demo_site'][Rails.env] == current_account.full_domain
       flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
     end
@@ -73,7 +73,7 @@ class ContactsController < ApplicationController
   
   def create  
     if build_and_save
-      flash[:notice] = t(:'flash.contacts.create.success')
+      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb',:locals => { :message => t('flash.contacts.create.success') } )
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
@@ -176,7 +176,7 @@ class ContactsController < ApplicationController
     @item.update_tag_names(params[:user][:tags]) # update tags in the user object
     if @item.update_attributes(params[cname])
       respond_to do |format|
-        flash[:notice] = t('merge_contacts.contact_updated')
+        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb', :locals => { :message => t('merge_contacts.contact_updated') } )
         format.html { redirect_to redirection_url }
         format.xml  { head 200}
         format.json { head 200}

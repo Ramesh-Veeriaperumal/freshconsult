@@ -16,7 +16,7 @@ describe Admin::Mobihelp::AppsController do
     end
 
     it "should list the mobihelp apps" do
-    get :index
+      get :index
       response.body.should =~ /Mobihelp Apps/i
     end
 

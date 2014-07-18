@@ -22,7 +22,7 @@
 		<% else %>
 			<span class="info_data"><%= t("solution_category.info2") %></span> 
       <% if privilege?(:publish_solution) %> -  
-        <%= link_to t('add_a_new_folder')[:create_new_folder], new_solution_category_folder_path(@item) %> 
+        <%= link_to t('add_a_new_folder'), new_solution_category_folder_path(@item) %> 
       <%end%>
 		<% end %>	
 	</div> 

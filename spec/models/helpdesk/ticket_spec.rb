@@ -4,9 +4,9 @@ describe Helpdesk::Ticket do
 
   before(:all) do
     setup_data
-    @new_agent = add_agent_to_account(@account, {:name => "testing", :email => "unit@testing.com",
-                                        :token => "xtoQaHDQ7TtTLQ5OKt9", :active => 1, :role => 4,
-                                        :group_id => @group.id})
+    @new_agent = add_agent_to_account(@account, {:name => "testing", :email => Faker::Internet.email,
+                                                 :active => 1, :role => 4,
+                                                 :group_id => @group.id})
 
 
     @new_ticket = create_ticket({:status => 2}, @group)
@@ -26,9 +26,9 @@ describe Helpdesk::Ticket do
     @group.ticket_assign_type = 1
     @group.save!
 
-    @agent = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com",
-                                        :token => "xtoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
-                                        })
+    @agent = add_agent_to_account(@account, {:name => "testing2", :email => Faker::Internet.email,
+                                             :active => 1, :role => 1
+                                            })
     @agent.available = 1
     @agent.save!
 
@@ -41,13 +41,13 @@ describe Helpdesk::Ticket do
   end
 
   it "should be assigning tickets to agents in round robin" do
-    @agent2 = add_agent_to_account(@account, {:name => "testing", :email => "ticket@testing.com",
-                                        :token => "xtoPaHDQ7TtTLQ5OKt9", :active => 1, :role => 4,
-                                        :group_id => @group.id})
+    @agent2 = add_agent_to_account(@account, {:name => "testing", :email => Faker::Internet.email,
+                                              :active => 1, :role => 4,
+                                              :group_id => @group.id})
 
-    @agent3 = add_agent_to_account(@account, {:name => "testing", :email => "ticket1@testing.com",
-                                        :token => "xtoPaHDQ7TtTLQ4OKt9", :active => 1, :role => 4,
-                                        :group_id => @group.id})
+    @agent3 = add_agent_to_account(@account, {:name => "testing", :email => Faker::Internet.email,
+                                              :active => 1, :role => 4,
+                                              :group_id => @group.id})
 
     @group.ticket_assign_type.should == Group::TICKET_ASSIGN_TYPE[:round_robin]
     #created 2 more agents. so totally 3 agents and 3 tickets.

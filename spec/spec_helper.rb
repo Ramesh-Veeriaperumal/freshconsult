@@ -2,11 +2,19 @@ require 'rubygems'
 require 'spork'
 
 require 'simplecov'
+require 'simplecov-csv'
+
+Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
+
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
   add_filter 'test/'
   add_filter 'app/controllers/subscription_admin'
+  add_filter 'reports'
+  add_filter 'search'
+  add_filter SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash. 
+
   #add_filter '/vendor/'
   add_group 'mailgun', 'lib/helpdesk/email'
   add_group 'email', 'lib/helpdesk/process_email.rb'
@@ -14,9 +22,16 @@ SimpleCov.start do
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
   add_group 'libs', 'lib/'
+  # add_group 'reports', 'reports'
+  # add_group 'search', 'search'
 end
 
 SimpleCov.coverage_dir 'tmp/coverage'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::CSVFormatter,
+]
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
@@ -54,7 +69,12 @@ Spork.prefork do
   'spec/support/va/tester/condition/supervisor.rb',
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
-  'spec/support/va/test_case.rb'].each do |file_path| require "#{RAILS_ROOT}/#{file_path}" end
+  'spec/support/va/test_case.rb',
+  'spec/support/wf/filter_functional_tests_helper.rb',
+  'spec/support/wf/test_case_generator.rb',
+  'spec/support/wf/operator_helper.rb',
+  'spec/support/wf/option_selector.rb',
+  'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
   Spec::Runner.configure do |config|
@@ -64,7 +84,7 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.mock_with :mocha
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.include AccountHelper
     config.include AgentHelper
     config.include TicketHelper
@@ -91,6 +111,9 @@ Spork.prefork do
     config.include ProductsHelper
     config.include WfFilterHelper, :type => :controller
     config.include S3Helper
+    config.include IntegrationsHelper
+    config.include QuestHelper
+    config.include Wf::FilterFunctionalTestsHelper
 
     config.before(:all) do
       @account = create_test_account
@@ -144,8 +167,8 @@ Spork.prefork do
     end
 
     config.after(:suite) do
-      Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
-        File.delete(file) unless file.include?("placeholder.txt")
+      Dir["#{Rails.root}/spec/fixtures/files/*"].each do |file|
+        File.delete(file) if file.include?("tmp15.doc")
       end
     end
 
@@ -165,7 +188,7 @@ Spork.prefork do
     #
     # You can also declare which fixtures to use (for example fixtures for test/fixtures):
     #
-    # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    # config.fixture_path = Rails.root + '/spec/fixtures/'
     #
     # == Mock Framework
     #

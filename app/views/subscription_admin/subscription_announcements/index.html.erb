@@ -1,33 +1,28 @@
 <div class="row">            
 	<div class="span10">
-	<div class="page-header">
-		<%= link_to('New announcement', new_admin_subscription_announcement_path, :class => "btn btn-success pull-right") %>                                                                                                                        
-		<h1><%= @page_title = 'Announcements' %></h1>
+		<div class="page-header">
+			<%= link_to('New announcement', new_admin_subscription_announcement_path, :class => "btn btn-success pull-right") %>    
+			<h1><%= @page_title = 'Announcements' %></h1>
+		</div>
+		<table id="anouncements" class="table table-bordered">
+			<h3 clas="heading">Maintenance Notifications</h3>
+			<tr>
+				<th>Display between</th>
+				<th>Title</th>
+			    <th colspan="2">Message</th>
+			</tr>
+		  	<%= render :partial => "announcement", :collection => @maintenance, :locals => {:type => "maintenance"} %>
+		</table>
+		
+		<table id="anouncements" class="table table-bordered">
+			<h3 class="heading">Product Notifications</h3>
+			<tr>
+				<th>Title</th>
+				<th>Url</th>			    
+				<th colspan="2">Message</th>
+			</tr>
+			<%= render :partial => "announcement", :collection => @product , :locals => {:type => "product"}%>
+		</table>
 	</div>
-	<table id="anouncements" class="table table-bordered">
-	  <tr>
-	    <th>Display between</th>
-	    <th colspan="2">Message</th>
-	  </tr>
-	  <% @announcements.each do |announcement| %>
-	    <tr>
-	      <td class="span4">    
-					<div>
-						From ~
-						<%= announcement.starts_at.to_s %> 
-					</div>         	
-					<div>
-						To ~
-	      		<%= announcement.ends_at.to_s %>
-					</div>
-				</td>
-				<td><%= announcement.message %></td>
-				<td>
-					<%= link_to('Edit', edit_admin_subscription_announcement_path(announcement), :class => "btn btn-small") %>
-				</td>
-	    </tr>
-	  <% end %>
-	</table>    
-	</div>     
 </div>
 

@@ -90,6 +90,7 @@ en:
   no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
   sidebar_help: "Help"
+  support_title: "Support"
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -456,7 +457,27 @@ en:
       ticket_list: "User tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
-
+  portal_meta:
+    titles:
+      portal_home: "Support"
+      user_signup: "Signup for a new account"
+      user_login: "Sign into"
+      forgot_password: "Forgot password"
+      profile_edit: "Edit your profile"
+      search: "Search"
+      solution_home: "Solutions"
+      solution_category: "Solutions category"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions"
+      discussions_category: "Discussions category"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "Start a discussions"
+      submit_ticket: "Submit a ticket"
+      ticket_list: "Your tickets"
+      ticket_view: "Ticket details"
+      my_topics: "My Topics"
   admin:
     social:
       helpcard:
@@ -936,6 +957,9 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
+      clone_rule:
+        title: Supervisor - Clone Rule
+        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -959,6 +983,9 @@ en:
         title: Observer - New Rule
       edit:
         title: Observer - Edit Rule
+      clone_rule:
+        title: Observer - Clone Rule
+        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -983,6 +1010,7 @@ en:
     va_rules:
       index:
         human_name: Dispatch’r Rule
+      remember_to_save: 'After updating, please remember to save it.'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -1024,6 +1052,9 @@ en:
         human_name: Scenario
       edit:
         title: Edit Scenario
+      clone_rule:
+        title: Clone Scenario
+        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -1627,6 +1658,7 @@ en:
       to_agent: The contact has been successfully converted to an Agent
       create:
         success: The contact has been created successfully.
+        view_contact: View Contact
       cancel: cancel
       info_select: Please select at least 1 user.
       unspamed: The contact(s) has been successfully marked as Unspam.
@@ -1680,10 +1712,10 @@ en:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
     post:
-      deleted: "Post of '{title}' was deleted."
+      deleted: "Post of %{title} was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
-      deleted: "Topic '{title}' was deleted."
+      deleted: "Topic %{title} was deleted."
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
@@ -1940,6 +1972,7 @@ en:
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
+  clone: Clone
   disable: Disable
   enable: Enable
   accounts:
@@ -2098,6 +2131,7 @@ en:
   dispatch:
     conditions: Conditions
     actions: Actions
+    clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
     cascade: all matching rules
@@ -2107,6 +2141,8 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
+    clone_of: This Dispatch'r is a clone of
+    copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
     rule_name: Rule Name
@@ -3632,7 +3668,7 @@ en:
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
-  scenario_label: Scenario Label
+  scenario_label: Scenario Name
   email: Email
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
@@ -3826,6 +3862,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
+        customer_responded_overdue: "Overdue"
       tabular_view:
         title: "Title"
         posted: "Posted"
@@ -5055,9 +5092,11 @@ en:
       subheader_layout: Portal layout
       subheader_pages: Portal pages
       pages_help_message: Here you will be able to customize body area of individual pages.
+      head_layout_title: Head
       header_layout_title: Header
       footer_layout_title: Footer
       pagelayout_title: Page layout
+      head_layout_help_message: Modify the head section of your portal html.
       header_layout_help_message: Change the header area of your support portal
       footer_layout_help_message: Change the footer area of your support portal
       pagelayout_help_message: Customize the entire layout of your support portal
@@ -5381,10 +5420,13 @@ en:
       block_number_title: "Block number"
     ticket:
       recording: "Play message"
-      ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}"
+      ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      ticket_desc: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
+      voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
-      dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
+      dial_a_number: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"
@@ -5545,6 +5587,11 @@ en:
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
+    msgbox_placeholder_title: "Reply box placeholder"
+    msg_waiting_agent_title: "Status Message while waiting for agent"
+    msg_joining_agent_title: "Message when agent joins chat"
+    msg_leaving_agent_title: "Message when agent leaves chat"
+    help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
@@ -5688,8 +5735,9 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
-    agent_joined_msg: "$ has joined the chat"
-    agent_left_msg: "$ has left the chat"
+    agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_left_msg: "{{agent_name}} has left the chat"
+    help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
@@ -5996,3 +6044,16 @@ en:
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."
+  notification:
+    whats_new_on_freshdesk: " What's New On Freshdesk "
+    see_all: "See All"
+    frequently_referred_articles: "Frequently referred "
+    browse: "Browse"
+    get_help: "Get Help"
+    have_question: "Have a question?"
+    submit_feedback: "Submit Feedback"
+    contact_support: " Contact Support "
+    search_articles: "Search Article"
+    contact_us: "Contact Us"
+    whats_new: "What's New"
+

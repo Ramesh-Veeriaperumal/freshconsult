@@ -20,7 +20,8 @@
 
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
-        <%= f.label(:reply_email, "From:" ) %>
+        <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid }) %> 
+        <%= f.label(:reply_email, "From:", :class => "mailaddr-label from" ) %>
         &nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %>
       </li>       
       <li class="inline-field field clearField continous message">
@@ -32,7 +33,7 @@
 
     <div class="btn-toolbar">
       <span>
-        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body") %>
       </span>
 
       <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">

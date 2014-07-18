@@ -24,7 +24,7 @@ describe Helpdesk::TicketsController do
 
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
-    post :create, :helpdesk_ticket => {:email => "rachel@freshdesk.com",
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Ticket #{now}",
                                        :ticket_type => "Question",
@@ -38,7 +38,6 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
-
   # Ticket Updates
 
     it "should edit a ticket" do
@@ -46,7 +45,7 @@ describe Helpdesk::TicketsController do
       get :edit, :id => @test_ticket.display_id
       response.body.should =~ /Edit ticket/
       put :update, :id => @test_ticket.display_id,
-                   :helpdesk_ticket => { :email => "rachel@freshdesk.com",
+                   :helpdesk_ticket => { :email => Faker::Internet.email,
                                          :requester_id => "",
                                          :subject => "Edit Ticket #{now}",
                                          :ticket_type => "Question",
@@ -222,6 +221,22 @@ describe Helpdesk::TicketsController do
       @account.tickets.find(@test_ticket.id).deleted.should be_true
     end
 
+    it "should unspam a ticket from spam view" do
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      tkt2 = create_ticket({ :status => 2 }, @group)
+      spam_tkt_arr = []
+      spam_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+      put :spam, :id => "multiple", :ids => spam_tkt_arr
+      tkt1.reload
+      tkt2.reload
+      get :filter_options, :filter_name => "spam"
+      put :unspam, :id => "multiple", :ids => spam_tkt_arr
+      tkt1.reload
+      tkt2.reload
+      @account.tickets.find(tkt1.id).spam.should be_false
+      @account.tickets.find(tkt2.id).spam.should be_false
+    end
+
   # Tickets filter
     it "should return ticket for tickets created today in created at filter" do
       created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_day.to_i}"
@@ -333,6 +348,65 @@ describe Helpdesk::TicketsController do
       }
       (assigns(:items).include? ticket_created).should be_true
       (response.body.include? created_at_timestamp).should be_true
+    end
+
+    it "should show the custom view save popup" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_week.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_week+1.hour}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "created_at", operator: "is_greater_than", ff_name: "default", value: "week"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      get :custom_view_save, :operation => "save_as"
+      response.should render_template "helpdesk/tickets/customview/_new.html.erb"
+    end
+
+    it "should return new tickets page through topic" do
+      forum_category = create_test_category
+      forum = create_test_forum(forum_category)
+      topic = create_test_topic(forum)
+      publish_topic(topic)
+      get :new , {"topic_id" => topic.id }
+      response.should render_template "helpdesk/tickets/new.html.erb"
+      response.body.should =~ /"#{topic.title}"/
+    end
+
+    it "should display latest note for ticket" do
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      body = "Latest note for the ticket is being displayed"
+      tkt1_note = create_note({:source => tkt1.source,
+                               :ticket_id => tkt1.id,
+                               :body => body,
+                               :user_id => @agent.id})
+      tkt1.reload
+      tkt1_note.reload
+      get :latest_note , :id => tkt1.display_id
+      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.body.should =~ /#{body}/
+      tkt2 = create_ticket({ :status => 2 }, @group)
+      tkt2.reload
+      get :latest_note , :id => tkt2.display_id
+      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.body.should =~ /#{tkt2.description}/
+    end
+
+    # Empty Trash
+    it "should empty(delete) all tickets in trash view" do
+      tkt1 = create_ticket({ :status => 2 }, @group)
+      tkt2 = create_ticket({ :status => 2 }, @group)
+      delete_tkt_arr = []
+      delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+      delete :destroy, :id => "multiple", :ids => delete_tkt_arr
+      Resque.inline = true
+      delete :empty_trash
+      Resque.inline = false
+      @account.tickets.find_by_id(tkt1.id).should be_nil
+      @account.tickets.find_by_id(tkt2.id).should be_nil
     end
 
 end

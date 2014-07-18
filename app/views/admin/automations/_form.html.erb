@@ -4,7 +4,7 @@
 <ul class="ui-form observer no-background">
 	<li class="row-fluid">
 		<div class="row-fluid">
-			<%= f.label :name, t('scenario_label'), :class => "span2" %>
+			<%= f.label :name, (t('scenario_label') + "<span class='required_star'>*</span>").html_safe, :class => "span2" %>
 			<div class="span8">
 				<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('automations.info5')%>"</em> </label>
 				<%= f.text_field :name, :class => "required" %>
@@ -37,7 +37,10 @@
 	</li>
 </ul>
 
+
+
 <div class="button-container">
+	<%= link_to(t('clone'), clone_rule_admin_automation_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%> 
 	<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
 	<input type="submit" class="btn btn-primary" value="<%=t('save')%>" />
 </div>

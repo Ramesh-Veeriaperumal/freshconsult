@@ -42,6 +42,16 @@ describe Admin::VaRulesController do
     get :edit, :id =>@test_va_rule.id
     response.should render_template "admin/va_rules/edit.html.erb"
   end
+
+  it "should clone a dispatchr rule" do
+    get :clone_rule, :id => @test_va_rule.id
+    response.should render_template "admin/va_rules/clone_rule.html.erb"
+    (@test_va_rule.id == assigns(:va_rule).id).should be_true
+    (@test_va_rule.action_data == assigns(:va_rule).action_data).should be_true
+    (@test_va_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+  end
+
+
   it "should update a dispatchr rule" do
     put :update, {:va_rule=>{"name"=>@test_va_rule.name+" - temp", "description"=>Faker::Lorem.sentence(3)},
                   :filter_data=>[{:name=>"subject", :operator=>"is", :value=>"temp"}].to_json,

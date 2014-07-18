@@ -9,7 +9,7 @@ module EmailCommands
         custom_ff_fields = {}
         email_cmds = $1.gsub("\\r\\n","").gsub("\\n","").gsub(/[”“]/,'"') unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
-        RAILS_DEFAULT_LOGGER.debug "The email commands are : #{cmds}"
+        Rails.logger.debug "The email commands are : #{cmds}"
         cmds.each_pair do |cmd, value|
           begin
             cmd = cmd.downcase
@@ -82,7 +82,7 @@ module EmailCommands
     ticket.responder = nil if value && (value.casecmp("none") == 0)
   end
   
-  def product(ticket, value, user, note)
+  def product(ticket, value, user, note) #possible dead code, reconsider for removing this command
     product = ticket.account.products.find_by_name(value)
     ticket.product = product unless product
   end

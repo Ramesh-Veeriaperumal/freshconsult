@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
+require 'spec_helper'
 
 include GnipHelper
 include DynamoHelper
@@ -7,7 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::TwitterController do
-  
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -19,7 +19,7 @@ describe Social::TwitterController do
     end
     @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
     update_db(@default_stream) unless GNIP_ENABLED
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
@@ -58,7 +58,7 @@ describe Social::TwitterController do
       end
       
       #Pushed tweet should not be a ticket
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should be_nil
       
       @stream_id = "#{@account.id}_#{@default_stream.id}"
@@ -67,7 +67,7 @@ describe Social::TwitterController do
       post :create_fd_item, fd_item_params
       
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       
@@ -83,7 +83,7 @@ describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{(Time.now.utc.to_f*100000).to_i}", @stream_id, SEARCH_TYPE[:custom])
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
     end
@@ -96,7 +96,7 @@ describe Social::TwitterController do
       
       #Check ticket
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       ticket = tweet.tweetable
@@ -109,7 +109,7 @@ describe Social::TwitterController do
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
       Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
       
-      tweet = Social::Tweet.find_by_tweet_id(reply_tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
       tweet.is_note?.should be_true
     end
@@ -133,7 +133,7 @@ describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:custom], "#{tweet_id}")
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       ticket = tweet.tweetable
@@ -146,7 +146,7 @@ describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
     end
     
@@ -202,7 +202,7 @@ describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:saved], "#{tweet_id}")
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       ticket = tweet.tweetable
@@ -221,7 +221,7 @@ describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       
       if GNIP_ENABLED
@@ -361,7 +361,7 @@ describe Social::TwitterController do
       
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
       ticket = tweet.tweetable
@@ -380,7 +380,7 @@ describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
      
       hash_key = "#{@account.id}_#{@default_stream.id}"
@@ -531,6 +531,7 @@ describe Social::TwitterController do
   end
   
   it "should retrieve all user info on clicking on the user link" do
+    Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user((Time.now.utc.to_f*100000).to_i)])
     get :user_info, {
         :user => {
           :name => "GnipTesting", 
@@ -544,8 +545,10 @@ describe Social::TwitterController do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all

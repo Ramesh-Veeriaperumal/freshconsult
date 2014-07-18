@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
+require 'spec_helper'
 
 describe Discussions::ForumsController do
 
@@ -177,9 +177,9 @@ describe Discussions::ForumsController do
 				forum = create_test_forum(@forum_category)
 				reorder_hash[forum.id] = position_arr[i] 
 			end
-			xhr :put, :reorder, :format => "js", "reorderlist" => reorder_hash.to_json
-			@forum_category.forums.each do |current_forum|
-				current_forum.position.should be_eql(reorder_hash[current_forum.id])
+			put :reorder, :format => "js", "reorderlist" => reorder_hash.to_json, :category_id => @forum_category.id
+			@forum_category.forums.each do |f|
+				f.position.should be_eql(reorder_hash[f.id])
 			end
 			response.code.should be_eql("200")
 			put :reorder, "reorderlist" => reorder_hash.to_json

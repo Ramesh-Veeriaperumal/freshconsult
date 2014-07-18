@@ -46,6 +46,17 @@ describe Social::TwitterHandle do
     end
   end
   
+   
+  it "should requeue to gnip on calling on a encountering an error in gnip add or delete" do
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      error_response = Net::HTTPResponse.new("http",401,"")
+      GnipRule::Client.any_instance.stubs(:add).returns(error_response, add_response) 
+    end
+    handle = create_test_twitter_handle(@account)
+  end
+
+  
   it "should create ticket rule for the dm stream if 'capture_dm_as_ticket' is selected " do
     @handle.update_attributes(:capture_dm_as_ticket => true)
     @handle.update_ticket_rules
@@ -63,6 +74,9 @@ describe Social::TwitterHandle do
   it "should delete the default gnip rule and the default streams if account is suspended" do
     GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
     Resque.inline = true
+    @handle.account.subscription.update_attributes(:state => "trial") 
+    @handle.reload
+    
     current_state = @handle.account.subscription.state
     handle_id = @handle.id
 
@@ -113,13 +127,14 @@ describe Social::TwitterHandle do
 
 
   it "should add custom streams if its search_keys are updated" do
+    @account.features.send(:social_revamp).destroy if @account.features?(:social_revamp)
     new_keys = ["freshservice", "freshchat"]
     @handle.update_attributes(:search_keys => new_keys)
     @handle.reload
     custom_stream_keys = @handle.twitter_streams.map{|stream| stream.name if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
     @handle.search_keys.delete(@handle.formatted_handle)
     custom_stream_keys.should == @handle.search_keys
-    
+    @account.features.send(:social_revamp).create
   end
 
 

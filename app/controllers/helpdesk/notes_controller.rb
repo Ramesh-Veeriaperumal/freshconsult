@@ -111,11 +111,19 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def update
+    build_attachments @item, :helpdesk_note
     if @item.update_note_attributes(params[nscname])
       post_persist
       flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
     else
       edit_error
+    end
+  end
+
+  def agents_autocomplete
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    respond_to do |format|
+      format.html { render :layout => false }
     end
   end
 

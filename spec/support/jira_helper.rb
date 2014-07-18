@@ -29,7 +29,7 @@ module JiraHelper
       :local_integratable_type => "issue-tracking",
       :application_id => @installed_application.application_id,
       :body => {:fields => {:project => {:id => "10000"}, :issuetype => {:id => "1"},
-                :summary => "rspec ticket - testing", :customfield_12100 => "2", 
+                :summary => "rspec ticket - testing", 
                 :reporter => {:name => @installed_application.configs_username}, :description => @installed_application.configs_jira_note, 
                 :priority => {:id => "1"}}}.to_json }
   end

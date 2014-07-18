@@ -7,7 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Admin::Social::TwitterStreamsController do
-  
+  integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -20,7 +20,7 @@ describe Admin::Social::TwitterStreamsController do
     end
     @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
     update_db(@default_stream) unless GNIP_ENABLED
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
@@ -40,7 +40,7 @@ describe Admin::Social::TwitterStreamsController do
   end
   
   describe "GET #edit" do
-    it "should render the create stream page when create a new stream is clicked" do
+    it "should render the create stream page when create a new stream is clicked for global access type" do
       get :edit, {
         :id => @default_stream.id
       }
@@ -137,7 +137,15 @@ describe Admin::Social::TwitterStreamsController do
       @handle.dm_stream.ticket_rules.first.action_data[:group_id].should eql(2)
       @default_stream.accessible[:access_type].should eql(2)
     end
-  
+    
+    it "should render the create stream page when create a new stream is clicked for group access type" do
+      get :edit, {
+        :id => @default_stream.id
+      }
+      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+    end
+    
+
     it "should update a stream create/delete ticket rules if the includes is not empty and remove rules of deleted" do    
       stream_name = "#{Faker::Lorem.words(1)}"
       includes = Faker::Lorem.words(1)
@@ -227,9 +235,10 @@ describe Admin::Social::TwitterStreamsController do
                           }
                         ]
                       }
-      
+                      
+      new_stream.reload
       new_stream.ticket_rules.count.should eql(2)
-      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule includes"])
+      new_stream.ticket_rules.first[:filter_data][:includes].should eql(["Ticket rule updated"])
     end
   end
   
@@ -245,8 +254,10 @@ describe Admin::Social::TwitterStreamsController do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all

@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :business_calendars, :class =>BusinessCalendar do |bc|
     bc.name "Test hours"
     bc.description "Testing business hours"

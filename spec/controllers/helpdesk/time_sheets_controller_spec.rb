@@ -16,13 +16,24 @@ describe Helpdesk::TimeSheetsController do
     log_in(@agent)
   end
 
+  it "should render the index page" do
+    get :index, :ticket_id => @test_ticket.display_id
+    response.should render_template("helpdesk/time_sheets/index")
+  end
+
+  it "should render the add-time form" do
+    ticket = create_ticket
+    get :new, :ticket_id => ticket.display_id
+    response.should render_template "helpdesk/time_sheets/new"
+  end
+
   it "should create a new timer" do
     now = (Time.now.to_f*1000).to_i
     post :create, { :time_entry => { :workable_id => @test_ticket.id,
                                      :user_id => @agent.id,
                                      :hhmm => "1:30",
                                      :billable => "1",
-                                     :executed_at => "02/19/2014",
+                                     :executed_at => DateTime.now.strftime("%d %b, %Y"),
                                      :timer_running => 1,
                                      :note => "#{now}"},
                     :_ => "",
@@ -30,6 +41,18 @@ describe Helpdesk::TimeSheetsController do
                   }
     @test_timesheet = @account.time_sheets.find_by_workable_id(@test_ticket.id)
     @test_timesheet.note.should be_eql("#{now}")
+  end
+
+  it "should render the edit timesheet form" do
+    ticket = create_ticket
+    time_sheet = Factory.build(:time_sheet, :user_id => @agent.id,
+                                            :workable_id => ticket.id,
+                                            :account_id => @account.id,
+                                            :billable => 1,
+                                            :note => "")
+    time_sheet.save
+    get :edit, :ticket_id => ticket.display_id, :id => time_sheet.id
+    response.should render_template "helpdesk/time_sheets/edit"
   end
 
   it "should edit a timer" do

@@ -6,7 +6,8 @@ describe PasswordResetsController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@test_email = @account.users.first.email
+		test_user = add_test_agent(@account)
+		@test_email = test_user.email
 	end
 
 	before(:each) do
@@ -21,8 +22,8 @@ describe PasswordResetsController do
 	it "should create new password" do
 		post :create, :email => @test_email
 		response.session[:flash][:notice].should eql "Instructions to reset your password have been emailed to you. Please check your email."
-        response.body.should =~ /redirected/
-        Delayed::Job.last.handler.should include("A request to change your password has been made.")
+		response.body.should =~ /redirected/
+		Delayed::Job.last.handler.should include("A request to change your password has been made.")
 	end
 
 	it "should create new password" do
@@ -45,7 +46,7 @@ describe PasswordResetsController do
 	end
 
 	it "should edit existing password" do
-		user = User.find_by_email(@test_email)
+		user = @account.users.find_by_email(@test_email)
 		token = user.perishable_token
 		get :edit, :id => token
 		response.body.should =~ /Change My Password/
@@ -59,7 +60,7 @@ describe PasswordResetsController do
 	end
 
 	it "should update existing password" do
-		user = User.find_by_email(@test_email)
+		user = @account.users.find_by_email(@test_email)
 		token = user.perishable_token
 		put :update, :id => token, :user =>{:password =>"[FILTERED]"}
 		response.session[:flash][:notice].should eql "Password successfully updated"

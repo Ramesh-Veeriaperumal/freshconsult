@@ -5,31 +5,28 @@ module TwitterHelper
   
   def create_test_twitter_handle(test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    last_handle_id = "#{(Time.now.utc.to_f*100000).to_i}"
-    @handle = Factory.build(:twitter_handle, :account_id => account.id, :twitter_user_id => last_handle_id)
-    @handle.save()
-    @handle.reload
-    @handle
+    handle = Factory.build(:twitter_handle, :account_id => account.id)
+    handle.save()
+    handle.reload
+    handle
   end
 
   
-  def create_test_custom_twitter_stream(test_account=nil)
-    account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    @custom_stream = Factory.build(:twitter_stream, :account_id => account.id, :social_id => @handle.id)
-    @custom_stream.save()
-    @custom_stream.reload
-    @custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
-    @custom_stream
+  def create_test_custom_twitter_stream(handle)
+    account = @account
+    custom_stream = Factory.build(:twitter_stream, :account_id => account.id, :social_id => handle.id)
+    custom_stream.save()
+    custom_stream.reload
+    custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
+    custom_stream
   end
   
   def create_test_ticket_rule(stream, test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    account.make_current
-    @ticket_rule = Factory.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
-    @ticket_rule.save
-    @ticket_rule
+    ticket_rule = Factory.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
+    ticket_rule.filter_data = {:includes => ['@TestingGnip']}
+    ticket_rule.save
+    ticket_rule
   end
   
   def push_tweet_to_dynamo(tweet_id, rule = @rule, time = Time.now.utc.iso8601, reply = nil, sender_id = nil)
@@ -52,6 +49,36 @@ module TwitterHelper
         "object_id" => {:s=>"feed:#{tweet_id}"}
       }
     }
+  end
+  
+  def sample_tweets_array(feeds = true)
+    tweet_array = {
+      "statuses" => []
+    }
+    tweets = []
+    
+    if feeds
+      #Customer tweets
+      10.times do |n|
+        tweet =  sample_twitter_feed
+        tweet["text"] = "http://helloworld.com" if n == 8
+        tweet["user"]["description"] = "TestingGnip" if n == 9
+        tweets << tweet 
+      end
+      
+      #Brand tweet
+      10.times do |n|
+        tweet = sample_twitter_feed
+        tweet["user"]["screen_name"] = "TestingGnip"
+        tweet["in_reply_to_status_id"] = tweets[n]["id"] if n==2
+        tweets << tweet
+      end   
+      
+      tweet_array["statuses"] = tweets
+    end
+    response = {:body => tweet_array.to_json}
+    faraday_response = Faraday::Response.new(response)
+    OAuth2::Response.new(faraday_response)
   end
   
   def sample_dynamo_query_params
@@ -154,7 +181,7 @@ module TwitterHelper
   
   def sample_twitter_feed
     text = Faker::Lorem.words(10).join(" ")
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    tweet_id = get_social_id
     in_reply_to_status_id_str = (1.days.ago.utc.to_f*100000).to_i
     twitter_feed = {
       "query" => "",
@@ -166,7 +193,7 @@ module TwitterHelper
       "id_str" => "#{tweet_id}",
       "in_reply_to_status_id_str" => "#{in_reply_to_status_id_str}",
       "user" =>  {
-          "id" => 2341632074,
+          "id" => "2341632074",
           "id_str" => "2341632074",
           "name" => "Save the Hacker",
           "screen_name" => "savethehacker",
@@ -208,7 +235,7 @@ module TwitterHelper
   
   def sample_twitter_tweet_object
     attrs = {
-      :id => (Time.now.utc.to_f*100000).to_i, 
+      :id => get_social_id, 
       :retweet_count => 1
     }
     twitter_tweet = Twitter::Tweet.new(attrs)
@@ -218,7 +245,7 @@ module TwitterHelper
   
    def sample_search_results_object
     attrs = {
-      :id => (Time.now.utc.to_f*100000).to_i,
+      :id => get_social_id,
       :statuses => [],
       :search_metadata => {
                 :max_id =>  250126199840518145,
@@ -248,28 +275,21 @@ module TwitterHelper
   
   def sample_twitter_object(parent_id = "")
     attrs = sample_twitter_feed.deep_symbolize_keys
-    attrs[:in_reply_to_user_id_str] = 2341632074
+    attrs[:in_reply_to_user_id_str] = "2341632074"
     twitter_feed = Twitter::Tweet.new(attrs)
   end
   
-  def send_tweet_and_wait(feed, wait=2, fd_counter=nil)
+  def send_tweet_and_wait(feed, fd_counter=nil)
     #Moking send tweet to sqs
     tweet_id = feed["id"].split(":").last.to_i
-    tweet = wait_for_tweet(tweet_id, feed, wait, fd_counter)
+    tweet = wait_for_tweet(tweet_id, feed, fd_counter)
   end
 
-  def wait_for_tweet(tweet_id, feed, wait=2, fd_counter=nil)
+  def wait_for_tweet(tweet_id, feed, fd_counter=nil)
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    while wait_for <= wait
-      tweet = Social::Tweet.find_by_tweet_id(tweet_id)
-      if tweet.nil?
-        wait_for = wait_for + 1
-      else
-        break
-      end
-    end
+    tweet = @account.tweets.find_by_tweet_id(tweet_id)
     return tweet
   end
 
@@ -291,7 +311,7 @@ module TwitterHelper
   end
   
   def sample_twitter_dm(twitter_id, screen_name, time)
-    tweet_id = (Time.now.utc.to_f*100000).to_i
+    tweet_id = get_social_id
     user_params = {
       :id => "#{twitter_id}", 
       :screen_name => "#{screen_name}", 
@@ -308,6 +328,10 @@ module TwitterHelper
       :sender => user_params
     }
     return dm_data
+  end
+
+  def get_social_id
+    (Time.now.utc.to_f*1000000).to_i
   end
 
 end

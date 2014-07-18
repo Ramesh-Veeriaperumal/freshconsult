@@ -1,5 +1,5 @@
 require 'spec_helper'
-include ActionController::TestProcess
+#include ActionController::TestProcess
 
 describe Helpdesk::AttachmentsController do
   integrate_views

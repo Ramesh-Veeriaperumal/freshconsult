@@ -86,7 +86,7 @@ include Mobile::Actions::Push_Notifier
   def opensocial_google
     begin
       Account.reset_current_account
-      cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
+      cert_file  = "#{Rails.root}/config/cert/#{params['xoauth_public_key']}"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
       container = params['opensocial_container']
@@ -201,11 +201,12 @@ include Mobile::Actions::Push_Notifier
     session.delete :original_user if session.has_key?(:original_user)
 
     flash.clear if mobile?
-	remove_logged_out_user_mobile_registrations if is_native_mobile?
+   remove_logged_out_user_mobile_registrations if is_native_mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
-    if current_account.sso_enabled? and !current_account.sso_logout_url.blank?
-      return redirect_to current_account.sso_logout_url
+    if current_account.sso_enabled? and current_account.sso_logout_url.present?
+      sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
+      redirect_to sso_redirect_url and return
     end
     
     respond_to do |format|
@@ -238,7 +239,7 @@ include Mobile::Actions::Push_Notifier
   end
 
   def openid_google
-    base_domain = AppConfig['base_domain'][RAILS_ENV]
+    base_domain = AppConfig['base_domain'][Rails.env]
     domain_name = params[:domain] 
     signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
     account_id = find_account_by_google_domain(domain_name)
@@ -267,7 +268,7 @@ include Mobile::Actions::Push_Notifier
       account_id = nil
       gm = GoogleDomain.find_by_domain(google_domain_name)
       if gm.blank?
-        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][Rails.env]}"
         sm = ShardMapping.fetch_by_domain(full_domain)
         account_id = sm.account_id if sm
       else

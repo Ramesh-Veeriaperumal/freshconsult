@@ -2,6 +2,7 @@ require 'spec_helper'
 include UsageTriggersSpecHelper
 
 describe Freshfone::UsageTriggersController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,7 +11,6 @@ describe Freshfone::UsageTriggersController do
   end
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     @request.host = @account.full_domain
   end

@@ -6,7 +6,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard"
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
-    resource :"helpdesk/note", :only => [:index]
+    resource :"helpdesk/note", :only => [:index, :agents_autocomplete]
     resource :user, :only => [:delete_avatar, :block]
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
@@ -64,7 +64,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
+    resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
+
 	end
 
   reply_ticket do

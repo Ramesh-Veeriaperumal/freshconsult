@@ -42,7 +42,7 @@ class ThemeController < ApplicationController
 		end
 
 		def theme_load_path
-			@theme_load_path ||= "#{RAILS_ROOT}/public/src"	
+			@theme_load_path ||= "#{Rails.root}/public/src"	
 		end
 
 		def render_from_cache?

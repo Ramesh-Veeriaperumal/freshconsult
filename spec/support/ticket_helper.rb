@@ -10,11 +10,12 @@ module TicketHelper
     end
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
     account_id =  group ? group.account_id : @account.id
-    test_ticket = Factory.build(:ticket, :status => params[:status],
+    test_ticket = Factory.build(:ticket, :status => params[:status] || 2,
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
+                                         :source => params[:source] || 2,
                                          :cc_email => {:cc_emails => [], :fwd_emails => []},
                                          :created_at => params[:created_at],
                                          :account_id => account_id)

@@ -3,15 +3,15 @@ require 'spec_helper'
 describe Agent do
 
   before (:all) do
-  	@agent1 = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@test.com", 
-                                        :token => "xtoQaHDQ7TtTLQ3OKtw", :active => 1, :role => 1
-                                        })
+  	@agent1 = add_agent_to_account(@account, {:name => "testing2", :email => Faker::Internet.email, 
+                                              :active => 1, :role => 1
+                                              })
   end
 
   it "should be available by default"  do
-  	@agent2 = add_agent_to_account(@account, {:name => "testing3", :email => "unit3@testing.com", 
-                                        :token => "ytoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
-                                        })
+  	@agent2 = add_agent_to_account(@account, {:name => "testing3", :email => Faker::Internet.email, 
+                                              :active => 1, :role => 1
+                                              })
   	@agent2.available.should be_true
   end
 

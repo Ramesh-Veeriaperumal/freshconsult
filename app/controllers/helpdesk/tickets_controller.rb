@@ -178,7 +178,7 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
   end
 
-  def latest_ticket_count    
+  def latest_ticket_count # Possible dead code
     index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
     ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
 
@@ -301,6 +301,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
+    build_attachments @item, :helpdesk_ticket   
     if @item.update_ticket_attributes(params[nscname])
 
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
@@ -416,7 +417,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html {
         flash[:notice] = render_to_string(
             :inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count ))
-          redirect_to :back
+          redirect_to helpdesk_tickets_path
         }
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
         format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.tickets_closed", 
@@ -642,6 +643,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
+    @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
 
     build_attachments @item, :helpdesk_ticket
 

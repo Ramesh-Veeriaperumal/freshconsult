@@ -38,8 +38,9 @@ class Support::Discussions::TopicsController < SupportController
   def show
     respond_to do |format|
       format.html do
-        @page_title = @topic.title
         @post = Post.new
+        load_page_meta
+        set_portal_page :topic_view
       end
       format.xml do
         return render :xml => @topic.to_xml(:include => :posts)
@@ -52,7 +53,6 @@ class Support::Discussions::TopicsController < SupportController
         return render(:action => 'show', :layout => false)
       end
     end
-    set_portal_page :topic_view
   end
 
   def hit
@@ -146,7 +146,7 @@ class Support::Discussions::TopicsController < SupportController
 
   def destroy
     @topic.destroy
-    flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, h(@topic.title)].html_safe
+    flash[:notice] = I18n.t('flash.topic.deleted', :title => h(@topic.title)).html_safe
     respond_to do |format|
       format.html { redirect_to support_discussions_path }
     end
@@ -248,6 +248,14 @@ class Support::Discussions::TopicsController < SupportController
       wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
         raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+    end
+    
+    def load_page_meta
+      @page_meta ||= {
+        :title => @topic.title,
+        :description => @topic.posts.published.first['body'],
+        :canonical => support_discussions_topic_path(@topic)
+      }
     end
 
     def scoper

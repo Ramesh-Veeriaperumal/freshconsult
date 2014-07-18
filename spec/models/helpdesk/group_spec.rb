@@ -21,13 +21,13 @@ describe Group do
  	end
 
  	it "should return next available agent for round robin groups if available" do
- 		@ag1 = add_agent_to_account(@account, {:name => "testing", :email => "unit10@testing.com", 
-                                        :token => "xtoQaHEQ7TtTLQ5OKt9", :active => 1, :role => 4,
-                                        :group_id => @group.id})
+ 		@ag1 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
+                                            :active => 1, :role => 4,
+                                            :group_id => @group.id})
  		#creating an unavailable agent
- 		@ag2 = add_agent_to_account(@account, {:name => "testing", :email => "unit11@testing.com", 
-                                        :token => "xtoQaADQ7TtTLQ5OKt9", :active => 1, :role => 4,
-                                        :group_id => @group.id, :available => 0})
+ 		@ag2 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
+                                            :active => 1, :role => 4,
+                                            :group_id => @group.id, :available => 0})
 
  		@group.next_available_agent.should == @ag1
  		#next available agent should not be the one created as unavailable.

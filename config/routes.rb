@@ -36,7 +36,7 @@
 
   map.resources :groups
 
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post, :notification_read => :put} do |profiles|
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
   
@@ -133,11 +133,11 @@
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
     admin.resources :chat_setting, :collection => { :toggle => :post }
-    admin.resources :automations, :collection => { :reorder => :put }
-    admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put },
+    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
+    admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
-    admin.resources :observer_rules, :member => { :activate_deactivate => :put },
+    admin.resources :observer_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
     :collection => { :existing_email => :get, 
@@ -182,7 +182,7 @@
     admin.resources :roles    
     admin.namespace :social do |social|
       social.resources :streams, :controller => 'streams', :only => :index
-      social.resources :twitter_streams, :controller => 'twitter_streams', :member => {:delete_ticket_rule => :post}
+      social.resources :twitter_streams, :controller => 'twitter_streams'
       social.resources :twitters, :controller => 'twitter_handles', :collection => {:authdone => :any}
     end
     admin.resources :mailboxes
@@ -417,7 +417,7 @@
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post, :mobihelp => :post}
 
-      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get, :agents_autocomplete => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post,
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,

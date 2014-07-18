@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
+require 'spec_helper'
 
 # Tests may fail if test db is not in sync with Chargebee account.
 
@@ -32,7 +32,7 @@ describe PartnerAdmin::AffiliatesController do
   end
 
   it "should add subscriptions to reseller" do
-    domain = "localhost.freshpo.com"
+    domain = Account.first.full_domain
     params = { :token => reseller_token, :domains => [ domain ] }
     @request.env['RAW_POST_DATA'] = params.to_json
     post "add_subscriptions_to_reseller", params.merge!(@auth_params)
@@ -85,7 +85,7 @@ describe PartnerAdmin::AffiliatesController do
 
   #Share A Sale API
   # it "should add account to shareasale" do
-  #   reseller_params = { :tracking => "localhost.freshpo.com", :userID => "123", :commission => 0.2, 
+  #   reseller_params = { :tracking => Account.first.full_domain, :userID => "123", :commission => 0.2, 
   #                         :transID => "123", :amount => 50 } 
   #   @request.env['RAW_POST_DATA'] = reseller_params.to_json
   #   @request.env['HTTPS'] = 'on'

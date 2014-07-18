@@ -16,7 +16,7 @@ describe Social::TwitterStream do
     @default_stream = @handle.default_stream
     update_db(@default_stream) unless GNIP_ENABLED
     @dm_stream = @handle.dm_stream
-    @custom_stream = create_test_custom_twitter_stream(@account)
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @rule = @default_stream.gnip_rule
   end
 
@@ -69,6 +69,9 @@ describe Social::TwitterStream do
 
   it "should delete the gnip rule for default stream if account is suspended" do
     Resque.inline = true
+    @handle.account.subscription.update_attributes(:state => "trial") 
+    @handle.reload
+    
     current_state = @handle.account.subscription.state
     stream_id = @default_stream.id
     rule = @default_stream.gnip_rule

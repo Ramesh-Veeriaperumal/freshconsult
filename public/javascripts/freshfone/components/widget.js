@@ -173,7 +173,7 @@ var FreshfoneWidget;
 			return (typeof(Notification) != (undefined || "undefined") )? true : false;
 		},
 		bindDeskNotifierButton: function () {
-				if(this.isSupportWebNotification && Notification.permission == 'default') {
+				if(this.isSupportWebNotification && Notification.permission == 'default' && (!freshfonecalls.isOutgoing())) {
 					this.desktopNotifierWidget.show();
 				} else {
 					this.desktopNotifierWidget.hide();

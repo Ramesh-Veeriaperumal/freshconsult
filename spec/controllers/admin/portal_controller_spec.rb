@@ -16,22 +16,35 @@ describe Admin::PortalController do
   end
 
   it "should update" do
-    put :update, { :id => @account.id,
-                   :account=>{ :features=>{:anonymous_tickets=>"0", :open_solutions=>"1", :auto_suggest_solutions=>"0", :open_forums=>"1", 
-                                           :google_signin=>"1", :facebook_signin=>"0", :twitter_signin=>"0", :signup_link=>"1", 
-                                           :captcha=>"1",:hide_portal_forums=>"0"
-                                         }
-                              }
+    @account.sso_enabled = false
+    @account.save(false)
+
+    put :update, { 
+      :id => @account.id,
+      :account => { 
+        :features => {
+          :anonymous_tickets => "0", 
+          :open_solutions    => "1", 
+          :auto_suggest_solutions => "0", 
+          :open_forums=>"1",
+          :google_signin=>"1", 
+          :facebook_signin=>"0", 
+          :twitter_signin=>"0", 
+          :signup_link=>"1", 
+          :captcha=>"1",
+          :hide_portal_forums=>"0"
+        }
+      }
     }
     available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature"]
     available_feature.each do |feature|
-        @account.features.find_by_type("#{feature}").should_not be_nil
+      @account.features.find_by_type("#{feature}").should_not be_nil
     end
 
     restricted_feature = ["AnonymousTicketsFeature","AutoSuggestSolutionsFeature","FacebookSigninFeature","TwitterSigninFeature",
                           "HidePortalForumsFeature"]
     restricted_feature.each do |feature|
-        @account.features.find_by_type("#{feature}").should be_nil
+      @account.features.find_by_type("#{feature}").should be_nil
     end
   end
 end

@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
+require 'spec_helper'
 
 describe ForumCategoriesController do
 	integrate_views
@@ -16,7 +16,7 @@ describe ForumCategoriesController do
 	it "should redirect to new discussions page on 'new'" do
 		get :new
 
-		response.should redirect_to new_discussions_path
+		response.should redirect_to new_discussion_path
 	end
 
 	it "should redirect to discussions page on 'index'" do
@@ -30,7 +30,7 @@ describe ForumCategoriesController do
 
 		get :show, :id => category.id
 
-		response.should redirect_to discussions_path(category)
+		response.should redirect_to discussion_path(category)
 	end
 
 	it "should redirect to edit discussions page on 'edit'" do
@@ -38,7 +38,7 @@ describe ForumCategoriesController do
 
 		get :edit, :id => category.id
 
-		response.should redirect_to edit_discussions_path(category)
+		response.should redirect_to edit_discussion_path(category)
 	end
 
 end

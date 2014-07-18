@@ -3,11 +3,15 @@ load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
 describe FreshfoneController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
+  
+  before(:all) do
+    @account.freshfone_calls.delete_all
+  end
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     @request.host = @account.full_domain
   end
@@ -31,7 +35,7 @@ describe FreshfoneController do
     set_twilio_signature('freshfone/voice', incoming_params)
     @account.features.freshfone.destroy
     post :voice
-    response.should render_template "/errors/non_covered_feature"
+    response.should render_template "errors/non_covered_feature.html.erb"
   end
 
   it 'should redirect to login when non-twilio-aware methods are called by not logged in users' do
@@ -39,7 +43,8 @@ describe FreshfoneController do
     response.should be_redirect
     response.should redirect_to('support/login')
   end
-  #End spec for freshfone base controller
+  #End spec for freshfone base controller. 
+  #Change this to contexts
 
 
   #Spec for actual freshfone_controller

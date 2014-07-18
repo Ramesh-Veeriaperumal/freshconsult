@@ -1,7 +1,7 @@
 gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
 rspec_gem_dir = nil
-Dir["#{RAILS_ROOT}/vendor/gems/*"].each do |subdir|
-  rspec_gem_dir = subdir if subdir.gsub("#{RAILS_ROOT}/vendor/gems/","") =~ /^(\w+-)?rspec-(\d+)/ && File.exist?("#{subdir}/lib/spec/rake/spectask.rb")
+Dir["#{Rails.root}/vendor/gems/*"].each do |subdir|
+  rspec_gem_dir = subdir if subdir.gsub("#{Rails.root}/vendor/gems/","") =~ /^(\w+-)?rspec-(\d+)/ && File.exist?("#{subdir}/lib/spec/rake/spectask.rb")
 end
 rspec_plugin_dir = File.expand_path(File.dirname(__FILE__) + '/../../vendor/plugins/rspec')
 
@@ -18,11 +18,19 @@ end
 
 FacebookTests = [
   "spec/lib/facebook/comment_spec.rb", 
-  "spec/lib/facebook/post_spec.rb"
+  "spec/lib/facebook/post_spec.rb",
+  "spec/lib/facebook/facebook_post_spec.rb",
+  "spec/lib/facebook/facebook_core_message_spec.rb",
+  "spec/lib/facebook/status_spec.rb",
+  "spec/controllers/social/facebook_pages_controller_spec.rb"
 ]
 
 GnipTests = [
   "spec/lib/social/gnip/rule_client_spec.rb"
+]
+
+XssTests = [
+  "spec/lib/xss_spec.rb"
 ]
 
 TwitterTests = [
@@ -32,10 +40,17 @@ TwitterTests = [
   "spec/controllers/admin/social/*_spec.rb"
 ]
 
-ModelTests = ["spec/models/helpdesk/*_spec.rb"]
+ModelTests = [
+  "spec/models/helpdesk/agent_spec.rb",
+  "spec/models/helpdesk/group_spec.rb",
+  "spec/models/helpdesk/mysql_note_spec.rb",
+  "spec/models/helpdesk/mysql_ticket_spec.rb",
+  "spec/models/helpdesk/ticket_spec.rb"
+]
 
 EmailTests = [ 
   "spec/lib/*_email_spec.rb", 
+  "spec/lib/email_commands_spec.rb",
   "spec/controllers/email_controller_spec.rb",
   "spec/controllers/mailgun_controller_spec.rb"
 ]
@@ -56,7 +71,15 @@ IntegrationTests = [
   "spec/controllers/integrations/jira_issue_controller_spec.rb",
   "spec/controllers/integrations/applications_controller_spec.rb",
   "spec/controllers/widgets/feedback_widgets_controller_spec.rb",
-  "spec/controllers/sso_controller_spec.rb"
+  "spec/controllers/sso_controller_spec.rb",
+  "spec/controllers/authorizations_controller_spec.rb",
+  "spec/controllers/integrations/http_request_proxy_controller_spec.rb",
+  "spec/controllers/integrations/installed_applications_controller_spec.rb",
+  "spec/controllers/integrations/oauth_util_controller_spec.rb",
+  "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
+  "spec/controllers/integrations/user_credentials_controller_spec.rb",
+  "spec/controllers/google_login_controller_spec.rb",
+  "spec/controllers/google_signup_controller_spec.rb"
 ]
 
 FreshfoneTests = [
@@ -72,10 +95,16 @@ APITests = [
 
 ForumTests = [
   "spec/controllers/discussions_controller_spec.rb",
-  "spec/controllers/discussions/*_spec.rb"
+  "spec/controllers/discussions/*_spec.rb",
+  "spec/controllers/forum_categories_controller_spec.rb",
+  "spec/controllers/forums_controller_spec.rb",
+  "spec/controllers/topics_controller_spec.rb"
 ]
 
 HelpdeskTests = [ 
+  "spec/controllers/accounts_controller_spec.rb",
+  "spec/controllers/home_controller_spec.rb",
+  "spec/controllers/account_configurations_controller_spec.rb",
   "spec/controllers/agents_controller_spec.rb",
   "spec/controllers/groups_controller_spec.rb",
   "spec/controllers/contacts_controller_spec.rb",
@@ -92,18 +121,29 @@ HelpdeskTests = [
   "spec/controllers/support/**/*_spec.rb",
   "spec/controllers/negative/**/*_spec.rb",
   "spec/controllers/wf_filters_controller_spec.rb",
+  "spec/controllers/domain_search_controller_spec.rb",
+  "spec/controllers/rabbit_mq_controller_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
-  "spec/models/va_rule_spec.rb"
+  "spec/models/va_rule_spec.rb",
+  "spec/controllers/notification/product_notification_controller_spec.rb"
 ]    
 
 BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
-]        
+]       
+
+FunctionalTests = [
+  "spec/lib/gamification/quests/ticket_quest_spec.rb",
+  "spec/lib/gamification/quests/process_solution_quests_spec.rb",
+  "spec/lib/gamification/quests/process_topic_quests_spec.rb",
+  "spec/lib/gamification/quests/process_post_quests_spec.rb",
+  "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
+] 
   
-UnitTests = [ FacebookTests, TwitterTests, EmailTests, MobihelpTests, IntegrationTests, FreshfoneTests, 
-              APITests, ForumTests, HelpdeskTests, BillingTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
@@ -141,7 +181,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
 
   Rake.application.instance_variable_get('@tasks').delete('default')
 
-  #spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+  #spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? "db:test:prepare" : :noop
   spec_prereq = :noop
   task :noop do
   end
@@ -151,7 +191,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
 
   desc "Run all specs in spec directory (excluding plugin specs)"
   Spec::Rake::SpecTask.new(:spec => spec_prereq) do |t|
-    t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+    t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
@@ -159,11 +199,11 @@ unless ARGV.any? {|a| a =~ /^gems/}
     desc "Run all specs in spec directory with RCov (excluding plugin specs)"
 
     Spec::Rake::SpecTask.new(:rcov) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList['spec/**/*_spec.rb']
       t.rcov = true
       t.rcov_opts = lambda do
-        IO.readlines("#{RAILS_ROOT}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+        IO.readlines("#{Rails.root}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
       end
     end
 
@@ -182,21 +222,21 @@ unless ARGV.any? {|a| a =~ /^gems/}
     [:models, :controllers, :views, :helpers, :lib, :integration].each do |sub|
       desc "Run the code examples in spec/#{sub}"
       Spec::Rake::SpecTask.new(sub => spec_prereq) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
       end
     end
 
     desc "Run the code examples in vendor/plugins (except RSpec's own)"
     Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
     end
 
     namespace :plugins do
       desc "Runs the examples for rspec_on_rails"
       Spec::Rake::SpecTask.new(:rspec_on_rails) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
       end
     end
@@ -240,7 +280,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
         require 'simplecov'
         require 'active_record'
         load 'Rakefile'
-        config = YAML::load(IO.read(File.join(RAILS_ROOT, 'config/database.yml')))
+        config = YAML::load(IO.read(File.join(Rails.root, 'config/database.yml')))
         ActiveRecord::Base.establish_connection(config["test"])
         ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
           t.string   "name"
@@ -265,7 +305,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :helpdesk do
       desc "Runs all twitter tests"
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(HelpdeskTests)
       end
     end    
@@ -273,12 +313,12 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :social do
       desc "Runs all twitter tests"
       Spec::Rake::SpecTask.new(:twitter) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(TwitterTests+GnipTests)
       end
 
       Spec::Rake::SpecTask.new(:facebook) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(FacebookTests)
       end
   
@@ -287,7 +327,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :freshfone do
       desc "Running all Freshfone Testss"
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(FreshfoneTests)
       end
     end    
@@ -296,8 +336,8 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all integration tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList.new(UnitTests)
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(UnitTests).uniq
       end
     end
 
@@ -305,7 +345,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       desc "Running all email tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(EmailTests)
       end
     end
@@ -313,7 +353,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :integrations do
       desc "Running all freshdesk integrations tests"
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(IntegrationTests)
       end
     end
@@ -321,7 +361,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :mobihelp do
       desc "Running all mobihelp tests"
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(MobihelpTests)
       end
     end
@@ -329,7 +369,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :api do
       desc "Running all api tests"
       Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(APITests)
       end
     end
@@ -337,12 +377,12 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :all do
       desc "Running all the tests"
       Spec::Rake::SpecTask.new(:tests) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(AllTests)
       end
 
       Spec::Rake::SpecTask.new(:model) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(ModelTests)
       end
     end

@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :unset_current_account, :set_current_account
   before_filter :set_default_locale, :set_locale
-  include Authority::Rails::ControllerHelpers
+  include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -150,11 +150,13 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+    # Possible dead code
     def silence_logging
       @bak_log_level = logger.level 
       logger.level = Logger::ERROR
     end
 
+    # Possible dead code
     def revoke_logging
       logger.level = @bak_log_level 
     end

@@ -1,12 +1,13 @@
 require 'spec_helper'
+load 'spec/support/freshfone_transfer_spec_helper.rb'
 include FreshfoneTransferSpecHelper
 
 describe Freshfone::CallTransferController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @account.update_attributes(:full_domain => "http://play.ngrok.com")
     create_test_freshfone_account
     @request.host = @account.full_domain
   end
