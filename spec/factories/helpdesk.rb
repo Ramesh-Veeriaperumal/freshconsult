@@ -97,4 +97,7 @@ if Rails.env.test?
 
   Factory.define :agent_group, :class => AgentGroup do |d|
   end
+
+  Factory.define :support_score, :class => SupportScore do |d|
+  end
 end
