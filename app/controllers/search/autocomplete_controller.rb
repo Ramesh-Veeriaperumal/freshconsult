@@ -82,7 +82,7 @@ class Search::AutocompleteController < ApplicationController
          tire_search.query do |q|
            q.filtered do |f|
              f.query { |q| q.string SearchUtil.es_filter_key(params[:q]), :fields => [ 'email', 'name', 'phone' ], :analyzer => "include_stop" }
-             f.filter :term, { :helpdesk_agent => agent }
+             f.filter :term, { :helpdesk_agent => agent } if agent
              f.filter :term, { :account_id => current_account.id }
              f.filter :term, { :deleted => false }
            end
