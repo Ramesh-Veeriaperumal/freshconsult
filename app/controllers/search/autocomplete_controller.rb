@@ -65,7 +65,7 @@ class Search::AutocompleteController < ApplicationController
 
     def search_companies
       search_name_string = 'name:'+params[:q]+'*'
-      options = { :load => true }
+      options = { :load => true, :size => 1000 }
       s = Tire.search Search::EsIndexDefinition.searchable_aliases([Customer], current_account.id),options do |s|
         s.query do |q|
           q.boolean do |b|
@@ -77,20 +77,18 @@ class Search::AutocompleteController < ApplicationController
     end
     
     def search_users(agent=false)
-      search_name_string = 'name:'+params[:q]+'*'
-      search_email_string = 'email:'+params[:q]+'*'
-      search_agent_string = 'helpdesk_agent:0'
-      options = { :load => true }
-      s = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |s|
-        s.query do |q|
-          q.boolean do |b|
-            b.should   { string search_email_string }
-            b.should   { string search_name_string  }
-            b.must_not { string search_agent_string } if agent
-          end
-        end
+      options = { :load => true, :size => 100 }
+      items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
+         tire_search.query do |q|
+           q.filtered do |f|
+             f.query { |q| q.string SearchUtil.es_filter_key(params[:q]), :fields => [ 'email', 'name', 'phone' ], :analyzer => "include_stop" }
+             f.filter :term, { :helpdesk_agent => agent }
+             f.filter :term, { :account_id => current_account.id }
+             f.filter :term, { :deleted => false }
+           end
+         end
+         tire_search.sort { by :name, 'asc' }
       end
-      return s
     end
 
     def ensure_kbase(requesters)
