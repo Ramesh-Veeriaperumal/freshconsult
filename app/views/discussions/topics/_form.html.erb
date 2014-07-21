@@ -37,7 +37,7 @@
 		</div>
 	<% end %>
 
-	<% if @topic.new_record? or privilege?(:view_admin) %>
+	<% if @topic.new_record? or privilege?(:manage_forums) %>
 		<div id="topic_forum" class="control-group">
 	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
 	  		<div class="controls">
@@ -47,7 +47,7 @@
 		</div>
 	<% end %>
 
-	<% if @topic.new_record? or privilege?(:view_admin) or current_user.moderator_of?(@topic.forum) %>
+	<% if @topic.new_record? or privilege?(:manage_forums) or current_user.moderator_of?(@topic.forum) %>
 
 	<div class="control-group">
 		<div class="controls">
