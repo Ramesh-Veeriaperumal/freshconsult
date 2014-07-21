@@ -48,6 +48,7 @@ class Social::Twitter::Feed
       :id         => self.feed_id,
       :postedTime => self.posted_time
     }
+    action_data.merge!(:stream_id => stream.id) if stream
     tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless tweet.blank?
       ticket = tweet.get_ticket
