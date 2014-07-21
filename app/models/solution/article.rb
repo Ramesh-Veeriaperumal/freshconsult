@@ -29,11 +29,16 @@ class Solution::Article < ActiveRecord::Base
   
   include Mobile::Actions::Article
   include Solution::Constants
+  include Cache::Memcache::Mobihelp::Solution
 
   attr_accessor :highlight_title, :highlight_desc_un_html
 
   attr_protected :account_id ,:attachments
   
+  after_commit_on_create  :clear_mobihelp_solutions_cache
+  after_commit_on_update  :clear_mobihelp_solutions_cache
+  before_destroy          :clear_mobihelp_solutions_cache
+
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
@@ -184,4 +189,10 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
+
+  private
+  
+    def clear_mobihelp_solutions_cache
+      clear_solutions_cache(self.folder.category_id)
+    end
 end
