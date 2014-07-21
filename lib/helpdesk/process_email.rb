@@ -10,7 +10,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
 
-  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b)/
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
   attr_accessor :reply_to_email

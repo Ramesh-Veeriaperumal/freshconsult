@@ -1,4 +1,4 @@
-module Authority::FreshdeskRails
+module Authority::Rails
   module ControllerHelpers
 
     def self.included(base)

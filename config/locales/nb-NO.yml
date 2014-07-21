@@ -1832,10 +1832,10 @@ nb-NO:
       update:
         success: "%{human_name} har blitt oppdatert."
     post:
-      deleted: "Meldingen {title} ble slettet."
+      deleted: "Meldingen %{title} ble slettet."
       page_not_found: "Meldingen ikke funnet. Den kan ha blitt slettet eller URL skrevet feil."
     topic:
-      deleted: "Emne {title} ble slettet."
+      deleted: "Emne %{title} ble slettet."
       page_not_found: "Dette emnet ble ikke funnet. Det kan ha blitt slettet eller det er skrevet feil inn URL."
     forum:
       page_not_found: "Dette forumet ble ikke funnet. Det kan ha blitt slettet eller det er skrevet feil inn URL."

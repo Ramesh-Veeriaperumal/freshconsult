@@ -1304,10 +1304,10 @@ zh-CN:
                 success: "%{human_name}已更新。"
                 failure: "无法更新%{human_name}。"
         post: 
-            deleted: "帖子'{title}'已删除。"
+            deleted: "帖子'%{title}'已删除。"
             page_not_found: "无法找到该帖子。可能已被删除或URL地址输入错误。"
         topic: 
-            deleted: "话题'{title}' 已删除"
+            deleted: "话题'%{title}' 已删除"
             page_not_found: "无法找到此话题。可能已被删除或URL地址输入错误。"
         forum: 
             page_not_found: "无法找到此论坛。可能已被删除或URL地址输入错误。"

@@ -1304,10 +1304,10 @@ de:
                 success: "%{human_name} wurde aktualisiert."
                 failure: "%{human_name} konnte nicht aktualisiert werden"
         post: 
-            deleted: "Der Beitrag „{title}“ wurde gelöscht."
+            deleted: "Der Beitrag „%{title}“ wurde gelöscht."
             page_not_found: "Dieser Beitrag konnte nicht gefunden werden. Er wurde möglicherweise gelöscht oder Sie haben sich bei der URL vertippt."
         topic: 
-            deleted: "Thema „{title}“ wurde gelöscht."
+            deleted: "Thema „%{title}“ wurde gelöscht."
             page_not_found: "Das Thema konnte nicht gefunden werden. Eventuell wurde es gelöscht oder die URL ist falsch."
         forum: 
             page_not_found: "Dieses Forum konnte nicht gefunden werden. Es könnte gelöscht worden sein oder die URL ist falsch."

@@ -1969,7 +1969,7 @@ hu:
       update:
         success: "%{human_name} frissítve."
     topic:
-      deleted: "Téma '{title}' törölve."
+      deleted: "Téma '%{title}' törölve."
   date_invalid: "Érvénytelen dátum"
   freshfone:
     not_enough_credit: "Nincs elég kredit!"

@@ -28,7 +28,7 @@ class AgentsController < ApplicationController
   end
 
   def check_demo_site
-    if AppConfig['demo_site'][Rails.env] == current_account.full_domain
+    if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
       flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
     end

@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   
-  include Authority::FreshdeskRails::ModelHelpers
+  include Authority::Rails::ModelHelpers
   
   belongs_to :account
   has_many :projects

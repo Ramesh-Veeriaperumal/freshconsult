@@ -217,8 +217,8 @@
 	var time = <%= ActiveSupport::JSON.encode(@time && {1 => @time['resolution_1'], 
 										2 => @time['resolution_2'],	3 => @time['resolution_3'], 
 										4 => @time['resolution_4']}).html_safe %> || {};
-	var autocomplete_companies_url = '<%= company_autocomplete_helpdesk_authorizations_path %>';
-	var agent_autocomplete_helpdesk_authorizations_path = '<%= agent_autocomplete_helpdesk_authorizations_path %>';
+	var autocomplete_companies_url = '<%= companies_search_autocomplete_path %>';
+	var agent_autocomplete_path = '<%= agents_search_autocomplete_path %>';
 
 	var agents_hash = <%= ActiveSupport::JSON.encode(@agents_cache).html_safe %>  || {} ;
 	var companies = <%= ActiveSupport::JSON.encode(@companies).html_safe %> || [];

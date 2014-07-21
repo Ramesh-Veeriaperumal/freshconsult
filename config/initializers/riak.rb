@@ -7,8 +7,8 @@
 # *host: 127.0.0.1
 
 # This configuration file is only to defrentiate between development and production
-riak_buckets = YAML::load(ERB.new(File.read("#{Rails.root}/config/riak_buckets.yml")).result)
-riak_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/riak.yml")).result)
+riak_buckets = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/riak_buckets.yml")).result)
+riak_config = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/riak.yml")).result)
 
 RIAK_BUCKETS = (riak_buckets[Rails.env] || riak_buckets)
 RIAK_CONF = (riak_config[Rails.env] || riak_config)

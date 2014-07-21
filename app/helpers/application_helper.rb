@@ -64,7 +64,7 @@ module ApplicationHelper
   end
 
   def logo_url(portal = current_portal)
-    MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
+    MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
         portal.logo.nil? ? "/images/logo.png?721013" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
@@ -72,7 +72,7 @@ module ApplicationHelper
   end
 
   def fav_icon_url(portal = current_portal)
-    MemcacheKeys.fetch(["v6","portal","fav_ico",portal]) do
+    MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
       portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
@@ -473,7 +473,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v9","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
       content_tag( :div, image_tag("/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
@@ -507,7 +507,7 @@ module ApplicationHelper
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
-    handle_avatar = MemcacheKeys.fetch(["v1","twt_avatar", profile_size, handle], 30.days.to_i) do
+    handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
       handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/images/fillers/profile_blank_#{profile_size}.gif"
     end
     handle_avatar
@@ -683,7 +683,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_helpdesk_autocomplete_path, :object_name => object_name }))  
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_path }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'

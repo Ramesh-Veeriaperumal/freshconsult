@@ -13,7 +13,7 @@ module Gamification
 
 			def self.evaluate_topic_quests(topic)
 				return if topic.user.customer?
-				Rails.logger.debug %(INSIDE evaluate_topic_quests)
+				RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_topic_quests)
 				topic.user.available_quests.create_forum_quests.each do |quest|
 					is_a_match = quest.matches(topic)
 					if is_a_match and evaluate_query(quest,topic)

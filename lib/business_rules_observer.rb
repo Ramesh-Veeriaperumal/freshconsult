@@ -16,7 +16,7 @@ module BusinessRulesObserver
   def biz_rules_check(events)
     evaluate_on = self
     begin
-      Rails.logger.debug("Invoked business rule check for #{events}")
+      RAILS_DEFAULT_LOGGER.debug("Invoked business rule check for #{events}")
       unless events.blank?
         evaluate_on.account.account_va_rules.observer_biz_rules.each do |vr|
           ret_evaluate_on = vr.pass_through(evaluate_on, events)
