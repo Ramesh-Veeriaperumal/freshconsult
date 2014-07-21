@@ -6013,9 +6013,9 @@ en:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."
   notification:
-    whats_new_on_freshdesk: " What's New On Freshdesk "
+    whats_new_in_freshdesk: " What's new in Freshdesk "
     see_all: "See All"
-    frequently_referred_articles: "Frequently referred "
+    popular_articles: "Popular articles"
     browse: "Browse"
     get_help: "Get Help"
     have_question: "Have a question?"
