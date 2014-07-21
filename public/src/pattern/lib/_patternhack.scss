@@ -167,11 +167,11 @@ html.touch .dialog-well .actions {
   }
 }
 
-select{
-  line-height: 20px;
-  padding: 0;
-  @include padding-left(2px);
-}
+//select{
+//  line-height: 20px;
+//  padding: 0;
+//  @include padding-left(2px);
+//}
 
 /* Fix for tickets show page data-tabs */
 .ticket_tabs{
