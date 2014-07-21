@@ -139,7 +139,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem "bunny", "1.2.1"
 
 group :production,:test,:staging do
-  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+  gem 'tire', :git => "git://github.com/freshdesk/tire.git", :branch => "multi_match"
 end
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
