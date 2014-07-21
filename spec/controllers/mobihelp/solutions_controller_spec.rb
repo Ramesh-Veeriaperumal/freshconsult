@@ -27,7 +27,7 @@ describe Mobihelp::SolutionsController do
   it "should fetch updated solution when updates present" do 
     update_since = Time.now.utc.strftime('%FT%TZ')
 
-    @test_category = create_category( {:name => "new category #{@now}", :description => "new category", :is_default => false} )
+    @test_category = create_category( {:name => "new category #{Time.now}", :description => "new category", :is_default => false} )
     @test_folder = create_folder( {:name => "new folder", :description => "new folder", :visibility => 1,
                                     :category_id => @test_category.id } )
     @test_article = create_article( {:title => "new article", :description => "new test article", :folder_id => @test_folder.id,
@@ -86,7 +86,7 @@ describe Mobihelp::SolutionsController do
   end
 
   it "should fetch empty solutions when category id is invalid" do
-    update_since = Time.now.utc.strftime('%FT%TZ')
+    update_since = (1.day.ago).utc.strftime('%FT%TZ') 
     solution_category = @mobihelp_app.config[:solutions]
     @mobihelp_app.config[:solutions] = 0
     @mobihelp_app.save
@@ -94,6 +94,8 @@ describe Mobihelp::SolutionsController do
       :updated_since => update_since
     }
     JSON.parse(response.body).should have(0).items
+
+    @mobihelp_app.config[:solutions] = solution_category
   end
 
 end
