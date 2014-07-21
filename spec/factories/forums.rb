@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :forum_category  do |c|
     c.sequence(:name) { |n| "Test Category #{n}"}
     c.sequence(:description) { |n| "This is a test category #{n}."}

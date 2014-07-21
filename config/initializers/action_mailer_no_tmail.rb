@@ -81,7 +81,6 @@ module ActionMailer
     end
 
     def perform_delivery_smtp(mail)
-      puts ":::::: initializer perform_delivery_smtp"
       destinations = mail.destinations
       mail.ready_to_send!
       sender = (mail['return-path'] && mail['return-path'].address) || Array(mail.from).first

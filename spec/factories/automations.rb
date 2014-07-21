@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :va_rule, :class =>VARule do |v|
     v.name "Test Rule"
     v.description "Testing"

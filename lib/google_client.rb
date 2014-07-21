@@ -4,7 +4,7 @@ require 'google/api_client'
 include Integrations::OauthHelper
 module GoogleClient
 
-	FILE_PATH = "#{Rails.root}/config/google_api.yml"
+	FILE_PATH = "#{RAILS_ROOT}/config/google_api.yml"
 	def self.included(base)
 		config = YAML.load_file(FILE_PATH)
 		oauth2 = config[Rails.env]["google_oauth2"]

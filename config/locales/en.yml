@@ -591,6 +591,7 @@ en:
           solutions: Solution Category
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
+          app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           not_included: is not included in the list
           should_be_unique: should be unique
           select_a_platform: Select a platform
@@ -1508,7 +1509,8 @@ en:
     portal:
       discussions:
         topics:
-          spam_check: "We're checking your topic for spam. It will appear once it has been approved."
+          spam_check: "Thank you starting a new topic. your topic will appear in the forum, after a standard moderation process."
+          success: "Thank you for posting. your reply will appear in the topic, after a standard moderation process."
       tickets:
         create:
           success: Your ticket has been created.
@@ -2432,7 +2434,7 @@ en:
       two: 2 Hours
       four: 4 Hours
       eight: 8 Hours
-      two: 12 Hours
+      twelve: 12 Hours
       day: 1 Day
       twoday: 2 Days
       threeday: 3 Days

@@ -16,7 +16,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def setup_bcc
-    @bcc = AppConfig['sub_bcc_email'][Rails.env] if Rails.env.production?
+    @bcc = AppConfig['sub_bcc_email'][RAILS_ENV] if Rails.env.production?
   end
   
   def welcome(account)

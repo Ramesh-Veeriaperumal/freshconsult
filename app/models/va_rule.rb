@@ -102,7 +102,7 @@ class VARule < ActiveRecord::Base
   end
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
-    Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
+    RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
@@ -111,7 +111,7 @@ class VARule < ActiveRecord::Base
   
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
-    Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
+    RAILS_DEFAULT_LOGGER.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
     s_match = match_type.to_sym   
     to_ret = false
     conditions.each do |c|

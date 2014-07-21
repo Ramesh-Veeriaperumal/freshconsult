@@ -193,6 +193,7 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get }
+    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get }
     search.resources :tickets, :only => :index
     search.resources :solutions, :only => :index
     search.resources :forums, :only => :index
@@ -473,12 +474,10 @@
     end
 
     helpdesk.resources :dropboxes
-
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
-
+ 
     helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
-
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 

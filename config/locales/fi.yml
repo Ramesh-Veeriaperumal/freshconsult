@@ -2186,10 +2186,10 @@ fi:
         success: "%{human_name} on päivitetty."
         failure: "%{human_name} - ei voitu päivittää."
     post:
-      deleted: "'{title}' liittyvät viestit poistettiin."
+      deleted: "'%{title}' liittyvät viestit poistettiin."
       page_not_found: "Tätä viestiä ei löydetty. Se on voitu poistaa tai URL on kirjoitettu väärin."
     topic:
-      deleted: "'{title}'-aihe poistettiin."
+      deleted: "'%{title}'-aihe poistettiin."
       page_not_found: "Tätä aihetta ei löydetty. Se on voitu poistaa tai URL on kirjoitettu väärin."
     forum:
       page_not_found: "Tätä foorumia ei löydetty. Se on voitu poistaa tai URL on kirjoitettu väärin."

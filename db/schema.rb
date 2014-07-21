@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(:version => 20140710120544) do
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
-    t.integer  "accessible_id"
+    t.integer  "accessible_id",   :limit => 8
     t.integer  "user_id",         :limit => 8
     t.integer  "visibility",      :limit => 8
     t.integer  "group_id",        :limit => 8

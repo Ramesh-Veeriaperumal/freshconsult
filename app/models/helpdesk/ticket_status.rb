@@ -138,8 +138,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
           fetch_ticket.ticket_states.save
         rescue Exception => e
             NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "SLA timer stopped at time update failed for Ticket ID : #{t_s.id} on status update"
-            Rails.logger.debug "Error message ::: #{e.message}"
+            RAILS_DEFAULT_LOGGER.debug "SLA timer stopped at time update failed for Ticket ID : #{t_s.id} on status update"
+            RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
         end
       end
     end
@@ -164,8 +164,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
             fetch_ticket.ticket_states.save
           rescue Exception => e
             NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "Due by time update failed for Ticket ID : #{t_s.id} on status update"
-            Rails.logger.debug "Error message ::: #{e.message}"
+            RAILS_DEFAULT_LOGGER.debug "Due by time update failed for Ticket ID : #{t_s.id} on status update"
+            RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
           end
         end
       end

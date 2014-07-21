@@ -2,6 +2,8 @@
 require 'base64'
 
 module Mobihelp::MobihelpHelperMethods
+  
+  include Cache::Memcache::Mobihelp::App
 
   MOBIHELP_STATUS = [
     [:MHC_SUCCESS, 0, "Successfully Registered"],
@@ -25,9 +27,9 @@ module Mobihelp::MobihelpHelperMethods
           render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS])
           return;
         end
-        @mobihelp_app = current_account.mobihelp_apps.find_by_app_key_and_app_secret(app_key, app_secret)
+        @mobihelp_app = fetch_app_from_cache(current_account, app_key)
       end
-      if @mobihelp_app.nil?
+      if @mobihelp_app.nil? or (@mobihelp_app.app_secret != app_secret)
         render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS])
       elsif @mobihelp_app.deleted
         render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED])
@@ -73,13 +75,15 @@ module Mobihelp::MobihelpHelperMethods
 
     def generate_mobile_config
       app_config = @mobihelp_app.config
-      {
+      config = {
         :breadcrumb_count => app_config[:bread_crumbs],
         :debug_log_count => app_config[:debug_log_count],
-        :acc_status => current_account.subscription.paid_account?,
         :solution_category => app_config[:solutions],
-        :app_review_launch_count => app_config[:app_review_launch_count]
+        :app_review_launch_count => app_config[:app_review_launch_count],
+        :acc_status => current_account.subscription.paid_account?
       }
+      config[:app_store_id] = app_config[:app_store_id] if @mobihelp_app.platform == Mobihelp::App::PLATFORM_ID_BY_KEY[:ios]
+      config
     end
 
     def validate_device_uuid

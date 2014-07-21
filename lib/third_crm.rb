@@ -2,7 +2,7 @@ class ThirdCRM
 
   COOKIE_NAME = "_mkto_trk"
 
-  API_KEYS = AppConfig['marketo'][Rails.env]
+  API_KEYS = AppConfig['marketo'][RAILS_ENV]
   PRODUCT_NAME = "Freshdesk"
   
   def initialize

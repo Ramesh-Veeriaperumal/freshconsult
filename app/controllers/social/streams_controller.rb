@@ -5,6 +5,8 @@ class Social::StreamsController < Social::BaseController
   include Social::Stream::Interaction
   
   before_filter { |c| c.requires_feature :twitter }
+  skip_before_filter :check_account_state
+  before_filter :check_account_state
   before_filter :check_if_handles_exist, :only => [:index]
 
   def index

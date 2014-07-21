@@ -2578,10 +2578,10 @@ sl:
       update:
         success: "spremembe %{human_name} so shranjene"
     post:
-      deleted: "Objava v {title} je izbrisana"
+      deleted: "Objava v %{title} je izbrisana"
       page_not_found: "Te objave ni možno najti. Lahko da je izbrisana ali pa je URL napačen."
     topic:
-      deleted: "Tema {title} je izbrisana"
+      deleted: "Tema %{title} je izbrisana"
       page_not_found: "Te teme ni možno najti. Lahko da je izbrisana ali pa je URL napačen."
     forum:
       page_not_found: "Tega foruma ni možno najti. Lahko da je izbrisan ali pa je URL napačen."

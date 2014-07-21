@@ -1,9 +1,9 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :mobihelp_app, :class => Mobihelp::App do |t|
     t.account_id 1
     t.sequence(:name) { |n| "Fresh App #{n}" }
     t.platform 1
-    t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  '10', :debug_log_count => '50', :solutions => '2', :app_review_launch_count => '5'})
+    t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  '10', :debug_log_count => '50', :solutions => '2', :app_review_launch_count => '10'})
   end
 
   Factory.define :mobihelp_device, :class => Mobihelp::Device do |t|

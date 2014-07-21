@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :group do |g|
     g.sequence(:name) { |n| "Group#{n}" }
     g.description { Faker::Lorem.sentence(10) }

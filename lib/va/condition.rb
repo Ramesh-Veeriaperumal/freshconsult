@@ -57,7 +57,7 @@ class Va::Condition
   private
     def action_matches?(evaluate_on, performed_actions)
       expected_action = @action_performed[:action]
-      Rails.logger.debug "Inside action_matches check: expected_action #{expected_action} performed_actions #{performed_actions} action_performed #{@action_performed.inspect}"
+      RAILS_DEFAULT_LOGGER.debug "Inside action_matches check: expected_action #{expected_action} performed_actions #{performed_actions} action_performed #{@action_performed.inspect}"
       performed_actions.include?(expected_action) && @action_performed[:entity] == evaluate_on.class.name
     end
 end

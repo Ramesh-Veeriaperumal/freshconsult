@@ -10,6 +10,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :user, :only => [:delete_avatar, :block]
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
+    resource :"search/autocomplete", :only => [:requesters, :agents, :companies]
 		resource :"helpdesk/ticket", :only => [:show, :new, :create, :show, :index, :user_tickets, :empty_trash, :empty_spam,
                       :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                       :spam, :unspam, :execute_scenario, :pick_tickets,
@@ -209,6 +210,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
                :contact_email, :edit, :update, :verify_email]
+    resource :"search/autocomplete", :only => [:companies]
     resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :contact_import
     resource :contact_merge

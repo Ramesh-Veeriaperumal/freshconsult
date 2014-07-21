@@ -111,13 +111,17 @@ if Integrations::Application.count == 0
     s.account_id = 0
     s.listing_order = 5
     s.options = {
-                  :keys_order => [:title, :domain, :username, :password, :jira_note], 
+                  :keys_order => [:title, :domain, :username, :password, :jira_note, :sync_settings], 
                   :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
                   :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" }, 
                   :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note", 
-                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}' },
+                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}', :css_class => "hide" },
                   :username => { :type => :text, :required => true, :label => "integrations.jira.form.username" },
-                  :password => { :type => :password, :label => "integrations.jira.form.password" } 
+                  :password => { :type => :password, :label => "integrations.jira.form.password" },
+                  :sync_settings => { :type => :custom, :required => false, :partial => "/integrations/applications/jira_sync_settings",
+                                      :info => "integrations.google_contacts.form.account_settings_info", :label => "integrations.google_contacts.form.account_settings"},
+                  :after_save => { :method => "install_jira_biz_rules", :clazz => "Integrations::JiraUtil" },
+                  :after_destroy => { :method => "uninstall_jira_biz_rules", :clazz => "Integrations::JiraUtil"} 
                 }
     s.application_type = "jira"            
   end
@@ -657,6 +661,33 @@ if Integrations::Application.count == 0
         :account_settings => { :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", :partial => "/integrations/applications/screenr_settings", :info => "integrations.google_contacts.form.account_settings_info" }
     }
     s.application_type = "screenr"
+  end
+
+  #populate pivotal tracker
+  pivotal_tracker = Integrations::Application.seed(:name) do |s|
+    s.name = "pivotal_tracker"
+    s.display_name = "integrations.pivotal_tracker.label"  
+    s.description = "integrations.pivotal_tracker.desc"
+    s.account_id = 0
+    s.listing_order = 23
+    s.options = { :keys_order => [:api_key, :pivotal_update],
+                  :api_key => { :type => :text, :required => true, :label => "integrations.pivotal_tracker.api_key", :info => "integrations.pivotal_tracker.api_key_info"},
+                  :pivotal_update => { :type => :checkbox, :label => "integrations.pivotal_tracker.pivotal_updates"}
+                }
+    s.application_type = "pivotal_tracker"
+  end
+
+  #populate shopify
+  shopify_app = Integrations::Application.seed(:name) do |s|
+    s.name = "shopify"
+    s.display_name = "integrations.shopify.label"  
+    s.description = "integrations.shopify.desc"
+    s.account_id = 0
+    s.listing_order = 24
+    s.options = {:direct_install => false, :keys_order => [:shop_name],
+                 :shop_name => { :type => :text, :required => true, :label => "integrations.shopify.form.shop_name", :info => "integrations.shopify.form.shop_name_info", :rel => "ghostwriter", :autofill_text => ".myshopify.com"},
+                }
+    s.application_type = "shopify"
   end
 
 end

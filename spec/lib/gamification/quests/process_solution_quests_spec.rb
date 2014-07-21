@@ -87,8 +87,11 @@ describe Gamification::Quests::ProcessSolutionQuests do
 		Resque.inline = true
 		test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
 										:folder_id => @test_folder_1.id,:user_id => @user.id, :status => "2", :art_type => "1" } )
+		
 		@user.reload
 		@account.quests.find(new_quest.id).achieved_quests.first.should be_nil
+		new_quest.support_scores.should be_empty
+		@user.achieved_quests.find_by_quest_id(new_quest.id).should be_nil
 		bonus_pts = total_points - exiting_pts
 		bonus_pts.should_not eql(new_quest.points)
 	end
@@ -100,7 +103,16 @@ describe Gamification::Quests::ProcessSolutionQuests do
 		def result(quest,exiting_pts)
 			@user.reload
 			@account.quests.find(quest.id).achieved_quests.first.should_not be_nil
+
+			quest.support_scores.should_not be_nil
+			quest.support_scores.first.score.should eql(quest.points)
+
+			@user.achieved_quests.find_by_quest_id(quest.id).should_not be_nil
+
 			bonus_pts = total_points - exiting_pts
 			bonus_pts.should eql(quest.points)
+
+			sb_level = @account.scoreboard_levels.level_for_score(total_points).first
+			@user.agent.scoreboard_level_id.should eql(sb_level.id)
 		end
 end

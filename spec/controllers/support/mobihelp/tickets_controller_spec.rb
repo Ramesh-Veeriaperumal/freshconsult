@@ -37,8 +37,7 @@ describe Support::Mobihelp::TicketsController do
   end
 
   it "should fetch the ticket attributes" do
-    
-    get :show, { :id => @test_ticket , :device_uuid => @user_device_id }
+    get :show, { :id => @test_ticket.display_id , :device_uuid => @user_device_id }
     JSON.parse(response.body).should have(1).items
   end
 
@@ -52,5 +51,19 @@ describe Support::Mobihelp::TicketsController do
     JSON.parse(response.body).should_not be_empty
   end
 
+  it "should add note" do
+    @request.params['format'] = "json"
+    note = {
+      :helpdesk_note => {
+        :private => "false", 
+        :note_body_attributes => {:body_html => "Add Note Test"},
+        :incoming => "true", 
+        :source => "10",
+        },
+        :id => @test_ticket.display_id
+      }
+
+    post :add_note, note
+  end
 
 end

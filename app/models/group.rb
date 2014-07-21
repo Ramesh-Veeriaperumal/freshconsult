@@ -44,7 +44,7 @@ class Group < ActiveRecord::Base
     [ :two,     I18n.t("group.assigntime.two"),       7200 ], 
     [ :four,    I18n.t("group.assigntime.four"),      14400 ], 
     [ :eight,   I18n.t("group.assigntime.eight"),     28800 ], 
-    [ :two,     I18n.t("group.assigntime.two"),       43200 ], 
+    [ :twelve,  I18n.t("group.assigntime.twelve"),    43200 ], 
     [ :day,     I18n.t("group.assigntime.day"),       86400 ],
     [ :twoday,  I18n.t("group.assigntime.twoday"),    172800 ], 
     [ :threeday,I18n.t("group.assigntime.threeday"),  259200 ], 

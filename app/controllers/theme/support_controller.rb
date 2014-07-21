@@ -3,7 +3,7 @@ class Theme::SupportController < ThemeController
 	skip_before_filter :check_privilege, :verify_authenticity_token
 
 	# Cache key for helpdesk file detecting change in file updated time
-	THEME_URL 			= "#{Rails.root}/public/src/portal/portal.scss"
+	THEME_URL 			= "#{RAILS_ROOT}/public/src/portal/portal.scss"
 	THEME_TIMESTAMP 	= (File.exists?(THEME_URL) && File.mtime(THEME_URL).to_i)
 
 	# Precautionary settings override
@@ -22,7 +22,7 @@ class Theme::SupportController < ThemeController
 		end
 
 		def theme_load_path
-			@theme_load_path ||= "#{Rails.root}/public/src/portal"	
+			@theme_load_path ||= "#{RAILS_ROOT}/public/src/portal"	
 		end
 
 		# Don't cache the preview as it may be different for various people

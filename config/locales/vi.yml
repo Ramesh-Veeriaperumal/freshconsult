@@ -2597,10 +2597,10 @@ vi:
         success: "%{human_name}đã được cập nhật."
         failure: "%{human_name} không thể cập nhật."
     post:
-      deleted: "bài đăng {title} đã xóa"
+      deleted: "bài đăng %{title} đã xóa"
       page_not_found: "Bài này không thể được tìm thấy. Nó có thể đã bị xóa hoặc URL gõ sai."
     topic:
-      deleted: "chủ đề {title} đã xóa"
+      deleted: "chủ đề %{title} đã xóa"
       page_not_found: "chủ đề này không thể được tìm thấy. Nó có thể đã bị xóa hoặc URL gõ sai."
     forum:
       page_not_found: "diễn đàn này không thể được tìm thấy. Nó có thể đã bị xóa hoặc URL gõ sai."

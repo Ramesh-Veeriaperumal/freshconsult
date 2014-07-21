@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :facebook_pages, :class => Social::FacebookPage do |f|
     f.sequence(:page_id) { |n| n }
     f.profile_id 123456

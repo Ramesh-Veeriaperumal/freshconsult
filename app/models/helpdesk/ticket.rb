@@ -507,7 +507,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    RAILS_DEFAULT_LOGGER.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
@@ -517,7 +517,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError => e
-      Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      RAILS_DEFAULT_LOGGER.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))

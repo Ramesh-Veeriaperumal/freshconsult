@@ -1304,7 +1304,7 @@ pt-BR:
                 success: "O %{human_name} foi atualizado."
                 failure: "Não foi possível atualizar %{human_name}."
         post: 
-            deleted: "A postagem de '{title}' foi excluída."
+            deleted: "A postagem de '%{title}' foi excluída."
             page_not_found: "Esta postagem não pôde ser encontrada. Ela pode ter sido excluída ou o URL foi digitado errado."
         topic: 
             deleted: "O tópico '{title}' foi excluído."

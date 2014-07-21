@@ -377,7 +377,7 @@ module ApplicationHelper
   end
 
   def responder_path(args_hash)
-    link_to(h(args_hash['name']), user_path(args_hash['id']))
+    request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
 
   def comment_path(args_hash, link_display = 'note', options={ :'data-pjax' => false })
@@ -401,11 +401,13 @@ module ApplicationHelper
   end
 
   def merge_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                          link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
   def split_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                           link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
    def timesheet_path(args_hash, link_display = 'time entry')
@@ -473,7 +475,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v9","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
       content_tag( :div, image_tag("/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
@@ -507,7 +509,7 @@ module ApplicationHelper
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
-    handle_avatar = MemcacheKeys.fetch(["v1","twt_avatar", profile_size, handle], 30.days.to_i) do
+    handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
       handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/images/fillers/profile_blank_#{profile_size}.gif"
     end
     handle_avatar
@@ -683,7 +685,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_helpdesk_autocomplete_path, :object_name => object_name }))  
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_path }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
