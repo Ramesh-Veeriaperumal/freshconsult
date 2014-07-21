@@ -19,12 +19,22 @@
         <label class="notify mailaddr-label from" for="helpdesk_note_to_emails">
           <%= t("ticket.note_form.notify_agents") %>:
         </label>
-        <div class="email_container">
-          <%= select_tag "helpdesk_note[to_emails]", 
-                          options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
-                              [( (@ticket.responder_id and @ticket.responder_id != current_user.id and @ticket.responder.present?) ? 
-                                      "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
-                          :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
+        <div class="email_container add_select2_custom">
+          <script type="text/javascript">
+              function addNoteAgents(){
+                if(!jQuery('.add_select2_custom').data('agent_loaded')){
+                  jQuery.ajax({
+                    url: '<%=agents_autocomplete_helpdesk_ticket_helpdesk_notes_path(params[:id])%>',
+                    method: "GET",
+                    success: function(response) {
+                      var custom_select2 = jQuery(response);
+                      jQuery(".add_select2_custom").append(custom_select2);
+                      jQuery('.add_select2_custom').data('agent_loaded',response);
+                    }
+                  });
+                }
+              }
+          </script>
         </div>
       </li>
 

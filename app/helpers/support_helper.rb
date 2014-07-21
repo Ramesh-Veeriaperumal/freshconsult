@@ -42,6 +42,31 @@ module SupportHelper
 	    end
 	    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
+  
+  def default_meta meta
+    output = []
+    output << %( 
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+      <meta name="description" content="#{ meta['description'] }" />
+      <meta name="author" content="#{ meta['author'] }" /> )
+      
+    output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
+    output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
+      
+    output.join('')
+  end
+  
+  def default_responsive_settings portal
+    if( portal['settings']['nonResponsive'] != "true" )
+      %(<link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
+    	  <link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
+    	  <link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+    	  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" /> )
+    end
+  end
 
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
@@ -789,10 +814,10 @@ HTML
 	end
 
 	def link_to_cookie_law portal
-		%(	<a href="#portal-cookie-info" rel="freshdialog" class="cookie-link"
+		%(	<a href="#portal-cookie-info" rel="freshdialog" data-lazy-load="true" class="cookie-link"
 				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
 				#{ I18n.t('portal.cookie.cookie_policy') }
-			</a>).html_safe
+			</a> #{ cookie_law } ).html_safe
 	end
 
 	def link_to_privacy_policy portal
@@ -803,11 +828,11 @@ HTML
 
 	def cookie_law
 		privacy_link = %(<a href="http://freshdesk.com/privacy/" target="_blank">#{ I18n.t('portal.cookie.privacy_policy') }</a>)
-		%(  <div id="portal-cookie-info" class="hide">
+		%(<div id="portal-cookie-info" class="hide"><textarea>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info1') }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
-			</div>).html_safe
+			</textarea></div>).html_safe
 	end
 
 	def attach_a_file_link attach_id

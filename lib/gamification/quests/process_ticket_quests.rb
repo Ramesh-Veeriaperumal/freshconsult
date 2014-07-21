@@ -74,7 +74,7 @@ module Gamification
 						ach_quest.updated_at = Time.zone.now
 						ach_quest.save
 					else # Rollback points and badge
-						Rails.logger.debug %(ROLLBACK POINTS N BADGE of user_id : #{ticket.responder.id} 
+						RAILS_DEFAULT_LOGGER.debug %(ROLLBACK POINTS N BADGE of user_id : #{ticket.responder.id} 
 									: quest_id : #{quest.id})
 						quest.revoke!(ticket.responder)
 					end

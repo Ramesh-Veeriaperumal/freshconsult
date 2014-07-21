@@ -2,6 +2,7 @@ require 'spec_helper'
 include UsageTriggersSpecHelper
 
 describe Freshfone::UsageTriggersController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

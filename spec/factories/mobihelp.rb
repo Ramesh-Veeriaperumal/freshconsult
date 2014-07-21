@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :mobihelp_app, :class => Mobihelp::App do |t|
     t.account_id 1
     t.sequence(:name) { |n| "Fresh App #{n}" }

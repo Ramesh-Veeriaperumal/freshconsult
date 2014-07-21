@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../config/environment.rb'
 
 class HelpdeskMailFetcherDaemon < Daemon::Base
   
-  @config = YAML.load_file("#{Rails.root}/config/helpdesk.yml")
-  @config = @config["EMAIL"]["incoming"][Rails.env].to_options
+  @config = YAML.load_file("#{RAILS_ROOT}/config/helpdesk.yml")
+  @config = @config["EMAIL"]["incoming"][RAILS_ENV].to_options
 
   @sleep_time = @config.delete(:sleep_time) || 60
   def self.start

@@ -6,8 +6,9 @@ class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationContro
   before_filter :set_selected_tab
   
   def index
-    @announcements = scoper.all
-  end            
+    @maintenance = scoper.maintenance_notifications
+    @product = scoper.product_notifications
+  end 
     
   def create
     @announcement = scoper.new(params[:subscription_announcement])   
@@ -55,4 +56,4 @@ class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationContro
         redirect_to(admin_subscription_login_path)
       end
     end 
-end
+end 

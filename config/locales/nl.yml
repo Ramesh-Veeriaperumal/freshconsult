@@ -245,7 +245,7 @@ nl:
         popular: "Populair"
         planned: "Gepland"
         implemented: "Geïmplementeerd"
-        nottaken: "Niet bezet"
+        nottaken: "Afgewezen"
         deferred: "Uitgesteld"
         inprogress: "In behandeling"
         answered: "Beantwoord"
@@ -1304,10 +1304,10 @@ nl:
                 success: "%{human_name} is bijgewerkt."
                 failure: "%{human_name} kan niet worden bijgewerkt."
         post: 
-            deleted: "Bericht van {title} is verwijderd."
+            deleted: "Bericht van %{title} is verwijderd."
             page_not_found: "Dit bericht is niet gevonden. Mogelijk is het verwijderd of hebt u de verkeerde URL ingevoerd."
         topic: 
-            deleted: "Onderwerp {title} is verwijderd."
+            deleted: "Onderwerp %{title} is verwijderd."
             page_not_found: "Dit onderwerp is niet gevonden. Mogelijk is het verwijderd of hebt u de URL verkeerd ingevoerd."
         forum: 
             page_not_found: "Dit forum is niet gevonden. Mogelijk is het verwijderd of hebt u de URL verkeerd ingevoerd."
@@ -1418,8 +1418,8 @@ nl:
                 short: "{{user_path}} heeft het forumonderwerp gemarkeerd als geïmplementeerd."
                 long: "{{user_path}} heeft het forumonderwerp {{notable_path}} gemarkeerd als geïmplementeerd."
             topic_stamp_3: 
-                short: "{{user_path}} heeft het forumonderwerp gemarkeerd als niet bezet."
-                long: "{{user_path}} heeft het forumonderwerp {{notable_path}} gemarkeerd als niet bezet."
+                short: "{{user_path}} heeft het forumonderwerp gemarkeerd als afgewezen."
+                long: "{{user_path}} heeft het forumonderwerp {{notable_path}} gemarkeerd als afgewezen."
             topic_stamp_4: 
                 short: "{{user_path}} heeft het forumonderwerp gemarkeerd als in behandeling."
                 long: "{{user_path}} heeft het forumonderwerp {{notable_path}} gemarkeerd als in behandeling."
@@ -1794,7 +1794,7 @@ nl:
         ideas_stamps: 
             planned: "Gepland"
             implemented: "Geïmplementeerd"
-            nottaken: "Niet aangenomen"
+            nottaken: "Afgewezen"
             deferred: "Uitgesteld"
             inprogress: "In behandeling"
         questions: 
@@ -2291,7 +2291,6 @@ nl:
             see_all_articles: "Alle %{count} artikelen weergeven"
             more_articles: "Meer artikelen in <span class='folder-name'> %{article_name} </span>"
             modified_on: "Gewijzigd op:"
-            related_articles: "Gerelateerde artikelen"
         folder: 
             filler_text: "Houd deze ruimte in de gaten voor artikelen over %{folder_name}"
         topic: 
@@ -4145,7 +4144,7 @@ nl:
                 feedback_widgets_knowledge_base: "Kennisbank "
                 feedback_widgets_help_articles: "of Helpartikelen zoeken"
                 show_all_results: "Alle resultaten weergeven"
-                no_results: "Geen resultaten voor "
+                no_results_for: "Geen resultaten voor %{term}"
     reorder: "Volgorde wijzigen"
     reports: 
         no_data: "Geen gegevens om weer te geven."

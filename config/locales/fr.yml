@@ -1304,10 +1304,10 @@ fr:
                 success: "Le %{human_name} a été mis à jour."
                 failure: "Le %{human_name} n'a pas pu être mis à jour."
         post: 
-            deleted: "Le message de « {title} » a été supprimé."
+            deleted: "Le message de « %{title} » a été supprimé."
             page_not_found: "Ce message est introuvable. Il a peut-être été supprimé ou il y a une erreur dans l'URL."
         topic: 
-            deleted: "La discussion « {title} » a été supprimée."
+            deleted: "La discussion « %{title} » a été supprimée."
             page_not_found: "Cette discussion est introuvable. Elle a peut-être été supprimée ou il y a une erreur dans l'URL."
         forum: 
             page_not_found: "Ce forum est introuvable. Il a peut-être été supprimé ou il y a une erreur dans l'URL."

@@ -63,7 +63,6 @@ _b.AutoSuggest = function (id, param)
 	// parameters object
 	//
 	this.oP = param ? param : {};
-	
 	// defaults	
 	//
 	var k, def = {minchars:1, meth:"get", varname:"input", className:"autosuggest", timeout:2500, delay:500, offsety:-5, shownoresults: true, noresults: "No results!", maxheight: 250, cache: true, maxentries: 25, id_as_value: false};
@@ -291,7 +290,7 @@ _b.AutoSuggest.prototype.doAjaxRequest = function (input)
 	var meth = this.oP.meth;
 	var input = this.sInp;
 	
-	var onSuccessFunc = function (req) { pointer.setSuggestions(req, input) };
+	var onSuccessFunc = function (res) { pointer.setSuggestions(res, input) };
 	var onErrorFunc = function (status) { alert("AJAX error: "+status); };
 
 	var myAjax = new _b.Ajax();
@@ -320,7 +319,7 @@ _b.AutoSuggest.prototype.setSuggestions = function (req, input)
 		
 		for (var i=0;i<jsondata.results.length;i++)
 		{
-			this.aSug.push(  { 'id':jsondata.results[i].id, 'value':jsondata.results[i].value, 'info':jsondata.results[i].info }  );
+			this.aSug.push(  { 'id':jsondata.results[i].email, 'value':jsondata.results[i].value, 'info':jsondata.results[i].info }  );
 		}
 	}
 	else

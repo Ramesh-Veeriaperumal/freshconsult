@@ -18,7 +18,7 @@ describe Admin::Social::TwitterHandlesController do
     
     it "should redirect to new handle if it doesn't exists and create a default stream/dm stream and ticket rule for dm stream" do 
       Resque.inline = true
-      handle = Factory.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_id}")
+      handle = Factory.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_social_id}")
       Resque.inline = false
       TwitterWrapper.any_instance.stubs(:auth).returns(handle)
       
@@ -36,7 +36,7 @@ describe Admin::Social::TwitterHandlesController do
     
     it "should redirect to existing stream if stream already exists" do    
       Resque.inline = true
-      handle = Factory.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_id}")
+      handle = Factory.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_social_id}")
       Resque.inline = false
       TwitterWrapper.any_instance.stubs(:auth).returns(handle)
       
@@ -77,8 +77,10 @@ describe Admin::Social::TwitterHandlesController do
   
   after(:all) do
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     Social::TwitterHandle.destroy_all
     Resque.inline = false
   end

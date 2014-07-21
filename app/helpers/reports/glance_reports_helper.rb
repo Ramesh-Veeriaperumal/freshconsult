@@ -22,7 +22,8 @@ module Reports::GlanceReportsHelper
 	}
 
 	def percentage_change(old_val, new_val, metric_label)
-		return "" if old_val.blank? || old_val == 0
+		#Changing "" to {} for rails 3. bug ticket: #3460
+		return {} if old_val.blank? || old_val == 0
 		comparison_hash = {}
 		percentage_val = ((new_val - old_val).to_f/old_val.to_f) * 100
 		comparison_hash[:val] = (number_to_percentage(percentage_val.abs, :precision => 2))

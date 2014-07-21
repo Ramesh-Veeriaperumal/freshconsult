@@ -36,7 +36,7 @@
 
   map.resources :groups
 
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post} do |profiles|
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post, :notification_read => :put} do |profiles|
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
   
@@ -196,6 +196,7 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get }
+    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get }
     search.resources :tickets, :only => :index
     search.resources :solutions, :only => :index
     search.resources :forums, :only => :index
@@ -420,7 +421,7 @@
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post, :mobihelp => :post}
 
-      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get, :agents_autocomplete => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post,
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,
@@ -476,12 +477,10 @@
     end
 
     helpdesk.resources :dropboxes
-
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
-
+ 
     helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
-
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 

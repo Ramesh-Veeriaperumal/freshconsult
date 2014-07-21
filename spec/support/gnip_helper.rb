@@ -4,7 +4,7 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 module GnipHelper
 
   def sample_gnip_feed(rule_hash=nil, reply=nil, time = Time.now.utc.iso8601)
-    tweet_id = get_id
+    tweet_id = get_social_id
     feed_hash = {
       "body" => "@TestingGnip #{Faker::Lorem.words(20).join(" ")}",
       "retweetCount" => 2,
@@ -18,7 +18,7 @@ module GnipHelper
       "actor" => {
         "preferredUsername" => "GnipTestUser",
         "image" => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png",
-        "id" => "id:twitter.com:#{get_id}",
+        "id" => "id:twitter.com:#{get_social_id}",
         "displayName" => "Gnip Test User"
       },
       "verb" => "post",

@@ -6,6 +6,7 @@ describe Helpdesk::DashboardController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @agent.make_current
     @forum_category = create_test_category
     @forum = create_test_forum(@forum_category)
     @id = @account.activities.last.id
@@ -13,6 +14,7 @@ describe Helpdesk::DashboardController do
 
   before(:each) do
     login_admin
+    @agent.make_current
   end
 
   it "should display the Dashboard page" do

@@ -19,7 +19,7 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||=  MemcacheKeys.fetch(["v6", "portal", "logo_href", source],30.days.to_i) do
+    @logo_url ||=  MemcacheKeys.fetch(["v7", "portal", "logo_href", source],30.days.to_i) do
             source.logo.nil? ? 
               "/images/logo.png" :
               AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
@@ -197,6 +197,10 @@ class PortalDrop < BaseDrop
 
   def paid_account
     @paid_account ||= portal_account.subscription.paid_account?
+  end
+  
+  def settings
+    @settings ||= source.template.preferences
   end
   
   private

@@ -75,11 +75,33 @@ $rtl: false !default;
 // = Radius =
 // ==========
 
+@mixin lr-radius-swap($value, $origin: left){
+  @if $origin == left {
+    @if $rtl { 
+      border-top-right-radius: $value; 
+      border-bottom-right-radius: $value; 
+    }
+    @else    { 
+      border-top-left-radius: $value; 
+      border-bottom-left-radius: $value; 
+    }
+  } @else {
+      @if $rtl { 
+        border-top-left-radius: $value; 
+        border-bottom-left-radius: $value; 
+      }
+      @else    { 
+        border-top-right-radius: $value; 
+        border-bottom-right-radius: $value; 
+      }
+  }
+}
+
 @mixin border-left-radius($value){
-  @include lr-swap($value, radius, left)  
+  @include lr-radius-swap($value, left)  
 }
 @mixin border-right-radius($value){
-  @include lr-swap($value, radius, right)  
+  @include lr-radius-swap($value, right)  
 }
 
 @mixin border-radius($values){

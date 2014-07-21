@@ -1,5 +1,6 @@
 require 'spec_helper'
 describe Integrations::OauthUtilController do
+	integrate_views
 	setup :activate_authlogic
   self.use_transactional_fixtures = false
 

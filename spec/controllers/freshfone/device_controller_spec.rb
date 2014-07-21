@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Freshfone::DeviceController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

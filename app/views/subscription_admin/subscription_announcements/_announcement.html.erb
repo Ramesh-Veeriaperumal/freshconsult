@@ -1,0 +1,22 @@
+<tr>
+	<% if type == "maintenance"%>
+	  	<td class="span4">
+			<div>
+				From ~
+				<%= announcement.starts_at.to_s %> 
+			</div>         	
+			<div>
+				To ~
+					<%= announcement.ends_at.to_s %>
+			</div>
+		</td>
+	<%end%>
+	<td><%= announcement.title %></td>
+	<%if type == "product"%>
+		<td class="span3" style="word-break: break-word;"><%= announcement.url %></td>
+	<% end %>
+	<td><%= announcement.message %></td>
+	<td>
+		<%= link_to('Edit', edit_admin_subscription_announcement_path(announcement), :class => "btn btn-small") %>
+	</td>
+</tr>

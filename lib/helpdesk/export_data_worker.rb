@@ -12,8 +12,8 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       @current_account.make_current
       @data_export = @current_account.data_exports.data_backup[0]   
       @data_export.started!
-      @out_dir = "#{Rails.root}/tmp/#{@current_account.id}" 
-      zip_file_path = File.join("#{Rails.root}/tmp/","#{@current_account.id}.zip") 
+      @out_dir = "#{RAILS_ROOT}/tmp/#{@current_account.id}" 
+      zip_file_path = File.join("#{RAILS_ROOT}/tmp/","#{@current_account.id}.zip") 
       
       delete_zip_file zip_file_path #cleaning up the directory
       FileUtils.mkdir_p @out_dir

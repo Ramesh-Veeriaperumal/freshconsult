@@ -659,4 +659,31 @@ if Integrations::Application.count == 0
     s.application_type = "screenr"
   end
 
+  #populate pivotal tracker
+  pivotal_tracker = Integrations::Application.seed(:name) do |s|
+    s.name = "pivotal_tracker"
+    s.display_name = "integrations.pivotal_tracker.label"  
+    s.description = "integrations.pivotal_tracker.desc"
+    s.account_id = 0
+    s.listing_order = 23
+    s.options = { :keys_order => [:api_key, :pivotal_update],
+                  :api_key => { :type => :text, :required => true, :label => "integrations.pivotal_tracker.api_key", :info => "integrations.pivotal_tracker.api_key_info"},
+                  :pivotal_update => { :type => :checkbox, :label => "integrations.pivotal_tracker.pivotal_updates"}
+                }
+    s.application_type = "pivotal_tracker"
+  end
+
+  #populate shopify
+  shopify_app = Integrations::Application.seed(:name) do |s|
+    s.name = "shopify"
+    s.display_name = "integrations.shopify.label"  
+    s.description = "integrations.shopify.desc"
+    s.account_id = 0
+    s.listing_order = 24
+    s.options = {:direct_install => false, :keys_order => [:shop_name],
+                 :shop_name => { :type => :text, :required => true, :label => "integrations.shopify.form.shop_name", :info => "integrations.shopify.form.shop_name_info", :rel => "ghostwriter", :autofill_text => ".myshopify.com"},
+                }
+    s.application_type = "shopify"
+  end
+
 end

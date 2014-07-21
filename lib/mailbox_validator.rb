@@ -46,13 +46,13 @@ module MailboxValidator
         verified = true
       rescue IdleNotSupportedError => error
         msg = I18n.t('mailbox.idle_not_supported')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the imap details : #{error} #{params.inspect}"
       rescue SocketError => error
         msg = I18n.t('mailbox.imap_connection_error')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the imap details : #{error} #{params.inspect}"
       rescue Exception => error
         msg = I18n.t('mailbox.imap_error')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"      
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the imap details : #{error} #{params.inspect}"      
       end
       { :success => verified, :msg => msg }
     end
@@ -68,16 +68,16 @@ module MailboxValidator
         verified = true
       rescue Timeout::Error => error
         msg = I18n.t('mailbox.smtp_timed_out')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue SocketError => error
         msg = I18n.t('mailbox.smtp_socket_error')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue Net::SMTPAuthenticationError => error
         msg = I18n.t('mailbox.invalid_credentials')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue Exception => error
         msg = I18n.t('mailbox.smtp_error', :error => error.message)
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       end
       { :success => verified, :msg => msg }
     end

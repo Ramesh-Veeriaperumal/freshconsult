@@ -7,7 +7,7 @@ Lockfile('lock', :retries => 0) do
   require File.dirname(__FILE__) + '/../config/environment'
   
   
-  unless Rails.env.staging?
+  unless RAILS_ENV == "staging"
   
     puts "The subscription script file is running "
   

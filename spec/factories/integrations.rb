@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :application, :class => Integrations::Application do |t|
     t.name "Test integration"
     t.display_name "app_name"

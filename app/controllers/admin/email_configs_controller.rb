@@ -152,7 +152,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   private
     # This method uses send grid api to remove the supplied email from send grid bounce list
     def remove_bounced_email (bounced_email_addr)
-      send_grid_credentials = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+      send_grid_credentials = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
       Rails.logger.debug "Start remove_bounced_email " +bounced_email_addr
       begin
         unless (bounced_email_addr.blank? or send_grid_credentials.blank?)

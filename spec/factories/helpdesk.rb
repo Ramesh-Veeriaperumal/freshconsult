@@ -1,4 +1,4 @@
-if Rails.env.test?
+if ENV["RAILS_ENV"] == "test"
   Factory.define :ticket, :class => Helpdesk::Ticket do |t|
     t.status 2
     t.urgent 0
@@ -26,7 +26,7 @@ if Rails.env.test?
   end
 
   Factory.define :product, :class => Product do |p|
-    p.name {Faker::Company.name}
+    p.sequence(:name) { |n| "Product#{n}" }
     p.description {Faker::Lorem.paragraph(3)}
   end
 
@@ -92,9 +92,12 @@ if Rails.env.test?
   end
 
   Factory.define :tag, :class => Helpdesk::Tag do |t|
-    t.name { Faker::Name.name }
+    t.sequence(:name) { |n| "HelpdeskTag#{n}" }
   end
 
   Factory.define :agent_group, :class => AgentGroup do |d|
+  end
+
+  Factory.define :support_score, :class => SupportScore do |d|
   end
 end

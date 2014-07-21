@@ -41,6 +41,15 @@ describe Admin::ObserverRulesController do
     get :edit, :id =>@test_observer_rule.id
     response.should render_template "admin/observer_rules/edit.html.erb"
   end
+
+  it "should clone a observer rule" do
+    get :clone_rule, :id => @test_observer_rule.id
+    response.should render_template "admin/observer_rules/clone_rule.html.erb"
+    (@test_observer_rule.id == assigns(:va_rule).id).should be_true
+    (@test_observer_rule.action_data == assigns(:va_rule).action_data).should be_true
+    (@test_observer_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+  end
+
   it "should update observer rule" do
     put :update, {:va_rule=>{"name"=>@test_observer_rule.name+" - temp", "description"=>Faker::Lorem.sentence(3)},
                   :filter_data=>[{:name=>"subject", :operator=>"is", :value=>"temp"}].to_json,

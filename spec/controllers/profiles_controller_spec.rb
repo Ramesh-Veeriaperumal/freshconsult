@@ -58,4 +58,11 @@ describe ProfilesController do
     response.should render_template "profiles/edit.html.erb"
   end
 
+  it "should update notification timesstamp" do
+    old_time_stamp = @agent.agent.notification_timestamp
+    put :notification_read
+    @agent.reload
+    @agent.agent.notification_timestamp.should_not be_eql(old_time_stamp)
+  end
+
 end

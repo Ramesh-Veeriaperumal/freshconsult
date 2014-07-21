@@ -1,4 +1,4 @@
-module Authority::FreshdeskRails
+module Authority::Rails
   module ModelHelpers
     
     def privilege?(privilege)

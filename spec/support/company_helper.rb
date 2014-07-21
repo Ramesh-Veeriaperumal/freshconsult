@@ -11,26 +11,28 @@ module CompanyHelper
   end
 
   def fake_a_company
-    @company_name = Faker::Company.name
+    @company_name = Faker::Company.name.gsub("'","")
     @params = {
-                :company => { :name => @company_name, 
-                              :description => Faker::Lorem.sentence, 
-                              :note => Faker::Lorem.sentence, 
-                              :domains => Faker::Internet.domain_name
-                            } 
-              }
+      :company       => { 
+        :name        => @company_name, 
+        :description => Faker::Lorem.sentence, 
+        :note        => Faker::Lorem.sentence, 
+        :domains     => Faker::Internet.domain_name
+      } 
+    }
     @company_params = @params.dup
   end
 
   def fake_a_customer
-    @company_name = Faker::Company.name
+    @company_name = Faker::Company.name.gsub("'","")
     @params = {
-                :customer => {  :name => @company_name, 
-                                :description => Faker::Lorem.sentence, 
-                                :note => Faker::Lorem.sentence, 
-                                :domains => Faker::Internet.domain_name
-                              } 
-              }
+      :customer => {  
+        :name        => @company_name, 
+        :description => Faker::Lorem.sentence, 
+        :note        => Faker::Lorem.sentence, 
+        :domains     => Faker::Internet.domain_name
+      } 
+    }
     @company_params = @params.dup
   end
 

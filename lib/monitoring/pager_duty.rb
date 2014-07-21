@@ -3,7 +3,7 @@ class Monitoring::PagerDuty
     # Path to pager duty config. Expects an +service_key+ and +event_url+
     mattr_accessor :config_yml
 
-    @@config_yml = "#{Rails.root}/config/pager_duty.yml"
+    @@config_yml = "#{RAILS_ROOT}/config/pager_duty.yml"
 
     class << self
         #incident_key(String) - Unique incident key

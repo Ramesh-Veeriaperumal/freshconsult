@@ -154,11 +154,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.eot");
-  src: url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.eot?#iefix") format("embedded-opentype"),
-       url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.woff") format("woff"),
-       url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.ttf") format("truetype"),
-       url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.svg#glyphs") format("svg");
+  src: url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.eot");
+  src: url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.eot?#iefix") format("embedded-opentype"),
+       url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.woff") format("woff"),
+       url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.ttf") format("truetype"),
+       url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -166,7 +166,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../fonts/glyphs_bbfb9f24a61044853b08c55811fcccad.svg#glyphs") format("svg");
+    src: url("../../fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.svg#glyphs") format("svg");
   }
 }
 
@@ -200,6 +200,7 @@
 .ficon-ellipsis:before,
 .ficon-eye:before,
 .ficon-facebook:before,
+.ficon-file:before,
 .ficon-file-edit:before,
 .ficon-file-visible:before,
 .ficon-folder-o:before,
@@ -214,14 +215,17 @@
 .ficon-linkedin:before,
 .ficon-lock:before,
 .ficon-lock-open:before,
+.ficon-mail:before,
 .ficon-map-marker:before,
 .ficon-minus:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
 .ficon-open-in-new-window:before,
 .ficon-paperplane:before,
+.ficon-phone:before,
 .ficon-plus:before,
 .ficon-post-edit:before,
+.ficon-rearrange:before,
 .ficon-reorder:before,
 .ficon-reply:before,
 .ficon-retweet:before,
@@ -279,6 +283,7 @@
 .ficon-ellipsis:before { content: "\f111"; }
 .ficon-eye:before { content: "\f112"; }
 .ficon-facebook:before { content: "\f113"; }
+.ficon-file:before { content: "\f142"; }
 .ficon-file-edit:before { content: "\f132"; }
 .ficon-file-visible:before { content: "\f133"; }
 .ficon-folder-o:before { content: "\f114"; }
@@ -293,14 +298,17 @@
 .ficon-linkedin:before { content: "\f11a"; }
 .ficon-lock:before { content: "\f11b"; }
 .ficon-lock-open:before { content: "\f11c"; }
+.ficon-mail:before { content: "\f143"; }
 .ficon-map-marker:before { content: "\f11d"; }
 .ficon-minus:before { content: "\f11e"; }
 .ficon-notice:before { content: "\f134"; }
 .ficon-notice-o:before { content: "\f135"; }
 .ficon-open-in-new-window:before { content: "\f13e"; }
 .ficon-paperplane:before { content: "\f11f"; }
+.ficon-phone:before { content: "\f144"; }
 .ficon-plus:before { content: "\f120"; }
 .ficon-post-edit:before { content: "\f136"; }
+.ficon-rearrange:before { content: "\f145"; }
 .ficon-reorder:before { content: "\f137"; }
 .ficon-reply:before { content: "\f121"; }
 .ficon-retweet:before { content: "\f122"; }
@@ -332,7 +340,7 @@
   <body class="characters-off">
     <div id="page" class="container">
       <header>
-        <h1>Fonticons (65)</h1>
+        <h1>Fonticons (69)</h1>
         <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code></p>
       </header>
 
@@ -582,6 +590,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-file" class="ficon-file"></i></span>
+        </div>
+        <div class="usage">
+          <span>file</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-file-edit" class="ficon-file-edit"></i></span>
         </div>
         <div class="usage">
@@ -708,6 +725,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mail" class="ficon-mail"></i></span>
+        </div>
+        <div class="usage">
+          <span>mail</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-map-marker" class="ficon-map-marker"></i></span>
         </div>
         <div class="usage">
@@ -762,6 +788,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-phone" class="ficon-phone"></i></span>
+        </div>
+        <div class="usage">
+          <span>phone</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-plus" class="ficon-plus"></i></span>
         </div>
         <div class="usage">
@@ -775,6 +810,15 @@
         </div>
         <div class="usage">
           <span>post-edit</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-rearrange" class="ficon-rearrange"></i></span>
+        </div>
+        <div class="usage">
+          <span>rearrange</span>
         </div>
       </div>
       

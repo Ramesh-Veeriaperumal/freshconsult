@@ -18,7 +18,7 @@ describe Social::Gnip::TwitterFeed do
     update_db(@default_stream) unless GNIP_ENABLED
     @default_stream.reload
     @ticket_rule = create_test_ticket_rule(@default_stream)
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
     @account = @handle.account
@@ -39,7 +39,7 @@ describe Social::Gnip::TwitterFeed do
     account = @handle.account
     account.make_current
     
-    sample_dm = sample_twitter_dm("#{get_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
+    sample_dm = sample_twitter_dm("#{get_social_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
@@ -61,7 +61,7 @@ describe Social::Gnip::TwitterFeed do
     account.make_current    
     
     # For creating ticket
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -99,7 +99,7 @@ describe Social::Gnip::TwitterFeed do
     account = @handle.account
     account.make_current
     
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     
     sample_dm1 = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -178,10 +178,8 @@ describe Social::Gnip::TwitterFeed do
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
 
-    #while reply_tweet.nil?
-      fd_counter = 120
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    #end
+    fd_counter = 120
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     reply_tweet.should_not be_nil
     reply_tweet.is_ticket?.should be_true
@@ -196,7 +194,6 @@ describe Social::Gnip::TwitterFeed do
   it "should convert the reply tweet to a note if the 'replied-to' tweet arrives within 2 minutes" do
     #Ticket feed
     ticket_feed = sample_gnip_feed(@rule)
-    # sleep 1
 
     #Send reply tweet
     ticket_tweet_id = ticket_feed["id"].split(":").last.to_i
@@ -209,22 +206,25 @@ describe Social::Gnip::TwitterFeed do
 
     fd_counter = 30
 
-    #while fd_counter != 60
-      fd_counter = fd_counter + 30
-      reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
-    #end
+    fd_counter = fd_counter + 30
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     #Send 'replied-to' tweet
     tweet = send_tweet_and_wait(ticket_feed)
 
     reply_tweet_id = reply_feed["id"].split(":").last.to_i
-    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, 2, fd_counter)
+    reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     #Reply tweet should be converted to a note
     reply_tweet.should_not be_nil
     reply_tweet.is_note?.should be_true
     reply_tweet.stream_id.should_not be_nil
-
+    
+    tweet.should_not be_nil
+    tweet.is_ticket?.should be_true
+    tweet.stream_id.should_not be_nil
+    
+    
     reply_body = reply_feed["body"]
     body = reply_tweet.tweetable.note_body.body
     reply_body.should eql(body)
@@ -295,7 +295,7 @@ describe Social::Gnip::TwitterFeed do
     account.make_current    
     
     # For creating ticket
-    user_id = "#{get_id}"
+    user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
     # stub the twitter api call

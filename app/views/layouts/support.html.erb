@@ -1,35 +1,19 @@
 <!DOCTYPE html>
 <%= open_html_tag %>
 	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-		<title><%= h(page_title) %></title>
-		<meta name="description" content="<%= page_description %>">
-		<meta name="author" content="">
-		<meta name="keywords" content="<%= page_keywords %>">
-
-		<% if(current_portal.template.preferences["nonResponsive"] != "true") %>
-		    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
-			<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
-			<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
-			<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />		
-			<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
-		<% end %>
-
+		
+		<%= @head %>
+		
 		<!-- Adding meta tag for CSRF token -->
 		<%= csrf_meta_tag %>
 		<!-- End meta tag for CSRF token -->
-
-		<% unless page_canonical.blank? %>
-			<link rel="canonical" href="<%= page_canonical %>" />
-		<% end %>
-
+		
+		<!-- Fav icon for portal -->
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
 		<%= include_cloudfront_css :portal_utils %>
-
+		
 		<!-- Theme stylesheet -->
 		<link href="<%= support_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 
@@ -38,13 +22,13 @@
 
 		<!-- Including default portal based script framework at the top -->
 		<%= include_cloudfront_js :portal_head %>
+		
+		<!-- Including syntexhighlighter for portal -->
+		<%= include_cloudfront_js :syntaxhighlighter %>
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
-		<!-- Including syntexhighliter for portal -->
-		<%= include_cloudfront_js :syntaxhighlighter %>
-
-		<!-- Access variables for portal -->
+		<!-- Access portal settings information via javascript -->
 		<%= portal_access_varibles %>
 	</head>
 	<body>
@@ -62,10 +46,10 @@
 		<%= include_cloudfront_js :freshfone_portal %>
 		<%= include_cloudfront_js_langs %>
 		<%= render :partial => "layouts/shared/scripts" %> 	
-		
-		<%= cookie_law %>
-		
+
 		<%= back_to_agent_view %>
+
+		<%# Page hit tracker %>
 		<%= page_tracker %>
 	</body>
 </html>

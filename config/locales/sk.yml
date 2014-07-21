@@ -979,10 +979,10 @@ sk:
       update: 
         success: "Účet %{human_name} bol aktualizovaný."
     post: 
-      deleted: "Príspevok {title} bol zmazaný."
+      deleted: "Príspevok %{title} bol zmazaný."
       page_not_found: "Tento príspevok nebol nájdený. Buď bol zmazaný, alebo ste zle zadali adresu."
     topic: 
-      deleted: "Téma {title} bola zmazaná."
+      deleted: "Téma %{title} bola zmazaná."
       page_not_found: "Táto téma nebolo nájdená. Buď bola zmazaná, alebo je nesprávne URL."
     forum: 
       page_not_found: "Toto fórum nebolo nájdené. Buď bolo zmazané, alebo je nesprávne URL."

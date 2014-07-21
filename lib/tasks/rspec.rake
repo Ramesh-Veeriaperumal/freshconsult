@@ -50,6 +50,7 @@ ModelTests = [
 
 EmailTests = [ 
   "spec/lib/*_email_spec.rb", 
+  "spec/lib/email_commands_spec.rb",
   "spec/controllers/email_controller_spec.rb",
   "spec/controllers/mailgun_controller_spec.rb"
 ]
@@ -76,7 +77,9 @@ IntegrationTests = [
   "spec/controllers/integrations/installed_applications_controller_spec.rb",
   "spec/controllers/integrations/oauth_util_controller_spec.rb",
   "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
-  "spec/controllers/integrations/user_credentials_controller_spec.rb"
+  "spec/controllers/integrations/user_credentials_controller_spec.rb",
+  "spec/controllers/google_login_controller_spec.rb",
+  "spec/controllers/google_signup_controller_spec.rb"
 ]
 
 FreshfoneTests = [
@@ -99,6 +102,7 @@ ForumTests = [
 ]
 
 HelpdeskTests = [ 
+  "spec/controllers/accounts_controller_spec.rb",
   "spec/controllers/home_controller_spec.rb",
   "spec/controllers/account_configurations_controller_spec.rb",
   "spec/controllers/agents_controller_spec.rb",
@@ -119,19 +123,27 @@ HelpdeskTests = [
   "spec/controllers/wf_filters_controller_spec.rb",
   "spec/controllers/domain_search_controller_spec.rb",
   "spec/controllers/rabbit_mq_controller_spec.rb",
-  "spec/controllers/helpdesk/tickets_filter_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
-  "spec/models/va_rule_spec.rb"
+  "spec/models/va_rule_spec.rb",
+  "spec/controllers/notification/product_notification_controller_spec.rb"
 ]    
 
 BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
   "spec/controllers/partner_admin/affiliates_controller_spec.rb"
-]        
+]       
+
+FunctionalTests = [
+  "spec/lib/gamification/quests/ticket_quest_spec.rb",
+  "spec/lib/gamification/quests/process_solution_quests_spec.rb",
+  "spec/lib/gamification/quests/process_topic_quests_spec.rb",
+  "spec/lib/gamification/quests/process_post_quests_spec.rb",
+  "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
+] 
   
-UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, GnipTests,
-              HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
+UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
@@ -325,7 +337,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(UnitTests)
+        t.spec_files = FileList.new(UnitTests).uniq
       end
     end
 

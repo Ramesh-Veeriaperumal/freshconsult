@@ -129,3 +129,45 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+/* ======================= header notification ================== */
+.header-notification-wrapper{
+	.notification_present .#{$font-class-name}help{
+		color: white;
+	}
+	.popover-wrapper{
+		.#{$font-class-name}freshdesk, .#{$font-class-name}search, .#{$font-class-name}mail,.#{$font-class-name}answer-checked {
+			color:#fff;
+		}
+		.#{$font-class-name}phone{
+			color: #aaa;
+		}
+	}
+	.search-head{
+		.#{$font-class-name}search{
+			color: #777;
+			float: left;
+			margin-right: 10px;
+			line-height: 25px;
+		}
+	}
+}
+/* === Admin Chat Settings === */
+.prechat_form{
+	.inline-field{
+		.#{$font-class-name}rearrange{
+			float: left;
+			margin-right: 10px;
+			line-height: 25px;
+		}
+	}
+	.prechat_wrap{
+		.#{$font-class-name}caret-down{
+			top: 50%;
+			position: absolute;
+			right: 7px;
+			font-size: 12px;
+			margin-top: -12px;
+			color: #8a8a8a;
+		}
+	}
+}

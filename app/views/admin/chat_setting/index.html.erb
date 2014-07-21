@@ -72,7 +72,7 @@
 			<div class="span4 pull-right">
 				<div id="chat_layout" class="pull-right">
 				  <div id="fc-header" class="chat_fc_header" style="background-color:<%=chat_color%>">
-				    <%=(@chat.maximized_title.blank?) ? t('freshchat.maximized_title') : @chat.maximized_title%>
+				    <%=(@chat.preferences != nil)? @chat.preferences['maximized_title'] : t('freshchat.maximized_title')%>
 				    <span id="symbol"><i class="icon-caret-down"></i></span>
 				  </div>
 				  <div id="chat-container" style="display: block;background-color:<%=chat_color%>">
@@ -93,47 +93,71 @@
 			    </div>
 			</div>
 		</div>
-				<ul class="ui-form">	
+				<ul class="ui-form default-msgs">	
 				  <li class="inline-field">
 				  	 <h3 class="title space_bottom"><%=t('freshchat.set_default_msgs')%></h3> 
 					 <label class="caption"><%=t('freshchat.minimize_chat_title')%></label>
 					 <div class="fields">
-					 	<input type="text" class="text" size="18" name="minimized_title" id="minimized_title" value="<%=(@chat.minimized_title != nil)? @chat.minimized_title : t('freshchat.minimized_title')%>" placeholder="<%=t('freshchat.minimized_title')%>">
+					 	<input type="text" class="text" size="18" name="minimized_title" id="minimized_title" value="<%=(@chat.preferences != nil)? @chat.preferences['minimized_title'] : t('freshchat.minimized_title')%>" placeholder="<%=t('freshchat.minimized_title')%>">
 					 </div>
 				  </li>
 
 				  <li class="inline-field">
 					 <label class="caption"><%=t('freshchat.maximize_chat_title')%></label>
 					 <div class="fields">
-					 	<input type="text" class="text" size="18" id="maximized_title" name="maximized_title" value="<%=(@chat.maximized_title != nil)? @chat.maximized_title : t('freshchat.maximized_title')%>" placeholder="<%=t('freshchat.maximized_title')%>">
+					 	<input type="text" class="text" size="18" id="maximized_title" name="maximized_title" value="<%=(@chat.preferences != nil)? @chat.preferences['maximized_title'] : t('freshchat.maximized_title')%>" placeholder="<%=t('freshchat.maximized_title')%>">
 					 </div>
 				  </li>
 
 				  <li class="inline-field">
 					<label class="caption"><%=t('freshchat.welcome')%></label>
 					<div class="fields">
-						<input type="text" class="text" id="welcome_message" name="welcome_message" size="18" value="<%=(@chat.welcome_message != nil)? @chat.welcome_message : t('freshchat.welcome_message')%>" placeholder="<%=t('freshchat.welcome_message')%>" >
+						<input type="text" class="text" id="welcome_message" name="welcome_message" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['welcome_message'] : t('freshchat.welcome_message')%>" placeholder="<%=t('freshchat.welcome_message')%>" >
+					</div>
+				  </li>
+
+				   <li class="inline-field">
+					<label class="caption"><%=t('freshchat.msgbox_placeholder_title')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="text_place" name="text_place" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['text_place'] : t('freshchat.text_placeholder')%>"  placeholder="<%=t('freshchat.text_placeholder')%>" >
 					</div>
 				  </li>
 
 				  <li class="inline-field">
-					<label class="caption"><%=t('freshchat.thank_title')%></label>
+					<label class="caption"><%=t('freshchat.msg_waiting_agent_title')%></label>
 					<div class="fields">
-						<input type="text" class="text" id="thank_message" name="thank_message" size="18" value="<%=(@chat.thank_message != nil)? @chat.thank_message : t('freshchat.thank_message')%>" placeholder="<%=t('freshchat.thank_message')%>" >
+						<input type="text" class="text" id="connecting_msg" name="connecting_msg" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['connecting_msg'] : t('freshchat.connecting_msg')%>" placeholder="<%=t('freshchat.connecting_msg')%>" >
 					</div>
 				  </li>
 
 				  <li class="inline-field">
 					 <label class="caption"><%=t('freshchat.wait_title')%></label>
 					 <div class="fields">
-					 	<input type="text" class="text" size="18" id="wait_message" name="wait_message" value="<%=(@chat.wait_message != nil)? @chat.wait_message : t('freshchat.wait_message')%>" placeholder="<%=t('freshchat.wait_message')%>">
+					 	<input type="text" class="text" size="18" id="wait_message" name="wait_message" value="<%=(@chat.preferences != nil)? @chat.preferences['wait_message'] : t('freshchat.wait_message')%>" placeholder="<%=t('freshchat.wait_message')%>">
+					 	<div class="info-data"><%=t('freshchat.help_text_wait_onhold_msg')%></div>
 					 </div>
 				  </li>
-
-				  <li class="inline-field">
-					<label class="caption"><%=t('freshchat.is_typing_header').html_safe%></label>
+                  
+				   <li class="inline-field">
+					<label class="caption"><%=t('freshchat.msg_joining_agent_title')%></label>
 					<div class="fields">
-						<input type="text" class="text" id="typing_message" name="typing_message" size="18" value="<%=(@chat.typing_message != nil)? @chat.typing_message : t('freshchat.typing_message')%>" placeholder="<%=t('freshchat.typing_message')%>" >
+						<input type="text" class="text" id="agent_joined_msg" name="agent_joined_msg" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['agent_joined_msg'] : t('freshchat.agent_joined_msg')%>" placeholder="<%=t('freshchat.agent_joined_msg')%>" >
+						<div class="info-data"><%=t('freshchat.help_text_agent_msg')%></div>
+					</div>
+				  </li>
+
+				   <li class="inline-field">
+					<label class="caption"><%=t('freshchat.msg_leaving_agent_title')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="agent_left_msg" name="agent_left_msg" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['agent_left_msg'] : t('freshchat.agent_left_msg')%>" placeholder="<%=t('freshchat.agent_left_msg')%>"> 
+						<div class="info-data"><%=t('freshchat.help_text_agent_msg')%></div>
+					</div>
+				  </li>
+
+				   <li class="inline-field">
+					<label class="caption"><%=t('freshchat.thank_title')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="thank_message" name="thank_message" size="18" value="<%=(@chat.preferences != nil)? @chat.preferences['thank_message'] : t('freshchat.thank_message')%>" placeholder="<%=t('freshchat.thank_message')%>" >
 					</div>
 				  </li>
 

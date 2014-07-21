@@ -65,10 +65,10 @@ class CRM::Salesforce < Resque::Job
 
     def oauth_keys
       {
-        :consumer_key    => AppConfig['salesforce'][Rails.env]['consumer_key'],
-        :consumer_secret => AppConfig['salesforce'][Rails.env]['consumer_secret'],
-        :access_token    => AppConfig['salesforce'][Rails.env]['access_token'],
-        :access_secret   => AppConfig['salesforce'][Rails.env]['access_secret'],
+        :consumer_key    => AppConfig['salesforce'][RAILS_ENV]['consumer_key'],
+        :consumer_secret => AppConfig['salesforce'][RAILS_ENV]['consumer_secret'],
+        :access_token    => AppConfig['salesforce'][RAILS_ENV]['access_token'],
+        :access_secret   => AppConfig['salesforce'][RAILS_ENV]['access_secret'],
         :login_url       => 'https://login.salesforce.com/services/OAuth/u/20.0'
       }
     end

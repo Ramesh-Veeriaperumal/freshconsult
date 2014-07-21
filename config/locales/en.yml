@@ -90,6 +90,7 @@ en:
   no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
   sidebar_help: "Help"
+  support_title: "Support"
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -456,7 +457,27 @@ en:
       ticket_list: "User tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
-
+  portal_meta:
+    titles:
+      portal_home: "Support"
+      user_signup: "Signup for a new account"
+      user_login: "Sign into"
+      forgot_password: "Forgot password"
+      profile_edit: "Edit your profile"
+      search: "Search"
+      solution_home: "Solutions"
+      solution_category: "Solutions category"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions"
+      discussions_category: "Discussions category"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "Start a discussions"
+      submit_ticket: "Submit a ticket"
+      ticket_list: "Your tickets"
+      ticket_view: "Ticket details"
+      my_topics: "My Topics"
   admin:
     social:
       helpcard:
@@ -2412,7 +2433,7 @@ en:
       two: 2 Hours
       four: 4 Hours
       eight: 8 Hours
-      two: 12 Hours
+      twelve: 12 Hours
       day: 1 Day
       twoday: 2 Days
       threeday: 3 Days
@@ -5072,9 +5093,11 @@ en:
       subheader_layout: Portal layout
       subheader_pages: Portal pages
       pages_help_message: Here you will be able to customize body area of individual pages.
+      head_layout_title: Head
       header_layout_title: Header
       footer_layout_title: Footer
       pagelayout_title: Page layout
+      head_layout_help_message: Modify the head section of your portal html.
       header_layout_help_message: Change the header area of your support portal
       footer_layout_help_message: Change the footer area of your support portal
       pagelayout_help_message: Customize the entire layout of your support portal
@@ -5565,6 +5588,11 @@ en:
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
+    msgbox_placeholder_title: "Reply box placeholder"
+    msg_waiting_agent_title: "Status Message while waiting for agent"
+    msg_joining_agent_title: "Message when agent joins chat"
+    msg_leaving_agent_title: "Message when agent leaves chat"
+    help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
@@ -5708,8 +5736,9 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
-    agent_joined_msg: "$ has joined the chat"
-    agent_left_msg: "$ has left the chat"
+    agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_left_msg: "{{agent_name}} has left the chat"
+    help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
@@ -6016,3 +6045,16 @@ en:
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."
+  notification:
+    whats_new_on_freshdesk: " What's New On Freshdesk "
+    see_all: "See All"
+    frequently_referred_articles: "Frequently referred "
+    browse: "Browse"
+    get_help: "Get Help"
+    have_question: "Have a question?"
+    submit_feedback: "Submit Feedback"
+    contact_support: " Contact Support "
+    search_articles: "Search Article"
+    contact_us: "Contact Us"
+    whats_new: "What's New"
+

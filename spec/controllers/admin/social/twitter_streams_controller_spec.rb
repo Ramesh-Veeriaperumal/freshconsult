@@ -20,7 +20,7 @@ describe Admin::Social::TwitterStreamsController do
     end
     @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
-    @custom_stream = create_test_custom_twitter_stream
+    @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
     update_db(@default_stream) unless GNIP_ENABLED
     @rule = {:rule_value => @data[:rule_value], :rule_tag => @data[:rule_tag]}
@@ -254,8 +254,10 @@ describe Admin::Social::TwitterStreamsController do
   after(:all) do
     #Destroy the twitter handle
     Resque.inline = true
-    GnipRule::Client.any_instance.stubs(:list).returns([]) unless GNIP_ENABLED
-    GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) unless GNIP_ENABLED
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      GnipRule::Client.any_instance.stubs(:delete).returns(delete_response) 
+    end
     # @handle.destroy
     # Social::Stream.destroy_all
     # Social::Tweet.destroy_all

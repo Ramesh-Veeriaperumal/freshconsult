@@ -18,7 +18,7 @@ module Reports
     REDSHIFT_MODIFIED_COLUMNS = { "#{Helpdesk::SchemaLessTicket.survey_rating_column}" => "survey_rating"}
     REDSHIFT_COLUMNS = REPORT_COLUMNS.map {|c| REDSHIFT_MODIFIED_COLUMNS.key?(c) ? REDSHIFT_MODIFIED_COLUMNS[c] : c } + %w(created_at)
     
-    CSV_FILE_DIR = File.join("#{Rails.root}","tmp","files")
+    CSV_FILE_DIR = File.join("#{RAILS_ROOT}","tmp","files")
     ARCHIVE_DATA_FILE = "%{date}_account_%{account_id}"
 
     DEFAULT_COLUMNS_ORDER = [:responder_id, :group_id,:customer_id, :priority,:ticket_type,:source,:product_id]

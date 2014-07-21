@@ -19,10 +19,10 @@ def load_schema_and_data
 end
 
 def load_schema
-  config = YAML::load(IO.read(File.join(::Rails.root, 'config/database.yml')))
-  ActiveRecord::Base.logger = Logger.new(File.join(::Rails.root, 'debug.log'))
+  config = YAML::load(IO.read(File.join(RAILS_ROOT, 'config/database.yml')))
+  ActiveRecord::Base.logger = Logger.new(File.join(RAILS_ROOT, 'debug.log'))
   ActiveRecord::Base.establish_connection(config)
-  load(::Rails.root + "/schema.rb")
+  load(RAILS_ROOT + "/schema.rb")
 end
 
 def seed_data
@@ -76,19 +76,19 @@ end
 
 # ******* Load freshdesk_authority ***********
 require 'authority/authorization'
-require ::Rails.root + '/config/privileges'
+require RAILS_ROOT + '/config/privileges'
 require 'authority/rails/controller_helpers'
 require 'authority/rails/model_helpers'
 require 'authority/bookkeeper'
 require 'authority/constants'
 
 # ******* Setup sample rails app ************
-Dir["#{::Rails.root}/controllers/*.rb"].each {|file| require file }
-Dir["#{::Rails.root}/models/*.rb"].each {|file| require file }
+Dir["#{RAILS_ROOT}/controllers/*.rb"].each {|file| require file }
+Dir["#{RAILS_ROOT}/models/*.rb"].each {|file| require file }
 
 # ******** Create privileges_test.yml file for testing *******
-if File.exist?("#{::Rails.root}/config/privileges_test.yml")
-  File.delete("#{::Rails.root}/config/privileges_test.yml")
+if File.exist?("#{RAILS_ROOT}/config/privileges_test.yml")
+  File.delete("#{RAILS_ROOT}/config/privileges_test.yml")
 end
 
 @keeper = Authority::Bookkeeper.new('privileges_test.yml')

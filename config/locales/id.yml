@@ -2043,10 +2043,10 @@ id:
       update:
         success: "%{human_name} telah berhasil diperbarui."
     post:
-      deleted: "kiriman'{title}' telah dihapus."
+      deleted: "kiriman'%{title}' telah dihapus."
       page_not_found: "Kiriman ini tidak dapat ditemukan. Kiriman ini mungkin telah dihapus atau URL nya kurang tepat."
     topic:
-      deleted: "Topik '{title}' telah dihapus."
+      deleted: "Topik '%{title}' telah dihapus."
       page_not_found: "Topik ini tidak dapat ditemukan. Kiriman ini mungkin telah dihapus atau URL nya kurang tepat."
     forum:
       page_not_found: "Forum ini tidak dapat ditemukan. Kiriman ini mungkin telah dihapus atau URL nya kurang tepat."

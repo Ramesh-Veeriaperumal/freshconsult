@@ -6,8 +6,7 @@ describe Helpdesk::QuestsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-  @all_quests = ["Show them you can write!", "Engage the Community!", "Be a Knowledge Guru!", "Go Social!", "Participate in Forums!", 
-                  "Share Knowledge!", "Earn Customer Love!"]
+    @all_quests = @account.quests.all(:limit => 25)
   end
 
   before(:each) do
@@ -17,7 +16,7 @@ describe Helpdesk::QuestsController do
   it "should display the quest index page" do
     xhr :get, :index
     @all_quests.each do |quest|
-      response.body.should =~ /#{quest}/
+      response.body.should =~ /#{quest.name}/
     end
     response.should be_success
   end
@@ -29,7 +28,7 @@ describe Helpdesk::QuestsController do
   end
 
   it "should display the unachieved quests" do
-    quest = @account.quests.find_by_name(@all_quests[0])
+    quest = @account.quests.find_by_name(@all_quests[0].name)
     achieved_quest = Factory.build(:achieved_quest, :user_id => @agent.id, :account_id => @account.id, :quest_id => quest.id)
     achieved_quest.save(false)
     xhr :get, :unachieved

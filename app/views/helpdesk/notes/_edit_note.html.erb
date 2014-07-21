@@ -15,6 +15,9 @@
 				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 			<% end %>
 		</li>
+		<li>
+			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => "add-note" , :nsc_param => "helpdesk_note" } %>
+		</li>
 		<li class="button-container hide">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>
 			<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>

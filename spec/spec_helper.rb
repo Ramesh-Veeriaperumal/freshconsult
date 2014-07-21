@@ -70,11 +70,12 @@ Spork.prefork do
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
   'spec/support/va/test_case.rb',
-  'spec/support/wf/filter_helper.rb',
+  'spec/support/wf/filter_functional_tests_helper.rb',
   'spec/support/wf/test_case_generator.rb',
   'spec/support/wf/operator_helper.rb',
   'spec/support/wf/option_selector.rb',
   'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
+
 
 
   Spec::Runner.configure do |config|
@@ -112,6 +113,8 @@ Spork.prefork do
     config.include WfFilterHelper, :type => :controller
     config.include S3Helper
     config.include IntegrationsHelper
+    config.include QuestHelper
+    config.include Wf::FilterFunctionalTestsHelper
 
     config.before(:all) do
       @account = create_test_account
@@ -186,7 +189,7 @@ Spork.prefork do
     #
     # You can also declare which fixtures to use (for example fixtures for test/fixtures):
     #
-    # config.fixture_path = Rails.root + '/spec/fixtures/'
+    # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
     #
     # == Mock Framework
     #

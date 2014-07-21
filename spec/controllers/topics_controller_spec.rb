@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
+require 'spec_helper'
 
 describe TopicsController do
   integrate_views
@@ -38,7 +38,7 @@ describe TopicsController do
     controller.stubs(:main_portal?).returns(false)
     get :show, :category_id => @category.id+10000, :forum_id => @forum.id, :id => topic.id
     response.should render_template("errors/wrong_portal.html.erb")
-    controller.any_instance.unstub(:main_portal?)
+    controller.class.any_instance.unstub(:main_portal?)
   end
 
   # it "should redirect to discussions topic page on 'index'" do

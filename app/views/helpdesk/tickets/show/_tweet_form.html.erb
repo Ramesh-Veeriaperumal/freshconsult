@@ -23,7 +23,8 @@
 		<%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
 		<ul class="ui-form dont-validate">
 			<li class="inline-field field">
-				<%= f.label(:reply_email, t('ticket.from') ) %>
+				<%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid }) %> 
+				<%= f.label(:reply_email, t('ticket.from'), :class => "mailaddr-label from" ) %>
 				<%= select_tag :twitter_handle, 
 								options_from_collection_for_select(current_account.twitter_handles_from_cache, :id, "formatted_handle" , {:selected => @ticket.fetch_twitter_handle}), 
 								:class => 'select2 responder_field' %>
@@ -44,7 +45,7 @@
 								{ } %>
 			</span>
 			<span>
-	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body" ) %>
 	        </span>
 
 	        <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
