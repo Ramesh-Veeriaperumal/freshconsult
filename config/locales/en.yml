@@ -1509,7 +1509,8 @@ en:
     portal:
       discussions:
         topics:
-          spam_check: "We're checking your topic for spam. It will appear once it has been approved."
+          spam_check: "Thank you starting a new topic. your topic will appear in the forum, after a standard moderation process."
+          success: "Thank you for posting. your reply will appear in the topic, after a standard moderation process."
       tickets:
         create:
           success: Your ticket has been created.
