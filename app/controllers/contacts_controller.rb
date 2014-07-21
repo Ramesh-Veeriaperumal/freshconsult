@@ -339,7 +339,9 @@ protected
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
+       # connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"
+       # temp need to change...
+       connection_to_be_used = "run_on_slave"
        per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
        order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
        order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)

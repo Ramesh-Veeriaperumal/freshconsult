@@ -55,32 +55,41 @@ ul.summary{
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
-		display:inline;
 		@include float(left);
-		width:19.5%;
-		margin:2px 0;
-		@include padding(0 0 4px 0);
-		@include border-right(1px solid #e8e8e8); 
-		@include text-align(center);
+		@include text-align(left);
+		width:20%;
+		margin:0;
 		a{ 
-			text-decoration:none; color:$default_txt_color; @include text-align(center);
-			span{
+			text-decoration:none; 
+			color:$default_txt_color; 
+			@include text-align(left);
+			padding-top: 10px;
+			padding-bottom: 5px;
+			@include border-right(1px solid #e8e8e8); 
+			display: inline-block;
+			width:100%;
+			@include box-sizing(border-box);
+			&:hover{
+				@include box-shadow(inset 0px 5px 6px -3px rgba(130, 130, 130, 0.1));
+				background: #f6f6f6;
+			}
+			span, h4{
 				display:block;
-				position:relative;
-				top:8px;
+				padding-left:15px;
+				color:$default_txt_color; 
 			}
 			h4{			 
-				font-size:36px; color:#666666;
-				padding-top:8px;	
-				font-weight:bold; 
+				font-size:36px; 
+				font-weight:300;
 			}
-		}	
-		a.overdue{
-			color:#996666;
-			h4{ color:#a65252; }
+			&.overdue{
+				span, h4{ color:#a00; }
+			}
 		}
-	}	
-	li.last { border:0; }		 
+		&.last a{
+			border:0;
+		}
+	}		 
 }  
 
 ul.activityfeed li{ 

@@ -4,8 +4,7 @@ class Support::SolutionsController < SupportController
 
 	def index
 		respond_to do |format|
-	      format.html { 
-	      	@page_canonical = support_solutions_url
+	      format.html {
 	      	set_portal_page :solution_home 
 	      }
         format.json {
@@ -17,7 +16,10 @@ class Support::SolutionsController < SupportController
 
 	def show
 		respond_to do |format|
-	      format.html { set_portal_page :solution_category }
+	      format.html { 
+          load_page_meta
+          set_portal_page :solution_category 
+        }
 	    end
 	end
 
@@ -35,5 +37,13 @@ class Support::SolutionsController < SupportController
       else
         @categories = solution_categories; # in case of portal only selected solution is available.
       end
+    end
+    
+    def load_page_meta
+      @page_meta ||= {
+        :title => @category.name,
+        :description => @category.description,
+        :canonical => support_solution_url(@category)
+      }
     end
 end

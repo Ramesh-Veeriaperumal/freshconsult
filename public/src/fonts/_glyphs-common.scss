@@ -145,6 +145,29 @@ i.#{$font-class-name}twitter{
 	.search-head{
 		.#{$font-class-name}search{
 			color: #777;
+			float: left;
+			margin-right: 10px;
+			line-height: 25px;
+		}
+	}
+}
+/* === Admin Chat Settings === */
+.prechat_form{
+	.inline-field{
+		.#{$font-class-name}rearrange{
+			float: left;
+			margin-right: 10px;
+			line-height: 25px;
+		}
+	}
+	.prechat_wrap{
+		.#{$font-class-name}caret-down{
+			top: 50%;
+			position: absolute;
+			right: 7px;
+			font-size: 12px;
+			margin-top: -12px;
+			color: #8a8a8a;
 		}
 	}
 }

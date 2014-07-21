@@ -1,26 +1,26 @@
 require 'spec_helper'
 
 describe Support::SignupsController do
-	integrate_views
-	setup :activate_authlogic
-	self.use_transactional_fixtures = false
+    integrate_views
+    setup :activate_authlogic
+    self.use_transactional_fixtures = false
 
   before(:all) do
     @account.features.send(:signup_link).create
   end
 
   it "should display new signup page" do
-  	get :new
-  	response.should render_template 'support/signups/new.portal'
-  	response.should be_success
+    get :new
+    response.should render_template 'support/signups/new.portal'
+    response.should be_success
   end
 
   it "should not display new signup page when user logged_in" do
     user = add_test_agent(@account)
     log_in(user)
-  	get :new
-  	response.redirected_to.should =~ /login/
-  	response.should_not be_success
+    get :new
+    response.redirected_to.should =~ /login/
+    response.should_not be_success
   end
 
   it "should be successfully create new user" do
@@ -31,9 +31,9 @@ describe Support::SignupsController do
   end
 
   it "should be successfully create new user without activation email" do
-  	notification = @account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-  	notification.requester_notification = false
-  	notification.save(false)
+    notification = @account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
+    notification.requester_notification = false
+    notification.save(false)
     test_email = Faker::Internet.email
     post 'create', :user => { :email => test_email }
     response.session[:flash][:notice].should eql "Successfully registered"

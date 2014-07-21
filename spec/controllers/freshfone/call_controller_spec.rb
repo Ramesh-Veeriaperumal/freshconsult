@@ -5,6 +5,7 @@ include FreshfoneCallSpecHelper
 include APIHelper
 
 describe Freshfone::CallController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -79,7 +80,7 @@ describe Freshfone::CallController do
   it 'should update call status as completed for normal end call' do
     set_twilio_signature('freshfone/call/status', status_params)
     status_call = create_call_for_status
-    
+    controller.stubs(:called_agent_id).returns(@agent.id)
     post :status, status_params
     freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed

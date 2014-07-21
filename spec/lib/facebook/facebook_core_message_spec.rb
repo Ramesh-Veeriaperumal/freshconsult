@@ -20,7 +20,7 @@ describe Facebook::Core::Message do
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages
     
-    post = Social::FbPost.find_by_post_id(msg_id)
+    post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
   end
@@ -37,7 +37,7 @@ describe Facebook::Core::Message do
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages
     
-    post = Social::FbPost.find_by_post_id(msg_id)
+    post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
     post.is_ticket?.should be_true
     
@@ -49,7 +49,7 @@ describe Facebook::Core::Message do
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages
     
-    post = Social::FbPost.find_by_post_id(msg_id)
+    post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
     post.is_note?.should be_true
   end

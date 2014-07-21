@@ -8,13 +8,18 @@ class Support::DiscussionsController < SupportController
 
 	def index
 		respond_to do |format|
-			format.html { set_portal_page :discussions_home }
-	    end
+			format.html {
+        set_portal_page :discussions_home 
+      }
+	  end
 	end
 
-	def show
+	def show  
 		respond_to do |format|
-			format.html { set_portal_page :discussions_category }
+			format.html { 
+        load_page_meta
+        set_portal_page :discussions_category 
+      }
 		end
 	end	
 
@@ -42,4 +47,12 @@ class Support::DiscussionsController < SupportController
 				(raise ActiveRecord::RecordNotFound and return) if @category[:id].to_s != params[:id].to_s
 			end
 		end
+    
+    def load_page_meta
+      @page_meta ||= {
+        :title => @category.name,
+        :description => @category.description,
+        :canonical => support_discussion_url(@category)
+      }
+    end
 end 

@@ -150,11 +150,13 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+    # Possible dead code
     def silence_logging
       @bak_log_level = logger.level 
       logger.level = Logger::ERROR
     end
 
+    # Possible dead code
     def revoke_logging
       logger.level = @bak_log_level 
     end

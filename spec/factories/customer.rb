@@ -1,6 +1,6 @@
 if ENV["RAILS_ENV"] == "test"
   Factory.define :user do |f|
-    f.sequence(:name) { |n| "foo#{n}" }
+    f.sequence(:name) { |n| "Foo#{n}" }
     f.time_zone "Chennai"
     f.active 1
     f.user_role 1
@@ -13,7 +13,7 @@ if ENV["RAILS_ENV"] == "test"
   end
 
   Factory.define :company, :class => Customer do |c|
-    c.name {Faker::Company.name}
+    c.sequence(:name) { |n| "Company#{n}" }
     c.description {Faker::Lorem.sentence(2)}
     c.note {Faker::Lorem.sentence(2)}
     c.domains {Faker::Internet.domain_name}

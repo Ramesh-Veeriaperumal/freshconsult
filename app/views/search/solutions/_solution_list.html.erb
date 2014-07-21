@@ -31,17 +31,27 @@ function respondWithSol(select, sol_id, url){
 
 function insertSuggestions(value)
 {
-	element_id = jQuery('#suggested_solutions_show').data('editorId');
+	var element_id = jQuery('#suggested_solutions_show').data('editorId'),
+		$element = jQuery("#"+element_id);
+
 	jQuery('#related_solutions').modal('hide');
 
-
-	if(jQuery('#' + element_id)){
+	if($element){
 		//restoreCaretPosition(element_id);//method in ticket show page.
-	  jQuery("#"+element_id).getEditor().focus();
-	  jQuery("#"+element_id).data('redactor').restoreSelection();
- 		jQuery("#"+element_id).insertHtml(value);
-	}
+		if(element_id != "send-tweet-cnt-reply-body" && element_id != "send-fb-post-cnt-reply-body") {
+	 		var $redactor = $element.data('redactor');
 
+		 	$element.getEditor().focus();
+	 		$redactor.saveSelection();
+	  		$redactor.restoreSelection();
+ 			$element.insertHtml(value);
+ 		} else {
+ 			var textValue = jQuery("<div />").html(value).text();
+			$element.focus();
+ 			insertTextAtCursor($element.get(0), textValue);
+ 			$element.keyup(); // to update the SendTweetCounter value
+ 		}
+ 	}
 }
 
 //Method to restore the caret position when editor loses focus.[Suggest solutions]

@@ -20,6 +20,10 @@ describe ContactsController do
     @active_contact.save(false)
   end
 
+  after(:each) do
+    @account.features.multiple_user_emails.destroy
+  end
+
   #A few exceptions have been missed and agent failures couldnt be reproduced
 
   it "should create a new contact" do

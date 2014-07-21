@@ -19,7 +19,8 @@ class Portal::Template < ActiveRecord::Base
   TEMPLATE_MAPPING = [ 
     [:header,  "portal/header.portal"],    
     [:footer,  "portal/footer.portal"],
-    [:layout,  "portal/layout.portal"]
+    [:layout,  "portal/layout.portal"],
+    [:head,    "portal/head.portal"]
   ]
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
@@ -60,6 +61,7 @@ class Portal::Template < ActiveRecord::Base
     self.footer = nil
     self.custom_css = nil
     self.layout = nil
+    self.head = nil
     self.save
     clear_cache!
     Portal::Page::PAGE_TYPE_OPTIONS.map do |page|
@@ -128,7 +130,7 @@ class Portal::Template < ActiveRecord::Base
   private
     def draft_key(label = "cosmetic")
       PORTAL_PREVIEW % {:account_id => self.account_id, 
-                        :template_id=> self.id, 
+                        :template_id => self.id, 
                         :label => label,
                         :user_id => User.current.id }
     end

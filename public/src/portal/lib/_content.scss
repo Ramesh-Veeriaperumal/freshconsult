@@ -249,7 +249,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .c-row{
 	@include pie-clearfix;
-	padding:10px 0;
+	padding-top:10px;
 	border-top:1px solid $row-border-color;
   	.help-text{ font-size: 0.96em; }
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
@@ -265,9 +265,12 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 /* Solutions table row */
 .c-article-row{
-	@include padding-left(38px);
+	@include padding-left(50px);
+  .article-title{
+    margin-top: 6px;
+  }
 	.icon-article-table-row{
-		@include margin-left(-38px);
+		@include margin-left(-40px);
 		@include float(left);
 	}	
 }

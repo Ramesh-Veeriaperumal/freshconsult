@@ -108,12 +108,12 @@ describe TicketFieldsController do
   it "should edit a custom dependant field" do
     flexifield_def_entry = []
     labels = ['Nation', 'Memorial']
-    # ffs_03 and ffs_04 are created here
+    # ffs_04 and ffs_05 are created here
     (0..1).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
                                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                            :flexifield_name => "ffs_0#{nested_field_id+3}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+4}",
                                                             :flexifield_order => 5,
                                                             :flexifield_coltype => "dropdown",
                                                             :account_id => @account.id)
@@ -238,12 +238,12 @@ describe TicketFieldsController do
   it "should delete a custom dependant field" do
     flexifield_def_entry = []
     labels = ['Country', 'State', 'City']
-    # ffs_05, ffs_06 and ffs_07 are created here
+    # ffs_06, ffs_07 and ffs_08 are created here
     (0..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
                                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                            :flexifield_name => "ffs_0#{nested_field_id+5}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+6}",
                                                             :flexifield_order => 6,
                                                             :flexifield_coltype => "dropdown",
                                                             :account_id => @account.id)

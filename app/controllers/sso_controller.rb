@@ -24,7 +24,10 @@ class SsoController < ApplicationController
           kv_store.remove_key
           facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
           if user_session.save
-            cookies["mobile_access_token"] = { :value => curr_user.single_access_token, :http_only => true } if is_native_mobile?
+            if is_native_mobile?
+              cookies["mobile_access_token"] = { :value => curr_user.single_access_token, :http_only => true } 
+              cookies["fd_mobile_email"] = { :value => curr_user.email, :http_only => true } 
+            end
             redirect_back_or_default(facebook_redirect || '/')
           end
           return
@@ -66,7 +69,10 @@ class SsoController < ApplicationController
       @user_session = current_account.user_sessions.new(@current_user)
       if @user_session.save
         return unless grant_day_pass
-        cookies["mobile_access_token"] = { :value => @current_user.single_access_token, :http_only => true, :email => @current_user.email } if is_native_mobile?
+        if is_native_mobile?
+          cookies["mobile_access_token"] = { :value => @current_user.single_access_token, :http_only => true } 
+          cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+        end
         session[:return_to] = protocol+"://"+portal_url + session[:return_to].to_s
         Rails.logger.info "google_login redirect_url #{session[:return_to]}"
         redirect_back_or_default('/')

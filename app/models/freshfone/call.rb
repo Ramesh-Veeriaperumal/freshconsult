@@ -240,19 +240,23 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 
 		def description_html
-			customer_temp = "<b>" + customer_name + "</b> (" + caller_number + ")" if valid_customer_name?
+
+			i18n_params = {
+				:customer_name=> customer_name,
+				:customer_number=> valid_customer_name? ? caller_number : customer_name,
+				:location => location,
+				:freshfone_number => freshfone_number.number
+			}
 			if voicemail?
-				desc = I18n.t('freshfone.ticket.voicemail_ticket_desc', 
-					{:customer=> customer_temp || caller_number, :location => location})
+				i18n_label = "freshfone.ticket.voicemail_ticket_desc"
 			elsif ivr_direct_dial?
-				desc = I18n.t('freshfone.ticket.dial_a_number', 
-					{:customer=> customer_temp || caller_number, :location => location, 
-						:direct_dial_number => params[:direct_dial_number]})
+				i18n_label = "freshfone.ticket.dial_a_number"
 			else
-				desc = I18n.t('freshfone.ticket.ticket_desc', 
-					{:customer=> customer_temp || caller_number, :location => location, :agent => params[:agent].name, 
-						:agent_number => freshfone_number.number})
+				i18n_label = "freshfone.ticket.ticket_desc"
+				i18n_params.merge!({:agent => params[:agent].name,:agent_number => freshfone_number.number})
 			end
+			i18n_label += "_with_name" if valid_customer_name?
+			desc = I18n.t(i18n_label, i18n_params)
 			desc << "#{params[:call_log]}"
 			desc.html_safe
 		end

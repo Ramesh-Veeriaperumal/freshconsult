@@ -41,8 +41,6 @@ var FreshfoneCallTransfer
       freshfoneuser.resetStatusAfterCall();
       freshfoneuser.updatePresence();
       freshfonewidget.resetToDefaultState();
-      freshfonecalls.init();
-      freshfoneuser.init();
     }
   } 
 }(jQuery));

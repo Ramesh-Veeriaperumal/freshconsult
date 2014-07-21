@@ -182,7 +182,7 @@
     admin.resources :roles    
     admin.namespace :social do |social|
       social.resources :streams, :controller => 'streams', :only => :index
-      social.resources :twitter_streams, :controller => 'twitter_streams', :member => {:delete_ticket_rule => :post}
+      social.resources :twitter_streams, :controller => 'twitter_streams'
       social.resources :twitters, :controller => 'twitter_handles', :collection => {:authdone => :any}
     end
     admin.resources :mailboxes

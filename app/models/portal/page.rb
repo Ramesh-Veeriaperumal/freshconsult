@@ -63,13 +63,12 @@ class Portal::Page < ActiveRecord::Base
 		{ :general 		=> [:portal_home, :user_signup, :user_login, :search] },
 		{ :solutions 	=> [:solution_home, :article_list, :article_view, :solution_category] }, 
 		{ :discussions 	=> [:discussions_home, :discussions_category, :topic_list, :my_topics, :topic_view, :new_topic] },
-		{ :tickets 		=> [:submit_ticket] }
+		{ :tickets 		=> [:submit_ticket, :ticket_list, :ticket_view] }
 	]
 
 	# Restricted pages from editing
 	# Hiding customization for profile_edit, ticket_list, ticket_view and password_reset
-	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset, :activation_form,
-											:facebook_home]
+	RESTRICTED_PAGES = [:profile_edit, :password_reset, :activation_form, :facebook_home]
 	
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	

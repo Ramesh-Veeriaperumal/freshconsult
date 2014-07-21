@@ -28,20 +28,14 @@ module SsoUtil
 
   def sso_login_page_redirect
     #redirect to SSO login page
+    sso_url = nil
     if current_account.is_saml_sso?
       settings = get_saml_settings(current_account)
-      redirect_to OneLogin::RubySaml::Authrequest.new.create(settings)
+      sso_url = OneLogin::RubySaml::Authrequest.new.create(settings)
     else
-      host_url = "host_url=#{request.host}"
-      sso_url = current_account.sso_login_url
-
-      if sso_url.include? "?" 
-        sso_url += "&#{host_url}"
-      else
-        sso_url += "?#{host_url}"
-      end
-      redirect_to sso_url;
+      sso_url = generate_sso_url(current_account.sso_login_url);
     end
+    redirect_to sso_url
   end
 
   def get_saml_settings(acc)
@@ -121,7 +115,15 @@ module SsoUtil
     SAMLResponse.new(response.is_valid? , user_name , user_email_id, phone, error_message);
   end
 
+  def generate_sso_url url
+      return url if current_account.sso_options[:sso_type] == SAML
+      host_url = "host_url=#{request.host}"
+      url += (url.include? "?") ? "&#{host_url}" : "?#{host_url}"
+      return url;
+  end
+
   private
+    
     def get_first_match(attributes , keys)
       keys.each do |key|
         return attributes[key] if attributes[key]

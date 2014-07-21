@@ -3,7 +3,7 @@ class Wf::TestCase
 
   include AccountHelper
   include UsersHelper
-  include Wf::FilterHelper
+  include Wf::FilterFunctionalTestsHelper
   include Wf::TestCaseGenerator
   include Wf::OperatorHelper
   include Wf::OptionSelecter
@@ -17,12 +17,11 @@ class Wf::TestCase
 
   def working
     before_all
-    prep_ticket
+    prep_a_ticket
     define_test_cases
-    success = []
     @filter_test_cases.each do |test_case|
       name = test_case[:name]
-      params = PARAMS.merge(:data_hash => [test_case].to_json)
+      params = PARAMS.merge(:filter_name => Faker::Name.name, :data_hash => [test_case].to_json)
       tickets = @account.tickets.filter(:filter => 'Helpdesk::Filters::CustomTicketFilter', 
                                         :params => params)
 
@@ -40,7 +39,9 @@ class Wf::TestCase
       operator = test_case[:operator]
       name = test_case[:name]
       value = test_case[:value]
-      send(operator, name, value)
+      ff_name = test_case[:ff_name]
+      field_name = (ff_name != 'default') ? ff_name : name
+      send(operator, field_name, value)
     end
 
     def print_progress_dot

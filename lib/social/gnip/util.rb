@@ -17,6 +17,7 @@ module Social::Gnip::Util
         end
       else
         @twitter_handle = account.twitter_handles.find_by_id(args[:stream_id])
+        #Possible dead code
         if @twitter_handle
           convert_hash = @twitter_handle.check_ticket_rules 
           notify_social_dev("Received a rule tag without tag prefix S", args )
