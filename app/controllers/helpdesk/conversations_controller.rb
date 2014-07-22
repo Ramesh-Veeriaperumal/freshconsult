@@ -67,7 +67,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def twitter
     if @item.save_note 
-      twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : :mention.to_s
+      twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
       twt_success, reply_twt = send("send_tweet_as_#{twt_type}")
       if twt_success
         flash[:notice] = t(:'flash.tickets.reply.success') 

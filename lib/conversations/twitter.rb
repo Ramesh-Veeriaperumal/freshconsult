@@ -86,7 +86,7 @@ module Conversations::Twitter
 
   def validate_tweet(tweet, twitter_id, is_ticket = false)
     twt_text = is_ticket ? (tweet.include?(twitter_id) ? tweet : "#{twitter_id} #{tweet}") : tweet
-    twt_text_body = (twt_text.length > Social::Tweet::LENGTH) ? twt_text[0,Social::Tweet::LENGTH - 1] : twt_text
+    twt_text_body = twt_text[0,Social::Tweet::LENGTH - 1]
   end
 
   def agent_reply_params(twt, status_id, note)
