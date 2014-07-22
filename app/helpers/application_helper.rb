@@ -377,7 +377,7 @@ module ApplicationHelper
   end
 
   def responder_path(args_hash)
-    link_to(h(args_hash['name']), user_path(args_hash['id']))
+    request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
 
   def comment_path(args_hash, link_display = 'note', options={ :'data-pjax' => false })
@@ -401,11 +401,13 @@ module ApplicationHelper
   end
 
   def merge_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                          link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
   def split_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                           link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
    def timesheet_path(args_hash, link_display = 'time entry')

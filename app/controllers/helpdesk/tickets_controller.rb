@@ -713,6 +713,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def activities
+    return activity_json if request.format == "application/json"
     if params[:since_id].present?
       activity_records = @item.activities.activity_since(params[:since_id])
     elsif params[:before_id].present?

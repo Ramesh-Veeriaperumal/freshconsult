@@ -47,6 +47,37 @@ module Helpdesk::Activities
 		activity_stack
 	end
 
+	def activity_json
+		activity_records = @item.activities.newest_first(100)
+		activities = stacked_activities(activity_records.reverse)
+		result = []
+		activities.each do |activity|
+			next if activity[:stack].first.activity_data.blank?
+			performer = []
+			tkt_act = []
+			performer.push({ "id" => activity[:user].id, "name" => activity[:user].name, "email" => activity[:user].email, 
+												 "agent" => activity[:user].helpdesk_agent })
+			if activity[:is_note]
+				result.push({ :ticket_activity => { :performer => performer, :activity => "Added a note",
+											:note_content => @prefetched_notes[activity[:stack].first.note_id].body,
+											:private => @prefetched_notes[activity[:stack].first.note_id].private,
+											:performed_time => activity[:time] }})
+			else
+				stack = activity[:stack].map{ |act| 
+												Liquid::Template.parse(
+														t(act.short_descr.chomp('.short') + '.without_user')
+														).render(eval_activity_data(act.activity_data)).html_safe 
+											}
+					stack.each do |act|
+						tkt_act.push(act.gsub(%r{</?[^>]+?>}, ''))
+					end
+				result.push({ :ticket_activity => { :performer => performer, :activity => tkt_act, 
+											:performed_time => activity[:time] }})
+			end
+		end
+		render :json => result
+	end
+
 private
 
 
