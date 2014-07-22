@@ -32,7 +32,7 @@
 					<%= content_tag(:h3, t('freshchat.custom_chat_window'), :class => "title" ) %> 
 				</li>
 			</ul>
-			<% form_for "chat_settings", "", :html => { :id => "chat_settings_form" } do |f| %>
+			<% form_for "chat_settings", "", :html => { :id => "chat_settings_form", :class => "clearfix" } do |f| %>
 			<% chat_color = (@chat.preferences != nil)? @chat.preferences['window_color'] : "#777777"; %>
 
 			<div class="span5 marLeftNone">
