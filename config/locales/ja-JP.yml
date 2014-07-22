@@ -5866,7 +5866,7 @@ ja-JP:
     set_bcc_email_text: Bccメールを自動化する
     name_info_msg: チケット返信に使用されるメールの名前
     Personalized_email_replies: パーソナル・メール返信にエージェント名を使用しますか？
-    Personalized_email_replies_info: "「はい」の場合、エージェントの返信にはエージェントの名前も送信者の名前も含まれます(メールアドレスはサポートメールアドレスのままです）。例：「%{current_user_name} &amp;lt;%{current_account_domain}&amp;gt;'.&lt;%{current_account_domain}&gt;」"
+    Personalized_email_replies_info: "「はい」の場合、エージェントの返信にはエージェントの名前も送信者の名前も含まれます(メールアドレスはサポートメールアドレスのままです）。例：「%{current_user_name} &lt;%{current_account_domain}&gt;」"
     Personalized_email_replies_yes: はい
     Personalized_email_replies_no: いいえ
     config_saved_message: 設定は正常に保存されました。
