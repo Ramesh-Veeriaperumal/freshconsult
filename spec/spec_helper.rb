@@ -117,7 +117,8 @@ Spork.prefork do
     config.include IntegrationsHelper
     config.include QuestHelper
     config.include Wf::FilterFunctionalTestsHelper
-
+    config.include MobileHelper, :type => :controller
+    config.include CustomMatcher
     config.before(:all) do
       @account = create_test_account
       @agent = get_admin

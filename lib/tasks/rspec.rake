@@ -141,9 +141,14 @@ FunctionalTests = [
   "spec/lib/gamification/quests/process_post_quests_spec.rb",
   "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
 ] 
+
+MobileAppTests = [
+  "spec/controllers/mobile/*_spec.rb"
+]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
-              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, XssTests ]
+
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
@@ -363,6 +368,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(MobihelpTests)
+      end
+    end
+
+    namespace :mobile do
+      desc "Running all Mobile app tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(MobileAppTests)
       end
     end
     
