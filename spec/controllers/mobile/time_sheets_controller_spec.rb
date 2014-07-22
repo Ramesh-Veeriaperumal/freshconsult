@@ -1,6 +1,8 @@
 require "spec_helper"
 
 describe Helpdesk::TimeSheetsController do	
+  self.use_transactional_fixtures = false
+
  	before(:each) do
     request.host = @account.full_domain
 	  request.user_agent = "Freshdesk_Native_Android"
@@ -15,7 +17,18 @@ describe Helpdesk::TimeSheetsController do
 
   it "should create a timesheet" do
     user = add_test_agent(@account)
-    post :create , {"time_entry"=>{"executed_at"=>"7/2/2014", "workable_id"=> @test_ticket.id, "billable"=>"1", "note"=>"", "user_id"=> user.id , "hhmm"=>"11:12"}, "ticket_id"=> @test_ticket.display_id, "format"=>"json"}
+    post :create, {
+      "time_entry" => {
+        "executed_at" => DateTime.now.strftime("%d %b, %Y"), 
+        "workable_id" => @test_ticket.id, 
+        "billable"    => "1", 
+        "note"        => "Mobile", 
+        "user_id"     => user.id, 
+        "hhmm"        => "11:12"
+      }, 
+      "ticket_id" => @test_ticket.display_id, 
+      "format"=>"json"
+    }
     json_response.should include("success")
     json_response["success"].should be_true
   end

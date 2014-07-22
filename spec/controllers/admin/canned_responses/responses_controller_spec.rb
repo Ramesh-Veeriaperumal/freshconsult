@@ -9,9 +9,9 @@ describe Admin::CannedResponses::ResponsesController do
 		@now = (Time.now.to_f*1000).to_i
 		@test_response_1 = create_response( {:title => "New Canned_Responses Hepler",:content_html => "DESCRIPTION: New Canned_Responses Hepler",
 			:folder_id => 1, :user_id => @agent.id, :visibility => 1, :group_id => 1  } )
-			@test_response_2 = create_response( {:title => "New Canned_Responses Hepler #{@now}",:content_html => "DESCRIPTION: New Canned_Responses Hepler #{@now}",
+		@test_response_2 = create_response( {:title => "New Canned_Responses Hepler #{@now}",:content_html => "DESCRIPTION: New Canned_Responses Hepler #{@now}",
 			:folder_id => 1, :user_id => @agent.id, :visibility => 3, :group_id => 1  } )
-			@test_cr_folder_1 = create_cr_folder({:name => "New CR Folder Helper #{@now}"})
+		@test_cr_folder_1 = create_cr_folder({:name => "New CR Folder Helper #{@now}"})
 	end
 
 	before(:each) do

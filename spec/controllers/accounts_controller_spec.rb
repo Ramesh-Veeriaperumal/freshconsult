@@ -57,7 +57,7 @@ describe AccountsController do
   end
 
   it 'should delete main portal logo' do
-  @account.main_portal.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
+    @account.main_portal.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
      :description => "logo", 
      :account_id => @account.id).save
 
@@ -67,7 +67,7 @@ describe AccountsController do
   end
 
   it 'should delete main portal favicon' do
-  @account.main_portal.build_fav_icon(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
+    @account.main_portal.build_fav_icon(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
      :description => "fav_icon", 
      :account_id => @account.id).save
 

@@ -6,14 +6,20 @@ describe Helpdesk::AttachmentsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  before(:all) do
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
+    @test_ticket = create_ticket({ 
+      :status => 2, 
+      :attachments => { 
+        :resource => file,
+        :description => Faker::Lorem.characters(10) 
+      } 
+    })    
+  end
+
   before(:each) do
     log_in(@agent)
     stub_s3_writes
-    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
-    @test_ticket = create_ticket({ :status => 2, 
-                                   :attachments => { :resource => file,
-                                                     :description => Faker::Lorem.characters(10) 
-                                                    } })
   end
 
   it "should show an attachment" do
@@ -115,9 +121,13 @@ describe Helpdesk::AttachmentsController do
   
   # Delete actions
   it "should delete a shared attachment" do
-    canned_response = create_response( :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
-                                                         :description => Faker::Lorem.characters(10)
-                                                        })
+    now = (Time.now.to_f*1000).to_i
+    canned_response = create_response( {:title => "Recent Canned_Responses Hepler #{now}",:content_html => Faker::Lorem.paragraph,
+      :folder_id => 1, :user_id => @agent.id, :visibility => 2, :group_id => 1,
+      :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+        :description => Faker::Lorem.characters(10)
+      }
+    })
     shared_attachment = canned_response.shared_attachments.first
     note = @test_ticket.notes.build(:body => Faker::Lorem.characters(10), 
                               :private => false, 
@@ -137,9 +147,14 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should delete a solution article's attachment" do
-    article = create_article( :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
-                                                 :description => Faker::Lorem.characters(10)
-                                                })
+    category   = create_category
+    folder     = create_folder(:category_id => category.id)
+    article    = create_article(:folder_id => folder.id)
+    attachment = article.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+                                            :description => Faker::Name.first_name, 
+                                            :account_id => article.account_id)
+    attachment.save    
+
     delete :destroy, :id => article.attachments.first.id
     article.reload
     article.attachments.first.should be_nil
