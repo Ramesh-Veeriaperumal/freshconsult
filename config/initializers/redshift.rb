@@ -1,6 +1,6 @@
 unless Rails.env.development?
 	begin
-		config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redshift.yml'))[RAILS_ENV]
+		config = YAML::load_file(File.join(Rails.root, 'config', 'redshift.yml'))[Rails.env]
 		
 		# This variable is added to differentiate multiple staging environments for reports archiving data in the s3 bucket
 		$st_env_name = config["env_name"]

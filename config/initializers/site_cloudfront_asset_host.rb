@@ -27,7 +27,7 @@ CloudfrontAssetHost.configure do |config|
   config.image_extensions = %w(jpg jpeg gif png ico eot svg ttf woff)
   config.asset_dirs       = %w(packages)
   config.exclude_pattern  = /psd|images\/sprite-images|images\/cdn-ignored|html/
-  config.s3_config        = "#{RAILS_ROOT}/config/s3_static_files.yml"
+  config.s3_config        = "#{Rails.root}/config/s3_static_files.yml"
   config.s3_logging       = true
   config.gzip             = true
   config.gzip_extensions  = %w(js css)

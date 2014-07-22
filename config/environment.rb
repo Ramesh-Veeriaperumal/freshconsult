@@ -11,7 +11,7 @@
 require File.join(File.dirname(__FILE__), 'boot')
 require 'rack/throttle'
 require 'gapps_openid'
-require "#{RAILS_ROOT}/lib/facebook_routing.rb"
+require "#{Rails.root}/lib/facebook_routing.rb"
 require "rate_limiting"
 
 Rails::Initializer.run do |config|
@@ -47,19 +47,19 @@ Rails::Initializer.run do |config|
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
 
   # Add additional load paths for your own custom dirs
-  # config.load_paths += %W( #{RAILS_ROOT}/extras )
+  # config.load_paths += %W( #{Rails.root}/extras )
 
-  config.autoload_paths += %W( #{RAILS_ROOT}/app/drops )
-  config.autoload_paths += %W( #{RAILS_ROOT}/app/lib )
-  config.autoload_paths += %W( #{RAILS_ROOT}/app/workers )
+  config.autoload_paths += %W( #{Rails.root}/app/drops )
+  config.autoload_paths += %W( #{Rails.root}/app/lib )
+  config.autoload_paths += %W( #{Rails.root}/app/workers )
   
   #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
-  config.autoload_paths += %W(#{RAILS_ROOT}/app/observers)
-  Dir.chdir("#{RAILS_ROOT}/app/observers") do
+  config.autoload_paths += %W(#{Rails.root}/app/observers)
+  Dir.chdir("#{Rails.root}/app/observers") do
     config.active_record.observers = Dir.glob("**/*_observer.rb").collect {|ob_name| ob_name.split(".").first}
   end
   #To load all the i18n files
-  #config.i18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', '**', '*.{rb,yml}')]
+  #config.i18n.load_path += Dir[File.join(Rails.root, 'config', 'locales', '**', '*.{rb,yml}')]
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
@@ -97,18 +97,18 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
-  #config.reload_plugins = true if RAILS_ENV == 'development'
+  #config.reload_plugins = true if Rails.env.development?
   
   config.action_controller.allow_forgery_protection = false
   #config.middleware.use 'ResqueWeb'
   if defined?(::Sidekiq)
     puts "enabling threadsafe!"
-    config.eager_load_paths += %W( #{RAILS_ROOT}/app/drops )
-    config.eager_load_paths += %W( #{RAILS_ROOT}/app/workers )
+    config.eager_load_paths += %W( #{Rails.root}/app/drops )
+    config.eager_load_paths += %W( #{Rails.root}/app/workers )
       
     #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
-    config.eager_load_paths += %W(#{RAILS_ROOT}/app/observers)
-    config.eager_load_paths += %W(#{RAILS_ROOT}/lib)
+    config.eager_load_paths += %W(#{Rails.root}/app/observers)
+    config.eager_load_paths += %W(#{Rails.root}/lib)
     config.eager_load_paths += Dir.glob("vendor/plugins/*/app/{models,controllers,helpers,metal}")
     config.eager_load_paths += Dir.glob("vendor/plugins/*/init.rb")
     config.cache_classes = true

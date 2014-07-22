@@ -494,14 +494,14 @@ def extract_zendesk_zip
     
     puts "@upload_file_name:: #{@upload_file_name}"
     
-    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+    zip_file_name = "#{Rails.root}/public/files/#{@upload_file_name}"
     File.open(zip_file_name , "wb") do |f|
       f.write(file.read)
     end
     
     @file_list = Array.new   
     
-    @out_dir = "#{RAILS_ROOT}/public/files/temp/#{@upload_file_name.gsub('.zip','')}"
+    @out_dir = "#{Rails.root}/public/files/temp/#{@upload_file_name.gsub('.zip','')}"
     FileUtils.mkdir_p @out_dir    
     zf = Zip::ZipFile.open(zip_file_name)
     
@@ -526,7 +526,7 @@ end
 
 
 def delete_zip_file
-    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+    zip_file_name = "#{Rails.root}/public/files/#{@upload_file_name}"
     FileUtils.rm_rf zip_file_name
   end
   def import_files_from_zendesk base_dir      

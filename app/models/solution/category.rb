@@ -1,4 +1,4 @@
-# require RAILS_ROOT+'/app/models/solution/folder.rb'
+# require Rails.root+'/app/models/solution/folder.rb'
 #In the gamification environment, Solution::Folder::VISIBILITY_KEYS_BY_TOKEN was not
 #accessible. It may be due to some screw up with the order of class loading.
 #So, temporarily put the 'require' here. Shan

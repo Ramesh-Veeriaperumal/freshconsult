@@ -208,7 +208,7 @@ class Quest < ActiveRecord::Base
       condition_arr.each do |f_condition|
         return false unless f_condition.matches(evaluate_on)
       end
-      RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_and_conditions return : true)
+      Rails.logger.debug %(INSIDE evaluate_and_conditions return : true)
       true
     end
 
@@ -220,7 +220,7 @@ class Quest < ActiveRecord::Base
         temp_ret = f_condition.matches(evaluate_on)
         to_ret = to_ret || temp_ret
       end
-      RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_or_conditions return : #{to_ret})
+      Rails.logger.debug %(INSIDE evaluate_or_conditions return : #{to_ret})
       to_ret
     end
 

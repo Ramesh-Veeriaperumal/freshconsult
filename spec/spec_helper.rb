@@ -79,7 +79,6 @@ Spork.prefork do
   'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
-
   Spec::Runner.configure do |config|
     # If you're not using ActiveRecord you should remove these
     # lines, delete config/database.yml and disable :active_record
@@ -192,7 +191,7 @@ Spork.prefork do
     #
     # You can also declare which fixtures to use (for example fixtures for test/fixtures):
     #
-    # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    # config.fixture_path = Rails.root + '/spec/fixtures/'
     #
     # == Mock Framework
     #

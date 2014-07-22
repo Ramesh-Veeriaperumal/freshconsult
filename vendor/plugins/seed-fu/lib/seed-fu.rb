@@ -5,21 +5,21 @@ module SeedFu
       fixture_path = ENV["FIXTURE_PATH"] ? ENV["FIXTURE_PATH"] : "db/fixtures"
   
       seed_files = (
-        ( Dir[File.join(RAILS_ROOT, fixture_path, '*.rb')] +
-          Dir[File.join(RAILS_ROOT, fixture_path, '*.rb.gz')] ).sort +
-        ( Dir[File.join(RAILS_ROOT, fixture_path, RAILS_ENV, '*.rb')] +
-          Dir[File.join(RAILS_ROOT, fixture_path, RAILS_ENV, '*.rb.gz')] ).sort
+        ( Dir[File.join(Rails.root, fixture_path, '*.rb')] +
+          Dir[File.join(Rails.root, fixture_path, '*.rb.gz')] ).sort +
+        ( Dir[File.join(Rails.root, fixture_path, Rails.env, '*.rb')] +
+          Dir[File.join(Rails.root, fixture_path, Rails.env, '*.rb.gz')] ).sort
       ).uniq
       
       if ENV["SEED"]
         filter = ENV["SEED"].gsub(/,/, "|")
         seed_files.reject!{ |file| !(file =~ /#{filter}/) }
-        RAILS_DEFAULT_LOGGER.debug "\n == Filtering seed files against regexp: #{filter}"
+        Rails.logger.debug "\n == Filtering seed files against regexp: #{filter}"
       end
   
       seed_files.each do |file|
-        pretty_name = file.sub("#{RAILS_ROOT}/", "")
-        RAILS_DEFAULT_LOGGER.debug "\n== Seed from #{pretty_name} " + ("=" * (60 - (17 + File.split(file).last.length)))
+        pretty_name = file.sub("#{Rails.root}/", "")
+        Rails.logger.debug "\n== Seed from #{pretty_name} " + ("=" * (60 - (17 + File.split(file).last.length)))
   
         old_level = ActiveRecord::Base.logger.level
         begin
@@ -100,7 +100,7 @@ module SeedFu
         record.send("#{k}=", v)
       end
       raise "Error Saving: #{record.inspect}" unless record.save
-      RAILS_DEFAULT_LOGGER.debug " - #{@model_class} #{condition_hash.inspect}"      
+      Rails.logger.debug " - #{@model_class} #{condition_hash.inspect}"      
       record
     end
 
