@@ -9,6 +9,7 @@ describe ContactMergeController do
     @account.features.multiple_user_emails.create
     @user1 = add_user_with_multiple_emails(@account, 2)
     @user2 = add_user_with_multiple_emails(@account, 2)
+    Resque.inline = true
   end
 
   before(:each) do
@@ -17,6 +18,7 @@ describe ContactMergeController do
 
   after(:all) do
     @account.features.multiple_user_emails.destroy
+    Resque.inline = false
   end
 
   it "should pass new contact merge" do
