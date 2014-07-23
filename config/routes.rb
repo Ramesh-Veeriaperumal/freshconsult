@@ -238,6 +238,10 @@
       :fetch_chart_data => :post}
     report.resources :report_filters, :controller => 'report_filters',
       :collection => {:create => :post,:destroy => :post}
+    report.namespace :freshfone do |freshfone|
+      freshfone.resources :summary_reports, :controller => 'summary_reports', 
+      :collection => {:generate => :post, :export_csv => :post } 
+    end
   end
 
   map.resources :reports

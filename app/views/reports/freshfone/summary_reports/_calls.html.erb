@@ -1,0 +1,25 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<!-- Agents calls list view -->
+<% calls.each do |call_list| %>
+  <tr class="even">
+  <% group_title = call_list.agent_name %>
+    <%group_title = call_list.freshfone_number.number_name if group_title.blank? 
+      num_of_unanswered = unanswered_calls_count([call_list])
+    %>
+    <td><strong><%= group_title %></strong></td> 
+      <%headers.keys.each do |header| %>
+        <%if([:call_handle_time, :avg_handle_time].include?(header))
+          content = call_duration_formatted(send(header,[call_list])) 
+        else
+          content =[:agent_name].include?(header) ? "" : send(header,[call_list])
+          if([:calls_count].include?(header) && num_of_unanswered.to_i != 0)
+            %>
+            <td><%=h(content)%><span class='muted'><%=" (#{num_of_unanswered.to_i} " + t("reports.freshfone.unanswered_count") + ")" %></span></td>
+            <%
+            next
+          end
+        end %> 
+        <%= content_tag(:td, h(content), :class => header) unless content.blank?%>
+      <% end %>
+    </tr>
+<% end %>

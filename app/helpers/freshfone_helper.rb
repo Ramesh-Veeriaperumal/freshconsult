@@ -40,6 +40,12 @@ module FreshfoneHelper
     NewRelic::Agent.notice_error(StandardError.new(error_message))
   end
 
+  #Used in filter_options
+  def call_types
+    all_calls = [[t('reports.freshfone.all_call_types'), "0"]]
+    all_calls + Freshfone::Call::CALL_TYPE_HASH.map { |k,v| [t("reports.freshfone.options.#{k}"), v]}
+  end
+
   def validation_exclude_methods ##Temp
   	[:action, :controller, :agent, :id]
   end
