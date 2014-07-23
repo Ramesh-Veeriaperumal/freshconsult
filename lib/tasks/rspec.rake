@@ -130,6 +130,7 @@ HelpdeskTests = [
   "spec/controllers/rabbit_mq_controller_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb",
+  "spec/lib/webhook_helper_methods_spec.rb",
   "spec/controllers/notification/product_notification_controller_spec.rb"
 ]    
 
