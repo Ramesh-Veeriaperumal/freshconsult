@@ -9,7 +9,7 @@
 		if(!is_default) {
 			lookupCompany = function(searchString, suggest) {
 				new Ajax.Request(autocomplete_companies_url,
-													{ parameters: {v: $.trim(searchString)},
+													{ parameters: {name: $.trim(searchString)},
 														method: 'GET',
 														onSuccess: function(response) {
 															suggest(response.responseJSON);
