@@ -89,6 +89,10 @@ FreshfoneTests = [
   "spec/models/freshfone/*_spec.rb"
 ]
 
+FreshfoneReportsTests = [ 
+  "spec/controllers/reports/freshfone/summary_reports_controller_spec.rb"
+]  
+
 APITests = [ 
   "spec/controllers/api/json/*_spec.rb",
   "spec/controllers/api/xml/*_spec.rb"
@@ -148,7 +152,8 @@ MobileAppTests = [
 ]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
-              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, XssTests ]
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, 
+              XssTests, FreshfoneReportsTests ]
 
 UnitTests.flatten!.uniq!
 
@@ -337,6 +342,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
         t.spec_files = FileList.new(FreshfoneTests)
       end
     end    
+
+    namespace :freshfone_reports do
+      desc "Running all freshfone summary reports tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(FreshfoneReportsTests)
+      end
+    end
 
     namespace :unit_tests do
       desc "Running all integration tests"
