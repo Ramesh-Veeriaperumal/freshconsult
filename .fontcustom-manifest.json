@@ -1,15 +1,23 @@
 {
   "checksum": {
-    "previous": "91dd4ac9d2ece4a0fa6216a55f0563c1b30c212aaef89e9eba20d2a0280e47da",
-    "current": "91dd4ac9d2ece4a0fa6216a55f0563c1b30c212aaef89e9eba20d2a0280e47da"
+    "previous": "8492a06a102243271ecb9bde19f982e76193ad8a1ec059eec3c656d9513cc25f",
+    "current": "8492a06a102243271ecb9bde19f982e76193ad8a1ec059eec3c656d9513cc25f"
   },
   "fonts": [
-    "public/fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.ttf",
-    "public/fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.svg",
-    "public/fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.woff",
-    "public/fonts/glyphs_91dd4ac9d2ece4a0fa6216a55f0563c1.eot"
+    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.ttf",
+    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.svg",
+    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.woff",
+    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.eot"
   ],
   "glyphs": {
+    "account": {
+      "codepoint": 61766,
+      "source": "public/glyphs/vectors/account.svg"
+    },
+    "agent": {
+      "codepoint": 61767,
+      "source": "public/glyphs/vectors/agent.svg"
+    },
     "all-streams": {
       "codepoint": 61696,
       "source": "public/glyphs/vectors/all-streams.svg"
@@ -38,6 +46,10 @@
       "codepoint": 61700,
       "source": "public/glyphs/vectors/arrow-up.svg"
     },
+    "billing": {
+      "codepoint": 61768,
+      "source": "public/glyphs/vectors/billing.svg"
+    },
     "book": {
       "codepoint": 61701,
       "source": "public/glyphs/vectors/book.svg"
@@ -49,6 +61,14 @@
     "bullhorn": {
       "codepoint": 61755,
       "source": "public/glyphs/vectors/bullhorn.svg"
+    },
+    "business-hours": {
+      "codepoint": 61769,
+      "source": "public/glyphs/vectors/business-hours.svg"
+    },
+    "canned-response": {
+      "codepoint": 61770,
+      "source": "public/glyphs/vectors/canned-response.svg"
     },
     "caret-down": {
       "codepoint": 61702,
@@ -94,6 +114,18 @@
       "codepoint": 61709,
       "source": "public/glyphs/vectors/crown.svg"
     },
+    "customer-portal": {
+      "codepoint": 61771,
+      "source": "public/glyphs/vectors/customer-portal.svg"
+    },
+    "day_pass": {
+      "codepoint": 61772,
+      "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "dispatcher": {
+      "codepoint": 61773,
+      "source": "public/glyphs/vectors/dispatcher.svg"
+    },
     "dots": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/dots.svg"
@@ -110,6 +142,18 @@
       "codepoint": 61713,
       "source": "public/glyphs/vectors/ellipsis.svg"
     },
+    "email": {
+      "codepoint": 61774,
+      "source": "public/glyphs/vectors/email.svg"
+    },
+    "email-notifications": {
+      "codepoint": 61775,
+      "source": "public/glyphs/vectors/email-notifications.svg"
+    },
+    "email_commands_setting": {
+      "codepoint": 61776,
+      "source": "public/glyphs/vectors/email_commands_setting.svg"
+    },
     "eye": {
       "codepoint": 61714,
       "source": "public/glyphs/vectors/eye.svg"
@@ -117,6 +161,14 @@
     "facebook": {
       "codepoint": 61715,
       "source": "public/glyphs/vectors/facebook.svg"
+    },
+    "facebook-setting": {
+      "codepoint": 61777,
+      "source": "public/glyphs/vectors/facebook-setting.svg"
+    },
+    "feedback": {
+      "codepoint": 61778,
+      "source": "public/glyphs/vectors/feedback.svg"
     },
     "file": {
       "codepoint": 61762,
@@ -142,6 +194,14 @@
       "codepoint": 61718,
       "source": "public/glyphs/vectors/freshdesk.svg"
     },
+    "freshfone": {
+      "codepoint": 61779,
+      "source": "public/glyphs/vectors/freshfone.svg"
+    },
+    "gamification-settings": {
+      "codepoint": 61780,
+      "source": "public/glyphs/vectors/gamification-settings.svg"
+    },
     "gear": {
       "codepoint": 61719,
       "source": "public/glyphs/vectors/gear.svg"
@@ -150,13 +210,25 @@
       "codepoint": 61720,
       "source": "public/glyphs/vectors/googleplus.svg"
     },
+    "group": {
+      "codepoint": 61781,
+      "source": "public/glyphs/vectors/group.svg"
+    },
     "help": {
       "codepoint": 61756,
       "source": "public/glyphs/vectors/help.svg"
     },
+    "import": {
+      "codepoint": 61782,
+      "source": "public/glyphs/vectors/import.svg"
+    },
     "infinity-5": {
       "codepoint": 61761,
       "source": "public/glyphs/vectors/infinity-5.svg"
+    },
+    "integrations": {
+      "codepoint": 61783,
+      "source": "public/glyphs/vectors/integrations.svg"
     },
     "like": {
       "codepoint": 61757,
@@ -190,6 +262,14 @@
       "codepoint": 61726,
       "source": "public/glyphs/vectors/minus.svg"
     },
+    "mobihelp": {
+      "codepoint": 61784,
+      "source": "public/glyphs/vectors/mobihelp.svg"
+    },
+    "multi-product": {
+      "codepoint": 61785,
+      "source": "public/glyphs/vectors/multi-product.svg"
+    },
     "notice": {
       "codepoint": 61748,
       "source": "public/glyphs/vectors/notice.svg"
@@ -197,6 +277,10 @@
     "notice-o": {
       "codepoint": 61749,
       "source": "public/glyphs/vectors/notice-o.svg"
+    },
+    "observer": {
+      "codepoint": 61786,
+      "source": "public/glyphs/vectors/observer.svg"
     },
     "open-in-new-window": {
       "codepoint": 61758,
@@ -222,6 +306,10 @@
       "codepoint": 61765,
       "source": "public/glyphs/vectors/rearrange.svg"
     },
+    "rebranding": {
+      "codepoint": 61787,
+      "source": "public/glyphs/vectors/rebranding.svg"
+    },
     "reorder": {
       "codepoint": 61751,
       "source": "public/glyphs/vectors/reorder.svg"
@@ -234,13 +322,29 @@
       "codepoint": 61730,
       "source": "public/glyphs/vectors/retweet.svg"
     },
+    "role": {
+      "codepoint": 61788,
+      "source": "public/glyphs/vectors/role.svg"
+    },
+    "scenario": {
+      "codepoint": 61789,
+      "source": "public/glyphs/vectors/scenario.svg"
+    },
     "search": {
       "codepoint": 61731,
       "source": "public/glyphs/vectors/search.svg"
     },
+    "security": {
+      "codepoint": 61790,
+      "source": "public/glyphs/vectors/security.svg"
+    },
     "sidebar-list": {
       "codepoint": 61752,
       "source": "public/glyphs/vectors/sidebar-list.svg"
+    },
+    "sla": {
+      "codepoint": 61791,
+      "source": "public/glyphs/vectors/sla.svg"
     },
     "star": {
       "codepoint": 61732,
@@ -250,9 +354,25 @@
       "codepoint": 61753,
       "source": "public/glyphs/vectors/star-o.svg"
     },
+    "supervisor": {
+      "codepoint": 61792,
+      "source": "public/glyphs/vectors/supervisor.svg"
+    },
+    "survey-settings": {
+      "codepoint": 61793,
+      "source": "public/glyphs/vectors/survey-settings.svg"
+    },
+    "tags": {
+      "codepoint": 61794,
+      "source": "public/glyphs/vectors/tags.svg"
+    },
     "ticket": {
       "codepoint": 61733,
       "source": "public/glyphs/vectors/ticket.svg"
+    },
+    "ticket-fields": {
+      "codepoint": 61795,
+      "source": "public/glyphs/vectors/ticket-fields.svg"
     },
     "ticket2": {
       "codepoint": 61734,
@@ -291,7 +411,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
+    "debug": false,
     "font_name": "glyphs",
     "force": false,
     "input": {

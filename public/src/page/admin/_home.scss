@@ -24,6 +24,12 @@ $animation_timing: .2s;
 	&.blur {
 		@include opacity (.2);
 	}
+	.admin_icons li a{
+		.ficon-supervisor, .ficon-dispatcher, .ficon-scenario, .ficon-observer{
+			font-size:52px;
+			padding:4px;
+		}
+	}
 	h3{
 		&.title{
 			margin-bottom:16px;
@@ -39,7 +45,8 @@ $animation_timing: .2s;
 	}
 	ul{
 		@include margin-left(-32px);
-		&.admin_icons{
+	}
+	.admin_icons{	
 			@include clearfix;
 			list-style:none;
 			li{
@@ -64,11 +71,15 @@ $animation_timing: .2s;
 						margin-bottom:5px; 
 
 					}
-					img{ 
-						height: 60px; 
-						width: 60px;
+					i{ 
 						@include border-radius(50%); 
 						@include transition(all 0.1s ease);
+						display:block;
+						color:#fff;
+						@include text-shadow(0px 1px 0px rgba(0,0,0,0.2));
+						padding: 12px;
+						min-height: 36px;
+						min-width: 36px;
 					}
 					div.admin-icon-text{
 						@include wrap;
@@ -79,8 +90,7 @@ $animation_timing: .2s;
 						position:relative;
 					}
 				}
-			}
-		}	
+			}	
 	}
 
 	&.support-channels, &.general-settings, &.helpdesk-productivity, &.account-settings{
@@ -95,7 +105,7 @@ $animation_timing: .2s;
 	    ul.admin_icons{
 			li a 
 			{
-				img{
+				i{
 					background-color: $helpdesk_color;
 				}
 				&:hover{
@@ -103,7 +113,7 @@ $animation_timing: .2s;
 					.img-outer{
 						background-color: $helpdesk_hover_color;
 					}
-					img{
+					i{
 						background-color: $helpdesk_hover_color;
 						@include animation(helpdesk_beat $animation_timing);
 						@include box-shadow( $hover_boxshadow_final $helpdesk_hover_color);
@@ -121,7 +131,7 @@ $animation_timing: .2s;
 	&.general-settings{
 		ul.admin_icons{
 			li a{ 
-				img{
+				i{
 					background-color: $HelpdeskProductivity_color;
 				}
 				&:hover{
@@ -129,7 +139,7 @@ $animation_timing: .2s;
 					.img-outer{
 						background-color: $HelpdeskProductivity_hover_color;
 					}
-					img{
+					i{
 						background-color: $HelpdeskProductivity_hover_color;
 						@include animation(HelpdeskProductivity_beat $animation_timing); 
 						@include box-shadow($hover_boxshadow_final $HelpdeskProductivity_hover_color);
@@ -147,7 +157,7 @@ $animation_timing: .2s;
 	&.helpdesk-productivity{
 		ul.admin_icons{
 			li a{ 
-				img{
+				i{
 					background-color: $CustomerPortal_color;
 				}
 				&:hover{
@@ -155,7 +165,7 @@ $animation_timing: .2s;
 					.img-outer{
 						background-color: $CustomerPortal_hover_color;
 					}
-					img{
+					i{
 						background-color: $CustomerPortal_hover_color;
 						@include animation(CustomerPortal_beat $animation_timing);
 						@include box-shadow($hover_boxshadow_final $CustomerPortal_hover_color);
@@ -173,7 +183,7 @@ $animation_timing: .2s;
 	&.account-settings{
 		ul.admin_icons{
 			li a{ 
-				img{
+				i{
 					background-color: $Account_color;
 				}
 				&:hover{
@@ -181,7 +191,7 @@ $animation_timing: .2s;
 					.img-outer{
 						background-color: $Account_hover_color;
 					}
-					img{
+					i{
 						background-color: $Account_hover_color;
 						@include animation(Account_beat $animation_timing);
 						@include box-shadow($hover_boxshadow_final $Account_hover_color);
@@ -203,7 +213,7 @@ $animation_timing: .2s;
 				a .img-outer {
 					background-color: $RelatedMatch_color;
 				}
-				img {
+				i{
 					background-color: $RelatedMatch_color;
 					@include animation(RelatedMatch_beat $animation_timing);
 					@include box-shadow( $hover_boxshadow_final $RelatedMatch_color);
@@ -214,7 +224,7 @@ $animation_timing: .2s;
 				a .img-outer {
 					background-color: $ExactMatch_color;	
 				}
-				img{
+				i{
 					background-color: $ExactMatch_color;
 					@include animation(ExactMatch_beat $animation_timing);
 					@include box-shadow( $hover_boxshadow_final $ExactMatch_color);
