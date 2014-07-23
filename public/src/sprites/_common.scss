@@ -5,9 +5,9 @@
 $common-icon-layout:horizontal;
 @include all-common-icon-sprites(true);
 
-@import "cdn-ignored/sprites/admin-icon/*.png";
+/*@import "cdn-ignored/sprites/admin-icon/*.png";
 $admin-icon-layout:horizontal;
-@include all-admin-icon-sprites;
+@include all-admin-icon-sprites;*/
 
 @import "application-logo/*.png";
 $application-logo-layout:vertical;
