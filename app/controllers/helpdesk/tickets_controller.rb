@@ -828,6 +828,10 @@ class Helpdesk::TicketsController < ApplicationController
     reply_to_all_emails
   end
 
+  def load_by_param(id)
+    current_account.tickets.find_by_param(id,current_account)
+  end
+
   
   private
   
