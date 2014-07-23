@@ -6,16 +6,16 @@
 <div class="body">
 	<div class="mail_content">
 		<b>New Topic</b> in forum <%= link_to @topic.forum.name, 
-		discussions_forum_url(@topic.forum.id, :host => @user.account.host) %>
+		discussions_forum_url(@topic.forum.id, :host => @host) %>
 	</div>
 	<div class="forum_content">
 
-		<%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @user.account.host), :class => "topic_title" %><br><br>
+		<%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @host), :class => "topic_title" %><br><br>
 		<div class="profile_img">
-			<img src="<%= profile_image_user_url(@user.id, :host => @user.account.host)%>" rel="lazyloadimage" width="30" height="30" />
+			<img src="<%= profile_image_user_url(@user.id, :host => @host)%>" width="30" height="30" />
 		</div> 
 		<div class="user_identity">
-			<b style="color:#333;"><%= @user.name %></b><br><%= @topic.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
+			<b class="user_name"><%= @user.name %></b><br><%= @topic.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
 		</div>
 		<br>
 		<div class="actual_content">
@@ -24,10 +24,10 @@
 		<br />
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", discussions_topic_url(@topic.id, :host => @user.account.host)<<"#reply-to-post", :class => "reply" %>
-		<%= link_to "Follow Topic", toggle_monitorship_url("topic", @topic.id, "follow", :host => @user.account.host), :class =>"follow_topic" %>
+		<%= link_to "Reply", reply_discussions_topic_url(@topic.id, :host => @user.account.host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<%= link_to "Follow Topic", toggle_monitorship_url("topic", @topic.id, "follow", :host => @host), :class =>"follow_topic" %>
 		<div class="footer-text">
-			<%= link_to "Turn Off", toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @user.account.host) %>
+			<%= link_to "Turn Off", toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @host) %>
 			New Topic notifications for this forum
 		</div>
 	</div>

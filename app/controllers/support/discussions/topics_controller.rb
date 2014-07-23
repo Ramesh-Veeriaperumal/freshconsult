@@ -225,7 +225,7 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def reply
-    redirect_to support_discussions_topic_path(params[:id], :anchor => 'reply-to-post')
+    redirect_to "#{support_discussions_topic_path(params[:id])}/page/last#reply-to-post"
   end
 
   protected
@@ -246,8 +246,12 @@ class Support::Discussions::TopicsController < SupportController
       @forum_category = @forum.forum_category
 
       wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
-        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+      raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+      
+      unless @forum.visible?(current_user)
+        store_location
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+      end
     end
     
     def load_page_meta

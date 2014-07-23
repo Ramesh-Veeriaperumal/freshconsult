@@ -29,6 +29,7 @@ class TopicObserver < ActiveRecord::Observer
   def after_update(topic)
     topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
     return if !topic.stamp_type_changed? or topic.stamp_type.blank?
+    send_later(:send_stamp_change_notification, topic, topic.type_name, topic.stamp, User.current.id)
     create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
   end
 
@@ -46,9 +47,16 @@ class TopicObserver < ActiveRecord::Observer
   end
 
   def send_monitorship_emails topic
-    topic.forum.monitorships.active_monitors.each do |monitor|
-      monitorship_email = monitor.user.email
-      TopicMailer.deliver_monitor_email!(monitorship_email,topic,topic.user) unless monitorship_email.blank? or (topic.user_id == monitor.user_id)
+    topic.forum.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+      next if monitor.user.email.blank? or (topic.user_id == monitor.user_id)
+      TopicMailer.deliver_monitor_email!(monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host)
+    end
+  end
+
+  def send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
+    topic.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+      next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
+      TopicMailer.deliver_stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
     end
   end
 

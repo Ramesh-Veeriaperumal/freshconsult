@@ -44,5 +44,18 @@ describe Support::Discussions::ForumsController do
 
 		response.should render_template "#{Rails.root}/public/404.html"
 	end
+
+	it "should redirect to support home if portal forums is disabled" do
+		forum = create_test_forum(@category)
+		@account.features.hide_portal_forums.create
+	 	
+	 	put :toggle_monitor, :id => forum.id
+	 	response.should redirect_to "/support/home"
+
+	 	get :show, :id => forum.id
+	 	response.should redirect_to "/support/home"	
+
+	 	@account.features.hide_portal_forums.destroy
+	end
 	
 end

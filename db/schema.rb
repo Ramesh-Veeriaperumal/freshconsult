@@ -1542,6 +1542,7 @@ ActiveRecord::Schema.define(:version => 20140714073940) do
     t.boolean "active",                        :default => true
     t.integer "account_id",       :limit => 8
     t.string  "monitorable_type"
+    t.integer "portal_id",        :limit => 8
   end
 
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
