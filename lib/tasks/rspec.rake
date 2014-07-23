@@ -80,6 +80,7 @@ IntegrationTests = [
   "spec/controllers/integrations/user_credentials_controller_spec.rb",
   "spec/controllers/google_login_controller_spec.rb",
   "spec/controllers/google_signup_controller_spec.rb"
+  "spec/controllers/integrations/integrated_resources_controller_spec.rb"
 ]
 
 FreshfoneTests = [

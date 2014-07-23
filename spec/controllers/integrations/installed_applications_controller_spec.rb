@@ -39,6 +39,11 @@ describe Integrations::InstalledApplicationsController do
     response.should redirect_to 'http://localhost.freshpo.com/integrations/applications'
   end
 
+  it "should install for google contacts" do
+    put :install, {:id => 4}
+    response.should redirect_to "/auth/google?origin=install"
+  end
+
 
   # Updating an application - logmein 
   it "should update a existing application" do

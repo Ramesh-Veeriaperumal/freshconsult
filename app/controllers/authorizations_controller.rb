@@ -18,7 +18,7 @@ class AuthorizationsController < ApplicationController
     Rails.logger.debug "@omniauth "+@omniauth.inspect
     failure if @omniauth.blank?
     @omniauth_origin = session["omniauth.origin"]
-    if @omniauth['provider'] == :open_id
+    if @omniauth['provider'] == :open_id #possible dead code
       current_account.make_current
       @current_user = current_account.user_emails.user_for_email(@omniauth['info']['email'])  unless  current_account.blank?
       create_for_sso(@omniauth)

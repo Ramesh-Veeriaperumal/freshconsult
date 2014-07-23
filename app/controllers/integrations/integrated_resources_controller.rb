@@ -21,7 +21,7 @@ class Integrations::IntegratedResourcesController < ApplicationController
     end
   end
 
-  def update
+  def update #possible dead code
     Rails.logger.debug "Editing integrated resource "+params.inspect
     begin
       newIntegratedResource = Integrations::IntegratedResource.updateResource(params)
