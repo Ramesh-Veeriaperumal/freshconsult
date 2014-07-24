@@ -8,11 +8,11 @@ describe Helpdesk::CannedResponsesController do
 		before(:all) do
 			@now = (Time.now.to_f*1000).to_i
 			@test_response_1 = create_response( {:title => "Recent Canned_Responses",:content_html => Faker::Lorem.paragraph,
-				:folder_id => 1, :user_id => @agent.id, :visibility => 1, :group_id => 1  } )
+				:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} )
 			@test_response_2 = create_response( {:title => "Recent Canned_Responses Hepler #{@now}",:content_html => Faker::Lorem.paragraph,
-				:folder_id => 1, :user_id => @agent.id, :visibility => 2, :group_id => 1  } )
+				:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]} )
 			@test_response_3 = create_response( {:title => "Recent Canned_Responses Only_me #{@now}",:content_html => "CONTENT: Canned_Responses Only_me #{@now}",
-				:folder_id => 1, :user_id => @agent.id, :visibility => 3, :group_id => 1  } )
+				:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} )
 		end
 
 		before(:each) do
@@ -39,7 +39,8 @@ describe Helpdesk::CannedResponsesController do
 		end
 
 		it "should view the canned responses" do
-			post :show, :ca_resp_id => @test_response_3.id, :id => 1
+			ticket = create_ticket({:status => 2})
+			post :show, :ca_resp_id => @test_response_3.id, :id => ticket.id
 			response.body.should =~ /CONTENT: Canned_Responses Only_me #{@now}/
 			response.body.should_not =~ /#{@test_response_1.content_html}/
 		end

@@ -20,7 +20,7 @@ describe Helpdesk::CaFoldersController do
 
 		it "should view the folder with canned responses" do
 			@test_response = create_response( {:title => "Folder Canned_Responses",:content_html => Faker::Lorem.paragraph,
-				:folder_id => @cr_folder.id, :user_id => @agent.id, :visibility => 1, :group_id => 1  } )
+				:folder_id => @cr_folder.id, :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} )
 			get :show, :id => @cr_folder.id, :ticket_id => 1
 			response.body.should =~ /#{@test_response.title}/
 		end
