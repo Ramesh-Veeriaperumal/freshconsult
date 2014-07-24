@@ -11,7 +11,8 @@ module SubscriptionSystem
   end
   
   def requires_feature(f)
-    render :template => "/errors/non_covered_feature", :locals => {:feature => f} unless feature?(f)
+	return if feature?(f)
+	render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/non_covered_feature", :locals => {:feature => f} }
   end
   
   def check_portal_scope(f)

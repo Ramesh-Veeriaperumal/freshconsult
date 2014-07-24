@@ -1,4 +1,5 @@
 class Freshfone::Number < ActiveRecord::Base
+	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_numbers
 	require_dependency 'freshfone/number/message'
 
@@ -80,7 +81,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def voice_type
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]
 	end
-
+	
 	def to_json
 		MESSAGE_FIELDS.map do |msg_type|
 

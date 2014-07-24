@@ -26,11 +26,11 @@ class Freshfone::User < ActiveRecord::Base
 	validates_inclusion_of :incoming_preference, :in => INCOMING.values,
 		:message => "%{value} is not a valid incoming preference"
 
-	named_scope :online_agents, :conditions => { :presence => PRESENCE[:online] }, :include => :user
-	named_scope :raw_online_agents, :conditions => { :presence => PRESENCE[:online] }
-	named_scope :online_agents_with_avatar,
-							:conditions => { :presence => PRESENCE[:online] },
-							:include => [:user => [:avatar]]
+	named_scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or freshfone_users.mobile_token_refreshed_at > ?", PRESENCE[:online], 1.hour.ago], :include => :user }}
+	named_scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or freshfone_users.mobile_token_refreshed_at > ?", PRESENCE[:online], 1.hour.ago] }}
+	named_scope :online_agents_with_avatar, lambda { {
+							:conditions => [ "freshfone_users.presence = ? or freshfone_users.mobile_token_refreshed_at > ?", PRESENCE[:online], 1.hour.ago],
+							:include => [:user => [:avatar]] }}
 	named_scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
 	named_scope :agents_in_group, lambda { |group_id|
 		{:joins => "INNER JOIN agent_groups ON agent_groups.user_id = #{table_name}.user_id AND
@@ -49,15 +49,24 @@ class Freshfone::User < ActiveRecord::Base
 		self
 	end
 	
-	def change_presence_and_preference(status, user_avatar_content)
+	def change_presence_and_preference(status, user_avatar_content, nmobile = false)
 		self.user_avatar = user_avatar_content
-		self.incoming_preference = status
-		self.presence = status if !busy?
+		if nmobile
+			self.mobile_token_refreshed_at = Time.now if self.incoming_preference == INCOMING[:allowed]
+		else
+			self.incoming_preference = status
+			self.presence = status unless busy?
+			self.mobile_token_refreshed_at = 2.hours.ago if self.incoming_preference == INCOMING[:not_allowed] && self.mobile_token_refreshed_at.present?
+		end
 	end
 	
 	PRESENCE.each_pair do |k, v|
 		define_method("#{k}?") do
-			presence == v
+			if k.eql? "online"
+				presence == v || mobile_token_refreshed_at > 1.hour.ago
+			else
+				presence == v
+			end
 		end
 	end
 	
@@ -104,5 +113,4 @@ class Freshfone::User < ActiveRecord::Base
 		def can_dial_agent_number?
 			@agent_number.national_string != GlobalPhone.parse(@current_number).national_string
 		end
-
 end
