@@ -103,7 +103,8 @@ ForumTests = [
   "spec/controllers/discussions/*_spec.rb",
   "spec/controllers/forum_categories_controller_spec.rb",
   "spec/controllers/forums_controller_spec.rb",
-  "spec/controllers/topics_controller_spec.rb"
+  "spec/controllers/topics_controller_spec.rb",
+  "spec/models/monitorship_spec.rb"
 ]
 
 HelpdeskTests = [ 
