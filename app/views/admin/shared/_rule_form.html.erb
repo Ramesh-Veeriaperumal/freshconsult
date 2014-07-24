@@ -58,9 +58,6 @@
 	<div id="webhook_usecase" class="hide">
 		<%= render :partial=> 'admin/shared/advanced_webhook_usecase.html.erb' %>
 	</div>
-	<% if params[:action] == "edit"%>
-		<a href="/<%= params[:controller] %>/<%= @va_rule.id%>/clone_rule" class="pull-left btn btn-flat">Clone<a/>
-	<% end %>
 	<div class="button-container itil-hide">
 		<input type="hidden" name="save_json" id="savejson" value="" />
 		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
