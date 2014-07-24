@@ -1,4 +1,6 @@
 <% @page_title = t('chatwidget_title') %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <% content_for :helpcard do -%>
 <%= render :partial => "helpnote" %>
 <%- end %>

@@ -14,10 +14,6 @@ development:
       host: 127.0.0.1
       database: helpkit1
       not_a_shard: false
-    shard_2:
-      host: 127.0.0.1
-      database: helpkit1
-      not_a_shard: false
 
 
 
