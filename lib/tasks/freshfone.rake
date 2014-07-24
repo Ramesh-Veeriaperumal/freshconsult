@@ -12,6 +12,19 @@ namespace :freshfone do
 			end
 		end
 	end
+
+  desc "Call status update for failed freshfone calls in the last 1 hours"
+  task :failed_call_status_update => :environment do
+    Sharding.execute_on_all_shards do
+      Account.active_accounts.each do |account| 
+        if account.features?(:freshfone)
+          account.freshfone_calls.calls_with_intermediate_status.each do |call|
+          	Freshfone::Cron::IntermediateCallStatusUpdate.update_call_status(call, account)
+        	end
+      	end
+    	end
+		end
+  end
 	
 	desc "Freshfone account suspension reminder: 15 days to go"
 	task :suspension_reminder_15days => :environment do

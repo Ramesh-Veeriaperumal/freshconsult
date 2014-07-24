@@ -48,7 +48,10 @@ class Freshfone::Call < ActiveRecord::Base
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
 	CALL_STATUS_REVERSE_HASH = Hash[*CALL_STATUS.map { |i| [i[2], i[0]] }.flatten]
 	CALL_STATUS_STR_HASH = Hash[*CALL_STATUS.map { |i| [i[0].to_s, i[2]] }.flatten]
-
+	INTERMEDIATE_CALL_STATUS = [
+		CALL_STATUS_HASH[:default],
+		CALL_STATUS_HASH[:'in-progress']
+	]
 	CALL_TYPE = [
 		[ :incoming,	'incoming',	1 ],
 		[ :outgoing,	'outgoing',	2 ]
@@ -212,9 +215,14 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def self.unbilled(from = 9.hours.ago, to = 3.hours.ago)
-		with_exclusive_scope { find(:all, :conditions => 
+		find(:all, :conditions => 
 			[ "call_cost IS NULL and call_status != ? and updated_at BETWEEN ? AND ?", 
-				CALL_STATUS_HASH[:blocked], from, to ]) }
+				CALL_STATUS_HASH[:blocked], from, to ])
+	end
+	def self.calls_with_intermediate_status(from = 3.hours.ago, to = 1.hours.ago)
+		find(:all, :conditions => 
+			[ 'call_status IN (?) and updated_at > ? and updated_at < ?', 
+		INTERMEDIATE_CALL_STATUS, from, to ])
 	end
 
 	def calculate_cost
