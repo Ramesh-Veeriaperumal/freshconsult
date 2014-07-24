@@ -67,7 +67,8 @@
 					quietMillis: 1000,
 					data: function (term) { 
 							return {
-								q: term
+								q: term,
+								sla: true
 							};
 					},
 					results: function (data) {
