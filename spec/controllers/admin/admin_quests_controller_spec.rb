@@ -56,6 +56,7 @@ describe Admin::QuestsController do
   end
 
   it "should not create new quest without quest_name" do
+    before_count = @account.quests.count
     quest_data = [{ :value => "34",:date => "3" }].to_json  
     post :create, { :quest =>{ :category=> GAME_TYPE_KEYS_BY_TOKEN[:ticket], :badge_id=>"1", :points=>"90", :name=>"", 
                                :description=>"Resolve 34 tickets in a span of 2 day and matching these conditions.On successful completion of the quest you can unlock Minute-man badge and 70 bonus points."
@@ -63,8 +64,9 @@ describe Admin::QuestsController do
                     :quest_data_date=>"3", :filter_data=>"", :quest_data=> quest_data
     }
     response.body.should =~ /New Quest/
-    quest = @account.quests.find_by_badge_id(1)
-    quest.should be_nil
+    @account.reload
+    after_count = @account.quests.count
+    before_count.should eql after_count
     response.should be_success
   end
 

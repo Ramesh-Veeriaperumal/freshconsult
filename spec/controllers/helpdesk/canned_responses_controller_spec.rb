@@ -40,7 +40,7 @@ describe Helpdesk::CannedResponsesController do
 
 		it "should view the canned responses" do
 			ticket = create_ticket({:status => 2})
-			post :show, :ca_resp_id => @test_response_3.id, :id => ticket.id
+			post :show, :ca_resp_id => @test_response_3.id, :id => ticket.display_id
 			response.body.should =~ /CONTENT: Canned_Responses Only_me #{@now}/
 			response.body.should_not =~ /#{@test_response_1.content_html}/
 		end
