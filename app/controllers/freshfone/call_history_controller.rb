@@ -1,4 +1,5 @@
 class Freshfone::CallHistoryController < ApplicationController
+	before_filter :set_native_mobile, :only => [:custom_search, :children]
 	before_filter :set_default_filter, :only => [:index]
 	before_filter :set_cookies_for_filter, :only => [:custom_search]
 	before_filter :get_cookies_for_filter, :only => [:index]
@@ -14,18 +15,27 @@ class Freshfone::CallHistoryController < ApplicationController
 	def custom_search
 		respond_to do |format|
 			format.js {}
+            format.nmobile {
+				response = {:calls => @calls.map(&:as_calls_mjson)}
+				response.merge!(:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson)) if params[:page] == "1"
+				render :json => response
+            }
 		end
 	end
 
 	def children
 		respond_to do |format|
 			format.js {}
+            format.nmobile {
+            	response = {:calls => @calls.map(&:as_calls_mjson)}
+                render :json => response
+            }
 		end
 	end
 	
 	def recent_calls
 		respond_to do |format|
-			format.js {}
+			format.js {} 
 		end
 	end
 

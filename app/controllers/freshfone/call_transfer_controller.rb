@@ -5,7 +5,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 
 	before_filter :validate_agent, :only => [:transfer_incoming_call, :transfer_outgoing_call]
 	before_filter :log_transfer, :only => [:initiate]
-
+	before_filter :set_native_mobile, :only => [:available_agents]
 	def initiate
 		respond_to do |format|
 			format.json {
@@ -27,6 +27,9 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 			@freshfone_users.reject! { |user| (params["existing_users_id"].include? user[:id].to_s) }
 		end
 		respond_to do |format|
+			format.nmobile {
+				render :json => @freshfone_users
+			}
 			format.js 
 		end
 	end

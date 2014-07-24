@@ -1,5 +1,6 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
+	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_calls
 
   serialize :customer_data, Hash
@@ -237,7 +238,7 @@ class Freshfone::Call < ActiveRecord::Base
 			calculator.perform
 		end
 	end
-	
+
 	private
 		def child_call_customer_id(params)
 			customer_id || (params[:customer] || {})[:id]
