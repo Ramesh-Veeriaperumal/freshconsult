@@ -9,7 +9,6 @@ module Reports::ActivityReport
       columns_in_use = columns_in_use.concat(params[:reports])
     end
     @nested_columns={}
-    @current_month_tot_tickets = scoper.size
 
     columns_in_use.each do |column_name|
       tickets_count = group_tkts_by_columns({:column_name => column_name })
@@ -51,8 +50,8 @@ module Reports::ActivityReport
       end
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
-    tot_tickets = tot_count if (!column_name.to_s.match(/flexifields\..*/)) #this should n't be updated for flexifields.(used in report page to draw charts)
-    tickets_hash = calculate_percentage_for_columns(tickets_hash,tot_tickets)
+    @current_month_tot_tickets = tot_count if (!column_name.to_s.match(/flexifields\..*/)) #this should n't be updated for flexifields.(used in report page to draw charts)
+    tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
 
     
     case column_name.to_s
