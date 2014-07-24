@@ -26,3 +26,9 @@ asset_url:
         js: "http://assets.chat.freshpo.com"
         css: "http://assets1.chat.freshpo.com"
         cloudfront: "https://dop9av6nvryqq.cloudfront.net"
+
+freshchat_request:
+    to: 
+        development: "muthu@freshdesk.com"
+        production: "support@freshdesk.com"
+        staging: "muthu@freshdesk.com"

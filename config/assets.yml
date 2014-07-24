@@ -133,6 +133,9 @@ stylesheets:
   freshfone_recording_playback:
     - public/stylesheets/freshfone/record_playback.css
 
+  freshchat_admin:
+    - public/stylesheets/chat/admin.css
+
 
 javascripts:
   defaults:
