@@ -1,0 +1,30 @@
+.freshchat_admin_content{
+	margin-left: 150px;
+	.info-data{
+		font-size: 15px;
+		li{
+			line-height: 1.8;
+		}
+	}
+	.content_footer {
+		font-size: 14px;
+		margin-bottom: 30px;
+		margin-top: 20px;
+	}
+	.freshchat_flash_message {
+		display: block;
+		position: relative;
+		margin-top: 10px;
+	}
+	.success_flash, .error_flash {
+	  text-align: center;
+	  padding: 5px 10px 4px;
+	  font-size: 13px;
+	  border: 1px solid #ccc;
+	  background: #fefcea;
+		border-radius:4px;
+	}
+	.error_flash {
+	 	color: #a90329;
+	}
+}

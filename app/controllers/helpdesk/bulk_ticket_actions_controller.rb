@@ -43,6 +43,10 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
 
     end
 
+    def load_by_param(id)
+      current_account.tickets.find_by_param(id,current_account)
+    end
+
     def total_attachment_size
       (params[:helpdesk_note][:attachments] || []).collect{ |a| a['resource'].size }.sum
     end

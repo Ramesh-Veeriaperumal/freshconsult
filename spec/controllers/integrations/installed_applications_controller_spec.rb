@@ -40,6 +40,9 @@ describe Integrations::InstalledApplicationsController do
   end
 
   it "should install for google contacts" do
+    google_app = @account.installed_applications.find_by_application_id(4)
+    google_app.destroy if !google_app.nil?
+
     put :install, {:id => 4}
     response.should redirect_to "/auth/google?origin=install"
   end
