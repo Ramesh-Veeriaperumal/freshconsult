@@ -33,14 +33,14 @@ module SupportHelper
 	    default_options = {
 	      :format => :short_day_with_time,
 	      :include_year => false,
-	      :translation => true
+	      :translate => true
 	    }
 	    options = default_options.merge(options)
 	    time_format = Account.current.date_type(options[:format])
 	    unless options[:include_year]
 	      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
 	    end
-	    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
+	    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
   
   def default_meta meta
