@@ -76,9 +76,15 @@ class Admin::PagesController < Admin::AdminController
       begin
         cname = Portal::Page::PAGE_MODEL_ACTION_BY_TOKEN[@portal_page_label.to_sym]
         unless cname.blank?
-          data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname) 
-          id = data.id unless data.blank?
-          portal_redirect_url = send(method_name, :id => id)  
+          
+          if cname = "tickets"
+            data = current_user.send(cname).visible.first if !cname.blank? && current_user.respond_to?(cname)
+            id = data.display_id unless data.blank?
+          else
+            data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname)
+            id = data.id unless data.blank?
+          end
+          portal_redirect_url = send(method_name, :id => id) 
         else
           portal_redirect_url = send(method_name)
         end

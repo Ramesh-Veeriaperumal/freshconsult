@@ -454,7 +454,7 @@ en:
       topic_view: "Topic view"
       new_topic: "New topic"
       submit_ticket: "New ticket"
-      ticket_list: "User tickets"
+      ticket_list: "Ticket list"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
   portal_meta:
@@ -5101,6 +5101,12 @@ en:
       header_layout_help_message: Change the header area of your support portal
       footer_layout_help_message: Change the footer area of your support portal
       pagelayout_help_message: Customize the entire layout of your support portal
+      page_preview_message:
+        article_view: "Note: For preview to be shown, please ensure that you have atleast one solution article."
+        article_list: "Note: For preview to be shown, please ensure that you have atleast one solution article."
+        topic_view: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
+        topic_list: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
+        ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
