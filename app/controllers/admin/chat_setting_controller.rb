@@ -1,17 +1,38 @@
 class Admin::ChatSettingController < Admin::AdminController
 
   include ChatHelper
-  before_filter { |c| c.requires_feature :chat }
+  before_filter(:only => [:toggle, :update]) { |c| c.requires_feature :chat }
   before_filter  :validate, :only => [:update]
 
   def index
-    if current_account.chat_setting
-      @chat = current_account.chat_setting
+    unless feature?(:chat)
+      if is_chat_plan?
+        render :request_page
+      else
+        render_404
+      end
     else
-      @chat = ChatSetting.new
-      @chat.save
+      if current_account.chat_setting
+        @chat = current_account.chat_setting
+      else
+        @chat = ChatSetting.new
+        @chat.save
+      end
     end
   end
+
+  def request_freshchat_feature
+    email_params = {
+      :subject => t('freshchat.feature_request.email_subject',
+                              {:account_name => current_account.name}),
+      :recipients => ChatConfig['freshchat_request']['to'][Rails.env],
+      :from => current_user.email,
+      :cc => current_account.admin_email,
+      :message => "A customer with the following account URL has requested for Freshchat"
+    }
+    FreshchatNotifier.send_later(:deliver_freshchat_email_template, current_account, email_params)
+    render :json => { :status => :success }
+  end 
 
   def toggle
     if feature?(:chat_enable)

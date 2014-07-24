@@ -1,0 +1,60 @@
+<% content_for :sidebar do -%><%-end %>
+<%= include_cloudfront_css :freshchat_admin %>
+<% @page_title = t('freshchat.feature_request.title')%>
+<div class="list-page-body ">
+<h3 class="lead"> <%= t('freshchat.title') %> </h3>
+  <div class="admin_help_image">
+    <img alt="Freshchat-admin-page" class="help_image"
+    src="/images/helpimages/freshchat-admin-page.png">
+    <div class="freshchat_admin_content">
+      <h2 class="title">  <%= t('freshchat.feature_request.heading') %> </h2>
+      <ul class="info-data disc">
+        <li><%= t('freshchat.feature_request.info1') %> </li>
+        <li><%= t('freshchat.feature_request.info2') %> </li>
+        <li><%= t('freshchat.feature_request.info3') %>  </li>
+      </ul>
+      <div class="content_footer">
+        <a href='http://freshdesk.com/freshchat' target="_blank">
+          <%= t('freshchat.feature_request.read_more') %>
+        </a>
+      </div>
+      <a href="#" class="btn btn-primary freshchat_feature_request"
+      id="freshchat_feature_request" data-loading-text="Requesting..">
+        <%= t('freshchat.feature_request.button_label')%>
+      </a>
+      <div class='freshchat_flash_message' id="freshchat_flash_message">
+        <div class="small_note muted"> 
+          <p>
+            <%= t('freshchat.feature_request.additional_note')%>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%javascript_tag do %>
+  jQuery('#freshchat_feature_request').on('click', function () {
+    var self = this;
+    jQuery(self).addClass('disabled');
+    jQuery(".small_note").hide();
+    jQuery.ajax({
+      url: '/admin/chat_setting/request_freshchat_feature',
+      type: "post",
+      success: function () {
+        jQuery('#freshchat_flash_message')
+          .html("<%= t('freshchat.feature_request.success_message')%>")
+          .addClass('success_flash')
+          .removeClass('error_flash')
+          .show();
+      },
+      error: function () {
+        jQuery(self).button('reset');
+        jQuery('#freshchat_flash_message')
+          .html("<%= t('freshchat.feature_request.error_message')%>")
+          .addClass('error_flash')
+          .removeClass('hide')
+          .show();
+      }
+    });
+  }); 
+<%- end %>
