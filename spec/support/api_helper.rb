@@ -62,4 +62,6 @@ module APIHelper
 
   SURVEY_ATTRIBS = ["agent_id", "created_at", "customer_id", "group_id", "id", "rating", "response_note_id", "survey_id", "surveyable_id", "surveyable_type", "updated_at"]
 
+  TIME_ENTRY_ATTRIBS = ["agent_email", "agent_name", "billable", "contact_email", "created_at", "customer_name", "executed_at", "id", "note", "start_time", "ticket_id", "timer_running", "timespent", "updated_at", "user_id", "workable_type"]
+
 end
