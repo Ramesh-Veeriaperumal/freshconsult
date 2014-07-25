@@ -559,7 +559,7 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
 
-  def empty_spam
+  def empty_spam # Possible dead code
     Helpdesk::Ticket.destroy_all(:spam => true)
     flash[:notice] = t(:'flash.tickets.empty_spam.success')
     redirect_to :back

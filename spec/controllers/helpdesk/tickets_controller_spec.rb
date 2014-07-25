@@ -499,4 +499,11 @@ describe Helpdesk::TicketsController do
       ticket_incremented? tickets_count
       @account.tickets.last.ticket_body.description_html.should =~ /#{note_body}/
     end
+
+    it "should close a ticket" do
+      tkt = create_ticket({ :status => 2 }, @group)
+      post :close, :id => tkt.display_id
+      tkt.reload
+      @account.tickets.find_by_id(tkt.id).status.should be_eql(5)
+    end
 end
