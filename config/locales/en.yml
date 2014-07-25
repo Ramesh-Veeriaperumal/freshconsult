@@ -6071,20 +6071,12 @@ en:
       domain_info: "ex. if your helpdesk is 'http://apple.freshdesk.com' then enter 'apple'"
       phone_no: "Phone Number"
       create_my_account: Create your Account
-      by_clicking: "By clicking "
-      agree: "you agree to our"
-      terms_of_service: "terms of service"
-      privacy_policy: "privacy policy"
-      and: " and"
-      freshdesk_terms: "http://freshdesk.com/terms"
-      freshdesk_privacy: "http://freshdesk.com/privacy"
+      terms_and_policy: "By clicking 'Create your Account', you agree to our <a href='http://freshdesk.com/terms' target='_blank'>terms of service</a> and <a href='http://freshdesk.com/privacy' target='_blank'>privacy policy</a>"
       helpdesk_name: "Helpdesk name"
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
-      error_message: "Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or "
-      signup: "Signup from Freshdesk Home page "
-      freshdesk_signup_page: "http://freshdesk.com/signup"
+      error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."

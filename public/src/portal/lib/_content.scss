@@ -437,7 +437,7 @@ hr.content-divider{
 @if $nonResponsive == false {
 	@include at-breakpoint($media-mobile){
 		
-		.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
+		.toolbar-actions{ margin-top: 3px; margin-bottom: 15px; }
 	
 		.toolbar-actions, .topic-list .topic-labels{ @include float(none); }
 

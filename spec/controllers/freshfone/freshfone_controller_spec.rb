@@ -34,7 +34,7 @@ describe FreshfoneController do
   it 'should fail on missing freshfone feature' do
     set_twilio_signature('freshfone/voice', incoming_params)
     @account.features.freshfone.destroy
-    post :voice
+    post :voice, { :format => "html" }
     response.should render_template "errors/non_covered_feature.html.erb"
   end
 

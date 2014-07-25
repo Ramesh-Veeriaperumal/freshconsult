@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "8492a06a102243271ecb9bde19f982e76193ad8a1ec059eec3c656d9513cc25f",
-    "current": "8492a06a102243271ecb9bde19f982e76193ad8a1ec059eec3c656d9513cc25f"
+    "previous": "8c66200b4d44d53917e349fec1bb1703a200aa97700603520615b73a1e8e9b06",
+    "current": "8c66200b4d44d53917e349fec1bb1703a200aa97700603520615b73a1e8e9b06"
   },
   "fonts": [
-    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.ttf",
-    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.svg",
-    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.woff",
-    "public/fonts/glyphs_8492a06a102243271ecb9bde19f982e7.eot"
+    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.ttf",
+    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.svg",
+    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.woff",
+    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.eot"
   ],
   "glyphs": {
     "account": {
@@ -189,6 +189,10 @@
     "folder-open-o": {
       "codepoint": 61717,
       "source": "public/glyphs/vectors/folder-open-o.svg"
+    },
+    "freshchat": {
+      "codepoint": 61796,
+      "source": "public/glyphs/vectors/freshchat.svg"
     },
     "freshdesk": {
       "codepoint": 61718,

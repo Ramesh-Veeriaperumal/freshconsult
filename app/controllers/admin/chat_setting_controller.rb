@@ -6,7 +6,11 @@ class Admin::ChatSettingController < Admin::AdminController
 
   def index
     unless feature?(:chat)
-      render :request_page
+      if is_chat_plan?
+        render :request_page
+      else
+        render_404
+      end
     else
       if current_account.chat_setting
         @chat = current_account.chat_setting

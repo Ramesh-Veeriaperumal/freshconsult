@@ -18,8 +18,8 @@ describe Helpdesk::AttachmentsController do
 
   it "should not allow an unauthorized user to delete a shared attachment" do
     now = (Time.now.to_f*1000).to_i
-    canned_response = create_response( {:title => "Recent Canned_Responses Hepler #{now}",:content_html => Faker::Lorem.paragraph,
-      :folder_id => 1, :user_id => @agent.id, :visibility => 2, :group_id => 1,
+    canned_response = create_response( {:title => "Recent Canned_Responses Hepler #{now}",:content_html => Faker::Lorem.paragraph, 
+      :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],
       :attachments => { :resource => fixture_file_upload('files/image.gif', 'image/gif'), 
         :description => Faker::Lorem.characters(10)
       }

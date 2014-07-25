@@ -24,18 +24,22 @@ module Freshfone::TicketActions
 	end
 
 	def create_ticket
+		json_response = {}
 		if build_ticket(params.merge!({ :agent => agent })).save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.ticket.human_name'),
 					:link => @template.link_to(t(:'freshfone.ticket.view'),
 						helpdesk_ticket_path(current_call.notable), :'data-pjax' => "#body-container") }).html_safe
+			json_response = {:success => true, :ticket => {:display_id =>current_call.notable.display_id , :subject => current_call.notable.subject , :status_name => current_call.notable.status_name, :priority => current_call.notable.priority}}
 		else
 			flash[:notice] = t(:'flash.general.create.failure',
 													{ :human_name => t(:'freshfone.ticket.human_name') })
+			json_response = {:success => false}
 		end
 		respond_to do |format|
 			format.xml { return empty_twiml }
 			format.js { }
+			format.nmobile { render :json => json_response }
 		end
 	ensure
 		update_user_presence unless call_history?
