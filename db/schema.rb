@@ -856,6 +856,7 @@ ActiveRecord::Schema.define(:version => 20140714073940) do
     t.boolean  "available_on_phone",               :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+		t.datetime "mobile_token_refreshed_at"
   end
 
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
