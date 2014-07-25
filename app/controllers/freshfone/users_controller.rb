@@ -13,11 +13,14 @@ class Freshfone::UsersController < ApplicationController
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
+	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
 
 	def presence
-		render :json => { 
-			:update_status => reset_presence
-		}
+		respond_to do |format|
+			format.any(:json, :nmobile) { 
+					render :json => { :update_status => reset_presence }
+			}
+		end
 	end
 
 	def node_presence
@@ -41,9 +44,9 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user))
+		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user), is_native_mobile?)
 		respond_to do |format|
-			format.json {
+			format.any(:json, :nmobile) {
 				if @freshfone_user.save
 					render :json => { :update_status => true, :token => generate_token,
 						:client => default_client, :expire => EXPIRES }
@@ -56,7 +59,7 @@ class Freshfone::UsersController < ApplicationController
 	
 	def in_call
 		respond_to do |format|
-			format.json { render :json => {
+			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
 				:call_sid => outgoing? ? current_call_sid : nil } }
 		end
@@ -82,7 +85,7 @@ class Freshfone::UsersController < ApplicationController
 			subaccount = current_account.freshfone_account
 			capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
 			capability.allow_client_outgoing subaccount.twilio_application_id
-			if params[:status].to_i == Freshfone::User::PRESENCE[:online]
+			if is_native_mobile? && @freshfone_user.presence = Freshfone::User::PRESENCE[:online] || params[:status].to_i == Freshfone::User::PRESENCE[:online]
 				capability.allow_client_incoming default_client
 			end
 			capability_token = capability.generate(expires=43200)

@@ -1,0 +1,18 @@
+Status update in topic
+<%= @topic.title %>
+
+<%= "_" * 100 %>
+
+The <%= @forum_type.downcase.singularize %> has been marked as <%= @current_stamp %>.
+
+<%= "_" * 100 %>
+
+View Topic
+<%= discussions_topic_url(@topic.id, :host => @host) %>
+
+Reply
+<%= reply_discussions_topic_url(@topic.id, :host => @user.account.host, :anchor => 'reply-to-post') %>
+
+Turn off notifications for this topic
+<%= toggle_monitorship_url("topic", @topic.id, "unfollow", :host => @host) %>
+ 

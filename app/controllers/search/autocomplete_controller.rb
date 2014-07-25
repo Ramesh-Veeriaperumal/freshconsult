@@ -57,7 +57,9 @@ class Search::AutocompleteController < ApplicationController
   private
 
     def respond_with_kbase(users)
-      users = ensure_kbase users
+      if(!params[:sla])
+        users = ensure_kbase users
+      end
       respond_to do |format|
         format.json { render :json => users.to_json }
       end
@@ -94,9 +96,11 @@ class Search::AutocompleteController < ApplicationController
     def ensure_kbase(requesters)
       requesters[:results].push({ 
                       :id => current_account.kbase_email, 
-                      :value => ""
+                      :value => "",
+                      :details => current_account.kbase_email
                     }) if params[:q] =~ /(kb[ase]?.*)/
       return requesters
+
     end
 
     def agent_sql

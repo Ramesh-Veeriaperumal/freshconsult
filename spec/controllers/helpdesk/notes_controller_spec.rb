@@ -36,6 +36,24 @@ describe Helpdesk::NotesController do
     response.should render_template "helpdesk/tickets/show/_conversations.html.erb"
   end
 
+  it "should create a note with RabbitMQ enabled" do
+    RabbitMq::Keys::NOTE_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RABBIT_MQ_ENABLED = true
+    Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
+    Array.any_instance.stubs(:publish).returns(true)
+
+    test_ticket = create_ticket({:status => 2 })
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>#{now}</p>"} },
+                  :ticket_id => test_ticket.display_id, :showing => "activities", :since_id => "-1"
+
+    test_ticket.notes.freshest(@account)[0].body.should =~ /#{now}/
+    
+    RABBIT_MQ_ENABLED = false
+    Account.any_instance.unstub(:rabbit_mq_exchange)
+    Array.any_instance.unstub(:publish)
+  end
+
   it "should edit a note " do
     test_ticket = create_ticket({:status => 2 })
     body = Faker::Lorem.paragraph

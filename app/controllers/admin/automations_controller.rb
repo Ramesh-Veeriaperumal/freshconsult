@@ -49,7 +49,6 @@ class Admin::AutomationsController < Admin::AdminController
 
   def clone_rule
     edit_data
-    @va_rule[:old_name] = @va_rule.name
     @va_rule.name = "%s #{@va_rule.name}" % t('dispatch.copy_of')
   end
 

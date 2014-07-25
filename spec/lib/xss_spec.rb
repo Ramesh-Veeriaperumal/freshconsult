@@ -59,7 +59,7 @@ describe "XssTermination" do
         XssTermination.xss_sanitize(perform)
         xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script><script>alert(\"hi\")</hello>hello</script></script>")
         xss_terminate.save!
-        XssTermination.first.field1.should eql "<hello>hii</hello>hello<div></div>"
+        XssTermination.first.field1.should eql "hiihello<div></div>"
         XssTermination.first.field2.should eql "hiialert(\"hi\")hello"
       end
       it "{:except => [:field1]} should return a sanitized text for other fields" do
@@ -67,7 +67,7 @@ describe "XssTermination" do
         XssTermination.xss_sanitize(perform)
         xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script>alert(\"hi\")</hello>hello")
         xss_terminate.save!
-        XssTermination.first.field1.should eql "<hello>hii</hello>hello<div></div>"
+        XssTermination.first.field1.should eql "hiihello<div></div>"
         XssTermination.first.field2.should eql "hii"
       end
     end
@@ -78,7 +78,7 @@ describe "XssTermination" do
         XssTermination.xss_sanitize(perform)
         xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script>alert(\"hi\")</hello>hello")
         xss_terminate.save!
-        XssTermination.first.field1.should eql "<hello>hii</hello>hello<div></div>"
+        XssTermination.first.field1.should eql "hiihello<div></div>"
         XssTermination.first.field2.should eql "&lt;hello&gt;hii&lt;script&gt;alert(&quot;hi&quot;)&lt;/hello&gt;hello"
         XssTermination.first.update_attributes(:field1 =>"this is only to test")
         XssTermination.first.field1.should eql "this is only to test"

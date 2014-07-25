@@ -1,5 +1,6 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
+	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_calls
 
   serialize :customer_data, Hash
@@ -42,7 +43,8 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :queued,	'queued',	6 ],
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
-		[ :blocked, 'blocked', 9 ]
+		[ :blocked, 'blocked', 9 ],
+		[ :voicemail, 'voicemail', 10 ]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -68,7 +70,6 @@ class Freshfone::Call < ActiveRecord::Base
 	validates_inclusion_of :call_type, :in => CALL_TYPE_HASH.values,
 		:message => "%{value} is not a valid call type"
 
-	default_scope :order => "created_at DESC"
 	
 	named_scope :active_calls, :conditions => [
 		'call_status = ? AND updated_at >= ?', 
@@ -76,8 +77,13 @@ class Freshfone::Call < ActiveRecord::Base
 	]
 
 	named_scope :filter_by_call_sid, lambda { |call_sid|
-		{ :conditions => ["call_sid = ? or dial_call_sid = ?", call_sid, call_sid], :limit => 1 }
+		{ :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
 	}
+
+	named_scope :filter_by_dial_call_sid, lambda { |dial_call_sid|
+		{ :conditions => ["dial_call_sid = ?", dial_call_sid], :order => 'created_at DESC', :limit => 1 }
+	}
+
 	named_scope :include_ticket_number, { 
 		:include => [ :ticket, :note, :freshfone_number ] }
 	named_scope :include_customer, { :include => [ :customer ] }
@@ -91,8 +97,13 @@ class Freshfone::Call < ActiveRecord::Base
 		}
 	}
 
+  named_scope :created_at_inside, lambda { |start, stop|
+  	{ :conditions => ["freshfone_calls.created_at >= ? and freshfone_calls.created_at <= ?", start, stop] }
+  }
+
 	def self.filter_call(call_sid)
-		filter_by_call_sid(call_sid).first
+    call = filter_by_call_sid(call_sid).first
+    call.blank? ? filter_by_dial_call_sid(call_sid).first : call
 	end
 	
 	def self.include_all
@@ -227,7 +238,7 @@ class Freshfone::Call < ActiveRecord::Base
 			calculator.perform
 		end
 	end
-	
+
 	private
 		def child_call_customer_id(params)
 			customer_id || (params[:customer] || {})[:id]

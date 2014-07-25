@@ -28,7 +28,7 @@ body, .feedback-wrapper{
 	// Reseting existing widget modal dialog
 	position: relative;
 	@include box-shadow(0 5px 10px rgba(0, 0, 0, 0.4), white 0 0 1px inset);
- @include left(0);
+ 	@include left(0);
 	top: 0;
 	margin: 0;
 	.modal-header{
@@ -411,4 +411,14 @@ body, .feedback-wrapper{
 	height: 35px !important;
 	position: absolute !important;
 	@include margin(41px 0 0 20px !important);
+}
+@include at-breakpoint($media-mobile){
+	.modal-panel-active{
+		.modal-body, .modal-footer, .modal-panel{
+			width:100%;
+		}
+	}
+	.modal-panel{
+		position: static;
+	}
 }

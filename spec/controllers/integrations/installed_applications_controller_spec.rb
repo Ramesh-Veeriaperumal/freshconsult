@@ -39,6 +39,14 @@ describe Integrations::InstalledApplicationsController do
     response.should redirect_to 'http://localhost.freshpo.com/integrations/applications'
   end
 
+  it "should install for google contacts" do
+    google_app = @account.installed_applications.find_by_application_id(4)
+    google_app.destroy if !google_app.nil?
+
+    put :install, {:id => 4}
+    response.should redirect_to "/auth/google?origin=install"
+  end
+
 
   # Updating an application - logmein 
   it "should update a existing application" do
@@ -79,12 +87,10 @@ describe Integrations::InstalledApplicationsController do
     @account.installed_applications.find_by_application_id(harvest_application_id).should_not be_nil
     harvest_application = @account.installed_applications.find_by_application_id(harvest_application_id)
 
-    #harvest_application = @account.installed_applications.find_by_application_id(@installaling_applications.find_by_name("harvest").id)
+
     get :edit, :id => harvest_application.id
 
     response.should render_template "integrations/installed_applications/edit"
-    # p "response.body"
-    # p response.body
     response.body.should =~ /Harvest settings/
   end
 
@@ -106,9 +112,7 @@ describe Integrations::InstalledApplicationsController do
     }
 
     @account.installed_applications.find_by_application_id(highrise_application_id).should be_nil
-      #response.should render_template "integrations/applicatons"
-      #response.should redirect_to 'integrations/applications'
-      #response.should have_selector('h3', :content => "Integrations")
+
   end
 
 end

@@ -3,6 +3,7 @@ class Monitorship < ActiveRecord::Base
   belongs_to_account
   belongs_to :monitorable, :polymorphic => true
   belongs_to :user
+  belongs_to :portal
   validates_presence_of :monitorable_type, :monitorable_id
   validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
@@ -14,6 +15,17 @@ class Monitorship < ActiveRecord::Base
   ACTIONS = [:follow, :unfollow]
 
   before_create :set_account_id
+
+  def sender_and_host
+    if !portal_id? || ( portal_id? && portal.main_portal? )
+      sender = user.account.default_friendly_email
+      host = user.account.host
+    else
+      sender = portal.friendly_email
+      host = portal.host
+    end
+    [sender,host]
+  end
 
   protected
 

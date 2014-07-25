@@ -66,6 +66,8 @@ describe Mobihelp::App do
     status = @mobihelp_app.save
     @account.mobihelp_apps.find_by_id(@mobihelp_app).config[:debug_log_count].should be_eql(debug_log_count)
     status.should_not be_true
+
+    @mobihelp_app.config[:debug_log_count] = Mobihelp::App::CONFIGURATIONS[:debug_log_count][0]
   end
 
 end

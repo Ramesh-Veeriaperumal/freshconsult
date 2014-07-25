@@ -1,0 +1,69 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<% form_tag(export_csv_reports_freshfone_summary_reports_url, { :method => :post, :id => 'report_filters' }) do %>
+<ul class="unstyled">
+
+<li>
+  <h3 class="lead"><%= t('reports.freshfone.filter_report') %>
+    <span class="muted report-close pull-right" id="filter-close-icon">×</span>
+  </h3>
+  </li>
+    <li>
+     <%date_range = @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date
+      %>
+      <label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
+      <%= text_field_tag :date_range, date_range, :class => "required input-large" %>
+
+       <label class="control-label"><%=t('reports.freshfone.number')%></label>  
+       <% @freshfone_number = freshfone_numbers.first.id if @freshfone_number.blank? %>
+      <%= select_tag :freshfone_number, 
+          options_for_select(freshfone_numbers.collect{ |c| [c.number_name,c.id] },@freshfone_number.to_i),
+          { :multiple => false, 
+              :class => "select2 filter_item",
+              "data-placeholder".to_sym() => t('reports.freshfone.select_number')
+            } %>
+      <label class="control-label"><%=t('reports.freshfone.group')%></label>  
+      <%= select_tag :group_id, 
+              options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
+                         @group_id.map(&:to_i)), 
+              { :multiple => true,
+                :class => "select2 filter_item", 
+                     "data-placeholder".to_sym() => t('reports.freshfone.select_group') } %>
+
+      <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
+      <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
+              { :multiple => false, 
+                :class => "select2 filter_item",
+                      "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
+    </li> 
+    <li>
+      <br/>
+      <a class="btn btn-primary" id="submit" href="javascript:void(0)"><%=t('reports.freshfone.generate_summary')%></a>
+      <a class="btn" id="cancel" href="javascript:void(0)"><%=t('reports.freshfone.filter_close')%></a>
+      <%= submit_tag "Generate PDF", :class => "hide", :id => "generate-pdf" %>
+    </li>
+  </ul>
+<% end %>
+<% javascript_tag do %>
+jQuery(document).ready(function() {
+ jQuery("#date_range").daterangepicker({
+    latestDate: new Date(),
+    presetRanges: [
+      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+    ],
+    presets: {
+      dateRange: '<%= t('reports.date_ranges.custom') %>'
+    },
+    dateFormat: getDateFormat('datepicker'),
+    closeOnSelect: true,
+    earliestDate: Date.parse('t - 90 d')
+  });
+  
+
+  jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
+    ev.preventDefault();
+    return false;
+  });
+ });
+<% end %>

@@ -40,7 +40,7 @@
 	    	case 'cnt-fwd':
 	         	jQuery('#'+element_id).redactor({ 
 	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
-	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
+	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
 	         	break;
 	        case 'cnt-note':
 	         	jQuery('#'+element_id).redactor({ 

@@ -91,7 +91,7 @@ module Rack #:nodoc:
     # returns a <tt>[status, header, body]</tt> response. 
     # The server_port is set as 80 forcefully to work in cluster - shihab
     def call(env)
-      if RAILS_ENV == "production" or RAILS_ENV == "staging"
+      if Rails.env.production? || Rails.env.staging?
         env["SERVER_PORT"] = 80 
         env["rack.url_scheme"] = env["HTTP_X_FORWARDED_PROTO"] if env["HTTP_X_FORWARDED_PROTO"]
         env["SERVER_PORT"] = 443 if fd_ssl?(env)

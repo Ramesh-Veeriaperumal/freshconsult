@@ -3,6 +3,8 @@ class Mobihelp::App < ActiveRecord::Base
   before_create       :set_key_and_secret
   after_initialize    :fix_config
   before_validation   :remove_white_space
+  after_commit        :clear_app_cache, :clear_mobihelp_solutions_cache
+
   private
 
     def set_key_and_secret
@@ -31,12 +33,18 @@ class Mobihelp::App < ActiveRecord::Base
     end
 
     def default_values
-      {
+      default_config = {
         :bread_crumbs => DEFAULT_BREADCRUMBS_COUNT,
         :debug_log_count => DEFAULT_LOGS_COUNT,
         :solutions => "",
         :push_notification => 'false',
         :app_review_launch_count => DEFAULT_APP_REVIEW_LAUNCH_COUNT
       }
+      default_config[:app_store_id] = "" if platform == PLATFORM_ID_BY_KEY[:ios]
+      default_config
+    end
+
+    def clear_mobihelp_solutions_cache
+      clear_solutions_cache(self.config[:solutions].to_i)
     end
 end

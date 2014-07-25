@@ -111,13 +111,17 @@ if Integrations::Application.count == 0
     s.account_id = 0
     s.listing_order = 5
     s.options = {
-                  :keys_order => [:title, :domain, :username, :password, :jira_note], 
+                  :keys_order => [:title, :domain, :username, :password, :jira_note, :sync_settings], 
                   :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
                   :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" }, 
                   :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note", 
-                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}' },
+                                      :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}', :css_class => "hide" },
                   :username => { :type => :text, :required => true, :label => "integrations.jira.form.username" },
-                  :password => { :type => :password, :label => "integrations.jira.form.password" } 
+                  :password => { :type => :password, :label => "integrations.jira.form.password" },
+                  :sync_settings => { :type => :custom, :required => false, :partial => "/integrations/applications/jira_sync_settings",
+                                      :info => "integrations.google_contacts.form.account_settings_info", :label => "integrations.google_contacts.form.account_settings"},
+                  :after_save => { :method => "install_jira_biz_rules", :clazz => "Integrations::JiraUtil" },
+                  :after_destroy => { :method => "uninstall_jira_biz_rules", :clazz => "Integrations::JiraUtil"} 
                 }
     s.application_type = "jira"            
   end

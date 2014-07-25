@@ -43,7 +43,7 @@ class VA::Tester
   end
 
   def execute_va_rule va_rule, ticket
-    # Intentionally Not doing anything
+    # Will be overridden
   end
 
   def exception? option_hash

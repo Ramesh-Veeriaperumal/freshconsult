@@ -377,7 +377,7 @@ module ApplicationHelper
   end
 
   def responder_path(args_hash)
-    link_to(h(args_hash['name']), user_path(args_hash['id']))
+    request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
 
   def comment_path(args_hash, link_display = 'note', options={ :'data-pjax' => false })
@@ -401,11 +401,13 @@ module ApplicationHelper
   end
 
   def merge_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                          link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
   def split_ticket_path(args_hash)
-    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+                                           link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
    def timesheet_path(args_hash, link_display = 'time entry')
@@ -539,14 +541,14 @@ module ApplicationHelper
     default_options = {
       :format => :short_day_with_time,
       :include_year => false,
-      :translation => true
+      :translate => true
     }
     options = default_options.merge(options)
     time_format = (current_account.date_type(options[:format]) if current_account) || "%a, %-d %b, %Y at %l:%M %p"
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
-    final_date = options[:translation] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
+    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
 
   def date_range_val(start_date,end_date,additional_options={})

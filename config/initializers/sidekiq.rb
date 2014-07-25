@@ -1,4 +1,4 @@
-config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'sidekiq.yml'))[RAILS_ENV]
+config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 
 $sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }

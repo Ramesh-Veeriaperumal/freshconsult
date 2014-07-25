@@ -68,4 +68,16 @@ describe TopicsController do
 			topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]
 		end
 	end
+
+	describe "Changing the topic stamp" do
+		it "should update the stamp type and set correct parameters for email notification" do
+			topic = create_test_topic(@problem_forum)
+			topic.update_attributes(:stamp_type => 8)
+			args = Delayed::Job.last.payload_object.args
+			args[3].should eql User.current.id
+			args[2].should eql Topic::PROBLEMS_STAMPS_BY_KEY[8]
+			args[1].should eql topic.type_name
+			args[0].split(":").last.to_i.should eql topic.id
+		end
+	end
 end

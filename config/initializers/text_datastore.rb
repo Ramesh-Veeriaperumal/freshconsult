@@ -2,7 +2,7 @@
 # in development mode we can have only mysql set
 # in staging and production mode the datastore is riak,mysql,s3
 
-storage = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/text_datastore.yml")).result)
+storage = YAML::load(ERB.new(File.read("#{Rails.root}/config/text_datastore.yml")).result)
 
 storage = (storage[Rails.env] || storage).symbolize_keys
 

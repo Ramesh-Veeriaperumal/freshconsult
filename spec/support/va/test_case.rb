@@ -8,7 +8,7 @@ class VA::TestCase
     before_each
     @controller_options, @test_cases = {}, {}
     # Summing up all options for simplicity, Supervisor Options makes it hard to compare if individually done
-    CONTROLLERS.each do |controller, details|
+    TESTS.each do |test_name, details|
       test_variable = details[:test_variable]
       module_to_be_included = details[:test_cases].first
       self.class.send :include, module_to_be_included
@@ -27,8 +27,8 @@ class VA::TestCase
     end
   end
 
-  def working
-    CONTROLLERS.each do |controller, details|
+  def check_rules
+    TESTS.each do |test_name, details|
       before_each
       tester_class = details[:tester_class]
       modules_to_be_included = details[:test_cases]
@@ -44,8 +44,8 @@ class VA::TestCase
             clear_background_jobs
             tester.perform @ticket, option_name, option_hash, op_types
           rescue Exception => e
-            p "Failed while checking the working of VA Option : #{option_name} in VARule for the ticket #{@ticket.inspect}"
-            raise "Error #{e.inspect} while checking the working of VA Option : #{option_name} in VARule for the ticket #{@ticket.inspect}"
+            p "Failed while checking the rules of VA Option : #{option_name} in VARule for the ticket #{@ticket.inspect}"
+            raise "Error #{e.inspect} while checking the rules of VA Option : #{option_name} in VARule for the ticket #{@ticket.inspect}"
           end
         end
       end

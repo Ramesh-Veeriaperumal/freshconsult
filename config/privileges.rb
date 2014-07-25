@@ -26,7 +26,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/automation"
-	  resource :"mobile/notification"
+	resource :"mobile/notification"
+	resource :"mobile/freshfone"
     resource :"helpdesk/mobihelp_ticket_extra"
     # Social - Twitter
     resource :"social/twitter_handle",
@@ -245,6 +246,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_performance_analysi"
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
+      resource :"reports/freshfone/summary_report"
    	resource :"reports/timesheet_report"
     resource :"reports/report_filter"
 	end

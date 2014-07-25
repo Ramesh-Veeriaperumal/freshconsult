@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe Authority::Rails::ControllerHelpers do
+describe Authority::FreshdeskRails::ControllerHelpers do
     before(:each) do  
       load_schema_and_data
       
@@ -17,7 +17,7 @@ describe Authority::Rails::ControllerHelpers do
       mock(@controller_class).append_before_filter(:check_privilege)
       mock(@controller_class).helper_method(:privilege?)
       
-      @controller_class.send(:include, Authority::Rails::ControllerHelpers)          
+      @controller_class.send(:include, Authority::FreshdeskRails::ControllerHelpers)          
     end
     
     describe "#privilege?" do

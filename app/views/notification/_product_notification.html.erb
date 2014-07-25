@@ -17,7 +17,7 @@
 		</div>
 		<div class="tab-content clear-left-margin span10">
 			<div class="tab-pane active" id="whats-new">
-			  	<div class="content-head header-border"><%= t('notification.whats_new_on_freshdesk') %></div>
+			  	<div class="content-head header-border"><%= t('notification.whats_new_in_freshdesk') %></div>
 			  	<div id="content-notify" class="content-notify row-fluid">
 				  	<% object.each do |announcement| %>
 						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.updated_at.utc %>">
@@ -41,7 +41,7 @@
 				<div id="notification-info" class="notification-list">
 					<div id="notify-search-content" class="notify-search-content">
 			    		<div id="fra-result" class="notify-fra bold">
-			    			<span><%= t('notification.frequently_referred_articles')%></span>
+			    			<span><%= t('notification.popular_articles')%></span>
 			    			<a href="https://support.freshdesk.com/support/solutions" target="_blank"> <%= t('notification.browse')%></a>
 			    		</div>
 			    		<div id="search-result-header" class="notify-fra bold hide"></div>
@@ -76,7 +76,7 @@
 	</div>
 </div>	
 
-<a href="#" id="notifiication-icon" class="product-notification-link tooltip" title="Whats new on freshdesk" data-placement="below">
+<a href="#" id="notifiication-icon" class="product-notification-link tooltip" title="<%= t('notification.whats_new_in_freshdesk') %>" data-placement="below">
 	<%= font_icon "help", { :size => 30 } %>
 </a>
 

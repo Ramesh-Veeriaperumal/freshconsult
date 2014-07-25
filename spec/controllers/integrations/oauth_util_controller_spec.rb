@@ -19,7 +19,7 @@ describe Integrations::OauthUtilController do
                         	"instance_url"=>"https://ap1.salesforce.com", "contact_fields"=>"Name", "lead_fields"=>"Name", "account_fields"=>"Name",
                         	"contact_labels"=>"Full Name", "lead_labels"=>"Full Name", "account_labels"=>"Account Name"}
                         })
-
+	  @new_installed_app.save!
   end
 
   before(:each) do
@@ -35,5 +35,10 @@ describe Integrations::OauthUtilController do
 	it "should get access token for non_user_specific_auth" do
 	get :get_access_token, {:controller=>"integrations/oauth_util", :action=>"get_access_token",:app_name=>"salesforce"} 
 	response.status.should eql "200 OK"
+	end
+
+	it "failure case" do
+		get :get_access_token, {:controller=>"integrations/oauth_util", :action=>"get_access_token",:app_name=>"pivotal_tracker"} 
+		response.status.should eql "200 OK"
 	end
 end

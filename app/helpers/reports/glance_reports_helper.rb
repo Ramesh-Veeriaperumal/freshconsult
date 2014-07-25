@@ -18,7 +18,9 @@ module Reports::GlanceReportsHelper
 		:fcr_tickets              => [DOWN_RED,UP_GREEN],
 		:hours_tracked            => [DOWN_RED,UP_GREEN],
 		:billable_hours           => [DOWN_RED,UP_GREEN],
-		:non_billable_hours       => [DOWN_GREEN,UP_RED]
+		:non_billable_hours       => [DOWN_GREEN,UP_RED],
+		:num_of_calls             => [DOWN_GREEN,UP_RED],
+		:missed_calls             => [DOWN_GREEN,UP_RED],
 	}
 
 	def percentage_change(old_val, new_val, metric_label)

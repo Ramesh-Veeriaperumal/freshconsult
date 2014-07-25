@@ -1,6 +1,8 @@
 class Mobihelp::App < ActiveRecord::Base
   include ApplicationHelper
-
+  include Cache::Memcache::Mobihelp::App
+  include Cache::Memcache::Mobihelp::Solution
+  
   set_table_name :mobihelp_apps
   concerned_with :associations, :callbacks, :constants, :validations
   serialize :config, Hash

@@ -79,7 +79,13 @@ module MemcacheKeys
   API_LIMIT = "v1/API_LIMIT:%{account_id}"
 
   ACCOUNT_API_WEBHOOKS_RULES = "v1/ACCOUNT_API_WEBHOOKS_RULES:%{account_id}"
+
+  MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
+
+  MOBIHELP_SOLUTIONS = "MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
+  MOBIHELP_SOLUTION_UPDATED_TIME = "MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{category_id}"
+
   PRODUCT_NOTIFICATION = "v1/PRODUCT_NOTIFICATION"
 
   class << self
