@@ -76,8 +76,7 @@ class Admin::PagesController < Admin::AdminController
       begin
         cname = Portal::Page::PAGE_MODEL_ACTION_BY_TOKEN[@portal_page_label.to_sym]
         unless cname.blank?
-          
-          if cname = "tickets"
+          if @portal_page_label == :ticket_view
             data = current_user.send(cname).visible.first if !cname.blank? && current_user.respond_to?(cname)
             id = data.display_id unless data.blank?
           else
