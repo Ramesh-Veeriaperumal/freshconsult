@@ -85,7 +85,7 @@ class Freshfone::UsersController < ApplicationController
 			subaccount = current_account.freshfone_account
 			capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
 			capability.allow_client_outgoing subaccount.twilio_application_id
-			if is_native_mobile? && @freshfone_user.presence = Freshfone::User::PRESENCE[:online] || params[:status].to_i == Freshfone::User::PRESENCE[:online]
+			if is_native_mobile? || params[:status].to_i == Freshfone::User::PRESENCE[:online]
 				capability.allow_client_incoming default_client
 			end
 			capability_token = capability.generate(expires=43200)
