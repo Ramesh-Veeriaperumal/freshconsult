@@ -1764,6 +1764,12 @@ en:
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
+    email_response: "email response"
+    reply: "reply"
+    forwarded: "forwarded"
+    tweet: "tweet"
+    time_entry: "time entry"
+    note: "note"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
