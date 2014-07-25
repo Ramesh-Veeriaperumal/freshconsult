@@ -38,6 +38,52 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
+  it "should create a new ticket with RabbitMQ enabled" do
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RABBIT_MQ_ENABLED = true
+    Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
+    Array.any_instance.stubs(:publish).returns(true)
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RABBIT_MQ_ENABLED = false
+    Account.any_instance.unstub(:rabbit_mq_exchange)
+    Array.any_instance.unstub(:publish)
+  end
+
+  it "should create a new ticket with RabbitMQ enabled and with RabbitMq publish error" do
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RABBIT_MQ_ENABLED = true
+    Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
+    Array.any_instance.stubs(:publish).raises(StandardError)
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RABBIT_MQ_ENABLED = false
+    Account.any_instance.unstub(:rabbit_mq_exchange)
+    Array.any_instance.unstub(:publish)
+  end
+
   # Ticket Updates
 
     it "should edit a ticket" do
@@ -71,6 +117,25 @@ describe Helpdesk::TicketsController do
                                        :id => @test_ticket.display_id
                                       }
       updated_ticket = @account.tickets.find(@test_ticket.id)
+      updated_ticket.ticket_type.should be_eql("Lead")
+      updated_ticket.source.should be_eql(9)
+    end
+
+    it "should update a ticket's properties with agent collision feature" do
+      @account.features.agent_collision.create
+      test_ticket = create_ticket
+      put :update_ticket_properties, { :helpdesk_ticket => { :priority => "4",
+                                                             :status => "3",
+                                                             :source => "9",
+                                                             :ticket_type => "Lead",
+                                                             :group_id => "",
+                                                             :responder_id => ""
+                                                            },
+                                       :helpdesk => { :tags => ""},
+                                       :id => test_ticket.display_id
+                                      }
+      @account.features.agent_collision.destroy
+      updated_ticket = @account.tickets.find(test_ticket.id)
       updated_ticket.ticket_type.should be_eql("Lead")
       updated_ticket.source.should be_eql(9)
     end
@@ -395,6 +460,15 @@ describe Helpdesk::TicketsController do
       response.body.should =~ /#{tkt2.description}/
     end
 
+    it "should load the next and previous tickets of a ticket" do
+      ticket_1 = create_ticket
+      ticket_2 = create_ticket
+      ticket_3 = create_ticket
+      get :prevnext, :id => ticket_2.display_id
+      assigns(:previous_ticket).should be_eql(ticket_1.display_id)
+      assigns(:next_ticket).should be_eql(ticket_3.display_id)
+    end
+
     # Empty Trash
     it "should empty(delete) all tickets in trash view" do
       tkt1 = create_ticket({ :status => 2 }, @group)
@@ -425,6 +499,4 @@ describe Helpdesk::TicketsController do
       ticket_incremented? tickets_count
       @account.tickets.last.ticket_body.description_html.should =~ /#{note_body}/
     end
-    
-
 end

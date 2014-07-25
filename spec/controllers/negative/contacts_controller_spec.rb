@@ -95,5 +95,23 @@ describe ContactsController do
     response.body.should =~ /Email has already been taken/
     @account.features.multiple_user_emails.destroy
   end
-  
+
+  it "should unblock an user" do
+    contact = Factory.build(:user, :account => @acc, :phone => "4564564656456", 
+                                                     :blocked => true, 
+                                                     :email => Faker::Internet.email,
+                                                     :user_role => 3, 
+                                                     :deleted => true, 
+                                                     :deleted_at => Time.now)
+    contact.save(false)
+    ticket = create_ticket({ :requester_id => contact.id })
+    Resque.inline = true
+    User.any_instance.stubs(:update_without_callbacks).raises(StandardError)
+    get :unblock, :id => contact.id
+    Resque.inline = false
+    Account.any_instance.unstub(:users)
+    contact.reload
+    contact.blocked.should eql false
+    response.should redirect_to(contact_path(contact.id))
+  end
 end
