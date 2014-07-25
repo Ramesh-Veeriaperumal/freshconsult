@@ -254,7 +254,7 @@ class Support::Discussions::TopicsController < SupportController
       @page_meta ||= {
         :title => @topic.title,
         :description => @topic.posts.published.first['body'],
-        :canonical => support_discussions_topic_path(@topic)
+        :canonical => support_discussions_topic_url(@topic)
       }
     end
 

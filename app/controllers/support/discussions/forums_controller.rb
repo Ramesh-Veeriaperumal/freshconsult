@@ -27,7 +27,7 @@ private
     @page_meta ||= {
       :title => @forum.name,
       :description => @forum.description,
-      :canonical => support_discussions_forum_path(@forum)
+      :canonical => support_discussions_forum_url(@forum)
     }
   end
 end
