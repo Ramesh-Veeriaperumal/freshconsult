@@ -49,5 +49,16 @@ if Rails.env.test?
     t.account_id 1
   end
 
+  Factory.define :create_webhooks, :class => ApiWebhooksController do |t|
+    t.name "Test_Webhook"
+    t.description "Test_description"
+    t.match_type "any"
+    t.filter_data "Test data"
+    t.action_data "Test action data"
+    t.account_id 1
+    t.rule_type 13
+    t.active 1
+  end
+
   
 end

@@ -45,13 +45,16 @@ describe Integrations::IntegratedResourcesController do
       },
       :application_id => "10"
     }
+    response.status.should eql "200 OK"
   end
 
   it "should fail create for a new IntegratedResource" do
     post :create, {
-      :integrated_resource => {},
-      :application_id => "10"
+        :integrated_resource => {
+        :error => "test_error"
+        }
     }
+    response.status.should eql "200 OK"
   end
 
 
@@ -62,7 +65,9 @@ describe Integrations::IntegratedResourcesController do
   end
   
   it "should fail for delete integrated resource" do 
-    delete :delete, { :integrated_resource => {:remote_integratable_id => "1106038/stories/73687832", :account => @account}}
+    delete :delete, { :integrated_resource => {:integrated_resource => {
+        :error => "test_error"
+        }}}
     response.status.should eql "200 OK"
   end
 

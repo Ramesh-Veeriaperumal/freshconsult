@@ -87,12 +87,10 @@ describe Integrations::InstalledApplicationsController do
     @account.installed_applications.find_by_application_id(harvest_application_id).should_not be_nil
     harvest_application = @account.installed_applications.find_by_application_id(harvest_application_id)
 
-    #harvest_application = @account.installed_applications.find_by_application_id(@installaling_applications.find_by_name("harvest").id)
+
     get :edit, :id => harvest_application.id
 
     response.should render_template "integrations/installed_applications/edit"
-    # p "response.body"
-    # p response.body
     response.body.should =~ /Harvest settings/
   end
 
@@ -114,9 +112,7 @@ describe Integrations::InstalledApplicationsController do
     }
 
     @account.installed_applications.find_by_application_id(highrise_application_id).should be_nil
-      #response.should render_template "integrations/applicatons"
-      #response.should redirect_to 'integrations/applications'
-      #response.should have_selector('h3', :content => "Integrations")
+
   end
 
 end
