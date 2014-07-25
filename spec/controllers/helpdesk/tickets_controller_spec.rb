@@ -36,7 +36,7 @@ describe Helpdesk::TicketsController do
         :user_id => ticket.requester.id
     )
     note.save_note
-    get :show, :id => ticket.id
+    get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
   
@@ -53,7 +53,7 @@ describe Helpdesk::TicketsController do
         :user_id => ticket.requester.id
     )
     note.save_note
-    get :show, :id => ticket.id
+    get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
 
