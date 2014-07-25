@@ -15,7 +15,6 @@ describe Social::TwitterHandlesController do
   end
 
   describe "GET #index" do
-
     context "without api exception" do
       it "should be successful" do
         get :index
@@ -30,13 +29,20 @@ describe Social::TwitterHandlesController do
       it "should redirect if exception arises" do
         TwitterWrapper.any_instance.stubs(:request_tokens).raises(Timeout::Error)
         get :index
-
         response.should redirect_to 'admin/home'
       end
     end
-
   end
-
+  
+  describe "GET #edit" do
+    it "should render the edit page of a handle" do
+      twt_handler = create_test_twitter_handle(@account)
+      get :edit, {
+          :id => twt_handler.id
+        }
+        response.should render_template("social/twitter_handles/edit.html.erb") 
+    end
+  end
 
   describe "GET #authdone" do
 
@@ -298,6 +304,17 @@ describe Social::TwitterHandlesController do
       handle.dm_thread_time.should be_eql(86400)
     end
   end
+  
+  it "should check if the user who is responding follows the accout to which being replyed to" do
+    twt_handler = create_test_twitter_handle(@account)
+    
+    Twitter::REST::Client.any_instance.stubs(:friendship?).returns(true)
+    
+    post :user_following, {
+                            :twitter_handle => twt_handler.id, 
+                            :req_twt_id => "TestingTwitter", 
+                          }
+  end 
   
   after(:all) do
     @account.features.send(:social_revamp).create

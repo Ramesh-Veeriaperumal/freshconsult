@@ -49,8 +49,8 @@ module MailgunHelper
 		number.times do |i|
 			if large
 				buffer = ("a" * 1024).freeze
-				file = File.open("spec/fixtures/files/temp/tmp15m.txt", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment-#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/temp/tmp15m.txt", 'text')
+				file = File.open("spec/fixtures/files/tmp15.doc", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
+				attach["attachment-#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/tmp15.doc", 'text')
 			else
 				file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
 				attach["attachment-#{i+1}"] = file

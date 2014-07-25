@@ -16,8 +16,8 @@ describe GroupsController do
 	end
 
 	after(:all) do
-        @test_group.destroy
-    end
+		@test_group.destroy
+	end
 
 	it "should go to the Groups index page" do
 		get :index
@@ -29,17 +29,19 @@ describe GroupsController do
 		get :new
 		response.body.should =~ /Automatic Ticket Assignment/
 		response.should be_success
-		post :create, { :group => {:name => "Spec Testing Grp #{@now}", :description => Faker::Lorem.paragraph, :business_calendar => 1,
-		                           :agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id}
-		                }
-		Group.find_by_name("Spec Testing Grp #{@now}").should_not be_nil
+		post :create, { :group => { :name => "Spec Testing Grp #{@now}", :description => Faker::Lorem.paragraph, :business_calendar => 1,
+									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
+									}
+		}
+		@account.groups.find_by_name("Spec Testing Grp #{@now}").should_not be_nil
 	end
 
 	it "should not create a Group without the name" do
-		post :create, { :group => {:name => "", :description => Faker::Lorem.paragraph, :business_calendar => 1,
-		                           :agent_list => "#{@agent.id},#{@user_1.id}", :ticket_assign_type=> 1,
-		                           :assign_time => "1800", :escalate_to => @agent.id}
-		                }
+		post :create, { :group => { :name => "", :description => Faker::Lorem.paragraph, :business_calendar => 1,
+									:agent_list => "#{@agent.id},#{@user_1.id}", :ticket_assign_type=> 1,
+									:assign_time => "1800", :escalate_to => @agent.id
+									}
+		}
 		response.body.should =~ /Name can&#39;t be blank/
 	end
 
@@ -61,7 +63,7 @@ describe GroupsController do
 				:added_list => "",
 				:removed_list => "", 
 				:ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
 		@test_group.reload
@@ -78,7 +80,7 @@ describe GroupsController do
 				:added_list => "#{@agent.id} , #{@user_1.id}",
 				:removed_list => "",
 				:ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
 		@test_group.reload
@@ -98,7 +100,7 @@ describe GroupsController do
 				:added_list => "",
 				:removed_list => "#{@agent.id}",
 				:ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
 		@test_group.reload
@@ -115,9 +117,9 @@ describe GroupsController do
 			:group => {:name => "",
 				:description => "Updated Description: Spec Testing Grp", :business_calendar => 1,
 				:added_list => "#{@user_1.id}",
-			    :removed_list => "",
-			    :ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:removed_list => "",
+				:ticket_assign_type=> 0,
+				:assign_time => "2500", :escalate_to => @agent.id
 			}
 		}
 		@test_group.reload
@@ -128,8 +130,8 @@ describe GroupsController do
 	end
 
 	it "should delete a Group" do
-		group = Group.find_by_name("Spec Testing Grp #{@now}")
+		group = @account.groups.find_by_name("Spec Testing Grp #{@now}")
 		delete :destroy, :id => group.id
-		Group.find_by_id(group.id).should be_nil
+		@account.groups.find_by_id(group.id).should be_nil
 	end
 end

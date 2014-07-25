@@ -90,6 +90,7 @@ en:
   no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
   sidebar_help: "Help"
+  support_title: "Support"
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -453,10 +454,31 @@ en:
       topic_view: "Topic view"
       new_topic: "New topic"
       submit_ticket: "New ticket"
-      ticket_list: "User tickets"
+      ticket_list: "Ticket list"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
-
+  portal_meta:
+    titles:
+      portal_home: "Support"
+      user_signup: "Signup for a new account"
+      user_login: "Sign into"
+      forgot_password: "Forgot password"
+      activation_form: "Activate your account"
+      profile_edit: "Edit your profile"
+      search: "Search"
+      solution_home: "Solutions"
+      solution_category: "Solutions category"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions"
+      discussions_category: "Discussions category"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "Start a discussions"
+      submit_ticket: "Submit a ticket"
+      ticket_list: "Your tickets"
+      ticket_view: "Ticket details"
+      my_topics: "My Topics"
   admin:
     social:
       helpcard:
@@ -1691,10 +1713,10 @@ en:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
     post:
-      deleted: "Post of '%{title}' was deleted."
+      deleted: "Post of %{title} was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
-      deleted: "Topic '%{title}' was deleted."
+      deleted: "Topic %{title} was deleted."
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
@@ -5071,12 +5093,20 @@ en:
       subheader_layout: Portal layout
       subheader_pages: Portal pages
       pages_help_message: Here you will be able to customize body area of individual pages.
+      head_layout_title: Head
       header_layout_title: Header
       footer_layout_title: Footer
       pagelayout_title: Page layout
+      head_layout_help_message: Modify the head section of your portal html.
       header_layout_help_message: Change the header area of your support portal
       footer_layout_help_message: Change the footer area of your support portal
       pagelayout_help_message: Customize the entire layout of your support portal
+      page_preview_message:
+        article_view: "Note: For preview to be shown, please ensure that you have atleast one solution article."
+        article_list: "Note: For preview to be shown, please ensure that you have atleast one solution article."
+        topic_view: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
+        topic_list: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
+        ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
@@ -5397,10 +5427,13 @@ en:
       block_number_title: "Block number"
     ticket:
       recording: "Play message"
-      ticket_desc: "Conversation with %{customer} from %{location} and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from %{customer} from %{location}"
+      ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      ticket_desc: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
+      voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
-      dial_a_number: "Conversation with %{customer} from %{location}. Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
+      dial_a_number: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"
@@ -5561,6 +5594,11 @@ en:
     thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
     wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
+    msgbox_placeholder_title: "Reply box placeholder"
+    msg_waiting_agent_title: "Status Message while waiting for agent"
+    msg_joining_agent_title: "Message when agent joins chat"
+    msg_leaving_agent_title: "Message when agent leaves chat"
+    help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
     prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
@@ -5704,8 +5742,9 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
-    agent_joined_msg: "$ has joined the chat"
-    agent_left_msg: "$ has left the chat"
+    agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_left_msg: "{{agent_name}} has left the chat"
+    help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date

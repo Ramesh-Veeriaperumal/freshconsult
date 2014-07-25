@@ -4,9 +4,9 @@ include MailgunHelper
 describe Helpdesk::Email::Process do
 	before(:all) do
 		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
-		@account.email_configs.find_by_to_email("support@#{@account.full_domain}").update_attributes({:primary_role => true})
-		@account.reload
+		clear_email_config
 		@comp = create_company
+		restore_default_feature("reply_to_based_tickets")
 	end
 
 	before(:each) do
@@ -23,6 +23,10 @@ describe Helpdesk::Email::Process do
 		@ticket_size = @account.tickets.size
 		@note_size = @account.notes.size
 		@article_size = @account.solution_articles.size
+	end
+
+	after(:all) do
+		restore_default_feature("reply_to_based_tickets")
 	end
 
 	#All exception handling has been left out except attachment

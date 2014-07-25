@@ -13,7 +13,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	@include box-shadow( rgba(#fff, 0.5) 0 1px inset );
 	@include clearfix;
 	border: 1px solid rgba($header_border_color, 0.2);
-	@if(lightness($header_color) < 50%){  @include text-shadow(rgba(#000, 0.9) -1px -1px 1px);	}    
+	@if(lightness($header_color) < 50%){  @include text-shadow(rgba(0,0,0,0.9) -1px 0px 0px);	}    
 	a{ color: inherit; font-size: 13px; }
     a:hover{ color: inherit; }
 

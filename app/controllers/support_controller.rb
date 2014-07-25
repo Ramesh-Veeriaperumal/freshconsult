@@ -50,10 +50,13 @@ class SupportController < ApplicationController
     def set_portal_page page_token
       # Set page flash message
       page_message
-
+      
       # Name of the page to be used to render the static or dynamic page
       @current_page_token = page_token.to_s
 
+      # Setting up meta information for the current page
+      page_meta page_token
+      
       # Setting up current_tab based on the page type obtained
       current_tab page_token
 
@@ -105,6 +108,15 @@ class SupportController < ApplicationController
       end
       @page_message ||= output.join(" ")
     end
+    
+    def page_meta page_token
+      @page_meta ||= { :title => @page_title || t("portal_meta.titles.#{page_token}") || t('support_title'),
+                       :description => @page_description,
+                       :keywords => @page_keywords,
+                       :canonical => @page_canonical }
+                       
+      @meta = HashDrop.new( @page_meta )
+    end
 
     def process_page_liquid(page_token)      
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
@@ -151,8 +163,12 @@ class SupportController < ApplicationController
     end
 
     def template_data(sym)
-      data = @portal_template[sym] 
-      data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
+      begin
+        data = @portal_template[sym] 
+        data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
+      rescue
+        data = nil
+      end
       data
     end
 

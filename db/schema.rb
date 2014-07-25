@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140716114821) do
+ActiveRecord::Schema.define(:version => 20140711070318) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1587,6 +1587,7 @@ ActiveRecord::Schema.define(:version => 20140716114821) do
     t.text     "layout"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "head"
   end
 
   add_index "portal_templates", ["account_id", "portal_id"], :name => "index_portals_on_account_id_and_portal_id"

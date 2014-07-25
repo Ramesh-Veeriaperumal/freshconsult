@@ -8,9 +8,11 @@ class Support::Discussions::ForumsController < SupportController
 	before_filter :load_forum, :only => [:show, :toggle_monitor]
 
 	def show
-		@page_title = @forum.name
 		respond_to do |format|
-			format.html { set_portal_page :topic_list }
+			format.html { 
+        load_page_meta
+        set_portal_page :topic_list 
+      }
 		end
 	end
 
@@ -20,4 +22,12 @@ private
 		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and !@forum.visible?(current_user) 
 		render_404 if @forum.nil?
 	end
+  
+  def load_page_meta
+    @page_meta ||= {
+      :title => @forum.name,
+      :description => @forum.description,
+      :canonical => support_discussions_forum_url(@forum)
+    }
+  end
 end

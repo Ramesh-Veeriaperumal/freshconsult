@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Integrations::IntegratedResourcesController do
+  integrate_views
   setup :activate_authlogic
+  self.use_transactional_fixtures = false
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
@@ -17,7 +19,7 @@ describe Integrations::IntegratedResourcesController do
       :integrated_resource => {
         :remote_integratable_id => "ROSH-100",
         :account => @account,
-        :local_integratable_id => @test_ticket.id,
+        :local_integratable_id => @test_ticket.display_id,
         :local_integratable_type => "issue-tracking"
       },
       :application_id => "10"

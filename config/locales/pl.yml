@@ -58,7 +58,7 @@ pl:
   apply: Zastosuj
   myself: Ja
   signup_complete_activate_info: Witamy! Wysłaliśmy do Ciebie wiadomość e-mail, zawierającą w treści łącze, za pomocą którego możesz ustawić swoje hasło i aktywować konto.
-  attachment_help_info: Rozmiar &lt; 15 MB
+  attachment_help_info: Rozmiar < 15 MB
   feedbackwidget_offset_info: Wybierz pozycję widżetu w przeglądarce. Przesunięcie jest to odległość (w pikselach) przycisku widżeta od lewej lub górnej krawędzi ekranu, w zależności od wybranego wyrównania.
   no_twitter_handle: Skonfiguruj przynajmniej jedno konto Twitter
   reset_my_password: Zresetuj moje hasło
@@ -96,7 +96,7 @@ pl:
   attachment: Załącznik
   attachments: Załączniki
   attachment_delete: Zamierzasz trwale usunąć ten załącznik. Kontynuować?
-  attachment_failed_message: Odrzucono co najmniej jeden z załączników, ponieważ przekroczono limit 15&nbsp;MB.
+  attachment_failed_message: Odrzucono co najmniej jeden z załączników, ponieważ przekroczono limit 15 MB.
   attach_file_local: Dołącz plik z komputera
   attach_file: Dołącz plik
   dropbox_attach_label: Dołącz z
@@ -458,12 +458,12 @@ pl:
         quest: Wyzwania
         quest_info1: Wyzwania oznaczają cele, jakie stawiasz konsultantom; za ich osiągnięcie otrzymają stosowne odznaki.
         quest_info2: Wszystkie wyzwania są domyślnie włączone. Możesz wyłączyć te, których nie chcesz używać. Jeśli chcesz dodać więcej wyzwań lub utworzyć własne, kliknij „Nowe Wyzwanie” – będziesz mieć możliwość utworzenia zupełnie nowego wyzwania i przypisania mu dowolnych warunków.
-        quest_form_info1: "Wybierz typ wyzwania dla konsultantów. Może to być jeden z&nbsp;trzech poniższych: <br /> a) rozwiązywanie problemów w zgłoszeniach,<br /> b) publikowanie rozwiązań i <br /> c) udzielanie się na forach."
+        quest_form_info1: "Wybierz typ wyzwania dla konsultantów. Może to być jeden z trzech poniższych: <br /> a) rozwiązywanie problemów w zgłoszeniach,<br /> b) publikowanie rozwiązań i <br /> c) udzielanie się na forach."
         quest_form_info2: Następnie wybierz kryteria wyzwania (co konsultant ma robić) i dodaj warunki, których spełnienie będzie determinować zdobycie odznaki.
         quest_form_info3: Wybierz punkty i odznakę, które konsultant może otrzymać. Na końcu wprowadź nazwę wyzwania i krótki jego opis.
         quest_form_info4: Kliknij opcję „Zapisz wyzwanie”, aby zapisać swoje ustawienia.
         creating_survey: "Tworzenie ankiety satysfakcji:"
-        creating_survey_help: "Wykonując poniższe kroki, będziesz mógł zebrać opinie od swoich klientów wystawiających ocenę poprzez łącze w e-mailach z&nbsp;odpowiedzią:<br> 1. Zaznacz pole wyboru Ankieta satysfakcji klienta<br> 2. Wprowadź tekst łącza do ankiety satysfakcji. Tekst domyślny brzmi: „Napisz, co sądzisz o jakości naszej pomocy technicznej”.<br> <br> <b>Wybierz wiadomości, które mają zawierać łącze do ankiety satysfakcji:</b><br> Możesz określić, czy łącza do ankiety satysfakcji klienta mają być wysyłane w każdej wiadomości do klienta czy tylko w ostatniej wiadomości po rozwiązaniu problemu w zgłoszeniu. <br><br> Więcej informacji na temat ankiet satysfakcji znajduje się na naszej stronie.  </p>"
+        creating_survey_help: "Wykonując poniższe kroki, będziesz mógł zebrać opinie od swoich klientów wystawiających ocenę poprzez łącze w e-mailach z odpowiedzią:<br> 1. Zaznacz pole wyboru Ankieta satysfakcji klienta<br> 2. Wprowadź tekst łącza do ankiety satysfakcji. Tekst domyślny brzmi: „Napisz, co sądzisz o jakości naszej pomocy technicznej”.<br> <br> <b>Wybierz wiadomości, które mają zawierać łącze do ankiety satysfakcji:</b><br> Możesz określić, czy łącza do ankiety satysfakcji klienta mają być wysyłane w każdej wiadomości do klienta czy tylko w ostatniej wiadomości po rozwiązaniu problemu w zgłoszeniu. <br><br> Więcej informacji na temat ankiet satysfakcji znajduje się na naszej stronie.  </p>"
       index:
         title: Ustawienia Arcade
         info1: Teraz każde zgłoszenie do pomocy technicznej to dla konsultanta szansa na zdobycie punktów. A co jeszcze lepsze – możesz przyznawać punkty premii swojemu zespołowi w oparciu o najważniejsze dla ciebie kryteria. Np. tempo udzielania odpowiedzi, rozwiązanie problemu przy pierwszym kontakcie lub zyskanie najlepszych opinii klientów.
@@ -478,7 +478,7 @@ pl:
         enable_label: Gamifikacja konsultantów
         title_points_configuration: Konfiguracja punktów
         title_ticket_points: Punkty za zgłoszenia
-        fast_resolution: Szybko <span>(&lt; 1 h)</span>
+        fast_resolution: Szybko <span>(< 1 h)</span>
         ontime_resolution: Terminowo <span>(zgodnie z warunkami SLA)</span>
         late_resolution: Późno <span>(po terminie)</span>
         bonus_points: Punkty premii
@@ -493,7 +493,7 @@ pl:
     surveys:
      successfully_updated: Ustawienia ankiety zostały pomyślnie zaktualizowane.
      error_updated: Wystąpił błąd podczas aktualizacji ustawień ankiety.
-     helptext: "<p><b>Dlaczego warto włączyć ankiety satysfakcji?</b> <br>\nAnkiety satysfakcji umożliwiają dodanie łącza we wiadomości z odpowiedzią do klienta i skierowanie go bezpośrednio do miejsca, gdzie może wyrazić opinię na temat obsługi. <br><br> <b>Tworzenie ankiety satysfakcji:</b><br> Wykonując poniższe kroki, będziesz mógł zebrać opinie od swoich klientów wystawiających ocenę poprzez łącze w e-mailach z&nbsp;odpowiedzią:<br> 1. Zaznacz pole wyboru Ankieta satysfakcji klienta<br> 2. Wprowadź tekst łącza do ankiety satysfakcji. Tekst domyślny brzmi: „Napisz, co sądzisz o jakości naszej pomocy technicznej”.<br> <br> <b>Wybierz wiadomości, które mają zawierać łącze do ankiety satysfakcji:</b><br> Możesz określić, czy łącza do ankiety satysfakcji klienta mają być wysyłane w każdej wiadomości do klienta czy tylko w ostatniej wiadomości po rozwiązaniu problemu w zgłoszeniu. <br><br> Więcej informacji na temat ankiet satysfakcji znajduje się na naszej stronie.  </p>"
+     helptext: "<p><b>Dlaczego warto włączyć ankiety satysfakcji?</b> <br>\nAnkiety satysfakcji umożliwiają dodanie łącza we wiadomości z odpowiedzią do klienta i skierowanie go bezpośrednio do miejsca, gdzie może wyrazić opinię na temat obsługi. <br><br> <b>Tworzenie ankiety satysfakcji:</b><br> Wykonując poniższe kroki, będziesz mógł zebrać opinie od swoich klientów wystawiających ocenę poprzez łącze w e-mailach z odpowiedzią:<br> 1. Zaznacz pole wyboru Ankieta satysfakcji klienta<br> 2. Wprowadź tekst łącza do ankiety satysfakcji. Tekst domyślny brzmi: „Napisz, co sądzisz o jakości naszej pomocy technicznej”.<br> <br> <b>Wybierz wiadomości, które mają zawierać łącze do ankiety satysfakcji:</b><br> Możesz określić, czy łącza do ankiety satysfakcji klienta mają być wysyłane w każdej wiadomości do klienta czy tylko w ostatniej wiadomości po rozwiązaniu problemu w zgłoszeniu. <br><br> Więcej informacji na temat ankiet satysfakcji znajduje się na naszej stronie.  </p>"
 
      index:
         title: Ustawienia satysfakcji klienta
@@ -523,7 +523,7 @@ pl:
             send_test_mail_confirm_yes: Tak, otrzymałem je.
             send_test_mail_confirm_no: Nie, nie widzę żadnego zgłoszenia.
             send_test_mail_yes_response: Brawo! Udało Ci się skonfigurować pocztę pomocy technicznej do pracy z systemem Freshdesk. Życzymy miłej pracy!
-            send_test_mail_response_no1: Wystąpił problem -&gt;
+            send_test_mail_response_no1: Wystąpił problem ->
             send_test_mail_response_no2: Dowiedz się, jak
             send_test_mail_response_no_3: <strong>A to pech! Wygląda na to, że wystąpił problem!</strong><br>Sprawdź regułę przekazywania, aby upewnić się, że jest prawidłowa. Jeśli nie otrzymasz zgłoszenia testowego w ciągu kilku minut, <a href="https://support.freshdesk.com/" target="_blank">skontaktuj się z nami</a>.
         index:
@@ -580,7 +580,7 @@ pl:
             rebrand_submit_label: Zmień wygląd marki
             admin_title: Wszystko w porządku?
             admin_sub_title: Nie zapomnij sprawdzić wszystkich funkcji dodatkowych dostępnych w karcie „%{admin_tab}”
-            product_link_label: Przejdź do centrum pomocy &gt;&gt;
+            product_link_label: Przejdź do centrum pomocy >>
             validating: Sprawdzanie...
             updating: Aktualizowanie...
             successfully_updated: Pomyślnie zaktualizowano.
@@ -617,10 +617,10 @@ pl:
         current_balance: Pozostało %{balance}!
         buy_pass: Kup więcej przepustek
         buy_now: Kup teraz
-        day_pass_pack: %{quantity}Pakiet przepustek dziennych (%{currency}%{amount})
+        day_pass_pack: "%{quantity}Pakiet przepustek dziennych (%{currency}%{amount})"
         day_pass_history: Historia zakupów
         add_confirm: Twoja karta kredytowa zostanie obciążona 
-        daypass_quantity: %{quantity} przepustek dziennych
+        daypass_quantity: "%{quantity} przepustek dziennych"
         order: Nr zamówienia
         no_of_day_passes: Liczba przepustek dziennych
         auto_recharge: Automatyczne doładowanie
@@ -743,7 +743,7 @@ pl:
         webhook_usecase_tooltip: Wypróbuj kilka sposobów używania webhooków za pomocą funkcji obserwatora.
         simple_webhook_tip: Wybierz dowolne właściwości zgłoszenia z powyższej listy, aby zostały przesłane razem z żądaniem. Jeśli chcesz zapisać własne żądania API, użyj opcji Zaawansowane.
         advanced_webhook_tip: Ta część umożliwia zapisanie niestandardowych żądań API. Kliknij przycisk Wstaw symbole zastępcze, aby uwzględnić w żądaniu szczegóły zgłoszenia, takie jak imię i nazwisko zgłaszającego, status zgłoszenia itp.
-        how_to_use_webhook: Jak używać webhooków &gt;
+        how_to_use_webhook: Jak używać webhooków >
         api_key?: Czy mam klucz API?
         user_pass?: Czy mam nazwę użytkownika i hasło?
         username: Nazwa użytkownika
@@ -768,7 +768,7 @@ pl:
       index:
         shared_secret: Współdzielone dane poufne
         remote_login_url: Adres URL zdalnego zalogowania
-        shared_secret_info: Skopiuj ten token i przechowuj w bezpiecznym miejscu. Musisz włączyć zdalne uwierzytelnianie. Są to współdzielone dane poufne dostępne tylko tobie i&nbsp;w systemie Freshdesk.
+        shared_secret_info: Skopiuj ten token i przechowuj w bezpiecznym miejscu. Musisz włączyć zdalne uwierzytelnianie. Są to współdzielone dane poufne dostępne tylko tobie i w systemie Freshdesk.
         remote_logout_url_info: Jest to adres URL, do którego system Freshdesk będzie przekierowywał użytkowników po kliknięciu łącza Wyloguj w systemie Freshdesk.
         remote_login_url_info: Jest to adres URL, do którego system Freshdesk będzie przekierowywał użytkowników w celu dokonania uwierzytelnienia, gdy będą próbować uzyskać dostęp do systemu Freshdesk.
         enable_sso_info: Funkcja jednokrotnego logowania umożliwia użycie twojej własnej aplikacji lub scentralizowanego serwera (np. MS Active Directory) w celu uwierzytelniania konsultantów i klientów, tak aby mogli uzyskiwać dostęp do systemu Freshdesk bez wprowadzenia oddzielnej nazwy użytkownika i hasła.
@@ -1129,7 +1129,7 @@ pl:
       number:
         success: Dodawanie numeru do konta Freshfone przebiegło pomyślnie
         error: Błąd podczas zakupu numeru na koncie Freshfone 
-        blank_message: %{num_type} nie może być puste
+        blank_message: "%{num_type} nie może być puste"
         add_blacklist_success: Numer został zablokowany
         add_blacklist_failure: Nie można zablokować numeru
         remove_blacklist_success: Numer został odblokowany
@@ -1187,7 +1187,7 @@ pl:
       no_file: Wczytaj plik.
       success: Rozpoczął się import danych z pliku csv, po jego zakończeniu otrzymasz wiadomość e-mail. Proces importowania może zająć kilka minut w zależności od wielkości danych.
       thank_user: Dziękujemy za przesłanie żądania importu.
-      details: Przetworzono plik csv i przeprowadzono import. Możesz teraz otworzyć centrum pomocy i przejść do %{customer}--&gt;%{users}, aby sprawdzić nowe informacje. 
+      details: Przetworzono plik csv i przeprowadzono import. Możesz teraz otworzyć centrum pomocy i przejść do %{customer}-->%{users}, aby sprawdzić nowe informacje. 
       help_desk: W razie potrzeby skontaktuj się z nami.
       regards: Pozdrawiamy,
       freshdesk: Zespół Freshdesk
@@ -1223,9 +1223,9 @@ pl:
       empty_trash:
         success: Kosz został opróżniony.
       delete_forever:
-        success: %{tickets} usunięto.
+        success: "%{tickets} usunięto."
       unwatch:
-        success: %{tickets} usunięto z listy podglądów.
+        success: "%{tickets} usunięto z listy podglądów."
         failure: Usunięcie podglądu zgłoszenia nie powiodło się.
         unsubscribe_success: Zgłoszenie zostało usunięte z twojej listy podglądów.
       bulk_merge_success : Zgłoszenia z numerami id %{merged_tickets} zostały połączone w <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}#%{target_ticket}</a> 
@@ -1310,10 +1310,10 @@ pl:
         success: Zaktualizowano użytkownika %{human_name}.
         failure: Nie można zaktualizować użytkownika %{human_name}.
     post:
-      deleted: Post pod tytułem ’%{title}’ został usunięty.
+      deleted: Post pod tytułem ’{title}’ został usunięty.
       page_not_found: Ten post nie został odnaleziony. Prawdopodobnie został usunięty lub wpisany adres jest niepoprawny.
     topic:
-      deleted: Temat &apos;%{title}&apos; został usunięty.
+      deleted: Temat '{title}' został usunięty.
       page_not_found: Nie można znaleźć tego wątku. Prawdopodobnie został usunięty lub wpisany adres jest niepoprawny.
     forum:
       page_not_found: Nie można znaleźć tego forum. Prawdopodobnie zostało usunięte lub wpisany adres jest niepoprawny.
@@ -1364,7 +1364,7 @@ pl:
       assigned_to_nobody: Konsultant nieprzydzielony
       reassigned: Konsultant przydzielony ponownie
       assigned: Konsultant przydzielony
-      priority_change: %{value}
+      priority_change: "%{value}"
       new_ticket: Nowe zgłoszenie
       conversation:
         out_email:
@@ -1380,7 +1380,7 @@ pl:
       execute_scenario: Wykonany scenariusz
       ticket_merge: Zgłoszenie połączone
       ticket_split: Zgłoszenie podzielone
-      status_change: %{value}
+      status_change: "%{value}"
       deleted: Zgłoszenie usunięte
       restored: Zgłoszenie przywrócone
       product_change: Produkt uaktualniony
@@ -1851,11 +1851,11 @@ pl:
         inclusion: nie jest zawarty na liście
         user_role: Użytkownik musi być powiązany przynajmniej z jedną rolą
       full_messages:
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template:
         body: "Pojawiły się problemy w następujących polach:"
         one: 1 błąd przeszkodził w zapisie tego %{model}
-        other: %{model} błędy/ów przeszkodziło w zapisie tego %{count}
+        other: "%{model} błędy/ów przeszkodziło w zapisie tego %{count}"
   top: Góra
   company_name: Nazwa firmy
   expires: Traci ważność
@@ -1890,7 +1890,7 @@ pl:
         vote_info_include_2: Ty i <a id='users-voted' href='#' title="Zobacz, kto ma to"> %{vote} osób</a> ma to pytanie
         voted_users_widget_title: Osoby, które mają to pytanie
     post:
-      posted_on: %{post_date}na %{user_name}
+      posted_on: "%{post_date}na %{user_name}"
       edit_comment: Edytuj komentarz
       unmark_answer: Odznacz jako odpowiedź
       post_accepted_as_a_good_answer: Ten wpis jest zaakceptowany jako dobra odpowiedź na ten temat
@@ -2001,7 +2001,7 @@ pl:
     trial: W wersji próbnej
     account_suspended: konto zawieszone
     buy: Kup więcej
-    available_seats: %{count} dostępnych miejsc konsultantów
+    available_seats: "%{count} dostępnych miejsc konsultantów"
     available_seats_without_count: Dostępne miejsca konsultantów
     no_seats: Brak dostępnych miejsc konsultantów
     last_logged_in: Ostatnio logowano %{time} temu.
@@ -2112,7 +2112,7 @@ pl:
     save_changes: Zapisz zmiany
     save: Zapisz
     deleted_message: To jest usunięty kontakt
-    contacts_in_companies: %{contacts}
+    contacts_in_companies: "%{contacts}"
     contact: kontakt
     contacts: kontakty
     no_contacts: Brak kontaktów
@@ -2328,10 +2328,10 @@ pl:
         other: Ty i
       more:
         one: 1 inna osoba
-        other: %{count} innych osób
+        other: "%{count} innych osób"
       people:
         one: 1 osoba
-        other: %{count} osoby/osób
+        other: "%{count} osoby/osób"
       ideas:
         one: lubi ten pomysł
         other: lubi/ą ten pomysł
@@ -2406,7 +2406,7 @@ pl:
     info2: Rozwiązania mogą być <b>publiczne</b> lub <b>prywatne</b>. Rozwiązania publiczne są widoczne na portalu samoobsługowym oraz pojawiają się w wynikach wyszukiwania
     info3: Rozwiązania prywatne są dostępne tylko konsultantom i wykorzystywane do wewnętrznego współdzielenia wiedzy
     no_solutions_info: Brak rozwiązań w tym folderze
-    info4: Drzewo rozwiązań zbudowane jest na 3 poziomach hierarchii – <b>Kategoria --&gt; Folder --&gt; Artykuł</b>
+    info4: Drzewo rozwiązań zbudowane jest na 3 poziomach hierarchii – <b>Kategoria --> Folder --> Artykuł</b>
     type: Typ rozwiązania
     info5: Rozwiązania mogą być dwóch rodzajów – Rozwiązanie <b>Tymczasowe</b> lub <b>Trwałe</b>
     info6: Rozwiązanie może mieć status <b>Wersja robocza</b>, kiedy nad nim pracujesz. Zostanie zmienione na <b>Opublikowana</b>, jak tylko zostanie dokończone i sprawdzone
@@ -2453,8 +2453,8 @@ pl:
   attach_files: Dołącz pliki
   plan_amount: na konsultanta/miesiąc
   free_plan_agents: dla %{free_agents} konsultantów
-  current_plan_details: %{plan_name}
-  free_plan_details: %{plan_name} Plan z %{agent_limit} konsultantami
+  current_plan_details: "%{plan_name}"
+  free_plan_details: "%{plan_name} Plan z %{agent_limit} konsultantami"
   add_more_free: Dodać więcej niż %{free_agents} konsultantów?
   zendesk_backup: Plik kopii zapasowej
   twoday: 2 dni
@@ -2645,7 +2645,7 @@ pl:
   activate_and_login: Aktywuj i zaloguj
   password: Hasło
   enter_payment: Wprowadź dane płatności...
-  downgrade_confirm: <span class="label label-important">Ważne</span>&nbsp;&nbsp;Możesz w tej chwili zmienić wersję planu <b>%{from}</b> na niższą <b>%{to}</b>. Pamiętaj, że wszystkie dane i konfiguracje powiązane z funkcjami dostępnymi w planie %{from} zostaną trwale utracone.<br /><br /> Aby zobaczyć pełną listę planów i funkcji, wejdź do sekcji <a target="_blank" href="http://freshdesk.com/pricing">Plany i ceny</a>. <br />Nie wiesz, co zrobić? <a href = "mailto:support@freshdesk.com" >Pozwól, że pomożemy ci się zdecydować</a>
+  downgrade_confirm: <span class="label label-important">Ważne</span>  Możesz w tej chwili zmienić wersję planu <b>%{from}</b> na niższą <b>%{to}</b>. Pamiętaj, że wszystkie dane i konfiguracje powiązane z funkcjami dostępnymi w planie %{from} zostaną trwale utracone.<br /><br /> Aby zobaczyć pełną listę planów i funkcji, wejdź do sekcji <a target="_blank" href="http://freshdesk.com/pricing">Plany i ceny</a>. <br />Nie wiesz, co zrobić? <a href = "mailto:support@freshdesk.com" >Pozwól, że pomożemy ci się zdecydować</a>
   errors_in_payment: "Znaleziono błędy dotyczące twojej płatności:"
   email_configs:
     delete_confirm: Czy na pewno chcesz usunąć tę konfigurację?
@@ -2717,7 +2717,7 @@ pl:
     set_bcc_email_text: Ustaw automatyczny e-mail UDW
     name_info_msg: Nazwa adresu e-mail, który zostanie użyty przy odpowiedziach na zgłoszenia
     Personalized_email_replies: Użyć imion i nazwisk konsultantów dla spersonalizowanych odpowiedzi?
-    Personalized_email_replies_info: Jeśli TAK, odpowiedzi konsultantów będą podpisane imionami i nazwiskami konsultantów w polu nadawcy (Adres e-mail wciąż będzie taki, jaki podano jako Adres e-mail pomocy technicznej). Na przykład „%{current_user_name}&lt;%{current_account_domain}&gt;”.
+    Personalized_email_replies_info: Jeśli TAK, odpowiedzi konsultantów będą podpisane imionami i nazwiskami konsultantów w polu nadawcy (Adres e-mail wciąż będzie taki, jaki podano jako Adres e-mail pomocy technicznej). Na przykład „%{current_user_name}<%{current_account_domain}>”.
     Personalized_email_replies_yes: Tak
     Personalized_email_replies_no: Nie
     config_saved_message: Ustawienia zostały zapisane.
@@ -2945,7 +2945,7 @@ pl:
       user_not_following: Ten użytkownik nie obserwuje twojego konta w serwisie Twitter
     activities: Działania
     activity_toggle: Pokaż działania
-    activity_timestamp: %{user_name} zaktualizował <abbr data-livestamp='%{timestamp}'></abbr>(%{note_date})
+    activity_timestamp: "%{user_name} zaktualizował <abbr data-livestamp='%{timestamp}'></abbr>(%{note_date})"
     requestor_info: Dane zgłaszającego
     view_twitter: Zobacz w serwisie Twitter
     reply_to: Odpowiedz
@@ -2993,7 +2993,7 @@ pl:
   recent_activities: Ostatnie działania
   forgot_password: Nie pamiętam hasła
   change_plan: Zmień plan
-  feedbackwidget_embed_code_intro: Skopiuj i wklej poniższy kod w dowolnym miejscu przed znacznikiem &lt;/body&gt; w szablonie html swojego serwisu lub każdej strony, na której chcesz umieścić widżet Freshdesk.
+  feedbackwidget_embed_code_intro: Skopiuj i wklej poniższy kod w dowolnym miejscu przed znacznikiem </body> w szablonie html swojego serwisu lub każdej strony, na której chcesz umieścić widżet Freshdesk.
   import_forum: Fora
   title: Tytuł
   new_ticket_created: Utworzono nowe zgłoszenie
@@ -3285,17 +3285,17 @@ pl:
 
 
     flash:
-      assignedto: %{tickets} przypisane %{username}.
-      tickets_closed: %{tickets} zamknięte
-      tickets_update: %{tickets} zaktualizowane
-      tickets_update_with_errors: %{tickets} zaktualizowane, ale są kwestie, które wymagają Twojej uwagi.
-      sending_failure : "Nie wysłano odpowiedzi na następujące zgłoszenia:" 
-      assigned_to_you: %{tickets} przypisane tobie
-      removed_from_spam: %{tickets} usunięte z folderu spam.
+      assignedto: "%{tickets} przypisane %{username}."
+      tickets_closed: "%{tickets} zamknięte"
+      tickets_update: "%{tickets} zaktualizowane"
+      tickets_update_with_errors: "%{tickets} zaktualizowane, ale są kwestie, które wymagają Twojej uwagi."
+      sending_failure : "Nie wysłano odpowiedzi na następujące zgłoszenia:"
+      assigned_to_you: "%{tickets} przypisane tobie"
+      removed_from_spam: "%{tickets} usunięte z folderu spam."
       closing_the_ticket_failed: Nie udało się zamknąć zgłoszenia
-      assigned_reassigned: %{type} do %{username}
-      flagged_spam: %{tickets} oznaczone jako spam.%{undo}
-      flagged_unspam: %{tickets} usunięte z folderu spam.
+      assigned_reassigned: "%{type} do %{username}"
+      flagged_spam: "%{tickets} oznaczone jako spam.%{undo}"
+      flagged_unspam: "%{tickets} usunięte z folderu spam."
 
     shared:
       addcc: Dodaj DW
@@ -3354,7 +3354,7 @@ pl:
         assigned: Przydzielone
         status: Status
         priority: Priorytet
-        time_ago: %{time_in_words} temu
+        time_ago: "%{time_in_words} temu"
         sla: Do dnia
       add_watcher:
         add_watcher_link: Dodaj obserwatora
@@ -3374,15 +3374,15 @@ pl:
         all_agents_watching: Wszyscy konsultanci obserwują to zgłoszenie
         mail:
           hi: Witaj!
-          added_as_watcher: %{agent_name} dodał cię jako obserwatora zgłoszenia
+          added_as_watcher: "%{agent_name} dodał cię jako obserwatora zgłoszenia"
           added_as_watcher_by_automation: Zostałeś dodany jako obserwujący to zgłoszenie
           new_activity: Nowe działanie w ramach obserwowanego zgłoszenia
           activity: Działanie
           ticket: Zgłoszenie
           requester: Zgłaszający
           customer: Klient
-          status_change:  %{agent_name} wykonał czynność %{status} na zgłoszeniu, które obserwujesz
-          response: %{responder} odpowiedział na zgłoszenie, które obserwujesz
+          status_change:  "%{agent_name} wykonał czynność %{status} na zgłoszeniu, które obserwujesz"
+          response: "%{responder} odpowiedział na zgłoszenie, które obserwujesz"
           ticket_details: Opis zgłoszenia
           customer_response: Odpowiedź klienta
           agent_response: Odpowiedź konsultanta
@@ -3487,19 +3487,19 @@ pl:
         resolved_or_closed: Rozwiązane lub zamknięte
         no_tickets: Nie masz żadnych zgłoszeń w bieżącym widoku
       note:
-        posted_on: %{user_name} dnia %{note_date}
+        posted_on: "%{user_name} dnia %{note_date}"
         created_on:
-          private_note: %{user_name} dodał notatkę prywatną dnia %{note_date}
-          public_note: %{user_name} dodał notatkę publiczną dnia %{note_date}
-          reply: %{user_name} odpowiedział dnia %{note_date}
-          forward: %{user_name} przekazał wiadomość dnia %{note_date}
+          private_note: "%{user_name} dodał notatkę prywatną dnia %{note_date}"
+          public_note: "%{user_name} dodał notatkę publiczną dnia %{note_date}"
+          reply: "%{user_name} odpowiedział dnia %{note_date}"
+          forward: "%{user_name} przekazał wiadomość dnia %{note_date}"
         created_on_live:
-          private_note: %{user_name} dodał prywatną notatkę <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          public_note: %{user_name} dodał publiczną notatkę <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          phone_note: %{user_name} dodał rozmowę telefoniczną <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          reply: %{user_name} odpowiedział  <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          forward: %{user_name} przekazał wiadomość <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
-          survey: %{user_name} ocenił to zgłoszenie <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})
+          private_note: "%{user_name} dodał prywatną notatkę <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} dodał publiczną notatkę <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          phone_note: "%{user_name} dodał rozmowę telefoniczną <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} odpowiedział  <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} przekazał wiadomość <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} ocenił to zgłoszenie <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edytuj notatkę
         split_this_as_new_ticket: Oddziel jako nowe zgłoszenie
         delete_note: Usunąć z konwersji zgłoszeń?
@@ -3761,7 +3761,7 @@ pl:
         sign_in_using_google: Zarejestruj przez konto Google
         help: 
   settings: Ustawienia pomocy
-  updated_on: %{user_name} zaktualizował dnia %{note_date}
+  updated_on: "%{user_name} zaktualizował dnia %{note_date}"
   mobile:
     home:
       remember: Pamiętaj mnie
@@ -3789,17 +3789,17 @@ pl:
       contacts: Dane kontaktowe 
     capsule_crm:
       label: Capsule CRM
-      helptext: <h4>Połącz Capsule z systemem Freshdesk</h4><p><br/>Teraz możesz utworzyć łącze w Capsule CRM, aby wyświetlać zgłoszenia kontaktów w systemie Freshdesk.</p> <p>W tym celu idź do <br /><b>Ustawienia -&gt; Pola niestandardowe -&gt; Dla osób i organizacji</b></p><p> Następnie kliknij opcję „Dodaj nowy...” i wybierz <b>„Wygenerowane łącze”</b></p> <p>Skopiuj dokładnie poniższy URL i wklej do Capsule CRM jako definicja łącza<span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
+      helptext: <h4>Połącz Capsule z systemem Freshdesk</h4><p><br/>Teraz możesz utworzyć łącze w Capsule CRM, aby wyświetlać zgłoszenia kontaktów w systemie Freshdesk.</p> <p>W tym celu idź do <br /><b>Ustawienia -> Pola niestandardowe -> Dla osób i organizacji</b></p><p> Następnie kliknij opcję „Dodaj nowy...” i wybierz <b>„Wygenerowane łącze”</b></p> <p>Skopiuj dokładnie poniższy URL i wklej do Capsule CRM jako definicja łącza<span class="info-code">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
     capsule:
       label: Capsule CRM
       desc: Możesz przeglądać dane kontaktów z aplikacji Capsule CRM w systemie Freshdesk. Dostęp do tych danych możesz uzyskiwać na stronach Szczegóły zgłoszenia i Szczegóły kontaktu.
       form:
         bcc_drop_box_mail: Adres pocztowy Drop Box
-        bcc_drop_box_mail_info: Możesz znaleźć swój unikalny adres e-mail Capsule Drop box w sekcji <b>„Ustawienia -&gt; E-mail Drop Box”</b><br /> (znajduje się w prawym górnym rogu strony).<br /> Skopiuj adres e-mail i wklej go w polu tekstowym powyżej. <br /> System Freshdesk automatycznie doda ten adres e-mail w polu UDW, kiedy będziesz odpowiadać na zgłoszenie
+        bcc_drop_box_mail_info: Możesz znaleźć swój unikalny adres e-mail Capsule Drop box w sekcji <b>„Ustawienia -> E-mail Drop Box”</b><br /> (znajduje się w prawym górnym rogu strony).<br /> Skopiuj adres e-mail i wklej go w polu tekstowym powyżej. <br /> System Freshdesk automatycznie doda ten adres e-mail w polu UDW, kiedy będziesz odpowiadać na zgłoszenie
         domain: Domena
         domain_info: Podaj samą domenę, bez https. Np. przykład.capsulecrm.com
         api_key: Klucz API
-        api_key_info: Aby uzyskać swój unikalny klucz API, zaloguj się na swoim koncie Capsule CRM, a następnie wybierz kolejno <br /> <b>„Użytkownik -&gt; Moje preferencje”</b> (znajduje się w prawym górnym rogu strony).<br /> Kliknij opcję <b>„Token uwierzytelnienia API”</b>, aby móc pobrać unikalny klucz API.<br /> Skopiuj klucz i wklej go w polu tekstowym powyżej.
+        api_key_info: Aby uzyskać swój unikalny klucz API, zaloguj się na swoim koncie Capsule CRM, a następnie wybierz kolejno <br /> <b>„Użytkownik -> Moje preferencje”</b> (znajduje się w prawym górnym rogu strony).<br /> Kliknij opcję <b>„Token uwierzytelnienia API”</b>, aby móc pobrać unikalny klucz API.<br /> Skopiuj klucz i wklej go w polu tekstowym powyżej.
         widget_title: Tytuł widżeta
     freshbooks:
       label: Freshbooks
@@ -3919,7 +3919,7 @@ pl:
         sync_type_info: W jaki sposób chcesz zsynchronizować kontakty pomiędzy Google a Freshdesk?
         account_settings: ""
         account_settings_info: ""
-        account_not_configured: <br/>Nie skonfigurowano jeszcze ustawień konta Google. Kliknij &apos;%{action}&apos;, aby skonfigurować nowe konto z Google.<br/><br/>
+        account_not_configured: <br/>Nie skonfigurowano jeszcze ustawień konta Google. Kliknij '%{action}', aby skonfigurować nowe konto z Google.<br/><br/>
       update_action:
         success: Pomyślnie dodano konto Google.
         also:   Również 
@@ -3930,7 +3930,7 @@ pl:
     jira:
       label: Atlassian JIRA
       desc: Konwertuj zgłoszenia na problemy, które można śledzić w JIRA.
-      helptext: <h4>Pomoc w zakresie dodatku JIRA</h4><p><br/>Aby włączyć dodatek JIRA w systemie Freshdesk, podaj login i hasło administratora  JIRA . Dodatek obsługuje zarówno opcję na żądanie, jak i na miejscu, z wersji JIRA 4.2 do najnowszej JIRA 5.<br/><br/> Aby utworzyć zgłoszenie lub łącze do istniejącego zgłoszenia z Freshdesk, należy przejść na stronę Zgłoszenia i kliknąć opcję <i class='jira-icon'></i><br/><br/> Aby wyświetlić szczegóły załączonych zgłoszeń Freshdesk w JIRA i odwrotnie, aby wyświetlić szczegóły problemów JIRA w systemie Freshdesk, administrator JIRA powinien utworzyć niestandardowe pole dla dowolnego tekstu o nazwie „Zgłoszenia Freshdesk” zgodnie z poniższym opisem. <br/><br/>Zaloguj się na swoim koncie JIRA, kliknij opcję <b>Administration</b> (Administracja), przejdź do <b>Issues</b> (Zgłoszenia) -&gt; <b>Fields</b> (Pola) i kliknij opcję <b>Add Custom Field</b> (Dodaj pole niestandardowe).  Na ekranie <b>Create Custom Field</b> (Utwórz pole niestandardowe) wybierz <b> Free Text Field</b> (Pole dowolnego tekstu) i kliknij <b>Next</b> (Dalej). Wprowadź określenie <b>„Zgłoszenia Freshdesk”</b> jako nazwę pola (Field Name) i kliknij Finish (Zakończ). Na stronie <b>Associate field to Screens</b> (Powiąż pole ze Screenr) zaznacz wszystkie opcje i kliknij Update (Aktualizuj).<br/><br/>
+      helptext: <h4>Pomoc w zakresie dodatku JIRA</h4><p><br/>Aby włączyć dodatek JIRA w systemie Freshdesk, podaj login i hasło administratora  JIRA . Dodatek obsługuje zarówno opcję na żądanie, jak i na miejscu, z wersji JIRA 4.2 do najnowszej JIRA 5.<br/><br/> Aby utworzyć zgłoszenie lub łącze do istniejącego zgłoszenia z Freshdesk, należy przejść na stronę Zgłoszenia i kliknąć opcję <i class='jira-icon'></i><br/><br/> Aby wyświetlić szczegóły załączonych zgłoszeń Freshdesk w JIRA i odwrotnie, aby wyświetlić szczegóły problemów JIRA w systemie Freshdesk, administrator JIRA powinien utworzyć niestandardowe pole dla dowolnego tekstu o nazwie „Zgłoszenia Freshdesk” zgodnie z poniższym opisem. <br/><br/>Zaloguj się na swoim koncie JIRA, kliknij opcję <b>Administration</b> (Administracja), przejdź do <b>Issues</b> (Zgłoszenia) -> <b>Fields</b> (Pola) i kliknij opcję <b>Add Custom Field</b> (Dodaj pole niestandardowe).  Na ekranie <b>Create Custom Field</b> (Utwórz pole niestandardowe) wybierz <b> Free Text Field</b> (Pole dowolnego tekstu) i kliknij <b>Next</b> (Dalej). Wprowadź określenie <b>„Zgłoszenia Freshdesk”</b> jako nazwę pola (Field Name) i kliknij Finish (Zakończ). Na stronie <b>Associate field to Screens</b> (Powiąż pole ze Screenr) zaznacz wszystkie opcje i kliknij Update (Aktualizuj).<br/><br/>
       form:
         domain: Domena
         domain_info: "Wprowadź pełny URL konta JIRA wraz z https/http. Np. https://example.atlassian.net. <br /><span class='italics'>Uwaga: warianty JIRA, z których korzysta się na miejscu, należy zaprezentować w Internecie.</span>"
@@ -4007,7 +4007,7 @@ pl:
       desc: Możesz przeglądać dane kontaktów z aplikacji SugarCRM w systemie Freshdesk.
       form:
         domain: URL konta SugarCRM
-        domain_info: "Na przykład, jeśli URL SugarCRM to <strong>http://mycompany.xyz/sugar/index.php?module=Administration&amp;action=index</strong> , wprowadź <strong>http://mycompany.xyz/sugar</strong><br /><br /> Uwaga: Warianty SugarCRM, z których korzysta się na miejscu, należy zaprezentować w Internecie.</span>"
+        domain_info: "Na przykład, jeśli URL SugarCRM to <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , wprowadź <strong>http://mycompany.xyz/sugar</strong><br /><br /> Uwaga: Warianty SugarCRM, z których korzysta się na miejscu, należy zaprezentować w Internecie.</span>"
         widget_title: Tytuł widżetu
         username: Nazwa użytkownika
         password: Hasło
@@ -4096,7 +4096,7 @@ pl:
     logmein:
       label: LogMeIn Rescue
       desc: Zapewnij stałą pomoc zdalną swoim klientom i pracownikom za pomocą LogMeIn Rescue
-      helptext: "<h4>Pomoc w zakresie dodatku LogMeIn Rescue</h4><p><br/> Aby włączyć dodatek LogMeIn Rescue w systemie Freshdesk, podaj ID firmy w LogMeIn Rescue oraz hasło SSO, a następnie kliknij opcję Update (Aktualizuj). <br/>Po wykonaniu tej czynności widżet LogMeIn Rescue będzie widoczny na stronie szczegółów zgłoszenia. <br/><br/>Użyj opcji „Uruchom konsolę technika”, aby uruchomić konsolę technika bezpośrednio z poziomu widżetu Freshdesk. <br/>Teraz możesz wygenerować kod PIN i przekazać instrukcje zgłaszającemu, aby nadal świadczyć usługi pomocy w LogMeIn Rescue. <br/><br/> <b>Uwaga:</b> Adres e-mail konsultanta powinien być taki sam, jak ID SSO technika w LogMeIn Rescue. Aby ustawić identyfikator SSO, przejdź do Centrum administratora -&gt; Imię i nazwisko technika -&gt; Organizacja -&gt; SSOID."
+      helptext: "<h4>Pomoc w zakresie dodatku LogMeIn Rescue</h4><p><br/> Aby włączyć dodatek LogMeIn Rescue w systemie Freshdesk, podaj ID firmy w LogMeIn Rescue oraz hasło SSO, a następnie kliknij opcję Update (Aktualizuj). <br/>Po wykonaniu tej czynności widżet LogMeIn Rescue będzie widoczny na stronie szczegółów zgłoszenia. <br/><br/>Użyj opcji „Uruchom konsolę technika”, aby uruchomić konsolę technika bezpośrednio z poziomu widżetu Freshdesk. <br/>Teraz możesz wygenerować kod PIN i przekazać instrukcje zgłaszającemu, aby nadal świadczyć usługi pomocy w LogMeIn Rescue. <br/><br/> <b>Uwaga:</b> Adres e-mail konsultanta powinien być taki sam, jak ID SSO technika w LogMeIn Rescue. Aby ustawić identyfikator SSO, przejdź do Centrum administratora -> Imię i nazwisko technika -> Organizacja -> SSOID."
       note:
         header: Szczegóły twojej sesji LogMeIn Rescue
         session_id: ID sesji
@@ -4110,8 +4110,8 @@ pl:
         widget_title: Tytuł widżetu
         company_id: ID firmy
         password: Hasło SSO
-        logmein_company_info: Aby pobrać identyfikator firmy, przejdź do Centrum administratora -&gt; Grupa techniczna -&gt; Ustawienia globalne -&gt; serwer ASP.Net C#. 
-        logmein_sso_pwd_info: Aby ustawić hasło SSO, przejdź do Centrum administratora -&gt; Grupa techniczna -&gt; Ustawienia globalne -&gt; Logowanie jednokrotne -&gt; nowe hasło SSO.
+        logmein_company_info: Aby pobrać identyfikator firmy, przejdź do Centrum administratora -> Grupa techniczna -> Ustawienia globalne -> serwer ASP.Net C#. 
+        logmein_sso_pwd_info: Aby ustawić hasło SSO, przejdź do Centrum administratora -> Grupa techniczna -> Ustawienia globalne -> Logowanie jednokrotne -> nowe hasło SSO.
     mailchimp:
       label: MailChimp
       desc: Dodaj MailChimp do systemu Freshdesk i zarządzaj subskrypcjami, eksportuj listy klientów i pozyskuj potrzebne informacje na temat ich działalności z poziomu swojego centrum pomocy.  
@@ -4123,7 +4123,7 @@ pl:
     campaignmonitor:
       label: Campaign Monitor
       desc: Sprawdzaj i zarządzaj subskrypcjami na swoim koncie Campaign Monitor, a także dokonuj przeglądów statystyk użytkowania klientów bezpośrednio w systemie Freshdesk 
-      helptext: <h4>Pomoc w zakresie dodatku Campaign Monitor</h4><br/>Aby włączyć dodatek Campaign Monitor, należy wprowadzić klucz API oraz ID klienta z Campaign Monitor. <br/>&lt;/br/&gt;Klucz API Key znajduje się w ustawieniach konta Campaign Monitor.<br/><br/> Aby uzyskać ID klienta, postępuj zgodnie z instrukcjami zamieszczonymi pod adresem <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'>http://www.campaignmonitor.com/api/getting-started/#clientid</a>. <br/><br/>Teraz kliknij „Aktualizuj”, aby włączyć dodatek Campaign Monitor.
+      helptext: <h4>Pomoc w zakresie dodatku Campaign Monitor</h4><br/>Aby włączyć dodatek Campaign Monitor, należy wprowadzić klucz API oraz ID klienta z Campaign Monitor. <br/></br/>Klucz API Key znajduje się w ustawieniach konta Campaign Monitor.<br/><br/> Aby uzyskać ID klienta, postępuj zgodnie z instrukcjami zamieszczonymi pod adresem <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'>http://www.campaignmonitor.com/api/getting-started/#clientid</a>. <br/><br/>Teraz kliknij „Aktualizuj”, aby włączyć dodatek Campaign Monitor.
       form:
         api_key: Klucz API
         api_key_info: Pobierz klucz API z ustawień konta
@@ -4249,9 +4249,9 @@ pl:
         list_content:
               rating_msg_none: nikt nie wystawił oceny %{rating}
               rating_msg_single: jeden użytkownik wystawił ocenę %{rating}
-              rating_msg_multiple: %{count} wystawił ocenę %{rating}
+              rating_msg_multiple: "%{count} wystawił ocenę %{rating}"
               rating_primary_msg_single: jeden klient wystawił ocenę %{rating}
-              rating_primary_msg_multiple: %{rating} klientów wystawiło ocenę %{count}
+              rating_primary_msg_multiple: "%{rating} klientów wystawiło ocenę %{count}"
               happy: bardzo dobrze
               neutral: dobrze
               unhappy: słabo
@@ -4279,8 +4279,8 @@ pl:
     helpcard:
       heading:  Ustawienia poleceń poczty elektronicznej
       tour: Pomóż mi zrozumieć polecenia e-mail
-      info1: Odpowiadając na powiadomienia e-mail ze skrzynki pocztowej, możesz zawrzeć w swoich wiadomościach „polecenia e-mail”, które informują system Freshdesk, aby wykonał określone czynności na zgłoszeniu. Tekst polecenia zostanie przez system Freshdesk rozłożony i zgłaszający nie będzie go widział, podczas gdy reszta tekstu stanie się częścią konwersacji.
-      info2: "Polecenia e-mail muszą być zgodne z zasadami składni i muszą być umieszczone w skonfigurowanym tekście ogranicznika. Na przykład polecenie „@simonsays agent: John Roberts Status: Resolved @simonsays&quot; przypisze zgłoszenie do konsultanta Johna Robertsa i oznaczy je jako rozwiązane."
+      info1: Odpowiadając na powiadomienia e-mail ze skrzynki pocztowej, możesz zawrzeć w swoich wiadomościach \"polecenia e-mail\", które informują system Freshdesk, aby wykonał określone czynności na zgłoszeniu. Tekst polecenia zostanie przez system Freshdesk rozłożony i zgłaszający nie będzie go widział, podczas gdy reszta tekstu stanie się częścią konwersacji.
+      info2: "Polecenia e-mail muszą być zgodne z zasadami składni i muszą być umieszczone w skonfigurowanym tekście ogranicznika. Na przykład polecenie \"@simonsays agent: John Roberts Status: Resolved @simonsays\" przypisze zgłoszenie do konsultanta Johna Robertsa i oznaczy je jako rozwiązane."
       info3: Reszta treści wiadomości zostanie dodana do systemu Freshdesk jako rozmowa i wysłana do zgłaszającego poprzez e-mail.
       ticket_type_example: Pytanie
   email_command_delimeter_label: Ogranicznik poleceń e-mail
@@ -4506,7 +4506,7 @@ pl:
     available_quests: Dostępne wyzwania
     all: Wszystko
     un_achieved: Nieosiągnięte
-    back_to_dashboard:  &lt; Powrót do pulpitu nawigacyjnego
+    back_to_dashboard:  < Powrót do pulpitu nawigacyjnego
     quests: Wyzwania
   close_this_ticket: Zamknij to zgłoszenie
   ticket_deleted: To zgłoszenie zostało usunięte
@@ -4568,7 +4568,7 @@ pl:
       avg_agent_intr: Średni czas interakcji konsultanta
       num_of_reopens: Liczba powtórnie otwartych zgłoszeń
       num_of_reassigns: Liczba przypisań do innego konsultanta
-      sla_percentage: % SLA
+      sla_percentage: "% SLA"
       select_customer_msg: Wybierz klienta
       select_agent_msg: Wybierz konsultanta
       select_group_msg: Wybierz grupę
@@ -4666,7 +4666,7 @@ pl:
     recharge: Doładuj
     number: Numer Freshfone
     subscription:
-      auto_recharge_text: Obciążamy twoje konto tylko, kiedy stan konta będzie poniżej 5&nbsp;USD
+      auto_recharge_text: Obciążamy twoje konto tylko, kiedy stan konta będzie poniżej 5 USD
       current_balance: Twój bieżący stan konta
       purchase: Kup środki Freshfone
       setup_auto_recharge: Ustaw automatyczne doładowanie
@@ -4756,9 +4756,9 @@ pl:
       block_number_title: Blokuj numer
     ticket:
       recording: Odtwórz wiadomość
-      ticket_desc: Rozmowa z %{customer} od %{location} i <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      ticket_desc: Rozmowa z %{customer} od %{location} i <b>%{agent}</b> (%{agent_number})<br/ >
       voicemail_ticket_desc: Wiadomość głosowa od %{customer} od %{location} 
-      agent_detail: i <b>%{agent}</b> (%{agent_number})&lt;br/ &gt;
+      agent_detail: i <b>%{agent}</b> (%{agent_number})<br/ >
       dial_a_number: "Rozmowa z %{customer} od %{location}. Połączenie połączone z IVR na numer: %{direct_dial_number}"
       default_subject: Połączenie z %{customer} dnia %{call_date}
       voicemail_subject: Wiadomość głosowa od %{customer}
@@ -4769,7 +4769,7 @@ pl:
       view: Wyświetl
     create:
       success:
-        with_link: %{human_name} utworzył %{link}
+        with_link: "%{human_name} utworzył %{link}"
     admin:
       important: Ważne
       general: Ogólne
@@ -4815,8 +4815,8 @@ pl:
         recorded_voice: Nagrany głos
         audio_upload: Wybierz plik do wgrania
         greeting_message: Wprowadź tutaj swoją wiadomość
-        attachment_help_info: Przyjmuje pliki audio &lt; 5 MB
-        recording_help_info: Włącz mikrofon. Czas trwania &lt; 5 minut.
+        attachment_help_info: Przyjmuje pliki audio < 5 MB
+        recording_help_info: Włącz mikrofon. Czas trwania < 5 minut.
         cancel: Anuluj
         change: Zmień
         group: Odtwórz komunikat i połącz z konsultantami w 
@@ -5005,7 +5005,7 @@ pl:
     edit_visitor_details: Edytuj szczegóły odwiedzającego
     new_ticket_tip: Zapisz jako <b>nowe</b> zgłoszenie
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Zamontuj skrypt</a> na swojej stronie, aby widzieć odwiedzających
-    window_offset_error_msg: Wprowadź prawidłową wartość odchylenia (&lt;500px).
+    window_offset_error_msg: Wprowadź prawidłową wartość odchylenia (<500px).
     nochat: Czat niedostępny
     chat_with_archive: <b>$1</b> i <b>$2</b>
     chat_loadmore: Wgraj więcej...
@@ -5055,7 +5055,7 @@ pl:
     got_it: Ok, rozumiem.
     reauth: <a href='%{page_tab_url}' >Autoryzuj ponownie</a> za pomocą serwisu Facebook, aby mieć dostęp do karty twojej strony
     auth: <a href='%{page_tab_url}' >Autoryzuj </a> za pomocą serwisu Facebook, aby mieć dostęp do karty twojej strony
-    page_tab_auth: "Ze względu na ostatnie zmiany w karcie twojej strony w serwisie Facebook wymagamy ponownej autoryzacji aplikacji. <b>Uwaga: aplikacja na stronie serwisu Facebook będzie nieaktywna, jeśli do 12 października nie przeprowadzisz ponownej autoryzacji</b> <br/> <a href='%{page_tab_url}' >Autoryzuj ponownie i włącz &gt;</a>" 
+    page_tab_auth: "Ze względu na ostatnie zmiany w karcie twojej strony w serwisie Facebook wymagamy ponownej autoryzacji aplikacji. <b>Uwaga: aplikacja na stronie serwisu Facebook będzie nieaktywna, jeśli do 12 października nie przeprowadzisz ponownej autoryzacji</b> <br/> <a href='%{page_tab_url}' >Autoryzuj ponownie i włącz ></a>" 
     page_tab_info: Autoryzuj ponownie kartę strony Facebook
     no_contact: Nie można w tej chwili nawiązać połączenia z serwerami Facebook w przypadku tych kart strony
     portal:

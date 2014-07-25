@@ -6,7 +6,9 @@
 		<% if article.folder.visible?(current_user) && article.published? %>
 			<%= link_to_function t('ticket.suggested_solutions.link').html_safe, "respondWithSol('url', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
 		<%end%>
-		<%= link_to_function t('ticket.suggested_solutions.content').html_safe, "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
+		<% unless @ticket.is_twitter? or @ticket.is_facebook? %>
+			<%= link_to_function t('ticket.suggested_solutions.content').html_safe, "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
+		<% end %>
 	</div>
 
 	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>

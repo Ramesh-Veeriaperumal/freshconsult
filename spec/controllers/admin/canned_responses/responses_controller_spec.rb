@@ -25,8 +25,8 @@ describe Admin::CannedResponses::ResponsesController do
 		post :create, { :admin_canned_responses_response => {:title => "New Canned_Responses #{@now}", :content_html => Faker::Lorem.paragraph,
 			:visibility => {:user_id => @agent.id, :visibility => 2, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
 		}
-		canned_response = Admin::CannedResponses::Response.find_by_title("New Canned_Responses #{@now}")
-		user_access = Admin::UserAccess.find_by_accessible_id(canned_response.id)
+		canned_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
+		user_access = @account.user_accesses.find_by_accessible_id(canned_response.id)
 		canned_response.should_not be_nil
 		canned_response.folder_id.should eql 1
 		user_access.should_not be_nil
@@ -39,7 +39,7 @@ describe Admin::CannedResponses::ResponsesController do
 		post :create, { :admin_canned_responses_response => {:title => "", :content_html => "New Canned_Responses without title",
 			:visibility => {:user_id => @agent.id, :visibility => 1, :group_id => 1}}, :new_folder_id => 1, :folder_id => 1
 		}
-		canned_response = Admin::CannedResponses::Response.find_by_content_html("New Canned_Responses without title")
+		canned_response = @account.canned_responses.find_by_content_html("New Canned_Responses without title")
 		canned_response.should be_nil
 	end
 
@@ -61,8 +61,8 @@ describe Admin::CannedResponses::ResponsesController do
 			:new_folder_id => 1,
 			:folder_id => "#{@test_response_1.folder_id}"
 		}
-		canned_response   = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
-		access_visibility = Admin::UserAccess.find_by_accessible_id(@test_response_1.id)
+		canned_response   = @account.canned_responses.find_by_id(@test_response_1.id)
+		access_visibility = @account.user_accesses.find_by_accessible_id(@test_response_1.id)
 		canned_response.title.should eql("Updated Canned_Responses #{@now}")
 		canned_response.content_html.should eql("Updated DESCRIPTION: New Canned_Responses Hepler")
 		access_visibility.visibility.should eql 2
@@ -81,7 +81,7 @@ describe Admin::CannedResponses::ResponsesController do
 			:new_folder_id => 1,
 			:folder_id => "#{@test_response_1.folder_id}"
 		}
-		canned_response = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
+		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.title.should eql("Updated Canned_Responses #{@now}")
 		canned_response.title.should_not eql ""
 		canned_response.content_html.should_not eql("Updated Canned_Responses without title")
@@ -89,15 +89,15 @@ describe Admin::CannedResponses::ResponsesController do
 
 	it "should update the folder of Canned Responses" do
 		put :update_folder, :ids => ["#{@test_response_1.id}","#{@test_response_2.id}"], :move_folder_id => @test_cr_folder_1.id, :folder_id => 1
-		canned_response_1 = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
-		canned_response_2 = Admin::CannedResponses::Response.find_by_id(@test_response_2.id)
+		canned_response_1 = @account.canned_responses.find_by_id(@test_response_1.id)
+		canned_response_2 = @account.canned_responses.find_by_id(@test_response_2.id)
 		canned_response_1.folder_id.should eql(@test_cr_folder_1.id)
 		canned_response_2.folder_id.should eql(@test_cr_folder_1.id)
 	end
 
 	it "should delete multiple Canned Responses" do
 		delete :delete_multiple, :ids => ["#{@test_response_1.id}"]
-		canned_response = Admin::CannedResponses::Response.find_by_id(@test_response_1.id)
+		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.should be_nil
 	end
 end

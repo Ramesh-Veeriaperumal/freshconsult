@@ -9,7 +9,7 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :load_agent_actions, :only => :show
 
   before_filter { |c| c.check_portal_scope :open_solutions }
-
+  
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
@@ -28,13 +28,11 @@ class Support::Solutions::ArticlesController < SupportController
     wrong_portal and return unless(main_portal? || 
         (current_portal.has_solution_category?(@article.folder.category_id)))
 
-    @page_title = @article.article_title
-    @page_description = @article.article_description
-    @page_keywords = @article.article_keywords
-    @page_canonical = support_article_url(@article)
-
     respond_to do |format|
-      format.html { set_portal_page :article_view }
+      format.html { 
+        load_page_meta
+        set_portal_page :article_view 
+      }
       format.json { render :json => @article.to_json  }
     end
   end
@@ -97,5 +95,14 @@ class Support::Solutions::ArticlesController < SupportController
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
+    end
+    
+    def load_page_meta
+      @page_meta ||= {
+        :title => @article.article_title,
+        :description => @article.article_description,
+        :keywords => @article.article_keywords,
+        :canonical => support_article_url(@article)
+      }
     end
 end

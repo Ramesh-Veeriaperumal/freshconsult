@@ -5,8 +5,8 @@ describe GroupsController do
 	include APIAuthHelper
 
 	before(:each) do
-	    request.host = @account.full_domain
-	    http_login(@agent)
+		request.host = @account.full_domain
+		http_login(@agent)
 	end
 
 	before(:all) do
@@ -14,15 +14,15 @@ describe GroupsController do
 	end
 
 	after(:all) do
-        @test_group.destroy
-    end
+		@test_group.destroy 
+	end
 
 	it "should not create a Group without the name" do
-		post :create, { :group => {:name => "", :description => Faker::Lorem.paragraph, :business_calendar => 1,
-		                           :agent_list => "#{@agent.id}", :ticket_assign_type=> 1,
-		                           :assign_time => "1800", :escalate_to => @agent.id},
-		                :format => 'xml'
-		                }
+		post :create, { :group => {:name => "", :description => Faker::Lorem.paragraph, :business_calendar => 1, :agent_list => "#{@agent.id}", 
+									:ticket_assign_type=> 1,:assign_time => "1800", :escalate_to => @agent.id
+									},
+						:format => 'xml'
+		}
 		name_blank?(response).should be_true
 	end
 
@@ -33,8 +33,8 @@ describe GroupsController do
 			:group => {:name => "",
 				:description => description, :business_calendar => 1,
 				:agent_list => "#{@agent.id}",
-			    :ticket_assign_type=> 0,
-		        :assign_time => "2500", :escalate_to => @agent.id
+				:ticket_assign_type=> 0,
+				:assign_time => "2500", :escalate_to => @agent.id
 			},
 			:format => 'xml'
 		}
@@ -46,12 +46,12 @@ describe GroupsController do
 		@test_group.description.should_not eql(description)
 	end
 
-	    def name_blank?(response)
-		    result = parse_xml(response)
-		    ["Name can't be blank"].include?(result["errors"]["error"])
-        end
+		def name_blank?(response)
+			result = parse_xml(response)
+			["Name can't be blank"].include?(result["errors"]["error"])
+		end
 
-        def error_status?(status)
-        	status =~ /422 Unprocessable Entity/ 
-        end
+		def error_status?(status)
+			status =~ /422 Unprocessable Entity/ 
+		end
 end

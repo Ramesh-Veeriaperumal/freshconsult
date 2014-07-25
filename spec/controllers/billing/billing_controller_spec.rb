@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
+require 'spec_helper'
 
 # Tests may fail if test db is not in sync with Chargebee account.
 

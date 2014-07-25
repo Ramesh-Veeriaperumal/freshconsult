@@ -9,7 +9,7 @@ module WfFilterHelper
   DEFAULT_FILTER = 'all_tickets'
 
   def create_filter args 
-    params = {'filter_name' => Faker::Name.name}.merge(args)
+    params = {:filter_name => Faker::Name.name}.merge(args.symbolize_keys!)
     wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
     wf_filter.visibility = params[:visibility]
     wf_filter.save

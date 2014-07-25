@@ -47,6 +47,14 @@ class UserDrop < BaseDrop
 		source.tickets.visible.newest(5)
 	end
 
+	def open_and_pending_tickets
+		source.open_tickets
+	end
+
+	def closed_and_resolved_tickets
+		source.tickets.visible.resolved_and_closed_tickets
+	end	
+
 	# To access User's company details
 	def company
 		@company ||= @source.customer if @source.customer

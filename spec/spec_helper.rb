@@ -4,6 +4,8 @@ require 'spork'
 require 'simplecov'
 require 'simplecov-csv'
 
+Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
+
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
@@ -11,6 +13,7 @@ SimpleCov.start do
   add_filter 'app/controllers/subscription_admin'
   add_filter 'reports'
   add_filter 'search'
+  add_filter SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash. 
 
   #add_filter '/vendor/'
   add_group 'mailgun', 'lib/helpdesk/email'
@@ -67,7 +70,7 @@ Spork.prefork do
   'spec/support/va/tester/event.rb',
   'spec/support/va/rule_helper.rb',
   'spec/support/va/test_case.rb',
-  'spec/support/wf/filter_helper.rb',
+  'spec/support/wf/filter_functional_tests_helper.rb',
   'spec/support/wf/test_case_generator.rb',
   'spec/support/wf/operator_helper.rb',
   'spec/support/wf/option_selector.rb',
@@ -109,6 +112,9 @@ Spork.prefork do
     config.include ProductsHelper
     config.include WfFilterHelper, :type => :controller
     config.include S3Helper
+    config.include IntegrationsHelper
+    config.include QuestHelper
+    config.include Wf::FilterFunctionalTestsHelper
 
     config.before(:all) do
       @account = create_test_account
@@ -162,8 +168,8 @@ Spork.prefork do
     end
 
     config.after(:suite) do
-      Dir["#{Rails.root}/spec/fixtures/files/temp/*"].each do |file|
-        File.delete(file) unless file.include?("placeholder.txt")
+      Dir["#{Rails.root}/spec/fixtures/files/*"].each do |file|
+        File.delete(file) if file.include?("tmp15.doc")
       end
     end
 

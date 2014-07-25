@@ -40,6 +40,14 @@ describe Admin::AutomationsController do
     response.body.should =~ /Edit Scenario/
   end
 
+  it "should clone a selected scenario" do
+    get :clone_rule, :id => @test_scn.id
+    response.should render_template "admin/automations/clone_rule.html.erb"
+    (@test_scn.id == assigns(:va_rule).id).should be_true
+    (@test_scn.action_data == assigns(:va_rule).action_data).should be_true
+    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be_true
+  end
+
   it "should update a scenario" do
     put :update, {:va_rule=>{"name"=>"move to Support", "description"=>Faker::Lorem.sentence(3)},
                   :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}

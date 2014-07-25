@@ -10,15 +10,23 @@
 	* ============================== */
 
 	var Freshdialog = function (element, options) {
-		this.$element = $(element)
+		this.$element = $(element);
 
-		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data())		
+		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data());
 
 		// Removing the hash in-front of the target
-		this.$dialogid = this.options.targetId.substring(1)
+		this.$dialogid = this.options.targetId.substring(1);
 
 		// Getting static content id and dom if it is present in the document
-		this.$content = $(/#/.test(element.href) && this.options.targetId)
+		this.$content = $(/#/.test(element.href) && this.options.targetId);
+    
+    // Repopulate content with lazy content
+    if(this.$element.data('lazyLoad')) {
+      var lazy_sizzle = ["#", this.$dialogid, " textarea"].join(''),
+    	    content = $(lazy_sizzle).first().val();
+          
+    	this.$content.html(content);
+    }
 
 		// Building the base wrapper for the modal dialog
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
@@ -28,18 +36,18 @@
 											"width": this.options.width
 										,	"marginLeft": -(parseInt(this.options.width)/2)
 									})
-									.appendTo('body') // Appending to the end of the body														
+									.appendTo('body'); // Appending to the end of the body														
         
         if(this.options.templateHeader != ""){
         	// Title for the header        
-        	this.dialogTitle = element.getAttribute('title') || this.options.title
+        	this.dialogTitle = element.getAttribute('title') || this.options.title;
 
 	        // Setting modal dialogs header and its title
 	    	this.$dynamicTarget
 	    			.append(this.options.templateHeader)
 					.find(".modal-title")
 					.attr("title", this.dialogTitle)
-					.html(this.dialogTitle)
+					.html(this.dialogTitle);
 		}
 
         // Setting up content body 

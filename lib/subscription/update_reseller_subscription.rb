@@ -30,7 +30,7 @@ class Subscription::UpdateResellerSubscription
       end
 
       def trigger_contact_updated_event(account)
-        data = { :account_id => account.id, :email => account.admin_email }
+        data = { :account_id => account.id, :email => account.admin_email, :phone => account.admin_phone }
         http_connect(:contact_updated, data, "post")
       end 
 
