@@ -21,6 +21,41 @@ describe Helpdesk::TicketsController do
     response.should render_template "helpdesk/tickets/index.html.erb"
     response.body.should =~ /Filter Tickets/
   end
+  
+  # Added this test case for covering meta_helper_methods.rb
+  it "should view a ticket created from portal" do
+    ticket = create_ticket({:status => 2},@group)
+    meta_data = { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                   :referrer => ""}
+    note = ticket.notes.build(
+        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
+        :private => true,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        :account_id => ticket.account.id,
+        :user_id => ticket.requester.id
+    )
+    note.save_note
+    get :show, :id => ticket.id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+  
+  # Added this test case for covering note_actions.rb
+  it "should view a ticket with notes(having to_emails)" do
+    ticket = create_ticket({:status => 2},@group)
+    agent_details = "#{@agent.name} #{@agent.email}"
+    note = ticket.notes.build(
+        :to_emails =>[agent_details],
+        :note_body_attributes => {:body => Faker::Lorem.sentence },
+        :private => true,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :account_id => ticket.account.id,
+        :user_id => ticket.requester.id
+    )
+    note.save_note
+    get :show, :id => ticket.id
+    response.body.should =~ /#{ticket.description_html}/
+  end
 
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
