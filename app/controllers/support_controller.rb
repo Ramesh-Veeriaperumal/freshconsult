@@ -166,7 +166,8 @@ class SupportController < ApplicationController
       begin
         data = @portal_template[sym] 
         data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
-      rescue
+      rescue Exception => e
+        Rails.logger.info "Exception on head customization :::: #{e.backtrace}"
         data = nil
       end
       data
