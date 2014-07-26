@@ -168,6 +168,7 @@ class SupportController < ApplicationController
         data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
       rescue Exception => e
         Rails.logger.info "Exception on head customization :::: #{e.backtrace}"
+        NewRelic::Agent.notice_error(e,{:description => "Error on head customization"})
         data = nil
       end
       data
