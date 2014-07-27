@@ -69,7 +69,7 @@ class Freshfone::UsersController < ApplicationController
 	private
 		def validate_freshfone_state
 			render :json => { :update_status => false } if 
-				current_account.freshfone_account && !current_account.freshfone_account.active?
+				current_account.freshfone_account && current_account.freshfone_account.suspended?
 		end
 
 		def load_or_build_freshfone_user

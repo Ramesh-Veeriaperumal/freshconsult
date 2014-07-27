@@ -70,12 +70,11 @@ class Freshfone::Call < ActiveRecord::Base
 	validates_inclusion_of :call_type, :in => CALL_TYPE_HASH.values,
 		:message => "%{value} is not a valid call type"
 
-	named_scope :active_calls, lambda { 
-		{ :conditions => [ 'call_status = ? AND updated_at >= ?', 
-				CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-			]
-		}
-	}
+	
+	named_scope :active_calls, :conditions => [
+		'call_status = ? AND updated_at >= ?', 
+		CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
+	]
 
 	named_scope :filter_by_call_sid, lambda { |call_sid|
 		{ :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
