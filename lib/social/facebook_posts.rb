@@ -106,51 +106,6 @@ class Social::FacebookPosts
     user
   end
 
-  def add_comment_as_note feed
-
-    post_id = feed[:post_id]
-    post = @account.facebook_posts.find_by_post_id(post_id)
-
-    comments = @rest.get_connections(post_id, "comments")
-    comments = comments.reject(&:blank?)
-
-    unless post.blank?
-      @ticket = post.postable
-    else
-      add_wall_post_as_ticket (feed)
-    end
-
-    unless @ticket.blank?
-      comments.each do |comment|
-        comment.symbolize_keys!
-        profile_id = comment[:from]["id"]
-        user = get_facebook_user(profile_id)
-
-        @note = @ticket.notes.build(
-          :note_body_attributes => { :body => comment[:message]} ,
-          :private => true ,
-          :incoming => true,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
-          :account_id => @fb_page.account_id,
-          :user => user,
-          :created_at => Time.zone.parse(comment[:created_time]),
-          :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id}
-        )
-
-        begin
-          user.make_current
-          if @note.save_note
-
-          else
-            Rails.logger.debug "error while saving the note #{@note.errors.to_json}"
-          end
-        ensure
-          User.reset_current_user
-        end
-      end
-    end
-  end
-
   def truncate_subject(subject , count)
     Rails.logger.debug "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
