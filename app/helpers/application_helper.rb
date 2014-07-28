@@ -380,24 +380,24 @@ module ApplicationHelper
     request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
 
-  def comment_path(args_hash, link_display = 'note', options={ :'data-pjax' => false })
+  def comment_path(args_hash, link_display = t('activities.note'), options={ :'data-pjax' => false })
     link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#note#{args_hash['comment_id']}", options)
   end
 
   def email_response_path(args_hash)
-    comment_path(args_hash, 'email response')
+    comment_path(args_hash, t('activities.email_response'))
   end
 
   def reply_path(args_hash)
-    comment_path(args_hash, 'reply')
+    comment_path(args_hash, t('activities.reply'))
   end
 
   def fwd_path(args_hash)
-    comment_path(args_hash, 'forwarded')
+    comment_path(args_hash, t('activities.forwarded'))
   end
 
   def twitter_path(args_hash)
-    comment_path(args_hash, 'tweet')
+    comment_path(args_hash, t('activities.tweet'))
   end
 
   def merge_ticket_path(args_hash)
@@ -410,7 +410,7 @@ module ApplicationHelper
                                            link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
-   def timesheet_path(args_hash, link_display = 'time entry')
+   def timesheet_path(args_hash, link_display = t('activities.time_entry'))
     link_display
   end
   #Liquid ends here..

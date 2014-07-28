@@ -61,7 +61,11 @@ var Ivr;
 			$.scrollTo(menu.menu);
 		},
 		hideAddMenuLink: function (menus) {
-			$(menus).each(function (i, menu) { menu.hideAddMenuLink(); });
+			$(menus).each(function (i, menu) {
+				if(menu != undefined){
+			 			menu.hideAddMenuLink();
+			 		}
+			 	});
 		},
 		propagateNameChange: function (menuId, menuName) {
 			$('#optionTemplate [rel=IVR]').find('option[value="' + menuId + '"]').text(menuName).change();

@@ -1,11 +1,15 @@
 class AddHeadToPortalTemplates < ActiveRecord::Migration
-  shard :shard_1
+  shard :all
     
   def self.up
-    add_column :portal_templates, :head, :text
+    Lhm.change_table :portal_templates, :atomic_switch => true do |m|
+      m.add_column :head, "text COLLATE utf8_unicode_ci DEFAULT NULL"
+    end
   end
 
   def self.down
-    remove_column :portal_templates, :head
+    Lhm.change_table :portal_templates, :atomic_switch => true do |m|
+      m.remove_column :head
+    end
   end
 end

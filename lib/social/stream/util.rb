@@ -74,6 +74,7 @@ module Social::Stream::Util
       :created_at => current_feed_hash[:posted_time],
       :ticket_id  => link,
       :stream_id  => current_feed_hash[:stream_id],
+      :in_reply_to_status_id_str => current_feed_hash[:in_reply_to],
       :entities => {
         :user_mentions => screen_names_hash
       }

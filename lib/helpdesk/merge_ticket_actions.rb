@@ -64,7 +64,7 @@ module Helpdesk::MergeTicketActions
 			end
 		end
 
-		def move_source_requesters_to_target
+		def move_source_requesters_to_target # Possible dead code
 			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 
 																	convert_to_cc_format(source) ] if check_source(source) }.flatten().compact
 			return unless cc_email_array.any?

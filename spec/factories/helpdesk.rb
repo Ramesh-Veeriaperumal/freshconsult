@@ -100,4 +100,7 @@ if Rails.env.test?
 
   Factory.define :support_score, :class => SupportScore do |d|
   end
+
+  Factory.define :tag_uses, :class => Helpdesk::TagUse do |d|
+  end
 end

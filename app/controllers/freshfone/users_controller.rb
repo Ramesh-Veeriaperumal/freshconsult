@@ -69,7 +69,7 @@ class Freshfone::UsersController < ApplicationController
 	private
 		def validate_freshfone_state
 			render :json => { :update_status => false } if 
-				current_account.freshfone_account && current_account.freshfone_account.suspended?
+				current_account.freshfone_account && !current_account.freshfone_account.active?
 		end
 
 		def load_or_build_freshfone_user
@@ -85,7 +85,7 @@ class Freshfone::UsersController < ApplicationController
 			subaccount = current_account.freshfone_account
 			capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
 			capability.allow_client_outgoing subaccount.twilio_application_id
-			if is_native_mobile? && @freshfone_user.presence = Freshfone::User::PRESENCE[:online] || params[:status].to_i == Freshfone::User::PRESENCE[:online]
+			if is_native_mobile? || params[:status].to_i == Freshfone::User::PRESENCE[:online]
 				capability.allow_client_incoming default_client
 			end
 			capability_token = capability.generate(expires=43200)

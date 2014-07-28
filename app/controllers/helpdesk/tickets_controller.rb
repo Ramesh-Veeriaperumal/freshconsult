@@ -301,7 +301,6 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
-    build_attachments @item, :helpdesk_ticket   
     if @item.update_ticket_attributes(params[nscname])
 
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?

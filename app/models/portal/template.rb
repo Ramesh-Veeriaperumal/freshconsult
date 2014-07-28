@@ -24,6 +24,7 @@ class Portal::Template < ActiveRecord::Base
   ]
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
+  TEMPLATE_OPTIONS = Portal::Template::TEMPLATE_MAPPING.map { |i| i[0] }
 
   # Set of prefrences data that will be used during template creation
   def default_preferences

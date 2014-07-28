@@ -2205,9 +2205,8 @@ ol, ul, li{
 .modal-body .timesheet_form {
 
 	dd, dt {
-		display: block;
-		@include float(left);
-		width: 70px;
+		float:left;
+		width: 30%;
 		margin-bottom: 10px;
 	}
 
@@ -2216,8 +2215,9 @@ ol, ul, li{
 	}
 
 	dd {
-		@include float(right);
-		width: 290px;
+		display: inline-block;
+		width: 68%;
+		margin-left:2%;
 	}
 
 	label {

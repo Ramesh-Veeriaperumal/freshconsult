@@ -73,7 +73,7 @@ class SAAS::SubscriptionActions
    def drop_layout_customization_data(account)
     account.portal_pages.destroy_all
     account.portal_templates.each do |template|
-      template.update_attributes( :header => nil, :footer => nil, :layout => nil)
+      template.update_attributes( :header => nil, :footer => nil, :layout => nil, :head => nil)
     end
    end
 
