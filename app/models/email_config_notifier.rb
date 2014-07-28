@@ -14,7 +14,7 @@ class EmailConfigNotifier < ActionMailer::Base
   end
   
   def test_email(email_config)
-    subject       "Wohoo.. Your Freshdesk Test Mail"
+    subject       "Woohoo.. Your Freshdesk Test Mail"
     body          :email_config => email_config
     from          "#{AppConfig['app_name']} Test <#{Helpdesk::EMAIL[:default_requester_email]}>"
     recipients    email_config.reply_email

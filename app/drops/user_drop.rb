@@ -52,7 +52,7 @@ class UserDrop < BaseDrop
 	end
 
 	def closed_and_resolved_tickets
-		source.tickets.resolved_and_closed_tickets
+		source.tickets.visible.resolved_and_closed_tickets
 	end	
 
 	# To access User's company details

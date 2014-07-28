@@ -270,7 +270,6 @@ $header-link-padding: 20px;
 			border-radius: 50%;
 			border: 1px solid white;
 			top: 7px;
-			z-index: 20;
 			right: 8px;
 		}
 		&:before{
@@ -280,14 +279,12 @@ $header-link-padding: 20px;
 			height: 25px;
 			display: inline-block;
 			background-color: rgb(34, 168, 0);
-			z-index: 10;
 			top: 5px;
 			border-radius: 50%;
 			left: 6px;
 			padding-top: 1px;
 		}
 		i.ficon-help{
-			z-index: 20;
 			position: relative;
 		}
 	}

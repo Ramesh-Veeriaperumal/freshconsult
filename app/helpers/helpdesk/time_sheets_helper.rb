@@ -100,7 +100,7 @@ module Helpdesk::TimeSheetsHelper
   
   def ticket_tasks_field(form, agent_list, type)
     %(
-      <dt>#{form.label :user_id, t('.agent')}: </label></dt> 
+      <dt>#{form.label :user_id, t('.agent')} </label></dt> 
        <dd>
         #{form.collection_select( :user_id, agent_list, :id, :name, {:selected => form.object.nil? ? current_user.id : form.object.user_id}, {:class => "select2"})}
       </dd>

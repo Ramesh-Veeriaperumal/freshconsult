@@ -155,7 +155,7 @@ class Support::TicketsController < SupportController
     end
 
     def check_user_permission
-      if current_user and current_user.agent? and session[:preview_button].blank?
+      if current_user and current_user.agent? and !preview?
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
     end

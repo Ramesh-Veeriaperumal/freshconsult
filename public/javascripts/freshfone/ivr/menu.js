@@ -66,7 +66,11 @@ var globalmenus = {},
 		},
 		nextMenuIdAvailable: function () {
 			if (!this.menusList.size()) { return 0; }
-			return ($.map(this.menusList, function (menu, index) { return menu.menuId; }).max() + 1);
+			return ($.map(this.menusList, function (menu, index) { 
+				if(menu != undefined){
+						return menu.menuId;
+					}
+				}).max() + 1);
 		},
 		// Menu Relations
 		jsonFix: function () {

@@ -10,6 +10,7 @@ class Social::Workers::Stream::Twitter
     else
       streams = select_non_gnip_streams(twitter_streams)
     end
+    streams.compact!
     process_streams(streams)
   end
 

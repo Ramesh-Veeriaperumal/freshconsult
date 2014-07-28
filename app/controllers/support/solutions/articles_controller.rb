@@ -100,7 +100,7 @@ class Support::Solutions::ArticlesController < SupportController
     def load_page_meta
       @page_meta ||= {
         :title => @article.article_title,
-        :description => @article.article_title,
+        :description => @article.article_description,
         :keywords => @article.article_keywords,
         :canonical => support_article_url(@article)
       }
