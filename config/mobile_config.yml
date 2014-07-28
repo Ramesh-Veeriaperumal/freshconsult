@@ -1,0 +1,4 @@
+notifications_url:
+    development: http://localnode.ngrok.com
+    staging: https://mobilepush.freshpo.com
+    production: https://mobilepush.freshdesk.com

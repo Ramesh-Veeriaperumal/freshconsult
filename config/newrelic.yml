@@ -240,6 +240,9 @@ test:
   # unit, functional or integration tests or the like.
   monitor_mode: false
 
+  autostart:
+    blacklisted_executables: 'irb,rspec,spec'
+
 # Turn on the agent in production for 24x7 monitoring.  NewRelic
 # testing shows an average performance impact of < 5 ms per
 # transaction, you you can leave this on all the time without
