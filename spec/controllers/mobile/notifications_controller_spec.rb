@@ -4,10 +4,7 @@ describe Mobile::NotificationsController do
     self.use_transactional_fixtures = false
 
     before(:each) do
-	    @request.user_agent = "Freshdesk_Native_Android"
-	    @request.accept = "application/json"
-	    @request.env['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64("#{@agent.single_access_token}:X").delete("\r\n")}"
-	    @request.format = "json"
+	    api_login
   	end
 
   	it "should register push notification" do
@@ -25,6 +22,7 @@ describe Mobile::NotificationsController do
   				"NEW_TICKET_NOTIFICATION" => 1
   				}
   			}
+      Mobile::NotificationsController.any_instance.stubs(:publish_to_channel).returns(1)
 		  post :register_mobile_notification, attributes
   		json_response["success"].should be_true
   	end

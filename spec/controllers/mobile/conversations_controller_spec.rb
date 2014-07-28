@@ -1,4 +1,6 @@
 require 'spec_helper'
+include GnipHelper
+include DynamoHelper
 
 describe Helpdesk::ConversationsController do
   self.use_transactional_fixtures = false
@@ -9,11 +11,7 @@ describe Helpdesk::ConversationsController do
   end
 
   before(:each) do
-    @request.host = @account.full_domain
-    @request.user_agent = "Freshdesk_Native_Android"
-    @request.accept = "application/json"
-    @request.env['HTTP_AUTHORIZATION'] =  ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token,"X")
-    @request.env['format'] = 'json'
+    api_login
   end
 
   it "should send a reply to the ticket" do
@@ -96,17 +94,59 @@ describe Helpdesk::ConversationsController do
   end
 
   it "should send a twitter reply to a ticket" do
+    Resque.inline = true
+    unless GNIP_ENABLED
+      GnipRule::Client.any_instance.stubs(:list).returns([]) 
+      Gnip::RuleClient.any_instance.stubs(:add).returns(add_response)
+    end
+    @handle = create_test_twitter_handle(@account)
+    @handle.update_attributes(:capture_dm_as_ticket => true)
+    @default_stream = @handle.default_stream
+    @ticket_rule = create_test_ticket_rule(@default_stream)
+    update_db(@default_stream) unless GNIP_ENABLED
+    @rule = {:rule_value => @default_stream.data[:rule_value] , :rule_tag => @default_stream.data[:rule_tag]}
+    Resque.inline = false
+    @account = @handle.account
+
+    unless GNIP_ENABLED
+      Social::DynamoHelper.stubs(:insert).returns({})
+      Social::DynamoHelper.stubs(:update).returns({})
+    end
+
+    includes = @default_stream.includes
+    @ticket_rule.filter_data[:includes] = includes
+    @ticket_rule.save
+    feed = sample_gnip_feed(@rule)
+    tweet = send_tweet_and_wait(feed)
+    
+    tweet.should_not be_nil
+    tweet.is_ticket?.should be_true
+    tweet.stream_id.should_not be_nil
+    tweet_body = feed["body"]
+    ticket = tweet.get_ticket
+    body = ticket.ticket_body.description
+    tweet_body.should eql(body)
+
+    
+    # stub the reply call
+    twitter_object = sample_twitter_object
+    Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
+    unless GNIP_ENABLED
+      Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twitter_object[:id]))
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+    end
     post :twitter,  { :helpdesk_note => {
-                            :private => false, 
-                            :source => 5, 
-                            :note_body_attributes => {:body => Faker::Lorem.sentence(3) }
-                         },
-                        :tweet => true,
-                        :tweet_type => "mention",
-                        :ticket_id => @test_ticket.display_id ,
-                        :ticket_status => "",
-                        :format => "json"
-                      }
+                        :private => false, 
+                        :source => 5, 
+                        :note_body_attributes => {:body => twitter_object[:text] }
+                     },
+                    :tweet => true,
+                    :tweet_type => "mention",
+                    :twitter_handle => @handle.id,
+                    :ticket_id => ticket.display_id ,
+                    :ticket_status => "",
+                    :format => "json"
+                  }
     json_response.should include("server_response")
     json_response["server_response"].should be_true
   end

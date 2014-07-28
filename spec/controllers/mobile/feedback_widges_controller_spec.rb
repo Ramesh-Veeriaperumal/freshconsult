@@ -4,10 +4,7 @@ describe Widgets::FeedbackWidgetsController do
   	self.use_transactional_fixtures = false
 
     before(:each) do
-      @request.user_agent = "Freshdesk_Native_Android"
-      @request.accept = "application/json"
-      @request.env['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64("#{@agent.single_access_token}:X").delete("\r\n")}"
-      @request.format = "json"
+      api_login
     end
 
   	it "should create a mobile feedback support ticket" do

@@ -5,11 +5,7 @@ describe AgentsController do
 	let(:params) { {:format => "json"} }
 	
  	before(:each) do
-    request.host = @account.full_domain
-	  request.user_agent = "Freshdesk_Native_Android"
-	  request.accept = "application/json"
-	  request.env['HTTP_AUTHORIZATION'] =  ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token,"X")
-	  request.env['format'] = 'json'
+    api_login
   end
 
   it "should return an agent object with all valid attributes" do
