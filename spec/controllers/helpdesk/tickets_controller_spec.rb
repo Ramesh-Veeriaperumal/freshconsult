@@ -21,7 +21,7 @@ describe Helpdesk::TicketsController do
     response.should render_template "helpdesk/tickets/index.html.erb"
     response.body.should =~ /Filter Tickets/
   end
-  
+    
   # Added this test case for covering meta_helper_methods.rb
   it "should view a ticket created from portal" do
     ticket = create_ticket({:status => 2},@group)
@@ -40,8 +40,9 @@ describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
   
-  # Added this test case for covering note_actions.rb
-  it "should view a ticket with notes(having to_emails)" do
+  # Added this test case for covering note_actions.rb and attachment_helper.rb
+  it "should view a ticket with notes(having to_emails & attachments)" do
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
     ticket = create_ticket({:status => 2},@group)
     agent_details = "#{@agent.name} #{@agent.email}"
     note = ticket.notes.build(
@@ -52,11 +53,14 @@ describe Helpdesk::TicketsController do
         :account_id => ticket.account.id,
         :user_id => ticket.requester.id
     )
+    note.attachments.build(:content => file, 
+                           :description => Faker::Lorem.characters(10) , 
+                           :account_id => note.account_id)
     note.save_note
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
-
+  
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
