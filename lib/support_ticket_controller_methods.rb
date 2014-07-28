@@ -2,7 +2,7 @@ module SupportTicketControllerMethods
 
   include Helpdesk::TicketActions
   
-  def show
+  def show # possible dead code
     @ticket = current_account.tickets.find_by_param(params[:id], current_account)    
     unless can_access_support_ticket?
       access_denied
@@ -69,7 +69,7 @@ module SupportTicketControllerMethods
 
    private
   
-    def check_email_scoper
+    def check_email_scoper # possible dead code
       current_account.all_users
     end
 
