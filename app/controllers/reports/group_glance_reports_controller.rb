@@ -36,8 +36,7 @@ class Reports::GroupGlanceReportsController < ApplicationController
         :layout => 'report/glance_report_pdf.html', # uses views/layouts/pdf.haml
         :show_as_html => params[:debug].present?, # renders html version if you set debug=true in URL
         :template => 'sections/generate_report_pdf.pdf.erb',
-        :page_size => "A3",
-        :encoding => 'utf-8'
+        :page_size => "A3"
   end
 
   def fetch_metrics

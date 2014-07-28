@@ -4,7 +4,7 @@ module ChatHelper
     freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
-    freshchat_plans.include?(current_account.subscription_plan.name)
+    freshchat_plans.include?(current_account.subscription.subscription_plan.name)
   end
 
   def chat_agents_list

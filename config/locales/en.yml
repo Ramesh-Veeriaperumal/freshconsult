@@ -2062,6 +2062,7 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
+  utf_8_format: The file has to be in UTF-8 format.
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
