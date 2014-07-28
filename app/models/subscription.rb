@@ -409,7 +409,7 @@ class Subscription < ActiveRecord::Base
     end
     
     def config_from_file(file)
-      YAML.load_file(File.join(RAILS_ROOT, 'config', file))[RAILS_ENV].symbolize_keys
+      YAML.load_file(File.join(Rails.root, 'config', file))[Rails.env].symbolize_keys
     end
     
     def set_free_plan_agnt_limit

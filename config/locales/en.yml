@@ -592,6 +592,7 @@ en:
           solutions: Solution Category
           solutions_info: The solution category you select will be shown in the App Support 
           app_store_id: App Store ID
+          app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           not_included: is not included in the list
           should_be_unique: should be unique
           select_a_platform: Select a platform
@@ -1332,7 +1333,7 @@ en:
         customer: Customer
         canned-response: Canned Responses
         multi-product: Multiple Products
-        twitter-setting: Twitter
+        twitter: Twitter
         survey: Survey Settings
         facebook-setting: Facebook
         security: Security
@@ -1509,7 +1510,8 @@ en:
     portal:
       discussions:
         topics:
-          spam_check: "We're checking your topic for spam. It will appear once it has been approved."
+          spam_check: "Thank you starting a new topic. your topic will appear in the forum, after a standard moderation process."
+          success: "Thank you for posting. your reply will appear in the topic, after a standard moderation process."
       tickets:
         create:
           success: Your ticket has been created.
@@ -1763,6 +1765,12 @@ en:
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
+    email_response: "email response"
+    reply: "reply"
+    forwarded: "forwarded"
+    tweet: "tweet"
+    time_entry: "time entry"
+    note: "note"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -4775,6 +4783,34 @@ en:
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
       satisfaction_title: "Satisfaction Report"
+      freshfone:
+        options:
+          incoming: "Incoming"
+          outgoing: "Outgoing"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        report_title: "Freshfone Summary"
+        summary_title: "Agent Call Summary "
+        agent: "Agent"
+        group: "Group"
+        call_type: "Call Type"
+        filter_report: "Edit Filter"
+        select_agent: "Select Agent"
+        select_group: "Select Group"
+        select_call_type: "Select Call Type"
+        select_number: "Select a Number"
+        all_call_types: "All"
+        number: "Number"
+        avg_handle_time: "Avg Handle Time"
+        num_of_calls: "No of Calls"
+        total_answered: "Answered Calls"
+        total_voice_mail: "Voice Mails"
+        total_duration: "Total Duration"
+        agent_calls_count: "No Of Calls"
+        total_unanswered_calls: "Unanswered Calls"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        unanswered_count: "Unanswered"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -5235,6 +5271,7 @@ en:
       select_group_msg: "Select Group"
       no_customers_msg: "You don't have any customers"
       no_groups_msg: "You don't have any groups"
+      loading_msg: "Generating Reports ..."
     load:
       recived_resolved_backlog: "Tickets Received vs Resolved vs Backlog"
       time_of_arrival: "Time of Arrival"
@@ -5573,6 +5610,19 @@ en:
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"
   freshchat:
+    feature_request:
+      title: "Welcome to Freshchat"
+      heading: "Support your customers with Freshchat"
+      info1: "Customize live chat widget for your brand and business"
+      info2: "Enable live chat for your support portal and website"
+      info3: "Track all chat transcripts and convert them to tickets"
+      read_more: "Read more"
+      email_subject: "Request for Freshchat Feature from %{account_name}"
+      email_message: "Need Freshchat Feature"
+      success_message: "Thanks for your interest in Freshchat. We will get back to you shortly."
+      error_message: "Sorry we can not make your request right now. Try again later."
+      additional_note: "Freshchat request will take two business days"
+      button_label: "Request for Freshchat"
     title: "Freshchat"
     widget: "Widget"
     messages: "Messages"
@@ -6034,20 +6084,12 @@ en:
       domain_info: "ex. if your helpdesk is 'http://apple.freshdesk.com' then enter 'apple'"
       phone_no: "Phone Number"
       create_my_account: Create your Account
-      by_clicking: "By clicking "
-      agree: "you agree to our"
-      terms_of_service: "terms of service"
-      privacy_policy: "privacy policy"
-      and: " and"
-      freshdesk_terms: "http://freshdesk.com/terms"
-      freshdesk_privacy: "http://freshdesk.com/privacy"
+      terms_and_policy: "By clicking 'Create your Account', you agree to our <a href='http://freshdesk.com/terms' target='_blank'>terms of service</a> and <a href='http://freshdesk.com/privacy' target='_blank'>privacy policy</a>"
       helpdesk_name: "Helpdesk name"
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
-      error_message: "Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or "
-      signup: "Signup from Freshdesk Home page "
-      freshdesk_signup_page: "http://freshdesk.com/signup"
+      error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
       creating_your_account: "Creating your account now..."

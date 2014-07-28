@@ -1,0 +1,26 @@
+
+<style>
+	<%= render :file => "mailer/css/mailer.css" %>
+</style>
+
+<div class="body">
+	<div class="mail_content">
+		Status update in topic
+	</div>
+	<div class="forum_content">
+
+		<%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @host), :class => "topic_title" %><br><br>
+		
+		The <%= @forum_type.downcase.singularize %> has been marked as <strong><%= @current_stamp %></strong>.
+		<br />
+	</div>
+	<div class="footer">
+		<%= link_to "Reply", reply_discussions_topic_url(@topic.id, :host => @user.account.host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<div class="footer-text">
+			<%= link_to "Turn Off", toggle_monitorship_url("topic", @topic.id, "unfollow", :host => @host) %>
+			 notifications for this topic
+		</div>
+	</div>
+	<br />
+	<br />
+</div>

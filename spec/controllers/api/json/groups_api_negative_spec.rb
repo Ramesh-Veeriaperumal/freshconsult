@@ -11,15 +11,18 @@ describe GroupsController do
 
 	before(:all) do
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
+		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(false)
 	end
 
 	after(:all) do
 		@test_group.destroy
+		@calendar.destroy
 	end
 
 	it "should not create a Group without the name" do
-		post :create, { :group => {:name => "", :description => Faker::Lorem.paragraph, :business_calendar => 1, :agent_list => "#{@agent.id}", 
-									:ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @agent.id
+		post :create, { :group => { :name => "", :description => Faker::Lorem.paragraph, :business_calendar => @calendar.id, 
+									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @agent.id
 									},
 						:format => 'json'
 		}
@@ -32,7 +35,7 @@ describe GroupsController do
 			:id => @test_group.id,
 			:group => {:name => "",
 				:description => description, 
-				:business_calendar => 1,
+				:business_calendar => @calendar.id,
 				:agent_list => "#{@agent.id}",
 				:ticket_assign_type=> 0,
 				:assign_time => "2500", 

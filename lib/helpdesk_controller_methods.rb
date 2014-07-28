@@ -165,7 +165,7 @@ protected
   end
 
   def load_by_param(id)
-    @temp_item = scoper.respond_to?(:find_by_param) ?  scoper.find_by_param(id, current_account) : scoper.find_by_id(id.to_i)
+    @temp_item = scoper.find_by_id(id.to_i)
     
     #by Shan new
     raise(ActiveRecord::RecordNotFound) if (@temp_item.respond_to?('account_id=') && @temp_item.account_id != current_account.id)

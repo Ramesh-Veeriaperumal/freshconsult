@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :email_config, :class => EmailConfig do |e|
     e.sequence(:name) { |n| "EmailConfig#{n}" }
     e.primary_role false

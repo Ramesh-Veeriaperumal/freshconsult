@@ -119,6 +119,7 @@ module Helpdesk::TicketFilterMethods
   def cancel_link view
     unless params[:report_type].blank?
       view = current_filter
+      view = {:default => view, :id => view} if view.is_a?(String)
     end
     link_to(link_title('cancel'), filter_path(view), 
                                 :class => "hide", :id => "cancel_filter",

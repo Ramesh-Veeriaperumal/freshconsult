@@ -60,9 +60,7 @@
 						<li class="button-container">
 							<div><%= submit_tag t('.create_my_account'), :class => "btn btn-primary pull-left" %></div>
 							<div class="help_text pull-left">
-								<%= t('.by_clicking') %> <%= t('.create_my_account') %> <%= t('.agree') %>
-								<a href="<%= t('.freshdesk_terms') %>" target="_blank"><%= t('.terms_of_service') %></a> and
-								<a href="<%= t('.freshdesk_privacy') %>" target="_blank"><%= t('.privacy_policy') %></a>
+								<%= t('.terms_and_policy').html_safe %>
 							</div>
 						</li>
 					</ul>

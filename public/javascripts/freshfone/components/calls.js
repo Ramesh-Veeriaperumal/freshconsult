@@ -130,13 +130,15 @@ var FreshfoneCalls;
 			}
 		},
 		credit_balance: function() {
-			var balance_available = false;
+			var balance_available = true;
 			$.ajax({
 				url: '/freshfone/credit_balance',
 				dataType: "json",
 				async: false,
 				success: function (result) {
-					if (result.credit_balance) { balance_available = true; }
+					if (!result.credit_balance) { 
+						balance_available = false; 
+					}
 				}
 			});
 			if (!balance_available) { this.$infoText().show(); }

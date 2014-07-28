@@ -5,3 +5,22 @@ class String
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
 end
+
+# module StringExt
+#   def brackets_with_translation(*args)
+#     args = [underscore.tr(' ', '_').to_sym] if args.empty?
+#     return brackets_without_translation(*args) unless args.first.is_a? Symbol
+#     Rails.logger.info "::::::::::::::::::::::::::::Some stupid code calling [] on string::::#{caller.join('\n\t')}"
+#     self
+#   end
+
+#   def self.included(base)
+#     base.class_eval do
+#       alias :brackets :[]
+#       alias_method_chain :brackets, :translation
+#       alias :[] :brackets
+#     end
+#   end
+# end
+
+# String.send :include, StringExt

@@ -15,7 +15,8 @@ describe Support::SurveysController do
 
   it "should not allow to rate a surveyed link" do
     ticket = create_ticket({ :status => 2 }, @group)
-    note = ticket.notes.create(:body => Faker::Lorem.sentence)
+    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+    note.save_note
     send_while = rand(1..4)
     s_handle = create_survey_handle(ticket, send_while, note)
     s_handle.rated = true

@@ -1,18 +1,22 @@
 module VA::RuleHelper
 
-  CONTROLLERS = { Admin::AutomationsController     => { :tester_class => VA::Tester::Action,                :test_cases => [VA::RandomCase::Action],                :test_variable => :action_defs },
-                  Admin::VaRulesController         => { :tester_class => VA::Tester::Condition::Dispatcher, :test_cases => [VA::RandomCase::Condition::Dispatcher], :test_variable => :filter_defs },
-                  Admin::SupervisorRulesController => { :tester_class => VA::Tester::Condition::Supervisor, :test_cases => [VA::RandomCase::Condition::Supervisor], :test_variable => :filter_defs },
-                  Admin::ObserverRulesController   => { :tester_class => VA::Tester::Event,                 :test_cases => [VA::RandomCase::Event],                 :test_variable => :event_defs }
-                } # Order determines the method definition as they are overridden by these modules
+  PERFORMER = :dummy_constant
+  TESTS = { Admin::AutomationsController     => { :tester_class => VA::Tester::Action,                :test_cases => [VA::RandomCase::Action],                :test_variable => :action_defs },
+            Admin::VaRulesController         => { :tester_class => VA::Tester::Condition::Dispatcher, :test_cases => [VA::RandomCase::Condition::Dispatcher], :test_variable => :filter_defs },
+            Admin::SupervisorRulesController => { :tester_class => VA::Tester::Condition::Supervisor, :test_cases => [VA::RandomCase::Condition::Supervisor], :test_variable => :filter_defs },
+            Admin::ObserverRulesController   => { :tester_class => VA::Tester::Event,                 :test_cases => [VA::RandomCase::Event],                 :test_variable => :event_defs },
+            PERFORMER                        => { :tester_class => VA::Tester::Performer,             :test_cases => [VA::RandomCase::Performer],             :test_variable => :event_defs }
+          } # Order determines the method definition as they are overridden by these modules
 
-  VA_CONTROLLER_VARIABLES = [:action_defs, :filter_defs, :event_defs, :time_based_filters, :op_types]
+  FETCH_FROM_CONTROLLERS = [Admin::AutomationsController, Admin::VaRulesController, Admin::SupervisorRulesController, Admin::ObserverRulesController]
+  FETCH_VARIABLES = [:action_defs, :filter_defs, :event_defs, :time_based_filters, :op_types]
 
   def before_each
     @account = create_test_account
     @account.features.multi_product.create
-    @user = add_test_agent(@account)
-    @user.make_current
+    @agent2 = add_test_agent(@account)
+    @agent2.make_current
+    @agent3 = add_test_agent(@account)
     @product = @account.products.create(Factory.attributes_for(:product)) # to make it multi product
     @to_email = @account.email_configs.first.to_email
     @ticlet_cc = Faker::Internet.email
@@ -24,7 +28,8 @@ module VA::RuleHelper
     @product = @account.products.create(Factory.attributes_for(:product))
     @company = @account.customers.create(Factory.attributes_for(:company))
     @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
-    @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id))
+    @responder = add_test_agent(@account)
+    @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
     @agent_note =@ticket.notes.create(Factory.attributes_for(:note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
     @user_note = @ticket.notes.create(Factory.attributes_for(:note, :notable_id => @ticket.id, :user_id => @requester.id))
     @time_sheet = @ticket.time_sheets.create
@@ -53,14 +58,14 @@ module VA::RuleHelper
   private
 
     def define_required_accessors
-      VA_CONTROLLER_VARIABLES.each do |variable|
+      FETCH_VARIABLES.each do |variable|
         self.class.send(:attr_accessor, variable)
         send :"#{variable}=", {}
       end
     end
 
     def build_all_possible_options
-      CONTROLLERS.keys.each do |controller| # Looping through all controllers to consolidate all the options
+      FETCH_FROM_CONTROLLERS.each do |controller| # Looping through all controllers to consolidate all the options
         @helper = ControllerDataFetcher.new(controller)
         @helper.fetch_data
         ControllerDataFetcher::RETRIEVE_VARIABLES[controller].each do |variable|

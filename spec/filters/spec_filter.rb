@@ -15,12 +15,17 @@ class SpecFilter < SimpleCov::Filter
     'app/controllers/moderators_controller.rb',
     'app/controllers/helpdesk/ticket_issues_controller.rb',
     'app/controllers/helpdesk/issues_controller.rb',
-    'app/controllers/helpdesk/tag_uses_controller.rb'
+    'app/controllers/helpdesk/tag_uses_controller.rb',
+    "app/controllers/social/twitter_handles_controller.rb"
   ]
 
   IGNORE_LIST = [
     'app/controllers/theme/support_controller.rb',
-    'app/controllers/theme_controller.rb'
+    'app/controllers/theme_controller.rb',
+    'lib/aws_wrapper/dynamo_db.rb',
+    'lib/aws_wrapper/sqs.rb',
+    'lib/two_factor_authentication.rb',
+    'app/controllers/helpdesk/authorizations_controller.rb'
   ]
 
   MAILER_MODELS = [
@@ -46,7 +51,15 @@ class SpecFilter < SimpleCov::Filter
     "app/models/subscription_payment.rb"
   ]
 
-  SPEC_FILTERS = [ FRESHFONE_FILTERS, DEAD_CODE, IGNORE_LIST, MAILER_MODELS, BILLING_MODELS ].flatten
+  TICKET_WEEKLY_TABLE_MODELS = [
+    "lib/helpdesk/mysql/dynamic_table.rb",
+    "app/models/helpdesk/note_body_weekly.rb",
+    "app/models/helpdesk/ticket_body_weekly.rb"
+  ]
+
+
+  SPEC_FILTERS = [ FRESHFONE_FILTERS, DEAD_CODE, IGNORE_LIST, MAILER_MODELS, BILLING_MODELS, 
+                    TICKET_WEEKLY_TABLE_MODELS ].flatten
 
   def matches?(src)
     SPEC_FILTERS.find {|file| src.filename =~ /#{file}/} 

@@ -10,6 +10,9 @@ describe AuthorizationsController do
     @new_installed_application = Factory.build(:installed_application, {:application_id => 19,
                                               :account_id => @account.id, :configs => { :inputs => {}}})
     @new_installed_application.save!
+    @auth_data = Factory.build(:authorization, {:provider => "facebook",
+                    :uid => "int_uid", :user_id => @user.id, :account_id => @account.id })
+    @data = @auth_data.save!
   end
 
   it "should create authorization for google calendar" do
@@ -52,7 +55,7 @@ describe AuthorizationsController do
 		:name=>"sathish babu.R", :nickname=>"satbuceg"},:provider=>"twitter",:uid=>"320555803"})
 		get :create, {:oauth_token=>"N1n8Qwfv33QPReAFSLds2Rtcgd1hFDz87bTQebA", :oauth_verifier=>"xnalvyPIgjAd8xx2YsjanwR3sxzNA8tSD0PI0Tgs",
 		 :controller=>"authorizations", :action=>"create", :provider=>"twitter"}
-		 response.location.should eql "http://localhost.freshpo.com/"
+		 response.location.should include("http://localhost.freshpo.com/")
 	end
 
 	it "should create authorization for facebook" do
@@ -67,7 +70,7 @@ describe AuthorizationsController do
 		random_hash = Digest::MD5.hexdigest(curr_time)
 		get :create, {:code=>"AQDjdI9SsCgBO0lVW2rFkd2-9XS1tGSHOowIkWcX4B1d4gTKziwBJTjeLbSUwGTuVqbEUXWPL3mrOcaMkZexUO2PRPwJF1M5RprgrtdFjV_tL9RL5hzFgjpASsB2s3NVZFdE_n65jXA_webfRQ8GTv-08YBaajbNqGKDyCc7j9Jnupi_O9ADDUis6boEdBkYlc4XAgvXGCDbtzomAiSOu1C0IY8Gt_z0vu2CWLl93sPYMyk2c_Fq0dU1y0I1hWi_xb0GzRDeEFRx9rbCU43-VEwVTkwWfjPqBvTYOdochDnQqOn_A8UtnRhlFYMpE2ExlkU",
 		 :controller=>"authorizations", :action=>"create", :provider=>"facebook"}
-		 response.should redirect_to "#{portal_url}/sso/login?provider=facebook&uid=100001393908238&s=#{random_hash}"
+		 response.location.should include("/sso/login?provider=facebook&uid=100001393908238")
 	end
 
 	it "should fail for mailchimp" do 

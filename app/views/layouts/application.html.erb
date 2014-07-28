@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%
-  @debuging =  RAILS_ENV.eql?("development") && params.has_key?("debug")
+  @debuging =  Rails.env.development? && params.has_key?("debug")
 %>
   <%= open_html_tag %>      
 	<%= render :partial => "layouts/shared/head" %>

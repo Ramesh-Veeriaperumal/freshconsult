@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140711070318) do
+ActiveRecord::Schema.define(:version => 20140725083159) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -749,7 +749,6 @@ ActiveRecord::Schema.define(:version => 20140711070318) do
   add_index "freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
-  add_index "freshfone_calls", ["account_id", "freshfone_number_id"], :name => "index_freshfone_calls_on_account_id_and_freshfone_number_id"
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
@@ -806,6 +805,7 @@ ActiveRecord::Schema.define(:version => 20140711070318) do
     t.boolean  "voicemail_active",                                                      :default => false
     t.text     "non_business_hours_message"
     t.string   "name"
+    t.integer  "direct_dial_limit",                                                       :default => 1
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -857,6 +857,7 @@ ActiveRecord::Schema.define(:version => 20140711070318) do
     t.boolean  "available_on_phone",               :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+		t.datetime "mobile_token_refreshed_at"
   end
 
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
@@ -870,8 +871,7 @@ ActiveRecord::Schema.define(:version => 20140711070318) do
     t.datetime "updated_at"
   end
 
-  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_meta_data_on_account_id_and_call_id"
-  add_index "freshfone_calls_meta", ["account_id", "group_id"], :name => "index_ff_meta_data_on_account_id_and_group_id"
+  add_index "freshfone_calls_meta", ["account_id", "call_id", "group_id"], :name => "index_ff_calls_on_account_id_call_id_group_id"
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -1544,6 +1544,7 @@ ActiveRecord::Schema.define(:version => 20140711070318) do
     t.boolean "active",                        :default => true
     t.integer "account_id",       :limit => 8
     t.string  "monitorable_type"
+    t.integer "portal_id",        :limit => 8
   end
 
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"

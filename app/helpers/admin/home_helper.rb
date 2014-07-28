@@ -10,13 +10,13 @@ module Admin::HomeHelper
       },
       :freshchat                       =>   {
         :url                           =>   "/admin/chat_setting",
-        :privilege                     =>   current_account.features?(:chat) && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks) && is_chat_plan? 
       },
       :freshfone                       =>   {
         :url                           =>   "/admin/freshfone",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :"twitter-setting"               =>   {
+      :"twitter"               =>   {
         :url                           =>   (feature?(:social_revamp) ? "/admin/social/streams" : "/social/twitters"),
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
@@ -183,7 +183,7 @@ module Admin::HomeHelper
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter-setting", "facebook-setting", "feedback", "mobihelp"],
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp"],
       :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
@@ -283,7 +283,7 @@ module Admin::HomeHelper
     KEYWORDS_META = {
       :chat_integration                       =>    [:customize_chat_window, :configure_chat_messages, :customise_chat_window],
       :phone_integration                      =>    [:purchase_support_number, :voice_integration, :ivr, :integrated_phone_support],
-      :"twitter-setting"                      =>    [:social],
+      :"twitter"                      =>    [:social],
       :"facebook-setting"                     =>    [:social],
       :stylesheet_customization               =>    [:css_customization, :customisation],
       :custom_domain_name                     =>    [:cname],
@@ -315,7 +315,7 @@ module Admin::HomeHelper
         admin_item = admin_items[item.to_sym]
         next unless admin_item[:privilege]      ## Skip according to the item privilege
           link_content = <<HTML
-          <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ item.to_s }" /></div>
+          <div class="img-outer"><i class = "fsize-36 ficon-#{ item.to_s }" ></i></div>
           <div class="admin-icon-text">#{t(".#{item.to_s}")}</div>
 HTML
           content_tag( :li, link_to(link_content.html_safe, admin_item[:url].html_safe))
@@ -365,7 +365,7 @@ HTML
       meta = KEYWORDS_META[item.to_sym]
 
       kw_items[t(".#{item}")] = 
-                    [url, "admin-icon-#{item}"].concat(meta.blank? ? [] : [meta.map { |e| t("admin.home.keywords.#{e}") }])
+                    [url, "ficon-#{item}"].concat(meta.blank? ? [] : [meta.map { |e| t("admin.home.keywords.#{e}") }])
 
       ## if item has keywords
       if( (kw_item = ADMIN_KEYWORDS[item.to_sym]).present? )      
@@ -388,7 +388,7 @@ HTML
 
   def collect_keywords(keyword, url, item)
     meta = KEYWORDS_META[keyword.to_sym]
-    item_value = [url, "admin-icon-#{item}"]
+    item_value = [url, "ficon-#{item}"]
     item_value << (meta || []).map { |e| t("admin.home.keywords.#{e}") }
 
     Hash[t("admin.home.keywords.#{keyword}"), item_value]

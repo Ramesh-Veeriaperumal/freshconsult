@@ -4,7 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation_on_create :set_token
 
-  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :save_ticket_states
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -15,6 +15,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
   before_update :clear_sender_email, :if => [:requester_id_changed?, :sender_email]
+
+  before_save :assign_email_config_and_product, :if => :new_record?
 
   before_save :update_dueby, :unless => :manual_sla?
 
@@ -220,7 +222,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_time_zone
@@ -229,7 +231,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
-      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     end 
   end
   #end of SLA

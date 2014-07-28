@@ -21,6 +21,41 @@ describe Helpdesk::TicketsController do
     response.should render_template "helpdesk/tickets/index.html.erb"
     response.body.should =~ /Filter Tickets/
   end
+  
+  # Added this test case for covering meta_helper_methods.rb
+  it "should view a ticket created from portal" do
+    ticket = create_ticket({:status => 2},@group)
+    meta_data = { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                   :referrer => ""}
+    note = ticket.notes.build(
+        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
+        :private => true,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        :account_id => ticket.account.id,
+        :user_id => ticket.requester.id
+    )
+    note.save_note
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+  
+  # Added this test case for covering note_actions.rb
+  it "should view a ticket with notes(having to_emails)" do
+    ticket = create_ticket({:status => 2},@group)
+    agent_details = "#{@agent.name} #{@agent.email}"
+    note = ticket.notes.build(
+        :to_emails =>[agent_details],
+        :note_body_attributes => {:body => Faker::Lorem.sentence },
+        :private => true,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :account_id => ticket.account.id,
+        :user_id => ticket.requester.id
+    )
+    note.save_note
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
 
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
@@ -36,6 +71,52 @@ describe Helpdesk::TicketsController do
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should create a new ticket with RabbitMQ enabled" do
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RABBIT_MQ_ENABLED = true
+    Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
+    Array.any_instance.stubs(:publish).returns(true)
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RABBIT_MQ_ENABLED = false
+    Account.any_instance.unstub(:rabbit_mq_exchange)
+    Array.any_instance.unstub(:publish)
+  end
+
+  it "should create a new ticket with RabbitMQ enabled and with RabbitMq publish error" do
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RABBIT_MQ_ENABLED = true
+    Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
+    Array.any_instance.stubs(:publish).raises(StandardError)
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RABBIT_MQ_ENABLED = false
+    Account.any_instance.unstub(:rabbit_mq_exchange)
+    Array.any_instance.unstub(:publish)
   end
 
   # Ticket Updates
@@ -71,6 +152,25 @@ describe Helpdesk::TicketsController do
                                        :id => @test_ticket.display_id
                                       }
       updated_ticket = @account.tickets.find(@test_ticket.id)
+      updated_ticket.ticket_type.should be_eql("Lead")
+      updated_ticket.source.should be_eql(9)
+    end
+
+    it "should update a ticket's properties with agent collision feature" do
+      @account.features.agent_collision.create
+      test_ticket = create_ticket
+      put :update_ticket_properties, { :helpdesk_ticket => { :priority => "4",
+                                                             :status => "3",
+                                                             :source => "9",
+                                                             :ticket_type => "Lead",
+                                                             :group_id => "",
+                                                             :responder_id => ""
+                                                            },
+                                       :helpdesk => { :tags => ""},
+                                       :id => test_ticket.display_id
+                                      }
+      @account.features.agent_collision.destroy
+      updated_ticket = @account.tickets.find(test_ticket.id)
       updated_ticket.ticket_type.should be_eql("Lead")
       updated_ticket.source.should be_eql(9)
     end
@@ -395,6 +495,15 @@ describe Helpdesk::TicketsController do
       response.body.should =~ /#{tkt2.description}/
     end
 
+    it "should load the next and previous tickets of a ticket" do
+      ticket_1 = create_ticket
+      ticket_2 = create_ticket
+      ticket_3 = create_ticket
+      get :prevnext, :id => ticket_2.display_id
+      assigns(:previous_ticket).should be_eql(ticket_1.display_id)
+      assigns(:next_ticket).should be_eql(ticket_3.display_id)
+    end
+
     # Empty Trash
     it "should empty(delete) all tickets in trash view" do
       tkt1 = create_ticket({ :status => 2 }, @group)
@@ -408,5 +517,134 @@ describe Helpdesk::TicketsController do
       @account.tickets.find_by_id(tkt1.id).should be_nil
       @account.tickets.find_by_id(tkt2.id).should be_nil
     end
+    
+    # Ticket actions
+    it "should split the note and as ticket" do
+      tkt = create_ticket({ :status => 2})
+      @account.reload
+      tickets_count = @account.tickets.count
+      note_body = Faker::Lorem.sentence
+      note = tkt.notes.build({ :note_body_attributes => {:body => note_body} , :user_id => tkt.requester_id, 
+                               :incoming => true, :private => false})
+      note.save_note
+      post :split_the_ticket, { :id => tkt.display_id,
+          :note_id => note.id
+      }
+      tkt.notes.find_by_id(note.id).should be_nil
+      ticket_incremented? tickets_count
+      @account.tickets.last.ticket_body.description_html.should =~ /#{note_body}/
+    end
 
+    it "should close a ticket" do
+      tkt = create_ticket({ :status => 2 }, @group)
+      post :close, :id => tkt.display_id
+      tkt.reload
+      @account.tickets.find_by_id(tkt.id).status.should be_eql(5)
+    end
+
+    it "should clear the filter_ticket values and set new values from tags" do
+      ticket = create_ticket({ :status => 2}, @group)
+      tag = ticket.tags.create(:name=> "Tag - #{Faker::Name.name}", :account_id =>@account.id)
+      get :index, :tag_name => tag.name, :tag_id => tag.id
+      response.body.should =~ /#{ticket.subject}/
+      response.body.should =~ /##{ticket.display_id}/
+      response.body.should =~ /#{tag.name}/
+    end
+
+    it "should clear the filter_ticket values and set new values from customer page" do
+      company = create_company
+      user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
+                                    :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
+      user.save(false)
+      ticket = create_ticket({ :status => 2, :requester_id => user.id}, @group)
+      ticket_1 = create_ticket({ :status => 2}, @group)
+      get :index, :customer_id => company.id
+      response.body.should =~ /#{company.name}/
+      response.body.should =~ /#{ticket.subject}/
+      response.body.should =~ /##{ticket.display_id}/
+      response.body.should_not =~ /#{ticket_1.subject}/
+    end
+
+    it "should clear the filter_ticket values and set new values from contact page" do
+      user = add_test_agent(@account)
+      ticket_1 = create_ticket({ :status => 2, :requester_id => user.id}, @group)
+      ticket_2 = create_ticket({ :status => 2}, @group)
+      get :index, :requester_id => user.id
+      response.body.should =~ /#{user.name}/
+      response.body.should =~ /#{ticket_1.subject}/
+      response.body.should =~ /##{ticket_1.display_id}/
+      response.body.should_not =~ /#{ticket_2.subject}/
+    end
+
+    it "should render add_requester page" do
+      post :add_requester
+      response.should render_template 'contacts/_add_requester_form.html.erb'
+      response.should be_success
+    end
+
+    it "should return the paginated values" do
+      ticket_1 = create_ticket({ :status => 2}, @group)
+      ticket_2 = create_ticket({ :status => 2}, @group)
+      tag = ticket_1.tags.create(:name=> "Tag - #{Faker::Name.name}", :account_id =>@account.id)
+      tag_uses = Factory.build(:tag_uses, :tag_id => tag.id, :taggable_type => "Helpdesk::Ticket", :taggable_id=> ticket_2.id)
+      tag_uses.save(false)
+      get 'index', :tag_name => tag.name, :tag_id => tag.id
+      tickets_count = @account.tags.find(tag.id).tag_uses_count
+      get :full_paginate
+      assigns["ticket_count"].should eql tickets_count
+      response.should be_success
+    end
+
+    it "should configure the export" do
+      get :configure_export
+      response.should render_template 'helpdesk/tickets/_configure_export.html.erb'
+      response.body.should =~ /Export as/
+      response.body.should =~ /Filter tickets by/
+    end
+
+    it "should export a ticket csv file" do 
+      open_ticket = create_ticket({ :status => 2, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
+      closed_ticket = create_ticket({ :status => 5, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
+
+      start_date = Date.parse((Time.now - 2.day).to_s).strftime("%d %b, %Y");
+      end_date = Date.parse((Time.now).to_s).strftime("%d %b, %Y");
+
+      Resque.inline = true
+      post :export_csv, :data_hash => "[]", :format => "csv", :ticket_state_filter=>"created_at",
+                        :date_filter => 30, :start_date => "#{start_date}",
+                        :end_date => "#{end_date}", :export_fields => { :display_id => "Ticket Id",
+                                                                        :subject => "Subject",
+                                                                        :description => "Description",
+                                                                        :status_name => "Status",
+                                                                        :requester_name => "Requester Name",
+                                                                        :requester_info => "Requester Email",
+                                                                        :responder_name => "Agent",
+                                                                        :created_at => "Created Time",
+                                                                        :updated_at => "Last Updated Time"
+                        }
+      Resque.inline = false
+      response.content_type.should be_eql("text/html")
+      response.header["Content-type"].should eql("text/html; charset=utf-8")
+      response.session[:flash][:notice].should eql"Your Ticket data will be sent to your email shortly!"
+    end
+
+    it "should render assign tickets to agent page" do
+      post :assign_to_agent
+      response.should render_template 'helpdesk/tickets/_assign_agent.html.erb'
+      response.should be_success
+    end
+
+    it "should render update_multiple_tickets page" do
+      get :update_multiple_tickets
+      response.should render_template 'helpdesk/tickets/_update_multiple.html.erb'
+      response.should be_success
+    end
+
+    it "should render component page" do
+      ticket = create_ticket({ :status => 2}, @group)
+      get :component, :component => "ticket_fields", :id => ticket.id
+      assigns["ticket"].id.should eql ticket.id
+      response.should render_template 'helpdesk/tickets/show/_ticket_fields.html.erb'
+      response.should be_success
+    end
 end

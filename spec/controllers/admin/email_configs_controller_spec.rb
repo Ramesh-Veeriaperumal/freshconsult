@@ -56,6 +56,44 @@ describe Admin::EmailConfigsController do
     delayed_job.handler.should include("AR:EmailConfig:#{new_email_config.id}")
   end
 
+  it "should validate the custom mailbox settings" do
+    mailbox_username = Faker::Internet.email
+    mailbox_password = Faker::Lorem.characters(10)
+    Net::IMAP.any_instance.stubs(:login).returns(true)
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    ["0", "1"].each do |i|
+      post :validate_mailbox_details, { :email_config => {:name => Faker::Name.name, 
+                                        :reply_email => mailbox_username, 
+                                        :group_id => "", 
+                                        :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
+                                        :smtp_mailbox_attributes => { :_destroy => "0",
+                                                                      :server_name => "smtp.gmail.com",
+                                                                      :port => "587",
+                                                                      :use_ssl => "true",
+                                                                      :authentication => "plain",
+                                                                      :user_name => mailbox_username,
+                                                                      :password => mailbox_password,
+                                                                      :domain => "freshpo.com"
+                                                                    }, 
+                                        :imap_mailbox_attributes => { :_destroy => i, 
+                                                                      :server_name => "imap.gmail.com",
+                                                                      :port => "993",
+                                                                      :use_ssl => "true",
+                                                                      :delete_from_server => "0",
+                                                                      :authentication => "cram-md5",
+                                                                      :user_name => mailbox_username,
+                                                                      :password => mailbox_password,
+                                                                      :folder => "inbox"
+                                                                    }
+                                        }
+                                      }
+      result = JSON.parse(response.body)
+      result["success"].should be_true
+      result["msg"].should be_eql("")
+    end
+  end
+
   it "should create an email config with custom IMAP and SMTP mailboxes" do
     mailbox_username = Faker::Internet.email
     mailbox_password = Faker::Lorem.characters(10)

@@ -38,6 +38,9 @@
 				<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'customer-satisfaction-report', :url => 
 					survey_activity_url}) %>
 			<%end%>
+			<% if feature?(:freshfone) %>
+				<%= report_item({:label => t('reports.freshfone.report_title'), :class => 'summary-report-icon', :url => reports_freshfone_summary_reports_url}) %>
+			<%end%>
 		</ul>
 	</div>
 	<% if feature?(:enterprise_reporting) %>

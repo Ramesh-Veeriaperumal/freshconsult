@@ -27,11 +27,12 @@ class CRM::Salesforce < Resque::Job
 
   def add_paid_customer_to_crm(payment)
     #returned_value = sandbox(0){
-      return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
       crm_ids = search_crm_record(payment.account_id)
+      update_paid_account(crm_ids, payment)   
+
+      return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
       opportunity_id = add_opportunity(crm_ids, payment)
       add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
-      update_paid_account(crm_ids, payment)   
     #}
     #FreshdeskErrorsMailer.deliver_error_in_crm!(payment) if returned_value == 0
   end
@@ -65,10 +66,10 @@ class CRM::Salesforce < Resque::Job
 
     def oauth_keys
       {
-        :consumer_key    => AppConfig['salesforce'][RAILS_ENV]['consumer_key'],
-        :consumer_secret => AppConfig['salesforce'][RAILS_ENV]['consumer_secret'],
-        :access_token    => AppConfig['salesforce'][RAILS_ENV]['access_token'],
-        :access_secret   => AppConfig['salesforce'][RAILS_ENV]['access_secret'],
+        :consumer_key    => AppConfig['salesforce'][Rails.env]['consumer_key'],
+        :consumer_secret => AppConfig['salesforce'][Rails.env]['consumer_secret'],
+        :access_token    => AppConfig['salesforce'][Rails.env]['access_token'],
+        :access_secret   => AppConfig['salesforce'][Rails.env]['access_secret'],
         :login_url       => 'https://login.salesforce.com/services/OAuth/u/20.0'
       }
     end
@@ -114,9 +115,11 @@ class CRM::Salesforce < Resque::Job
     def update_paid_account(crm_ids, payment)
       record = account_details(crm_ids[:account], payment)
       binding.update('sObject {"xsi:type" => "Account"}' => record)
+
+      subscription = payment.account.subscription
       binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
-        :Account_Renewal_Date__c => payment.account.subscription.next_renewal_at,
-        :Customer_Status__c => CUSTOMER_STATUS[:paid] })
+        :Account_Renewal_Date__c => subscription.next_renewal_at,
+        :Customer_Status__c => CUSTOMER_STATUS[:paid], :Monthly_Revenue__c => subscription.cmrr })
     end
 
     def update_account(crm_ids, domain, status)

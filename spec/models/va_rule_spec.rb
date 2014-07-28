@@ -8,11 +8,11 @@ describe VARule do
     va = Class.new(VA::TestCase).new # Creating a dynamic class for re-including the modules
     va.count
   end
-  
+
   3.times do # Doing it thrice, coz of the random choices
     it "should test all VA options with random choices" do
       va = Class.new(VA::TestCase).new # Creating a dynamic class for re-including the modules
-      va.working
+      va.check_rules
     end
   end
 

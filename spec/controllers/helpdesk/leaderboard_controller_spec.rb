@@ -8,9 +8,16 @@ describe Helpdesk::LeaderboardController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
+		@account.support_scores.destroy_all
+		@limit = 1
+
+		# Create Agent
 		@agent_1 = add_test_agent(@account)
 		@agent_2 = add_test_agent(@account)
-		@group = create_group(@account, {:name => "Leaderboard"})
+
+		# Create Group
+		@group_1 = create_group(@account, {:name => "Group 1 Leaderboard"})
+		@group_2 = create_group(@account, {:name => "Group 2 Leaderboard"})
 
 		# create Quest
 		quest_data = {:value=>"10", :date=>"6"}
@@ -21,7 +28,7 @@ describe Helpdesk::LeaderboardController do
 		# create Support_score
 		create_support_score( { :user_id => @agent_1.id, :score_trigger=> SOLUTION_QUEST,:score => 200, 
 								:scorable_id=>@soln_quest.id,:scorable_type=> "Quest" } )
-		create_support_score( { :user_id => @agent_2.id,:score_trigger=> FIRST_CALL_RESOLUTION,:score => 400,
+		create_support_score( { :user_id => @agent_2.id,:group_id => @group_1.id,:score_trigger=> FIRST_CALL_RESOLUTION,:score => 400,
 								:scorable_id=>@tkt_quest_1.id,:scorable_type=> "Helpdesk::Ticket" } )
 	end
 
@@ -41,52 +48,88 @@ describe Helpdesk::LeaderboardController do
 		response.should be_success
 	end 
 
-	it "should display Leaderboard Mini_list - 1" do
+	it "should display Leaderboard Mini_list" do
 		get :mini_list
 		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Most Valuable Player/
 		response.body.should =~ /Sharpshooter/
+		response.body.should =~ /#{@agent_2.name}/
+		response.body.should_not =~ /#{@agent_1.name}/
 		response.body.should_not =~ /Speed Racer/
 		response.body.should_not =~ /Customer Wow Champion/
 
 		#check if agent_2 is a Most Valuable Player
-		user_support_score.limit(1).first.user_id.should eql @agent_2.id
+		assigns[:mvp_scorecard].first.user_id.should eql @agent_2.id
+		user_support_score.limit(@limit).first.user_id.should eql @agent_2.id
 
 		#check if agent_2 is a Sharpshooter
-		user_support_score.first_call.limit(1).first.user_id.should eql @agent_2.id
+		assigns[:first_call_scorecard].first.user_id.should eql @agent_2.id
+		user_support_score.first_call.limit(@limit).first.user_id.should eql @agent_2.id
 
 		#check if  Mini_list Leaderboard Speed Racer is empty
+		assigns[:fast_scorecard].should be_empty
 		user_support_score.fast.should be_empty
 
 		#check if  Mini_list Leaderboard Customer Wow Champion is empty
+		assigns[:customer_champion_scorecard].should be_empty
 		user_support_score.customer_champion.should be_empty
 		response.should be_success
 	end
 
 	it "should display Group Leaderboard" do
-		create_support_score( { :user_id => @agent_1.id,:group_id => @group.id,:score_trigger=> FAST_RESOLUTION,:score => 700,
+		get :groups
+		response.body.should =~ /Group Leaderboard/
+		response.body.should =~ /Speed Racer/
+		response.body.should =~ /#{@group_1.name}/
+		response.body.should_not =~ /#{@group_2.name}/
+
+		#check if group is a Most Valuable Player in Groups Leaderboard
+		assigns[:mvp_scorecard].first.group_id.should eql @group_1.id
+		group_support_score.limit(@limit).first.group_id.should eql @group_1.id
+
+		#check if group is a Speed Racer is empty
+		assigns[:fast_scorecard].should be_empty
+		group_support_score.fast.should be_empty
+
+		#check if Groups Leaderboard Sharpshooter is empty
+		assigns[:first_call_scorecard].first.group_id.should eql @group_1.id
+		group_support_score.first_call.limit(@limit).first.group_id.should eql @group_1.id
+
+		#check if Groups Leaderboard Customer Wow Champion is empty
+		assigns[:customer_champion_scorecard].should be_empty
+		group_support_score.customer_champion.should be_empty
+		response.should be_success
+	end
+
+	it "should display Group Leaderboard with new scores" do
+		create_support_score( { :user_id => @agent_1.id,:group_id => @group_2.id,:score_trigger=> FAST_RESOLUTION,:score => 700,
 								:scorable_id=>@tkt_quest_2.id,:scorable_type=> "Helpdesk::Ticket" } )
 		
 		get :groups
 		response.body.should =~ /Group Leaderboard/
 		response.body.should =~ /Speed Racer/
-		response.body.should =~ /#{@group.name}/
+		response.body.should =~ /#{@group_1.name}/
+		response.body.should =~ /#{@group_2.name}/
 
 		#check if group is a Most Valuable Player in Groups Leaderboard
-		group_support_score.limit(1).first.group_id.should eql @group.id
+		assigns[:mvp_scorecard].first.group_id.should eql @group_2.id
+		group_support_score.limit(@limit).first.group_id.should eql @group_2.id
 
 		#check if group is a Speed Racer in Groups Leaderboard
-		group_support_score.fast.limit(1).first.user_id.should eql @agent_1.id
+		assigns[:fast_scorecard].first.group_id.should eql @group_2.id
+		group_support_score.fast.limit(@limit).first.group_id.should eql @group_2.id
 
 		#check if Groups Leaderboard Sharpshooter is empty
-		group_support_score.first_call.should be_empty
+		assigns[:first_call_scorecard].first.group_id.should eql @group_1.id
+		group_support_score.first_call.limit(@limit).first.group_id.should eql @group_1.id
 
 		#check if Groups Leaderboard Customer Wow Champion is empty
+		assigns[:customer_champion_scorecard].should be_empty
 		group_support_score.customer_champion.should be_empty
 		response.should be_success
 	end
 
-	it "should display Leaderboard Mini_list" do
+	it "should display Leaderboard Mini_list with new scores" do
 		create_support_score( { :user_id => @agent_2.id,:score_trigger=> HAPPY_CUSTOMER,:score => 250,:scorable_id=>@tkt_quest_2.id,
 								:scorable_type=> "Helpdesk::Ticket" } )
 
@@ -94,18 +137,24 @@ describe Helpdesk::LeaderboardController do
 		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Sharpshooter/
 		response.body.should =~ /Customer Wow Champion/
+		response.body.should =~ /#{@agent_1.name}/
+		response.body.should =~ /#{@agent_2.name}/
 
 		#check if agent_1 is a Most Valuable Player
-		user_support_score.limit(1).first.user_id.should eql @agent_1.id
+		assigns[:mvp_scorecard].first.user_id.should eql @agent_1.id
+		user_support_score.limit(@limit).first.user_id.should eql @agent_1.id
 
 		#check if agent_1 is a Speed Racer
-		user_support_score.fast.limit(1).first.user_id.should eql @agent_1.id
+		assigns[:fast_scorecard].first.user_id.should eql @agent_1.id
+		user_support_score.fast.limit(@limit).first.user_id.should eql @agent_1.id
 
 		#check if agent_2 is a Sharpshooter
-		user_support_score.first_call.limit(1).first.user_id.should eql @agent_2.id
+		assigns[:first_call_scorecard].first.user_id.should eql @agent_2.id
+		user_support_score.first_call.limit(@limit).first.user_id.should eql @agent_2.id
 
 		#check if agent_2 is a Customer Wow Champion
-		user_support_score.customer_champion.limit(1).first.user_id.should eql @agent_2.id
+		assigns[:customer_champion_scorecard].first.user_id.should eql @agent_2.id
+		user_support_score.customer_champion.limit(@limit).first.user_id.should eql @agent_2.id
 		response.should be_success
 	end
 

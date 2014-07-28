@@ -8,6 +8,8 @@ describe GroupsController do
 		@now = (Time.now.to_f*1000).to_i
 		@user_1 = add_test_agent(@account)
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
+		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(false)
 	end
 
 	before(:each) do
@@ -17,6 +19,7 @@ describe GroupsController do
 
 	after(:all) do
 		@test_group.destroy
+		@calendar.destroy
 	end
 
 	it "should go to the Groups index page" do
@@ -27,7 +30,7 @@ describe GroupsController do
 	end
 
 	it "should create a new Group" do
-		post :create, { :group => {:name => "Spec Testing Grp - json", :description => Faker::Lorem.paragraph, :business_calendar => 1,
+		post :create, { :group => { :name => "Spec Testing Grp - json", :description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
 									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
 									},
 						:format => 'json'
@@ -39,7 +42,7 @@ describe GroupsController do
 		put :update, {
 			:id => @test_group.id,
 			:group => {:name => "Updated: Spec Testing Grp #{@now}",
-				:description => Faker::Lorem.paragraph, :business_calendar => 1,
+				:description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
 				:agent_list => "#{@agent.id} , #{@user_1.id}",
 				:ticket_assign_type=> 0,
 				:assign_time => "2500", :escalate_to => @agent.id
@@ -59,7 +62,7 @@ describe GroupsController do
 		put :update, {
 			:id => @test_group.id,
 			:group => {:name => "Updated: Spec Testing Grp #{@now}",
-				:description => Faker::Lorem.paragraph, :business_calendar => 1,
+				:description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
 				:agent_list => "#{@user_1.id}",
 				:ticket_assign_type=> 0,
 				:assign_time => "2500", :escalate_to => @agent.id

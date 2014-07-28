@@ -1,4 +1,4 @@
-# require RAILS_ROOT+'/app/models/solution/folder.rb'
+# require Rails.root+'/app/models/solution/folder.rb'
 #In the gamification environment, Solution::Folder::VISIBILITY_KEYS_BY_TOKEN was not
 #accessible. It may be due to some screw up with the order of class loading.
 #So, temporarily put the 'require' here. Shan
@@ -6,7 +6,8 @@
 class Solution::Category < ActiveRecord::Base
 
   include Solution::Constants
-
+  include Cache::Memcache::Mobihelp::Solution
+  
   set_table_name "solution_categories"
   
   validates_presence_of :name,:account
@@ -29,6 +30,7 @@ class Solution::Category < ActiveRecord::Base
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
   after_create :assign_portal
+  after_destroy :clear_mobihelp_solutions_cache
 
   acts_as_list :scope => :account
 
@@ -69,4 +71,9 @@ class Solution::Category < ActiveRecord::Base
     portal_solution_category.save
   end
    
+  private 
+
+    def clear_mobihelp_solutions_cache
+      clear_solutions_cache(self.id)
+    end
 end

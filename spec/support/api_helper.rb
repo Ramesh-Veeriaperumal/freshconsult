@@ -38,11 +38,11 @@ module APIHelper
     clear_json
   end
 
-  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "attachments", "custom_field"]
+  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_name", "attachments", "custom_field"]
   
   NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments"]
 
-  TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails"]
+  TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_name"]
   
   CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
 
@@ -59,5 +59,9 @@ module APIHelper
   SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "name", "position", "updated_at", "visibility"]
 
   SOLUTION_ARTICLE_ATTRIBS = ["art_type", "created_at", "delta", "desc_un_html", "description", "folder_id", "id", "position", "seo_data", "status", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
+
+  SURVEY_ATTRIBS = ["agent_id", "created_at", "customer_id", "group_id", "id", "rating", "response_note_id", "survey_id", "surveyable_id", "surveyable_type", "updated_at"]
+
+  TIME_ENTRY_ATTRIBS = ["agent_email", "agent_name", "billable", "contact_email", "created_at", "customer_name", "executed_at", "id", "note", "start_time", "ticket_id", "timer_running", "timespent", "updated_at", "user_id", "workable_type"]
 
 end

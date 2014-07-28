@@ -77,8 +77,6 @@ describe Helpdesk::ConversationsController do
         tweet_note.is_note?.should be_true
         note_body = tweet_note.tweetable.note_body.body
         note_body.should eql(twitter_object[:text])
-        tweet_note.destroy
-        tweet.destroy
       end
     end
     
@@ -124,8 +122,6 @@ describe Helpdesk::ConversationsController do
         dm.is_note?.should be_true
         note_body = dm.tweetable.note_body.body
         note_body.should eql(dm_text)
-        tweet.destroy
-        dm.destroy
       end
     end
     
@@ -165,7 +161,7 @@ describe Helpdesk::ConversationsController do
         actor_id = comment_feeds.first["from"]["id"]
         # stub the calls
         Social::FacebookPosts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(fql_feeds)
+        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(fql_feeds, [])
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feeds)
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:put_comment).returns(sample_put_comment)
@@ -191,8 +187,6 @@ describe Helpdesk::ConversationsController do
         comment = Social::FbPost.find_by_post_id(put_comment_id)
         comment.should_not be_nil
         comment.is_note?.should be_true
-        fb_post.destroy
-        comment.destroy
       end
     end
     
@@ -228,8 +222,6 @@ describe Helpdesk::ConversationsController do
         dm_reply = Social::FbPost.find_by_post_id(reply_dm_id)
         dm_reply.should_not be_nil
         dm_reply.is_note?.should be_true
-        dm.destroy
-        dm_reply.destroy
       end
     end
     

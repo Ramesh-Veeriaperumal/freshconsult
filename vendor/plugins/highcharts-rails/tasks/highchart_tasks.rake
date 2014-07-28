@@ -12,10 +12,10 @@ namespace :highcharts_rails do
     
     to_copy.each do |script|
       # copy from
-    	destination = File.join(RAILS_ROOT, "/public/javascripts/", script)
+    	destination = File.join(Rails.root, "/public/javascripts/", script)
     	
     	# copy to
-    	source = File.join(RAILS_ROOT + "/vendor/plugins/highcharts-rails/javascripts/", script)
+    	source = File.join(Rails.root + "/vendor/plugins/highcharts-rails/javascripts/", script)
     	
     	# copy
     	unless FileUtils.cp_r(source, destination)
@@ -29,7 +29,7 @@ namespace :highcharts_rails do
   # uninstall
   desc 'Removes required scripts from the public/javascripts directory.'
   task :uninstall do
-    FileUtils.rm_r to_copy.collect { |script| RAILS_ROOT + "/public/javascripts/" + script  }
+    FileUtils.rm_r to_copy.collect { |script| Rails.root + "/public/javascripts/" + script  }
     
     puts "#{to_copy.to_sentence} removed successfully."
   end
