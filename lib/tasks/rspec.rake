@@ -22,7 +22,8 @@ FacebookTests = [
   "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
   "spec/lib/facebook/status_spec.rb",
-  "spec/controllers/social/facebook_pages_controller_spec.rb"
+  "spec/controllers/social/facebook_pages_controller_spec.rb",
+  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb"
 ]
 
 GnipTests = [
@@ -133,7 +134,9 @@ HelpdeskTests = [
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb",
   "spec/lib/webhook_helper_methods_spec.rb",
-  "spec/controllers/notification/product_notification_controller_spec.rb"
+  "spec/controllers/notification/product_notification_controller_spec.rb",
+  "spec/lib/workers/throttler_spec.rb",
+  "spec/lib/zen_import_redis_spec.rb"
 ]    
 
 BillingTests = [
