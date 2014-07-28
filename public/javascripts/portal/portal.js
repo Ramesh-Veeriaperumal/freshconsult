@@ -114,6 +114,8 @@
 				$($(this).data("toggleDom")).toggle()
 		})
 
+		$("[data-toggle='tooltip']").tooltip({ live: true });
+
 		// Data api for onclick change of html text inside the dom element
 		$("[data-toggle-text]").live("click", function(ev){
 			ev.preventDefault()
