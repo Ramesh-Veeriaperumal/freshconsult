@@ -28,6 +28,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"mobile/automation"
 	resource :"mobile/notification"
 	resource :"mobile/freshfone"
+    resource :"mobile/setting"    
     resource :"helpdesk/mobihelp_ticket_extra"
     # Social - Twitter
     resource :"social/twitter_handle",
