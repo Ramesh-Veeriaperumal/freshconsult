@@ -43,7 +43,11 @@ describe Support::NotesController do
     end
 
     log_in(new_contacts[0])
+    
     test_ticket = create_ticket({ :requester_id => new_contacts[0].id, :status => 2 })
+    test_ticket.cc_email = nil
+    test_ticket.save(false)
+
     log_in(new_contacts[1])
     Resque.inline = true
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_contacts[0].name} from #{new_company.name} company </p>"} },
@@ -55,7 +59,7 @@ describe Support::NotesController do
     flash[:notice].should eql "The note has been added to your ticket."
   end
 
-  it "any user with manage tickets permission can create note to any ticket" do
+  it "any user with manage tickets permission can create note with attachment to any ticket" do
     new_company = Factory.build(:customer, :name => Faker::Name.name)
     new_company.save
 
@@ -83,7 +87,11 @@ describe Support::NotesController do
 
     log_in(new_agent)
     Resque.inline = true
-    post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_agent.name} </p>"} },
+    post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_agent.name} </p>"},
+                                      :attachments =>[{ :resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png'),
+                                                        :description => Faker::Lorem.characters(10) 
+                                                      }]
+                                    },
                   :ticket_id => test_ticket.display_id
     Resque.inline = false
     client_manager_note = @account.tickets.find(test_ticket.id).notes.last
