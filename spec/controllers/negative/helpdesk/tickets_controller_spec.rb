@@ -356,4 +356,16 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_id(tkt1.id).should_not be_nil
     @account.tickets.find_by_id(tkt2.id).should_not be_nil
   end
+
+  it "should render new and my open view when filter doesnt exist" do
+    # Create two new tickets with open and close status. Ticket with closed status should not exist in the resulting view
+    tkt1 = create_ticket({ :status => 2, :subject => "Open ticket to test view generated for non existing filter name" }, @group)
+    tkt2 = create_ticket({ :status => 5, :subject => "Closed ticket to test view generated for non existing filter name" }, @group)
+    get :index, :filter_name => "no_viu_xists"
+    response.should render_template "helpdesk/tickets/index.html.erb"
+    response.body.should =~ /Filter Tickets/
+    response.body.should =~ /#{tkt1.subject}/
+    response.body.should_not =~ /#{tkt2.subject}/
+  end
+
 end
