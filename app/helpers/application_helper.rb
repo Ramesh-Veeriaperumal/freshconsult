@@ -874,14 +874,11 @@ module ApplicationHelper
     end
     
     def social_tab
-      feature_enabled = feature?(:social_revamp)
       view_social_tab = can_view_social?
       handles_present = handles_associated?
-      if !feature_enabled && handles_present
-        ['/social/twitters/feed', :social,     view_social_tab ]
-      elsif feature_enabled && handles_present
+      if handles_present
         ['/social/streams', :social,     view_social_tab]
-      elsif feature_enabled  && !handles_present
+      elsif !handles_present
         ['/social/welcome', :social,     can_view_welcome_page?]
       else
         ['#', :social, false]
@@ -922,7 +919,7 @@ module ApplicationHelper
 
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
-    link = current_account.features?(:social_revamp) ? "<a href='/admin/social/streams' target='_blank'>" : "<a href='/social/twitters' target='_blank'>"
+    link = "<a href='/admin/social/streams' target='_blank'>"
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible.
         It looks like username or password has been changed recently. Kindly
