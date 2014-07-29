@@ -10,9 +10,11 @@ describe Admin::CannedResponses::ResponsesController do
 		@group = create_group(@account, {:name => "Response grp #{@now}"})
 		@folder_id = @account.canned_response_folders.find_by_is_default(true).id
 
+		file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
 	    # Create canned responses
 		@test_response_1 = create_response( {:title => "New Canned_Responses Hepler",:content_html => "DESCRIPTION: New Canned_Responses Hepler",
-			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} )
+			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+			:attachments => {:resource => file, :description => "" } })
 		@test_response_2 = create_response( {:title => "New Canned_Responses Hepler #{@now}",:content_html => "DESCRIPTION: New Canned_Responses Hepler #{@now}",
 			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} )
 		@test_cr_folder_1 = create_cr_folder({:name => "New CR Folder Helper #{@now}"})

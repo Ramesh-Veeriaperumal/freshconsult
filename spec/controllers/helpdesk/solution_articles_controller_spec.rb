@@ -28,8 +28,13 @@ describe Solution::ArticlesController do
   end
 
   it "should render a show page of an article" do
-    get :show, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
-    response.body.should =~ /#{@test_article.title}/
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
+    article_with_attachments = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1",
+      :attachments => { :resource => file, :description => Faker::Lorem.characters(10)}
+    } )
+    get :show, :id => article_with_attachments.id, :category_id => @test_category.id, :folder_id => @test_folder.id
+    response.body.should =~ /#{article_with_attachments.title}/
     response.should render_template("solution/articles/show")    
   end
 
