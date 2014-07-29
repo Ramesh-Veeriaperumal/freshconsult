@@ -14,7 +14,11 @@ describe AccountsController do
     signup_params = { "callback"=>"", "account"=>{"name"=>"RSpec Test", "domain"=>"rspectest"}, 
       "utc_offset"=>"5.5", "user"=>{"email"=>admin_email, "name"=>admin_name} }
     
+    Resque.inline = true 
+    Billing::Subscription.any_instance.stubs(:create_subscription).returns(true)
     post :new_signup_free, signup_params
+    Resque.inline = false
+    Billing::Subscription.any_instance.unstub(:create_subscription)
     
     response.should be_success
     signup_status = JSON.parse(response.body)

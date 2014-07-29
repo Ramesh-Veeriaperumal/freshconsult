@@ -504,10 +504,42 @@ describe Helpdesk::TicketsController do
       ticket_1 = create_ticket
       ticket_2 = create_ticket
       ticket_3 = create_ticket
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
       get :prevnext, :id => ticket_2.display_id
-      assigns(:previous_ticket).should be_eql(ticket_1.display_id)
-      assigns(:next_ticket).should be_eql(ticket_3.display_id)
+      assigns(:previous_ticket).to_i.should be_eql(ticket_3.display_id)
+      assigns(:next_ticket).to_i.should be_eql(ticket_1.display_id)
     end
+
+    it "should load the next ticket of a ticket from the adjacent page" do
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      ticket = assigns(:items).first
+      30.times do |i|
+        create_ticket
+      end
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:next_ticket).to_i.should be_eql(ticket.display_id)
+    end
+
+    it "should load the next and previous tickets of a ticket with no filters" do
+      30.times do |i|
+        t = create_ticket
+      end
+      @request.cookies['filter_name'] = "0"
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => @account.id, 
+                                                          :user_id => @agent.id, 
+                                                          :session_id => session.session_id})
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:previous_ticket).to_i.should be_eql(last_ticket.display_id + 1)
+    end
+
 
     # Empty Trash
     it "should empty(delete) all tickets in trash view" do
