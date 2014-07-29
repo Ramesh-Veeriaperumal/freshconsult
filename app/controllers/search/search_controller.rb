@@ -163,7 +163,7 @@ class Search::SearchController < ApplicationController
 				render :partial => 'search/search_sort.rjs'
 			end
 			format.json do
-				render :json => @result_json[:results]
+				render :json => @result_json
 			end
 			format.nmobile do
 				json="[" 
