@@ -1,5 +1,6 @@
 require 'spec_helper'
-include ContactsImportHelper
+
+#include ContactImportHelper
 
 
 describe Workers::Import::ContactsImportWorker do 
