@@ -9,7 +9,7 @@ describe Admin::CannedResponses::ResponsesController do
 		@now = (Time.now.to_f*1000).to_i
 		@group = create_group(@account, {:name => "Response grp #{@now}"})
 		@folder_id = @account.canned_response_folders.find_by_is_default(true).id
-
+		stub_s3_writes
 		file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
 	    # Create canned responses
 		@test_response_1 = create_response( {:title => "New Canned_Responses Hepler",:content_html => "DESCRIPTION: New Canned_Responses Hepler",
@@ -22,6 +22,7 @@ describe Admin::CannedResponses::ResponsesController do
 
 	before(:each) do
 		@request.env['HTTP_REFERER'] = '/admin/canned_responses/folders'
+		stub_s3_writes
 		log_in(@agent)
 	end
 

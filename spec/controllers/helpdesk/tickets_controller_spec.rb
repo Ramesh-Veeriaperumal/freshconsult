@@ -14,6 +14,7 @@ describe Helpdesk::TicketsController do
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
   end
 
   it "should go to the index page" do
