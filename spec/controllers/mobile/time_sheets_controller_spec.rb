@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Helpdesk::TimeSheetsController do	
   self.use_transactional_fixtures = false
