@@ -23,7 +23,6 @@ describe Admin::DataExportController do
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
 
     FileUtils.stubs(:remove_dir)
-    FileUtils.stubs(:rm_f)
 
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_forums_data)
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_solutions_data)
@@ -37,15 +36,11 @@ describe Admin::DataExportController do
 
   after(:each) do
     Resque.inline = false
-    @account.reload
-    @account.data_exports.destroy_all
   end
 
   after(:all) do
     out_dir = "#{Rails.root}/tmp/#{@account.id}" 
-    zip_file_path = "#{Rails.root}/tmp/#{@account.id}.zip"
     FileUtils.remove_dir(out_dir, true)
-    FileUtils.rm_f(zip_file_path)
   end
 
   it 'should export users data' do
@@ -148,5 +143,17 @@ describe Admin::DataExportController do
     data_export = @account.data_exports.data_backup[0]
     get :download, { :source => data_export.source, :token => data_export.token }
     response.should redirect_to "helpdesk/attachments/#{data_export.attachment.id}"
+  end
+
+  it 'should not initiate export when other exports are in progress' do
+    DataExport.any_instance.stubs(:completed?).returns(false)
+    Helpdesk::ExportDataWorker.any_instance.unstub(:export_groups_data)
+    post :export
+    response.should redirect_to "account"
+  end
+
+  it 'should redirect to support home path if download url is not valid' do
+    get :download, { :source => "Random source", :token => "random token" }
+    response.should redirect_to "support/home"
   end
 end
