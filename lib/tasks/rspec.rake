@@ -136,7 +136,8 @@ HelpdeskTests = [
   "spec/lib/webhook_helper_methods_spec.rb",
   "spec/controllers/notification/product_notification_controller_spec.rb",
   "spec/lib/workers/throttler_spec.rb",
-  "spec/lib/zen_import_redis_spec.rb"
+  "spec/lib/zen_import_redis_spec.rb",
+  "spec/lib/detect_user_language_spec.rb"
 ]    
 
 BillingTests = [
