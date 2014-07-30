@@ -116,7 +116,6 @@ module Search::TicketSearch
       agents.push([0, I18n.t("helpdesk.tickets.add_watcher.me") ])
       agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })
       agents.push([-1, I18n.t("filter_options.unassigned") ])
-      agents.delete(agents.find{|agent| agent[0]==User.current.id})
       return agents
     end
 
