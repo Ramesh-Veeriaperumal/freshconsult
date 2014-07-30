@@ -14,11 +14,7 @@ describe Helpdesk::TicketsController do
   end
 
   before(:each) do
-    request.host = @account.full_domain
-    request.user_agent = "Freshdesk_Native_Android"
-    request.accept = "application/json"
-    request.env['HTTP_AUTHORIZATION'] =  ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token,"X")
-    request.env['format'] = 'json'
+    api_login
   end
 
   it "should get the single ticket" do
@@ -55,12 +51,36 @@ describe Helpdesk::TicketsController do
     json_response["success_message"].should be_eql("Scenario Executed")
   end
 
-  it "should delete ticket forever" do
-    @test_ticket.deleted = 1
+  it "should update ticket properties" do
+    @test_ticket.ticket_type = "Question"
     @test_ticket.save!
-    delete 'delete_forever', {"id"=> @test_ticket.display_id, "format"=>"json"}
+    @test_ticket.ticket_type.should be_eql("Question")
+    @test_ticket.status.should be_eql(2)
+    put 'update_ticket_properties', {"format"=>"json", "helpdesk_ticket"=>{"status"=>"3", "ticket_type"=>"Incident"}, "id"=>@test_ticket.display_id}
+    json_response.should include("success","success_message")
+    json_response["success"].should be_true
+    json_response["success_message"].should be_eql("The ticket has been updated.")
+    @test_ticket.reload
+    @test_ticket.ticket_type.should be_eql("Incident")
+    @test_ticket.status.should be_eql(3)
+  end
+
+  it "should delete ticket forever" do
+    test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
+    test_ticket.deleted = 1
+    test_ticket.save!
+    delete 'delete_forever', {"id"=> test_ticket.display_id, "format"=>"json"}
     json_response.should include("success","success_message")
     json_response["success"].should be_true
     json_response["success_message"].should be_eql("1 ticket was deleted.")
+  end
+
+  it "should close a single ticket" do
+    @test_ticket.status = 2
+    @test_ticket.save!
+    put 'close', {"format" => "json", "id" => @test_ticket.display_id, "helpdesk_ticket"=>{"status"=>"5"}  }
+    json_response.should include("success","success_message")
+    json_response["success"].should be_true
+    json_response["success_message"].should be_eql("The ticket has been closed.")
   end
 end

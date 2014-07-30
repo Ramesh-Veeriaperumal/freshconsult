@@ -18,6 +18,12 @@ describe TicketFieldsController do
     response.body.should =~ /Ticket Fields/
   end
 
+  it "should go to the ticket fields json" do
+    get 'index', :format => "json"
+    data_json = JSON.parse(response.body)
+    (data_json[0]['ticket_field']['label']).should be_eql("Requester")
+  end
+
   it "should create a custom field" do
     put :update, :jsonData => @default_fields.push({:type => "paragraph", 
                                                     :field_type => "custom_paragraph", 
@@ -343,5 +349,11 @@ describe TicketFieldsController do
     parent_custom_field = @account.ticket_fields.find_by_label(labels[0])
     parent_custom_field.should be_an_instance_of(Helpdesk::TicketField)
     parent_custom_field.level_three_present.should eql false
+  end
+
+  it "should go to the ticket fields xml" do
+    get 'index', :format => "xml"
+    data_xml = Hash.from_trusted_xml(response.body)
+    (data_xml['helpdesk_ticket_fields'][0]['label_in_portal']).should be_eql("Requester")
   end
 end

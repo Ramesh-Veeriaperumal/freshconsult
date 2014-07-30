@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Helpdesk::CannedResponsesController do
 	self.use_transactional_fixtures = true
@@ -16,10 +16,7 @@ describe Helpdesk::CannedResponsesController do
 	end
 
 	before(:each) do
-		request.host = @account.full_domain
-		request.user_agent = "Freshdesk_Native_Android"
-		request.accept = "application/json"
-		request.env['HTTP_AUTHORIZATION'] =  ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token,"X")
+		api_login
 	end
 
 	it "should return canned responses array" do

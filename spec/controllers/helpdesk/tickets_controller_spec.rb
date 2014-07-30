@@ -14,6 +14,7 @@ describe Helpdesk::TicketsController do
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
   end
 
   it "should go to the index page" do
@@ -21,7 +22,7 @@ describe Helpdesk::TicketsController do
     response.should render_template "helpdesk/tickets/index.html.erb"
     response.body.should =~ /Filter Tickets/
   end
-  
+    
   # Added this test case for covering meta_helper_methods.rb
   it "should view a ticket created from portal" do
     ticket = create_ticket({:status => 2},@group)
@@ -40,8 +41,9 @@ describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
   
-  # Added this test case for covering note_actions.rb
-  it "should view a ticket with notes(having to_emails)" do
+  # Added this test case for covering note_actions.rb and attachment_helper.rb
+  it "should view a ticket with notes(having to_emails & attachments)" do
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
     ticket = create_ticket({:status => 2},@group)
     agent_details = "#{@agent.name} #{@agent.email}"
     note = ticket.notes.build(
@@ -52,11 +54,14 @@ describe Helpdesk::TicketsController do
         :account_id => ticket.account.id,
         :user_id => ticket.requester.id
     )
+    note.attachments.build(:content => file, 
+                           :description => Faker::Lorem.characters(10) , 
+                           :account_id => note.account_id)
     note.save_note
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
-
+  
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
@@ -499,10 +504,42 @@ describe Helpdesk::TicketsController do
       ticket_1 = create_ticket
       ticket_2 = create_ticket
       ticket_3 = create_ticket
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
       get :prevnext, :id => ticket_2.display_id
-      assigns(:previous_ticket).should be_eql(ticket_1.display_id)
-      assigns(:next_ticket).should be_eql(ticket_3.display_id)
+      assigns(:previous_ticket).to_i.should eql ticket_3.display_id
+      assigns(:next_ticket).to_i.should eql ticket_1.display_id
     end
+
+    it "should load the next ticket of a ticket from the adjacent page" do
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      ticket = assigns(:items).first
+      30.times do |i|
+        create_ticket
+      end
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:next_ticket).to_i.should eql ticket.display_id
+    end
+
+    it "should load the next and previous tickets of a ticket with no filters" do
+      30.times do |i|
+        t = create_ticket
+      end
+      @request.cookies['filter_name'] = "0"
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => @account.id, 
+                                                          :user_id => @agent.id, 
+                                                          :session_id => session.session_id})
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
+    end
+
 
     # Empty Trash
     it "should empty(delete) all tickets in trash view" do
