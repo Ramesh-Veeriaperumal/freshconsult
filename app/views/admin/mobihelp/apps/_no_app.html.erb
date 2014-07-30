@@ -1,44 +1,10 @@
-<%= content_tag :h5, t('admin.mobihelp.apps.index.no_app.heading1'), :class => "lead" %>
-<div class="row-fluid index-app-container">
-  <div class="span4 index-app-span">
-    <div class="common-icon-download app-icon"></div>
-    <div class="app-def">
-      <h4><%= t('admin.mobihelp.apps.index.no_app.download_heading') %></h4>
-      <div class="text-info">
-        <p>
-          <a class="common-icon-android_blue app-image"></a>
-          <a href='https://s3.amazonaws.com/assets.mobihelp.freshpo.com/sdk/mobihelp_sdk_android.zip'><%= t('admin.mobihelp.apps.index.no_app.download_android') %></a>
-        </p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="span4 index-app-span">
-    <div class="common-icon-new app-icon"></div> 
-    <p class="app-def">
-      <h4><%= t('admin.mobihelp.apps.index.no_app.add_heading') %></h4>
-    </p>
-  </div>
-  
-  <div class="span4 index-app-span">
-    <div class="common-icon-configure app-icon"></div>
-    <p class="app-def">
-      <h4><%= t('admin.mobihelp.apps.index.no_app.configure_heading') %></h4>
-      <a href='http://developers.freshdesk.com'><%= t('admin.mobihelp.apps.index.no_app.configure') %></a>
-    </p>
-  </div>
-</div>
+<p><%=t('admin.mobihelp.apps.helpnote.content1.info1')%> <%=t('admin.mobihelp.apps.helpnote.content1.info2')%></p>
+<p><%=t('admin.mobihelp.apps.helpnote.content1.info3')%></p>
 
 <div class="row-fluid create-container">
    <div class="span6 create-btn"> 
-    <span> Create New 
-
-      <% Mobihelp::App::PLATFORM_NAMES_BY_ID.each do |k,v| %>
-        <% unless k ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
-          <%= link_to v, new_admin_mobihelp_app_path(:platform => k)%>
-        <%end%>
-      <% end %>
-      App
+    <span>
+      <a href='http://developers.freshdesk.com'><%= t('admin.mobihelp.apps.index.no_app.sdk_and_guide')%></a>
     </span>
    </div>
 </div>

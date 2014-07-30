@@ -611,15 +611,7 @@ en:
           new_app: New App
           no_app:
             title: Welcome to Mobihelp
-            heading1: You are 3 steps away from adding in-app support to your App
-            heading2: Get the latest SDK for iOS and Android
-            download_heading: Download Mobihelp
-            download_android: Download Android SDK
-            download_apple: Download iOS SDK
-            add_heading: Add Mobihelp to your App
-            learn: Learn More
-            configure_heading: Configure Mobihelp
-            configure: Configure
+            sdk_and_guide: Mobihelp SDK and Integration guide
         new:
           title: New Mobihelp App
         edit:
