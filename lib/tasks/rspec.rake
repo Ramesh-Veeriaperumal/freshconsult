@@ -138,7 +138,8 @@ HelpdeskTests = [
   "spec/lib/workers/throttler_spec.rb",
   "spec/lib/zen_import_redis_spec.rb",
   "spec/lib/detect_user_language_spec.rb",
-  "spec/lib/contacts_import_worker_spec.rb"
+  "spec/lib/contacts_import_worker_spec.rb",
+  "spec/controllers/solution_uploaded_images_controller_spec.rb"
 ]    
 
 BillingTests = [
