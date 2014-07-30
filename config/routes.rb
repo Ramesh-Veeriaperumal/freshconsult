@@ -1,7 +1,5 @@
  ActionController::Routing::Routes.draw do |map|
 
-  map.connect '/visitor/load/:id.:format', :controller => 'chats', :action => 'load', :conditions => { :method => :get }
-
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
 
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
