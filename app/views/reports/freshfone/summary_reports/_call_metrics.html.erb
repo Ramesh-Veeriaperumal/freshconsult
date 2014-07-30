@@ -79,7 +79,7 @@
     </div>
     <div class="report-summary-footer">
       <ul class="inline">
-        <li> <label class='tooltip' title='<%=t("reports.freshfone.includes_transfer")%>'><%=t('reports.freshfone.num_of_calls')%></label> </li>
+        <li> <label><%=t('reports.freshfone.num_of_calls')%></label> </li>
         <li> <label><%=t('reports.freshfone.total_answered')%></label> </li>
         <li> <label><%=t('reports.freshfone.total_unanswered_calls')%></label> </li>
         <% if @call_type.to_i != Freshfone::Call::CALL_TYPE_HASH[:outgoing] %>
