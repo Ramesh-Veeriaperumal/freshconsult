@@ -275,8 +275,8 @@ var FreshfoneSocket;
 				this.$freshfoneAvailableAgentsListContainer.hide();
 					$.ajax({
 						data: { "existing_users_id": this.onloadUserarray.pluck('id') },
+            dataType: "script",
 						url : freshfone.transfer_list_path
-
 						// error: function () {
 						// 	$recentCalls.removeClass('loading-small sloading');
 						// 	$recentCallsContainer.show();
