@@ -119,6 +119,7 @@ Spork.prefork do
     config.include MobileHelper, :type => :controller
     config.include CustomMatcher
     config.include PerfHelper
+    config.include DynamicTemplateHelper
 
     
     config.before(:all) do
