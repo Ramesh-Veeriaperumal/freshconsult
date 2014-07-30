@@ -1,7 +1,5 @@
  ActionController::Routing::Routes.draw do |map|
 
-  map.connect '/visitor/load/:id.:format', :controller => 'chats', :action => 'load', :conditions => { :method => :get }
-
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
 
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -650,6 +648,7 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
+    mobile.resources :settings,  :only =>:index
   end
  
   map.namespace :mobihelp do |mobihelp|

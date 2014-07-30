@@ -19,15 +19,28 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :load_user_by_phone, :only => :caller_data
 	before_filter :set_dial_call_sid, :only => [:in_call, :call_transfer_success, :direct_dial_success]
 	before_filter :reset_outgoing_count, :only => [:status]
+  before_filter :set_native_mobile, :only => [:caller_data]
+
 
 	def caller_data
-		render :json => {
-      :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
-                           :locals => { :user => @user }),
-      :user_name => (@user || {})[:name],
-      :user_id => (@user || {})[:id],
-      :call_meta => call_meta
-    }
+    call_meta_data = call_meta
+    respond_to do |format|
+      format.nmobile {
+        render :json => {
+          :user_name => (@user || {})[:name],
+          :country => call_meta_data.present? ? call_meta_data[:country] : nil
+        }
+      }
+      format.js {
+				render :json => {
+     		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
+                          :locals => { :user => @user }),
+		      :user_name => (@user || {})[:name],
+  	 		  :user_id => (@user || {})[:id],
+          :call_meta => call_meta_data
+    		}
+      }
+	  end
 	end
 	
 	def in_call

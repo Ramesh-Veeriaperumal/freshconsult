@@ -9,7 +9,7 @@ class Freshfone::CallFlow
   attr_accessor :available_agents, :busy_agents, :params, :current_account, :current_number,
                 :current_user, :welcome_menu, :call_initiator, :transfered,
                 :outgoing_transfer, :call_actions, :numbers, :hunt_options
-  delegate :record?, :non_business_hour_calls?, :ivr, :to => :current_number
+  delegate :record?, :non_business_hour_calls?, :ivr, :direct_dial_limit, :to => :current_number
   delegate :freshfone_users, :to => :current_account
 	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :block_incoming_call,
@@ -118,11 +118,8 @@ class Freshfone::CallFlow
     end
 
     def direct_dialled_number_busy?(number)
-      calls_today = current_account.freshfone_calls.active_calls
-      calls_today.each do |call|
-        return true if call.direct_dial_number == number
-      end
-      false
+      busy_dd_calls = current_account.freshfone_calls.active_calls.find_all_by_direct_dial_number(number)
+      busy_dd_calls.count >= direct_dial_limit
     end
 
     def all_agents_busy?

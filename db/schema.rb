@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140714073940) do
+ActiveRecord::Schema.define(:version => 20140725083159) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -805,6 +805,7 @@ ActiveRecord::Schema.define(:version => 20140714073940) do
     t.boolean  "voicemail_active",                                                      :default => false
     t.text     "non_business_hours_message"
     t.string   "name"
+    t.integer  "direct_dial_limit",                                                       :default => 1
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"

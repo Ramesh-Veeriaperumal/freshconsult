@@ -231,12 +231,17 @@ development:
   
   # Enable textmate links
   # textmate: true
+  autostart:
+    blacklisted_executables: 'irb,rspec,spec'
 
 test:
   <<: *default_settings
   # It almost never makes sense to turn on the agent when running
   # unit, functional or integration tests or the like.
   monitor_mode: false
+
+  autostart:
+    blacklisted_executables: 'irb,rspec,spec'
 
 # Turn on the agent in production for 24x7 monitoring.  NewRelic
 # testing shows an average performance impact of < 5 ms per

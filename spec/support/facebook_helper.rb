@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
+require 'spec_helper'
 
 module FacebookHelper
   
@@ -153,7 +153,6 @@ module FacebookHelper
       "privacy" => {
         "value" => ""
       }, 
-      "type" => "status", 
       "status_type" =>  "mobile_status_update", 
       "created_time" => "2014-04-28T12:06:36+0000", 
       "updated_time" => "2014-04-28T12:06:36+0000"

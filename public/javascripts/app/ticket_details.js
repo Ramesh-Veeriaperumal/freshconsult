@@ -799,10 +799,8 @@ var scrollToError = function(){
 					ev.preventDefault();
 					blockConversationForm(_form);
 					if(propertiesForm.data('updated')) {
-		      			submitTicketProperties(function() {
-		      				submitNewConversation(_form, ev);
-		      			})
-		      		}	
+	      			submitNewConversation(_form, ev, submitTicketProperties);
+	      		}	
 				} else {
 					ev.preventDefault();
 					scrollToError();

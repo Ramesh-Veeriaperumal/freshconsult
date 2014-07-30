@@ -36,4 +36,31 @@ describe Admin::AccountAdditionalSettingsController do
 		response.session[:flash][:notice].should eql "Failed to update Bcc email"
 		response.redirected_to.should eql "/admin/email_configs"
 	end
+	
+	context "For Dynamic Content feature" do
+		before(:all) do
+			@account.features.dynamic_content.create unless @account.features?(:dynamic_content)
+			@template_eng = create_dynamic_notification_template({:language => :en, :email_notification_id => 3})
+			@template_ca = create_dynamic_notification_template({:language => :ca, :email_notification_id => 2})
+			@account.account_additional_settings.update_attributes({:supported_languages => [:en, :tr]})
+		end
+		
+		before(:each) do
+			@account.reload
+		end
+	
+		it "should add or remove the support languages" do
+			changed_languages = [:fi,:cs,:ca]
+			put :update, {
+				:account_additional_settings => {
+					:supported_languages =>  [:fi,:cs,:ca]
+				}
+			}
+			@account.reload
+			@account.account_additional_settings.supported_languages.should eql(changed_languages)
+			@account.dynamic_notification_templates.find_by_language(@template_eng.language).active.should be_false
+			@account.dynamic_notification_templates.find_by_language(@template_ca.language).active.should be_true
+			response.redirected_to.should eql "/admin/email_configs"
+		end
+	end
 end

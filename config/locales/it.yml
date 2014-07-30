@@ -6,7 +6,7 @@ it:
   or: o
   reorder_rules: Riordina regole attive
   plain_yes: Sì
-  plain_no: No
+  plain_no: "No"
   unspam: Non spam
   unblock: Inserisci in whitelist
   enabled: Abilitato

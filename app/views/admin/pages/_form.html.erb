@@ -8,8 +8,12 @@
 			"data-fullscreen-title" => "<span class='light'>Editing</span> #{t("portal_pages.pages.#{@portal_page.token}")}",
             "data-fullscreen-actions" => "#page_btns .portal-form-actions" %>
 </p>
-<hr />
-<div id="page_btns">
+
+<% if [:ticket_view, :article_view, :article_list, :topic_view, :topic_list].include?(@portal_page.token) %>
+	<p class="help-text"> <%=t("portalcss.layout_pages.page_preview_message.#{@portal_page.token}")%> </p>
+<% end %>
+
+<div id="page_btns" class="mt15">
     <%= render :partial => "/admin/shared/customization_buttons", 
       :locals => { :page_id => params[:id], :page_type => @portal_page.page_type, :type => :page } %>
 </div>

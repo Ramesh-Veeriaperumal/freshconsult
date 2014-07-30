@@ -3,19 +3,26 @@ require 'spec_helper'
 include FacebookHelper
 
 describe Social::FacebookPosts do
+  self.use_transactional_fixtures = false
   
   before(:all) do
     @fb_page = create_test_facebook_page(@account)
   end
   
- 
+  before(:each) do
+    time = Time.now-1.hour
+    @fb_page.update_attributes(:fetch_since => time.to_i)
+  end 
+
   it "should create a ticket when a company post arrives and import company post is enabled" do   
     @fb_page.update_attributes(:import_company_posts => true)
     
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, [])
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))  
+    sample_feed = sample_facebook_feed(feed_id)
+    sample_feed["type"] = "video"
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id),  sample_feed)  
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
@@ -34,13 +41,14 @@ describe Social::FacebookPosts do
     @fb_page.update_attributes(:import_company_posts => true)
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true, 1)
+    facebook_feed.first[:type] = "photo"
     
     comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
     
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, comment_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id), sample_facebook_feed((feed_id)))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id), sample_facebook_feed(feed_id)) 
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
@@ -70,7 +78,7 @@ describe Social::FacebookPosts do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, false)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, [])
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]),  sample_facebook_feed(feed_id))  
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
@@ -95,7 +103,7 @@ describe Social::FacebookPosts do
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
     
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, comment_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]),  sample_facebook_feed(feed_id))  
     
     fb_posts =  Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
@@ -124,7 +132,7 @@ describe Social::FacebookPosts do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, false)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, [])
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]),  sample_facebook_feed(feed_id))  
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
@@ -150,6 +158,5 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should be_nil
-   end
-  
+  end
 end

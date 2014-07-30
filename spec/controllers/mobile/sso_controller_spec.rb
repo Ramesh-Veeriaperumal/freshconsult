@@ -9,10 +9,7 @@ describe SsoController do
   end
 
   before(:each) do
-    request.host = @account.full_domain
-    request.user_agent = "Freshdesk_Native_Android"
-    request.accept = "application/json"
-    request.env['format'] = 'json'
+    api_login
   end
 
   it "should create new user session if user hasn't logged in" do

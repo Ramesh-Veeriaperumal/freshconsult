@@ -13,3 +13,5 @@ MailboxConfig = YAML.load_file(File.join(Rails.root, 'config', 'mailbox.yml'))[R
 BraintreeConfig = YAML.load_file(File.join(Rails.root, 'config', 'braintree.yml'))
 
 RateLimitConfig = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
+
+MobileConfig = YAML.load_file(File.join(Rails.root, 'config', 'mobile_config.yml'))

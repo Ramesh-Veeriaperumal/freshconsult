@@ -1,10 +1,15 @@
 class ThirdCRM
 
   COOKIE_NAME = "_mkto_trk"
+  ANALYTICS_COOKIE = "__utmz"
 
   API_KEYS = AppConfig['marketo'][Rails.env]
   PRODUCT_NAME = "Freshdesk"
   
+  ANALYTICS_DATA = {
+    :GA_Campaign__c => :utmccn
+  }
+
   def initialize
     @client = Marketo::Client.new_marketo_client(
       API_KEYS['access_key'], API_KEYS['secret_key'], API_KEYS['api_subdomain'], API_KEYS['api_version'] )
@@ -12,7 +17,11 @@ class ThirdCRM
 
   def self.fetch_cookie_info(cookies)
     begin
-      cookies.fetch(COOKIE_NAME, "")
+      {
+        :marketo => cookies.fetch(COOKIE_NAME, ""), 
+        :analytics => cookies.fetch(ANALYTICS_COOKIE, "") 
+        # :analytics => "255757067.1401950302.1.1.utmccn=(referral)|utmcsr=freshdesk.com|utmcct=/resources/|utmcmd=referral"
+      }
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
@@ -20,15 +29,16 @@ class ThirdCRM
 
   def add_signup_data(account, options = {})
     @signup_id = options[:signup_id]
-    add_lead_to_crm(lead_info(account), options[:marketo_cookie])
+    add_lead_to_crm(lead_info(account, options[:analytics_cookie]), options[:marketo_cookie])    
   end
 
-  def lead_info(account)
+  def lead_info(account, analytics_data)
     account_info = user_info(account)
     subscription_info = subscription_info(account.subscription)
     misc = account.conversion_metric ? signup_info(account.conversion_metric) : {}
+    analytics = analytics_data.present? ? analytics_info(analytics_data) : {}
     
-    account_info.merge(subscription_info).merge(misc)
+    account_info.merge(subscription_info).merge(misc).merge(analytics)
   end
 
 
@@ -72,6 +82,16 @@ class ThirdCRM
 
     def tld(landing_url)
       TOP_LEVEL_DOMAINS[TLDOMAINS.select { |tld| landing_url.include?(tld) }.to_s]
+    end
+
+    def analytics_info(analytics_data)
+      ANALYTICS_DATA.inject({}) { |h, (k, v)| h[k] = fetch_info(analytics_data, v); h } 
+    end
+
+    def fetch_info(analytics_data, dimension)
+      match = analytics_data.match(/#{dimension.to_s}=[^\|]*/).to_s
+      match.slice!(%(#{dimension.to_s}=))
+      match
     end
     
 
