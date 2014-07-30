@@ -50,7 +50,7 @@ class Post < ActiveRecord::Base
     :spam => :unpublished_spam,
     :waiting => :waiting_for_approval
   }
-  attr_accessor :request_params
+  attr_accessor :request_params, :portal
 
   def to_xml(options = {})
     options[:except] ||= []
@@ -89,7 +89,7 @@ class Post < ActiveRecord::Base
 
   def monitor_topic
     monitorship = topic.monitorships.find_by_user_id(user.id)
-    topic.monitorships.create(:user_id => user.id, :active => true) unless monitorship
+    topic.monitorships.create(:user_id => user.id, :active => true, :portal_id => portal) unless monitorship
   end
 
   def toggle_answer
