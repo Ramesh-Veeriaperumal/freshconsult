@@ -5389,6 +5389,7 @@ en:
       canceled: "Canceled"
       failed: "Failed"
       in_progress: "In progress"
+      voicemail: "Voicemail"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
       suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"

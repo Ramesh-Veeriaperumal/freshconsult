@@ -98,7 +98,7 @@ module Freshfone::Jobs
 			end
 
 			def self.set_status_voicemail     
- 				@call.update_status({:DialCallStatus => Freshfone::Call::CALL_STATUS_HASH[:voicemail]})
+ 				@call.update_status({:DialCallStatus => "voicemail"})
  				@call.save
  			end
 
