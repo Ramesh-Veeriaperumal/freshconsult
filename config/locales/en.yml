@@ -4812,6 +4812,7 @@ en:
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        includes_transfer: "Includes transferred calls"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
