@@ -3,7 +3,7 @@
 <div id="tickets-expanded" class="contact_tickets row-fluid">
 	<div class="detailed_view">
 		<% if @user_tickets.blank? %>
-			<%= "#{t('contacts.info5')}" %>
+			<%= t('contacts.info5', :nick_name => h(@ticket.requester.display_name)) %>
 		<% else %>
 			<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
 			<table class="tickets" id="tickets_view" width="100%">	
