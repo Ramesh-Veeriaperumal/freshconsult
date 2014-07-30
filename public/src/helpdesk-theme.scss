@@ -91,12 +91,6 @@ body { background: $background; }
 .theme-tab, .title-highlight{ background-color: $tab_color; color: $tab_ctxt_color;  }
 .theme-tab:before{ border-left-color: $tab_color; }	
 
-input:focus, textarea:focus{ border-color: $tab_color; }
-input:focus, select:focus, textarea:focus{ 
-	  -moz-box-shadow: $tab_color 0 0 3px;
-	  -webkit-box-shadow: $tab_color 0 0 3px;
-	  box-shadow: $tab_color 0 0 3px;
-}
 .nav_search div.search_bar input, a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
 .nav_search div.search_bar .search-icon-inactive{
 	background: inline-image($tab_search_image) no-repeat;
@@ -113,33 +107,7 @@ a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }
 	 background-color:$tab_color; 
 	 border-color: darken($tab_color, 20%);  
 	 color:$tab_ctxt_color; 
-}  /*    
-.reminders:before { 
-	border-color:$background $background #734e3d #734e3d; 
-}
-.ticket-leftcol h3.title, .ticket-leftcol h4.title,  .view_filters .link-item .nav-trigger {
-	color:$bg_ctxt_color;
-}
-
-.view_filters .link-item .nav-trigger {
-	text-shadow: $filterTextShadow;
-}
-
-.ticket-leftcol .leftFilter .item, .drop-right {
-	color:$subtxt_color;	
-}
-
-.ticket-leftcol .leftFilter .item:hover span{
-	color:$subtxt_hover_color;
-}
-
-.drop-right:hover,  .view_filters .link-item .nav-trigger.selected,  .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
-	color: $subtxt_color;
-	
-}
-.sort-bar {
-	color:$subtxt_color;	
-}*/
+} 
 
 /* ------------------------------------------------------------------------------------------- */
 /* 										Button settings 									   */
