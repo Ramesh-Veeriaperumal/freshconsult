@@ -18,6 +18,12 @@ if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment)
 }
 
 
+// Fix for the ticket #3719. Element name contains square braces which doesnt escape during pattern matching. 
+// So name is made to return only when id is not present.
+jQuery.validator.prototype.idOrName = function( element ) {
+    return this.groups[ element.name ] || ( element.id || element.name );
+}
+
 // ref http://stackoverflow.com/questions/1225102/jquery-event-to-trigger-action-when-a-div-is-made-visible
 // !PULP move this into the pulp framework later
 // @venom
