@@ -78,6 +78,40 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
+  it "should not create a new ticket without email - Mobile Format" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => "",
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      },
+                  :format => 'mobile'
+    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should not create a new ticket without email - Widget Format" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => "",
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      },
+                  :format => 'widget'
+    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
+  end
+
   it "should create a new ticket with RabbitMQ enabled" do
     RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
     RABBIT_MQ_ENABLED = true

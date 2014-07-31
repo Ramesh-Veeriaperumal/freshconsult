@@ -21,19 +21,22 @@ describe Admin::CannedResponses::FoldersController do
 		response.body.should =~ /General/
 	end
 
+	it "should render create new folder template" do
+		xhr :get, :new
+		response.status == 200
+	end
+
 	it "should create a new folder" do
 		@now = (Time.now.to_f*1000).to_i
 		get :new
-		response.should_not be_nil
+		response.redirected_to.should eql "/admin/canned_responses/folders"
 		post :create, { :admin_canned_responses_folder => {:name => "New CR Folder #{@now}"} }
-		folder = @account.canned_response_folders.find_by_name("New CR Folder #{@now}")
-		folder.should_not be_nil
+		@account.canned_response_folders.find_by_name("New CR Folder #{@now}").should_not be_nil
 	end
 
 	it "should not create a new folder with less than 3 characters" do
 		post :create, { :admin_canned_responses_folder => {:name => "cr"} }
-		folder = @account.canned_response_folders.find_by_name("cr")
-		folder.should be_nil
+		@account.canned_response_folders.find_by_name("cr").should be_nil
 	end
 
 	it "should update a folder" do
@@ -42,15 +45,14 @@ describe Admin::CannedResponses::FoldersController do
 		put :update, { :id => @cr_folder_1.id,
 			:admin_canned_responses_folder => { :name => "Updated CR Folder #{@now}" }
 		}
-		folder = @account.canned_response_folders.find_by_name("Updated CR Folder #{@now}")
-		folder.should_not be_nil
+		@account.canned_response_folders.find_by_name("Updated CR Folder #{@now}").should_not be_nil
 	end
 
 	it "should not update folder name if the name has less than 3 characters" do
 		put :update, { :id => @cr_folder_1.id,
 			:admin_canned_responses_folder => { :name => "CR" }
 		}
-		folder = @account.canned_response_folders.find_by_id(@cr_folder_1.id)
+		folder = @account.canned_response_folders.find(@cr_folder_1.id)
 		folder.name.should_not eql "CR"
 	end
 
@@ -61,8 +63,12 @@ describe Admin::CannedResponses::FoldersController do
 
 	it "should delete a folder" do
 		delete :destroy, :id => @cr_folder_1.id
-		folder = @account.canned_response_folders.find_by_id(@cr_folder_1.id)
-		folder.should be_nil
+		@account.canned_response_folders.find_by_id(@cr_folder_1.id).should be_nil
+	end
+
+	it "should delete a folder - Js format" do
+		delete :destroy, :id => @cr_folder_2.id, :format => 'js'
+		@account.canned_response_folders.find_by_id(@cr_folder_2.id).should be_nil
 	end
 
 	it "should not update a General folder" do
@@ -71,7 +77,7 @@ describe Admin::CannedResponses::FoldersController do
 				:admin_canned_responses_folder => { :name => "Updated General #{@now}" }
 			}
 		rescue Exception => e
-			folder = @account.canned_response_folders.find_by_id(@folder.id)
+			folder = @account.canned_response_folders.find(@folder.id)
 			folder.name.should_not eql "Updated General #{@now}"
 		end
 	end
@@ -80,8 +86,7 @@ describe Admin::CannedResponses::FoldersController do
 		begin
 			delete :destroy, :id => @folder.id
 		rescue Exception => e
-			folder = @account.canned_response_folders.find_by_id(@folder.id)
-			folder.should_not be_nil
+			@account.canned_response_folders.find(@folder.id).should_not be_nil
 		end
 	end
 end
