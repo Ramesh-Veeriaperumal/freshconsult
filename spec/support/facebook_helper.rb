@@ -377,6 +377,16 @@ module FacebookHelper
           "email"=> Faker::Internet.email(name.split.last) , 
           "id"=> "#{actor_id}" 
         }, 
+      "attachments" => {
+        "data" => [
+          {
+            "image_data" => {
+              "preview_url" => "http://img.com",
+              "url" => "http://img.com"
+            }
+          }
+       ]
+      },
       "message"=> Faker::Lorem.sentence(4)
     } 
   end

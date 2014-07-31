@@ -86,6 +86,9 @@ describe Social::TwitterController do
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_true
+      
+      #Covering exception
+      post :create_fd_item, fd_item_params   
     end
     
     it "should create a note for a replied tweet whose search type is custom" do
@@ -112,6 +115,9 @@ describe Social::TwitterController do
       tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
       tweet.is_note?.should be_true
+      
+      #Covering exception
+      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
     end
   end
   
@@ -171,7 +177,7 @@ describe Social::TwitterController do
       Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
       
       @stream_id = "#{@account.id}_#{@default_stream.id}"
-      reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
+      reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:custom])
       post :reply, reply_params
     end
     
