@@ -159,10 +159,16 @@ FunctionalTests = [
 MobileAppTests = [
   "spec/controllers/mobile/*_spec.rb"
 ]
+
+ChatTests = [
+  "spec/controllers/chats_controller_spec.rb",
+  "spec/controllers/admin/chat_setting_controller_spec.rb",
+  "spec/models/chat_setting_spec.rb"
+]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
               GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, 
-              XssTests, FreshfoneReportsTests ]
+              XssTests, FreshfoneReportsTests, ChatTests ]
 
 UnitTests.flatten!.uniq!
 
@@ -343,6 +349,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
   
     end
+
+    namespace :freshchat do
+      desc "Running all FreshChat Tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ChatTests)
+      end
+    end    
 
     namespace :freshfone do
       desc "Running all Freshfone Testss"
