@@ -1,7 +1,7 @@
 class ChatsController < ApplicationController
   
   before_filter  :load_ticket, :only => [:add_note]
-
+  
   def create_ticket
 
     @ticket = current_account.tickets.build(

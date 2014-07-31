@@ -41,25 +41,72 @@ describe ContactsController do
     @account.customers.find_by_name("helloworld").should be_an_instance_of(Customer)
   end
 
-  it "should create a new contact" do
+  it "should create a new contact - nmobile format" do
     test_email = Faker::Internet.email
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }, :format =>'nmobile'
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
   end
 
-  it "should create a new contact" do
+  it "should create a new contact - json format" do
     test_email = Faker::Internet.email
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :tags => "phonecontact" }, :format => 'json'
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
   end
-
+  
+  it "should create a new contact with email - js format" do
+    test_email = Faker::Internet.email
+    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en"}, :format => 'js'
+   
+    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+  end
+  
+  it "should create a new contact with phone number - js format" do
+    phone_number = Faker::PhoneNumber.phone_number
+    post :create, :user => { :name => Faker::Name.name, :phone => phone_number, :time_zone => "Chennai", :language => "en"}, :format => 'js'
+    @account.users.find_by_phone(phone_number).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+  end
+  
+  it "should create a new contact with mobile no- js format" do
+    mobile_no = Faker::PhoneNumber.cell_phone
+    post :create, :user => { :name => Faker::Name.name, :mobile => mobile_no, :time_zone => "Chennai", :language => "en"}, :format => 'js'
+    @account.users.find_by_mobile(mobile_no).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+  end
+  
+  it "should create a new contact with twitter_id - js format" do
+    twitter_id = "twitter_user_#{rand(100)}"
+    post :create, :user => { :name => Faker::Name.name, :twitter_id => twitter_id, :time_zone => "Chennai", :language => "en"}, :format => 'js'
+    @account.users.find_by_twitter_id(twitter_id).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+  end
+  
   it "should list all contacts created" do
     get :index
     response.body.should =~ /#{@active_contact.email}/
   end
+  
+  it "should list all non-verified contacts" do
+    unverified_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
+                              :user_role => 3, :active => false)
+    unverified_contact.save(false)
+    get :index, {:state => "unverified", :letter => []}
+    response.body.should =~ /#{unverified_contact.email}/
+  end
 
+  it "should list all blocked contacts" do
+    blocked_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
+                              :user_role => 3, :active => false, 
+                              :blocked => true, :blocked_at =>  Time.now + 2.days, 
+                              :deleted => true, :deleted_at => Time.now + 3.days)
+    blocked_contact.save(false)
+    get :index, {:state => "blocked", :letter => []}
+    response.body.should =~ /#{blocked_contact.email}/
+  end
+  
   it "should list all contacts created xml" do
     get :index, :format => 'xml'
     response.body.should =~ /#{@active_contact.email}/
