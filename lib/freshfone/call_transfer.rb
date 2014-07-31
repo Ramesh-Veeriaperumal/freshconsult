@@ -13,7 +13,8 @@ class Freshfone::CallTransfer
 	def initiate
 		begin
 			outgoing? ? transfer_outgoing_call : transfer_incoming_call
-		rescue
+		rescue Exception => e
+			Rails.logger.error "Call transfer failed for account #{current_account.id}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			false
 		end
 	end
