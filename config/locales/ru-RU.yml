@@ -713,7 +713,7 @@ ru-RU:
         insert_placeholder: Вставить заполнитель
         subject: Тема
         body: Основной текст
-        to: Получатель
+        to: Кому
         selected: Выбрано
         not_selected: Не выбрано
         checked: проверено
