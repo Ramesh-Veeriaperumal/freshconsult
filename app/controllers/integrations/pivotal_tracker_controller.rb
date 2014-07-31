@@ -86,7 +86,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   private
     def construct_xml
-      xml = Builder::XmlMarkup.new()
+      xml = ::Builder::XmlMarkup.new()
       xml.instruct!
       xml.external_stories(:type => "array") do 
         @items.each_with_index do |external_story|

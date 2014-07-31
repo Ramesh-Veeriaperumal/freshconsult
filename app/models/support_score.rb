@@ -3,8 +3,7 @@ class SupportScore < ActiveRecord::Base
   include Gamification::Scoreboard::Constants
   
 
-  after_commit_on_destroy :update_agents_score
-  after_commit_on_create  :update_agents_score
+  after_commit :update_agents_score, on: [:create, :destroy]
 
   belongs_to :user
   has_one :agent, :through => :user
@@ -15,29 +14,29 @@ class SupportScore < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  named_scope :created_at_inside, lambda { |start, stop|
+  scope :created_at_inside, lambda { |start, stop|
     { :conditions => [" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop] }
   }
 
-  named_scope :fast, { :conditions => 
+  scope :fast, { :conditions => 
         {:score_trigger => FAST_RESOLUTION }}
 
-  named_scope :first_call, {
+  scope :first_call, {
     :conditions => {:score_trigger => FIRST_CALL_RESOLUTION}}
 
-  named_scope :happy_customer, {
+  scope :happy_customer, {
     :conditions => {:score_trigger => HAPPY_CUSTOMER}}
 
-  named_scope :unhappy_customer, {
+  scope :unhappy_customer, {
     :conditions => {:score_trigger => UNHAPPY_CUSTOMER}}
 
-  named_scope :customer_champion, {
+  scope :customer_champion, {
     :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
   }
   
-  named_scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
+  scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
 
-  named_scope :group_score,
+  scope :group_score,
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
     :conditions => ["group_id is not null and groups.id is not null"],
@@ -47,7 +46,7 @@ class SupportScore < ActiveRecord::Base
     :order => "tot_score desc, recent_created_at"
   }
 
-  named_scope :user_score,
+  scope :user_score,
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
     :include => { :user => [ :avatar ] },
@@ -58,7 +57,8 @@ class SupportScore < ActiveRecord::Base
     :order => "tot_score desc, recent_created_at"
   }
 
-  named_scope :limit, lambda { |num| { :limit => num } } 
+  # RAILS3 by default has this feature
+  #scope :limit, lambda { |num| { :limit => num } } 
 
   def self.add_happy_customer(scorable)
     add_support_score(scorable, HAPPY_CUSTOMER)

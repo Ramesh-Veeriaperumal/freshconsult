@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Support::Discussions::TopicsController do
-	integrate_views
+	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -68,15 +68,15 @@ describe Support::Discussions::TopicsController do
 					:forum_id=> @forum.id,
 					:sticky => true }
 
-		new_topic = @account.topics.find_by_title(topic_title)
+		new_topic = RSpec.configuration.account.topics.find_by_title(topic_title)
 		new_topic.forum_id.should eql @forum.id
 		new_topic.user_id.should eql @user.id
-		new_topic.account_id.should eql @account.id
+		new_topic.account_id.should eql RSpec.configuration.account.id
 
-		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+		new_post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}</p>")
 		new_post.topic_id.should eql new_topic.id
 		new_post.user_id.should eql @user.id
-		new_post.account_id.should eql @account.id
+		new_post.account_id.should eql RSpec.configuration.account.id
 
 		response.should redirect_to 'support/discussions'
 	end
@@ -112,12 +112,12 @@ describe Support::Discussions::TopicsController do
 		topic.title.should eql new_topic_title
 		topic.forum_id.should eql @forum.id
 		topic.user_id.should eql @user.id
-		topic.account_id.should eql @account.id
+		topic.account_id.should eql RSpec.configuration.account.id
 
-		post = @account.posts.find_by_body_html("<p>#{new_post_body}</p>")
+		post = RSpec.configuration.account.posts.find_by_body_html("<p>#{new_post_body}</p>")
 		post.topic_id.should eql topic.id
 		post.user_id.should eql @user.id
-		post.account_id.should eql @account.id
+		post.account_id.should eql RSpec.configuration.account.id
 
 		response.should redirect_to "support/discussions/topics/#{topic.id}"
 	end
@@ -176,7 +176,7 @@ describe Support::Discussions::TopicsController do
 		put :toggle_solution,
 			:id => topic.id
 
-		solved_topic = @account.topics.find_by_id(topic.id)
+		solved_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		solved_topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]
 		response.should redirect_to "support/discussions/topics/#{topic.id}"
 
@@ -202,7 +202,7 @@ describe Support::Discussions::TopicsController do
 		monitorship.should be_an_instance_of(Monitorship)
 		monitorship.monitorable_id.should eql topic.id
 		monitorship.monitorable_type.should eql "Topic"
-		monitorship.active.should be_true
+		monitorship.active.should be_truthy
 
 		#monitorship should be inactive on unfollow
 
@@ -213,7 +213,7 @@ describe Support::Discussions::TopicsController do
 		monitorship.should be_an_instance_of(Monitorship)
 		monitorship.monitorable_id.should eql topic.id
 		monitorship.monitorable_type.should eql "Topic"
-		monitorship.active.should be_false
+		monitorship.active.should be_falsey
 	end
 
 
@@ -225,7 +225,7 @@ describe Support::Discussions::TopicsController do
 			:id => topic.id,
 			:vote => "for"
 
-		liked_topic = @account.topics.find_by_id(topic.id)
+		liked_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		liked_topic.user_votes.should be_eql(vote_count + 1)
 		vote = liked_topic.votes.find_by_user_id(@user.id)
 		vote.should be_an_instance_of(Vote)
@@ -239,7 +239,7 @@ describe Support::Discussions::TopicsController do
 			:id => topic.id,
 			:vote => "for"
 
-		unliked_topic = @account.topics.find_by_id(topic.id)
+		unliked_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		unliked_topic.user_votes.should be_eql(vote_count)
 		vote = unliked_topic.votes.find_by_user_id(@user.id)
 		vote.should be_nil
@@ -333,7 +333,7 @@ describe Support::Discussions::TopicsController do
 	# 		:id => topic.id
 
 	# 	topic.reload
-	# 	topic.locked.should be_true
+	# 	topic.locked.should be_truthy
 	# 	response.should render_template 'support/discussions/topics'
 	# end
 
@@ -344,7 +344,7 @@ describe Support::Discussions::TopicsController do
 	# 		:id => locked_topic.id
 
 	# 	locked_topic.reload
-	# 	locked_topic.locked.should be_false
+	# 	locked_topic.locked.should be_falsey
 	# 	response.should render_template 'support/discussions/topics'
 	# end
 

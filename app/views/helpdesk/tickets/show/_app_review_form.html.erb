@@ -1,11 +1,11 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
 
-  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
+  <%= form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
                       :multipart => true,
                       :id => "HelpdeskReviewNotes"
                     } do |f| %>
 
-    <% f.fields_for(:note_body,Helpdesk::NoteBody.new) do |ff| %>
+    <%= f.fields_for(:note_body,Helpdesk::NoteBody.new) do |ff| %>
       <%= ff.text_area(:body_html, :value => t("admin.mobihelp.app_review.request_sent"), :class => "body_html", :id => "#{cntid}-body") %>
     <% end %>
 

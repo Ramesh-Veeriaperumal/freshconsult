@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Helpdesk::CommonsController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
 	before(:all) do
 		@test_group = create_group(@account, {:name => "Testing group_agents"})
-		agents_group = Factory.build(:agent_group, :user_id => @agent.id, :group_id => @test_group.id)
-		agents_group.save(false)
+		agents_group = FactoryGirl.build(:agent_group, :user_id => RSpec.configuration.agent.id, :group_id => @test_group.id)
+		agents_group.save(validate: false)
 	end
 
 	before(:each) do

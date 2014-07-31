@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::SurveysController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,12 +16,12 @@ describe Admin::SurveysController do
 
   it "should disable customer satisfaction surveys" do
     post :disable
-    @account.features.find_by_type("SurveyLinksFeature").should be_nil
+    RSpec.configuration.account.features.find_by_type("SurveyLinksFeature").should be_nil
   end
 
   it "should enable customer satisfaction surveys" do
     post :enable
-    @account.features.find_by_type("SurveyLinksFeature").should be_an_instance_of(SurveyLinksFeature)
+    RSpec.configuration.account.features.find_by_type("SurveyLinksFeature").should be_an_instance_of(SurveyLinksFeature)
   end
 
   it "should update the customer satisfaction survey settings" do
@@ -37,7 +37,7 @@ describe Admin::SurveysController do
                                                 :unhappy_text => unhappy_text, 
                                                 :send_while => send_while
                                               }
-    survey = @account.survey
+    survey = RSpec.configuration.account.survey
     survey.link_text.should be_eql(link_text)
     survey.happy_text.should be_eql(happy_text)
     survey.neutral_text.should be_eql(neutral_text)

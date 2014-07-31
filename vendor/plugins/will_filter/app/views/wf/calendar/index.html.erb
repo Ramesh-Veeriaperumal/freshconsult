@@ -12,7 +12,7 @@
   Calendar
 </div>  
 <div class="wf_calendar_container">
-<% form_tag({:controller => "/wf/calendar"}, {:method => :get, :id => "wf_calendar_form"}) do %>
+<%= form_tag({:controller => "/wf/calendar"}, {:method => :get, :id => "wf_calendar_form"}) do %>
     <%= hidden_field_tag :wf_calendar_start_date, @calendar.start_date.strftime("%Y/%m/%d") %>
 	  <%= hidden_field_tag :wf_calendar_selected_date, @calendar.selected_date.strftime("%Y/%m/%d") %>
     <%= hidden_field_tag :wf_calendar_mode, @calendar.mode %>

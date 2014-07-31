@@ -54,7 +54,7 @@ class Workers::Supervisor
       supervisor_logger = custom_logger(path)
     rescue Exception => e
       puts "Error occured while #{e}"
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor",:recipients => "pradeep.t@freshdesk.com"})  
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor",:recipients => "pradeep.t@freshdesk.com"})  
     end
     account = Account.current
     return unless account.supervisor_rules.count > 0 

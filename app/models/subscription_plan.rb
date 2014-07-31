@@ -6,7 +6,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   has_many :subscriptions
   
-  has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon"
+  has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon", :source => :subscription_plan_addon
   has_many :addons,
     :class_name => "Subscription::Addon",
     :through => :subscription_plan_addons,
@@ -19,7 +19,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  named_scope :current, :conditions => { :classic => false }, :order => 'amount asc'
+  scope :current, :conditions => { :classic => false }, :order => 'amount asc'
   
   SUBSCRIPTION_PLANS = { 
     :basic => "Basic", 

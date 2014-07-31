@@ -44,7 +44,7 @@
 
 <br><br>
   <h4>Add a subscription to this affiliate</h4><br>
-  <% form_tag({:action => 'add_subscription'}, :class => " form-inline") do %>
+  <%= form_tag({:action => 'add_subscription'}, :class => " form-inline") do %>
     <input type="text" name="domain" id="domain" placeholder="Account Domain" />
     <input type="submit" value="Add Subscription" class="btn" />
   <% end %>

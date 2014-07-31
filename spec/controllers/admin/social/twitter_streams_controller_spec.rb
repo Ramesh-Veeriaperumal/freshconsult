@@ -7,7 +7,7 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Admin::Social::TwitterStreamsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -18,7 +18,7 @@ describe Admin::Social::TwitterStreamsController do
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
       GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
-    @handle = create_test_twitter_handle(@account)
+    @handle = create_test_twitter_handle(RSpec.configuration.account)
     @default_stream = @handle.default_stream
     @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data
@@ -35,7 +35,7 @@ describe Admin::Social::TwitterStreamsController do
   describe "GET #new" do
     it "should render the create stream page when create a new stream is clicked" do
       get :new
-      response.should render_template("admin/social/twitter_streams/new.html.erb") 
+      response.should render_template("admin/social/twitter_streams/new") 
     end
   end
   
@@ -44,7 +44,7 @@ describe Admin::Social::TwitterStreamsController do
       get :edit, {
         :id => @default_stream.id
       }
-      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+      response.should render_template("admin/social/twitter_streams/edit") 
     end
   end
   
@@ -96,7 +96,7 @@ describe Admin::Social::TwitterStreamsController do
       new_stream  = Social::TwitterStream.find_by_name(stream_name)
       new_stream[:includes].should eql(includes)
       new_stream[:excludes].should eql(excludes)
-      new_stream.custom_stream?.should be_true
+      new_stream.custom_stream?.should be_truthy
       new_stream.ticket_rules.should_not be_nil
       ticket_rule = new_stream.ticket_rules.first
       new_stream.accessible.should_not be_nil
@@ -142,7 +142,7 @@ describe Admin::Social::TwitterStreamsController do
       get :edit, {
         :id => @default_stream.id
       }
-      response.should render_template("admin/social/twitter_streams/edit.html.erb") 
+      response.should render_template("admin/social/twitter_streams/edit") 
     end
     
 

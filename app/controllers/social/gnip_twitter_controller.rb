@@ -6,7 +6,8 @@ class Social::GnipTwitterController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
 
-  filter_parameter_logging :hash
+  # TODO-RAILS3 password moved to application.rb but need to check hash
+  #filter_parameter_logging :hash
 
   def reconnect
     if verify_params? && update_reconnect_time_in_redis(params[:reconnect_time])

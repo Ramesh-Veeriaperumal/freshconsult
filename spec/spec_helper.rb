@@ -40,11 +40,12 @@ Spork.prefork do
 
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environment'))
-  require 'spec/autorun'
-  require 'spec/rails'
+  require 'rspec/core'
+  require 'rspec/rails'
   require 'factory_girl'
-  require 'mocha_standalone'
-  require 'mocha/object'
+  require 'mocha/api'
+  # TOD-RAILS3
+  # require 'mocha/object'
   require 'authlogic/test_case'
 
   # Uncomment the next line to use webrat's matchers
@@ -79,10 +80,11 @@ Spork.prefork do
   'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
-  Spec::Runner.configure do |config|
+  RSpec.configure do |config|
     # If you're not using ActiveRecord you should remove these
     # lines, delete config/database.yml and disable :active_record
     # in your config/boot.rb
+    config.render_views
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.mock_with :mocha
@@ -120,34 +122,38 @@ Spork.prefork do
     config.include CustomMatcher
     config.include PerfHelper
     config.include DynamicTemplateHelper
+    config.infer_spec_type_from_file_location!
+    config.add_setting :account
+    config.add_setting :agent
+    config.add_setting :timings
 
     
     config.before(:all) do
-      @account = create_test_account
-      @agent = get_admin
-      @timings = []
+      RSpec.configuration.account = create_test_account
+      RSpec.configuration.agent = get_admin
+      RSpec.configuration.timings = []
       
       begin_gc_defragment
     end
 
     config.before(:each, :type => :controller) do
-      @request.host = @account.full_domain
+      @request.host = RSpec.configuration.account.full_domain
       @request.env['HTTP_REFERER'] = '/sessions/new'
       @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     end
 
     config.before(:each) do |x|
-      name = "#{x.class.description} #{x.description}"
+      name = "#{x.metadata[:described_class]} #{x.metadata[:description]}"
       Rails.logger.info "*"*100
       Rails.logger.info name
       @test_start_time = Time.now
     end     
 
     config.after(:each) do |x|
-      name = "#{x.class.description} #{x.description}"
+      name = "#{x.metadata[:described_class]} #{x.metadata[:description]}"
       @test_end_time = Time.now
-      @timings.push({
+      RSpec.configuration.timings.push({
         :name => name,
         :duration => @test_end_time - @test_start_time
       })
@@ -160,7 +166,7 @@ Spork.prefork do
       logfile_name = 'log/rspec_file_times.log'
       logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
       file = File.open(logfile, 'a')
-      @timings.each do |timing|
+      RSpec.configuration.timings.each do |timing|
         file.write(sprintf("%-150s  -  % 5.3f seconds\n",
                             timing[:name], timing[:duration]))
       end

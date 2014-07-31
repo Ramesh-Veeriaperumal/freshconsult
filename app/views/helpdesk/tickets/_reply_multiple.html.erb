@@ -6,7 +6,7 @@
         </div>
               
         <li class="inline-field">
-            <% f.fields_for(:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
+            <%= f.fields_for(:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
                 <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :value => "" %>
             <% end %>
             <%= f.hidden_field :private, :value=> 0 %>
@@ -25,7 +25,7 @@
 </div>
 
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
     invokeRedactor('reply-multiple-cnt-reply-multiple-body');
     

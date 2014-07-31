@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	function changeProfilePic(){
 		jQuery('#AvatarPic').toggle();
 		jQuery('#AvatarInput').toggle();
@@ -19,7 +19,7 @@
 									:onerror => "imgerror(this)" %>
 	</div>
 	<div id="AvatarInput" style="display:none;">
-		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
+		<%= fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 			<div class="info-data"><%=t('user.info1')%></div>
 			  <%= avatar_form.file_field :content, :size => 10 , :class => 'upload_size_validity'  %>
 		<% end %>
@@ -35,7 +35,7 @@
 	</div>
 	<br />
 <% else %>
-	<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
+	<%= fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 		<div class="info-data"><%=t('user.info1')%></div>
 		  <%= avatar_form.file_field :content, :size => 10, :class => 'upload_size_validity'%>
 	<% end %>

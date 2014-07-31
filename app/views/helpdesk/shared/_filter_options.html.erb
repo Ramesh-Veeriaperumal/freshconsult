@@ -114,7 +114,7 @@
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
-    	  <% 
+    	  <%=
         unless c_hash[:options].blank?
           content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
                                 :class       => "ff_item", 
@@ -127,7 +127,7 @@
           <% end
           end 
         end %>
-<% javascript_tag do%>
+<%= javascript_tag do%>
 	var query_hash  = $A();
   
 	jQuery(document).ready(function(){

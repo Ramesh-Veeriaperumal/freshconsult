@@ -33,13 +33,13 @@ module SeedFu
                 chunked_ruby = ''
                 gz.each_line do |line|
                   if line == "# BREAK EVAL\n"
-                    eval(chunked_ruby)
+                    eval(chunked_ruby, binding, __FILE__, __LINE__)
                     chunked_ruby = ''
                   else
                     chunked_ruby << line
                   end
                 end
-                eval(chunked_ruby) unless chunked_ruby == ''
+                eval(chunked_ruby, binding, __FILE__, __LINE__) unless chunked_ruby == ''
               end
             else
               # Just load regular .rb files
@@ -49,13 +49,13 @@ module SeedFu
                 chunked_ruby = ''
                 file.each_line do |line|
                   if line == "# BREAK EVAL\n"
-                    eval(chunked_ruby)
+                    eval(chunked_ruby, binding, __FILE__, __LINE__)
                     chunked_ruby = ''
                   else
                     chunked_ruby << line
                   end
                 end
-                eval(chunked_ruby) unless chunked_ruby == ''
+                eval(chunked_ruby, binding, __FILE__, __LINE__) unless chunked_ruby == ''
               end
             end
           end

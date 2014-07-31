@@ -54,7 +54,7 @@ end
       sla_logger = custom_logger(path)
     rescue Exception => e
       puts "Exception occured - #{e}"
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rb",:recipients => "pradeep.t@freshdesk.com"})  
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rb",:recipients => "pradeep.t@freshdesk.com"})  
     end
     account = Account.current
     db_name = account.premium? ? "run_on_master" : "run_on_slave"
@@ -138,7 +138,7 @@ end
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
     email_body = Liquid::Template.parse(agent_template.last).render(
                                 'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
+    SlaNotifier.escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end

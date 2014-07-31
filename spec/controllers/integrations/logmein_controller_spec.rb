@@ -3,7 +3,7 @@ include Redis::RedisKeys
 include Redis::IntegrationsRedis
 
 describe Integrations::LogmeinController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -37,7 +37,7 @@ describe Integrations::LogmeinController do
 													 "WorkTime" => Time.now.to_s, :format=>"json"}
 		response.body.should == @success_json
 		@test_ticket.notes.should_not be_empty
-		@test_ticket.notes.first.note_body.body.start_with?('Your LogMeIn Rescue Session details').should be_true
+		@test_ticket.notes.first.note_body.body.start_with?('Your LogMeIn Rescue Session details').should be_truthy
 		get_integ_redis_key(@redis_key).should be_nil
 	end
 end

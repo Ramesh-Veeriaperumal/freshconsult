@@ -1,4 +1,5 @@
 class Helpdesk::Note < ActiveRecord::Base
+  self.primary_key= :id
 
   include ParserUtil
   include BusinessRulesObserver
@@ -12,7 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
 
-  set_table_name "helpdesk_notes"
+  self.table_name =  "helpdesk_notes"
 
   concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
   text_datastore_callbacks :class => "note"
@@ -26,58 +27,58 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
 
-  named_scope :newest_first, :order => "created_at DESC"
-  named_scope :visible, :conditions => { :deleted => false } 
-  named_scope :public, :conditions => { :private => false } 
-  named_scope :private, :conditions => { :private => true } 
+  scope :newest_first, :order => "created_at DESC"
+  scope :visible, :conditions => { :deleted => false } 
+  scope :public, :conditions => { :private => false } 
+  scope :private, :conditions => { :private => true } 
   
-  named_scope :latest_twitter_comment,
+  scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
  'Helpdesk::Note'"],
               :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
               :order => "created_at desc"
   
-  named_scope :freshest, lambda { |account|
+  scope :freshest, lambda { |account|
     { :conditions => ["deleted = ? and account_id = ? ", false, account], 
       :order => "helpdesk_notes.created_at DESC"
     }
   }
-  named_scope :since, lambda { |last_note_id|
+  scope :since, lambda { |last_note_id|
     { :conditions => ["helpdesk_notes.id > ? ", last_note_id], 
       :order => "helpdesk_notes.created_at DESC"
     }
   }
   
-  named_scope :before, lambda { |first_note_id|
+  scope :before, lambda { |first_note_id|
     { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 
       :order => "helpdesk_notes.created_at DESC"
     }
   }
   
-  named_scope :for_quoted_text, lambda { |first_note_id|
+  scope :for_quoted_text, lambda { |first_note_id|
     { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
       :order => "helpdesk_notes.created_at DESC",
       :limit => 4
     }
   }
   
-  named_scope :latest_facebook_message,
+  scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
               :order => "created_at desc"
 
-  CATEGORIES.keys.each { |c| named_scope c.to_s.pluralize, 
+  CATEGORIES.keys.each { |c| scope c.to_s.pluralize, 
     :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
       ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
     :conditions => { 'helpdesk_schema_less_notes' => { :int_nc01 => CATEGORIES[c]}}
     }
 
-  named_scope :created_between, lambda { |start_time, end_time| 
+  scope :created_between, lambda { |start_time, end_time| 
     {:conditions => ['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?', 
       start_time, end_time]}
   }
   
-  named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
@@ -166,7 +167,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true, :include=>:attachments, 
                           :except => [:account_id,:notable_id,:notable_type]) do |xml|
@@ -261,9 +262,9 @@ class Helpdesk::Note < ActiveRecord::Base
     def send_reply_email  
       add_cc_email     
       if fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
+        Helpdesk::TicketNotifier.send_later(:forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? , 
+        Helpdesk::TicketNotifier.send_later(:reply, notable, self, {:include_cc => self.cc_emails.present? , 
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
                 :quoted_text => self.quoted_text,
                 :include_surveymonkey_link => (self.include_surveymonkey_link.present? && self.include_surveymonkey_link.to_i==1)})

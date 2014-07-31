@@ -49,7 +49,7 @@
                         <li><a href="#" class="unhappy" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>"><%=h(current_account.survey.unhappy_text)%></a></li>
                     </ul>
                     <div class="survey-comment">
-                    <% form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>
+                    <%= form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>
                         <input type="hidden" name="rating" id="survey_rating" vlaue="">
                         <h4><%= t('.feedback_title') %></h4>
                         <textarea name="feedback" id="feedback"></textarea> <input type="submit" value="<%= t('.submit')%>" />

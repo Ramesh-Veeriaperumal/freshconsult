@@ -1,678 +1,1504 @@
- ActionController::Routing::Routes.draw do |map|
-
-  map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
-
-  map.connect "/javascripts/:action.:format", :controller => 'javascripts'
-
-  # Routing for Asset management Jammit
-  Jammit::Routes.draw(map)
-
-  map.resources :authorizations
-  map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
-  map.callback '/auth/google_login/callback', :controller => 'google_login', :action => 'create_account_from_google'
-  map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
-  map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
-  map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
-
-  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ]
-
-  map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
-
-  map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
-
-  map.resources :contact_import , :collection => {:csv => :get, :google => :get}
-
-  map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
-     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
-   end
-  map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
-
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
-    contacts.resources :contact_merge, :collection => { :search => :get }
-  end
-  map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
-
-  map.resources :groups
-
-  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post, :notification_read => :put} do |profiles|
-    profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
-  end
-  
-  map.resources :agents, :member => { :delete_avatar => :delete ,
-                                      :toggle_shortcuts => :put,
-                                      :restore => :put,
-                                      :convert_to_user => :get,
-                                      :reset_password=> :put },
-                          :collection => { :create_multiple_items => :put,
-                                           :info_for_node => :get} do |agent|
-      agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
-  end
-
-  map.connect '/agents/filter/:state/*letter', :controller => 'agents', :action => 'index'
-
-#  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
-#  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
-  #map.resources :support_plans
-
-  map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-  map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
-  map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
-  map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
-  map.login '/login', :controller => 'user_sessions', :action => 'new'
-  map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.saml_login '/login/saml', :controller => 'user_sessions', :action => 'saml_login'
-  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
-  map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
-
-  map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
-
-  map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
-
-  map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
-  
-  map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
-  #map.register '/register', :controller => 'users', :action => 'create'
-  #map.signup '/signup', :controller => 'users', :action => 'new'
-
-  map.namespace :freshfone do |freshfone|
-    freshfone.resources :ivrs, :member => { :activate => :post, :deactivate => :post }
-    freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :caller_data => :get, :call_transfer_success => :post }
-    freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
-    freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
-    freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
-    freshfone.resources :call_history, :collection => { :custom_search => :get,
-                                                       :children => :get, :recent_calls => :get }
-    freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
-    freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
-                           :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
-    freshfone.resources :autocomplete, :collection => { :requester_search => :get}
-    freshfone.resources :usage_triggers, :collection => { :notify => :post }
-    freshfone.resources :ops_notification, :member => { :voice_notification => :post }
-  end
-
-  map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
-                                  :dashboard_stats => :get, :get_available_agents => :get,
-                                  :credit_balance => :get, :ivr_flow => :get, :preview_ivr => :get
-                                }
-
-  map.resources :users, :member => { :delete_avatar => :delete,
-          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
-  map.resource :user_session
-  map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
-  map.register_new_email 'register_new_email/:activation_code', :controller => 'activations', :action => 'new_email'
-  map.activate '/activate/:perishable_token', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put }
-  map.resources :home, :only => :index
-  map.resources :ticket_fields, :only => :index
-  map.resources :email, :only => [:new, :create]
-  map.resources :mailgun, :only => :create
-  map.resources :password_resets, :except => [:index, :show, :destroy]
-  map.resources :sso, :collection => {:login => :get, :facebook => :get, :google_login => :get}
-  map.resource :account_configuration
-
-  map.namespace :integrations do |integration|
-    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
-    integration.resources :applications, :member=>{:custom_widget_preview => :post}
-    integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
-    integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
-    integration.resources :gmail_gadgets, :collection =>{:spec => :get}
-    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
-    integration.resources :pivotal_tracker, :collection => { :tickets => :get, :pivotal_updates => :post, :update_config => :post}
-    integration.resources :user_credentials
-    integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
-    integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
-    integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
-    integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
-  end
-
-  map.namespace :admin do |admin|
-    admin.resources :home, :only => :index
-    admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
-    admin.resources :widget_config, :only => :index
-    admin.resources :chat_setting, :collection => { :toggle => :post }
-    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
-    admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
-      :collection => { :reorder => :put }
-    admin.resources :observer_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
-      :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , 
-    :collection => { :existing_email => :get, 
-                     :personalized_email_enable => :post, 
-                     :personalized_email_disable => :post, 
-                     :reply_to_email_enable => :post, 
-                     :reply_to_email_disable => :post, 
-                     :id_less_tickets_enable => :post, 
-                     :id_less_tickets_disable => :post }
-    admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
-    admin.resources :email_notifications
-    admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
-    admin.resources :getting_started, :collection => {:rebrand => :put}
-    admin.resources :business_calendars
-    admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }
-    admin.resources :data_export, :collection => {:export => :any }
-    admin.resources :portal, :only => [ :index, :update ]
-    admin.namespace :canned_responses do |ca_response|
-      ca_response.resources :folders do |folder|
-        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }, :member=> { :delete_shared_attachments => :any  }
-      end
-    end
-    admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
-    admin.resources :portal, :only => [ :index, :update] do |portal|
-      portal.resource :template,
-                      :collection => { :show =>:get, :update => :put, :soft_reset => :put,
-                                        :restore_default => :get, :publish => :get, :clear_preview => :get } do |template|
-        template.resources :pages, :member => { :edit_by_page_type => :get, :soft_reset => :put }
-      end
-    end
-    admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
-    admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
-    admin.resources :quests, :member => { :toggle => :put }
-    admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
-    admin.resources :email_commands_setting, :member => { :update => :put }
-    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
-    admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
-    admin.namespace :freshfone do |freshfone|
-      freshfone.resources :numbers, :collection => { :purchase => :post }
-      freshfone.resources :credits, :collection => { :disable_auto_recharge => :put, :enable_auto_recharge => :put, :purchase => :post }
-    end
-    admin.resources :roles    
-    admin.namespace :social do |social|
-      social.resources :streams, :controller => 'streams', :only => :index
-      social.resources :twitter_streams, :controller => 'twitter_streams'
-      social.resources :twitters, :controller => 'twitter_handles', :collection => {:authdone => :any}
-    end
-    admin.resources :mailboxes
-    admin.namespace :mobihelp do |mobihelp|
-      mobihelp.resources :apps
-    end
-  end
-
-  map.namespace :search do |search|
-    search.resources :home, :only => :index, :collection => { :suggest => :get }
-    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get }
-    search.resources :tickets, :only => :index
-    search.resources :solutions, :only => :index
-    search.resources :forums, :only => :index
-    search.resources :customers, :only => :index
-    search.ticket_related_solutions '/related_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'related_solutions'
-    search.ticket_search_solutions '/search_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'search_solutions'
-  end
-  map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
-  map.connect '/search/all', :controller => 'search/home', :action => 'index'
-  map.connect '/search/topics.:format', :controller => 'search/forums', :action => 'index'
-  map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
-
-  map.namespace :reports do |report|
-    report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
-    report.resources :analysis_reports, :controller => 'helpdesk_load_analysis',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
-    report.resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
-    report.resources :agent_glance_reports, :controller => 'agent_glance_reports',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
-    report.resources :group_glance_reports, :controller => 'group_glance_reports',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
-    report.resources :agent_analysis_reports, :controller => 'agents_analysis',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_chart_data => :post}
-    report.resources :group_analysis_reports, :controller => 'groups_analysis',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_chart_data => :post}
-    report.resources :agents_comparison_reports, :controller => 'agents_comparison',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
-    report.resources :groups_comparison_reports, :controller => 'groups_comparison',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
-    report.resources :customer_glance_reports, :controller => 'customer_glance_reports',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
-    report.resources :customers_analysis_reports, :controller => 'customers_analysis',
-      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
-      :fetch_chart_data => :post}
-    report.resources :report_filters, :controller => 'report_filters',
-      :collection => {:create => :post,:destroy => :post}
-    report.namespace :freshfone do |freshfone|
-      freshfone.resources :summary_reports, :controller => 'summary_reports', 
-      :collection => {:generate => :post, :export_csv => :post } 
-    end
-  end
-
-  map.resources :reports
-  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post}
-  map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
-  map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
-  map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
-  map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
-  map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
-  map.scoreboard_activity '/gamification/reports', :controller => 'reports/gamification_reports', :action => 'index'
-  map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
-  map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'
-  map.survey_list '/survey/reports_list', :controller => 'reports/survey_reports', :action => 'list'
-  map.survey_detail_report '/survey/report_details/:entity_id/:category', :controller => 'reports/survey_reports', :action => 'report_details'
-  map.survey_overall_report '/survey/overall_report/:category', :controller => 'reports/survey_reports', :action => 'report_details'
-  map.survey_feedbacks '/reports/survey_reports/feedbacks', :controller => 'reports/survey_reports', :action => 'feedbacks'
-  map.survey_refresh_details '/reports/survey_reports/refresh_details', :controller => 'reports/survey_reports', :action => 'refresh_details'
-
-
-  map.namespace :social do |social|
-    social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :show => :any, :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
-                :member     =>  { :search => :any, :edit => :any }
-
-    social.resources :gnip, :controller => 'gnip_twitter',
-                :collection => {:reconnect => :post}
-                
-    social.resources :streams, 
-                :collection => { :stream_feeds => :get, :show_old => :get, :fetch_new => :get, :interactions => :any }
-    
-    social.resources :welcome, :controller => 'welcome',
-                :only => :index, :collection => { :get_stats => :get, :enable_feature => :post }
-                
-    social.resources :twitter,
-                :collection => {  :twitter_search => :get, :show_old => :get, :fetch_new => :get, :create_fd_item => :post,
-                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post  }
-  end
-
-  #SAAS copy starts here
-  map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
-    subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
-    subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
-      admin.resources :subscription_plans, :as => 'plans'
-      # admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
-                                                :member => { :add_subscription => :post }
-      admin.resources :subscription_payments, :as => 'payments'
-      admin.resources :subscription_announcements, :as => 'announcements'
-      admin.resources :conversion_metrics, :as => 'metrics'
-      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post, :update_global_blacklist_ips => :put }
-      admin.resources :manage_users, :as => 'manage_users', :collection =>{:add_whitelisted_user_id => :post, :remove_whitelisted_user_id => :post }
-      admin.namespace :resque do |resque|
-        resque.home '', :controller => 'home', :action => 'index'
-        resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
-        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
-      end
-      
-      admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
-      admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
-      
-      # admin.resources :analytics
-      admin.resources :spam_watch, :only => :index
-      admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
-      admin.spam_user ':shard_name/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
-      admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
-      admin.hard_block_user ':shard_name/hard_block/:user_id', :controller => :spam_watch, :action => :hard_block
-      admin.internal_whitelist ':shard_name/internal_whitelist/:user_id', :controller => :spam_watch, :action => :internal_whitelist
-      admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
-      admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
-      admin.resources :currencies, :as => 'currency'
-      admin.subscription_logout 'admin_sessions/logout', :controller => :admin_sessions , :action => :destroy
-      admin.subscription_login 'admin_sessions/login', :controller => :admin_sessions , :action => :new
-      admin.resources :subscription_users, :as => 'subscription_users', :member => { :update => :post, :edit => :get, :show => :get }, :collection => {:reset_password => :get }
-    end
-  end
-
-  map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
-    subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
-      partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
-    end
-  end
-
-  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
-    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
-      billing.resources :billing, :collection => { :trigger => :post }
-    end
-  end
-
-  map.namespace :widgets do |widgets|
-    widgets.resource :feedback_widget, :member => { :loading => :get }
-  end
-
-  map.plans '/signup', :controller => 'accounts', :action => 'plans'
-  map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
-  map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
-  map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,
-    :cancel => :any, :canceled => :get , :signup_google => :any, :delete_logo => :delete, :delete_favicon => :delete }
-  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
-
-  map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
-
-  map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
-  map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
-
-  map.search_domain '/search_user_domain', :controller => 'domain_search', :action => 'locate_domain'
-
-  #SAAS copy ends here
-
-
-  # Restful-authentication routes. Not to be included in final engine.  map.resource :session
-
-  # The priority is based upon order of creation: first created -> highest priority.
+Helpkit::Application.routes.draw do
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
 
   # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
+  #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
+  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
+  #   resources :products
 
   # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
+  #   resources :products do
+  #     member do
+  #       get 'short'
+  #       post 'toggle'
+  #     end
+  #
+  #     collection do
+  #       get 'sold'
+  #     end
+  #   end
 
   # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
+  #   resources :products do
+  #     resources :comments, :sales
+  #     resource :seller
+  #   end
 
   # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #       get 'recent', :on => :collection
+  #     end
   #   end
 
   # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
   #   end
 
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  # map.root :controller => "welcome"
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
+  # root :to => 'welcome#index'
 
   # See how all your routes lay out with "rake routes"
 
-  # Begin routes to be included in final engine
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  # match ':controller(/:action(/:id))(.:format)'
 
-  # The reason for the strange name_prefix values is that when you pass a Helpdesk::Ticket
-  # instance to url_for, it will look for the named path called "helpdesk_ticket". So if
-  # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
-  map.namespace :helpdesk do |helpdesk|
+  root :to => 'home#index'
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get, :remove_tag => :delete, :rename_tags => :put, :merge_tags => :put }
+  match '/visitor/load/:id.:format' => 'chats#load', :via => :get
+  match '/images/helpdesk/attachments/:id/:style.:format' => 'helpdesk/attachments#show', :via => :get
+  match '/javascripts/:action.:format' => 'javascripts#index'
+  match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
+  resources :authorizations
+  match '/google_sync' => 'authorizations#sync', :as => :google_sync
+  match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
+  match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
+  match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
+  match '/auth/failure' => 'authorizations#failure', :as => :failure
+  resources :solutions_uploaded_images, :only => [:index, :create]
+  resources :forums_uploaded_images, :only => :create
+  resources :tickets_uploaded_images, :only => :create
 
-#    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
-#      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
-#    end
-
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete,
-                                    :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get,
-                                    :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get, :summary => :get,
-                                    :update_multiple_tickets => :get, :configure_export => :get, :custom_view_save => :get },
-                                 :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get,
-                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post,
-                                    :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put,
-                                    :change_due_by => :put, :split_the_ticket =>:post, :status => :get,
-                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get,
-                                    :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
-
-
-      ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
-      ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
-                                       :twitter => :post, :facebook => :post, :mobihelp => :post}
-
-      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get, :agents_autocomplete => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :collection => { :create_watchers => :post,
-                                                        :unsubscribe => :get,
-                                                        :unwatch => :delete,
-                                                        :unwatch_multiple => :delete },
-                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :mobihelp_ticket_extras, :name_prefix => 'helpdesk_ticket_helpdesk_', :only => :index
-
+  resources :contact_import do
+    collection do
+      get :csv
+      get :google
     end
-
-    #helpdesk.resources :ticket_issues
-
-    helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :agents => :get,
-      :groups => :get }, :only => [ :mini_list, :agents, :groups ]
-    helpdesk.resources :quests, :only => [ :active, :index, :unachieved ],
-      :collection => { :active => :get, :unachieved => :get }
-
-
-    helpdesk.resources :notes
-    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
-    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge => :put }
-    helpdesk.resources :ca_folders
-    helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
-    helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
-
-    helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
-    helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
-    helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
-    helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
-    helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
-    helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
-    helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
-    helpdesk.reports_filter        '/tickets/filter/reports/:report_type', :controller => 'tickets', :action => 'index'
-
-
-    #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
-
-    helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
-    helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
-    helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
-    helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
-
-#   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
-
-    helpdesk.resources :articles, :collection => { :autocomplete => :get }
-
-    helpdesk.resources :attachments, :member => { :unlink_shared => :delete, :text_content => :get }
-    helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
-      fb_helpdesk.resources :attachments, :only => [:show, :destroy]
-    end
-
-    helpdesk.resources :dropboxes
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
-                                                        :company_autocomplete => :get }
- 
-    helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
-    helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
-                      :except => :show
-
-    helpdesk.resources :commons
-
   end
 
-  map.resources :api_webhooks, :as => 'webhooks/subscription'
+  resources :customers do
+    member do
+      post :quick
+      get :sla_policies
+    end
+    collection do
+      delete :destroy
+    end
+    resources :time_sheets
+  end
+
+  match '/customers/filter/:state/*letter' => 'customers#index'
+
+  resources :contacts do
+    collection do
+      get :contact_email
+      get :autocomplete
+      get :configure_export
+    end
+
+    member do
+      get :hover_card
+      put :restore
+      post :quick_customer
+      put :make_agent
+      put :make_occasional_agent
+    end
+
+    resources :contact_merge do
+      collection do
+        get :search
+      end
+    end
+  end
+
+  match '/contacts/filter/:state/*letter' => 'contacts#index'
+  resources :groups
+
+  resources :profiles do
+    collection do
+      post :reset_api_key
+    end
+    member do
+      post :change_password
+    end
+    resources :user_emails do
   
-  map.namespace :solution do |solution|
-    solution.resources :categories, :collection => {:reorder => :put}  do |category|
-      category.resources :folders, :collection => {:reorder => :put}  do |folder|
-        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
-          article.resources :tag_uses
+      member do
+        get :make_primary
+        put :send_verification
+      end
+    end
+  end
+
+  resources :agents do
+    collection do
+      put :create_multiple_items
+      get :info_for_node
+    end
+    member do
+      delete :delete_avatar
+      put :toggle_shortcuts
+      put :restore
+      get :convert_to_user
+      put :reset_password
+      put :convert_to_contact
+      post :toggle_availability
+    end
+    resources :time_sheets
+  end
+
+  match '/agents/filter/:state/*letter' => 'agents#index'
+  match '/logout' => 'user_sessions#destroy', :as => :logout
+  match '/openid/google' => 'user_sessions#openid_google', :as => :gauth
+  match '/opensocial/google' => 'user_sessions#opensocial_google', :as => :gauth
+  match '/authdone/google' => 'user_sessions#google_auth_completed', :as => :gauth_done
+  match '/login' => 'user_sessions#new', :as => :login
+  match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
+  match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
+  match '/login/normal' => 'user_sessions#new', :as => :login_normal
+  match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
+  match '/google/complete' => 'accounts#openid_complete', :as => :openid_done
+  match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
+  match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
+  match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
+  namespace :freshfone do
+    resources :ivrs do
+      member do
+        post :activate
+        post :deactivate
+      end
+    end
+
+    resources :call do
+      collection do
+        post :status
+        post :in_call
+        post :direct_dial_success
+        get :inspect_call
+        get :caller_data
+        post :call_transfer_success
+      end
+    end
+
+    resources :queue do
+      collection do
+        post :enqueue
+        post :dequeue
+        post :quit_queue_on_voicemail
+        post :trigger_voicemail
+        post :trigger_non_availability
+        post :bridge
+        post :hangup
+      end
+    end
+
+    resources :voicemail do
+      collection do
+        post :quit_voicemail
+      end
+    end
+
+    resources :call_transfer do
+      collection do
+        post :initiate
+        post :transfer_incoming_call
+        post :transfer_outgoing_call
+        get :available_agents
+      end
+    end
+
+    resources :device do
+      collection do
+        post :record
+        get :recorded_greeting
+      end
+    end
+
+    resources :call_history do
+      collection do
+        get :custom_search
+        get :children
+        get :recent_calls
+      end
+    end
+
+    resources :blacklist_number do
+      collection do
+        post :create
+        post :destroy
+      end
+    end
+
+    resources :users do
+      collection do
+        post :presence
+        post :node_presence
+        post :availability_on_phone
+        post :refresh_token
+        post :in_call
+        post :reset_presence_on_reconnect
+      end
+    end
+
+    resources :autocomplete do
+      collection do
+        get :requester_search
+      end
+    end
+    resources :usage_triggers do
+      collection do
+        post :notify
+      end
+    end
+      
+    resources :ops_notification do    
+      member do
+        post :voice_notification
+      end
+    end
+  end
+
+  resources :freshfone do
+    collection do
+      get :voice
+      post :build_ticket
+      get :dashboard_stats
+      get :get_available_agents
+      get :credit_balance
+      get :ivr_flow
+      get :preview_ivr
+    end
+  end
+
+
+  resources :users do
+    collection do
+      get :revert_identity
+    end
+    member do
+      delete :delete_avatar
+      put :block
+      get :assume_identity
+      get :profile_image
+    end  
+  end
+
+  resource :user_session
+
+  match '/register/:activation_code' => 'activations#new', :as => :register
+  match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
+  match '/activate/:perishable_token' => 'activations#create', :as => :activate
+
+  resources :activations do
+    member do
+      put :send_invite
+    end
+  end
+
+  resources :home, :only => :index
+  resources :ticket_fields, :only => :index
+  resources :email, :only => [:new, :create]
+  resources :mailgun, :only => :create
+  resources :password_resets, :except => [:index, :show, :destroy]
+
+  resources :sso do
+    collection do
+      get :login
+      get :facebook
+      get :google_login
+    end
+  end
+
+  resource :account_configuration
+
+  namespace :integrations do
+      resources :installed_applications do
+        member do
+          put :install
+          get :uninstall
+        end
+      end
+
+      resources :applications do
+        member do
+          post :custom_widget_preview
+        end
+      end
+
+      resources :integrated_resource do
+    
+        member do
+          put :create
+          delete :delete
+        end
+      end
+
+      resources :google_accounts do
+        member do
+          get :edit
+          delete :delete
+          put :update
+          put :import_contacts
+        end
+      end
+
+      resources :gmail_gadgets do
+        collection do
+          get :spec
+        end
+      end
+
+      resources :jira_issue do
+        collection do
+          get :get_issue_types
+          put :unlink
+          post :notify
+          get :register
+        end
+      end
+
+      resources :pivotal_tracker do
+        collection do
+          get :tickets
+          post :pivotal_updates
+          post :update_config
+        end
+      end
+
+      resources :user_credentials
+      resources :logmein do
+        collection do
+          get :rescue_session
+          put :update_pincode
+          get :refresh_session
+          get :tech_console
+          get :authcode
+        end
+      end
+      match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
+      match 'oauth_install/:provider' => 'applications#oauth_install', :as => :custom_install
+      match 'install/:app' => 'oauth#authenticate', :as => :oauth
+  end
+
+  namespace :admin do
+    resources :home, :only => :index
+    resources :day_passes, :only => [:index, :update] do  
+      member do
+        put :buy_now
+        put :toggle_auto_recharge
+      end
+    end
+
+    resources :widget_config, :only => :index
+    resources :chat_setting do
+      collection do
+        post :toggle
+      end
+    end
+
+    resources :automations do
+      collection do
+        put :reorder
+      end
+      member do
+        get :clone_rule
+      end
+    end
+
+    resources :va_rules do
+      collection do
+        put :reorder
+        post :toggle_cascade
+      end
+      member do
+        put :activate_deactivate
+        get :clone_rule
+      end
+    end
+
+    resources :supervisor_rules do
+      collection do
+        put :reorder
+      end
+      member do
+        put :activate_deactivate
+        get :clone_rule
+      end
+    end
+
+    resources :observer_rules do
+      collection do
+        put :reorder
+      end
+      member do
+        put :activate_deactivate
+        get :clone_rule
+      end
+    end
+
+    resources :email_configs do
+      collection do
+        get :existing_email
+        post :personalized_email_enable
+        post :personalized_email_disable
+        post :reply_to_email_enable
+        post :reply_to_email_disable
+        post :id_less_tickets_enable
+        post :id_less_tickets_disable
+      end
+      member do
+        put :make_primary
+        get :deliver_verification
+        put :test_email
+      end  
+    end
+    match '/register_email/:activation_code' => 'email_configs#register_email', :as => :register_email
+    resources :email_notifications do
+      member do
+        put :update_agents
+      end
+    end
+    match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
+    resources :getting_started do
+      collection do
+        put :rebrand
+        delete :delete_logo
+      end
+    end
+    
+    resources :business_calendars
+
+    resources :security do
+      collection do
+        post :request_custom_ssl
+      end
+      member do
+        put :update
+      end
+    end
+
+    resources :data_export do
+      collection do
+        get :export
+      end
+    end
+
+    resources :portal, :only => [:index, :update]
+
+    namespace :canned_responses do
+      resources :folders do
+        collection do
+          get :edit
+        end
+        resources :responses do
+          collection do
+            put :update_folder
+            delete :delete_multiple
+          end
+          member do
+            delete :delete_shared_attachments
+          end
         end
       end
     end
-    solution.resources :articles, :only => :show
-  end
 
-  # Savage Beast route config entries starts from here
-  map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
-  map.resources :topics, :posts, :monitorship
-
-  map.namespace :discussions do |discussion|
-    discussion.resources :forums, :collection => {:reorder => :put}, :except => :index
-    discussion.resources :topics,
-        :except => :index,
-        :member => { :toggle_lock => :put, :latest_reply => :get, :update_stamp => :put,:remove_stamp => :put, :vote => :put, :destroy_vote => :delete, :reply => :get },
-        :collection => {:destroy_multiple => :delete } do |topic|
-      discussion.topic_page "/topics/:id/page/:page", :controller => :topics, :action => :show
-      discussion.topic_component "/topics/:id/component/:name", :controller => :topics, :action => :component
-
-      topic.resources :posts, :except => :new, :member => { :toggle_answer => :put }
-      topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
-
+    resources :products do
+      member do
+        delete :delete_logo
+        delete :delete_favicon
+      end
     end
-    discussion.resources :moderation,
-      :collection => { :empty_folder => :delete, :spam_multiple => :put },
-      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
 
-    discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
-  end
+    resources :portal, :only => [:index, :update] do
+      resource :template do
+        collection do
+          get :show
+          put :update
+          put :soft_reset
+          get :restore_default
+          get :publish
+          get :clear_preview
+        end
+          
+        resources :pages do      
+          member do
+            get :edit_by_page_type
+            put :soft_reset
+          end
+        end
+      end
+    end
 
-  map.resources :discussions, :collection => { :your_topics => :get, :sidebar => :get, :categories => :get, :reorder => :put }
+    resources :surveys do
+      collection do
+        post :enable
+        post :disable
+        get :index
+        put :update
+      end  
+    end
 
-  map.resources :discussions
+    resources :gamification do
+      collection do
+        post :toggle
+        get :quests
+        put :update_game
+      end
+    end
 
-  %w(forum).each do |attr|
-    map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
-  end
+    resources :quests do
+      member do
+        put :toggle
+      end
+    end
 
-  map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
-  forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
-    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }, :collection => { :destroy_multiple => :delete }
-    forum.resources :topics do |topic|
-      topic.resources :posts, :member => { :toggle_answer => :put }
-      topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
+    resources :zen_import do
+      collection do
+        post :import_data
+        get :status
+      end  
+    end
+
+    resources :email_commands_setting do
+      member do
+        put :update
+      end
+    end
+
+    resources :account_additional_settings do
+      collection do
+        post :assign_bcc_email
+        put :update
+      end
+      member do
+        put :update
+        get :assign_bcc_email
+      end
+    end
+
+    resources :freshfone, :only => [:index] do
+      collection do
+        get :search
+        put :toggle_freshfone
+      end
+    end
+
+    namespace :freshfone do
+      resources :numbers do
+        collection do
+          post :purchase
+        end
+      end
+      
+      resources :credits do
+        collection do
+          put :disable_auto_recharge
+          put :enable_auto_recharge
+          post :purchase
+        end
+      end
+    end
+
+    resources :roles
+    namespace :social do
+      resources :streams, :only => :index
+      resources :twitter_streams do
+        collection do
+          get :preview
+        end
+        member do
+          post :delete_ticket_rule
+        end
+      end
+      
+      resources :twitters do
+        collection do
+          put :authdone
+        end
+      end
+
+      resources :twitter_handles do
+        collection do
+          get :authdone
+        end
+        member do
+          delete :destroy
+        end
+      end
+    end
+    
+    resources :mailboxes
+    namespace :mobihelp do
+      resources :apps
+    end
+
+    resources :dynamic_notification_templates do
+      collection do
+        put :update
+      end
+    end
+
+    resources :email_commands_settings do
+      collection do
+        get :index
+        put :update
       end
     end
   end
 
-  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :method => :post
-  # Savage Beast route config entries ends from here
-
-  # Theme for the support portal
-  map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
-  map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
-
-  # Support Portal routes
-  map.namespace :support do |support|
-    # Portal home
-    support.home 'home', :controller => "home"
-
-    # Portal preview
-    support.preview 'preview', :controller => "preview"
-
-    # Login for users in the portal
-    support.resource :login, :controller => "login", :only => [:new, :create]
-    support.connect "/login", :controller => 'login', :action => :new
-
-    # Signup for a new user in the portal
-    # registrations route is not renamed to signup
-    support.resource :signup, :only => [:new, :create]
-    support.connect "/signup", :controller => 'signups', :action => :new
-
-    # Signed in user profile edit and update routes
-    support.resource :profile, :only => [:edit, :update],
-      :member => { :delete_avatar => :delete }
-
-    # Search for the portal, can search Articles, Topics and Tickets
-    support.resource :search, :controller => 'search', :only => :show,
-      :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
-    support.resource :search do |search|
-      search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
-    end
-
-    # Forums for the portal, the items will be name spaced by discussions
-    support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
-    support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put }
-      discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
-        :action => :show
-      discussion.connect "/forums/:id/page/:page", :controller => :forums,
-        :action => :show
-      discussion.resources :topics, :except => :index, :member => { :like => :put, :hit => :get,
-          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get, :toggle_solution => :put, :reply => :get },
-          :collection => {:my_topics => :get} do |topic|
-        discussion.connect "/topics/my_topics/page/:page", :controller => :topics,
-          :action => :my_topics
-        discussion.connect "/topics/:id/page/:page", :controller => :topics,
-          :action => :show
-        topic.resources :posts, :except => [:index, :new, :show],
-          :member => { :toggle_answer => :put }
-        topic.best_answer "/answer/:id", :controller => :posts, :action => :best_answer
+  namespace :search do
+    resources :home, :only => :index do
+      collection do
+        get :suggest
       end
     end
 
-    # Solutions for the portal
-    support.resources :solutions, :only => [:index, :show]
-    support.namespace :solutions do |solution|
-      solution.connect "/folders/:id/page/:page", :controller => :folders,
-        :action => :show
-      solution.resources :folders, :only => :show
-      solution.resources :articles, :only => :show, :member => { :thumbs_up => :put,
-        :thumbs_down => :put , :create_ticket => :post }
+    resources :autocomplete do
+      collection do
+        get :requesters
+        get :agents
+        get :companies
+      end
     end
 
-    # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
-    # Check with shan if we really need this route or the one with the solution namespace
-    support.resources :articles, :controller => 'solutions/articles',
-      :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+    resources :tickets, :only => :index
+    resources :solutions, :only => :index
+    resources :forums, :only => :index
+    resources :customers, :only => :index
+    match '/related_solutions/ticket/:ticket/' => 'solutions#related_solutions', :as => :ticket_related_solutions
+    match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
+  end
 
-    # Tickets for the portal
-    # All portal tickets including company_tickets are now served from this controller
-    support.resources :tickets,
-      :collection => { :check_email => :get, :configure_export => :get, :filter => :get, :export_csv => :post },
-      :member => { :close => :post, :add_people => :put } do |ticket|
+  match '/search/tickets/filter/:search_field' => 'search/tickets#index'
+  match '/search/all' => 'search/home#index'
+  match '/search/topics.:format' => 'search/forums#index'
+  match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
 
-      ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
+  namespace :reports do
+    resources :helpdesk_glance_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_activity_ajax
+        post :fetch_metrics
+      end
     end
 
-    support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
-    support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
-    support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create',
-      :conditions => { :method => :post }
-
-    support.namespace :mobihelp do |mobihelp|
-      mobihelp.resources :tickets
-      mobihelp.connect "/tickets/:id/notes.:format", :controller => 'tickets' , :action => 'add_note'
+    resources :analysis_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+      end
+    end
+      
+    resources :performance_analysis_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+      end
     end
 
-  end
+    resources :agent_glance_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_activity_ajax
+        post :fetch_metrics
+      end
+    end
 
-  map.namespace :anonymous do |anonymous|
-    anonymous.resources :requests
-  end
+    resources :group_glance_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_activity_ajax
+        post :fetch_metrics
+      end
+    end
 
-  map.namespace :public do |p|
-     p.resources :tickets do |ticket|
-        ticket.resources :notes
+    resources :agent_analysis_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_chart_data
+      end
+    end
+    
+    resources :group_analysis_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_chart_data
+      end
+    end
+
+    resources :agents_comparison_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+      end
+    end
+
+    resources :groups_comparison_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+      end
+    end
+
+    resources :customer_glance_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_activity_ajax
+        post :fetch_metrics
+      end
+    end
+
+    resources :customers_analysis_reports do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_chart_data
+      end
+    end
+
+    resources :report_filters do
+      collection do
+        post :create
+        post :destroy
+      end
     end
   end
 
-  map.namespace :mobile do |mobile|
-    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
-    mobile.resources :automations, :only =>:index
-	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index
-  end
- 
-  map.namespace :mobihelp do |mobihelp|
-    mobihelp.resources :devices, { :collection => {:register => :post, :app_config => :get, :register_user => :post }}
-    mobihelp.resources :solutions, { :collection => {:articles => :get }}
+  resources :reports
+
+  resources :timesheet_reports do
+    collection do
+      post :report_filter
+      post :export_csv
+    end
   end
 
-  map.resources :rabbit_mq, :only => [ :index ]
+  match '/activity_reports/customer' => 'reports/customer_reports#index', :as => :customer_activity
+  match '/activity_reports/helpdesk' => 'reports/helpdesk_reports#index', :as => :helpdesk_activity
+  match '/activity_reports/customer/generate' => 'reports/customer_reports#generate', :as => :customer_activity_generate
+  match '/activity_reports/helpdesk/generate' => 'reports/helpdesk_reports#generate', :as => :helpdesk_activity_generate
+  match '/activity_reports/helpdesk/export_to_excel' => 'reports/helpdesk_reports#export_to_excel', :as => :helpdesk_activity_export
+  match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity
+  match '/survey/reports' => 'reports/survey_reports#index', :as => :survey_activity
+  match '/survey/reports/:category/:view' => 'reports/survey_reports#index', :as => :survey_back_to_list
+  match '/survey/reports_list' => 'reports/survey_reports#list', :as => :survey_list
+  match '/survey/report_details/:entity_id/:category' => 'reports/survey_reports#report_details', :as => :survey_detail_report
+  match '/survey/overall_report/:category' => 'reports/survey_reports#report_details', :as => :survey_overall_report
+  match '/reports/survey_reports/feedbacks' => 'reports/survey_reports#feedbacks', :as => :survey_feedbacks
+  match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
 
-  map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
-  map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
+  namespace :social do
+    resources :twitters do
+      collection do
+        get :show
+        get :feed
+        post :create_twicket
+        post :send_tweet
+        post :signin
+        get :tweet_exists
+        get :user_following
+        put :authdone
+        get :twitter_search
+      end
 
-  map.root :controller => "home"
-  #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
+      member do
+        get :search
+        get :edit
+      end
+    end
 
-  # End routes to be included in final engine
 
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+    resources :gnip do
+      collection do
+        post :reconnect
+      end
+    end
+      
+    resources :streams do
+      collection do
+        get :stream_feeds
+        get :show_old
+        get :fetch_new
+        get :interactions
+      end
+    end
 
-  map.connect '/all_agents', :controller => 'agents', :action => 'list'
-  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+    resources :welcome, :only => :index do
+      collection do
+        get :get_stats
+        post :enable_feature
+      end
+    end
+
+    resources :twitter do
+      collection do
+        get :twitter_search
+        get :show_old
+        get :fetch_new
+        post :create_fd_item
+        get :user_info
+        get :retweets
+        post :reply
+        get :retweet
+        post :post_tweet
+      end
+    end
+  end
+
+  namespace :widgets do
+    resource :feedback_widget do
+      member do
+        get :loading
+      end
+    end
+  end
+
+  match '/signup' => 'accounts#plans', :as => :plans
+  match '/signup/d/:discount' => 'accounts#plans'
+  match '/signup/thanks' => 'accounts#thanks', :as => :thanks
+  match '/signup/create/:discount' => 'accounts#create', :as => :create, :discount => nil
+
+  resource :account do
+    collection do
+      put :rebrand
+      get :dashboard
+      get :thanks
+      put :cancel
+      get :canceled
+      post :signup_google
+      delete :delete_logo
+      delete :delete_favicon
+      get :new_signup_free
+    end
+  end
+
+  resource :subscription do
+    collection do
+      get :plans
+      get :billing
+      get :plan
+      get :calculate_amount
+      put :convert_subscription_to_free
+    end
+  end
+
+  match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
+  match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
+  match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
+  match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
+
+  namespace :helpdesk do
+    resources :tags do
+      collection do
+        get :autocomplete
+        delete :remove_tag
+        put :rename_tags
+        put :merge_tags
+      end
+    end
+
+    resources :authorizations do
+      collection do
+        get :autocomplete
+      end
+    end
+
+    resources :tickets do
+      collection do
+        get :user_tickets
+        delete :empty_trash
+        delete :empty_spam
+        delete :delete_forever
+        get :user_ticket
+        get :search_tweets
+        get :custom_search
+        post :export_csv
+        post :latest_ticket_count
+        post :add_requester
+        get :filter_options
+        get :full_paginate
+        get :summary
+        get :update_multiple_tickets
+        get :configure_export
+        get :custom_view_save
+      end
+
+      member do
+        get :reply_to_conv
+        get :forward_conv
+        get :view_ticket
+        put :assign
+        put :restore
+        put :spam
+        put :unspam
+        post :close
+        post :execute_scenario
+        put :close_multiple
+        put :pick_tickets
+        put :change_due_by
+        post :split_the_ticket
+        get :status
+        post :merge_with_this_request
+        get :print
+        get :latest_note
+        get :activities
+        delete :clear_draft
+        post :save_draft
+        put :update_ticket_properties
+        get :component
+        get :prevnext
+      end
+
+      resources :surveys do
+        collection do
+          get :results
+          post :rate
+        end
+      end
+
+      resources :conversations do
+        collection do
+          post :reply
+          post :forward
+          post :note
+          post :twitter
+          post :facebook
+          post :mobihelp
+        end
+      end
+
+      resources :notes do
+        collection do
+          get :since
+        end
+        
+        member do
+          put :restore
+        end
+      end
+
+      resources :subscriptions do
+        collection do
+          post :create_watchers
+          get :unsubscribe
+          delete :unwatch
+          delete :unwatch_multiple
+        end
+      end
+
+      resources :tag_uses
+      resources :reminders
+      resources :time_sheets
+      resources :mobihelp_ticket_extras, :only => :index
+    end
+      
+    resources :leaderboard, :only => [:mini_list, :agents, :groups] do
+      collection do
+        get :mini_list
+        get :agents
+        get :groups
+      end
+    end
+
+    resources :quests, :only => [:active, :index, :unachieved] do
+      collection do
+        get :active
+        get :unachieved
+      end
+    end
+
+    resources :notes
+    
+    resources :bulk_ticket_actions do
+      collection do
+        put :update_multiple
+      end
+    end
+
+    resources :merge_tickets do
+      collection do
+        post :complete_merge
+        put :merge
+      end
+    end
+
+
+    resources :ca_folders
+    
+    resources :canned_responses do
+      collection do
+        get :search
+        get :recent
+      end
+      resources :folders do
+        collection do
+          get :edit
+        end
+      end
+    end
+
+    resources :reminders do
+      member do
+        put :complete
+        put :restore
+      end
+    end
+
+    resources :time_sheets do
+      member do
+        put :toggle_timer
+      end
+    end
+
+    match '/tags/:id/*filters' => 'tags#show', :as => :filter_tag_tickets
+    match '/tickets/filter/tags' => 'tags#index', :as => :filter_tickets
+    match '/tickets/filter/:filter_name' => 'tickets#index', :as => :filter_view_default
+    match '/tickets/view/:filter_key' => 'tickets#index', :as => :filter_view_custom
+    match '/tickets/filter/requester/:requester_id' => 'tickets#index', :as => :requester_filter
+    match '/tickets/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter
+    match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
+    match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+    match '/dashboard.:format' => 'dashboard#index', :as => :formatted_dashboard
+    match '/dashboard/activity_list' => 'dashboard#activity_list'
+    match '/dashboard/latest_activities' => 'dashboard#latest_activities'
+    match '/dashboard/latest_summary' => 'dashboard#latest_summary'
+    match '' => 'dashboard#index', :as => :dashboard
+    match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
+    match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
+    
+    resources :articles do
+      collection do
+        get :autocomplete
+      end
+    end
+
+    resources :attachments do
+      member do
+        delete :unlink_shared
+        get :text_content
+      end
+    end
+
+    resources :attachments, :only => [:show, :destroy]
+    resources :dropboxes
+
+    resources :sla_policies, :except => :show do
+      collection do
+        put :reorder
+      end
+      member do
+        put :activate
+      end
+    end
+
+    resources :autocomplete do
+      collection do
+        get :requester
+        get :customer
+      end
+    end
+
+    resources :commons
+  end
+
+  resources :api_webhooks
+
+  namespace :solution do
+    resources :categories do
+      collection do
+        put :reorder
+      end
+    
+      resources :folders do
+        collection do
+          put :reorder
+        end
+      
+        resources :articles do
+          collection do
+            put :reorder
+          end
+          
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            post :delete_tag
+          end
+          resources :tag_uses
+        end
+      end
+    end
+
+    resources :articles, :only => :show
+  end
+
+  resources :posts do
+    collection do
+      get :search
+    end
+  end
+
+  resources :topics
+  resources :posts
+  resources :monitorship
+
+  namespace :discussions do
+    resources :forums, :except => :index do
+      collection do
+        put :reorder
+      end
+    end
+
+    resources :topics, :except => :index do
+      collection do
+        delete :destroy_multiple
+      end
+      member do
+        put :toggle_lock
+        get :latest_reply
+        put :update_stamp
+        put :remove_stamp
+        put :vote
+        delete :destroy_vote
+      end
+      match '/topics/:id/page/:page' => 'topics#show'
+      match '/topics/:id/component/:name' => 'topics#component', :as => :topic_component
+      resources :posts, :except => :new do
+        member do
+          put :toggle_answer
+        end
+      end
+    
+      match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+    end
+      
+    resources :moderation do
+      collection do
+        delete :empty_folder
+        put :spam_multiple
+      end
+      
+      member do
+        put :approve
+        put :ban
+        put :mark_as_spam
+      end
+    end
+      
+    match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
+  end
+
+  resources :discussions do
+    collection do
+      get :your_topics
+      get :sidebar
+      get :categories
+      put :reorder
+    end
+  end
+
+  resources :discussions
+  resources :posts
+  resources :categories do
+    collection do
+      put :reorder
+    end
+  
+    resources :forums do
+      collection do
+        put :reorder
+      end
+    
+      resources :topics do
+        collection do
+          delete :destroy_multiple
+        end
+        member do
+          get :users_voted
+          put :update_stamp
+          put :remove_stamp
+          put :update_lock
+        end
+      end
+
+      resources :topics do
+        resources :posts do
+          member do
+            put :toggle_answer
+          end
+        end
+        match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+      end
+    end
+  end
+
+  match 'discussions/:object/:id/subscriptions/:type.:format' => 'monitorships#toggle', :as => :toggle_monitorship, :method => :post
+  match '/support/theme.:format' => 'theme/support#index'
+  match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
+  namespace :support do
+    match 'home' => 'home#index', :as => :home
+    match 'preview' => 'preview#index', :as => :preview
+    resource :login, :controller => "login", :only => [:new, :create]
+    match '/login' => 'login#new'
+    resource :signup, :only => [:new, :create]
+    match '/signup' => 'signups#new'
+
+    resource :profile, :only => [:edit, :update] do
+      member do
+        delete :delete_avatar
+      end
+    end
+    
+    resource :search, :only => :show do
+      member do
+        get :solutions
+        get :topics
+        get :tickets
+        get :suggest_topic
+      end
+    end
+      
+    resource :search do
+      match '/topics/suggest' => 'search#suggest_topic'
+    end
+
+    resources :discussions, :only => [:index, :show] do
+      collection do
+        get :user_monitored
+      end
+    end
+
+    namespace :discussions do
+      resources :forums, :only => :show do
+        member do
+          put :toggle_monitor
+        end
+      end
+
+      match '/forums/:id/:filter_topics_by' => 'forums#show', :as => :filter_topics
+      match '/forums/:id/page/:page' => 'forums#show'
+
+      resources :topics, :except => :index do
+        collection do
+          get :my_topics
+        end
+        
+        member do
+          put :like
+          get :hit
+          put :unlike
+          put :toggle_monitor
+          put :monitor
+          get :check_monitor
+          get :users_voted
+          put :toggle_solution
+          get :reply
+        end
+
+        match '/topics/my_topics/page/:page' => 'topics#my_topics'
+        match '/topics/:id/page/:page' => 'topics#show'
+
+        resources :posts, :except => [:index, :new, :show] do
+          member do
+            put :toggle_answer
+          end
+        end
+
+        match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+      end
+    end
+
+    
+    resources :solutions, :only => [:index, :show]
+    
+    namespace :solutions do
+      match '/folders/:id/page/:page' => 'folders#show'
+      resources :folders, :only => :show
+      
+      resources :articles, :only => :show do
+        member do
+          put :thumbs_up
+          put :thumbs_down
+          post :create_ticket
+        end
+      end
+    end
+
+    resources :articles do
+      member do
+        put :thumbs_up
+        put :thumbs_down
+        post :create_ticket
+      end
+    end
+
+    resources :tickets do
+      collection do
+        get :check_email
+        get :configure_export
+        get :filter
+        post :export_csv
+      end
+      
+      member do
+        post :close
+        put :add_people
+      end
+      resources :notes
+    end
+
+    match '/surveys/:ticket_id' => 'surveys#create_for_portal', :as => :portal_survey
+    match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
+    match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
+    
+    namespace :mobihelp do
+      resources :tickets
+      match '/tickets/:id/notes.:format' => 'tickets#add_note'
+    end
+  end
+
+  namespace :anonymous do
+    resources :requests
+  end
+
+  namespace :public do
+    resources :tickets do
+      resources :notes
+    end
+  end
+
+  namespace :mobile do
+    resources :tickets do
+      collection do
+        get :view_list
+        get :get_portal
+        get :ticket_properties
+        get :load_reply_emails
+      end
+    end
+
+    resources :automations, :only => :index
+    resources :notifications, :only => {} do
+      collection do
+        put :register_mobile_notification
+      end
+    end
+    resources :settings,  :only =>:index
+  end
+
+  namespace :mobihelp do
+    resources :devices do
+      collection do
+        post :register
+        get :app_config
+        post :register_user
+      end
+    end
+    
+    resources :solutions do
+      collection do
+        get :articles
+      end
+    end
+  end
+
+  namespace :notification do
+    resources :product_notification, :only => :index
+  end
+
+  resources :rabbit_mq, :only => [:index]
+  match '/marketplace/login' => 'google_login#marketplace_login', :as => :route
+  match '/google/login' => 'google_login#portal_login', :as => :route
+  match '/' => 'home#index'
+  # match '/:controller(/:action(/:id))'
+  match '/all_agents' => 'agents#list'
+  match '/chat/create_ticket' => 'chats#create_ticket', :method => :post
+  match '/chat/add_note' => 'chats#add_note', :method => :post
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  #SAAS copy starts here
+  # map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
+  #   subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
+  #   subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
+  #     admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
+  #     admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
+  #     admin.resources :subscription_plans, :as => 'plans'
+  #     # admin.resources :subscription_discounts, :as => 'discounts'
+  #     admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
+  #                                               :member => { :add_subscription => :post }
+  #     admin.resources :subscription_payments, :as => 'payments'
+  #     admin.resources :subscription_announcements, :as => 'announcements'
+  #     admin.resources :conversion_metrics, :as => 'metrics'
+  #     admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post, :update_global_blacklist_ips => :put }
+  #     admin.resources :manage_users, :as => 'manage_users', :collection =>{:add_whitelisted_user_id => :post, :remove_whitelisted_user_id => :post }
+  #     admin.namespace :resque do |resque|
+  #       resque.home '', :controller => 'home', :action => 'index'
+  #       resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
+  #       resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
+  #     end
+      
+  #     admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
+  #     admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
+      
+  #     # admin.resources :analytics
+  #     admin.resources :spam_watch, :only => :index
+  #     admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
+  #     admin.spam_user ':shard_name/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
+  #     admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+  #     admin.hard_block_user ':shard_name/hard_block/:user_id', :controller => :spam_watch, :action => :hard_block
+  #     admin.internal_whitelist ':shard_name/internal_whitelist/:user_id', :controller => :spam_watch, :action => :internal_whitelist
+  #     admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
+  #     admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
+  #     admin.resources :currencies, :as => 'currency'
+  #     admin.subscription_logout 'admin_sessions/logout', :controller => :admin_sessions , :action => :destroy
+  #     admin.subscription_login 'admin_sessions/login', :controller => :admin_sessions , :action => :new
+  #     admin.resources :subscription_users, :as => 'subscription_users', :member => { :update => :post, :edit => :get, :show => :get }, :collection => {:reset_password => :get }
+  #   end
+  # end
+
+  # map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
+  #   subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
+  #     partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+  #   end
+  # end
+
+  # map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+  #   subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+  #     billing.resources :billing, :collection => { :trigger => :post }
+  #   end
+  # end
 end

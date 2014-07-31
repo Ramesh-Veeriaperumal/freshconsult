@@ -36,11 +36,11 @@ module Wf::TestCaseGenerator
   end
 
   def options_for_customers
-    @account.customers.all.map { |company| [company.id, company.name] }
+    RSpec.configuration.account.customers.all.map { |company| [company.id, company.name] }
   end
 
   def options_for_requester
-    @account.users.contacts.all.map { |contact| [contact.id, contact.name] }
+    RSpec.configuration.account.users.contacts.all.map { |contact| [contact.id, contact.name] }
   end
 
   def add_filters_for_nested_fields filter_details

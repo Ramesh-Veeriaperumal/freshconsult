@@ -1,7 +1,7 @@
 <% content_for :pagefixed do %>
   <script src="/javascripts/helpdesk/expanding_textarea.js" type="text/javascript"></script>
   <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
-  <% javascript_tag do -%>
+  <%= javascript_tag do -%>
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({
         toggleMode: true,
@@ -107,7 +107,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 			
 			<%if has_editable_field%>	
 				<div id="ticket_props_form" style="display:none;">
-					<% form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
+					<%= form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
 					   <ul class="cnt">
 						   <% current_portal.ticket_fields.each do |field| %>
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
@@ -131,7 +131,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 								<%= f.submit t('update'), :class => "uiButton special" %>
 							</li>
 									
-					       <% javascript_tag do %>  
+					       <%= javascript_tag do %>  
 					       	validateOptions = {
 								onkeyup: false,
 								focusCleanup: true,

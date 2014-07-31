@@ -194,8 +194,8 @@ protected
   end
 
   def set_item_user
-    @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
+    @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
   end
 
   def process_item

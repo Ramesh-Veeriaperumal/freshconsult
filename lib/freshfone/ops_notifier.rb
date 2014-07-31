@@ -18,7 +18,7 @@ class Freshfone::OpsNotifier
   end
 
   def alert_mail
-    FreshfoneNotifier.deliver_ops_alert(current_account, notification, message)
+    FreshfoneNotifier.ops_alert(current_account, notification, message)
   end
 
   def alert_call

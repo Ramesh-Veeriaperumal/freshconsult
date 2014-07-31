@@ -21,7 +21,7 @@
     </div>
   <% end %>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(".trial-background").bind("click", function(ev){
         window.location = '<%= subscription_url %>';  
     });

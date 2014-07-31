@@ -1,5 +1,5 @@
-<% form_for :account_additional_settings, @account_additional_settings, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
-	<%= f.error_messages %>
+<%= form_for @account_additional_settings, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
+	<%= render partial: '/shared/error_messages', collection: @account_additional_settings.errors.full_messages %>
 	<div class="ui-form auto_bcc_email">
 		<label><%= t('email_configs.bcc_email')%></label>
 		<%= f.text_field :bcc_email, :class => "required text email" , :id => "bcc_email"%>
@@ -10,7 +10,7 @@
 		<%= f.submit t('save'), :class => "btn" %>
 	</div>  
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	closeDialog = function(){
 		active_dialog.dialog('close');
  	}

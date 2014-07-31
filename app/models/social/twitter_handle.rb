@@ -1,15 +1,17 @@
 class Social::TwitterHandle < ActiveRecord::Base
 
-  set_table_name "social_twitter_handles"
+  self.table_name =  "social_twitter_handles"
 
   concerned_with :associations, :constants, :validations, :callbacks
 
   serialize  :search_keys, Array
 
-  named_scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
-  named_scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
-  named_scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
-  named_scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
+  scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
+  scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
+  scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
+  scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
+
+  attr_accessible :product_id, :dm_thread_time
 
 
   def search_keys_to_s

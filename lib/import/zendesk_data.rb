@@ -567,7 +567,7 @@ end
 def handle_error
      delete_zip_file
      email_params = {:email => params[:email], :domain => params[:domain]}
-     Admin::DataImportMailer.deliver_import_error_email(email_params)
+     Admin::DataImportMailer.import_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
      @current_account.data_import.destroy
     
@@ -579,7 +579,7 @@ end
                      :tickets_stat =>  @tickets_stat ,:groups_stat => @groups_stat,
                      :users_stat => @users_stat , :customers_stat => @customers_stat , 
                      :topic_stat => @topic_stat,:article_stat => @article_stat}
-     Admin::DataImportMailer.deliver_import_email(email_params)
+     Admin::DataImportMailer.import_email(email_params)
   end
  
   

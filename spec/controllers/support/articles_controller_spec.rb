@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Support::Solutions::ArticlesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,7 +22,7 @@ describe Support::Solutions::ArticlesController do
   end
 
   before(:each) do
-    @account.features.open_solutions.create
+    RSpec.configuration.account.features.open_solutions.create
   end
 
   it "should redirect to support home if index is hit" do 
@@ -50,7 +50,7 @@ describe Support::Solutions::ArticlesController do
 
   it "should redirect to login page if there is no open solutions feature " do
     name = Faker::Name.name
-    @account.features.open_solutions.destroy
+    RSpec.configuration.account.features.open_solutions.destroy
     article = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
     get 'show', id: article.id
@@ -65,7 +65,7 @@ describe Support::Solutions::ArticlesController do
   end
  
   it "should not show draft article without logging in while open solutions feature is disabled" do
-    @account.features.open_solutions.destroy
+    RSpec.configuration.account.features.open_solutions.destroy
     get 'show', id: @test_article2
     response.body.should_not =~ /article2 with status as draft/
     response.should redirect_to(login_url)    

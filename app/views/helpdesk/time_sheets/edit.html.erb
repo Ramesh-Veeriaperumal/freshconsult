@@ -2,7 +2,7 @@
   <%= render :partial => "form", :object => f, :locals => {:edit => @time_entry, :type =>"edit"} %>
 <% end %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
 	jQuery('.modal.in #time_entry_hhmm').focus();
 	<%= modifyTimesheetApps(@time_entry) %>
 <% end %>

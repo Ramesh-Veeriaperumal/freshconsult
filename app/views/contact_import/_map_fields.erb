@@ -1,4 +1,4 @@
-<% form_tag nil, :method => :post , :rel => "validate" do -%>
+<%= form_tag nil, :method => :post , :rel => "validate" do -%>
 	<% @parameters.each do |arr| -%>
 	<%= hidden_field_tag arr[0], arr[1] %>
 	<% end -%>
@@ -28,7 +28,7 @@
 	</ul>
 <% end -%>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(document).ready(function(){
 		sample_value = [<%= raw @rows[1].to_json %>];
 		jQuery(".table_header").change(function(){ 

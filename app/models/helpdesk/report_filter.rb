@@ -1,5 +1,5 @@
 class Helpdesk::ReportFilter < ActiveRecord::Base
-  set_table_name "report_filters"
+  self.table_name =  "report_filters"
 
   belongs_to_account
 
@@ -9,7 +9,7 @@ class Helpdesk::ReportFilter < ActiveRecord::Base
 
   serialize :data_hash
 
-  named_scope :by_report_type, lambda { |report_type|
+  scope :by_report_type, lambda { |report_type|
     { :conditions => {:report_type => report_type}}
   }
 end

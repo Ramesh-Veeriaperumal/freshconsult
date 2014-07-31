@@ -2,12 +2,12 @@ require 'spec_helper'
 include EmailHelper
 
 describe EmailController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   it "should process new email" do
-    email1 = new_email({:email_config => @account.primary_email_config.to_email})
+    email1 = new_email({:email_config => RSpec.configuration.account.primary_email_config.to_email})
     post :create, :params => email1
     response.status.should eql "200 OK"
   end

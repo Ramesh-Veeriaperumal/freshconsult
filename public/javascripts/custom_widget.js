@@ -1177,7 +1177,7 @@ var CustomWidget =  {
 	}
 };
 
-CustomWidget.include_js("/javascripts/strftime-min.js");
+CustomWidget.include_js("/assets/strftime-min.js");
 
 var XmlUtil = {
 	extractEntities:function(resStr, lookupTag){

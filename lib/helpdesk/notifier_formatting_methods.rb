@@ -30,7 +30,7 @@ module Helpdesk::NotifierFormattingMethods
     html_part.xpath('//img[@class="inline-image"]').each do |inline|
       inline_attachment = account.attachments.find_by_id(inline['data-id'])
       if inline_attachment
-        cid = ActiveSupport::SecureRandom.hex(8)
+        cid = SecureRandom.hex(8)
         inline_attachments.push({ :cid => cid, :attachment => inline_attachment})
         inline.set_attribute('src', "cid:#{cid}")
         inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
@@ -41,12 +41,13 @@ module Helpdesk::NotifierFormattingMethods
 
   def handle_inline_attachments(inline_attachments)
     inline_attachments.each do |inline_attachment|
-      attachment  :content_type => inline_attachment[:attachment].content_content_type, 
-              :headers => { 'Content-ID' => "<#{inline_attachment[:cid]}>",
-                            'Content-Disposition' => "inline; filename=\"#{inline_attachment[:attachment].content_file_name}\"",
-                            'X-Attachment-Id' => inline_attachment[:cid] },
-                  :body => File.read(inline_attachment[:attachment].content.to_file.path), 
-                  :filename => inline_attachment[:attachment].content_file_name
-    end   
+      attachments[inline_attachment[:attachment].content_file_name] = { 
+        :mime_type => inline_attachment[:attachment].content_content_type, 
+        'Content-ID' => "<#{inline_attachment[:cid]}>",
+        'Content-Disposition' => "inline; filename=\"#{inline_attachment[:attachment].content_file_name}\"",
+        'X-Attachment-Id' => inline_attachment[:cid] ,
+        :content => File.read(inline_attachment[:attachment].content.to_file.path)
+      }
+    end
   end
 end

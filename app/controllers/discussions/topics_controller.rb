@@ -31,12 +31,14 @@ class Discussions::TopicsController < ApplicationController
 			forum = current_account.forums.find(params[:topic][:forum_id])
 			@topic  = forum.topics.build(topic_param)
 			assign_protected
+			@topic.forum_id = params[:topic][:forum_id]
 			@post       = @topic.posts.build(post_param)
 			@post.topic = @topic
 			if privilege?(:view_admin)
 				@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
 			end
 			@post.user  ||= current_user
+			@topic.user ||= current_user
 			@post.account_id = current_account.id
 			# only save topic if post is valid so in the view topic will be a new record if there was an error
 			@topic.body_html = @post.body_html # incase save fails and we go back to the form
@@ -283,7 +285,7 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def topic_param
-			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html].include? k }
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id].include? k }
 		end
 
 		def post_param

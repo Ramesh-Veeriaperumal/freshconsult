@@ -6,8 +6,8 @@ describe 'CallRecordingAttachment' do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @agent = get_admin
+    RSpec.configuration.account = create_test_account
+    RSpec.configuration.agent = get_admin
   end
 
   before(:each) do
@@ -42,15 +42,15 @@ describe 'CallQueueWait' do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @agent = get_admin
+    RSpec.configuration.account = create_test_account
+    RSpec.configuration.agent = get_admin
     create_test_freshfone_account
   end
 
   it 'should not dequeue a call which is not present in the twilio queue' do
     call = create_freshfone_call
     queued_twiml = Freshfone::QueueWait.perform({
-      :queue_sid => @account.freshfone_account.queue, 
+      :queue_sid => RSpec.configuration.account.freshfone_account.queue, 
       :call_sid => call.call_sid})
     queued_twiml.should be_blank
   end

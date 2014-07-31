@@ -1,6 +1,6 @@
 class Helpdesk::TicketDrop < BaseDrop
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 	include TicketConstants
 
 	liquid_attributes << :requester << :group << :ticket_type << :deleted	

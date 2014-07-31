@@ -2,7 +2,7 @@ class SurveyHandle < ActiveRecord::Base
 	
   belongs_to_account
   	
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   NOTIFICATION_VS_SEND_WHILE = {
     EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,

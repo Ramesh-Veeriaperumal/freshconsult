@@ -6,7 +6,7 @@
 		</div>
 		<span class="pull-right label label-small"><%= ticket.status_name %></span>
 	    <div class="ellipsis">
-	      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "...")) %> 
+	      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, :length => 350, :omission => '...')) %> 
 	    </div>
 			
 		<% content_tag :p, :class => "help-text" do %>

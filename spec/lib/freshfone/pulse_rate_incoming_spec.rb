@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe "CreditInfo" do
 	before :each do
-		@call = Factory.build(:freshfone_call)
-		@call.freshfone_number = Factory.build(:freshfone_number)
-		account = Factory.build(:account)
-		account.freshfone_account = Factory.build(:freshfone_account)
+		@call = FactoryGirl.build(:freshfone_call)
+		@call.freshfone_number = FactoryGirl.build(:freshfone_number)
+		account = FactoryGirl.build(:account)
+		account.freshfone_account = FactoryGirl.build(:freshfone_account)
 		@call.account = account
-		@call.agent = Factory.build(:user)
+		@call.agent = FactoryGirl.build(:user)
 	end
 
 	describe "Checking Incoming cost" do

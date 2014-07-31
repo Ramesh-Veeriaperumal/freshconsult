@@ -10,7 +10,7 @@
 <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) unless @items.empty?%>
 <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) if @items.empty? %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   activity_count = 0;
   previous_id = jQuery('#Pages li').first().prop('id');
     if(previous_id == undefined) previous_id = 0;

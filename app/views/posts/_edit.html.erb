@@ -1,4 +1,4 @@
-<% remote_form_for @post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
+<%= form_for @post, :remote => true, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
 	<%= (f.rich_editor :body_html, :height => "150px", :index => @post.id, 'editor-type' => :forum).html_safe  %>
 	<% if is_application_installed?("screenr") %>
 		<br>
@@ -9,7 +9,7 @@
 		<%= submit_tag t('cancel'), { :name => 'reset', 'data-id' => @post.id, :id => "reset_button_#{@post.id}", :type => "reset", :class => "uiButton small reset_button"} %>		
 	</div>
 <% end -%>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	(function($) {
 		$("#reset_button_" + <%= @post.id.to_s %>).data('html', 
 							$('#post_' + <%= @post.id.to_s %> +'_body_html').val());

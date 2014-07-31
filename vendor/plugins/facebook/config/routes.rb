@@ -1,22 +1,29 @@
-ActionController::Routing::Routes.draw do |map|
+Rails.application.routes.draw do
 
-  map.namespace :social do |social|
-    social.resources :facebook, :controller => 'facebook_pages',
-      :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any, :update_page_token => :any },
-      :member     =>  { :edit => :any } do |fb|
-         fb.resources :tabs, :controller => 'facebook_tabs',
-        :collection => { :configure => :any, :remove => :any }
+  namespace :social do
+    resources :facebook do
+      collection do
+        post :signin
+        post :event_listener
+        post :enable_pages
+        post :update_page_token
+      end
+      member do
+        get :edit
+      end
+      resources :tabs do
+        collection do
+          post :configure
+          delete :remove
+        end
+      end
     end
-    
-    #uncomment it before running the spec locally
-    #social.resources :realtime, :controller => 'facebook_subscription',
-    #:only => :none, :collection => {:subscription => [:get,:post]}
   end
 
-  map.filter 'facebook'
-  
-  map.namespace :support do |support|
-    support.facebook_tab_home "/facebook_tab/redirect/:app_id", :controller => 'facebook_tabs', 
-      :action => :redirect, :app_id => nil
+  # TODO-RAILS3 need to cross check
+  # match 'facebook' => '#index', :as => :filter
+
+  namespace :support do
+      match '/facebook_tab/redirect/:app_id' => 'facebook_tabs#redirect', :as => :facebook_tab_home, :app_id => nil
   end
 end

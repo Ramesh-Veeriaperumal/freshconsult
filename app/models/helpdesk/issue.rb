@@ -1,6 +1,6 @@
 # encoding: utf-8
 class Helpdesk::Issue < ActiveRecord::Base
-  set_table_name "helpdesk_issues"
+  self.table_name =  "helpdesk_issues"
 
   belongs_to :user,
     :class_name => 'User'
@@ -21,8 +21,8 @@ class Helpdesk::Issue < ActiveRecord::Base
     :as => 'notable',
     :dependent => :destroy
 
-  named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  named_scope :visible, :conditions => "status > 0" 
+  scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+  scope :visible, :conditions => "status > 0" 
 
   STATUSES = [
     [ :open,        "OPEN",                           1 ], 

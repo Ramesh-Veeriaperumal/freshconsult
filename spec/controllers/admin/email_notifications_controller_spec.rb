@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Admin::EmailNotificationsController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@email_notifications = @account.email_notifications
+		@email_notifications = RSpec.configuration.account.email_notifications
 		@test_notification = @email_notifications.find_by_notification_type("1")		
 		@test_reply_temp = @email_notifications.find_by_notification_type("15")
-		@user1 = add_test_agent(@account)
-		@user2 = add_test_agent(@account)
+		@user1 = add_test_agent(RSpec.configuration.account)
+		@user2 = add_test_agent(RSpec.configuration.account)
 	end
 
 	before(:each) do

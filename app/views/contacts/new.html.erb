@@ -3,7 +3,7 @@
   <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user. </p>	
 <% else %>
   <h3 class="lead"><%=t('contacts.new')%></h3>
-  <% form_for @user,:url => { :controller => "contacts", :action => "create" }, :html => { :multipart => true, :rel => 'validate'}  do |f| -%>
+  <%= form_for @user,:url => { :controller => "contacts", :action => "create" }, :html => { :multipart => true, :rel => 'validate'}  do |f| -%>
     <%= render :partial => "form", :locals => { :f => f, :type => "user" } %>
 	<div class="button-container">
 		<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn" %>

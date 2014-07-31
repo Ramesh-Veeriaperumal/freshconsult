@@ -21,22 +21,23 @@
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_css :common %>
-	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_css :plugins  %>
-	<%= include_cloudfront_css :sprites  %>
-	<%= include_cloudfront_css :app %>
-	<%= include_cloudfront_css :non_pattern %>
-	<%= include_cloudfront_css :tour_my_app %>
-	<%= include_cloudfront_css :ie_hacks %>
-	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_css :'360player' %>
-	<%= include_cloudfront_css :community %>
+	<%= stylesheet_link_tag :app_common %>
+	<%= stylesheet_link_tag :pattern, :media => "screen, print, projection"  %>
+	<%= stylesheet_link_tag :plugins  %>
+	<%= stylesheet_link_tag :sprites  %>
+	<%= stylesheet_link_tag :app %>
+	<%= stylesheet_link_tag :non_pattern %>
+	<%= stylesheet_link_tag :tour_my_app %>
+	<%= stylesheet_link_tag :ie_hacks %>
+	<%= stylesheet_link_tag :tkt_details, :media => "screen, print, projection"  %>
+	<%= stylesheet_link_tag :'360player' %>
+	<%= stylesheet_link_tag :community %>
 
-	<%= include_cloudfront_css :'freshfone_recording_playback' %>
+	<%= stylesheet_link_tag :'freshfone_recording_playback' %>
 	<%#= render :partial => "shared/theme.css"  %>
 
 	<script type="text/javascript">
+	  /*TODo_RAILS3 need to cross check this area*/
 		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
 		SPACER_IMAGE_PATH = '<%= image_path("spacer.gif") %>';
@@ -44,27 +45,29 @@
 			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
 		};
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
-		cloudfront_host_url = "<%= CloudfrontAssetHost.asset_host('frameworks.js',request) %>";
+		cloudfront_host_url = "<%= ActionController::Base.asset_host %>";
 	</script>
-	<%= include_cloudfront_js :defaults  %>
-	<%= include_cloudfront_js :frameworks %>
-	<%= include_cloudfront_js :workspace %>
-	<%= include_cloudfront_js :redactor %>
-	<%= include_cloudfront_js :shortcut if shortcuts_enabled? %>
-	<%= include_cloudfront_js :syntaxhighlighter %>
+	
+	
+	<%= javascript_include_tag :defaults  %>
+	<%= javascript_include_tag :frameworks %>
+	<%= javascript_include_tag :workspace %>
+	<%= javascript_include_tag :redactor %>
+	<%= javascript_include_tag :shortcut if shortcuts_enabled? %>
+	<%= javascript_include_tag :syntaxhighlighter %>
 
 
-	<%= include_cloudfront_js :pattern  %>
-	<%= include_cloudfront_js :merge  %>
+	<%= javascript_include_tag :pattern  %>
+	<%= javascript_include_tag :merge  %>
 
-	<%= include_cloudfront_js :custom_widget %>
+	<%= javascript_include_tag :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
-		<%= include_cloudfront_js :soundmanager %>
+		<%= javascript_include_tag :soundmanager %>
 	<% end %>
 
-	<%= include_cloudfront_js_langs %>
+	<%#= javascript_include_tag_langs #TODO-RAILS3%>
 
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;

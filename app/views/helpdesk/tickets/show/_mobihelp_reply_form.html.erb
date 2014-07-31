@@ -3,7 +3,7 @@
 		<strong>Reply </strong> 
 	</div>
 	<div class="list_agents_replying" class="hide"></div>
-	<% form_for note, :url => mobihelp_helpdesk_ticket_conversations_path(@ticket), :html => {
+	<%= form_for note, :url => mobihelp_helpdesk_ticket_conversations_path(@ticket), :html => {
 						:multipart => true,  
 						:id => "HelpdeskMobihelpChat",
 						"data-panel" => cntid,
@@ -17,7 +17,7 @@
 		<%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
 		<ul class="ui-form dont-validate">
 			<li class="inline-field field clearField continous message">
-				<% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+				<%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
           <%= ff.text_area :body, { :class => 'required mobihelp_chat auto-height', :id => "#{id}-#{cntid}-body", :rows => "3" } %>
           <%= text_area_tag "quoted_text_html", "", { :id => "#{cntid}-quoted", :class => "hide" } %>
 				<% end %>

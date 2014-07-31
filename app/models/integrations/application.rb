@@ -7,7 +7,7 @@ class Integrations::Application < ActiveRecord::Base
     :class_name => 'Integrations::Widget',
     :dependent => :destroy
   belongs_to :account
-  named_scope :available_apps, lambda {|account_id| { 
+  scope :available_apps, lambda {|account_id| { 
     :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
     :order => :listing_order }}
 

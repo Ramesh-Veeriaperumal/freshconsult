@@ -8,13 +8,15 @@ class Monitorship < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
 
-  named_scope :active_monitors, :conditions => { :active => true }
-  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+  scope :active_monitors, :conditions => { :active => true }
+  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   ALLOWED_TYPES = [:forum, :topic]
   ACTIONS = [:follow, :unfollow]
 
   before_create :set_account_id
+
+  attr_accessible :active
 
   def sender_and_host
     if !portal_id? || ( portal_id? && portal.main_portal? )
@@ -26,6 +28,7 @@ class Monitorship < ActiveRecord::Base
     end
     [sender,host]
   end
+
 
   protected
 

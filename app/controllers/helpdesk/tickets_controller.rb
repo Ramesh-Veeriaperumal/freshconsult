@@ -104,7 +104,7 @@ class Helpdesk::TicketsController < ApplicationController
           @show_options = show_options
         end
         @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-        @is_default_filter = (!is_num?(@template.current_filter))
+        @is_default_filter = (!is_num?(view_context.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end
@@ -173,7 +173,7 @@ class Helpdesk::TicketsController < ApplicationController
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
     @show_options = show_options
-    @is_default_filter = (!is_num?(@template.current_filter))
+    @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
     render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
   end
@@ -228,7 +228,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def custom_view_save
-    filter = current_account.user_accesses(current_user.id).find_by_accessible_id(@template.current_filter)
+    filter = current_account.user_accesses(current_user.id).find_by_accessible_id(view_context.current_filter)
     # Edit
     if params[:operation] and (params[:operation] == "edit") and !filter.nil?
       filter = filter.accessible
@@ -801,7 +801,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
    def is_num?(str)
-    Integer(str)
+    Integer(str.to_s)
    rescue ArgumentError
     false
    else
@@ -848,7 +848,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def redis_key
-      HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id}
+      HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session['session_id']}
     end
 
     def allowed_quick_assign_fields
@@ -969,7 +969,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def load_ticket_filter
       return if @cached_filter_data
-      filter_name = @template.current_filter
+      filter_name = view_context.current_filter
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
@@ -1130,8 +1130,8 @@ class Helpdesk::TicketsController < ApplicationController
   end 
 
   def load_sort_order
-    params[:wf_order] = @template.current_wf_order.to_s
-    params[:wf_order_type] = @template.current_wf_order_type.to_s
+    params[:wf_order] = view_context.current_wf_order.to_s
+    params[:wf_order_type] = view_context.current_wf_order_type.to_s
   end
  
 end

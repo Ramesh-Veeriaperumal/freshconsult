@@ -1,5 +1,5 @@
 <div class="comm-items" id="forum_category_sort" data-menu-hover-in='li.comm-item' >
-	<% form_for :reorder, items, :url => action_url, :html => { :method => :put, :class => "form-reorder" } do |f| %>
+	<%= form_for items, :url => action_url, :html => { :method => :put, :class => "form-reorder" } do |f| %>
 	  <input name="reorderlist" type="hidden" value="" />
 	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @forum_category.id %>" />
 	  <ul class="row-fluid" rel="sortlist">

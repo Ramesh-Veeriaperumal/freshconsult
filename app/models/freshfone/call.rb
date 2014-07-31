@@ -1,7 +1,7 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	include Mobile::Actions::Freshfone
-	set_table_name :freshfone_calls
+	self.table_name =  :freshfone_calls
 
   serialize :customer_data, Hash
 
@@ -20,7 +20,7 @@ class Freshfone::Call < ActiveRecord::Base
   has_ancestry :orphan_strategy => :destroy
 
   before_save   :update_call_changes
-  after_commit_on_update :recording_attachment_job, :if => :trigger_recording_job?
+  after_commit :recording_attachment_job, on: :update, :if => :trigger_recording_job?
 
   has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
   has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
@@ -73,35 +73,35 @@ class Freshfone::Call < ActiveRecord::Base
 	validates_inclusion_of :call_type, :in => CALL_TYPE_HASH.values,
 		:message => "%{value} is not a valid call type"
 
-	named_scope :active_calls, lambda { 
-		{ :conditions => [ 'call_status = ? AND updated_at >= ?', 
-				CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-			]
-		}
+
+	
+	scope :active_calls, :conditions => [
+		'call_status = ? AND updated_at >= ?', 
+		CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
+	]
+
+	scope :filter_by_call_sid, lambda { |call_sid|
+		{ :conditions => ["call_sid = ? or dial_call_sid = ?", call_sid, call_sid], :limit => 1 }
 	}
 
-	named_scope :filter_by_call_sid, lambda { |call_sid|
-		{ :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
-	}
-
-	named_scope :filter_by_dial_call_sid, lambda { |dial_call_sid|
+	scope :filter_by_dial_call_sid, lambda { |dial_call_sid|
 		{ :conditions => ["dial_call_sid = ?", dial_call_sid], :order => 'created_at DESC', :limit => 1 }
 	}
 
-	named_scope :include_ticket_number, { 
+	scope :include_ticket_number, { 
 		:include => [ :ticket, :note, :freshfone_number ] }
-	named_scope :include_customer, { :include => [ :customer ] }
-	named_scope :include_agent, { :include => [ :agent ] }
-	named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-	named_scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
-	named_scope :agent_progress_calls, lambda { |user_id|
+	scope :include_customer, { :include => [ :customer ] }
+	scope :include_agent, { :include => [ :agent ] }
+	scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+	scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
+	scope :agent_progress_calls, lambda { |user_id|
 		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or call_status = ?)",
 					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db), CALL_STATUS_HASH[:'in-progress']
 				]
 		}
 	}
 
-  named_scope :created_at_inside, lambda { |start, stop|
+  scope :created_at_inside, lambda { |start, stop|
   	{ :conditions => ["freshfone_calls.created_at >= ? and freshfone_calls.created_at <= ?", start, stop] }
   }
 
@@ -323,7 +323,6 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def update_call_changes
 			@call_model_changes = self.changes.clone
-			@call_model_changes.symbolize_keys!
 		end
 
 		def trigger_recording_job?

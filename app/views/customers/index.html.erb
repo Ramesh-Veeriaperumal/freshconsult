@@ -3,7 +3,7 @@
 		<% if privilege?(:manage_contacts) %>
 		<div class="sidepanel">
 		<h3 class="lead"><%=t('company.quick_company')%></h3> 
-		<% form_tag :action=> :quick, :method =>:post do %> 
+		<%= form_tag :action=> :quick, :method =>:post do %> 
 		<div class="control-group">
 			<div class="controls">
 				<input id="customer_name" name="customer[name]" size="30" type="text" class="required trim_spaces input-large" placeholder="<%=t('company.name')%>" />
@@ -17,7 +17,7 @@
 	<div id="cust-list" class="list-page">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
 		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => customers_path})%>
-		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+		<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 			<% if @customers.length > 0 %>
 				<div class="list-page-body">
 					<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "company", :path => "customers"}) %>

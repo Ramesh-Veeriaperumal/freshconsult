@@ -1,6 +1,6 @@
 class Forum < ActiveRecord::Base
   acts_as_list :scope => :forum_category
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -45,7 +45,7 @@ class Forum < ActiveRecord::Base
   end
 
 
-  named_scope :visible, lambda {|user| {
+  scope :visible, lambda {|user| {
                     # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
                     #             and customer_forums.account_id = forums.account_id ",
                     :conditions => visiblity_condition(user) } }
@@ -94,8 +94,8 @@ class Forum < ActiveRecord::Base
 
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums, :backup_forum_changes
-  after_commit_on_update :update_search_index, :if => :forum_visibility_updated?
-  after_commit_on_destroy :remove_topics_from_es
+  after_commit :update_search_index, on: :update, :if => :forum_visibility_updated?
+  after_commit :remove_topics_from_es, on: :destroy
 
   def after_create
     create_activity('new_forum')
@@ -201,7 +201,7 @@ class Forum < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end
@@ -263,7 +263,6 @@ class Forum < ActiveRecord::Base
 
     def backup_forum_changes
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def forum_visibility_updated?

@@ -23,7 +23,7 @@ describe Freshfone::Number do
   it 'should successfully renew number deducting credits' do
     expect {
       @number.renew
-      @account.freshfone_credit.reload
+      RSpec.configuration.account.freshfone_credit.reload
     }.to change{@account.freshfone_credit.available_credit.to_f}.by(-1)
   end
 
@@ -31,7 +31,7 @@ describe Freshfone::Number do
     expect {
       Freshfone::Credit.any_instance.stubs(:renew_number).returns(false)
       @number.renew
-      @account.freshfone_credit.reload
+      RSpec.configuration.account.freshfone_credit.reload
     }.to_not change{@account.freshfone_credit.available_credit.to_f}.by(-1)
   end
 
@@ -50,7 +50,7 @@ describe Freshfone::Number do
   end
 
   it 'should return false for insufficient renewal amount check with new recharge' do
-    @number.insufficient_renewal_amount?.should be_false
+    @number.insufficient_renewal_amount?.should be_falsey
   end
 
 end

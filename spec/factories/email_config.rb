@@ -1,33 +1,35 @@
 if Rails.env.test?
-  Factory.define :email_config, :class => EmailConfig do |e|
-    e.sequence(:name) { |n| "EmailConfig#{n}" }
-    e.primary_role false
-  end
+  FactoryGirl.define do
+    factory :email_config, :class => EmailConfig do
+      sequence(:name) { |n| "EmailConfig#{n}" }
+      primary_role false
+    end
 
-  Factory.define :primary_email_config, :class => EmailConfig do |p|
-    p.sequence(:name) { |n| "PrimaryEmailConfig#{n}" }
-    p.primary_role true
-  end
+    factory :primary_email_config, :class => EmailConfig do
+      sequence(:name) { |n| "PrimaryEmailConfig#{n}" }
+      primary_role true
+    end
 
-  Factory.define :imap_mailbox, :class => ImapMailbox do |m|
-    m.server_name "imap.gmail.com"
-    m.user_name Faker::Internet.email
-    m.password Faker::Lorem.characters(100)
-    m.port 993
-    m.authentication "plain"
-    m.use_ssl true
-    m.folder "inbox"
-    m.delete_from_server false
-    m.timeout 1500
-  end
+    factory :imap_mailbox, :class => ImapMailbox do
+      server_name "imap.gmail.com"
+      user_name Faker::Internet.email
+      password Faker::Lorem.characters(100)
+      port 993
+      authentication "plain"
+      use_ssl true
+      folder "inbox"
+      delete_from_server false
+      timeout 1500
+    end
 
-  Factory.define :smtp_mailbox, :class => SmtpMailbox do |m|
-    m.server_name "smtp.gmail.com"
-    m.user_name Faker::Internet.email
-    m.password Faker::Lorem.characters(100)
-    m.port 587
-    m.authentication "plain"
-    m.use_ssl true
-    m.domain Faker::Internet.domain_name
+    factory :smtp_mailbox, :class => SmtpMailbox do
+      server_name "smtp.gmail.com"
+      user_name Faker::Internet.email
+      password Faker::Lorem.characters(100)
+      port 587
+      authentication "plain"
+      use_ssl true
+      domain Faker::Internet.domain_name
+    end
   end
 end

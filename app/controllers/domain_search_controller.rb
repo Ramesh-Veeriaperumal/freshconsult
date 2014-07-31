@@ -1,7 +1,9 @@
-class DomainSearchController < ApplicationController
+class DomainSearchController < ActionController::Base
   
-  skip_filter filter_chain
-  before_filter :unset_current_account, :ensure_email
+  # TODO-RAILS3 Need to cross check skiping whole filter chain, now this call is inheirted from 
+  # ActionController::Base instead of ApplicationController
+  #skip_filter filter_chain
+  before_filter :ensure_email#, :unset_current_account
 
   def locate_domain
     agents = urls = []
@@ -15,7 +17,7 @@ class DomainSearchController < ApplicationController
     end
         
     urls.uniq!
-    UserNotifier.deliver_helpdesk_url_reminder(params[:user_email], urls) if urls.present?
+    UserNotifier.helpdesk_url_reminder(params[:user_email], urls) if urls.present?
     render :json => { :available => urls.present? }, :callback => params[:callback]
   end
 

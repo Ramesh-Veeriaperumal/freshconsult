@@ -9,15 +9,15 @@ class Solution::Folder < ActiveRecord::Base
   
   belongs_to_account
   belongs_to :category, :class_name => 'Solution::Category'
-  set_table_name "solution_folders"
+  self.table_name =  "solution_folders"
   
   acts_as_list :scope => :category
   
   before_create :populate_account
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
-  after_commit_on_update :update_search_index, :if => :visibility_updated?
-  after_commit        :clear_mobihelp_solutions_cache
+  after_commit :update_search_index, on: :update, :if => :visibility_updated?
+  after_commit :clear_mobihelp_solutions_cache
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
@@ -25,7 +25,7 @@ class Solution::Folder < ActiveRecord::Base
 
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
   
-  named_scope :alphabetical, :order => 'name ASC'
+  scope :alphabetical, :order => 'name ASC'
 
   attr_protected :account_id
   
@@ -57,7 +57,7 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
   
-  named_scope :visible, lambda {|user| {
+  scope :visible, lambda {|user| {
                     :order => "position" ,
                     # :joins => "LEFT JOIN `solution_customer_folders` ON 
                                 # solution_customer_folders.folder_id = solution_folders.id and  
@@ -104,7 +104,7 @@ class Solution::Folder < ActiveRecord::Base
   
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
@@ -130,7 +130,6 @@ class Solution::Folder < ActiveRecord::Base
 
     def backup_folder_changes
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def visibility_updated?

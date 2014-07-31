@@ -53,7 +53,7 @@ class Admin::SecurityController <  Admin::AdminController
  def request_custom_ssl
    set_others_redis_key(ssl_key, "1", 86400*10)
    current_account.main_portal.update_attributes( :portal_url => params[:domain_name] )
-   FreshdeskErrorsMailer.deliver_error_email( nil, 
+   FreshdeskErrorsMailer.error_email( nil, 
                                               { "domain_name" => params[:domain_name] }, 
                                               nil, 
                                               { :subject => "Request for new SSL Certificate -

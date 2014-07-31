@@ -12,12 +12,12 @@ class BusinessCalendar < ActiveRecord::Base
   #can revisit this data model later...
   belongs_to :account
   before_create :set_default_version, :valid_working_hours?
-  after_commit_on_update :clear_cache
+  after_commit :clear_cache, on: :update
   
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validates_presence_of :time_zone, :name
 
-  named_scope :default, :conditions => { :is_default => true }
+  scope :default, :conditions => { :is_default => true }
 
   #needed for upgrading business_time_data - Abhinav
   BUSINESS_TIME_INFO = [:fullweek, :weekdays] 
@@ -133,11 +133,11 @@ class BusinessCalendar < ActiveRecord::Base
     def valid_working_hours?
       if (version != 1) && !weekdays.blank?
         weekdays.each do |n|
-          errors.add_to_base("Enter a valid Time") if (Time.zone.parse(beginning_of_workday(n))  >
+          errors.add(:base,"Enter a valid Time") if (Time.zone.parse(beginning_of_workday(n))  >
              Time.zone.parse(end_of_workday(n)))
         end
       else
-        errors.add_to_base("Atleast one working day must be checked")
+        errors.add(:base,"Atleast one working day must be checked")
       end
     end
 

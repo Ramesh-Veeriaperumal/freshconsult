@@ -7,37 +7,37 @@ module ForumHelper
 					 "12345678901x1234", "044 2656 7136", "(0055)(123)8575973", "1-234-567-8901 x1234", "+1 800 555-1234"]
 
 	def create_test_category
-    forum_category = Factory.build(:forum_category, :account_id => @account.id,
+    forum_category = FactoryGirl.build(:forum_category, :account_id => RSpec.configuration.account.id,
                                                     :name => Faker::Lorem.sentence(2))
-		forum_category.save(false)
+		forum_category.save(validate: false)
 		forum_category
 	end
 
 	def create_test_forum(forum_category,type = 1)
-		forum = Factory.build(
+		forum = FactoryGirl.build(
 							:forum, 
-							:account_id => @account.id, 
+							:account_id => RSpec.configuration.account.id, 
 							:forum_category_id => forum_category.id,
 							:forum_type => type
 							)
-		forum.save(false)
+		forum.save(validate: false)
 		forum
 	end
 
 	def create_test_topic(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
 		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
-		topic = Factory.build(
+		topic = FactoryGirl.build(
 							:topic, 
-							:account_id => @account.id, 
+							:account_id => RSpec.configuration.account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
 							:stamp_type => stamp_type
 							)
 		topic.save(true)
-		post = Factory.build(
+		post = FactoryGirl.build(
 							:post,
-							:account_id => @account.id,
+							:account_id => RSpec.configuration.account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
 							)
@@ -47,9 +47,9 @@ module ForumHelper
 	end
 
 	def create_test_post(topic, user = @customer)
-		post = Factory.build(
+		post = FactoryGirl.build(
 							:post, 
-							:account_id => @account.id, 
+							:account_id => RSpec.configuration.account.id, 
 							:topic_id => topic.id,
 							:user_id => user.id
 							)
@@ -62,9 +62,9 @@ module ForumHelper
 	end
 
 	def create_ticket_topic_mapping(topic,ticket)
-		ticket_topic = Factory.build(
+		ticket_topic = FactoryGirl.build(
 											:ticket_topic,
-											:account_id => @account.id,
+											:account_id => RSpec.configuration.account.id,
 											:topic_id => topic.id,
 											:ticket_id => ticket.id 
 										)
@@ -89,12 +89,12 @@ module ForumHelper
 	end
 
 	def monitor_topic(topic, user = @user, portal_id = nil)
-		monitorship = Factory.build(
+		monitorship = FactoryGirl.build(
 									:monitorship,
 									:monitorable_id => topic.id,
 									:user_id => user.id,
 									:active => 1,
-									:account_id => @account.id,
+									:account_id => RSpec.configuration.account.id,
 									:monitorable_type => "Topic",
 									:portal_id => portal_id
 									)

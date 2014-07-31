@@ -107,7 +107,7 @@
         <div class="controls">
         <div>
         <% @product.email_configs.each_with_index do |email_config, index| %>
-          <% javascript_tag do %>
+          <%= javascript_tag do %>
             
             var _template = jQuery("#emailConfigTemplate").template();
             
@@ -154,7 +154,7 @@
 </div>
 
 <% content_for :pagefixed do -%>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     var email_config_index = <%= @product.email_configs.size %>;
 
     jQuery('.product_send_act').on("click", function(){

@@ -18,6 +18,7 @@ class LiquidView
   def initialize(view)
     @view = view
   end
+
   
   def render(template, local_assigns = nil)
     @view.controller.headers["Content-Type"] ||= 'text/html; charset=utf-8'

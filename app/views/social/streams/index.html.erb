@@ -1,4 +1,4 @@
-<%= include_cloudfront_css :social %>
+<%= stylesheet_link_tag :social %>
 <div class="row-fluid">
   <div class="span2">
     <% if @streams.length > 0 %>
@@ -141,7 +141,7 @@
   </div>
 </div>
 
-<%= include_cloudfront_js  :social_tab %>
+<%= javascript_include_tag  :social_tab %>
 <script type="text/javascript">
   Fjax.afterNextPage = function () {
     streamMgr.destroy();

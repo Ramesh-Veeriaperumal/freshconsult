@@ -15,15 +15,15 @@ module DataStoreCallbacks
 
     def generate_methods
       class_name = text_data_store_options[:class]
-      class_eval %Q(
+      class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
         attr_accessor :s3_create, :s3_delete, :s3_update
         after_create "create_#{class_name}_body"
         after_update "update_#{class_name}_body"
         after_destroy "destroy_#{class_name}_body"
         after_rollback "handle_rollback_for_riak"
-        after_commit_on_create "push_to_resque_create"
-        after_commit_on_update "push_to_resque_update"
-        after_commit_on_destroy "push_to_resque_destroy"
+        after_commit "push_to_resque_create", on: :create
+        after_commit "push_to_resque_update", on: :update
+        after_commit "push_to_resque_destroy", on: :destroy
 
         def create_#{class_name}_body
           self.rollback_#{class_name}_body = true
@@ -65,15 +65,15 @@ module DataStoreCallbacks
         def created_at_updated_at_on_update
           self.#{class_name}_body_content.updated_at = Time.now.utc
         end
-      )
+      RUBY_EVAL
 
-      class_eval do
+      class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
         def datastore(type)
-          send("#{type}_in_#{$primary_cluster}")
-          send("#{type}_in_#{$secondary_cluster}")
-          send("#{type}_in_#{$backup_cluster}")
+          send(type+"_in_#{$primary_cluster}")
+          send(type+"_in_#{$secondary_cluster}")
+          send(type+"_in_#{$backup_cluster}")
         end
-      end
+      RUBY_EVAL
     end
   end
 end

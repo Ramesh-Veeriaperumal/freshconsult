@@ -3,7 +3,7 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   # add for multiform phase 1 migration
   include Helpdesk::Ticketfields::TicketFormFields
 
-  set_table_name "helpdesk_nested_ticket_fields"
+  self.table_name =  "helpdesk_nested_ticket_fields"
   attr_protected  :account_id
 
   belongs_to_account
@@ -17,9 +17,8 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   before_create :populate_label
 
   # Phase1:- multiform , will be removed once migration is done.
-  after_commit_on_create :save_form_field_mapping
-  after_commit_on_update :save_form_field_mapping
-  after_commit_on_destroy :remove_form_field_mapping
+  after_commit :save_form_field_mapping, on: [:create, :update]
+  after_commit :remove_form_field_mapping, on: :destroy
   #Phase1:- end
 
   def dom_type

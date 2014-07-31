@@ -17,10 +17,10 @@
 			<link rel="canonical" href="<%= page_canonical %>" />
 		<% end %>
 		<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-		<%= include_cloudfront_css :common %>
-		<%= include_cloudfront_css :ie_hacks %>
-		<%= include_cloudfront_css :google_signup %>
-		<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
+		<%= stylesheet_link_tag :common %>
+		<%= stylesheet_link_tag :ie_hacks %>
+		<%= stylesheet_link_tag :google_signup %>
+		<%= stylesheet_link_tag :pattern, :media => "screen, print, projection"  %>
 		<%= render :partial => "shared/theme.css"  %>
 
 		<script type="text/javascript">
@@ -31,11 +31,11 @@
 			};
 			cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 		</script>
-		<%= include_cloudfront_js :defaults  %>
-		<%= include_cloudfront_js :frameworks %>
-		<%= include_cloudfront_js :workspace %>
-		<%= include_cloudfront_js :pattern  %>
-		<%#= include_cloudfront_js :visitor %>
+		<%= javascript_include_tag :defaults  %>
+		<%= javascript_include_tag :frameworks %>
+		<%= javascript_include_tag :workspace %>
+		<%= javascript_include_tag :pattern  %>
+		<%#= javascript_include_tag :visitor %>
 		<%= yield :head %>
 	</head>
 	<body class="single ui-signup">

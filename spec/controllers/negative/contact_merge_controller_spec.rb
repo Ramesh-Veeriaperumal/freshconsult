@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ContactMergeController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -14,7 +14,7 @@ describe ContactMergeController do
   end
 
   it "should not merge for agent" do
-    post :new, :id => @agent.id
+    post :new, :id => RSpec.configuration.agent.id
     response.body.should =~ /The change you wanted was rejected/
   end
 

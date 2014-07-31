@@ -3,7 +3,7 @@
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
-			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+			:onchange => remote_function( :url => toggle_admin_gamification_index_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
 </div>
 <h3 class="lead"><%=t('.title')%></h3>
 
@@ -55,7 +55,7 @@
 	</div>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('#points-tab, #quests-tab').bind("click", function(){
 		jQuery("#gamification-help .active").removeClass("active");
 		jQuery('#'+this.id+'-help').addClass('active');

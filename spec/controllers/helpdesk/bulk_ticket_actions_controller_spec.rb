@@ -1,23 +1,23 @@
 require 'spec_helper'
 
 describe Helpdesk::BulkTicketActionsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before do
-    @test_ticket = create_ticket({ :status => 2, :responder_id => @agent.id }, create_group(@account, {:name => "Bulk"}))
-    @group = @account.groups.first
+    @test_ticket = create_ticket({ :status => 2, :responder_id => RSpec.configuration.agent.id }, create_group(@account, {:name => "Bulk"}))
+    @group = RSpec.configuration.account.groups.first
     log_in(@agent)
   end
 
   it "should perform bulk actions on selected tickets" do
-    test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id }, @group)
-    test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id }, @group)
+    test_ticket1 = create_ticket({ :status => 2, :responder_id => RSpec.configuration.agent.id }, @group)
+    test_ticket2 = create_ticket({ :status => 2, :responder_id => RSpec.configuration.agent.id }, @group)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "" },
                                                 :private => "0",
-                                                :user_id => @agent.id,
+                                                :user_id => RSpec.configuration.agent.id,
                                                 :source => "0"
                                               },
                             :helpdesk_ticket => { :ticket_type => "Feature Request",
@@ -36,8 +36,8 @@ describe Helpdesk::BulkTicketActionsController do
   end
 
   it "should add attachment to reply using bulk reply" do
-    test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id })
-    test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id })
+    test_ticket1 = create_ticket({ :status => 2, :responder_id => RSpec.configuration.agent.id })
+    test_ticket2 = create_ticket({ :status => 2, :responder_id => RSpec.configuration.agent.id })
     @request.env['HTTP_REFERER'] = 'sessions/new'
     buffer = ("b" * 1024).freeze
     att_file = Tempfile.new('bulk_att')
@@ -46,7 +46,7 @@ describe Helpdesk::BulkTicketActionsController do
     Resque.inline = true
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p>bulk ticket update with reply and attachments</p>" },
                                                 :private => "0",
-                                                :user_id => @agent.id,
+                                                :user_id => RSpec.configuration.agent.id,
                                                 :source => "0",
                                                 :attachments => [{"resource" => att_file}]
                                               },
@@ -55,8 +55,8 @@ describe Helpdesk::BulkTicketActionsController do
     Resque.inline = false
     test_ticket1.reload
     test_ticket2.reload
-    tkt1_note = @account.tickets.find(test_ticket1.id).notes.last
-    tkt2_note = @account.tickets.find(test_ticket2.id).notes.last
+    tkt1_note = RSpec.configuration.account.tickets.find(test_ticket1.id).notes.last
+    tkt2_note = RSpec.configuration.account.tickets.find(test_ticket2.id).notes.last
     tkt1_note.attachments.first.attachable_type.should be_eql("Helpdesk::Note")
     tkt2_note.attachments.first.attachable_type.should be_eql("Helpdesk::Note")
     tkt1_note.attachments.size.should be_eql(1)

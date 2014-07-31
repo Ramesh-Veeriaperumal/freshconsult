@@ -7,14 +7,14 @@ describe ContactsController do
 
 
   before(:each) do
-    request.host = @account.full_domain
-    http_login(@agent)
+    request.host = RSpec.configuration.account.full_domain
+    http_login(RSpec.configuration.agent)
   end
   
   it "should not create a contact without an email" do
   	contact_name = Faker::Lorem.sentence(3)
   	post :create, {:user => {:name => contact_name },:format => 'json'}, :content_type => 'application/json'
-  	error_status?(response.status).should be_true
+  	error_status?(response.status).should be_truthy
   end
 
   it "should not update a contact with an existing/duplicate email" do
@@ -22,11 +22,11 @@ describe ContactsController do
 		dup_email = first_contact.email
 		second_contact = add_new_user(@account,{})
 		put :update, {:id => second_contact.id, :user=>{:email => dup_email },:format => 'json'}, :content_type => 'application/json'
-		error_status?(response.status).should be_true
+		error_status?(response.status).should be_truthy
   end
 
 
     def error_status?(status)
-      status =~ /422 Unprocessable Entity/ 
+      status =~ /422/ 
     end
 end

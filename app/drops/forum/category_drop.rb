@@ -1,6 +1,6 @@
 class Forum::CategoryDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   liquid_attributes << :name << :description
   

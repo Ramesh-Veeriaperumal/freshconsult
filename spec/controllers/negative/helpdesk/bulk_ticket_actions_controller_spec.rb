@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Helpdesk::BulkTicketActionsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before do
     @group_name="Bulk - #{Time.now}"
     @test_ticket = create_ticket({ :status => 2}, create_group(@account, {:name => @group_name}))
-    @group = @account.groups.find_by_name(@group_name)
+    @group = RSpec.configuration.account.groups.find_by_name(@group_name)
     log_in(@agent)
   end
 
@@ -23,7 +23,7 @@ describe Helpdesk::BulkTicketActionsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>restricted_user.id)
     group_id=create_group(@account, {:name => "Bulk123"}).id
@@ -70,13 +70,13 @@ describe Helpdesk::BulkTicketActionsController do
                                             :role_ids => ["#{@account.roles.first.id}"] ,
                                             :group_id => test_group.id})
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
 
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id)
 
     group_agent_ticket =create_ticket({ :status => 2 },test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     group_id=create_group(@account, {:name => "Bulk123"}).id
     log_in(group_user)
     ticket_reply_notes=Faker::Lorem.paragraph

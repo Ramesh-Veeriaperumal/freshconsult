@@ -11,7 +11,7 @@ class PortalView
                                      @helpers @assigns_added @template @_render_stack @template_format @assigns )
   
   def self.call(template)
-    "PortalView.new(self).render(template, local_assigns)"
+    "PortalView.new(self).render(#{template.source.inspect}, local_assigns)"
   end
 
   def initialize(view)

@@ -1,5 +1,5 @@
 class Helpdesk::Subscription < ActiveRecord::Base
-  set_table_name "helpdesk_subscriptions"
+  self.table_name =  "helpdesk_subscriptions"
 
   belongs_to_account
   belongs_to :ticket,

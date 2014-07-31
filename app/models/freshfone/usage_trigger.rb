@@ -1,5 +1,5 @@
 class Freshfone::UsageTrigger < ActiveRecord::Base
-  set_table_name :freshfone_usage_triggers
+  self.table_name =  :freshfone_usage_triggers
   
   attr_protected :account_id
 
@@ -9,7 +9,7 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
   TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
   TRIGGER_TYPE_BY_VALUE = TRIGGER_TYPE.invert
 
-  named_scope :previous, lambda { |type| { 
+  scope :previous, lambda { |type| { 
     :conditions => ["trigger_type = ?", Freshfone::UsageTrigger::TRIGGER_TYPE[type.to_sym]], 
     :limit => 1,
     :order => "created_at DESC" } }

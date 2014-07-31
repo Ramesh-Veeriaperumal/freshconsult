@@ -1,5 +1,5 @@
 <div class="login">
-  <% form_tag user_session_path do -%>
+  <%= form_tag user_session_path do -%>
   <h1>Log In</h1>
   <p><%= label_tag 'email' %><br />
   <%= text_field_tag 'email', @email %></p>

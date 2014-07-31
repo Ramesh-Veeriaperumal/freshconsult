@@ -173,7 +173,7 @@ AllTests.flatten!.uniq!
 unless ARGV.any? {|a| a =~ /^gems/}
 
   begin
-    require 'spec/rake/spectask'
+    require 'rspec/core/rake_task'
   rescue MissingSourceFile
     module Spec
       module Rake
@@ -210,17 +210,17 @@ unless ARGV.any? {|a| a =~ /^gems/}
   task :stats => "spec:statsetup"
 
   desc "Run all specs in spec directory (excluding plugin specs)"
-  Spec::Rake::SpecTask.new(:spec => spec_prereq) do |t|
-    t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-    t.spec_files = FileList['spec/**/*_spec.rb']
+  RSpec::Core::RakeTask.new(:spec => spec_prereq) do |t|
+    t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+    t.pattern = FileList['spec/**/*_spec.rb']
   end
 
   namespace :spec do
     desc "Run all specs in spec directory with RCov (excluding plugin specs)"
 
-    Spec::Rake::SpecTask.new(:rcov) do |t|
-      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-      t.spec_files = FileList['spec/**/*_spec.rb']
+    RSpec::Core::RakeTask.new(:rcov) do |t|
+      t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+      t.pattern = FileList['spec/**/*_spec.rb']
       t.rcov = true
       t.rcov_opts = lambda do
         IO.readlines("#{Rails.root}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
@@ -228,36 +228,36 @@ unless ARGV.any? {|a| a =~ /^gems/}
     end
 
     desc "Print Specdoc for all specs (excluding plugin specs)"
-    Spec::Rake::SpecTask.new(:doc) do |t|
-      t.spec_opts = ["--format", "specdoc", "--dry-run"]
-      t.spec_files = FileList['spec/**/*_spec.rb']
+    RSpec::Core::RakeTask.new(:doc) do |t|
+      t.rspec_opts = ["--format", "specdoc", "--dry-run"]
+      t.pattern = FileList['spec/**/*_spec.rb']
     end
 
     desc "Print Specdoc for all plugin examples"
-    Spec::Rake::SpecTask.new(:plugin_doc) do |t|
-      t.spec_opts = ["--format", "specdoc", "--dry-run"]
-      t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*')
+    RSpec::Core::RakeTask.new(:plugin_doc) do |t|
+      t.rspec_opts = ["--format", "specdoc", "--dry-run"]
+      t.pattern = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*')
     end
 
     [:models, :controllers, :views, :helpers, :lib, :integration].each do |sub|
       desc "Run the code examples in spec/#{sub}"
-      Spec::Rake::SpecTask.new(sub => spec_prereq) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
+      RSpec::Core::RakeTask.new(sub => spec_prereq) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList["spec/#{sub}/**/*_spec.rb"]
       end
     end
 
     desc "Run the code examples in vendor/plugins (except RSpec's own)"
-    Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
-      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-      t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
+    RSpec::Core::RakeTask.new(:plugins => spec_prereq) do |t|
+      t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+      t.pattern = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
     end
 
     namespace :plugins do
       desc "Runs the examples for rspec_on_rails"
-      Spec::Rake::SpecTask.new(:rspec_on_rails) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
+      RSpec::Core::RakeTask.new(:rspec_on_rails) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
       end
     end
 
@@ -323,38 +323,38 @@ unless ARGV.any? {|a| a =~ /^gems/}
     end
 
     namespace :helpdesk do
-      desc "Runs all twitter tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(HelpdeskTests)
+      desc "Runs all helpdesk tests"
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(HelpdeskTests)
       end
     end    
 
     namespace :social do
       desc "Runs all twitter tests"
-      Spec::Rake::SpecTask.new(:twitter) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(TwitterTests+GnipTests)
+      RSpec::Core::RakeTask.new(:twitter) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(TwitterTests+GnipTests)
       end
 
-      Spec::Rake::SpecTask.new(:facebook) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(FacebookTests)
+      RSpec::Core::RakeTask.new(:facebook) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(FacebookTests)
       end
   
     end
 
     namespace :freshfone do
       desc "Running all Freshfone Testss"
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(FreshfoneTests)
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(FreshfoneTests)
       end
     end    
 
     namespace :freshfone_reports do
       desc "Running all freshfone summary reports tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
+      RSpec::Core::RakeTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
         t.spec_files = FileList.new(FreshfoneReportsTests)
       end
@@ -363,7 +363,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :unit_tests do
       desc "Running all integration tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-      Spec::Rake::SpecTask.new(:all) do |t|
+      RSpec::Core::RakeTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(UnitTests).uniq
       end
@@ -372,31 +372,31 @@ unless ARGV.any? {|a| a =~ /^gems/}
     namespace :email_tests do
       desc "Running all email tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(EmailTests)
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(EmailTests)
       end
     end
 
     namespace :integrations do
       desc "Running all freshdesk integrations tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(IntegrationTests)
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(IntegrationTests)
       end
     end
 
     namespace :mobihelp do
       desc "Running all mobihelp tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(MobihelpTests)
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(MobihelpTests)
       end
     end
 
     namespace :mobile do
       desc "Running all Mobile app tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
+      RSpec::Core::RakeTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(MobileAppTests)
       end
@@ -404,22 +404,22 @@ unless ARGV.any? {|a| a =~ /^gems/}
     
     namespace :api do
       desc "Running all api tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(APITests)
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(APITests)
       end
     end
 
     namespace :all do
       desc "Running all the tests"
-      Spec::Rake::SpecTask.new(:tests) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(AllTests)
+      RSpec::Core::RakeTask.new(:tests) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(AllTests)
       end
 
-      Spec::Rake::SpecTask.new(:model) do |t|
-        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-        t.spec_files = FileList.new(ModelTests)
+      RSpec::Core::RakeTask.new(:model) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(ModelTests)
       end
     end
 

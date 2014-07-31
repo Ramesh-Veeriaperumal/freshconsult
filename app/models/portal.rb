@@ -1,16 +1,18 @@
+require_dependency "mobile/actions/portal"
+require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   serialize :preferences, Hash
 
   attr_protected  :account_id
 
-  xss_sanitize  :only => [:name]
+  # xss_sanitize  :only => [:name]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit_on_update :update_users_language, :if => :main_portal_language_changes?
+  after_commit :update_users_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
 
@@ -156,7 +158,6 @@ class Portal < ActiveRecord::Base
 
     def backup_portal_changes
       @portal_changes = self.changes.clone
-      @portal_changes.symbolize_keys!
     end
 
     def handle_icon(icon_field, icon_attr)

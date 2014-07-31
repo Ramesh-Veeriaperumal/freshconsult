@@ -16,7 +16,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 		def notify_low_balance(freshfone_credit, account)
 			if credit_limit_on_disabled_auto_recharge?(freshfone_credit)
 				# notify_freshfone_admin_dashboard
-				FreshfoneNotifier.deliver_low_balance(account, freshfone_credit.available_credit) 
+				FreshfoneNotifier.low_balance(account, freshfone_credit.available_credit) 
 			end
 		end
 
@@ -24,7 +24,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 			return if account.freshfone_account.blank?
 			if account_to_be_suspended?(freshfone_credit)
 				suspend_freshfone_account(account)
-				FreshfoneNotifier.deliver_suspended_account(account)
+				FreshfoneNotifier.suspended_account(account)
 			end
 		end
 

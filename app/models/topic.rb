@@ -1,7 +1,7 @@
 class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   include Mobile::Actions::Topic
   acts_as_voteable
   validates_presence_of :forum, :user, :title
@@ -40,31 +40,31 @@ class Topic < ActiveRecord::Base
   delegate :problems?, :questions?, :to => :forum
   delegate :type_name, :to => :forum
 
-  named_scope :newest, :order => 'replied_at DESC'
+  scope :newest, :order => 'replied_at DESC'
 
-  named_scope :visible, lambda {|user| visiblity_options(user) }
+  scope :visible, lambda {|user| visiblity_options(user) }
 
-  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
-  named_scope :published, :conditions => { :published => true }
+  scope :published, :conditions => { :published => true }
 
-  named_scope :as_list_view,
+  scope :as_list_view,
       :conditions => { :published => true },
       :include => {:last_post => [:user], :forum => [], :user => []}
 
-  named_scope :as_activities,
+  scope :as_activities,
       :conditions => { :published => true },
       :include => {:last_post => [:user], :forum => []},
       :order => "#{Topic.table_name}.replied_at DESC"
 
-  named_scope :find_by_forum_category_id, lambda { |forum_category_id|
+  scope :find_by_forum_category_id, lambda { |forum_category_id|
     { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
         forums.account_id = topics.account_id),
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
     }
   }
 
-  named_scope :following, lambda { |ids|
+  scope :following, lambda { |ids|
     {
       :conditions => following_conditions(ids),
       :order => "#{Topic.table_name}.replied_at DESC"
@@ -73,7 +73,7 @@ class Topic < ActiveRecord::Base
 
 
   # The below namescope might be used later. DO NOT DELETE. @Thanashyam
-  # named_scope :followed_by, lambda { |user_id|
+  # scope :followed_by, lambda { |user_id|
   #   {
   #     :joins => %(  LEFT JOIN `forums` ON `forums`.`id` = `topics`.`forum_id`
   #                   INNER JOIN `monitorships` ON 
@@ -97,18 +97,18 @@ class Topic < ActiveRecord::Base
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  named_scope :popular, lambda { |days_before|
+  scope :popular, lambda { |days_before|
     { :conditions => ["replied_at >= ?", days_before],
       :order => 'hits DESC, user_votes DESC, replied_at DESC',
       :include => :last_post }
   }
 
-  named_scope :sort_by_popular,
+  scope :sort_by_popular,
       :order => 'user_votes DESC, hits DESC, replied_at DESC'
 
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
-  named_scope :by_stamp, lambda { |stamp_type|
+  scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
   }
 
@@ -140,12 +140,12 @@ class Topic < ActiveRecord::Base
     [sql.join(" OR ")] | ([ids[:topic], ids[:forum]] - [[]])
   end
 
-  named_scope :for_forum, lambda { |forum|
+  scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum]
     }
   }
-  named_scope :limit, lambda { |num| { :limit => num } }
-  named_scope :freshest, lambda { |account|
+  # scope :limit, lambda { |num| { :limit => num } }
+  scope :freshest, lambda { |account|
     { :conditions => ["account_id = ? ", account],
       :order => "topics.replied_at DESC"
     }
@@ -324,7 +324,7 @@ class Topic < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end

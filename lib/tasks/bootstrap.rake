@@ -13,6 +13,7 @@ namespace :db do
     create_es_indices
     
     puts 'Loading data...'
+    ENV["FIXTURE_PATH"] = "db/fixtures/global"
     Rake::Task["db:seed_fu"].invoke
 
     #We do not need savage_beast migration here, all the forums
@@ -24,7 +25,7 @@ namespace :db do
     PopulateGlobalBlacklistIpsTable.create_default_record
     
     puts 'Changing secret in environment.rb...'
-    new_secret = ActiveSupport::SecureRandom.hex(64)
+    new_secret = SecureRandom.hex(64)
     config_file_name = File.join(Rails.root, 'config', 'environment.rb')
     config_file_data = File.read(config_file_name)
     File.open(config_file_name, 'w') do |file|

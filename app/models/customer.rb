@@ -23,13 +23,12 @@ class Customer < ActiveRecord::Base
 
   has_many :customer_folders, :class_name => 'Solution::CustomerFolder', :dependent => :destroy
 
-  named_scope :domains_like, lambda { |domain|
+  scope :domains_like, lambda { |domain|
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
-  after_commit_on_create :map_contacts_to_customers, :clear_cache
-  after_commit_on_destroy :clear_cache
-  after_commit_on_update :clear_cache
+  after_commit :map_contacts_to_customers, :clear_cache, on: :create
+  after_commit :clear_cache, on: [:destroy, :update]
   after_update :map_contacts_on_update, :if => :domains_changed?
   
   before_create :check_sla_policy
@@ -47,7 +46,7 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
 
-  named_scope :custom_search, lambda { |search_string| 
+  scope :custom_search, lambda { |search_string| 
     { :conditions => ["name like ?" ,"%#{search_string}%"],
       :select => "name, id",
       :limit => 1000  }
@@ -98,7 +97,7 @@ class Customer < ActiveRecord::Base
   
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
@@ -149,7 +148,6 @@ class Customer < ActiveRecord::Base
 
     def backup_customer_changes
       @model_changes = self.changes.clone
-      @model_changes.symbolize_keys!
     end
   
 end

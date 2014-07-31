@@ -1181,7 +1181,7 @@ var scrollToError = function(){
 	if (updateShowMore()) updatePagination();
 
 	//Previous Next Buttons request
-	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+	$.getScript("/helpdesk/tickets/" + TICKET_DETAILS_DATA['displayId'] + "/prevnext");
 
 	$('#twitter_handle').change();
 

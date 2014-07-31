@@ -46,7 +46,7 @@
 
 <div class="account-content">
 	 
-	<% form_for :account_configuration, @account_configuration, :url => { :controller => 
+	<%= form_for @account_configuration, :url => { :controller => 
 		"account_configurations", :action => "update" },  :html => { :method => :put, 
 		:id => "account-details-form"} do |f| %>
 

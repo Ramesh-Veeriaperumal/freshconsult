@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::AccountAdditionalSettingsController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -20,10 +20,10 @@ describe Admin::AccountAdditionalSettingsController do
 		put :update, {
 			:account_additional_settings =>{ :bcc_email=> test_email }
 		}
-		@account.reload
-		@account.account_additional_settings.bcc_email.should eql(test_email)
-		response.session[:flash][:notice].should eql "Successfully updated Bcc email"
-		response.redirected_to.should eql "/admin/email_configs"
+		RSpec.configuration.account.reload
+		RSpec.configuration.account.account_additional_settings.bcc_email.should eql(test_email)
+		session[:flash][:notice].should eql "Successfully updated Bcc email"
+		response.should redirect_to("/admin/email_configs")
 	end
 
 	it "should not update the account_additional_settings without emailId" do
@@ -31,10 +31,10 @@ describe Admin::AccountAdditionalSettingsController do
 		put :update, {
 			:account_additional_settings =>{ :bcc_email=> text }
 		}
-		@account.reload
-		@account.account_additional_settings.bcc_email.should_not eql(text)
-		response.session[:flash][:notice].should eql "Failed to update Bcc email"
-		response.redirected_to.should eql "/admin/email_configs"
+		RSpec.configuration.account.reload
+		RSpec.configuration.account.account_additional_settings.bcc_email.should_not eql(text)
+		session[:flash][:notice].should eql "Failed to update Bcc email"
+		response.should redirect_to("/admin/email_configs")
 	end
 	
 	context "For Dynamic Content feature" do

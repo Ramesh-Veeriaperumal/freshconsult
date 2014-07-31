@@ -1,8 +1,10 @@
 # encoding: utf-8
 class User < ActiveRecord::Base
-  
+
+  self.primary_key= :id
+
   belongs_to_account
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
@@ -39,11 +41,11 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email]
-  named_scope :contacts, :conditions => { :helpdesk_agent => false }
-  named_scope :technicians, :conditions => { :helpdesk_agent => true }
-  named_scope :visible, :conditions => { :deleted => false }
-  named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
-  named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+  scope :contacts, :conditions => { :helpdesk_agent => false }
+  scope :technicians, :conditions => { :helpdesk_agent => true }
+  scope :visible, :conditions => { :deleted => false }
+  scope :active, lambda { |condition| { :conditions => { :active => condition }} }
+  scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
 
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
@@ -66,6 +68,7 @@ class User < ActiveRecord::Base
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_REGEX
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
   end
   
   validate :has_role?, :unless => :customer?
@@ -152,7 +155,7 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
-    protected :find_by_email_or_name, :find_by_an_unique_id
+    # protected :find_by_email_or_name, :find_by_an_unique_id
   end
   
   def client_manager=(checked)
@@ -262,7 +265,7 @@ class User < ActiveRecord::Base
     true
   end
 
-  named_scope :matching_users_from, lambda { |search|
+  scope :matching_users_from, lambda { |search|
     {
       :select => %(users.id, name, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
@@ -277,7 +280,7 @@ class User < ActiveRecord::Base
     }
   }
 
-  named_scope :without, lambda { |source|
+  scope :without, lambda { |source|
     {
       :conditions => "users.id <> %<us_id>i" % {
         :us_id => source.id
@@ -484,7 +487,7 @@ class User < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml,:root=>options[:root], :skip_instruct => true, :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
@@ -626,7 +629,6 @@ class User < ActiveRecord::Base
 
     def bakcup_user_changes
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def helpdesk_agent_updated?

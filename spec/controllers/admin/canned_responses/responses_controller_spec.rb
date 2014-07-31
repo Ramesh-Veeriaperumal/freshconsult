@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Admin::CannedResponses::ResponsesController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
 	before(:all) do
 		@now = (Time.now.to_f*1000).to_i
-		@group = create_group(@account, {:name => "Response grp #{@now}"})
-		@folder_id = @account.canned_response_folders.find_by_is_default(true).id
+		@group = create_group(RSpec.configuration.account, {:name => "Response grp #{@now}"})
+		@folder_id = RSpec.configuration.account.canned_response_folders.find_by_is_default(true).id
 		stub_s3_writes
 		file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
 	    # Create canned responses
@@ -23,7 +23,7 @@ describe Admin::CannedResponses::ResponsesController do
 	before(:each) do
 		@request.env['HTTP_REFERER'] = '/admin/canned_responses/folders'
 		stub_s3_writes
-		log_in(@agent)
+		log_in(RSpec.configuration.agent)
 	end
 
 	it "should create a new Canned Responses" do
@@ -31,14 +31,14 @@ describe Admin::CannedResponses::ResponsesController do
 		response.should render_template("admin/canned_responses/responses/new")
 		post :create, { :admin_canned_responses_response =>{:title => "New Canned_Responses #{@now}", 
 															:content_html => Faker::Lorem.paragraph,
-															:visibility => {:user_id => @agent.id, 
+															:visibility => {:user_id => RSpec.configuration.agent.id, 
 																			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], 
 																			:group_id => @group.id}
 															}, 
 															:new_folder_id => @folder_id, :folder_id => @folder_id
 		}
-		canned_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
-		user_access = @account.user_accesses.find_by_accessible_id(canned_response.id)
+		canned_response = RSpec.configuration.account.canned_responses.find_by_title("New Canned_Responses #{@now}")
+		user_access = RSpec.configuration.account.user_accesses.find_by_accessible_id(canned_response.id)
 		canned_response.should_not be_nil
 		canned_response.folder_id.should eql @folder_id
 		user_access.should_not be_nil
@@ -50,13 +50,13 @@ describe Admin::CannedResponses::ResponsesController do
 		response.should render_template("admin/canned_responses/responses/new")
 		post :create, { :admin_canned_responses_response =>{:title => "", 
 															:content_html => "New Canned_Responses without title",
-															:visibility => {:user_id => @agent.id, 
+															:visibility => {:user_id => RSpec.configuration.agent.id, 
 																			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], 
 																			:group_id => @group.id}
 															}, 
 															:new_folder_id => @folder_id, :folder_id => @folder_id
 		}
-		canned_response = @account.canned_responses.find_by_content_html("New Canned_Responses without title")
+		canned_response = RSpec.configuration.account.canned_responses.find_by_content_html("New Canned_Responses without title")
 		canned_response.should be_nil
 	end
 
@@ -73,15 +73,15 @@ describe Admin::CannedResponses::ResponsesController do
 			:admin_canned_responses_response => {
 				:title => "Updated Canned_Responses #{@now}",
 				:content_html => "Updated DESCRIPTION: New Canned_Responses Hepler",
-				:visibility => {:user_id => @agent.id, 
+				:visibility => {:user_id => RSpec.configuration.agent.id, 
 								:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], 
 								:group_id => @group.id}
 			},
 			:new_folder_id => @folder_id,
 			:folder_id => "#{@test_response_1.folder_id}"
 		}
-		canned_response   = @account.canned_responses.find_by_id(@test_response_1.id)
-		access_visibility = @account.user_accesses.find_by_accessible_id(@test_response_1.id)
+		canned_response   = RSpec.configuration.account.canned_responses.find_by_id(@test_response_1.id)
+		access_visibility = RSpec.configuration.account.user_accesses.find_by_accessible_id(@test_response_1.id)
 		canned_response.title.should eql("Updated Canned_Responses #{@now}")
 		canned_response.content_html.should eql("Updated DESCRIPTION: New Canned_Responses Hepler")
 		access_visibility.visibility.should eql 2
@@ -95,14 +95,14 @@ describe Admin::CannedResponses::ResponsesController do
 			:id => @test_response_1.id,
 			:admin_canned_responses_response => {:title => "",
 				:content_html => "Updated Canned_Responses without title",
-				:visibility => {:user_id => @agent.id, 
+				:visibility => {:user_id => RSpec.configuration.agent.id, 
 								:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], 
 								:group_id => @group.id}
 			},
 			:new_folder_id => @folder_id,
 			:folder_id => "#{@test_response_1.folder_id}"
 		}
-		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
+		canned_response = RSpec.configuration.account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.title.should eql("Updated Canned_Responses #{@now}")
 		canned_response.title.should_not eql ""
 		canned_response.content_html.should_not eql("Updated Canned_Responses without title")
@@ -110,15 +110,15 @@ describe Admin::CannedResponses::ResponsesController do
 
 	it "should update the folder of Canned Responses" do
 		put :update_folder, :ids => ["#{@test_response_1.id}","#{@test_response_2.id}"], :move_folder_id => @test_cr_folder_1.id, :folder_id => @folder_id
-		canned_response_1 = @account.canned_responses.find_by_id(@test_response_1.id)
-		canned_response_2 = @account.canned_responses.find_by_id(@test_response_2.id)
+		canned_response_1 = RSpec.configuration.account.canned_responses.find_by_id(@test_response_1.id)
+		canned_response_2 = RSpec.configuration.account.canned_responses.find_by_id(@test_response_2.id)
 		canned_response_1.folder_id.should eql(@test_cr_folder_1.id)
 		canned_response_2.folder_id.should eql(@test_cr_folder_1.id)
 	end
 
 	it "should delete multiple Canned Responses" do
 		delete :delete_multiple, :ids => ["#{@test_response_1.id}"]
-		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
+		canned_response = RSpec.configuration.account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.should be_nil
 	end
 end

@@ -33,7 +33,7 @@
 	<% end
 %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	displayAsModal = function(app) {
 		var contact_title = "<%= contact.name %>";
 		jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');

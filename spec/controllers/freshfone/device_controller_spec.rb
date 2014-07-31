@@ -7,7 +7,7 @@ describe Freshfone::DeviceController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
   end
 
   it 'should_save_recording_url_and_render_record_twiml' do

@@ -1,4 +1,4 @@
-<% form_for [@parent, @item], 
+<%= form_for [@parent, @item], 
 			:html => { 
 				:id => "edit_#{@item.id}",
 				:rel => 'edit_note_form', 
@@ -11,7 +11,7 @@
 	<ul class="ui-form dont-validate">
 		<li class="inline-field field continous">
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-			<% f.fields_for :note_body, @item.note_body do |ff| %>
+			<%= f.fields_for :note_body, @item.note_body do |ff| %>
 				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 			<% end %>
 		</li>
@@ -26,7 +26,7 @@
     </div>
     <div class="clearfix"></div>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	invokeRedactor('<%= "#{@item.id}-body" %>', 'cnt-reply');
 
 	jQuery(document).ready(function(){

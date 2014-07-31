@@ -4,7 +4,7 @@
 </div>
 
 <% unless current_user%>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       var valid_email = /^<%= email_regex %>$/;

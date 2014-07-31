@@ -1,5 +1,5 @@
 class Freshfone::Ivr < ActiveRecord::Base
-	set_table_name "freshfone_ivrs"
+	self.table_name =  "freshfone_ivrs"
 	require_dependency 'freshfone/menu'
 	require_dependency 'freshfone/option'
 	require_dependency 'freshfone/number/message'
@@ -110,7 +110,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 		
 		def validate_attachments
 			(attachments || []).each do |a|
-				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+				errors.add(:base,I18n.t('freshfone.admin.invalid_attachment',
 					{ :name => a.content_file_name })) unless a.audio?
 			end
 		end

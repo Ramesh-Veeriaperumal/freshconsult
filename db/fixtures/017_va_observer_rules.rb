@@ -1,6 +1,6 @@
 account = Account.current
 
-VARule.seed_many(:account_id, :name, :rule_type, [
+VaRule.seed_many(:account_id, :name, :rule_type, [
     [ 'Automatically assign ticket to first responder', 
       'When an agent replies to, or adds a note to an unassigned ticket, it gets assigned to him/her automatically.',
       1,

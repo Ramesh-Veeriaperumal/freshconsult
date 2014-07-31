@@ -1,4 +1,4 @@
-<% form_for @user, :url => contacts_path, :method => 'post', 
+<%= form_for @user, :url => contacts_path, :method => 'post', 
       :html => { :id => "add_requester_form", :rel => "validate", "data-remote" => true } do |add_requester| %>
   <div id="errorExplanation" class="errorExplanation" style="display:none;">
   </div>
@@ -35,7 +35,7 @@
   </div>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   function lookup(searchString, callback) { 
     new Ajax.Request('<%= autocomplete_contacts_path %>?v='+encodeURIComponent(searchString), 
                         { parameters: {name: searchString, rand: (new Date()).getTime()},

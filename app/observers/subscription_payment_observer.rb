@@ -31,11 +31,11 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
       return unless payment.amount > 0
 
       if payment.setup?
-        SubscriptionNotifier.deliver_setup_receipt(payment)
+        SubscriptionNotifier.setup_receipt(payment)
       elsif payment.misc?
-        #SubscriptionNotifier.deliver_misc_receipt(payment) #Has been moved to subscription itself.
+        #SubscriptionNotifier.misc_receipt(payment) #Has been moved to subscription itself.
       else
-        SubscriptionNotifier.deliver_charge_receipt(payment)
+        SubscriptionNotifier.charge_receipt(payment)
       end
       
       true
@@ -58,7 +58,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
-        FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error contacting shareAsale #{payment.id}"})
+        FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Error contacting shareAsale #{payment.id}"})
       end
     end
 

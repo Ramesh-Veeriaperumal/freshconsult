@@ -4,7 +4,7 @@ module FreshfoneCallSpecHelper
   CLIENT_CALL = "FRESHFONE:CLIENT_CALLS:1"
   def setup_caller_data
     @caller_number = Faker::Base.numerify('(###)###-####')
-    @agent.update_attributes(:phone => @caller_number)
+    RSpec.configuration.agent.update_attributes(:phone => @caller_number)
     Freshfone::Search.stubs(:search_user_with_number).returns(@agent)
     create_call_with_caller_and_meta
   end
@@ -21,7 +21,7 @@ module FreshfoneCallSpecHelper
 
   def set_active_call_in_redis(additional_params = {})
     key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
-    controller.set_key(key, {:agent => @agent.id}.merge(additional_params).to_json)
+    controller.set_key(key, {:agent => RSpec.configuration.agent.id}.merge(additional_params).to_json)
   end
 
   def tear_down(key)
@@ -29,7 +29,7 @@ module FreshfoneCallSpecHelper
   end
 
   def create_call_for_status
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+    @freshfone_call = RSpec.configuration.account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
                                       :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
   end
@@ -77,10 +77,10 @@ module FreshfoneCallSpecHelper
 
   private
     def create_call_with_caller_and_meta
-      call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
+      call = RSpec.configuration.account.freshfone_calls.create( :freshfone_number_id => @number.id, 
                :call_status => 0, :call_type => 1, :agent => @agent,
                :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :From => @caller_number } )
-      call.create_meta( :account => @account, :group_id => Group.first)
+      call.create_meta( :account => RSpec.configuration.account, :group_id => Group.first)
     end
 
 end

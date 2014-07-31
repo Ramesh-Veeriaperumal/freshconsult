@@ -1,6 +1,6 @@
 account = Account.current
 
-VARule.seed_many(:account_id, :name, :rule_type, [
+VaRule.seed_many(:account_id, :name, :rule_type, [
     [ 'Assign to QA', 'Customer reported bugs are assigned to QA in a single click',
         [
           { :name => "ticket_type", :value => "Problem" },

@@ -42,8 +42,6 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   #
   
-  # Scrub sensitive parameters from your log
-  filter_parameter_logging :password, :password_confirmation
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 

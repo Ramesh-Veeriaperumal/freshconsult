@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Integrations::GmailGadgetsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -27,7 +27,7 @@ describe Integrations::GmailGadgetsController do
 
    before(:each) do
     login_admin
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
   end
 
   it "should get correct spec for development" do
@@ -50,7 +50,7 @@ describe Integrations::GmailGadgetsController do
     def @env.production? 
       true;
     end
-    @account.update_attributes(:ssl_enabled => false)
+    RSpec.configuration.account.update_attributes(:ssl_enabled => false)
     get :spec, :format => "xml"
     response.body.should have_tag("Module", /script/)
   end

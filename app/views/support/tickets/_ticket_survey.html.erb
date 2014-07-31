@@ -51,7 +51,7 @@
                 </a>
             </div>
             <div id="survey-comment" class="hide">
-            <% form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>
+            <%= form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>
                 <input type="hidden" name="rating" id="survey-rating" value="">
 
                 <textarea name="feedback" id="survey-description" placeholder="<%= t('.feedback_title') %>"></textarea> 

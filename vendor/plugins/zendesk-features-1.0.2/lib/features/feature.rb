@@ -23,6 +23,8 @@ module Features
     after_destroy :reset_owner_association
     before_destroy :destroy_dependant_features, :clear_features_from_cache
     before_create :clear_features_from_cache
+
+    attr_accessible :account
   
     def available?
       feature_owner_instance.features.available?(to_sym)

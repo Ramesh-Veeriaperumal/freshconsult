@@ -1,12 +1,12 @@
 
 <div class="tkt-sidebar" id="ticket_details_sidebar">
-	<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
-	<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
-	<%= render :partial => "helpdesk/tickets/show/app_info.html.erb" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
+	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+	<%= render :partial => "helpdesk/tickets/show/requester" %> 
+	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
 	<% unless @ticket.deleted or @ticket.spam %> 
 		<div class="widget" id='TicketProperties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>
-			<div class="content" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=ticket_fields"></div>
+			<div class="content" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=ticket_fields"></div>
 		</div>
 
 		<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
@@ -22,14 +22,14 @@
 					<span class="time_unit">Hrs </span>
 				</div>
 			</h3>
-			<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_helpdesk_time_sheets_path(@ticket) %>"></div>
+			<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_time_sheets_path(@ticket) %>"></div>
 		</div>
 		<% end %>
 		<div class="widget inactive load_remote" id="ToDoList">
 			<h3><%= t('to_do') %></h3>
-			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=todo"></div>
+			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>
 		
-		<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
+		<%= render :partial => "helpdesk/tickets/show/integrations" %> 
 	<% end %>
 </div>

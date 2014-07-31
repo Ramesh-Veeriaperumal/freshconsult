@@ -1,6 +1,6 @@
 class Admin::CannedResponses::Folder < ActiveRecord::Base
 
-  set_table_name "ca_folders"
+  self.table_name =  "ca_folders"
 
   belongs_to :account
   
@@ -13,7 +13,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   validates_length_of :name, :in => 3..240
   validates_uniqueness_of :name, :scope => :account_id
 
-  named_scope :accessible_for, lambda { |agent_user|
+  scope :accessible_for, lambda { |agent_user|
     {
       :select => "ca_folders.*, available_responses_count",
       :joins => %(inner join 
@@ -43,7 +43,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
 
     def confirm_destroy
       if is_default?
-        self.errors.add_to_base("Cannot delete default folder!!")
+        self.errors.add(:base,"Cannot delete default folder!!")
         return false
       end
     end

@@ -75,7 +75,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
-      @va_rule = params[:va_rule].nil? ? VARule.new : scoper.build(params[:va_rule])
+      @va_rule = params[:va_rule].nil? ? VaRule.new : scoper.build(params[:va_rule])
     end
     
     def human_name

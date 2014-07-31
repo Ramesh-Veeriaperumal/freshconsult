@@ -27,7 +27,7 @@
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
 						rel="remote-load" 
-						data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>"
+						data-url= "<%=helpdesk_ticket_subscriptions_path(@ticket)%>"
 						data-load-unique="true" >
 						<span class="arrow-top"></span>
 					</div>
@@ -38,7 +38,7 @@
 						data-watching="<%= @ticket.subscriptions.map(&:user_id).include? current_user.id %>" 
 						data-currentuserid="<%= current_user.id %>">
 						<span id="monitor">
-							<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
+							<%= render :partial => "/helpdesk/subscriptions/monitor" %>
 						</span>
 					</div>
 					<% end %>
@@ -96,7 +96,7 @@
 				<% end %>
 				<li class="ticket-btns hide_on_collapse">
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
-					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn ', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
 					  				:title => t('ticket.execute_scenario')) %> 
 					</div>
@@ -127,7 +127,7 @@
 						<% end %>
 
 						<li class="show_on_collapse">
-							<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+							<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", "data-template-footer" => "", :id => "ticket_scenario_btn" ,
 					  				:title => t('ticket.execute_scenario') ) %>
 						</li>
@@ -147,7 +147,7 @@
 					  	</li>
 
 					  	<li id="spamicon">
-					  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
+					  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
 					  	</li>
 					  	<% if privilege?(:delete_ticket) %>
 					  	<li>

@@ -2,7 +2,7 @@
 	<%= post_topic_in_portal current_portal.to_liquid, true %>
 <% else %>
 	<% @topic ||= current_account.topics.new %>
-	<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
+	<%= form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
 						:method => @topic.new_record? ? :post : :put,
 						:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
 	<%= form.error_messages %>					
@@ -34,7 +34,7 @@
 				{ :include_blank => t("portal.topic.default_select_option") },
 				{ :class => "required custom-select", 
 				  :disabled => !@topic.new_record? } %>
-			<% javascript_tag do %>
+			<%= javascript_tag do %>
 				jQuery("#topic_forum_id").val(<%= params[:forum_id] || @topic.forum_id %>)
 			<% end %>
 		</div>

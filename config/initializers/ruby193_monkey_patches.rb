@@ -114,52 +114,54 @@ Encoding.default_internal = Encoding::UTF_8
 
 # Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
 class ActiveRecord::Base
-  def unserialize_attribute_with_utf8(attr_name)
-    traverse = lambda do |object, block|
-      if object.kind_of?(Hash)
-        object.each_value { |o| traverse.call(o, block) }
-      elsif object.kind_of?(Array)
-        object.each { |o| traverse.call(o, block) }
-      else
-        block.call(object)
-      end
-      object
-    end
-    force_encoding = lambda do |o|
-      o.force_encoding(Encoding::UTF_8) if o.respond_to?(:force_encoding)
-    end
-    value = unserialize_attribute_without_utf8(attr_name)
-    traverse.call(value, force_encoding)
-  end
-  alias_method_chain :unserialize_attribute, :utf8
+  # TODO-RAILS3 need to cross check this one is need or not
+  # def unserialize_attribute_with_utf8(attr_name)
+  #   traverse = lambda do |object, block|
+  #     if object.kind_of?(Hash)
+  #       object.each_value { |o| traverse.call(o, block) }
+  #     elsif object.kind_of?(Array)
+  #       object.each { |o| traverse.call(o, block) }
+  #     else
+  #       block.call(object)
+  #     end
+  #     object
+  #   end
+  #   force_encoding = lambda do |o|
+  #     o.force_encoding(Encoding::UTF_8) if o.respond_to?(:force_encoding)
+  #   end
+  #   value = unserialize_attribute_without_utf8(attr_name)
+  #   traverse.call(value, force_encoding)
+  # end
+  # alias_method_chain :unserialize_attribute, :utf8
 
   # https://rails.lighthouseapp.com/projects/8994/tickets/2283 Backport patch to 2-3-stable. to fix Module is not missing Model error
-  (class << self; self; end).instance_eval do 
-    define_method "compute_type_with_class_load_fix" do |type_name|
-      if type_name.match(/^::/)
-        # If the type is prefixed with a scope operator then we assume that
-        # the type_name is an absolute reference.
-        type_name.constantize
-      else
-        # Build a list of candidates to search for
-        candidates = []
-        name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
-        candidates << type_name
+  # TODO-RAILS3 freshservice need to check this
+  # (class << self; self; end).instance_eval do 
+  #   define_method "compute_type_with_class_load_fix" do |type_name|
+  #     if type_name.match(/^::/)
+  #       # If the type is prefixed with a scope operator then we assume that
+  #       # the type_name is an absolute reference.
+  #       type_name.constantize
+  #     else
+  #       # Build a list of candidates to search for
+  #       candidates = []
+  #       name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
+  #       candidates << type_name
 
-        candidates.each do |candidate|
-          begin
-            constant = candidate.constantize
-            return constant if candidate == constant.to_s
-          rescue NameError
-          rescue ArgumentError
-          end
-        end
+  #       candidates.each do |candidate|
+  #         begin
+  #           constant = candidate.constantize
+  #           return constant if candidate == constant.to_s
+  #         rescue NameError
+  #         rescue ArgumentError
+  #         end
+  #       end
 
-        raise NameError, "uninitialized constant #{candidates.first}"
-      end
-    end
-    alias_method_chain :compute_type, :class_load_fix
-  end if Rails.env.development?
+  #       raise NameError, "uninitialized constant #{candidates.first}"
+  #     end
+  #   end
+  #   alias_method_chain :compute_type, :class_load_fix
+  # end if Rails.env.development?
   
 end
 
@@ -362,23 +364,24 @@ class String
   end
 end
 
+# TODO-RAILS3 need to cross check
 # Make sure the logger supports encodings properly.
 # https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
-module ActiveSupport
-  class BufferedLogger
-    def add(severity, message = nil, progname = nil, &block)
-      return if @level > severity
-      message = (message || (block && block.call) || progname).to_s
+# module ActiveSupport
+#   class BufferedLogger
+#     def add(severity, message = nil, progname = nil, &block)
+#       return if @level > severity
+#       message = (message || (block && block.call) || progname).to_s
  
-      # If a newline is necessary then create a new message ending with a newline.
-      # Ensures that the original message is not mutated.
-      message = "#{message}\n" unless message[-1] == ?\n
-      message = message.force_encoding(Encoding.default_external) if message.respond_to?(:force_encoding)
-      buffer << message
-      auto_flush
-      message
-    end
-  end
-end
+#       # If a newline is necessary then create a new message ending with a newline.
+#       # Ensures that the original message is not mutated.
+#       message = "#{message}\n" unless message[-1] == ?\n
+#       message = message.force_encoding(Encoding.default_external) if message.respond_to?(:force_encoding)
+#       buffer << message
+#       auto_flush
+#       message
+#     end
+#   end
+# end
 
 

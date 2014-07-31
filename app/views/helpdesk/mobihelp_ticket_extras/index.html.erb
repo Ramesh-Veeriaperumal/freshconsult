@@ -15,13 +15,13 @@
   		</ul>
   		<div class="tab-content">
   			<div class="tab-pane active" id="metaData">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info.html.erb', :locals => {:extra_info => @extra_info, :info => debug_data_json["app_info"] ,  :source => 'app_info'} if debug_data %>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["app_info"] ,  :source => 'app_info'} if debug_data %>
   			</div>
   			<div class="tab-pane" id="customData">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info.html.erb', :locals => {:extra_info => @extra_info, :info => debug_data_json["custom_data"] , :source => 'custom_data'} if debug_data %>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["custom_data"] , :source => 'custom_data'} if debug_data %>
   			</div>
   			<div class="tab-pane" id="breadCrumb">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info.html.erb', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data%>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data%>
   			</div>
         <div class="tab-pane" id="debugLog">
           <pre>

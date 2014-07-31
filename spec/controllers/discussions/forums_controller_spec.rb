@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Discussions::ForumsController do
 
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -11,7 +11,7 @@ describe Discussions::ForumsController do
 	end
 
 	before(:each) do
-		@request.host = @account.full_domain
+		@request.host = RSpec.configuration.account.full_domain
 		log_in(@user)
 	end
 

@@ -21,7 +21,7 @@
   	<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
   </div>
 </div>
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   if(jQuery("#folder-section").height() > jQuery("#article-section").height())
     jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
 <%- end %>

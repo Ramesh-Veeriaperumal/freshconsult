@@ -1,6 +1,6 @@
 <%#= render :partial => 'layouts/shared/freshfone/freshfone' %>
-<%= include_cloudfront_css :freshfone %>
-<%= include_cloudfront_js :freshfone_ticket_search %>
+<%= stylesheet_link_tag :freshfone %>
+<%= javascript_include_tag :freshfone_ticket_search %>
 <div>
 	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
 </div>
@@ -16,7 +16,7 @@
 	<%= render 'layouts/shared/freshfone/freshfone_popupbox_content' %>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
 	freshfone.current_user = <%= current_user.id %>;
 	freshfone.current_account = <%= current_account.id%>;
@@ -40,4 +40,4 @@
 	freshfone.numbersHash = JSON.parse('<%= Hash[*current_account_freshfone_numbers.collect(&:reverse).flatten].to_json.html_safe %>');
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_path %>';
 <% end %>
-<%= include_cloudfront_js :freshfone_client %>
+<%= javascript_include_tag :freshfone_client %>

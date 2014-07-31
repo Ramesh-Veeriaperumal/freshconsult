@@ -1,0 +1,15 @@
+//= require syntaxhighlighter/shCore.js
+//= require syntaxhighlighter/shBrushCss.js
+//= require syntaxhighlighter/shBrushJava.js
+//= require syntaxhighlighter/shBrushJScript.js
+//= require syntaxhighlighter/shBrushPhp.js
+//= require syntaxhighlighter/shBrushRuby.js
+//= require syntaxhighlighter/shBrushSass.js
+//= require syntaxhighlighter/shBrushSql.js
+//= require syntaxhighlighter/shBrushXml.js
+//= require syntaxhighlighter/shBrushCpp.js
+//= require syntaxhighlighter/shBrushCSharp.js
+//= require syntaxhighlighter/shBrushPerl.js
+//= require syntaxhighlighter/shBrushPlain.js
+//= require syntaxhighlighter/shBrushPython.js
+//= require syntaxhighlighter/shBrushVb.js

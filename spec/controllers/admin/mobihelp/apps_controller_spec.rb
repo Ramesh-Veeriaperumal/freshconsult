@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::Mobihelp::AppsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -23,7 +23,7 @@ describe Admin::Mobihelp::AppsController do
     it "should show welcome page" do
       Mobihelp::App.delete_all
       get :index
-      response.should render_template "admin/mobihelp/apps/index.html.erb"
+      response.should render_template "admin/mobihelp/apps/index"
       response.body.should =~ /Welcome to Mobihelp/i
     end
   end
@@ -42,15 +42,15 @@ describe Admin::Mobihelp::AppsController do
           }
         }
       }
-    @account.mobihelp_apps.find_by_name("FreshApp #{now}").should be_an_instance_of(Mobihelp::App)
-    @account.mobihelp_apps.find_by_name("FreshApp #{now}").platform.should be_eql(1)
+    RSpec.configuration.account.mobihelp_apps.find_by_name("FreshApp #{now}").should be_an_instance_of(Mobihelp::App)
+    RSpec.configuration.account.mobihelp_apps.find_by_name("FreshApp #{now}").platform.should be_eql(1)
   end
 
   it "should reject invalid mobihelp app and render new page " do
     get :new, :platform => 1
     post :create, :mobihelp_app => {:name => "", :platform => 1, :config => {"bread_crumbs"=>"10", "debug_log_count"=>"50", 
           "solutions"=>"2", "app_review_launch_count"=>"5"}}
-    response.should render_template('new')
+    response.should render_template('new',layout: :application)
   end
 
   it "should reject updatation with incorrect values and render edit page " do
@@ -69,19 +69,19 @@ describe Admin::Mobihelp::AppsController do
         },
         "id" => mobihelp_app.id
       }
-    response.should render_template('edit')
+    response.should render_template('edit',layout: :application)
   end
   
   it "should go to new page" do 
     get :new, "platform" => 1
-    response.should render_template "admin/mobihelp/apps/new.html.erb"
+    response.should render_template "admin/mobihelp/apps/new"
     response.body.should =~ /New Mobihelp App/
   end
 
   it "should go to edit page" do 
     mobihelp_app = create_mobihelp_app
     get :edit, "id" => mobihelp_app.id
-    response.should render_template "admin/mobihelp/apps/edit.html.erb"
+    response.should render_template "admin/mobihelp/apps/edit"
     response.body.should =~ /Edit Mobihelp App/
     response.body.should =~ /#{mobihelp_app.app_key}/
     response.body.should =~ /#{mobihelp_app.app_secret}/
@@ -102,7 +102,7 @@ describe Admin::Mobihelp::AppsController do
         },
         "id" => mobihelp_app.id
     }
-    updated_mobihelp_app = @account.mobihelp_apps.find_by_id(mobihelp_app.id)
+    updated_mobihelp_app = RSpec.configuration.account.mobihelp_apps.find_by_id(mobihelp_app.id)
     updated_mobihelp_app.config[:app_review_launch_count].should be_eql("15")
     updated_mobihelp_app.platform.should be_eql(mobihelp_app.platform)
   end
@@ -110,7 +110,7 @@ describe Admin::Mobihelp::AppsController do
   it "should delete a mobihelp_app" do
     mobihelp_app = create_mobihelp_app
     delete :destroy, :id => mobihelp_app.id
-    Mobihelp::App.find_by_id(mobihelp_app.id).deleted.should be_true
+    Mobihelp::App.find_by_id(mobihelp_app.id).deleted.should be_truthy
   end
 
   it "should not delete a mobihelp_app" do

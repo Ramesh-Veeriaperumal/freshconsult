@@ -45,7 +45,7 @@
 	<br />
 
 	<div id="ReplyToTicketPublic" class="request_panel" style="display:none;">
-		<% form_for Helpdesk::Note.new, 
+		<%= form_for Helpdesk::Note.new, 
 					:url => public_ticket_notes_path(params[:id]),
 					:html => {:multipart => true, :rel => "validate" }  do |f| %>
 			<%= f.error_messages %>
@@ -56,7 +56,7 @@
 						<%= label_tag :requester_email, (t('your_email')+'<span class="required_star">*</span>').html_safe %>
 						<%= text_field_tag :requester_email, nil, :class => "email required"  %>
 					<% end %>
-					<% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+					<%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             			<%= ff.text_area :body_html, :class => "required",
             			:id=>"portal_ticket_note_public", :value => "" %>
           			<% end %>

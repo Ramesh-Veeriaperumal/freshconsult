@@ -1,3 +1,3 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :flexifield_defs, :has_many => :flexifield_def_entries
+Rails.application.routes.draw do 
+  resources :flexifield_defs
 end

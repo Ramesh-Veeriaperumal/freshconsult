@@ -31,7 +31,7 @@ namespace :freshfone do
 		Sharding.execute_on_all_shards do
 			Freshfone::Account.find_due(15.days.from_now).each do |freshfone_account|
 				account = freshfone_account.account
-				FreshfoneNotifier.deliver_account_expiring(account, "15 days")
+				FreshfoneNotifier.account_expiring(account, "15 days")
 			end
 		end
 	end
@@ -41,7 +41,7 @@ namespace :freshfone do
 		Sharding.execute_on_all_shards do
 			Freshfone::Account.find_due(3.days.from_now).each do |freshfone_account|
 				account = freshfone_account.account
-				FreshfoneNotifier.deliver_account_expiring(account, "3 days")
+				FreshfoneNotifier.account_expiring(account, "3 days")
 			end
 		end
 	end
@@ -52,7 +52,7 @@ namespace :freshfone do
 			Freshfone::Number.find_trial_account_due(3.days.from_now).each do |trial_number|
 				if trial_number.insufficient_renewal_amount?
 					account = trial_number.account
-					FreshfoneNotifier.deliver_trial_number_expiring(account, trial_number.number, "3 days")	
+					FreshfoneNotifier.trial_number_expiring(account, trial_number.number, "3 days")	
 				end
 			end
 		end
@@ -64,7 +64,7 @@ namespace :freshfone do
 			Freshfone::Account.find_due.each do |ff_account|
 				# ff_account.process_subscription
 				account = ff_account.account
-				FreshfoneNotifier.deliver_freshfone_account_closure(account)
+				FreshfoneNotifier.freshfone_account_closure(account)
 				#should we collect negative balance amounts here?
 			end
 		end

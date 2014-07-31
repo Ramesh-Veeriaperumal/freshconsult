@@ -2,12 +2,12 @@ require 'spec_helper'
 include TicketFieldsHelper
 
 describe TicketFieldsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields = ticket_field_hash(@account.ticket_fields, RSpec.configuration.account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     login_admin
   end

@@ -152,7 +152,7 @@ class Va::Action
         cc_email_value = value.downcase.strip
         return if ticket_cc_emails.include?(cc_email_value)
         act_on.cc_email[:cc_emails] << cc_email_value
-        Helpdesk::TicketNotifier.deliver_send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+        Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
       end
     end
 
@@ -164,7 +164,7 @@ class Va::Action
         unless watcher.present?
           subscription = act_on.subscriptions.create( {:user_id => agent_id} )
           watchers.push subscription.user.name if subscription
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+          Helpdesk::WatcherNotifier.send_later(notify_new_watcher, 
                                                act_on, 
                                                subscription, 
                                                "automations rule")
@@ -176,7 +176,7 @@ class Va::Action
     def send_email_to_requester(act_on)
       if act_on.requester_has_email?
         act_on.account.make_current
-        Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, 
+        Helpdesk::TicketNotifier.email_to_requester(act_on, 
           substitute_placeholders_for_requester(act_on, :email_body),
                         substitute_placeholders_for_requester(act_on, :email_subject)) 
         add_activity("Sent an email to the requester") 
@@ -246,7 +246,7 @@ class Va::Action
 
     def send_internal_email act_on, receipients
       act_on.account.make_current
-      Helpdesk::TicketNotifier.deliver_internal_email(act_on, 
+      Helpdesk::TicketNotifier.internal_email(act_on, 
         receipients, substitute_placeholders(act_on, :email_body),
           substitute_placeholders(act_on, :email_subject))
     end

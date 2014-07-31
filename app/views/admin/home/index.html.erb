@@ -14,8 +14,8 @@
 <%= build_admin_prefpane %>
 <%#= link_to(t('more'), "#", :class => "as-more") %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	var adminSearchKeywords = <%= generate_keywords_hash.to_json.html_safe %>;
 <% end %>
 
-<%= include_cloudfront_js :admin %>
+<%= javascript_include_tag :admin %>

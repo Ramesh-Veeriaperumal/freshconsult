@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Admin::ObserverRulesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @test_observer_rule = create_observer_rule({:account_id => @account.id})
+    @test_observer_rule = create_observer_rule({:account_id => RSpec.configuration.account.id})
   end
 
   before(:each) do
@@ -15,12 +15,12 @@ describe Admin::ObserverRulesController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "admin/observer_rules/index.html.erb"
+    response.should render_template "admin/observer_rules/index"
   end
 
   it "should go to new observer rule page" do
     get 'new'
-    response.should render_template "admin/observer_rules/new.html.erb"
+    response.should render_template "admin/observer_rules/new"
   end
 
   it "should create a new observer rule" do
@@ -34,12 +34,12 @@ describe Admin::ObserverRulesController do
                      :event=>"end",
                      :name=>"status", :from=>"--", :to=>"--", :performer_data=>{"type"=>"1"},
                      :action_data => [{:name=>"priority", :value=>"2"}].to_json}
-    @account.all_observer_rules.find_by_name(observer_rule_name).should_not be_nil
+    RSpec.configuration.account.all_observer_rules.find_by_name(observer_rule_name).should_not be_nil
   end
 
   it "should edit observer rule" do
     get :edit, :id =>@test_observer_rule.id
-    response.should render_template "admin/observer_rules/edit.html.erb"
+    response.should render_template "admin/observer_rules/edit"
   end
 
   it "should clone a observer rule" do
@@ -58,21 +58,21 @@ describe Admin::ObserverRulesController do
                   :event=>"end",
                   :name=>"status", :from=>"--", :to=>"--", :performer_data=>{"type"=>"1"},
                   :action_data=>[{:name=>"status",:value=>"6"}].to_json, :id=>@test_observer_rule.id}
-    @account.all_observer_rules.find_by_id(@test_observer_rule.id).action_data.should_not be_eql(@test_observer_rule.action_data)
+    RSpec.configuration.account.all_observer_rules.find_by_id(@test_observer_rule.id).action_data.should_not be_eql(@test_observer_rule.action_data)
   end
 
   it "should delete a observer rule" do
-    delete_observer_id = create_observer_rule({:account_id => @account.id}).id
+    delete_observer_id = create_observer_rule({:account_id => RSpec.configuration.account.id}).id
     delete :destroy, {:id=>delete_observer_id}
-    @account.all_observer_rules.find_by_id(delete_observer_id).should be_nil
+    RSpec.configuration.account.all_observer_rules.find_by_id(delete_observer_id).should be_nil
   end
 
   it "should active and deactivate a observer rule" do
-    observer_rule = create_observer_rule({:account_id => @account.id})
+    observer_rule = create_observer_rule({:account_id => RSpec.configuration.account.id})
     put :activate_deactivate,  {:va_rule=>{:active=>"false"},:id =>observer_rule.id}
-    @account.all_observer_rules.find_by_id(observer_rule.id).active.should be_eql(false)
+    RSpec.configuration.account.all_observer_rules.find_by_id(observer_rule.id).active.should be_eql(false)
     put :activate_deactivate,  {:va_rule=>{:active=>"true"},:id =>observer_rule.id}
-    @account.all_observer_rules.find_by_id(observer_rule.id).active.should be_eql(true)
+    RSpec.configuration.account.all_observer_rules.find_by_id(observer_rule.id).active.should be_eql(true)
   end
 
 end

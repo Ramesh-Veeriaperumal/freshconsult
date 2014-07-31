@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Discussions::ModerationController do
-	integrate_views
+	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -36,7 +36,7 @@ describe Discussions::ModerationController do
 		Resque.inline = false
 
 		unpublished_post.reload
-		unpublished_post.published.should be_true
+		unpublished_post.published.should be_truthy
 		unpublished_post.spam.should eql spam_value
 	end
 
@@ -51,11 +51,11 @@ describe Discussions::ModerationController do
 		Resque.inline = false
 
 		published_post.reload
-		published_post.published.should be_false
-		published_post.spam.should be_true
+		published_post.published.should be_falsey
+		published_post.spam.should be_truthy
 		if published_post.original_post?
 			published_topic.reload
-			published_topic.published.should be_false
+			published_topic.published.should be_falsey
 		end
 	end
 
@@ -67,7 +67,7 @@ describe Discussions::ModerationController do
 		delete :empty_folder
 		unpublished_spam.each do |post|
 			post.reload
-			post.trash.should be_true
+			post.trash.should be_truthy
 		end
 		response.should redirect_to discussions_path
 	end
@@ -81,9 +81,9 @@ describe Discussions::ModerationController do
 		put :spam_multiple, :ids => [topic_1.id, topic_2.id]
 		published_topics.each do |topic|
 			topic.reload
-			topic.published.should be_false
-			topic.posts.first.published.should be_false
-			topic.posts.first.spam.should be_true
+			topic.published.should be_falsey
+			topic.posts.first.published.should be_falsey
+			topic.posts.first.spam.should be_truthy
 		end
 	end
 

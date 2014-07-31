@@ -1,5 +1,5 @@
 class CustomerForum < ActiveRecord::Base
-	set_table_name "customer_forums"
+	self.table_name =  "customer_forums"
 
 
 	before_validation :set_account_id
@@ -14,7 +14,7 @@ class CustomerForum < ActiveRecord::Base
 
 	delegate :update_search_index, :to => :forum, :allow_nil => true
 	
-	after_commit_on_create :update_search_index
+	after_commit :update_search_index, on: :create
 
 	protected 
 

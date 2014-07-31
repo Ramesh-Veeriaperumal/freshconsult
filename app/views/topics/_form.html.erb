@@ -54,7 +54,7 @@
 	<% end %>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery("#topic_locked").click(function(ev){
 		jQuery("#monitor-topic-lable").toggle(!this.checked);
 	});

@@ -10,7 +10,7 @@
 
 <ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
 
-<%= include_cloudfront_js :search  %>
+<%= javascript_include_tag :search  %>
 
 <script type="text/javascript">
 	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>",

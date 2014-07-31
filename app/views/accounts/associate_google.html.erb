@@ -7,8 +7,8 @@ cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
 %>
 
 	<div id="change-sub-domain" class="ui-form">
-		 <% form_for :account, @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put" } do |f| %>
-			<%= f.error_messages %>
+		 <%= form_for @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put" } do |f| %>
+			<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
 			<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />				
 			<input type="hidden" value="<%=@sub_domain%>" name="account[sub_domain]" id="account_sub_domain" class="textfield" />		
 			<input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />		 				

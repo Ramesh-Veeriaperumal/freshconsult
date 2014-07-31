@@ -1,4 +1,4 @@
-<%= include_cloudfront_css :reports  %>
+<%= stylesheet_link_tag :reports  %>
 
 <%
 	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
@@ -45,7 +45,7 @@
 </div>
 </div>
 
-<% javascript_tag do %>		
+<%= javascript_tag do %>		
 <%unless @reports_list.blank?%>
 		jQuery('#report_list').pageless({
 		    currentPage:1,

@@ -1,0 +1,10 @@
+//= require pattern/bootstrap-affix.js
+//= require pattern/bootstrap-button.js
+//= require pattern/bootstrap-dropdown.js
+//= require pattern/bootstrap-modal.js
+//= require pattern/bootstrap-dialog.js
+//= require pattern/bootstrap-transition.js
+//= require pattern/bootstrap-tab.js
+//= require jquery.pageslide.js
+//= require pattern/sticky.js
+//= require pattern/stickyinit.js

@@ -1,7 +1,7 @@
 
 class ShardMapping < ActiveRecord::Base
   
-  set_primary_key "account_id"
+  self.primary_key = :account_id
   not_sharded
 
   include MemcacheKeys
@@ -14,6 +14,8 @@ class ShardMapping < ActiveRecord::Base
 
   after_update :clear_cache
   after_destroy :clear_cache
+
+  attr_accessible :shard_name, :status
 
 
  def self.lookup_with_account_id(shard_key)

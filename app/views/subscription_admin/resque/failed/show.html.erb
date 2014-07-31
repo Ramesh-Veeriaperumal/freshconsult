@@ -1,4 +1,4 @@
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   jQuery('.header').hide();
 <% end %>
 
@@ -19,7 +19,7 @@
 	<%= render :partial => "jobs", :object => @failed_in_given_queue %>
 </table>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('#results').pageless({ 
 	                           url: "<%= url_path(request.path_info.sub('/','')) %>"
 	                          , params: { job_count: function(){ return jQuery("#results").data("jobCount") } }

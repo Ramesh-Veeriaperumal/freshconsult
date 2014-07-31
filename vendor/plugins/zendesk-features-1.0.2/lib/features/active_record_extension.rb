@@ -8,7 +8,7 @@ module Features
 
         has_many :features, :class_name => 'Features::Feature', :dependent => :destroy do
           def available?(feature_name)
-            @owner.features?(*Feature.sym_to_class(feature_name).required_features.map(&:to_sym))
+            proxy_association.owner.features?(*Feature.sym_to_class(feature_name).required_features.map(&:to_sym))
           end
           
           def build(*feature_names)
@@ -40,7 +40,8 @@ module Features
             #
             define_method "#{f}" do
               instance = detect { |feature| feature.matches?(f) }
-              instance ||= Feature.sym_to_class(f).new(@owner.class.name.underscore.to_sym => @owner)
+              Rails.logger.debug "::::::#{proxy_association.owner.class.name.underscore.to_sym}::::::#{f.inspect}"
+              instance ||= Feature.sym_to_class(f).new(proxy_association.owner.class.name.underscore.to_sym => proxy_association.owner)
             end
           end
         end

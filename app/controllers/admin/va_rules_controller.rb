@@ -4,7 +4,8 @@ class Admin::VaRulesController < Admin::AutomationsController
   skip_before_filter :check_automation_feature
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :hide_password_in_webhook, :only => [:edit]
-  filter_parameter_logging :action_data, :password
+  # TODO-RAILS3 password moved to application.rb but need to check action_data
+  # filter_parameter_logging :action_data, :password
   
   def activate_deactivate
     @va_rule = all_scoper.find(params[:id])

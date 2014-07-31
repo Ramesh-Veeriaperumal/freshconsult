@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery(document).ready(function(){    	
     jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset()); 
 	sub_domain = '<%=@sub_domain%>'
@@ -80,8 +80,8 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 	<div class="intro info-data">
 		Create a new Freshdesk account or <a href="javascript:associate_existing_domain()">Link your existing Freshdesk account.</a>
 	</div>	
-		<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
-			<%= f.error_messages %>
+		<%= form_for @account, :url => {:action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
+			<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
 		  <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
 		  <input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  <input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
@@ -130,8 +130,8 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 		<div class="intro info-data">
 			 Link your existing Freshdesk account or <a href="javascript:new_account()">Create a new Freshdesk account.</a>
 		</div>
-		 <% form_for :account, @account, :url => {:action=> :associate_google_account} , :html => { :method => "put" } do |f| %>
-			<%= error_messages_for :account %> 
+		 <%= form_for @account, :url => {:action=> :associate_google_account} , :html => { :method => "put" } do |f| %>
+			<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
 				<input type="hidden" value="<%=@call_back_url%>" name="call_back" id="call_back_url" />
 		  	<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  	<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">		 	

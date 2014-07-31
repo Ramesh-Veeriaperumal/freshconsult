@@ -49,7 +49,7 @@
                     :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
       <% end %>
   <% end %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
       jQuery('#<%=category_id%>')
         .nested_select_tag({
           initValues: { 

@@ -130,7 +130,7 @@
     }(jQuery);
     Gamification.init(<%= @criteria_defs.html_safe if @criteria_defs %>, [<%= @quest_input.html_safe if @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
   <% end %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){

@@ -5,7 +5,7 @@
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery('#primary_maker, #verify_email').live('click', function(){
 	jQuery(this).text("<%= t('merge_contacts.please_wait') %>");
 	jQuery(this).off('click');
@@ -109,7 +109,7 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 
 <div class="row-fluid">
 	<h4 class="title"><%=t('contacts.info3',:nick_name => h(@user.display_name)).html_safe%></h4>
-		<% form_for @user do |f| %>
+		<%= form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description").html_safe, :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 5 %>
       <% if privilege?(:manage_contacts) %>
@@ -162,7 +162,7 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   // need to convert this to util
   jQuery(document).ready(function(){
     if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {

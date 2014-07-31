@@ -3,7 +3,7 @@ require 'spec_helper'
 module ApplicationsHelper
 
 	def redis_key(provider)
-		key_options = { :account_id => @account.id, :provider => provider}
+		key_options = { :account_id => RSpec.configuration.account.id, :provider => provider}
     Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
 	end
 

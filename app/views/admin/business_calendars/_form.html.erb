@@ -130,7 +130,7 @@
 				<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
 				<ul class="unstyled hide" id="HolidayList"></ul>
 				<% content_for :pagefixed do %>
-					<% javascript_tag do %>
+					<%= javascript_tag do %>
 						<% @business_calendar.holiday_data.each do |holiday| %>
 							addHolidaytoList("<%=holiday[0]%>", "<%=h(holiday[1])%>");
 						<% end %>	

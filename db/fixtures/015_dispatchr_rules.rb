@@ -1,6 +1,6 @@
 account = Account.current
 
-VARule.seed(:account_id, :name, :rule_type) do |s|
+VaRule.seed(:account_id, :name, :rule_type) do |s|
   s.account_id = account.id
   s.rule_type = VAConfig::BUSINESS_RULE
   s.name = "Send Leads to Sales - Sample Dispatch'r rule"

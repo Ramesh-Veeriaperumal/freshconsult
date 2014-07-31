@@ -2,7 +2,7 @@ class Freshfone::Credit < ActiveRecord::Base
 	include ActionView::Helpers::NumberHelper
 	
 	belongs_to_account
-	set_table_name :freshfone_credits
+	self.table_name =  :freshfone_credits
 	alias_attribute :credit, :last_purchased_credit
 
 	CREDIT_LIMIT = {
@@ -38,7 +38,7 @@ class Freshfone::Credit < ActiveRecord::Base
         :status => true,
         :purchased_credit => selected_credit
       )
-      FreshfoneNotifier.deliver_recharge_success(account, selected_credit, available_credit)
+      FreshfoneNotifier.recharge_success(account, selected_credit, available_credit)
     end
     response
 	end

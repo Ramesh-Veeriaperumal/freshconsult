@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Support::TicketsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -11,15 +11,15 @@ describe Support::TicketsController do
   end
 
   it "should not allow a user to access tickets from a different company" do
-    company = Factory.build(:customer, :name => Faker::Name.name)
+    company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     company.save
-    test_user1 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    test_user1 = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :customer_id => company.id)
     test_user1.save
     now = (Time.now.to_f*1000).to_i
     test_ticket = create_ticket({ :status => 2, :requester_id => test_user1.id, :subject => "#{now}" }, 
                                   create_group(@account, {:name => "Tickets"}))
-    test_user2 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    test_user2 = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :customer_id => company.id)
     test_user2.save
     log_in(test_user2)
@@ -31,10 +31,10 @@ describe Support::TicketsController do
   end
 
   it "should not allow a user to update inaccessible attributes" do
-    user1 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    user1 = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     user1.save
-    user2 = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    user2 = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     user2.save
     now = (Time.now.to_f*1000).to_i
@@ -50,7 +50,7 @@ describe Support::TicketsController do
     ticket = @acc.tickets.find_by_subject(now)
     ticket.requester_id.should be_eql(user1.id)
     ticket.source.should_not be_eql(6)
-    ticket.spam.should be_false
-    ticket.deleted.should be_false
+    ticket.spam.should be_falsey
+    ticket.deleted.should be_falsey
   end
 end 

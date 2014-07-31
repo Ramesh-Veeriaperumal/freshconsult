@@ -1,6 +1,6 @@
 class Admin::CannedResponses::Response < ActiveRecord::Base
   
-  set_table_name "admin_canned_responses"    
+  self.table_name =  "admin_canned_responses"    
   
   belongs_to_account
  
@@ -35,7 +35,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
    validates_length_of :title, :in => 3..240
    validates_presence_of :folder_id
 
-  named_scope :accessible_for, lambda { |agent_user| 
+  scope :accessible_for, lambda { |agent_user| 
     {
       :joins => %(JOIN admin_user_accesses acc ON
         admin_canned_responses.account_id=%<account_id>i AND

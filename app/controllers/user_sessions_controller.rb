@@ -6,7 +6,7 @@ require 'rack/openid'
 require 'uri'
 require 'openid'
 require 'oauth/consumer' 
-require 'oauth/request_proxy/action_controller_request'
+require 'oauth/request_proxy/rack_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
@@ -229,7 +229,7 @@ include Mobile::Actions::Push_Notifier
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
       @current_user.deliver_admin_activation
-      #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
+      #SubscriptionNotifier.send_later(:welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to_getting_started
     else
@@ -366,7 +366,7 @@ include Mobile::Actions::Push_Notifier
   private
 
     def remove_old_filters
-      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session['session_id']})
     end
 
     def mark_agent_unavailable

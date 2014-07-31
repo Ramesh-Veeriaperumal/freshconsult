@@ -7,7 +7,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   # add for multiform phase 1 migration
   include Helpdesk::Ticketfields::TicketFormFields
   
-  set_table_name "helpdesk_ticket_fields"
+  self.table_name =  "helpdesk_ticket_fields"
   attr_protected  :account_id
   
   belongs_to :account
@@ -27,9 +27,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_save :set_portal_edit
 
   # Phase1:- multiform , will be removed once migration is done.
-  after_commit_on_create :save_form_field_mapping
-  after_commit_on_update :save_form_field_mapping
-  after_commit_on_destroy :remove_form_field_mapping
+  after_commit :save_form_field_mapping, on: [:create, :update]
+  after_commit :remove_form_field_mapping, on: :destroy
   #Phase1:- end
 
   # xss_terminate
@@ -67,15 +66,15 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_create :populate_label
   
   
-  named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
-  named_scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
-  named_scope :customer_visible, :conditions => { :visible_in_portal => true }
-  named_scope :customer_editable, :conditions => { :editable_in_portal => true }
-  named_scope :type_field, :conditions => { :name => "ticket_type" }
-  named_scope :status_field, :conditions => { :name => "status" }
-  named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
-  named_scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
-  named_scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
+  scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
+  scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
+  scope :customer_visible, :conditions => { :visible_in_portal => true }
+  scope :customer_editable, :conditions => { :editable_in_portal => true }
+  scope :type_field, :conditions => { :name => "ticket_type" }
+  scope :status_field, :conditions => { :name => "status" }
+  scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
+  scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
+  scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
 
 
   # Enumerator constant for mapping the CSS class name to the field type
@@ -242,7 +241,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) do |xml|
       if field_type == "nested_field"

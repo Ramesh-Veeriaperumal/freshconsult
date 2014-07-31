@@ -1,5 +1,5 @@
 class Portal::Page < ActiveRecord::Base
-	set_table_name "portal_pages"
+	self.table_name =  "portal_pages"
 	
 	include MemcacheKeys
 

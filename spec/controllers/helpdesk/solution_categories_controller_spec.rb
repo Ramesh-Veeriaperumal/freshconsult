@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Solution::CategoriesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -44,7 +44,7 @@ describe Solution::CategoriesController do
   end
 
   it "should reorder categories" do
-    categories = @account.solution_categories
+    categories = RSpec.configuration.account.solution_categories
     count = categories.count
     position_arr = (1..count).to_a.shuffle
     reorder_hash = {}
@@ -58,7 +58,7 @@ describe Solution::CategoriesController do
   end  
 
   it "should not edit a default category" do 
-    default_category = @account.solution_categories.find_by_is_default(true)
+    default_category = RSpec.configuration.account.solution_categories.find_by_is_default(true)
     get :edit, :id => default_category.id 
     flash[:notice] =~ /category_edit_not_allowed/
   end
@@ -81,7 +81,7 @@ describe Solution::CategoriesController do
     log_in(restricted_agent)
     get :show, :id => @test_category.id
     response.status.should eql "302 Found"
-    response.session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')    
+    session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')    
     UserSession.find.destroy
   end
 
@@ -100,7 +100,7 @@ describe Solution::CategoriesController do
                                        :description => "#{Faker::Lorem.sentence(3)}"
                                       }
 
-    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
+    RSpec.configuration.account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
     response.should redirect_to(solution_categories_url)
   end
 
@@ -112,13 +112,13 @@ describe Solution::CategoriesController do
       :solution_category => { :name => "#{name}",
                               :description => "#{Faker::Lorem.sentence(3)}"
                             }
-    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)    
+    RSpec.configuration.account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)    
     response.should redirect_to(solution_categories_url)
   end
 
   it "should delete a solution category" do
     delete :destroy, :id => @test_category.id
-    @account.solution_categories.find_by_name(@test_category.name).should be_nil
+    RSpec.configuration.account.solution_categories.find_by_name(@test_category.name).should be_nil
     response.should redirect_to(solution_categories_url)
   end
 

@@ -1,7 +1,7 @@
-<% form_for @profile, :url => support_profile_path, 
+<%= form_for @profile, :url => support_profile_path, 
 	:html => { :class => "form-portal", :multipart => true, :rel => "validate"} do |f| %>
 	<%= f.error_messages %>
-	<% fields_for "users", @profile do |usr| %>
+	<%= fields_for "users", @profile do |usr| %>
     <div class="row-fluid">
     	<fieldset class="span4 avatar-span">
     		<div id="avatar-pic">
@@ -31,7 +31,7 @@
 				<% end %>
 			</div>	
 			<div id="avatar-edit" class="<%= (@profile.avatar) ? 'hide' : '' %>">
-				<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+				<%= fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
 					<div class="info-data"><%=t('user.info1')%></div>
 					<%= avatar_form.file_field :content, :size => "12" %>				
 				<% end %>

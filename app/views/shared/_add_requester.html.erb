@@ -1,6 +1,6 @@
 
    or  <%= link_to t('add_new_requester'), add_requester_helpdesk_tickets_path, :class => "add_requester_button dialog2", :id => "add_requester_btn", :title => t('contacts.add_new_requester'), "data-width" => "500" %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 jQuery("#add_requester_btn").click( function(ev) {
 

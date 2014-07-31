@@ -22,25 +22,25 @@ class Account < ActiveRecord::Base
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
-  named_scope :active_accounts,
+  scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
-  named_scope :trial_accounts,
+  scope :trial_accounts,
               :conditions => [" subscriptions.state = 'trial' "], 
               :joins => [:subscription]
 
-  named_scope :free_accounts,
+  scope :free_accounts,
               :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
               :joins => [:subscription]
 
-  named_scope :paid_accounts,
+  scope :paid_accounts,
               :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
               :joins => [:subscription]
 
-  named_scope :premium_accounts, {:conditions => {:premium => true}}
+  scope :premium_accounts, {:conditions => {:premium => true}}
               
-  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
+  scope :non_premium_accounts, {:conditions => {:premium => false}}
   
   
   Limits = {

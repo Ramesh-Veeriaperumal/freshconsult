@@ -1,6 +1,6 @@
 class Mobihelp::TicketInfo < ActiveRecord::Base
 
-  set_table_name :mobihelp_ticket_infos
+  self.table_name =  :mobihelp_ticket_infos
 
   attr_accessible :app_name, :app_version, :os , :os_version, :sdk_version, :device_make, :device_model, :device_id, :ticket_id
 

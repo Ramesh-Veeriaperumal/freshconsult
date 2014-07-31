@@ -2,8 +2,8 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_css :rating %>
-	<%= include_cloudfront_js :survey  %>
+	<%= stylesheet_link_tag :rating %>
+	<%= javascript_include_tag :survey  %>
 </head>
 <body>	
 	<div class="top-strip">
@@ -49,7 +49,7 @@
 		<div>
 			<div class="search-bar">
 				<p class="search-top"><%= t('.additional_info') %></p>
-				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
+				<%= form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
 					<div class="text_con">
 						<%= text_area(:survey, :feedback, :autocomplete => "off", 
 							:rel => "ghostwriter", :size => "24", :width => "100%", 

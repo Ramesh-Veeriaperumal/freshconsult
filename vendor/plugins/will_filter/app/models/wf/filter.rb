@@ -25,7 +25,7 @@ class Wf::Filter < ActiveRecord::Base
   
   JOIN_NAME_INDICATOR = '>'
 
-  set_table_name :wf_filters
+  self.table_name =  :wf_filters
   serialize   :data
   
   #############################################################################

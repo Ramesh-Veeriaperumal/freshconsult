@@ -1,4 +1,4 @@
-<% form_for :survey_handle,
+<%= form_for :survey_handle,
     :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post } do |f| -%>
 
 	<div style="margin-left:15px;font-weight:bold;"><%=t('.thanks_info')%></div>

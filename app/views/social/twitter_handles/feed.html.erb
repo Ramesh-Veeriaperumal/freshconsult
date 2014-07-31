@@ -81,7 +81,7 @@
 		</tr>
 	</table>
 </div>
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   function check_tweets_with_tickets( update_div ){
     var tweet_ids = [];
     jQuery.each(update_div, function(index, item){
@@ -110,7 +110,7 @@
   } 
 <%- end %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   var current_product_id = <%= @twitter_accounts.first.product ? @twitter_accounts.first.product.id : 0 %> ;
   var current_twitter_id = <%= @twitter_accounts.first.id %>;
   var feed = null;

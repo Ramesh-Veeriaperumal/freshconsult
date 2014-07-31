@@ -1,3 +1,4 @@
+require_dependency "social/base_helper"
 module Admin::Social::StreamsHelper
   include Social::BaseHelper
   

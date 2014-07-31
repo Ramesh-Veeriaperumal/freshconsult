@@ -6,7 +6,7 @@ body{
 </style>
 
 
-<% form_tag '/email', :multipart => true, :id => "EmailTicketForm" do -%>
+<%= form_tag '/email', :multipart => true, :id => "EmailTicketForm" do -%>
 
   <label for="from">From email</label>
   <input id="from" name="from" size="30" type="text" />

@@ -1,6 +1,6 @@
-<%= include_cloudfront_css :freshfone_message_select %>
-<%= include_cloudfront_css :freshfone_settings %>
-<%= include_cloudfront_css :freshfone_ivr %>
+<%= stylesheet_link_tag :freshfone_message_select %>
+<%= stylesheet_link_tag :freshfone_settings %>
+<%= stylesheet_link_tag :freshfone_ivr %>
 
 <ul data-tabs="tabs" class="tabs nav-tabs">
 	<div class="lead">
@@ -24,7 +24,7 @@
 </div>
 		
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
 	freshfone.is_ivr_active = <%= @ivr.active %>;
 	freshfone.IVR_TURN_OFF_MESSAGE = '<%= t('freshfone.admin.ivr.turn_off') %>';
@@ -50,5 +50,5 @@
 	scriptLoader.load('360player');
 <% end %>
 
-<%= include_cloudfront_js :freshfone_settings %>
-<%= include_cloudfront_js :freshfone_ivr %>
+<%= javascript_include_tag :freshfone_settings %>
+<%= javascript_include_tag :freshfone_ivr %>

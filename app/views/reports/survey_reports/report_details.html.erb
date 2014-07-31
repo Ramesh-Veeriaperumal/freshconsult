@@ -1,4 +1,4 @@
- <%= include_cloudfront_css :reports  %>
+ <%= stylesheet_link_tag :reports  %>
 
 <%
 	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
@@ -46,7 +46,7 @@
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('reports.survey_reports.list.no_feedback')%> </h1>
 <%end%>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 		var isRefreshed = false;
 		<% if !params[:category].blank? and params[:category]!=Survey::OVERALL %> 
 		   jQuery("#back_to_con").show();		 

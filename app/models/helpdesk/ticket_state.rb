@@ -1,5 +1,7 @@
 class Helpdesk::TicketState <  ActiveRecord::Base
 
+  self.primary_key = :id
+
   include Reports::TicketStats
   include Redis::RedisKeys
   include Redis::ReportsRedis
@@ -10,15 +12,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
                                  :requester_responded_at, :status_updated_at ]
 
   belongs_to_account
-  set_table_name "helpdesk_ticket_states"
+  self.table_name =  "helpdesk_ticket_states"
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   
   attr_protected :ticket_id
 
   before_update :update_ticket_state_changes
-  after_commit_on_create :create_ticket_stats, :if => :ent_reports_enabled?
-  after_commit_on_update :update_ticket_stats, :if => :ent_reports_enabled?
-  after_commit_on_update :update_search_index
+  after_commit :create_ticket_stats, on: [:create, :update], :if => :ent_reports_enabled?
+  after_commit :update_search_index, on: :update
   
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
@@ -136,7 +137,6 @@ private
 
   def update_ticket_state_changes
     @ticket_state_changes = self.changes.clone
-    @ticket_state_changes.symbolize_keys!
   end
 
   # populating data in monthly stats table for created and update cases

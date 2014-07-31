@@ -66,7 +66,7 @@
 <% content_for :pagefixed do %>
   <%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders+survey_placeholders }  %>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery('.preview_link').bind("click", function(ev){
       ev.preventDefault();
       preview_box = jQuery("#preview")

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Discussions::PostsController do
-	integrate_views
+	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -28,11 +28,11 @@ describe Discussions::PostsController do
 											    :body_html => "<div>#{post_body}</div>"					
 											    }
 
-		new_post = @account.posts.find_by_body_html("<div>#{post_body}</div>")
+		new_post = RSpec.configuration.account.posts.find_by_body_html("<div>#{post_body}</div>")
 		new_post.should be_instance_of(Post)
-		new_post.user_id.should be_eql @agent.id
+		new_post.user_id.should be_eql RSpec.configuration.agent.id
 		new_post.topic_id.should be_eql @topic.id
-		new_post.account_id.should be_eql @account.id
+		new_post.account_id.should be_eql RSpec.configuration.account.id
 		response.should redirect_to "/discussions/topics/#{@topic.id}/page/last#post_#{new_post.id}"
 	end
 
@@ -81,7 +81,7 @@ describe Discussions::PostsController do
 
 	    delete :destroy, :id => post.id, :topic_id => @topic.id
 
-	    @account.posts.find_by_id(post.id).should be_nil
+	    RSpec.configuration.account.posts.find_by_id(post.id).should be_nil
 	end
 
 

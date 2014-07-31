@@ -6,7 +6,7 @@ describe Integrations::GoogleAccountsController do
   self.use_transactional_fixtures = false
 
   before(:all) do    
-    @new_application = Factory.build(:application, 
+    @new_application = FactoryGirl.build(:application, 
                                      :name => "google_contacts", 
                                      :display_name => "integrations.google_contacts.label", 
                                      :description => "integrations.google_contacts.desc", 
@@ -21,14 +21,14 @@ describe Integrations::GoogleAccountsController do
                                                       }
                                                   },
                                      :application_type => "google_contacts")
-    @new_application.save(false)
+    @new_application.save(validate: false)
 
-    @new_installed_application = Factory.build(:installed_application, 
+    @new_installed_application = FactoryGirl.build(:installed_application, 
                                                { :application_id => "#{@new_application.id}",
-                                                 :account_id => @account.id, 
+                                                 :account_id => RSpec.configuration.account.id, 
                                                  :configs => { :inputs => {}}
                                                 })
-    @new_installed_application.save(false)
+    @new_installed_application.save(validate: false)
     @iapp_id = @new_installed_application.id
     @email = Faker::Internet.email
     @google_account_attr = { :integrations_google_account => { :import_groups => ["6"], 
@@ -51,7 +51,7 @@ describe Integrations::GoogleAccountsController do
 
   before(:each) do
     login_admin
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
   end
 
   it "should update google accounts" do
@@ -97,7 +97,7 @@ describe Integrations::GoogleAccountsController do
     google_account_id = google_account.id
 
     Integrations::GoogleAccount.find_by_id(google_account_id).should_not be_nil
-    Integrations::GoogleAccount.find_by_id(google_account_id).overwrite_existing_user.should be_false
+    Integrations::GoogleAccount.find_by_id(google_account_id).overwrite_existing_user.should be_falsey
     response.should redirect_to(edit_integrations_installed_application_path(@iapp_id))
   end
 

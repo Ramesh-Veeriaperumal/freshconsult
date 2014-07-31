@@ -13,11 +13,11 @@ module ControllerHelper
   end
 
   def get_admin()
-    agents = @account.account_managers
+    agents = RSpec.configuration.account.account_managers
     agents.each do |agent|
       return agent if agent.can_view_all_tickets?
     end
-    add_test_agent(@account)
+    add_test_agent(RSpec.configuration.account)
   end
 
   def clear_email_config

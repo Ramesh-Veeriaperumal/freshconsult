@@ -1,10 +1,10 @@
-<% form_for [:admin, @portal_template], :url => { :action => :update }, 
+<%= form_for [:admin, @portal_template], :url => { :action => :update }, 
   :html => { :method => :put, :target => "freshdesk_preview", :rel => "portal_form" } do |f| -%>
   <%= hidden_field_tag 'portal_tab', :custom_css %>    
   
   <h3 class="title">
     <%=t("portalcss.cosmetic.css_responsive")%>
-    <% f.fields_for :preferences do |ff| %>
+    <%= f.fields_for :preferences do |ff| %>
       <%= ff.check_box :nonResponsive, { :rel => "toggle", "data-checked-label" => "Yes", "data-unchecked-label" => "No",
             :checked => (custom_css.preferences['nonResponsive'] != "true") }, false, true %>
     <% end %>

@@ -7,12 +7,12 @@ describe Admin::Freshfone::NumbersController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
     log_in(@agent)
   end
 
   it 'should return all freshfone numbers on index' do
-    number = @account.freshfone_numbers.first
+    number = RSpec.configuration.account.freshfone_numbers.first
     get :index
     assigns[:account].app_id.should be_eql(@account.freshfone_account.app_id)
     assigns[:numbers].first.number.should be_eql(number.number)
@@ -65,7 +65,7 @@ describe Admin::Freshfone::NumbersController do
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"true", "business_calendar"=>"1", "id"=>@number.id}
     put :update, params
-    @account.freshfone_numbers.find(@number).name.should be_eql(name)
+    RSpec.configuration.account.freshfone_numbers.find(@number).name.should be_eql(name)
   end
 
   it 'should not update number for invalid queue length' do
@@ -79,7 +79,7 @@ describe Admin::Freshfone::NumbersController do
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"false", "business_calendar"=>"1", "id"=>@number.id}
     put :update, params
-    @account.freshfone_numbers.find(@number).name.should_not be_eql(name)
+    RSpec.configuration.account.freshfone_numbers.find(@number).name.should_not be_eql(name)
   end
 
   it 'should not update number for invalid queue length and return error json' do
@@ -96,7 +96,7 @@ describe Admin::Freshfone::NumbersController do
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"false", "id"=>@number.id, "format" => "json"}
     put :update, params
-    @account.freshfone_numbers.find(@number).name.should_not be_eql(name)
+    RSpec.configuration.account.freshfone_numbers.find(@number).name.should_not be_eql(name)
     json.should have_key(:error_message)
   end
 
@@ -104,22 +104,22 @@ describe Admin::Freshfone::NumbersController do
   it 'should soft delete freshfone number' do
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
     Freshfone::NumberObserver.any_instance.stubs(:delete_from_twilio)
-    number = @account.freshfone_numbers.create!( :number => Faker::PhoneNumber.phone_number, :display_number => "+1234567890", 
+    number = RSpec.configuration.account.freshfone_numbers.create!( :number => Faker::PhoneNumber.phone_number, :display_number => "+1234567890", 
                   :country => "US", :region => "Texas", :number_type => 1 )
     post :destroy, {:id => number.id}
-    @account.all_freshfone_numbers.find(number.id).should be_deleted
-    @account.all_freshfone_numbers.find(number.id).delete
+    RSpec.configuration.account.all_freshfone_numbers.find(number.id).should be_deleted
+    RSpec.configuration.account.all_freshfone_numbers.find(number.id).delete
   end
 
   it 'should not delete freshfone number on exception' do
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
     Freshfone::NumberObserver.any_instance.stubs(:delete_from_twilio)
     Freshfone::Number.any_instance.stubs(:update_attributes)
-    number = @account.freshfone_numbers.create!( :number => Faker::PhoneNumber.phone_number, :display_number => "+1234567890", 
+    number = RSpec.configuration.account.freshfone_numbers.create!( :number => Faker::PhoneNumber.phone_number, :display_number => "+1234567890", 
                   :country => "US", :region => "Texas", :number_type => 1 )
     post :destroy, {:id => number.id}
-    @account.all_freshfone_numbers.find(number.id).should_not be_deleted
-    @account.all_freshfone_numbers.find(number.id).delete
+    RSpec.configuration.account.all_freshfone_numbers.find(number.id).should_not be_deleted
+    RSpec.configuration.account.all_freshfone_numbers.find(number.id).delete
   end
 
   it 'should display low balance message for zero credits on edit action' do

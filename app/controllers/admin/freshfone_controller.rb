@@ -16,7 +16,7 @@ class Admin::FreshfoneController < Admin::AdminController
 			:cc => current_account.admin_email,
 			:message => "A customer with the following account URL has requested for Freshfone"
 		}
-		FreshfoneNotifier.send_later(:deliver_freshfone_email_template, current_account, email_params)
+		FreshfoneNotifier.send_later(:freshfone_email_template, current_account, email_params)
 		render :json => { :status => :success }
 	end
 

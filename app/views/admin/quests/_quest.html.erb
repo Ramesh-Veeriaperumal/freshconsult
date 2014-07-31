@@ -23,7 +23,7 @@
                 :confirm => t("quests.delete"), :class => "btn btn-mini" ) %>
       </div>
   </td>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery("#quest_toggle_<%= quest.id %>").itoggle()
   <% end %>
 <% end %>

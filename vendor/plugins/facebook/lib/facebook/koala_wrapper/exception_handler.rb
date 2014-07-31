@@ -39,7 +39,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
               })
 
               #send mail to the account admin if needed
-              UserNotifier.send_later(:deliver_notify_facebook_reauth,@fan_page.account,@fan_page)
+              UserNotifier.send_later(:notify_facebook_reauth,@fan_page.account,@fan_page)
               if @intial_feed && !return_value
                 Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed)
               end

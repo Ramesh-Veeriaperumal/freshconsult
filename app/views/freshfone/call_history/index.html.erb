@@ -1,5 +1,5 @@
 <%= render :partial => "freshfone_admin_calls" %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
 	freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH = '<%= custom_search_freshfone_call_history_path %>';
 	freshfone.CALL_HISTORY_CHILDREN_PATH = '<%= children_freshfone_call_history_path %>';
@@ -8,6 +8,6 @@
 	scriptLoader.load('360player');
 <% end %>
 
-<%= include_cloudfront_js :freshfone_call_history %>
+<%= javascript_include_tag :freshfone_call_history %>
 
-<%= include_cloudfront_css :freshfone_call_history %>
+<%= stylesheet_link_tag :freshfone_call_history %>

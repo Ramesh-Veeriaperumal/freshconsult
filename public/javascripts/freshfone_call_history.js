@@ -1,0 +1,1 @@
+//= require freshfone/call_history

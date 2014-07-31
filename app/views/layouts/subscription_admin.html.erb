@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 		<link rel="shortcut icon" href="/images/favicon.ico" />
-		<%= include_cloudfront_css :subscription %>		
+		<%= stylesheet_link_tag :subscription %>		
 	</head>
 	<body>     
 		<div class="navbar navbar-fixed-top">
@@ -45,7 +45,7 @@
 							<%= content_tag(:li, link_to("My Profile", show_admin_subscription_user_path(current_user)).html_safe) %>   
 						<% end %>    
 		            </ul> 
-								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
+								<%= form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
 								  <%= text_field_tag :search, params[:search], :class => "search-query span3", :placeholder => "Search account", :autocompelete => "off" %> 
 								<% end %>
 		          </div>
@@ -56,8 +56,8 @@
 			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
 			<%= yield %>
 		</div>
-		<%= include_cloudfront_js :subscription%>    
-		<% javascript_tag do %>
+		<%= javascript_include_tag :subscription%>    
+		<%= javascript_tag do %>
 			jQuery.noConflict();
 
 			jQuery("select.select2").livequery(function(){ jQuery(this).select2(jQuery(this).data()); });

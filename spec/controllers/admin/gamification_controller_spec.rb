@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::GamificationController do
-	integrate_views
+	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -14,7 +14,7 @@ describe Admin::GamificationController do
 	end
 
 	it "should display arcade index page with gamification_enabled" do
-		@account.features.gamification_enable.create
+		RSpec.configuration.account.features.gamification_enable.create
 		get :index
 		response.body.should =~ /Arcade Settings/
 		response.body.should =~ /Award points/
@@ -43,20 +43,20 @@ describe Admin::GamificationController do
 		}
 		response.session[:flash][:notice].should eql "Gamification settings has been successfully updated."
 		for i in 1..6 do
-			@account.scoreboard_ratings.find(i).score.should eql scr[i-1]
-			@account.scoreboard_levels.find(i).points.should eql pts[i-1]
+			RSpec.configuration.account.scoreboard_ratings.find(i).score.should eql scr[i-1]
+			RSpec.configuration.account.scoreboard_levels.find(i).points.should eql pts[i-1]
 		end
 		response.redirected_to.should eql "/admin/gamification" 
 	end
 
 	it "should inactivate the Gamification" do
 		post :toggle
-		@account.features.reload
-		@account.features.find_by_type("GamificationEnableFeature").should be_nil
+		RSpec.configuration.account.features.reload
+		RSpec.configuration.account.features.find_by_type("GamificationEnableFeature").should be_nil
 	end
 
 	it "should display arcade page with gamification_disabled" do
-		@account.features.gamification_enable.destroy
+		RSpec.configuration.account.features.gamification_enable.destroy
 		get :index
 		response.body.should =~ /What is Freshdesk Arcade?/
 		response.body.should =~ /Enable freshdesk arcade/
@@ -66,7 +66,7 @@ describe Admin::GamificationController do
 
 	it "should activate the Gamification" do
 		post :toggle
-		@account.features.reload
-		@account.features.find_by_type("GamificationEnableFeature").should_not be_nil
+		RSpec.configuration.account.features.reload
+		RSpec.configuration.account.features.find_by_type("GamificationEnableFeature").should_not be_nil
 	end
 end

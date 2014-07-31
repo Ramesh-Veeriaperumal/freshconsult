@@ -10,7 +10,7 @@ describe Freshfone::QueueController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
   end
 
   it 'should render enqueue twiml for a normal queue call' do
@@ -48,7 +48,7 @@ describe Freshfone::QueueController do
   it 'should dequeue twiml on call dequeue' do
     set_twilio_signature("freshfone/queue/dequeue?client=#{@agent.id}", dequeue_params)
     create_online_freshfone_user
-    post :dequeue, dequeue_params.merge({"client" => @agent.id})
+    post :dequeue, dequeue_params.merge({"client" => RSpec.configuration.agent.id})
     xml[:Response][:Dial][:Client].should be_eql(@agent.id.to_s)
   end
 
@@ -64,7 +64,7 @@ describe Freshfone::QueueController do
                            hangup_params.merge({"CallSid" => "CAGENTQUEUE"}))
     set_agent_queue_redis_entry
     post :hangup, 
-      hangup_params.merge({:hunt_type => "agent", :hunt_id => @agent.id, "CallSid" => "CAGENTQUEUE"})
+      hangup_params.merge({:hunt_type => "agent", :hunt_id => RSpec.configuration.agent.id, "CallSid" => "CAGENTQUEUE"})
     controller.get_key(AGENT_QUEUE).should be_nil
   end
 
@@ -95,8 +95,8 @@ describe Freshfone::QueueController do
 
   it 'should fetch the calls waiting in queue for a group: group hunted call' do
     log_in @agent
-    group = create_group @account, {:name => "Freshfone Group"}
-    AgentGroup.new(:user_id => @agent.id , :account_id => @account.id, :group_id => group.id).save!    
+    group = create_group RSpec.configuration.account, {:name => "Freshfone Group"}
+    AgentGroup.new(:user_id => RSpec.configuration.agent.id , :account_id => RSpec.configuration.account.id, :group_id => group.id).save!    
     
     group_key = "FRESHFONE:GROUP_QUEUE:#{@account.id}"
     controller.remove_key group_key

@@ -1,5 +1,5 @@
 class Freshfone::Account < ActiveRecord::Base
-	set_table_name :freshfone_accounts
+	self.table_name =  :freshfone_accounts
 	
 	belongs_to_account
 	has_many :freshfone_usage_triggers, :class_name => "Freshfone::UsageTrigger", 
@@ -23,7 +23,7 @@ class Freshfone::Account < ActiveRecord::Base
 	validates_inclusion_of :state, :in => STATE_HASH.values,
 		:message => "%{value} is not a valid state"
 
-	named_scope :filter_by_due, lambda { |expires_on|
+	scope :filter_by_due, lambda { |expires_on|
 		{
 			:include => :account, 
 			:conditions => { :state => STATE_HASH[:suspended],

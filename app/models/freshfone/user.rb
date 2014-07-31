@@ -1,5 +1,5 @@
 class Freshfone::User < ActiveRecord::Base
-	set_table_name "freshfone_users"
+	self.table_name =  "freshfone_users"
 	belongs_to_account
 
 	belongs_to :user, :inverse_of => :freshfone_user
@@ -26,13 +26,13 @@ class Freshfone::User < ActiveRecord::Base
 	validates_inclusion_of :incoming_preference, :in => INCOMING.values,
 		:message => "%{value} is not a valid incoming preference"
 
-	named_scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
-	named_scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
-	named_scope :online_agents_with_avatar, lambda { {
+	scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
+	scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
+	scope :online_agents_with_avatar, lambda { {
 							:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago],
 							:include => [:user => [:avatar]] }}
-	named_scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
-	named_scope :agents_in_group, lambda { |group_id|
+	scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
+	scope :agents_in_group, lambda { |group_id|
 		{:joins => "INNER JOIN agent_groups ON agent_groups.user_id = #{table_name}.user_id AND
 								agent_groups.account_id = #{table_name}.account_id",
 		 :conditions => ["agent_groups.group_id = ? ", group_id]

@@ -3,7 +3,7 @@ require 'spec_helper'
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe Billing::BillingController do
-  integrate_views
+  # integrate_views
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -15,12 +15,12 @@ describe Billing::BillingController do
       @billing_account = create_test_billing_acccount
       Resque.inline = false               
       @billing_account.reload      
-      @account = Account.find(@billing_account.id)      
+      RSpec.configuration.account = Account.find(@billing_account.id)      
     end
   end
 
   before(:each) do
-    @account.make_current
+    RSpec.configuration.account.make_current
     @request.host = "billing.freshpo.com"
     @request.env["HTTP_ACCEPT"] = "application/json"
     @request.env["HTTP_AUTHORIZATION"] = "Basic " + Base64::encode64("freshdesk:FDCB$6MUSD") 
@@ -33,41 +33,41 @@ describe Billing::BillingController do
     plan = retrieve_plan(billing_result.subscription.plan_id)
     renewal_period = Billing::Subscription.billing_cycle[billing_result.subscription.plan_id]
     
-    @account = Account.find_by_id(billing_result.subscription.id)
-    @account.subscription.agent_limit.should eql billing_result.subscription.plan_quantity
-    @account.subscription.subscription_plan.should eql plan
-    @account.subscription.free_agents.should eql plan.free_agents
-    @account.subscription.renewal_period.should eql renewal_period
+    RSpec.configuration.account = Account.find_by_id(billing_result.subscription.id)
+    RSpec.configuration.account.subscription.agent_limit.should eql billing_result.subscription.plan_quantity
+    RSpec.configuration.account.subscription.subscription_plan.should eql plan
+    RSpec.configuration.account.subscription.free_agents.should eql plan.free_agents
+    RSpec.configuration.account.subscription.renewal_period.should eql renewal_period
     
     billing_result.subscription.addons.each do |addon|
       addon_obj = Subscription::Addon.fetch_addon(addon.id)
-      @account.addons.should include(addon_obj)
-      @account.features?(addon.id.to_sym).should be_true
+      RSpec.configuration.account.addons.should include(addon_obj)
+      RSpec.configuration.account.features?(addon.id.to_sym).should be_truthy
     end
   end
 
 	it "should activate free subscription" do
     plan = SubscriptionPlan.find_by_name("Sprout")
-    @account.subscription.subscription_plan = plan
-    @account.subscription.convert_to_free
+    RSpec.configuration.account.subscription.subscription_plan = plan
+    RSpec.configuration.account.subscription.convert_to_free
     Billing::Subscription.new.activate_subscription(@account.subscription)
-    @account.subscription.save!
-    @account.subscription.reload
+    RSpec.configuration.account.subscription.save!
+    RSpec.configuration.account.subscription.reload
   
     billing_result = build_test_billing_result(@account.id)
     post "trigger", event_params(@account.id, "subscription_activated")
     
   	@account.subscription.agent_limit.should eql 3
-    @account.subscription.subscription_plan.should eql plan
-    @account.subscription.free_agents.should eql plan.free_agents
+    RSpec.configuration.account.subscription.subscription_plan.should eql plan
+    RSpec.configuration.account.subscription.free_agents.should eql plan.free_agents
 	end
 
   it "should suspend subscription" do    
     Billing::Subscription.new.cancel_subscription(@account)    
     post "trigger", event_params(@account.id, "subscription_cancelled")
 
-    @account.subscription.reload
-    @account.subscription.state.should eql "suspended"
+    RSpec.configuration.account.subscription.reload
+    RSpec.configuration.account.subscription.state.should eql "suspended"
   end
 
   it "should reactivate subscription" do
@@ -75,8 +75,8 @@ describe Billing::BillingController do
     billing_result = build_test_billing_result(@account.id)    
     post "trigger", event_params(@account.id, "subscription_reactivated")
 
-    @account.subscription.reload
-    @account.subscription.state.should_not eql "suspended"
+    RSpec.configuration.account.subscription.reload
+    RSpec.configuration.account.subscription.state.should_not eql "suspended"
   end
 
   it "should add payment record" do

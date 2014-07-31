@@ -1,6 +1,6 @@
 class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   
-	set_table_name "helpdesk_schema_less_tickets"
+	self.table_name =  "helpdesk_schema_less_tickets"
 
 	belongs_to :ticket, :class_name => 'Helpdesk::Ticket', :foreign_key => 'ticket_id'
 	belongs_to :product

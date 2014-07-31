@@ -1,0 +1,1 @@
+//= require freshfone/plugin/ticket_search

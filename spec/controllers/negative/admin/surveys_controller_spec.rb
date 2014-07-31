@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::SurveysController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -18,7 +18,7 @@ describe Admin::SurveysController do
                                                 :unhappy_text => nil, 
                                                 :send_while => send_while
                                               }
-    survey = @account.survey
+    survey = RSpec.configuration.account.survey
     survey.link_text.should_not be_nil
     survey.happy_text.should_not be_nil
     survey.neutral_text.should_not be_nil

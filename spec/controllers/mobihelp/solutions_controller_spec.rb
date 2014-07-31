@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Mobihelp::SolutionsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -65,7 +65,7 @@ describe Mobihelp::SolutionsController do
     }
     result = JSON.parse(response.body)
     result.should have(1).items
-    result["no_update"].should be_true
+    result["no_update"].should be_truthy
   end
 
   it "should fetch all solutions when last updated time is not sent" do

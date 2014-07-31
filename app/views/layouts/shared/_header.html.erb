@@ -47,7 +47,7 @@
 			<% else %>
 			 	<div class="header_links">
 			        <%= link_to( t('header.login').html_safe , login_path) %>
-					<%= link_to( t('signup').html_safe , current_portal.support_signup_path ) if feature?(:signup_link) %>
+					<%= link_to( t('signup').html_safe , support_signup_path ) if feature?(:signup_link) %>
 				</div>
 		    <% end %>    
 			<% if current_user then %>                        
@@ -107,7 +107,7 @@
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
-							<% form_tag('/search/all', :method => :get, :class => "nav_search") do %>
+							<%= form_tag('/search/all', :method => :get, :class => "nav_search") do %>
 								<div class="search_bar" id="SearchBar">
 									<span class="search-icon-inactive"></span>
 									<span class="searchIcon nav-search-icon"></span>
@@ -185,7 +185,7 @@
 </script>
 
 <% if current_user %>
-	<% javascript_tag do %>
+	<%= javascript_tag do %>
 	 function toggleAgent() {
 		var user_id = '<%= current_user.id %>'
 	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )

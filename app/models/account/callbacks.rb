@@ -9,9 +9,9 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_destroy :remove_shard_mapping
 
-  after_commit_on_create :add_to_billing, :enable_elastic_search
-  after_commit_on_update :clear_cache, :clear_api_limit_cache, :update_redis_display_id
-  after_commit_on_destroy :clear_cache, :delete_reports_archived_data
+  after_commit :add_to_billing, :enable_elastic_search, on: :create
+  after_commit :clear_cache, :clear_api_limit_cache, :update_redis_display_id, on: :update
+  after_commit :clear_cache, :delete_reports_archived_data, on: :destroy
 
 
   def check_default_values
@@ -60,7 +60,6 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
   private
@@ -80,9 +79,11 @@ class Account < ActiveRecord::Base
     def set_shard_mapping
       begin
         create_shard_mapping
-       rescue
+       rescue => e
+        Rails.logger.error e.message
+        Rails.logger.error e.backtrace.join("\n\t")
         Rails.logger.info "Shard mapping exception caught"
-        errors.add_to_base("Domain is not available!")
+        errors[:base] << "Domain is not available!"
         return false
       end
     end

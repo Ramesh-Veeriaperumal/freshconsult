@@ -6,6 +6,6 @@
 			<p><%=t('.sideinfo2')%>.</p>
 		</div>
 <% end %> 
-<% form_for :quest, @quest, :url => admin_quests_path, :html => { :method => :post , :id => "formQuestNew" } do |f| %>
+<%= form_for :quest, @quest, :url => admin_quests_path, :html => { :method => :post , :id => "formQuestNew" } do |f| %>
 	<%= render :partial => "/admin/quests/quest_form", :locals => { :f => f } %>
 <% end %>

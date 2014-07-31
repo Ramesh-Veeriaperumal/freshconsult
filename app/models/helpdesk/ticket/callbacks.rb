@@ -2,7 +2,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :set_default_values
 
-	before_validation_on_create :set_token
+	before_validation :set_token, on: :create
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :save_ticket_states
 
@@ -22,23 +22,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
-  after_commit_on_create :create_initial_activity, :pass_thro_biz_rules
+  after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
 
-  after_commit_on_update :filter_observer_events, :if => :user_present?
-  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
-  after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
-  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
-  after_commit_on_create :publish_new_ticket_properties_to_rabbitmq
-  after_commit_on_update :publish_updated_ticket_properties_to_rabbitmq
-  after_commit_on_update :update_group_escalation, :if => :model_changes?
-  after_commit_on_update :publish_to_update_channel, :if => :model_changes?
+  after_commit :filter_observer_events, on: :update, :if => :user_present?
+  after_commit :update_ticket_states, :notify_on_update, :update_activity, 
+  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data, :push_update_notification,
+  :publish_updated_ticket_properties_to_rabbitmq, on: :update 
+  after_commit :publish_new_ticket_properties, on: :create, :if => :auto_refresh_allowed?
+  after_commit :publish_updated_ticket_properties, on: :update, :if => :model_changes?
+  after_commit :publish_new_ticket_properties_to_rabbitmq, :push_create_notification, on: :create
+  after_commit :update_group_escalation, on: :create, :if => :model_changes?
+  after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
 
-  after_commit_on_create :push_create_notification
-  after_commit_on_update :push_update_notification
 
-  after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
-  after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
+  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
+  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
 
   def construct_ticket_old_body_hash
     {
@@ -355,7 +353,7 @@ private
     @model_changes = self.changes.clone
     @model_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
-    @model_changes.symbolize_keys!
+    @model_changes
   end
 
   def load_ticket_status

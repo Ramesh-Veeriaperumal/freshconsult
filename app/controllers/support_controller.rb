@@ -71,7 +71,8 @@ class SupportController < ApplicationController
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
 
-      @skip_liquid_compile = true # if active_layout.present?      
+      # TODO-RAILS3 need to check this
+      @skip_liquid_compile = false # if active_layout.present?      
     end
 
     def preview?
@@ -195,4 +196,5 @@ class SupportController < ApplicationController
         send_data f.read, :type => "image/gif", :disposition => "inline"
       end
     end
+
 end

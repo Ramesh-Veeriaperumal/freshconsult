@@ -3,13 +3,13 @@ include Redis::TicketsRedis
 include Redis::RedisKeys
 
 describe Helpdesk::RemindersController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Reminders"}))
-    @group = @account.groups.first
+    @group = RSpec.configuration.account.groups.first
   end
 
   before(:each) do
@@ -36,23 +36,23 @@ describe Helpdesk::RemindersController do
   end
 
   it "should strike off a to-do entry" do
-    reminder = Factory.build(:reminder, :user_id => @agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => RSpec.configuration.agent.id,
                                         :ticket_id => @test_ticket.id,
-                                        :account_id => @account.id)
+                                        :account_id => RSpec.configuration.account.id)
     reminder.save
     put :complete, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
-    @test_ticket.reminders.first.deleted.should be_true
+    @test_ticket.reminders.first.deleted.should be_truthy
   end
 
   it "should restore a to-do entry" do
     put :restore, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
-    @test_ticket.reminders.first.deleted.should be_false
+    @test_ticket.reminders.first.deleted.should be_falsey
   end
 
   it "should delete a reminder" do
-    reminder = Factory.build(:reminder, :user_id => @agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => RSpec.configuration.agent.id,
                                         :ticket_id => @test_ticket.id,
-                                        :account_id => @account.id)
+                                        :account_id => RSpec.configuration.account.id)
     reminder.save
     delete :destroy, :id => reminder.id
     @test_ticket.reminders.find_by_id(reminder.id).should be_nil

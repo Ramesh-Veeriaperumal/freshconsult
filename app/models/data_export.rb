@@ -16,8 +16,8 @@ class DataExport < ActiveRecord::Base
                     :file_uploaded => 3,
                     :completed => 4 }
 
-  named_scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }
-  named_scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
+  scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }
+  scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
 
   def owner?(downloader)
     user_id && downloader && (user_id == downloader.id)

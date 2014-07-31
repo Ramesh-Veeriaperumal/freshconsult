@@ -1,8 +1,8 @@
 module UsageTriggersSpecHelper
   def create_ut(type)
     @usage_trigger = Freshfone::UsageTrigger.create(
-      :account => @account,
-      :freshfone_account => @account.freshfone_account,
+      :account => RSpec.configuration.account,
+      :freshfone_account => RSpec.configuration.account.freshfone_account,
       :sid => "UT#{type.to_s}",
       :trigger_type => type,
       :start_value => 15,
