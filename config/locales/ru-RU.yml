@@ -713,7 +713,7 @@ ru-RU:
         insert_placeholder: Вставить заполнитель
         subject: Тема
         body: Основной текст
-        to: Получатель
+        to: Кому
         selected: Выбрано
         not_selected: Не выбрано
         checked: проверено
@@ -3337,7 +3337,7 @@ ru-RU:
         info: Это будет названием службы поддержки, отображаемым в заголовке сайта и электронных уведомлениях.
     ticket_created_on_n_by: "автор: %{requester}, дата: %{date_time}"
     tickets:
-      to: "Получатель: "
+      to: "Кому: "
       no_email_found: Пользователь с адресом электронной почты %{email} недоступен в этой системе.
       overlay_reply_time:  отвечено, %{time_in_words} назад
       overlay_fwd_time:  перенаправлено, %{time_in_words} назад

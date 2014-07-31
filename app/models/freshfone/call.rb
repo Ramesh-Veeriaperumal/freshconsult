@@ -263,7 +263,7 @@ class Freshfone::Call < ActiveRecord::Base
 
 			i18n_params = {
 				:customer_name=> customer_name,
-				:customer_number=> valid_customer_name? ? caller_number : customer_name,
+				:customer_number=> caller_number,
 				:location => location,
 				:freshfone_number => freshfone_number.number
 			}
