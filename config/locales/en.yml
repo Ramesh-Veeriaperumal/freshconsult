@@ -4032,6 +4032,7 @@ en:
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
            not_added: (Not Added)
+           not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
     merge:
       merge:
