@@ -3359,6 +3359,9 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    quoted_text:
+      wrote_on: 'On'
+      wrote: wrote
     add_time: Add time
     support:
       reply: "Reply"

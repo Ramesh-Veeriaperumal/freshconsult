@@ -175,11 +175,11 @@ module Helpdesk::TicketsHelper
     @last_item = (item.is_a?(Helpdesk::Note) or forward) ? item : (item.notes.visible.public.last || item)
 
     %(<div class="freshdesk_quote">
-        <blockquote class="freshdesk_quote">On #{formated_date(@last_item.created_at)}
-          <span class="separator" />, #{user_details_template(@last_item)} wrote:
+        <blockquote class="freshdesk_quote">#{t('ticket.quoted_text.wrote_on')} #{formated_date(@last_item.created_at)}
+          <span class="separator" />, #{user_details_template(@last_item)} #{t('ticket.quoted_text.wrote')}:
           #{ (@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
         </blockquote>
-       </div>)
+       </div>) 
   end
 
   def user_details_template(item)
