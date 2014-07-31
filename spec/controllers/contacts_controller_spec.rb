@@ -345,6 +345,15 @@ describe ContactsController do
     customer.deleted?.should eql false
   end
 
+  it "should restore a deleted contact - Js format" do
+    customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3, :deleted => true)
+    customer.save(false)
+    put :restore, :id => customer.id, :format => 'js'
+    customer.reload
+    customer.deleted?.should eql false
+  end
+
   it "should delete an existing contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)

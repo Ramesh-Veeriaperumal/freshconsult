@@ -124,7 +124,7 @@ module HelpdeskControllerMethods
     end
   end
 
-  def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
+  def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan (POSSIBLE DEAD CODE)
     items = autocomplete_scoper.find(
       :all, 
       :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account], 
@@ -207,7 +207,7 @@ protected
     # Hook for controllers to add their own message and redirect
   end
 
-  def load_parent_ticket
+  def load_parent_ticket # possible dead code
     @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
     raise ActiveRecord::RecordNotFound unless @parent
   end
