@@ -13,9 +13,10 @@ describe Support::SurveysController do
     login_admin
   end
 
-  it "should create a new survey handle" do
+  it "should create a new survey handle" do 
     ticket = create_ticket({ :status => 2 }, @group)
-    note = ticket.notes.create(:body => Faker::Lorem.sentence)
+    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+    note.save_note
     send_while = rand(1..4)
     s_handle = create_survey_handle(ticket, send_while, note)
     rating_type = rand(1..3)
@@ -28,7 +29,8 @@ describe Support::SurveysController do
 
   it "should create a new survey remark" do
     ticket = create_ticket({ :status => 2 }, @group)
-    note = ticket.notes.create(:body => Faker::Lorem.sentence)
+    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+    note.save_note
     send_while = rand(1..4)
     s_handle = create_survey_handle(ticket, send_while, note)
     rating_type = rand(1..3)

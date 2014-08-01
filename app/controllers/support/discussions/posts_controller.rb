@@ -27,10 +27,12 @@ class Support::Discussions::PostsController < SupportController
 		@post  = @topic.posts.build(params[:post])
 		@post.user = current_user
 		@post.account_id = current_account.id
+		@post.portal = current_portal.id
 		@post.save!
 		create_attachments
 		respond_to do |format|
 		  format.html do
+		  	flash[:notice] = t('.flash.portal.discussions.topics.success')
 		    redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
 		  end
 		  format.xml {

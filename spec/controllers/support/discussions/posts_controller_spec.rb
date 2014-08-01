@@ -25,6 +25,7 @@ describe Support::Discussions::PostsController do
 	it "should create a new post on post 'create'" do
 		topic = publish_topic(create_test_topic(@forum))
 		post_body = Faker::Lorem.paragraph
+		old_follower_count = Monitorship.count
 
 		post :create, 
 					:post => {
@@ -37,6 +38,8 @@ describe Support::Discussions::PostsController do
 		new_post.topic_id.should eql topic.id
 		new_post.user_id.should eql @user.id
 		new_post.account_id.should eql @account.id
+		Monitorship.count.should eql old_follower_count + 1
+		Monitorship.last.portal_id.should_not be_nil
 
 		response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{new_post.id}"
 	end
@@ -82,7 +85,6 @@ describe Support::Discussions::PostsController do
 							:body_html =>"<p>#{post_body}</p>"
 							},
 					:topic_id => topic.id
-
 		response.should render_template "support/discussions/topics/_edit_post.html.erb"
 	end
 
@@ -191,7 +193,6 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
 			post.published.should eql true
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
 
@@ -212,7 +213,6 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
 			post.published.should eql false
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
 
@@ -234,7 +234,6 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body}#{email}</p>")
 			post.published.should eql false
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
 
@@ -256,7 +255,6 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body} #{phone}</p>")
 			post.published.should eql false
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
 
@@ -278,7 +276,6 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body} #{link}</p>")
 			post.published.should eql false
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
 
@@ -300,8 +297,41 @@ describe Support::Discussions::PostsController do
 
 			post = @account.posts.find_by_body_html("<p>#{post_body} #{whitelisted_link}</p>")
 			post.published.should eql true
-
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
+	end
+	
+	it "should redirect to support home if portal forums is disabled" do
+		topic = publish_topic(create_test_topic(@forum))
+		@account.features.hide_portal_forums.create
+
+		post :create, 
+				:post => {
+						:body_html =>"<p>#{Faker::Lorem.paragraph}</p>"
+						},
+				:topic_id => create_test_post(topic).id
+		response.should redirect_to "/support/home"
+
+		post = create_test_post(topic)
+
+		get :show, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"
+
+		get :edit, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"
+
+		get :best_answer, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"
+
+		put :update, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"
+
+		put :toggle_answer, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"
+
+		delete :destroy, :topic_id => topic.id, :id => post.id
+		response.should redirect_to "/support/home"			
+
+		@account.features.hide_portal_forums.destroy
 	end
 end

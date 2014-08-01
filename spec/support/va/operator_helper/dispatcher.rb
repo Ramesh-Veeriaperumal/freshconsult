@@ -8,7 +8,7 @@ module VA
       
       def contains ticket_values, rule_value
         ticket_values = ticket_values.is_a?(Array) ? ticket_values : [ticket_values]
-        ticket_values.any? do |ticket_value| ticket_value.downcase.include?(rule_value.downcase) end
+        ticket_values.any? do |ticket_value| ticket_value.to_s.downcase.include?(rule_value.downcase) end
       end
       
       def starts_with ticket_value, rule_value

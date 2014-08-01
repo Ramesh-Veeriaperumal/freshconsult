@@ -1,4 +1,4 @@
-config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis.yml'))[RAILS_ENV]
+config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 
 #$redis = Redis.new(:host => config["host"], :port => config["port"])
 
@@ -10,7 +10,7 @@ $redis_integrations = Redis.new(:host => config["host"], :port => config["port"]
 $redis_portal = Redis.new(:host => config["host"], :port => config["port"])
 $redis_others = Redis.new(:host => config["host"], :port => config["port"])
 
-mobile_config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis_mobile.yml'))[RAILS_ENV]
+mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"])
 
 Redis.class_eval {add_method_tracer :set}

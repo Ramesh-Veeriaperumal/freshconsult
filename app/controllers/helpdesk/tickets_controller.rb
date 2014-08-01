@@ -558,7 +558,7 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
 
-  def empty_spam
+  def empty_spam # Possible dead code
     Helpdesk::Ticket.destroy_all(:spam => true)
     flash[:notice] = t(:'flash.tickets.empty_spam.success')
     redirect_to :back
@@ -825,6 +825,10 @@ class Helpdesk::TicketsController < ApplicationController
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
     @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
+  end
+
+  def load_by_param(id)
+    current_account.tickets.find_by_param(id,current_account)
   end
 
   

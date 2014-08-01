@@ -49,6 +49,7 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def call_duration_formatted(duration)
-		Time.at(duration).gmtime.strftime("%M:%S")
+		format = (duration >= 3600) ? "%H:%M:%S" : "%M:%S"
+		Time.at(duration).gmtime.strftime(format)
 	end
 end

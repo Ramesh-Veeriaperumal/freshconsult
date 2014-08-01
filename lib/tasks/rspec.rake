@@ -79,7 +79,9 @@ IntegrationTests = [
   "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
   "spec/controllers/integrations/user_credentials_controller_spec.rb",
   "spec/controllers/google_login_controller_spec.rb",
-  "spec/controllers/google_signup_controller_spec.rb"
+  "spec/controllers/google_signup_controller_spec.rb",
+  "spec/controllers/integrations/integrated_resources_controller_spec.rb",
+  "spec/controllers/api_webhooks_controller_spec.rb"
 ]
 
 FreshfoneTests = [
@@ -87,6 +89,10 @@ FreshfoneTests = [
   "spec/lib/freshfone/*_spec.rb",
   "spec/models/freshfone/*_spec.rb"
 ]
+
+FreshfoneReportsTests = [ 
+  "spec/controllers/reports/freshfone/summary_reports_controller_spec.rb"
+]  
 
 APITests = [ 
   "spec/controllers/api/json/*_spec.rb",
@@ -98,7 +104,8 @@ ForumTests = [
   "spec/controllers/discussions/*_spec.rb",
   "spec/controllers/forum_categories_controller_spec.rb",
   "spec/controllers/forums_controller_spec.rb",
-  "spec/controllers/topics_controller_spec.rb"
+  "spec/controllers/topics_controller_spec.rb",
+  "spec/models/monitorship_spec.rb"
 ]
 
 HelpdeskTests = [ 
@@ -125,6 +132,7 @@ HelpdeskTests = [
   "spec/controllers/rabbit_mq_controller_spec.rb",
   "spec/models/helpdesk/mysql_*_spec.rb",
   "spec/models/va_rule_spec.rb",
+  "spec/lib/webhook_helper_methods_spec.rb",
   "spec/controllers/notification/product_notification_controller_spec.rb"
 ]    
 
@@ -141,9 +149,15 @@ FunctionalTests = [
   "spec/lib/gamification/quests/process_post_quests_spec.rb",
   "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
 ] 
+
+MobileAppTests = [
+  "spec/controllers/mobile/*_spec.rb"
+]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
-              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, ModelTests, TwitterTests, XssTests ]
+              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, 
+              XssTests, FreshfoneReportsTests ]
+
 UnitTests.flatten!.uniq!
 
 AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
@@ -332,6 +346,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end    
 
+    namespace :freshfone_reports do
+      desc "Running all freshfone summary reports tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(FreshfoneReportsTests)
+      end
+    end
+
     namespace :unit_tests do
       desc "Running all integration tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
@@ -363,6 +385,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(MobihelpTests)
+      end
+    end
+
+    namespace :mobile do
+      desc "Running all Mobile app tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(MobileAppTests)
       end
     end
     

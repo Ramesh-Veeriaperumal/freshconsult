@@ -22,7 +22,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
    has_attached_file :content,
     :storage => :s3,
-    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :s3_credentials => "#{Rails.root}/config/s3.yml",
     :path => "data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
     :url => ":s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket],

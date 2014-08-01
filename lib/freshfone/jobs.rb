@@ -51,6 +51,7 @@ module Freshfone::Jobs
 				 	@call.save
 				 	@recording.delete
 				else
+					set_status_voicemail if args[:voicemail]
 					download_data 
 					build_recording_audio
 				end
@@ -95,6 +96,11 @@ module Freshfone::Jobs
 			def self.build_recording_audio
 				@call.build_recording_audio(:content => @data).save
 			end
+
+			def self.set_status_voicemail     
+ 				@call.update_status({:DialCallStatus => "voicemail"})
+ 				@call.save
+ 			end
 
 			def self.create_voicemail_ticket(args)
 				set_current_call(@call)

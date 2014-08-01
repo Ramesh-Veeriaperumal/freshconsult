@@ -6,7 +6,7 @@ module MobihelpHelper
   def create_mobihelp_user(test_account=nil, email_id, device_id)
     account = test_account.nil? ? Account.first : test_account
     account.make_current
-    create_mobihelp_app
+    mh_app = create_mobihelp_app
 
     @mh_user = User.find_by_email(email_id) unless email_id.nil?
     return @mh_user unless @mh_user.nil?
@@ -16,18 +16,15 @@ module MobihelpHelper
     @mh_user.save
     Rails.logger.debug("Created user #{@mh_user.inspect}");
 
-    create_user_device(@mh_app, @mh_user, device_id);
+    create_user_device(mh_app, @mh_user, device_id);
     @mh_user
   end
 
   def create_mobihelp_app
-    @mh_app = @account.mobihelp_apps.find(:all, :conditions => ["deleted != 1"]).first;
-    return @mh_app unless @mh_app.nil?
-
-    @mh_app = Factory.build(:mobihelp_app)
-    @mh_app.save
-    Rails.logger.debug("Created mobihelp_app #{@mh_app.inspect}");
-    @mh_app
+    mh_app = Factory.build(:mobihelp_app, :name => "Fresh App #{Time.now.nsec}")
+    mh_app.save
+    Rails.logger.debug("Created mobihelp_app #{mh_app.inspect}");
+    mh_app
   end
 
   def create_user_device(app, user, device_id)

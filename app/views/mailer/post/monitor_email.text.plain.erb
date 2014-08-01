@@ -9,10 +9,10 @@ New Reply on topic "<%= @post.topic.title %>"
 <%= "_" * 100 %>
 
 View Topic
-<%= discussions_topic_url(@post.topic.id, :host => @user.account.host) %>
+<%= discussions_topic_url(@post.topic.id, :host => @host) %>
 
 Reply
-<%= discussions_topic_url(@post.topic.id, :host => @user.account.host) << "#reply-to-post"%>
+<%= reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
 
 Turn off reply notifications for this topic
-<%= toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @user.account.host) %>
+<%= toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @host) %>

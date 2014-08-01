@@ -88,14 +88,15 @@ module ForumHelper
 		post
 	end
 
-	def monitor_topic(topic)
+	def monitor_topic(topic, user = @user, portal_id = nil)
 		monitorship = Factory.build(
 									:monitorship,
 									:monitorable_id => topic.id,
-									:user_id => @user.id,
+									:user_id => user.id,
 									:active => 1,
 									:account_id => @account.id,
-									:monitorable_type => "Topic" 
+									:monitorable_type => "Topic",
+									:portal_id => portal_id
 									)
 		monitorship.save(true)
 	end

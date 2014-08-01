@@ -439,6 +439,7 @@ $single_stackbar_chart_height: 120px;
 		display: table;
 		vertical-align: middle;
 		padding: 0 1%;
+		border-radius:3px;
 		div{
 			display: table-cell;
 			vertical-align: middle;
@@ -960,12 +961,6 @@ $animation_timing: .1s;
 	height: 21px;
 	width: 35px;
 	cursor:pointer;
-}
-.reports-icon-topN{
-	background-position: 0 -1696px;
-}
-.reports-icon-bottomN{
-	background-position: 0 -1673px;
 }
 .sort {
 	position: relative;

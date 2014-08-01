@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :solution_categories, :class => Solution::Category do |t|
     t.name "TestingSolutionCategory"
     t.description "Test for Solution Categories"

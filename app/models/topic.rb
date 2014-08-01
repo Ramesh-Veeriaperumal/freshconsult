@@ -38,6 +38,7 @@ class Topic < ActiveRecord::Base
     :as => 'notable'
 
   delegate :problems?, :questions?, :to => :forum
+  delegate :type_name, :to => :forum
 
   named_scope :newest, :order => 'replied_at DESC'
 

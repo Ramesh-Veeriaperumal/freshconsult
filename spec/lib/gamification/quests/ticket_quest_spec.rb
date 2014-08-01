@@ -125,7 +125,8 @@ describe Gamification::Quests::ProcessTicketQuests do
       Resque.inline = false
       ticket = create_ticket({:status => 2, :responder_id => @agent.user_id, :source => 1})
       Resque.inline = true
-      note = ticket.notes.create({:body => Faker::Lorem.sentence, :user_id => @agent.user_id})
+      note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}, :user_id => @agent.user_id})
+      note.save_note
       send_while = rand(1..4)
       s_handle = create_survey_handle(ticket, send_while, note) 
       s_result = s_handle.create_survey_result(Survey::HAPPY)
@@ -141,7 +142,8 @@ describe Gamification::Quests::ProcessTicketQuests do
       Resque.inline = false
       ticket = create_ticket({:status => 2, :source => 1, :responder_id => @agent.user_id})
       Resque.inline = true
-      note = ticket.notes.create({:body => Faker::Lorem.sentence, :user_id => @agent.user_id})
+      note = ticket.notes.build({ :note_body_attributes => {:body => Faker::Lorem.sentence} , :user_id => @agent.user_id})
+      note.save_note
       send_while = rand(1..4)
       s_handle = create_survey_handle(ticket, send_while, note) 
       s_result = s_handle.create_survey_result(Survey::HAPPY)

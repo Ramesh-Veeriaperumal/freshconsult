@@ -101,7 +101,7 @@
 	 }
 
 	 function useFilterforIE(item) {
-	 	url = item.src;
+	 	var url = item.src;
 	    var browser = window.navigator && window.navigator.appVersion.split("MSIE");
 	    var version = parseFloat(browser[1]);
 	    if ((version >= 5.5) && (version < 7) && (document.body.filters)) {

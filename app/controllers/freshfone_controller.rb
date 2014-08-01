@@ -4,7 +4,8 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
-
+	before_filter :set_native_mobile, :only => :create_ticket
+		
 	def voice
 		render :xml => current_call_flow.resolve_request
 	end

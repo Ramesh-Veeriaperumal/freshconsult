@@ -24,7 +24,7 @@ module Search::SearchResultJson
 			:created_at => ticket.created_at,
 			:created_at_int => ticket.created_at.to_i,
 			:ticket_path => helpdesk_ticket_path(ticket),
-			:searchKey => (params[:search_field] == "requester") ? ticket.requester_name : ticket.send(params[:search_field]),
+			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]),
 			:ticket_info => t("ticket.merge_ticket_list_status_created_at", 
 							:username => "<span class='muted'>#{ticket.requester}</span>", 
 							:time_ago => time_ago_in_words(ticket.created_at))

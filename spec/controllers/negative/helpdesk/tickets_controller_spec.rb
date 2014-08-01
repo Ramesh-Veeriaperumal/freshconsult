@@ -16,6 +16,14 @@ describe Helpdesk::TicketsController do
     log_in(@agent)
   end
 
+  it "should go to the index page even if redis fails to set adjacent tickets" do
+    Redis.any_instance.stubs(:send).raises(Exception)
+    get 'index'
+    Redis.any_instance.unstub(:send)
+    response.should render_template "helpdesk/tickets/index.html.erb"
+    response.body.should =~ /Filter Tickets/
+  end
+
   it "should not create a new ticket without the required fields" do
     now = (Time.now.to_f*1000).to_i
     post :create, :helpdesk_ticket => {:email => "",
@@ -323,4 +331,29 @@ describe Helpdesk::TicketsController do
     @account.tickets.find(group_agent_ticket.id).spam.should be_eql(true)
   end
 
+  it "should throw an exception when redis fails" do
+    ticket_1 = create_ticket
+    ticket_2 = create_ticket
+    ticket_3 = create_ticket
+    Redis.any_instance.stubs(:llen).raises(Exception)
+    get :prevnext, :id => ticket_2.display_id
+    Redis.any_instance.unstub(:llen)
+    assigns(:previous_ticket).should be_eql(ticket_1.display_id)
+    assigns(:next_ticket).should be_eql(ticket_3.display_id)
+  end
+
+  it "should throw an exception when empty trash fails" do
+    tkt1 = create_ticket({ :status => 2 }, @group)
+    tkt2 = create_ticket({ :status => 2 }, @group)
+    delete_tkt_arr = []
+    delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+    delete :destroy, :id => "multiple", :ids => delete_tkt_arr
+    Resque.inline = true
+    Account.any_instance.stubs(:tickets).raises(Exception)
+    delete :empty_trash
+    Account.any_instance.unstub(:tickets)
+    Resque.inline = false
+    @account.tickets.find_by_id(tkt1.id).should_not be_nil
+    @account.tickets.find_by_id(tkt2.id).should_not be_nil
+  end
 end

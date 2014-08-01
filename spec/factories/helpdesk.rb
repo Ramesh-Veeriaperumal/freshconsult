@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :ticket, :class => Helpdesk::Ticket do |t|
     t.status 2
     t.urgent 0
@@ -99,5 +99,8 @@ if ENV["RAILS_ENV"] == "test"
   end
 
   Factory.define :support_score, :class => SupportScore do |d|
+  end
+
+  Factory.define :tag_uses, :class => Helpdesk::TagUse do |d|
   end
 end

@@ -238,6 +238,10 @@
       :fetch_chart_data => :post}
     report.resources :report_filters, :controller => 'report_filters',
       :collection => {:create => :post,:destroy => :post}
+    report.namespace :freshfone do |freshfone|
+      freshfone.resources :summary_reports, :controller => 'summary_reports', 
+      :collection => {:generate => :post, :export_csv => :post } 
+    end
   end
 
   map.resources :reports
@@ -506,9 +510,9 @@
     discussion.resources :forums, :collection => {:reorder => :put}, :except => :index
     discussion.resources :topics,
         :except => :index,
-        :member => { :toggle_lock => :put, :latest_reply => :get, :update_stamp => :put,:remove_stamp => :put, :vote => :put, :destroy_vote => :delete },
+        :member => { :toggle_lock => :put, :latest_reply => :get, :update_stamp => :put,:remove_stamp => :put, :vote => :put, :destroy_vote => :delete, :reply => :get },
         :collection => {:destroy_multiple => :delete } do |topic|
-      discussion.connect "/topics/:id/page/:page", :controller => :topics, :action => :show
+      discussion.topic_page "/topics/:id/page/:page", :controller => :topics, :action => :show
       discussion.topic_component "/topics/:id/component/:name", :controller => :topics, :action => :component
 
       topic.resources :posts, :except => :new, :member => { :toggle_answer => :put }

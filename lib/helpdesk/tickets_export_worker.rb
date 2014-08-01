@@ -75,7 +75,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     @xls_hash = export_params[:export_fields]
     @headers = delete_invisible_fields 
     @records = ticket_data(@headers)
-    path =  "#{RAILS_ROOT}/app/views/support/tickets/export_csv.xls.erb"
+    path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
     ERB.new(File.read(path)).result(binding)
   end
 
@@ -187,7 +187,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
 
   def file_path
     @file_path ||= begin
-      output_dir = "#{RAILS_ROOT}/tmp" 
+      output_dir = "#{Rails.root}/tmp" 
       FileUtils.mkdir_p output_dir
       file_path = "#{output_dir}/#{file_name}"
       file_path

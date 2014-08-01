@@ -3,12 +3,17 @@ require 'spec_helper'
 include FacebookHelper
 
 describe Social::FacebookPosts do
+  self.use_transactional_fixtures = false
   
   before(:all) do
     @fb_page = create_test_facebook_page(@account)
   end
-  
- 
+
+  before(:each) do
+    time = Time.now-1.hour
+    @fb_page.update_attributes(:fetch_since => time.to_i)
+  end 
+
   it "should create a ticket when a company post(without comments) arrives and import company post is enabled" do   
     @fb_page.update_attributes(:import_company_posts => true)
     

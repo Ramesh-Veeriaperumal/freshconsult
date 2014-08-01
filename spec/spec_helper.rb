@@ -62,12 +62,14 @@ Spork.prefork do
   'spec/support/va/random_case/condition/dispatcher.rb',
   'spec/support/va/random_case/condition/supervisor.rb',
   'spec/support/va/random_case/event.rb',
+  'spec/support/va/random_case/performer.rb',
   'spec/support/va/tester.rb',
   'spec/support/va/tester/action.rb',
   'spec/support/va/tester/condition.rb',
   'spec/support/va/tester/condition/dispatcher.rb',
   'spec/support/va/tester/condition/supervisor.rb',
   'spec/support/va/tester/event.rb',
+  'spec/support/va/tester/performer.rb',
   'spec/support/va/rule_helper.rb',
   'spec/support/va/test_case.rb',
   'spec/support/wf/filter_functional_tests_helper.rb',
@@ -75,7 +77,6 @@ Spork.prefork do
   'spec/support/wf/operator_helper.rb',
   'spec/support/wf/option_selector.rb',
   'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
-
 
 
   Spec::Runner.configure do |config|
@@ -115,7 +116,10 @@ Spork.prefork do
     config.include IntegrationsHelper
     config.include QuestHelper
     config.include Wf::FilterFunctionalTestsHelper
+    config.include MobileHelper, :type => :controller
+    config.include CustomMatcher
 
+    
     config.before(:all) do
       @account = create_test_account
       @agent = get_admin
@@ -189,7 +193,7 @@ Spork.prefork do
     #
     # You can also declare which fixtures to use (for example fixtures for test/fixtures):
     #
-    # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    # config.fixture_path = Rails.root + '/spec/fixtures/'
     #
     # == Mock Framework
     #

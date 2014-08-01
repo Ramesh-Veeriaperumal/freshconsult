@@ -4,7 +4,7 @@ class PostObserver < ActiveRecord::Observer
 
 	def before_create(post)
 		post.forum_id = post.topic.forum_id
-		post.published = post.user.agent? #Agent posts are approved by default.
+		post.published = (post.user.agent?  || !post.import_id.nil?) #Agent posts are approved by default.
 	end
 
 	def before_save(post)
@@ -30,11 +30,12 @@ class PostObserver < ActiveRecord::Observer
   end
 
   def send_monitorship_emails(post)
-    post.topic.monitorships.active_monitors.each do |monitorship|
-      monitorship_email = monitorship.user.email
-      PostMailer.deliver_monitor_email!(monitorship_email,post,post.user) unless monitorship_email.blank? or (post.user_id == monitorship.user_id)
+    post.topic.monitorships.active_monitors.all(:include => :portal).each do |monitorship|
+    	next if monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
+    	PostMailer.deliver_monitor_email!(monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
     end
   end
+
 	def after_update(post)
 		update_cached_fields(post) if post.published_changed?
 		if post.published_changed?

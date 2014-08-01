@@ -1,5 +1,6 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
+	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_calls
 
   serialize :customer_data, Hash
@@ -42,7 +43,8 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :queued,	'queued',	6 ],
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
-		[ :blocked, 'blocked', 9 ]
+		[ :blocked, 'blocked', 9 ],
+		[ :voicemail, 'voicemail', 10 ]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -71,22 +73,32 @@ class Freshfone::Call < ActiveRecord::Base
 	validates_inclusion_of :call_type, :in => CALL_TYPE_HASH.values,
 		:message => "%{value} is not a valid call type"
 
-	default_scope :order => "created_at DESC"
-	
-	named_scope :active_calls, :conditions => [
-		'call_status = ? AND updated_at >= ?', 
-		CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-	]
+	named_scope :active_calls, lambda { 
+		{ :conditions => [ 'call_status = ? AND updated_at >= ?', 
+				CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
+			]
+		}
+	}
 
 	named_scope :filter_by_call_sid, lambda { |call_sid|
-		{ :conditions => ["call_sid = ? or dial_call_sid = ?", call_sid, call_sid], :limit => 1 }
+		{ :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
 	}
+
+	named_scope :filter_by_dial_call_sid, lambda { |dial_call_sid|
+		{ :conditions => ["dial_call_sid = ?", dial_call_sid], :order => 'created_at DESC', :limit => 1 }
+	}
+
 	named_scope :include_ticket_number, { 
 		:include => [ :ticket, :note, :freshfone_number ] }
 	named_scope :include_customer, { :include => [ :customer ] }
 	named_scope :include_agent, { :include => [ :agent ] }
 	named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-	named_scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
+	named_scope :active_call, lambda {
+		{ :conditions => [ 'call_status = ? AND updated_at >= ?', 
+				CALL_STATUS_HASH[:default], 1.minute.ago.to_s(:db)
+			], :limit => 1, :order => "created_at DESC"
+		}
+	}
 	named_scope :agent_progress_calls, lambda { |user_id|
 		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or call_status = ?)",
 					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db), CALL_STATUS_HASH[:'in-progress']
@@ -94,8 +106,13 @@ class Freshfone::Call < ActiveRecord::Base
 		}
 	}
 
+  named_scope :created_at_inside, lambda { |start, stop|
+  	{ :conditions => ["freshfone_calls.created_at >= ? and freshfone_calls.created_at <= ?", start, stop] }
+  }
+
 	def self.filter_call(call_sid)
-		filter_by_call_sid(call_sid).first
+    call = filter_by_call_sid(call_sid).first
+    call.blank? ? filter_by_dial_call_sid(call_sid).first : call
 	end
 	
 	def self.include_all
@@ -235,7 +252,7 @@ class Freshfone::Call < ActiveRecord::Base
 			calculator.perform
 		end
 	end
-	
+
 	private
 		def child_call_customer_id(params)
 			customer_id || (params[:customer] || {})[:id]
@@ -251,7 +268,7 @@ class Freshfone::Call < ActiveRecord::Base
 
 			i18n_params = {
 				:customer_name=> customer_name,
-				:customer_number=> valid_customer_name? ? caller_number : customer_name,
+				:customer_number=> caller_number,
 				:location => location,
 				:freshfone_number => freshfone_number.number
 			}

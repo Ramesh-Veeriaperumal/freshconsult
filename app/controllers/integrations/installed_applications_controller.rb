@@ -93,7 +93,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   private
-  def convert_to_configs_hash(params)
+  def convert_to_configs_hash(params) #possible dead code
     if params[:configs].blank?
       {:inputs => {}}
     else

@@ -15,7 +15,7 @@ class Search::SearchController < ApplicationController
 												:ticket_states, :ticket_old_body, :ticket_status, :responder, :group]},
 				Topic => { :include => [ {:forum => :forum_category}, :user] },
 				Solution::Article => { :include => [ :user, :folder ] },
-				User => { :include => [:avatar, :customer]}, Customer => {}
+				User => { :include => [:avatar, :customer, :primary_email]}, Customer => {}
 			}
 
 	def index
@@ -163,7 +163,7 @@ class Search::SearchController < ApplicationController
 				render :partial => 'search/search_sort.rjs'
 			end
 			format.json do
-				render :json => @result_json[:results]
+				render :json => @result_json
 			end
 			format.nmobile do
 				json="[" 

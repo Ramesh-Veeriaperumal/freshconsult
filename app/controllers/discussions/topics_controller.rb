@@ -4,7 +4,8 @@ class Discussions::TopicsController < ApplicationController
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
-	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
+	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :show, :reply ]
+	before_filter :require_user, :only => :reply
 	before_filter :find_topic, :except => [:index, :create, :new, :destroy_multiple]
 	before_filter :portal_check, :only => :show
 	before_filter :fetch_monitorship, :only => :show
@@ -37,6 +38,7 @@ class Discussions::TopicsController < ApplicationController
 			end
 			@post.user  ||= current_user
 			@post.account_id = current_account.id
+			@post.portal = current_portal.id
 			# only save topic if post is valid so in the view topic will be a new record if there was an error
 			@topic.body_html = @post.body_html # incase save fails and we go back to the form
 			build_attachments
@@ -194,6 +196,16 @@ class Discussions::TopicsController < ApplicationController
 		end
 	end
 
+	def reply
+		if current_user.agent?
+			path = discussions_topic_path(params[:id])
+  	else
+  		path = support_discussions_topic_path(params[:id])
+  	end
+  	path << "/page/last#reply-to-post"
+  	redirect_to path
+	end
+
 	private
 
 		def assign_protected
@@ -240,10 +252,16 @@ class Discussions::TopicsController < ApplicationController
 
 		def portal_check
 			if current_user.nil? || current_user.customer?
-				return redirect_to support_discussions_topic_path(@topic)
+				return redirect_to topic_portal_path
 			elsif !privilege?(:view_forums)
 				access_denied
 			end
+		end
+
+		def topic_portal_path
+			path = support_discussions_topic_path(@topic)
+			path << "/page/#{params[:page]}" if params[:page].present?
+			path
 		end
 
 		def set_page

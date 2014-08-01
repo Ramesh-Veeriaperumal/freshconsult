@@ -60,6 +60,7 @@ describe Support::Discussions::TopicsController do
 	it "should create a topic on post 'create'" do
 		topic_title = Faker::Lorem.sentence(1)
 		post_body = Faker::Lorem.paragraph
+		old_follower_count = Monitorship.count
 
 		post :create,
 			:topic =>
@@ -78,6 +79,8 @@ describe Support::Discussions::TopicsController do
 		new_post.user_id.should eql @user.id
 		new_post.account_id.should eql @account.id
 
+		Monitorship.count.should eql old_follower_count + 1
+		Monitorship.last.portal_id.should_not be_nil
 		response.should redirect_to 'support/discussions'
 	end
 
@@ -258,6 +261,71 @@ describe Support::Discussions::TopicsController do
 		get :users_voted, :id => topic.id
 
 		response.should render_template 'support/discussions/topics/_users_voted.html.erb'
+	end
+
+	it "should redirect to support home if portal forums is disabled" do
+		topic = publish_topic(create_test_topic(@forum, @user))
+		@account.features.hide_portal_forums.create
+
+		get :my_topics
+		response.should redirect_to "/support/home"
+
+		topic_title = Faker::Lorem.sentence(1)
+		post :create,
+		:topic =>
+				{:title=> topic_title, 
+				:body_html=> "", 
+				:forum_id=> @forum.id }
+		response.should redirect_to "/support/home"
+
+		get :new
+		response.should redirect_to "/support/home"
+
+		put :like, :id => topic.id, :vote => "for"
+		response.should redirect_to "/support/home"
+
+		put :unlike, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		put :toggle_monitor, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		put :monitor, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		put :toggle_solution, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :edit, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :hit, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :check_monitor, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :users_voted , :id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :reply, :topic_id => topic.id
+		response.should redirect_to "/support/home"
+
+		get :show, :id => topic.id
+		response.should redirect_to "/support/home"
+
+		put :update,
+			:id => topic.id,
+			:topic => {
+				:title=> Faker::Lorem.sentence(1), 
+				:body_html=>"<p>#{Faker::Lorem.paragraph}</p>"
+			}
+		response.should redirect_to "/support/home"
+
+		delete :destroy, :id => topic.id
+		response.should redirect_to "/support/home"			
+
+		@account.features.hide_portal_forums.destroy
 	end
 
 

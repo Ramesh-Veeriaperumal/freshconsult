@@ -67,7 +67,8 @@
 					quietMillis: 1000,
 					data: function (term) { 
 							return {
-								q: term
+								q: term,
+								sla: true
 							};
 					},
 					results: function (data) {
@@ -287,7 +288,9 @@
 				});
 			}
 			if(no_condition && !is_default) {
-				$('label[for=sla_policy_conditions]').addClass('error').show();
+				//Hack for hideThese() function in jquery.validate.js version 1.13 which removes the text from the container.
+				var _errorLabel = $('label[for=sla_policy_conditions]');
+				_errorLabel.text(_errorLabel.data("errorText")).addClass('error').show();
 				$('.add_new_condition .dropdown-toggle').qtip('hide');
 			}
 			else {

@@ -8,12 +8,12 @@ class User < ActiveRecord::Base
   include Mobile::Actions::User
   include Users::Activator
   include Users::Preferences
-  include Authority::Rails::ModelHelpers
+  include Authority::FreshdeskRails::ModelHelpers
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include Authority::Rails::ModelHelpers
+  include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
 
@@ -588,9 +588,9 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.text :name, SearchUtil.es_filter_exact(search_by), :type => :phrase }        
+              f.query { |q| q.match ["name", "email"], SearchUtil.es_filter_exact(search_by) } 
             else
-              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name'], :analyzer => "include_stop" }
+              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email'], :analyzer => "include_stop" }
             end
             f.filter :term, { :account_id => account_id }
             f.filter :term, { :deleted => false }

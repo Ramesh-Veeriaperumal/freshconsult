@@ -1,4 +1,4 @@
-if ENV["RAILS_ENV"] == "test"
+if Rails.env.test?
   Factory.define :application, :class => Integrations::Application do |t|
     t.name "Test integration"
     t.display_name "app_name"
@@ -47,6 +47,17 @@ if ENV["RAILS_ENV"] == "test"
                       :oauth_token => "ya29.LgA1EMj53KSvWhoAAABtT8Nt-ZdsGJXa7bfxXn7pVkzOsLnFW9eFQCIArfLfjg", 
                       :email => "sathish@freshdesk.com"})
     t.account_id 1
+  end
+
+  Factory.define :create_webhooks, :class => ApiWebhooksController do |t|
+    t.name "Test_Webhook"
+    t.description "Test_description"
+    t.match_type "any"
+    t.filter_data "Test data"
+    t.action_data "Test action data"
+    t.account_id 1
+    t.rule_type 13
+    t.active 1
   end
 
   
