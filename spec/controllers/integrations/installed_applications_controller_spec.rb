@@ -115,6 +115,57 @@ describe Integrations::InstalledApplicationsController do
 
   end
 
+  it "jira install should fail with wrong password " do
+    application_id = @installaling_applications.find_by_name("jira").id
+
+    put :install, {
+        :configs => { "domain" => "https://fresh-desk.atlassian.net", 
+                      "title" => "Atlassian Jira", 
+                      "username" => "sathappan@freshdesk.com", 
+                      "jira_note" => "rspec Testing Ticket", 
+                      "password" => "wrong_password" },
+        :id => application_id, 
+        :commit => "Enable" }
+
+    @account.installed_applications.find_by_application_id(application_id).should be_nil
+    response.should redirect_to "/integrations/applications"
+  end
+
+  it "jira install should raise exception with too large password" do
+    application_id = @installaling_applications.find_by_name("jira").id
+
+    put :install, {
+        :configs => { "domain" => "https://fresh-desk.atlassian.net", 
+                      "title" => "Atlassian Jira", 
+                      "username" => "sathappan@freshdesk.com", 
+                      "jira_note" => "rspec Testing Ticket", 
+                      "password" => "QwX4vYE25cZcKiqnLbnwHmD2cC9cWn40HT5EnjESaslWTA0lGpr2rlyAiSxq
+                                     HwvXDp8wlkW2NsVPAG00WhXsEc5YrWmWFHWP+tWlARHzspmE9dr1uCcYXNPw
+                                     dBEPADQcpr2m5ucl4HR7EBH5sVxfeax8czPo0xQSvuHO5qN25R9fwQnRn03+
+                                     dngsOjWfJk9Q/zmB9oRJp2EwXeOmeWcDjTaC2FmMumvq8j6ZF4Kms65dnEF5
+                                     4y2ruxLHFeg24P0rOmYFwbK+evqLCPW7WSkaQOGKK/5IkfwDaUgJvnJf3SWr
+                                     arjGLsJdSjtkDrIXO5nmQ/28Kr6juK2P8WK4AMryuw==" },
+        :id => application_id }
+    @account.installed_applications.find_by_application_id(application_id).should be_nil
+    response.should redirect_to "/integrations/applications"
+  end
+
+  it "should install jira" do
+    application_id = @installaling_applications.find_by_name("jira").id
+
+    put :install, {
+        :configs => { "domain" => "https://fresh-desk.atlassian.net", 
+                      "title" => "Atlassian Jira", 
+                      "username" => "sathappan@freshdesk.com", 
+                      "jira_note" => "rspec Testing Ticket", 
+                      "password" => "legolas" },
+        :id => application_id, 
+        :commit => "Enable" }
+
+    @account.installed_applications.find_by_application_id(application_id).should_not be_nil
+    response.should redirect_to "/integrations/applications"
+  end
+
 end
 
 
