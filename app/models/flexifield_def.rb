@@ -42,7 +42,7 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_name)
   end
   
-  def unassigned_flexifield_names
+  def unassigned_flexifield_names # Dead code, returns wrong result
     Flexifield.flexiblefield_names - ff_fields
   end
   
