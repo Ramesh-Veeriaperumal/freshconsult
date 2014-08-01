@@ -71,7 +71,7 @@ $.extend($.fn, {
 								.val( $( validator.submitButton ).val() )
 								.appendTo( validator.currentForm );
 						}
-						validator.settings.submitHandler.call( validator, validator.currentForm, event );
+						validator.settings.submitHandler.call( validator, validator.currentForm, validator.submitButton, event );
 						if ( validator.submitButton ) {
 							// and clean up afterwards; thanks to no-block-scope, hidden can be referenced
 							hidden.remove();
