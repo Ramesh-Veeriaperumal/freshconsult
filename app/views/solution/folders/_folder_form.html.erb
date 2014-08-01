@@ -18,6 +18,7 @@
     		<div class="row-fluid">
 		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
 	    	</div>
+	    	<br>
 	    	<div id="company_folders" class="row-fluid">
   				<%= render_autocomplete({ :selected_values => selected_customers(@customer_id), :type => :customers }) %>
   			</div>
