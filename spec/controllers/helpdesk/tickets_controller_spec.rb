@@ -10,6 +10,8 @@ describe Helpdesk::TicketsController do
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     @group = @account.groups.first
+    user = add_test_agent(@account)
+    sla_policy = create_sla_policy(user)
   end
 
   before(:each) do
