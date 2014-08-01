@@ -2,7 +2,7 @@
 <%= open_html_tag %>
 	<head>
 		
-		<%=raw @head %>
+		<%= raw @head %>
 		
 		<!-- Adding meta tag for CSRF token -->
 		<%= csrf_meta_tag %>
@@ -34,9 +34,7 @@
 	<body>
 		<%= assumed_identity_message %>
 
-		<%=raw @layout %>
-
-		<%= yield %>
+		<%= raw @layout %>
 
 		<% if portal_chat_enabled? %>
 			<%= render :partial => "layouts/shared/chat/chat" %>
