@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module SubscriptionHelper
 
 	CARD_NUMBERS = { :valid => "4111111111111111", :invalid => "4119862760338320", 

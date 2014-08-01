@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module GroupHelper
 	def create_group(account, options= {})
     group = account.groups.find_by_name(options[:name])

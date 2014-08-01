@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module SolutionsHelper
 
   def create_category(params = {})

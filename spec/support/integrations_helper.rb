@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module IntegrationsHelper
 
 	def create_installed_applications(options= {})

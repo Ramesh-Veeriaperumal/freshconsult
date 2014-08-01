@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module GnipHelper
 
   def sample_gnip_feed(rule_hash=nil, reply=nil, time = Time.now.utc.iso8601)

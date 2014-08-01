@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module FacebookHelper
   
   def create_test_facebook_page(account = nil)

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module NoteHelper
 
   def create_note(params = {})
