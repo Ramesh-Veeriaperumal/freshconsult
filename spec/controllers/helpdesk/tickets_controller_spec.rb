@@ -61,6 +61,40 @@ describe Helpdesk::TicketsController do
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
+
+  # Following 2 tests are added to cover survey models
+  it "should load the reply template with survey link" do
+    @account.survey.update_attributes(:send_while => 1)
+    notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+    notification.update_attributes(:requester_notification => true,
+                                   :requester_template => "#{notification.requester_template} {{ticket.satisfaction_survey}}")
+    ticket = create_ticket
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should show the survey remark of a ticket" do
+    Survey::CUSTOMER_RATINGS.each do |rating_type, value|
+      ticket = create_ticket({ :status => 2 }, @group)
+      note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+      note.save_note
+      send_while = rand(1..4)
+      s_handle = create_survey_handle(ticket, send_while, note)
+      s_handle.create_survey_result rating_type
+      remark = Faker::Lorem.sentence
+      s_handle.survey_result.add_feedback(remark)
+      s_handle.destroy
+      s_result = s_handle.survey_result
+      s_remark = SurveyRemark.find_by_survey_result_id(s_result.id)
+      s_remark.should be_an_instance_of(SurveyRemark)
+      note = ticket.notes.last
+      s_remark.note_id.should be_eql(note.id)
+      note.body.should be_eql(remark)
+
+      get :show, :id => ticket.display_id
+      response.body.should =~ /#{ticket.description_html}/
+    end
+  end
   
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i

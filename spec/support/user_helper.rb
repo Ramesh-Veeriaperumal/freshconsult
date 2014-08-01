@@ -39,6 +39,10 @@ module UsersHelper
   end
 
   def add_new_user(account, options={})
+    if options[:email]
+      user = User.find_by_email(options[:email])
+      return user if user
+    end
     new_user = Factory.build(:user, :account => account,
                                     :name => Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
