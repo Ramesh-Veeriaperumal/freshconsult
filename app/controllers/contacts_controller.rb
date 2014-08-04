@@ -254,7 +254,7 @@ protected
   def initialize_new_user
     @user = current_account.users.new
     @user.helpdesk_agent = false
-    @user.avatar = Helpdesk::Attachment.new
+    @user.avatar = Helpdesk::ImageAttachment.new
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
     @user.user_emails.build

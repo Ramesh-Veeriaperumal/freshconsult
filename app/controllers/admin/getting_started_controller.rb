@@ -16,7 +16,7 @@ class Admin::GettingStartedController < Admin::AdminController
     @agent = current_account.agents.new       
     #@agent.user = User.new
     @agent.build_user
-    @agent.user.avatar = Helpdesk::Attachment.new
+    @agent.user.avatar = Helpdesk::ImageAttachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
     @account = current_account    

@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
 
   has_one :avatar,
     :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
+    :class_name => 'Helpdesk::ImageAttachment',
     :dependent => :destroy
 
   has_many :support_scores, :dependent => :delete_all

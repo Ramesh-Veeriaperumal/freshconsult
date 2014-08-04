@@ -12,7 +12,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
 
   MAX_DIMENSIONS = 16000000
-
+  
   set_table_name "helpdesk_attachments"
   belongs_to_account
 
@@ -132,7 +132,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
       # errors.add('Dimensions are higher than Expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
       (dimensions.width * dimensions.height) <= MAX_DIMENSIONS
     rescue Exception => e
-      NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
+      begin
+        NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
+      rescue
+        false
+      end
       false
     end
   end
