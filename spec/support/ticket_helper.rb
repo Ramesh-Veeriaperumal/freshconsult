@@ -1,5 +1,3 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module TicketHelper
 
   def create_ticket(params = {}, group = nil)

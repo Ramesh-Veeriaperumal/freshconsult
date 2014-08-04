@@ -1,22 +1,7 @@
 class ChatsController < ApplicationController
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:load]
   before_filter  :load_ticket, :only => [:add_note]
-
-  def load
-
-    @chat = ChatSetting.find_by_display_id(params[:id])
-    @app_url = "//#{@chat.account.full_domain}"
-    @comm_url = ChatConfig['communication_url'][Rails.env]
-    @chat_debug = ChatConfig['chat_debug'][Rails.env]
-    @visitor_id = "visitor#{(Time.now.to_f * 1000.0).to_i}"
-    
-    respond_to do |format|
-        format.js
-    end
-
-  end
-
+  
   def create_ticket
 
     @ticket = current_account.tickets.build(

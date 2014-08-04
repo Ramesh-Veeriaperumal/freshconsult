@@ -46,31 +46,6 @@ module Integrations::GoogleContactsUtil
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
-  
-  def self.get_prime_sec_email(contact_xml_as_hash)
-    primary_email = nil
-    second_email = nil
-    contact_xml_as_hash['email'].each { |contact_emails|
-      is_primary = contact_emails['primary']
-      unless is_primary.blank? || is_primary != "true"
-        primary_email = contact_emails['address']
-      else
-        second_email = contact_emails['address']
-      end
-    }
-    return primary_email, second_email
-  end
-  
-
-  def is_matched(google_account, goog_cnt, db_cnt)
-    if !goog_cnt.blank? and !db_cnt.blank?
-      g_goog_cnt = fetch_current_account_contact(goog_cnt, google_account)
-      g_db_cnt = fetch_current_account_contact(db_cnt, google_account)
-      return ((!g_goog_cnt.blank?) and (g_goog_cnt.google_id == g_db_cnt.google_id or goog_cnt.email == db_cnt.email or goog_cnt.second_email == db_cnt.email))
-    else
-      return false
-    end
-  end
 
   def trimmed_contact_xml(user, goog_cnt, sync_group_id=nil)
     google_xml = goog_cnt.google_xml
@@ -216,37 +191,6 @@ module Integrations::GoogleContactsUtil
         end
       end
     end
-
-    def copy(from_user, to_user)
-      USER_FIELDS.each { |prop_name|
-        if(from_user.has_attribute?(prop_name))
-          prop_value = from_user.read_attribute(prop_name)
-          unless prop_value.blank?
-            to_user.write_attribute(prop_name, prop_value)
-          end
-        end
-      }
-      to_user.customer = from_user.customer
-    end
-
-    def fetch_current_account_contact(db_cnt, google_account)
-      db_cnt.google_contacts.each {|g_cnt|
-        return g_cnt if g_cnt.google_account_id == google_account.id
-      }
-      return nil
-    end
-
-=begin
-    def correct_postal_address(entry_element, paddr_element)
-      paddr_element.name = "gd:structuredPostalAddress"
-      addr_val = paddr_element.text
-      paddr_element.text = nil
-      faEle = REXML::Element.new("gd:formattedAddress")
-      faEle.text=addr_val
-      paddr_element.add_element(faEle)
-      paddr_element
-    end
-=end
 
     GOOGLE_USER_FIELD_XML_MAPPING = [
       [:name, "name", "<gd:name><gd:fullName>$name</gd:fullName></gd:name>"], 

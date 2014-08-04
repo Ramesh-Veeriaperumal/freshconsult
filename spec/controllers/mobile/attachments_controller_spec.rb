@@ -1,14 +1,11 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Helpdesk::AttachmentsController do
     self.use_transactional_fixtures = false
 
-    before(:each) do
-    	request.host = @account.full_domain
-	    request.user_agent = "Freshdesk_Native_Android"
-	    request.accept = "application/json"
-	    request.env['HTTP_AUTHORIZATION'] =  ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token,"X")
-  	end
+  before(:each) do
+  	api_login
+	end
 
 	it "should return attachment array" do
 		ticket = create_ticket({ :status => 2, 

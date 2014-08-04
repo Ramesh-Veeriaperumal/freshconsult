@@ -31,6 +31,7 @@ class Mobile::TicketsController < ApplicationController
 
   private
 
+  # possible dead code
   def customer_view_list
     view_list = []
     CUSTOMER_FILTER_NAMES.each { |view_name|

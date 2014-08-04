@@ -13,8 +13,8 @@ gem "mysql2", "~> 0.2.7"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 2.3.16"
-gem "country_select", github: "stefanpenner/country_select", :tag => 'v1.1.2'
-gem "activemerchant", github: "Shopify/active_merchant", :tag => 'v1.7.0'
+gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
+gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag => 'v1.7.0'
 gem "acts_as_list", "0.1.4"
 
 group :development do

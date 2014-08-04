@@ -210,15 +210,15 @@ module Helpdesk::TicketFilterMethods
     current_filter#.reject { |f| CONTEXTS.include? f }
   end
 
-  def filter_title(selector)
+  def filter_title(selector) # Possible dead code
     SELECTOR_NAMES[selector]
   end
 
-  def current_filter_title
+  def current_filter_title # Possible dead code
     filter_title(current_selector)
   end
   
-  def get_ticket_show_params(params, ticket_display_id)
+  def get_ticket_show_params(params, ticket_display_id) # Possible dead code
     filters = {:filters => params.clone}
     
     if filters[:filters].blank?

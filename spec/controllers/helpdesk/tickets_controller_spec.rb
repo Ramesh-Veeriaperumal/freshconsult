@@ -10,10 +10,13 @@ describe Helpdesk::TicketsController do
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     @group = @account.groups.first
+    user = add_test_agent(@account)
+    sla_policy = create_sla_policy(user)
   end
 
   before(:each) do
     log_in(@agent)
+    stub_s3_writes
   end
 
   it "should go to the index page" do
@@ -21,7 +24,7 @@ describe Helpdesk::TicketsController do
     response.should render_template "helpdesk/tickets/index.html.erb"
     response.body.should =~ /Filter Tickets/
   end
-  
+    
   # Added this test case for covering meta_helper_methods.rb
   it "should view a ticket created from portal" do
     ticket = create_ticket({:status => 2},@group)
@@ -40,8 +43,9 @@ describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
   
-  # Added this test case for covering note_actions.rb
-  it "should view a ticket with notes(having to_emails)" do
+  # Added this test case for covering note_actions.rb and attachment_helper.rb
+  it "should view a ticket with notes(having to_emails & attachments)" do
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
     ticket = create_ticket({:status => 2},@group)
     agent_details = "#{@agent.name} #{@agent.email}"
     note = ticket.notes.build(
@@ -52,11 +56,48 @@ describe Helpdesk::TicketsController do
         :account_id => ticket.account.id,
         :user_id => ticket.requester.id
     )
+    note.attachments.build(:content => file, 
+                           :description => Faker::Lorem.characters(10) , 
+                           :account_id => note.account_id)
     note.save_note
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
 
+  # Following 2 tests are added to cover survey models
+  it "should load the reply template with survey link" do
+    @account.survey.update_attributes(:send_while => 1)
+    notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+    notification.update_attributes(:requester_notification => true,
+                                   :requester_template => "#{notification.requester_template} {{ticket.satisfaction_survey}}")
+    ticket = create_ticket
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should show the survey remark of a ticket" do
+    Survey::CUSTOMER_RATINGS.each do |rating_type, value|
+      ticket = create_ticket({ :status => 2 }, @group)
+      note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+      note.save_note
+      send_while = rand(1..4)
+      s_handle = create_survey_handle(ticket, send_while, note)
+      s_handle.create_survey_result rating_type
+      remark = Faker::Lorem.sentence
+      s_handle.survey_result.add_feedback(remark)
+      s_handle.destroy
+      s_result = s_handle.survey_result
+      s_remark = SurveyRemark.find_by_survey_result_id(s_result.id)
+      s_remark.should be_an_instance_of(SurveyRemark)
+      note = ticket.notes.last
+      s_remark.note_id.should be_eql(note.id)
+      note.body.should be_eql(remark)
+
+      get :show, :id => ticket.display_id
+      response.body.should =~ /#{ticket.description_html}/
+    end
+  end
+  
   it "should create a new ticket" do
     now = (Time.now.to_f*1000).to_i
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
@@ -71,6 +112,40 @@ describe Helpdesk::TicketsController do
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should not create a new ticket without email - Mobile Format" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => "",
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      },
+                  :format => 'mobile'
+    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should not create a new ticket without email - Widget Format" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => "",
+                                       :requester_id => "",
+                                       :subject => "New Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => "3",
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      },
+                  :format => 'widget'
+    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
   end
 
   it "should create a new ticket with RabbitMQ enabled" do
@@ -499,10 +574,42 @@ describe Helpdesk::TicketsController do
       ticket_1 = create_ticket
       ticket_2 = create_ticket
       ticket_3 = create_ticket
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
       get :prevnext, :id => ticket_2.display_id
-      assigns(:previous_ticket).should be_eql(ticket_1.display_id)
-      assigns(:next_ticket).should be_eql(ticket_3.display_id)
+      assigns(:previous_ticket).to_i.should eql ticket_3.display_id
+      assigns(:next_ticket).to_i.should eql ticket_1.display_id
     end
+
+    it "should load the next ticket of a ticket from the adjacent page" do
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      ticket = assigns(:items).first
+      30.times do |i|
+        create_ticket
+      end
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:next_ticket).to_i.should eql ticket.display_id
+    end
+
+    it "should load the next and previous tickets of a ticket with no filters" do
+      30.times do |i|
+        t = create_ticket
+      end
+      @request.cookies['filter_name'] = "0"
+      get :index
+      response.should render_template "helpdesk/tickets/index.html.erb"
+      last_ticket = assigns(:items).last
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => @account.id, 
+                                                          :user_id => @agent.id, 
+                                                          :session_id => session.session_id})
+      get :prevnext, :id => last_ticket.display_id
+      assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
+    end
+
 
     # Empty Trash
     it "should empty(delete) all tickets in trash view" do

@@ -611,15 +611,7 @@ en:
           new_app: New App
           no_app:
             title: Welcome to Mobihelp
-            heading1: You are 3 steps away from adding in-app support to your App
-            heading2: Get the latest SDK for iOS and Android
-            download_heading: Download Mobihelp
-            download_android: Download Android SDK
-            download_apple: Download iOS SDK
-            add_heading: Add Mobihelp to your App
-            learn: Learn More
-            configure_heading: Configure Mobihelp
-            configure: Configure
+            sdk_and_guide: Mobihelp SDK and Integration guide
         new:
           title: New Mobihelp App
         edit:
@@ -2729,8 +2721,8 @@ en:
     free_plan_currency_note: "When you upgrade or add agents, your payment will be in "
   activate: Activate
   feedbackwidget_button_text: Label
-  billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
-  billed_amount_annually: You will be billed <b>%{amount} annually</b>.
+  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.
+  amount_billed_annually: You will be billed <b>%{amount} annually</b>.
   currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
@@ -3368,6 +3360,9 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    quoted_text:
+      wrote_on: 'On'
+      wrote: wrote
     add_time: Add time
     support:
       reply: "Reply"
@@ -4041,6 +4036,7 @@ en:
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
            not_added: (Not Added)
+           not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
     merge:
       merge:

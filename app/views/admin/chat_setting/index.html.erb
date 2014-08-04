@@ -40,7 +40,7 @@
 					<div class="fields">
 						<div class="color">
 							<%= f.color_picker_tag(:class => "color_field required", 
-									:id => "window_color", :value => chat_color, :name => "window_color") %>
+									:id => "window_color", :value => chat_color, :name => "window_color", :maxlength => 10) %>
 							<label id="window_color_error" generated="true" class="error" style="display:none;">
 								<%=t('freshchat.valid_code')%>
 							</label>

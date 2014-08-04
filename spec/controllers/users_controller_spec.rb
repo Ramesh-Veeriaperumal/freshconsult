@@ -47,6 +47,16 @@ describe UsersController do
 		response.body.should =~ /redirected/
 	end
 
+	it "should update a user" do
+		now = (Time.now.to_f*1000).to_i
+		put :update,{:id => @user.id,
+					 :user => { :name => "user with profile image #{now}", :email => @user.email , :time_zone => @user.time_zone, 
+								:language => @user.language }
+		}
+		response.session["flash"][:notice].should eql "The user has been updated."
+		@account.users.find_by_name("user with profile image #{now}").should be_an_instance_of(User)
+	end
+
 	it "should view a user" do
 		get :show, :id => @user.id
 		response.redirected_to[:controller].should eql "contacts"

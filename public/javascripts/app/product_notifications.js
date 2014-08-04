@@ -9,13 +9,22 @@ window.App = window.App || {};
     App.ProductNotification = {
         suggestDelay : null,
         url : "https://support.freshdesk.com",
+
         articles: [{title : "Converting your Support Email into Freshdesk Tickets", url : "/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets"},
                    {title : "Rebranding your Support Portal to reflect your Theme", url : "/support/solutions/articles/37563-rebranding-your-support-portal-to-reflect-your-theme"},
                    {title : "Single Sign On / Remote Authentication in Freshdesk", url : "/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"},
-                   {title : "Using a Vanity Support URL and pointing the CNAME", url : "/support/solutions/articles/37590-using-a-vanity-support-url-and-pointing-the-cname"}],
-        contacts: [{country : "US / Canada", phone : "+1 866 832-3090"},
-                   {country : "Europe", phone : "+44 800 808-5790"},
-                   {country : "Australia", phone : "+61 894 687-228"}],    
+                   {title : "Using a Vanity Support URL and pointing the CNAME", url : "/support/solutions/articles/37590-using-a-vanity-support-url-and-pointing-the-cname"},
+                   {title : "Configuring and using Email Notifications", url : "/support/solutions/articles/37542-configuring-and-using-email-notifications"},
+                   {title : "Customizing your ticket form", url : "/support/solutions/articles/37595-customizing-the-ticket-form"},
+                   {title : "Creating an SPF record to ensure proper email delivery", url : "/support/solutions/articles/43170-creating-an-strong-spf-strong-strong-record-strong-to-ensure-proper-email-delivery"},
+                   {title : "Using FreshPlugs to integrate third party Apps", url : "/support/solutions/articles/32031-using-freshplugs-to-integrate-third-party-apps"},
+                   {title : "Getting feedback from your website (with the Feedback Widget)", url : "/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget-"},
+                   {title : "Adding new support agents", url : "/support/solutions/articles/37591-adding-new-support-agents-"}],
+
+        contacts: [{country : "USA & Canada", phone : "+1 866 832-3090"},
+                   {country : "UK", phone : "+44 800 808-5790"},
+                   {country : "Australia", phone : "+61 894 687-228"}], 
+
         initialize: function () {
             this.bindDocumentClick();
             this.bindNotification();
@@ -100,11 +109,12 @@ window.App = window.App || {};
                 var parent_check = $(ev.target).parents(".tabbable");
                 if (!parent_check.get(0)) {
                     $("#popoverContent").addClass("hide");
+                    $("#notifiication-icon").removeClass("active");
                 }
             });
         },
         bindNotification: function () {
-            jQuery(document).on("click.productnotification","#notifiication-icon",function(ev){
+            $(document).on("click.productnotification","#notifiication-icon",function(ev){
                 ev.stopPropagation();
                 $("#popoverContent").toggleClass('hide');
                 if ($(ev.currentTarget).hasClass("notification_present")) {
@@ -117,16 +127,18 @@ window.App = window.App || {};
                         }
                     });
                 }
+                $(ev.currentTarget).addClass("active");
             })
         },
         bindFeedbackLink: function () {
             $(document).on("click.productnotification", "#notify-feedback", function () {
                 $("#popoverContent").addClass("hide");
+                $("#notifiication-icon").removeClass("active");
                 FreshWidget.show();
             });
         },
         bindSearchField: function () {
-            jQuery(document).on("keydown.productnotification change.productnotification paste.productnotification", "#notification-article" ,$.proxy(function(ev){
+            $(document).on("keydown.productnotification change.productnotification paste.productnotification", "#notification-article" ,$.proxy(function(ev){
                 var $this = jQuery(ev.currentTarget);
                 clearTimeout(this.suggestDelay);
                 this.suggestDelay = setTimeout($.proxy(function() {

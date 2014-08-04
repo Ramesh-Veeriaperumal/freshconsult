@@ -38,12 +38,12 @@ module APIHelper
     clear_json
   end
 
-  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "attachments", "custom_field"]
-
+  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id", "attachments", "custom_field"]
+  
   NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments"]
 
-  TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails"]
-
+  TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
+  
   CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
 
   FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]

@@ -15,11 +15,12 @@ if Rails.env.test?
     t.created_at Time.now
   end
 
-  Factory.define :note, :class => Helpdesk::Note do |n|
+  Factory.define :helpdesk_note, :class => Helpdesk::Note do |n|
     n.body Faker::Lorem.paragraph(3)
     n.notable_id 1
     n.notable_type 'Helpdesk::Ticket'
     n.private false
+    n.incoming true
   end
 
   Factory.define :subscription, :class => Helpdesk::Subscription do |s|
@@ -66,12 +67,6 @@ if Rails.env.test?
   end
 
   Factory.define :picklist_value, :class => Helpdesk::PicklistValue do |f|
-  end
-
-  Factory.define :helpdesk_note, :class => Helpdesk::Note do |note|
-    note.deleted 0
-    note.incoming 0
-    note.private 1
   end
 
   Factory.define :sla_policies, :class => Helpdesk::SlaPolicy do |f|

@@ -105,7 +105,7 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
         @new_ca_res_folder = scoper.new
     end
 
-    def cname
+    def cname # possible dead code
       @cname ||= controller_name.singularize
     end
 

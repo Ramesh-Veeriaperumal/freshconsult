@@ -1,5 +1,3 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module SurveyHelper
 
   def create_survey_handle(ticket, send_while, note=nil)

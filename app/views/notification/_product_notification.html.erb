@@ -20,9 +20,9 @@
 			  	<div class="content-head header-border"><%= t('notification.whats_new_in_freshdesk') %></div>
 			  	<div id="content-notify" class="content-notify row-fluid">
 				  	<% object.each do |announcement| %>
-						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.updated_at.utc %>">
+						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.created_at.utc %>">
 							<a href="<%= announcement.url.to_s %>" target="_blank">
-								<p class="notify-title bold"> <%= announcement.title.to_s %></p>
+								<p class="notify-title"> <%= announcement.title.to_s %></p>
 								<p class="notify-content" > <%= truncate(announcement.message.to_s, :length => 90) %> </p>
 							</a>
 						</div>
@@ -66,7 +66,7 @@
 		                	<p class="support bold"><%= t('notification.contact_support')%></p>
 		                	<div class="contact-wrap row-fluid">
 		                		<a class="phone-icon icons span2"><%= font_icon "phone", { :size => 26 } %></a>
-		                		<div id="help-us" class="contact-detail span8"></div>
+		                		<div id="help-us" class="contact-detail span9"></div>
 		                	</div>
 		                </div>
 		            </div>
@@ -82,7 +82,7 @@
 
 <script id="article-tmpl" type="text/x-jquery-tmpl">
 	<li class="search_list">
-		<div class="list_content bold">
+		<div class="list_content">
 			<a href="https://support.freshdesk.com${url}" class="ellipsis" target="_blank">
 			<%= font_icon "file", { :size => 14 } %> <span class="searched_data ml15">{{html title}}</span>
 			</a>
@@ -91,7 +91,7 @@
 </script>
 
 <script id="help-us-tmpl" type="text/x-jquery-tmpl">
-	<p><span class="mr20">{{html country}}</span><span class="bold">{{html phone}}</span></p>
+	<p class="row-fluid contact-list"><span class="span6">{{html country}}</span><span class="span6 c-num">{{html phone}}</span></p>
 </script>
 
 <script>

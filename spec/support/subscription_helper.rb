@@ -1,6 +1,3 @@
-#require '../spec_helper'
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module SubscriptionHelper
 
 	CARD_NUMBERS = { :valid => "4111111111111111", :invalid => "4119862760338320", 

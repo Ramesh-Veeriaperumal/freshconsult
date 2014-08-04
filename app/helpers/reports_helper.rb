@@ -16,5 +16,9 @@ module ReportsHelper
 
 	    content_tag( :li, link_to( link_content.html_safe, item_info[:url].html_safe ) )
 	end
+
+  def freshfone_reports?
+    feature?(:freshfone) && !current_account.freshfone_numbers.empty?
+  end
   
 end

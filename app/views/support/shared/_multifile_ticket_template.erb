@@ -4,7 +4,7 @@
       <a href="#" class="close attach-close"
       onclick="Helpdesk.Multifile.remove(this);return false;" inputId="${inputId}">&times;</a>
     {{else}}
-      <%= content_tag(:span, t('helpdesk.tickets.note.attachment_size.not_added'), 
+      <%= content_tag(:span, t('helpdesk.tickets.note.attachment_size.not_added_greater'), 
                                 :class => "alert-invalid-text tooltip", 
                                 :title => t('helpdesk.tickets.note.attachment_size.exceed_limit')) %>
     {{/if}}
