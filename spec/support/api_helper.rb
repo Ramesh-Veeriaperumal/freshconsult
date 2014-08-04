@@ -52,9 +52,9 @@ module APIHelper
 
   TOPIC_ATTRIBS = ["account_id", "created_at", "delta", "forum_id", "hits", "id", "import_id", "last_post_id", "locked", "posts_count", "published", "replied_at", "replied_by", "stamp_type", "sticky", "title", "updated_at", "user_id", "user_votes"]
 
-  POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id"] 
+  POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id"]
 
-  SOLUTION_CATEGORY_ATTRIBS = ["created_at", "description", "id", "is_default", "name", "position", "updated_at"] 
+  SOLUTION_CATEGORY_ATTRIBS = ["created_at", "description", "id", "is_default", "name", "position", "updated_at"]
 
   SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "name", "position", "updated_at", "visibility"]
 

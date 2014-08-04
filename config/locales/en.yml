@@ -2054,6 +2054,7 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
+  utf_8_format: The file has to be in UTF-8 format.
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -4807,6 +4808,7 @@ en:
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        includes_transfer: "Note: Call count includes transferred calls"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -5383,6 +5385,7 @@ en:
       canceled: "Canceled"
       failed: "Failed"
       in_progress: "In progress"
+      voicemail: "Voicemail"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
       suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"

@@ -27,6 +27,7 @@ class Support::Discussions::PostsController < SupportController
 		@post  = @topic.posts.build(params[:post])
 		@post.user = current_user
 		@post.account_id = current_account.id
+		@post.portal = current_portal.id
 		@post.save!
 		create_attachments
 		respond_to do |format|

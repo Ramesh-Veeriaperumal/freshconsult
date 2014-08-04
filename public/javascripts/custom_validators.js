@@ -119,7 +119,7 @@
  
     return _returnCondition
 
- },jQuery.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
+ },jQuery.validator.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
 
   $.validator.addClassRules("requester", { requester: true });
 
@@ -137,7 +137,7 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
     return false;
   }
   return true;
-}, jQuery.format("Please enter a Email or Phone Number"));
+}, jQuery.validator.format("Please enter a Email or Phone Number"));
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
 
@@ -151,7 +151,7 @@ $.validator.addMethod("upload_size_validity", function(value,element){
     }
   }
   return true;
-},jQuery.format("Upload exceeds the available 15MB limit"));
+},jQuery.validator.format("Upload exceeds the available 15MB limit"));
 
 $.validator.addClassRules("upload_size_validity", { upload_size_validity: true });
 
@@ -159,7 +159,7 @@ $.validator.addClassRules("upload_size_validity", { upload_size_validity: true }
 // To check if atleast one role is present
 $.validator.addMethod("at_least_one_item", function(value, element, options) {
   return($($(element).data("selector")).size() != 0)
-}, jQuery.format("At least one role is required for the agent"));
+}, jQuery.validator.format("At least one role is required for the agent"));
 
 $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
 
@@ -283,7 +283,7 @@ $.validator.addMethod("zendesk_size_validity", function(value,element){
   }
   jQuery("#file_size_limit").toggle(!is_valid);
   return is_valid;
-},jQuery.format(''));
+},jQuery.validator.format(''));
 
 $.validator.addClassRules("zendesk_size_validity", { zendesk_size_validity: true });
 

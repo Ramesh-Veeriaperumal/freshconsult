@@ -91,6 +91,7 @@ class Support::Discussions::TopicsController < SupportController
       @post.topic = @topic
       @post.user  = current_user
       @post.account_id = current_account.id
+      @post.portal = current_portal.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       build_attachments

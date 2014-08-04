@@ -168,6 +168,7 @@ var FreshfoneUser,
 			$.ajax({
 				type: "POST",
 				url: "/freshfone/users/presence",
+        dataType: "json",
 				async: async,
 				data: { "status": this.status }
 			});
@@ -215,6 +216,7 @@ var FreshfoneUser,
 			self.setStatus(userStatus.BUSY);
 			$.ajax({
 				type: 'POST',
+        dataType: "json",
 				url: '/freshfone/users/in_call',
 				data: { 'From': this.freshfonecalls.tConn.parameters.From,
 								'To': this.freshfonecalls.tConn.parameters.To,

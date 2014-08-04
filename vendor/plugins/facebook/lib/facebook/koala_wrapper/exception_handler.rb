@@ -19,14 +19,20 @@ module Facebook::KoalaWrapper::ExceptionHandler
 
           #requeue if api limit is reached
           $sqs_facebook.requeue(@feed.feed) if @intial_feed && !return_value
-
-          Rails.logger.debug "API Limit reached - #{e.to_s} :: account_id => #{@fan_page.account_id} :: id => #{@fan_page.id} "
+          
+          fb_msg = "Facebook API Limit reached"
+          Rails.logger.debug fb_msg
           newrelic_custom_params =  {
             :custom_params => {
-              :error_type => e.fb_error_type,
-              :error_msg => e.to_s
+              :error_type     => e.fb_error_type,
+              :error_msg      => e.to_s,
+              :account_id     => @fan_page.account_id,
+              :facebook_page  => @fan_page.page_id,
+              :fb_page_id     => @fan_page.id
             }
           }
+          
+          raise_sns_notification(fb_msg, newrelic_custom_params)
           NewRelic::Agent.notice_error(e, newrelic_custom_params)
         else
           if @fan_page && !@fan_page.reauth_required
@@ -72,6 +78,14 @@ module Facebook::KoalaWrapper::ExceptionHandler
       end
       return return_value
     end
+    
+    def raise_sns_notification(subject, message)
+      message = {} unless message
+      message.merge!(:environment => Rails.env)
+      topic = SNS["social_notification_topic"]
+      DevNotification.publish(topic, subject, message.to_json)
+    end
+    
   end
 
 end

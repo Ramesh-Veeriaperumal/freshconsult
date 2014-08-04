@@ -94,7 +94,7 @@ class Social::WelcomeController < ApplicationController
   end  
   
   def can_view_welcome_page?
-    basic_previlege = privilege?(:view_admin) && can_view_social? && feature?(:social_revamp) && additional_settings?
+    basic_previlege = privilege?(:view_admin) && can_view_social? && additional_settings?
     if basic_previlege
       redirect_to social_streams_url if handles_associated?
     else

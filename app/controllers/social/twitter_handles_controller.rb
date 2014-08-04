@@ -324,10 +324,9 @@ class Social::TwitterHandlesController < ApplicationController
     'Twitter'
   end
   
-  def check_social_revamp_feature
-    if current_account.features?(:social_revamp)
-      action_name == "index" ? (redirect_to :admin_social_streams) : (redirect_to :social_streams)
-    end
+  def check_social_revamp_feature # If the old ui url is hit directly, redirect to new UI
+    action_name == "index" ? (redirect_to :admin_social_streams) : ( current_account.twitter_handles_from_cache.blank? ? 
+      (redirect_to :social_welcome_index)  : (redirect_to :social_streams) )
   end
 
 end

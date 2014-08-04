@@ -1,4 +1,4 @@
-# encoding: utf-8
+ [#3733] fixing the requester name we show when there are no recent - Venky# encoding: utf-8
 require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base
@@ -565,6 +565,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_attributes = [] if options[:shallow]
     super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name, :product_id]) do |xml|
+      :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.to_emails do
         self.to_emails.each do |emails|
           xml.tag!(:to_email,emails)

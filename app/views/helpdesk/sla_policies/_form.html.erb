@@ -75,8 +75,7 @@
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.applicable_to').html_safe}:" , :class => "large" %>
 		<p class="muted"><%= t('sla_policy.applicable_details').html_safe %></p>
-		<label for="sla_policy_conditions" class="hide">
-			<%= t('sla_policy.applicable_error').html_safe %>
+		<label for="sla_policy_conditions" class="hide" data-error-text="<%= t('sla_policy.applicable_error').html_safe %>">
 		</label>
 	    <% f.fields_for :conditions do |a| %>
 	    <div class="sla_policy_conditions_container">

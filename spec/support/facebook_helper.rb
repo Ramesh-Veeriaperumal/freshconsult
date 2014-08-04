@@ -151,6 +151,7 @@ module FacebookHelper
       "privacy" => {
         "value" => ""
       }, 
+      "type" => "status", 
       "status_type" =>  "mobile_status_update", 
       "created_time" => "2014-04-28T12:06:36+0000", 
       "updated_time" => "2014-04-28T12:06:36+0000"
@@ -309,10 +310,9 @@ module FacebookHelper
           "name" => Faker::Lorem.sentence(1), 
           "id" => (Time.now.utc.to_f * 1000).to_i
         }, 
-        "time" => (Time.now.utc.to_f).to_i,
-        "text" => Faker::Lorem.sentence(3),
+        "message" => Faker::Lorem.sentence(3),
         "can_remove" => true, 
-        "created_time" => (Time.now.utc.to_f).to_i, 
+        "created_time" => Time.now.utc.iso8601, 
         "like_count" => 0, 
         "user_likes" => false
       }
