@@ -5602,7 +5602,7 @@ en:
         about_recording: "Record customer conversations and access it anywhere"
         read_more: "Read more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_subject: "Freshfone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
         success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
         error_message: "Sorry we can not make your request right now. Try again later."
