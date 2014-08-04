@@ -17,7 +17,8 @@ class SpecFilter < SimpleCov::Filter
     'app/controllers/helpdesk/issues_controller.rb',
     'app/controllers/helpdesk/tag_uses_controller.rb',
     'app/controllers/social/twitter_handles_controller.rb',
-    'app/models/helpdesk/issue.rb'
+    'app/models/helpdesk/issue.rb',
+    'app/models/flexifield_picklist_val.rb'
   ]
 
   IGNORE_LIST = [
@@ -31,7 +32,8 @@ class SpecFilter < SimpleCov::Filter
     'lib/faye/agent_collision.rb', 
     'lib/guid.rb', 
     'lib/admin_controller_methods.rb',
-    'app/models/admin_user.rb'
+    'app/models/admin_user.rb',
+    'app/models/conversion_metric.rb'
   ]
 
   MAILER_MODELS = [

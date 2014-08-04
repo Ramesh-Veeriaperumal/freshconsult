@@ -1,6 +1,7 @@
 require "spec_helper"
 
 describe Admin::ChatSettingController do
+	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 	
@@ -52,14 +53,14 @@ describe Admin::ChatSettingController do
 		
 		secondState=@account.features? :chat_enable
 		secondState.should_not eql firstState
-		response.should render_template("/admin/chat_setting/_toggle.rjs")
+		response.should render_template("admin/chat_setting/_toggle.rjs")
 
 		post :toggle
 		@account.reload
 
 		thirdState=@account.features? :chat_enable
 		thirdState.should eql firstState
-		response.should render_template("/admin/chat_setting/_toggle.rjs")
+		response.should render_template("admin/chat_setting/_toggle.rjs")
 
 
 	end
