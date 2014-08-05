@@ -14,8 +14,15 @@
 </div>
 <div class="pull-right email-settings-bcc">
   <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, :length => 20, :omission => '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
-  <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
-  <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
+  <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')), 
+              { :controller => 'admin/account_additional_settings', 
+                :action => "assign_bcc_email" }, 
+              :class => "", 
+              :rel => "freshdialog", 
+              :title => t('email_configs.set_bcc_email_text'), 
+              :"data-target" => "#assign-bcc", 
+              :"data-width" => "400" ) %>
+  <%= content_tag :i, "", :class => "tooltip #{font_class(:help)} email-help", :title => t('email_configs.info17')%>
 </div>
 <div class="list-page">
   <h4 class="sub-lead"><%=t('email_configs.global_support_emails')%></h4>

@@ -570,7 +570,7 @@ Helpkit::Application.routes.draw do
 
     resources :account_additional_settings do
       collection do
-        post :assign_bcc_email
+        get :assign_bcc_email
         put :update
       end
       member do

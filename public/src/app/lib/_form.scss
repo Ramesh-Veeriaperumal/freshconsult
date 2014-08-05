@@ -1833,7 +1833,7 @@ ul.ui-form .inputs-list{
 				@include inline-block;
 				span{
 					position: absolute;
-				 @include left(0px);
+				 	@include left(0px);
 					top: 4px;
 					background: url("/images/email_config_add.png") no-repeat;
 					width: 25px;
