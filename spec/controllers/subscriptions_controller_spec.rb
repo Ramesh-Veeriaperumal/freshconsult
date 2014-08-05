@@ -27,6 +27,23 @@ describe SubscriptionsController do
     log_in(@user)
   end
 
+  it "should get subscription amount in trial" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "calculate_amount", { :currency => "USD", :plan_id => 1, 
+      :agent_limit => 1, :billing_cycle => 3 }
+
+    response.should render_template 'subscriptions/_calculate_amount.html.erb'
+    response.should render_template 'subscriptions/_calculate_amount.html.erb'
+  end
+
+  it "should get subscription plan amount" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "calculate_plan_amount", { :currency => "USD", :plan_id => 1, 
+      :agent_limit => 1, :billing_cycle => 3 }
+
+    response.should render_template 'subscriptions/_select_plans.html.erb'
+  end
+  
   it "should update plan" do
     @request.env["HTTP_ACCEPT"] = "application/json"
     post "plan", :plan_id => 3, :agent_limit => 10, :billing_cycle => 1, :currency => "USD"
@@ -94,6 +111,14 @@ describe SubscriptionsController do
     @account.subscription.card_number.should be_present
     @account.subscription.card_expiration.should be_present
     @account.subscription.state.should eql "active"
+  end
+
+  it "should get subscription amount when active" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "calculate_amount", { :currency => "USD", :plan_id => 1, 
+      :agent_limit => 1, :billing_cycle => 3 }
+
+    response.should render_template 'subscriptions/_calculate_amount.html.erb'
   end
 
 

@@ -147,7 +147,8 @@ HelpdeskTests = [
 BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
-  "spec/controllers/partner_admin/affiliates_controller_spec.rb"
+  "spec/controllers/partner_admin/affiliates_controller_spec.rb",
+  "spec/controllers/admin/day_passes_controller_spec.rb"
 ]       
 
 FunctionalTests = [
