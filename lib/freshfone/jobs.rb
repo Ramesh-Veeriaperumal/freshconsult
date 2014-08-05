@@ -104,7 +104,7 @@ module Freshfone::Jobs
 
 			def self.create_voicemail_ticket(args)
 				set_current_call(@call)
-				voicmail_ticket(args)
+				voicmail_ticket(args) if @call.ticket.blank?
 			end
 
 			def self.release_data
