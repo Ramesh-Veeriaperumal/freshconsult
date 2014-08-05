@@ -52,6 +52,16 @@ if node[:opsworks]
                                      :comment => "service restart from master"
 
         })
+        newrelic_key = (node["opsworks"]["environment"] == "production") ? "53e0eade912ffb2c559d6f3c045fe363609df3ee" : "7a4f2f3abfd0f8044580034278816352324a9fb7"
+        long_user_string = node["deploy"][node["opsworks"]["applications"][0]["slug_name"]]["deploying_user"]
+        #something like: "arn:aws:iam::(long-number):user/username"
+        username = long_user_string.split('/').last
+        Chef::Log.debug "curl -H \"x-license-key:#{newrelic_key}\" -d \"deployment[app_name]=#{node['opsworks']['stack']['name']} / helpkit (#{node['opsworks']['environment']})\" -d \"deployment[user]=#{username}\" https://rpm.newrelic.com/deployments.xml"
+        begin
+          run "curl -H \"x-license-key:#{newrelic_key}\" -d \"deployment[app_name]=#{node['opsworks']['stack']['name']} / helpkit (#{node['opsworks']['environment']})\" -d \"deployment[user]=#{username}\" https://rpm.newrelic.com/deployments.xml"
+        rescue  Exception => e  
+          Chef::Log.debug "The following error occurred: #{e.message}"
+        end
       end
     else
       # restart nginx for custom deployment without master only for old instances
