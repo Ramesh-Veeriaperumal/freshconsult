@@ -27,7 +27,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
