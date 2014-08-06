@@ -23,7 +23,7 @@ class UserSession < Authlogic::Session::Base
     generated_hash = Digest::SHA512.hexdigest("#{SECRET_KEY}::#{self.attempted_record.id}")
     controller.cookies['helpdesk_node_session'] = {
       :value => generated_hash, 
-      :httponly => true
+      # :httponly => true # TODO: Please Enable this once we assess the Auth Mechanism. Security Vulnerability.
     }
   end
 
@@ -36,7 +36,7 @@ class UserSession < Authlogic::Session::Base
       generated_hash = Digest::SHA512.hexdigest("#{SECRET_KEY}::#{self.attempted_record.id}")
       controller.cookies['helpdesk_node_session'] = {
         :value => generated_hash, 
-        :httponly => true
+      # :httponly => true # TODO: Please Enable this once we assess the Auth Mechanism. Security Vulnerability.
       }
     end
   end
