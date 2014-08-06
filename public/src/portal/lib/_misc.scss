@@ -24,7 +24,8 @@
 // Attachment overrides
 .attach-wrapper{
 	background: #fafafa;
-    border-bottom-radius:$inputBorderRadius;
+    border-bottom-left-radius:$inputBorderRadius;
+    border-bottom-right-radius:$inputBorderRadius;
     padding: 10px 12px 3px;
     border: 1px solid #c6c6c6;
     margin-top: -3px;
