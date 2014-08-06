@@ -524,6 +524,12 @@
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
   end
 
+  map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'create', :conditions => { :method => :post }
+  map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'categories', :conditions => { :method => :get } 
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'show',  :conditions => { :method => :get }
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'destroy', :conditions => { :method => :delete }
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'update', :conditions => { :method => :put }
+
   map.resources :discussions, :collection => { :your_topics => :get, :sidebar => :get, :categories => :get, :reorder => :put }
 
   map.resources :discussions
