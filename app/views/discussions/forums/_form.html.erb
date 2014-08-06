@@ -4,9 +4,9 @@
 <%= form.error_messages %>
 <div class="form-horizontal">
 	<div class="control-group">
-		<label class="control-label"><%=t('title')%></label>
+		<label class="control-label"><%=t('title')%><span class='required_star'>*</span></label>
 		<div class="controls">
-			<%= form.text_field :name, :class => "primary input-xxlarge" %>
+			<%= form.text_field :name, :class => "primary input-xxlarge required" %>
 		</div>
 	</div>
 	<div class="control-group">
@@ -50,9 +50,11 @@
 			var visiblity = jQuery('#forum_forum_visibility').val();
 			if (visiblity == <%= Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>) {
 			   jQuery('#company_forums').show();
+			   jQuery("#company_forums #customers_filter").addClass("required");
 			} else {
 			  jQuery('#customers_filter').val("");
 			  jQuery("#customers_filter").trigger("liszt:updated");
+			  jQuery("#company_forums #customers_filter").removeClass("required");
 			  jQuery('#company_forums').hide();
 			}
 		};
