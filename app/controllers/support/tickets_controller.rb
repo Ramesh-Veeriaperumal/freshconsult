@@ -174,7 +174,6 @@ class Support::TicketsController < SupportController
   private
   
     def update_reply_cc cc_hash, old_cc_hash
-      debugger
       if cc_hash[:reply_cc]
         removed = cc_hash[:reply_cc] - cc_hash[:cc_emails]
         added = cc_hash[:cc_emails] - old_cc_hash[:cc_emails]
