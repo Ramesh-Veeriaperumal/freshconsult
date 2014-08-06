@@ -111,7 +111,7 @@ class Support::TicketsController < SupportController
     def load_item
       @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       # Using .dup as otherwise it references the same address quoting same values.
-      @old_cc_hash = @ticket and @ticket.cc_email_hash ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
+      @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
       @item || raise(ActiveRecord::RecordNotFound)      
     end
 
