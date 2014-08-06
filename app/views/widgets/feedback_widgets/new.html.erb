@@ -16,7 +16,7 @@
 <%= hidden_field_tag "searchInputFrom" %>
 <div class="modal-body">
 <% formTitle = h params[:formTitle] %>
-<% submit_message = h params[:submitThanks] %>
+<% submit_message = params[:submitThanks] %>
 <% form_for :helpdesk_ticket, @ticket,
 		:url => widgets_feedback_widget_path(:submit_message => submit_message, :formTitle => formTitle, :widgetType => widget_type),
 		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>

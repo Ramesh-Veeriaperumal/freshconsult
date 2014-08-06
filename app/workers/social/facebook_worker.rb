@@ -14,16 +14,15 @@ module Social
     def perform(msg)
       account = Account.current
       facebook_pages = execute_on_db do 
-        account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])
+        account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
       end
       facebook_pages.each do |fan_page|
-          #This will get removed
-          fetch_fb_posts(fan_page) unless fan_page.realtime_subscription
-          if fan_page.import_dms && !(fan_page.last_error &&
-                                  fan_page.last_error.include?(ERROR_MESSAGES[:mailbox_error]))
-              fetch_fb_messages fan_page
-          end
-       end
+        #This will get removed
+        fetch_fb_posts(fan_page) unless fan_page.realtime_subscription
+        if fan_page.import_dms and fan_page.last_error.nil?
+            fetch_fb_messages fan_page
+        end
+     end
     ensure
       Account.reset_current_account
     end

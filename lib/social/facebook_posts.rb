@@ -129,7 +129,7 @@ class Social::FacebookPosts
     unless @ticket.blank?
       comments.each do |comment|
         comment.symbolize_keys!
-        profile_id = comment[:from]["id"]
+        profile_id = comment[:from].is_a?(Hash) ? comment[:from]["id"] : comment[:from]
         user = get_facebook_user(profile_id)
 
         @note = @ticket.notes.build(

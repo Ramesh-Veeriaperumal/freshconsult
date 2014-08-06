@@ -19,12 +19,13 @@ module Conversations::Email
   end
 
   def add_cc_email #possible dead code
-    cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : @parent.cc_email_hash
+    cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : @parent.cc_email_hash
     if @item.fwd_email?
       fwd_emails = @item.to_emails | @item.cc_emails | @item.bcc_emails | cc_email_hash_value[:fwd_emails]
       fwd_emails.delete_if {|email| (email == @parent.requester.email)}
       cc_email_hash_value[:fwd_emails]  = fwd_emails
     else
+      cc_email_hash_value[:reply_cc] = @item.cc_emails.reject {|email| (email == @parent.requester.email)}
       cc_emails = @item.cc_emails | cc_email_hash_value[:cc_emails]
       cc_emails.delete_if {|email| (email == @parent.requester.email)}
       cc_email_hash_value[:cc_emails] = cc_emails

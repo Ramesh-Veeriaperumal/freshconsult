@@ -1,4 +1,4 @@
-
+require 'timeout'
 
 class Import::Attachment
   include Import::Zen::Redis
@@ -26,9 +26,11 @@ class Import::Attachment
     end
     if @item
      begin
-        file = RemoteFile.new(attach_url, username, password)
+        file = Timeout.timeout(60) { RemoteFile.new(attach_url, username, password) }
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
         @item.update_es_index if attachment.save!
+      rescue Timeout::Error => ex
+        raise Timeout::Error, "Timeout on attachment import"
       rescue => e
         puts "#{e.message}\n#{e.backtrace.join("\n")}"
         puts "Attachment exceed the limit!"

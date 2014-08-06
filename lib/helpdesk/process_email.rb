@@ -240,7 +240,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :reply_cc => parse_cc_email},
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -532,10 +532,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : ticket.cc_email_hash
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : ticket.cc_email_hash
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
+      cc_email_hash_value[:reply_cc] = cc_emails_val
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end

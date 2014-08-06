@@ -27,8 +27,7 @@ module Helpdesk::TicketModelExtension
       {:label => "Agent interactions", :value => "outbound_count", :selected => false},
       {:label => "Customer interactions", :value => "inbound_count", :selected => false},
       {:label => "Resolution Status", :value => "resolution_status", :selected => false},
-      {:label => "First Response Status", :value => "first_response_status", :selected => false},
-      {:label =>  "Facebook Profile ID", :value => "requester_fb_profile_id", :selected => false}
+      {:label => "First Response Status", :value => "first_response_status", :selected => false}
      ]
    end
 

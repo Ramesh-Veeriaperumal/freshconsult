@@ -44,6 +44,41 @@ describe Support::TicketsController do
     @account.tickets.find_by_subject(test_subject).should be_an_instance_of(Helpdesk::Ticket)
   end
 
+  it "should create a new ticket with cc_emails" do
+    test_subject = Faker::Lorem.sentence(4)
+    post :create, { :helpdesk_ticket => { :email => "rachel@freshdesk.com", 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
+                                        }, 
+                    :cc_emails => "superman@marvel.com,avengers@marvel.com", 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}}
+    ticket = @account.tickets.find_by_subject(test_subject)
+    ticket.cc_email_hash[:cc_emails].should eql ticket.cc_email_hash[:reply_cc]
+  end
+
+  it "should affect reply_cc when adding/removing ticket cc_emails" do
+    test_subject = Faker::Lorem.sentence(4)
+    post :create, { :helpdesk_ticket => { :email => "rachel@freshdesk.com", 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
+                                        }, 
+                    :cc_emails => "superman@marvel.com,avengers@marvel.com, batman@gothamcity.com", 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}}
+    ticket = @account.tickets.find_by_subject(test_subject)
+    ticket.cc_email_hash[:reply_cc] = ["superman@marvel.com", "batman@gothamcity.com"]
+    ticket.update_attribute(:cc_email, ticket.cc_email_hash)
+
+    put :add_people, { :helpdesk_ticket => { :cc_email => { :cc_emails => "avengers@marvel.com, batman@gothamcity.com, roadrunner@looneytoons.com"}
+                                            }, 
+                        :id =>ticket.id
+                      }
+    ticket.cc_email_hash[:reply_cc] = ["batman@gothamcity.com", "roadrunner@looneytoons.com"]
+  end
+
   it "should create a new ticket with format - JSON" do
     test_subject = Faker::Lorem.sentence(4)
     post :create, { :helpdesk_ticket => { :email => Faker::Internet.email, 
