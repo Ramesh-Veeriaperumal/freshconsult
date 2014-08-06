@@ -28,6 +28,11 @@ describe Billing::BillingController do
 
   it "should update subscription and adds(/removes) a feature as addon" do  	
     billing_result = build_test_billing_result(@account.id)
+    @account.subscription.addons = [ Subscription::Addon.first ]
+    @account.subscription.agent_limit = 1
+    
+    Billing::Subscription.new.update_subscription(@account.subscription, true, @account.subscription.addons)
+    
     post "trigger", event_params(@account.id, "subscription_changed")
 
     plan = retrieve_plan(billing_result.subscription.plan_id)
@@ -47,6 +52,9 @@ describe Billing::BillingController do
   end
 
 	it "should activate free subscription" do
+    @account.subscription.addons = []    
+    Billing::Subscription.new.update_subscription(@account.subscription, true, @account.subscription.addons)
+
     plan = SubscriptionPlan.find_by_name("Sprout")
     @account.subscription.subscription_plan = plan
     @account.subscription.convert_to_free

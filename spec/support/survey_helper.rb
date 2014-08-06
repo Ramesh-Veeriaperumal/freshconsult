@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module SurveyHelper
 
   def create_survey_handle(ticket, send_while, note=nil)

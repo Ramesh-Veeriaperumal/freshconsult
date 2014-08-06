@@ -2,13 +2,10 @@ class EnableGoogleSigninForDisabledAccounts < ActiveRecord::Migration
 	shard :all
 
   def self.up
-  	count = 0
-		Sharding.run_on_shard("shard_2") do
-			puts "Entering a Shard"
-			Account.find_in_batches(:batch_size => 300, :conditions => ['id > ?',123353]) do |accounts|
-				count = count + 1
-				accounts.each do |account|
-					acc = Account.find(account.id)
+  	ShardMapping.find_in_batches(:batch_size => 300) do |shards|
+			shards.each do |shard|
+				Sharding.select_shard_of shard.account_id do
+					acc = Account.find shard.account_id
 					acc.make_current
 					if !acc.features?(:google_signin)
 						acc.features.google_signin.create
@@ -17,7 +14,6 @@ class EnableGoogleSigninForDisabledAccounts < ActiveRecord::Migration
 				end
 				Account.reset_current_account
 			end
-			puts "Batch #{count} done"
 		end
   end
 

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module SubscriptionHelper
 
 	CARD_NUMBERS = { :valid => "4111111111111111", :invalid => "4119862760338320", 
@@ -53,6 +51,12 @@ module SubscriptionHelper
 			:password => AppConfig["reseller_portal"]["password"],
 			:shared_secret => AppConfig["reseller_portal"]["shared_secret"]
 		}
+	end
+
+	def active_merchant_card_object
+		card = { :number => CARD_NUMBERS[:valid], :verification_value => "123", :month => "1", 
+			:year => 2.years.from_now.year }
+		ActiveMerchant::Billing::CreditCard.new(card)
 	end
 
 end

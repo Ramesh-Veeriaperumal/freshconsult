@@ -38,7 +38,7 @@ if node[:opsworks]
     # master node else restart nginx that means a partial deployment
     if master_node_id && instance_ids.include?(master_node_id)
       # trigger deployment incase of masternode else don't do anything
-      if node[:opsworks][:instance][:hostname].include?(master_node)
+      if node[:opsworks][:instance][:hostname] == master_node
         # custom_json = "{\"custom_deployment_id\":\"#{node[:opsworks][:deployment].first}\",\"custom_stack_id\":\"#{stack_id}\"}"
         opsworks.create_deployment({
                                      :stack_id =>  stack_id,

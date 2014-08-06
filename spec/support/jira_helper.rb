@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module JiraHelper
 
 	def create_installed_application(account)

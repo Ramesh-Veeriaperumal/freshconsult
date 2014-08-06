@@ -15,10 +15,10 @@
       old_num_of_calls = calls_count(old_calls)
       old_unanswered_count = unanswered_calls_count(old_calls)
       old_voice_count = voicemails_count(old_calls)
-      old_answered_count = num_of_calls - unanswered_count
+      old_answered_count = old_num_of_calls - unanswered_count
       %>
       <% old_avg_time_in_secs = avg_handle_time(old_calls) || 0
-        old_seconds = ((avg_time_in_secs%3600)%60).round
+        old_seconds = ((old_avg_time_in_secs%3600)%60).round
         %>
         <!-- end old calls -->
       <ul class="inline">

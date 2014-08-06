@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module ForumHelper
 
 	PHONE_NUMBERS = ["1-234-567-8901", "1-234-567-8901 x1234", "1-234-567-8901 ext1234", "1 (234) 567-8901", "12345678901",

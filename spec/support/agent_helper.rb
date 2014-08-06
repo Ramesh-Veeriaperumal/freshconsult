@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module AgentHelper
 
   def add_agent_to_account(account, options={})

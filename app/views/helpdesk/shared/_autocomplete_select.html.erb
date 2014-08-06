@@ -75,7 +75,7 @@ jQuery(document).ready(function() {
 
   jQuery("#<%=container%>_filter").select2("val",[]);
 
-  jQuery("#<%=container%>_filter").on("change", function(){
+  jQuery(".ticket_list #<%=container%>_filter").on("change", function(){
     toggle_save_and_refresh();
   });  
 

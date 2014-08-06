@@ -2055,6 +2055,7 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
+  utf_8_format: The file has to be in UTF-8 format.
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -2721,8 +2722,8 @@ en:
     free_plan_currency_note: "When you upgrade or add agents, your payment will be in "
   activate: Activate
   feedbackwidget_button_text: Label
-  billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
-  billed_amount_annually: You will be billed <b>%{amount} annually</b>.
+  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.
+  amount_billed_annually: You will be billed <b>%{amount} annually</b>.
   currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
@@ -3360,6 +3361,9 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    quoted_text:
+      wrote_on: 'On'
+      wrote: wrote
     add_time: Add time
     support:
       reply: "Reply"
@@ -4033,6 +4037,7 @@ en:
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
            not_added: (Not Added)
+           not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
     merge:
       merge:
@@ -4804,6 +4809,7 @@ en:
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        includes_transfer: "Note: Call count includes transferred calls"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -5380,6 +5386,7 @@ en:
       canceled: "Canceled"
       failed: "Failed"
       in_progress: "In progress"
+      voicemail: "Voicemail"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
       suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"
@@ -5596,7 +5603,7 @@ en:
         about_recording: "Record customer conversations and access it anywhere"
         read_more: "Read more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_subject: "Freshfone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
         success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
         error_message: "Sorry we can not make your request right now. Try again later."

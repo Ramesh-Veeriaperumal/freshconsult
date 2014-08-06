@@ -42,7 +42,7 @@ describe Admin::AccountAdditionalSettingsController do
 			@account.features.dynamic_content.create unless @account.features?(:dynamic_content)
 			@template_eng = create_dynamic_notification_template({:language => :en, :email_notification_id => 3})
 			@template_ca = create_dynamic_notification_template({:language => :ca, :email_notification_id => 2})
-			@account.account_additional_settings.update_attributes({:supported_languages => [:en, :tr]})
+			@account.account_additional_settings.update_attributes({:supported_languages => ["en", "tr"]})
 		end
 		
 		before(:each) do
@@ -50,10 +50,10 @@ describe Admin::AccountAdditionalSettingsController do
 		end
 	
 		it "should add or remove the support languages" do
-			changed_languages = [:fi,:cs,:ca]
+			changed_languages = ["fi","cs","ca"]
 			put :update, {
 				:account_additional_settings => {
-					:supported_languages =>  [:fi,:cs,:ca]
+					:supported_languages =>  ["fi","cs","ca"]
 				}
 			}
 			@account.reload

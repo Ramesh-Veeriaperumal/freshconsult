@@ -198,6 +198,54 @@ describe Admin::EmailConfigsController do
     delayed_job.handler.should include("AR:EmailConfig:#{new_email_config.id}")
   end
 
+  it "should edit the primary email config in to a custom mailbox and verify emails are being sent" do
+    @account.features.mailbox.create
+    test_email = "dev-ops@freshpo.com"
+    email_config = @account.primary_email_config
+    imap_mailbox = Factory.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
+    imap_mailbox.save
+    smtp_mailbox = Factory.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
+    smtp_mailbox.save
+    put :update, {  :id => email_config.id,
+                    :email_config => {:name => Faker::Name.name, 
+                                      :reply_email => test_email, 
+                                      :group_id => "", 
+                                      :to_email => "freshpocomdev-ops@#{@account.full_domain}", 
+                                      :smtp_mailbox_attributes => { :_destroy => "0",
+                                                                    :server_name => "smtp.gmail.com",
+                                                                    :port => "587",
+                                                                    :use_ssl => "true",
+                                                                    :authentication => "plain",
+                                                                    :user_name => test_email,
+                                                                    :password => "freshstage123",
+                                                                    :domain => "freshpo.com",
+                                                                    :id => smtp_mailbox.id
+                                                                  }, 
+                                      :imap_mailbox_attributes => { :_destroy => "0", 
+                                                                    :server_name => "imap.gmail.com",
+                                                                    :port => "993",
+                                                                    :use_ssl => "true",
+                                                                    :delete_from_server => "0",
+                                                                    :authentication => "plain",
+                                                                    :user_name => test_email,
+                                                                    :password => "freshstage123",
+                                                                    :folder => "inbox",
+                                                                    :id => imap_mailbox.id
+                                                                  }
+                                      }
+                  }
+    delayed_job = Delayed::Job.last
+    delayed_job.handler.should include("deliver_activation_instructions")
+    delayed_job.handler.should include("AR:EmailConfig:#{email_config.id}")
+    EmailConfig.find(email_config.id).update_attributes(:active => true)
+    email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)
+    email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
+    Delayed::Job.destroy_all
+    test_ticket = create_ticket
+    3.times do Delayed::Job.reserve_and_run_one_job end
+    clear_email_config
+  end
+
   it "should edit an email config with custom IMAP and SMTP mailboxes" do
     email_config = Factory.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
     email_config.save

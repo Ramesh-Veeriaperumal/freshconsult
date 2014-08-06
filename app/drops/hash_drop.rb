@@ -5,7 +5,7 @@ class HashDrop < Liquid::Drop
   end
   
   def before_method(method)
-    @options[method.to_sym]
+    CGI::escapeHTML("#{@options[method.to_sym]}")
   end
   
 end

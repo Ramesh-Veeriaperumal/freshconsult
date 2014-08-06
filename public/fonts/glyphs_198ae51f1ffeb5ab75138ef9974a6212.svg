@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2014-7-24: Created.
+2014-8-5: Created.
 -->
 <svg xmlns="http://www.w3.org/2000/svg">
 <metadata>
-Created by FontForge 20120731 at Thu Jul 24 15:26:08 2014
- By Vadivelmsc
-Created by Vadivelmsc with FontForge 2.0 (http://fontforge.sf.net)
+Created by FontForge 20120731 at Tue Aug  5 10:05:16 2014
+ By Munawar
+Created by Munawar with FontForge 2.0 (http://fontforge.sf.net)
 </metadata>
 <defs>
 <font id="glyphs" horiz-adv-x="398" >
@@ -22,7 +22,7 @@ Created by Vadivelmsc with FontForge 2.0 (http://fontforge.sf.net)
     bbox="-0.424634 -65 512.777 448"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F164"
+    unicode-range="U+F100-F165"
   />
     <missing-glyph />
     <glyph glyph-name="uniF135" unicode="&#xf135;" 
@@ -217,6 +217,8 @@ h46z" />
 d="M263 55c0 -5 0 -11 1 -16h-228c-20 0 -36 15 -36 35v223c6 -5 12 -10 19 -13l164 -82c12 -6 29 -9 45 -9s32 3 44 9l164 82c7 3 13 8 19 13v-88c-11 2 -22 4 -34 4c-86 0 -158 -72 -158 -158zM32 307c-18 9 -32 29 -32 45s16 28 36 28h383c20 0 36 -12 36 -28
 s-14 -36 -32 -45l-164 -82c-9 -4 -20 -6 -32 -6c-11 0 -22 2 -31 6zM431 23c-15 -7 -31 -10 -50 -10c-46 0 -84 29 -84 77c0 51 40 95 102 95c49 0 81 -30 81 -71c0 -37 -24 -59 -50 -59c-11 0 -21 6 -20 21h-2c-10 -15 -22 -21 -39 -21c-16 0 -30 11 -30 31
 c0 31 27 59 66 59c12 0 23 -3 30 -6l-10 -44c-4 -19 0 -28 9 -28c14 0 30 16 30 45c0 36 -25 62 -68 62c-46 0 -83 -32 -83 -82c0 -41 30 -67 71 -67c16 0 32 2 43 8zM416 130c-3 1 -8 1 -14 1c-25 0 -45 -20 -45 -44c0 -11 7 -19 19 -19c16 0 31 19 34 34z" />
+    <glyph glyph-name="uniF165" unicode="&#xf165;" horiz-adv-x="412" 
+d="M206 375c114 0 206 -76 206 -170c0 -104 -119 -201 -282 -158l-117 -38l29 94c-26 26 -42 62 -42 102c0 94 92 170 206 170z" />
     <glyph glyph-name="uniF112" unicode="&#xf112;" horiz-adv-x="427" 
 d="M423 183c5 -7 5 -17 0 -24c-2 -3 -44 -63 -102 -104c-30 -21 -69 -34 -108 -34s-77 12 -107 33c-58 41 -100 101 -102 104c-5 7 -5 18 0 25c2 3 44 63 102 104c30 21 68 33 107 33s78 -12 108 -33c58 -41 100 -101 102 -104zM213 96c41 0 75 34 75 75s-34 74 -75 74
 s-74 -33 -74 -74s33 -75 74 -75zM256 171c0 -24 -19 -43 -43 -43s-42 19 -42 43s18 42 42 42s43 -18 43 -42z" />

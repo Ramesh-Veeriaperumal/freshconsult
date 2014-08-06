@@ -39,9 +39,9 @@ describe Helpdesk::SlaPoliciesController do
         response.session[:flash][:notice].should eql "The SLA Policy has been created."
         sla_policy = @account.sla_policies.find_by_name("Sla Policy - Test Spec")
         sla_policy.should_not be_nil
-        sla_policy.conditions[:ticket_type].should eql ["Question"]
-        sla_policy.escalations[:response]["1"][:agents_id].should eql [@agent.id]
-        sla_policy.escalations[:resolution]["2"][:time].should eql(1800)
+        sla_policy.conditions["ticket_type"].should eql ["Question"]
+        sla_policy.escalations["response"]["1"][:agents_id].should eql [@agent.id]
+        sla_policy.escalations["resolution"]["2"][:time].should eql(1800)
         sla_Detail = @account.sla_policies.find(sla_policy.id).sla_details
         sla_details = sla_Detail.find(:first,:conditions => [ "priority = ?", 3 ])
         sla_details.resolution_time.should eql(7200)
@@ -72,10 +72,10 @@ describe Helpdesk::SlaPoliciesController do
         @sla_policy_1.reload
         response.session[:flash][:notice].should eql "The SLA Policy has been updated."
         @sla_policy_1.name.should eql "Updated - Sla Policy"
-        @sla_policy_1.conditions[:ticket_type].should eql ["Feature Request"]
-        @sla_policy_1.conditions[:company_id].should be_nil
-        @sla_policy_1.escalations[:resolution]["1"][:agents_id].should eql [@agent_2.id]
-        @sla_policy_1.escalations[:resolution]["2"][:agents_id].should eql [@agent_1.id]
+        @sla_policy_1.conditions["ticket_type"].should eql ["Feature Request"]
+        @sla_policy_1.conditions["company_id"].should be_nil
+        @sla_policy_1.escalations["resolution"]["1"][:agents_id].should eql [@agent_2.id]
+        @sla_policy_1.escalations["resolution"]["2"][:agents_id].should eql [@agent_1.id]
         sla_details = @account.sla_policies.find(@sla_policy_1.id).sla_details.find(ids[1])
         sla_details.resolution_time.should eql(7200)
     end
@@ -89,10 +89,10 @@ describe Helpdesk::SlaPoliciesController do
         }
         @sla_policy_1.reload
         @sla_policy_1.name.should_not eql "Update Sla Policy without conditions"
-        @sla_policy_1.conditions[:ticket_type].should eql ["Feature Request"]
-        @sla_policy_1.escalations[:response]["1"][:agents_id].should eql [@agent.id]
-        @sla_policy_1.escalations[:resolution]["1"][:agents_id].should eql [@agent_2.id]
-        @sla_policy_1.escalations[:resolution]["2"][:agents_id].should_not eql [@agent.id]
+        @sla_policy_1.conditions["ticket_type"].should eql ["Feature Request"]
+        @sla_policy_1.escalations["response"]["1"][:agents_id].should eql [@agent.id]
+        @sla_policy_1.escalations["resolution"]["1"][:agents_id].should eql [@agent_2.id]
+        @sla_policy_1.escalations["resolution"]["2"][:agents_id].should_not eql [@agent.id]
     end
     
     it "should deactivate a Sla Policy" do

@@ -197,4 +197,11 @@ describe Admin::ProductsController do
                                                            "#{@test_product.portal.id}", "Portal", "fav_icon"])
     fav_icon.should be_nil
   end
+
+  it "should destroy a product" do
+    post :destroy, :id => @test_product.id
+    flash[:notice].should eql "The product has been deleted."
+    response.redirected_to.should eql "/admin/products"
+    @account.products.find_by_id(@test_product.id).should be_nil
+  end
 end

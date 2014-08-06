@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "8c66200b4d44d53917e349fec1bb1703a200aa97700603520615b73a1e8e9b06",
-    "current": "8c66200b4d44d53917e349fec1bb1703a200aa97700603520615b73a1e8e9b06"
+    "previous": "198ae51f1ffeb5ab75138ef9974a6212e4b620802ddbb6c49c8cedfe5efb762e",
+    "current": "198ae51f1ffeb5ab75138ef9974a6212e4b620802ddbb6c49c8cedfe5efb762e"
   },
   "fonts": [
-    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.ttf",
-    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.svg",
-    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.woff",
-    "public/fonts/glyphs_8c66200b4d44d53917e349fec1bb1703.eot"
+    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.ttf",
+    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.svg",
+    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.woff",
+    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.eot"
   ],
   "glyphs": {
     "account": {
@@ -262,6 +262,10 @@
       "codepoint": 61725,
       "source": "public/glyphs/vectors/map-marker.svg"
     },
+    "message": {
+      "codepoint": 61797,
+      "source": "public/glyphs/vectors/message.svg"
+    },
     "minus": {
       "codepoint": 61726,
       "source": "public/glyphs/vectors/minus.svg"
@@ -430,7 +434,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

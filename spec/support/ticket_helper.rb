@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module TicketHelper
 
   def create_ticket(params = {}, group = nil)

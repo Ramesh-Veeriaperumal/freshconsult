@@ -53,7 +53,7 @@ class MonitorshipsController < ApplicationController
     end
     
     def follow
-      @monitorship.update_attributes({:active => true})
+      @monitorship.update_attributes({:active => true, :portal_id => current_portal.id})
     end
 
     def unfollow
