@@ -25,5 +25,9 @@ class Social::FacebookPage < ActiveRecord::Base
   def existing_page_tab_user?
     self.page_token_tab ? self.page_token_tab.empty? : false
   end
+  
+  def reauth_required?
+    self.reauth_required
+  end
 
 end
