@@ -218,6 +218,15 @@ describe Helpdesk::ProcessEmail do
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket_incremented?(@ticket_size)
 		end
+
+		it "with cc email" do
+			cc_email = Faker::Internet.email
+			email = new_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc_email})
+			Helpdesk::ProcessEmail.new(email).perform
+			ticket_incremented?(@ticket_size)
+			recent_ticket = @account.tickets.last
+			recent_ticket.cc_email_hash[:reply_cc].should eql recent_ticket.cc_email_hash[:cc_emails]
+		end
 	end
 
 	describe "Create article" do
@@ -427,6 +436,7 @@ describe Helpdesk::ProcessEmail do
 			Helpdesk::ProcessEmail.new(first_reply).perform
 			ticket_incremented?(@ticket_size)
 			@account.tickets.last.cc_email_hash[:cc_emails].should include (new_to_email)
+			@account.tickets.last.cc_email_hash[:reply_cc].should include (new_to_email)
 		end
 
 		it "as reply from a CC email" do
@@ -444,6 +454,25 @@ describe Helpdesk::ProcessEmail do
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+2
 			ticket.notes.size.should eql 2
+		end
+
+		it "with cc removed from reply" do
+			email_id = Faker::Internet.email
+			cc_email = Faker::Internet.email
+			new_cc_email = Faker::Internet.email
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+			first_reply = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => cc_email})
+			second_reply = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_cc_email})
+			Helpdesk::ProcessEmail.new(email).perform
+			ticket = @account.tickets.last
+			first_reply[:subject] = first_reply[:subject]+" [##{ticket.display_id}]"
+			second_reply[:subject] = second_reply[:subject]+" [##{ticket.display_id}]"
+			Helpdesk::ProcessEmail.new(first_reply).perform
+			Helpdesk::ProcessEmail.new(second_reply).perform
+			ticket_incremented?(@ticket_size)
+			latest_ticket = @account.tickets.last
+			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
+			latest_ticket.cc_email_hash[:reply_cc].should_not include cc_email
 		end
 	end
 

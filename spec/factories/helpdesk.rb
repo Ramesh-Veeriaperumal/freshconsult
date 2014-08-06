@@ -11,7 +11,7 @@ if Rails.env.test?
     t.priority 1
     t.subject Faker::Lorem.sentence(3)
     t.description Faker::Lorem.paragraph(3)
-    t.cc_email({:cc_emails => [], :fwd_emails => []}.with_indifferent_access)
+    t.cc_email({:cc_emails => [], :fwd_emails => [], :reply_cc => []}.with_indifferent_access)
     t.created_at Time.now
   end
 

@@ -114,6 +114,22 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
+  it "should create a new ticket with cc emails" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, { :helpdesk_ticket => {:email => "rachel@freshdesk.com", 
+                                       :subject => "New Ticket #{now}", 
+                                       :ticket_type => "Question", 
+                                       :source => "3", 
+                                       :status => "2", 
+                                       :priority => "1", 
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }, 
+                                      :cc_emails => "superman@marvel.com,avengers@marvel.com"
+                  }
+    ticket = @account.tickets.find_by_subject("New Ticket #{now}")
+    ticket.cc_email_hash[:cc_emails].should eql ticket.cc_email_hash[:reply_cc]
+  end
+
   it "should not create a new ticket without email - Mobile Format" do
     now = (Time.now.to_f*1000).to_i
     post :create, :helpdesk_ticket => {:email => "",
@@ -318,7 +334,7 @@ describe Helpdesk::TicketsController do
       @account.tickets.find(@test_ticket.id).priority.should be_eql(3)
     end
 
-
+  
   # Ticket Top Nav Bar
 
     it "should assign multiple tickets to the current user" do

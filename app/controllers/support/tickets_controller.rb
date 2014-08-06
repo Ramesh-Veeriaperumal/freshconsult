@@ -96,6 +96,7 @@ class Support::TicketsController < SupportController
   def add_people
     cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
     @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
+    update_reply_cc @ticket.cc_email, @old_cc_hash
     @ticket.save
     flash[:notice] = "Email(s) successfully added to CC."
     redirect_to support_ticket_path(@ticket)
@@ -109,6 +110,8 @@ class Support::TicketsController < SupportController
 
     def load_item
       @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
+      # Using .dup as otherwise it references the same address quoting same values.
+      @old_cc_hash = @ticket and @ticket.cc_email_hash ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
       @item || raise(ActiveRecord::RecordNotFound)      
     end
 
@@ -169,6 +172,16 @@ class Support::TicketsController < SupportController
     end
 
   private
+  
+    def update_reply_cc cc_hash, old_cc_hash
+      if cc_hash[:reply_cc]
+        removed = cc_hash[:reply_cc] - cc_hash[:cc_emails]
+        added = cc_hash[:cc_emails] - old_cc_hash[:cc_emails]
+        cc_hash[:reply_cc] = cc_hash[:reply_cc] - removed + added
+      else
+        cc_hash[:reply_cc] = cc_hash[:cc_emails]
+      end
+    end
   
     def clean_params
       params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT_PROTECTED_ATTRIBUTES.exclude? k }
