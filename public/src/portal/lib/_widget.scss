@@ -133,9 +133,9 @@ body, .feedback-wrapper{
 		max-height: 90%;
 		//Mozilla fix for hidden Embedded widget
 		.redactor_editor, .redactor_editor:focus{ 
-			min-height: 150px;
+			min-height: 100px;
 			height:auto !important;
-			height: 150px;
+			height: 100px;
 			max-height:150px;
 		}
 	}
