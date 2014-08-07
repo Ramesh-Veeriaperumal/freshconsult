@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
-      :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
+      :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums, 
         :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
@@ -28,7 +28,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+      :features => [ :gamification, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
         :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden ]
     },
@@ -55,7 +55,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :gamification, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -66,7 +66,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden_classic ]
     }
