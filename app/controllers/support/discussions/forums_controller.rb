@@ -17,12 +17,16 @@ class Support::Discussions::ForumsController < SupportController
 	end
 
 private
-	def load_forum 
-		@forum = current_portal.portal_forums.visible(current_user).find_by_id(params[:id])
-		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and !@forum.visible?(current_user) 
+	def load_forum
+		@forum = current_portal.portal_forums.find_by_id(params[:id])
 		render_404 if @forum.nil?
+		unless @forum.visible?(current_user)
+			store_location
+			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+		end
+
 	end
-  
+
   def load_page_meta
     @page_meta ||= {
       :title => @forum.name,
