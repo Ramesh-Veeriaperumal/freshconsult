@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140725083159) do
+ActiveRecord::Schema.define(:version => 20140805143739) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1577,6 +1577,7 @@ ActiveRecord::Schema.define(:version => 20140725083159) do
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
+  add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
 
   create_table "portal_templates", :force => true do |t|
     t.integer  "account_id",  :limit => 8,        :null => false
@@ -2428,6 +2429,8 @@ ActiveRecord::Schema.define(:version => 20140725083159) do
     t.boolean  "published",                 :default => false
   end
 
+  add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
+  add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
