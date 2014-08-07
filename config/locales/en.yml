@@ -953,7 +953,6 @@ en:
         title: Supervisor - Edit Rule
       clone_rule:
         title: Supervisor - Clone Rule
-        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -979,7 +978,6 @@ en:
         title: Observer - Edit Rule
       clone_rule:
         title: Observer - Clone Rule
-        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -1048,7 +1046,6 @@ en:
         title: Edit Scenario
       clone_rule:
         title: Clone Scenario
-        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -2143,7 +2140,6 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
-    clone_of: This Dispatch'r is a clone of
     copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
