@@ -3,7 +3,7 @@
 	<%= sidebar_toggle("mt4") %>
 	<h3 class="lead"><%= t('forum.edit') %></h3>
 </div>
-<% form_for @forum, :url => discussions_forum_path(@forum)   do |f| -%>
+<% form_for @forum, :url => discussions_forum_path(@forum), :html => {:rel => "validate"}  do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container align-left">
 		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "btn",  :confirm => t('forum.confim_msg1') ) %>
