@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "198ae51f1ffeb5ab75138ef9974a6212e4b620802ddbb6c49c8cedfe5efb762e",
-    "current": "198ae51f1ffeb5ab75138ef9974a6212e4b620802ddbb6c49c8cedfe5efb762e"
+    "previous": "6d7d50a3e21770f8a407c3f8f033ae245d83127b34e2181b289ae642e3336957",
+    "current": "6d7d50a3e21770f8a407c3f8f033ae245d83127b34e2181b289ae642e3336957"
   },
   "fonts": [
-    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.ttf",
-    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.svg",
-    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.woff",
-    "public/fonts/glyphs_198ae51f1ffeb5ab75138ef9974a6212.eot"
+    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.ttf",
+    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg",
+    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.woff",
+    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot"
   ],
   "glyphs": {
     "account": {
@@ -34,21 +34,41 @@
       "codepoint": 61697,
       "source": "public/glyphs/vectors/arrow-down.svg"
     },
+    "arrow-down-2": {
+      "codepoint": 61798,
+      "source": "public/glyphs/vectors/arrow-down-2.svg"
+    },
     "arrow-left": {
       "codepoint": 61698,
       "source": "public/glyphs/vectors/arrow-left.svg"
+    },
+    "arrow-left-2": {
+      "codepoint": 61799,
+      "source": "public/glyphs/vectors/arrow-left-2.svg"
     },
     "arrow-right": {
       "codepoint": 61699,
       "source": "public/glyphs/vectors/arrow-right.svg"
     },
+    "arrow-right-2": {
+      "codepoint": 61800,
+      "source": "public/glyphs/vectors/arrow-right-2.svg"
+    },
     "arrow-up": {
       "codepoint": 61700,
       "source": "public/glyphs/vectors/arrow-up.svg"
     },
+    "arrow-up-2": {
+      "codepoint": 61801,
+      "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
     "billing": {
       "codepoint": 61768,
       "source": "public/glyphs/vectors/billing.svg"
+    },
+    "blank-file": {
+      "codepoint": 61802,
+      "source": "public/glyphs/vectors/blank-file.svg"
     },
     "book": {
       "codepoint": 61701,
@@ -85,6 +105,14 @@
     "caret-up": {
       "codepoint": 61705,
       "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "chat-disable": {
+      "codepoint": 61803,
+      "source": "public/glyphs/vectors/chat-disable.svg"
+    },
+    "chat-enable": {
+      "codepoint": 61804,
+      "source": "public/glyphs/vectors/chat-enable.svg"
     },
     "checkmark": {
       "codepoint": 61706,
@@ -218,6 +246,14 @@
       "codepoint": 61781,
       "source": "public/glyphs/vectors/group.svg"
     },
+    "grouping-disable": {
+      "codepoint": 61805,
+      "source": "public/glyphs/vectors/grouping-disable.svg"
+    },
+    "grouping-enable": {
+      "codepoint": 61806,
+      "source": "public/glyphs/vectors/grouping-enable.svg"
+    },
     "help": {
       "codepoint": 61756,
       "source": "public/glyphs/vectors/help.svg"
@@ -302,6 +338,14 @@
       "codepoint": 61764,
       "source": "public/glyphs/vectors/phone.svg"
     },
+    "phone-disable": {
+      "codepoint": 61807,
+      "source": "public/glyphs/vectors/phone-disable.svg"
+    },
+    "phone-enable": {
+      "codepoint": 61808,
+      "source": "public/glyphs/vectors/phone-enable.svg"
+    },
     "plus": {
       "codepoint": 61728,
       "source": "public/glyphs/vectors/plus.svg"
@@ -318,9 +362,17 @@
       "codepoint": 61787,
       "source": "public/glyphs/vectors/rebranding.svg"
     },
+    "refresh": {
+      "codepoint": 61809,
+      "source": "public/glyphs/vectors/refresh.svg"
+    },
     "reorder": {
       "codepoint": 61751,
       "source": "public/glyphs/vectors/reorder.svg"
+    },
+    "reorder-2": {
+      "codepoint": 61810,
+      "source": "public/glyphs/vectors/reorder-2.svg"
     },
     "reply": {
       "codepoint": 61729,
