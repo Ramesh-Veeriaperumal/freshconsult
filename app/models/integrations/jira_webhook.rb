@@ -1,12 +1,13 @@
 class Integrations::JiraWebhook
   include Integrations::Jira::Api
   
-  attr_accessor :updated_entity_type, :notification_cause, :updated_time, :params
+  attr_accessor :updated_entity_type, :notification_cause, :updated_time, :params, :options
 
-  def initialize(params,http_request_proxy = nil)
+  def initialize(params,http_request_proxy = nil, options = {})
     if(http_request_proxy)  
       @installed_app = params
       @http_request_proxy = http_request_proxy
+      self.options = options
     else
       self.params = params
       self.parse_jira_webhook(params)
@@ -36,14 +37,19 @@ class Integrations::JiraWebhook
     all_webhooks = available_webhooks
     all_webhooks.each do |webhook|
       if webhook["url"].include?("integrations/jira_issue/notify")
-        webhook_delete = construct_params_for_http(:delete_webhooks,webhook["self"].split('/')[-1])
+        webhook_delete = construct_params_for_http(:delete_webhooks,webhook["self"].split('/')[-1],options)
         make_rest_call(webhook_delete, nil)
       end
     end
   end
 
+  def create_webhooks
+    delete_webhooks
+    register_webhooks
+  end
+
   def available_webhooks
-    webhook_data = construct_params_for_http(:available_webhooks)
+    webhook_data = construct_params_for_http(:available_webhooks,nil,options)
     res_data = make_rest_call(webhook_data, nil)
     unless(res_data[:exception])
       res_data[:json_data]

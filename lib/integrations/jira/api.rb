@@ -64,12 +64,12 @@ JIRA_REST_API = {
     }
   } 
 
-  def construct_params_for_http(method, issueId = nil)
+  def construct_params_for_http(method,issueId = nil, options = {} )
     rest_url = issueId ? JIRA_REST_API[method][:rest_url].gsub("issueId",issueId) : JIRA_REST_API[method][:rest_url]
     fieldData = {
-      :username => @installed_app.configs_username,
-      :password => @installed_app.configsdecrypt_password,
-      :domain => @installed_app.configs_domain,
+      :username => options[:username] || @installed_app.configs_username,
+      :password => options[:password] || @installed_app.configsdecrypt_password,
+      :domain =>  options[:domain] || @installed_app.configs_domain,
       :rest_url => rest_url,
       :method => JIRA_REST_API[method][:method],
       :content_type => JIRA_REST_API[method][:content_type] 

@@ -34,7 +34,9 @@ class Integrations::JiraIssue
       params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
       params[:remote_key] = params['integrated_resource']['remote_integratable_id']
       newIntegratedResource = Integrations::IntegratedResource.createResource(params)
-      send_later(:update,params,{}) 
+      params[:operation] = "update"
+      params[:app_id] = @installed_app.id
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
       return newIntegratedResource
     else
       return res_data
