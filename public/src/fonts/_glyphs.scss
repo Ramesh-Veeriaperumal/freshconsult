@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.eot");
-  src: font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.woff") format("woff"),
-       font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.ttf") format("truetype"),
-       font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.svg#glyphs") format("svg");
+  src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot");
+  src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.woff") format("woff"),
+       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.ttf") format("truetype"),
+       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_198ae51f1ffeb5ab75138ef9974a6212.svg#glyphs") format("svg");
+    src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg#glyphs") format("svg");
   }
 }
 
@@ -29,10 +29,15 @@
 .ficon-answer-checked:before,
 .ficon-answer-unchecked:before,
 .ficon-arrow-down:before,
+.ficon-arrow-down-2:before,
 .ficon-arrow-left:before,
+.ficon-arrow-left-2:before,
 .ficon-arrow-right:before,
+.ficon-arrow-right-2:before,
 .ficon-arrow-up:before,
+.ficon-arrow-up-2:before,
 .ficon-billing:before,
+.ficon-blank-file:before,
 .ficon-book:before,
 .ficon-bulb:before,
 .ficon-bullhorn:before,
@@ -42,6 +47,8 @@
 .ficon-caret-left:before,
 .ficon-caret-right:before,
 .ficon-caret-up:before,
+.ficon-chat-disable:before,
+.ficon-chat-enable:before,
 .ficon-checkmark:before,
 .ficon-checkmark-round:before,
 .ficon-checkmark-round-o:before,
@@ -75,6 +82,8 @@
 .ficon-gear:before,
 .ficon-googleplus:before,
 .ficon-group:before,
+.ficon-grouping-disable:before,
+.ficon-grouping-enable:before,
 .ficon-help:before,
 .ficon-import:before,
 .ficon-infinity-5:before,
@@ -96,11 +105,15 @@
 .ficon-open-in-new-window:before,
 .ficon-paperplane:before,
 .ficon-phone:before,
+.ficon-phone-disable:before,
+.ficon-phone-enable:before,
 .ficon-plus:before,
 .ficon-post-edit:before,
 .ficon-rearrange:before,
 .ficon-rebranding:before,
+.ficon-refresh:before,
 .ficon-reorder:before,
+.ficon-reorder-2:before,
 .ficon-reply:before,
 .ficon-retweet:before,
 .ficon-role:before,
@@ -144,10 +157,15 @@
 .ficon-answer-checked:before { content: "\f12e"; }
 .ficon-answer-unchecked:before { content: "\f140"; }
 .ficon-arrow-down:before { content: "\f101"; }
+.ficon-arrow-down-2:before { content: "\f166"; }
 .ficon-arrow-left:before { content: "\f102"; }
+.ficon-arrow-left-2:before { content: "\f167"; }
 .ficon-arrow-right:before { content: "\f103"; }
+.ficon-arrow-right-2:before { content: "\f168"; }
 .ficon-arrow-up:before { content: "\f104"; }
+.ficon-arrow-up-2:before { content: "\f169"; }
 .ficon-billing:before { content: "\f148"; }
+.ficon-blank-file:before { content: "\f16a"; }
 .ficon-book:before { content: "\f105"; }
 .ficon-bulb:before { content: "\f13a"; }
 .ficon-bullhorn:before { content: "\f13b"; }
@@ -157,6 +175,8 @@
 .ficon-caret-left:before { content: "\f107"; }
 .ficon-caret-right:before { content: "\f108"; }
 .ficon-caret-up:before { content: "\f109"; }
+.ficon-chat-disable:before { content: "\f16b"; }
+.ficon-chat-enable:before { content: "\f16c"; }
 .ficon-checkmark:before { content: "\f10a"; }
 .ficon-checkmark-round:before { content: "\f12f"; }
 .ficon-checkmark-round-o:before { content: "\f130"; }
@@ -190,6 +210,8 @@
 .ficon-gear:before { content: "\f117"; }
 .ficon-googleplus:before { content: "\f118"; }
 .ficon-group:before { content: "\f155"; }
+.ficon-grouping-disable:before { content: "\f16d"; }
+.ficon-grouping-enable:before { content: "\f16e"; }
 .ficon-help:before { content: "\f13c"; }
 .ficon-import:before { content: "\f156"; }
 .ficon-infinity-5:before { content: "\f141"; }
@@ -211,11 +233,15 @@
 .ficon-open-in-new-window:before { content: "\f13e"; }
 .ficon-paperplane:before { content: "\f11f"; }
 .ficon-phone:before { content: "\f144"; }
+.ficon-phone-disable:before { content: "\f16f"; }
+.ficon-phone-enable:before { content: "\f170"; }
 .ficon-plus:before { content: "\f120"; }
 .ficon-post-edit:before { content: "\f136"; }
 .ficon-rearrange:before { content: "\f145"; }
 .ficon-rebranding:before { content: "\f15b"; }
+.ficon-refresh:before { content: "\f171"; }
 .ficon-reorder:before { content: "\f137"; }
+.ficon-reorder-2:before { content: "\f172"; }
 .ficon-reply:before { content: "\f121"; }
 .ficon-retweet:before { content: "\f122"; }
 .ficon-role:before { content: "\f15c"; }
