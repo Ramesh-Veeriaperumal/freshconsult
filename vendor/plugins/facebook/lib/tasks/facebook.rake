@@ -10,7 +10,9 @@ namespace :facebook do
       puts "Facebook Worker initialized at #{Time.zone.now}"
       Sharding.run_on_all_slaves do
         Account.active_accounts.each do |account|
-          next if check_if_premium?(account) || account.facebook_pages.empty?
+          next if check_if_premium?(account)
+          facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
+          next if facebook_pages.empty?
           Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => account.id} )
         end
       end
@@ -36,23 +38,12 @@ namespace :facebook do
     queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
-      shards = Sharding.all_shards
-      shards.each do |shard_name|
-        shard_sym = shard_name.to_sym
-        puts "shard_name is #{shard_name}"
-        Sharding.run_on_shard(shard_name) {
-          Social::FacebookPage.active.find_in_batches(
-            :joins => %(
-              LEFT JOIN  accounts on accounts.id = social_facebook_pages.account_id
-            INNER JOIN `subscriptions` ON subscriptions.account_id = accounts.id),
-            :conditions => "subscriptions.state != 'suspended' "
-          ) do |page_block|
-            page_block.each do |page|
-              Resque.enqueue(Social::FacebookCommentsWorker ,
-                             {:account_id => page.account_id, :fb_page_id => page.id} ) unless page.account.features?(:facebook_realtime)
-            end
-          end
-        }
+      Sharding.run_on_all_slaves do
+        Account.active_accounts.each do |account|
+          facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
+          next if facebook_pages.empty?
+          Resque.enqueue(Social::FacebookCommentsWorker ,{:account_id => account.id})
+        end
       end
     else
       puts "Facebook Comments Worker is already running . skipping at #{Time.zone.now}"

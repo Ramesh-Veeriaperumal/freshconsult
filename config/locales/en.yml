@@ -3258,6 +3258,7 @@ en:
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
+    error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
