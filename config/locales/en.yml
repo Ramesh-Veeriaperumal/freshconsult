@@ -2162,7 +2162,7 @@ en:
     event_note: When <b>Any</b> of these events occur
     condition_note: With the following conditions
     action_note: Perform these actions
-    info3: When a ticket satisfies these condtions
+    info3: When a ticket satisfies these conditions
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
