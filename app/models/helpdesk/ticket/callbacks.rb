@@ -207,21 +207,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = self.group
     set_sla_time(ticket_status_changed)
+    Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = nil
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
-    if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
+    if self.new_record?
       set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
-      set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)      
-      set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
+      set_dueby_on_priority_change(sla_detail)
+
       set_user_time_zone if User.current
       Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-    end
-  end
+    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
+      set_time_zone
+      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+
+      set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
+      set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
+      set_user_time_zone if User.current
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+    end 
+  end
   #end of SLA
   
   def set_account_time_zone  
@@ -455,16 +465,14 @@ private
 
   def set_dueby_on_priority_change(sla_detail)
     created_time = self.created_at || Time.zone.now
-    business_calendar = Group.default_business_calendar(group)
-    self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)      
-    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) 
+    self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time)      
+    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time) 
   end
 
   def set_dueby_on_status_change(sla_detail)
     if calculate_dueby_and_frdueby?
-      business_calendar = Group.default_business_calendar(group)
-      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)      
-      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar)
+      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self)      
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self)
       if changed_to_closed_or_resolved?
         update_ticket_state_sla_timer
       end

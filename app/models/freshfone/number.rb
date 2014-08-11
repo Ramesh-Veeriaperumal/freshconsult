@@ -1,7 +1,6 @@
 class Freshfone::Number < ActiveRecord::Base
 	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_numbers
-	include BusinessCalendar::Association
 	require_dependency 'freshfone/number/message'
 
 	serialize :on_hold_message

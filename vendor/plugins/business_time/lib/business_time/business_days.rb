@@ -1,8 +1,6 @@
 module BusinessTime
 
   class BusinessDays
-    attr_accessor :business_calendar_config    
-
     def initialize(days)
       @days = days
     end
@@ -10,8 +8,8 @@ module BusinessTime
     def after(time = Time.zone.now)
       #SignalException (SIGABRT): in business_time calculation becuase of parsing. Pratheepv
       # time = Time.zone ? Time.zone.parse(time.to_s) : Time.parse(time.to_s)
-      next_time = Time.roll_forward(time,business_calendar_config)
-      if !Time.workday?(time,business_calendar_config) || !Time.working_hours?(time,business_calendar_config)
+      next_time = Time.roll_forward(time)
+      if !Time.workday?(time) || !Time.working_hours?(time)
         number = @days - 1
         started_in_off_hours = true
       else
@@ -21,14 +19,14 @@ module BusinessTime
       number.times do
         begin
           next_time = next_time + 1.day
-          while !Time.workday?(next_time,business_calendar_config)
+          while !Time.workday?(next_time)
             next_time = next_time + 1.day
           end
         end
       end
 
-      if !Time.working_hours?(next_time,business_calendar_config) || started_in_off_hours
-        next_time = Time.end_of_workday(next_time,business_calendar_config)
+      if !Time.working_hours?(next_time) || started_in_off_hours
+        next_time = Time.end_of_workday(next_time)
       end
 
       next_time

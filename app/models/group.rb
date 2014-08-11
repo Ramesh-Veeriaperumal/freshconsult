@@ -4,7 +4,6 @@ class Group < ActiveRecord::Base
   include Cache::Memcache::Group
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include BusinessCalendar::Association
 
   after_commit :clear_cache
 

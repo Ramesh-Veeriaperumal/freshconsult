@@ -91,22 +91,22 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   default_scope :order => "priority DESC"
 
-  def calculate_due_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + resolution_time.seconds) : business_time(resolution_time, created_time, calendar)
+  def calculate_due_by_time_on_priority_change(created_time)
+    override_bhrs ? (created_time + resolution_time.seconds) : business_time(resolution_time, created_time)
   end
 
-  def calculate_frDue_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + response_time.seconds) : business_time(resolution_time, created_time, calendar)
+  def calculate_frDue_by_time_on_priority_change(created_time)
+    override_bhrs ? (created_time + response_time.seconds) : business_time(response_time, created_time)
   end
 
-  def calculate_due_by_time_on_status_change(ticket,calendar)
+  def calculate_due_by_time_on_status_change(ticket)
     override_bhrs ? on_status_change_override_bhrs(ticket, ticket.due_by) : 
-      on_status_change_bhrs(ticket, ticket.due_by,calendar)
+      on_status_change_bhrs(ticket, ticket.due_by)
   end
 
-  def calculate_frDue_by_time_on_status_change(ticket,calendar)
+  def calculate_frDue_by_time_on_status_change(ticket)
     override_bhrs ? on_status_change_override_bhrs(ticket, ticket.frDueBy) :
-      on_status_change_bhrs(ticket, ticket.frDueBy,calendar)
+      on_status_change_bhrs(ticket, ticket.frDueBy)
   end
 
   def self.sla_options
@@ -115,17 +115,13 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   private
 
-    def business_time(sla_time, created_time, calendar)
+    def business_time(sla_time, created_time)
       fact = sla_time.div(ONE_DAY_IN_SECONDS)
       
       if sla_time.modulo(ONE_DAY_IN_SECONDS).zero?
-        business_days = fact.business_days
-        business_days.business_calendar_config = calendar
-        business_days.after(created_time)
+        fact.business_days.after(created_time)
       else
-        business_minute = sla_time.div(60).business_minute
-        business_minute.business_calendar_config = calendar
-        business_minute.after(created_time)
+         sla_time.div(60).business_minute.after(created_time)
       end
     end
 
@@ -138,14 +134,11 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       end
     end
 
-    def on_status_change_bhrs(ticket, due_by_type, calendar)
-      sla_timer = ticket.ticket_states.sla_timer_stopped_at
-      bhrs_during_elapsed_time =  sla_timer.business_time_until(
-        Time.zone.now,calendar)
-      if due_by_type > sla_timer
-        business_minute = bhrs_during_elapsed_time.div(60).business_minute
-        business_minute.business_calendar_config = calendar
-        business_minute.after(due_by_type) 
+    def on_status_change_bhrs(ticket, due_by_type)
+      bhrs_during_elapsed_time =  ticket.ticket_states.sla_timer_stopped_at.business_time_until(
+        Time.zone.now)
+      if due_by_type > ticket.ticket_states.sla_timer_stopped_at
+        bhrs_during_elapsed_time.div(60).business_minute.after(due_by_type) 
       else
         due_by_type
       end
