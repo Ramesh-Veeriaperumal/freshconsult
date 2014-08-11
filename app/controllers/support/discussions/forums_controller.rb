@@ -20,7 +20,7 @@ private
 	def load_forum
 		@forum = current_portal.portal_forums.find_by_id(params[:id])
 		render_404 if @forum.nil?
-		unless @forum.visible?(current_user)
+		unless @forum.nil? || @forum.visible?(current_user)
 			store_location
 			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
 		end
