@@ -953,7 +953,6 @@ en:
         title: Supervisor - Edit Rule
       clone_rule:
         title: Supervisor - Clone Rule
-        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -979,7 +978,6 @@ en:
         title: Observer - Edit Rule
       clone_rule:
         title: Observer - Clone Rule
-        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -1048,7 +1046,6 @@ en:
         title: Edit Scenario
       clone_rule:
         title: Clone Scenario
-        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -2143,7 +2140,6 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
-    clone_of: This Dispatch'r is a clone of
     copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
@@ -2154,7 +2150,7 @@ en:
     event_note: When <b>Any</b> of these events occur
     condition_note: With the following conditions
     action_note: Perform these actions
-    info3: When a ticket satisfies these condtions
+    info3: When a ticket satisfies these conditions
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
@@ -3043,7 +3039,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: This text will be included in your ticket replies automatically, along with your cursor position
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
@@ -5603,7 +5599,7 @@ en:
         about_recording: "Record customer conversations and access it anywhere"
         read_more: "Read more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_subject: "Freshfone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
         success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
         error_message: "Sorry we can not make your request right now. Try again later."

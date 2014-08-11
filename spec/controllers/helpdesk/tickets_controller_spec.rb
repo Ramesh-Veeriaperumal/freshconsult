@@ -593,8 +593,8 @@ describe Helpdesk::TicketsController do
       get :index
       response.should render_template "helpdesk/tickets/index.html.erb"
       get :prevnext, :id => ticket_2.display_id
-      assigns(:previous_ticket).to_i.should eql ticket_3.display_id
-      assigns(:next_ticket).to_i.should eql ticket_1.display_id
+      assigns(:previous_ticket).to_i.should eql ticket_1.display_id
+      assigns(:next_ticket).to_i.should eql ticket_3.display_id
     end
 
     it "should load the next ticket of a ticket from the adjacent page" do
@@ -608,7 +608,7 @@ describe Helpdesk::TicketsController do
       response.should render_template "helpdesk/tickets/index.html.erb"
       last_ticket = assigns(:items).last
       get :prevnext, :id => last_ticket.display_id
-      assigns(:next_ticket).to_i.should eql ticket.display_id
+      assigns(:next_ticket).to_i.should eql ticket.display_id + 1
     end
 
     it "should load the next and previous tickets of a ticket with no filters" do
@@ -623,7 +623,7 @@ describe Helpdesk::TicketsController do
                                                           :user_id => @agent.id, 
                                                           :session_id => session.session_id})
       get :prevnext, :id => last_ticket.display_id
-      assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
+      assigns(:previous_ticket).to_i.should eql last_ticket.display_id - 1
     end
 
 

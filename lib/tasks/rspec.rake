@@ -95,8 +95,8 @@ FreshfoneReportsTests = [
 ]  
 
 APITests = [ 
-  "spec/controllers/api/json/*_spec.rb",
-  "spec/controllers/api/xml/*_spec.rb"
+  "spec/controllers/api/json/**/*_spec.rb",
+  "spec/controllers/api/xml/**/*_spec.rb"
 ]
 
 ForumTests = [
@@ -138,13 +138,16 @@ HelpdeskTests = [
   "spec/lib/zen_import_redis_spec.rb",
   "spec/lib/detect_user_language_spec.rb",
   "spec/lib/contacts_import_worker_spec.rb",
-  "spec/controllers/solution_uploaded_images_controller_spec.rb"
+  "spec/controllers/solution_uploaded_images_controller_spec.rb",
+  "spec/controllers/contact_import_controller_spec.rb",
+  "spec/models/flexifield_spec.rb"
 ]    
 
 BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
-  "spec/controllers/partner_admin/affiliates_controller_spec.rb"
+  "spec/controllers/partner_admin/affiliates_controller_spec.rb",
+  "spec/controllers/admin/day_passes_controller_spec.rb"
 ]       
 
 FunctionalTests = [

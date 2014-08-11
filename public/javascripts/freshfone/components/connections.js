@@ -29,6 +29,7 @@ var FreshfoneConnection;
 				self.reject();
 			});
 			this.$userInfoContainer.one('click','#accept_call', function () {
+				$("#accept_call").text("Accepting...");
 				self.$userInfoContainer.off('click','#reject_call');
 				self.accept();
 			});

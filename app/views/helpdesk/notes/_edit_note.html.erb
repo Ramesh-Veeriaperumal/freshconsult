@@ -1,5 +1,6 @@
 <% form_for [@parent, @item], 
 			:html => { 
+				:multipart => true,
 				:id => "edit_#{@item.id}",
 				:rel => 'edit_note_form', 
 				"data-panel" => "edit-#{@item.id}",
@@ -14,6 +15,9 @@
 			<% f.fields_for :note_body, @item.note_body do |ff| %>
 				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 			<% end %>
+		</li>
+		<li>
+			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => "add-note" , :nsc_param => "helpdesk_note" } %>
 		</li>
 		<li class="button-container hide">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>

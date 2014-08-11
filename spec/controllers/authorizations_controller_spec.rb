@@ -54,6 +54,9 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for google contacts" do 
+    inst_obj = Integrations::InstalledApplication.find_by_application_id(4)
+    inst_obj.destroy unless inst_obj.blank?
+
     @request.env["omniauth.origin"] = "install"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
                                           { :credentials => { :secret => "cXGmgJ7I84ZDO3g_KSrk5-lK", 

@@ -127,7 +127,7 @@ Spork.prefork do
       @agent = get_admin
       @timings = []
       
-      begin_gc_defragment
+      #begin_gc_defragment
     end
 
     config.before(:each, :type => :controller) do
@@ -153,7 +153,7 @@ Spork.prefork do
       })
       Rails.logger.info "^"*100 
 
-      reconsider_gc_defragment
+      #reconsider_gc_defragment
     end
 
     config.after(:all) do |x|

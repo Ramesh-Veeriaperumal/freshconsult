@@ -190,7 +190,14 @@ module FreshdeskCore::Model
 
     def delete_jira_webhooks(account)
       if(app = jira_enabled?(account))
-        Integrations::JiraWebhook.new(app, HttpRequestProxy.new).send_later(:delete_webhooks)
+        args = {
+          :username => app.configs_username,
+          :password => app.configs_password,
+          :domain => app.configs_domain,
+          :operation => "delete_webhooks"
+          :app_id => app.id
+      }
+        Resque.enqueue(Workers::Integrations::JiraAccountUpdates, args)
       end
     end
 

@@ -53,6 +53,12 @@ module SubscriptionHelper
 		}
 	end
 
+	def active_merchant_card_object
+		card = { :number => CARD_NUMBERS[:valid], :verification_value => "123", :month => "1", 
+			:year => 2.years.from_now.year }
+		ActiveMerchant::Billing::CreditCard.new(card)
+	end
+
 end
 
 

@@ -56,9 +56,15 @@
                       "data-template-footer" => "",
                       :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
               <% when :filter then %>
-                <%= link_to t('ticket.recent_tickets'), 
+                <% if local_assigns.has_key? :new_tab %>
+                  <%= link_to t('ticket.recent_tickets'), 
+                      helpdesk_requester_filter_path(:requester_id => user.id),
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)), :target => "_blank" %>
+                <% else %>
+                  <%= link_to t('ticket.recent_tickets'), 
                       helpdesk_requester_filter_path(:requester_id => user.id),
                       :title => t('contacts.info4', :nick_name => h(user.display_name)) %>
+                <% end %>
             <% end %>
         </div>
       <% end %>
