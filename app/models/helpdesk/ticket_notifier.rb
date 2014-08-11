@@ -85,13 +85,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
 
     survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
-    survey_monkey_survey = Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket])
+    surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket])
     
     part :content_type => "multipart/alternative" do |alt|
        alt.part "text/plain" do |plain|
          plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body_plain], :dropboxes=>params[:dropboxes],
                      :survey_handle => survey_handle,
-                     :surveymonkey_survey => survey_monkey_survey )
+                     :surveymonkey_survey => surveymonkey_survey )
        end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
