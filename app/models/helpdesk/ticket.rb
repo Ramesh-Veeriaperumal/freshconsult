@@ -35,6 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
   
   text_datastore_callbacks :class => "ticket"
+  spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
