@@ -43,7 +43,9 @@ describe Facebook::Core::Comment do
     
     facebook_feed = sample_facebook_feed(feed_id, true)
     
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed, true)
+    comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
+    
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed, comment)
       
     Facebook::Core::Parser.new(realtime_feed).parse
     

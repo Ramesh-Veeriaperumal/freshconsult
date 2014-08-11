@@ -170,6 +170,7 @@ var FreshfoneCalls;
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
+			this.disableCallButton();
 		},
 
 		toggleInvalidNumberText: function (show) {
@@ -232,11 +233,12 @@ var FreshfoneCalls;
 			if (this.callButtonDisabled === true) {
 				$('#number').data('keypad')._mainDiv.find('.keypad-call')
 					.attr('disabled', 'disabled')
-					.text('Calling...');
+					 .text('Calling...'); 
 			} else {
 				$('#number').data('keypad')._mainDiv.find('.keypad-call')
 					.removeAttr('disabled', 'disabled')
-					.text('Call');
+					 .text('Call');
+
 			}
 		},
 		selectFreshfoneNumber: function (freshfone_number_id) {
