@@ -460,6 +460,7 @@ en:
   portal_meta:
     titles:
       portal_home: "Support"
+      password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
       forgot_password: "Forgot password"
