@@ -21,10 +21,7 @@ class UserSession < Authlogic::Session::Base
 
   def set_node_session
     generated_hash = Digest::SHA512.hexdigest("#{SECRET_KEY}::#{self.attempted_record.id}")
-    controller.cookies['helpdesk_node_session'] = {
-      :value => generated_hash, 
-      # :httponly => true # TODO: Please Enable this once we assess the Auth Mechanism. Security Vulnerability.
-    }
+    controller.cookies['helpdesk_node_session'] = generated_hash
   end
 
   def delete_node_session
@@ -34,10 +31,7 @@ class UserSession < Authlogic::Session::Base
   def set_missing_node_session
     if controller.cookies['helpdesk_node_session'].blank?
       generated_hash = Digest::SHA512.hexdigest("#{SECRET_KEY}::#{self.attempted_record.id}")
-      controller.cookies['helpdesk_node_session'] = {
-        :value => generated_hash, 
-      # :httponly => true # TODO: Please Enable this once we assess the Auth Mechanism. Security Vulnerability.
-      }
+      controller.cookies['helpdesk_node_session'] = generated_hash
     end
   end
   

@@ -64,7 +64,7 @@ class AgentsController < ApplicationController
   def new    
     @agent      = current_account.agents.new       
     @agent.user = User.new
-    @agent.user.avatar = Helpdesk::ImageAttachment.new
+    @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
     @agent.user.user_emails.build({:primary_role => true}) if @agent.user.user_emails.blank?
