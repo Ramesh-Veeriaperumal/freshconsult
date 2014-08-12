@@ -160,7 +160,8 @@ FunctionalTests = [
 ] 
 
 MobileAppTests = [
-  "spec/controllers/mobile/*_spec.rb"
+  "spec/controllers/mobile/*_spec.rb",
+  "spec/controllers/mobile/freshfone/*_spec.rb"
 ]
 
 ChatTests = [
