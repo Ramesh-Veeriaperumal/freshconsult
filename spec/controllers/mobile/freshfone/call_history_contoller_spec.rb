@@ -8,7 +8,7 @@ describe Freshfone::CallHistoryController do
 	end
 
 	it "should get call history with agent" do
-		create_freshfone_call
+		create_freshfone_customer_call
 		get :custom_search, { "format" => "json", "wf_order"=>"created_at", "wf_order_type"=>"desc", 
                           "page"=>"1", "number_id"=>@number.id }
     	json_response.should include("calls","freshfone_numbers")

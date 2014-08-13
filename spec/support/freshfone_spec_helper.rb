@@ -44,10 +44,16 @@ module FreshfoneSpecHelper
   end
 
   def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
+    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+                                      :call_status => 0, :call_type => 1, :agent => @agent,
+                                      :params => { :CallSid => call_sid })
+  end
+
+  def create_freshfone_customer_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
     user = create_customer
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
-                                      :params => { :CallSid => call_sid }, :customer => user )
+                                      :params => { :CallSid => call_sid }, :customer => user)
   end
 
   def build_freshfone_caller
