@@ -165,11 +165,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def joins
-    all_joins = @index_filter.get_joins(sql_conditions)
-    all_joins[0].concat(%( INNER JOIN helpdesk_ticket_states ON 
-                   helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
-                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
-    all_joins        
+    @index_filter.get_joins(sql_conditions)
   end
 
   def build_file file_string
