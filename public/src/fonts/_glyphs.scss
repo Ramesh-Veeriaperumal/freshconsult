@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot");
-  src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.woff") format("woff"),
-       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.ttf") format("truetype"),
-       font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg#glyphs") format("svg");
+  src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.eot");
+  src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.woff") format("woff"),
+       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.ttf") format("truetype"),
+       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg#glyphs") format("svg");
+    src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.svg#glyphs") format("svg");
   }
 }
 
@@ -68,6 +68,7 @@
 .ficon-email_commands_setting:before,
 .ficon-eye:before,
 .ficon-facebook:before,
+.ficon-facebook-lock:before,
 .ficon-facebook-setting:before,
 .ficon-feedback:before,
 .ficon-file:before,
@@ -133,6 +134,7 @@
 .ficon-trash:before,
 .ficon-trash-o:before,
 .ficon-twitter:before,
+.ficon-twitter-lock:before,
 .ficon-unlock:before,
 .ficon-user:before,
 .ficon-view-retweets:before,
@@ -196,6 +198,7 @@
 .ficon-email_commands_setting:before { content: "\f150"; }
 .ficon-eye:before { content: "\f112"; }
 .ficon-facebook:before { content: "\f113"; }
+.ficon-facebook-lock:before { content: "\f173"; }
 .ficon-facebook-setting:before { content: "\f151"; }
 .ficon-feedback:before { content: "\f152"; }
 .ficon-file:before { content: "\f142"; }
@@ -261,6 +264,7 @@
 .ficon-trash:before { content: "\f13f"; }
 .ficon-trash-o:before { content: "\f127"; }
 .ficon-twitter:before { content: "\f128"; }
+.ficon-twitter-lock:before { content: "\f174"; }
 .ficon-unlock:before { content: "\f129"; }
 .ficon-user:before { content: "\f12a"; }
 .ficon-view-retweets:before { content: "\f12b"; }
