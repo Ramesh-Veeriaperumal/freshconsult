@@ -14,6 +14,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ApplicationHelper
   include Mobile::Controllers::Ticket
   helper AutocompleteHelper
+  helper Helpdesk::NotesHelper
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
