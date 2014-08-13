@@ -16,6 +16,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
   text_datastore_callbacks :class => "note"
+  spam_watcher_callbacks :user_column => "user_id"
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
   attr_protected :attachments, :notable_id
 

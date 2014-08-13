@@ -194,7 +194,7 @@ module FreshdeskCore::Model
           :username => app.configs_username,
           :password => app.configs_password,
           :domain => app.configs_domain,
-          :operation => "delete_webhooks"
+          :operation => "delete_webhooks",
           :app_id => app.id
       }
         Resque.enqueue(Workers::Integrations::JiraAccountUpdates, args)
