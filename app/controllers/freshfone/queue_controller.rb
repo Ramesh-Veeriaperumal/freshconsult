@@ -63,10 +63,6 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   private
-    def update_call
-      current_call.update_call(params)
-    end
-
     def trigger_queue_wait
       unless get_key(resque_queue_wait_key)
         set_key(resque_queue_wait_key, true)

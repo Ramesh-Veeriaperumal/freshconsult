@@ -13,7 +13,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		account = freshfone_number.account
 		create_subaccount(freshfone_number, account) if new_freshfone_account?(account)
 		build_ivr_for_number(freshfone_number, account)
-		add_number_to_twilio(freshfone_number, account) unless freshfone_number.skip_in_twilio
+		add_number_to_twilio(freshfone_number, account)
 		set_number_config(freshfone_number, account)
 	end
 
@@ -55,8 +55,8 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 		def add_number_to_twilio(freshfone_number, account)
 			number = account.freshfone_subaccount.incoming_phone_numbers.create(
-														:phone_number => freshfone_number.number, 
-														:voice_application_sid => account.freshfone_account.app_id )
+															:phone_number => freshfone_number.number, 
+															:voice_application_sid => account.freshfone_account.app_id )
 			freshfone_number.number_sid = number.sid unless number.blank?
 		end
 

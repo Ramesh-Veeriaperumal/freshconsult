@@ -14,8 +14,8 @@ class Freshfone::Credit < ActiveRecord::Base
 	}
 
 	RECHARGE_THRESHOLD = 25
-	RECHARGE_OPTIONS = [25, 50, 100, 250, 500, 1000, 2500, 5000]
-	DEFAULT = 100
+	RECHARGE_OPTIONS = (25..500) #Temp Credit Range for recharge.
+	STEP = 25
 
 	attr_accessor :selected_credit
 	validates_numericality_of :recharge_quantity, :if => :auto_recharge? , :greater_than_or_equal_to => RECHARGE_THRESHOLD
