@@ -800,8 +800,10 @@ var scrollToError = function(){
 					ev.preventDefault();
 					blockConversationForm(_form);
 					if(propertiesForm.data('updated')) {
-	      			submitNewConversation(_form, ev, submitTicketProperties);
-	      		}	
+		      			submitTicketProperties(function() {
+		      				submitNewConversation(_form, ev);
+		      			})
+		      		}	
 				} else {
 					ev.preventDefault();
 					scrollToError();
