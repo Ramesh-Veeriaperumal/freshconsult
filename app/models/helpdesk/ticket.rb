@@ -535,7 +535,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_json(options = {}, deep=true)
     return super(options) unless options[:tailored_json].blank?
-    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails] unless options.has_key?(:methods)
+    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails, :product_id] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
       json_str = super options
@@ -564,7 +564,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_attributes = [:notes,:attachments]
     ticket_attributes = [] if options[:shallow]
     super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
-      :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
+      :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name, :product_id]) do |xml|
       xml.to_emails do
         self.to_emails.each do |emails|
           xml.tag!(:to_email,emails)
@@ -637,7 +637,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => []}
+      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+    else
+      cc_email
+    end
+  end
+
+  def current_cc_emails
+    return [] unless cc_email
+    unless cc_email.is_a?(Array)
+      (cc_email[:reply_cc] || cc_email[:cc_emails] || [])
     else
       cc_email
     end

@@ -11,12 +11,11 @@ class Admin::FreshfoneController < Admin::AdminController
 		email_params = {
 			:subject => t('freshfone.admin.feature_request_content.email_subject',
 				{:account_name => current_account.name}),
-			:recipients => FreshfoneConfig['freshfone_request']['to'],
 			:from => current_user.email,
 			:cc => current_account.admin_email,
-			:message => "A customer with the following account URL has requested for Freshfone"
+			:message => "Request to Enable freshfone "
 		}
-		FreshfoneNotifier.send_later(:deliver_freshfone_email_template, current_account, email_params)
+		FreshfoneNotifier.send_later(:deliver_freshfone_request_template, current_account, current_user, email_params)
 		render :json => { :status => :success }
 	end
 

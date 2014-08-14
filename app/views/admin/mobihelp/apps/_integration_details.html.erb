@@ -13,14 +13,17 @@
   </div>
 </div>
 
-<% if @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:android] %>
-  <div class="control-group">
-    <label class="control-label" >Initialization code</label>
-    <div class="controls code-view">
-      <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>Mobihelp.init(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));</textarea>
-    </div>
+<div class="control-group">
+  <label class="control-label" >Initialization code</label>
+  <div class="controls code-view">
+    <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>
+      <% if @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:android] %>
+Mobihelp.init(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));
+      <% elsif @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
+FDMobihelpConfig *config = [[FDMobihelpConfig alloc]initWithDomain:@"<%= current_account.full_domain %>" withAppKey:@"<%= app.app_key %>" andAppSecret:@"<%= app.app_secret %>"];
+[[FDMobihelp sharedInstance]initWithConfig:config];<% end %></textarea>
   </div>
-<% end %>
+</div>
 
 <script>
   jQuery(document).ready(function () {

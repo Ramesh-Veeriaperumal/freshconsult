@@ -1,6 +1,3 @@
-#require '../spec_helper'
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module TwitterHelper
   
   def create_test_twitter_handle(test_account=nil)

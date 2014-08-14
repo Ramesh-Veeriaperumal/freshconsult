@@ -30,8 +30,8 @@ module VA::RuleHelper
     @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @responder = add_test_agent(@account)
     @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
-    @agent_note =@ticket.notes.create(Factory.attributes_for(:note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
-    @user_note = @ticket.notes.create(Factory.attributes_for(:note, :notable_id => @ticket.id, :user_id => @requester.id))
+    @agent_note =@ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
+    @user_note = @ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => @requester.id))
     @time_sheet = @ticket.time_sheets.create
     @survey_result = @ticket.survey_results.create(:rating => 1)
     ###Need to define custom fields

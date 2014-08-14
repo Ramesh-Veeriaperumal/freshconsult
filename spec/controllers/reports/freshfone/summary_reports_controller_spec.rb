@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Reports::Freshfone::SummaryReportsController do
+  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

@@ -123,6 +123,14 @@ class ContactsController < ApplicationController
     render :partial => "hover_card"
   end
 
+  def hover_card_in_new_tab
+    @user = current_account.all_users.find(params[:id])    
+    render :partial => "hover_card", :locals => 
+      {
+        :new_tab => true
+      }
+  end
+
   def configure_export
     render :partial => "contacts/contact_export", :locals => {:csv_headers => EXPORT_CONTACT_FIELDS}
   end

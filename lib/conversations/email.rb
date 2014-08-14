@@ -5,7 +5,7 @@ module Conversations::Email
     Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
   end
 
-  def send_email      
+  def send_email #possible dead code
     add_cc_email     
     if @item.fwd_email?
       Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
@@ -18,13 +18,14 @@ module Conversations::Email
     end
   end
 
-  def add_cc_email
-    cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : @parent.cc_email_hash
+  def add_cc_email #possible dead code
+    cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : @parent.cc_email_hash
     if @item.fwd_email?
       fwd_emails = @item.to_emails | @item.cc_emails | @item.bcc_emails | cc_email_hash_value[:fwd_emails]
       fwd_emails.delete_if {|email| (email == @parent.requester.email)}
       cc_email_hash_value[:fwd_emails]  = fwd_emails
     else
+      cc_email_hash_value[:reply_cc] = @item.cc_emails.reject {|email| (email == @parent.requester.email)}
       cc_emails = @item.cc_emails | cc_email_hash_value[:cc_emails]
       cc_emails.delete_if {|email| (email == @parent.requester.email)}
       cc_email_hash_value[:cc_emails] = cc_emails

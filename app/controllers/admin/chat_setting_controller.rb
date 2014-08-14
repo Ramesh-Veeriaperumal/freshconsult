@@ -6,7 +6,7 @@ class Admin::ChatSettingController < Admin::AdminController
 
   def index
     unless feature?(:chat)
-      if is_chat_plan?
+      if current_account.subscription.is_chat_plan?
         render :request_page
       else
         render_404

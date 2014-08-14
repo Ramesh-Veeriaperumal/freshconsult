@@ -1,7 +1,5 @@
  ActionController::Routing::Routes.draw do |map|
 
-  map.connect '/visitor/load/:id.:format', :controller => 'chats', :action => 'load', :conditions => { :method => :get }
-
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
 
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -29,7 +27,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
@@ -526,6 +524,12 @@
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
   end
 
+  map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'create', :conditions => { :method => :post }
+  map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'categories', :conditions => { :method => :get } 
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'show',  :conditions => { :method => :get }
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'destroy', :conditions => { :method => :delete }
+  map.connect '/discussions/categories/:id.:format', :controller => 'discussions', :action => 'update', :conditions => { :method => :put }
+
   map.resources :discussions, :collection => { :your_topics => :get, :sidebar => :get, :categories => :get, :reorder => :put }
 
   map.resources :discussions
@@ -650,6 +654,7 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
+    mobile.resources :settings,  :only =>:index
   end
  
   map.namespace :mobihelp do |mobihelp|

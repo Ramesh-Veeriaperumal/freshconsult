@@ -6,6 +6,8 @@ describe Helpdesk::MergeTicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @account = create_test_account
+    @user = add_test_agent(@account)
     @group = create_group(@account, {:name => "Merge"})
     @target_ticket = create_ticket({ :status => 2}, @group)
   end
@@ -14,6 +16,7 @@ describe Helpdesk::MergeTicketsController do
     login_admin
     @source_ticket1 = create_ticket({ :status => 2 }, @group)
     @source_ticket2 = create_ticket({ :status => 2 }, @group)
+    stub_s3_writes
   end
 
   after(:each) do

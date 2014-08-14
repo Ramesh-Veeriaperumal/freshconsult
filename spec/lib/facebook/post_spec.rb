@@ -15,6 +15,7 @@ describe Facebook::Core::Post do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id)
     facebook_feed = sample_facebook_feed(feed_id)
+    facebook_feed[:type] = "video"
     
     #stub the api call for koala
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)

@@ -9,12 +9,22 @@ module Integrations::Jira::WebhookInstaller
   end
 
   def register_webhook
-    send_later(:background_task_register)
+    options = {
+      :operation => "create_webhooks",
+      :app_id => self.id
+    }
+    Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
+    
   end
 
   def unregister_webhook
-  	http_request_proxy = HttpRequestProxy.new
-  	Integrations::JiraWebhook.new(self,http_request_proxy).send_later(:delete_webhooks)
+    options = {
+        :username => self.configs_username,
+        :password => self.configs_password,
+        :domain => self.configs_domain,
+        :operation => "delete_webhooks"
+      }
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates, options)
   end
 
   def background_task_register

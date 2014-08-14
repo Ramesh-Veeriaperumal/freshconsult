@@ -28,6 +28,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"mobile/automation"
 	resource :"mobile/notification"
 	resource :"mobile/freshfone"
+    resource :"mobile/setting"    
     resource :"helpdesk/mobihelp_ticket_extra"
     # Social - Twitter
     resource :"social/twitter_handle",
@@ -200,7 +201,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
 	view_contacts do
-	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv]
+	 resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :configure_export, :export_csv]
 	 resource :customer, :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]

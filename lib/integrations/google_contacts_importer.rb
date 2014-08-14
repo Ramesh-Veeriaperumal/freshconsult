@@ -155,7 +155,7 @@ class Integrations::GoogleContactsImporter
       end
     end
 
-    def send_error_email (status, options={})
+    def send_error_email (status, options={}) #possible dead code
       begin
         if options[:send_email]
           email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}

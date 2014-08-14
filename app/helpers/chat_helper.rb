@@ -1,12 +1,5 @@
 module ChatHelper
 
-  def is_chat_plan?
-    freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
-    freshchat_plans.include?(current_account.subscription.subscription_plan.name)
-  end
-
   def chat_agents_list
     Base64.strict_encode64(current_account.agents_from_cache.collect { |c| {:name=>c.user.name, :id=>c.user.id} }.to_json.html_safe )
   end

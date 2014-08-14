@@ -1,12 +1,10 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe PasswordResetsController do
     self.use_transactional_fixtures = false
 
     before(:each) do
-    	request.host = @account.full_domain
-	    request.user_agent = "Freshdesk_Native_Android"
-	    request.accept = "application/json"
+    	api_login
   	end
 
 	it "should Reset Password and return an array" do 

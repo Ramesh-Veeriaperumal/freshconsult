@@ -143,7 +143,7 @@ class Freshfone::Call < ActiveRecord::Base
 	
 	def update_call_details(params)
 		self.params = params 
-		self.dial_call_sid = params[:DialCallSid]
+		self.dial_call_sid = params[:DialCallSid] if params[:DialCallSid].present?
 		self.agent = params[:called_agent] if agent.blank?
 		self.recording_url = params[:RecordingUrl] if recording_url.blank?
 		self.call_duration = params[:DialCallDuration] || params[:RecordingDuration] if call_duration.blank?

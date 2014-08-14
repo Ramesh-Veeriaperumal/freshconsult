@@ -13,13 +13,11 @@
         margin: 0;
         padding: 0;
       }
-
       body {
-        background: #fafafa;
+        background: #fff;
         color: #444;
         font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
-
       a,
       a:visited {
         color: #888;
@@ -27,13 +25,13 @@
       }
       a:hover,
       a:focus { color: #000; }
-
       header {
         overflow: hidden;
-        padding: 20px 0;
-        margin:0 5px 20px 0px;
+        padding: 20px 0 20px 60px;
+        margin:0 5px 20px 0;
+        background: #fafafa;
+        border-bottom: 1px solid #eee;
       }
-
       header h1 {
         color: #555;
         font-size: 24px;
@@ -49,43 +47,34 @@
         float: right;
         font-size: 14px;
       }
-
       .container {
         margin: 0 auto;
-        max-width: 1200px;
         min-width: 960px;
-        padding: 0 40px 50px;
-        width: 90%;
+        padding: 0 40px 50px 50px;
       }
       .glyph {
-        border: 1px solid #eee;
         padding: 10px;
-        margin-left: -1px;
-        margin-bottom:-1px;
         width: 20%;
-        text-align: center;
         float: left;
-        background: #fff;
+        line-height: 23px;
       }
-      .glyph:hover{
-        background: #fff9e7;
+      .preview-glyphs{
+        min-width: 32px;
       }
-
-      .preview-glyphs {}
-
+      .preview-glyphs,.usage {
+        float: left;
+      }
       .preview-scale {
         color: #888;
         font-size: 12px;
         margin-top: 5px;
       }
-
       .step {
         display: inline-block;
         line-height: 1;
         position: relative;
         width: 10%;
       }
-
       .step .letters,
       .step i {
         -webkit-transition: opacity .3s;
@@ -94,41 +83,34 @@
         -o-transition: opacity .3s;
         transition: opacity .3s;
       }
-
       .step:hover .letters { opacity: 1; }
       .step:hover i { opacity: .3; }
-
       .letters {
         opacity: .3;
         position: absolute;
       }
-
       .characters-off .letters { display: none; }
       .characters-off .step:hover i { opacity: 1; }
 
-      <% scale.each do |n| %>
-      .size-<%= n %> { font-size: <%= n %>px; }
-      <% end %>
+      <% scale.each do |n| %>.size-<%= n %> { font-size: <%= n %>px; }<% end %>
 
       .usage { font-size: 12px; }
-
       .usage span {
         font-family: monospace;
-        margin-right: 3px;
-        padding: 2px 5px;
         text-align: center;
+        background: #f2f2f2;
+        padding: 1px 8px 3px;
+        -webkit-border-radius: 16px;
+        -moz-border-radius: 16px;
+        border-radius: 16px;
       }
-
       .usage .point { width: 150px; }
-
       .usage .class { width: 250px; }
-
       footer {
         color: #888;
         font-size: 12px;
         padding: 20px 0;
       }
-
       .clearboth{
         clear:both;
       }
@@ -157,11 +139,11 @@
   </head>
 
   <body class="characters-off">
+    <header>
+      <h1>Font Icons (<%= @glyphs.length %>)</h1>
+      <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
+    </header>
     <div id="page" class="container">
-      <header>
-        <h1>Fonticons (<%= @glyphs.length %>)</h1>
-        <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code></p>
-      </header>
 
       <% @glyphs.each do |name, value|
         selector = @options[:css_selector].sub('{{glyph}}', name.to_s) %>

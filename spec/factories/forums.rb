@@ -1,23 +1,23 @@
 if Rails.env.test?
   Factory.define :forum_category  do |c|
-    c.sequence(:name) { |n| "Test Category #{n}"}
-    c.sequence(:description) { |n| "This is a test category #{n}."}
+    c.name Faker::Lorem.words.join(' ').capitalize
+    c.description Faker::Lorem.sentence
   end
 
 
   Factory.define :forum do |f|
-    f.sequence(:name) { |n| "Test Forum #{n}"}
-    f.sequence(:description) { |n| "This is a test forum #{n}."}
+    f.name Faker::Lorem.words.join(' ').capitalize
+    f.description Faker::Lorem.sentence
     f.forum_visibility  1
   end
 
 
   Factory.define :topic do |t|
-    t.sequence(:title) { |n| "Test Topic #{n}"}
+    t.title Faker::Lorem.sentence
   end
 
   Factory.define :post do |p|
-    p.sequence(:body_html) { |n| "<p>This is a new post #{n}.</p>"}
+    p.body_html "<p>#{Faker::Lorem.paragraph}</p>"
   end
 
   Factory.define :ticket_topic do |tt|

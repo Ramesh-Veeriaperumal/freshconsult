@@ -13,7 +13,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
-  attr_accessor :reply_to_email
+  attr_accessor :reply_to_email, :additional_emails
 
   def perform
     # from_email = parse_from_email
@@ -151,6 +151,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
+        self.additional_emails = get_email_array($1)[1..-1]
         self.reply_to_email = parse_email($1)
       end
       reply_to_email
@@ -201,6 +202,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:cc].nil?
         cc_array = params[:cc].split(',').collect! {|n| (parse_email n)[:email]}
       end
+      cc_array.concat(additional_emails || [])
       return cc_array.compact.map{|i| i.downcase}.uniq
     end
 
@@ -240,7 +242,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :reply_cc => parse_cc_email},
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -532,10 +534,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : ticket.cc_email_hash
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : ticket.cc_email_hash
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
+      cc_email_hash_value[:reply_cc] = cc_emails_val
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end

@@ -74,14 +74,14 @@ describe ActivationsController do
     u.active = false
     u.save
     u.reload
-    get :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello", :password_confirmation=>"hello"}
+    post :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello", :password_confirmation=>"hello"}
     u.reload
     u.active?.should eql true
     response.session["flash"][:notice].should eql "Your account has been activated."
   end
 
   it "should not create activation" do
-    get :create, :perishable_token => "dasdasdASDASDasdAsdefsFasDfSdfsdFsDf"
+    post :create, :perishable_token => "dasdasdASDASDasdAsdefsFasDfSdfsdFsDf"
     response.body.should_not =~ /Your account has been activated./
   end
 end

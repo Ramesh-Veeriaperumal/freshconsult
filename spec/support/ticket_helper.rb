@@ -1,5 +1,3 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module TicketHelper
 
   def create_ticket(params = {}, group = nil)
@@ -16,7 +14,7 @@ module TicketHelper
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
-                                         :cc_email => {:cc_emails => [], :fwd_emails => []},
+                                         :cc_email => {:cc_emails => [], :fwd_emails => [], :reply_cc => []},
                                          :created_at => params[:created_at],
                                          :account_id => account_id)
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)

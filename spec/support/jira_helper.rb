@@ -1,5 +1,3 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module JiraHelper
 
 	def create_installed_application(account)

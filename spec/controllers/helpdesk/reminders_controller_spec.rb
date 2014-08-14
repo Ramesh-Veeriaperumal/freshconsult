@@ -26,6 +26,18 @@ describe Helpdesk::RemindersController do
     @test_ticket.reminders.first.body.should be_eql(test_body)
   end
 
+  it "should create a new reminder - Mobile format" do
+    new_ticket = create_ticket({:status => 2})
+    test_body = Faker::Lorem.sentence(3)
+    post :create, { :source => "ticket_view",
+                    :helpdesk_reminder => { :body => test_body },
+                    :_ => "",
+                    :ticket_id => new_ticket.display_id,
+                    :format => 'mobile'
+                  }
+    new_ticket.reminders.first.body.should eql(test_body)
+  end
+
   it "should not create a new reminder without reminder_body" do
     post :create, { :source => "ticket_view",
                     :helpdesk_reminder => { :body => "" },

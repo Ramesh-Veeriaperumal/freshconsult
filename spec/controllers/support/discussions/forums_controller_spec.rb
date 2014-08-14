@@ -42,7 +42,7 @@ describe Support::Discussions::ForumsController do
 
 		get :show, :id => forum.id
 
-		response.should render_template "#{Rails.root}/public/404.html"
+		response.should redirect_to support_login_url
 	end
 
 	it "should redirect to support home if portal forums is disabled" do
@@ -57,5 +57,5 @@ describe Support::Discussions::ForumsController do
 
 	 	@account.features.hide_portal_forums.destroy
 	end
-	
+
 end

@@ -13,6 +13,25 @@ describe Support::TicketsController do
     log_in(@user)
   end
 
+  it "should render new support ticket page" do
+    get :new
+    response.should render_template 'support/tickets/new.portal'
+  end
+
+  it "should not create a new ticket when captcha failed or save_ticket returns false" do
+    test_subject = Faker::Lorem.sentence(4)
+    Helpdesk::Ticket.any_instance.stubs(:save_ticket).returns(false)
+    post :create, { :helpdesk_ticket => { :email => Faker::Internet.email, 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing ticket creation</p>"} 
+                                        }, 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}}
+    @account.tickets.find_by_subject(test_subject).should_not be_an_instance_of(Helpdesk::Ticket)
+    Helpdesk::Ticket.any_instance.unstub(:save_ticket)
+  end
+
   it "should create a new ticket" do
     test_subject = Faker::Lorem.sentence(4)
     post :create, { :helpdesk_ticket => { :email => Faker::Internet.email, 
@@ -22,6 +41,56 @@ describe Support::TicketsController do
                     :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
                                               (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
                                :referrer => ""}}
+    @account.tickets.find_by_subject(test_subject).should be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should create a new ticket with cc_emails" do
+    test_subject = Faker::Lorem.sentence(4)
+    post :create, { :helpdesk_ticket => { :email => "rachel@freshdesk.com", 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
+                                        }, 
+                    :cc_emails => "superman@marvel.com,avengers@marvel.com", 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}}
+    ticket = @account.tickets.find_by_subject(test_subject)
+    ticket.cc_email_hash[:cc_emails].should eql ticket.cc_email_hash[:reply_cc]
+  end
+
+  it "should affect reply_cc when adding/removing ticket cc_emails" do
+    test_subject = Faker::Lorem.sentence(4)
+    post :create, { :helpdesk_ticket => { :email => "rachel@freshdesk.com", 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
+                                        }, 
+                    :cc_emails => "superman@marvel.com,avengers@marvel.com, batman@gothamcity.com", 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}}
+    ticket = @account.tickets.find_by_subject(test_subject)
+    ticket.cc_email_hash[:reply_cc] = ["superman@marvel.com", "batman@gothamcity.com"]
+    ticket.update_attribute(:cc_email, ticket.cc_email_hash)
+
+    put :add_people, { :helpdesk_ticket => { :cc_email => { :cc_emails => "avengers@marvel.com, batman@gothamcity.com, roadrunner@looneytoons.com"}
+                                            }, 
+                        :id =>ticket.id
+                      }
+    ticket.cc_email_hash[:reply_cc] = ["batman@gothamcity.com", "roadrunner@looneytoons.com"]
+  end
+
+  it "should create a new ticket with format - JSON" do
+    test_subject = Faker::Lorem.sentence(4)
+    post :create, { :helpdesk_ticket => { :email => Faker::Internet.email, 
+                                          :subject => test_subject, 
+                                          :ticket_body_attributes => { :description_html => "<p>Testing</p>"} 
+                                        }, 
+                    :meta => { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+                                              (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
+                               :referrer => ""}, :format => 'json'
+                 }
+    result = JSON.parse(response.body)
+    result["success"].should be_true
     @account.tickets.find_by_subject(test_subject).should be_an_instance_of(Helpdesk::Ticket)
   end
 
@@ -78,8 +147,8 @@ describe Support::TicketsController do
     flash[:notice].should be_eql("Email(s) successfully added to CC.")
     response.should redirect_to "support/tickets/#{test_ticket.display_id}"
     @account.tickets.find_by_display_id(test_ticket.display_id).cc_email[:cc_emails].should be_eql([test_cc_email1,test_cc_email2])
-
   end
+
   it "should filter only closed tickets in list view" do
     test_user = Factory.build(:user, :account => @account, :email => Faker::Internet.email,
                                :user_role => 3)
@@ -132,5 +201,12 @@ describe Support::TicketsController do
                       }
     response.content_type.should be_eql("text/csv")
     response.headers["Content-Disposition"].should be_eql("attachment; filename=tickets.csv")
+  end
+
+  it "should check whether user_email is already exists" do
+    get :check_email, :v => Faker::Internet.email
+    item = JSON.parse(response.body)
+    item["user_exists"].should be_false
+    response.should be_success
   end
 end

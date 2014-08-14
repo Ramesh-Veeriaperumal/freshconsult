@@ -1,5 +1,3 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
-
 module UsersHelper
   def add_test_agent(account=nil, options={})
     role_id = options[:role].nil? ? account.roles.find_by_name("Account Administrator").id : options[:role]
@@ -39,6 +37,10 @@ module UsersHelper
   end
 
   def add_new_user(account, options={})
+    if options[:email]
+      user = User.find_by_email(options[:email])
+      return user if user
+    end
     new_user = Factory.build(:user, :account => account,
                                     :name => Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,

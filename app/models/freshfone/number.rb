@@ -216,10 +216,10 @@ class Freshfone::Number < ActiveRecord::Base
 			end
 		end
 
-		def validate_attachments
+		def validate_attachments 
 			(attachments || []).each do |a|
 				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
-					{ :name => a.content_file_name })) unless a.audio?
+					{ :name => a.content_file_name })) unless a.mp3?
 			end
 		end
 

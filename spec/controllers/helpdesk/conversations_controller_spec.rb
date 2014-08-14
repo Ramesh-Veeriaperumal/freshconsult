@@ -14,6 +14,7 @@ describe Helpdesk::ConversationsController do
 
     before(:each) do
       log_in(@agent)
+      stub_s3_writes
     end
 
     it "should send a reply to the ticket, with CC and BCC emails, assign responder as agent" do
@@ -67,6 +68,70 @@ describe Helpdesk::ConversationsController do
                     }
       response.should render_template "helpdesk/notes/create.rjs"
       @account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
+    end
+
+    it "should forward a ticket with attachment" do
+      now = (Time.now.to_f*1000).to_i
+      new_ticket = create_ticket({:status => 2,
+                                  :attachments => {:resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
+                                                    :description => Faker::Lorem.characters(10)
+                                                  }
+                                    }, @group)
+      attachment = @account.attachments.find_by_attachable_id(new_ticket.id)
+      attachment.should_not be_nil
+      attachment.attachable_type.should eql "Helpdesk::Ticket"
+      post :forward, {:reply_email => { :id => "support@#{@account.full_domain}" },
+                      :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>",
+                                                                    :full_text_html =>"<div>#{now}</div>"},
+                                          :attachments => [{:resource => "#{attachment.id}",:description => "<div>note_attachment</div>"}], 
+                                          :cc_emails => "",
+                                          :bcc_emails => "",
+                                          :private => "true",
+                                          :source => "8",
+                                          :to_emails => Faker::Internet.email,
+                                          :from_email => "support@#{@account.full_domain}"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "197",
+                     :ticket_id => new_ticket.display_id
+                    }
+      new_ticket.reload
+      new_note = new_ticket.notes.first
+      new_note.should_not be_nil
+      item = @account.attachments.find_by_attachable_id(new_note.id)
+      item.should_not be_nil
+      item.attachable_type.should eql "Helpdesk::Note"
+      response.should render_template "helpdesk/notes/create.rjs"
+      @account.tickets.find(new_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
+    end
+
+    it "should not forward a ticket with attachment_resource nil" do
+      now = (Time.now.to_f*1000).to_i
+      test_ticket = create_ticket({ :status => 2 }, @groups)
+      begin
+        post :forward, { :reply_email => { :id => "support@#{@account.full_domain}" },
+                         :helpdesk_note => { :note_body_attributes =>{:body_html => "<div>#{now}</div>",
+                                                                      :full_text_html =>"<div>#{now}</div>"},
+                                            :cc_emails => "",
+                                            :attachments => [{:resource => ""}],
+                                            :bcc_emails => "",
+                                            :private => "true",
+                                            :source => "8",
+                                            :to_emails => Faker::Internet.email,
+                                            :from_email => "support@#{@account.full_domain}"
+                                          },
+                         :ticket_status => "",
+                         :format => "js",
+                         :showing => "notes",
+                         :since_id => "197",
+                         :ticket_id => test_ticket.display_id
+        }
+      rescue Exception => e
+        test_ticket.reload
+        test_ticket.notes.should be_empty
+      end
     end
 
     it "should add a private note to a ticket" do
@@ -154,6 +219,30 @@ describe Helpdesk::ConversationsController do
                    } 
       topic.reload
       topic.last_post.body.strip.should be_eql(body)
+    end
+
+    # Keep this last as ticket_cc is being changed
+    it "should add a reply and alter reply_cc" do
+      @test_ticket.cc_email = { :cc_emails => ["superman@justiceleague.com"], :fwd_emails => [], :reply_cc => ["superman@justiceleague.com"] }
+      @test_ticket.save
+
+      now = (Time.now.to_f*1000).to_i
+      post :reply, { :reply_email => { :id => "support@#{@account.full_domain}" },
+                     :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>",
+                                                                :full_text_html =>"<div>#{now}</div>"},
+                                          :cc_emails => "batman@gothamcity.com, avengers@superheroes.com",
+                                          :private => "false",
+                                          :source => "0",
+                                          :to_emails => Faker::Internet.email,
+                                          :from_email => "support@#{@account.full_domain}"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :ticket_id => @test_ticket.display_id
+                    }
+      latest_note = @account.tickets.find(@test_ticket.id).notes.last
+      latest_note.notable.cc_email_hash[:reply_cc].should eql latest_note.cc_emails
     end
   end
     
