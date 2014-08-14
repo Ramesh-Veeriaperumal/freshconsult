@@ -24,6 +24,24 @@
 	</div>
 
 	<div class="control-group">
+		<%= f.label :hunt_type, t('freshfone.admin.number_settings.hunt_type'),
+								:class => "control-label settings-label" %>
+		<div class="controls recording-alert">
+				<p><%=t('freshfone.admin.number_settings.routing_message')%></p>
+		</div>
+		<div class="controls">
+			<div class="radio inline">
+				<%= f.radio_button :hunt_type, 1, :class => "radio" %> 
+				<%= f.label :hunt_type, t('freshfone.admin.number.simultaneous'), :class => "radiolabel", :value => 1 %>
+			</div>
+			<div class="radio inline">
+				<%= f.radio_button :hunt_type, 2, :class => "radio" %> 
+				<%= f.label :hunt_type, t('freshfone.admin.number.round_robin'), :class => "radiolabel", :value => 2 %>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
 		<%= f.label :voice, t('freshfone.admin.number_settings.transcript_voice'),
 								:class => "control-label settings-label" %>
 		<div class="controls">
