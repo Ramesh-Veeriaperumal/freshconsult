@@ -56,6 +56,70 @@ describe Helpdesk::Email::Process do
 			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
   	end
 
+  	it "with multiple reply_to emails" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+  	end
+
+  	it "with multiple reply_to emails and cc with repetition" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			cc = a.last
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+			ticket.cc_email_hash[:cc_emails].should include(cc)
+			(ticket.cc_email_hash[:cc_emails].length - ticket.cc_email_hash[:cc_emails].uniq.length).should eql 0
+  	end
+
+  	it "with multiple reply_to emails and cc without repetition" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			cc = Faker::Internet.email
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+			ticket.cc_email_hash[:cc_emails].should include(cc)
+			(ticket.cc_email_hash[:cc_emails].length - ticket.cc_email_hash[:cc_emails].uniq.length).should eql 0
+  	end
+
+  	it "with multiple reply_to emails without the feature" do
+  		@account.features.reply_to_based_tickets.destroy
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql email[:from]
+			ticket.cc_email_hash[:cc_emails].should_not include(*a[1..-1])
+			@account.features.reply_to_based_tickets.create
+  	end
+
   	it "non Reply_to based" do
   		email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
   		@account.features.reply_to_based_tickets.destroy

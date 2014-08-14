@@ -55,6 +55,10 @@ module Helpdesk::Email::ParseEmailData
 		return f_email unless f_email[:email].blank?
 	end
 
+	def additional_reply_to_emails
+		get_email_array(params["Reply-To"])[1..-1]
+	end
+
 	def reply_to_feature
 		@acc_reply_to_feature ||= account.features?(:reply_to_based_tickets)
 	end

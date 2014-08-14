@@ -13,7 +13,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
-  attr_accessor :reply_to_email
+  attr_accessor :reply_to_email, :additional_emails
 
   def perform
     # from_email = parse_from_email
@@ -151,6 +151,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
+        self.additional_emails = get_email_array($1)[1..-1]
         self.reply_to_email = parse_email($1)
       end
       reply_to_email
@@ -201,6 +202,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:cc].nil?
         cc_array = params[:cc].split(',').collect! {|n| (parse_email n)[:email]}
       end
+      cc_array.concat(additional_emails || [])
       return cc_array.compact.map{|i| i.downcase}.uniq
     end
 
