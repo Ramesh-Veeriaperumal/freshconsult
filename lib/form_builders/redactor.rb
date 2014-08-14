@@ -5,7 +5,6 @@ module FormBuilders::Redactor
 
       REDACTOR_FORUM_EDITOR = {
         :autoresize => false,
-        :cursorTracking => false,
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
@@ -16,7 +15,6 @@ module FormBuilders::Redactor
 
       REDACTOR_SOLUTION_EDITOR = {
         :autoresize => false,
-        :cursorTracking => false,
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/solutions_uploaded_images",
@@ -26,7 +24,6 @@ module FormBuilders::Redactor
       REDACTOR_TICKET_EDITOR = {
         :focus => true,
         :autoresize => false,
-        :cursorTracking => false,
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/tickets_uploaded_images",
