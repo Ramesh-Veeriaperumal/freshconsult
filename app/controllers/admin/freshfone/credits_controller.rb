@@ -14,7 +14,7 @@ class Admin::Freshfone::CreditsController < ApplicationController
 	end
 
 	def enable_auto_recharge
-    @freshfone_credit.enable_auto_recharge(params[:freshfone_credits][:recharge_quantity].to_i)
+    @freshfone_credit.enable_auto_recharge(params[:recharge_quantity].to_i)
     redirect_to subscription_url
   end
 
@@ -29,7 +29,7 @@ class Admin::Freshfone::CreditsController < ApplicationController
 		end
 
 		def set_freshfone_credit
-			@freshfone_credit.selected_credit = params[:freshfone_credits][:credit].to_i
+			@freshfone_credit.selected_credit = params[:credit].to_i
 		end
 
     def validate_freshfone_credit

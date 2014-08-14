@@ -301,6 +301,7 @@
       
       admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
       admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
+      admin.freshfone_actions '/freshfone_admin/actions', :controller => :freshfone_actions, :action => :index
       
       # admin.resources :analytics
       admin.resources :spam_watch, :only => :index
