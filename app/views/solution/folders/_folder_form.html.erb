@@ -36,11 +36,9 @@
 				if (visiblity  == 4)
 				{
 				   jQuery('#company_folders').show();
-				   jQuery("#company_folders #customers_filter").addClass("required");
 				}
 				else
 				{
-				  jQuery("#company_folders #customers_filter").removeClass("required");
 				  jQuery('#customers_filter').val("");
 				  jQuery("#customers_filter").trigger("liszt:updated");
 				  jQuery('#company_folders').hide();
