@@ -19,6 +19,7 @@ module SupportNoteControllerMethods
       cc_email_hash_value = {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
     end
     cc_array = cc_email_hash_value[:cc_emails]
+    cc_email_hash_value[:reply_cc] = cc_array.dup unless cc_email_hash_value[:reply_cc]
     if(cc_array.is_a?(Array)) # bug fix for string cc_emails value
       cc_array.push((current_user || @requester).email)
       cc_email_hash_value[:cc_emails] = cc_array.uniq
