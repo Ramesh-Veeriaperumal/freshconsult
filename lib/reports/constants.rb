@@ -27,6 +27,9 @@ module Reports
     REPORTS_TABLE = 'helpdesk_report_stats'
     REPORTS_DATE_COLUMN = 'created_at'
 
+    REGENERATE_LABEL = "Regenerate_"
+    STAGING_LABEL = "_staging_"
+
     DEFAULT_COLUMNS =  [
       [ :responder_id,        "Agent",    :dropdown],
       [ :group_id,            "Group",    :dropdown],

@@ -3043,7 +3043,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: This text will be included in your ticket replies automatically, along with your cursor position
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
