@@ -153,6 +153,7 @@ var Redactor = function(element, options)
 	this.textPaste = false;
 	this.undoDisable = false;
 	this.$el = $(element);
+	this.cursorPlacementDelay = null,
 	this.paste_supported_browser = (($.browser.mozilla==true) && (navigator.appVersion.indexOf("Win")!=-1)) || ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
 	
 	this.buildLangSelector();
@@ -875,12 +876,10 @@ Redactor.prototype = {
 		}
 
 		var imgTag = $("<img id='cursor' />");
-		imgTag.attr("src","data:image/image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+		imgTag.attr("src","//:0");
 		imgTag.attr("rel","cursor");
-
-		if(!$.browser.mozilla){
-			imgTag.css({ "display": "none" });
-		}
+		imgTag.attr("width",0);
+		imgTag.attr("height",0);
 
 	    if (window.getSelection) { 
 	        var selection = window.getSelection();
@@ -998,8 +997,11 @@ Redactor.prototype = {
 			var key = e.keyCode || e.which;
 			
 			if (this.opts.cursorTracking) 
-			{
-				this.setCursorPosition(e);
+			{	
+					clearTimeout(this.cursorPlacementDelay);
+					this.cursorPlacementDelay = setTimeout($.proxy(function(){
+						this.setCursorPosition();
+					},this),300);
 			}
 			// callback as you type
 			if (typeof this.opts.keyupCallback === 'function')
@@ -1304,9 +1306,6 @@ Redactor.prototype = {
 	},
 	syncCode: function()
 	{
-		if($.browser.mozilla && this.$editor.find("[rel='cursor']").get(0)){
-			$("[rel='cursor']").css({"display": "none"});
-		}
 		this.$el.val(this.$editor.html());
 	},
 	
@@ -1446,7 +1445,7 @@ Redactor.prototype = {
 				$(s).attr('unselectable', 'on');
 			}
 			
-			if($(s).attr('id') != "cursor" && $(s).attr('rel') != undefined){
+			if($(s).attr('id') != "cursor"){
 				this.resizeImage(s);
 			}
 				
