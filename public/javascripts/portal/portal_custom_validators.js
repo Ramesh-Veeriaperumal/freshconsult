@@ -6,7 +6,7 @@
 // Redactor validators
 $.validator.addMethod("required_redactor", function(value, element, param) {
   if ($(element).data('redactor')){
-  	return $(element).data('redactor').isEmpty();	
+  	return $(element).data('redactor').isNotEmpty();	
   }else{
   	return ($(element).val() != "");
   }
