@@ -48,6 +48,7 @@ class Helpdesk::Email::Process
   end
 
   def get_necessary_details
+    self.common_email_data[:cc] = common_email_data[:cc].concat(additional_reply_to_emails || []).uniq if reply_to_feature
     self.common_email_data.merge!(additional_email_data) #In parse_email_data
     self.kbase_email = account.kbase_email
     self.to_email = support_email_from_recipients unless common_email_data[:email_config] #In parse_email_data

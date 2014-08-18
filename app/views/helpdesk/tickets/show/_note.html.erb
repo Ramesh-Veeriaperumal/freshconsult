@@ -14,8 +14,14 @@ minimizable ||= false
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
-					<%= 'private-note' if note.private_note? %>">
-		<%= content_tag(:span, "", :class => "comment-lock") if note.private_note? %>
+					<%= 'private-note' if note.private_note? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+		<% if note.private_note? %>
+			<%= content_tag(:span, "", :class => "comment-lock") %>
+		<% elsif is_twitter_dm?(note) %>
+			<%= content_tag(:span, "", :class => "ficon-twitter-lock fsize-21 muted") %>
+		<% elsif is_facebook_message?(note) %>
+			<%= content_tag(:span, "", :class => "ficon-facebook-lock fsize-21 muted") %>
+		<% end %>
 		
 		<div class="helpdesk_note">
 			<% if note.deleted? %>
@@ -81,11 +87,22 @@ minimizable ||= false
 				</div>
 			</div>
 			<%= freshfone_audio_dom(note) %>
-			<div id="note_attachments_container_<%= note.id%>">
-				<% unless note.all_attachments.empty? and note.dropboxes.empty? %>				
-						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :locals => { :note => note }%>
-				<% end %>
-			</div>
+			<% unless note.all_attachments.empty? and note.dropboxes.empty? %>
+				<span class="seperator"></span>
+				<div class="attachments-wrap clearfix">
+					<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+					<ul class="attachment_list">
+	                    <% note.all_attachments.each do |attached| %> 
+	                    	<%= attachment_list(attached, privilege?(:edit_note, note), "ticket", note.id) %>
+	                    <%end%>
+
+					    <% note.dropboxes.each do |dropbox| %> 
+							<%= attachment_list(dropbox, privilege?(:edit_note, note), "dropbox",nil) %>
+						<%end%>
+					</ul>
+				</div>
+			<% end %>
+
 		</div>
 	</div>
 

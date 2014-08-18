@@ -26,9 +26,11 @@ class Freshfone::CallInitiator
 		set_calls_beyond_threshold
 		twiml_response do |r|
 			read_welcome_message(r) unless primary_leg? 
-			agents_to_be_called = process_in_batch(agents || available_agents)
+			timeout = current_number.call_timeout if current_number.round_robin?  #5 secs = min 2 rings.
+			agents_to_be_called = process_in_batch(agents || batch_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url,
+						 :timeout => timeout || 30, #nil will default to 30 secs
 						 :timeLimit => time_limit do |d|
 				agents_to_be_called.each { |agent| agent.call_agent_twiml(d, forward_url(agent), current_number, update_user_presence_url(agent))}
 			end
@@ -202,7 +204,7 @@ class Freshfone::CallInitiator
 		end
 
 		def process_in_batch(agents)
-			current_batch_agents = agents.slice!(0, BATCH_SIZE)
+			current_batch_agents = current_number.round_robin? ? agents.slice!(0, 1) : agents.slice!(0, BATCH_SIZE)
 			if agents.present?
 				Rails.logger.debug "Batch Call started for call_sid ==> #{params[:CallSid]} ::
 account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + BATCH_SIZE}" if params[:batch_call].blank?
@@ -212,6 +214,11 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 				set_key(key, agent_ids, 600)
 			end
 			current_batch_agents
+		end
+
+		def batch_agents
+			asc_desc = current_number.round_robin? ? "ASC" : "DESC" 
+			current_account.freshfone_users.agents_online_ordered(asc_desc)
 		end
 
 		def time_limit

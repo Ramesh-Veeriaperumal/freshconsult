@@ -14,6 +14,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ApplicationHelper
   include Mobile::Controllers::Ticket
   helper AutocompleteHelper
+  helper Helpdesk::NotesHelper
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -301,7 +302,6 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
-    build_attachments @item, :helpdesk_ticket   
     if @item.update_ticket_attributes(params[nscname])
 
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
@@ -639,7 +639,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     @item.product ||= current_portal.product
     cc_emails = fetch_valid_emails(params[:cc_emails])
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
+
+    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup}
+    
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
@@ -843,8 +846,7 @@ class Helpdesk::TicketsController < ApplicationController
       if @ticket_notes.blank?
         @to_cc_emails = @ticket.reply_to_all_emails
       else
-        cc_email_hash = @ticket.cc_email_hash
-        @to_cc_emails = cc_email_hash && cc_email_hash[:cc_emails] ? cc_email_hash[:cc_emails] : []
+        @to_cc_emails = @ticket.current_cc_emails
       end
     end
 

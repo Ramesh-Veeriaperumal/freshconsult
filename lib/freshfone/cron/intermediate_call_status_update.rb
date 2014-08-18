@@ -29,7 +29,9 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
   end
 
   def self.is_voicemail?
-    @call.call_status == Freshfone::Call::CALL_STATUS_HASH[:'no-answer']
+    @call.call_status == Freshfone::Call::CALL_STATUS_HASH[:'no-answer'] ||
+    (@call.call_status == Freshfone::Call::CALL_STATUS_HASH[:busy] && 
+      @call.call_type.to_i == Freshfone::Call::CALL_TYPE_HASH[:incoming] )
   end
 
   def self.recording_upload_job

@@ -5,7 +5,7 @@
       onclick="Helpdesk.Multifile.remove(this);return false;" inputId="${inputId}">&times;</a>
     {{else}}
       <%= content_tag(:span, t('helpdesk.tickets.note.attachment_size.not_added_greater'), 
-                                :class => "alert-invalid-text tooltip", 
+                                :class => "alert-invalid-text", 
                                 :title => t('helpdesk.tickets.note.attachment_size.exceed_limit')) %>
     {{/if}}
     <div class="ellipsis {{if (!file_valid) }} alert-invalid {{/if}}">${name} 

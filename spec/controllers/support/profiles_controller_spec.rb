@@ -5,11 +5,12 @@ describe Support::ProfilesController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before do
-    @user = create_dummy_customer
+  before(:all) do
+    @user = add_new_user(@account, {:active => true})
   end
 
   before(:each) do
+    log_in(@user)
     #stub_s3_writes
   end
 

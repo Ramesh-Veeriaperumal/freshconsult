@@ -6,7 +6,7 @@
 			<div class="file-upload-wrap">
 				<span class="file-upload-text"><%= t("account.change_logo") %></span>
 			</div>
-			<%= logo_form.file_field :content, :class => "upload_size_validity fileAdminUpload portal-logo", :id => "portal-logo" %>
+			<%= logo_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-logo", :accept => 'image/*', :id => "portal-logo" %>
 		<% end %>
 		<div>
 			<% if item.logo.present? %>
