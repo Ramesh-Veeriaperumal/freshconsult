@@ -141,10 +141,8 @@ swapEmailNote = function(formid, link){
 		
 		if (link && $(link).data('noteType') === 'fwd') {
 			$('.forward_email input').trigger('focus');
-		} else {
-			$('#'+formid+"-body").getEditor().focus();
-		}
-
+		} 
+		
 		if($.browser.mozilla){
 			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 		}
@@ -201,10 +199,12 @@ insertIntoConversation = function(value,element_id){
 			$element.keyup(); // to update the SendTweetCounter value
 		}
 		else{
+
+			$element.data('redactor').focusOnCursor();
+		    $element.insertHtml(value); 
+		    jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+
 			$element.getEditor().focus();
-			$element.data('redactor').saveSelection();
-			$element.data('redactor').restoreSelection();	
-			$element.insertHtml(value);
 		}
 	}    
 	return;
