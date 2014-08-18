@@ -12,6 +12,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Helpdesk::Activities
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  helper Helpdesk::NotesHelper
   
   before_filter :build_note_body_attributes, :build_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
