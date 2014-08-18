@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base
@@ -637,7 +638,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => []}
+      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+    else
+      cc_email
+    end
+  end
+
+  def current_cc_emails
+    return [] unless cc_email
+    unless cc_email.is_a?(Array)
+      (cc_email[:reply_cc] || cc_email[:cc_emails] || [])
     else
       cc_email
     end

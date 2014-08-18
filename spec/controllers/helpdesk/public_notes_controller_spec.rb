@@ -28,7 +28,7 @@ describe Public::NotesController do
   
   it "must add a note when cc'd person adds a note" do
     cc_ppl = Faker::Internet.email
-    @test_ticket.cc_email = {:cc_emails => [cc_ppl], :fwd_emails => []}
+    @test_ticket.cc_email = {:cc_emails => [cc_ppl], :fwd_emails => [], :reply_cc => [cc_ppl]}
     @test_ticket.save
     
     access_token = @test_ticket.access_token

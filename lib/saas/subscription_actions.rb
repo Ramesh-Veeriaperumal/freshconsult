@@ -20,6 +20,7 @@ class SAAS::SubscriptionActions
       new_addons = account.addons
       #Remove all features
       account.remove_features_of old_subscription.subscription_plan.canon_name
+      remove_chat_feature(account)      # Remove chat feature if downgrade to non chat plan
       existing_addons.each do |addon|
         addon.features.collect{ |feature| account.remove_feature(feature) }
       end
@@ -106,6 +107,15 @@ class SAAS::SubscriptionActions
     def drop_mailbox_data(account)      
       account.imap_mailboxes.destroy_all
       account.smtp_mailboxes.destroy_all
+    end
+
+    def remove_chat_feature(account)
+      if !account.subscription.is_chat_plan? && account.features?(:chat)
+        account.remove_feature(:chat)
+        if account.features?(:chat_enable)
+          account.remove_feature(:chat_enable)
+        end
+      end
     end
  
 end

@@ -8,7 +8,10 @@ module Helpdesk::TicketActions
 
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
-    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
+
+    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup})
+    
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
     # The below is_native_mobile? check is valid for iPhone app version 1.0.0 and Android app update 1.0.3 

@@ -120,7 +120,7 @@ en:
   myself: "Myself"
   meta:
    language_name: 'English'
-  one_time_password_instructions: "Hello, You one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
+  one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
@@ -461,6 +461,7 @@ en:
   portal_meta:
     titles:
       portal_home: "Support"
+      password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
       forgot_password: "Forgot password"
@@ -3042,7 +3043,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: This text will be included in your ticket replies automatically, along with your cursor position
+    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications

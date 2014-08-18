@@ -155,6 +155,20 @@ $.validator.addMethod("upload_size_validity", function(value,element){
 
 $.validator.addClassRules("upload_size_validity", { upload_size_validity: true });
 
+//Validator to check whether the file is an image file
+$.validator.addMethod("validate_image", function(value,element){
+  if (window.FileReader){
+    var newfile = jQuery(element)[0].files;
+    if(newfile.length){
+      var file = newfile[0]
+      return /^image*/.test(file.type);
+    }
+  }
+  return true;
+},jQuery.validator.format("Invalid image format"));
+
+$.validator.addClassRules("validate_image", { validate_image: true });
+
 // Agent role validation
 // To check if atleast one role is present
 $.validator.addMethod("at_least_one_item", function(value, element, options) {

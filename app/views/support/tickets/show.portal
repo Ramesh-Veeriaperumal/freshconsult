@@ -65,7 +65,7 @@
 						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							<h4 class="user-name">{{ comment.user.name | h }}</h4> 
-							<div class="p-info tooltip" title="{{ comment.created_on | short_day_with_time }}">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
+							<div class="p-info" title="{{ comment.created_on | short_day_with_time }}">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
 						</div>
 					</div>
 					

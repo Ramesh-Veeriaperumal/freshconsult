@@ -6,7 +6,7 @@
       <div class="file-upload-wrap">
         <span class="file-upload-text"><%= t("account.change_favicon") %></span>
       </div>
-      	<%= fav_icon_form.file_field :content, :class => "upload_size_validity fileAdminUpload portal-fav-icon", :id => "portal-fav-icon" %>
+      	<%= fav_icon_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-fav-icon", :accept => 'image/*', :id => "portal-fav-icon" %>
     <% end %>
     <div>
       <% if item.fav_icon.present? %>
