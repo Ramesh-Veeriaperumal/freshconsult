@@ -20,7 +20,15 @@ module ChatHelper
 
   def portal_chat_enabled?
     chat_setting = current_account.chat_setting
-    chat_active? && chat_setting.show_on_portal && (!chat_setting.portal_login_required || logged_in?)
+    if chat_active? && chat_setting.show_on_portal 
+      if logged_in?
+        return current_user.customer?
+      else
+        return !chat_setting.portal_login_required
+      end
+    else
+      return false
+    end
   end
 
   def multiple_business_hours?

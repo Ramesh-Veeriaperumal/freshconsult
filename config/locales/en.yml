@@ -287,6 +287,7 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
+    delete: "Important: Deleting this folder will delete all %{no_of_articles} article(s) in it."
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -2115,6 +2116,8 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
+    delete: "Important: Deleting a category will delete all folders and articles in it."
+    size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
   billed_monthly: Billed monthly
   users:
     activations:
@@ -3456,6 +3459,8 @@ en:
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Requestor Info
     view_twitter: View on Twitter
+    view_facebook: View on Facebook
+    via: via
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
@@ -5491,6 +5496,9 @@ en:
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
+      number:
+        simultaneous: "Call all agents"
+        round_robin: "Call idle agent first"
       number_settings:
         title: "Managing your call center with Freshfone"
         info: "<b>Assigning phone calls to agents and groups</b><br/>You can use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your Freshfone number</b><br>You could also configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/>"
@@ -5534,6 +5542,8 @@ en:
         anytime: 24/7 Anytime
         name: Name
         name_placeholder: Enter a friendly name for your number
+        hunt_type: "Call Routing"
+        routing_message: "When multiple agents are available online..."
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -5721,7 +5731,7 @@ en:
     visitor_disconnect_msg: "Visitor has left the chat"
     last_message: "Last Message..."
     chat_recent_empty_tip: "You didn't chat with anyone recently"
-    add_agent_to_chat: "No agents available"
+    add_agent_to_chat: "No other agents logged in"
     url_error_msg: "No such url exists"
     accept: "Accept"
     ignore: "Ignore"
@@ -5779,8 +5789,8 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
-    click_to_go_online: "You are offline to visitors"
-    click_to_go_offline: "You are online to visitors"
+    click_to_go_online: "Not accepting visitor chats"
+    click_to_go_offline: "Accepting visitor chats"
     fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"

@@ -5,8 +5,14 @@ describe Admin::DayPassesController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
-  before(:all) do    
-    if @billing_account.blank?
+  before(:all) do
+  	@account = Account.last
+
+  	if @account.full_domain.include?("billing")
+  		# Using the account if created in subscriptions/billing controller.
+	  	@account.make_current	  	
+	  	@user = @account.account_managers.first	  	
+	  else	  	
       Account.reset_current_account
       User.current = nil
       
@@ -16,7 +22,7 @@ describe Admin::DayPassesController do
     
       @account = Account.find(@billing_account.id)
       @user = @account.account_managers.first
-    end
+	  end
   end
 
 	before(:each) do

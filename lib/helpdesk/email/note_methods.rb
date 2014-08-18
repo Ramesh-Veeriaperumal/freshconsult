@@ -111,7 +111,7 @@ module Helpdesk::Email::NoteMethods
   def update_ticket_cc
     cc_email = ticket.cc_email_hash || {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
     cc_email[:reply_cc] = email[:cc]
-    cc_email[:cc_emails] = email[:cc] | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
+    cc_email[:cc_emails] = email[:cc] | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
     ticket.cc_email = cc_email
   end
 end

@@ -168,6 +168,7 @@ var FreshfoneEndCall;
 				this.freshfonecalls.init();
 				this.freshfoneuser.init();
 			}
+			this.$requesterName.select2('data',null);
 			this.init();
 		},
 		

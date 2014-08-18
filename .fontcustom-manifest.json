@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "6d7d50a3e21770f8a407c3f8f033ae245d83127b34e2181b289ae642e3336957",
-    "current": "6d7d50a3e21770f8a407c3f8f033ae245d83127b34e2181b289ae642e3336957"
+    "previous": "f735a0dabb182924ac15ddd8ece1caee3da01c0d36e6e356b60dabf311b62bfb",
+    "current": "f735a0dabb182924ac15ddd8ece1caee3da01c0d36e6e356b60dabf311b62bfb"
   },
   "fonts": [
-    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.ttf",
-    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.svg",
-    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.woff",
-    "public/fonts/glyphs_6d7d50a3e21770f8a407c3f8f033ae24.eot"
+    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.ttf",
+    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.svg",
+    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.woff",
+    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.eot"
   ],
   "glyphs": {
     "account": {
@@ -189,6 +189,10 @@
     "facebook": {
       "codepoint": 61715,
       "source": "public/glyphs/vectors/facebook.svg"
+    },
+    "facebook-lock": {
+      "codepoint": 61811,
+      "source": "public/glyphs/vectors/facebook-lock.svg"
     },
     "facebook-setting": {
       "codepoint": 61777,
@@ -450,6 +454,10 @@
       "codepoint": 61736,
       "source": "public/glyphs/vectors/twitter.svg"
     },
+    "twitter-lock": {
+      "codepoint": 61812,
+      "source": "public/glyphs/vectors/twitter-lock.svg"
+    },
     "unlock": {
       "codepoint": 61737,
       "source": "public/glyphs/vectors/unlock.svg"
@@ -486,6 +494,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

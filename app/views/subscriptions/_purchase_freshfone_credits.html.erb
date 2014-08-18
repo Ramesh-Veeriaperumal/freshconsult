@@ -3,11 +3,15 @@
 						:html => {:class => "purchase_freshfone"} do |f| %>
 	<div class="row-fluid">
 		<div class="recharge-now-text"><%= t('freshfone.subscription.recharge_now_text') %></div>
-		<%= f.select "credit", recharge_options, {}, 
+		<%= select_tag :credit, options_for_select(recharge_options, 
+                            :selected => default_freshfone_credit(@freshfone_credit)),
 					:class => 'select2', :'data-minimum-results-for-search' => '30' %>
 		<%= submit_tag "Purchase Credits", :class => "btn" %>
 		<% unless default_currency? %>
-			<div id = "fone-credit-followup">$<%= @freshfone_credit ? @freshfone_credit.last_purchased_credit : 25 %> <%= t('freshfone.subscription.followup_text') %></div>
+			<div id = "fone-credit-followup">$
+      <%= @freshfone_credit ? @freshfone_credit.last_purchased_credit
+                            : Freshfone::Credit::DEFAULT %> 
+      <%= t('freshfone.subscription.followup_text') %></div>
 		<% end %>
 	</div>
 <% end %>
