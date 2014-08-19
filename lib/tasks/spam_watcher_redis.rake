@@ -70,7 +70,7 @@ namespace :spam_watcher_redis do
         end
         # deleted_users = account.all_users.find([user.id])
         deleted_users = [user]
-        SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users)
+        SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users,operation=="blocked")
         spam_alert(account,user,table_name,operation)
         # Notify admin about the blocked user
       end
