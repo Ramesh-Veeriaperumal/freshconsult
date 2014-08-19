@@ -26,7 +26,8 @@
 		
 		$ticket_desc.redactor({
 			convertDivs: false, 
-			autoresize:false, 
+			autoresize: false, 
+			mobile: false,
 			buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],
 			keyupCallback: function(e){
 				var $item = $ticket_desc;
@@ -35,6 +36,11 @@
 			    }, 0);
 			}
 		});
+
+		if(inMobile()){
+			$(".form-widget").addClass("form-mobile");
+			$("#helpdesk_ticket_ticket_body_attributes_description_html").removeClass("required_redactor").addClass("required");
+		}
 		
 		var $placeholder_proxy = $ticket_desc.data("placeholder-proxy")
 

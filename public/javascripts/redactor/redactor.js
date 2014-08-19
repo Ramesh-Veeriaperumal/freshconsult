@@ -4115,7 +4115,7 @@ Redactor.prototype = {
 		{
 			return true;
 		}
-		else if (/(iPhone|iPod|BlackBerry|Android)/.test(navigator.userAgent))
+		else if (/(iPhone|iPod|iPad|BlackBerry|Android)/.test(navigator.userAgent))
 		{
 			return true;
 		}
