@@ -881,6 +881,10 @@ Redactor.prototype = {
 		imgTag.attr("width",0);
 		imgTag.attr("height",0);
 
+		if(!$.browser.mozilla){
+			imgTag.css({ "display": "none" });
+		}
+
 	    if (window.getSelection) { 
 	        var selection = window.getSelection();
 
@@ -909,7 +913,10 @@ Redactor.prototype = {
 			 	this.getSelection().removeAllRanges();
 				this.getSelection().addRange(temp_range);
 		}
-		this.$editor.focus();
+
+		if($.browser.mozilla){
+			this.$editor.focus();
+		}
 		
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
@@ -998,10 +1005,16 @@ Redactor.prototype = {
 			
 			if (this.opts.cursorTracking) 
 			{	
+				if (key === 40){
+
 					clearTimeout(this.cursorPlacementDelay);
 					this.cursorPlacementDelay = setTimeout($.proxy(function(){
 						this.setCursorPosition();
-					},this),300);
+					},this),500);
+
+				} else { 
+					this.setCursorPosition();
+				}
 			}
 			// callback as you type
 			if (typeof this.opts.keyupCallback === 'function')
@@ -1306,6 +1319,9 @@ Redactor.prototype = {
 	},
 	syncCode: function()
 	{
+		if($.browser.mozilla && this.$editor.find("[rel='cursor']").get(0)){
+			$("[rel='cursor']").css({"display": "none"});
+		}
 		this.$el.val(this.$editor.html());
 	},
 	
