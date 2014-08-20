@@ -28,6 +28,10 @@
         <%end%>
   		<%end%>
 	   <%end%>
+     <div class="field-item">
+      <label for="helpdesk_ticket_tags_label" rel="inputcheckbox"><input class="update-check-for-fields" id="helpdesk_ticket_tags_label" name="helpdesk_ticket_tags_label" type="checkbox" value=""><%= t('ticket_fields.fields.tags') %></label>
+      <input type="text" id="helpdesk_tags" name="helpdesk[tags]" rel="inputtextbox" />
+    </div>
   </div>
 </div>
 <% end %>
@@ -68,7 +72,7 @@
   function submitBulkUpdate(){
     if( !($('addbulkreply') && $('addbulkreply').checked) ||
       jQuery("#reply-multiple-cnt-reply-multiple-body").valid()) {
-      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )".html_safe %>
+      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get() )".html_safe %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').addClass("sloading loading-small loading-align");      
     }
@@ -83,8 +87,8 @@
     jQuery('#clear-search').trigger('click');
 });
 
-  jQuery("[rel=inputselectbox]").die('change');
- jQuery("[rel=inputselectbox]").live('change',  function(ev){
+  jQuery("[rel=inputselectbox],[rel=inputtextbox]").die('change');
+ jQuery("[rel=inputselectbox],[rel=inputtextbox]").live('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -158,5 +162,9 @@ jQuery('.ui-icon-closethick').live('click', function(){
       });
 
 
+    jQuery("#helpdesk_tags").select2({  
+          tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+          tokenSeparators: [',']
+        });
 
 <% end %>

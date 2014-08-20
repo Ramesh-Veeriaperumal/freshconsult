@@ -228,6 +228,7 @@ en:
       product: Product
       ticket_type: Type
       created_at: Created
+      tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     first_choice: First Choice

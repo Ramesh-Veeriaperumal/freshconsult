@@ -20,6 +20,12 @@
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
 
+<li class = "text default_tags field">
+    <% fields_for :helpdesk  do |ticket| %>
+      <%= ticket.label(:tags, t('ticket_fields.fields.tags')) %>
+      <%= ticket.text_field :tags , :value => @item.tags.collect{|tag| tag.name}.join(','), :class => "select2 input-xxlarge"%>
+    <%end%>
+</li>
 <%= ci_fields(ticket_form)%>
 
 <% content_for :onload_script do -%> 
@@ -40,4 +46,9 @@
                      }
       });
     });
+
+jQuery("#helpdesk_tags").select2({  
+      tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+      tokenSeparators: [',']
+        });
 <%- end %>
