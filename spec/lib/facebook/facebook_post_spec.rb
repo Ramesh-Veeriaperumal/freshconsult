@@ -27,10 +27,10 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     ticket = post.postable
-    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
   end
@@ -50,17 +50,17 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     ticket = post.postable
-    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
 
     
     post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be_truthy
     
     note = post_comment.postable
     note.notable.should eql ticket
@@ -80,10 +80,10 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     ticket = post.postable
-    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
   end
@@ -105,16 +105,16 @@ describe Social::FacebookPosts do
     
     post = Social::FbPost.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     ticket = post.postable
-    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
     
     post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be_truthy
     
     note = post_comment.postable
     note.notable.should eql ticket

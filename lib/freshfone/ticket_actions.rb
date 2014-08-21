@@ -7,7 +7,7 @@ module Freshfone::TicketActions
 		if @ticket.present? && build_note.save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.note.human_name'),
-					:link => @template.comment_path({ 'ticket_id' => current_call.notable.notable.display_id, 
+					:link => view_context.comment_path({ 'ticket_id' => current_call.notable.notable.display_id, 
 																						'comment_id' => current_call.notable_id }, 
 																					t(:'freshfone.note.view'), 
 																					{ :'data-pjax' => "#body-container" }),
@@ -28,7 +28,7 @@ module Freshfone::TicketActions
 		if build_ticket(params.merge!({ :agent => agent })).save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.ticket.human_name'),
-					:link => @template.link_to(t(:'freshfone.ticket.view'),
+					:link => view_context.link_to(t(:'freshfone.ticket.view'),
 						helpdesk_ticket_path(current_call.notable), :'data-pjax' => "#body-container") }).html_safe
 			json_response = {:success => true, :ticket => {:display_id =>current_call.notable.display_id , :subject => current_call.notable.subject , :status_name => current_call.notable.status_name, :priority => current_call.notable.priority}}
 		else

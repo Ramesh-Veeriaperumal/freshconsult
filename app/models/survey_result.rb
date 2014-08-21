@@ -1,5 +1,7 @@
 class SurveyResult < ActiveRecord::Base
 
+  self.primary_key = :id
+
   include Va::Observer::Util
 
   belongs_to_account
@@ -13,7 +15,7 @@ class SurveyResult < ActiveRecord::Base
 
   after_create :update_ticket_rating
   before_create :update_observer_events
-  after_commit_on_create :filter_observer_events, :if => :user_present?
+  after_commit :filter_observer_events, on: :create, :if => :user_present?
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -108,28 +110,28 @@ class SurveyResult < ActiveRecord::Base
 
   end
 
-  named_scope :agent , lambda { |conditional_params| { :joins => :agent,
+  scope :agent , lambda { |conditional_params| { :joins => :agent,
                                                      :select => "users.id as id,users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total",
                                                      :group => "survey_results.agent_id,survey_results.rating", 
                                                      :conditions => conditional_params,
                                                      :order => :name
                                                    }}
   
-  named_scope :group , lambda { |conditional_params| { :joins => :group,
+  scope :group , lambda { |conditional_params| { :joins => :group,
                                                      :select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
                                                      :group => "survey_results.group_id,survey_results.rating",
                                                      :conditions => conditional_params,                                                     
                                                      :order => :name
                                                    }}
 
-  named_scope :portal , lambda { |conditional_params| { :joins => :account,                    
+  scope :portal , lambda { |conditional_params| { :joins => :account,                    
                                                       :select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",                
                                                       :group => "survey_results.account_id,survey_results.rating",
                                                       :conditions => conditional_params,                                                     
                                                       :order => :name
                                                    }}
 
-  named_scope :remarks , lambda { |conditional_params| { 
+  scope :remarks , lambda { |conditional_params| { 
                                                       :include => :survey_remark,
                                                       :conditions => conditional_params,
                                                       :order => "survey_results.created_at DESC"

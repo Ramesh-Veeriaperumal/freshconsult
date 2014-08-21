@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Helpdesk::MobihelpTicketExtrasController do
-	integrate_views
+	# integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

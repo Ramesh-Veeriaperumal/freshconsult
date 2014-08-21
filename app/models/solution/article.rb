@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   include Search::ElasticSearchIndex
-  set_table_name "solution_articles"
+  self.table_name =  "solution_articles"
   serialize :seo_data, Hash
 
   acts_as_list :scope => :folder
@@ -35,22 +35,22 @@ class Solution::Article < ActiveRecord::Base
 
   attr_protected :account_id ,:attachments
   
-  after_commit_on_create  :clear_mobihelp_solutions_cache
-  after_commit_on_update  :clear_mobihelp_solutions_cache
+  after_commit  :clear_mobihelp_solutions_cache, on: :create
+  after_commit :clear_mobihelp_solutions_cache, on: :update
   before_destroy          :clear_mobihelp_solutions_cache
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
  
-  named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
-  named_scope :newest, lambda {|num| {:limit => num, :order => 'updated_at DESC'}}
+  scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
+  scope :newest, lambda {|num| {:limit => num, :order => 'updated_at DESC'}}
  
-  named_scope :by_user, lambda { |user|
+  scope :by_user, lambda { |user|
       { :conditions => ["user_id = ?", user.id ] }
   }
 
-  named_scope :articles_for_portal, lambda { |portal|
+  scope :articles_for_portal, lambda { |portal|
     {
       :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
           portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
@@ -126,7 +126,7 @@ class Solution::Article < ActiveRecord::Base
   
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end

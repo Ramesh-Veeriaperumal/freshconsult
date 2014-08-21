@@ -3,12 +3,12 @@ module TicketHelper
   def create_ticket(params = {}, group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
-      user = add_new_user(@account)
+      user = add_new_user(RSpec.configuration.account)
       requester_id = user.id
     end
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
-    account_id =  group ? group.account_id : @account.id
-    test_ticket = Factory.build(:ticket, :status => params[:status] || 2,
+    account_id =  group ? group.account_id : RSpec.configuration.account.id
+    test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
                                          :subject => subject,
@@ -29,8 +29,8 @@ module TicketHelper
   end
 
   def ticket_incremented? ticket_size
-    @account.reload
-    @account.tickets.size.should eql ticket_size+1
+    RSpec.configuration.account.reload
+    RSpec.configuration.account.tickets.size.should eql ticket_size+1
   end
 
   def create_test_time_entry(params = {}, test_ticket = nil)

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe UserEmailsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account.features.multiple_user_emails.create
+    RSpec.configuration.account.features.multiple_user_emails.create
     @userUEC = add_user_with_multiple_emails(@account, 4)
   end
 
@@ -15,7 +15,7 @@ describe UserEmailsController do
   end
 
   after(:all) do
-    @account.features.multiple_user_emails.destroy
+    RSpec.configuration.account.features.multiple_user_emails.destroy
   end
 
   it "should make email primary" do
@@ -35,7 +35,7 @@ describe UserEmailsController do
     Delayed::Job.delete_all
     put :send_verification, :email_id => @userUEC.user_emails.second.id
     response.body.should =~ /Activation mail sent./
-    Delayed::Job.last.handler.should include("deliver_email_activation")
+    Delayed::Job.last.handler.should include("email_activation")
   end
 
 end

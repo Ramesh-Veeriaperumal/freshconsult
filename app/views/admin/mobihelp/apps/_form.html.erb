@@ -1,5 +1,5 @@
 <% content_for :pagefixed do -%>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
   jQuery(function() {
     jQuery("#push_notification").bind("change",
           function(ev){
@@ -43,7 +43,7 @@
       <span class="seperator"></span>
 
       <%= content_tag :h3, t('admin.mobihelp.apps.form.configurations').html_safe, :class => "lead title" %>
-      <% f.fields_for :config do |c| %>
+      <%= f.fields_for :config do |c| %>
         <div class="control-group">
           <%= c.label :bread_crumbs, t('admin.mobihelp.apps.form.bread_crumbs').html_safe, :class => "control-label" %>
           <div class="controls">

@@ -1,4 +1,4 @@
-<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation", :placeholders => nil } %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation", :placeholders => [] } %>
 
 <%= f.error_messages :object_name => 'scenario' %>
 <ul class="ui-form observer no-background">
@@ -31,7 +31,7 @@
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
-	        	<p><%=t('automations.info8')%></p> <img alt="Add New action" class="add" src="/images/add.png" />
+	        	<p><%=t('automations.info8')%></p> <div class="pull-left"><%= font_icon(:plus) %></div>
 	    	</fieldset>		
 		</div>
 	</li>

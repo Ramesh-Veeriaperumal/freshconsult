@@ -451,7 +451,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Set the values for the user.
       goog_contact_detail.each { |key, value|
         db_attr = GOOGLE_FIELDS_TO_USER_FILEDS_MAPPING[key]
-        user.write_attribute(db_attr, value) unless (db_attr.blank? or value.blank?)
+        user.send(:write_attribute,db_attr, value) unless (db_attr.blank? or value.blank?)
       }
 
       user.account = account if user.account.blank?

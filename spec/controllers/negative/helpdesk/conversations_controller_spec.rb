@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Helpdesk::ConversationsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -25,7 +25,7 @@ describe Helpdesk::ConversationsController do
                    :ticket_id => @test_ticket.display_id
                   }
     response.should redirect_to "helpdesk/tickets/#{@test_ticket.display_id}"
-    private_note = @account.tickets.find(@test_ticket.id).notes.last
+    private_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
     private_note.should be_nil
   end
   
@@ -52,7 +52,7 @@ describe Helpdesk::ConversationsController do
                   }
     Resque.inline = false
     response.should redirect_to "helpdesk/tickets/#{@test_ticket.display_id}"
-    reply_note = @account.tickets.find(@test_ticket.id).notes.last
+    reply_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
     reply_note.should be_nil
   end
   
@@ -74,7 +74,7 @@ describe Helpdesk::ConversationsController do
                    :ticket_id => @test_ticket.display_id
                   }
     response.should redirect_to "helpdesk/tickets/#{@test_ticket.display_id}"
-    fwd_note = @account.tickets.find(@test_ticket.id).notes.last
+    fwd_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
     fwd_note.should be_nil
   end
   
@@ -91,7 +91,7 @@ describe Helpdesk::ConversationsController do
                         :format => "js"
                       }
     response.should redirect_to "helpdesk/tickets/#{@test_ticket.display_id}"
-    tweet_note = @account.tickets.find(@test_ticket.id).notes.last
+    tweet_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
     tweet_note.should be_nil
   end
   
@@ -108,7 +108,7 @@ describe Helpdesk::ConversationsController do
                             :ticket_id => @test_ticket.display_id,
                         }
     response.should redirect_to "helpdesk/tickets/#{@test_ticket.display_id}"
-    fb_note = @account.tickets.find(@test_ticket.id).notes.last
+    fb_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
     fb_note.should be_nil
   end
 end

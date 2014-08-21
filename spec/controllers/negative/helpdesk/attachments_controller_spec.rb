@@ -2,7 +2,7 @@ require 'spec_helper'
 #include ActionController::TestProcess
 
 describe Helpdesk::AttachmentsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

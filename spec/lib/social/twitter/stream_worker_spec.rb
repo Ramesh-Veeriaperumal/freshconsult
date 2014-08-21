@@ -17,8 +17,8 @@ describe "Social::Stream::Workers::Twitter" do
     update_db(@default_stream) unless GNIP_ENABLED
     @default_stream.reload
     @ticket_rule = create_test_ticket_rule(@default_stream)
-    @account = @handle.account
-    @account.make_current
+    RSpec.configuration.account = @handle.account
+    RSpec.configuration.account.make_current
     Resque.inline = false
     unless GNIP_ENABLED
       Social::DynamoHelper.stubs(:insert).returns({})
@@ -35,15 +35,15 @@ describe "Social::Stream::Workers::Twitter" do
       search_object = sample_search_results_object
       search_object.attrs[:statuses].first[:text] << " #{@handle.screen_name}"
       Twitter::REST::Client.any_instance.stubs(:search).returns(search_object)
-      Social::Workers::Stream::Twitter.perform({:account_id => @account.id })
+      Social::Workers::Stream::Twitter.perform({:account_id => RSpec.configuration.account.id })
       hash_key = "#{@account.id}_#{@default_stream.id}"
       range_key = search_object.attrs[:statuses].first[:id_str]
       posted_time = search_object.attrs[:statuses].first[:created_at]
       dynamo_entry = dynamo_feeds_for_tweet("feeds", hash_key, range_key, posted_time)
   
-      tweet = @account.tweets.find_by_tweet_id(range_key)
+      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(range_key)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       
       if GNIP_ENABLED
         dynamo_entry.should_not be_nil

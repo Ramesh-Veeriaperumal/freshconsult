@@ -2,7 +2,7 @@
                 :onerror => "default_image_error(this)",
                 :"data-type" => "favicon" %>
   <div class="thumb-file-upload">
-    <% fields_for "#{field_name}[fav_icon_attributes]", item.fav_icon do |fav_icon_form| %>
+    <%= fields_for "#{field_name}[fav_icon_attributes]", item.fav_icon do |fav_icon_form| %>
       <div class="file-upload-wrap">
         <span class="file-upload-text"><%= t("account.change_favicon") %></span>
       </div>

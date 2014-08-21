@@ -1,6 +1,6 @@
 class Freshfone::Number < ActiveRecord::Base
 	include Mobile::Actions::Freshfone
-	set_table_name :freshfone_numbers
+	self.table_name =  :freshfone_numbers
 	require_dependency 'freshfone/number/message'
 
 	serialize :on_hold_message
@@ -56,14 +56,14 @@ class Freshfone::Number < ActiveRecord::Base
 		:message => "%{value} is not a valid state"
 	validates_inclusion_of :number_type, :in => TYPE_HASH.values,
 		:message => "%{value} is not a valid number_type"
-	validate_on_create :validate_purchase
-	validate_on_update :validate_settings, :validate_attachments, :unless => :deleted_changed?
+	validate :validate_purchase, on: :create
+	validate :validate_settings, :validate_attachments, :unless => :deleted_changed?, on: :update
 	validates_uniqueness_of :number, :scope => :account_id
 
-	named_scope :filter_by_number, lambda {|from, to| {
+	scope :filter_by_number, lambda {|from, to| {
 		:conditions => ["number in (?, ?)", from, to] }
 	}
-	named_scope :expired, :conditions => { :state => 2 }
+	scope :expired, :conditions => { :state => 2 }
 
 
 	VOICE_HASH.each_pair do |k, v|
@@ -132,7 +132,7 @@ class Freshfone::Number < ActiveRecord::Base
 			end
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
-			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+			FreshfoneNotifier.number_renewal_failure(account, self.number)
 		end
 	end
 
@@ -145,7 +145,7 @@ class Freshfone::Number < ActiveRecord::Base
 		if account.subscription.active?
 			update_attributes(:state => STATE[:expired], 
 												:next_renewal_at => next_renewal)
-			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+			FreshfoneNotifier.number_renewal_failure(account, self.number)
 		else
 			update_attributes(:deleted => true)
 		end
@@ -218,17 +218,17 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def validate_attachments 
 			(attachments || []).each do |a|
-				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
-					{ :name => a.content_file_name })) unless a.mp3?
+				errors.add(:base,I18n.t('freshfone.admin.invalid_attachment',
+					{ :name => a.content_file_name })) unless a.audio?
 			end
 		end
 
 		def validate_purchase
 			if invalid_credit_and_country
-				errors.add_to_base(I18n.t('freshfone.admin.numbers.cannot_purchase'))
+				errors.add(:base,I18n.t('freshfone.admin.numbers.cannot_purchase'))
 				return false
 			end
-			errors.add_to_base(I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
+			errors.add(:base,I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
 		end
 
 		def assign_number_to_message

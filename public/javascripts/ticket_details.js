@@ -1,0 +1,1 @@
+//= require app/ticket_details

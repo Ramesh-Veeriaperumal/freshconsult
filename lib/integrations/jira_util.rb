@@ -4,12 +4,12 @@ class Integrations::JiraUtil
   include Redis::IntegrationsRedis
 
   def install_jira_biz_rules(installed_app)
-    jira_app_biz_rules = VARule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID, 
+    jira_app_biz_rules = VaRule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID, 
                                         :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", 
                                         :conditions=>["app_business_rules.application_id=?", installed_app.application_id]) if jira_app_biz_rules.blank? # for create
     jira_app_biz_rules.each { |jira_app_biz_rule|
       Rails.logger.debug "Before jira_app_biz_rule #{jira_app_biz_rule.inspect}"
-      installed_biz_rule = VARule.find_by_name_and_rule_type_and_account_id(jira_app_biz_rule.name, VAConfig::INSTALLED_APP_BUSINESS_RULE, installed_app.account.id, 
+      installed_biz_rule = VaRule.find_by_name_and_rule_type_and_account_id(jira_app_biz_rule.name, VAConfig::INSTALLED_APP_BUSINESS_RULE, installed_app.account.id, 
                                         :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", :select=>"va_rules.*", # explicit select needed to avoid read_only because of joins
                                         :conditions=>["app_business_rules.application_id=?", installed_app.application_id]) # for update
       if installed_biz_rule.blank?

@@ -42,7 +42,7 @@ module FreshfoneQueueHelper
 
   def set_agent_queue_redis_entry
     controller.set_key(AGENT_QUEUE, 
-        { @agent.id => ["CAGENTQUEUE"] }.to_json)
+        { RSpec.configuration.agent.id => ["CAGENTQUEUE"] }.to_json)
 
   end
 

@@ -71,7 +71,8 @@ class SupportController < ApplicationController
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
 
-      @skip_liquid_compile = true # if active_layout.present?      
+      # TODO-RAILS3 need to check this
+      @skip_liquid_compile = false # if active_layout.present?      
     end
 
     def preview?
@@ -123,9 +124,10 @@ class SupportController < ApplicationController
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
       dynamic_template = page_data(page_token) if feature?(:layout_customization)
-      _content = render_to_string :file => partial,
+      _content = render_to_string :file => partial, :layout => false,
                   :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
-
+                  
+                  
       @page_yield = @content_for_layout = _content
     end
 
@@ -157,7 +159,7 @@ class SupportController < ApplicationController
     def process_template_liquid
       Portal::Template::TEMPLATE_MAPPING.each do |t|
         dynamic_template = template_data(t[0]) if feature?(:layout_customization)
-        _content = render_to_string :partial => t[1], 
+        _content = render_to_string :partial => t[1], :layout => false,
                     :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
         instance_variable_set "@#{t[0]}", _content
       end
@@ -196,4 +198,5 @@ class SupportController < ApplicationController
         send_data f.read, :type => "image/gif", :disposition => "inline"
       end
     end
+
 end

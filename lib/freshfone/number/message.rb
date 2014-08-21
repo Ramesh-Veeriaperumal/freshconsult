@@ -30,7 +30,7 @@ class Freshfone::Number::Message
 	end
 	
 	def validate
-		parent.errors.add_to_base(I18n.t('flash.freshfone.number.blank_message', 
+		parent.errors.add(:base,I18n.t('flash.freshfone.number.blank_message', 
 															{:num_type => type.to_s.humanize})) unless has_message?
 	end
 	

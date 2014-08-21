@@ -33,7 +33,7 @@ module Helpdesk::TicketsHelper
                
     panels = content_tag :div, tabs.collect{ |t| 
       if(tabs.first == t)
-        content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
+        content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/#{@ticket.id}/component?component=ticket"}
       else
         content_tag :div, content_tag(:div, "", :class => "loading-block sloading loading-small "), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
@@ -356,7 +356,7 @@ module Helpdesk::TicketsHelper
   # ITIL Related Methods starts here
 
   def load_sticky
-    render("helpdesk/tickets/show/sticky.html.erb")
+    render("helpdesk/tickets/show/sticky")
   end
 
   def itil_ticket_tabs

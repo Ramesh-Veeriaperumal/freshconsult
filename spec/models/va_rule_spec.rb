@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VARule do
+describe VaRule do
 
   self.use_transactional_fixtures = false
 

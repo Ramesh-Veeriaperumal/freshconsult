@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Wf::FilterController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -68,7 +68,7 @@ describe Wf::FilterController do
   private
   
     def scoper
-      @account.ticket_filters
+      RSpec.configuration.account.ticket_filters
     end
 
 end

@@ -1,4 +1,4 @@
-<% form_tag :action => :complete_merge, :controller => 'merge_tickets' do |f| %>  
+<%= form_tag :action => :complete_merge, :controller => 'merge_tickets' do |f| %>  
   <div class="contact-special">
   	  <br>
     <div id="primary-contact">
@@ -103,7 +103,7 @@
     "data-loading-text" => t('please_wait')  %>
   </div>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
   var value="";
   var label="";
 

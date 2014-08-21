@@ -3,15 +3,13 @@ include Redis::TicketsRedis
 include Redis::RedisKeys
 
 describe Helpdesk::TicketsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
-    @group = @account.groups.first
-    user = add_test_agent(@account)
-    sla_policy = create_sla_policy(user)
+    @group = RSpec.configuration.account.groups.first
   end
 
   before(:each) do
@@ -111,7 +109,7 @@ describe Helpdesk::TicketsController do
                                        :responder_id => "",
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
-    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RSpec.configuration.account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
   it "should create a new ticket with cc emails" do
@@ -228,7 +226,7 @@ describe Helpdesk::TicketsController do
                                          :responder_id => "",
                                          :ticket_body_attributes => {"description_html"=>"<p>Editing...</p>"}
                                         }
-      @account.tickets.find_by_subject("Edit Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+      RSpec.configuration.account.tickets.find_by_subject("Edit Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
     end
 
     it "should update a ticket's properties" do
@@ -242,7 +240,7 @@ describe Helpdesk::TicketsController do
                                        :helpdesk => { :tags => ""},
                                        :id => @test_ticket.display_id
                                       }
-      updated_ticket = @account.tickets.find(@test_ticket.id)
+      updated_ticket = RSpec.configuration.account.tickets.find(@test_ticket.id)
       updated_ticket.ticket_type.should be_eql("Lead")
       updated_ticket.source.should be_eql(9)
     end
@@ -275,11 +273,11 @@ describe Helpdesk::TicketsController do
                             :due_by_date_time => due_date,
                             :id => @test_ticket.display_id
                           }
-      @account.tickets.find(@test_ticket.id).due_by.to_date.should be_eql(due_date.to_date)
+      RSpec.configuration.account.tickets.find(@test_ticket.id).due_by.to_date.should be_eql(due_date.to_date)
     end
 
     it "should save draft for a ticket" do
-      draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => @account.id, :user_id => @agent.id,
+      draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => RSpec.configuration.account.id, :user_id => RSpec.configuration.agent.id,
         :ticket_id => @test_ticket.id}
       post :save_draft, { :draft_data => "<p>Testing save_draft</p>", :id => @test_ticket.display_id }
       get_tickets_redis_key(draft_key).should be_eql("<p>Testing save_draft</p>")
@@ -288,9 +286,9 @@ describe Helpdesk::TicketsController do
     it "should execute a scenario" do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       scenario_ticket = create_ticket({ :status => 2 }, @group)
-      scenario = @account.scn_automations.find_by_name("Mark as Feature Request")
+      scenario = RSpec.configuration.account.scn_automations.find_by_name("Mark as Feature Request")
       put :execute_scenario, :scenario_id => scenario.id, :id => scenario_ticket.display_id
-      @account.tickets.find(scenario_ticket.id).ticket_type.should be_eql("Feature Request")
+      RSpec.configuration.account.tickets.find(scenario_ticket.id).ticket_type.should be_eql("Feature Request")
     end
 
     it "should close a ticket without notifying the customer on shift_close_ticket+Close" do
@@ -307,7 +305,7 @@ describe Helpdesk::TicketsController do
                                        :redirect => "true",
                                        :id => shift_close_ticket.display_id
                                       }
-      @account.tickets.find(shift_close_ticket.id).status.should be_eql(5)
+      RSpec.configuration.account.tickets.find(shift_close_ticket.id).status.should be_eql(5)
       Delayed::Job.last.handler.should include("biz_rules_check")
       Delayed::Job.last.handler.should include("update_status")
     end
@@ -316,22 +314,22 @@ describe Helpdesk::TicketsController do
   # Ticket Quick Assign Triplet
 
     it "should quick-assign an agent to a ticket" do
-      put :quick_assign, { :assign => "agent", :value => @agent.id, :id => @test_ticket.display_id,
+      put :quick_assign, { :assign => "agent", :value => RSpec.configuration.agent.id, :id => @test_ticket.display_id,
                            :disable_notification => false, :_method => "put" }
       response.body.should be_eql({:success => true}.to_json)
-      @account.tickets.find(@test_ticket.id).responder_id.should be_eql(@agent.id)
+      RSpec.configuration.account.tickets.find(@test_ticket.id).responder_id.should be_eql(@agent.id)
     end
 
     it "should quick-assign status of a ticket" do
       put :quick_assign, { :assign => "status", :value => 3, :id => @test_ticket.display_id }
       response.body.should be_eql({:success => true}.to_json)
-      @account.tickets.find(@test_ticket.id).status.should be_eql(3)
+      RSpec.configuration.account.tickets.find(@test_ticket.id).status.should be_eql(3)
     end
 
     it "should quick-assign priority of a ticket" do
       put :quick_assign, { :assign => "priority", :value => 3, :id => @test_ticket.display_id }
       response.body.should be_eql({:success => true}.to_json)
-      @account.tickets.find(@test_ticket.id).priority.should be_eql(3)
+      RSpec.configuration.account.tickets.find(@test_ticket.id).priority.should be_eql(3)
     end
 
   
@@ -343,9 +341,9 @@ describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :pick_tickets, { :id => "multiple",
                            :ids => ["#{pick_ticket1.display_id}", "#{pick_ticket2.display_id}"]}
-      picked_tickets = @account.tickets.find_all_by_responder_id(@agent.id).map(&:id)
-      picked_tickets.include?(pick_ticket1.id).should be_true
-      picked_tickets.include?(pick_ticket2.id).should be_true
+      picked_tickets = RSpec.configuration.account.tickets.find_all_by_responder_id(@agent.id).map(&:id)
+      picked_tickets.include?(pick_ticket1.id).should be_truthy
+      picked_tickets.include?(pick_ticket2.id).should be_truthy
     end
 
     it "should assign multiple tickets to a specific agent" do
@@ -362,9 +360,9 @@ describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :assign, { :id => "multiple", :responder_id => new_agent.id,
                     :ids => ["#{assign_ticket1.display_id}", "#{assign_ticket2.display_id}"]}
-      assigned_tickets = @account.tickets.find_all_by_responder_id(new_agent.id).map(&:id)
-      assigned_tickets.include?(assign_ticket1.id).should be_true
-      assigned_tickets.include?(assign_ticket2.id).should be_true
+      assigned_tickets = RSpec.configuration.account.tickets.find_all_by_responder_id(new_agent.id).map(&:id)
+      assigned_tickets.include?(assign_ticket1.id).should be_truthy
+      assigned_tickets.include?(assign_ticket2.id).should be_truthy
     end
 
     it "should close multiple tickets" do
@@ -373,9 +371,9 @@ describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :close_multiple, { :id => "multiple",
                              :ids => ["#{close_ticket1.display_id}", "#{close_ticket2.display_id}"]}
-      closed_tickets = @account.tickets.find_all_by_status(5).map(&:id)
-      closed_tickets.include?(close_ticket1.id).should be_true
-      closed_tickets.include?(close_ticket2.id).should be_true
+      closed_tickets = RSpec.configuration.account.tickets.find_all_by_status(5).map(&:id)
+      closed_tickets.include?(close_ticket1.id).should be_truthy
+      closed_tickets.include?(close_ticket2.id).should be_truthy
     end
 
     it "should mark multiple tickets as spam" do
@@ -384,9 +382,9 @@ describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :spam, { :id => "multiple",
                    :ids => ["#{spam_ticket1.display_id}", "#{spam_ticket2.display_id}"]}
-      spammed_tickets = @account.tickets.find_all_by_spam(1).map(&:id)
-      spammed_tickets.include?(spam_ticket1.id).should be_true
-      spammed_tickets.include?(spam_ticket2.id).should be_true
+      spammed_tickets = RSpec.configuration.account.tickets.find_all_by_spam(1).map(&:id)
+      spammed_tickets.include?(spam_ticket1.id).should be_truthy
+      spammed_tickets.include?(spam_ticket2.id).should be_truthy
     end
 
     it "should delete multiple tickets" do
@@ -394,9 +392,9 @@ describe Helpdesk::TicketsController do
       del_ticket2 = create_ticket({ :status => 2 }, @group)
       delete :destroy, { :id => "multiple",
                          :ids => ["#{del_ticket1.display_id}", "#{del_ticket2.display_id}"]}
-      deleted_tickets = @account.tickets.find_all_by_deleted(1).map(&:id)
-      deleted_tickets.include?(del_ticket1.id).should be_true
-      deleted_tickets.include?(del_ticket2.id).should be_true
+      deleted_tickets = RSpec.configuration.account.tickets.find_all_by_deleted(1).map(&:id)
+      deleted_tickets.include?(del_ticket1.id).should be_truthy
+      deleted_tickets.include?(del_ticket2.id).should be_truthy
     end
 
 
@@ -404,12 +402,12 @@ describe Helpdesk::TicketsController do
 
     it "should mark a ticket as spam" do
       put :spam, :id => @test_ticket.display_id
-      @account.tickets.find(@test_ticket.id).spam.should be_true
+      RSpec.configuration.account.tickets.find(@test_ticket.id).spam.should be_truthy
     end
 
     it "should delete a ticket" do
       delete :destroy, :id => @test_ticket.display_id
-      @account.tickets.find(@test_ticket.id).deleted.should be_true
+      RSpec.configuration.account.tickets.find(@test_ticket.id).deleted.should be_truthy
     end
 
     it "should unspam a ticket from spam view" do
@@ -441,8 +439,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created yesterday" do
@@ -457,8 +455,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within this week" do
@@ -473,8 +471,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within this month" do
@@ -489,8 +487,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within 2 months" do
@@ -505,8 +503,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within 6 months" do
@@ -521,8 +519,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within mins of integer values" do
@@ -537,8 +535,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should show the custom view save popup" do

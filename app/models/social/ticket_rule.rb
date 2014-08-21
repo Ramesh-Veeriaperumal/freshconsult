@@ -1,6 +1,6 @@
 class Social::TicketRule < ActiveRecord::Base
 
-  set_table_name "social_ticket_rules"
+  self.table_name =  "social_ticket_rules"
 
   belongs_to_account
 
@@ -12,6 +12,8 @@ class Social::TicketRule < ActiveRecord::Base
 
   serialize :filter_data, Hash
   serialize :action_data, Hash
+
+  attr_accessible :filter_data, :action_data
 
 
   def apply(feed)

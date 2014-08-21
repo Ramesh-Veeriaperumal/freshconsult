@@ -9,7 +9,9 @@ class AccountConfiguration < ActiveRecord::Base
 
   after_update :update_crm, :update_billing, :update_reseller_subscription
 
-  
+  attr_accessible :contact_info, :billing_emails, :name, :billing_site, 
+    :billing_api_key, :exchange_rate
+
   def admin_first_name
   	contact_info[:first_name]
   end
@@ -34,7 +36,7 @@ class AccountConfiguration < ActiveRecord::Base
 
   	def ensure_values
       if (contact_info[:first_name].blank? or contact_info[:email].blank? or billing_emails[:invoice_emails].blank?)
-        errors.add_to_base(I18n.t("activerecord.errors.messages.blank"))
+        errors.add(:base,I18n.t("activerecord.errors.messages.blank"))
       end
   	end
 

@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester, :class_name => 'User'
 
-  has_many :notes,  :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy
+  has_many :notes,  :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy# TODO-RAILS3 Need to cross check, :foreign_key => :id
 
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',

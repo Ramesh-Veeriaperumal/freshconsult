@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Support::Discussions::PostsController do
-	integrate_views
+	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -33,11 +33,11 @@ describe Support::Discussions::PostsController do
 							},
 					:topic_id => topic.id
 
-		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+		new_post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}</p>")
 		new_post.should_not be_nil
 		new_post.topic_id.should eql topic.id
 		new_post.user_id.should eql @user.id
-		new_post.account_id.should eql @account.id
+		new_post.account_id.should eql RSpec.configuration.account.id
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 
@@ -191,7 +191,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}</p>")
 			post.published.should eql true
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
@@ -211,7 +211,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}</p>")
 			post.published.should eql false
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
@@ -232,7 +232,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body}#{email}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}#{email}</p>")
 			post.published.should eql false
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
@@ -253,7 +253,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{phone}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body} #{phone}</p>")
 			post.published.should eql false
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
@@ -274,7 +274,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{link}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body} #{link}</p>")
 			post.published.should eql false
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end
@@ -295,7 +295,7 @@ describe Support::Discussions::PostsController do
 
 			Resque.inline = false
 
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{whitelisted_link}</p>")
+			post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body} #{whitelisted_link}</p>")
 			post.published.should eql true
 			response.should redirect_to "support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
 		end

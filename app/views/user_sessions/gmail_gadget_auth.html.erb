@@ -8,7 +8,7 @@ flash[:notice] = @notice
 	Close Window
 <% end %>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	<%= "setTimeout(function() {window.close()},5000); " if !@gauth_error %>
 <%	end %>
 </div>

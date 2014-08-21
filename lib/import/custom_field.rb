@@ -106,7 +106,7 @@ module Import::CustomField
   def create_nested_field(ticket_field, nested_field, account=current_account)
       incorrect_data = (nested_field[:label].blank? || nested_field[:type].blank? || nested_field[:level].blank?)
 
-      @invalid_fields.push(ticket_field) and ticket_field.errors.add_to_base("Incorrect values for level 2 and level 3 for dependant field") and return false if incorrect_data
+      @invalid_fields.push(ticket_field) and ticket_field.errors.add(:base,"Incorrect values for level 2 and level 3 for dependant field") and return false if incorrect_data
 
       nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
       nested_field.delete(:id)

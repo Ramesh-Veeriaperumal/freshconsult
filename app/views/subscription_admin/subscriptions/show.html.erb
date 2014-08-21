@@ -140,7 +140,7 @@
 
 		<h3>Add Day Passes</h3>
 
-		<% form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
+		<%= form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
 		  <input type="text" name="passes_count" id="passes_count" placeholder="No. of day passes" />
 		  <input type="submit" value="Add Passes" class="btn" />
 		<% end %>

@@ -44,12 +44,13 @@ module Admin::FreshfoneHelper
 		"<option value=''>All States</option>" 
 	end
 
-	def method_missing(symbol, *params)
-   if (symbol.to_s =~ /^(.*)_before_type_cast$/)
-     send $1
-   else
-     super
-   end
- end
+ # TODO-RAILS3 need to check why they have this...
+ # def method_missing(symbol, *params)
+ #   if (symbol.to_s =~ /^(.*)_before_type_cast$/)
+ #     send $1
+ #   else
+ #     super
+ #   end
+ # end
 
 end

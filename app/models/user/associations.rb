@@ -20,9 +20,12 @@ class User < ActiveRecord::Base
   
   has_and_belongs_to_many :roles,
     :join_table => "user_roles",
-    :insert_sql => 
-      'INSERT INTO user_roles (account_id, user_id, role_id) VALUES
-       (#{account_id}, #{id}, #{ActiveRecord::Base.sanitize(record.id)})',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_roles (account_id, user_id, role_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    },
     :after_add => :touch_role_change,
     :after_remove => :touch_role_change,
     :autosave => true

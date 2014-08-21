@@ -6,7 +6,7 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>
+<%= form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>
   <h3 class="lead itil-hide">
         <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
       <% unless @role.default_role? %>
@@ -20,7 +20,7 @@
   <%= render :partial => 'form', :locals => { :role_form => role_form} %>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
   (function($) {
     

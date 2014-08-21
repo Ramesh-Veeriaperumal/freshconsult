@@ -4,6 +4,7 @@ class Quest < ActiveRecord::Base
   include Gamification::Quests::Badges
   include Cache::Memcache::Quest
   
+  attr_accessible :category, :badge_id, :points, :name, :description
   belongs_to_account
 
   has_many :achieved_quests, :dependent => :destroy
@@ -23,36 +24,34 @@ class Quest < ActiveRecord::Base
 
   before_save :modify_quest_data, :denormalize_filter_data
 
-  after_commit_on_create :clear_quests_cache
-  after_commit_on_update :clear_quests_cache
-  after_commit_on_destroy :clear_quests_cache
+  after_commit :clear_quests_cache, on: [:create, :update, :destroy]
 
-  named_scope :available, lambda{|user| {
+  scope :available, lambda{|user| {
     :conditions => [%(quests.id not in (select quest_id from achieved_quests 
       where user_id = ? and account_id = ?)), user.id, user.account_id]
     }}
 
-  named_scope :disabled, :conditions => { :active => false }
-  named_scope :enabled, :conditions => { :active => true }
+  scope :disabled, :conditions => { :active => false }
+  scope :enabled, :conditions => { :active => true }
 
-  named_scope :ticket_quests, :conditions => {
+  scope :ticket_quests, :conditions => {
     :category => GAME_TYPE_KEYS_BY_TOKEN[:ticket],
   }
 
-  named_scope :forum_quests, :conditions => {
+  scope :forum_quests, :conditions => {
     :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
   }
 
-  named_scope :solution_quests, :conditions => {
+  scope :solution_quests, :conditions => {
     :category => GAME_TYPE_KEYS_BY_TOKEN[:solution],
   }
 
-  named_scope :create_forum_quests, :conditions => {
+  scope :create_forum_quests, :conditions => {
     :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
     :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:create]
   }
 
-  named_scope :answer_forum_quests, :conditions => {
+  scope :answer_forum_quests, :conditions => {
     :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
     :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:answer]
   }
@@ -271,7 +270,7 @@ class Quest < ActiveRecord::Base
       return false if quest_data.blank?
       quest_data.first.symbolize_keys!
       if quest_data.first[:value].blank? || (quest_data.first[:value].to_i == 0)
-        errors.add_to_base(I18n.t("quests.#{GAME_TYPE_TOKENS_BY_KEY[category].to_s}_mand")) 
+        errors.add(:base,I18n.t("quests.#{GAME_TYPE_TOKENS_BY_KEY[category].to_s}_mand")) 
       end
     end
 

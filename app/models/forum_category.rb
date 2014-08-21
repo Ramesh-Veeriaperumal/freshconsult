@@ -2,7 +2,7 @@ class ForumCategory < ActiveRecord::Base
   validates_presence_of :name,:account_id
   validates_uniqueness_of :name, :scope => :account_id
 
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   def self.company_specific?(user)
     (user && user.has_company?)
@@ -60,7 +60,7 @@ class ForumCategory < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end

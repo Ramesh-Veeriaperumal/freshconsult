@@ -38,7 +38,7 @@
 	 		<% 
 				sla_size = @sla_policy.sla_details.size
 				@sla_policy.sla_details.each_with_index do |slas , index| %>
-		 		<% fields_for "SlaDetails[#{index}]", slas do |sla| %>
+		 		<%= fields_for "SlaDetails[#{index}]", slas do |sla| %>
 					<%
 					 priority_id = slas.priority || (sla_size-index)
 					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
@@ -77,7 +77,7 @@
 		<p class="muted"><%= t('sla_policy.applicable_details').html_safe %></p>
 		<label for="sla_policy_conditions" class="hide" data-error-text="<%= t('sla_policy.applicable_error').html_safe %>">
 		</label>
-	    <% f.fields_for :conditions do |a| %>
+	    <%= f.fields_for :conditions do |a| %>
 	    <div class="sla_policy_conditions_container">
 	    	<div class="fast_autocomplete condition <%= @companies.blank? ? "hide" : "" %>" id="company_id">
 	    		<span class='delete_conditions'></span>
@@ -100,7 +100,7 @@
 						</div>
 		    	</div>
 		    <% end %>
-		    <% f.fields_for :datatype do |a| %>
+		    <%= f.fields_for :datatype do |a| %>
 		    	<%= a.hidden_field :'ticket_type', :value => 'text'%>
 		    <% end %>
 	    	<div class="add_new_condition hide" >
@@ -138,7 +138,7 @@
 					<%= select_tag('response_time', 
 									options_for_select(escalation_time_options), 
 									{:class => "hide"}) %>
-				 	<% f.fields_for :escalations do |e| %>
+				 	<%= f.fields_for :escalations do |e| %>
 				 		<% e.fields_for "response" do |response|%>	
 				 			<% response.fields_for "1"  do |i| %>
 								<tr data-level = "1" data-type = "response" rel = "reconstruct" 
@@ -212,7 +212,7 @@
 </div>	 
 
 <script src="/javascripts/helpdesk/sla_policy.js" type="text/javascript"></script>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	var time = <%= ActiveSupport::JSON.encode(@time && {1 => @time['resolution_1'], 
 										2 => @time['resolution_2'],	3 => @time['resolution_3'], 
 										4 => @time['resolution_4']}).html_safe %> || {};

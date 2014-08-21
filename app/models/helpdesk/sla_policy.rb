@@ -1,6 +1,6 @@
 class Helpdesk::SlaPolicy < ActiveRecord::Base
   
-  set_table_name "sla_policies"
+  self.table_name =  "sla_policies"
 
   serialize :escalations, Hash
   serialize :conditions, Hash
@@ -23,11 +23,11 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   accepts_nested_attributes_for :sla_details
 
-  named_scope :rule_based, :conditions => { :is_default => false }
-  named_scope :default, :conditions => { :is_default => true }
+  scope :rule_based, :conditions => { :is_default => false }
+  scope :default, :conditions => { :is_default => true }
 
-  named_scope :active, :conditions => {:active => true }
-  named_scope :inactive, :conditions => {:active => false }
+  scope :active, :conditions => {:active => true }
+  scope :inactive, :conditions => {:active => false }
 
   default_scope :order => "is_default, position"
   

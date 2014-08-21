@@ -58,7 +58,7 @@ def execute_supevisor(task_name)
       rake_logger = custom_logger(path)
     rescue Exception => e
       puts "Error occured #{e}" 
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor.rake",:recipients => "pradeep.t@freshdesk.com"})       
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor.rake",:recipients => "pradeep.t@freshdesk.com"})       
     end    
     rake_logger.info "rake=#{task_name} Supervisor" unless rake_logger.nil?
     Sharding.execute_on_all_shards do

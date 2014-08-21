@@ -2,7 +2,6 @@ class SubscriptionAdmin::AdminSessionsController < ApplicationController
 
   include AdminControllerMethods
   include TwoFactorAuthentication
-  filter_parameter_logging :password
 
   skip_before_filter :check_admin_user_privilege
  

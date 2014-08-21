@@ -1,12 +1,12 @@
-<%= include_cloudfront_js :social_admin %>
-<%= include_cloudfront_css :social %>
+<%= javascript_include_tag :social_admin %>
+<%= stylesheet_link_tag :social %>
 <% content_for :sidebar do -%><%-end %>
 
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
 
-<% form_for :twitter_stream, :url => admin_social_twitter_stream_path(@twitter_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
+<%= form_for :twitter_stream, :url => admin_social_twitter_stream_path(@twitter_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
 
   <div class="floatr">
     <%= link_to(t('admin.social.streams.cancel'), :admin_social_streams , :class => "btn" ) %>

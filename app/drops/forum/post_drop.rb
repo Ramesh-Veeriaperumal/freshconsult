@@ -1,6 +1,6 @@
 class Forum::PostDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   liquid_attributes << :body << :body_html
   

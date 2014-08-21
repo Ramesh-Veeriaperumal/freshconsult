@@ -1,5 +1,5 @@
 class Post < ActiveRecord::Base
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
@@ -14,20 +14,20 @@ class Post < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  named_scope :answered_posts, :conditions => { :answer => true }
+  scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
-  named_scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
-  named_scope :published, :conditions => {:published => true, :trash => false }
-  named_scope :trashed, :conditions => {:trash => true }
+  scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
+  scope :published, :conditions => {:published => true, :trash => false }
+  scope :trashed, :conditions => {:trash => true }
 
-  named_scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
-  named_scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  named_scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  named_scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
+  scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
+  scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
+  scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
+  scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
 
 
-  named_scope :by_user, lambda { |user|
+  scope :by_user, lambda { |user|
       { :joins => [:topic],
         :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ]
       }
@@ -60,7 +60,7 @@ class Post < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id])
   end
@@ -89,7 +89,11 @@ class Post < ActiveRecord::Base
 
   def monitor_topic
     monitorship = topic.monitorships.find_by_user_id(user.id)
-    topic.monitorships.create(:user_id => user.id, :active => true, :portal_id => portal) unless monitorship
+    unless monitorship
+      @monitorships = topic.monitorships.build(:active => true)
+      @monitorships.user_id = user.id 
+      @monitorships.save!
+    end
   end
 
   def toggle_answer

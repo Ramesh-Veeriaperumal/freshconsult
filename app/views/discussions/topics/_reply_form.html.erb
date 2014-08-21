@@ -5,7 +5,7 @@
 			<a><%=t('reply')%></a>
 		</div>
 		<div id="reply-box">
-			<% form_for @post, :url => discussions_topic_posts_path(@topic), :html => {:multipart => true, :rel => :validate} do |f| %>
+			<%= form_for @post, :url => discussions_topic_posts_path(@topic), :html => {:multipart => true, :rel => :validate} do |f| %>
 			<div class="row-fluid topic-reply">
 				<h5 class="sub-lead"><%=t('reply')%></h5>
 				<ul class="unstyled form-inline flow-form">

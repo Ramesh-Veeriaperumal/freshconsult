@@ -40,7 +40,7 @@
             	<div id="cust-list">
             		<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
 	            	<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
-	            	<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+	            	<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 		        		<% if @contacts.present? %>
 					        <div class="list-page-body">
 					        	<!-- Add content here for top of the table-->
@@ -85,7 +85,7 @@
 </div>
 
 
-<% javascript_tag do%>
+<%= javascript_tag do%>
 	jQuery(".delete_user_btn").on('click',function(){
 		jQuery("#contacts-expanded").data('user',jQuery(this).data('user'));
 	});

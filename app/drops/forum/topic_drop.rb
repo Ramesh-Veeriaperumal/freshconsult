@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Forum::TopicDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   liquid_attributes << :title << :posts_count
 

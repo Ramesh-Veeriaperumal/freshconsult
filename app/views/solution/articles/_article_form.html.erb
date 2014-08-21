@@ -30,7 +30,7 @@
 
 		</div>
 	<% end %>
-	<% fields_for :tags  do |tag| %>
+	<%= fields_for :tags  do |tag| %>
 		<div class="control-group row-fluid">
 			<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 			<div class="controls">
@@ -62,7 +62,7 @@
 		</div>
 		<br/>
 		<div id="solution-seo" class="hide">
-			<% f.fields_for :seo_data  do |s| %>
+			<%= f.fields_for :seo_data  do |s| %>
 				<div class="control-group">
 					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
 					<div class="controls">
@@ -103,7 +103,7 @@
 		</div>
 	</div>
 </div>
-	<% javascript_tag do %>
+	<%= javascript_tag do %>
 		(function($) {
 			$(document).ready(function() {
 				$('#solution-seo-show').bind("click", function(){

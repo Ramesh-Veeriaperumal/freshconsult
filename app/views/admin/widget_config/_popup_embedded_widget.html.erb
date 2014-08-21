@@ -1,5 +1,5 @@
 <% widget_type = selected_widget_type %>
-<% form_for "widget_config", "widget_config", :html => {:class => "form-horizontal", :rel => "validate",
+<%= form_for :widget_config, :html => { :class => "form-horizontal", :rel => "validate",
 		:name => "widget_config_#{widget_type}", :id => "WidgetConfig#{widget_type}" } do |f| %>
 
 <div class="row-fluid">

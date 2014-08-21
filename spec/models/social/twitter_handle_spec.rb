@@ -125,6 +125,18 @@ describe Social::TwitterHandle do
     end
   end
 
+  it "should add custom streams if its search_keys are updated" do
+    RSpec.configuration.account.features.send(:social_revamp).destroy if RSpec.configuration.account.features?(:social_revamp)
+    new_keys = ["freshservice", "freshchat"]
+    @handle.update_attributes(:search_keys => new_keys)
+    @handle.reload
+    custom_stream_keys = @handle.twitter_streams.map{|stream| stream.name if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
+    @handle.search_keys.delete(@handle.formatted_handle)
+    custom_stream_keys.should == @handle.search_keys
+    RSpec.configuration.account.features.send(:social_revamp).create
+  end
+
+
   it "should destroy the gnip rule default_stream dm_stream and associated rules with the default 
         stream and the dm stream on twitter handle destroy and set social id to nil for associated custom streams" do
     Resque.inline = true

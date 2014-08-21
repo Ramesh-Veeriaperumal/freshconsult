@@ -13,7 +13,7 @@
   <% if privilege?(:manage_contacts) %> 
   	<div class="sidepanel">
   	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=h(@customer.name)%></span></h4> 	
-  		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
+  		<%= form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
   		  <%= hidden_field_tag 'customer_id', params[:id] %> 	
     		<ul class="ui-form">
     		<li> 
@@ -67,7 +67,7 @@
 	</div>
 </div>
 <div class="text_area_notes hide control-group">
-<% form_for(@customer) do |f| %>
+<%= form_for(@customer) do |f| %>
 	<label class="overlabel" for="comp_notes">
 		<%=t('company.info5')%>
 	</label>

@@ -6,7 +6,7 @@
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <div class="sidepanel">
- 	<% remote_form_for( survey_list_path, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
+ 	<%= form_for( survey_list_path, :remote => true, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
  			:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
  		<ul>
     	   <li class="control-group">
@@ -38,7 +38,7 @@
 	<p>	<%= t('.helptext').html_safe %> </p>
 </div>
 
-<% javascript_tag do %> 	
+<%= javascript_tag do %> 	
 
 	function validate_request(){
 		var category =  jQuery("#category").val();

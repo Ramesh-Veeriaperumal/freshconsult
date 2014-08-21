@@ -67,7 +67,7 @@ private
     class_name = wf_filter.model_class_name.underscore
     
     result = ""
-    xml = Builder::XmlMarkup.new(:target => result, :indent => 1)
+    xml = ::Builder::XmlMarkup.new(:target => result, :indent => 1)
     xml.instruct!
     xml.tag!(class_name.pluralize) do
       wf_filter.results.each do |obj|

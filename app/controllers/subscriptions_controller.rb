@@ -16,7 +16,6 @@ class SubscriptionsController < ApplicationController
 
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
-  filter_parameter_logging :creditcard, :password
   restrict_perform :billing
   ssl_required :billing
 

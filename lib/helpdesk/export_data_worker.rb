@@ -4,7 +4,7 @@ require 'zip/zipfilesystem'
 require 'fileutils'
 
 class Helpdesk::ExportDataWorker < Struct.new(:params)
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   def perform
     begin
@@ -33,7 +33,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       url = url_for(:controller => "download_file/#{@data_export.source}/#{hash_file_name}", 
                     :host => @current_account.full_domain, 
                     :protocol => 'https')
-      DataExportMailer.deliver_data_backup({:email => params[:email], 
+      DataExportMailer.data_backup({:email => params[:email], 
                                             :domain => params[:domain], 
                                             :url =>  url})
       delete_zip_file zip_file_path  #cleaning up the directory

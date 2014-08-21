@@ -1,4 +1,4 @@
-class VARule < ActiveRecord::Base
+class VaRule < ActiveRecord::Base
 
   include Cache::Memcache::VARule
 
@@ -22,14 +22,16 @@ class VARule < ActiveRecord::Base
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event
 
+  attr_accessible :name, :description, :match_type, :active
+
   belongs_to :account
   
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
 
-  named_scope :active, :conditions => { :active => true }
-  named_scope :inactive, :conditions => { :active => false }
+  scope :active, :conditions => { :active => true }
+  scope :inactive, :conditions => { :active => false }
 
-  named_scope :observer_biz_rules, :conditions => { 
+  scope :observer_biz_rules, :conditions => { 
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
     "va_rules.active" => true }, :order => "va_rules.position"
 
@@ -183,6 +185,7 @@ class VARule < ActiveRecord::Base
     return unless dispatchr_rule? || observer_rule? || api_webhook_rule?
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
+
     
     to_action_data.each do |action_data|
       action_data.symbolize_keys!
@@ -235,16 +238,16 @@ class VARule < ActiveRecord::Base
   private
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      errors.add_to_base(I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
+      errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
     
     def has_conditions?
       return unless supervisor_rule?
-      errors.add_to_base(I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+      errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
     end
     
     def has_actions?
-      errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
+      errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
 
     def filter_array

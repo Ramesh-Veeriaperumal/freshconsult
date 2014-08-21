@@ -9,8 +9,8 @@ class Notification::ProductNotificationController < ApplicationController
   private
   def notifications_content
     MemcacheKeys.fetch(PRODUCT_NOTIFICATION) do
-      render_to_string :partial => 'notification/product_notification', 
-                       :object => SubscriptionAnnouncement.latest_product_notifications
+      @object = SubscriptionAnnouncement.latest_product_notifications
+      render_to_string :partial => 'notification/product_notification'
     end
   end 
 end

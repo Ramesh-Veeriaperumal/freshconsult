@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Discussions::TopicsController do
-	integrate_views
+	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -27,7 +27,7 @@ describe Discussions::TopicsController do
 	end
 
 	it "should render edit page on get 'edit'" do
-		topic = create_test_topic(@forum, @agent)
+		topic = create_test_topic(@forum, RSpec.configuration.agent)
 		create_test_post(topic)
 
 		get :edit, :id => topic.id
@@ -51,15 +51,16 @@ describe Discussions::TopicsController do
 					:sticky => 0,
 					:locked => 0 }
 
-		new_topic = @account.topics.find_by_title(topic_title)
+		new_topic = RSpec.configuration.account.topics.find_by_title(topic_title)
 		new_topic.forum_id.should eql @forum.id
-		new_topic.user_id.should eql @agent.id
-		new_topic.account_id.should eql @account.id
+		new_topic.user_id.should eql RSpec.configuration.agent.id
+		new_topic.account_id.should eql RSpec.configuration.account.id
 
-		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+		new_post = RSpec.configuration.account.posts.find_by_body_html("<p>#{post_body}</p>")
 		new_post.topic_id.should eql new_topic.id
-		new_post.user_id.should eql @agent.id
-		new_post.account_id.should eql @account.id
+
+		new_post.user_id.should eql RSpec.configuration.agent.id
+		new_post.account_id.should eql RSpec.configuration.account.id
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 
@@ -113,7 +114,7 @@ describe Discussions::TopicsController do
 
 		get :show, :id => topic.id
 
-		response.session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
+		session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
 	end
 
 	it "should redirect to support page on get 'show' when logged in by customer" do
@@ -127,8 +128,8 @@ describe Discussions::TopicsController do
 	end
 
 	it "should update a topic on put 'update'" do
-		topic = create_test_topic(@forum, @agent)
-		create_test_post(topic, @agent)
+		topic = create_test_topic(@forum, RSpec.configuration.agent)
+		create_test_post(topic, RSpec.configuration.agent)
 		new_topic_title = Faker::Lorem.sentence(1)
 		new_post_body = Faker::Lorem.paragraph
 
@@ -141,20 +142,20 @@ describe Discussions::TopicsController do
 		topic.reload
 		topic.title.should eql new_topic_title
 		topic.forum_id.should eql @forum.id
-		topic.user_id.should eql @agent.id
-		topic.account_id.should eql @account.id
+		topic.user_id.should eql RSpec.configuration.agent.id
+		topic.account_id.should eql RSpec.configuration.account.id
 
-		post = @account.posts.find_by_body_html("<p>#{new_post_body}</p>")
+		post = RSpec.configuration.account.posts.find_by_body_html("<p>#{new_post_body}</p>")
 		post.topic_id.should eql topic.id
-		post.user_id.should eql @agent.id
-		post.account_id.should eql @account.id
+		post.user_id.should eql RSpec.configuration.agent.id
+		post.account_id.should eql RSpec.configuration.account.id
 
 		response.should redirect_to "discussions/topics/#{topic.id}"
 	end
 
 	it "should not update a topic on put 'update' when message is invalid" do
-		topic = create_test_topic(@forum, @agent)
-		create_test_post(topic, @agent)
+		topic = create_test_topic(@forum, RSpec.configuration.agent)
+		create_test_post(topic, RSpec.configuration.agent)
 
 		put :update,
 			:id => topic.id,
@@ -206,7 +207,7 @@ describe Discussions::TopicsController do
 			:id => topic.id
 
 		topic.reload
-		topic.locked.should be_true
+		topic.locked.should be_truthy
 		response.should redirect_to "discussions/topics/#{topic.id}"
 	end
 
@@ -217,13 +218,13 @@ describe Discussions::TopicsController do
 			:id => locked_topic.id
 
 		locked_topic.reload
-		locked_topic.locked.should be_false
+		locked_topic.locked.should be_falsey
 		response.should redirect_to "discussions/topics/#{locked_topic.id}"
 	end
 
 	it "should render latest reply page on get 'latest_reply'" do
-		topic = create_test_topic(@forum, @agent)
-		create_test_post(topic, @agent)
+		topic = create_test_topic(@forum, RSpec.configuration.agent)
+		create_test_post(topic, RSpec.configuration.agent)
 
 		get :latest_reply, :id => topic.id
 
@@ -245,14 +246,14 @@ describe Discussions::TopicsController do
 	end
 
 	it "should vote a topic on put 'vote'" do
-		topic = create_test_topic(@forum, @agent)
+		topic = create_test_topic(@forum, RSpec.configuration.agent)
 		vote_count = topic.user_votes
 
 		put :vote,
 			:id => topic.id,
 			:vote => "for"
 
-		liked_topic = @account.topics.find_by_id(topic.id)
+		liked_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		liked_topic.user_votes.should be_eql(vote_count + 1)
 		vote = liked_topic.votes.find_by_user_id(@agent.id)
 		vote.should be_an_instance_of(Vote)
@@ -266,7 +267,7 @@ describe Discussions::TopicsController do
 			:id => topic.id,
 			:vote => "for"
 
-		unliked_topic = @account.topics.find_by_id(topic.id)
+		unliked_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		unliked_topic.user_votes.should be_eql(vote_count)
 		vote = unliked_topic.votes.find_by_user_id(@agent.id)
 		vote.should be_nil

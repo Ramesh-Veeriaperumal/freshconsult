@@ -1,6 +1,6 @@
 # encoding: utf-8
 class Helpdesk::Activity < ActiveRecord::Base
-  set_table_name "helpdesk_activities"
+  self.table_name =  "helpdesk_activities"
   
   belongs_to_account
   
@@ -18,29 +18,29 @@ class Helpdesk::Activity < ActiveRecord::Base
   
   
   
-  named_scope :freshest, lambda { |account|
+  scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? ", account], 
       :order => "helpdesk_activities.id DESC"
     }
   }
 
-  named_scope :activity_since, lambda { |id|
+  scope :activity_since, lambda { |id|
     { :conditions => ["helpdesk_activities.id > ? ", id],
       :order => "helpdesk_activities.id DESC",
       :limit => 20
     }
   }
 
-  named_scope :activity_before, lambda { | activity_id|
+  scope :activity_before, lambda { | activity_id|
     { :conditions => ["helpdesk_activities.id < ?", activity_id], 
       :order => "helpdesk_activities.id DESC"
     }
   }
 
-  named_scope :newest_first, :order => "helpdesk_activities.id DESC"
+  scope :newest_first, :order => "helpdesk_activities.id DESC"
 
   
- named_scope :permissible , lambda {|user| { 
+ scope :permissible , lambda {|user| { 
  :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND helpdesk_activities.account_id = helpdesk_tickets.account_id AND notable_type = 'Helpdesk::Ticket'"  ,
  :conditions => send(:agent_permission ,user) } if user.agent? && !user.agent.all_ticket_permission  }
   

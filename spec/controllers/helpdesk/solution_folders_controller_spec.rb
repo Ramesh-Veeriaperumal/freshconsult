@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Solution::FoldersController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -84,7 +84,7 @@ describe Solution::FoldersController do
     log_in(restricted_agent)
     get :show, :id => @test_folder.id, :category_id => @test_category.id
     response.status.should eql "302 Found"
-    response.session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
+    session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
     UserSession.find.destroy    
   end
 
@@ -99,7 +99,7 @@ describe Solution::FoldersController do
     name = Faker::Name.name
     post :create, {:solution_folder => {:name => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1},
         :category_id => @test_category.id }
-    @account.folders.find_by_name(name).should be_an_instance_of(Solution::Folder)    
+    RSpec.configuration.account.folders.find_by_name(name).should be_an_instance_of(Solution::Folder)    
   end
 
   it "should redirect to new page if folder create fails" do 
@@ -119,19 +119,19 @@ describe Solution::FoldersController do
           :visibility => 1
         },
       :category_id => @test_category.id
-    @account.folders.find_by_name("#{name}").should be_an_instance_of(Solution::Folder)
+    RSpec.configuration.account.folders.find_by_name("#{name}").should be_an_instance_of(Solution::Folder)
     response.should redirect_to(solution_category_path(@test_category.id))
   end
 
   it "should not edit a default folder" do 
-    default_category = @account.solution_categories.find_by_is_default(true)
+    default_category = RSpec.configuration.account.solution_categories.find_by_is_default(true)
     get :edit, :id => default_category.folders.first.id, :category_id => default_category.id
-    response.session["flash"][:notice].should eql I18n.t(:'folder_edit_not_allowed')
+    session["flash"][:notice].should eql I18n.t(:'folder_edit_not_allowed')
   end  
 
   it "should delete a solution categories folder" do
     delete :destroy, :id => @test_folder.id, :category_id => @test_category.id
-    @account.folders.find_by_name("#{@test_folder.name}").should be_nil
+    RSpec.configuration.account.folders.find_by_name("#{@test_folder.name}").should be_nil
     response.should redirect_to(solution_category_path(@test_category))    
   end
 

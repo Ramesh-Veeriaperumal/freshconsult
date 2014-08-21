@@ -1,6 +1,6 @@
 class Helpdesk::Dropbox < ActiveRecord::Base
 
-	set_table_name "helpdesk_dropboxes"
+	self.table_name =  "helpdesk_dropboxes"
 
 	belongs_to :droppable, :polymorphic => true
 

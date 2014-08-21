@@ -49,11 +49,11 @@ class Freshfone::Option
 	
 	def validate
 		unless has_valid_performer_type?
-			ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.invalid_performer_type'))
+			ivr.errors.add(:base,I18n.t('freshfone.admin.ivr.invalid_performer_type'))
 		end
-		ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.invalid_number',
+		ivr.errors.add(:base,I18n.t('freshfone.admin.ivr.invalid_number',
 																				{ :menu => menu.menu_name })) if invalid_performer_number?
-		ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.invalid_jump_to',
+		ivr.errors.add(:base,I18n.t('freshfone.admin.ivr.invalid_jump_to',
 															{ :menu => menu.menu_name })) if has_invalid_jump_to?
 	end
 	

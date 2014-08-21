@@ -1,4 +1,4 @@
-<%- javascript_tag do -%>	
+<%= javascript_tag do %>	
 	jQuery(document).ready(function() {
 		<%= yield :onload_script -%>
 			
@@ -27,4 +27,4 @@
 
 	// Shortcuts variables
 	var Shortcuts = <%= Shortcut::KEY_BINDINGS.to_json.html_safe %>;
-<%- end -%>
+<% end %>

@@ -25,10 +25,11 @@ class Group < ActiveRecord::Base
     :join_table => 'group_accesses'
     
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type, :business_calendar_id
+                   :ticket_assign_type, :business_calendar_id,
+                   :added_list, :removed_list
    
    accepts_nested_attributes_for :agent_groups
-   named_scope :active_groups_in_account, lambda { |account_id|
+   scope :active_groups_in_account, lambda { |account_id|
      { :joins => "inner join agent_groups on agent_groups.account_id = #{account_id} and
                    agent_groups.group_id = groups.id and groups.account_id = #{account_id}
                    inner join users ON agent_groups.account_id = #{account_id} and
@@ -101,7 +102,7 @@ class Group < ActiveRecord::Base
 
   def to_xml(options ={})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     #options for the user which is included within the groups as agents is set for root node.
     super(:builder=>xml, :skip_instruct => options[:skip_instruct],:include=>{:agents=>{:root=>'agent',:skip_instruct=>true}},:except=>[:account_id,:import_id,:email_on_assign])
   end

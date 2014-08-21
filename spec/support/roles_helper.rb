@@ -1,9 +1,9 @@
 module RolesHelper
 
 	def create_role(params = {})
-		test_role = Factory.build(:roles, :name => params[:name], :description => Faker::Lorem.paragraph, 
+		test_role = FactoryGirl.build(:roles, :name => params[:name], :description => Faker::Lorem.paragraph, 
 		                            :privilege_list => params[:privilege_list] )
-		test_role.save(false)
+		test_role.save(validate: false)
 		test_role
 	end
 

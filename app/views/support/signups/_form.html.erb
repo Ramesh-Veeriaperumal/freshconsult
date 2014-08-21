@@ -1,6 +1,6 @@
 <% if current_account.features?(:signup_link) && (preview? || !current_user) %>
 	<% @user ||= current_account.users.new %>
-	<% form_for @user, :url => support_signup_path, :html => { :class => "form-portal", :rel => "validate" } do |f| -%>
+	<%= form_for @user, :url => support_signup_path, :html => { :class => "form-portal", :rel => "validate" } do |f| -%>
 		<%= f.error_messages %>
 		<fieldset>
 			<div class="control-group"> 

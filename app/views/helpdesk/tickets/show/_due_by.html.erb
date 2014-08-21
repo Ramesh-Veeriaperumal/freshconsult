@@ -15,6 +15,6 @@ on <%= formated_date(due_by) %>
 	<%= t('change').html_safe %>
 </a>
 <% end %>
-<% javascript_tag do %>
-jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status.html.erb') %>");
+<%= javascript_tag do %>
+jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status') %>");
 <% end %>

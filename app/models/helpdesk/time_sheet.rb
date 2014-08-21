@@ -4,7 +4,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   include ApplicationHelper
   include Mobile::Actions::TimeSheet
 
-  set_table_name "helpdesk_time_sheets"
+  self.table_name =  "helpdesk_time_sheets"
 
   default_scope :order => "executed_at DESC"
   
@@ -25,25 +25,25 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable'
     
-  named_scope :timer_active , :conditions =>["timer_running=?" , true]
+  scope :timer_active , :conditions =>["timer_running=?" , true]
 
-  named_scope :created_at_inside, lambda { |start, stop|
+  scope :created_at_inside, lambda { |start, stop|
     { :conditions => 
       [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
         start, stop] 
     }
   }
-  named_scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
+  scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
         
-  named_scope :by_agent , lambda { |created_by|
+  scope :by_agent , lambda { |created_by|
     { :conditions => {:user_id => created_by } } unless created_by.blank?
   }
   
-  named_scope :by_group , lambda  { |group|
+  scope :by_group , lambda  { |group|
       { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
 
-  named_scope :for_customers, lambda{ |customers|
+  scope :for_customers, lambda{ |customers|
     {
       :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
       :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
@@ -52,7 +52,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     } unless customers.blank?
   }
       
-  named_scope :for_contacts, lambda{|contact_email|
+  scope :for_contacts, lambda{|contact_email|
       {
         :select => "DISTINCT `helpdesk_time_sheets`.*" ,
         :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
@@ -61,7 +61,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       } unless contact_email.blank?
   }
 
-  named_scope :for_products, lambda { |products|
+  scope :for_products, lambda { |products|
     { 
       :select => "DISTINCT helpdesk_time_sheets.*",
       :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
@@ -173,7 +173,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml, :skip_instruct => true, :dasherize=>false, :except => 
       [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|

@@ -30,3 +30,4 @@ Paperclip::Storage::S3.module_eval do
     (self.instance.description and PUBLIC_DESCRIPTIONS.include?(self.instance.description))? "public-read" : "private"
   end
 end
+

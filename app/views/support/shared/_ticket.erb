@@ -4,7 +4,7 @@
 	<span class="label-status label label-small"><%= ticket.status_name %></span>			 
 	<div class="ticket-brief">
 	    <div class="ellipsis">
-	      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "..."), :class => "c-link") %> 
+	      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, :length => 350, :omission => '...'), :class => "c-link") %> 
 	    </div>
 	    <div class="help-text">
 			<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>

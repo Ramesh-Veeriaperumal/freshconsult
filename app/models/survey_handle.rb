@@ -2,7 +2,7 @@ class SurveyHandle < ActiveRecord::Base
 	
   belongs_to_account
   	
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   NOTIFICATION_VS_SEND_WHILE = {
     EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,
@@ -31,6 +31,7 @@ class SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket, send_while) if send_while
   end
   
+  # Method moved to helper
   def survey_url(ticket, rating)
     support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
       :host => ticket.portal_host)

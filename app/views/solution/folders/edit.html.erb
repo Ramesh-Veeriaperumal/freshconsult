@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%-end %>
 <h3 class="lead itil-hide"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
-<% form_for (@folder), :url => solution_category_folder_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
+<%= form_for (@folder), :url => solution_category_folder_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container align-right itil-hide">
 		<div class="pull-left">

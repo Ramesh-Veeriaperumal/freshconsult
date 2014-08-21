@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
 <div class='reply_box'>
-  <% form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
+  <%= form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
 	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
@@ -18,7 +18,7 @@
 				Message:
 			</label>
 	    <div class="fields">
-	    	<% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+	    	<%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body ,  { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
           	<% end %>
       	<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
@@ -48,7 +48,7 @@
   jQuery('#send-tweet-cnt-tweet-body').NobleCount('#SendTweetCounter', { on_negative : "error" }); 
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery(document).ready(function(){
 jQuery('#twitter_handle').change(function user_follows(){
 twitter_handle= jQuery('#twitter_handle').val();

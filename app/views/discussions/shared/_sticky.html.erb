@@ -4,14 +4,14 @@
   <div class="sticky_panel">
 	<%= sidebar_toggle %>
     <div class="sticky_left">
-	  <% if @content_for_sticky_left %>
+	  <% if content_for?(:sticky_left)%>
 		<%= yield :sticky_left %>
 	  <% else %>
     	<%= discussions_breadcrumb page %>
 	  <% end %>
     </div>
 	<div class="sticky_right">
-      <% if @content_for_sticky_right %>
+      <% if content_for?(:sticky_right)%>
       	<%= yield :sticky_right %>
       <% else %>
         &nbsp;

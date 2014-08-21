@@ -5,7 +5,7 @@
 <%= content_tag( :h3, t('email_command_settings_heading'), :class => "lead") %>
 <%= content_tag( :div, t('email_command_settings_info'), :class => "lead-desc muted") %>
 
-<% form_for :account_additional_settings, @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
+<%= form_for @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
 	<%= f.error_messages %>
 	<div class="control-group">
 		<label class="control-label"><%=t('email_command_delimeter_label')%></label>
@@ -41,7 +41,7 @@
 	</div>
 <% end %>
 
-<% javascript_tag do%>
+<%= javascript_tag do%>
 		email_content_commands = '<%= @email_content_commands.html_safe %>';
 		content_prefix = 'Hi,\n\n';
 		content_suffix = '\n\nYour issue is resolved now.\n\nThanks,\nAgent Name.\n'; 

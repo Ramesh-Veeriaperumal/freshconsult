@@ -22,7 +22,7 @@ describe Facebook::Core::Message do
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
   end
   
   it "should convert a dm to a ticket and subsequent replies within the threded time to a note when dm to ticket is enabled" do
@@ -39,7 +39,7 @@ describe Facebook::Core::Message do
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     actor_id = thread_id + 10
     msg_id = thread_id + 20
@@ -51,6 +51,6 @@ describe Facebook::Core::Message do
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_note?.should be_true
+    post.is_note?.should be_truthy
   end
 end

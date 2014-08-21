@@ -3,7 +3,8 @@ class Mobihelp::App < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::App
   include Cache::Memcache::Mobihelp::Solution
   
-  set_table_name :mobihelp_apps
+  self.table_name =  :mobihelp_apps
+
   concerned_with :associations, :callbacks, :constants, :validations
   serialize :config, Hash
   attr_protected :account_id

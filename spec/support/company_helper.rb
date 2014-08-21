@@ -5,7 +5,7 @@ module CompanyHelper
   end
 
   def create_company
-    comp = Factory.build(:company)
+    comp = FactoryGirl.build(:company)
     comp.save
     comp
   end

@@ -7,7 +7,7 @@ describe Admin::FreshfoneController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
     log_in(@agent)
   end
 

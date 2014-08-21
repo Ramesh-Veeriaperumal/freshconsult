@@ -1,7 +1,7 @@
 module JiraHelper
 
 	def create_installed_application(account)
-    installed_application = Factory.build(:installed_application, 
+    installed_application = FactoryGirl.build(:installed_application, 
       "application_id" => 5,
       "account_id" => account.id, 
       "configs" => { :inputs => { 
@@ -18,7 +18,7 @@ module JiraHelper
 		  "auth_key" => "f77d624058fc7b03480d1077ff691e2b",
       "customFieldId" => "customfield_11700" } }
       )
-    installed_application.save(false)
+    installed_application.save(validate: false)
     installed_application
   end
 
@@ -51,7 +51,7 @@ module JiraHelper
     { "webhookEvent" => "jira:issue_updated", "timestamp" => DateTime.now.strftime('%Q').to_i,
       "issue" => { "key" => integrated_resource.remote_integratable_id }, 
       "auth_key" => @installed_application.configs_auth_key,
-      "user" => {"emailAddress" => @installed_application.configs_username, "displayName" => @agent.name },
+      "user" => {"emailAddress" => @installed_application.configs_username, "displayName" => RSpec.configuration.agent.name },
       "changelog" => {"id" => "10300",
       "items" => [ 
       {"field" => "status", "fieldtype" => "jira", "from" => "1", "fromString" => "Open", 

@@ -44,12 +44,12 @@
       <% end %>
     </div> 
 
-    <% form_for :user_id, :url => add_whitelisted_user_id_admin_manage_users_path , 
+    <%= form_for :user_id, :url => add_whitelisted_user_id_admin_manage_users_path , 
       :html => {:method => 'post', :id => 'add_user_id_account_id'}  do |f| %>
       <%= f.error_messages %>
     <% end %>
     
-    <% form_for :user_id, :url => remove_whitelisted_user_id_admin_manage_users_path, 
+    <%= form_for :user_id, :url => remove_whitelisted_user_id_admin_manage_users_path, 
         :html => {:method => 'post', :id => 'remove_user_id_account_id'}  do |f| %>
         <%= f.error_messages %>  
     <% end %>

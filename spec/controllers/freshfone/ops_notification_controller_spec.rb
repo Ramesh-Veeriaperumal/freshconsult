@@ -7,7 +7,7 @@ describe Freshfone::OpsNotificationController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = @account.full_domain
+    @request.host = RSpec.configuration.account.full_domain
   end
 
   it 'should render the twiml with notification message' do

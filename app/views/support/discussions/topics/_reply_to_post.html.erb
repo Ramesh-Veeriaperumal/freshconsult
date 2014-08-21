@@ -1,6 +1,6 @@
 <% if @topic.present? %>
 	<%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
-	<% form_for @topic.posts.new, :url => support_discussions_topic_posts_path(@topic), 
+	<%= form_for @topic.posts.new, :url => support_discussions_topic_posts_path(@topic), 
 		:html => { :multipart => true, :rel => "validate" } do |f| -%>		
 		<div class="row-fluid">
 			<p class="span12">

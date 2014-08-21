@@ -1,4 +1,4 @@
-<% remote_form_for @post, 
+<%= form_for @post, :remote => true,
 			:url => discussions_topic_post_path(:topic_id => @post.topic_id, :id => @post),
 			:before => "if (!jQuery(this).valid()) { return false; }",
 			:html => { 
@@ -25,7 +25,7 @@
 		<%= submit_tag(t("save"), :class => "btn btn-primary btn-small", 'data-id' => @post.id, :id => "save_button_#{@post.id}") %>
 	</div>
 <% end -%>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	(function($) {
 		$("#reset_button_" + <%= @post.id.to_s %>).data('html',
 							$('#post_' + <%= @post.id.to_s %> +'_body_html').val());

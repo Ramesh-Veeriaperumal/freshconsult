@@ -1,7 +1,7 @@
 class Workers::Community::ReportPost
   extend Resque::AroundPerform
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 
   @queue = 'report_post'
 

@@ -1,7 +1,7 @@
 class Workers::Community::CheckForSpam
   extend Resque::AroundPerform
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 
   @queue = 'check_for_spam'
 

@@ -1,4 +1,4 @@
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<%= form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<div class="info-highlight"><%=t('export_data.contact_info')%></div>
 	<ul class="ui-form">
@@ -29,7 +29,7 @@
 	</div>
 <%end%>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery("#exportFilter").submit(function() {  
 
 	if (jQuery('#contact_fields :checked').length == 0) {

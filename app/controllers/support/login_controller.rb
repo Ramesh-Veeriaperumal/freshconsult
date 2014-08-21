@@ -51,13 +51,13 @@ class Support::LoginController < SupportController
 	    		login_user = current_account.all_users.find_by_email(params[:user_session][:email])
 	    		if !login_user.nil? && login_user.deleted?
 		    		@user_session.errors.clear
-					@user_session.errors.add_to_base(I18n.t("activerecord.errors.messages.contact_admin"))
+					@user_session.errors.add(:base,I18n.t("activerecord.errors.messages.contact_admin"))
 				end
 	    	end
 	    end
 
 	    def remove_old_filters
-	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session['session_id']})
 	    end
 
       def check_request_referrer

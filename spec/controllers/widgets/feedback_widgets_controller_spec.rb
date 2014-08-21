@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Widgets::FeedbackWidgetsController do
-	integrate_views
+	# integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -34,7 +34,7 @@ describe Widgets::FeedbackWidgetsController do
                                        :source => "3",
                                        :status => "2",
                                        :priority => "1"}
-    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    RSpec.configuration.account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
     response.should render_template "widgets/feedback_widgets/thanks.html.erb"
   end
 

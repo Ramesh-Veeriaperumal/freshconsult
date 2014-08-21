@@ -34,10 +34,6 @@
 
 .icons-edit-forum{ @include icons-sprite(edit-forum); }
 
-// .forum_follow_icon{ @include icons-sprite(follow-forum); }
-//
-// .forum_follow_icon.active{ @include icons-sprite(following-forum); }
-
 .icons-like{ @include icons-sprite(like); }
 
 .icons-dislike{ @include icons-sprite(dislike); }
@@ -69,27 +65,6 @@ $chat-layout:horizontal;
 .topic-list-view {
 	.spam_action { @include icons-sprite(is-spam); }
 	.spam_action:hover { @include icons-sprite(not-spam); }
-}
-
-.icon-eye{
-	display: inline-block;
-	width: 22px;
-	height: 12px;
-	margin-top: 1px;
-	vertical-align: text-top;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url("/images/eye.png");
-}
-.icon-crosseye{
-	display: inline-block;
-	width: 22px;
-	height: 12px;
-	margin-top: 1px;
-	vertical-align: text-top;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-image: url("/images/crosseye.png");
 }
 
 .icon_remove{

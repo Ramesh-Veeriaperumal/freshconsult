@@ -1,6 +1,6 @@
 class UserDrop < BaseDrop	
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 	include Integrations::AppsUtil
 
 	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 

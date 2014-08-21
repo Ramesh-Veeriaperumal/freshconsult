@@ -21,14 +21,14 @@ class WhitelistedIp < ActiveRecord::Base
 
 	def valid_ips?
 		unless ip_ranges.all? { |ip| valid_ipv4_address?(ip) || valid_ipv6_address?(ip) }
-			errors.add_to_base("#{I18n.t('admin.security.index.valid_ip_address')}")
+			errors.add(:base,"#{I18n.t('admin.security.index.valid_ip_address')}")
 			return false
 		end
 	end
 
 	def valid_range?
 		unless ip_ranges.all? { |ip| (IPAddress ip["start_ip"]) <= (IPAddress ip["end_ip"]) }
-			errors.add_to_base("#{I18n.t('admin.security.index.invalid_ip_range')}")
+			errors.add(:base,"#{I18n.t('admin.security.index.invalid_ip_range')}")
 		end
 	end
 
@@ -42,7 +42,7 @@ class WhitelistedIp < ActiveRecord::Base
        	end
       end
 		end
-		errors.add_to_base("#{I18n.t('admin.security.index.current_ip_not_in_range')}")
+		errors.add(:base,"#{I18n.t('admin.security.index.current_ip_not_in_range')}")
 	end
 
 	# ip --> A Hash. 

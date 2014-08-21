@@ -17,9 +17,9 @@
 	<!-- Mobile viewport optimized-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <%= include_cloudfront_css :getting_started %>
-   	<%= include_cloudfront_js :defaults %>
-    <%= include_cloudfront_js :getting_started %>
+    <%= stylesheet_link_tag :getting_started %>
+   	<%= javascript_include_tag :defaults %>
+    <%= javascript_include_tag :gettingstarted %>
 	 
     <link rel="shortcut icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
@@ -27,7 +27,7 @@
     <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
 </head>
 <body>
-<% javascript_tag do %>  
+<%= javascript_tag do %>  
   jQuery(document).ready(function(){
   		GettingStarted.map("next_please_wait", "<%=t('.next_please_wait')%>");
       GettingStarted.map("next_alt_link", "<%=t('.next_alt_text')%>");
@@ -98,7 +98,7 @@
 				<div id="content">
 
 				<!--Support Email-->
-				<% remote_form_for :email_config, @email_config, :url => admin_email_config_path(@email_config), :html => { :method => :put,:id =>"email_config"} do |f| %>
+				<%= form_for @email_config, :remote => true, :url => admin_email_config_path(@email_config), :html => { :method => :put,:id =>"email_config"} do |f| %>
 					<div class="slide">
 
 						<div class="forward-mail-wrap-top">
@@ -142,13 +142,13 @@
 
 					<!--Agents-->
 					<div class="slide">
-						<% remote_form_for @agent, :url => create_multiple_items_agents_path(), :html => { :method => :put,:id =>"agent_invite" } do |f| %>
+						<%= form_for @agent, :url => create_multiple_items_agents_path(), :remote => true, :html => { :method => :put,:id =>"agent_invite" } do |f| %>
 						<div class="slide-left-panel small-slide-left-panel">
 								<h4><%=t(".agents_subtitle")%></h4>
 								<div class="textbox-note"><%=t(".agent_title_info")%></div>
 								<div class="email-textbox">
 									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
-									<% javascript_tag do %>
+									<%= javascript_tag do %>
 										jQuery(document).ready(function(){
 				                  			var agent_cachedBackend = new Autocompleter.Cache(function(searchString, callback) {}, {choices: 10});
 				                  			var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
@@ -166,8 +166,8 @@
 
 					<!--Logo & Colors-->
 					<div class="slide">
-						<% form_for :account, @account, :url => rebrand_admin_getting_started_path(), :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
-						<% f.fields_for :main_portal do |portal| %>
+						<%= form_for @account, :url => rebrand_admin_getting_started_index_path(), :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
+						<%= f.fields_for :main_portal do |portal| %>
 						<div class="slide-left-panel">
 								<h4><%=t('.rebrand_subtitle')%></h4>
 								<div class="rebrand-label"><%=t('.rebranding_header')%></div>
@@ -240,7 +240,7 @@
 		</div>
 
   
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
 	  jQuery(document).ready(function(){
 			jQuery("#reply_to_id").bind("change keyup", function(ev){
 	         if(this.value != ''){

@@ -34,7 +34,7 @@ class CRM::Salesforce < Resque::Job
       opportunity_id = add_opportunity(crm_ids, payment)
       add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
     #}
-    #FreshdeskErrorsMailer.deliver_error_in_crm!(payment) if returned_value == 0
+    #FreshdeskErrorsMailer.error_in_crm!(payment) if returned_value == 0
   end
 
   def add_free_customer_to_crm(subscription) 

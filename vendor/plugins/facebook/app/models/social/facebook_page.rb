@@ -1,12 +1,12 @@
 class Social::FacebookPage < ActiveRecord::Base
 
   include Cache::Memcache::Facebook
-  set_table_name "social_facebook_pages"
+  self.table_name =  "social_facebook_pages"
   
   concerned_with :associations, :constants, :validations, :callbacks
 
-  named_scope :active, :conditions => ["enable_page=?", true]
-  named_scope :reauth_required, :conditions => ["reauth_required=?", true]
+  scope :active, :conditions => ["enable_page=?", true]
+  scope :reauth_required, :conditions => ["reauth_required=?", true]
   
   #account_id is removed from validation check.
   

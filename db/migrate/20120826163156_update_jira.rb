@@ -15,7 +15,7 @@ class UpdateJira < ActiveRecord::Migration
                          :info => "integrations.google_contacts.form.account_settings_info" }
     jira_app.save!
 
-    status_change_biz_rule = VARule.new
+    status_change_biz_rule = VaRule.new
     status_change_biz_rule.account_id = SYSTEM_ACCOUNT_ID
     status_change_biz_rule.rule_type = VAConfig::APP_BUSINESS_RULE
     status_change_biz_rule.name = "fd_status_sync"
@@ -32,7 +32,7 @@ class UpdateJira < ActiveRecord::Migration
     status_change_jira_biz_rule.va_rule = status_change_biz_rule
     status_change_jira_biz_rule.save!
 
-    comment_add_biz_rule = VARule.new
+    comment_add_biz_rule = VaRule.new
     comment_add_biz_rule.account_id = SYSTEM_ACCOUNT_ID
     comment_add_biz_rule.rule_type = VAConfig::APP_BUSINESS_RULE
     comment_add_biz_rule.name = "fd_comment_sync"
@@ -51,8 +51,8 @@ class UpdateJira < ActiveRecord::Migration
   end
 
   def self.down
-    VARule.find_by_name_and_rule_type_and_account_id("fd_comment_sync", VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID).app_business_rule.destroy
-    VARule.find_by_name_and_rule_type_and_account_id("fd_status_sync", VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID).app_business_rule.destroy
+    VaRule.find_by_name_and_rule_type_and_account_id("fd_comment_sync", VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID).app_business_rule.destroy
+    VaRule.find_by_name_and_rule_type_and_account_id("fd_status_sync", VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID).app_business_rule.destroy
     jira_app = Integrations::Application.first(:conditions=>["name='#{@app_name}'"])
     jira_app.options[:jira_note].delete(:css_class)
     jira_app.options.delete(:sync_settings)

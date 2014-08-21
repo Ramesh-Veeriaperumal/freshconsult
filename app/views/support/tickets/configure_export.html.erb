@@ -1,4 +1,4 @@
-<% form_tag(export_csv_support_tickets_path(:a => params[:a], :i => params[:i]), { :method => :post, :class => "form-portal" }) do %>
+<%= form_tag(export_csv_support_tickets_path(:a => params[:a], :i => params[:i]), { :method => :post, :class => "form-portal" }) do %>
   	<input type="hidden" name="data_hash" value="" />
   	<input type="hidden" name="_method" value="post" />
   	<div class="row-fluid">
@@ -59,7 +59,7 @@
 	</fieldset>
 <%end%>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	!function( $ ) {
 
 		$(function () {

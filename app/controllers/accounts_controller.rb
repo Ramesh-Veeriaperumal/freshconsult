@@ -30,9 +30,7 @@ class AccountsController < ApplicationController
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
-  
-  filter_parameter_logging :creditcard,:password
-  
+    
   def show
   end   
    
@@ -285,7 +283,7 @@ class AccountsController < ApplicationController
        @account.primary_email_config.active = true
       
       begin 
-        locale = request.compatible_language_from I18n.available_locales  
+        locale = http_accept_language.compatible_language_from I18n.available_locales  
         locale = I18n.default_locale if locale.blank?
       rescue
         locale =  I18n.default_locale
@@ -427,7 +425,7 @@ class AccountsController < ApplicationController
         end
       end
       
-      params[:signup][:locale] = request.compatible_language_from(I18n.available_locales)
+      params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
     end
@@ -458,7 +456,7 @@ class AccountsController < ApplicationController
     end      
 
     def deliver_mail(feedback)
-      SubscriptionNotifier.deliver_account_deleted(current_account, 
+      SubscriptionNotifier.account_deleted(current_account, 
                                   feedback) if Rails.env.production?
     end
     

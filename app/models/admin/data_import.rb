@@ -4,7 +4,7 @@ class Admin::DataImport < ActiveRecord::Base
 
 	after_destroy :clear_key, :if => :zendesk_import?
   
-  set_table_name "admin_data_imports"    
+  self.table_name =  "admin_data_imports"    
   
   belongs_to :account
   

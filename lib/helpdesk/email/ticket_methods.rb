@@ -94,7 +94,7 @@ module Helpdesk::Email::TicketMethods
       header_info_update(ticket_message_id)
       ticket.save_ticket!
     rescue ActiveRecord::RecordInvalid => e
-      FreshdeskErrorsMailer.deliver_error_email(ticket,email,e)
+      FreshdeskErrorsMailer.error_email(ticket,email,e)
     end
     create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?
   end

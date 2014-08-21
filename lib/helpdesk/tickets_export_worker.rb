@@ -1,7 +1,7 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ExportCsvUtil
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   def perform
@@ -14,7 +14,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
         send_no_ticket_email
       else
         build_file(file_string) 
-        DataExportMailer.deliver_ticket_export({:user => User.current, 
+        DataExportMailer.ticket_export({:user => User.current, 
                                                 :domain => export_params[:portal_url],
                                                 :url => hash_url,
                                                 :export_params => export_params})
@@ -229,7 +229,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def send_no_ticket_email
-    DataExportMailer.deliver_no_tickets({
+    DataExportMailer.no_tickets({
                                           :user => User.current,
                                           :domain => export_params[:portal_url]
                                         })

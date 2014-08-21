@@ -4,13 +4,12 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification,
-                         :publish_new_note_properties_to_rabbitmq
+  after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification,
+                         :publish_new_note_properties_to_rabbitmq, on: :create
 
-  after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
-  after_commit_on_create :subscribe_event_create, :if => :api_webhook_note_check  
-  after_commit_on_update :update_es_index, :if => :human_note_for_ticket?
-  after_commit_on_destroy :remove_es_document
+  after_commit :update_es_index, on: [:create, :update], :if => :human_note_for_ticket?
+  after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
+  after_commit :remove_es_document, on: :destroy
 
   def construct_note_old_body_hash
     {
@@ -81,7 +80,7 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
         if note? && !self.to_emails.blank? && !incoming
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
+          Helpdesk::TicketNotifier.send_later(:notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
         end
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
@@ -175,7 +174,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return if meta?
       notable.subscriptions.each do |subscription|
         if subscription.user.id != user_id
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
+          Helpdesk::WatcherNotifier.send_later(:notify_on_reply, 
                                                 notable, subscription, self)
         end
       end

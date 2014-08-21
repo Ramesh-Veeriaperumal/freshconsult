@@ -8,8 +8,8 @@ class Social::TwitterHandle < ActiveRecord::Base
   before_save :add_default_search, :set_default_state, :persist_previous_changes
   before_create :set_default_threaded_time
   after_commit :clear_cache
-  after_commit_on_create :construct_avatar, :populate_streams, :clear_handles_cache
-  after_commit_on_destroy :cleanup, :clear_handles_cache
+  after_commit :construct_avatar, :populate_streams, :clear_handles_cache, on: :create
+  after_commit :cleanup, :clear_handles_cache, on: :destroy
 
   def construct_avatar
     args = {

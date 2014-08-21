@@ -1,6 +1,6 @@
 class Solution::ArticleDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
   liquid_attributes << :title << :status << :thumbs_up << :thumbs_down
   

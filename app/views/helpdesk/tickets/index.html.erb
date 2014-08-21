@@ -46,7 +46,7 @@
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } , :inline => true %>
   </div>
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
       TicketListEvents();
       Fjax.afterNextPage = function() {
         MergeTicketsDestructor();

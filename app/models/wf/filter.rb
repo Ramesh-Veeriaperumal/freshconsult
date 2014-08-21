@@ -26,7 +26,7 @@ class Wf::Filter < ActiveRecord::Base
   
   JOIN_NAME_INDICATOR = '>'
 
-  set_table_name :wf_filters
+  self.table_name =  :wf_filters
   serialize   :data
   
   belongs_to :user
@@ -50,7 +50,7 @@ class Wf::Filter < ActiveRecord::Base
   #############################################################################
   # Basics 
   #############################################################################
-  def initialize(model_class = 'Helpdesk::Ticket')
+  def initialize(model_class = 'Helpdesk::Ticket',opts={})
     super()
     self.model_class_name = model_class.to_s
   end

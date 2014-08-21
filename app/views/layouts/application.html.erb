@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <%
   @debuging =  Rails.env.development? && params.has_key?("debug")
+  @content_for_sidebar = content_for?(:sidebar)
+  @content_for_helpcard = content_for?(:helpcard)
+
 %>
   <%= open_html_tag %>      
 	<%= render :partial => "layouts/shared/head" %>

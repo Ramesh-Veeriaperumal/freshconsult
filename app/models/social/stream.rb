@@ -1,6 +1,6 @@
 class Social::Stream < ActiveRecord::Base
 
-  set_table_name "social_streams"
+  self.table_name =  "social_streams"
   belongs_to_account
 
   serialize :data, Hash
@@ -22,6 +22,8 @@ class Social::Stream < ActiveRecord::Base
     :dependent => :destroy
 
   delegate :groups, :users, :to => :accessible
+
+  attr_accessible :name, :includes, :excludes, :filter, :data
   
 
   def create_global_access

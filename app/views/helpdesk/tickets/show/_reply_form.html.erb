@@ -1,4 +1,4 @@
-<% javascript_tag do %> 
+<%= javascript_tag do %> 
   function lookup(searchString, callback) { 
     new Ajax.Request('<%=requesters_search_autocomplete_path%>?q='+encodeURIComponent(searchString), 
                                               { 
@@ -23,7 +23,7 @@
   
   <div class="form_title"><%= t('.title') %>: <span><%= @ticket.from_email %></span> </div>
   <div class="list_agents_replying" class="hide"></div>
-  <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
+  <%= form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReply",
                         "data-panel" => cntid,
@@ -78,7 +78,7 @@
             data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
-              <% javascript_tag do %>
+              <%= javascript_tag do %>
                 new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
               <% end %>
             </div>
@@ -91,7 +91,7 @@
             data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
-              <% javascript_tag do %>
+              <%= javascript_tag do %>
                 new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
               <% end %>
             </div>
@@ -99,7 +99,7 @@
       <li class="inline-field field clearField message">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
         <% conv_item = conv_id.nil? ? @ticket : @note %>
-        <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+        <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
                               :value => bind_last_reply(conv_item, @signature),
                               :"data-quoted-textarea" => "##{cntid}-quoted" %>
@@ -225,7 +225,7 @@
     <% end %>
 </div>
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
 
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){

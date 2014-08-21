@@ -18,15 +18,15 @@ class SubscriptionAnnouncement < ActiveRecord::Base
 	#latest product notification limit
 	NOTIFICATION_LIMIT = 3
 
-	named_scope :maintenance_notifications, 
+	scope :maintenance_notifications, 
 		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:maintenance] }, 
     	:order => 'updated_at DESC' 
 
-	named_scope :product_notifications, 
+	scope :product_notifications, 
 		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
     	:order => 'updated_at DESC'
 
- 	named_scope	:latest_product_notifications, 
+ 	scope	:latest_product_notifications, 
  		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
     	:limit => NOTIFICATION_LIMIT, 
     	:order => 'updated_at DESC'

@@ -4,7 +4,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
   
-  set_table_name "helpdesk_ticket_statuses"
+  self.table_name =  "helpdesk_ticket_statuses"
 
   belongs_to_account
   
@@ -15,17 +15,15 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   attr_protected :account_id, :status_id
   
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
-  
+
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",
-           :conditions => 'helpdesk_tickets.account_id = #{account_id}'
-           
+        :conditions => proc  { "helpdesk_tickets.account_id = #{send(:account_id)}" }
+
   after_update :update_tickets_sla_on_status_change
 
-  after_commit_on_destroy :clear_statuses_cache
-  after_commit_on_create :clear_statuses_cache
-  after_commit_on_update :clear_statuses_cache
+  after_commit :clear_statuses_cache, on: [:create, :update, :destroy]
   
-  named_scope :visible, :conditions => {:deleted => false}
+  scope :visible, :conditions => {:deleted => false}
 
   acts_as_list :scope => :account
   

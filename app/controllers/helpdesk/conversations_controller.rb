@@ -117,6 +117,8 @@ class Helpdesk::ConversationsController < ApplicationController
       logger.debug "testing the caller class:: #{nscname} and cname::#{cname}"
       @item = self.instance_variable_set('@' + cname,
         scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
+      # TODO-RAILS3 need think another better way
+      @item.notable = @parent
       set_item_user
       @item
     end

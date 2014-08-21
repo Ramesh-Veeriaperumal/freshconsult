@@ -1,4 +1,4 @@
-class BootstrapPaginationRenderer < WillPaginate::LinkRenderer
+class BootstrapPaginationRenderer < WillPaginate::ViewHelpers::LinkRenderer
 
   def initialize
     @gap_marker = '<li class="disabled gap"><a>&hellip;</a></li>'
@@ -10,8 +10,8 @@ class BootstrapPaginationRenderer < WillPaginate::LinkRenderer
     links.unshift(page_link_or_span(@collection.previous_page, 'previous', @options[:previous_label].to_s.html_safe))
     links.push(page_link_or_span(@collection.next_page, 'next', @options[:next_label].to_s.html_safe))
 
-    html = @template.content_tag(:ul, links.join(@options[:separator]).to_s.html_safe)
-    (@options[:container] ? @template.content_tag(:div, html, html_attributes) : html).to_s.html_safe
+    html = view_context.content_tag(:ul, links.join(@options[:separator]).to_s.html_safe)
+    (@options[:container] ? view_context.content_tag(:div, html, html_attributes) : html).to_s.html_safe
   end
 
 protected
@@ -40,11 +40,11 @@ protected
   end
 
   def page_link(page, text, attributes = {})
-    @template.content_tag(:li, (@template.link_to(text.html_safe, url_for(page))).html_safe, attributes)
+    view_context.content_tag(:li, (view_context.link_to(text.html_safe, url_for(page))).html_safe, attributes)
   end
 
   def page_disabled_link(page, text, attributes = {})
-    @template.content_tag(:li, (@template.content_tag(:span, text.html_safe)).html_safe, attributes)
+    view_context.content_tag(:li, (view_context.content_tag(:span, text.html_safe)).html_safe, attributes)
   end
 
 end

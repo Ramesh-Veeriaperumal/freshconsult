@@ -1,0 +1,1 @@
+//= require sound/soundmanager2-jsmin

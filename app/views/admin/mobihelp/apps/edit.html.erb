@@ -5,7 +5,7 @@
 </ul>
 
 <div class="row-fluid">
-	<% form_for(@app, :html => {:class => "form-horizontal" , :rel => "validate"} , :url => admin_mobihelp_app_path(@app), :action => "update" ) do |f| %>
+	<%= form_for(@app, :html => {:class => "form-horizontal" , :rel => "validate"} , :url => admin_mobihelp_app_path(@app), :action => "update" ) do |f| %>
   	<%= render :partial => "form", :locals => {:f => f, :page => "edit"} %>
 	<% end %>
 </div>

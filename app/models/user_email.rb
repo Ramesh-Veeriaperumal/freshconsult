@@ -1,8 +1,10 @@
 # encoding: utf-8
 class UserEmail < ActiveRecord::Base
 
+  self.primary_key = :id
+  attr_accessible :email, :primary_role, :verified
   include Users::Activator
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
 
@@ -15,8 +17,8 @@ class UserEmail < ActiveRecord::Base
   before_validation :downcase_email
   before_update :drop_authorization, :if => [:email_changed?, :check_multiple_email_feature]
   before_update :save_model_changes
-  after_commit_on_update :change_email_status, :send_agent_activation, :if => [:check_for_email_change?, :check_multiple_email_feature]
-  after_commit_on_create :send_activation, :if => :check_multiple_email_feature
+  after_commit :change_email_status, :send_agent_activation, on: :update, :if => [:check_for_email_change?, :check_multiple_email_feature]
+  after_commit :send_activation, on: :create, :if => :check_multiple_email_feature
   before_destroy :drop_authorization, :check_active_with_emails, :if => :check_multiple_email_feature
 
   def self.find_email_using_perishable_token(token, age)
@@ -68,7 +70,7 @@ class UserEmail < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:email, :verified, :primary_role]) 
   end

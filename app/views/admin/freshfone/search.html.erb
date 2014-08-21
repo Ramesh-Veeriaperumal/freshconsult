@@ -44,5 +44,5 @@
 		<p><%= t('freshfone.admin.numbers.setup.info').html_safe %></p>
 	</div>
 <% end %>
-<%= include_cloudfront_js :freshfone %>
-<%= include_cloudfront_css :freshfone_admin %>
+<%= javascript_include_tag :freshfone %>
+<%= stylesheet_link_tag :freshfone_admin %>

@@ -2,13 +2,13 @@ require 'spec_helper'
 include MemcacheKeys
 
 describe Integrations::ApplicationsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @agent = add_test_agent(@account)
-    @new_application = Factory.build(:application, 
+    RSpec.configuration.agent = add_test_agent(@account)
+    @new_application = FactoryGirl.build(:application, 
                                     :name => "Test Application",
                                     :listing_order => 24,
                                     :options => {
@@ -21,17 +21,17 @@ describe Integrations::ApplicationsController do
                                                       :info => "integrations.new_application.api_key_info"}
                                                   },
                                     :application_type => "freshplug")
-    @new_application.save(false)
-    @widget = Factory.build(:widget, :application_id => @new_application.id)
-    @widget.save(false)
-    @new_installed_app = Factory.build(:installed_application, :application_id => @new_application.id,
-                                              :account_id => @account.id,
+    @new_application.save(validate: false)
+    @widget = FactoryGirl.build(:widget, :application_id => @new_application.id)
+    @widget.save(validate: false)
+    @new_installed_app = FactoryGirl.build(:installed_application, :application_id => @new_application.id,
+                                              :account_id => RSpec.configuration.account.id,
                                               :configs => { :inputs => { "refresh_token" => "7977697105566556112", 
                                                             "oauth_token" => "61837911-03ab-485a-9903-fb6dbbbf7b46", 
                                                             "uid" => "roshiniphilip@gmail.com"}
                                                           }
                                               )
-    @new_installed_app.save(false)
+    @new_installed_app.save(validate: false)
   end
 
   before(:each) do
@@ -107,7 +107,7 @@ describe Integrations::ApplicationsController do
                                    :description => "New application subject #{now}",
                                    :listing_order => 1,
                                    :options => {:display_in_pages => ["helpdesk_tickets_show_page_side_bar"]},
-                                   :account_id => @account.id,
+                                   :account_id => RSpec.configuration.account.id,
                                    :application_type => "freshplug"
                                   }
     response.should redirect_to "/integrations/applications"

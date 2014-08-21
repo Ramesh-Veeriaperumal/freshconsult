@@ -76,18 +76,18 @@
 			</div>
 	        
 	        <div class="hide canned_create_folder" id="create_folder">
-                <% form_for @new_ca_res_folder, :html => { :rel => "validate"} do |f| %>
+                <%= form_for @new_ca_res_folder, :html => { :rel => "validate"} do |f| %>
 					<%= render :partial => "folder_form", :locals => { :f => f } %>
 			    <% end %>
             </div> 
 
-            <% javascript_tag do %>
+            <%= javascript_tag do %>
     			jQuery(".presence_in_list").data("list", <%= raw @ca_res_folders.map(&:name).to_json%>)
     		<% end %>
 
 			<div id="editing" class="hide">
 				<div id="edit_form" class="center">
-					<% form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
+					<%= form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
 					<div class="form-horizontal">
 						<%= f.error_messages :object_name => 'canned_response_folder' %>
 						<%= f.text_field :name, :class => "text required" %>
@@ -100,7 +100,7 @@
 			<ul id="drop-list"></ul>
 		</div>
 
-		<% remote_form_for :admin_canned_response, 
+		<%= form_for :admin_canned_response, :remote => true,
 				:url => delete_multiple_admin_canned_responses_folder_responses_path(:ids), 
 				:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
 			<div class="response-list list-page-body">
@@ -141,7 +141,7 @@
 	</div>
 </div>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
 	var folder_id = <%= @ca_res_folder.id %>;
 	var new_ca_path = "<%= new_admin_canned_responses_folder_path %>";
 	var ca_path = "<%= admin_canned_responses_folders_path %>/";

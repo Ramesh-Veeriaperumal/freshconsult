@@ -3,6 +3,8 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  self.primary_key = :id
+
   MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
                        "doc" => "application/msword",
                        "xls" => "application/vnd.ms-excel",
@@ -13,7 +15,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
-  set_table_name "helpdesk_attachments"
+  self.table_name =  "helpdesk_attachments"
   belongs_to_account
 
   belongs_to :attachable, :polymorphic => true
@@ -29,7 +31,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
 
-   named_scope :gallery_images,
+   scope :gallery_images,
     {
       :conditions => ['description = ? and attachable_type = ?',
       'public', 'Image Upload'],
@@ -43,6 +45,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     #before_post_process :set_content_dispositon
     before_create :set_content_type
     before_save :set_account_id
+
+  attr_accessible :content
 
    def s3_permissions
     public_permissions? ? "public-read" : "private"
@@ -110,7 +114,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => exclude) do |xml|
          xml.tag!("attachment_url", attachment_url_for_api)
@@ -144,7 +148,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   private
 
   def set_random_secret
-    self.random_secret = ActiveSupport::SecureRandom.hex(8)
+    self.random_secret = SecureRandom.hex(8)
   end
 
   def lookup_by_extension(extension)

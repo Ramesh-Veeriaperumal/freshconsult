@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery(document).ready(function(){  
  invokeRedactor('<%= "user_binfo" %>','signature');
     jQuery("#password_confirmation").rules("add", {  
@@ -52,7 +52,7 @@ jQuery('.email').live('keyup', function(){
 <% user = @profile %>
 <% user = @profile.user unless current_user.customer? %>
  
-<% fields_for "user", @profile do |usr| %>
+<%= fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %> 
  	<ul class="ui-form">
 		<li>

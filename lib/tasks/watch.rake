@@ -28,7 +28,7 @@ def check_and_alert(table, threshold)
 end
 
 def deliver_alert(table, accounts, query_str)
-  FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
+  FreshdeskErrorsMailer.error_email(nil, nil, nil,
     {
       :subject          => "Abnormal load in #{table}",
       :additional_info  => {

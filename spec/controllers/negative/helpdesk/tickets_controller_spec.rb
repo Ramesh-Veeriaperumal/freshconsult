@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Helpdesk::TicketsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @group_name = "Tickets - #{Time.now}"
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => @group_name}))
-    @group = @account.groups.find_by_name(@group_name)
+    @group = RSpec.configuration.account.groups.find_by_name(@group_name)
     @test_group = create_group(@account, {:name => "Group-Bulk -Test #{Time.now}"})
   end
 
@@ -38,7 +38,7 @@ describe Helpdesk::TicketsController do
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
     response.body.should =~ /Requester should be a valid email address/
-    @account.tickets.find_by_subject("#{now}").should be_nil
+    RSpec.configuration.account.tickets.find_by_subject("#{now}").should be_nil
   end
 
   # Restricted access - global tickets props should not change where as tickets assined to restricted user should change..
@@ -53,14 +53,14 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>restricted_user.id)
     log_in(restricted_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :close_multiple, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).status.should be_eql(2)
-    @account.tickets.find(restricted_agent_ticket.id).status.should be_eql(5)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).status.should be_eql(2)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).status.should be_eql(5)
   end
 
   # Delete -restricted access
@@ -74,14 +74,14 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>restricted_user.id)
     log_in(restricted_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :destroy, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).deleted.should be_eql(false)
-    @account.tickets.find(restricted_agent_ticket.id).deleted.should be_eql(true)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).deleted.should be_eql(false)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).deleted.should be_eql(true)
   end
 
   # Empty trash -restricted access
@@ -95,7 +95,7 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id,:deleted => true)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id,:deleted => true)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id => restricted_user.id ,:deleted => true)
     log_in(restricted_user)
@@ -103,8 +103,8 @@ describe Helpdesk::TicketsController do
     Resque.inline = true
     put :delete_forever, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
     Resque.inline = false
-    @account.tickets.find_by_id(global_agent_ticket.id).should_not be_nil
-    @account.tickets.find_by_id(restricted_agent_ticket.id).should be_nil
+    RSpec.configuration.account.tickets.find_by_id(global_agent_ticket.id).should_not be_nil
+    RSpec.configuration.account.tickets.find_by_id(restricted_agent_ticket.id).should be_nil
   end
 
   # Assign -restricted access
@@ -125,14 +125,14 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 1,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>restricted_user.id)
     log_in(restricted_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :assign, { :id => "multiple", :responder_id=>responder_user.id,:ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
-    @account.tickets.find(restricted_agent_ticket.id).responder_id.should be_eql(responder_user.id)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).responder_id.should be_eql(responder_user.id)
   end
 
   # Pickup Tickets -restricted access
@@ -146,11 +146,11 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(restricted_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :pick_tickets, { :id => "multiple", :ids => [global_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
   end
 
   # Flag spam -restricted access
@@ -164,14 +164,14 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 3,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>restricted_user.id)
     log_in(restricted_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :spam, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).spam.should be_eql(false)
-    @account.tickets.find(restricted_agent_ticket.id).spam.should be_eql(true)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).spam.should be_eql(false)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).spam.should be_eql(true)
   end
 
   # Group access - global tickets props should not change where as tickets assigned to group user, tickets in that group should change
@@ -187,17 +187,17 @@ describe Helpdesk::TicketsController do
                                             :role_ids => ["#{@account.roles.first.id}"],
                                             :group_id => @test_group.id })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :close_multiple, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).status.should be_eql(2)
-    @account.tickets.find(restricted_agent_ticket.id).status.should be_eql(5)
-    @account.tickets.find(group_agent_ticket.id).status.should be_eql(5)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).status.should be_eql(2)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).status.should be_eql(5)
+    RSpec.configuration.account.tickets.find(group_agent_ticket.id).status.should be_eql(5)
   end
 
   # Delete -group access
@@ -212,17 +212,17 @@ describe Helpdesk::TicketsController do
                                             :role_ids => ["#{@account.roles.first.id}"],
                                             :group_id => @test_group.id  })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :destroy, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).deleted.should be_eql(false)
-    @account.tickets.find(restricted_agent_ticket.id).deleted.should be_eql(true)
-    @account.tickets.find(group_agent_ticket.id).deleted.should be_eql(true)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).deleted.should be_eql(false)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).deleted.should be_eql(true)
+    RSpec.configuration.account.tickets.find(group_agent_ticket.id).deleted.should be_eql(true)
   end
 
 # Empty trash -group access
@@ -237,19 +237,19 @@ describe Helpdesk::TicketsController do
                                             :role_ids => ["#{@account.roles.first.id}"],
                                             :group_id => @test_group.id  })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id,:deleted => true)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id,:deleted => true)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id,:deleted =>true)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id, :deleted =>true)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id, :deleted =>true)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     Resque.inline = true
     put :delete_forever, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
     Resque.inline = false
-    @account.tickets.find_by_id(global_agent_ticket.id).should_not be_nil
-    @account.tickets.find_by_id(restricted_agent_ticket.id).should be_nil
-    @account.tickets.find_by_id(group_agent_ticket.id).should be_nil
+    RSpec.configuration.account.tickets.find_by_id(global_agent_ticket.id).should_not be_nil
+    RSpec.configuration.account.tickets.find_by_id(restricted_agent_ticket.id).should be_nil
+    RSpec.configuration.account.tickets.find_by_id(group_agent_ticket.id).should be_nil
   end
 
   # Assign -group access
@@ -271,17 +271,17 @@ describe Helpdesk::TicketsController do
                                             :ticket_permission => 1,
                                             :role_ids => ["#{@account.roles.first.id}"] })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :assign, { :id => "multiple", :responder_id=>responder_user.id,:ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
-    @account.tickets.find(restricted_agent_ticket.id).responder_id.should be_eql(responder_user.id)
-    @account.tickets.find(group_agent_ticket.id).responder_id.should be_eql(responder_user.id)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).responder_id.should be_eql(responder_user.id)
+    RSpec.configuration.account.tickets.find(group_agent_ticket.id).responder_id.should be_eql(responder_user.id)
   end
 
   # Pickup Tickets -group access
@@ -296,14 +296,14 @@ describe Helpdesk::TicketsController do
                                             :role_ids => ["#{@account.roles.first.id}"],
                                             :group_id => @test_group.id  })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :pick_tickets, { :id => "multiple", :ids => [global_agent_ticket.display_id,group_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
-    @account.tickets.find(group_agent_ticket.id).responder_id.should be_eql(group_user.id)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).responder_id.should be_eql(@agent.id)
+    RSpec.configuration.account.tickets.find(group_agent_ticket.id).responder_id.should be_eql(group_user.id)
   end
 
   # Flag spam -group access
@@ -318,17 +318,17 @@ describe Helpdesk::TicketsController do
                                             :role_ids => ["#{@account.roles.first.id}"] ,
                                             :group_id => @test_group.id })
     global_agent_ticket = create_ticket({ :status => 2 }, @group)
-    global_agent_ticket.update_attributes(:responder_id => @agent.id)
+    global_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     restricted_agent_ticket= create_ticket({ :status => 2 }, @group)
     restricted_agent_ticket.update_attributes(:responder_id =>group_user.id)
     group_agent_ticket =create_ticket({ :status => 2 },@test_group)
-    group_agent_ticket.update_attributes(:responder_id => @agent.id)
+    group_agent_ticket.update_attributes(:responder_id => RSpec.configuration.agent.id)
     log_in(group_user)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :spam, { :id => "multiple", :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
-    @account.tickets.find(global_agent_ticket.id).spam.should be_eql(false)
-    @account.tickets.find(restricted_agent_ticket.id).spam.should be_eql(true)
-    @account.tickets.find(group_agent_ticket.id).spam.should be_eql(true)
+    RSpec.configuration.account.tickets.find(global_agent_ticket.id).spam.should be_eql(false)
+    RSpec.configuration.account.tickets.find(restricted_agent_ticket.id).spam.should be_eql(true)
+    RSpec.configuration.account.tickets.find(group_agent_ticket.id).spam.should be_eql(true)
   end
 
   it "should throw an exception when redis fails" do

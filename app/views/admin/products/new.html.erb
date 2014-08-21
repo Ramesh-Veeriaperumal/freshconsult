@@ -3,7 +3,7 @@
 <%-end %>
 <% @page_title = t('.title') %>
 <%= content_tag :h3, @page_title, :class => "title" %>
-<% form_for :product, @product, :url => admin_products_path, :html => { :multipart => true, :rel => "validate", :method => :post, :id => "ProductForm", "data-rebrand-form" => true, :class => "form-horizontal" }  do |f| %>
+<%= form_for @product, :url => admin_products_path, :html => { :multipart => true, :rel => "validate", :method => :post, :id => "ProductForm", "data-rebrand-form" => true, :class => "form-horizontal" }  do |f| %>
   <%= render :partial => "form", :object => f %>
   <div class="button-container pull-right">
   	<%= link_to(t('cancel'), admin_products_path, :class => "btn", :id => "email-form-cancel" )  %>  	

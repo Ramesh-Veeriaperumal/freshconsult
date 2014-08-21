@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Helpdesk::NotesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -63,12 +63,25 @@ describe Helpdesk::NotesController do
   end
 
   it "should edit a note " do
-    get :edit, :ticket_id => @test_ticket.display_id, :id => @ticket_note.id
-    response.body.should =~ /#{@body}/
+    test_ticket = create_ticket({:status => 2 })
+    body = Faker::Lorem.paragraph
+    ticket_note = create_note({:source => test_ticket.source,
+                               :ticket_id => test_ticket.id,
+                               :body => body,
+                               :user_id => RSpec.configuration.agent.id})
+    get :edit, :ticket_id => test_ticket.display_id, :id => ticket_note.id
+    response.body.should =~ /#{body}/
     response.should render_template "helpdesk/notes/_edit_note.html.erb"
   end
 
   it "should update a note " do
+    test_ticket = create_ticket({:status => 2 })
+    body = Faker::Lorem.paragraph
+    ticket_note = create_note({:source => test_ticket.source,
+                               :ticket_id => test_ticket.id,
+                               :body => body,
+                               :user_id => RSpec.configuration.agent.id})
+
     updated_note_body = "Edited Note - #{Faker::Lorem.paragraph}"
     post :update, :helpdesk_note => {:source => @test_ticket.source,
                                     :note_body_attributes => { :body_html => updated_note_body,
@@ -94,9 +107,15 @@ describe Helpdesk::NotesController do
   end
 
   it "should destroy a note " do
-    @test_ticket.notes.last.deleted.should eql(false)
-    post :destroy, :id => @ticket_note.id, :ticket_id => @test_ticket.display_id
-    @test_ticket.notes.last.deleted.should eql(true)
+    test_ticket = create_ticket({:status => 2 })
+    body = Faker::Lorem.paragraph
+    ticket_note = create_note({:source => test_ticket.source,
+                               :ticket_id => test_ticket.id,
+                               :body => body,
+                             :user_id => RSpec.configuration.agent.id})
+    test_ticket.notes.last.body.should be_eql(body)
+    post :destroy, :id => ticket_note.id, :ticket_id => test_ticket.display_id
+    test_ticket.notes.last.deleted.should be_eql(true)
   end
 
   it "should destroy a note - Mobile format" do
@@ -141,7 +160,7 @@ describe Helpdesk::NotesController do
                    :since_id => "-1",
                    :showing => "activites"
                  } 
-    @account.solution_articles.find_by_title(test_ticket.subject).should be_an_instance_of(Solution::Article)
+    RSpec.configuration.account.solution_articles.find_by_title(test_ticket.subject).should be_an_instance_of(Solution::Article)
   end
 
   it "should add a post to forum topic" do

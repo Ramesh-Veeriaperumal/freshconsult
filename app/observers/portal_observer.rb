@@ -42,12 +42,11 @@ class PortalObserver < ActiveRecord::Observer
     def backup_changes(portal)
       @old_object = Portal.find_by_account_id_and_id(portal.account_id,portal.id)
       @all_changes = portal.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def notify_custom_ssl_removal(portal)
       if portal.elb_dns_name
-        FreshdeskErrorsMailer.deliver_error_email( nil, 
+        FreshdeskErrorsMailer.error_email( nil, 
                                               { "domain_name" => portal.portal_url }, 
                                               nil, 
                                               { :subject => "Custom SSL to be removed for ##{portal.account_id}" })

@@ -1,5 +1,5 @@
-<%= include_cloudfront_js 'merge' %>
-<% javascript_tag do -%>
+<%= javascript_include_tag 'merge' %>
+<%= javascript_tag do -%>
 
   MergeInitializer();
   ContactsMergeInitializer();
@@ -62,12 +62,12 @@ var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
   <div class="search-content span6">
     <span>
     <input type="text" id="select-user" name="select-user" class="search_merge" placeholder="Search contacts to merge"/><span class="searchicon"></span></span>
-    <% javascript_tag do %>
+    <%= javascript_tag do %>
       new Autocompleter.PanedSearch("select-user", cachedLookup, this.ContactsSearch, "match_results", $A(<%= @contact_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true, afterPaneShow: ContactsMergeAfterShow, separatorRegEx:/;|,/});
     <% end %>
       <div id="match_results"></div>
   </div>
-  <% form_tag do -%>
+  <%= form_tag do -%>
   <input type="hidden" name="parent_user" id="parent_user_id" value="<%=params[:id]%>" />
   <div id="inputs"></div>
   <div class="button-container">

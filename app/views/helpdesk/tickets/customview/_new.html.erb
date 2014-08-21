@@ -1,4 +1,4 @@
-<% form_tag({:action => :custom_search}, { :method => :post, :id => 'freshFilter' }) do %>
+<%= form_tag({:action => :custom_search}, { :method => :post, :id => 'freshFilter' }) do %>
   <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
   <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
   <div class="form-horizontal">
@@ -40,7 +40,7 @@
     <% end %>
   </div>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery(document).ready(function(){
   if(jQuery('#filter_name').val().empty()){
     jQuery('#filter_name').val('<%= t('tickets_filter.copy_of') %> ' + jQuery("#active_filter").text())

@@ -2,7 +2,7 @@
 <% disable_options = params[:disable]%>
 
 <% if(responsive != "no") %>
-	 <%= include_cloudfront_css :responsive_widget %>
+	 <%= stylesheet_link_tag :responsive_widget %>
 <% end %>
 
 <div class="modal-header">
@@ -15,7 +15,7 @@
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
 <%= hidden_field_tag "searchInputFrom" %>
 <div class="modal-body">
-<% form_for :helpdesk_ticket, @ticket,
+<%= form_for :helpdesk_ticket, @ticket,
 		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks],
 																				:formTitle => params[:formTitle],
 																				:widgetType => widget_type),
@@ -252,7 +252,7 @@
 </iframe>
 
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('.modal-body').scroll(function() {
 		if(this.scrollTop > 8){
 			jQuery(this).parent().addClass("modal-scroll");

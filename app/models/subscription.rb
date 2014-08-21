@@ -46,24 +46,25 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm, :if => :free_customer?
   after_update :update_reseller_subscription
-  after_commit_on_update :update_social_subscription, :add_free_freshfone_credit
+  after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
+  attr_accessible :plan, :next_renewal_at, :creditcard, :address, :affiliate, :state, :agent_limit
 
-  named_scope :paying_subscriptions, { 
+  scope :paying_subscriptions, { 
     :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
     :include => "currency" }
   
-  named_scope :free_subscriptions, { 
+  scope :free_subscriptions, { 
     :conditions => ["state IN ('#{ACTIVE}', '#{FREE}') AND amount = 0.00"] }
   
-  named_scope :filter_with_currency, lambda { |currency| {    
+  scope :filter_with_currency, lambda { |currency| {    
     :conditions => { :subscription_currency_id => currency.id }
   }}
   
-  named_scope :filter_with_state, lambda { |state| {
+  scope :filter_with_state, lambda { |state| {
     :conditions => { :state => state }
   }}
 
@@ -284,6 +285,11 @@ class Subscription < ActiveRecord::Base
     suspended? and card_number.blank? and subscription_payments.empty?
   end
 
+  def paid_account?
+    (state == 'active') and (subscription_payments.count > 0)
+  end
+  alias :is_paid_account :paid_account?
+    
   protected
   
     def non_social_plans
@@ -318,11 +324,6 @@ class Subscription < ActiveRecord::Base
       end
     end
     
-    def paid_account?
-      (state == 'active') and (subscription_payments.count > 0)
-    end
-    alias :is_paid_account :paid_account?
-    
     def total_amount(addons, coupon_code)      
       unless active?
         response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
@@ -343,7 +344,7 @@ class Subscription < ActiveRecord::Base
 
     def chk_change_agents 
       if(agent_limit && agent_limit < account.full_time_agents.count)
-       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
+       errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
       end  
     end
 

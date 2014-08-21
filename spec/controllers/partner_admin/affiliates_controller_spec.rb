@@ -3,7 +3,7 @@ require 'spec_helper'
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe PartnerAdmin::AffiliatesController do
-  integrate_views
+  # integrate_views
   self.use_transactional_fixtures = false
   user_name = AppConfig["reseller_portal"]["user_name"]
   password = AppConfig["reseller_portal"]["password"]

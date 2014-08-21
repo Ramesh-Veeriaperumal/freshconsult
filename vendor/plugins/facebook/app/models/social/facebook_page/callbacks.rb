@@ -4,7 +4,7 @@ class Social::FacebookPage < ActiveRecord::Base
   before_destroy :unregister_stream_subscription
   after_destroy :remove_mapping
 
-  after_commit_on_create :subscribe_realtime
+  after_commit :subscribe_realtime, on: :create
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
 
@@ -33,7 +33,7 @@ class Social::FacebookPage < ActiveRecord::Base
   def create_mapping
     facebook_page_mapping = Social::FacebookPageMapping.new(:account_id => account_id)
     facebook_page_mapping.facebook_page_id = page_id
-    errors.add_to_base("Facebook page already in use") unless facebook_page_mapping.save
+    errors.add(:base,"Facebook page already in use") unless facebook_page_mapping.save
   end
 
   def remove_mapping

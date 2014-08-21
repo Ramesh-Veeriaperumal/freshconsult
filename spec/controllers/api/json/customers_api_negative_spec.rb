@@ -5,8 +5,8 @@ describe CustomersController do
   include APIAuthHelper
 
   before(:each) do
-    request.host = @account.full_domain
-    http_login(@agent)
+    request.host = RSpec.configuration.account.full_domain
+    http_login(RSpec.configuration.agent)
   end
 
 
@@ -36,7 +36,7 @@ describe CustomersController do
 
   it "should not allow to update an empty customer name to any existing customer" do
     company_name = Faker::Lorem.sentence(2)
-    company = Factory.build(:company, :name => company_name)
+    company = FactoryGirl.build(:company, :name => company_name)
     company.save
     put :update, { :id=>company.id ,:customer => { :name => "" }, :format => 'json'}
     error_status?(response.status) && name_blank?(response)
@@ -44,16 +44,16 @@ describe CustomersController do
 
   it "should not allow to update an existing customer name to any other customer" do
     company_name = Faker::Lorem.sentence(2)
-    company = Factory.build(:company, :name => company_name)
+    company = FactoryGirl.build(:company, :name => company_name)
     company.save
-    second_company = Factory.build(:company, :name => Faker::Lorem.sentence(3))
+    second_company = FactoryGirl.build(:company, :name => Faker::Lorem.sentence(3))
     second_company.save
     put :update, { :id=>second_company.id ,:customer => { :name => company_name }, :format => 'json'}
     error_status?(response.status) && duplicate_name?(response)
   end
 
     def error_status?(status)
-      status =~ /422 Unprocessable Entity/ 
+      status =~ /422/ 
     end
 
     def name_blank?(response)

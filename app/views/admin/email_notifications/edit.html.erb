@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 	jQuery(document).ready(function() {
 
@@ -197,7 +197,7 @@
 	<br/>
 <div class="row-fluid tab-content">
 	<div class="tab-pane fade active in" id="default"> 
-		<% form_for @email_notification, :remote => true, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
+		<%= form_for @email_notification, :remote => true, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
 			<div class="row-fluid" id="last_saved_reset">
 				<div class="span7">
 					<div class="notification-message" title="<%=@email_notification.updated_at%>" >
@@ -265,7 +265,7 @@
 					
 				</div>	
 			<%end%>	
-				<% javascript_tag do %>
+				<%= javascript_tag do %>
 						jQuery("#reset_template_default").data('html', jQuery('#description_default').val());
 						jQuery("#reset_template_default").data('subject', jQuery('#subject_default').val());
 						jQuery('#reset_template_default').live("click", function(ev){
@@ -306,7 +306,7 @@
 				content = get_requester_content(@email_notification, lang)
 			end %>	 
 			<div class="tab-pane fade" id="<%=lang%>" data-lang="<%=lang%>">  
-				<% form_for content, :url => { :controller => 'admin/dynamic_notification_templates', :action => "update" , :id => content.id}, :html => { :method => :put, :id => 'description_'+lang+'_form', :class => "notif_form" , :rel =>"validate"}  do |c| %>	
+				<%= form_for content, :url => { :controller => 'admin/dynamic_notification_templates', :action => "update" , :id => content.id}, :html => { :method => :put, :id => 'description_'+lang+'_form', :class => "notif_form" , :rel =>"validate"}  do |c| %>	
 				<%= c.hidden_field :language %>
 				<%= c.hidden_field :category %>
 				<%= c.hidden_field :active %>
@@ -372,7 +372,7 @@
 						    </label>
 						</div>
 					<%end%>
-					<% javascript_tag do %>
+					<%= javascript_tag do %>
 							jQuery("#reset_template_<%=lang%>").data('html', jQuery('#description_<%=lang%>').val());
 							jQuery("#reset_template_<%=lang%>").data('subject', jQuery('#subject_<%=lang%>').val());
 							jQuery('#reset_template_<%=lang%>').live("click", function(ev){
@@ -412,7 +412,7 @@ title="<%= t('email_notifications.unsaved_title')%>"
 <% if notification_type == EmailNotification::NEW_TICKET and @type == 'agent_template' %>
 	<div id="agent-dialog" style="display:none;">
 		<p> <%=t('email_notifications.agent_select')%></p><br/>
-		<% form_for :email_notification_agents , :url => { :controller => 'admin/email_notifications', :action => "update_agents" , :id => @email_notification.id }, :html => { :method => :put , :id => "agent_dialog_form"}  do |v| %>
+		<%= form_for :email_notification_agents , :url => { :controller => 'admin/email_notifications', :action => "update_agents" , :id => @email_notification.id }, :html => { :method => :put , :id => "agent_dialog_form"}  do |v| %>
 			<%= v.hidden_field :notifyagents_data, { :id => "NotifyAgents" } %>
 			<% agent_hash = {:options => get_agent_options } if (notification_type == EmailNotification::NEW_TICKET and @type =="agent_template")%>
 

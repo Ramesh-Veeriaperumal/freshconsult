@@ -28,14 +28,14 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_cloudfront_css :portal_utils %>
-		<%= include_cloudfront_css :facebook %>
+		<%= stylesheet_link_tag :portal_utils %>
+		<%= stylesheet_link_tag :facebook %>
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_cloudfront_js :portal_head %>
+		<%= javascript_include_tag :portal_head %>
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
@@ -108,8 +108,8 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_cloudfront_js :portal_bottom %>
-		<%= include_cloudfront_js :redactor %>
+		<%= javascript_include_tag :portal_bottom %>
+		<%= javascript_include_tag :redactor %>
 
 		<%= cookie_law %>
 	</body>

@@ -1,5 +1,5 @@
 class Helpdesk::TicketIssue < ActiveRecord::Base
-  set_table_name "helpdesk_ticket_issues"
+  self.table_name =  "helpdesk_ticket_issues"
 
   belongs_to :issue, 
     :class_name => 'Helpdesk::Issue',

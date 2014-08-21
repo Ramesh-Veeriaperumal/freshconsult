@@ -192,6 +192,37 @@ module Integrations::GoogleContactsUtil
       end
     end
 
+    def copy(from_user, to_user)
+      USER_FIELDS.each { |prop_name|
+        if(from_user.has_attribute?(prop_name))
+          prop_value = from_user.read_attribute(prop_name)
+          unless prop_value.blank?
+            to_user.send(:write_attribute,prop_name, prop_value)
+          end
+        end
+      }
+      to_user.customer = from_user.customer
+    end
+
+    def fetch_current_account_contact(db_cnt, google_account)
+      db_cnt.google_contacts.each {|g_cnt|
+        return g_cnt if g_cnt.google_account_id == google_account.id
+      }
+      return nil
+    end
+
+=begin
+    def correct_postal_address(entry_element, paddr_element)
+      paddr_element.name = "gd:structuredPostalAddress"
+      addr_val = paddr_element.text
+      paddr_element.text = nil
+      faEle = REXML::Element.new("gd:formattedAddress")
+      faEle.text=addr_val
+      paddr_element.add_element(faEle)
+      paddr_element
+    end
+=end
+
     GOOGLE_USER_FIELD_XML_MAPPING = [
       [:name, "name", "<gd:name><gd:fullName>$name</gd:fullName></gd:name>"], 
       [:primary_email, "email", "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>"], 

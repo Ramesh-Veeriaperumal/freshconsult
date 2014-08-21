@@ -46,17 +46,17 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
 	<%= field %>
 <% end %>
 
-<% javascript_tag do %>  
+<%= javascript_tag do %>  
 	<% if @ticket.ticket_status.deleted? %>
 		jQuery("#helpdesk_ticket_status")
 		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
 		.val("<%=@ticket.status%>")
 	<% end %>
 <% end %>
-<%= render :partial => '/helpdesk/tickets/show/tags.html.erb' %>
+<%= render :partial => '/helpdesk/tickets/show/tags' %>
 
 <% unless privilege?(:edit_ticket_properties) %>
-  <% javascript_tag do %> 
+  <%= javascript_tag do %> 
     jQuery('#custom_ticket_form').find('select, input').attr('disabled', 'disabled');
   <% end %>
 <% end %>

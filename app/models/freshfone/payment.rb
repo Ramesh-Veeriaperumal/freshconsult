@@ -1,10 +1,10 @@
 class Freshfone::Payment < ActiveRecord::Base
-	set_table_name :freshfone_payments
+	self.table_name =  :freshfone_payments
 
 	belongs_to_account
 	attr_protected :account_id
 
-  after_commit_on_create :set_usage_trigger
+  after_commit :set_usage_trigger, on: :create
 
   private
     def set_usage_trigger

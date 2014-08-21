@@ -2146,28 +2146,6 @@ a.submit_link:hover{
 	cursor: default;
 }
 
-.email-settings-bcc{
-	position: relative;
-	label{
-		font-size: 14px;
-		@include padding(0 5px 0 0);
-	}
-	a{
-		font-size: 14px;
-		color: #0c74d7;
-		font-weight: 500;
-		@include padding-right(25px);
-	}
-	.tool-tip{
-		position: absolute;
-		background: url(/images/email_config_bcc_tooltip.png) no-repeat;
-		width: 18px;
-		height: 18px;
-		top: 1px;
-	 	@include right(0);
-	}
-}
-
 .unsupported-message{
 	background: rgba(238, 238, 238, 0.43);
 	font-size: 16px;
@@ -2194,16 +2172,14 @@ a.submit_link:hover{
 		font-size: 14px;
 		color: #0c74d7;
 		font-weight: 500;
-		@include padding-right(25px);
 	}
-	.tool-tip{
-		position: absolute;
-		background: url(/images/email_config_bcc_tooltip.png) no-repeat;
-		width: 18px;
-		height: 18px;
-		top: 1px;
-	 	@include right(0);
-	}
+  .email-help{
+    font-size: 1.1em;
+    position: relative;
+    right: 3px;
+    margin-left: 4px;
+    color: #0c74d7;
+  }
 }
 
 .product-title {

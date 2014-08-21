@@ -5,8 +5,8 @@ class EsEnabledAccount < ActiveRecord::Base
   belongs_to :account
   validates_presence_of :account_id
 
-  after_commit_on_create :create_aliases
-  after_commit_on_destroy :clear_cache
+  after_commit :create_aliases, on: :create
+  after_commit :clear_cache, on: :destroy
 
   private
 

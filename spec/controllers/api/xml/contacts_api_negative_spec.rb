@@ -7,8 +7,8 @@ describe ContactsController do
 
 
   before(:each) do
-    request.host = @account.full_domain
-    http_login(@agent)
+    request.host = RSpec.configuration.account.full_domain
+    http_login(RSpec.configuration.agent)
   end
 
   it "should not create a contact without an email" do
@@ -17,31 +17,31 @@ describe ContactsController do
     # val = error_message(response) && error_status?(response.status)
     #puts "#{response.body} :: #{response.status} "
 
-  	error_status?(response.status).should be_true
+  	error_status?(response.status).should be_truthy
   end
 
   it "should not update a contact with an existing/duplicate email" do
-		first_contact = add_new_user(@account,{})
+		first_contact = add_new_user(RSpec.configuration.account,{})
 		dup_email = first_contact.email
-		second_contact = add_new_user(@account,{})
+		second_contact = add_new_user(RSpec.configuration.account,{})
 		put :update, {:id => second_contact.id, :user=>{:email => dup_email },:format => 'xml'}, :content_type => 'application/xml'
 		# puts "#{response.body} :: #{response.status}"
     # val = error_message(response) && error_status?(response.status)
-		error_status?(response.status).should be_true
+		error_status?(response.status).should be_truthy
   end
 
   it "should not accept query params other than email/phone/mobile" do
-    contact = add_new_user(@account,{})
+    contact = add_new_user(RSpec.configuration.account,{})
     check_name  = contact.name
     get :index, {:query=>"name is #{check_name}", :state=>:all, :format => 'xml'}
     #puts "#{response.body} :: #{response.status}"
     val = query_error(response)
-    val.should be_true
+    val.should be_truthy
   end
 
 
   def error_status?(status)
-      status =~ /422 Unprocessable Entity/ 
+      status =~ /422/ 
    end
 
    def error_message(message)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Admin::PortalController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,11 +16,11 @@ describe Admin::PortalController do
   end
 
   it "should update" do
-    @account.sso_enabled = false
-    @account.save(false)
+    RSpec.configuration.account.sso_enabled = false
+    RSpec.configuration.account.save(false)
 
     put :update, { 
-      :id => @account.id,
+      :id => RSpec.configuration.account.id,
       :account => { 
         :features => {
           :anonymous_tickets => "0", 
@@ -38,13 +38,13 @@ describe Admin::PortalController do
     }
     available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature"]
     available_feature.each do |feature|
-      @account.features.find_by_type("#{feature}").should_not be_nil
+      RSpec.configuration.account.features.find_by_type("#{feature}").should_not be_nil
     end
 
     restricted_feature = ["AnonymousTicketsFeature","AutoSuggestSolutionsFeature","FacebookSigninFeature","TwitterSigninFeature",
                           "HidePortalForumsFeature"]
     restricted_feature.each do |feature|
-      @account.features.find_by_type("#{feature}").should be_nil
+      RSpec.configuration.account.features.find_by_type("#{feature}").should be_nil
     end
   end
 end

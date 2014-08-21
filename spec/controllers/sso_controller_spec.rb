@@ -2,16 +2,16 @@ require 'spec_helper'
 include MemcacheKeys
 
 describe SsoController do
-	integrate_views
+	# integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @agent = add_test_agent(@account)
-    @authorization = Factory.build(:authorization, :provider => "facebook",
-                    :uid => "12345678", :user_id => @agent.id, :account_id => @account.id )
-    @authorization.save(false)
-    key_options = { :account_id => @account.id, :user_id => @agent.id, :provider => @authorization[:provider]}
+    RSpec.configuration.agent = add_test_agent(@account)
+    @authorization = FactoryGirl.build(:authorization, :provider => "facebook",
+                    :uid => "12345678", :user_id => RSpec.configuration.agent.id, :account_id => RSpec.configuration.account.id )
+    @authorization.save(validate: false)
+    key_options = { :account_id => RSpec.configuration.account.id, :user_id => RSpec.configuration.agent.id, :provider => @authorization[:provider]}
     @key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
   end
 
@@ -40,7 +40,7 @@ describe SsoController do
 
   it "should redirect to facebook auth url" do
     get :facebook
-    current_portal = @account.portals.first
+    current_portal = RSpec.configuration.account.portals.first
     response.should redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{@account.id}%26portal_id%3D#{current_portal.id}&state="
   end
 

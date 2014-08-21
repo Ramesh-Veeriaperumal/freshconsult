@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ProfilesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -13,7 +13,7 @@ describe ProfilesController do
   it "should update mobile and phone number" do
     new_phone  = Faker::PhoneNumber.phone_number
     new_mobile = Faker::PhoneNumber.phone_number
-    put :update, :id => @agent.id,
+    put :update, :id => RSpec.configuration.agent.id,
       :agent =>{ :signature_html=>"<p><br></p>\r\n",
         :user_id => "#{@agent.id}" },
         :user =>{ :name => "#{@agent.name}",
@@ -23,14 +23,14 @@ describe ProfilesController do
         :time_zone => "Chennai",
         :language => "en"
       }
-    @agent.reload
-    @agent.phone.should be_eql(new_phone)
-    @agent.mobile.should be_eql(new_mobile)
+    RSpec.configuration.agent.reload
+    RSpec.configuration.agent.phone.should be_eql(new_phone)
+    RSpec.configuration.agent.mobile.should be_eql(new_mobile)
     # Delayed::Job.last.handler.should include("Your Phone number and Mobile number in #{@account.name} has been updated")
   end
 
   it "should change api_key" do
-    api_before_change = @agent.single_access_token
+    api_before_change = RSpec.configuration.agent.single_access_token
     post :reset_api_key, {}
     user = User.find_by_id(@agent.id)
     api_after_change = user.single_access_token
@@ -39,7 +39,7 @@ describe ProfilesController do
   end
 
   it "should change password" do
-    password_before_update = @agent.crypted_password
+    password_before_update = RSpec.configuration.agent.crypted_password
     post :change_password, {"user_id"=>"#{@agent.id}",
       "user"=>{"current_password"=>"test",
       "password"=>"test1",
@@ -52,9 +52,9 @@ describe ProfilesController do
   end
 
   it "should go to the edit page" do
-    @agent.reload
+    RSpec.configuration.agent.reload
     log_in(@agent)
-    get :edit, :id => @agent.id
+    get :edit, :id => RSpec.configuration.agent.id
     response.should render_template "profiles/edit.html.erb"
   end
 

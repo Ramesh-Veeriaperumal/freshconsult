@@ -2,10 +2,10 @@ module AgentHelper
 
   def add_agent_to_account(account, options={})
     available = options[:available] || 1
-    new_agent = Factory.build(:agent, :signature => "Regards, #{options[:name]}", 
+    new_agent = FactoryGirl.build(:agent, :signature => "Regards, #{options[:name]}", 
                                       :account_id => account.id, 
                                       :available => available)
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name], 
                                     :email => options[:email],
                                     :time_zone => "Chennai", 

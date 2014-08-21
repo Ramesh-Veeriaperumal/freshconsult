@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 jQuery(document).ready(function(){
 	invokeRedactor('ca-content', 'cnt-reply');
@@ -72,7 +72,7 @@ function toggleGroup(access_id)
 
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
-		<% f.fields_for :visibility do |access| %>	
+		<%= f.fields_for :visibility do |access| %>	
 			<label class="control-label"><%=t('.available_for').html_safe%>:</label>
 			<div class="controls">
 				<label class="radio">

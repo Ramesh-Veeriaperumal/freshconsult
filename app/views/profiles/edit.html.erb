@@ -1,5 +1,5 @@
 <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
-<% form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+<%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>
 	<%= render :partial => "form" %>
 	<div class="button-container">
@@ -13,7 +13,7 @@
   <% unless current_account.sso_enabled? %>	
 	<div class="sidepanel">
 		<%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
-		<% form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
+		<%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
   			<%= hidden_field_tag 'user_id', params[:id] %>
 			<ul class="ui-form">
 				<li> 
@@ -38,7 +38,7 @@
 	<% unless current_user.customer? %>
 	  <div class="sidepanel">
 		<%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
-		<% form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
+		<%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
 			<ul class="ui-form">
 				<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
 			</ul> 

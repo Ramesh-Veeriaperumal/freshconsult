@@ -1,0 +1,1 @@
+//= require freshfone/freshfone_admin_welcome_page

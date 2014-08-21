@@ -14,7 +14,7 @@
 	  </div>
   <% end %>
 </div>
-<% fields_for "user", @agent.user, :html => {:id => 'agent_form'} do |usr| %>
+<%= fields_for "user", @agent.user, :html => {:id => 'agent_form'} do |usr| %>
 
   <%if @agent.occasional? or @agent.new_record?%>
     <%=check_agents_limit%>
@@ -225,7 +225,7 @@
   </div>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   (function($) { 
     var roles = {};
     var role_details = {};

@@ -8,8 +8,8 @@ describe Freshfone::CallFlow do
   self.use_transactional_fixtures = false
   
   before(:all) do
-    @account = create_test_account
-    @agent = get_admin
+    RSpec.configuration.account = create_test_account
+    RSpec.configuration.agent = get_admin
   end
 
   before(:each) do
@@ -18,21 +18,21 @@ describe Freshfone::CallFlow do
   end
 
   it 'should render non availability message if all users in the group are offline' do
-    group = create_group @account, {:name => "Freshfone Group"}
+    group = create_group RSpec.configuration.account, {:name => "Freshfone Group"}
     call = create_freshfone_call
     @freshfone_user.update_attributes(:presence => 0)
-    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.call_users_in_group(group.id)
     twiml[:Response][:Dial].should be_blank
   end
 
   it 'should dial online users in a group' do
-    group = create_group @account, {:name => "Freshfone Online Group"}
+    group = create_group RSpec.configuration.account, {:name => "Freshfone Online Group"}
     call = create_freshfone_call
     create_online_freshfone_user
-    AgentGroup.new(:user_id => @agent.id , :account_id => @account.id, :group_id => group.id).save!
-    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, @account, @number, @agent)
+    AgentGroup.new(:user_id => RSpec.configuration.agent.id , :account_id => RSpec.configuration.account.id, :group_id => group.id).save!
+    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.call_users_in_group(group.id)
     twiml[:Response][:Dial].should_not be_blank
@@ -43,14 +43,14 @@ describe Freshfone::CallFlow do
 
   it 'should render twiml for regular incoming' do
     create_online_freshfone_user
-    call_flow = Freshfone::CallFlow.new({}, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new({}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     twiml = twimlify call_flow.send(:regular_incoming)
     twiml[:Response][:Dial][:Client].should_not be_blank
   end
 
   it 'should connect call to a specific user given user id' do
     create_online_freshfone_user
-    call_flow = Freshfone::CallFlow.new({}, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new({}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.call_user_with_id(@agent.id)
     twiml[:Response][:Dial][:Client].should be_eql(@agent.id.to_s)
@@ -59,7 +59,7 @@ describe Freshfone::CallFlow do
   it 'should connect call to a non-busy direct dial number' do
     call = create_freshfone_call
     number = Faker::Base.numerify('(###)###-####')
-    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.call_user_with_number(number)
     twiml[:Response][:Dial][:Number].should be_eql(number)
@@ -67,10 +67,10 @@ describe Freshfone::CallFlow do
 
   it 'should render twiml for an outgoing call' do
     number = Faker::Base.numerify('(###)###-####')
-    outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => @account.id }
-    remove_value_from_set(outgoing_key, @agent.id)
+    outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => RSpec.configuration.account.id }
+    remove_value_from_set(outgoing_key, RSpec.configuration.agent.id)
     params = {:CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :PhoneNumber => number, :From => "client:#{@agent.id}"}
-    call_flow = Freshfone::CallFlow.new(params, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new(params, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.send(:outgoing)
     twiml[:Response][:Dial][:Number].should be_eql(number)
@@ -78,14 +78,14 @@ describe Freshfone::CallFlow do
 
   it 'should return Reject on blocked incoming call' do
     params = {:From => Faker::Base.numerify('(###)###-####')}
-    call_flow = Freshfone::CallFlow.new(params, @account, @number, @agent)
+    call_flow = Freshfone::CallFlow.new(params, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.send(:block_call)
     twiml[:Response][:Reject].should_not be_blank
   end
 
   # it 'should return false on non business hour check before calls' do
-  #   call_flow = Freshfone::CallFlow.new({}, @account, @number, @agent)
-  #   call_flow.send(:within_business_hours?).should be_false
+  #   call_flow = Freshfone::CallFlow.new({}, RSpec.configuration.account, @number, RSpec.configuration.agent)
+  #   call_flow.send(:within_business_hours?).should be_falsey
   # end
 end

@@ -6,7 +6,7 @@ class CleanupSupervisorRule < ActiveRecord::Migration
   	new_name = "frDueBy"
   	old_name = "first_response_time"
 	Sharding.run_on_all_shards do 
-		VARule.find_in_batches(:batch_size => 300, 
+		VaRule.find_in_batches(:batch_size => 300, 
 			:conditions => ["rule_type = ? and filter_data like ?", 
 			VAConfig::SUPERVISOR_RULE, "%#{old_name}%"]) do |rules|
 			rules.each do |rule|

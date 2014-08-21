@@ -2,7 +2,7 @@ module FacebookHelper
   
   def create_test_facebook_page(account = nil)
     account = create_test_account if account.nil?
-    fb_page = Factory.build(:facebook_pages, :account_id => account.id)
+    fb_page = FactoryGirl.build(:facebook_pages, :account_id => account.id)
     fb_page.save
     fb_page
   end
@@ -247,10 +247,10 @@ module FacebookHelper
     
     post = Social::FbPost.find_by_post_id(post_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     ticket = post.postable
-    user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
     ticket.description.should eql facebook_feed[:message]
     ticket.subject.should eql truncate_subject(facebook_feed[:message], 100)
     ticket.requester_id.should eql user_id
@@ -331,15 +331,15 @@ module FacebookHelper
     
     Facebook::Core::Parser.new(realtime_feed).parse
     
-    user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(comment[:from][:id]).id
     post_comment = Social::FbPost.find_by_post_id(comment[:id])
     
     
     post_comment.should_not be_nil
-    post_comment.is_ticket?.should be_true
+    post_comment.is_ticket?.should be_truthy
     
     ticket = post_comment.postable
-    user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
+    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(comment[:from][:id]).id
     ticket.description.should eql comment[:message]
     ticket.subject.should eql truncate_subject(comment[:message], 100)
     ticket.requester_id.should eql user_id

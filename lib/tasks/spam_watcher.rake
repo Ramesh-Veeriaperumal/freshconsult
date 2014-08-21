@@ -103,7 +103,7 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
         unless deleted_users.empty?
           puts "deleted_users 2::::::::->#{deleted_users.inspect}"
           deleted_users = account.all_users.find(deleted_users)
-          SubscriptionNotifier.send_later(:deliver_admin_spam_watcher, account, deleted_users)
+          SubscriptionNotifier.send_later(:admin_spam_watcher, account, deleted_users)
         end
       end
     end
@@ -113,7 +113,7 @@ end
 
 
 def deliver_spam_alert(table, query_str,additional_info)
-  FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
+  FreshdeskErrorsMailer.error_email(nil, nil, nil,
     {
       :subject          => "Abnormal load by spam watcher #{table}",
       :additional_info  => {

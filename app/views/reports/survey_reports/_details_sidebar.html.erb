@@ -14,7 +14,7 @@
         end        
 
 %>
-    <% form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
+    <%= form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
     <ul class="">
            <input type="hidden" name="category" value="<%=params[:category]%>">
            <input type="hidden" name="rating" value="<%=params[:rating]%>">
@@ -34,7 +34,7 @@
     <%end%> 
  </div>     
 
-<% javascript_tag do %>     
+<%= javascript_tag do %>     
     jQuery(document).ready(function() {
         jQuery("#date_range").daterangepicker({
         earliestDate: Date.parse('1/1/2009'),

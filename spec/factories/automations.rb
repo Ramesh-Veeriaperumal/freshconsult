@@ -1,9 +1,11 @@
 if Rails.env.test?
-  Factory.define :va_rule, :class =>VARule do |v|
-    v.name "Test Rule"
-    v.description "Testing"
-    v.match_type "all"
-    v.active true
-    v.action_data [{:name=> "priority", :value=>"3"}, {:name=> "status", :value=> "3"}]
+  FactoryGirl.define do
+    factory :va_rule, :class =>VaRule do
+      name "Test Rule"
+      description "Testing"
+      match_type "all"
+      active true
+      action_data [{:name=> "priority", :value=>"3"}, {:name=> "status", :value=> "3"}]
+    end
   end
 end

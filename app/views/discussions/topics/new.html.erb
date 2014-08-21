@@ -5,7 +5,8 @@
 </div>
 <%= error_messages_for :post %>
 <%= error_messages_for :topic %>
-<% form_for @topic, :url  => discussions_topics_path,
+<%=
+ form_for @topic, :url  => discussions_topics_path,
 	:html => {:multipart => true, :id => "post-form", :rel => "validate"} do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container">

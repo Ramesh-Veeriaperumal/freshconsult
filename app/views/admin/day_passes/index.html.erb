@@ -17,7 +17,7 @@
           <div id="BuyPasses" class="hide">
            <span class="seperator"></span>
            <%= content_tag :h2, t(".buy_pass"), :class => "title" %>        
-           <% form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
+           <%= form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
              <%= ul @day_pass_amounts.map { |pass|
                   content_tag :label,  
                     radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
@@ -74,7 +74,7 @@
     <p><%= content_tag :strong, t(".recharge_quantity") %> </p>
     <div  id="text_daypass" class="intro"><%= t(".daypass_quantity", :quantity => @day_pass_config.recharge_quantity) %> (<a href="javascript:void(0)" onclick="jQuery(this).parent().hide(); jQuery('#update_daypass').slideDown();"><%= t("change") %></a>) </div>
     <div id="update_daypass" class="intro hide">
-    <% form_tag(admin_day_pass_path(@day_pass_config), :method => :put ) do %>
+    <%= form_tag(admin_day_pass_path(@day_pass_config), :method => :put ) do %>
       <%= select :day_pass_config, :recharge_quantity, options_for_select([ "5", "10", "25", "50" ], @day_pass_config.recharge_quantity.to_s)  %>
       <%= t(".day_passes") %>
       <br />      

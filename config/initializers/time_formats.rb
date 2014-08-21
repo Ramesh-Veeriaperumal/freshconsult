@@ -1,6 +1,6 @@
 # Be sure to restart your server when you modify this file.
-
-ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS.merge!(  
+require 'active_support/core_ext/time/conversions'
+Time::DATE_FORMATS.merge!(  
   :us => '%m/%d/%y',
   :us_with_time => '%m/%d/%y, %l:%M %p',
   :short_day => '%e %B %Y',

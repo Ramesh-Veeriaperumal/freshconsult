@@ -8,8 +8,8 @@ describe 'UsageTrigger' do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
-    @agent = get_admin
+    RSpec.configuration.account = create_test_account
+    RSpec.configuration.agent = get_admin
     create_test_freshfone_account
   end
 

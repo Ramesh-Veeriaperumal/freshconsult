@@ -7,7 +7,7 @@ describe Freshfone::TicketActions do
   
   include Freshfone::TicketActions
   before(:all) do
-    @agent = get_admin
+    RSpec.configuration.agent = get_admin
   end
 
   before(:each) do

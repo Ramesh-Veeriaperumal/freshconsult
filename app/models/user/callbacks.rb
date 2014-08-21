@@ -16,20 +16,18 @@ class User < ActiveRecord::Base
   after_update :change_user_email, :if => [:email_changed?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   after_update :update_verified, :if => [:active_changed?, :email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   before_update :make_inactive, :if => [:email_changed?, :no_multiple_user_emails]
-  after_commit_on_update :send_activation_email, :if => [:email_updated?, :no_multiple_user_emails]
+  after_commit :send_activation_email, on: :update, :if => [:email_updated?, :no_multiple_user_emails]
   before_save :set_primary_email, :if => :no_primary_email
   before_save :remove_duplicate_emails
 
-  after_commit_on_create :clear_agent_list_cache, :if => :agent?
-  after_commit_on_update :clear_agent_list_cache, :if => :agent?
-  after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
-  after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
+  after_commit :clear_agent_list_cache, on: [:create, :update, :destroy], :if => :agent?
+  after_commit :clear_agent_list_cache, on: :update, :if => :helpdesk_agent_updated?
   after_commit :clear_agent_name_cache
-  after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
-  after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
+  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
+  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
-  after_commit_on_update :update_search_index, :if => :company_info_updated?
+  after_commit :update_search_index, on: :update, :if => :company_info_updated?
 
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
@@ -94,7 +92,7 @@ class User < ActiveRecord::Base
 
   def update_user_related_changes
     @model_changes = self.changes.clone
-    @model_changes.symbolize_keys!
+    # @model_changes.symbolize_keys!
   end
 
   def set_company_name

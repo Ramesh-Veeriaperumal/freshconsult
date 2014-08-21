@@ -4,7 +4,7 @@
   <h3 class="lead"><%= t('topic.edit') %></h3>
 </div>
 <%= error_messages_for :topic %>
-<% form_for @topic,
+<%= form_for @topic,
      :url  => discussions_topic_path(@topic),
     :html => {:multipart => true, :method => :put } do |f| -%>
 

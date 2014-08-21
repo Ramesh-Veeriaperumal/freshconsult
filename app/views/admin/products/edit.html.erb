@@ -4,7 +4,7 @@
 <div class="row-fluid">
   <% @page_title = t('.title') %>
   <%= content_tag :h3, @page_title, :class => "title lead" %>
-  <% form_for :product, @product, :url => admin_product_path, :html => { :multipart => true, :rel => "validate", :method => :put, :id => "ProductForm", "data-rebrand-form" => true  , :class => "form-horizontal" } do |f| %>
+  <%= form_for @product, :url => admin_product_path, :html => { :multipart => true, :rel => "validate", :method => :put, :id => "ProductForm", "data-rebrand-form" => true  , :class => "form-horizontal" } do |f| %>
     <%= render :partial => "form", :object => f %>
     <div class="button-container">
       <%= f.submit t('update'), :id => "email-form-update", :class => "btn btn-primary pull-right", "data-loading-text" => t('.updating') %> 

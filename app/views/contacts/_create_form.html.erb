@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(document).ready(function(){
 		jQuery("#contact_customer").autocomplete({
 			source: function( request, response ) {
@@ -57,7 +57,7 @@
 		</li>
 		<li>
 			<%= label(:user, :email, t('user.email')) %> 
-			<% f.fields_for :user_emails do |ue| %>
+			<%= f.fields_for :user_emails do |ue| %>
 				<%= ue.text_field :email, :id => "email_primary", :class => "email" %>
 			<% end %>
 		</li>

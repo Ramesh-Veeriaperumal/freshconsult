@@ -2,8 +2,10 @@
 require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base
+
+  self.primary_key = :id
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
@@ -29,7 +31,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket"]
   OBSERVER_ATTR = []
 
-  set_table_name "helpdesk_tickets"
+  self.table_name =  "helpdesk_tickets"
   
   serialize :cc_email
 
@@ -44,29 +46,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :account_id,:display_id #to avoid update of these properties via api.
 
-  named_scope :created_at_inside, lambda { |start, stop|
+  attr_accessible :email, :requester_id, :subject, :ticket_type, :source, 
+    :status, :priority, :group_id, :responder_id, :ticket_body_attributes, :attachments
+
+  scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
         }
-  named_scope :resolved_at_inside, lambda { |start, stop|
+  scope :resolved_at_inside, lambda { |start, stop|
           { 
             :joins => [:ticket_states,:requester],
             :conditions => [%( helpdesk_ticket_states.resolved_at >= ? and 
               helpdesk_ticket_states.resolved_at <= ?), start, stop] }
         }
 
-  named_scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
-  named_scope :user_open_tickets, lambda { |user| 
+  scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
+  scope :user_open_tickets, lambda { |user| 
     { :conditions => { :status => [OPEN], :requester_id => user.id } }
   }
   
-  named_scope :all_company_tickets,lambda { |customer| { 
+  scope :all_company_tickets,lambda { |customer| { 
         :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
           users.account_id = helpdesk_tickets.account_id ),
         :conditions => [" users.customer_id = ?",customer]
   } 
   }
   
-  named_scope :company_tickets_resolved_on_time,lambda { |customer| { 
+  scope :company_tickets_resolved_on_time,lambda { |customer| { 
         :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
           users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
@@ -75,19 +80,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   } 
   }
   
-   named_scope :resolved_on_time,
+   scope :resolved_on_time,
         :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
           helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
-  named_scope :first_call_resolution,
+  scope :first_call_resolution,
            :joins  => %(INNER JOIN helpdesk_ticket_states on 
             helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
             helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
-  named_scope :company_first_call_resolution,lambda { |customer| { 
+  scope :company_first_call_resolution,lambda { |customer| { 
         :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
           users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
@@ -97,56 +102,56 @@ class Helpdesk::Ticket < ActiveRecord::Base
   } 
   }
         
-  named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  named_scope :updated_in, lambda { |duration| { :conditions => [ 
+  scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+  scope :updated_in, lambda { |duration| { :conditions => [ 
     "helpdesk_tickets.updated_at > ?", duration ] } }
   
-  named_scope :created_in, lambda { |duration| { :conditions => [ 
+  scope :created_in, lambda { |duration| { :conditions => [ 
     "helpdesk_tickets.created_at > ?", duration ] } }
  
-  named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  named_scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
-  named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
-  named_scope :requester_active, lambda { |user| { :conditions => 
+  scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
+  scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
+  scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
+  scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
       user.id ], :order => 'created_at DESC' } }
-  named_scope :requester_completed, lambda { |user| { :conditions => 
+  scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
       
-  named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+  scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
 
-  named_scope :assigned_tickets_permission , lambda { |user,ids| { 
+  scope :assigned_tickets_permission , lambda { |user,ids| { 
     :select => "helpdesk_tickets.display_id",
     :conditions => ["responder_id=? and display_id in (?)", user.id, ids] } 
   }
 
-  named_scope :group_tickets_permission , lambda { |user,ids| { 
+  scope :group_tickets_permission , lambda { |user,ids| { 
     :select => "distinct helpdesk_tickets.display_id", 
     :joins => "LEFT JOIN agent_groups on helpdesk_tickets.group_id = agent_groups.group_id and helpdesk_tickets.account_id = agent_groups.account_id", 
     :conditions => ["(agent_groups.user_id=? or helpdesk_tickets.responder_id=? or helpdesk_tickets.requester_id=?) and display_id in (?)", user.id, user.id, user.id, ids] } 
   }
  
-  named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+  scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
 
-  named_scope :with_tag_names, lambda { |tag_names| {
+  scope :with_tag_names, lambda { |tag_names| {
             :joins => :tags,
             :select => "helpdesk_tickets.id", 
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
 
   
-  named_scope :twitter_dm_tickets, lambda{ |twitter_handle_id| {
+  scope :twitter_dm_tickets, lambda{ |twitter_handle_id| {
     :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and 
                   helpdesk_tickets.account_id = social_tweets.account_id",
               :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? and social_tweets.twitter_handle_id =?",
                       'Helpdesk::Ticket','dm', twitter_handle_id] } 
   }
               
-  named_scope :spam_created_in, lambda { |user| { :conditions => [ 
+  scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
-  named_scope :with_display_id, lambda { |search_string| {  
+  scope :with_display_id, lambda { |search_string| {  
     :include => [ :requester ],
     :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
     :order => 'helpdesk_tickets.display_id',
@@ -154,7 +159,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
-  named_scope :with_requester, lambda { |search_string| {  
+  scope :with_requester, lambda { |search_string| {  
     :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
       users.account_id = helpdesk_tickets.account_id and users.deleted = false),
     :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
@@ -499,7 +504,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") && attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
@@ -554,7 +559,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
 
     unless options[:basic].blank? #to give only the basic properties[basic prop set from 

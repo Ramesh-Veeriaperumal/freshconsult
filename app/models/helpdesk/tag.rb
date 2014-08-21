@@ -5,7 +5,7 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   after_commit :clear_cache
 
-  set_table_name "helpdesk_tags"
+  self.table_name =  "helpdesk_tags"
   
   belongs_to_account
 
@@ -38,16 +38,16 @@ class Helpdesk::Tag < ActiveRecord::Base
            :source_type => "Solution::Article",
            :through => :tag_uses
 
-  named_scope :with_taggable_type, lambda { |taggable_type| {
+  scope :with_taggable_type, lambda { |taggable_type| {
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
         }
-  named_scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
+  scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
         }
 
-  named_scope :sort_tags, lambda  { |sort_type| { :order => SORT_SQL_BY_KEY[(sort_type).to_sym] || SORT_SQL_BY_KEY[:activity_desc] }  }
+  scope :sort_tags, lambda  { |sort_type| { :order => SORT_SQL_BY_KEY[(sort_type).to_sym] || SORT_SQL_BY_KEY[:activity_desc] }  }
 
-  named_scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
+  scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
 
 
 

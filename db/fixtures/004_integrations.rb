@@ -140,7 +140,7 @@ if Integrations::Application.count == 0
     s.application_id = jira_app.id
   end
 
-  status_change_biz_rule = VARule.seed(:account_id, :name) do |s|
+  status_change_biz_rule = VaRule.seed(:account_id, :name) do |s|
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.rule_type = VAConfig::APP_BUSINESS_RULE
     s.name = "fd_status_sync"
@@ -158,7 +158,7 @@ if Integrations::Application.count == 0
     s.va_rule = status_change_biz_rule
   end
 
-  comment_add_biz_rule = VARule.seed(:account_id, :name) do |s|
+  comment_add_biz_rule = VaRule.seed(:account_id, :name) do |s|
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.rule_type = VAConfig::APP_BUSINESS_RULE
     s.name = "fd_comment_sync"

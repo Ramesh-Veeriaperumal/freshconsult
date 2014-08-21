@@ -1,5 +1,5 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
-  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
+  <%= form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
                       :multipart => true,  
                       :id => "HelpdeskNotes",
                       :rel => 'note_form', 
@@ -40,7 +40,7 @@
 
       <li class="inline-field field clearField message">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
-        <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+        <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body" %>
         <% end %>
       </li>

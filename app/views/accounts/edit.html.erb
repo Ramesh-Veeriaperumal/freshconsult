@@ -1,7 +1,7 @@
 <% content_for :helpcard do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(document).ready(function(){ 
 		if(<%=request.referrer.include?('email_notification')%>){
 			jQuery("#supported_language_list").animateHighlight();
@@ -31,7 +31,7 @@
 	}); 
 <% end %>
 <div id="admin-account-rebraning-page" class="rebrand-page">
-	<% form_for :account, @account, :url => { :action => 'update' }, 
+	<%= form_for @account, :url => { :action => 'update' }, 
 									:html => { :multipart => true ,
 											   :method => :put, 
 											   "data-rebrand-form" => true, 
@@ -41,9 +41,9 @@
 					:rel => "customize-portal", :class => "btn btn-bold btn-primary pull-right" %>
 	<h1 class="lead"><%=t('account.rebrand')%></h1>
 
-	<%= f.error_messages %>
+	<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
 	<div class="row-fluid">
-		<% f.fields_for :main_portal do |portal| %>
+		<%= f.fields_for :main_portal do |portal| %>
 			<h3 class="rebrand-head-text top-space-none"><%= t("account.settings") %></h3>
 			<div>
 					<div class="fields">
@@ -88,7 +88,7 @@
 							</div>
 						</div>
 						
-						<% f.fields_for :account_additional_settings do |settings| %>
+						<%= f.fields_for :account_additional_settings do |settings| %>
 							<% if feature?(:dynamic_content) %>
 								<div class="control-group" id="supported_language_list">
 									<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>

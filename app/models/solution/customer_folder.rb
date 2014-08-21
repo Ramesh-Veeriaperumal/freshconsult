@@ -1,6 +1,6 @@
 class Solution::CustomerFolder < ActiveRecord::Base
 
-	set_table_name "solution_customer_folders"
+	self.table_name =  "solution_customer_folders"
 
 	before_validation :set_account_id
 
@@ -16,7 +16,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 
 	delegate :update_search_index, :to => :folder, :allow_nil => true
 	
-	after_commit_on_create :update_search_index
+	after_commit :update_search_index, on: :create
 
 	def set_account_id
 		self.account_id = customer.account_id

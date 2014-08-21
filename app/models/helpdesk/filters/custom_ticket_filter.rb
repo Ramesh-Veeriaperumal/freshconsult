@@ -1,4 +1,5 @@
 class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
+  self.primary_key= :id
   
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
@@ -136,7 +137,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     
     self.id   =  params[:wf_id].to_i            unless params[:wf_id].blank?
-    self.name =  params[:filter_name].strip     unless params[:filter_name].blank?
+    self.name =  params[:filter_name].to_s.strip     unless params[:filter_name].blank?
 
     @fields = []
     unless params[:wf_export_fields].blank?

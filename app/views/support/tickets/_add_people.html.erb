@@ -1,10 +1,10 @@
 <% if @ticket.present? %>
 <div id="add-people" class="hide">
 	<div class="alert"><%= t('portal.tickets.add_or_remove_emails') %></div>
-	<% form_for @ticket, :url => add_people_support_ticket_path(@ticket.display_id), :method => :put, 
+	<%= form_for @ticket, :url => add_people_support_ticket_path(@ticket.display_id), :method => :put, 
 			:html => { :rel => "validate" } do |f| %>	
 
-		<% f.fields_for :cc_email do |cc| %>
+		<%= f.fields_for :cc_email do |cc| %>
 			<%= cc.text_field :cc_emails,
 					:value => (@ticket.cc_email[:cc_emails].join(',') if 
 						(@ticket.cc_email.present? && @ticket.cc_email[:cc_emails].present? )),

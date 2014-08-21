@@ -8,7 +8,7 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   
-  set_table_name "solution_categories"
+  self.table_name =  "solution_categories"
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
@@ -36,11 +36,11 @@ class Solution::Category < ActiveRecord::Base
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids
 
-  named_scope :customer_categories, {:conditions => {:is_default=>false}}
+  scope :customer_categories, {:conditions => {:is_default=>false}}
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end

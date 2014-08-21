@@ -33,7 +33,7 @@ namespace :delayedjobs_watcher do
             :conditions => ["last_error is not null and attempts > 1"]
         )
 
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,{  
+        FreshdeskErrorsMailer.error_email(nil, nil, nil,{  
             :subject => "#{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
         }) if failed_jobs_count >= FAILED_DELAYED_JOBS_THRESHOLD
 
@@ -54,7 +54,7 @@ namespace :delayedjobs_watcher do
 
         total_jobs_count = Delayed::Job.count
 
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,{  
+        FreshdeskErrorsMailer.error_email(nil, nil, nil,{  
             :subject => "#{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
         }) if total_jobs_count >= TOTAL_DELAYED_JOBS_THRESHOULD
         
@@ -76,7 +76,7 @@ namespace :resque_watcher do
     task :failed_jobs => :environment do
 
         failed_jobs_count = Resque::Failure.count
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
+        FreshdeskErrorsMailer.error_email(nil, nil, nil,
             {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs" }
         ) if failed_jobs_count >= FAILED_RESQUE_JOBS_THRESHOLD
 
@@ -98,7 +98,7 @@ namespace :resque_watcher do
           :additional_info => queue_info
         }
         
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,details_hash) unless queue_info.empty?
+        FreshdeskErrorsMailer.error_email(nil, nil, nil,details_hash) unless queue_info.empty?
         growing_queue_names = queue_info.keys 
         if $redis_others.get("RESQUEUE_JOBS_ALERTED").blank? and
             (growing_queue_names & PAGERDUTY_QUEUES).size > 0

@@ -14,7 +14,8 @@ class Agent < ActiveRecord::Base
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
   
-  attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
+  attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, 
+    :shortcuts_enabled, :scoreboard_level_id
   
   has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
           :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
@@ -40,10 +41,10 @@ class Agent < ActiveRecord::Base
     [ :assigned_tickets, 3 ]
   ]
  
-  named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
-  named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
-  named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
-  named_scope :list , lambda {{ :include => :user , :order => :name }}
+  scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
+  scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
+  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
+  scope :list , lambda {{ :include => :user , :order => :name }}
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]

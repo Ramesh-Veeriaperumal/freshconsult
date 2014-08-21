@@ -4,7 +4,7 @@
     
   <% if gamification_feature?(current_account) %>
   	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
-  						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
+  						 "data-remote-url" => mini_list_helpdesk_leaderboard_index_path() %>
 
     <%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "quests-section-container",
                "data-remote-url" => active_helpdesk_quests_path() %>

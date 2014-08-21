@@ -1,4 +1,4 @@
-<%= include_cloudfront_js :widget_config %>
+<%= javascript_include_tag :widget_config %>
 <% unless current_account.main_portal.preferences.nil?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>
@@ -32,7 +32,7 @@
   </div>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	(function($){
 		$(document).ready(function () {
 

@@ -1,5 +1,5 @@
 class Helpdesk::Access < ActiveRecord::Base
-  set_table_name "helpdesk_accesses"  
+  self.table_name =  "helpdesk_accesses"  
   
   belongs_to_account
 
@@ -19,6 +19,8 @@ class Helpdesk::Access < ActiveRecord::Base
   ]
   
   ACCESS_TYPES_KEYS_BY_TOKEN = Hash[*ACCESS_TYPES.map { |i| [i[0], i[2]] }.flatten] 
+
+  attr_accessible :access_type
   
   class << self
   
@@ -62,7 +64,7 @@ class Helpdesk::Access < ActiveRecord::Base
     end
   end
         
-  named_scope :user_accessible_items_via_group, lambda { |type, user|
+  scope :user_accessible_items_via_group, lambda { |type, user|
     {
       :joins      => "#{group_accesses_join(type, user)} #{agent_groups_join}" ,
       :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})",
@@ -70,7 +72,7 @@ class Helpdesk::Access < ActiveRecord::Base
     }  
   }
   
-  # named_scope :all_user_accessible_items, lambda { |type, user|
+  # scope :all_user_accessible_items, lambda { |type, user|
   #   {
   #     :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
   #     :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})" ,
@@ -78,7 +80,7 @@ class Helpdesk::Access < ActiveRecord::Base
   #   } 
   # }
   
-  # named_scope :user_accessible_items, lambda { |type, user|
+  # scope :user_accessible_items, lambda { |type, user|
   #   {
   #     :joins => "#{user_accesses_join(type, user)}",
   #     :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users]})",
@@ -86,7 +88,7 @@ class Helpdesk::Access < ActiveRecord::Base
   #   }
   # }
   
-  # named_scope :group_accessible_items, lambda { |type, group|
+  # scope :group_accessible_items, lambda { |type, group|
   #   {
   #     :joins => "#{group_accesses_join(type, group)}",
   #     :conditions => "#{type_conditions(type)} AND (#{group_conditions(group)[:global]} OR #{group_conditions(group)[:groups]})",

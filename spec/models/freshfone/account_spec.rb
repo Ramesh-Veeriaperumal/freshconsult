@@ -5,7 +5,7 @@ describe Freshfone::Account do
   
   before(:each) do
     create_test_freshfone_account
-    @freshfone_account = @account.freshfone_account
+    @freshfone_account = RSpec.configuration.account.freshfone_account
   end
 
   it 'should find all accounts that are suspended' do

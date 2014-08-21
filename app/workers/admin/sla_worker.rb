@@ -55,7 +55,7 @@ module Admin
                                     'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
         email_body = Liquid::Template.parse(e_notification.formatted_agent_template).render(
                                     'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-        SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
+        SlaNotifier.escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
       ensure
         User.reset_current
       end

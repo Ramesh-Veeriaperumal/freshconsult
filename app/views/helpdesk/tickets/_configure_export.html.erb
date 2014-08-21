@@ -1,4 +1,4 @@
-<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
+<%= form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<ul class="configure_export">
 		<li class="control-group">
@@ -55,7 +55,7 @@
 		<li>
 	</ul>	
 <%end%>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 // For Select all/none functionality 
 	jQuery('#toggle_checks').on('change', function () {
 		jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));

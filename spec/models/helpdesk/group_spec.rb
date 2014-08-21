@@ -42,7 +42,7 @@ describe Group do
 
 	    @group6 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
 	    								:name =>  "dummy group6"})
-	    @group6.round_robin_eligible?.should be_true
+	    @group6.round_robin_eligible?.should be_truthy
 
 	end
 

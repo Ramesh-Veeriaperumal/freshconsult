@@ -6,7 +6,7 @@
 <% end %>
 <%= content_tag(:h3, t(".title"), :class => "lead") %> 
 
-<% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+<%= form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
   <div class="admin_form">
     <ul id="custom_fields" class="ui-custom-fields"> 
       <%= content_tag(:h4, t(".add_custom_field"), :class => "title") %>
@@ -49,7 +49,7 @@
 	<%= render :partial => "formfield_props" %>
 <% end %>
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     // Localizing ticket fields js elements
     tf_settings = <%= @ticket_field_json.to_json.html_safe %>;
     tf_lang = {
@@ -60,6 +60,6 @@
       confirm_delete:     '<%= t("ticket_fields.confirm_delete") %>'
     };
   <% end %>
-  <%= include_cloudfront_js :ticket_fields %>
+  <%= javascript_include_tag :ticket_fields %>
 <% end %> 
 <% content_for :layoutType do -%>antipattern<%- end %>

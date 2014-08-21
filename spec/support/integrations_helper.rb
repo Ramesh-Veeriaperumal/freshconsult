@@ -2,13 +2,13 @@ module IntegrationsHelper
 
 	def create_installed_applications(options= {})
 		application_id = Integrations::Application.find_by_name(options[:application_name]).id
-		installed_application = Factory.build(:installed_application, :configs => options[:configs],
+		installed_application = FactoryGirl.build(:installed_application, :configs => options[:configs],
 		     								:account_id => options[:account_id],
 		                  	:application_id => application_id)
 		installed_application.save
 		installed_application
 	end
-
+	
 	def create_user_credentials(options = {})
 		inst_app = create_installed_applications(options)
 		user_credentials = Factory.build(:integration_user_credential, :installed_application_id => inst_app.id,

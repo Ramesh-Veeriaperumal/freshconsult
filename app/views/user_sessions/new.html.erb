@@ -1,6 +1,6 @@
 <div class="ui-form">
-	<% form_for @user_session, :url => user_session_path do |f| %>
-	  <%= f.error_messages %>
+	<%= form_for @user_session, :url => user_session_path do |f| %>
+	  <%= render partial: '/shared/error_messages', collection: @user_session.errors.full_messages %>
 		  <ul>
 		  	<li class="largefield">
 		  		<%= f.label t('.email') %>

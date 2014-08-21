@@ -1,0 +1,27 @@
+//= require bootstrap/twipsy.js
+//= require pattern/spin.js
+//= require pattern/jquery.spin.js
+//= require app/loading-init.js
+//= require bootstrap/tabs.js
+//= require bootstrap/popover.js
+//= require dyn_menu.js
+//= require fast_autocompleter.js
+//= require factory_ui.js
+//= require lib/json2.js
+//= require custom_validators.js
+//= require dates.js
+//= require globalinit.js
+//= require app/app.js
+//= require security.js
+//= require fjax.js
+//= require fjax/config.js
+//= require fjax/assets.js
+//= require fjax/manager.js
+//= require loader.js
+//= require application.js
+//= require navsearch.js
+//- app/views/shared/spotlight_result.jst
+//= require report/date.js
+//= require freshfone/global.js
+//= require app/metrics.js
+//= require app/product_notifications.js

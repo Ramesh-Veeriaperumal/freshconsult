@@ -33,7 +33,7 @@
       <% (@va_rules.active + @va_rules.inactive).each do |va_rule| %>
         <tr id=<%= dom_id(va_rule) %>>
           <td>
-            <% form_for va_rule, :url => activate_deactivate_admin_supervisor_rule_path(va_rule) do |f| %>
+            <%= form_for va_rule, :url => activate_deactivate_admin_supervisor_rule_path(va_rule) do |f| %>
               <%= f.check_box :active, { :class => 'activate'}, true, false %>
             <% end %>
           </td>
@@ -58,7 +58,7 @@
 
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   (function($){
     $('.activate').itoggle({
       checkedLabel: 'On',

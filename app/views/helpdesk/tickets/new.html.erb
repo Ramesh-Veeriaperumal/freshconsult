@@ -1,6 +1,6 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <%= content_tag(:h3, t("ticket.submit_ticket_title"), :class => "lead") %>
-<% form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
+<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
   <ul class="ui-form">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false, :f => f } %>
     <li>
@@ -35,7 +35,7 @@
     </span>  
   </div>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery('a[name="action_save"]').bind('click', function(ev){
     preventDefault(ev);
     var _form = jQuery(this).parents("form");

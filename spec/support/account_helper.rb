@@ -7,9 +7,11 @@ module AccountHelper
       create_dummy_customer
       return @acc
     end
-    ENV["SEED"]="002_subscription_plans"
+    ENV["SEED"]="global/002_subscription_plans"
+    ENV["FIXTURE_PATH"] = "db/fixtures/global"
     SeedFu::PopulateSeed.populate
     ENV["SEED"] = nil
+    ENV["FIXTURE_PATH"] = nil
     
     create_new_account
     update_currency
@@ -47,10 +49,10 @@ module AccountHelper
     @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL", :limit => 1).first
 
     if @customer.nil?
-      @customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
+      @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
       @customer.save
     end
-
     @customer
   end
 

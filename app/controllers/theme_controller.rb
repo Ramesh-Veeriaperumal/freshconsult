@@ -7,7 +7,8 @@ class ThemeController < ApplicationController
 
 	THEME_COMPASS_SETTINGS 	= { :syntax => :scss, 
 								:always_update => true, 
-								:style => :compressed }	
+								:style => :compressed,
+								:custom => {:resolver => ::Sass::Rails::Resolver.new(CompassRails.context)} }	
 
 	def index
 		respond_to do |format|
@@ -31,6 +32,7 @@ class ThemeController < ApplicationController
 			# Appending the theme load path as partial scss includes 
 			# will be from the root src dir when reading from a file
 			_opts[:load_paths] << theme_load_path
+			_opts[:load_paths] << "#{Rails.root}/public/images"	
 
 			Sass::Engine.new(scss, _opts).render
 		end

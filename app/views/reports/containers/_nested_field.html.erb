@@ -47,7 +47,7 @@
         <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field select2"%>
       <% end %>
   <% end %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery(document).ready(function(){
       jQuery('#<%=category_id%>')
         .nested_select_tag({

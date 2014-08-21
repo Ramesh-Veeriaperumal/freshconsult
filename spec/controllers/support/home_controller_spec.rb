@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Support::HomeController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,13 +16,13 @@ describe Support::HomeController do
     @test_folder3 = create_folder( {:name => "folder3 visible to logged in customers - #{now}", :description => "new folder", :visibility => 2,
       :category_id => @test_category.id } )
     @test_article1 = create_article( {:title => "article1 - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1", :user_id => @agent.id } )
+      :status => "2", :art_type => "1", :user_id => RSpec.configuration.agent.id } )
     @test_article2 = create_article( {:title => "article2 with status as draft - #{now}", :description => "new test article", :folder_id => @test_folder1.id, 
       :status => "1", :art_type => "1", :user_id => @agent_id } )
   end
 
   before(:each) do
-    @account.features.open_solutions.create
+    RSpec.configuration.account.features.open_solutions.create
   end
 
   it "should show folder1 without logging in" do
@@ -31,19 +31,19 @@ describe Support::HomeController do
   end
 
   it "should not show folder3 without logging in" do
-    @account.features.open_solutions.destroy
+    RSpec.configuration.account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /folder3 visible to logged in customers/
   end
 
   it "should not show folder2 without logging in" do
-    @account.features.open_solutions.destroy
+    RSpec.configuration.account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /folder2 visible to agents/
   end
 
   it "should not show solutions" do
-    @account.features.open_solutions.destroy
+    RSpec.configuration.account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /Solutions/
   end

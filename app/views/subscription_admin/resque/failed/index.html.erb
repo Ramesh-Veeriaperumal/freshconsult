@@ -6,7 +6,7 @@
 <% index = 0 %>
 <% date_format = "%Y/%m/%d %T %z" %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   jQuery('.header').hide();
 <% end %>
 
@@ -94,7 +94,7 @@
 </p>
 <%end%>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   jQuery(".show_trace").on("click", function(){
     if(jQuery(this).val() == "Show Stacktrace"){
       jQuery(this).parent().parent().next().show();

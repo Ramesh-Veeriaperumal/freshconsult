@@ -31,7 +31,7 @@
   </div>
 </div>
 <% end %>
-<% form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
+<%= form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
 <% if privilege?(:reply_ticket) %>
   <div id="reply-fields">
     <div id="content-bulk" class="content clearfix">
@@ -55,7 +55,7 @@
 </div>
 </div>
 <% end %>
-<% javascript_tag do %> 
+<%= javascript_tag do %> 
   jQuery('#ticket_cancel_multiple_button').die('click')
   jQuery('#ticket_cancel_multiple_button').live('click',
    	function(){
