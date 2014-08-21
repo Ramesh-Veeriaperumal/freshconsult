@@ -3,6 +3,7 @@ class Topic < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include Rails.application.routes.url_helpers
   include Mobile::Actions::Topic
+  include ObserverAfterCommitCallbacks
   acts_as_voteable
   validates_presence_of :forum, :user, :title
 
@@ -57,7 +58,7 @@ class Topic < ActiveRecord::Base
       :include => {:last_post => [:user], :forum => []},
       :order => "#{Topic.table_name}.replied_at DESC"
 
-  scope :find_by_forum_category_id, lambda { |forum_category_id|
+  scope :scope_by_forum_category_id, lambda { |forum_category_id|
     { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
         forums.account_id = topics.account_id),
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
@@ -151,7 +152,7 @@ class Topic < ActiveRecord::Base
     }
   }
 
-  attr_protected :forum_id , :account_id, :published
+  attr_protected :account_id, :published
   # to help with the create form
   attr_accessor :body_html, :highlight_title
 

@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   include Search::ElasticSearchIndex
+  include ObserverAfterCommitCallbacks
   self.table_name =  "solution_articles"
   serialize :seo_data, Hash
 

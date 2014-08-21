@@ -3,6 +3,9 @@ class SubscriptionPayment < ActiveRecord::Base
   serialize :meta_info
   
   include HTTParty
+  include ObserverAfterCommitCallbacks
+
+  self.primary_key = :id
 
   NON_RECURRING_PAYMENTS = {
     :day_pass => "Day Pass",

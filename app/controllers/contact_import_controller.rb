@@ -28,7 +28,7 @@ class ContactImportController < ApplicationController
     if fields_mapped?
         contact_params = {:account_id => current_account.id,
                         :email => current_user.email,
-                        :contacts =>{:mapped_fields => mapped_fields,
+                        :contacts =>{:mapped_fields => @rows,
                                   :fields => params[:fields] ,
                                   :ignore_first_row => params[:ignore_first_row]}}
          Resque.enqueue(Workers::Import::ContactsImport ,contact_params)

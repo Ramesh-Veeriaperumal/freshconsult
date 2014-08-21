@@ -1,6 +1,7 @@
 class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	self.table_name =  "helpdesk_schema_less_notes"
+	self.primary_key = :id
 
 	alias_attribute :header_info, :text_nc01
 	alias_attribute :category, :int_nc01

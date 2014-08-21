@@ -18,7 +18,9 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   attr_protected :ticket_id
 
   before_update :update_ticket_state_changes
-  after_commit :create_ticket_stats, on: [:create, :update], :if => :ent_reports_enabled?
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.send(:create_ticket_stats) }, on: :update, :if => :ent_reports_enabled?
+  after_commit ->(obj) { obj.send(:create_ticket_stats) }, on: :create, :if => :ent_reports_enabled?
   after_commit :update_search_index, on: :update
   
   def reset_tkt_states
@@ -152,7 +154,7 @@ private
         connection.execute(sql)
       end
     rescue Exception => e
-      puts "Exception occurred while inserting data into stats table"
+      puts "Exception occurred while inserting data into stats table ::: #{e.message}::::#{e.backtrace}"
       NewRelic::Agent.notice_error(e)
     end
   end

@@ -4,7 +4,7 @@ class Quest < ActiveRecord::Base
   include Gamification::Quests::Badges
   include Cache::Memcache::Quest
   
-  attr_accessible :category, :badge_id, :points, :name, :description
+  attr_accessible :category, :badge_id, :points, :name, :description, :sub_category
   belongs_to_account
 
   has_many :achieved_quests, :dependent => :destroy
@@ -24,7 +24,7 @@ class Quest < ActiveRecord::Base
 
   before_save :modify_quest_data, :denormalize_filter_data
 
-  after_commit :clear_quests_cache, on: [:create, :update, :destroy]
+  after_commit :clear_quests_cache
 
   scope :available, lambda{|user| {
     :conditions => [%(quests.id not in (select quest_id from achieved_quests 

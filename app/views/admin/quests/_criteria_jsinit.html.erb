@@ -53,7 +53,7 @@
 
             questData.push(questObj);
 
-            jQuery("#quest_quest_data").val(questData.toJSON());
+            jQuery("#quest_quest_data").val(JSON.stringify(questData));
 
             jQuery.each(_mand_fields,function(index,value){
               _mand_check_fails = false;

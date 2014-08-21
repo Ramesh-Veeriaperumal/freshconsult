@@ -1,5 +1,7 @@
 class Account < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
@@ -7,6 +9,7 @@ class Account < ActiveRecord::Base
   include Redis::TicketsRedis
   include ErrorHandle
   include AccountConstants
+  include ObserverAfterCommitCallbacks
 
   has_many_attachments
   

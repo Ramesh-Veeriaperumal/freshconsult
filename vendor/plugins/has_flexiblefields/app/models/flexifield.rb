@@ -9,6 +9,9 @@ class Flexifield < ActiveRecord::Base
   belongs_to :flexifield_def, :include => 'flexifield_def_entries'
 
   # xss_terminate
+
+  self.primary_key = :id
+
   
   delegate :to_ff_alias, :to_ff_field, :ff_aliases, :ff_fields, :to => :flexifield_def
   

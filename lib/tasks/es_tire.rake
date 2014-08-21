@@ -74,7 +74,7 @@ namespace :freshdesk_tire do
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
-          Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+          Rake::Task["tire:import:model"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
         end
       end
       account.es_enabled_account.update_attribute(:imported, true)

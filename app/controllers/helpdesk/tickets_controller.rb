@@ -1,4 +1,3 @@
-require 'fastercsv'
 
 class Helpdesk::TicketsController < ApplicationController  
     

@@ -21,7 +21,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   after_update :update_tickets_sla_on_status_change
 
-  after_commit :clear_statuses_cache, on: [:create, :update, :destroy]
+  after_commit :clear_statuses_cache
   
   scope :visible, :conditions => {:deleted => false}
 
@@ -156,7 +156,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
             sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
             if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
               fetch_ticket.update_dueby(true)
-              fetch_ticket.send(:update_without_callbacks)
+              # fetch_ticket.send(:update_without_callbacks)
+              fetch_ticket.sneaky_save
             end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil
             fetch_ticket.ticket_states.save

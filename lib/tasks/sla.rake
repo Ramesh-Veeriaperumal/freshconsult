@@ -20,22 +20,23 @@ SLA_TASK = {
             }
 
 namespace :sla do
-  desc 'Check for SLA violation and trigger emails..'
 
-  desc 'Execute Supervisor Rules...'
-  
+  desc 'Check for SLA violation and trigger emails for paid accounts'
   task :run => :environment do
     execute_sla("paid")
   end
 
+  desc 'Check for SLA violation and trigger emails for trial accounts'
   task :trial => :environment do
    execute_sla("trial")
   end
 
+  desc 'Check for SLA violation and trigger emails for free accounts'
   task :free => :environment do
    execute_sla("free")
   end
 
+  desc 'Check for SLA violation and trigger emails for paid accounts'
   task :paid => :environment do
    execute_sla("paid")
   end

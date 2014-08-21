@@ -1,4 +1,17 @@
 GIT
+  remote: git://github.com/PratheepV/retire.git
+  revision: ea6e2c318f00cbae37b42b87efdf5b40c39671f3
+  specs:
+    tire (0.6.2)
+      activemodel (>= 3.0)
+      activesupport
+      ansi
+      hashr (~> 0.0.19)
+      multi_json (~> 1.3)
+      rake
+      rest-client (~> 1.6)
+
+GIT
   remote: git://github.com/PratheepV/sidekiq.git
   revision: 708125eaa9bd28bc4f9f841ac5f00ad1b8cfb34e
   branch: master
@@ -29,6 +42,12 @@ GIT
   revision: 2f492f1053a0c668c294067667e6b7952d06f2c8
   specs:
     class_inheritable_attributes (0.0.2)
+
+GIT
+  remote: git://github.com/d3chapma/map-fields
+  revision: 188990d4dd069c2cc55d84391e90790394595964
+  specs:
+    map_fields (1.0.5)
 
 GIT
   remote: git://github.com/freshdesk/Marketo.git
@@ -83,17 +102,6 @@ GIT
       POpen4 (>= 0.1.4)
 
 GIT
-  remote: git://github.com/freshdesk/tire.git
-  revision: d0a26fe7fca1fa40ba9acf496507eccd50aa77d9
-  branch: multi_match
-  specs:
-    tire (0.4.3)
-      hashr (~> 0.0.19)
-      multi_json (~> 1.0)
-      rake
-      rest-client (~> 1.6)
-
-GIT
   remote: git://github.com/jim/carmen.git
   revision: 964e2ceeef601b792c4c99cd30f4667dbade587d
   tag: ruby-18
@@ -101,10 +109,24 @@ GIT
     carmen (1.0.0.beta2)
 
 GIT
+  remote: git://github.com/jorgevaldivia/active_presenter.git
+  revision: 4f45be82e5f8566dee9600cbba5cf748685eda19
+  specs:
+    active_presenter (3.2.2)
+      activerecord (>= 3.0.10)
+
+GIT
   remote: git://github.com/neubloc/white_list.git
   revision: fef96494da6259763ddafd7edbec7e7afe3c2fcd
   specs:
     white_list (0.0.1)
+
+GIT
+  remote: git://github.com/partyearth/sneaky-save.git
+  revision: b000d4f941fc220ea9f4686b99753712b103c853
+  specs:
+    sneaky-save (0.0.4)
+      activerecord (>= 3.2.0)
 
 GIT
   remote: git://github.com/stefanpenner/country_select.git
@@ -152,9 +174,8 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    active_presenter (3.2.2)
-    active_record_shards (2.7.0)
-      activerecord (>= 2.3.5, < 3.3)
+    active_record_shards (3.1.0)
+      activerecord (>= 3.2.16, <= 4.1)
     active_utils (2.2.1)
       activesupport (>= 2.3.11)
       i18n
@@ -172,7 +193,8 @@ GEM
     activesupport (3.2.18)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    acts_as_list (0.1.4)
+    acts_as_list (0.4.0)
+      activerecord (>= 3.0)
     addressable (2.3.4)
     akami (1.2.0)
       gyoku (>= 0.4.0)
@@ -180,6 +202,7 @@ GEM
     amq-protocol (1.9.2)
     ancestry (1.3.0)
       activerecord (>= 2.3.14)
+    ansi (1.4.3)
     arel (3.0.3)
     authlogic (3.4.2)
       activerecord (>= 3.2)
@@ -204,10 +227,13 @@ GEM
       uuidtools (~> 2.1)
     backports (3.6.0)
     beefcake (0.3.7)
+    better_errors (1.1.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
     braintree (2.10.0)
       builder
     buftok (0.2.0)
-    builder (3.0.0)
+    builder (3.0.4)
     bunny (1.2.1)
       amq-protocol (>= 1.9.2)
     celluloid (0.15.2)
@@ -219,6 +245,7 @@ GEM
     clockwork (0.4.1)
       tzinfo
     cocaine (0.4.2)
+    coderay (1.1.0)
     columnize (0.8.9)
     compass (0.12.6)
       chunky_png (~> 1.2)
@@ -248,14 +275,12 @@ GEM
     erubis (2.7.0)
     execjs (2.0.2)
     extlib (0.9.16)
-    ey_config (0.0.6)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
     faker (1.0.1)
       i18n (~> 0.4)
     faraday (0.8.7)
       multipart-post (~> 1.1)
-    fastercsv (1.5.4)
     ffi (1.9.0)
     ffi-compiler (0.1.3)
       ffi (>= 1.0.0)
@@ -329,12 +354,10 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    map-fields (1.0.0)
-      fastercsv (>= 1.2.3)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     metaclass (0.0.4)
-    mime-types (1.16)
+    mime-types (1.25.1)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     money (6.1.1)
@@ -452,8 +475,9 @@ GEM
       rufus-scheduler (~> 2.0)
     resque-status (0.4.1)
       resque (~> 1.19)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    rest-client (1.6.8)
+      mime-types (~> 1.16)
+      rdoc (>= 2.4.2)
     rforce (0.8.1)
       builder (~> 3.0)
       oauth (~> 0.4)
@@ -581,7 +605,7 @@ GEM
       json (~> 1.8)
       memoizable (~> 0.4.0)
       simple_oauth (~> 0.2.0)
-    tzinfo (0.3.39)
+    tzinfo (0.3.41)
     uglifier (2.1.2)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
@@ -606,10 +630,10 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.9)
   ZenTest (= 4.4.1)
-  active_presenter (= 3.2.2)
-  active_record_shards (= 2.7.0)
+  active_presenter!
+  active_record_shards (~> 3.1.0)
   activemerchant!
-  acts_as_list (= 0.1.4)
+  acts_as_list (~> 0.4.0)
   akismetor!
   ancestry (= 1.3)
   arel (~> 3.0.2)
@@ -618,6 +642,7 @@ DEPENDENCIES
   autotest-growl (= 0.2.0)
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.11.3)
+  better_errors (~> 1.1.0)
   braintree (= 2.10.0)
   bunny (= 1.2.1)
   carmen!
@@ -634,7 +659,6 @@ DEPENDENCIES
   delayed_job!
   dynamic_form
   encryptor (= 1.1.3)
-  ey_config
   factory_girl (~> 4.4.0)
   faker (~> 1.0.1)
   faraday (= 0.8.7)
@@ -657,7 +681,7 @@ DEPENDENCIES
   lhm!
   lockfile (= 1.4.3)
   mail
-  map-fields (= 1.0.0)
+  map_fields!
   marketo!
   mocha (~> 0.13.0)
   mysql2 (~> 0.3.0)
@@ -713,6 +737,7 @@ DEPENDENCIES
   sidekiq!
   simplecov (~> 0.7.1)
   simplecov-csv
+  sneaky-save!
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.9.0)
   spreadsheet (= 0.6.8)

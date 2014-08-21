@@ -35,20 +35,22 @@
 			</label><br/><br/><br/>
 				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
 				<div class="threecol-form" id="ticket_fields">
-		 			<% csv_headers.each do |head| %>
+		 			<% @csv_headers.each do |head| %>
 		 			  	<div class="item <%= head[:type] %>">
 			  				<label class="checkbox prime"> 
 			    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
 								<%= head[:label].html_safe %>														
 			  				</label>
-			  				<div class="tree_line">
-				  				<% head[:levels].each do |level| %>
-					  				<label class="checkbox level"> 
-					    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-										<%= level[:label].html_safe %>
-					  				</label>
-					  			<% end %>
-				  		   </div>
+			  				<%if head[:levels]%>
+				  				<div class="tree_line">
+					  				<% head[:levels].each do |level| %>
+						  				<label class="checkbox level"> 
+						    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
+											<%= level[:label].html_safe %>
+						  				</label>
+						  			<% end %>
+					  		   </div>
+					  		<%end%>
 		  			    </div>	
 		 			<% end %>
 				</div>
@@ -77,7 +79,7 @@
 		jQuery('#err_no_fields_selected').addClass('hide');
 		
 	 	getFilterData();
-		jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+		jQuery("#exportFilter input[name=data_hash]").val(JSON.stringify(query_hash));
 		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "sloading loading-small", 0);
 		setTimeout(function(){
 			active_dialog.dialog("close");

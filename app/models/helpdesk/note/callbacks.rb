@@ -7,7 +7,9 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification,
                          :publish_new_note_properties_to_rabbitmq, on: :create
 
-  after_commit :update_es_index, on: [:create, :update], :if => :human_note_for_ticket?
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
+  after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
   after_commit :remove_es_document, on: :destroy
 

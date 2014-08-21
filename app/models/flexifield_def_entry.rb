@@ -18,7 +18,9 @@ class FlexifieldDefEntry < ActiveRecord::Base
   before_save :ensure_alias_is_one_word
   before_create :set_account_id
 
-  after_commit :clear_cache, on: [:create, :destroy]
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.clear_cache }, on: :create
+  after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
   ViewColumn = Struct.new(:object,:content) do
     def viewname

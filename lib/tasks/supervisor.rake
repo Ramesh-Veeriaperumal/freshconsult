@@ -20,20 +20,23 @@ SUPERVISOR_TAKS = {
                   }
 
 namespace :supervisor do
-  desc 'Execute Supervisor Rules...'
-  
+
+  desc 'Execute Supervisor Rules for paid accounts'
   task :run => :environment do
     execute_supevisor("paid")
   end
 
+  desc 'Execute Supervisor Rules for trial accounts'
   task :trial => :environment do
    execute_supevisor("trial")
   end
 
+  desc 'Execute Supervisor Rules for free accounts'
   task :free => :environment do
    execute_supevisor("free")
   end
 
+  desc 'Execute Supervisor Rules for premium accounts'
   task :premium => :environment do
     queue_name = "premium_supervisor_worker"
     if supervisor_should_run?(queue_name)

@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
+  include ObserverAfterCommitCallbacks
 
   USER_ROLES = [
      [ :admin,       "Admin",            1 ],
@@ -89,7 +90,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, :user_emails_attributes, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
-                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
+                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :tags
 
   class << self # Class Methods
     #Search display
@@ -612,8 +613,8 @@ class User < ActiveRecord::Base
   protected
   
     def search_fields_updated?
-      all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                    :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
+      all_fields = ["name", "email", "description", "job_title", "phone", "mobile",
+                    "twitter_id", "fb_profile_id", "customer_id", "deleted", "helpdesk_agent"]
       (@all_changes.keys & all_fields).any?
     end
 

@@ -3,6 +3,7 @@ class SurveyResult < ActiveRecord::Base
   self.primary_key = :id
 
   include Va::Observer::Util
+  include ObserverAfterCommitCallbacks
 
   belongs_to_account
     

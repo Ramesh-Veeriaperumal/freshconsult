@@ -1,5 +1,6 @@
 class AccountConfiguration < ActiveRecord::Base
 
+  self.primary_key = :id
   belongs_to_account
 
   serialize :contact_info, Hash

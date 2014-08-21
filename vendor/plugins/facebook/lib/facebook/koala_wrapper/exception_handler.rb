@@ -67,7 +67,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
         $sqs_facebook.requeue(@feed.feed) if @intial_feed && !return_value
         SocialErrorsMailer.deliver_facebook_exception(e,@feed.feed) if @intial_feed
         NewRelic::Agent.notice_error(e)
-        Rails.logger.debug "Error while processing facebook - #{e.to_s}"
+        Rails.logger.debug "Error while processing facebook - #{e.to_s}:::#{e.backtrace.join('\n')}"
         return_value = false
       end
       return return_value

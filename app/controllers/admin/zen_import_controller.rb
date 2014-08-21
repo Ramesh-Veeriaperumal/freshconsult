@@ -12,7 +12,7 @@ class Admin::ZenImportController < Admin::AdminController
   def import_data
     item = current_account.build_zendesk_import({:status=>true })   
     if item.save
-      item.attachments.create(:content => params[:zendesk][:file], :description => 'zen data', :account_id => item.account_id)
+      item.attachments.create(:content => params[:zendesk][:file], :description => 'zen data')
       handle_zen_import
       flash[:notice] =  t(:'flash.data_import.zendesk.success')
     else

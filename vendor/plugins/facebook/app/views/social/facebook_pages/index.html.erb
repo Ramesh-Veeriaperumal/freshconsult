@@ -40,7 +40,7 @@ if(jQuery('#got_pages').length){
                 </div>
               </td>
               <td>
-                <%= link_to "#{page.page_name}", edit_social_facebook_url(page), :class => "item_info" %> 
+                <%= link_to "#{page.page_name}", edit_social_facebook_page_path(page), :class => "item_info" %> 
                 <%if page.reauth_required %>
                   <span class="label label-important align-fix"> <%=t(".reauth_required").html_safe%></span>
                 <%end%>
@@ -51,8 +51,8 @@ if(jQuery('#got_pages').length){
               <td class="text-right">
                 <%=content_tag("span","", :class => 'symbols-issue tooltip', :title=> t('facebook_tab.page_tab_info')) if page.page_token_tab && page.page_token_tab.empty? %>
                 <%= link_to(t(".reauthorize").html_safe,  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
-                <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "btn btn-mini" %>
-                <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
+                <%= link_to t("edit"),  edit_social_facebook_page_path(page), :class => "btn btn-mini" %>
+                <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_page_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
               </td>
             </tr>
            

@@ -15,7 +15,7 @@ class Workers::ClearTrash
         end
       end
     rescue Exception => e
-      puts "something is wrong: #{e.message}"
+      puts "something is wrong: #{e.message} ::: #{e.backtrace.join('\n')}"
     end
   end
 end

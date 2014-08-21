@@ -61,7 +61,7 @@
 			<div class="badgelist badges_items">
 				<div class="row">
 					<% @available_badges.each do | badges | %>
-						<% content_tag :div,"", 
+						<%= content_tag :div,"", 
 								"data-class" => badges[:classname],
 								"data-name" => badges[:name],
 								"data-badge-id" => badges[:id], :class => "span2 badge-set" do %>

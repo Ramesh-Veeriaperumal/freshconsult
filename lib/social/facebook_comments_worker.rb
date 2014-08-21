@@ -38,7 +38,7 @@ class Social::FacebookCommentsWorker
     rescue Exception => e
         Rails.logger.debug e.to_s
         NewRelic::Agent.notice_error(e)
-        Rails.logger.debug "Error while processing facebook - #{e.to_s}"
+        Rails.logger.debug "Error while processing facebook - #{e.to_s}- #{e.backtrace}"
     end
   end
 

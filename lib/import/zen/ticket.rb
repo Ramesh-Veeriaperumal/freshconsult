@@ -55,7 +55,7 @@ def save_ticket ticket_xml
   priority_id = 1 if priority_id < 1
   props = {:subject=> ticket_prop.subject,:ticket_body_attributes => {:description => ticket_prop.description},
                     :requester_id => requester.id , 
-                    :account_id => @current_account.id , :status =>ZENDESK_TICKET_STATUS[ticket_prop.status.to_i], :due_by => ticket_prop.updated_at.to_datetime(),
+                    :status =>ZENDESK_TICKET_STATUS[ticket_prop.status.to_i], :due_by => ticket_prop.updated_at.to_datetime(),
                     :ticket_type => ZENDESK_TICKET_TYPES[ticket_prop.ticket_type.to_i] , :created_at =>ticket_prop.created_at.to_datetime(),
                     :updated_at => ticket_prop.updated_at.to_datetime() , :import_id => ticket_prop.display_id , :priority => priority_id  }  
   

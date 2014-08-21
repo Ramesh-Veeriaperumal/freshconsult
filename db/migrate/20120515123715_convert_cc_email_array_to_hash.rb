@@ -7,7 +7,8 @@ class ConvertCcEmailArrayToHash < ActiveRecord::Migration
         if cc_email_val.is_a?(Array)
           cc_hash = {:cc_emails => "#{cc_email_val}", :fwd_emails => []}
           tkt.cc_email = cc_hash
-          tkt.send(:update_without_callbacks)
+          # tkt.send(:update_without_callbacks)
+          tkt.sneaky_save
         end
       end
     end

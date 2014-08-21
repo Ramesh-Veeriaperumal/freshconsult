@@ -34,7 +34,7 @@
 	<div class="sidepanel">
 		<h5 class="lead"><%= t(".export_data") %></h5> 
 		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "btn" %>
+		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_index_path, :class => "btn" %>
 	</div>
 
 <%- end %>
@@ -45,8 +45,7 @@
 </h3>
 
 <div class="account-content">
-	 
-	<%= form_for @account_configuration, :url => { :controller => 
+	<%= form_for current_account.account_configuration, :url => { :controller => 
 		"account_configurations", :action => "update" },  :html => { :method => :put, 
 		:id => "account-details-form"} do |f| %>
 

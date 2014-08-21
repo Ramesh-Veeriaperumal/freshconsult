@@ -18,7 +18,8 @@ class Billing::AddToBilling
     def self.set_billing_site(subscription)
       currency = fetch_currency(subscription.account)
       subscription.set_billing_params(currency)      
-      subscription.send(:update_without_callbacks) #To avoid update amount callback
+      # subscription.send(:update_without_callbacks) #To avoid update amount callback
+      subscription.sneaky_save
     end
 
     def self.fetch_currency(account)      

@@ -4,6 +4,7 @@ class Customer < ActiveRecord::Base
   include Cache::Memcache::Customer
   include Search::ElasticSearchIndex
   include Mobile::Actions::Customer
+  include ObserverAfterCommitCallbacks
   serialize :domains
     
   validates_presence_of :name,:account
@@ -28,7 +29,9 @@ class Customer < ActiveRecord::Base
   }
 
   after_commit :map_contacts_to_customers, :clear_cache, on: :create
-  after_commit :clear_cache, on: [:destroy, :update]
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.clear_cache }, on: :destroy
+  after_commit ->(obj) { obj.clear_cache }, on: :update
   after_update :map_contacts_on_update, :if => :domains_changed?
   
   before_create :check_sla_policy
@@ -124,7 +127,7 @@ class Customer < ActiveRecord::Base
   protected
 
     def search_fields_updated?
-      all_fields = [:name, :description, :note]
+      all_fields = ["name", "description", "note"]
       (@model_changes.keys & all_fields).any?
     end
 

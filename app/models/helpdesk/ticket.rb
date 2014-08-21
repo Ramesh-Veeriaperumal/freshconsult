@@ -25,6 +25,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
   include RabbitMq::Ticket
+  include ObserverAfterCommitCallbacks
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -47,7 +48,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_protected :account_id,:display_id #to avoid update of these properties via api.
 
   attr_accessible :email, :requester_id, :subject, :ticket_type, :source, 
-    :status, :priority, :group_id, :responder_id, :ticket_body_attributes, :attachments
+    :status, :priority, :group_id, :responder_id, :ticket_body_attributes, :attachments,
+    :escalation_level, :isescalated, :twitter_id, :product_id, :created_at, :tweet_attributes, :requester, 
+    :fb_post_attributes, :due_by, :updated_at, :import_id
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -739,9 +742,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   protected
 
     def search_fields_updated?
-      attribute_fields = [:subject, :description, :responder_id, :group_id, :requester_id,
-                         :status, :spam, :deleted, :source, :priority, :due_by, :to_emails, :cc_email]
-      include_fields = es_flexifield_columns.map(&:to_sym)
+      attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
+                         "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
+      include_fields = es_flexifield_columns
       all_fields = attribute_fields | include_fields
       (@model_changes.keys & all_fields).any?
     end

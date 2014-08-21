@@ -83,16 +83,8 @@ YAML::ENGINE.yamler = "syck" if defined?(YAML::ENGINE)
 
 # In order to have consistent behavior between Ruby 1.8.7 and Ruby 1.9.3, we created a class called CSVBridge, and use that instead of CSV or FasterCSV:
 require 'csv'
-require 'fastercsv'
- 
-if CSV.const_defined?(:Reader)
-  class CSVBridge < FasterCSV
-  end
-else
-  class CSVBridge < CSV
-  end
+class CSVBridge < CSV
 end
-
 
 
 # Drop this file in config/initializers to run your Rails project on Ruby 1.9.

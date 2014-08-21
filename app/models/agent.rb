@@ -4,6 +4,7 @@ class Agent < ActiveRecord::Base
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
+  include ObserverAfterCommitCallbacks
 
   before_destroy :remove_escalation
 

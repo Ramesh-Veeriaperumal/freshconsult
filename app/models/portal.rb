@@ -2,6 +2,7 @@ require_dependency "mobile/actions/portal"
 require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
   include Rails.application.routes.url_helpers
+  include ObserverAfterCommitCallbacks
 
   serialize :preferences, Hash
 
@@ -96,12 +97,12 @@ class Portal < ActiveRecord::Base
 
   def my_topics(user, per_page, page)
     main_portal ? user.monitored_topics.published.filter(per_page, page) :
-       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
+       forum_category ?  user.monitored_topics.published.scope_by_forum_category_id(forum_category.id).filter(per_page, page) : []
   end
 
   def my_topics_count(user)
     main_portal ? user.monitored_topics.published.count :
-       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).count : 0
+       forum_category ?  user.monitored_topics.published.scope_by_forum_category_id(forum_category.id).count : 0
   end
 
   #Yeah.. It is ugly.

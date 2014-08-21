@@ -93,15 +93,14 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
     config.time_zone = 'Chennai'
 
-    # ActiveSupport::JSON.backend = "JSONGem" # TODO-RAILS3 http://stackoverflow.com/questions/683989/how-do-you-deal-with-the-conflict-between-activesupportjson-and-the-json-gem#answer-3285570
-    ActionController::Base.config.secret_token = '3f1fd34135e84c4245a13c212c11ff2f4b205725faf706345716efb6686f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f'
+    # ActiveSupport::JSON.backend = "JSONGem"
+    ActiveSupport::JSON.backend = :json_gem
     # Your secret key for verifying cookie session data integrity.
     # If you change this key, all old sessions will become invalid!
     # Make sure the secret is at least 30 characters and all random, 
     # no regular words or you'll be exposed to dictionary attacks.
     config.session_store(:cookie_store, {
-        :session_key => '_helpkit_session',
-        :secret      => '3f1fd135e84c2a13c212c11ff2f4b205725faf706345716efb6686f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f'
+        :session_key => '_helpkit_session'
     })
 
     config.action_controller.allow_forgery_protection = true

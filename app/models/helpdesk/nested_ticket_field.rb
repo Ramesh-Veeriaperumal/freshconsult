@@ -16,8 +16,10 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
     
   before_create :populate_label
 
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
   # Phase1:- multiform , will be removed once migration is done.
-  after_commit :save_form_field_mapping, on: [:create, :update]
+  after_commit ->(obj) { obj.save_form_field_mapping }, on: :create
+  after_commit ->(obj) { obj.save_form_field_mapping }, on: :update
   after_commit :remove_form_field_mapping, on: :destroy
   #Phase1:- end
 

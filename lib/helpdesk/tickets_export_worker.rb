@@ -209,7 +209,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
 
   def build_attachment(file_path)
     file = File.open(file_path,  'r')
-    attachment = @item.build_attachment(:content => file,  :account_id => Account.current.id)
+    attachment = @item.build_attachment(:content => file)
     attachment.save!
     @item.file_uploaded!
   end
@@ -221,11 +221,12 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def hash_url
-    url_for(
-            :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
-            :host => export_params[:portal_url], 
-            :protocol => Account.current.ssl_enabled? ? 'https' : 'http'
-            )
+    download_file_url(
+      @item.source,
+      hash(@item.id), 
+      :host => export_params[:portal_url], 
+      :protocol => Account.current.ssl_enabled? ? 'https' : 'http'
+    )
   end
 
   def send_no_ticket_email

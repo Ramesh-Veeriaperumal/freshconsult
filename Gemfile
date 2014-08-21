@@ -15,13 +15,17 @@ gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
 gem "country_select", github: "stefanpenner/country_select", :tag => 'v1.1.2'
 gem "activemerchant", github: "Shopify/active_merchant", :tag => 'v1.43.1'
-gem "acts_as_list", "0.1.4"
+gem "acts_as_list", "~> 0.4.0"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
 gem "class_inheritable_attributes", github: "burke/class_inheritable_attributes"
 
+gem 'sneaky-save', git: 'git://github.com/partyearth/sneaky-save.git'
+
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
+  gem 'better_errors', '~> 1.1.0'
+  gem "debugger", "~> 1.6.8"
 end
 
 gem "mail"
@@ -33,8 +37,6 @@ gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
 gem "omniauth-oauth"
 gem "tzinfo", "~> 0.3.29"
-
-gem "debugger", "~> 1.6.8"
 
 gem "test-unit", '1.2.3'
 
@@ -65,7 +67,7 @@ gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem "ruby-saml", "0.8.1"
 
 gem "arel", "~> 3.0.2"
-gem "map-fields", "1.0.0", :require => "map_fields"
+gem "map_fields", :git => "git://github.com/d3chapma/map-fields", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"
@@ -120,7 +122,7 @@ gem 'global_phone'
 # gem "global_phone_dbgen", "~> 1.0.0"
 gem "useragent", "~> 0.4.16"
 
-gem "active_record_shards","2.7.0", :require => 'active_record_shards'
+gem 'active_record_shards', '~> 3.1.0', :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 gem "static_model", "~> 1.0.4"
 
@@ -141,7 +143,6 @@ gem "aws-sdk", "~> 1.11.3"
 gem "xml-simple", "~> 1.1.2"
 
 
-gem "ey_config"
 gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
@@ -150,12 +151,14 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem "bunny", "1.2.1"
 
 group :production,:test,:staging do
-  gem 'tire', :git => "git://github.com/freshdesk/tire.git", :branch => "multi_match"
+  gem "tire", :git => "git://github.com/PratheepV/retire.git"
 end
+
+
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "delayed_job", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/delayed_job"
-gem "active_presenter", "3.2.2"
+gem "active_presenter", :git => "git://github.com/jorgevaldivia/active_presenter.git"
 
 group :development,:test do
   gem "forgery","0.5.0"

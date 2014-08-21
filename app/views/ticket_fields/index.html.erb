@@ -6,7 +6,7 @@
 <% end %>
 <%= content_tag(:h3, t(".title"), :class => "lead") %> 
 
-<%= form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+<%= form_for @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
   <div class="admin_form">
     <ul id="custom_fields" class="ui-custom-fields"> 
       <%= content_tag(:h4, t(".add_custom_field"), :class => "title") %>

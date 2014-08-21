@@ -1,5 +1,6 @@
 class Post < ActiveRecord::Base
   include Rails.application.routes.url_helpers
+  include ObserverAfterCommitCallbacks
 
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
@@ -141,11 +142,11 @@ class Post < ActiveRecord::Base
   end
 
   def topic_path
-    support_discussions_topic_path(topic)
+    Rails.application.routes.url_helpers.support_discussions_topic_path(topic)
   end
 
   def topic_url
-    support_discussions_topic_url(topic, :host => account.host)
+    Rails.application.routes.url_helpers.support_discussions_topic_url(topic, :host => account.host)
   end
 
 end

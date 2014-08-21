@@ -1,4 +1,3 @@
-require 'fastercsv'
 
 class Helpdesk::BulkTicketActionsController < ApplicationController
   include ActionView::Helpers::TextHelper

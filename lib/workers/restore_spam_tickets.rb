@@ -10,7 +10,8 @@ class Workers::RestoreSpamTickets
       Helpdesk::Ticket.spam_created_in(user).update_all( { :spam => false }, 
         ["helpdesk_tickets.account_id = ?",account.id] )
       user.deleted_at= nil
-      user.send(:update_without_callbacks)
+      # user.send(:update_without_callbacks)
+      user.sneaky_save
     end
   rescue Exception => e
     puts "something is wrong: #{e.message}::#{e.backtrace.join("\n")}"

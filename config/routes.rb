@@ -614,9 +614,9 @@ Helpkit::Application.routes.draw do
         end
       end
       
-      resources :twitters do
+      resources :twitters, :controller => :twitter_handles  do
         collection do
-          put :authdone
+          get :authdone
         end
       end
 
@@ -647,6 +647,7 @@ Helpkit::Application.routes.draw do
         put :update
       end
     end
+
   end
 
   namespace :search do
@@ -893,6 +894,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resource :accounts do
+    collection do
+      get :new_signup_free
+    end
+  end
+
   resource :subscription do
     collection do
       get :plans
@@ -991,6 +998,7 @@ Helpkit::Application.routes.draw do
       resources :notes do
         collection do
           get :since
+          get :agents
         end
         
         member do
@@ -1032,7 +1040,7 @@ Helpkit::Application.routes.draw do
     
     resources :bulk_ticket_actions do
       collection do
-        put :update_multiple
+        post :update_multiple
       end
     end
 
@@ -1040,6 +1048,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :complete_merge
         put :merge
+        post :bulk_merge
       end
     end
 
@@ -1170,6 +1179,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/topics/:id/page/:page' => 'topics#show'
+    match '/topics/:id/component/:name' => 'topics#component', :as => :topic_component
+
     resources :topics, :except => :index do
       collection do
         delete :destroy_multiple
@@ -1181,9 +1193,9 @@ Helpkit::Application.routes.draw do
         put :remove_stamp
         put :vote
         delete :destroy_vote
+        get :show
       end
-      match '/topics/:id/page/:page' => 'topics#show'
-      match '/topics/:id/component/:name' => 'topics#component', :as => :topic_component
+      
       resources :posts, :except => :new do
         member do
           put :toggle_answer
@@ -1435,9 +1447,7 @@ Helpkit::Application.routes.draw do
   match '/all_agents' => 'agents#list'
   match '/chat/create_ticket' => 'chats#create_ticket', :method => :post
   match '/chat/add_note' => 'chats#add_note', :method => :post
-
-
-
+  match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
 
 
 

@@ -1,10 +1,14 @@
 class ImapMailbox < ActiveRecord::Base
 
+  include ObserverAfterCommitCallbacks
+
   belongs_to :email_config
 
   belongs_to_account
 
   attr_protected :account_id
+
+  self.primary_key = :id
 
   def selected_server_profile
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && server_name.casecmp("imap.#{server[4]}") == 0}

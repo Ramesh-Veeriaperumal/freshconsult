@@ -1,9 +1,12 @@
 class SupportScore < ActiveRecord::Base
 
+  self.primary_key = :id
   include Gamification::Scoreboard::Constants
   
 
-  after_commit :update_agents_score, on: [:create, :destroy]
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.update_agents_score }, on: :create
+  after_commit ->(obj) { obj.update_agents_score }, on: :destroy
 
   belongs_to :user
   has_one :agent, :through => :user

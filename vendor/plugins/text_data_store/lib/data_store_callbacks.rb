@@ -21,8 +21,8 @@ module DataStoreCallbacks
         after_update "update_#{class_name}_body"
         after_destroy "destroy_#{class_name}_body"
         after_rollback "handle_rollback_for_riak"
-        after_commit "push_to_resque_create", on: :create
-        after_commit "push_to_resque_update", on: :update
+        after_commit ->(obj) { obj.push_to_resque_create }, on: :create
+        after_commit ->(obj) { obj.push_to_resque_update }, on: :update
         after_commit "push_to_resque_destroy", on: :destroy
 
         def create_#{class_name}_body

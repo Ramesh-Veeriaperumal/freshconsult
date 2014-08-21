@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Helpdesk::Activity < ActiveRecord::Base
   self.table_name =  "helpdesk_activities"
+  self.primary_key = :id
   
   belongs_to_account
   

@@ -46,7 +46,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     before_save :set_account_id
 
-  attr_accessible :content
+  attr_accessible :content, :description
 
    def s3_permissions
     public_permissions? ? "public-read" : "private"

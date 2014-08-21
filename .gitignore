@@ -43,3 +43,7 @@ dump.rdb
 coverage/*
 coverage/**/*
 spec/fixtures/files/temp/*
+
+# RVM
+.ruby-gemset
+.ruby-version

@@ -71,7 +71,7 @@ class Workers::Supervisor
         puts "conditions::::::: #{conditions.inspect}"
         puts "negate_conditions::::#{negate_conditions.inspect}"
         joins  = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
-        tickets = Sharding.run_on_slave { account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
+        tickets = Sharding.run_on_slave { account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
         tickets.each do |ticket|
           begin
             rule.trigger_actions ticket
