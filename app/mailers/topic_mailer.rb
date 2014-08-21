@@ -14,9 +14,12 @@ class TopicMailer < ActionMailer::Base
     inline_attachments = []
     @topic  = topic
     @user   = user
-    @body_html = generate_body_html(topic.posts.first.body_html, inline_attachments, topic.account)
+    @body_html = generate_body_html(topic.posts.first.body_html, inline_attachments, topic.account, attachments)
     @host = host
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, topic.posts.first.body_html, topic.account)
+    end
 
     mail(headers) do |part|
       part.text { render "mailer/topic/monitor_email.text.plain" }

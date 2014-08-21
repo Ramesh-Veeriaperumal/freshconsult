@@ -174,7 +174,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return if meta?
       notable.subscriptions.each do |subscription|
         if subscription.user.id != user_id
-          Helpdesk::WatcherNotifier.send_later(notify_on_reply, 
+          Helpdesk::WatcherNotifier.send_later(:notify_on_reply, 
                                                 notable, subscription, self)
         end
       end

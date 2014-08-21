@@ -15,9 +15,13 @@ class PostMailer < ActionMailer::Base
     inline_attachments = []
     @post = post
     @user = user
-    @body_html = generate_body_html( post.body_html, inline_attachments, post.account )
+    @body_html = generate_body_html( post.body_html, inline_attachments, post.account, attachments)
     @host = host
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, post.body_html, post.account)
+    end
+    
     mail(headers) do |part|
       part.text do 
         render "mailer/post/monitor_email.text.plain"

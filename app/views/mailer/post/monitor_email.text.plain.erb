@@ -12,7 +12,7 @@ View Topic
 <%= discussions_topic_url(@post.topic.id, :host => @host) %>
 
 Reply
-<%= reply_discussions_topic_url(@post.topic.id, :host => @user.account.host, :anchor => 'reply-to-post') %>
+<%= reply_support_discussions_topic_url(@post.topic.id, :host => @user.account.host, :anchor => 'reply-to-post') %>
 
 Turn off reply notifications for this topic
 <%= toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @host) %>

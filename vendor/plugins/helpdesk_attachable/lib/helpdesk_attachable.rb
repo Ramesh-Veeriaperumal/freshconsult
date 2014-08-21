@@ -15,7 +15,7 @@ module HelpdeskAttachable
           :class_name => 'Helpdesk::Attachment',
           :dependent => :destroy do
             def build(args)
-              proxy_owner.validate_attachment_size(args)
+              proxy_association.owner.validate_attachment_size(args)
               super args
             end
         end

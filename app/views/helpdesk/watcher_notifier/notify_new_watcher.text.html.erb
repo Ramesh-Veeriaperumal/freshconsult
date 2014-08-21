@@ -30,7 +30,7 @@
 <%=@ticket.description_html.html_safe%> <br /> <br /> 
 ---------- ---------- ----------<br /><br />
 
-<a href='<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,
+<a href='<%=unsubscribe_helpdesk_ticket_subscriptions_url(@ticket,
                                                                 :host => @ticket.account.host)%>'>
     <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>
 </a> <br /> <br />

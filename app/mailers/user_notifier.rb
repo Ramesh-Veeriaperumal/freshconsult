@@ -2,19 +2,19 @@ require 'mailer_deliver_alias'
 class UserNotifier < ActionMailer::Base
 
   def user_activation(user, params, reply_email_config)
-    self.mailbox= reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
     @subject = params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])
   end
 
   def email_activation(email_id, params, reply_email_config)
-    self.mailbox= reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
     @subject = params[:subject]
     send_the_mail(email_id, params[:email_body], params[:reply_email])
   end
 
   def password_reset_instructions(user, params, reply_email_config)  
-    self.mailbox= reply_email_config.smtp_mailbox  
+    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox  
     @subject = params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])
   end

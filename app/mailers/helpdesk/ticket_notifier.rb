@@ -73,7 +73,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
    
   def email_notification(params)
-    self.mailbox=  params[:ticket].reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
     
     headers = {
       :subject                   => params[:subject],
@@ -99,17 +99,21 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
                             params[:notification_type], params[:ticket]
                           )
-    @body_html           = generate_body_html(
-                            params[:email_body_html], inline_attachments, params[:ticket].account
-                          )
+    @body_html           = generate_body_html(params[:email_body_html], 
+                                              inline_attachments, 
+                                              params[:ticket].account,
+                                              attachments)
     
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
+    end
+
     params[:attachments].each do |a|
       attachments[a.content_file_name] = {
         :mime_type => a.content_content_type,
         :content => File.read(a.content.to_file.path, :mode => "rb")
-      }
-    end
+      } 
+    end if params[:attachments].present?
 
     mail(headers) do |part|
       part.text { render "email_notification.text.plain" }
@@ -119,7 +123,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply(ticket, note , options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    self.mailbox=  email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
 
     options = {} unless options.is_a?(Hash) 
     
@@ -139,22 +143,25 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     inline_attachments = []
 
-    @ticket = ticket, 
     @body = note.full_text
-    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account)
+    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
     @note = note, 
     @dropboxes = note.dropboxes, 
     @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey]),
     @include_quoted_text = options[:quoted_text],
-    @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
+    @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user),
+    @ticket = ticket
 
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, note.full_text_html, note.account)
+    end
     note.all_attachments.each do |a|
       attachments[a.content_file_name] = {
         :mime_type => a.content_content_type, 
         :content => File.read(a.content.to_file.path, :mode => "rb")
       }
     end
+
     mail(headers) do |part|
       part.text { render "reply.text.plain" }
       part.html { render "reply.text.html" }
@@ -163,7 +170,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def forward(ticket, note, options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    self.mailbox=  email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
     
     headers = {
       :subject                                => fwd_formatted_subject(ticket),
@@ -182,9 +189,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket
     @body = note.full_text
     @dropboxes= note.dropboxes
-    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account)
+    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
 
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, note.full_text_html, note.account)
+    end
     self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
       note.all_attachments.each do |a|
         attachments[a.content_file_name] = {
@@ -200,12 +209,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def send_cc_email(ticket,options={})
-    self.mailbox=  ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
 
     headers = {
       :subject                        => formatted_subject(ticket),
       :from                           => ticket.friendly_reply_email,
-      :sent_on                        => Timw.now,
+      :sent_on                        => Time.now,
       "Reply-to"                      => "#{ticket.friendly_reply_email}", 
       "Auto-Submitted"                => "auto-generated", 
       "X-Auto-Response-Suppress"      => "DR, RN, OOF, AutoReply", 
@@ -218,9 +227,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket 
     @body = ticket.description
     @dropboxes = ticket.dropboxes
-    @body_html = generate_body_html(ticket.description_html, inline_attachments, ticket.account)
+    @body_html = generate_body_html(ticket.description_html, inline_attachments, ticket.account, attachments)
 
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, ticket.description_html, ticket.account)
+    end
 
     self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
       ticket.attachments.each do |a|
@@ -240,7 +251,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
 
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    self.mailbox=  email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
 
     headers = {
       :subject                        => formatted_subject(ticket),
@@ -253,9 +264,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       "References"                    => generate_email_references(ticket)
     }
 
-    @ticket = ticket, @note = note , @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host)
-    @body_html = generate_body_html(note.body_html, inline_attachments, note.account)
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    @note = note , @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host)
+    @body_html = generate_body_html(note.body_html, inline_attachments, note.account, attachments)
+    @ticket = ticket
+    
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, note.body_html, note.account)
+    end
 
     mail(headers) do |part|
       part.text { render "notify_comment.text.plain" }
@@ -264,7 +279,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
-    self.mailbox=  ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
     
     headers   = {
       :subject                      => (sub.blank? ? formatted_subject(ticket) : sub),
@@ -278,9 +293,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content, inline_attachments, ticket.account)
+    @body_html = generate_body_html(content, inline_attachments, ticket.account, attachments)
 
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, content, ticket.account)
+    end
+
     mail(headers) do |part|
       part.text { @body }
       part.html { @body_html }
@@ -288,7 +306,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def internal_email(ticket, receips, content, sub=nil)
-    self.mailbox=  ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
     
     headers     =  {
       :subject                        => (sub.blank? ? formatted_subject(ticket) : sub),
@@ -302,9 +320,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content, inline_attachments, ticket.account)
+    @body_html = generate_body_html(content, inline_attachments, ticket.account, attachments)
 
-    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, content, ticket.account)
+    end
 
     mail(headers) do |part|
       part.text { @body }

@@ -183,35 +183,37 @@ end
 # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
 # (fix_params.rb)
 
-module ActionController
-  class Request
-    private
 
-      # Convert nested Hashs to HashWithIndifferentAccess and replace
-      # file upload hashs with UploadedFile objects
-      def normalize_parameters(value)
-        case value
-        when Hash
-          if value.has_key?(:tempfile)
-            upload = value[:tempfile]
-            upload.extend(UploadedFile)
-            upload.original_path = normalize_parameters(value[:filename])
-            upload.content_type = value[:type]
-            upload
-          else
-            h = {}
-            value.each { |k, v| h[normalize_parameters(k.dup)] = normalize_parameters(v) }
-            h.with_indifferent_access
-          end
-        when Array
-          value.map { |e| normalize_parameters(e) }
-        else
-          value.force_encoding(Encoding::UTF_8) if value.respond_to?(:force_encoding)
-          value
-        end
-      end
-  end
-end
+# TODO-RAILS3 - need to force-encode attachment file's name to UTF-8
+# module ActionController
+#   class Request
+#     private
+
+#       # Convert nested Hashs to HashWithIndifferentAccess and replace
+#       # file upload hashs with UploadedFile objects
+#       def normalize_parameters(value)
+#         case value
+#         when Hash
+#           if value.has_key?(:tempfile)
+#             upload = value[:tempfile]
+#             upload.extend(UploadedFile)
+#             upload.original_path = normalize_parameters(value[:filename])
+#             upload.content_type = value[:type]
+#             upload
+#           else
+#             h = {}
+#             value.each { |k, v| h[normalize_parameters(k.dup)] = normalize_parameters(v) }
+#             h.with_indifferent_access
+#           end
+#         when Array
+#           value.map { |e| normalize_parameters(e) }
+#         else
+#           value.force_encoding(Encoding::UTF_8) if value.respond_to?(:force_encoding)
+#           value
+#         end
+#       end
+#   end
+# end
 
 
 #

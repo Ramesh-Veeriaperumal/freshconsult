@@ -30,7 +30,7 @@ class Admin::ChatSettingController < Admin::AdminController
       :cc => current_account.admin_email,
       :message => "A customer with the following account URL has requested for Freshchat"
     }
-    FreshchatNotifier.send_later(:deliver_freshchat_email_template, current_account, email_params)
+    FreshchatNotifier.send_later(:freshchat_email_template, current_account, email_params)
     render :json => { :status => :success }
   end 
 

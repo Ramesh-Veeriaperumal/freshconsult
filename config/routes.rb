@@ -1253,7 +1253,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match 'discussions/:object/:id/subscriptions/:type.:format' => 'monitorships#toggle', :as => :toggle_monitorship, :method => :post
+  match 'discussions/:object/:id/subscriptions/:type(.:form)' => 'monitorships#toggle', :as => :toggle_monitorship, :method => :post
   match '/support/theme.:format' => 'theme/support#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
   namespace :support do

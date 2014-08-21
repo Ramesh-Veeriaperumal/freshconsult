@@ -31,6 +31,7 @@ class SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket, send_while) if send_while
   end
   
+  # Method moved to helper
   def survey_url(ticket, rating)
     support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
       :host => ticket.portal_host)

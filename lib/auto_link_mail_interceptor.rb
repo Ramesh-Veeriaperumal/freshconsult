@@ -5,8 +5,8 @@ class AutoLinkMailInterceptor
 
   def self.delivering_email(mail)
     Rails.logger.debug "auto_linking mail #{mail.inspect}!"
-    ActionMailer::Base.reset_smtp_settings
-    ActionMailer::Base.set_smtp_settings
+    ActionMailer::Base.reset_smtp_settings(mail)
+    ActionMailer::Base.set_smtp_settings(mail)
     auto_link_mail(mail)
   end
 
