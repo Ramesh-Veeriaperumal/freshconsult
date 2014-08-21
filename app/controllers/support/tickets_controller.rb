@@ -95,10 +95,14 @@ class Support::TicketsController < SupportController
 
   def add_people
     cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
-    @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
-    update_reply_cc @ticket.cc_email, @old_cc_hash
-    @ticket.save
-    flash[:notice] = "Email(s) successfully added to CC."
+    if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
+      @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
+      update_reply_cc @ticket.cc_email, @old_cc_hash
+      @ticket.save
+      flash[:notice] = "Email(s) successfully added to CC."
+    else
+      flash[:error] = "You can add upto #{TicketConstants::MAX_EMAIL_COUNT} CC emails"
+    end
     redirect_to support_ticket_path(@ticket)
   end  
 
