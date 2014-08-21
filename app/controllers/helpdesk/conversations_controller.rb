@@ -40,8 +40,7 @@ class Helpdesk::ConversationsController < ApplicationController
       flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
-      flash[:error] = @item.errors.full_messages.to_sentence 
-      create_error(:reply)
+      create_error
     end
   end
   
@@ -52,8 +51,7 @@ class Helpdesk::ConversationsController < ApplicationController
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
-      flash[:error] = @item.errors.full_messages.to_sentence 
-      create_error(:fwd)
+      create_error
     end
   end
 
@@ -64,7 +62,7 @@ class Helpdesk::ConversationsController < ApplicationController
       process_and_redirect
     else
       flash_message "failure"
-      create_error(:note)
+      create_error
     end
   end
 
@@ -79,8 +77,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
       process_and_redirect
     else
-      flash[:error] = "failure"
-      create_error(:twitter)
+      create_error
     end
   end
 
@@ -89,9 +86,7 @@ class Helpdesk::ConversationsController < ApplicationController
       send_facebook_reply
       process_and_redirect
     else
-      # Flash here
-      flash[:error] = "failure"
-      create_error(:facebook)
+      create_error
     end
   end
   
@@ -181,11 +176,8 @@ class Helpdesk::ConversationsController < ApplicationController
         Thread.current[:notifications] = nil
     end
 
-    def create_error(note_type = nil)
-      respond_to do |format|
-        format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
-        format.html { redirect_to @parent }
-      end
+    def create_error
+      redirect_to @parent
     end
     
     private
