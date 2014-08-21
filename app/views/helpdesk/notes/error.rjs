@@ -1,0 +1,7 @@
+button = 'null'
+if note_type == :facebook || note_type == :twitter 
+	note_type = :reply
+	button = "jQuery('#ReplyButton')"
+end
+show_ajax_flash(page)
+page << "setTimeout(function(){swapEmailNote('cnt-#{note_type}', #{button})}, 500);" if note_type

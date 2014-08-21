@@ -1,7 +1,7 @@
 (function($) {
 
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
-
+var MAX_EMAILS = 20;
 // ----- SAVING REPLIES AS DRAFTS -------- //
 save_draft = function(content) {
 	if ($.trim(content) != '') {
@@ -782,6 +782,21 @@ var scrollToError = function(){
 					alert('No email addresses found');
 					return false;
 				}
+			}
+			if (_form.find('input[name="helpdesk_note[to_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' TO emails');
+				return false;
+			}
+
+			if (_form.find('input[name="helpdesk_note[cc_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' CC emails');
+				return false;
+			}
+
+
+			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
+				return false;
 			}
 
 			_form.find('input[type=submit]').prop('disabled', true);

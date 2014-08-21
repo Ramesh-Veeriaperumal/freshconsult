@@ -18,4 +18,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  validate_on_create do |ticket|
+    if (ticket.cc_email && ticket.cc_email[:cc_emails] && 
+      ticket.cc_email[:cc_emails].count >= TicketConstants::MAX_EMAIL_COUNT)
+      Rails.logger.debug "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket" 
+      ticket.errors.add_to_base("You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket")
+    end
+  end
+
 end

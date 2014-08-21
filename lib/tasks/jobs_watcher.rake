@@ -19,7 +19,9 @@ QUEUE_WATCHER_RULE = {
         "update_ticket_states_queue" => 5000,
         "premium_supervisor_worker" => 5000,
         "es_index_queue" => 10000,
-        "sla_worker" => 25000
+        "sla_worker" => 25000,
+        "free_sla_worker" => 25000,
+        "trail_sla_worker" => 25000,
     } ,
     :except => ["supervisor_worker"]
 }
