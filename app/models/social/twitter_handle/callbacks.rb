@@ -9,7 +9,6 @@ class Social::TwitterHandle < ActiveRecord::Base
   before_create :set_default_threaded_time
   after_commit :clear_cache
   after_commit :construct_avatar, :populate_streams, :clear_handles_cache, on: :create
-  after_commit :update_streams, on: :update
   after_commit :cleanup, :clear_handles_cache, on: :destroy
 
   def construct_avatar
@@ -23,7 +22,6 @@ class Social::TwitterHandle < ActiveRecord::Base
   def populate_streams
     if account.active?
       build_default_streams
-      build_custom_streams unless account.features?(:social_revamp)
     end
   end
 
@@ -109,22 +107,4 @@ class Social::TwitterHandle < ActiveRecord::Base
       @custom_previous_changes = changes
     end
 
-    def update_streams
-      return if account.features?(:social_revamp) || previous_changes["search_keys"].nil?
-      streams = twitter_streams
-      unless streams.empty?
-        old_search_keys = previous_changes["search_keys"][0]
-        remove_keywords = old_search_keys - search_keys
-        remove_keywords.each do |remove_keyword|
-          stream = find_custom_stream(remove_keyword)
-          stream.destroy unless stream.nil?
-        end
-
-        add_keywords = search_keys - old_search_keys
-        add_keywords.each do |add_keyword|
-          stream = build_stream(add_keyword, STREAM_TYPE[:custom], false, add_keyword)
-          stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]) if (stream and !stream.default_stream?)
-        end
-      end
-    end
 end

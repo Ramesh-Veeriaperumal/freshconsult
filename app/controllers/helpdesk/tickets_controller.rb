@@ -637,7 +637,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     @item.product ||= current_portal.product
     cc_emails = fetch_valid_emails(params[:cc_emails])
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
+
+    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup}
+    
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
@@ -841,8 +844,7 @@ class Helpdesk::TicketsController < ApplicationController
       if @ticket_notes.blank?
         @to_cc_emails = @ticket.reply_to_all_emails
       else
-        cc_email_hash = @ticket.cc_email_hash
-        @to_cc_emails = cc_email_hash && cc_email_hash[:cc_emails] ? cc_email_hash[:cc_emails] : []
+        @to_cc_emails = @ticket.current_cc_emails
       end
     end
 

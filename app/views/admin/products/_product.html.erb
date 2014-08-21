@@ -49,9 +49,7 @@
     <% product.twitter_handles.each do |twitter_handle| %>
         <div class="channel-text">
           <span class='product-twitter'></span>
-          <% link = current_account.features?(:social_revamp) ? edit_admin_social_twitter_stream_path(twitter_handle.default_stream) :           edit_social_twitter_path(twitter_handle) %>
-          <%= link_to("@#{twitter_handle.screen_name}", link,
-            :title => t(".edit_twitter_account", :screen_name => twitter_handle.screen_name )) %>
+          <%= link_to("@#{twitter_handle.screen_name}", edit_admin_social_twitter_stream_path(twitter_handle.default_stream), :title => t(".edit_twitter_account", :screen_name => twitter_handle.screen_name )) %>
         </div>
       <% end %>
       <% product.facebook_pages.each do |facebook_page| %>

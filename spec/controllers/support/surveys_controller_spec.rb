@@ -27,6 +27,21 @@ describe Support::SurveysController do
     s_result.rating.should be_eql(rating_type)
   end
 
+  it "should delete a previous survey result and create a new survey handle" do 
+    ticket = create_ticket({ :status => 2 }, @group)
+    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+    note.save_note
+    send_while = rand(1..4)
+    s_handle = create_survey_handle(ticket, send_while, note)
+    s_handle.create_survey_result Survey::CUSTOMER_RATINGS[1]
+    s_handle.update_attributes(:rated => false)
+
+    get :new, :survey_code => s_handle.id_token, :rating => Survey::CUSTOMER_RATINGS[2]
+    s_result = SurveyHandle.find(s_handle.id).survey_result
+    s_result.should be_an_instance_of(SurveyResult)
+    s_result.rating.should be_eql(2)
+  end
+
   it "should create a new survey remark" do
     ticket = create_ticket({ :status => 2 }, @group)
     note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})

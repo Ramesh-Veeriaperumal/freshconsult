@@ -125,7 +125,6 @@ describe Social::TwitterHandle do
     end
   end
 
-
   it "should add custom streams if its search_keys are updated" do
     RSpec.configuration.account.features.send(:social_revamp).destroy if RSpec.configuration.account.features?(:social_revamp)
     new_keys = ["freshservice", "freshchat"]

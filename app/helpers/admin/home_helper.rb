@@ -10,14 +10,15 @@ module Admin::HomeHelper
       },
       :freshchat                       =>   {
         :url                           =>   "/admin/chat_setting",
-        :privilege                     =>   privilege?(:admin_tasks) && is_chat_plan? 
+        :privilege                     =>   privilege?(:admin_tasks) && (current_account.subscription.is_chat_plan? || 
+                                                                                    current_account.features?(:chat))
       },
       :freshfone                       =>   {
         :url                           =>   "/admin/freshfone",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :"twitter"               =>   {
-        :url                           =>   (feature?(:social_revamp) ? "/admin/social/streams" : "/social/twitters"),
+      :"twitter"                       =>   {
+        :url                           =>   "/admin/social/streams",
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   {

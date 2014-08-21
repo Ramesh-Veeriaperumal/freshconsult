@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #http://signalvnoise.com/posts/2742-the-road-to-faster-tests
 module PerfHelper
 

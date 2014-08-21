@@ -98,6 +98,7 @@ class Discussions::PostsController < ApplicationController
 
 		@post.user ||= current_user
 		@post.account_id = current_account.id
+		@post.portal = current_portal.id
 		build_attachments
 		@post.save!
 	end

@@ -50,8 +50,7 @@ class Reports::AgentsAnalysisController < ApplicationController
     render :pdf => @report_title,
       :layout => 'report/agent_analysis_pdf.html.erb', # uses views/layouts/pdf.haml
       :show_as_html => params[:debug].present?, # renders html version if you set debug=true in URL
-      :template => 'sections/generate_report_pdf.pdf.erb',
-      :encoding => 'utf-8'
+      :template => 'sections/generate_report_pdf.pdf.erb'
   end
 
   def send_report_email

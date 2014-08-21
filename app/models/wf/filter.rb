@@ -72,11 +72,11 @@ class Wf::Filter < ActiveRecord::Base
   #############################################################################
   # Defaults 
   #############################################################################
-  def show_export_options?
+  def show_export_options? #partial - conditions.html.erb does not seem to be used anywhere in the app now
     Wf::Config.exporting_enabled?
   end
 
-  def show_save_options?
+  def show_save_options? #partial - conditions.html.erb does not seem to be used anywhere in the app now
     Wf::Config.saving_enabled?
   end
 
@@ -218,7 +218,7 @@ class Wf::Filter < ActiveRecord::Base
     @order_type ||= default_order_type
   end
 
-  def order_model
+  def order_model #doesn't seem to be used anywhere?
     @order_model ||= begin
       order_parts = order.split('.')
       if order_parts.size > 1
@@ -455,7 +455,7 @@ class Wf::Filter < ActiveRecord::Base
     params.merge(merge_params)
   end
   
-  def to_url_params
+  def to_url_params # only used in to_s
     params = []
     serialize_to_params.each do |name, value|
       params << "#{name.to_s}=#{ERB::Util.url_encode(value)}"
@@ -463,19 +463,19 @@ class Wf::Filter < ActiveRecord::Base
     params.join("&")
   end
   
-  def to_s
+  def to_s #used during initialize of the current class but it is not being called default to_s is being callled
     to_url_params
   end
   
   #############################################################################
   # allows to create a filter from params only
   #############################################################################
-  def self.deserialize_from_params(params)
+  def self.deserialize_from_params(params) # ask ranjith
     params[:wf_type] = self.name unless params[:wf_type]
     params[:wf_type].constantize.new(params[:wf_model]).deserialize_from_params(params)
   end
   
-  def deserialize_from_params(params)
+  def deserialize_from_params(params) #used in mobile - have to ask ranjith
     @conditions = []
     @match                = params[:wf_match]       || :all
     @key                  = params[:wf_key]         || self.id.to_s
@@ -602,7 +602,7 @@ class Wf::Filter < ActiveRecord::Base
     end
   end
   
-  def condition_models
+  def condition_models #used in the joins method below
     @condition_models ||= begin 
       models = [] 
       conditions.each do |condition|
@@ -618,7 +618,7 @@ class Wf::Filter < ActiveRecord::Base
     end  
   end
   
-  def debug_conditions(conds)
+  def debug_conditions(conds) # called in the below debug_sql_conditions
     all_conditions = []
     conds.each_with_index do |c, i|
       cond = ""
@@ -646,14 +646,14 @@ class Wf::Filter < ActiveRecord::Base
     all_conditions
   end
 
-  def debug_sql_conditions
+  def debug_sql_conditions # called in filter/_container.html.erb - called in will_filter lib/wf/helper_methods.rb
     debug_conditions(sql_conditions)
   end
 
   #############################################################################
   # Saved Filters 
   #############################################################################
-  def saved_filters(include_default = true)
+  def saved_filters(include_default = true) # used in wf/filter/_conditions.html.erb- not called anywhere, also config/wf/config.yml
     @saved_filters ||= begin
       filters = []
     
@@ -706,15 +706,15 @@ class Wf::Filter < ActiveRecord::Base
     load_filter!(default_filter_if_empty)
   end
   
-  def default_filters
+  def default_filters #called in the saved_filters
     []
   end
 
-  def default_filter_conditions(key)
+  def default_filter_conditions(key) # used in the below function load_default_filter - only return empty array?
     []
   end
   
-  def load_default_filter(key)
+  def load_default_filter(key) # not used - /helpdesk/tickets_controller.rb has one but it is using Helpdesk::Filters::CustomTicketFilter
     default_conditions = default_filter_conditions(key)
     return if default_conditions.nil? or default_conditions.empty?
     
@@ -728,13 +728,13 @@ class Wf::Filter < ActiveRecord::Base
     end
   end
   
-  def reset!
+  def reset! #only used in the below function load_fitler!
     remove_all
     @sql_conditions = nil
     @results = nil
   end
   
-  def load_filter!(key_or_id)
+  def load_filter!(key_or_id) # only used in the above function - handle_empty_filter
     reset!
     @key = key_or_id.to_s
     
@@ -749,7 +749,7 @@ class Wf::Filter < ActiveRecord::Base
   #############################################################################
   # Export Filter Data
   #############################################################################
-  def export_formats
+  def export_formats # used in a partial not included anywhere /wf/exporter/index.html.erb
     formats = []
     formats << ["-- Generic Formats --", -1]
     Wf::Config.default_export_formats.each do |frmt|
@@ -764,18 +764,18 @@ class Wf::Filter < ActiveRecord::Base
     formats
   end
 
-  def custom_format?
+  def custom_format? # used in controller  - controllers/wf/exporter_controller.rb does not seem to be called in the app
     custom_formats.each do |frmt|
       return true if frmt[1].to_sym == format
     end
     false
   end
   
-  def custom_formats
+  def custom_formats # only used by the above function export_formats
     []
   end
   
-  def process_custom_format
+  def process_custom_format # used in controller  - controllers/wf/exporter_controller.rb does not seem to be called in the app
     ""
   end
   
@@ -795,7 +795,7 @@ class Wf::Filter < ActiveRecord::Base
     end 
   end
   
-  def results
+  def results #overriden in the filters/custom_ticket_filter
     @results ||= begin
       handle_empty_filter! 
       recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => sql_conditions, :joins => joins)

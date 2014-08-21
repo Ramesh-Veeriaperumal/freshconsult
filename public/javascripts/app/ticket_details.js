@@ -133,6 +133,7 @@ swapEmailNote = function(formid, link){
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
 		$element.value = $(link).data('replytoHandle');
+		$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
 		//For all other reply forms using redactor.
@@ -799,8 +800,10 @@ var scrollToError = function(){
 					ev.preventDefault();
 					blockConversationForm(_form);
 					if(propertiesForm.data('updated')) {
-	      			submitNewConversation(_form, ev, submitTicketProperties);
-	      		}	
+		      			submitTicketProperties(function() {
+		      				submitNewConversation(_form, ev);
+		      			})
+		      		}	
 				} else {
 					ev.preventDefault();
 					scrollToError();

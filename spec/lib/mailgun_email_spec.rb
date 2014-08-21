@@ -56,6 +56,70 @@ describe Helpdesk::Email::Process do
 			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
   	end
 
+  	it "with multiple reply_to emails" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+  	end
+
+  	it "with multiple reply_to emails and cc with repetition" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			cc = a.last
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+			ticket.cc_email_hash[:cc_emails].should include(cc)
+			(ticket.cc_email_hash[:cc_emails].length - ticket.cc_email_hash[:cc_emails].uniq.length).should eql 0
+  	end
+
+  	it "with multiple reply_to emails and cc without repetition" do
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			cc = Faker::Internet.email
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql a.first
+			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
+			ticket.cc_email_hash[:cc_emails].should include(cc)
+			(ticket.cc_email_hash[:cc_emails].length - ticket.cc_email_hash[:cc_emails].uniq.length).should eql 0
+  	end
+
+  	it "with multiple reply_to emails without the feature" do
+  		@account.features.reply_to_based_tickets.destroy
+			a = []
+			5.times do
+				a << Faker::Internet.email
+			end
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			email["Reply-To"] = a.join(", ")
+			Helpdesk::Email::Process.new(email).perform
+			ticket = RSpec.configuration.account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql email[:from]
+			ticket.cc_email_hash[:cc_emails].should_not include(*a[1..-1])
+			@account.features.reply_to_based_tickets.create
+  	end
+
   	it "non Reply_to based" do
   		email = new_mailgun_email({:email_config => RSpec.configuration.account.primary_email_config.to_email})
   		@account.features.reply_to_based_tickets.destroy
@@ -208,6 +272,15 @@ describe Helpdesk::Email::Process do
 			email = new_mailgun_email({:email_config => RSpec.configuration.account.primary_email_config.to_email, :auto => true})
 			Helpdesk::Email::Process.new(email).perform
 			ticket_incremented?(@ticket_size)
+		end
+
+		it "with cc email" do
+			cc_email = Faker::Internet.email
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => cc_email})
+			Helpdesk::Email::Process.new(email).perform
+			ticket_incremented?(@ticket_size)
+			recent_ticket = @account.tickets.last
+			recent_ticket.cc_email_hash[:reply_cc].should eql recent_ticket.cc_email_hash[:cc_emails]
 		end
 
 	end
@@ -430,6 +503,7 @@ describe Helpdesk::Email::Process do
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+1
 			@account.tickets.last.cc_email_hash[:cc_emails].should include new_to_email
+			@account.tickets.last.cc_email_hash[:reply_cc].should include new_to_email
 		end
 
 		it "as reply from a CC email" do
@@ -446,6 +520,25 @@ describe Helpdesk::Email::Process do
 			Helpdesk::Email::Process.new(second_reply).perform
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+2
+		end
+
+		it "with cc removed from reply" do
+			email_id = Faker::Internet.email
+			cc_email = Faker::Internet.email
+			new_cc_email = Faker::Internet.email
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+			first_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => cc_email})
+			second_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_cc_email})
+			Helpdesk::Email::Process.new(email).perform
+			ticket = RSpec.configuration.account.tickets.last
+			first_reply["subject"] = first_reply["subject"]+" [##{ticket.display_id}]"
+			second_reply["subject"] = second_reply["subject"]+" [##{ticket.display_id}]"
+			Helpdesk::Email::Process.new(first_reply).perform
+			Helpdesk::Email::Process.new(second_reply).perform
+			ticket_incremented?(@ticket_size)
+			latest_ticket = @account.tickets.last
+			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
+			latest_ticket.cc_email_hash[:reply_cc].should_not include cc_email
 		end
 	end
 

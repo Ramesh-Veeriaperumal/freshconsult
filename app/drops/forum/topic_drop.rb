@@ -23,6 +23,10 @@ class Forum::TopicDrop < BaseDrop
     source.user_votes
   end
 
+  def views
+    source.hits
+  end
+
   def created_on
     source.created_at
   end

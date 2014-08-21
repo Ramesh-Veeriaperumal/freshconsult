@@ -22,8 +22,7 @@ FacebookTests = [
   "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
   "spec/lib/facebook/status_spec.rb",
-  "spec/controllers/social/facebook_pages_controller_spec.rb",
-  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb"
+  "spec/controllers/social/facebook_pages_controller_spec.rb"
 ]
 
 GnipTests = [
@@ -96,8 +95,8 @@ FreshfoneReportsTests = [
 ]  
 
 APITests = [ 
-  "spec/controllers/api/json/*_spec.rb",
-  "spec/controllers/api/xml/*_spec.rb"
+  "spec/controllers/api/json/**/*_spec.rb",
+  "spec/controllers/api/xml/**/*_spec.rb"
 ]
 
 ForumTests = [
@@ -139,13 +138,16 @@ HelpdeskTests = [
   "spec/lib/zen_import_redis_spec.rb",
   "spec/lib/detect_user_language_spec.rb",
   "spec/lib/contacts_import_worker_spec.rb",
-  "spec/controllers/solution_uploaded_images_controller_spec.rb"
+  "spec/controllers/solution_uploaded_images_controller_spec.rb",
+  "spec/controllers/contact_import_controller_spec.rb",
+  "spec/models/flexifield_spec.rb"
 ]    
 
 BillingTests = [
   "spec/controllers/subscriptions_controller_spec.rb",
   "spec/controllers/billing/billing_controller_spec.rb",
-  "spec/controllers/partner_admin/affiliates_controller_spec.rb"
+  "spec/controllers/partner_admin/affiliates_controller_spec.rb",
+  "spec/controllers/admin/day_passes_controller_spec.rb"
 ]       
 
 FunctionalTests = [
@@ -159,10 +161,16 @@ FunctionalTests = [
 MobileAppTests = [
   "spec/controllers/mobile/*_spec.rb"
 ]
+
+ChatTests = [
+  "spec/controllers/chats_controller_spec.rb",
+  "spec/controllers/admin/chat_setting_controller_spec.rb",
+  "spec/models/chat_setting_spec.rb"
+]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
               GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, 
-              XssTests, FreshfoneReportsTests ]
+              XssTests, FreshfoneReportsTests, ChatTests ]
 
 UnitTests.flatten!.uniq!
 
@@ -343,6 +351,14 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
   
     end
+
+    namespace :freshchat do
+      desc "Running all FreshChat Tests"
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ChatTests)
+      end
+    end    
 
     namespace :freshfone do
       desc "Running all Freshfone Testss"

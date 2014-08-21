@@ -37,7 +37,7 @@ class Product < ActiveRecord::Base
     enable_portal.eql? '1'
   end
   
-  def portal_attributes=(pt_attr)
+  def portal_attributes=(pt_attr) # Possible dead code
     unless portal
       if portal_enabled?
         build_portal

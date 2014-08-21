@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module TwitterHelper
   
   def create_test_twitter_handle(test_account=nil)

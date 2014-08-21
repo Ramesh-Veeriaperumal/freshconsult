@@ -161,7 +161,7 @@ describe Helpdesk::ConversationsController do
         actor_id = comment_feeds.first["from"]["id"]
         # stub the calls
         Social::FacebookPosts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(fql_feeds, [])
+        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(fql_feeds)
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feeds)
         Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:put_comment).returns(sample_put_comment)

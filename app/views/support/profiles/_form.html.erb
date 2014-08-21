@@ -33,7 +33,7 @@
 			<div id="avatar-edit" class="<%= (@profile.avatar) ? 'hide' : '' %>">
 				<%= fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
 					<div class="info-data"><%=t('user.info1')%></div>
-					<%= avatar_form.file_field :content, :size => "12" %>				
+					<%= avatar_form.file_field :content, :size => "12", :class => "validate_image", :accept => 'image/*'  %>				
 				<% end %>
 			</div>
 			<br />

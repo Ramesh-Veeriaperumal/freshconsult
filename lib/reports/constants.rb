@@ -185,7 +185,8 @@ module Reports
       :agent_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85337-how-to-read-agent-at-a-glance-report',
       :group_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85338-how-to-read-group-at-a-glance-report',
       :helpdesk_peformance_analysis => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85343-how-to-read-helpdesk-performance-analysis-report',
-      :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report'    
+      :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report',
+      :freshfone_summary            => 'https://support.freshdesk.com/solution/categories/157866/folders/267839/articles/197502-freshfone-call-summary'
     }
 
     REPORTS_GLANCE_TICKET_VIEW = {

@@ -29,13 +29,12 @@ describe Admin::SurveysController do
     happy_text = Faker::Lorem.sentence
     neutral_text = Faker::Lorem.sentence
     unhappy_text = Faker::Lorem.sentence
-    send_while = rand(1..4)
     put :update, :id => "update", :survey => {  
                                                 :link_text => link_text, 
                                                 :happy_text => happy_text, 
                                                 :neutral_text => neutral_text, 
                                                 :unhappy_text => unhappy_text, 
-                                                :send_while => send_while
+                                                :send_while => 1
                                               }
     survey = RSpec.configuration.account.survey
     survey.link_text.should be_eql(link_text)
@@ -43,5 +42,20 @@ describe Admin::SurveysController do
     survey.neutral_text.should be_eql(neutral_text)
     survey.unhappy_text.should be_eql(unhappy_text)
     survey.send_while.should be_eql(send_while)
+  end
+
+  it "should create a new ticket and send notification emails with a survey" do
+    Delayed::Job.destroy_all
+    test_ticket = create_ticket
+    notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+    notification.update_attributes(:requester_notification => false)
+    create_note({:source => 0,
+                 :ticket_id => test_ticket.id,
+                 :body => Faker::Lorem.paragraph,
+                 :user_id => @agent.id,
+                 :private => false, 
+                 :incoming => false})
+    10.times do Delayed::Job.reserve_and_run_one_job end
+    Delayed::Job.count.should eql 0
   end
 end

@@ -18,6 +18,12 @@ if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment)
 }
 
 
+// Fix for the ticket #3719. Element name contains square braces which doesnt escape during pattern matching. 
+// So name is made to return only when id is not present.
+jQuery.validator.prototype.idOrName = function( element ) {
+    return this.groups[ element.name ] || ( element.id || element.name );
+}
+
 // ref http://stackoverflow.com/questions/1225102/jquery-event-to-trigger-action-when-a-div-is-made-visible
 // !PULP move this into the pulp framework later
 // @venom
@@ -52,3 +58,27 @@ if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment)
 //     });
 // });
 
+//Resolve the conflict between Bootstrap and PrototypeJS
+// http://www.softec.lu/site/DevelopersCorner/BootstrapPrototypeConflict
+jQuery.noConflict();
+if (Prototype.BrowserFeatures.ElementExtensions) {
+    var disablePrototypeJS = function (method, pluginsToDisable) {
+            var handler = function (event) {
+                event.target[method] = undefined;
+                setTimeout(function () {
+                    delete event.target[method];
+                }, 0);
+            };
+            pluginsToDisable.each(function (plugin) { 
+                jQuery(window).on(method + '.bs.' + plugin, handler);
+            });
+        },
+        pluginsToDisable = ['collapse', 'dropdown', 'modal', 'tooltip'];
+    disablePrototypeJS('show', pluginsToDisable);
+    disablePrototypeJS('hide', pluginsToDisable);
+}
+jQuery(document).ready(function ($) {
+    $('.bs-example-tooltips').children().each(function () {
+        $(this).tooltip();
+    });
+});

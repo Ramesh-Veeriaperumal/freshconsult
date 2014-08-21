@@ -356,4 +356,52 @@ describe TicketFieldsController do
     data_xml = Hash.from_trusted_xml(response.body)
     (data_xml['helpdesk_ticket_fields'][0]['label_in_portal']).should be_eql("Requester")
   end
+
+  it "should delete a custom status" do
+    Delayed::Job.destroy_all
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}.merge!({:action => "edit", :type => "dropdown"})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].push({
+                                                                            :status_id => 0,
+                                                                            :name => "test delete",
+                                                                            :customer_display_name => "test delete",
+                                                                            :stop_sla_timer => false,
+                                                                            :deleted => false})
+    put :update, :jsonData => @default_fields.to_json
+    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.map{|f_d| f_d.delete(:level_three_present)}
+    new_status_id = @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:status_id]
+    tkt = create_ticket({:status => new_status_id})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}.merge!({:action => "edit", :type => "dropdown"})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last.merge!(:deleted => true)
+    put :update, :jsonData => @default_fields.to_json
+    Delayed::Job.work_off(5)
+    Delayed::Job.count.should eql 0
+    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.map{|f_d| f_d.delete(:level_three_present)}
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:deleted].should be_false
+  end
+
+  it "should edit a custom status" do
+    Delayed::Job.destroy_all
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}.merge!({:action => "edit", :type => "dropdown"})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].push({
+                                                                            :status_id => 0,
+                                                                            :name => "test edit",
+                                                                            :customer_display_name => "test edit",
+                                                                            :stop_sla_timer => true,
+                                                                            :deleted => false})
+    put :update, :jsonData => @default_fields.to_json
+    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.map{|f_d| f_d.delete(:level_three_present)}
+    new_status_id = @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:status_id]
+    tkt = create_ticket({:status => new_status_id})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}.merge!({:action => "edit", :type => "dropdown"})
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last.merge!(:stop_sla_timer => false)
+    put :update, :jsonData => @default_fields.to_json
+    Delayed::Job.work_off(5)
+    Delayed::Job.count.should eql 0
+    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.map{|f_d| f_d.delete(:level_three_present)}
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:stop_sla_timer].should be_false
+  end
 end

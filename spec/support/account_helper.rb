@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module AccountHelper
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
@@ -48,9 +46,13 @@ module AccountHelper
   end
 
   def create_dummy_customer
-    @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+    @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL", :limit => 1).first
+
+    if @customer.nil?
+      @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    @customer.save
+      @customer.save
+    end
     @customer
   end
 

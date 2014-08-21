@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module ApplicationsHelper
 
 	def redis_key(provider)

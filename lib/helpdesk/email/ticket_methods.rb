@@ -45,7 +45,8 @@ module Helpdesk::Email::TicketMethods
   end
 
   def hash_cc_emails
-    {:cc_emails => email[:cc], :fwd_emails => []}
+    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+    {:cc_emails => email[:cc], :fwd_emails => [], :reply_cc => email[:cc].dup}
   end
 
   def check_valid_ticket

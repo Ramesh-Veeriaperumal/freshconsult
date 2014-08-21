@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module UsersHelper
   def add_test_agent(account=nil, options={})
     role_id = options[:role].nil? ? account.roles.find_by_name("Account Administrator").id : options[:role]

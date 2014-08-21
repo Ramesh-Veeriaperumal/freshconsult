@@ -98,13 +98,13 @@ module Freshfone::Jobs
 			end
 
 			def self.set_status_voicemail     
- 				@call.update_status({:DialCallStatus => Freshfone::Call::CALL_STATUS_HASH[:voicemail]})
+ 				@call.update_status({:DialCallStatus => "voicemail"})
  				@call.save
  			end
 
 			def self.create_voicemail_ticket(args)
 				set_current_call(@call)
-				voicmail_ticket(args)
+				voicmail_ticket(args) if @call.ticket.blank?
 			end
 
 			def self.release_data

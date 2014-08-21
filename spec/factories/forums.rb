@@ -24,7 +24,7 @@ if Rails.env.test?
     factory :ticket_topic do
     end
 
-    factory :monitorship, :class => Monitorship do |m|
+    factory :monitorship do
     end
   end
 end

@@ -51,7 +51,7 @@ class Post < ActiveRecord::Base
     :spam => :unpublished_spam,
     :waiting => :waiting_for_approval
   }
-  attr_accessor :request_params
+  attr_accessor :request_params, :portal
 
   def to_xml(options = {})
     options[:except] ||= []

@@ -5,6 +5,14 @@ describe Helpdesk::NotesController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  before(:all) do
+    @test_ticket = create_ticket({:status => 2 })
+    @ticket_note = create_note({:source => @test_ticket.source,
+                               :ticket_id => @test_ticket.id,
+                               :body => Faker::Lorem.paragraph,
+                               :user_id => @agent.id})
+  end
+
   before(:each) do
     log_in(@agent)
   end
@@ -75,13 +83,27 @@ describe Helpdesk::NotesController do
                                :user_id => RSpec.configuration.agent.id})
 
     updated_note_body = "Edited Note - #{Faker::Lorem.paragraph}"
-    post :update, :helpdesk_note => {:source => test_ticket.source,
+    post :update, :helpdesk_note => {:source => @test_ticket.source,
                                     :note_body_attributes => { :body_html => updated_note_body,
-                                                               :id => ticket_note.id}},
-                                    :id => ticket_note.id,
-                                    :ticket_id => test_ticket.display_id
-    flash[:notice].should be_eql("The note has been updated.")
-    test_ticket.notes.last.body.should be_eql(updated_note_body)
+                                                               :id => @ticket_note.id}},
+                                    :id => @ticket_note.id,
+                                    :ticket_id => @test_ticket.display_id
+    @test_ticket.reload
+    flash[:notice].should eql("The note has been updated.")
+    @test_ticket.notes.last.body.should eql(updated_note_body)
+  end
+
+  it "should not update a note without source or ID" do
+    now = (Time.now.to_f*1000).to_i
+    updated_note_body = "#{now} - Edited Note - #{Faker::Lorem.paragraph}"
+    post :update, :helpdesk_note => {:source => "",
+                                    :note_body_attributes => { :body_html => updated_note_body,
+                                                               :id => ""}},
+                                    :id => @ticket_note.id,
+                                    :ticket_id => @test_ticket.display_id
+    @test_ticket.reload
+    response.should render_template "helpdesk/notes/edit.html.erb"
+    @test_ticket.notes.last.body.should_not eql(updated_note_body)
   end
 
   it "should destroy a note " do
@@ -94,6 +116,30 @@ describe Helpdesk::NotesController do
     test_ticket.notes.last.body.should be_eql(body)
     post :destroy, :id => ticket_note.id, :ticket_id => test_ticket.display_id
     test_ticket.notes.last.deleted.should be_eql(true)
+  end
+
+  it "should destroy a note - Mobile format" do
+    ticket_note = create_note({:source => @test_ticket.source,
+                               :ticket_id => @test_ticket.id,
+                               :body => Faker::Lorem.paragraph,
+                               :user_id => @agent.id})
+    @test_ticket.notes.last.deleted.should eql(false)
+    post :destroy, :id => ticket_note.id, :ticket_id => @test_ticket.display_id, :format => 'mobile'
+    @test_ticket.reload
+    result = JSON.parse(response.body)
+    result["success"].should be_true
+    @test_ticket.notes.last.deleted.should eql(true)
+  end
+
+  it "should destroy a note - Js format" do
+    ticket_note = create_note({:source => @test_ticket.source,
+                               :ticket_id => @test_ticket.id,
+                               :body => Faker::Lorem.paragraph,
+                               :user_id => @agent.id})
+    @test_ticket.notes.last.deleted.should eql(false)
+    post :destroy, :id => ticket_note.id, :ticket_id => @test_ticket.display_id, :format => 'js'
+    @test_ticket.reload
+    @test_ticket.notes.last.deleted.should eql(true)
   end
 
   it "should add a KBase article of ticket" do
@@ -142,6 +188,6 @@ describe Helpdesk::NotesController do
                    :showing => "notes"
                  } 
     topic.reload
-    topic.last_post.body.strip.should be_eql(body)
+    topic.last_post.body.strip.should eql(body)
   end
 end

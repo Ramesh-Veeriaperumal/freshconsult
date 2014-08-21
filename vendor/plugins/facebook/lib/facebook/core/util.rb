@@ -77,11 +77,11 @@ module Facebook::Core::Util
     if fb_page
       if @parent.is_fb_message?
         unless Facebook::Core::Message.new(fb_page).send_reply(@parent, @item)
-          return flash[:notice] = fb_page.last_error
+          return flash[:notice] = t(:'facebook.error_on_reply_fb')
         end
       else
         unless Facebook::Core::Comment.new(fb_page).send_reply(@parent, @item)
-          return flash[:notice] = fb_page.last_error
+          return flash[:notice] = t(:'facebook.error_on_reply_fb')
         end
       end
       flash[:notice] = t(:'flash.tickets.reply.success')

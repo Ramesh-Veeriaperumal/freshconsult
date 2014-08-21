@@ -120,7 +120,7 @@ en:
   myself: "Myself"
   meta:
    language_name: 'English'
-  one_time_password_instructions: "Hello, You one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
+  one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
@@ -460,6 +460,7 @@ en:
   portal_meta:
     titles:
       portal_home: "Support"
+      password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
       forgot_password: "Forgot password"
@@ -953,7 +954,6 @@ en:
         title: Supervisor - Edit Rule
       clone_rule:
         title: Supervisor - Clone Rule
-        clone_of: This Supervisor is a clone of
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
@@ -979,7 +979,6 @@ en:
         title: Observer - Edit Rule
       clone_rule:
         title: Observer - Clone Rule
-        clone_of: This Observer is a clone of
       add_new_event: Add new event
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
@@ -1048,7 +1047,6 @@ en:
         title: Edit Scenario
       clone_rule:
         title: Clone Scenario
-        clone_of: This Scenario is a clone of
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
@@ -2054,6 +2052,7 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
+  utf_8_format: The file has to be in UTF-8 format.
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -2142,7 +2141,6 @@ en:
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
-    clone_of: This Dispatch'r is a clone of
     copy_of: Copy of
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
@@ -2153,7 +2151,7 @@ en:
     event_note: When <b>Any</b> of these events occur
     condition_note: With the following conditions
     action_note: Perform these actions
-    info3: When a ticket satisfies these condtions
+    info3: When a ticket satisfies these conditions
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
@@ -2720,8 +2718,8 @@ en:
     free_plan_currency_note: "When you upgrade or add agents, your payment will be in "
   activate: Activate
   feedbackwidget_button_text: Label
-  billed_amount_per_month: You will be billed <b>%{amount} %{period}</b>.
-  billed_amount_annually: You will be billed <b>%{amount} annually</b>.
+  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.
+  amount_billed_annually: You will be billed <b>%{amount} annually</b>.
   currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
@@ -3249,6 +3247,7 @@ en:
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
+    error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
@@ -3359,6 +3358,9 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    quoted_text:
+      wrote_on: 'On'
+      wrote: wrote
     add_time: Add time
     support:
       reply: "Reply"
@@ -4032,6 +4034,7 @@ en:
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
            not_added: (Not Added)
+           not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
     merge:
       merge:
@@ -4803,6 +4806,7 @@ en:
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        includes_transfer: "Note: Call count includes transferred calls"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -5379,6 +5383,7 @@ en:
       canceled: "Canceled"
       failed: "Failed"
       in_progress: "In progress"
+      voicemail: "Voicemail"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
       suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"
@@ -5595,7 +5600,7 @@ en:
         about_recording: "Record customer conversations and access it anywhere"
         read_more: "Read more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Request for Freshfone Feature from %{account_name}"
+        email_subject: "Freshfone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
         success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
         error_message: "Sorry we can not make your request right now. Try again later."

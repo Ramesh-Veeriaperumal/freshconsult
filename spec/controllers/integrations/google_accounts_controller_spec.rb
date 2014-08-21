@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'rake'
 
 describe Integrations::GoogleAccountsController do
   integrate_views
@@ -111,6 +112,28 @@ describe Integrations::GoogleAccountsController do
     invalid_google_account_id = ((Integrations::GoogleAccount.last.id if Integrations::GoogleAccount.last) || 0) + 1
     get :edit, :id => invalid_google_account_id
   end
-  
+
+  it "should install google contacts" do
+    @inst_obj = Integrations::InstalledApplication.find_by_application_id(4)
+    @inst_obj.destroy unless @inst_obj.blank?
+    post :update, {"authenticity_token"=>"hEewL7TVXuob8hZNW+8MEqWwgagGACD2Fm8TYTbAsJk=", 
+      "integrations_google_account"=>{"import_groups"=>["6"], "sync_tag"=>"gmail", 
+      "overwrite_existing_user"=>"1", "sync_group_id"=>"31db62ca8c5c4881", "sync_group_name"=>"Freshdesk Contacts", 
+      "id"=>"", "name"=>"Sathish Babu", "email"=>"sathish@freshdesk.com", 
+      "token"=>"1/93NJny-KQzpu88PkQ4ClNfnRKk5GrgUZLVxrv9FAgxY", "secret"=>"XHdrB3wpUGReanGX0Dt14DjJ"}, 
+      "omniauth_origin"=>"install", "commit"=>  "Import & Activate",
+      "controller"=>"integrations/google_accounts", "action"=>"update"}
+      Delayed::Job.last.invoke_job
+      sleep(15)
+      @user.deleted = false
+      @user.save!
+      @user1.deleted = true 
+      @user1.save!
+      @user2.external_id = Time.now.utc
+      @user2.save!
+      load "lib/tasks/google_contacts.rake"
+      Rake::Task.define_task(:environment)
+      Rake::Task["google_contacts:sync"].invoke
+  end
 end
 

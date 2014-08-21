@@ -69,12 +69,14 @@ describe Facebook::Core::Status do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is requeued"))
-    Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(4)
+   error_info = {
+      "code" => 4,
+      "message" => "Error"
+    }
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new(400, "message is requeued", error_info))
     
     AwsWrapper::Sqs.any_instance.expects(:requeue).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse   
-    @account.facebook_pages.find_by_page_id(@fb_page.page_id).last_error.should_not be_nil
   end
   
   
@@ -82,8 +84,12 @@ describe Facebook::Core::Status do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     realtime_feed = sample_realtime_feed(feed_id, "status")
     
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new("400",nil,"message is pushed to dynamo db access token"))
-    Koala::Facebook::APIError.any_instance.stubs(:fb_error_type).returns(190)
+    error_info = {
+      "code" => 190,
+      "message" => "manage_pages"
+    }
+    
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new(400, "message is pushed to dynamo db access token", error_info))
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse

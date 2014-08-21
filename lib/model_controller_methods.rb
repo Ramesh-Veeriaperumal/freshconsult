@@ -70,7 +70,12 @@ module ModelControllerMethods
           render :action => 'show'
         end
       end
-      
+      wants.json do 
+        head :ok
+      end
+      wants.xml do 
+        head :ok
+      end
       wants.js do
         render :update do |page|
           if @result

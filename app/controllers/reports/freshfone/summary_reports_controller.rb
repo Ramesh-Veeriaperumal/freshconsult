@@ -6,8 +6,9 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   include Reports::FreshfoneReport
   #Added for export csv, call to methods using send
   include Reports::Freshfone::SummaryReportsHelper
+  include ReportsHelper
 
-  before_filter { |c| c.requires_feature :freshfone }
+  before_filter :access_denied, :unless => :freshfone_reports?
   before_filter :set_selected_tab, :build_criteria
   before_filter :set_filter ,:only => [:index, :generate]
 

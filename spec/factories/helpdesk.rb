@@ -99,14 +99,14 @@ if Rails.env.test?
       sequence(:name) { |n| "HelpdeskTag#{n}" }
     end
 
+    factory :support_score, :class => SupportScore do
+    end
+
+    factory :tag_uses, :class => Helpdesk::TagUse do
+    end
+
     # TODO-RAILS3
     # factory :agent_group, :class => AgentGroup do
     # end
-  end
-
-  Factory.define :support_score, :class => SupportScore do |d|
-  end
-
-  Factory.define :tag_uses, :class => Helpdesk::TagUse do |d|
   end
 end

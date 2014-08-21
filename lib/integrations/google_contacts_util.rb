@@ -46,31 +46,6 @@ module Integrations::GoogleContactsUtil
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
-  
-  def self.get_prime_sec_email(contact_xml_as_hash)
-    primary_email = nil
-    second_email = nil
-    contact_xml_as_hash['email'].each { |contact_emails|
-      is_primary = contact_emails['primary']
-      unless is_primary.blank? || is_primary != "true"
-        primary_email = contact_emails['address']
-      else
-        second_email = contact_emails['address']
-      end
-    }
-    return primary_email, second_email
-  end
-  
-
-  def is_matched(google_account, goog_cnt, db_cnt)
-    if !goog_cnt.blank? and !db_cnt.blank?
-      g_goog_cnt = fetch_current_account_contact(goog_cnt, google_account)
-      g_db_cnt = fetch_current_account_contact(db_cnt, google_account)
-      return ((!g_goog_cnt.blank?) and (g_goog_cnt.google_id == g_db_cnt.google_id or goog_cnt.email == db_cnt.email or goog_cnt.second_email == db_cnt.email))
-    else
-      return false
-    end
-  end
 
   def trimmed_contact_xml(user, goog_cnt, sync_group_id=nil)
     google_xml = goog_cnt.google_xml

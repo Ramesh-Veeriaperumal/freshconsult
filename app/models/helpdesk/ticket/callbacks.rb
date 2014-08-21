@@ -4,7 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :set_token, on: :create
 
-  before_create :assign_flexifield, :assign_schema_less_attributes, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -15,8 +15,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
   before_update :clear_sender_email, :if => [:requester_id_changed?, :sender_email]
-
-  before_save :assign_email_config_and_product, :if => :new_record?
 
   before_save :update_dueby, :unless => :manual_sla?
 

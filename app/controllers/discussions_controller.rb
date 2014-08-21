@@ -75,6 +75,11 @@ class DiscussionsController < ApplicationController
 		@forum_categories = scoper
 		@portals = current_account.portals
 		@topics_count = current_account.topics.count
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @forum_categories }
+      format.json  { render :json => @forum_categories }
+    end
 	end
 
 	def sidebar

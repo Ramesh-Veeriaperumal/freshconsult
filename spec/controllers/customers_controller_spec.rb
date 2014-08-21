@@ -67,4 +67,15 @@ describe CustomersController do
       response.body.should =~ /#{value}/
     end
   end
+
+  it "should display the company information on the show page with sla_policy" do
+    company = create_company
+    agent = add_test_agent(@account)
+    sla_policy = create_sla_policy(agent)
+    sla_policy.conditions["company_id"] = [company.id]
+    sla_policy.save
+    get :sla_policies, :id => company.id
+    response.body.should =~ /#{sla_policy.name}/
+    response.should be_success
+  end
 end

@@ -18,10 +18,9 @@ describe Social::TwitterHandlesController do
     context "without api exception" do
       it "should be successful" do
         get :index
-
         response.should render_template("social/twitter_handles/index.html.erb")
-        session["request_token"].present?.should be_truthy
-        session["request_secret"].present?.should be_truthy
+        # session["request_token"].present?.should be_truthy
+        # session["request_secret"].present?.should be_truthy
       end
     end
 
@@ -29,7 +28,7 @@ describe Social::TwitterHandlesController do
       it "should redirect if exception arises" do
         TwitterWrapper.any_instance.stubs(:request_tokens).raises(Timeout::Error)
         get :index
-        response.should redirect_to 'admin/home'
+        response.should redirect_to "admin/social/streams"
       end
     end
   end
@@ -91,14 +90,14 @@ describe Social::TwitterHandlesController do
       Social::TwitterHandle.destroy_all
 
       get :feed
-      response.should redirect_to 'social/twitters'
+      response.should redirect_to "social/welcome"
     end
 
     it "if handles preset should render feed page" do
       twt_handler = create_test_twitter_handle(RSpec.configuration.account)
 
       get :feed
-      response.should render_template("social/twitter_handles/feed.html.erb")
+      response.should redirect_to "social/streams"
     end
 
   end

@@ -80,7 +80,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     return google_groups_arr
   end
 
-  def fetch_all_google_contacts()
+  def fetch_all_google_contacts() #possible dead code
     return fetch_latest_google_contacts("none", Time.at(0)) # To fetch all the contacts change the last synced time 0.
   end
 
@@ -485,7 +485,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                                   :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
     end
 
-    def fetch_current_account_contact(db_contact)
+    def fetch_current_account_contact(db_contact) #possible dead code
       db_contact.google_contacts.each {|g_cnt|
         return g_cnt if g_cnt.google_account_id == self.id
       }

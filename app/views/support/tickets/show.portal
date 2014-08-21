@@ -13,18 +13,26 @@
 			<section class="toolbar-actions" id="ticket-toolbar">
 				<span class="hide-tablet pull-right">
 					<a href="#ticket-sidebar" class="btn btn-icon btn-small btn-primary"
-						title="More ticket details">
+						title="More ticket details" data-toggle="tooltip">
 						<i class="icon-cog-drop-light"></i>
 					</a>
 				</span>
 				<div class="btn-group" id="ticket-toolbar">
 					{% unless ticket.closed? %}
-						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">{% translate reply %}</a>
-						<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
-							{% translate portal.tickets.mark_closed %}
+						<a href="#reply-to-ticket" class="btn btn-small" 
+							data-proxy-for="#add-note-form" title="{% translate reply %}" 
+							data-toggle="tooltip">
+								<i class="icon-reply"></i> 
 						</a>
-						<a href="#add-people" rel="freshdialog" title="{% translate portal.tickets.add_people_title %}" 
-							data-width="400" class="btn btn-small" data-submit-label="{% translate portal.tickets.add_people %}">{% translate portal.tickets.add_people %}</a>
+						<a href="{{ ticket.close_ticket_url }}" data-method="post" 
+							class="btn btn-small" data-toggle="tooltip" 
+							title="{% translate portal.tickets.mark_closed %}">
+								<i class="icon-close-ticket"></i>
+						</a>
+						<a href="#add-people" rel="freshdialog" 
+							title="{% translate portal.tickets.add_people_title %}" data-width="400" class="btn btn-small" data-submit-label="{% translate portal.tickets.add_people %}" data-toggle="tooltip" title="{% translate portal.tickets.add_people %}">
+								<i class="icon-add-people"></i>
+						</a>
 					{% endunless %}
 				</div>			
 			</section>
@@ -57,7 +65,7 @@
 						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							<h4 class="user-name">{{ comment.user.name | h }}</h4> 
-							<div class="p-info tooltip" title="{{ comment.created_on | short_day_with_time }}">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
+							<div class="p-info" title="{{ comment.created_on | short_day_with_time }}">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
 						</div>
 					</div>
 					

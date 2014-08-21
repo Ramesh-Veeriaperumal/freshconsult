@@ -79,8 +79,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
     (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
 
-  def audio?
-    (!(content_content_type =~ /^audio.*/).nil?) and (content_file_size < 5242880)
+  def audio?(content_type = /^audio.*/)
+     (!(content_content_type =~ content_type).nil?) and (content_file_size < 5242880)
+  end
+
+  def mp3?
+    audio? /^audio\/(mp3)/
   end
 
   def attachment_sizes

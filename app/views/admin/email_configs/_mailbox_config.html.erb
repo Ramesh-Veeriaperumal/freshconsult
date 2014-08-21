@@ -36,7 +36,7 @@
           jQuery("#email_config_smtp_mailbox_attributes_user_name").trigger("change");
       })        
 
-      if("<%= @smtp_mailbox.new_record? %>") jQuery("#reply_to_id").trigger("change");
+      if("<%= @smtp_mailbox.present? && @smtp_mailbox.new_record? %>") jQuery("#reply_to_id").trigger("change");
 
       jQuery("#email_config_smtp_mailbox_attributes_user_name")
         .bind("change keyup",
