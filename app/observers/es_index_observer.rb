@@ -1,6 +1,6 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post, Helpdesk::Tag
+	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller
 
 	def after_commit_on_create(model)
 		model.update_es_index
@@ -14,7 +14,7 @@ class EsIndexObserver < ActiveRecord::Observer
 	def after_commit_on_destroy(model)
 		model.update_es_index if [:User,:Post].include? model.class.name.to_sym
 		model.remove_es_document if [
-			:"Helpdesk::Ticket",:Customer,:"Solution::Article",:Topic, :"Helpdesk::Tag"].include? model.class.name.to_sym
+			:"Helpdesk::Ticket",:Customer,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller"].include? model.class.name.to_sym
 	end
 
 end
