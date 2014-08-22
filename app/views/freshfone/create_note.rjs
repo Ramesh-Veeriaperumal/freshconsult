@@ -1,5 +1,5 @@
 show_ajax_flash page
-unless @current_call.blank? && !@current_call.note.nil?
+if @current_call.present? && !@current_call.note.nil?
 	ticket = @current_call.note.notable
 	parent = "#freshfone_call_#{@current_call.id}"
 
