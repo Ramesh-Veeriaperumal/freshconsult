@@ -31,8 +31,8 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       hash_file_name = Digest::SHA1.hexdigest(@data_export.id.to_s + Time.now.to_f.to_s)
       @data_export.save_hash!(hash_file_name)
       url = url_for(:controller => "download_file/#{@data_export.source}/#{hash_file_name}", 
-                    :host => @current_account.full_domain, 
-                    :protocol => 'https')
+                    :host => @current_account.host, 
+                    :protocol => 'http')
       DataExportMailer.deliver_data_backup({:email => params[:email], 
                                             :domain => params[:domain], 
                                             :url =>  url})
