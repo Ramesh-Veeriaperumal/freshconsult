@@ -228,6 +228,7 @@ en:
       product: Product
       ticket_type: Type
       created_at: Created
+      tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     first_choice: First Choice
@@ -2758,7 +2759,7 @@ en:
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
-    or_signup: " or %{signup} for an account"
+    login_or_signup: "%{login} or %{signup} for an account"
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
     to_post_topic: " to post a topic"

@@ -27,7 +27,7 @@ class Freshfone::CallInitiator
 		twiml_response do |r|
 			read_welcome_message(r) unless primary_leg? 
 			timeout = current_number.call_timeout if current_number.round_robin?  #5 secs = min 2 rings.
-			agents_to_be_called = process_in_batch(agents || batch_agents)
+			agents_to_be_called = process_in_batch(agents || available_agents)
 			r.Dial :callerId => outgoing_transfer ? params[:To] : params[:From],
 						 :record => record?, :action => status_url,
 						 :timeout => timeout || 30, #nil will default to 30 secs
@@ -214,11 +214,6 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 				set_key(key, agent_ids, 600)
 			end
 			current_batch_agents
-		end
-
-		def batch_agents
-			asc_desc = current_number.round_robin? ? "ASC" : "DESC" 
-			current_account.freshfone_users.agents_online_ordered(asc_desc)
 		end
 
 		def time_limit
