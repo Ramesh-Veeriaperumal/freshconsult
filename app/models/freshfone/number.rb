@@ -232,9 +232,11 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 
 		def validate_attachments 
-			(attachments || []).each do |a|
-				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
-					{ :name => a.content_file_name })) unless a.mp3?
+			 (attachments || []).each do |a|
+			 	if a.id.blank? 
+					errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+						{ :name => a.content_file_name })) unless a.mp3?
+				end
 			end
 		end
 
