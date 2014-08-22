@@ -131,11 +131,10 @@ class Freshfone::CallFlow
     end
 
     def within_business_hours?
-      Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = current_number
-      Time.zone = current_number.business_calendar.time_zone unless current_number.business_calendar.blank?
-      business_hours = Time.working_hours?(Time.zone.now)
-      Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = nil 
-      business_hours
+     default_business_calendar = current_number.business_calendar 
+     default_business_calendar.blank? ? (default_business_calendar = Freshfone::Number.default_business_calendar(current_number)) :
+          (Time.zone = default_business_calendar.time_zone)  
+     business_hours = Time.working_hours?(Time.zone.now,default_business_calendar)
     ensure
       TimeZone.set_time_zone
     end

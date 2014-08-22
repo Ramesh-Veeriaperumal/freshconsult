@@ -53,7 +53,14 @@ module Reports
       	# reporting_data.free
 
       	utc_time = Time.now.utc
-      	s3_folder = regenerate ? temp_file : %(#{utc_time.strftime('%Y_%m_%d')}_#{utc_time.hour})
+      	utc_date, utc_hour = utc_time.strftime('%Y_%m_%d'), utc_time.hour
+
+      	if account.features?(:reports_regenerate_data) && regenerate
+	      	s3_folder = regenerate_s3_folder(utc_date, utc_hour) 
+	      else
+      		s3_folder = regenerate ? temp_file : %(#{utc_date}_#{utc_hour})
+      	end
+
       	AwsWrapper::S3Object.store("#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv", File.read(csv_file_path), S3_CONFIG[:reports_bucket])
       	
 				File.delete(csv_file_path)
@@ -124,5 +131,13 @@ module Reports
 				%(#{table_column_name} >= '#{stats_date_time.to_s(:db)}' AND #{table_column_name} <= '#{stats_end_time.to_s(:db)}') 
 			end
 
+			def report_notification(subject,message)
+				notification_topic = SNS["reports_notification_topic"]
+      	DevNotification.publish(notification_topic, subject, message)
+			end
+
+			def regenerate_s3_folder(date,hour)
+				%(#{REGENERATE_LABEL}#{date}_#{hour})
+			end
 	end
 end

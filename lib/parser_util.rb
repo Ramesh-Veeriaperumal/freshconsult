@@ -122,5 +122,12 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
     (email =~ VALID_EMAIL_REGEX) ? true : false
   end
 
+  # removes trailing characters after + 
+  # email = redhat+01@freshdesk.com
+  # returns redhat@freshdesk.com
+  def trim_trailing_characters(email)
+    email.sub(/\+.*@/,"@")
+  end
+
   
 end

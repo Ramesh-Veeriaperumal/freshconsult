@@ -1,6 +1,7 @@
 class Freshfone::Number < ActiveRecord::Base
 	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_numbers
+	include BusinessCalendar::Association
 	require_dependency 'freshfone/number/message'
 
 	serialize :on_hold_message
@@ -19,7 +20,7 @@ class Freshfone::Number < ActiveRecord::Base
 						:dependent => :destroy
 
 	delegate :group_id, :group, :to => :ivr
-	attr_accessor :attachments_hash, :address_required
+	attr_accessor :attachments_hash, :address_required, :skip_in_twilio
 	attr_protected :account_id
 
 	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]

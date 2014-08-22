@@ -287,6 +287,7 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
+    delete: "Important: Deleting this folder will delete all %{no_of_articles} article(s) in it."
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -366,8 +367,8 @@ en:
         send: Send
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
-        happy_info: It has been our pleasure to serve you, glad you were happy with our service
-        neutral_info: Wish you were a little more happy.
+        happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
+        neutral_info: We look forward to serve you better the next time around.
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
   gamification:
@@ -1500,8 +1501,8 @@ en:
     portal:
       discussions:
         topics:
-          spam_check: "Thank you starting a new topic. your topic will appear in the forum, after a standard moderation process."
-          success: "Thank you for posting. your reply will appear in the topic, after a standard moderation process."
+          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
+          success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
       tickets:
         create:
           success: Your ticket has been created.
@@ -2115,6 +2116,8 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
+    delete: "Important: Deleting a category will delete all folders and articles in it."
+    size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
   billed_monthly: Billed monthly
   users:
     activations:
@@ -3040,7 +3043,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
@@ -3456,6 +3459,8 @@ en:
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Requestor Info
     view_twitter: View on Twitter
+    view_facebook: View on Facebook
+    via: via
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
@@ -5721,7 +5726,7 @@ en:
     visitor_disconnect_msg: "Visitor has left the chat"
     last_message: "Last Message..."
     chat_recent_empty_tip: "You didn't chat with anyone recently"
-    add_agent_to_chat: "No agents available"
+    add_agent_to_chat: "No other agents logged in"
     url_error_msg: "No such url exists"
     accept: "Accept"
     ignore: "Ignore"
@@ -5779,8 +5784,8 @@ en:
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
     integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
-    click_to_go_online: "You are offline to visitors"
-    click_to_go_offline: "You are online to visitors"
+    click_to_go_online: "Not accepting visitor chats"
+    click_to_go_offline: "Accepting visitor chats"
     fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"

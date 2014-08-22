@@ -5,6 +5,8 @@ Chat:
   - :chat_enable
 Custom Domain:
   - :custom_domain
+Custom Mailbox:
+  - :mailbox
 Custom Roles: 
   - :custom_roles
 Custom Slas:
@@ -33,3 +35,6 @@ Layout Customization:
   - :survey_links
 Round Robin:
   - :round_robin
+Whitelisted Ips:
+  - :whitelisted_ips
+

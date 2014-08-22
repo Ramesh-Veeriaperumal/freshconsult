@@ -134,6 +134,10 @@ else
       run "sudo monit restart all -g helpkit_twitter_realtime"
       run "sudo monit restart all -g helpkit_facebook_realtime"
     end
+
+    on_utilities(all_instances_of('services')) do
+      run "sudo monit restart all -g helpkit_clockwork"
+    end
   end
 
 end

@@ -1,7 +1,7 @@
 (function($) {
 
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
-
+var MAX_EMAILS = 20;
 // ----- SAVING REPLIES AS DRAFTS -------- //
 save_draft = function(content) {
 	if ($.trim(content) != '') {
@@ -141,10 +141,8 @@ swapEmailNote = function(formid, link){
 		
 		if (link && $(link).data('noteType') === 'fwd') {
 			$('.forward_email input').trigger('focus');
-		} else {
-			$('#'+formid+"-body").getEditor().focus();
-		}
-
+		} 
+		
 		if($.browser.mozilla){
 			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 		}
@@ -201,10 +199,12 @@ insertIntoConversation = function(value,element_id){
 			$element.keyup(); // to update the SendTweetCounter value
 		}
 		else{
+
+			$element.data('redactor').focusOnCursor();
+		    $element.insertHtml(value); 
+		    jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+
 			$element.getEditor().focus();
-			$element.data('redactor').saveSelection();
-			$element.data('redactor').restoreSelection();	
-			$element.insertHtml(value);
 		}
 	}    
 	return;
@@ -782,6 +782,21 @@ var scrollToError = function(){
 					alert('No email addresses found');
 					return false;
 				}
+			}
+			if (_form.find('input[name="helpdesk_note[to_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' TO emails');
+				return false;
+			}
+
+			if (_form.find('input[name="helpdesk_note[cc_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' CC emails');
+				return false;
+			}
+
+
+			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length >= MAX_EMAILS) {
+				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
+				return false;
 			}
 
 			_form.find('input[type=submit]').prop('disabled', true);

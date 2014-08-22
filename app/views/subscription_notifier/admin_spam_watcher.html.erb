@@ -1,5 +1,16 @@
 <div>
 	Hi <%= @account.admin_first_name %>,<div><br></div>
+	<%if @spam_watcher_redis%>
+		<div>Below listed users are blocked by our spam watcher. If you feel they are genuine users, you can send an email to support@freshdesk.com with the following details.</div>
+		<div><br></div>
+		<% @deleted_users.each do |user| %>
+			<div> 
+				Account url: <%= @account.host%>
+			<br/>
+				Username: <%= user.name_details%>
+			</div>
+		<%end%>
+	<%else%>
 	<div>Below listed users are blocked by our spam watcher.If you feel they are genuine users, you can whitelist them by clicking the links.</div>
 	<div><br></div>
 	<% @deleted_users.each do |user| %>
@@ -12,6 +23,7 @@
 				<%=link_to "unblock", "#{@account.url_protocol}://#{@account.host}/contacts/unblock/#{user.id}" %>
 			</b>
 		</div>
+	<%end%>
 	<%end%>
 	<div><br></div>
 	<div>Regards</div>
