@@ -367,8 +367,8 @@ en:
         send: Send
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
-        happy_info: It has been our pleasure to serve you, glad you were happy with our service
-        neutral_info: Wish you were a little more happy.
+        happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
+        neutral_info: We look forward to serve you better the next time around.
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
   gamification:
