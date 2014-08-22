@@ -35,7 +35,7 @@ namespace :spam_watcher_redis do
   def spam_alert(account,user,table_name,operation)
     FreshdeskErrorsMailer.deliver_spam_watcher(
       {
-        :subject          => "Abnormal load by spam watcher #{table_name}",
+        :subject          => "New Spam Watcher Abnormal load #{table_name}",
         :additional_info  => {
           :operation  => operation,
           :full_domain  => account.full_domain,
@@ -63,14 +63,14 @@ namespace :spam_watcher_redis do
         table_name = queue.split("sw_")[1]
         unless paid_account?(account)
           operation = "blocked"
-          block_spam_user(user)
+          # block_spam_user(user)
         else
           operation = "deleted"
-          delete_user(user)
+          # delete_user(user)
         end
         # deleted_users = account.all_users.find([user.id])
         deleted_users = [user]
-        SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users,operation=="blocked")
+        # SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users,operation=="blocked")
         spam_alert(account,user,table_name,operation)
         # Notify admin about the blocked user
       end
