@@ -912,9 +912,11 @@ Redactor.prototype = {
 			 	temp_range.selectNode(imgfocus[0]);	
 			 	this.getSelection().removeAllRanges();
 				this.getSelection().addRange(temp_range);
-		}
 
-		if($.browser.mozilla){
+			if($.browser.mozilla){
+				this.$editor.focus();
+			}
+		} else {
 			this.$editor.focus();
 		}
 		
