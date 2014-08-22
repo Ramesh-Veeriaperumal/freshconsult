@@ -25,6 +25,9 @@ class Search::CreateAlias
       account.notes.visible.exclude_source('meta').find_in_batches(:batch_size => 300) do |notes|
         notes.each { |note| note.update_es_index }
       end
+      account.tags.find_in_batches(:batch_size => 300) do |tags|
+        tags.each { |tag| tag.update_es_index }
+      end
     end
   end
 end
