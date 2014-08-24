@@ -27,31 +27,7 @@
 
 </div>
 <% javascript_tag do %> 
-
   jQuery(document).ready(function() {
-    var date_today = new Date();
-    var dates = jQuery( "#start_date, #end_date" ).datepicker({
-      changeMonth: true, 
-      changeYear: true,
-      numberOfMonths: 3,
-      showButtonPanel: true,
-      maxDate: "today",
-      showOn: "both", 
-      disabled: true,
-      onSelect: function( selectedDate ) {
-        var option = this.id == "start_date" ? "minDate" : "maxDate",
-          instance = jQuery( this ).data( "datepicker" ),
-          date = jQuery.datepicker.parseDate(
-            instance.settings.dateFormat ||
-            jQuery.datepicker._defaults.dateFormat,
-            selectedDate, instance.settings );
-        dates.not( this ).datepicker( "option", option, date );
-        jQuery(this).prop("date", date);
-        jQuery("#report_filters").trigger("change");
-      }
-    }); 
-
     jQuery('#loading-box').hide();
-
   });
 <%end%>

@@ -1,12 +1,12 @@
 <!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
 <!-- Agents calls list view -->
-<% calls.each do |call_list| %>
-  <tr class="even">
-  <% group_title = call_list.agent_name %>
-    <%group_title = call_list.freshfone_number.number_name if group_title.blank? 
-      num_of_unanswered = unanswered_calls_count([call_list])
+<% calls.each do |call_list| 
+    group_title = call_list.agent_name 
+    next if group_title.blank? 
     %>
-    <td><strong><%= group_title %></strong></td> 
+    <tr class="odd">
+      <td><strong><%= group_title %></strong></td> 
+      <% num_of_unanswered = unanswered_calls_count([call_list])%>
       <%headers.keys.each do |header| %>
         <%if([:call_handle_time, :avg_handle_time].include?(header))
           content = call_duration_formatted(send(header,[call_list])) 

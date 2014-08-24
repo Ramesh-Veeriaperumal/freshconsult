@@ -10,7 +10,20 @@ var setLocationIfUnknown,
 		$callHistoryBody = $freshfoneCallHistory.find(".list-page-body"),
 		$currentPageNumber = $filterSortForm.find("input[name=page]"),
 		$filterContainer = $freshfoneCallHistory.find(".ff_item"),
-		$currentNumber = $filterSortForm.find("input[name=number_id]");
+		$currentNumber = $filterSortForm.find("input[name=number_id]"),
+		$data_hash = $filterSortForm.find("input[name=data_hash]"),
+		$callFilter = $('.call-history-left-filter'),
+		$requesterName = $callFilter.find('#requesterName'),
+		$callerName = $callFilter.find('#callerName'),
+		$requesterId_ffitem = $callFilter.find('#requesterName_choices'),
+		$callerId_ffitem = $callFilter.find('#callerName_choices'),
+		$groupName = $callFilter.find("#groupName"),
+		$groupId_ffitem = $callFilter.find('#groupName_choices'),
+		$filterDetails = $freshfoneCallHistory.find("#filterdetails"),
+		$fNumberSelect2 = $callFilter.find("#ff_number"),
+		$fCallStatusSelect2 = $callFilter.find("#ff_call_status"),
+		$filterFreshfoneNumberLabel = $freshfoneCallHistory.find(".filter_freshfone_number"),
+		filterString, bindChangeEventForSelect2, data_hash = [];
 	
 	setLocationIfUnknown = function () {
 		$(".location_unknown").each(function () {
@@ -18,6 +31,160 @@ var setLocationIfUnknown,
 			$(this).html(country);
 		});
 	};
+
+	$fNumberSelect2.select2({
+		dropdownCssClass : 'no-search',
+		data: {
+			text: 'value',
+			results: freshfone.freshfone_number_list},
+		formatResult: function (result) {
+			if (result.deleted){
+				return result.value+"<i class='muted'> (Deleted)</i>"
+			} 
+			return result.value;
+		},
+		formatSelection: function (result) {
+			$fNumberSelect2.attr('fnumber',result.value);
+			$currentNumber.val(result.id);
+			return result.value;
+		}
+	});
+
+	$fCallStatusSelect2.select2({
+		dropdownCssClass : 'no-search',
+		data:{
+			text: 'value',
+			results:freshfone.call_status_list
+		},
+		formatResult: function (result) {
+			return result.value;
+		},
+		formatSelection: function (result) {
+			$fCallStatusSelect2.attr('values',result.call_type)
+												 .data('value',result.value);
+			return result.value;
+		}
+	});
+
+
+	$('#requesterName').select2({
+			placeholder: 'Agent',
+			minimumInputLength: 1,
+			multiple: false,
+			allowClear: true,
+			ajax: {
+				url: freshfone.requester_autocomplete_path,
+				method: 'GET',
+				quietMillis: 1000,
+				data: function (term) {
+					return {
+						q: term
+					};
+				},
+				results: function (data, page, query) {
+					if (!data.results.length) {
+						return { results: [ { value: query.term, id: ""} ] }
+					}
+					return {results: data.results};
+				}
+			},
+			formatResult: function (result) {
+				var userDetails = result.email || result.mobile || result.phone;
+				if(userDetails && $(userDetails).trim != "") {
+					userDetails = "(" + userDetails + ")" ;
+				}
+				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+								(userDetails||'') + "</span>"; 
+			},
+			formatSelection: function (result) {
+				$requesterName.val(result.value);
+				if(result.id){
+					$requesterId_ffitem.attr('values',result.id);
+					$requesterId_ffitem.data('value',result.value);
+				}
+				return result.value;
+			}
+	});
+	
+	$requesterName.bind("change", function () {
+		if(this.value) { return }
+		bindChangeEventForSelect2($requesterId_ffitem);
+	});
+
+	$callerName.select2({
+				placeholder: 'Caller',
+				minimumInputLength: 1,
+				multiple: false,
+				allowClear: true,
+				ajax: {
+					url: freshfone.customer_autocomplete_path,
+					method: 'GET',
+					quietMillis: 1000,
+					data: function (term) {
+						return {
+							q: term
+						};
+					},
+					results: function (data, page, query) {
+						if (!data.results.length) {
+							return { results: [ { value: query.term, id: ""} ] }
+						}
+						return {results: data.results};
+					}
+				},
+				formatResult: function (result) {
+					var userDetails = result.mobile || result.phone;
+					if(userDetails && $(userDetails).trim != "") {
+						userDetails = "(" + userDetails + ")";
+					}
+					return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+									(userDetails||'') + "</span>"; 
+				},
+				formatSelection: function (result) {
+					$callerName.val(result.value);
+					var condition = (result.user_result == undefined) ? 'caller_number_id' : 'customer_id' 
+					$callerId_ffitem.attr('condition', condition);
+					$callerId_ffitem.attr('values',result.id);
+					$callerId_ffitem.data('value',result.value);
+					if(!result.id){
+						$callerId_ffitem.attr('values',result.value);
+					}
+					//getFilterData();
+					//$filterSortForm.trigger('change');
+					return result.value;
+				}
+		});
+
+	$groupName.select2({
+		placeholder: 'Group',
+		allowClear: true,
+		data: {
+			text: 'value',
+			results: freshfone.group_list },
+		formatResult: function (result) {
+			return result.value;
+		},
+		formatSelection: function (result) {
+			$groupName.attr('values',result.id);
+			$groupName.data('value', result.value);
+			return result.value;
+		}
+	});
+
+	$callerName.bind("change", function () {
+		if(this.value) { return }
+		bindChangeEventForSelect2($callerId_ffitem);
+	});
+
+	$groupName.bind("change", function () {
+		if(this.value) { return }
+		bindChangeEventForSelect2($groupName);
+	});
+
+	bindChangeEventForSelect2 = function (dataElement) {
+		dataElement.data('value','');
+		dataElement.attr('values','');
+	}
 	
 	blockNumber = function (number) {
 		var $blockedNumbers = $freshfoneCallHistory.find('.blacklist[data-number="' + number + '"]')
@@ -33,19 +200,27 @@ var setLocationIfUnknown,
 	}
   
   function setFilterData() {
-		var condition, container, operator, values;
+		var fcondition, container, foperator, fvalues,
+		 filterString, data_hash=[], i = 0;
 		$filterCondition.empty();
+	 	filterString = " Filtered by:  ";
 		$filterContainer.map(function (index, ele) {
-			condition = this.getAttribute("condition");
+			fcondition = this.getAttribute("condition");
 			container = this.getAttribute("container");
-			operator  = this.getAttribute("operator");
-			values  = this.getAttribute("values");
-			if (values.blank()) { return true; }
-			// see if data_hash is better
-			setPostParam($filterCondition, ('wf_c' + index), condition);
-			setPostParam($filterCondition, ('wf_o' + index), operator);
-			setPostParam($filterCondition, ('wf_v' + index + '_' + index), values.toString());
+			foperator  = this.getAttribute("operator");
+			fvalues  = this.getAttribute("values");
+			if(!$(this).data("value").blank()) {
+					filterString +="<li>"+$(this).data("filtername") + " : <strong>" + $(this).data("value")+ "</strong></li>   ";
+			}
+			if (fvalues.blank() || (fvalues == 0) ) { return true; }
+			data_hash.push({
+				condition : fcondition,
+				operator  : foperator,
+				value     : fvalues 
+			});
+			i++;
 		});
+		$data_hash.val(data_hash.toJSON());
   }
 
 	function setDropdownValue(obj) {
@@ -55,7 +230,7 @@ var setLocationIfUnknown,
 	}
 
 	// Ordering
-	$freshfoneCallHistory.on("click", ".wf_order_type, .wf_order, .number_id", function (ev) {
+	$freshfoneCallHistory.on("click", ".wf_order_type, .wf_order", function (ev) {
 		ev.preventDefault();
 		$filterSortForm.find("input[name=" + this.className + "]")
 			.val(this.getAttribute(this.className))
@@ -77,16 +252,22 @@ var setLocationIfUnknown,
 	// Filtering
 	$freshfoneCallHistory.on("click", ".wf_filter", function (ev) {
 		ev.preventDefault();
-		$filterContainer.attr("values", this.getAttribute(this.className));
-
+		$($filterContainer[this.getAttribute('data-type')]).attr("values", this.getAttribute(this.className));
 		$freshfoneCallHistory
 			.find("." + this.className + " .ticksymbol").remove();
 		$(this).prepend($('<span class="icon ticksymbol"></span>'));
 
 		setDropdownValue(this);
-
-		getFilterData();
+		$($filterContainer[this.getAttribute('data-type')]).data("value",$(this).data("livalue"));
+		//getFilterData();
 	});
+
+	$freshfoneCallHistory.on("click","#submitfilter",function(ev) {
+		ev.preventDefault();
+		getFilterData();
+		$("#sliding").trigger("click");
+	});
+
 	// Pagination
 	$freshfoneCallHistory.on("click", ".pagination a", function (ev) {
 		ev.preventDefault();
@@ -102,7 +283,9 @@ var setLocationIfUnknown,
 			url: freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH,
 			dataType: "script",
 			data: $(this).serializeArray(),
-			success: function (script) {  }
+			success: function (script) { 
+        setFilterDetails();
+       }
 		});
 	});
 
@@ -181,10 +364,61 @@ var setLocationIfUnknown,
 		});
 	});
 
+	$(".list-page-header").ready(function() {
+		$("#sliding").slide();
+	});
+
+  function setFilterDetails() {
+    $filterFreshfoneNumberLabel.text($fNumberSelect2.attr('fnumber'));
+    $filterDetails.html(filterString);
+  }
+
+	function initSelect2Values() {
+		var cached_ffone_number = getCookie('fone_number_id');
+		if (cached_ffone_number != undefined){
+			var number_object = $.grep(freshfone.freshfone_number_list, function (ele) { return ele.id == cached_ffone_number; })[0];
+		}
+		number_object = number_object || freshfone.freshfone_number_list[0];
+		$fNumberSelect2.select2('data',number_object);
+		$fCallStatusSelect2.select2('data',freshfone.call_status_list[0]);
+		$("#date_range").val('Today');
+	}
+
+	function settingsForDatePicker() {
+		var datePickerLabels = freshfone.date_picker_labels[0];
+		$("#date_range").attr("values",Date.today().toString("dddd, MMMM dd yyyy"));
+		$("#date_range").daterangepicker({
+			earliestDate: Date.parse('04/01/2013'),
+			latestDate: Date.parse('Today'),
+			presetRanges: [
+				{text: datePickerLabels['today'], dateStart: 'Today', dateEnd: 'Today' },
+				{text: datePickerLabels['yesterday'], dateStart: 'Yesterday', dateEnd: 'Yesterday' },
+				{text: datePickerLabels['this_week'], dateStart: 'Today-7', dateEnd: 'Today-1' },
+				{text: datePickerLabels['this_month'], dateStart: 'Today-30', dateEnd: 'Today-1'}
+			],
+			presets: {
+				dateRange: datePickerLabels['custom']
+			},
+			rangeStartTitle: 'From',
+			rangeEndTitle: 'To',
+			dateFormat: 'dd MM yy',
+			closeOnSelect: true,
+			onChange: function() {
+				$("#date_range").attr("values",$("#date_range").val());
+				$("#date_range").data("value",$("#date_range").val());
+			}
+		});
+		$("#date_range").bind('keypress keyup keydown', function(ev) {
+			ev.preventDefault();
+			return false;
+		});
+	}
 
 	$(document).ready(function () {
 		setLocationIfUnknown();
+		initSelect2Values();
 		setFilterData();
+		setFilterDetails();
+		settingsForDatePicker();
 	});
-
 }(jQuery));
