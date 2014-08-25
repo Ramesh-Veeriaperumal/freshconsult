@@ -54,15 +54,16 @@ end
 # would instantiate AR objects all (!!) tickets in the account, not merely return a count of the recent ones.
 # See https://rails.lighthouseapp.com/projects/8994/tickets/5410-multiple-database-queries-when-chaining-named-scopes-with-rails-238-and-ruby-192
 # (The patch in that lighthouse bug was not, in fact, merged in).
-module ActiveRecord
-  module Associations
-    class AssociationProxy
-      def respond_to_missing?(meth, incl_priv)
-        false
-      end
-    end
-  end
-end
+# TODO-RAILS3 need to cross check
+# module ActiveRecord
+#   module Associations
+#     class AssociationProxy
+#       def respond_to_missing?(meth, incl_priv)
+#         false
+#       end
+#     end
+#   end
+# end
 
 #IN Ruby 1.9.0 Array.to_s or Hash.to_s allias methods for inspect where as in 1.8.7 to_s is uses join.
 class Array
@@ -105,7 +106,8 @@ Encoding.default_internal = Encoding::UTF_8
 
 
 # Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
-class ActiveRecord::Base
+# TODO-RAILS3 need to cross check
+# class ActiveRecord::Base
   # TODO-RAILS3 need to cross check this one is need or not
   # def unserialize_attribute_with_utf8(attr_name)
   #   traverse = lambda do |object, block|
@@ -155,19 +157,20 @@ class ActiveRecord::Base
   #   alias_method_chain :compute_type, :class_load_fix
   # end if Rails.env.development?
   
-end
+# end
 
 #https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
-module ActionController
-  module Flash
-    class FlashHash
-      def [](k)
-        v = super
-        v.is_a?(String) ? v.force_encoding("UTF-8") : v
-      end
-    end
-  end
-end
+# TODO-RAILS3 need to cross check
+# module ActionController
+#   module Flash
+#     class FlashHash
+#       def [](k)
+#         v = super
+#         v.is_a?(String) ? v.force_encoding("UTF-8") : v
+#       end
+#     end
+#   end
+# end
 
 # class ActionController::InvalidByteSequenceErrorFromParams < Encoding::InvalidByteSequenceError; end
 
@@ -212,59 +215,60 @@ end
 # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
 # (fix_renderable.rb)
 #
-module ActionView
-  module Renderable #:nodoc:
+# TODO-RAILS3 need to cross check
+# module ActionView
+#   module Renderable #:nodoc:
 
-    def render(view, local_assigns = {})
-      compile(local_assigns)
+#     def render(view, local_assigns = {})
+#       compile(local_assigns)
 
-      view.force_encoding(Encoding::UTF_8) if view.respond_to?(:force_encoding)
+#       view.force_encoding(Encoding::UTF_8) if view.respond_to?(:force_encoding)
 
-      view.with_template self do
-        view.send(:_evaluate_assigns_and_ivars)
-        view.send(:_set_controller_content_type, mime_type) if respond_to?(:mime_type)
+#       view.with_template self do
+#         view.send(:_evaluate_assigns_and_ivars)
+#         view.send(:_set_controller_content_type, mime_type) if respond_to?(:mime_type)
 
-        view.send(method_name(local_assigns), local_assigns) do |*names|
-          ivar = :@_proc_for_layout
-          if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
-            view.capture(*names, &proc)
-          elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
-            view.instance_variable_get(ivar)
-          end
-        end
-      end
-    end
+#         view.send(method_name(local_assigns), local_assigns) do |*names|
+#           ivar = :@_proc_for_layout
+#           if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
+#             view.capture(*names, &proc)
+#           elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
+#             view.instance_variable_get(ivar)
+#           end
+#         end
+#       end
+#     end
 
-    private
-      def compile!(render_symbol, local_assigns)
-        locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
+#     private
+#       def compile!(render_symbol, local_assigns)
+#         locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
 
-        source = <<-end_src
-          # encoding: utf-8
-          def #{render_symbol}(local_assigns)
-            old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
-          ensure
-            self.output_buffer = old_output_buffer
-          end
-        end_src
-        source.force_encoding(Encoding::UTF_8) if RUBY_VERSION >= '1.9.3'
+#         source = <<-end_src
+#           # encoding: utf-8
+#           def #{render_symbol}(local_assigns)
+#             old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
+#           ensure
+#             self.output_buffer = old_output_buffer
+#           end
+#         end_src
+#         source.force_encoding(Encoding::UTF_8) if RUBY_VERSION >= '1.9.3'
 
-        begin
-          ActionView::Base::CompiledTemplates.module_eval(source, filename, 0)
-        rescue Errno::ENOENT => e
-          raise e # Missing template file, re-raise for Base to rescue
-        rescue Exception => e # errors from template code
-          if logger = defined?(ActionController) && Base.logger
-            logger.debug "ERROR: compiling #{render_symbol} RAISED #{e}"
-            logger.debug "Function body: #{source}"
-            logger.debug "Backtrace: #{e.backtrace.join("\n")}"
-          end
+#         begin
+#           ActionView::Base::CompiledTemplates.module_eval(source, filename, 0)
+#         rescue Errno::ENOENT => e
+#           raise e # Missing template file, re-raise for Base to rescue
+#         rescue Exception => e # errors from template code
+#           if logger = defined?(ActionController) && Base.logger
+#             logger.debug "ERROR: compiling #{render_symbol} RAISED #{e}"
+#             logger.debug "Function body: #{source}"
+#             logger.debug "Backtrace: #{e.backtrace.join("\n")}"
+#           end
 
-          raise ActionView::TemplateError.new(self, {}, e)
-        end
-      end
-  end
-end
+#           raise ActionView::TemplateError.new(self, {}, e)
+#         end
+#       end
+#   end
+# end
 
 require 'date'
 
