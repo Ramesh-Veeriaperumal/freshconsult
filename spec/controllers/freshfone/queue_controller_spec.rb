@@ -49,7 +49,7 @@ describe Freshfone::QueueController do
     set_twilio_signature("freshfone/queue/dequeue?client=#{@agent.id}", dequeue_params)
     create_online_freshfone_user
     post :dequeue, dequeue_params.merge({"client" => @agent.id})
-    xml[:Response][:Dial][:Client].should be_eql(@agent.id.to_s)
+    xml[:Response][:Dial][:Client].should include(@agent.id.to_s)
   end
 
   it 'should remove all default queue entries from redis on hangup' do

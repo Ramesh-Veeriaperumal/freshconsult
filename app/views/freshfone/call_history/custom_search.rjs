@@ -1,6 +1,6 @@
 page << "jQuery('.fresfone-call-history .list-page-body')
 .html('#{escape_javascript(render :partial => 'call_log_body', :locals => {:calls => @calls, :children => :false}) }');
 freshfonePlayerSettings();
-setLocationIfUnknown();
+App.Freshfonecallhistory.CallLogs.setLocationIfUnknown();
 threeSixtyPlayer.init();"
 

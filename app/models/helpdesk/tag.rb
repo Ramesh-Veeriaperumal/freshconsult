@@ -2,6 +2,7 @@
 class Helpdesk::Tag < ActiveRecord::Base
   
   include Cache::Memcache::Helpdesk::Tag
+  include Search::ElasticSearchIndex
 
   after_commit :clear_cache
 
@@ -98,5 +99,13 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   def ticket_count
     tickets.visible.size
+  end
+
+  def to_indexed_json
+    to_json({
+            :root => "helpdesk/tag",
+            :tailored_json => true,
+            :only => [ :name, :tag_uses_count, :account_id ]
+            })
   end
 end

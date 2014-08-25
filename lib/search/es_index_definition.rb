@@ -8,15 +8,20 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers]
   end
 
-  def index_hash(pre_fix = DEFAULT_CLUSTER)
-    Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
+  def additional_models
+    [:helpdesk_tags, :freshfone_callers]
   end
 
-	def create_es_index(index_name = DEFAULT_CLUSTER)
-    index_hash(index_name).each do |key, value|
+  def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
+    index_models = is_additional_model ? additional_models : models
+    Hash[*index_models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
+  end
+
+	def create_es_index(index_name = DEFAULT_CLUSTER, is_additional_model=false)
+    index_hash(index_name, is_additional_model).each do |key, value|
       create_model_index(value, key)
     end
 	end
@@ -62,6 +67,18 @@ class Search::EsIndexDefinition
             }
   		}
 	end
+
+  def helpdesk_tags
+    {
+          :"helpdesk/tag" => {
+              :properties => {
+                :name => { :type => :string, :boost => 5, :store => 'yes' },
+                :tag_uses_count => { :type => :long, :include_in_all => false },
+                :account_id => { :type => :long, :include_in_all => false }
+              }
+            }
+      }
+  end
 
 	def helpdesk_tickets
     	{
@@ -208,6 +225,17 @@ class Search::EsIndexDefinition
   		}
 	end
 
+  def freshfone_callers 
+    {
+      :"freshfone/caller" => {
+        :properties => {
+            :number => { :type => :string, :boost => 10, :store => 'yes' },
+            :account_id => { :type => :long, :include_in_all => false }
+        }
+      }
+    }
+  end
+
   def create_model_index(index_name, model_mapping)
   	sandbox(0) {
       Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
@@ -249,11 +277,11 @@ class Search::EsIndexDefinition
     res_aliases
   end
   
-  def create_aliases(account_id)
+  def create_aliases(account_id, is_additional_model=false)
     sandbox(0) {
       pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
       actions = []
-      index_hash(pre_fix).each do |model, index_name|
+      index_hash(pre_fix, is_additional_model).each do |model, index_name|
         operation = { :index => index_name, :alias => "#{model}_#{account_id}" }
         operation.update( { :routing => account_id.to_s } )
         operation.update( { :filter  => { :term => { :account_id => account_id } } } )
@@ -266,11 +294,11 @@ class Search::EsIndexDefinition
     }
   end
 
-  def remove_aliases(account_id)
+  def remove_aliases(account_id, is_additional_model=false)
     sandbox(0) {
       pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
       actions = []
-      index_hash(pre_fix).each do |model, index_name|
+      index_hash(pre_fix, is_additional_model).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
         operation = { :index => index_name, :alias => a.name }
         actions.push( { :remove => operation } )
@@ -282,11 +310,11 @@ class Search::EsIndexDefinition
     }
   end
 
-  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER)
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER, is_additional_model=false)
     sandbox(0) {
       Search::EsIndexDefinition.es_cluster(account_id)
-      old_index_hash = index_hash(old_index_prefix)
-      index_hash(new_index_prefix).each do |model, index_name|
+      old_index_hash = index_hash(old_index_prefix, is_additional_model)
+      index_hash(new_index_prefix, is_additional_model, is_additional_model).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
         a.indices.add index_name
         a.indices.delete old_index_hash[model]

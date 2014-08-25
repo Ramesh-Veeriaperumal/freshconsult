@@ -44,7 +44,7 @@ module AccountHelper
   end
 
   def create_dummy_customer
-    @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL", :limit => 1).first
+    @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL and active = 1 and deleted = 0", :limit => 1).first
 
     if @customer.nil?
       @customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)

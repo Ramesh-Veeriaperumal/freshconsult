@@ -1302,8 +1302,14 @@ Redactor.prototype = {
 		}, this));
 
 	},	
-	isEmpty:function(e){
-		return (this.$editor.text().trim() !== "");
+	isNotEmpty:function(e){
+		var valid_tags = ["img", "iframe", "object", "embed"];
+		for(var i=0; i < valid_tags.length; i++){
+			if(this.$editor.find(valid_tags[i]).length !=0 ){
+				return true
+			}
+		}
+		return  (this.$editor.text().trim() !== "")
 	},
 	showAir: function(e)
 	{
@@ -4209,7 +4215,7 @@ Redactor.prototype = {
 		{
 			return true;
 		}
-		else if (/(iPhone|iPod|BlackBerry|Android)/.test(navigator.userAgent))
+		else if (/(iPhone|iPod|iPad|BlackBerry|Android)/.test(navigator.userAgent))
 		{
 			return true;
 		}

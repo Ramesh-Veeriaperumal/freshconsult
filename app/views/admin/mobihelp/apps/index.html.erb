@@ -21,11 +21,7 @@
         </button>
         <ul class="dropdown-menu">
           <%Mobihelp::App::PLATFORM_NAMES_BY_ID.each do |k,v| %>
-            <%unless k ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
-              <li><%= link_to v, new_admin_mobihelp_app_path(:platform => k)%></li>
-            <%else%>
-              <li class="disabled"><%= link_to "#{v} - #{t('admin.mobihelp.apps.helpnote.content2.download_ios_sdk')}", "#"%> </li>
-            <%end%>
+            <li><%= link_to v, new_admin_mobihelp_app_path(:platform => k)%></li>
           <%end%>
         </ul>
       </div>

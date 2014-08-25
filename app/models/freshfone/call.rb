@@ -140,11 +140,15 @@ class Freshfone::Call < ActiveRecord::Base
 			(caller || {})[type]
 		end
 	end
+
+	def update_call(params)
+		update_call_details(params).save
+	end
 	
 	def update_call_details(params)
 		self.params = params 
 		self.dial_call_sid = params[:DialCallSid] if params[:DialCallSid].present?
-		self.agent = params[:called_agent] if agent.blank?
+		self.agent = called_agent(params) if agent.blank?
 		self.recording_url = params[:RecordingUrl] if recording_url.blank?
 		self.call_duration = params[:DialCallDuration] || params[:RecordingDuration] if call_duration.blank?
 		self.direct_dial_number = params[:direct_dial_number] if ivr_direct_dial?
@@ -254,6 +258,11 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	private
+		def called_agent(params)
+			agent_scoper.find_by_id(params[:agent]) if 
+				can_log_agent? && params[:agent].present? 
+		end
+
 		def child_call_customer_id(params)
 			customer_id || (params[:customer] || {})[:id]
 		end
@@ -344,5 +353,9 @@ class Freshfone::Call < ActiveRecord::Base
 			}
 			record_params.merge!({:voicemail => true}) if (call_status === CALL_STATUS_HASH[:'no-answer'] )
 			Resque::enqueue_at(30.seconds.from_now, Freshfone::Jobs::CallRecordingAttachment, record_params) if recording_url
+		end
+
+		def agent_scoper
+			account.users.technicians.visible
 		end
 end
