@@ -124,7 +124,7 @@ class Helpdesk::Email::Process
 	end
 
   def html_blank?
-    params["body-html"].blank? && !params["body-plain"].blank?
+    Helpdesk::HTMLSanitizer.plain(params["body-html"]).blank? && !params["body-plain"].blank?
   end
 
 end
