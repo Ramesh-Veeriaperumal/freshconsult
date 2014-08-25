@@ -133,7 +133,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
     end
 
     def check_admin_user_privilege
-      if !(current_user && current_user.has_role?(:manage_admin))
+      if !(current_user && current_user.has_role?(:freshfone))
         flash[:notice] = "You dont have access to view this page"
         redirect_to(admin_subscription_login_path)
       end

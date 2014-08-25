@@ -22,6 +22,7 @@ class Facebook::Core::Message
   #reply to a message in fb
   def send_reply(ticket, note)
     return_value = sandbox(true) {
+      @fan_page = @fb_page
       thread_id =  ticket.fb_post.thread_id
       message = @rest.put_object(thread_id , 'messages',:message => note.body)
       message.symbolize_keys!

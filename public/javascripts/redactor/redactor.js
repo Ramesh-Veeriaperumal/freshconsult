@@ -153,6 +153,7 @@ var Redactor = function(element, options)
 	this.textPaste = false;
 	this.undoDisable = false;
 	this.$el = $(element);
+	this.cursorPlacementDelay = null,
 	this.paste_supported_browser = (($.browser.mozilla==true) && (navigator.appVersion.indexOf("Win")!=-1)) || ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
 	
 	this.buildLangSelector();
@@ -263,6 +264,7 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
 		buffer: false,
 		visual: true,
+		cursorTracking: true,
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 
 		// modal windows container
@@ -754,6 +756,11 @@ Redactor.prototype = {
 			}
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
+				if (this.opts.cursorTracking) 
+				{ 
+					this.setCursorPosition();
+				}
+
 				if(!this.specialPaste)
 				{
 			        if(this.paste_supported_browser)
@@ -794,6 +801,9 @@ Redactor.prototype = {
 		this.keyup();	
 		this.keydown();			
 
+		this.bindclick();
+		this.bindCustomEvent();
+
 		// autosave
 		if (this.opts.autosave !== false)
 		{
@@ -815,7 +825,7 @@ Redactor.prototype = {
 		// focus
 		if (this.opts.focus) 
 		{
-			this.$editor.focus();
+			this.focusOnCursor();
 		}
 
 		// fixed
@@ -859,6 +869,57 @@ Redactor.prototype = {
 		}else{
 			this.hasQuotedText = false;
 		}
+	},
+	setCursorPosition: function(){
+		if(this.$editor.find("[rel='cursor']").get(0)){
+			this.removeContent();
+		}
+
+		var imgTag = $("<img id='cursor' />");
+		imgTag.attr("src","//:0");
+		imgTag.attr("rel","cursor");
+		imgTag.attr("width",0);
+		imgTag.attr("height",0);
+
+		if(!$.browser.mozilla){
+			imgTag.css({ "display": "none" });
+		}
+
+	    if (window.getSelection) { 
+	        var selection = window.getSelection();
+
+	        if (selection.rangeCount > 0) {
+	            var range = selection.getRangeAt(0);
+				newRange = document.createRange();
+				newRange.setStart(selection.focusNode, range.endOffset);
+				newRange.insertNode(imgTag[0]);
+	        }
+	    }
+	},
+    removeContent: function() {
+        var srcObj = this.$editor.find("[rel='cursor']").get(0);
+        if (document.createRange) {     
+            var rangeObj = document.createRange();
+            rangeObj.selectNode(srcObj);
+            rangeObj.deleteContents();
+        }
+    },
+	focusOnCursor: function(){
+		var imgfocus = this.$editor.find("[rel='cursor']");
+
+		if(imgfocus[0]){ 
+			var temp_range = document.createRange();
+			 	temp_range.selectNode(imgfocus[0]);	
+			 	this.getSelection().removeAllRanges();
+				this.getSelection().addRange(temp_range);
+
+			if($.browser.mozilla){
+				this.$editor.focus();
+			}
+		} else {
+			this.$editor.focus();
+		}
+		
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -922,12 +983,41 @@ Redactor.prototype = {
                               self.recursive_find($(this));
                           });
     },
+    bindclick: function(){
+    	if (this.opts.cursorTracking) 
+    	{
+    		this.$editor.click($.proxy(function(e) {
+	    		this.setCursorPosition();
+	    	}, this));	
+    	}
+    },
+    bindCustomEvent: function(){
+    	if (this.opts.cursorTracking) 
+    	{
+	    	this.$editor.on('textInserted',$.proxy(function(e) {
+	    		this.setCursorPosition();
+	    	}, this));
+	    }
+    },
 	keyup: function()
 	{
 		this.$editor.keyup($.proxy(function(e)
 		{
 			var key = e.keyCode || e.which;
 			
+			if (this.opts.cursorTracking) 
+			{	
+				if (key === 40){
+
+					clearTimeout(this.cursorPlacementDelay);
+					this.cursorPlacementDelay = setTimeout($.proxy(function(){
+						this.setCursorPosition();
+					},this),500);
+
+				} else { 
+					this.setCursorPosition();
+				}
+			}
 			// callback as you type
 			if (typeof this.opts.keyupCallback === 'function')
 			{
@@ -966,6 +1056,10 @@ Redactor.prototype = {
 			if (parent && $(parent).get(0).tagName === 'PRE')
 			{
 				pre = true;
+			}
+
+			if(this.$editor.find("[rel='cursor']").get(0)){
+				this.removeContent();
 			}
 
 			// callback keydown
@@ -1233,6 +1327,9 @@ Redactor.prototype = {
 	},
 	syncCode: function()
 	{
+		if($.browser.mozilla && this.$editor.find("[rel='cursor']").get(0)){
+			$("[rel='cursor']").css({"display": "none"});
+		}
 		this.$el.val(this.$editor.html());
 	},
 	
@@ -1372,7 +1469,10 @@ Redactor.prototype = {
 				$(s).attr('unselectable', 'on');
 			}
 			
-			this.resizeImage(s);
+			if($(s).attr('id') != "cursor"){
+				this.resizeImage(s);
+			}
+				
 			
 		}, this));
 	

@@ -8,7 +8,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
   #need to refactor this code and handle the exception properly
   module ClassMethods
     AUTH_ERROR               = 190
-    AUTH_SUB_CODES           = [458, 460, 463, 467]
+    AUTH_SUB_CODES           = [458, 459, 460, 463, 464, 467]
     HTTP_STATUS_CLIENT_ERROR = [400, 499]
     HTTP_STATUS_SERVER_ERROR = [500, 599]
     APP_RATE_LIMIT           = 4
@@ -20,7 +20,6 @@ module Facebook::KoalaWrapper::ExceptionHandler
       exception = nil
       begin
         return_value = yield
-        @fan_page = @fan_page || @fb_page
         
       rescue Koala::Facebook::APIError => exception
         error_params = construct_error_and_raise(exception)
@@ -51,7 +50,8 @@ module Facebook::KoalaWrapper::ExceptionHandler
         end
         
       rescue => exception
-        construct_error_and_raise(exception)
+        #construct_error_and_raise(exception)
+        NewRelic::Agent.notice_error(exception, {:page_id => @fan_page.id, :account_id => @fan_page.account_id})
       end
       
       return_value = false unless exception.nil?
