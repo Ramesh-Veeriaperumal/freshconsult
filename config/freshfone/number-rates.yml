@@ -23,12 +23,12 @@ BG:
   local: 1.0
 BH:
   name: Bahrain
-  beta: true
+  beta: false
   address_required: false
   local: 8.0
 BR:
   name: Brazil
-  beta: true
+  beta: false
   address_required: false
   local: 3.0
 CA:
@@ -44,7 +44,7 @@ CH:
   local: 1.0
 CY:
   name: Cyprus
-  beta: true
+  beta: false
   address_required: false
   national: 4.0
   local: 4.0
@@ -61,12 +61,12 @@ DK:
   local: 1.0
 DO:
   name: Dominican Republic
-  beta: true
+  beta: false
   address_required: false
   local: 7.0
 EE:
   name: Estonia
-  beta: true
+  beta: false
   address_required: false
   national: 1.0
   local: 1.0
@@ -129,22 +129,22 @@ JP:
   local: 5.0
 LT:
   name: Lithuania
-  beta: true
+  beta: false
   address_required: false
   local: 1.0
 LU:
   name: Luxembourg
-  beta: true
+  beta: false
   address_required: true
   local: 3.0
 LV:
   name: Latvia
-  beta: true
+  beta: false
   address_required: true
   local: 1.0
 MT:
   name: Malta
-  beta: true
+  beta: false
   address_required: false
   national: 5.0
   local: 5.0
@@ -154,7 +154,7 @@ MX:
   address_required: true
   local: 3.0
 NL:
-  name: The Netherlands
+  name: Netherlands
   beta: false
   address_required: false
   national: 1.0
@@ -166,7 +166,7 @@ NZ:
   local: 3.0
 PE:
   name: Peru
-  beta: true
+  beta: false
   address_required: false
   local: 5.0
 PL:
@@ -204,7 +204,7 @@ SK:
   local: 1.0
 SV:
   name: El Salvador
-  beta: true
+  beta: false
   address_required: false
   local: 10.0
 US:
@@ -215,7 +215,7 @@ US:
   toll_free: 2.0
 ZA:
   name: South Africa
-  beta: true
+  beta: false
   address_required: false
   national: 1.0
   local: 1.0
