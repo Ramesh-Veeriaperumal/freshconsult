@@ -2416,29 +2416,3 @@ label.label-choice{ cursor: pointer; }
 	.reason-followup{ display: block; }
 }	
 /* end */
-
-.ui-form .conditionset div.redactor_editor{ // overriding line no 472
-	float:none;
-	*{ 
-		float:none;
-		margin: 0;
-	}
-}
-.ui-form .conditionset .redactor_box{
-	width:545px;
-	margin-left:3px;
-	.redactor_toolbar{ 
-		padding-left:0 !important; //overriding plugin css 
-	}
-}
-
-.paragraph-redactor{
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	width: 100%;
-	padding: 5px 10px;
-	border: none;
-	box-shadow: none;
-	height: 100px;
-}
