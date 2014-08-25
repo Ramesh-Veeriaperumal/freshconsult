@@ -49,7 +49,7 @@ module GoogleLoginHelper
   end
 
   def scopes
-    scopes = "&scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/calendar"
+    scopes = "&scope=email+profile+https://www.googleapis.com/auth/calendar"
   end
 
   def options_name

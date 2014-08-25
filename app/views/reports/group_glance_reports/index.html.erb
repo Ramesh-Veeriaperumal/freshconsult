@@ -33,7 +33,7 @@
 jQuery(document).ready(function(){
 	Helpkit.GlanceReport.init({
 		report_type: 'group',
-		title:"<%=t('adv_reports.group_at_a_glance')%>",
+		title:"<%=t('adv_reports.group_at_a_glance').html_safe%>",
 		date_range: jQuery("#date_range").val(),
 		_url:'<%=reports_group_glance_reports_url%>'
 	});

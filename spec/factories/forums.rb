@@ -1,24 +1,24 @@
 if Rails.env.test?
   FactoryGirl.define do
     factory :forum_category  do
-      sequence(:name) { |n| "Test Category #{n}"}
-      sequence(:description) { |n| "This is a test category #{n}."}
+      name { Faker::Lorem.words.join(' ').capitalize }
+      description { Faker::Lorem.sentence }
     end
 
 
     factory :forum do
-      sequence(:name) { |n| "Test Forum #{n}"}
-      sequence(:description) { |n| "This is a test forum #{n}."}
+      name { Faker::Lorem.words.join(' ').capitalize }
+      description Faker::Lorem.sentence
       forum_visibility  1
     end
 
 
     factory :topic do
-      sequence(:title) { |n| "Test Topic #{n}"}
+      title { Faker::Lorem.sentence }
     end
 
     factory :post do
-      sequence(:body_html) { |n| "<p>This is a new post #{n}.</p>"}
+      body_html { "<p>#{Faker::Lorem.paragraph}</p>" }
     end
 
     factory :ticket_topic do

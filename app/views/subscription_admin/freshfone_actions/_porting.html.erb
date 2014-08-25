@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="span5">
+    <h3>Port ahead</h3>
+    <% form_tag({:action => 'port_ahead'}, :class => "well") do %>
+      <%= label_tag :account_id %>
+      <%= text_field_tag :account_id, "", :class => "required" %>
+      <%= label_tag :sid, "Number SID" %>
+      <%= text_field_tag :sid, "", :class => "required", :style => "width: 300px;" %>
+      <%= label_tag :number %>
+      <%= text_field_tag :number, "", :class => "required" %>
+      <%= label_tag :display_number %>
+      <%= text_field_tag :display_number, "", :class => "required" %>
+      <%= label_tag :number_type %>
+      <%= select_tag :number_type, 
+          options_for_select([ ["Toll Free", 2], ["Local", 1] ]), {:class => "required"} %>
+      <div><%= submit_tag "Create Number", :class => "btn btn-success" %></div>
+    <% end %>
+  </div>
+  <div class="span4">
+    <h3>Post Twilio port</h3>
+    <% form_tag({:action => 'post_twilio_port'}, :id => "post_twilio_port", :class => "well") do %>
+      <%= label_tag :account_id%>
+      <%= text_field_tag :account_id, "", :class => "required" %>
+      <%= label_tag "number_attributes[number]", "Number" %>
+      <%= text_field_tag "number_attributes[number]", "", :class => "required" %>
+      <%= label_tag "number_attributes[display_number]", "Display Number" %>
+      <%= text_field_tag "number_attributes[display_number]", "", :class => "required" %>
+      <%= label_tag "number_attributes[country]", "Country" %>
+      <%= text_field_tag "number_attributes[country]", "", :class => "required" %>
+      <%= label_tag "number_attributes[region]", "Region" %>
+      <%= text_field_tag "number_attributes[region]", "", :class => "required" %>
+      <%= label_tag "number_attributes[number_type]", "Number Type" %>
+      <%= select_tag "number_attributes[number_type]",
+           options_for_select([ ["Toll Free", 2], ["Local", 1] ], 
+            :selected => "toll_free") %>
+      <div><%= submit_tag "Create number", :class => "btn btn-success" %></div>
+    <% end %>
+  </div>
+</div>

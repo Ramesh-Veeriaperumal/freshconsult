@@ -58,6 +58,7 @@ class Signup < ActivePresenter::Base
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
+      user.language = account.language
       user.user_emails.build({:email => user.email, :primary_role => true, :verified => user.active})
       user.user_emails.first.account = account
     end

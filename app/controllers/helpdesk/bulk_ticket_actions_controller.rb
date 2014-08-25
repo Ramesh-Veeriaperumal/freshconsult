@@ -28,6 +28,16 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
       if privilege?(:reply_ticket) and reply_content.present?
         return unless check_attachments
+        begin
+          Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
+            key = "#{current_user.account_id}-#{current_user.id}"
+            value = Time.now.to_i.to_s
+            $spam_watcher.setex(key,24.hours,value)
+            params["spam_key"] = "#{key}:#{value}"
+          end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e,{:description => "error occured while adding key in redis"})
+        end
         Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
       end
     end
@@ -67,7 +77,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def params_for_queue
-      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'dropbox_url', 'shared_attachments')
+      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'dropbox_url', 'shared_attachments', 'spam_key')
     end
 
     def get_updated_ticket_count

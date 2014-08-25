@@ -1,3 +1,6 @@
+<% unless ["ko", "zh-CN", "ja-JP"].index(current_user.language) %>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<% end %>
 <%= stylesheet_link_tag :reports  %>
 <%= stylesheet_link_tag :pattern  %>
 <%= javascript_include_tag :frameworks  %>

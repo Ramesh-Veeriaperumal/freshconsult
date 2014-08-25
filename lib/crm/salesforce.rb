@@ -119,7 +119,7 @@ class CRM::Salesforce < Resque::Job
       subscription = payment.account.subscription
       binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
         :Account_Renewal_Date__c => subscription.next_renewal_at,
-        :Customer_Status__c => CUSTOMER_STATUS[:paid], :Monthly_Revenue__c => subscription.cmrr })
+        :Customer_Status__c => CUSTOMER_STATUS[:paid], :Monthly_Revenue__c => subscription.cmrr.to_s })
     end
 
     def update_account(crm_ids, domain, status)

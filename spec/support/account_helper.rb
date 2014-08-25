@@ -22,7 +22,7 @@ module AccountHelper
     auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
     ActiveRecord::Base.connection.execute(auto_increment_query)
 
-    create_new_account("test#{Time.now.to_i}", "sample+#{Time.now.to_i}@freshdesk.com")
+    create_new_account("billingtest#{Time.now.to_i}", "sample+#{Time.now.to_i}@freshdesk.com")
   end
 
   def create_new_account(domain = "localhost", user_email = Helpdesk::EMAIL[:sample_email])

@@ -28,9 +28,12 @@ marketer:
   - converstion_metrics 
   - plans 
   - payments
-  - freshfone
 
 support:
  - accounts 
+
+freshfone:
+ - accounts
+ - freshfone
 
 

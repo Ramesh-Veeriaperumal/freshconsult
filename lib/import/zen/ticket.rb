@@ -108,6 +108,7 @@ def ticket_post_process ticket_prop , ticket
   unless custom_hash.blank?      
     ticket.ff_def = @current_account.flexi_field_defs.first.id       
     ticket.assign_ff_values custom_hash    
+    ticket.flexifield.save 
   end
   #Attachment
   ticket_prop.attachments.each do |attachment|   

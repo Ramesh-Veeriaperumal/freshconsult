@@ -76,7 +76,7 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def admin_spam_watcher(account, deleted_users)
+  def admin_spam_watcher(account, deleted_users,spam_watcher_redis=nil)
     @headers = {
       :from    => AppConfig['from_email'],
       :to      => account.admin_email,
@@ -85,6 +85,7 @@ class SubscriptionNotifier < ActionMailer::Base
     }
     @account = account 
     @deleted_users = deleted_users
+    @spam_watcher_redis = spam_watcher_redis
     mail(@headers) do |part|
       part.html { render "admin_spam_watcher.html"}
     end.deliver

@@ -39,6 +39,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
   
   text_datastore_callbacks :class => "ticket"
+  spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
@@ -672,7 +673,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     account.support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
-        (parse_email_text(support_email)[:email]).casecmp(parse_email_text(to_email.strip)[:email]) == 0)}
+        (trim_trailing_characters(parse_email_text(support_email)[:email])).casecmp(trim_trailing_characters(parse_email_text(to_email.strip)[:email])) == 0) ||
+        (parse_email_with_domain(to_email.strip)[:domain] == account.full_domain)
+      }
     end
 
     reply_to_all_emails

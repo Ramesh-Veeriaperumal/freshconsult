@@ -73,7 +73,7 @@ def import_file base_dir, file_arr
     res = http.start{|http| http.request(req) }     
     case res
     when Net::HTTPSuccess, Net::HTTPRedirection
-       File.open(file_path, 'w') {|f| f.write(res.body) }      
+       File.open(file_path, 'wb') {|f| f.write(res.body) }      
     else 
       NewRelic::Agent.notice_error("#{res.body}")
       raise ArgumentError, "Unable to connect zendesk :: #{res.body}" 
