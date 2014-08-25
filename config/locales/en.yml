@@ -5242,6 +5242,7 @@ en:
     top_n_analysis: "Top-N Analysis"
     agent_top_n_analysis: "Agent Top-N Analysis"
     group_top_n_analysis: "Group Top-N Analysis"
+    time_sheet_report: "Time Sheet Report"
     customer_top_n_analysis: "Customer Top-N Analysis"
     select_option_msg: "Please select an option"
     no_data_to_display_msg: "No data to display!"
