@@ -24,7 +24,7 @@ class Admin::DataExportController < Admin::AdminController
   end
 
   def export
-    params[:domain] =  current_account.host
+    params[:domain] =  current_account.full_domain
     params[:email] = current_user.email
     Resque.enqueue(Helpdesk::ExportData, params)
     flash[:notice] = t("export_data_successfull")
