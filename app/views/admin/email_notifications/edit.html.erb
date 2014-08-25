@@ -232,11 +232,11 @@
 						<br/>
 				<%end%>	
 				<% if notification_type != EmailNotification::USER_ACTIVATION and notification_type != EmailNotification::PASSWORD_RESET and notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-					<span class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </span>
+					<small class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </small>
 					<br/>
 				<%end%>
 				<% if notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-					<span class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </span>
+					<small class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </small>
 					<br/>
 				<%end%>
 			</div>
@@ -349,11 +349,11 @@
 							<br/>
 					<%end	%>
 					<% if notification_type != EmailNotification::USER_ACTIVATION and notification_type != EmailNotification::PASSWORD_RESET  and notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-						<span class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </span>
-						<span/>
+						<small class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </small>
+						<br/>
 					<%end%>
 					<% if notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-						<span class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </span>
+						<small class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </small>
 						<br/>
 					<%end%>
 				</div>
