@@ -419,7 +419,7 @@
 
       ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
-                                       :twitter => :post, :facebook => :post, :mobihelp => :post}
+                                       :twitter => :post, :facebook => :post, :mobihelp => :post, :full_text => :get}
 
       ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get, :agents_autocomplete => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post,
