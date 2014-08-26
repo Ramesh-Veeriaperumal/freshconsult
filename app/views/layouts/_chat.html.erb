@@ -1,5 +1,5 @@
 <% account = current_account %>
-<%if (current_user && chat_active?)
+<%if (current_user && chat_active? && !(is_assumed_user?))
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
     asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
@@ -42,13 +42,8 @@ var CURRENT_USER = {
     'id':'<%=current_user.id%>',
     'username':'<%=current_user.name%>',
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>,
-    'email' : '<%=current_user.email%>',
-    'isAssumed': false
+    'email' : '<%=current_user.email%>'
 };
-<% if is_assumed_user? %>
-    CURRENT_USER.isAssumed = true;
-    CURRENT_USER.oid = '<%=(current_account.users.find session[:original_user]).id%>';
-<%end%>
 
 var CHAT_AGENTS = '<%=chat_agents_list%>';
 var SITE_ID = '<%=account.chat_setting.display_id%>';

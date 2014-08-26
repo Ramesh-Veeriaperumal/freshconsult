@@ -60,7 +60,7 @@
 	<%= include_cloudfront_js :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||
-		 (current_account.features?(:chat) && current_account.chat_setting) %>
+		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
 	<% end %>
 
