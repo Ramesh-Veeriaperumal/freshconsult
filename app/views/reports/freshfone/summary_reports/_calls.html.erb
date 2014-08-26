@@ -32,7 +32,7 @@
        <td><%= group_title %></td> 
         <% num_of_unanswered = unanswered_calls_count([call_list]) + unanswered_transfers([call_list])%>
       <%headers.keys.each do |header| %>
-        <%if([:call_handle_time, :avg_handle_time].include?(header))
+        <%if([:call_handle_time].include?(header))
           content = call_duration_formatted(send(header,[call_list])) 
         else
           content =[:agent_name].include?(header) ? "" : send(header,[call_list])
@@ -43,6 +43,7 @@
             next
           end
         end %> 
+        <% content = "-" if([:answered_percentage, :avg_handle_time].include?(header))%>
         <%= content_tag(:td, h(content), :class => header) unless content.blank?%>
       <% end %>   
     </tr>
