@@ -14,6 +14,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.bindSubmitButton();
       this.bindFormSumbit();
       this.bindPagination();
+      this.setFilterData();
+      this.setFilterDetails();
       $("#sliding").slide();
     },
     initializeElements: function () {
