@@ -109,7 +109,9 @@ class Freshfone::Filters::CallFilter < Wf::Filter
         return [{ "condition" => "call_type", "operator" => "is", "value" =>"#{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}"},
           { "condition" => "call_status", "operator" => "is_not", "value" => "#{Freshfone::Call::CALL_STATUS_HASH[:blocked]}"}]
       when 'missed' then
-        return [{ "condition" => "call_status", "operator" => "is", "value" => "#{Freshfone::Call::CALL_STATUS_HASH[:'no-answer']}"}]
+        return [{ "condition" => "call_status", "operator" => "is_in", 
+              "value" => "#{Freshfone::Call::CALL_STATUS_HASH[:'no-answer']},#{Freshfone::Call::CALL_STATUS_HASH[:busy]}"},
+                  { "condition" => "call_type", "operator" => "is", "value" =>"#{Freshfone::Call::CALL_TYPE_HASH[:incoming]}"}]
       when 'voicemail' then
         return [{ "condition" => "call_status", "operator" => "is", "value" => "#{Freshfone::Call::CALL_STATUS_HASH[:voicemail]}"}]
       when 'blocked' then
