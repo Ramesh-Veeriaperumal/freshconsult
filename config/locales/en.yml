@@ -4808,7 +4808,7 @@ en:
         total_answered: "Answered Calls"
         total_voice_mail: "Voice Mails"
         total_duration: "Total Duration"
-        agent_calls_count: "Calls Received"
+        agent_calls_count: "Calls"
         total_unanswered_calls: "Unanswered Calls"
         num_of_transfered: "No of Transfers"
         unanswered_transfers: "Unanswered Transfers"
@@ -4816,7 +4816,8 @@ en:
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
-        includes_transfer: "Note: Call count includes transferred calls"
+        includes_transfer: "Includes transferred calls"
+        no_agent: "- No Agent -"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
