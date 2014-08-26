@@ -92,7 +92,6 @@ module Helpkit
     # in the database in UTC, and return them converted to the specified local zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
     config.time_zone = 'Chennai'
-
     # ActiveSupport::JSON.backend = "JSONGem"
     ActiveSupport::JSON.backend = :json_gem
     # Your secret key for verifying cookie session data integrity.

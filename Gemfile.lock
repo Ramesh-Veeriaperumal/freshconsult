@@ -143,14 +143,152 @@ GIT
       railties (>= 3.0)
 
 PATH
+  remote: vendor/gems/acts_as_voteable
+  specs:
+    acts_as_voteable (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/ar_shards
+  specs:
+    ar_shards (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/business_time
+  specs:
+    business_time (1.0.0)
+
+PATH
   remote: vendor/gems/delayed_job
   specs:
     delayed_job (1.7.0)
 
 PATH
+  remote: vendor/gems/dev_notification
+  specs:
+    dev_notification (1.0.0)
+
+PATH
+  remote: vendor/gems/facebook
+  specs:
+    facebook (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:
     freshdesk_authority (0.1)
+
+PATH
+  remote: vendor/gems/gnip
+  specs:
+    gnip (1.0.0)
+
+PATH
+  remote: vendor/gems/has_flexiblefields
+  specs:
+    has_flexiblefields (1.0.0)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/has_no_table
+  specs:
+    has_no_table (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/helpdesk_attachable
+  specs:
+    helpdesk_attachable (1.0.0)
+
+PATH
+  remote: vendor/gems/highcharts-rails
+  specs:
+    highcharts-rails (3.0.1)
+      railties (>= 3.1)
+
+PATH
+  remote: vendor/gems/liquid
+  specs:
+    liquid (2.4.1)
+
+PATH
+  remote: vendor/gems/log_filter
+  specs:
+    log_filter (1.0.0)
+
+PATH
+  remote: vendor/gems/open_id_authentication
+  specs:
+    open_id_authentication (1.0.0)
+      rack-openid (>= 0.2.1)
+
+PATH
+  remote: vendor/gems/paperclip_ext
+  specs:
+    paperclip_ext (1.0.0)
+
+PATH
+  remote: vendor/gems/rack-openid
+  specs:
+    rack-openid (1.3.1)
+      rack (>= 1.1.0)
+      ruby-openid (>= 2.1.8)
+
+PATH
+  remote: vendor/gems/recaptcha
+  specs:
+    recaptcha (0.3.4)
+
+PATH
+  remote: vendor/gems/seed-fu
+  specs:
+    seed-fu (1.2.3)
+      rails (>= 2.1)
+
+PATH
+  remote: vendor/gems/sentient_user
+  specs:
+    sentient_user (0.3.1)
+
+PATH
+  remote: vendor/gems/sharding
+  specs:
+    sharding (1.0.0)
+
+PATH
+  remote: vendor/gems/ssl_requirement
+  specs:
+    ssl_requirement (1.0.0)
+
+PATH
+  remote: vendor/gems/text_data_store
+  specs:
+    text_data_store (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/will_filter
+  specs:
+    will_filter (1.0.0)
+      rails (>= 3.2.3)
+
+PATH
+  remote: vendor/gems/will_paginate-liquidized
+  specs:
+    will_paginate-liquidized (1.0.0)
+
+PATH
+  remote: vendor/gems/xss
+  specs:
+    xss (0.0.1)
+      rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/zendesk-features-1.0.2
+  specs:
+    features (1.0.2)
 
 GEM
   remote: https://rubygems.org/
@@ -427,9 +565,6 @@ GEM
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
-    rack-openid (1.3.1)
-      rack (>= 1.1.0)
-      ruby-openid (>= 2.1.8)
     rack-ssl (1.3.4)
       rack
     rack-test (0.6.2)
@@ -634,8 +769,10 @@ DEPENDENCIES
   active_record_shards (~> 3.1.0)
   activemerchant!
   acts_as_list (~> 0.4.0)
+  acts_as_voteable!
   akismetor!
   ancestry (= 1.3)
+  ar_shards!
   arel (~> 3.0.2)
   authlogic (~> 3.4.2)
   autotest-fsevent (= 0.1.1)
@@ -645,6 +782,7 @@ DEPENDENCIES
   better_errors (~> 1.1.0)
   braintree (= 2.10.0)
   bunny (= 1.2.1)
+  business_time!
   carmen!
   chargebee (~> 1.2.9)
   class_inheritable_attributes!
@@ -657,17 +795,25 @@ DEPENDENCIES
   deadlock_retry!
   debugger (~> 1.6.8)
   delayed_job!
+  dev_notification!
   dynamic_form
   encryptor (= 1.1.3)
+  facebook!
   factory_girl (~> 4.4.0)
   faker (~> 1.0.1)
   faraday (= 0.8.7)
+  features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   freshdesk_authority!
   global_phone
+  gnip!
   gnip-rule (= 0.4.1)
   google-api-client (~> 0.6.3)
+  has_flexiblefields!
+  has_no_table!
+  helpdesk_attachable!
+  highcharts-rails!
   http_accept_language (~> 2.0.1)
   httparty (= 0.10.0)
   i18n (~> 0.6.0)
@@ -679,7 +825,9 @@ DEPENDENCIES
   json-compare (= 0.1.8)
   koala (~> 1.6.0)
   lhm!
+  liquid!
   lockfile (= 1.4.3)
+  log_filter!
   mail
   map_fields!
   marketo!
@@ -701,17 +849,21 @@ DEPENDENCIES
   omniauth-salesforce
   omniauth-shopify-oauth2 (= 1.0.0)
   omniauth-surveymonkey (= 1.0.0)
+  open_id_authentication!
   paperclip (~> 2.8.0)
+  paperclip_ext!
   pg
   premailer (~> 1.8.0)
   prototype-rails (~> 3.2.0)
   rack (~> 1.4.5)
+  rack-openid!
   rack-test (~> 0.6.2)
   rack-throttle (~> 0.3.0)
   rails (= 3.2.18)
   rails-dev-boost!
   rake (= 0.8.7)
   rate-limiting!
+  recaptcha!
   redis (= 3.0.7)
   resque (= 1.22.0)
   resque-scheduler
@@ -734,6 +886,9 @@ DEPENDENCIES
   sass-rails
   sax-machine (~> 0.1.0)
   scrypt
+  seed-fu!
+  sentient_user!
+  sharding!
   sidekiq!
   simplecov (~> 0.7.1)
   simplecov-csv
@@ -741,9 +896,11 @@ DEPENDENCIES
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.9.0)
   spreadsheet (= 0.6.8)
+  ssl_requirement!
   static_model (~> 1.0.4)
   susy
   test-unit (= 1.2.3)
+  text_data_store!
   therubyracer
   tire!
   twilio-ruby
@@ -754,7 +911,10 @@ DEPENDENCIES
   webrick (= 1.3.1)
   white_list!
   wicked_pdf (~> 0.9.2)
+  will_filter!
   will_paginate (~> 3.0)
+  will_paginate-liquidized!
   wkhtmltopdf-binary (~> 0.9.9.1)
   xml-simple (~> 1.1.2)
+  xss!
   yui-compressor!

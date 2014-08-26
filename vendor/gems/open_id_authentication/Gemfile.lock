@@ -1,0 +1,20 @@
+PATH
+  remote: .
+  specs:
+    open_id_authentication (1.0.0)
+      rack-openid (>= 0.2.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rack (1.5.2)
+    rack-openid (1.4.2)
+      rack (>= 1.1.0)
+      ruby-openid (>= 2.1.8)
+    ruby-openid (2.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  open_id_authentication!

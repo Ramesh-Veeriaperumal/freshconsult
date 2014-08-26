@@ -1,5 +1,4 @@
 class Topic < ActiveRecord::Base
-  include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include Rails.application.routes.url_helpers
   include Mobile::Actions::Topic
