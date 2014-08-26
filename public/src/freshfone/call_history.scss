@@ -309,7 +309,9 @@
 	color: #000;
 }
 .no-search .select2-search {
-    display:none
+  display: block;
+	position: absolute;
+	@include left(-10000px);
 }
 .filter-subheader {
 	padding: 7px 10px;

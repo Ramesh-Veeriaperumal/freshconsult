@@ -75,7 +75,7 @@ defaults: &defaults
          customer:           [customer]
     freshfone_calls:
          datetime:           [created_at, date_time_range]
-         int:                [numeric]
+         int:                [numeric, numeric_delimited]
          bigint:             [numeric]
          varchar:            [text]
 
