@@ -420,6 +420,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def tag_names
     tags.collect { |tag| tag.name }
   end
+
+  def ticket_tags
+    tag_names.join(',')
+  end
+
+  def ticket_survey_results
+     recent_survey = survey_results.last(:order => "id")
+     recent_survey.text if recent_survey
+  end
   
   def subject_or_description
     [subject, description]
