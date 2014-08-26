@@ -682,4 +682,8 @@
   map.connect '/all_agents', :controller => 'agents', :action => 'list'
   map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
+  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
+  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+
 end
