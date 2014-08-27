@@ -11,5 +11,7 @@ class ChatSetting < ActiveRecord::Base
 	belongs_to :business_calendar
 
 	attr_protected :account_id
+  serialize :preferences
+  serialize :non_availability_message
 
 end
