@@ -355,7 +355,7 @@ unless ARGV.any? {|a| a =~ /^gems/}
 
     namespace :freshchat do
       desc "Running all FreshChat Tests"
-      Spec::Rake::SpecTask.new(:all) do |t|
+      RSpec::Core::RakeTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(ChatTests)
       end
