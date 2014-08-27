@@ -66,9 +66,7 @@
 						</div>
 						<div class="span4 pull-right">
 							<div id="chat_layout" class="pull-right">
-								<div id="fc-header" class="chat_fc_header">
-									<span id="symbol"><i class="icon-caret-down"></i></span>
-								</div>
+								<div id="fc-header" class="chat_fc_header"></div>
 								<div id="chat-container" style="display: block;">
 									<div id="chatwindow">
 										<div id="messagewindow">
@@ -215,7 +213,7 @@
 				</div>
 			</div>
 			<div class="tab-pane" id="preferences">
-				<ul class="ui-form">
+				<ul class="chat-window-left ui-form clearfix">
 					<li class="inline-field">
 						<h3 class="title space_top"><%= t('freshchat.chat_availability') %></h3> 
 						<div class="fields marginleftnone">
@@ -323,7 +321,7 @@
 					</li>
 
 					<li class="code-view">
-						<div class="chat_code_copy tooltip" twipsy-content-set="true" data-original-title="<%= t('freshchat.copy_to_clipboard') %>"><span class="icon-copy"></span></div>  
+						<div class="chat_code_copy tooltip" twipsy-content-set="true" data-original-title="<%= t('freshchat.copy_to_clipboard') %>"><span class="ficon icon-copy"></span></div>  
 						<textarea id="EmbedCode" readonly></textarea>
 						<div class="intro"><%=t('freshchat.integrate_freshchat_info')%>
 					</li>
