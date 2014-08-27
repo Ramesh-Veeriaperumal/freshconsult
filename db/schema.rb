@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140805143739) do
+ActiveRecord::Schema.define(:version => 20140821061303) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20140805143739) do
     t.string   "prechat_form_name"
     t.string   "prechat_form_mail"
     t.string   "prechat_form_phoneno"
+    t.boolean  "active",                                :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
