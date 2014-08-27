@@ -61,6 +61,7 @@ include FreshfoneHelper
   def avg_handle_time(call_list)
     sum = answered = 0
     call_list.each do |calls|
+      next if calls.agent_name.blank?
       answered += (calls.count - (calls.unanswered_call + calls.outbound_failed_call + calls.unanswered_transfers))
       sum += calls.total_duration unless calls.total_duration.blank?
     end
