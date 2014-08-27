@@ -74,10 +74,7 @@ defaults: &defaults
          requester:          [requester]
          customer:           [customer]
     freshfone_calls:
-         datetime:           [created_at, date_time_range]
-         int:                [numeric, numeric_delimited]
-         bigint:             [numeric]
-         varchar:            [text]
+         datetime:           [created_at]
 
   operators:              # operators precedence
     is:                   100
