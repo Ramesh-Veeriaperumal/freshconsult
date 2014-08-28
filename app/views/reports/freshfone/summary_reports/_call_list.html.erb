@@ -46,8 +46,6 @@
     <div class="row-fluid  report-summary" id="metric_container">
       <div>
        <h3 class="header-lead"><span>Summary </span><a href='<%=Reports::Constants::REPORT_ARTICAL_LINKS[:freshfone_summary]%>' target="_blank" class="report-help-icon pull-right">?</a>
-          <label class="muted pull-right vertical-alignment mt5 mr5">
-          <%=t('reports.freshfone.includes_transfer')%>&nbsp;&nbsp;</label>
         </h3>
          <div class="row-fluid report-summary-wrapper">
           <%= render :partial => "call_metrics", :locals => { :calls => @calls, :old_calls => @old_calls } %>

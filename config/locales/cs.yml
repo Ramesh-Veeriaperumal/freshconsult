@@ -2801,7 +2801,7 @@ cs:
     remove_photo: "Ostranit fotografii"
     remove_profile_image: "Z vašeho profilu byl smazán obrázek"
     remove_profile_image_confirm: "Opravdu chcete smazat obrázek z vašeho profilu?"
-  feedbackwidget_defaulttitle: "Pomoc &amp;amp; Podpora"
+  feedbackwidget_defaulttitle: "Pomoc &amp; Podpora"
   bulk_actions: "Hromadné akce"
   portal_customizer_option_forums_i: "Pokud chcete aby uživatel viděl fóra až po přihlášení, zakažte tuto možnost."
   portal_customizer_anon_for_g: "Aktivujte tuto funkci, pokud mají mít uživatelé možnost přihlásit se svým uživatelským jménem a heslem služby Google. "

@@ -1,55 +1,52 @@
-<span class="dropdown">
-	<b><%= t('freshfone.call_history.sort_by') %></b>
-	<a role="button" 
-		 class="dropdown-toggle" 
-		 id="sorting_dropdown" 
-		 data-toggle="dropdown" 
-		 href="#"> 
-		 <span class="filter-name"><%= t('freshfone.call_history.received_date') %></span>
-		 <b class="caret"></b>
-	</a>
-	<ul class="dropdown-menu right" 
-			role="menu" 
-			aria-labelledby="sorting_dropdown_list">
-		<% sort_by_primary_filters.each_with_index do |wf_order, i| %>
-			<li><a class="wf_order" href="#" wf_order="<%= wf_order[1] %>" >
-				<% if i == 0 %>
-					<span class="icon ticksymbol"></span>
-				<% end %>
-				<%= wf_order[0] %>
-			</a></li>
-		<% end %>
-		<span class="seperator"></span>
-		<% sort_by_secondary_filters.each_with_index do |wf_order_type, i| %>
-			<li><a class="wf_order_type" href="#" wf_order_type="<%= wf_order_type[1] %>" >
-				<% if wf_order_type[1] === :desc %>
-					<span class="icon ticksymbol"></span>
-				<% end %>
-				<%= wf_order_type[0] %>
-			</a></li>
-		<% end %>
-	</ul>
-</span> 
-<span class="dropdown ff_item" condition="created_at" operator="is_greater_than" values="today">
-	<b><%= t('freshfone.call_history.filtered_by') %></b>
-	<a role="button" 
-		 class="dropdown-toggle" 
-		 id="sorting_dropdown" 
-		 data-toggle="dropdown" 
-		 href="#"> 
-		 <span class="filter-name"><%= t('freshfone.call_history.today') %></span>
-		 <b class="caret"></b>
-	</a>
-	<ul class="dropdown-menu right" 
-			role="menu" 
-			aria-labelledby="sorting_dropdown_list">
-		<% filtered_by_options.each_with_index do |wf_order, i| %>
-			<li><a class="wf_filter" href="#" wf_filter="<%= wf_order[1] %>" >
-				<% if i == 0 %>
-					<span class="icon ticksymbol"></span>
-				<% end %>
-				<%= wf_order[0] %>
-			</a></li>
-		<% end %>
-	</ul>
-</span> 
+
+<div class="filter_title">
+	<label>Number</label>
+</div>
+<div id="sorting_dropdown" class="filter_tool_select2">
+	<input type="hidden" id="ff_number"  name="ff_number" class="number_id" fnumber=""/>
+</div>
+<div class="filter_title">
+	<label><%= t('freshfone.call_history.filter_by_time') %></label>
+</div>
+<div class="filter_tool_select2">
+	<input class="ff_item" id="date_range" type="text" condition="created_at" operator="is_in_the_range" 
+		values="" data-filtername="<%= t('freshfone.call_history.filter_by_time') %>"data-value="<%=Date.today()%>"/>
+</div>
+<div class="filter_title">
+		<label><%= t('freshfone.call_history.filter_by_call_status') %></label>
+</div>
+
+<div id="sorting_dropdown" class="filter_tool_select2">
+	<input type="hidden" id="ff_call_status" class="ff_item" condition="call_type" operator="is" 
+	values='' data-filtername="Call type" data-value="All calls"/>
+</div>
+
+<div class="filter_title">
+	<label><%= t('freshfone.call_history.filter_by_agent')%></label>
+</div>
+<div class="filter_tool_select2">
+	<input type="text" name="requester_name" id="requesterName"  class="requesterName"/>
+	<input type="hidden"  id="requesterId" />
+				 <div id="requesterName_choices" class="autocomplete ff_item" condition="user_id" 
+				 		operator="is" values='' data-filtername="Agent" data-value=""></div>
+</div>
+<div class="filter_title">
+	<label><%= t('freshfone.call_history.filter_by_caller')%></label>
+</div>
+<div class="filter_tool_select2">
+	<input type="text" name="caller_name" id="callerName"  class="callerName"/>
+	<input type="hidden"  id="callerId" />
+ 	<div id="callerName_choices" class="autocomplete ff_item" condition="customer_id" 
+ 		operator="is" values='' data-filtername="Caller" data-value=""></div>
+</div>
+<div class="filter_title">
+	<label><%= t('freshfone.call_history.filter_by_group')%></label>
+</div>
+<div class="filter_tool_select2">
+	<input type="hidden" id="groupName"  name="group_name" class="groupName ff_item" condition='freshfone_calls_meta.group_id' 
+	operator='is' values = '0' data-filtername='Group' data-value=''/>
+	</div>
+<div class="filter_footer">
+	<a class="btn btn-primary" id="submitfilter">Filter</a>
+	<a class="btn" id="cancel" data-dismiss="slider" class="filter-close">Close</a>
+</div>

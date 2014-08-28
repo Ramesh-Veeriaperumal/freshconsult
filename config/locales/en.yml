@@ -368,8 +368,8 @@ en:
         send: Send
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
-        happy_info: It has been our pleasure to serve you, glad you were happy with our service
-        neutral_info: Wish you were a little more happy.
+        happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
+        neutral_info: We look forward to serve you better the next time around.
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
   gamification:
@@ -1503,8 +1503,8 @@ en:
     portal:
       discussions:
         topics:
-          spam_check: "Thank you starting a new topic. your topic will appear in the forum, after a standard moderation process."
-          success: "Thank you for posting. your reply will appear in the topic, after a standard moderation process."
+          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
+          success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
       tickets:
         create:
           success: Your ticket has been created.
@@ -3045,7 +3045,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
@@ -4789,6 +4789,7 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+        range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
         report_title: "Freshfone Summary"
@@ -4808,8 +4809,11 @@ en:
         total_answered: "Answered Calls"
         total_voice_mail: "Voice Mails"
         total_duration: "Total Duration"
-        agent_calls_count: "No Of Calls"
+        agent_calls_count: "Calls Received"
         total_unanswered_calls: "Unanswered Calls"
+        num_of_transfered: "No of Transfers"
+        unanswered_transfers: "Unanswered Transfers"
+        answered_percentage: "Answer %"
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
@@ -5239,6 +5243,7 @@ en:
     top_n_analysis: "Top-N Analysis"
     agent_top_n_analysis: "Agent Top-N Analysis"
     group_top_n_analysis: "Group Top-N Analysis"
+    time_sheet_report: "Time Sheet Report"
     customer_top_n_analysis: "Customer Top-N Analysis"
     select_option_msg: "Please select an option"
     no_data_to_display_msg: "No data to display!"
@@ -5391,6 +5396,7 @@ en:
       failed: "Failed"
       in_progress: "In progress"
       voicemail: "Voicemail"
+      all_calls: "All Calls"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
       suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"
@@ -5442,11 +5448,18 @@ en:
       active_number: "Active Numbers"
       singular_deleted_number: "Deleted Number"
       deleted_number: "Deleted Numbers"
+      active_number: "Active Number"
+      deleted_number: "Deleted Number"
       block_number: "Block"
       cancel: "Cancel"
       blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
+      filter_by_time: "Time Period"
+      filter_by_agent: "Agent"
+      filter_by_group: "Group"
+      filter_by_call_status: "Call type"
+      filter_by_caller: "Caller (Requester)"
       received_date: "Date"
       duration: "Duration"
       cost: "Cost"
@@ -5455,9 +5468,10 @@ en:
       all_time: "All time"
       today: "Today"
       yesterday: "Yesterday"
-      this_week: "This week"
-      this_month: "This month"
+      this_week: "Last 7 Days"
+      this_month: "Last 30 Days"
       month: "Last %{month} months"
+      custom: "Date Range"
       no_calls: "No Calls found"
       view_transferred_calls: "View transfered calls"
       save_ticket: "Convert to ticket"
@@ -5466,6 +5480,13 @@ en:
       block_number: "Block"
       unblock_number: "Unblock"
       block_number_title: "Block number"
+      filter_option_all_calls: "All calls"
+      filter_option_received_calls: "Incoming Calls"
+      filter_option_outgoing_calls: "Outgoing Calls"
+      filter_option_missed_calls: "Missed Calls"
+      filter_option_voicemail: "Voicemail"
+      filter_option_blocked_calls: "Blocked Calls"
+
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -5498,9 +5519,6 @@ en:
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
-      number:
-        simultaneous: "Call all agents"
-        round_robin: "Call idle agent first"
       number_settings:
         title: "Managing your call center with Freshfone"
         info: "<b>Assigning phone calls to agents and groups</b><br/>You can use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your Freshfone number</b><br>You could also configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/>"
@@ -5544,8 +5562,6 @@ en:
         anytime: 24/7 Anytime
         name: Name
         name_placeholder: Enter a friendly name for your number
-        hunt_type: "Call Routing"
-        routing_message: "When multiple agents are available online..."
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -5680,8 +5696,14 @@ en:
     name: "Name"
     phone: "Phone Number"
     mail: "Email"
+    textfield: "Textfield"
+    dropdown: "Dropdown"
+    dropdown_choices: "Dropdown Choices"
+    dropdown_info: "Enter each choice in a newline"
+    edit: "Edit"
     cancel: "Cancel"
     save: "Save"
+    done: "Done"
     me: "Me"
     window_position: "Window Position"
     window_offset: "Window Offset"
@@ -5807,7 +5829,7 @@ en:
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
-    installation: "Installation"
+    installation: "Widget Code"
     intro_title: "Why Freshchat?"
     intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, not only can your agents chat with each other without leaving Freshdesk, but they can also engage with your visitors real-time and provide instant answers. It's another arrow in your quiver, a channel designed especially to bring you closer to your users."
     enable_chat: "Enable Freshchat"

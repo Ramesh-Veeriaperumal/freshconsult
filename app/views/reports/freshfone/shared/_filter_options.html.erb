@@ -12,6 +12,7 @@
       %>
       <label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
       <%= text_field_tag :date_range, date_range, :class => "required input-large" %>
+      <label id='filter_range_exceed' class="error hide"><%=t('reports.freshfone.range_exceed')%><span class="required_star">*</span></label>
 
        <label class="control-label"><%=t('reports.freshfone.number')%></label>  
        <% @freshfone_number = freshfone_numbers.first.id if @freshfone_number.blank? %>
@@ -57,7 +58,7 @@ jQuery(document).ready(function() {
     },
     dateFormat: getDateFormat('datepicker'),
     closeOnSelect: true,
-    earliestDate: Date.parse('t - 90 d')
+    earliestDate: Date.parse('t - 6 m')
   });
   
 

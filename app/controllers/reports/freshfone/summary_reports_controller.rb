@@ -41,6 +41,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
         "Total Duration" => :call_handle_time,
         "Average Handle Time" => :avg_handle_time,
         "Unanswered Calls" => :unanswered_calls_count,
+        "Answer %" => :answered_percentage,
         "Total Calls" => :calls_count }
     end
 
@@ -49,6 +50,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
         csv << headers
         headers.shift #agent_name field removed to make a common method call send
         @calls.each do |call_list|
+          next if call_list.agent_name.blank?
           csv_data = [call_list.agent_name]
           headers.each do |val|
             csv_data << column_data(val, [call_list])

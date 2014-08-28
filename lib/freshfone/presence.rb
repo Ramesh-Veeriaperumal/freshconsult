@@ -3,7 +3,6 @@ module Freshfone::Presence
 	
 	def update_freshfone_presence(user, status)
 		freshfone_user(user).set_presence(status)
-		freshfone_user(user).set_last_call_at(Time.now)#updating the agent call pickup/hung-up time
 	end
 
 	def update_presence_and_publish_call(params, message=nil)

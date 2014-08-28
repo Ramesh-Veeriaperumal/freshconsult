@@ -47,14 +47,6 @@ class Freshfone::Number < ActiveRecord::Base
 	VOICEMAIL_STATE = { :on => 1, :off => 0}
 	VOICEMAIL_STATE_BY_VALUE = VOICEMAIL_STATE.invert
 	
-	HUNT_TYPE = [
-		[ :simultaneous, I18n.t('freshfone.admin.number.simultaneous'), 1 ],
-		[ :round_robin,  I18n.t('frehfone.admin.number.round_robin'), 2 ]
-	]
-
-	HUNT_TYPE_HASH = Hash[*HUNT_TYPE.map { |i|  [ i[0], i[2]] }.flatten]
-	HUNT_TYPE_REVERSE_HASH = Hash[*HUNT_TYPE.map { |i|  [ i[2], i[0]] }.flatten]
-
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
 	validates_inclusion_of :queue_wait_time,  :in => [ 2, 5, 10, 15 ] #Temp options
@@ -87,12 +79,6 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 	end	
 
-	HUNT_TYPE_HASH.each_pair do |k, v|
-		define_method("#{k}?") do
-			hunt_type == v
-		end
-	end
-	
 	def voice_type
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]
 	end
@@ -232,9 +218,11 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 
 		def validate_attachments 
-			(attachments || []).each do |a|
-				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
-					{ :name => a.content_file_name })) unless a.mp3?
+			 (attachments || []).each do |a|
+			 	if a.id.blank? 
+					errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+						{ :name => a.content_file_name })) unless a.mp3?
+				end
 			end
 		end
 

@@ -5,9 +5,8 @@ class Account < ActiveRecord::Base
                           logs projects itil marketing partner store channel reseller resellers online
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
-                          static6 static7 static8 static9 static10 marketplace developer dev apps freshapps fone 
+                          static6 static7 static8 static9 static10 dev apps freshapps fone
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 )
-                          
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -35,7 +34,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat ],
       :inherits => [ :blossom ]
     },
 
@@ -80,9 +79,9 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
-    :chat_enable => false, :agent_collision => false, :multiple_user_emails => false,
-    :facebook_realtime => false, :chat => false, :social_revamp => false,
-    :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, :hide_portal_forums => false}
+    :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => false, :social_revamp => true,
+    :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
+    :hide_portal_forums => false, :reports_regenerate_data => false, :chat_enable => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 

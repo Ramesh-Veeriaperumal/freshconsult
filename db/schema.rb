@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140813101832) do
+ActiveRecord::Schema.define(:version => 20140821061303) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20140813101832) do
     t.string   "prechat_form_name"
     t.string   "prechat_form_mail"
     t.string   "prechat_form_phoneno"
+    t.boolean  "active",                                :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -806,8 +807,6 @@ ActiveRecord::Schema.define(:version => 20140813101832) do
     t.text     "non_business_hours_message"
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
-    t.integer  "hunt_type",                                                               :default => 1
-    t.integer  "call_timeout",                                                            :default => 5
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -860,10 +859,8 @@ ActiveRecord::Schema.define(:version => 20140813101832) do
     t.datetime "created_at"
     t.datetime "updated_at"
 		t.datetime "mobile_token_refreshed_at"
-    t.datetime "last_call_at"
   end
 
-  add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
 

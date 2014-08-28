@@ -115,7 +115,8 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
     def notify_freshfone_ops
       type = params[:action].humanize
       subject = "admin.freshdesk : #{type} for Account #{@account.id}"
-      message = "#{type} for account #{@account.id} by #{current_user.name}<#{current_user.email}>"
+      message = "#{type} for account #{@account.id} by #{current_user.name}<#{current_user.email}>
+                 Parameters :: #{params.except(:action, :controller).map{|k,v| "#{k}=#{v}"}.join(' & ')}"
       FreshfoneNotifier.deliver_freshfone_email_template(@account, {
         :subject => subject,
         :recipients => FreshfoneConfig['ops_alert']['mail']['to'],
@@ -133,7 +134,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
     end
 
     def check_admin_user_privilege
-      if !(current_user && current_user.has_role?(:manage_admin))
+      if !(current_user && current_user.has_role?(:freshfone))
         flash[:notice] = "You dont have access to view this page"
         redirect_to(admin_subscription_login_path)
       end
