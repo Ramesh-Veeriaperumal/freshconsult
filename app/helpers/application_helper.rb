@@ -60,7 +60,7 @@ module ApplicationHelper
   end
 
   def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
-    include_cloudfront_js locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
+    javascript_include_tag locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
   end
 
   def logo_url(portal = current_portal)
@@ -477,11 +477,11 @@ module ApplicationHelper
     end 
     avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      content_tag( :div, image_tag("/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
     avatar_content
   end
-
+  
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture') }
     if options.include?(:width)

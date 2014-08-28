@@ -51,8 +51,6 @@ class Subscription < ActiveRecord::Base
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
-  attr_accessible :plan, :next_renewal_at, :creditcard, :address, :affiliate, :state, :agent_limit
-
   scope :paying_subscriptions, { 
     :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
     :include => "currency" }
@@ -289,7 +287,55 @@ class Subscription < ActiveRecord::Base
     (state == 'active') and (subscription_payments.count > 0)
   end
   alias :is_paid_account :paid_account?
-    
+
+
+  def chk_change_agents 
+    if(agent_limit && agent_limit < account.full_time_agents.count)
+     errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
+    end  
+  end
+  
+  def total_amount(addons, coupon_code)      
+    unless active?
+      response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
+      self.amount = to_currency(response.estimate.amount)
+    else
+      response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
+      self.amount = to_currency(response.estimate.amount)
+    end
+  end
+
+  def non_free_agents 
+    non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
+    (non_free_agents > 0) ? non_free_agents : 0
+  end
+
+  def available_free_agents
+    agents = agent_limit || account.full_time_agents.count
+    if (free_agents >= agents) 
+      available_free_slots = (free_agents - agents).to_s + " available"
+    else
+      available_free_slots = free_agents
+    end
+    available_free_slots
+  end
+
+  def is_chat_plan?
+    freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
+    freshchat_plans.include?(self.subscription_plan.name)
+  end
+
+  def set_next_renewal_at(billing_subscription)
+    self.next_renewal_at = if (renewal_date = billing_subscription.current_term_end)
+      Time.at(renewal_date).to_datetime.utc
+    else
+      Time.at(billing_subscription.trial_end).to_datetime.utc
+    end
+  end
+
+
   protected
   
     def non_social_plans
@@ -324,15 +370,7 @@ class Subscription < ActiveRecord::Base
       end
     end
     
-    def total_amount(addons, coupon_code)      
-      unless active?
-        response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
-        self.amount = to_currency(response.estimate.amount)
-      else
-        response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
-        self.amount = to_currency(response.estimate.amount)
-      end
-    end
+    
     
     def cache_old_model
       @old_subscription = Subscription.find id
@@ -342,27 +380,10 @@ class Subscription < ActiveRecord::Base
       chk_change_agents unless trial?
     end
 
-    def chk_change_agents 
-      if(agent_limit && agent_limit < account.full_time_agents.count)
-       errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
-      end  
-    end
 
-    def available_free_agents
-      agents = agent_limit || account.full_time_agents.count
-      if (free_agents >= agents) 
-        available_free_slots = (free_agents - agents).to_s + " available"
-      else
-        available_free_slots = free_agents
-      end
-      available_free_slots
-    end
+    
 
-    def non_free_agents 
-      non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
-      (non_free_agents > 0) ? non_free_agents : 0
-    end
-
+    
     def finished_trial?
       next_renewal_at < Time.zone.now
     end
@@ -376,13 +397,6 @@ class Subscription < ActiveRecord::Base
       SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
 
-    def set_next_renewal_at(billing_subscription)
-      self.next_renewal_at = if (renewal_date = billing_subscription.current_term_end)
-        Time.at(renewal_date).to_datetime.utc
-      else
-        Time.at(billing_subscription.trial_end).to_datetime.utc
-      end
-    end
 
     def set_billing_info(card)
       self.card_number = card.masked_number
@@ -421,12 +435,6 @@ class Subscription < ActiveRecord::Base
       state == 'active' and amount > 0
     end
    
-    def is_chat_plan?
-      freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                          SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                          SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
-      freshchat_plans.include?(self.subscription_plan.name)
-    end
    
   private
 

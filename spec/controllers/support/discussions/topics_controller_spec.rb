@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::Discussions::TopicsController do
-	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -27,13 +26,13 @@ describe Support::Discussions::TopicsController do
 
 		get :show, :id => topic.id
 
-		response.should render_template 'support/discussions/topics/show.portal'
+		response.should render_template 'support/discussions/topics/show'
 	end
 
 	it "should render new page on get 'new'" do
 		get :new
 
-		response.should render_template 'support/discussions/topics/new.portal'
+		response.should render_template 'support/discussions/topics/new'
 	end
 
 	it "should increase hit count on get 'hit'" do
@@ -53,7 +52,7 @@ describe Support::Discussions::TopicsController do
 
 		topic_from_controller = controller.instance_variable_get(:@topic)
 		topic_from_controller.should eql topic
-		response.should render_template 'support/discussions/topics/new.portal'
+		response.should render_template 'support/discussions/topics/new'
 	end
 
 
@@ -81,7 +80,7 @@ describe Support::Discussions::TopicsController do
 
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
-		response.should redirect_to 'support/discussions'
+		response.should redirect_to '/support/discussions'
 	end
 
 	it "should not create a topic on post 'create' when post is invalid" do
@@ -96,7 +95,7 @@ describe Support::Discussions::TopicsController do
 		@account.topics.find_by_title(topic_title).should be_nil
 		@account.posts.find_by_body_html("").should be_nil
 
-		response.should render_template 'support/discussions/topics/new.portal'
+		response.should render_template 'support/discussions/topics/new'
 	end
 
 
@@ -122,7 +121,7 @@ describe Support::Discussions::TopicsController do
 		post.user_id.should eql @user.id
 		post.account_id.should eql RSpec.configuration.account.id
 
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
 	it "should deny access when someone tries to update a topic on put 'update'" do
@@ -157,7 +156,7 @@ describe Support::Discussions::TopicsController do
 	# 	@account.topics.find_by_title(new_topic_title).should be_nil
 	# 	@account.posts.find_by_body_html("").should be_nil
 
-	# 	response.should redirect_to "support/discussions/topics/new.portal"
+	# 	response.should redirect_to "/support/discussions/topics/new.portal"
 	# end
 
 	it "should delete a topic on delete 'destroy'" do
@@ -169,7 +168,7 @@ describe Support::Discussions::TopicsController do
 
 		@account.topics.find_by_id(topic.id).should be_nil
 		@account.posts.find_by_id(post.id).should be_nil
-		response.should redirect_to 'support/discussions'
+		response.should redirect_to '/support/discussions'
 	end
 
 	it "should toggle stamp between solved and unsolved on put 'toggle_solution'" do
@@ -181,7 +180,7 @@ describe Support::Discussions::TopicsController do
 
 		solved_topic = RSpec.configuration.account.topics.find_by_id(topic.id)
 		solved_topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 
 		#unsolve a solved topic
 
@@ -190,7 +189,7 @@ describe Support::Discussions::TopicsController do
 
 		solved_topic.reload
 		solved_topic.stamp_type.should eql Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
 	it "should toggle monitor on put 'toggle_monitor'" do
@@ -234,7 +233,7 @@ describe Support::Discussions::TopicsController do
 		vote.should be_an_instance_of(Vote)
 		vote.voteable_id.should eql topic.id
 		vote.voteable_type.should eql "Topic"
-		response.should render_template 'support/discussions/topics/_topic_vote.html.erb'
+		response.should render_template 'support/discussions/topics/_topic_vote'
 
 		#----
 
@@ -246,13 +245,13 @@ describe Support::Discussions::TopicsController do
 		unliked_topic.user_votes.should be_eql(vote_count)
 		vote = unliked_topic.votes.find_by_user_id(@user.id)
 		vote.should be_nil
-		response.should render_template 'support/discussions/topics/_topic_vote.html.erb'
+		response.should render_template 'support/discussions/topics/_topic_vote'
 	end
 
 	it "should render my topics page on get 'my_topics'" do
 		get :my_topics
 
-		response.should render_template 'support/discussions/topics/my_topics.portal'
+		response.should render_template 'support/discussions/topics/my_topics'
 	end
 
 	it "should render users voted partial on get 'users_voted'" do
@@ -260,7 +259,7 @@ describe Support::Discussions::TopicsController do
 
 		get :users_voted, :id => topic.id
 
-		response.should render_template 'support/discussions/topics/_users_voted.html.erb'
+		response.should render_template 'support/discussions/topics/_users_voted'
 	end
 
 	it "should redirect to support home if portal forums is disabled" do

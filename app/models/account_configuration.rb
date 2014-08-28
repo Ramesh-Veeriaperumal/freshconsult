@@ -10,9 +10,6 @@ class AccountConfiguration < ActiveRecord::Base
 
   after_update :update_crm, :update_billing, :update_reseller_subscription
 
-  attr_accessible :contact_info, :billing_emails, :name, :billing_site, 
-    :billing_api_key, :exchange_rate
-
   def admin_first_name
   	contact_info[:first_name]
   end

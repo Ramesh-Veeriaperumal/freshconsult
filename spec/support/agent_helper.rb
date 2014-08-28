@@ -14,18 +14,17 @@ module AgentHelper
                                     :active => options[:active], 
                                     :user_role => options[:role], 
                                     :delta => 1, 
-                                    :language => "en") 
+                                    :language => "en")  
     new_user.agent = new_agent
     new_user.roles = [account.roles.second]
-    new_user.save(false)
-    
+    new_user.save(:validate => false)
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , 
                               :account_id =>  account.id, 
                               :group_id => options[:group_id])
       ag_grp.save!
     end
-    @acc.users << new_user
+    account.users << new_user
     new_agent
   end
 end

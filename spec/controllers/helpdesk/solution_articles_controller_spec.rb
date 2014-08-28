@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Solution::ArticlesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -58,7 +57,7 @@ describe Solution::ArticlesController do
                                             })
     log_in(restricted_agent)
     get :show, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
-    response.status.should eql "302 Found"
+    response.status.should eql 302
     session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
     UserSession.find.destroy    
   end
@@ -123,13 +122,9 @@ describe Solution::ArticlesController do
   end
 
   it "should add attahchment to article" do 
-    buffer = ("b" * 1024).freeze
-    att_file = Tempfile.new('bulk_att')
-    File.open(att_file.path, 'wb') { |f| 1.kilobytes.times { f.write buffer } }
-
     Resque.inline = true
     put :update, { :id => @test_article.id, 
-                   :solution_article => { :attachments => [{"resource" => att_file}] },
+                   :solution_article => { :attachments => [{"resource" => fixture_file_upload('files/image.gif', 'image/gif')}] },
                     :tags => {:name => ""},
                     :category_id => @test_category.id, 
                     :folder_id => @test_folder.id 

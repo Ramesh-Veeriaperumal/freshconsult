@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::LoginController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,7 +21,7 @@ describe Support::LoginController do
 
   it "should display portal login page" do
     @account.sso_enabled = false
-    @account.save(false)
+    @account.save(:validate => false)
     get :new
     response.body.should =~ /Login to the support portal/
     response.body.should =~ /...or login using/
@@ -34,7 +33,7 @@ describe Support::LoginController do
 
   it "should not display the restricted features in portal login page" do
     @account.sso_enabled = false
-    @account.save(false)
+    @account.save(:validate => false)
     @account.features.send(:facebook_signin).destroy
     @account.features.send(:signup_link).destroy
     get :new
@@ -53,10 +52,10 @@ describe Support::LoginController do
 
   it "should display portal login page for sso_enabled account" do
     @account.sso_enabled = true
-    @account.save(false)
+    @account.save(:validate => false)
     get :new
     response.body.should =~ /redirected/
-    response.redirected_to.should =~ /host_url/
+    response.location.should =~ /host_url/
   end
 
   it "should allow user to login" do
@@ -66,7 +65,7 @@ describe Support::LoginController do
     post :create, :user_session=>{:email=> user.email, :password=>"test", :remember_me=>"0"}
     response.body.should =~ /redirected/
     response.body.should_not =~ /Login to the support portal/
-    response.redirected_to.should eql "/"
+    response.should redirect_to "/"
   end
 
   it "should not allow user to login with an incorrect password or if the user is a deleted user" do
@@ -77,6 +76,6 @@ describe Support::LoginController do
     response.should be_success
     response.body.should_not =~ /redirected/
     response.body.should =~ /Login to the support portal/
-    response.redirected_to.should eql nil 
+    response.should_not be_redirect 
   end
 end

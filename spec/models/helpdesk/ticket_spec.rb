@@ -15,9 +15,9 @@ describe Helpdesk::Ticket do
 
   before(:each) do
     @ticket.responder_id = nil
-    @ticket.save(false)
+    @ticket.save(:validate => false)
     @new_ticket.responder_id = nil
-    @new_ticket.save(false)
+    @new_ticket.save(:validate => false)
   end
 
 
@@ -37,7 +37,7 @@ describe Helpdesk::Ticket do
 
     @ticket = create_ticket({:status => 2}, @group)
     @ticket.group_id = @group.id
-    @ticket.save(false)
+    @ticket.save(:validate => false)
   end
 
   it "should be assigning tickets to agents in round robin" do
@@ -62,7 +62,7 @@ describe Helpdesk::Ticket do
 
   it "should not be assigned to agent if no agents are available" do
     Agent.any_instance.stubs(:available?).returns(false)
-    @agent.available?.should be_false
+    @agent.available?.should be false
     @ticket.assign_tickets_to_agents
     @ticket.responder_id.should be_nil
   end

@@ -77,7 +77,7 @@ module Mobile::Actions::Ticket
                     :ticket_notes, :ticket_sla_status],
       :include => json_inlcude
     }
-    to_json(options,false) 
+    as_json(options,false) 
   end
   
 	def to_mob_json_index
@@ -86,7 +86,7 @@ module Mobile::Actions::Ticket
       :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :need_attention, :pretty_updated_date ,:ticket_current_state]
     }
-    to_json(options,false) 
+    as_json(options,false) 
   end
   
 	def to_mob_json_search
@@ -94,7 +94,7 @@ module Mobile::Actions::Ticket
       :only => [ :id,:display_id,:subject,:description,:priority],
       :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :requester_name ]
     }
-    to_json(options,false)
+    as_json(options,false)
   end
 
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")

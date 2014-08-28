@@ -87,7 +87,7 @@ Helpkit::Application.routes.draw do
     collection do
       delete :destroy
     end
-    resources :time_sheets
+    resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
   match '/customers/filter/:state/*letter' => 'customers#index'
@@ -101,10 +101,12 @@ Helpkit::Application.routes.draw do
 
     member do
       get :hover_card
+      get :hover_card_in_new_tab
       put :restore
       post :quick_customer
       put :make_agent
       put :make_occasional_agent
+      put :verify_email
     end
 
     resources :contact_merge do
@@ -315,72 +317,72 @@ Helpkit::Application.routes.draw do
   resource :account_configuration
 
   namespace :integrations do
-      resources :installed_applications do
-        member do
-          put :install
-          get :uninstall
-        end
+    resources :installed_applications do
+      member do
+        put :install
+        get :uninstall
       end
+    end
 
-      resources :applications do
-        member do
-          post :custom_widget_preview
-        end
+    resources :applications do
+      member do
+        post :custom_widget_preview
       end
+    end
 
-      resources :integrated_resource do
+    resources :integrated_resource do
     
-        member do
-          put :create
-          delete :delete
-        end
+      member do
+        put :create
+        delete :delete
       end
+    end
 
-      resources :google_accounts do
-        member do
-          get :edit
-          delete :delete
-          put :update
-          put :import_contacts
-        end
+    resources :google_accounts do
+      member do
+        get :edit
+        delete :delete
+        put :update
+        put :import_contacts
       end
+    end
 
-      resources :gmail_gadgets do
-        collection do
-          get :spec
-        end
+    resources :gmail_gadgets do
+      collection do
+        get :spec
       end
+    end
 
-      resources :jira_issue do
-        collection do
-          get :get_issue_types
-          put :unlink
-          post :notify
-          get :register
-        end
+    resources :jira_issue do
+      collection do
+        get :get_issue_types
+        put :unlink
+        post :notify
+        get :register
       end
+    end
 
-      resources :pivotal_tracker do
-        collection do
-          get :tickets
-          post :pivotal_updates
-          post :update_config
-        end
+    resources :pivotal_tracker do
+      collection do
+        get :tickets
+        post :pivotal_updates
+        post :update_config
       end
+    end
 
-      resources :user_credentials
-      resources :logmein do
-        collection do
-          get :rescue_session
-          put :update_pincode
-          get :refresh_session
-          get :tech_console
-          get :authcode
-        end
+    resources :user_credentials
+    resources :logmein do
+      collection do
+        get :rescue_session
+        put :update_pincode
+        get :refresh_session
+        get :tech_console
+        get :authcode
       end
-      match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
-      match 'oauth_install/:provider' => 'applications#oauth_install', :as => :custom_install
-      match 'install/:app' => 'oauth#authenticate', :as => :oauth
+    end
+    match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
+    match 'oauth_install/:provider' => 'applications#oauth_install', :as => :custom_install
+    match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
 
   namespace :admin do
@@ -679,7 +681,7 @@ Helpkit::Application.routes.draw do
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
 
   namespace :reports do
-    resources :helpdesk_glance_reports do
+    resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
       collection do
         post :generate
         post :generate_pdf
@@ -689,7 +691,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :analysis_reports do
+    resources :analysis_reports, :controller => 'helpdesk_load_analysis' do
       collection do
         post :generate
         post :generate_pdf
@@ -697,7 +699,7 @@ Helpkit::Application.routes.draw do
       end
     end
       
-    resources :performance_analysis_reports do
+    resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis' do
       collection do
         post :generate
         post :generate_pdf
@@ -705,17 +707,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agent_glance_reports do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_activity_ajax
-        post :fetch_metrics
-      end
-    end
-
-    resources :group_glance_reports do
+    resources :agent_glance_reports, :controller => 'agent_glance_reports' do
       collection do
         post :generate
         post :generate_pdf
@@ -725,7 +717,17 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agent_analysis_reports do
+    resources :group_glance_reports, :controller => 'group_glance_reports' do
+      collection do
+        post :generate
+        post :generate_pdf
+        post :send_report_email
+        post :fetch_activity_ajax
+        post :fetch_metrics
+      end
+    end
+
+    resources :agent_analysis_reports, :controller => 'agents_analysis' do
       collection do
         post :generate
         post :generate_pdf
@@ -734,7 +736,7 @@ Helpkit::Application.routes.draw do
       end
     end
     
-    resources :group_analysis_reports do
+    resources :group_analysis_reports, :controller => 'groups_analysis' do
       collection do
         post :generate
         post :generate_pdf
@@ -743,7 +745,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agents_comparison_reports do
+    resources :agents_comparison_reports, :controller => 'agents_comparison' do
       collection do
         post :generate
         post :generate_pdf
@@ -751,7 +753,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :groups_comparison_reports do
+    resources :groups_comparison_reports, :controller => 'groups_comparison' do
       collection do
         post :generate
         post :generate_pdf
@@ -759,7 +761,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :customer_glance_reports do
+    resources :customer_glance_reports, :controller => 'customer_glance_reports' do
       collection do
         post :generate
         post :generate_pdf
@@ -769,7 +771,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :customers_analysis_reports do
+    resources :customers_analysis_reports, :controller => 'customers_analysis' do
       collection do
         post :generate
         post :generate_pdf
@@ -778,10 +780,19 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :report_filters do
+    resources :report_filters, :controller => 'report_filters' do
       collection do
         post :create
         post :destroy
+      end
+    end
+    
+    namespace :freshfone do
+      resources :summary_reports, :controller => 'summary_reports' do
+        collection do
+          post :generate
+          post :export_csv
+        end
       end
     end
   end
@@ -928,9 +939,11 @@ Helpkit::Application.routes.draw do
     resources :authorizations do
       collection do
         get :autocomplete
+        get :company_autocomplete
+        get :agent_autocomplete
       end
     end
-
+    
     resources :tickets do
       collection do
         get :user_tickets
@@ -949,6 +962,7 @@ Helpkit::Application.routes.draw do
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save
+        post :assign_to_agent#TODO-RAILS3 new route
       end
 
       member do
@@ -975,6 +989,7 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
+        put :quick_assign #TODO-RAILS3 new route
       end
 
       resources :surveys do
@@ -998,7 +1013,7 @@ Helpkit::Application.routes.draw do
       resources :notes do
         collection do
           get :since
-          get :agents
+          get :agents_autocomplete
         end
         
         member do
@@ -1006,7 +1021,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :subscriptions do
+      resources :subscriptions do #:as => 'helpdesk_ticket_helpdesk'
         collection do
           post :create_watchers
           get :unsubscribe
@@ -1108,8 +1123,12 @@ Helpkit::Application.routes.draw do
         get :text_content
       end
     end
-
-    resources :attachments, :only => [:show, :destroy]
+    
+    namespace :facebook do
+      namespace :helpdesk do
+        resources :attachments, :only => [:show, :destroy]
+      end
+    end
     resources :dropboxes
 
     resources :sla_policies, :except => :show do
@@ -1128,7 +1147,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :commons
+    resources :commons do# TODO-RAILS3 new route
+      collection do
+        post :group_agents
+      end
+    end
   end
 
   resources :api_webhooks
@@ -1159,10 +1182,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :articles, :only => :show
+    resources :articles, :only => [:show, :create]#TODO-RAILS3 :: new route
   end
 
-  resources :posts do
+  resources :posts, :as => 'all' do
     collection do
       get :search
     end
@@ -1171,6 +1194,8 @@ Helpkit::Application.routes.draw do
   resources :topics
   resources :posts
   resources :monitorship
+
+  resources :discussions
 
   namespace :discussions do
     resources :forums, :except => :index do
@@ -1230,8 +1255,9 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :discussions
+  
   resources :posts
+    
   resources :categories do
     collection do
       put :reorder
@@ -1460,6 +1486,144 @@ Helpkit::Application.routes.draw do
 
 
 
+  constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
+    
+    root :to => 'subscription_admin/subscriptions#index'
+    
+    namespace :subscription_admin, :as => 'admin' do
+      resources :subscriptions do
+        collection do
+          get :customer
+          get :deleted_customers
+          get :customers_csv
+        end
+      end
+      
+      resources :accounts do
+        member do
+          post :add_day_passes
+        end
+        collection do
+          get :agents
+          get :tickets
+          get :renewal_csv
+        end
+      end
+      
+      resources :subscription_plans, :as => 'plans'
+      
+      resources :subscription_affiliates, :as => 'affiliates' do
+        collection do
+          post :add_affiliate_transaction
+        end
+        member do
+          post :add_subscription
+        end
+      end
+      
+      resources :subscription_payments, :as => 'payments'
+      resources :subscription_announcements, :as => 'announcements'
+      resources :conversion_metrics, :as => 'metrics'
+      
+      resources :account_tools, :as => 'tools' do
+        collection do
+          post :regenerate_reports_data
+          put :update_global_blacklist_ips
+        end
+      end
+        
+      resources :manage_users, :as => 'manage_users' do
+        collection do
+          post :add_whitelisted_user_id
+          post :remove_whitelisted_user_id
+        end
+      end
+        
+      namespace :resque do
+        match '/' => 'home#index', :as => :home
+        match '/failed/:queue_name/show' => 'failed#show', :as => :failed_show
+          
+        resources :failed do
+          member do
+            delete :destroy
+            put :requeue
+          end
+          collection do
+            delete :destroy_all
+            put :requeue_all
+          end
+        end
+      end
+        
+      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone
+        
+      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats
+        
+      resources :spam_watch, :only => :index
+      match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details'
+      
+      match ':shard_name/spam_user/:user_id' => 'spam_watch#spam_user', :as => :spam_user
+      
+      match ':shard_name/block_user/:user_id' => 'spam_watch#block_user'
+      match ':shard_name/hard_block/:user_id' => 'spam_watch#hard_block', :as => :hard_block_user
+      match ':shard_name/internal_whitelist/:user_id' => 'spam_watch#internal_whitelist', :as => :internal_whitelist
+      
+      
+      resources :subscription_events, :as => 'events' do
+        collection do
+          get :export_to_csv
+        end
+      end
+      
+      resources :custom_ssl, :as => 'customssl' do
+        collection do
+          post :enable_custom_ssl
+        end
+      end
+      
+      resources :currencies, :as => 'currency'
+      
+      match 'admin_sessions/logout' => 'admin_sessions#destroy', :as => :subscription_logout
+      
+      match 'admin_sessions/login' => 'admin_sessions#new', :as => :subscription_login
+      
+      resources :subscription_users, :as => 'subscription_users' do
+        member do
+          post :update
+          get :edit
+          get :show
+        end
+        
+        collection do
+          get :reset_password
+        end
+      end
+    end
+  end
+  
+  
+#  constraints(lambda {|req| req.subdomain == AppConfig['partner_subdomain'] }) do
+    namespace :partner_admin, :as => 'partner' do
+      resources :affiliates do
+        collection do
+          post :add_affiliate_transaction
+        end
+      end
+    end
+#  end
+    
+  constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
+    namespace :billing do
+      resources :billing do
+        collection do
+          post :trigger
+        end
+      end
+    end
+  end
+  
+  # match ':controller(/:action(/:id))', :via => :all
+  # match ':controller/:action/(:id).:format', :via => :all
   #SAAS copy starts here
   # map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
   #   subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'

@@ -15,7 +15,7 @@ Helpkit::Application.configure do
   config.whiny_nils = true
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates
@@ -30,7 +30,7 @@ Helpkit::Application.configure do
   config.action_mailer.delivery_method = :test
 
   # Raise exception on mass assignment protection for Active Record models
-  config.active_record.mass_assignment_sanitizer = :strict
+  config.active_record.mass_assignment_sanitizer = :logger
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr

@@ -44,7 +44,7 @@ describe ContactsController do
     json_response.should include("success")
     json_response['requester_id'].should be_eql @account.all_contacts.last.id
     
-    json_response["success"].should be_true
+    json_response["success"].should eql(true)
   end
 
   it "should delete multiple contacts" do
@@ -53,8 +53,8 @@ describe ContactsController do
     contact_one = add_new_user(@account)
     contact_one.save!
     delete :destroy, params.merge!(:id => "multiple", :ids => [contact.id,contact_one.id])
-    @account.all_contacts.find(contact.id).deleted.should be_true
-    @account.all_contacts.find(contact_one.id).deleted.should be_true
+    @account.all_contacts.find(contact.id).deleted.should be true
+    @account.all_contacts.find(contact_one.id).deleted.should be true
   end
 
   it "should restore multiple contacts" do
@@ -65,8 +65,8 @@ describe ContactsController do
     contact_one.deleted = 1
     contact_one.save!
     put :restore, params.merge!(:id => "multiple", :ids => [contact.id,contact_one.id])
-    @account.all_contacts.find(contact.id).deleted.should be_false
-    @account.all_contacts.find(contact_one.id).deleted.should be_false
+    @account.all_contacts.find(contact.id).deleted.should be false
+    @account.all_contacts.find(contact_one.id).deleted.should be false
   end
 
   # Negative Cases
@@ -84,7 +84,7 @@ describe ContactsController do
                       })
                    
     json_response.should include("error")
-    json_response["error"].should be_true
-    json_response["message"][0][1].should be_eql("Email has already been taken")
+    json_response["error"].should be true
+    json_response["message"]['base'].should include("Email has already been taken")# Check the same change in native mobile
   end
 end

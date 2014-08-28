@@ -3,7 +3,6 @@ require 'spec_helper'
 include FacebookHelper
 
 describe Social::FacebookPagesController do
-  integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -15,7 +14,7 @@ describe Social::FacebookPagesController do
   describe "#GET index" do
     it "should render the index page to add a new facebook page when no pages are configured" do
       get :index
-      response.should render_template("social/facebook_pages/index.html.erb")
+      response.should render_template("social/facebook_pages/index")
     end
     
     
@@ -29,14 +28,15 @@ describe Social::FacebookPagesController do
       Koala::Facebook::OAuth.any_instance.stubs(:get_access_token).returns("23324324")
     
       Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(facebook_pages)
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_profile, facebook_page_info)
+      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_profile)
+      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_page_info)
       Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_picture).returns(sample_page_picture)
       
         get :index, {
           :code => "CODE123"
         }
-        response.should render_template("social/facebook_pages/index.html.erb")
-        response.template_objects["new_fb_pages"].should_not be_nil
+        response.should render_template("social/facebook_pages/index")
+        assigns(:new_fb_pages).should_not be_nil
     end
   end
   

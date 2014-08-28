@@ -24,7 +24,7 @@ describe Facebook::Core::Post do
     Facebook::Core::Parser.new(realtime_feed).parse
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -45,7 +45,7 @@ describe Facebook::Core::Post do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -58,7 +58,7 @@ describe Facebook::Core::Post do
     user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
     post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be true
     
     note = post_comment.postable
     note.notable.should eql ticket
@@ -95,8 +95,8 @@ describe Facebook::Core::Post do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    Social::FacebookPage.find_by_id(@fb_page.id).reauth_required.should be_true
-    Social::FacebookPage.find_by_id(@fb_page.id).enable_page.should be_false
+    Social::FacebookPage.find_by_id(@fb_page.id).reauth_required.should be true
+    Social::FacebookPage.find_by_id(@fb_page.id).enable_page.should be false
   end
   
   it "should not create a ticket when a post arrives and import visitor post is not enabled" do

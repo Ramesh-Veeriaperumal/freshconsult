@@ -20,19 +20,21 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 	private
 		def initialize_subaccount_details(freshfone_account, account)
-			sub_account = TwilioMaster.client.accounts.create({ :friendly_name => subaccount_name(account) })
-			application = sub_account.applications.create({
-											:friendly_name => account.name,
-											:voice_url => "#{freshfone_account.host}/freshfone/voice", 
-											:voice_fallback_url => "#{freshfone_account.host}/freshfone/voice_fallback"
-										})		
-			queue = sub_account.queues.create(:friendly_name => account.name)
-			
-			freshfone_account.twilio_subaccount_id = sub_account.sid
-			freshfone_account.twilio_subaccount_token = sub_account.auth_token
-			freshfone_account.twilio_application_id = application.sid
-			freshfone_account.queue = queue.sid
-			freshfone_account.friendly_name = sub_account.friendly_name
+			unless Rails.env.test?
+  			sub_account = TwilioMaster.client.accounts.create({ :friendly_name => subaccount_name(account) })
+  			application = sub_account.applications.create({
+  											:friendly_name => account.name,
+  											:voice_url => "#{freshfone_account.host}/freshfone/voice", 
+  											:voice_fallback_url => "#{freshfone_account.host}/freshfone/voice_fallback"
+  										})		
+  			queue = sub_account.queues.create(:friendly_name => account.name)
+  			
+  			freshfone_account.twilio_subaccount_id = sub_account.sid
+  			freshfone_account.twilio_subaccount_token = sub_account.auth_token
+  			freshfone_account.twilio_application_id = application.sid
+  			freshfone_account.queue = queue.sid
+  			freshfone_account.friendly_name = sub_account.friendly_name
+		  end
 		end
 
 		def set_expiry(freshfone_account)

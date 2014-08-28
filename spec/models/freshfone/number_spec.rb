@@ -14,10 +14,10 @@ describe Freshfone::Number do
   end
 
   it 'should return json of messages for the freshfone number' do
-    number = JSON.parse @number.to_json
+    number = @number.as_json
     number.should have(4).message_types
-    number.map{|n| n["type"]}.sort.should be_eql(["non_availability_message", 
-      "non_business_hours_message", "on_hold_message", "voicemail_message"])
+    number.map{|n| n.type }.sort.should be_eql([:non_availability_message, 
+      :non_business_hours_message, :on_hold_message, :voicemail_message])
   end
 
   it 'should successfully renew number deducting credits' do

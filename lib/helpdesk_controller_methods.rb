@@ -180,7 +180,7 @@ protected
   end
 
   def load_multiple_items
-    @items = (params[:ids] || (params[:id] ? [params[:id]] : [])).map { |id| load_by_param(id) }.select{ |r| r }
+    @items = (params[:ids] || Array.wrap(params[:id])).map { |id| load_by_param(id) }.select{ |r| r }
     self.instance_variable_set('@' + cname.pluralize, @items) 
   end
   

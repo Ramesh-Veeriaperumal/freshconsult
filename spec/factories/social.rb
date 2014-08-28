@@ -21,6 +21,7 @@ if Rails.env.test?
       capture_dm_as_ticket true
       capture_mention_as_ticket false
       search_keys []
+      twitter_user_id { (Time.now.utc.to_f*1000000).to_i }
     end
     
     factory :twitter_stream, :class => Social::TwitterStream do

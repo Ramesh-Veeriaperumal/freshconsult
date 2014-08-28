@@ -3,7 +3,6 @@ require 'spec_helper'
 include Gamification::Quests::Constants
 
 describe Admin::QuestsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

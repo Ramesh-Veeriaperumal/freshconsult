@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::ProductsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -161,9 +160,9 @@ describe Admin::ProductsController do
                           :forum_category_id=>"", 
                           :solution_category_ids=>[""], 
                           :logo_attributes => { :content => 
-                            Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
+                            fixture_file_upload('files/image4kb.png', 'image/png')},
                           :fav_icon_attributes => {:content => 
-                            Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')},
+                            fixture_file_upload('files/image33kb.jpg', 'image/jpg')},
                           :preferences=>{ :logo_link=>"", 
                                           :contact_info=>"", 
                                           :header_color=>"#009999", 
@@ -201,7 +200,7 @@ describe Admin::ProductsController do
   it "should destroy a product" do
     post :destroy, :id => @test_product.id
     flash[:notice].should eql "The product has been deleted."
-    response.redirected_to.should eql "/admin/products"
+    response.should redirect_to "/admin/products"
     @account.products.find_by_id(@test_product.id).should be_nil
   end
 end

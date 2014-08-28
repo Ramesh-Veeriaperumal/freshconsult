@@ -244,7 +244,7 @@ class Billing::BillingController < ApplicationController
     def payment_info(content)
       {
         :account => @account,
-        :amount => content[:transaction][:amount]/100,
+        :amount => content[:transaction][:amount].to_f/100,
         :transaction_id => content[:transaction][:id_at_gateway], 
         :misc => recurring_invoice?(content[:invoice]),
         :meta_info => build_meta_info(content[:invoice])

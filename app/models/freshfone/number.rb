@@ -24,6 +24,7 @@ class Freshfone::Number < ActiveRecord::Base
 	delegate :group_id, :group, :to => :ivr
 	attr_accessor :attachments_hash, :address_required, :skip_in_twilio
 	attr_protected :account_id
+  after_find :assign_number_to_message
 
 	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]
 	STATE = { :active => 1, :expired => 2 }
@@ -85,7 +86,7 @@ class Freshfone::Number < ActiveRecord::Base
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]
 	end
 	
-	def to_json
+	def as_json
 		MESSAGE_FIELDS.map do |msg_type|
 
 			if self[msg_type].blank?
@@ -94,7 +95,7 @@ class Freshfone::Number < ActiveRecord::Base
 				self[msg_type].parent = self
 				self[msg_type]
 			end
-		end.to_json
+		end
 	end
 
 	def number_name
@@ -110,10 +111,6 @@ class Freshfone::Number < ActiveRecord::Base
 		attachments_hash.has_key?(type)
 	end
 	
-	def after_find
-		assign_number_to_message
-	end
-
 	def self.find_due(renew_at = Time.now)
 		find(:all, :conditions => { :state => STATE[:active], :deleted => false,
 											 :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
@@ -182,7 +179,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def unused_attachments
 		attachments.reject{ |a| inuse_attachment_ids.include? a.id }
 	end
-
+  
 	private
 
 		def set_renewal_date

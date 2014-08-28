@@ -10,6 +10,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 		update_freshfone_account_state(freshfone_credit, account) if freshfone_credit.available_credit_changed?
 		notify_low_balance(freshfone_credit, account) if freshfone_credit.available_credit_changed?
 		trigger_auto_recharge(freshfone_credit) if credit_threshold_reached?(freshfone_credit)
+    	freshfone_credit
 	end
 
 	private

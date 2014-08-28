@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe Support::TicketsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   it "should not allow a user view tickets wwithout logging in" do
     get :index
-    response.should redirect_to 'login'
+    response.should redirect_to '/login'
   end
 
   it "should not allow a user to access tickets from a different company" do
@@ -25,9 +24,9 @@ describe Support::TicketsController do
     log_in(test_user2)
     get :index
     response.body.should_not =~ /#{now}/
-    response.should render_template 'support/tickets/index.portal'
+    response.should render_template 'support/tickets/index'
     get :show, :id => test_ticket.display_id
-    response.should redirect_to 'support/login'
+    response.should redirect_to '/support/login'
   end
 
   it "should not allow a user to update inaccessible attributes" do

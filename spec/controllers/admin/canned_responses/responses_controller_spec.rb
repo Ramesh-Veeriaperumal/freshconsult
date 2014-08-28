@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::CannedResponses::ResponsesController do
-	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -48,7 +47,7 @@ describe Admin::CannedResponses::ResponsesController do
 	it "should create a Canned Responses with attachment" do
 		post :create, {:admin_canned_responses_response => {:title => "Canned Response with attachment", 
 															:content_html => Faker::Lorem.paragraph,
-															:attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}],
+															:attachments => [{:resource => fixture_file_upload('files/image4kb.png', 'image/png', :binary) }],
 															:visibility => {:user_id => @agent.id, 
 																			:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], 
 																			:group_id => @group.id}

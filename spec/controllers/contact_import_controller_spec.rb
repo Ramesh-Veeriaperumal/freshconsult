@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ContactImportController do
-	integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -12,7 +11,7 @@ describe ContactImportController do
 
 	it "should open import csv page" do
 		get :csv
-		response.should render_template "contact_import/csv.html.erb"
+		response.should render_template "contact_import/csv"
 		response.body.should =~ /Import Customers from CSV/
 	end
 

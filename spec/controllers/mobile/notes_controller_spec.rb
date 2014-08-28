@@ -35,7 +35,7 @@ describe Helpdesk::NotesController do
     post :destroy, { :format => "json", :id => ticket_note.id, :ticket_id => test_ticket.display_id }
     test_ticket.notes.last.deleted.should be_eql(true)
     json_response.should include("success")
-    json_response["success"].should be_true
+    json_response["success"].should be true
   end
 
   # it "should restore a note" do

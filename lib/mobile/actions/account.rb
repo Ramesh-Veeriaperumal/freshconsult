@@ -35,7 +35,7 @@ module Mobile::Actions::Account
       })
     end
     options[:include] = json_include;
-    to_json options
+    as_json options
   end
 
   def timesheets_feature

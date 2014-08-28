@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::VaRulesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -45,10 +44,10 @@ describe Admin::VaRulesController do
 
   it "should clone a dispatchr rule" do
     get :clone_rule, :id => @test_va_rule.id
-    response.should render_template "admin/va_rules/clone_rule.html.erb"
-    (@test_va_rule.id == assigns(:va_rule).id).should be_true
-    (@test_va_rule.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_va_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+    response.should render_template "admin/va_rules/clone_rule"
+    (@test_va_rule.id == assigns(:va_rule).id).should be true
+    (@test_va_rule.action_data == assigns(:va_rule).action_data).should be true
+    (@test_va_rule.filter_data == assigns(:va_rule).filter_data).should be true
   end
 
 

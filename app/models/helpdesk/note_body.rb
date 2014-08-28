@@ -30,8 +30,6 @@ class Helpdesk::NoteBody < ActiveRecord::Base
   column :created_at, :datetime
   column :updated_at, :datetime
 
-  attr_accessible :body_html, :full_text_html, :body, :full_text, :raw_text, :raw_html
-
   # this method tells if it is a new record or old record
   def new_record?
     !self.new_record && !self.new_record.nil? ? false : true

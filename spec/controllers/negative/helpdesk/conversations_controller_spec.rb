@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::ConversationsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -24,7 +23,7 @@ describe Helpdesk::ConversationsController do
                    :showing => "notes",
                    :ticket_id => @test_ticket.display_id
                   }
-    response.should have_rjs
+    response.content_type.should == Mime::JS
     private_note = @account.tickets.find(@test_ticket.id).notes.last
     private_note.should be_nil
   end
@@ -51,7 +50,7 @@ describe Helpdesk::ConversationsController do
                    :ticket_id => @test_ticket.display_id
                   }
     Resque.inline = false
-    response.should have_rjs
+    response.content_type == Mime::JS
     reply_note = @account.tickets.find(@test_ticket.id).notes.last
     reply_note.should be_nil
   end
@@ -73,7 +72,7 @@ describe Helpdesk::ConversationsController do
                    :showing => "notes",
                    :ticket_id => @test_ticket.display_id
                   }
-    response.should have_rjs
+    response.content_type == Mime::JS
     fwd_note = @account.tickets.find(@test_ticket.id).notes.last
     fwd_note.should be_nil
   end
@@ -90,7 +89,7 @@ describe Helpdesk::ConversationsController do
                         :ticket_status => "",
                         :format => "js"
                       }
-    response.should have_rjs
+    response.content_type == Mime::JS
     tweet_note = @account.tickets.find(@test_ticket.id).notes.last
     tweet_note.should be_nil
   end
@@ -107,7 +106,7 @@ describe Helpdesk::ConversationsController do
                             :showing => "notes",
                             :ticket_id => @test_ticket.display_id,
                         }
-    response.should have_rjs
+    response.content_type == Mime::JS
     fb_note = @account.tickets.find(@test_ticket.id).notes.last
     fb_note.should be_nil
   end

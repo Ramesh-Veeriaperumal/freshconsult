@@ -17,7 +17,6 @@ class Helpdesk::SurveysController < ApplicationController
 	def rate
 		@survey_result = @ticket.survey_results.create({        
 			:survey_id => current_account.survey.id,                
-			:surveyable_type => "Helpdesk::Ticket",
 			:customer_id => @ticket.requester_id,
 			:agent_id => @ticket.responder_id,
 			:group_id => @ticket.group_id,                

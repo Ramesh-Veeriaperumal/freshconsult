@@ -113,11 +113,11 @@ class Customer < ActiveRecord::Base
            )
   end
   
-  def to_json(options = {})
+  def as_json(options = {})# TODO-RAILS3
     return super(options) unless options[:tailored_json].blank?
     options[:except] = [:account_id,:import_id,:delta]
-    json_str = super options
-    json_str
+    json_hash = super options
+    json_hash
   end
 
   def to_liquid

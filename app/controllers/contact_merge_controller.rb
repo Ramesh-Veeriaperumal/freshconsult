@@ -1,5 +1,5 @@
 class ContactMergeController < ApplicationController
-  include Users::Activator
+  #include Users::Activator TODO-RAILS3
   include ApplicationHelper
   include HelpdeskControllerMethods
 

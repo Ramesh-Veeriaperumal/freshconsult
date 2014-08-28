@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Reports::Freshfone::SummaryReportsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -52,8 +51,8 @@ describe Reports::Freshfone::SummaryReportsController do
     groups = @account.groups.map(&:id)
     post :export_csv, {:date_range=>"#{start_date} - #{end_date}", :freshfone_number=>number.id }
     assigns[:calls].should_not be_empty
-    expected = (response.status =~ /200 OK/)
-    expected.should be_true
+    expected = (response.status == 200)
+    expected.should be true
   end
 
 end

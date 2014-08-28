@@ -15,7 +15,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_save :before_save_customize
   after_save :after_save_customize
 
-  scope :with_name, lambda { |app_name| {:joins=>"INNER JOIN applications ON applications.id=installed_applications.application_id", :conditions=>["applications.name = ?", app_name]}}
+  scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins("INNER JOIN applications ON applications.id=installed_applications.application_id").select('*')}
   
   def to_liquid
     configs[:inputs]

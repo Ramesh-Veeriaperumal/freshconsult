@@ -5,7 +5,6 @@ include DynamoHelper
 include FacebookHelper
 
 describe Helpdesk::ConversationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
       
@@ -45,7 +44,7 @@ describe Helpdesk::ConversationsController do
         tweet = send_tweet_and_wait(feed)
         
         tweet.should_not be_nil
-        tweet.is_ticket?.should be_true
+        tweet.is_ticket?.should be true
         tweet.stream_id.should_not be_nil
         tweet_body = feed["body"]
         ticket = tweet.get_ticket
@@ -60,6 +59,7 @@ describe Helpdesk::ConversationsController do
           Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twitter_object[:id]))
           Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         end
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         post :twitter,  { :helpdesk_note => {
                             :private => false, 
                             :source => 5, 
@@ -74,7 +74,7 @@ describe Helpdesk::ConversationsController do
                       }
         tweet_note = @account.tweets.find_by_tweet_id(twitter_object[:id])
         tweet_note.should_not be_nil
-        tweet_note.is_note?.should be_true
+        tweet_note.is_note?.should be true
         note_body = tweet_note.tweetable.note_body.body
         note_body.should eql(twitter_object[:text])
       end
@@ -90,7 +90,7 @@ describe Helpdesk::ConversationsController do
         Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
         tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
         tweet.should_not be_nil
-        tweet.is_ticket?.should be_true
+        tweet.is_ticket?.should be true
         
         # replying to a DM ticket
         ticket = tweet.get_ticket
@@ -119,7 +119,7 @@ describe Helpdesk::ConversationsController do
                       }        
         dm = @account.tweets.find_by_tweet_id(reply_id)
         dm.should_not be_nil
-        dm.is_note?.should be_true
+        dm.is_note?.should be true
         note_body = dm.tweetable.note_body.body
         note_body.should eql(dm_text)
       end
@@ -138,12 +138,12 @@ describe Helpdesk::ConversationsController do
   
   describe "POST #facebook" do
     before(:all) do
-      @fb_page = Factory.build(:facebook_pages)
+      @fb_page = FactoryGirl.build(:facebook_pages)
       @fb_page.realtime_subscription = false
       @fb_page.account_id = @account.id
       @fb_page.import_visitor_posts = true
       @fb_page.import_dms = true
-      @fb_page.save(false)
+      @fb_page.save(:validate => false)
     end
     
     before(:each) do
@@ -170,7 +170,7 @@ describe Helpdesk::ConversationsController do
         Social::FacebookPosts.new(@fb_page).fetch
         fb_post = Social::FbPost.find_by_post_id(post_id)
         fb_post.should_not be_nil
-        fb_post.is_ticket?.should be_true
+        fb_post.is_ticket?.should be true
         ticket = fb_post.postable
          
         post :facebook, {   :helpdesk_note => 
@@ -186,7 +186,7 @@ describe Helpdesk::ConversationsController do
                         }
         comment = Social::FbPost.find_by_post_id(put_comment_id)
         comment.should_not be_nil
-        comment.is_note?.should be_true
+        comment.is_note?.should be true
       end
     end
     
@@ -202,7 +202,7 @@ describe Helpdesk::ConversationsController do
         
         dm = Social::FbPost.find_by_post_id(msg_id)
         dm.should_not be_nil
-        dm.is_ticket?.should be_true
+        dm.is_ticket?.should be true
         dm_ticket =  dm.postable
         
         reply_dm_id = generate_msg_id
@@ -221,7 +221,7 @@ describe Helpdesk::ConversationsController do
                         }
         dm_reply = Social::FbPost.find_by_post_id(reply_dm_id)
         dm_reply.should_not be_nil
-        dm_reply.is_note?.should be_true
+        dm_reply.is_note?.should be true
       end
     end
     

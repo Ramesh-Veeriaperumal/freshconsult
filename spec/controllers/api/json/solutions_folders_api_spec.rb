@@ -21,14 +21,14 @@ describe Solution::FoldersController do
     params = solution_folder_api_params
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
-    expected = (response.status === "201 Created") && (compare(result["folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    expected = (response.status === 201) && (compare(result["folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @solution_category.id } ) 
     put :update, { :id => @test_folder.id, :category_id=>@solution_category.id, :solution_folder => {:description => Faker::Lorem.paragraph }, :format => 'json'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to view a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
@@ -36,14 +36,14 @@ describe Solution::FoldersController do
     get :show, { :category_id => @solution_category.id, :id=>@test_folder.id, :format => 'json'}
     result = parse_json(response)
 
-    expected = (response.status === "200 OK") &&  (compare(result["folder"].keys-["articles"],APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    expected = (response.status === 200) &&  (compare(result["folder"].keys-["articles"],APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @solution_category.id } )
     delete :destroy, { :category_id => @solution_category.id, :id=>@test_folder.id, :format => 'json'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
 
   def solution_folder_api_params

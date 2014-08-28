@@ -171,23 +171,25 @@ include Mobile::Actions::Push_Notifier
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-        respond_to do |format|
-          # format.mobile{
-          #   flash[:error] = I18n.t("mobile.home.sign_in_error")
-          #   redirect_to root_url
-          # }
-          format.html{
-            redirect_to support_login_path
-          }
-          format.nmobile{
-              json = "{'login':'failed',"
-              @user_session.errors.each_error do |attr,error|
-                json << "'attr' : '#{attr}', 'message' : '#{error.message}'}"
-                break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
-              end
-              render :json => json
-          } 
-        end
+      respond_to do |format|
+        # format.mobile{
+        #   flash[:error] = I18n.t("mobile.home.sign_in_error")
+        #   redirect_to root_url
+        # }
+        format.html{
+          redirect_to support_login_path
+        }
+        format.nmobile{# TODO-RAILS3
+          json = "{'login':'failed',"
+          @user_session.errors.messages.each do |attr, error|
+            error.each do |err|
+              json << "'attr' : '#{attr}', 'message' : '#{err}'}"
+              break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
+            end
+          end
+          render :json => json
+        } 
+      end
       
     end
   end

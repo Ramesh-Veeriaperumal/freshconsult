@@ -28,6 +28,8 @@ class Wf::Filter < ActiveRecord::Base
 
   self.table_name =  :wf_filters
   serialize   :data
+  after_find :set_error
+  before_save :set_data_and_type
   
   belongs_to :user
   belongs_to_account
@@ -59,12 +61,13 @@ class Wf::Filter < ActiveRecord::Base
     super.tap {|ii| ii.conditions = self.conditions.dup}
   end
   
-  def before_save
+  def set_data_and_type
     self.data = serialize_to_params
     self.type = self.class.name
+    self
   end
   
-  def after_find
+  def set_error
     @errors = {}
     #deserialize_from_params(self.data)
   end

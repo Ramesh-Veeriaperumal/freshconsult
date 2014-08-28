@@ -3,7 +3,6 @@ load 'spec/support/freshfone_transfer_spec_helper.rb'
 include FreshfoneTransferSpecHelper
 
 describe Freshfone::CallTransferController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -13,12 +12,14 @@ describe Freshfone::CallTransferController do
   end
 
   it 'should fail on invalid call transfer by sending a completed call sid' do
+    request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
     post :initiate, initiate_params
     json.should be_eql({:call => "failure"})
   end
 
   it 'should render valid transfer twiml on correct inputs' do
+    request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
     Twilio::REST::Call.any_instance.stubs(:update).returns(true)
     post :initiate, initiate_params

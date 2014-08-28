@@ -29,6 +29,6 @@ describe Freshfone::User do
     number = GlobalPhone.parse(Faker::Base.numerify('(###)###-####')).international_string
     @freshfone_user.user.update_attributes(:phone => number)
     @freshfone_user.reload
-    @freshfone_user.send(:vaild_phone_number?, @number).should be_true
+    @freshfone_user.send(:vaild_phone_number?, @number).should be true
   end
 end

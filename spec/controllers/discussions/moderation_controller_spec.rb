@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Discussions::ModerationController do
-	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -22,7 +21,7 @@ describe Discussions::ModerationController do
 
 	it "should go to the index page" do
 	    get 'index'
-	    response.should render_template "discussions/moderation/index.html.erb"
+	    response.should render_template "discussions/moderation/index"
 	end
 
 	it "should publish a post on 'approve'" do
@@ -69,7 +68,7 @@ describe Discussions::ModerationController do
 			post.reload
 			post.trash.should be_truthy
 		end
-		response.should redirect_to discussions_path
+		response.should redirect_to '/discussions'
 	end
 
 	it "should mark as spam multiple posts when 'put 'spam_multiple''" do

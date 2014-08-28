@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::TemplatesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -17,7 +16,7 @@ describe Admin::TemplatesController do
   end
 
   it "should update the portal with the customized changes" do
-    color = "##{ActiveSupport::SecureRandom.hex(3)}"
+    color = "##{SecureRandom.hex(3)}"
     updated_preferences = @account.main_portal.template.default_preferences.merge({:bg_color => color})
     put :update, :portal_id => @account.main_portal.id,
                  :portal_tab => "preferences",
@@ -26,7 +25,7 @@ describe Admin::TemplatesController do
   end
 
   it "should update and publish the portal with the customized changes" do
-    color = "##{ActiveSupport::SecureRandom.hex(3)}"
+    color = "##{SecureRandom.hex(3)}"
     updated_preferences = @account.main_portal.template.default_preferences.merge({:bg_color => color})
     put :update, :portal_id => @account.main_portal.id,
                  :portal_tab => "preferences",
@@ -38,7 +37,7 @@ describe Admin::TemplatesController do
   end
 
   it "should update the portal with the customized changes and preview it" do
-    color = "##{ActiveSupport::SecureRandom.hex(3)}"
+    color = "##{SecureRandom.hex(3)}"
     updated_preferences = @account.main_portal.template.default_preferences.merge({:bg_color => color})
     put :update, :portal_id => @account.main_portal.id,
                  :portal_tab => "preferences",
@@ -51,7 +50,7 @@ describe Admin::TemplatesController do
   end
 
   it "should publish the portal with the customized changes" do
-    color = "##{ActiveSupport::SecureRandom.hex(3)}"
+    color = "##{SecureRandom.hex(3)}"
     updated_preferences = @account.main_portal.template.default_preferences.merge({:bg_color => color})
     put :update, :portal_id => @account.main_portal.id,
                  :portal_tab => "preferences",
@@ -64,7 +63,7 @@ describe Admin::TemplatesController do
   
   it "should reset the portal to last-published" do
     initial_color = @account.main_portal.template.preferences[:bg_color]
-    color = "##{ActiveSupport::SecureRandom.hex(3)}"
+    color = "##{SecureRandom.hex(3)}"
     updated_preferences = @account.main_portal.template.default_preferences.merge({:bg_color => color})
     put :update, :portal_id => @account.main_portal.id,
                  :portal_tab => "preferences",

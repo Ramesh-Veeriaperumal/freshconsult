@@ -1,6 +1,6 @@
 class Helpdesk::ConversationsController < ApplicationController
   
-  helper 'helpdesk/tickets'
+  helper  Helpdesk::TicketsHelper#TODO-RAILS3
   
   before_filter :load_parent_ticket_or_issue
   

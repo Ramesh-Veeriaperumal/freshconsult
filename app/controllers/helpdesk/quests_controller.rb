@@ -5,7 +5,7 @@ class Helpdesk::QuestsController < ApplicationController
   helper Helpdesk::QuestsHelper
 
   def index
-    @quests = scoper.paginate(:all, :page => params[:page], :per_page => 25)
+    @quests = scoper.paginate(:page => params[:page], :per_page => 25)
     if request.xhr? and !request.headers['X-PJAX']
       render :partial => "quest", :collection => @quests
     end
@@ -18,7 +18,7 @@ class Helpdesk::QuestsController < ApplicationController
   end
 
   def unachieved
-    @quests = unachieved_scoper.paginate(:all, :page => params[:page], :per_page => 25)
+    @quests = unachieved_scoper.paginate(:page => params[:page], :per_page => 25)
     if request.xhr? and !request.headers['X-PJAX']
       render :partial => "quest", :collection => @quests
     end

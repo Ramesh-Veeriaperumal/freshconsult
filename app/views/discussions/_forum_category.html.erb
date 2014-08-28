@@ -4,7 +4,7 @@
 	  <ul class="row-fluid" rel="sortlist">
 		  <% items.each do |forum_category| %>
 		  	<% disabled ||= nil %>
-		  	<% content_tag :li, :item_id => forum_category.id, :class => "comm-item" do %>
+		  	<%= content_tag :li, :item_id => forum_category.id, :class => "comm-item" do %>
 		  		<% if privilege?(:manage_forums) %>
 			  		<div class="reorder-icon vertical-alignment handle-reorder">
 							<!-- <i class="community-reorder-icon" id="sortable-icon"></i> -->

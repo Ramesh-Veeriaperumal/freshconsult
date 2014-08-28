@@ -10,4 +10,3 @@ Mime::Type.register "application/msword", :doc
 Mime::Type.register_alias "text/html", :mob
 Mime::Type.register_alias "application/json", :mobile
 Mime::Type.register_alias "application/json", :nmobile
-Mime::Type.register "application/pdf", :pdf

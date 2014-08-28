@@ -35,7 +35,7 @@ module TicketHelper
 
   def create_test_time_entry(params = {}, test_ticket = nil)
     ticket = test_ticket.blank? ? create_ticket : test_ticket
-    time_sheet = Factory.build(:time_sheet, :user_id => params[:agent_id] || @agent.id,
+    time_sheet = FactoryGirl.build(:time_sheet, :user_id => params[:agent_id] || @agent.id,
                                             :workable_id => ticket.id,
                                             :account_id => @account.id,
                                             :billable => params[:billable] || 1,

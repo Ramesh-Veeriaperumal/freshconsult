@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe AccountsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,7 +21,7 @@ describe AccountsController do
     
     response.should be_success
     signup_status = JSON.parse(response.body)
-    signup_status["success"].should be_true
+    signup_status["success"].should be true
     signup_status["url"].should match(/http:\/\/rspectest.freshpo.com\/signup_complete/)
 
     new_account = Account.find(signup_status["account_id"])

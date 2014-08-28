@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Social::TwitterHandlesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -18,9 +17,9 @@ describe Social::TwitterHandlesController do
     context "without api exception" do
       it "should be successful" do
         get :index
-        response.should render_template("social/twitter_handles/index.html.erb")
-        # session["request_token"].present?.should be_truthy
-        # session["request_secret"].present?.should be_truthy
+        response.should render_template("social/twitter_handles/index")
+        session["request_token"].present?.should be_truthy
+        session["request_secret"].present?.should be_truthy
       end
     end
 
@@ -28,7 +27,7 @@ describe Social::TwitterHandlesController do
       it "should redirect if exception arises" do
         TwitterWrapper.any_instance.stubs(:request_tokens).raises(Timeout::Error)
         get :index
-        response.should redirect_to "admin/social/streams"
+        response.should redirect_to '/admin/home'
       end
     end
   end
@@ -39,7 +38,7 @@ describe Social::TwitterHandlesController do
       get :edit, {
           :id => twt_handler.id
         }
-        response.should render_template("social/twitter_handles/edit.html.erb") 
+        response.should render_template("social/twitter_handles/edit") 
     end
   end
 
@@ -51,7 +50,7 @@ describe Social::TwitterHandlesController do
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
-      response.should redirect_to "social/twitters/#{twt_handler.id}/edit"
+      response.should redirect_to "/social/twitters/#{twt_handler.id}/edit"
     end
 
     it "should redirect to new handle if it doesn't exists" do
@@ -63,13 +62,13 @@ describe Social::TwitterHandlesController do
 
       get :authdone
       twt_handler = RSpec.configuration.account.twitter_handles.find_by_screen_name(twt_handler.screen_name)
-      response.should redirect_to "social/twitters/#{twt_handler.id}/edit"
+      response.should redirect_to "/social/twitters/#{twt_handler.id}/edit"
     end
 
     it "should redirect to social/twitters if exception arise" do
       TwitterWrapper.any_instance.stubs(:auth).raises(Errno::ECONNRESET)
       get :authdone
-      response.should redirect_to "social/twitters"
+      response.should redirect_to "/social/twitters"
     end
 
   end
@@ -90,14 +89,14 @@ describe Social::TwitterHandlesController do
       Social::TwitterHandle.destroy_all
 
       get :feed
-      response.should redirect_to "social/welcome"
+      response.should redirect_to "/social/welcome"
     end
 
     it "if handles preset should render feed page" do
       twt_handler = create_test_twitter_handle(RSpec.configuration.account)
 
       get :feed
-      response.should redirect_to "social/streams"
+      response.should redirect_to "/social/streams"
     end
 
   end
@@ -165,7 +164,7 @@ describe Social::TwitterHandlesController do
 
       handle = RSpec.configuration.account.twitter_handles.find_by_id(twt_handler.id)
       handle.present?.should be_falsey
-      response.should redirect_to 'social/twitters'
+      response.should redirect_to '/social/twitters'
     end
 
   end
@@ -173,6 +172,7 @@ describe Social::TwitterHandlesController do
   describe "GET #tweet_exists" do
 
     it "Check for tweet exists" do
+      request.env["HTTP_ACCEPT"] = "application/json"
       get :tweet_exists, :tweet_ids => rand(100)
       body = JSON.parse(response.body)
       body.class.should be_eql(Hash)

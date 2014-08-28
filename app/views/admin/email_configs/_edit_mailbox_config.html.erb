@@ -1,4 +1,4 @@
-<%= form_for :email_config, @email_config, :url => admin_email_config_path, :html => { :method => :put, :id => "editEmailConfigForm"} do |f| %>
+<%= form_for @email_config, :url => admin_email_config_path, :object_name => :email_config , :html => { :method => :put, :id => "editEmailConfigForm"} do |f| %>
 <%= f.error_messages %>
 <h3 class="lead"><%=t('email_configs.title')%></h3>
 <ul class="unstyled form-horizontal row-fluid">

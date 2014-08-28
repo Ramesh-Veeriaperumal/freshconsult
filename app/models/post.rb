@@ -1,5 +1,4 @@
 class Post < ActiveRecord::Base
-  include Rails.application.routes.url_helpers
   include ObserverAfterCommitCallbacks
 
   def self.per_page() 25 end
@@ -23,9 +22,9 @@ class Post < ActiveRecord::Base
   scope :trashed, :conditions => {:trash => true }
 
   scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
-  scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
+  scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
 
 
   scope :by_user, lambda { |user|
@@ -36,7 +35,7 @@ class Post < ActiveRecord::Base
   before_update :unmark_another_answer, :if => :questions? && :topic_has_answer?
   after_update :toggle_answered_stamp, :if => :questions?
   after_destroy :mark_as_unanswered, :if => :answer
-
+  
   has_many_attachments
 
   delegate :update_es_index, :to => :topic, :allow_nil => true

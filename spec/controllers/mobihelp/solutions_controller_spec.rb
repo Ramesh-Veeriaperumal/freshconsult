@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Mobihelp::SolutionsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -12,6 +11,7 @@ describe Mobihelp::SolutionsController do
 
   before(:each) do
     @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(@mobihelp_app)
+    @request.env["HTTP_ACCEPT"] = "application/json"
   end
 
   it "should fetch empty solutions for no updates" do

@@ -6,11 +6,11 @@ module Mobile::Actions::Article
 
 
   def to_mob_json
-  	to_json JSON_OPTIONS
+  	as_json JSON_OPTIONS
   end
 
   def to_mob_json_search
-  	to_json JSON_OPTIONS
+  	as_json JSON_OPTIONS
   end
 
 end

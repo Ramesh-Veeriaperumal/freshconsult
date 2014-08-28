@@ -1,14 +1,13 @@
 require 'spec_helper'
 
 describe Helpdesk::QuestsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @quest = all_quests[0]
     @quest.name = "Ideal supporter"
-    @quest.save(false)
+    @quest.save(:validate => false)
   end
 
   before(:each) do
@@ -33,8 +32,8 @@ describe Helpdesk::QuestsController do
   end
 
   it "should display the unachieved quests" do
-    achieved_quest = Factory.build(:achieved_quest, :user_id => @agent.id, :account_id => @account.id, :quest_id => @quest.id)
-    achieved_quest.save(false)
+    achieved_quest = FactoryGirl.build(:achieved_quest, :user_id => @agent.id, :account_id => @account.id, :quest_id => @quest.id)
+    achieved_quest.save(:validate => false)
     xhr :get, :unachieved
     response.body.should_not =~ /#{@quest.name}/
     response.should be_success

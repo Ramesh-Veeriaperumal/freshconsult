@@ -5,9 +5,9 @@ require 'spec_helper'
 
 describe Workers::Import::ContactsImportWorker do 
 
-	before(:all) do		
-		@sample_contact = Factory.build(:user, :account => @acc, :phone => "23423423434", :email => "samara@example.net", :user_role => 3)
-		@sample_contact.save(false)
+	before(:all) do	
+		@sample_contact = FactoryGirl.build(:user, :account => RSpec.configuration.account, :phone => "23423423434", :email => "samara@example.net", :user_role => 3)
+		@sample_contact.save(:validate => false)
 		@contact_import_params = YAML.load(File.read("spec/fixtures/contacts_import/contact_import.yml"))
 		Resque.inline = true
 		Workers::Import::ContactsImportWorker.new(@contact_import_params).perform
@@ -21,7 +21,7 @@ describe Workers::Import::ContactsImportWorker do
 	it "should update contacts when the same email name or twitter id is used" do
 		old_name = @sample_contact.name
 		new_name = @account.users.find_by_email("samara@example.net").name
-		(new_name != old_name).should be_true
+		(new_name != old_name).should be true
 	end
 
 	it "should add company on importing" do

@@ -13,8 +13,6 @@ class Social::TwitterStream < Social::Stream
 
   validates_presence_of :includes
 
-  attr_accessible :social_id
-
   def check_ticket_rules(tweet_body)
     hash = {
       :stream_id => self.id

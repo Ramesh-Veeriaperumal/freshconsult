@@ -52,8 +52,6 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 	}
 	scope :active, :conditions => { :active => true }
 
-	attr_accessible :outdated, :language, :category, :active, :email_notification_id, :subject, :description
-
 	def update_outdated_in_email_notifications
 		email_notification.outdate_email_notification!(category)
 	end

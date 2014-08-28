@@ -1,12 +1,4 @@
 if Rails.env.test?
-<<<<<<< Updated upstream
-  Factory.define :mobihelp_app, :class => Mobihelp::App do |t|
-    t.account_id 1
-    t.sequence(:name) { |n| "Fresh App #{n}" }
-    t.platform 1
-    t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  '10', :debug_log_count => '50', :solutions => '2', :app_review_launch_count => '10'})
-  end
-=======
   FactoryGirl.define do
     factory :mobihelp_app, :class => Mobihelp::App do
       account_id 1
@@ -14,7 +6,6 @@ if Rails.env.test?
       platform 1
       config HashWithIndifferentAccess.new({ :bread_crumbs =>  '10', :debug_log_count => '50', :solutions => '2', :app_review_launch_count => '5'})
     end
->>>>>>> Stashed changes
 
     factory :mobihelp_device, :class => Mobihelp::Device do
       account_id 1

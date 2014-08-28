@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Discussions::PostsController do
-	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -54,7 +53,7 @@ describe Discussions::PostsController do
 
 		get :edit, :id => post.id, :topic_id => @topic.id
 
-		response.should render_template "discussions/posts/edit.html.erb"
+		response.should render_template "discussions/posts/edit"
 	end
 
 	it "should update a post on 'update'" do
@@ -120,7 +119,7 @@ describe Discussions::PostsController do
 
 	    put :best_answer, :id => post.id, :topic_id => @topic.id
 
-	    response.should render_template "discussions/posts/best_answer.html.erb"
+	    response.should render_template "discussions/posts/best_answer"
 	end
 
 

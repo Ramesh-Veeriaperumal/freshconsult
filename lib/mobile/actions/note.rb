@@ -31,6 +31,6 @@ module Mobile::Actions::Note
       :include => json_include,
       :methods => [ :formatted_created_at ]
     }
-    to_json(options)
+    as_json(options)
   end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Discussions::TopicsController do
-	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -23,7 +22,7 @@ describe Discussions::TopicsController do
 	it "should render new page on get 'new'" do
 		get :new
 
-		response.should render_template 'discussions/topics/new.html.erb'
+		response.should render_template 'discussions/topics/new'
 	end
 
 	it "should render edit page on get 'edit'" do
@@ -34,7 +33,7 @@ describe Discussions::TopicsController do
 
 		topic_from_controller = controller.instance_variable_get(:@topic)
 		topic_from_controller.should eql topic
-		response.should render_template 'discussions/topics/edit.html.erb'
+		response.should render_template 'discussions/topics/edit'
 	end
 
 
@@ -64,7 +63,7 @@ describe Discussions::TopicsController do
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 
-		response.should redirect_to "discussions/topics/#{new_topic.id}"
+		response.should redirect_to "/discussions/topics/#{new_topic.id}"
 	end
 
 	it "should not create a topic on post 'create' when post is invalid" do
@@ -79,7 +78,7 @@ describe Discussions::TopicsController do
 		@account.topics.find_by_title(topic_title).should be_nil
 		@account.posts.find_by_body_html("").should be_nil
 
-		response.should render_template 'discussions/topics/new.html.erb'
+		response.should render_template 'discussions/topics/new'
 	end
 
 	it "should render show page on get 'show'" do
@@ -88,7 +87,7 @@ describe Discussions::TopicsController do
 
 		get :show, :id => topic.id
 
-		response.should render_template "discussions/topics/show.html.erb"
+		response.should render_template "discussions/topics/show"
 	end
 
 	it "should redirect to discussions page on get 'show' when topic is not available" do
@@ -98,7 +97,7 @@ describe Discussions::TopicsController do
 
 		get :show, :id => topic_id
 
-		response.should redirect_to "discussions"
+		response.should redirect_to "/discussions"
 	end
 
 	it "should deny access on get 'show' when user doesnt have privilege to view forum" do
@@ -124,7 +123,7 @@ describe Discussions::TopicsController do
 
 		get :show, :id => topic.id
 
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
 	it "should update a topic on put 'update'" do
@@ -150,7 +149,7 @@ describe Discussions::TopicsController do
 		post.user_id.should eql RSpec.configuration.agent.id
 		post.account_id.should eql RSpec.configuration.account.id
 
-		response.should redirect_to "discussions/topics/#{topic.id}"
+		response.should redirect_to "/discussions/topics/#{topic.id}"
 	end
 
 	it "should not update a topic on put 'update' when message is invalid" do
@@ -167,7 +166,7 @@ describe Discussions::TopicsController do
 		topic.title.should_not eql ""
 		@account.posts.find_by_body_html("").should be_nil
 
-		response.should render_template "discussions/topics/edit.html.erb"
+		response.should render_template "discussions/topics/edit"
 	end
 
 	it "should delete a topic on delete 'destroy'" do
@@ -178,7 +177,7 @@ describe Discussions::TopicsController do
 
 		@account.topics.find_by_id(topic.id).should be_nil
 		@account.posts.find_by_id(post.id).should be_nil
-		response.should redirect_to "discussions/forums/#{@forum.id}"
+		response.should redirect_to "/discussions/forums/#{@forum.id}"
 	end
 
 	it "should render a component partial on 'component'" do
@@ -208,7 +207,7 @@ describe Discussions::TopicsController do
 
 		topic.reload
 		topic.locked.should be_truthy
-		response.should redirect_to "discussions/topics/#{topic.id}"
+		response.should redirect_to "/discussions/topics/#{topic.id}"
 	end
 
 	it "should unlock a locked topic on put 'update_lock'" do
@@ -219,7 +218,7 @@ describe Discussions::TopicsController do
 
 		locked_topic.reload
 		locked_topic.locked.should be_falsey
-		response.should redirect_to "discussions/topics/#{locked_topic.id}"
+		response.should redirect_to "/discussions/topics/#{locked_topic.id}"
 	end
 
 	it "should render latest reply page on get 'latest_reply'" do
@@ -228,7 +227,7 @@ describe Discussions::TopicsController do
 
 		get :latest_reply, :id => topic.id
 
-		response.should render_template 'discussions/topics/latest_reply.html.erb'
+		response.should render_template 'discussions/topics/latest_reply'
 	end
 
 	it "should update stamp of a topic on put 'update_stamp'" do
@@ -242,10 +241,11 @@ describe Discussions::TopicsController do
 
 		topic.reload
 		topic.stamp_type.should eql stamp_type
-		# response.should redirect_to "discussions/topics/#{topic.id}"
+		# response.should redirect_to "/discussions/topics/#{topic.id}"
 	end
 
 	it "should vote a topic on put 'vote'" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
 		topic = create_test_topic(@forum, RSpec.configuration.agent)
 		vote_count = topic.user_votes
 
@@ -259,7 +259,7 @@ describe Discussions::TopicsController do
 		vote.should be_an_instance_of(Vote)
 		vote.voteable_id.should eql topic.id
 		vote.voteable_type.should eql "Topic"
-		response.should render_template 'discussions/topics/vote.rjs'
+		response.should render_template 'discussions/topics/vote'
 
 		#----
 
@@ -271,7 +271,7 @@ describe Discussions::TopicsController do
 		unliked_topic.user_votes.should be_eql(vote_count)
 		vote = unliked_topic.votes.find_by_user_id(@agent.id)
 		vote.should be_nil
-		response.should render_template 'discussions/topics/vote.rjs'
+		response.should render_template 'discussions/topics/vote'
 	end
 
 	it "should mark delete all the topics when 'destroy_multiple'" do

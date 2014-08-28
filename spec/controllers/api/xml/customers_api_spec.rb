@@ -5,7 +5,6 @@ describe CustomersController do
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
                     :delta, :import_id ]
 
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

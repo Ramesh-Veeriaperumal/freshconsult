@@ -25,7 +25,7 @@ describe Solution::ArticlesController do
     post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id, 
       :tags => {:name => "new"},:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "201 Created") && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
+    expected = (response.status === 201) && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a solution article" do
@@ -36,7 +36,7 @@ describe Solution::ArticlesController do
       :tags => {:name => "new"}, :format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
     puts compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS,{})
-    expected = (response.status === "201 Created") && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
+    expected = (response.status === 201) && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
     expected.should be(true)
   end
 it "should be able to view a solution article" do
@@ -44,14 +44,14 @@ it "should be able to view a solution article" do
       :folder_id => @solution_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     get :show, { :category_id=>@solution_category.id,:folder_id=>@solution_folder.id,:id => @test_article.id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK")  &&  (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
+    expected = (response.status === 200)  &&  (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a solution article" do
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
       :folder_id => @solution_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     delete :destroy, { :id => @test_article.id, :format => 'xml'}
-    expected = (response.status === "200 OK")
+    expected = (response.status === 200)
     expected.should be(true)
   end
   #negative checks
@@ -59,7 +59,7 @@ it "should be able to view a solution article" do
     params = {"solution_article"=> { "description"=>Faker::Lorem.sentence(3), "folder_id"=>1}}
     post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id, 
       :tags => {:name => "new"},:format => 'xml'), :content_type => 'application/xml'
-    response.status.should === "422 Unprocessable Entity"
+    response.status.should === 422
   end
 
   def article_api_params

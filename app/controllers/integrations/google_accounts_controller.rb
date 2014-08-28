@@ -36,7 +36,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   def delete
     Rails.logger.debug "Integrations::GoogleAccountsController.delete #{params.inspect}"
     begin
-      Integrations::GoogleAccount.destroy_all ["id=? and account_id=?", params[:id], current_account]
+      Integrations::GoogleAccount.destroy_all ["id=? and account_id=?", params[:id].to_i, current_account.id]
       flash[:notice] = t('integrations.google_contacts.delete_action.success')
     rescue => err
         Rails.logger.error("Error during delete. \n#{err.message}\n#{err.backtrace.join("\n")}")

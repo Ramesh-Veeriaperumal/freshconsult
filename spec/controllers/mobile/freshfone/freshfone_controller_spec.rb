@@ -24,6 +24,6 @@ describe FreshfoneController do
 	   post :create_ticket, params
 	   json_response.should include("success","ticket")
 	   json_response["ticket"].should include("display_id","subject","status_name","priority")
-	   json_response["success"].should be_true
+	   json_response["success"].should be true
 	end
 end

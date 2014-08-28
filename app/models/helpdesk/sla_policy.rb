@@ -7,8 +7,10 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
+  
+  before_save :standardize_and_validate
 
-  def before_save 
+  def standardize_and_validate
     standardize_escalations(self.escalations) if escalations_changed?
     standardize_conditions if conditions_changed? 
     validate_conditions?

@@ -27,7 +27,7 @@ class Solution::Folder < ActiveRecord::Base
   
   scope :alphabetical, :order => 'name ASC'
 
-  attr_protected :account_id
+  attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
@@ -103,10 +103,11 @@ class Solution::Folder < ActiveRecord::Base
   end
   
   def to_xml(options = {})
+     options[:root] = 'solution_folder'# TODO-RAILS3
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root] ) 
   end
 
   def as_json(options={})

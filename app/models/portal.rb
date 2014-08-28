@@ -1,7 +1,6 @@
 require_dependency "mobile/actions/portal"
 require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
-  include Rails.application.routes.url_helpers
   include ObserverAfterCommitCallbacks
 
   serialize :preferences, Hash

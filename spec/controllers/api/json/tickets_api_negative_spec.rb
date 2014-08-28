@@ -11,12 +11,13 @@ describe Helpdesk::TicketsController do
   end
 
   it "should create a ticket" do
-    
+#    request.env["HTTP_USER_AGENT"] = 'Android'
+    request.env["HTTP_ACCEPT"] = "application/json"
   	post :create, {:helpdesk_ticket => {:subject => Faker::Lorem.words(10).join(" "),
           :description => Faker::Lorem.paragraph,
           :email => Faker::Internet.email,
-          :priority => "Lower" },:format => 'json'}, :content_type => 'application/json'
-    response.status.should be_eql('406 Not Acceptable')
+          :priority => "Lower" },:format => 'json'}, :content_type => 'application/json', :format => 'mobile'
+    response.status.should eql(406)
   end
 
   it "should update a ticket" do

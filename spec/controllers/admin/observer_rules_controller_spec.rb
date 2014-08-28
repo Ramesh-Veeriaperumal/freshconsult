@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::ObserverRulesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -44,10 +43,10 @@ describe Admin::ObserverRulesController do
 
   it "should clone a observer rule" do
     get :clone_rule, :id => @test_observer_rule.id
-    response.should render_template "admin/observer_rules/clone_rule.html.erb"
-    (@test_observer_rule.id == assigns(:va_rule).id).should be_true
-    (@test_observer_rule.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_observer_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+    response.should render_template "admin/observer_rules/clone_rule"
+    (@test_observer_rule.id == assigns(:va_rule).id).should be true
+    (@test_observer_rule.action_data == assigns(:va_rule).action_data).should be true
+    (@test_observer_rule.filter_data == assigns(:va_rule).filter_data).should be true
   end
 
   it "should update observer rule" do

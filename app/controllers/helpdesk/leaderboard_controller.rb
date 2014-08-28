@@ -22,7 +22,7 @@ class Helpdesk::LeaderboardController < ApplicationController
       c_card = (type == :user) ? user_scoper : group_scoper
 
       [:mvp, :first_call, :customer_champion, :fast].each do |item|
-        instance_variable_set "@#{item}_scorecard", ((item == :mvp) ? c_card : c_card.send(item)).limit(_limit)
+        instance_variable_set "@#{item}_scorecard", ((item == :mvp) ? c_card : c_card.send(item)).limit(_limit).all
       end
     end
 

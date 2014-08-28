@@ -221,7 +221,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet.stream_id.should_not be_nil
     
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     tweet.stream_id.should_not be_nil
     
     

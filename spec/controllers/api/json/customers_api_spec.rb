@@ -5,7 +5,6 @@ describe CustomersController do
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
                     :delta, :import_id ]
 
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,8 +21,8 @@ describe CustomersController do
     fake_a_customer
     post :create, @params.merge!(:format => 'json')
     @comp = RSpec.configuration.account.customers.find_by_name(@company_name)
-    response.status.should be_eql '201 Created'
-    @company_params.should be_eql(json SKIPPED_KEYS)
+    response.status.should be_eql 201
+    @company_params.should eql(json SKIPPED_KEYS)
   end
 
   it "should fetch a company using the API" do
@@ -42,14 +41,14 @@ describe CustomersController do
 
   it "should delete a company using the API" do
     delete :destroy, { :id => company.id, :format => 'json' }
-    response.status.should be_eql("200")
+    response.status.should eql(200)
     @company = nil
   end
 
   it "should delete multiple companies using the API" do
     another_company = create_company
     delete :destroy, { :ids => [company.id, another_company.id], :format => 'json' }
-    response.status.should be_eql("200")
+    response.status.should eql(200)
     @company = nil
   end
 

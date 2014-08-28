@@ -2,7 +2,6 @@ require 'spec_helper'
 include TicketFieldsHelper
 
 describe TicketFieldsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -14,11 +13,12 @@ describe TicketFieldsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "ticket_fields/index.html.erb"
+    response.should render_template "ticket_fields/index"
     response.body.should =~ /Ticket Fields/
   end
 
   it "should go to the ticket fields json" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get 'index', :format => "json"
     data_json = JSON.parse(response.body)
     (data_json[0]['ticket_field']['label']).should be_eql("Requester")
@@ -352,6 +352,7 @@ describe TicketFieldsController do
   end
 
   it "should go to the ticket fields xml" do
+    request.env["HTTP_ACCEPT"] = "application/xml"
     get 'index', :format => "xml"
     data_xml = Hash.from_trusted_xml(response.body)
     (data_xml['helpdesk_ticket_fields'][0]['label_in_portal']).should be_eql("Requester")
@@ -378,7 +379,7 @@ describe TicketFieldsController do
     Delayed::Job.count.should eql 0
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
-    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:deleted].should be_false
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:deleted].should be false
   end
 
   it "should edit a custom status" do
@@ -402,6 +403,6 @@ describe TicketFieldsController do
     Delayed::Job.count.should eql 0
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
-    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:stop_sla_timer].should be_false
+    @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:stop_sla_timer].should be false
   end
 end

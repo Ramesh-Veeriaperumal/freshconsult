@@ -22,7 +22,7 @@
     var list = jQuery('#match_results').find('ul');
     if(list.length)
       list.empty();
-    new Ajax.Request('<%= search_contact_contact_merge_path(@source_user.id) %>?v='+searchString+'&id=<%= @source_user.id %>', 
+    new Ajax.Request('<%= search_contact_contact_merge_index_path(@source_user.id) %>?v='+searchString+'&id=<%= @source_user.id %>', 
                         { parameters: {name: searchString, rand: (new Date()).getTime()},
                           method: 'get',
                           onSuccess: function(response) {       

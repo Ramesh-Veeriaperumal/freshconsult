@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Freshfone::CallHistoryController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -24,7 +23,7 @@ describe Freshfone::CallHistoryController do
     get :index
     assigns[:all_freshfone_numbers].first.number.should be_eql(freshfone_number.number)
     assigns[:calls].first.call_sid.should eql call_sid
-    response.should render_template("freshfone/call_history/index.html.erb")
+    response.should render_template("freshfone/call_history/index")
   end
 
   it 'should return no results in search for calls made yesterday' do
@@ -55,9 +54,10 @@ describe Freshfone::CallHistoryController do
   end
 
   it 'should get recent calls' do
+    @request.env["HTTP_ACCEPT"] = "application/javascript"
     get :recent_calls
     assigns[:calls].should_not be_empty
-    response.should render_template('freshfone/call_history/recent_calls.rjs')
+    response.should render_template('freshfone/call_history/recent_calls')
   end
 
 end

@@ -17,49 +17,31 @@ class SupportScore < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  scope :created_at_inside, lambda { |start, stop|
-    { :conditions => [" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop] }
-  }
+  scope :created_at_inside, lambda { |start, stop| where(" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop) }
 
-  scope :fast, { :conditions => 
-        {:score_trigger => FAST_RESOLUTION }}
+ scope :fast, -> { where(:score_trigger => FAST_RESOLUTION)} 
 
-  scope :first_call, {
-    :conditions => {:score_trigger => FIRST_CALL_RESOLUTION}}
+  scope :first_call, -> { where(:score_trigger => FIRST_CALL_RESOLUTION) }
 
-  scope :happy_customer, {
-    :conditions => {:score_trigger => HAPPY_CUSTOMER}}
+  scope :happy_customer, -> { where(:score_trigger => HAPPY_CUSTOMER ) }
 
-  scope :unhappy_customer, {
-    :conditions => {:score_trigger => UNHAPPY_CUSTOMER}}
+  scope :unhappy_customer, -> { where( :score_trigger => UNHAPPY_CUSTOMER ) }
 
-  scope :customer_champion, {
-    :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
+  scope :customer_champion, -> { where( :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] ) }
+  
+  scope :by_performance, -> { where("score_trigger != ?", AGENT_LEVEL_UP) }
+
+  scope :group_score, -> { select("support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at").
+      joins("INNER JOIN groups ON groups.id = support_scores.group_id and groups.account_id = support_scores.account_id").where("group_id is not null and groups.id is not null").
+      group("group_id").order("tot_score desc, recent_created_at")
   }
   
-  scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
-
-  scope :group_score,
-  { 
-    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
-    :conditions => ["group_id is not null and groups.id is not null"],
-    :joins => "INNER JOIN groups ON groups.id = support_scores.group_id and 
-      groups.account_id = support_scores.account_id",
-    :group => "group_id",
-    :order => "tot_score desc, recent_created_at"
+  scope :user_score, -> { select("support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at").
+      includes(:user => :avatar ).joins("INNER JOIN users ON users.id = support_scores.user_id and 
+      users.account_id = support_scores.account_id and users.deleted = false").
+        where("user_id is not null and users.id is not null").group('user_id').order("tot_score desc, recent_created_at")# TODO-RAILS3 check include condition
   }
-
-  scope :user_score,
-  { 
-    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
-    :include => { :user => [ :avatar ] },
-    :joins => "INNER JOIN users ON users.id = support_scores.user_id and 
-      users.account_id = support_scores.account_id and users.deleted = false",
-    :conditions => ["user_id is not null and users.id is not null"],
-    :group => "user_id",
-    :order => "tot_score desc, recent_created_at"
-  }
-
+  
   # RAILS3 by default has this feature
   #scope :limit, lambda { |num| { :limit => num } } 
 

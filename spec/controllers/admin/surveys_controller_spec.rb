@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::SurveysController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -41,7 +40,7 @@ describe Admin::SurveysController do
     survey.happy_text.should be_eql(happy_text)
     survey.neutral_text.should be_eql(neutral_text)
     survey.unhappy_text.should be_eql(unhappy_text)
-    survey.send_while.should be_eql(send_while)
+    survey.send_while.should be_eql(1)
   end
 
   it "should create a new ticket and send notification emails with a survey" do

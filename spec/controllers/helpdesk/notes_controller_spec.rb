@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::NotesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -41,7 +40,7 @@ describe Helpdesk::NotesController do
     test_ticket.notes.freshest(@account)[0].body.should =~ /#{body}/
     xhr :get, :index, :v => 2, :ticket_id => test_ticket.display_id
     response.body.should =~ /New note shown on index/
-    response.should render_template "helpdesk/tickets/show/_conversations.html.erb"
+    response.should render_template "helpdesk/tickets/show/_conversations"
   end
 
   it "should create a note with RabbitMQ enabled" do
@@ -71,7 +70,7 @@ describe Helpdesk::NotesController do
                                :user_id => RSpec.configuration.agent.id})
     get :edit, :ticket_id => test_ticket.display_id, :id => ticket_note.id
     response.body.should =~ /#{body}/
-    response.should render_template "helpdesk/notes/_edit_note.html.erb"
+    response.should render_template "helpdesk/notes/_edit_note"
   end
 
   it "should update a note " do
@@ -102,7 +101,7 @@ describe Helpdesk::NotesController do
                                     :id => @ticket_note.id,
                                     :ticket_id => @test_ticket.display_id
     @test_ticket.reload
-    response.should render_template "helpdesk/notes/edit.html.erb"
+    response.should render_template "helpdesk/notes/edit"
     @test_ticket.notes.last.body.should_not eql(updated_note_body)
   end
 
@@ -127,7 +126,7 @@ describe Helpdesk::NotesController do
     post :destroy, :id => ticket_note.id, :ticket_id => @test_ticket.display_id, :format => 'mobile'
     @test_ticket.reload
     result = JSON.parse(response.body)
-    result["success"].should be_true
+    result["success"].should be true
     @test_ticket.notes.last.deleted.should eql(true)
   end
 

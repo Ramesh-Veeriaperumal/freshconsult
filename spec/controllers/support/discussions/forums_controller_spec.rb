@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::Discussions::ForumsController do
-	# integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -23,7 +22,7 @@ describe Support::Discussions::ForumsController do
 	it "should show the forum on get 'show'" do
 		get :show, :id => @forum.id
 
-		response.should render_template "support/discussions/forums/show.portal"
+		response.should render_template "support/discussions/forums/show"
 	end
 
 	it "should render 404 on get 'show' if forum is not available" do

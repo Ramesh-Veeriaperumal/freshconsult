@@ -7,6 +7,8 @@ class BusinessCalendar < ActiveRecord::Base
   serialize :business_time_data
   serialize :holiday_data
   
+  after_find :set_business_time_data
+  
   #business_time_data has working days and working hours inside.
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
@@ -120,11 +122,12 @@ class BusinessCalendar < ActiveRecord::Base
     return business_time
   end
 
-  def after_find
+  def set_business_time_data
     if (version == 1) 
       self.business_time_data = upgraded_business_time_data 
       self.save
     end
+    self
   end
   #migrtation code ends..
 

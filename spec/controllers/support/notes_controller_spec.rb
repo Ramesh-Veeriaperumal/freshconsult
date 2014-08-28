@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe Support::NotesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @user = Factory.build(:user)
+    @user = FactoryGirl.build(:user)
     @user.save
   end
 
@@ -26,12 +25,12 @@ describe Support::NotesController do
   end
 
   it "client manager can create note if requester company and client manager company are same" do
-    new_company = Factory.build(:customer, :name => Faker::Name.name)
+    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     new_company.save
 
     new_contacts = []
     2.times do |index|
-      new_contacts.push(Factory.build(:user, :customer_id => new_company.id,
+      new_contacts.push(FactoryGirl.build(:user, :customer_id => new_company.id,
                                       :name => Faker::Name.name,
                                       :email => Faker::Internet.email,
                                       :privileges => index.eql?(0) ? index : Role.privileges_mask([:client_manager]),
@@ -46,7 +45,7 @@ describe Support::NotesController do
     
     test_ticket = create_ticket({ :requester_id => new_contacts[0].id, :status => 2 })
     test_ticket.cc_email = nil
-    test_ticket.save(false)
+    test_ticket.save(:validate => false)
 
     log_in(new_contacts[1])
     Resque.inline = true
@@ -60,10 +59,10 @@ describe Support::NotesController do
   end
 
   it "any user with manage tickets permission can create note with attachment to any ticket" do
-    new_company = Factory.build(:customer, :name => Faker::Name.name)
+    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     new_company.save
 
-    new_contact = Factory.build(:user, :customer_id => new_company.id,
+    new_contact = FactoryGirl.build(:user, :customer_id => new_company.id,
                                  :name => Faker::Name.name,
                                  :email => Faker::Internet.email,
                                  :user_role => 3,
@@ -88,7 +87,7 @@ describe Support::NotesController do
     log_in(new_agent)
     Resque.inline = true
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>New note by #{new_agent.name} </p>"},
-                                      :attachments =>[{ :resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png'),
+                                      :attachments =>[{ :resource => fixture_file_upload('files/image4kb.png','image/png'),
                                                         :description => Faker::Lorem.characters(10) 
                                                       }]
                                     },

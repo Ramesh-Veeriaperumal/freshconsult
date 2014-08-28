@@ -19,11 +19,11 @@ describe MonitorshipsController do
   #adding xml api too here, to avoid an unnecessary file
   it "should be able to monitor/follow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "follow", :format => 'xml'}, :content_type => 'application/xml'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to unmonitor/unfollow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "unfollow", :format => 'xml'}, :content_type => 'application/xml'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
 
  end

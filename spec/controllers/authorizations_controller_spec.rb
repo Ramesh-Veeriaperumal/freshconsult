@@ -1,21 +1,20 @@
 require 'spec_helper'
 
 describe AuthorizationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @account = create_test_account
     @user = add_test_agent(@account)
-    @new_installed_application = Factory.build(:installed_application, 
+    @new_installed_application = FactoryGirl.build(:installed_application, 
                                                 {
                                                   :application_id => 19,
                                                   :account_id => @account.id, 
                                                   :configs => { :inputs => {}}
                                                 })
     @new_installed_application.save!
-    @auth_data = Factory.build(:authorization, {:provider => "facebook",
+    @auth_data = FactoryGirl.build(:authorization, {:provider => "facebook",
                     :uid => "int_uid", :user_id => @user.id, :account_id => @account.id })
     @data = @auth_data.save!
   end

@@ -1,5 +1,5 @@
 class Helpdesk::TagsController < ApplicationController
-  helper 'helpdesk/tickets'
+  helper Helpdesk::TicketsHelper
 
   before_filter :set_selected_tab
 

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::AutomationsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -42,10 +41,10 @@ describe Admin::AutomationsController do
 
   it "should clone a selected scenario" do
     get :clone_rule, :id => @test_scn.id
-    response.should render_template "admin/automations/clone_rule.html.erb"
-    (@test_scn.id == assigns(:va_rule).id).should be_true
-    (@test_scn.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be_true
+    response.should render_template "admin/automations/clone_rule"
+    (@test_scn.id == assigns(:va_rule).id).should be true
+    (@test_scn.action_data == assigns(:va_rule).action_data).should be true
+    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be true
   end
 
   it "should update a scenario" do

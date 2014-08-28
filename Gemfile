@@ -26,6 +26,7 @@ group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   gem "debugger", "~> 1.6.8"
+  gem 'pry'
 end
 
 gem "mail"
@@ -37,6 +38,7 @@ gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
 gem "omniauth-oauth"
 gem "tzinfo", "~> 0.3.29"
+gem 'rails_autolink', '1.1.6'
 
 gem "test-unit", '1.2.3'
 
@@ -140,7 +142,7 @@ gem "routing-filter", "~> 0.3.1"
 gem "paperclip", "~> 2.8.0"
 
 gem "aws-sdk", "~> 1.11.3"
-gem "xml-simple", "~> 1.1.2"
+gem "xml-simple", "1.1.4"
 
 
 gem "therubyracer"
@@ -188,7 +190,7 @@ gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/
 
 group :development,:test do
   gem "forgery","0.5.0"
-  gem "factory_girl", "~> 4.4.0"
+  gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
 end
 
@@ -196,7 +198,8 @@ group :test do
   gem "rspec", '~> 3.0.0'
   gem "rspec-rails", '~> 3.0.0'
   gem "spork", "~> 0.9.0"
-  gem "mocha", "~> 0.13.0"
+  gem "mocha", "~> 0.13.0", require: false
+  gem 'rspec-collection_matchers', '1.0.0'
   gem 'rack-test', '~> 0.6.2'
   gem "rr", "~> 1.1.0"
   gem "ZenTest", "4.4.1"

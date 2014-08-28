@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ContactMergeController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -37,6 +36,7 @@ describe ContactMergeController do
   end
 
   it "should search all except source contact" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get :search, :id => @user1.id, :v => "a"
     response.body.should_not =~ /#{@user1.name}/
     response.body.should =~ /Rachel/
@@ -44,7 +44,7 @@ describe ContactMergeController do
 
   it "should not pass new contact merge for agent" do
     post :new, :id => @agent.id
-    response.status.should eql "422 Unprocessable Entity"
+    response.status.should eql 422
   end
 
 end

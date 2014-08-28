@@ -9,7 +9,7 @@
 				:rel => "toggle", 
 				"data-checked-label" => "enabled", 
 				"data-unchecked-label" => "disabled",
-				:onchange => remote_function( :url => toggle_admin_chat_setting_path, 
+				:onchange => remote_function( :url => toggle_admin_chat_setting_index_path, 
 											  :complete => "jQuery('#chat_setting').toggle();jQuery('#chat_intro').toggle();") 
 			%>
 		</div>

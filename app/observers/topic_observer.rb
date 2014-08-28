@@ -1,11 +1,10 @@
 class TopicObserver < ActiveRecord::Observer
 
-  include Rails.application.routes.url_helpers
-
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
     topic.posts_count = 1 #Default count
     topic.published = (topic.user.agent? or topic.import_id?) #Agent Topics are approved by default.
+    topic
 	end
 
   def before_update(topic)
@@ -59,11 +58,15 @@ class TopicObserver < ActiveRecord::Observer
       TopicMailer.stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
     end
   end
+  
+  def before_destroy(topic)
+    create_activity(topic, 'delete_topic', User.current) unless topic.trash#TODO-RAILS3
+  end
 
 	def after_destroy(topic)
     topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic', User.current) unless topic.trash
+#    add_activity(topic, 'delete_topic', User.current) unless topic.trash#TODO-RAILS3
 	end
 
 private
@@ -117,7 +120,7 @@ private
       :account       => topic.account,
       :user          => user,
       :activity_data => {
-                          :path        => discussions_topic_path(topic.id),
+                          :path        => Rails.application.routes.url_helpers.discussions_topic_path(topic.id),
                           'forum_name' => h(topic.forum.to_s),
                           :url_params  => {
                                             :topic_id => topic.id,

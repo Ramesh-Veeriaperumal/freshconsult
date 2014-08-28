@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::ConversationsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   include APIAuthHelper
@@ -39,7 +38,7 @@ describe Helpdesk::ConversationsController do
                      :ticket_id => @test_ticket.display_id
                     }
       Resque.inline = false
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       replied_ticket = RSpec.configuration.account.tickets.find(@test_ticket.id)
       replied_ticket.responder_id.should be_eql(@agent.id)
       ticket_reply = replied_ticket.notes.last
@@ -66,7 +65,7 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @test_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
     end
 
@@ -83,7 +82,7 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @test_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       private_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{now}</div>")
       private_note.private.should be_truthy
@@ -102,7 +101,7 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => test_tkt.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       private_note = RSpec.configuration.account.tickets.find(test_tkt.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{note_body}</div>")
       private_note.private.should be_truthy
@@ -197,7 +196,7 @@ describe Helpdesk::ConversationsController do
       }
       post :note, note_params.merge!({:format => 'json', :ticket_id => ticket_id }),:content_type => 'application/json'
       note_result = parse_json(response)
-      expected = (response.status =~ /200 OK/) && compare(note_result['note'].keys,APIHelper::NOTE_ATTRIBS,{}).empty?
+      expected = (response.status == 200) && compare(note_result['note'].keys,APIHelper::NOTE_ATTRIBS,{}).empty?
       expected.should be(true)
     end
   end
@@ -225,10 +224,10 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       mobihelp_reply = @account.tickets.find(@mobihelp_ticket.id).notes.last
       mobihelp_reply.full_text_html.should be_eql("<div>#{now}</div>")
-      mobihelp_reply.private.should be_false
+      mobihelp_reply.private.should eql(false)
     end
 
     it "should not reply to a mobihelp ticket if the source is invalid" do

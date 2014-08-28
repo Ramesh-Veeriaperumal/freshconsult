@@ -16,8 +16,6 @@ class Monitorship < ActiveRecord::Base
 
   before_create :set_account_id
 
-  attr_accessible :active
-
   def sender_and_host
     if !portal_id? || ( portal_id? && portal.main_portal? )
       sender = user.account.default_friendly_email

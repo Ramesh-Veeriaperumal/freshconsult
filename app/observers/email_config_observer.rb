@@ -1,7 +1,10 @@
 class EmailConfigObserver < ActiveRecord::Observer
     
-  def before_validation_on_create(email_config)
-    set_account email_config
+  def before_validation(email_config)
+    if email_config.new_record?
+     set_account email_config
+    end
+    email_config
   end
 
   def before_create(email_config)

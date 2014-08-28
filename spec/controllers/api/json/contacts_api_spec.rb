@@ -19,7 +19,7 @@ describe ContactsController do
 		#api impl gives out 200 status, change this when its fixed to return '201 created'
 	 	#also add helpdesk_agent attrib to json response to be in sync with xml
 	 	#&& compare(result["user"],APIHelper::CONTACT_ATTRIBS,{})
-	 	response.status.should be_eql("200")
+	 	response.status.should eql(200)
 	end
 
 	it "should show an existing contact" do
@@ -39,7 +39,7 @@ describe ContactsController do
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone, 
                                                 :language => contact.language },:format => 'json'}
-	 	response.status.should eql("200")
+	 	response.status.should eql(200)
 	end
 
 	it "should delete an existing contact" do

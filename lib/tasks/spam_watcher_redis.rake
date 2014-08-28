@@ -13,13 +13,13 @@ namespace :spam_watcher_redis do
   def block_spam_user(user)
     user.blocked = true
     user.blocked_at = Time.zone.now + 10.years
-    user.save(false)
+    user.save(:validate => false)
   end
 
   def delete_user(user)
     user.deleted = true
     user.deleted_at = Time.zone.now
-    user.save(false)
+    user.save(:validate => false)
   end
 
   def paid_account?(account)

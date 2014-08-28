@@ -15,14 +15,14 @@ module CannedResponsesHelper
                                                               :description => params[:attachments][:description], 
                                                               :account_id => test_response.account_id)
     end
-    test_response.save(false)
+    test_response.save(:validate => false)
     test_response
   end
 
   def create_cr_folder(params = {})
-    test_cr_folder = Factory.build(:ca_folders, :name => params[:name])
+    test_cr_folder = FactoryGirl.build(:ca_folders, :name => params[:name])
     test_cr_folder.account_id = RSpec.configuration.account.id
-    test_cr_folder.save(false)
+    test_cr_folder.save(:validate => false)
     test_cr_folder
   end
 end

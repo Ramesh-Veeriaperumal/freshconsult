@@ -3,13 +3,15 @@ class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
   before_create :set_default_version
+  after_find :set_requester_and_agent_template
 
 
-  def after_find
+  def set_requester_and_agent_template
     if (self.version == 1)
       self.requester_template = (RedCloth.new(requester_template).to_html) if requester_template
       self.agent_template = (RedCloth.new(agent_template).to_html) if agent_template
     end
+    self
   end
   
   has_many :email_notification_agents, :class_name => "EmailNotificationAgent", :dependent => :destroy

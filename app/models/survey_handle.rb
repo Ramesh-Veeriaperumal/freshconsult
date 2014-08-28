@@ -1,9 +1,7 @@
 class SurveyHandle < ActiveRecord::Base
-	
+	self.primary_key = :id
   belongs_to_account
   	
-  include Rails.application.routes.url_helpers
-  
   NOTIFICATION_VS_SEND_WHILE = {
     EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,
     EmailNotification::TICKET_CLOSED => Survey::CLOSED_NOTIFICATION
@@ -33,7 +31,7 @@ class SurveyHandle < ActiveRecord::Base
   
   # Method moved to helper
   def survey_url(ticket, rating)
-    support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
+    Rails.application.routes.url_helpers.support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
       :host => ticket.portal_host)
   end
   

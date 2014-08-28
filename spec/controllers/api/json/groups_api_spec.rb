@@ -8,8 +8,8 @@ describe GroupsController do
 		@now = (Time.now.to_f*1000).to_i
 		@user_1 = add_test_agent(@account)
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
-		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-		@calendar.save(false)
+		@calendar = FactoryGirl.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(:validate => false)
 	end
 
 	before(:each) do
@@ -26,14 +26,14 @@ describe GroupsController do
 		get :index, :format => 'json'
 		json = parse_json(response)
 		json.first['group']['description'] == 'Product Management group'
-		response.status.should be_eql("200 OK")
+		response.status.should be_eql(200)
 	end
 
 	it "should create a new Group" do
 		post :create, { :group => { :name => "Spec Testing Grp - json", :description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
-									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
-									},
-						:format => 'json'
+        :agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
+      },
+      :format => 'json'
 		}
 		@account.groups.find_by_name("Spec Testing Grp - json").should_not be_nil
 	end
@@ -55,7 +55,7 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 	end
 
 	it "should add new agents to the group" do
@@ -75,7 +75,7 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [@user_1.id]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 	end
 
 	it "should delete a Group" do

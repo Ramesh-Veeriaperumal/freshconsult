@@ -27,6 +27,6 @@ describe ContactsController do
 
 
     def error_status?(status)
-      status =~ /422/ 
+      status == 422
     end
 end

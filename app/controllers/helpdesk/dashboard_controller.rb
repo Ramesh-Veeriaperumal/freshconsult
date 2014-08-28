@@ -1,6 +1,6 @@
 class Helpdesk::DashboardController < ApplicationController
 
-  helper 'helpdesk/tickets' #by Shan temp
+  helper  Helpdesk::TicketsHelper #by Shan temp
   include Reports::GamificationReport
 
   skip_before_filter :check_account_state

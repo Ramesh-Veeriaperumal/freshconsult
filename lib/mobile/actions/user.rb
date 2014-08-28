@@ -10,7 +10,7 @@ module Mobile::Actions::User
     to_json options
   end
   
-	def to_mob_json
+	def to_mob_json(opt = {})
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, 
       							:is_customer, :recent_tickets, :is_client_manager, :company_name,
@@ -18,8 +18,8 @@ module Mobile::Actions::User
                     :can_view_time_entries, :can_edit_time_entries, :agent_signature ],
                     
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
-    }
-    to_json options
+    }.merge(opt)
+    as_json options
   end
 
   def original_avatar

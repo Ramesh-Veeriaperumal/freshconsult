@@ -118,31 +118,27 @@ class Helpdesk::TicketsController < ApplicationController
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
-          json = "["; sep=""
+          array = []
           @items.each { |tic| 
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+            array << tic.as_json({}, false)['helpdesk_ticket']
           }
-          render :json => json + "]"
+          render :json => array
         end
       end
 	    format.mobile do 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
-          json = "["; sep=""
+          array = []
           @items.each { |tic| 
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-
-            json << sep + tic.to_json({
+            array << tic.as_json({
+              :root => false,
               :except => [ :description_html, :description ],
               :methods => [ :status_name, :priority_name, :source_name, :requester_name,
                             :responder_name, :need_attention, :pretty_updated_date ]
-            }, false)[19..-2]; sep=","
+            }, false)
           }
-          render :json => json + "]"
+          render :json => array
         end
       end	   
       format.nmobile do 

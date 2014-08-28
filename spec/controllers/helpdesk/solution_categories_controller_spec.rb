@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Solution::CategoriesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -80,7 +79,7 @@ describe Solution::CategoriesController do
                                             })
     log_in(restricted_agent)
     get :show, :id => @test_category.id
-    response.status.should eql "302 Found"
+    response.status.should eql 302
     session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')    
     UserSession.find.destroy
   end

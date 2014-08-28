@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::AccountAdditionalSettingsController do
-	# integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -58,9 +57,10 @@ describe Admin::AccountAdditionalSettingsController do
 			}
 			@account.reload
 			@account.account_additional_settings.supported_languages.should eql(changed_languages)
-			@account.dynamic_notification_templates.find_by_language(@template_eng.language).active.should be_false
-			@account.dynamic_notification_templates.find_by_language(@template_ca.language).active.should be_true
-			response.redirected_to.should eql "/admin/email_configs"
+			@account.dynamic_notification_templates.find_by_language(@template_eng.language).active.should be false
+			@account.dynamic_notification_templates.find_by_language(@template_ca.language).active.should be true
+			
+      expect(response).to redirect_to("/admin/email_configs")
 		end
 	end
 end

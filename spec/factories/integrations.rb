@@ -41,25 +41,29 @@ if Rails.env.test?
       options HashWithIndifferentAccess.new({:display_in_pages => [:helpdesk_tickets_show_page_side_bar]})
     end
   end
-
-  Factory.define :integration_user_credential, :class => Integrations::UserCredential do |t|
-    t.installed_application_id 1
-    t.user_id 1
-    t.auth_info HashWithIndifferentAccess.new({ :refresh_token => "1/tpO82YgF2AsCnQup7SCYN1hOlk6RBHL4iyaX-oaBkRw", 
-                      :oauth_token => "ya29.LgA1EMj53KSvWhoAAABtT8Nt-ZdsGJXa7bfxXn7pVkzOsLnFW9eFQCIArfLfjg", 
-                      :email => "sathish@freshdesk.com"})
-    t.account_id 1
+  
+  FactoryGirl.define do
+    factory :integration_user_credential, :class => Integrations::UserCredential do |t|
+      t.installed_application_id 1
+      t.user_id 1
+      t.auth_info HashWithIndifferentAccess.new({ :refresh_token => "1/tpO82YgF2AsCnQup7SCYN1hOlk6RBHL4iyaX-oaBkRw", 
+          :oauth_token => "ya29.LgA1EMj53KSvWhoAAABtT8Nt-ZdsGJXa7bfxXn7pVkzOsLnFW9eFQCIArfLfjg", 
+          :email => "sathish@freshdesk.com"})
+      t.account_id 1
+    end
   end
-
-  Factory.define :create_webhooks, :class => ApiWebhooksController do |t|
-    t.name "Test_Webhook"
-    t.description "Test_description"
-    t.match_type "any"
-    t.filter_data "Test data"
-    t.action_data "Test action data"
-    t.account_id 1
-    t.rule_type 13
-    t.active 1
+  
+  FactoryGirl.define do
+    factory :create_webhooks, :class => ApiWebhooksController do |t|
+      t.name "Test_Webhook"
+      t.description "Test_description"
+      t.match_type "any"
+      t.filter_data "Test data"
+      t.action_data "Test action data"
+      t.account_id 1
+      t.rule_type 13
+      t.active 1
+    end
   end
 
   

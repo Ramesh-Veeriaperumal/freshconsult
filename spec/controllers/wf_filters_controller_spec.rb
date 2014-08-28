@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wf::FilterController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

@@ -247,7 +247,7 @@ module FacebookHelper
     
     post = Social::FbPost.find_by_post_id(post_id)
     post.should_not be_nil
-    post.is_ticket?.should be_truthy
+    post.is_ticket?.should eql(true)
     
     ticket = post.postable
     user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -336,7 +336,7 @@ module FacebookHelper
     
     
     post_comment.should_not be_nil
-    post_comment.is_ticket?.should be_truthy
+    post_comment.is_ticket?.should eql(true)
     
     ticket = post_comment.postable
     user_id = RSpec.configuration.account.users.find_by_fb_profile_id(comment[:from][:id]).id

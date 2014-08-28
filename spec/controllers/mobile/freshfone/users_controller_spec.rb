@@ -27,21 +27,21 @@ describe Freshfone::UsersController do
       @account.features.freshfone.destroy
       post :refresh_token, { :format => "json" }
       json_response.should include("requires_feature")
-      json_response["requires_feature"].should be_false
+      json_response["requires_feature"].should be false
       json_response.should_not include("token","update_status","client","expire")
     end
 
     it "should post presence of an user" do
       post :presence , { :format => "json" }
       json_response.should include("update_status")
-      json_response["update_status"].should be_true
+      json_response["update_status"].should be true
     end
 
     it "should send incoming call" do
       freshfone_call = create_freshfone_call
       post :in_call, {:format => "json", :From => "+16617480240", :To => "+12407433321", :CallSid => freshfone_call.call_sid, :outgoing => "false"}
       json_response.should include("update_status","call_sid")
-      json_response["update_status"].should be_true
+      json_response["update_status"].should be true
     end
 
     it "should send outgoing call to server" do

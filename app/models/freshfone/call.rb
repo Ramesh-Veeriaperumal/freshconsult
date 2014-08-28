@@ -2,6 +2,7 @@ class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	include Mobile::Actions::Freshfone
 	self.table_name =  :freshfone_calls
+    self.primary_key = :id
 
   serialize :customer_data, Hash
 

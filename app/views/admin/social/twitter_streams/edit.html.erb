@@ -6,7 +6,7 @@
   <%= render :partial => "helpnote" %>
 <% end %>
 
-<%= form_for :twitter_stream, :url => admin_social_twitter_stream_path(@twitter_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
+<%= form_for @twitter_stream, :url => admin_social_twitter_stream_path(@twitter_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
 
   <div class="floatr">
     <%= link_to(t('admin.social.streams.cancel'), :admin_social_streams , :class => "btn" ) %>

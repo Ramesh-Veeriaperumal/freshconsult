@@ -6,7 +6,7 @@ module Mobile::Actions::TimeSheet
 	}
 	
 	def to_mob_json
-		to_json(JSON_OPTIONS,false)
+		as_json(JSON_OPTIONS,false)
 	end
 
 end

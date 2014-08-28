@@ -32,9 +32,8 @@ module ForumHelper
 							:user_id => user.id,
 							:stamp_type => stamp_type
 							)
-		topic.save(true)
-		post = FactoryGirl.build(
-							:post,
+		topic.save
+		post = FactoryGirl.build(:post,
 							:account_id => RSpec.configuration.account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
@@ -45,13 +44,12 @@ module ForumHelper
 	end
 
 	def create_test_post(topic, user = @customer)
-		post = FactoryGirl.build(
-							:post, 
+		post = FactoryGirl.build(:post, 
 							:account_id => RSpec.configuration.account.id, 
 							:topic_id => topic.id,
 							:user_id => user.id
 							)
-		post.save(true)
+		post.save
 		post			
 	end
 
@@ -60,19 +58,18 @@ module ForumHelper
 	end
 
 	def create_ticket_topic_mapping(topic,ticket)
-		ticket_topic = FactoryGirl.build(
-											:ticket_topic,
+		ticket_topic = FactoryGirl.build(:ticket_topic,
 											:account_id => RSpec.configuration.account.id,
 											:topic_id => topic.id,
 											:ticket_id => ticket.id 
 										)
-		ticket_topic.save(true)
+		ticket_topic.save
 		ticket_topic
 	end
 
 	def publish_topic(topic)
 		topic.published = true
-		topic.save(true)
+		topic.save
 		topic
 	end
 
@@ -87,8 +84,7 @@ module ForumHelper
 	end
 
 	def monitor_topic(topic, user = @user, portal_id = nil)
-		monitorship = FactoryGirl.build(
-									:monitorship,
+		monitorship = FactoryGirl.build(:monitorship,
 									:monitorable_id => topic.id,
 									:user_id => user.id,
 									:active => 1,
@@ -96,7 +92,7 @@ module ForumHelper
 									:monitorable_type => "Topic",
 									:portal_id => portal_id
 									)
-		monitorship.save(true)
+		monitorship.save
 	end
 
 	def lock_topic(topic)

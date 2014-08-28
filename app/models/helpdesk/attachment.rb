@@ -46,8 +46,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     before_save :set_account_id
 
-  attr_accessible :content, :description
-
    def s3_permissions
     public_permissions? ? "public-read" : "private"
    end
@@ -105,11 +103,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days).gsub( "#{AwsWrapper::S3::DEFAULT_HOST}/", '' )
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options[:except] = exclude
     options[:methods] = [:attachment_url_for_api]
-    json_str = super(options)
-    ActiveSupport::JSON.encode(ActiveSupport::JSON.decode(json_str)["attachment"]).sub("\"attachment_url_for_api\"", "\"attachment_url\"")
+    json_hash = super(options)
+    json_hash[:attachment_url] = json_hash['attachment'].delete(:attachment_url_for_api)
   end
 
   def to_xml(options = {})

@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
-  include Rails.application.routes.url_helpers
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User

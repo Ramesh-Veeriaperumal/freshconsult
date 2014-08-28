@@ -47,7 +47,7 @@ describe Helpdesk::TicketsController do
     scenario = @account.scn_automations.find_by_name("Mark as Feature Request")
     post 'execute_scenario', { "scenario_id" => scenario.id, "id" => @test_ticket.display_id , "format" => "json"}
     json_response.should include("success","success_message","id")
-    json_response["success"].should be_true
+    json_response["success"].should be true
     json_response["success_message"].should be_eql("Scenario Executed")
   end
 
@@ -58,7 +58,7 @@ describe Helpdesk::TicketsController do
     @test_ticket.status.should be_eql(2)
     put 'update_ticket_properties', {"format"=>"json", "helpdesk_ticket"=>{"status"=>"3", "ticket_type"=>"Incident"}, "id"=>@test_ticket.display_id}
     json_response.should include("success","success_message")
-    json_response["success"].should be_true
+    json_response["success"].should be true
     json_response["success_message"].should be_eql("The ticket has been updated.")
     @test_ticket.reload
     @test_ticket.ticket_type.should be_eql("Incident")
@@ -71,7 +71,7 @@ describe Helpdesk::TicketsController do
     test_ticket.save!
     delete 'delete_forever', {"id"=> test_ticket.display_id, "format"=>"json"}
     json_response.should include("success","success_message")
-    json_response["success"].should be_true
+    json_response["success"].should be true
     json_response["success_message"].should be_eql("1 ticket was deleted.")
   end
 
@@ -80,7 +80,7 @@ describe Helpdesk::TicketsController do
     @test_ticket.save!
     put 'close', {"format" => "json", "id" => @test_ticket.display_id, "helpdesk_ticket"=>{"status"=>"5"}  }
     json_response.should include("success","success_message")
-    json_response["success"].should be_true
+    json_response["success"].should be true
     json_response["success_message"].should be_eql("The ticket has been closed.")
   end
 end

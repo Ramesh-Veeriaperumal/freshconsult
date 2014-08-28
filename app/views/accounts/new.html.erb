@@ -54,7 +54,7 @@
 	  <br/>
 	  
 	  <li>
-	    <% content_tag(:p) do %>
+	    <%= content_tag(:p) do %>
 	      Your card will be charged <%= number_to_currency(@account.plan.setup_amount) + ' now and ' if  @account.plan.setup_amount? && !@account.plan.trial_period? %> <%= number_to_currency(@account.plan.amount) %> 
 	      <%= @account.plan.renewal_period == 1 ? 'every month' : "every #{@account.plan.renewal_period} months" %>.
 	    <% end if @account.needs_payment_info? %>

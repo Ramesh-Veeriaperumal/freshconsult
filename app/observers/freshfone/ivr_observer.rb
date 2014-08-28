@@ -1,12 +1,15 @@
 class Freshfone::IvrObserver < ActiveRecord::Observer
 	observe Freshfone::Ivr
 
-	def before_validation_on_update(freshfone_ivr)
-		if freshfone_ivr.ivr_message? || freshfone_ivr.preview_mode
-			build_menus_and_relations(freshfone_ivr) if freshfone_ivr.any_ivr_data_changed?
-		else
-			build_welcome_message(freshfone_ivr) if freshfone_ivr.welcome_message_changed?
-		end
+	def before_validation(freshfone_ivr)
+    unless freshfone_ivr.new_record?
+      if freshfone_ivr.ivr_message? || freshfone_ivr.preview_mode
+        build_menus_and_relations(freshfone_ivr) if freshfone_ivr.any_ivr_data_changed?
+      else
+        build_welcome_message(freshfone_ivr) if freshfone_ivr.welcome_message_changed?
+      end
+    end
+    freshfone_ivr
 	end
 
 	def before_save(freshfone_ivr)

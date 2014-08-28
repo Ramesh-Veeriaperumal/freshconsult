@@ -2,7 +2,7 @@ class Freshfone::User < ActiveRecord::Base
 	self.table_name =  "freshfone_users"
 	belongs_to_account
 
-	belongs_to :user, :inverse_of => :freshfone_user
+	belongs_to :user, :class_name => '::User', :inverse_of => :freshfone_user
 	has_many :agent_groups, :through => :user
 	delegate :available_number, :name, :avatar, :to => :user
 	attr_accessor :user_avatar

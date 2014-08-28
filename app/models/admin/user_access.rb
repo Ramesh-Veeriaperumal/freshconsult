@@ -18,7 +18,6 @@ class Admin::UserAccess < ActiveRecord::Base
   
   before_save :check_visibility
 
-  attr_accessible :account_id, :visibility, :user_id, :group_id
   
   def check_visibility
     if !group_agents_visibility?

@@ -3,7 +3,6 @@ include Redis::TicketsRedis
 include Redis::RedisKeys
 
 describe Helpdesk::TimeSheetsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

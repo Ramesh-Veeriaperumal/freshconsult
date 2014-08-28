@@ -19,5 +19,11 @@ if Rails.env.test?
       note {Faker::Lorem.sentence(2)}
       domains {Faker::Internet.domain_name}
     end
+    
+    factory :customer do |p|
+      p.account_id 1
+      p.name  { Forgery(:lorem_ipsum).words(1) }
+    end
+    
   end
 end

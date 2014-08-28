@@ -144,7 +144,7 @@ class Helpdesk::Note < ActiveRecord::Base
     email? or fwd_email?
   end
   
-  def to_json(options = {})
+  def as_json(options = {})
     return super(options) unless options[:tailored_json].blank?
     options[:methods] = Array.new if options[:methods].nil?
     options[:methods].push(:attachments)
@@ -248,7 +248,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json({
+    as_json({
             :root => "helpdesk/note",
             :tailored_json => true,
             :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id,

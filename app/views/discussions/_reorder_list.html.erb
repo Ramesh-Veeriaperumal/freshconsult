@@ -4,7 +4,7 @@
 	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @forum_category.id %>" />
 	  <ul class="row-fluid" rel="sortlist">
 		  <% items.each do |forum| %>
-		  	<% content_tag :li, :item_id => forum.id,
+		  	<%= content_tag :li, :item_id => forum.id,
 		  						:class => "comm-item" do %>
 				<div class="reorder-icon vertical-alignment  handle-reorder">
 						<%= font_icon "reorder", :size => 15, :id => "sortable-icon" %>

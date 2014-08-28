@@ -13,14 +13,11 @@ class Helpdesk::CommonsController < ApplicationController
         render :partial => "group_agents", :locals =>{ :blank_value => blank_value }
       }
       format.mobile {
-        json = "["; sep=""
+        array = []
           @agents.each { |agent_group|
-            user = agent_group.user
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 8..-2 will remove "{user:" and the last "}"
-            json << sep + user.to_mob_json()[8..-2]; sep=","
+            array << agent_group.user.to_mob_json(:root => false)
           }
-        render :json => json + "]"
+        render :json => array
       }
     end
   end

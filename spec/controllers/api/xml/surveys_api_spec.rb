@@ -14,7 +14,7 @@ describe Helpdesk::SurveysController do
     @test_ticket = create_ticket()
     post :rate, {:rating=>1, :ticket_id=>@test_ticket.display_id, :feedback=>"Keep up the good work -John", :format => 'xml'}, :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "200 OK")  && compare(result['survey_result'].keys, APIHelper::SURVEY_ATTRIBS, {}).empty?
+    expected = (response.status === 200)  && compare(result['survey_result'].keys, APIHelper::SURVEY_ATTRIBS, {}).empty?
     expected.should be(true)
   end
   
@@ -22,7 +22,7 @@ describe Helpdesk::SurveysController do
     @test_ticket = create_ticket()
     get :index, {:ticket_id=>@test_ticket.display_id, :format => 'xml'}, :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "200 OK")
+    expected = (response.status === 200)
     expected.should be(true)
   end
 end

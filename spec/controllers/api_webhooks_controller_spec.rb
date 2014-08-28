@@ -2,7 +2,6 @@ require 'spec_helper'
 include Import::CustomField
 
 describe ApiWebhooksController do
-	integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,56 +15,57 @@ describe ApiWebhooksController do
 	end
 
 	before(:each) do
+    request.env["HTTP_ACCEPT"] = "application/json"
 	  log_in(@user)
 	end
 
 	it "should create webhooks for user" do
 		post :create, {"url"=>"http://requestb.in/14beecl1","name"=>"user_create","description"=>"testing",
 									 "event_data"=>[{"name"=>"user_action","value"=>"create"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql(200)
 	end
 
 	it "should fail for create webhooks" do
 		post :create, {"url"=>"http://requestb.in/14beecl1","name"=>"user_create","description"=>"testing",
 									 "event_data"=>[{"name"=>"user_action","value"=>"delete"}]}
-		response.status.should eql "422 Unprocessable Entity"
+		response.status.should eql(422)
 	end
 
 	it "should delete webhooks" do
 		id = VARule.find(:first,:conditions=>["rule_type=13"]).id
 		delete :destroy, {"controller"=>"api_webhooks", "action"=>"destroy", "id"=> id, "format"=>"json"}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for ticket" do
 		post :create, {"url"=>"http://testticketurl","name"=>"ticket_create","description"=>"testing",
 									 "event_data"=>[{"name"=>"ticket_action","value"=>"create"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for note" do
 		post :create, {"url"=> "http://testnoteurl","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for note with username" do
 		post :create, {"url"=> "http://testnotesurl","username" => "sathish@freshdesk.com", 
 			"password" => "test","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for note with api key" do
 		post :create, {"url"=> "http://testnotesapi","api_key" => "BfPY67HoIscsgEbkSv","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for ticket update" do
 		post :create, {"url"=> "http://ticketupdate","name"=>"ticket_update","description"=>"testing",
 			"event_data"=>[{"name"=>"ticket_action","value"=>"update"}]}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should create webhooks for user update" do
@@ -76,7 +76,7 @@ describe ApiWebhooksController do
 		@ticket.status=3
 		@ticket.save!
 		Resque.inline = false
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 end

@@ -7,7 +7,6 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::TwitterController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -434,7 +433,7 @@ describe Social::TwitterController do
                       }
                   
                   
-      user_interactions = response.template_objects["interactions"][:others]
+      user_interactions = assigns[:interactions][:others]
       user_interactions.length.should eql(2)
       user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
     end
@@ -467,8 +466,8 @@ describe Social::TwitterController do
                           }
     Rails.logger.info response
     Rails.logger.info "%"*100
-    Rails.logger.info response.template_objects["recent_search"].inspect                        
-    recent_search = response.template_objects["recent_search"]
+    Rails.logger.info assigns[:recent_search].inspect  
+    recent_search = assigns[:recent_search]
     recent_search.first["query"].should eql(["hello world"])
     recent_search.second["query"].should eql(["4"])
     recent_search.third["query"].should eql(["3"])
@@ -478,7 +477,7 @@ describe Social::TwitterController do
 
   it "should return older results on  live search" do
       Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-      
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :show_old, {
                               :search => {
                                 :q => ["show old"], 
@@ -488,12 +487,12 @@ describe Social::TwitterController do
                               }
                             }
                             
-      response.should render_template("social/twitter/show_old.rjs")
+      response.should render_template("social/twitter/show_old")
   end
   
   it "should newer results on  live search" do
     Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-    
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     get :fetch_new, {
                             :search => {
                               :q => ["new results"], 
@@ -502,28 +501,29 @@ describe Social::TwitterController do
                               :refresh_url => ""
                             }
                           }
-    response.should render_template("social/twitter/fetch_new.rjs")
+    response.should render_template("social/twitter/fetch_new")
   end  
   
   it "should fetch retweet when retweeting a particular tweet" do
     Twitter::REST::Client.any_instance.stubs(:retweet).returns("")
-    
+     request.env["HTTP_ACCEPT"] = "application/javascript"
       get :retweet, {
           :tweet => {
             :feed_id => "#{(Time.now.utc.to_f*100000).to_i}"
           }
         }
         
-    response.should render_template("social/twitter/retweet.rjs")
+    response.should render_template("social/twitter/retweet")
   end
   
   it "should fetch retweets from twitter when clicking on a particular tweet" do
     Twitter::REST::Client.any_instance.stubs(:status).returns(sample_twitter_tweet_object)
     Twitter::REST::Client.any_instance.stubs(:retweets).returns([sample_twitter_tweet_object])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
       get :retweets, {
           :retweeted_id => "472324358761750530"
         }
-    response.should render_template("social/twitter/retweets.rjs")
+    response.should render_template("social/twitter/retweets")
   end
   
   it "should post a tweet to twitter" do
@@ -539,6 +539,7 @@ describe Social::TwitterController do
   
   it "should retrieve all user info on clicking on the user link" do
     Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user((Time.now.utc.to_f*100000).to_i)])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     get :user_info, {
         :user => {
           :name => "GnipTesting", 
@@ -546,7 +547,7 @@ describe Social::TwitterController do
           :normal_img_url => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png"
         }
     }
-    response.should render_template("social/twitter/user_info.rjs")
+    response.should render_template("social/twitter/user_info")
   end
 
   after(:all) do

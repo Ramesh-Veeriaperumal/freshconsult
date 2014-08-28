@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe AgentsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -357,7 +356,7 @@ describe AgentsController do
                                       :signature_html=> "Spec Cheers!", 
                                       :user_id => "",
                                       :ticket_permission => "1")
-    new_user = FactoryGirl.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 
+    new_user = FactoryGirl.build(:user, :avatar_attributes => { :content => fixture_file_upload('files/image4kb.png', 
                                         'image/png')},
                                     :helpdesk_agent => true,
                                     :name => "Spec test user",

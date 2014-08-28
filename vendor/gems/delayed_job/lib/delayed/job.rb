@@ -12,7 +12,6 @@ module Delayed
     self.table_name =  :delayed_jobs
     not_sharded
 
-    attr_accessible :payload_object, :priority, :run_at
     before_save { self.run_at ||= self.class.db_time_now }
     MAX_ATTEMPTS = 25
     MAX_RUN_TIME = 4.hours

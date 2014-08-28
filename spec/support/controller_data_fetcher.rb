@@ -20,7 +20,7 @@ class ControllerDataFetcher
     "action_controller.request.path_parameters"=>{"controller"=>"admin/observer_rules", "action"=>"edit", "id"=>"8"}
   }
 
-  REQUEST  = ActionController::Request.new ENV
+  REQUEST  = ActionDispatch::Request.new ENV
 
   RETRIEVE_VARIABLES = {  Admin::AutomationsController      => [:action_defs],
                           Admin::VaRulesController          => [:action_defs, :filter_defs, :op_types],
@@ -47,7 +47,7 @@ class ControllerDataFetcher
     def prep_the_controller
       controller.request = REQUEST
       controller.params = {}
-      controller.send :initialize_current_url # Actioncontroller::Base method # Hack
+#      controller.send :initialize_current_url # Actioncontroller::Base method # Hack
       controller.send :load_config
     end
 

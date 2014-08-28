@@ -33,6 +33,8 @@ Helpkit::Application.configure do
   # See everything in the log (default is :info)
   config.log_level = :debug
 
+  config.active_record.mass_assignment_sanitizer = :logger
+
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
 

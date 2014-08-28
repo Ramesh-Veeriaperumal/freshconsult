@@ -1,7 +1,6 @@
 require "spec_helper"
 
 describe Admin::ChatSettingController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 	
@@ -24,7 +23,7 @@ describe Admin::ChatSettingController do
 		plan = SubscriptionPlan.find(2)
 		@account.subscription.update_attributes(plan_info(plan))
 		get :index
-		response.status.should eql "404 Not Found"
+		response.status.should eql 404
 	end
 
 	it "should render successfully when chat feature is turned on and chatSetting is already created" do
@@ -47,25 +46,27 @@ describe Admin::ChatSettingController do
 	end
 
 	it "should toggle the chat enable feature" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
 		firstState=@account.features? :chat_enable
 		post :toggle
 		@account.reload
 		
 		secondState=@account.features? :chat_enable
 		secondState.should_not eql firstState
-		response.should render_template("admin/chat_setting/_toggle.rjs")
+		response.should render_template("admin/chat_setting/_toggle")
 
 		post :toggle
 		@account.reload
 
 		thirdState=@account.features? :chat_enable
 		thirdState.should eql firstState
-		response.should render_template("admin/chat_setting/_toggle.rjs")
+		response.should render_template("admin/chat_setting/_toggle")
 
 
 	end
 
 	it "should update the chat feature" do
+    request.env["HTTP_ACCEPT"] = "application/json"
 		@account.features.send(:chat_enable).create
 		@account.reload
 		chat_setting = {
@@ -138,6 +139,7 @@ describe Admin::ChatSettingController do
 				:ticket_link_option=>"",
 				:custom_link_url=>""}
 			}
+    request.env["HTTP_ACCEPT"] = "application/json"  
 		post :update ,:chat_setting=>chat_setting
 		temp = JSON.parse(response.body)
 		temp["status"].should eql "error"

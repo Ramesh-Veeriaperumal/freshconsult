@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
     render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   
-  def record_not_found (exception)
+  def record_not_found(exception)
     Rails.logger.debug "Error  =>" + exception.message
     respond_to do |format|
       format.html {

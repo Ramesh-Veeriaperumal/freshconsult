@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Helpdesk::AutocompleteController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:each) do
     log_in(@agent)
+    request.env["HTTP_ACCEPT"] = 'application/json'
   end
 
   it "should return the requesters matching the initial text" do

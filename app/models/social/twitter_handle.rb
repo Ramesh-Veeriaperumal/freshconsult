@@ -11,9 +11,6 @@ class Social::TwitterHandle < ActiveRecord::Base
   scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
   scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
 
-  attr_accessible :product_id, :dm_thread_time
-
-
   def search_keys_to_s
     search_keys.blank? ? "" : search_keys.join(",")
   end
@@ -37,7 +34,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   def update_ticket_rules(dm_group_id=nil, includes=[], mention_group_id = nil)
     streams = self.twitter_streams
-    changes = previous_changes.symbolize_keys!
+    changes = previous_changes
 
     unless streams.empty?
       default_stream = self.default_stream

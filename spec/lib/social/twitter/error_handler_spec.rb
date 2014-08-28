@@ -63,7 +63,7 @@ describe "Twitter Error Handler" do
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.handle_auth_error')}")
     @handle.reload
-    @handle.reauth_required?.should be_true
+    @handle.reauth_required?.should be true
     @handle.state.should eql(Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required])
   end
   

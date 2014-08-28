@@ -3,6 +3,8 @@ require 'spork'
 
 require 'simplecov'
 require 'simplecov-csv'
+require 'pry'
+require 'rspec/collection_matchers'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
@@ -45,7 +47,7 @@ Spork.prefork do
   require 'factory_girl'
   require 'mocha/api'
   # TOD-RAILS3
-  # require 'mocha/object'
+  require 'mocha/setup'
   require 'authlogic/test_case'
 
   # Uncomment the next line to use webrat's matchers
@@ -54,7 +56,6 @@ Spork.prefork do
   # Requires supporting files with custom matchers and macros, etc,
   # in ./support/ and its subdirectories.
   Dir[File.expand_path(File.join(File.dirname(__FILE__),'support',  '*.rb'))].each {|f| require f}
-  Dir[File.expand_path(File.join(File.dirname(__FILE__),'factories','*.rb'))].each {|f| require f}
 
  ['spec/support/controller_data_fetcher.rb',
   'spec/support/va/operator_helper/dispatcher.rb',
@@ -87,11 +88,12 @@ Spork.prefork do
     config.render_views
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.mock_with :mocha
+    config.mock_with :rspec
     config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.include AccountHelper
     config.include AgentHelper
     config.include TicketHelper
+    config.include Authlogic::TestCase
     config.include GroupHelper
     config.include TwitterHelper
     config.include SubscriptionHelper
@@ -122,6 +124,8 @@ Spork.prefork do
     config.include CustomMatcher
     config.include PerfHelper
     config.include DynamicTemplateHelper
+    config.include FactoryGirl::Syntax::Methods
+    config.include ActionDispatch::TestProcess# to use fixture_file_upload
     config.infer_spec_type_from_file_location!
     config.add_setting :account
     config.add_setting :agent
@@ -129,8 +133,11 @@ Spork.prefork do
 
     
     config.before(:all) do
-      RSpec.configuration.account = create_test_account
-      RSpec.configuration.agent = get_admin
+      create_test_account
+      @account = Account.first
+      RSpec.configuration.account = @account
+      @agent = get_admin
+      RSpec.configuration.agent = @agent
       RSpec.configuration.timings = []
       
       #begin_gc_defragment
@@ -139,7 +146,7 @@ Spork.prefork do
     config.before(:each, :type => :controller) do
       @request.host = RSpec.configuration.account.full_domain
       @request.env['HTTP_REFERER'] = '/sessions/new'
-      @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
+      @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36\
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     end
 

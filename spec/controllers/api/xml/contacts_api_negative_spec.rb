@@ -17,7 +17,7 @@ describe ContactsController do
     # val = error_message(response) && error_status?(response.status)
     #puts "#{response.body} :: #{response.status} "
 
-  	error_status?(response.status).should be_truthy
+  	error_status?(response.status).should eql(true)
   end
 
   it "should not update a contact with an existing/duplicate email" do
@@ -41,7 +41,7 @@ describe ContactsController do
 
 
   def error_status?(status)
-      status =~ /422/ 
+      status == 422
    end
 
    def error_message(message)

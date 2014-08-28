@@ -7,7 +7,6 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::StreamsController do
-  integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -45,12 +44,13 @@ describe Social::StreamsController do
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
       get :index
-      response.should render_template("social/streams/index.html.erb")
-      response.template_objects["streams"].should eql(default_streams)
-      response.template_objects["custom_streams"].should eql(custom_streams)
+      response.should render_template("social/streams/index")
+      assigns(:streams).should eql(default_streams)
+      assigns(:custom_streams).should eql(custom_streams)
     end
     
     it "should show all the old tweets on clicking on show more" do
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :show_old, {
                         :social_streams => 
                           {
@@ -59,11 +59,11 @@ describe Social::StreamsController do
                             :last_feed_id => "0,0"
                           }
                       }
-     
-      response.should render_template("social/streams/show_old.rjs")
+      response.should render_template("social/streams/show_old")
     end
     
     it "should show all the old tweets on clicking on show more" do
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :fetch_new, {
                             :social_streams => 
                                 {
@@ -73,7 +73,7 @@ describe Social::StreamsController do
                                 }
                           }
      
-      response.should render_template("social/streams/fetch_new.rjs")
+      response.should render_template("social/streams/fetch_new")
     end
   
     it "should fetch the top tweets from all the handles with latest first from dynamo when" do
@@ -95,7 +95,7 @@ describe Social::StreamsController do
       tweet_id1, sample_gnip_feed1 = push_tweet_to_dynamo(tweet_id1, first_rule, Time.now.utc.iso8601)
       tweet_id2, sample_gnip_feed2 = push_tweet_to_dynamo(tweet_id2, first_rule, Time.now.ago(5.minutes).utc.iso8601)
       tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, sec_rule, Time.now.ago(2.minutes).utc.iso8601)
-      
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :stream_feeds, {
                             :social_streams => 
                                 {
@@ -104,9 +104,8 @@ describe Social::StreamsController do
                                   :last_feed_id => "0,0"
                                 }
                           }
-     
-      response.should render_template("social/streams/stream_feeds.rjs")
-      sorted_feeds = response.template_objects["sorted_feeds"]
+      response.should render_template("social/streams/stream_feeds")
+      sorted_feeds = assigns[:sorted_feeds]
       order = sorted_feeds.map{|a| a.stream_id if (a.stream_id == "#{@account.id}_#{sec_default_stream.id}" or a.stream_id == "#{@account.id}_#{first_default_stream.id}")}.compact
       order[0..2].should eql(["#{@account.id}_#{first_default_stream.id}", "#{@account.id}_#{sec_default_stream.id}", "#{@account.id}_#{first_default_stream.id}"])
     end
@@ -125,7 +124,7 @@ describe Social::StreamsController do
       tweet_id4, sample_gnip_feed4 = push_tweet_to_dynamo(tweet_id4, @first_rule,  Time.now.advance(:hours => +3).utc.iso8601, tweet_id3, sender2)
 
       sample_gnip_feed3.deep_symbolize_keys!
-      
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :interactions, {
                           :social_streams =>
                             {
@@ -145,9 +144,8 @@ describe Social::StreamsController do
                             :is_reply => "true", 
                             :is_retweet => "false", 
                         }
-                        
-      response.should render_template("social/streams/interactions.rjs")
-      current_interactions = response.template_objects["interactions"][:current]
+      response.should render_template("social/streams/interactions")
+      current_interactions = assigns[:interactions][:current]
       current_interactions.length.should eql(4)
       current_interactions[0].feed_id.should eql("#{tweet_id1}")
       current_interactions[1].feed_id.should eql("#{tweet_id2}")
@@ -165,7 +163,7 @@ describe Social::StreamsController do
       tweet_id3, sample_gnip_feed3 = push_tweet_to_dynamo(tweet_id3, @first_rule,  Time.now.advance(:hours => +2).utc.iso8601, nil, sender2)
       
       sample_gnip_feed2.deep_symbolize_keys!
-      
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :interactions, {
                           :social_streams =>
                             {
@@ -185,9 +183,8 @@ describe Social::StreamsController do
                             :is_reply => "true", 
                             :is_retweet => "false", 
                         }
-                        
-      response.should render_template("social/streams/interactions.rjs")
-      other_interactions = response.template_objects["interactions"][:others]
+      response.should render_template("social/streams/interactions")
+      other_interactions = assigns[:interactions][:others]
       other_interactions.length.should eql(1)
       other_interactions[0].feed_id.should eql("#{tweet_id3}")
     end
@@ -213,9 +210,9 @@ describe Social::StreamsController do
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
       get :index
-      response.should render_template("social/streams/index.html.erb")
-      response.template_objects["streams"].should eql(default_streams)
-      response.template_objects["custom_streams"].should eql(custom_streams)
+      response.should render_template("social/streams/index")
+      assigns[:streams].should eql(default_streams)
+      assigns[:custom_streams].should eql(custom_streams)
     end
     
     it "should fetch all the streams that are visible to the where the stream is visible to marketing" do
@@ -229,10 +226,11 @@ describe Social::StreamsController do
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
       get :index
-      response.should render_template("social/streams/index.html.erb")
-      response.template_objects["streams"].include?(@first_default_stream).should be_false
-      response.template_objects["streams"].include?(@sec_default_stream).should be_false
-      response.template_objects["custom_streams"].should eql(custom_streams)
+      response.should render_template("social/streams/index")
+      assigns[:streams].include?(@first_default_stream).should be false
+      assigns[:streams].include?(@sec_default_stream).should be false
+      assigns[:streams].include?(@sec_default_stream).should be false
+      assigns[:custom_streams].should eql(custom_streams)
     end
     
     it "should fetch all the streams that are visible to the user belonging to marketing" do
@@ -242,11 +240,11 @@ describe Social::StreamsController do
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
       get :index
-      response.should render_template("social/streams/index.html.erb")
-      response.template_objects["streams"].should eql(default_streams)
-      response.template_objects["streams"].include?(@first_default_stream).should be_true
-      response.template_objects["streams"].include?(@sec_default_stream).should be_false
-      response.template_objects["custom_streams"].should eql(custom_streams)
+      response.should render_template("social/streams/index")
+      assigns[:streams].should eql(default_streams)
+      assigns[:streams].include?(@first_default_stream).should be true
+      assigns[:streams].include?(@sec_default_stream).should be false
+      assigns[:custom_streams].should eql(custom_streams)
     end
   end
 

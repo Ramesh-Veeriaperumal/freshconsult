@@ -3,7 +3,7 @@ if Rails.env.test?
     factory :freshfone_call, :class => Freshfone::Call do
       call_sid "CA2db76c748cb6f081853f80dace462a04"
       call_duration "59"
-      recording_url
+      recording_url "http://api.twilio.com/2010-04-01/Accounts/ACcb66690d4a703515a22f3aa080aa782e/Recordings/REc77ce1f6b56d2081e297f79d8b0d3b15"
       call_status 1
       call_type 1
       customer_data HashWithIndifferentAccess.new({ :number => "+16617480240",:country => 'US',:state => 'CA',:city => 'BAKERSFIELD' })

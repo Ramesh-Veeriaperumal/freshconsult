@@ -12,8 +12,6 @@ class DomainMapping < ActiveRecord::Base
 
 	scope :main_portal, :conditions => ['portal_id IS NULL']
 
-  attr_accessible :domain, :account_id, :portal_id
-
 	def act_as_directory
   end
 

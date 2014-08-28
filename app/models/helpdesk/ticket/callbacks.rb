@@ -192,6 +192,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     self.sla_policy = (new_match || account.sla_policies.default.first)
+    self
   end
 
   def changed_condition?

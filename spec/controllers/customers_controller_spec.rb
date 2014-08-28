@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe CustomersController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -54,14 +53,14 @@ describe CustomersController do
 
   it "should respond to new" do
     get :new
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
     response.should render_template 'customers/new'
   end
 
   it "should respond to edit" do
     company = create_company
     get :edit, :id => company.id
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
     response.should render_template 'customers/edit'
     company_attributes(company, SKIPPED_KEYS).each do |attribute, value|
       response.body.should =~ /#{value}/

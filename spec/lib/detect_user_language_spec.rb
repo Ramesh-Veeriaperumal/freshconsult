@@ -11,7 +11,7 @@ TEST_LANGUAGES = {
 describe Helpdesk::DetectUserLanguage do
 
   before(:all) do
-    @new_user = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email))
+    @new_user = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email))
   end
   
   it "should set the detected language if we support translations for that language" do

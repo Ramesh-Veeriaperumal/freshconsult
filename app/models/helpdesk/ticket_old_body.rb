@@ -8,9 +8,7 @@ class Helpdesk::TicketOldBody < ActiveRecord::Base
   belongs_to_account
   belongs_to :ticket, :class_name => "Helpdesk::Ticket", :foreign_key => "ticket_id"
 
-  # attr_protected :account_id
-
-  attr_accessible :account_id, :description, :description_html, :raw_text, :raw_html, :meta_info, :version, :ticket_id
+  attr_protected :account_id
 
   #  returns false by default 
   #  preventing update a ticket_body in case of ticket update gets called in cases

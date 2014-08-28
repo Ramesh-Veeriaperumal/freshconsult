@@ -18,7 +18,7 @@
 					<div class="fd-menu" id="app-menu-<%=contact_id%>" style="display:none;">
 					  <ul>             
 					     <% installed_apps.each do |iapp| %>       
-					       <% content_tag :li do %>
+					       <%= content_tag :li do %>
 					       		<%= link_to_function( Integrations::Constants::APP_NAMES[iapp], "displayAsModal('#{Integrations::Constants::APP_NAMES[iapp]}')", :class => Integrations::Constants::APP_NAMES[iapp].downcase + '-logo') %>
 					       <% end %>
 					     <% end %>

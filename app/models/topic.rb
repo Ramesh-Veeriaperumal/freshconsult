@@ -1,6 +1,5 @@
 class Topic < ActiveRecord::Base
   include Search::ElasticSearchIndex
-  include Rails.application.routes.url_helpers
   include Mobile::Actions::Topic
   include ObserverAfterCommitCallbacks
   acts_as_voteable
@@ -151,7 +150,7 @@ class Topic < ActiveRecord::Base
     }
   }
 
-  attr_protected :account_id, :published
+  attr_protected :forum_id , :account_id, :published
   # to help with the create form
   attr_accessor :body_html, :highlight_title
 
@@ -318,7 +317,7 @@ class Topic < ActiveRecord::Base
 
   def last_post_url
     if self.last_post_id.present?
-      support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
+      Rails.application.routes.url_helpers.support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
     end
   end
 

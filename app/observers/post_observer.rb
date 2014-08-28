@@ -1,10 +1,9 @@
 class PostObserver < ActiveRecord::Observer
 
-	include Rails.application.routes.url_helpers
-
 	def before_create(post)
 		post.forum_id = post.topic.forum_id
 		post.published = (post.user.agent?  || !post.import_id.nil?) #Agent posts are approved by default.
+    post
 	end
 
 	def before_save(post)
@@ -19,10 +18,14 @@ class PostObserver < ActiveRecord::Observer
 		end
 
 	end
+  
+  def before_destroy(post)
+    create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3
+  end
 
 	def after_destroy(post)
 		update_cached_fields(post)
-		create_activity(post, 'delete_post', User.current) unless post.trash
+#		create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3 do it in before destroy
 	end
 
 	def monitor_reply(post)
@@ -68,7 +71,7 @@ class PostObserver < ActiveRecord::Observer
 			:account 		=> post.account,
 			:user 			=> user,
 			:activity_data 	=> {
-								 :path => discussions_topic_path(post.topic_id),
+								 :path => Rails.application.routes.url_helpers.discussions_topic_path(post.topic_id),
 								 :url_params => {
 												 :topic_id => post.topic_id,
 												 :path_generator => 'discussions_topic_path'

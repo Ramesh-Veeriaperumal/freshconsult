@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::EmailConfigsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -89,7 +88,7 @@ describe Admin::EmailConfigsController do
                                         }
                                       }
       result = JSON.parse(response.body)
-      result["success"].should be_true
+      result["success"].should be true
       result["msg"].should be_eql("")
     end
   end
@@ -203,7 +202,7 @@ describe Admin::EmailConfigsController do
     @account.features.mailbox.create
     test_email = "dev-ops@freshpo.com"
     email_config = @account.primary_email_config
-    imap_mailbox = Factory.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
+    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     imap_mailbox.save
     smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
     smtp_mailbox.save
@@ -496,7 +495,7 @@ describe Admin::EmailConfigsController do
     email_config = RSpec.configuration.account.email_configs.first
     if email_config.activator_token.nil?
       email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config.reply_email + Time.now.to_f.to_s).downcase
-      email_config.save(false)
+      email_config.save(:validate => false)
       email_config.reload
     end
     get :register_email, :activation_code => email_config.activator_token

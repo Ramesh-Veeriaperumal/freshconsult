@@ -26,7 +26,7 @@ describe Helpdesk::TimeSheetsController do
       "format"=>"json"
     }
     json_response.should include("success")
-    json_response["success"].should be_true
+    json_response["success"].should be true
   end
 
   it "should get timesheets for a ticket" do
@@ -37,14 +37,14 @@ describe Helpdesk::TimeSheetsController do
 
   it "should delete a timesheet entry for a ticket" do
     now = (Time.now.to_f*1000).to_i
-    time_sheet = Factory.build(:time_sheet, :user_id => @agent.id,
+    time_sheet = FactoryGirl.build(:time_sheet, :user_id => @agent.id,
                                             :workable_id => @test_ticket.id,
                                             :account_id => @account.id,
                                             :billable => 1,
                                             :note => "Note for edit")
     time_sheet.save
     delete :destroy, {"id"=>"#{time_sheet.id}", "format"=>"json"}
-    json_response["success"].should be_true
+    json_response["success"].should be true
   end
 
 end

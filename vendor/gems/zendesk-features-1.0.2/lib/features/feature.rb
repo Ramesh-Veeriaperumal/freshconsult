@@ -24,7 +24,6 @@ module Features
     before_destroy :destroy_dependant_features, :clear_features_from_cache
     before_create :clear_features_from_cache
 
-    attr_accessible :account
   
     def available?
       feature_owner_instance.features.available?(to_sym)

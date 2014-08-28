@@ -1,5 +1,6 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
+  self.primary_key= :id
   include Search::ElasticSearchIndex
   include ObserverAfterCommitCallbacks
   self.table_name =  "solution_articles"
@@ -34,7 +35,8 @@ class Solution::Article < ActiveRecord::Base
 
   attr_accessor :highlight_title, :highlight_desc_un_html
 
-  attr_protected :account_id ,:attachments
+  attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
+    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data
   
   after_commit  :clear_mobihelp_solutions_cache, on: :create
   after_commit :clear_mobihelp_solutions_cache, on: :update
@@ -126,10 +128,11 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_xml(options = {})
+     options[:root] ||= 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root]) 
   end
 
   def to_indexed_json

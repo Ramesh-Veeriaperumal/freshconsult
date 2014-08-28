@@ -108,7 +108,7 @@ class Group < ActiveRecord::Base
     super(:builder=>xml, :skip_instruct => options[:skip_instruct],:include=>{:agents=>{:root=>'agent',:skip_instruct=>true}},:except=>[:account_id,:import_id,:email_on_assign])
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     #options for user which is included within the groups as agents
     options ={:except=>[:account_id,:email_on_assign,:import_id] ,:include=>{:agents=>{:only=>[:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,

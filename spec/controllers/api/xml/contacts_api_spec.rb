@@ -16,7 +16,7 @@ describe ContactsController do
 		post :create, @params.merge!(:format => 'xml'), :content_type => 'application/xml'
 		#api impl gives out 200 status, change this when its fixed to return '201 created'
 	 	result = parse_xml(response)
-	 	expected = (response.status =~ /201 Created/) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+	 	expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 	 	expected.should be(true)
 	end
 

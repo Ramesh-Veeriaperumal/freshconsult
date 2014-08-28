@@ -1,8 +1,11 @@
 class Freshfone::NumberObserver < ActiveRecord::Observer
 	observe Freshfone::Number
 
-	def before_validation_on_update(freshfone_number)
-		build_message_hash(freshfone_number) if freshfone_number.message_changed?
+	def before_validation(freshfone_number)
+    unless freshfone_number.new_record?
+      build_message_hash(freshfone_number) if freshfone_number.message_changed?
+    end
+    freshfone_number
 	end
 
 	def before_save(freshfone_number)

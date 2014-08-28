@@ -14,21 +14,13 @@ if Rails.env.test?
       preferences "something"
     end
 
-    factory :portal_template, :class => Portal::Template do
-      preferences "something"
-    end
+#    factory :portal_template, :class => Portal::Template do
+#      preferences "something"
+#    end
 
-    def create_subscriptions
-      SubscriptionPlan.seed(:name, [
-                                   { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00 },
-                                   { :name => 'Blossom', :amount => 19, :free_agents => 0, :day_pass_amount => 2.00 },
-                                   { :name => 'Garden', :amount => 29, :free_agents => 0, :day_pass_amount => 2.00 },
-                                   { :name => 'Estate', :amount => 49, :free_agents => 0, :day_pass_amount => 4.00 }
-      ])
-    end
 
     factory :account do
-      create_subscriptions
+#      create_subscriptions
       sequence(:name) { |n| "foo#{n}" }
       sequence(:full_domain) { |n| "foo#{n}.freshdesk.com" }
       time_zone "Chennai"
@@ -47,29 +39,29 @@ if Rails.env.test?
       active true
     end
 
-    factory :main_portal, :class => Portal do
-      default_preferences =  HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
-      locale =  I18n.default_locale
-      sequence(:name) { |n| "foo#{n}" }
-      language locale.to_s
-      preferences default_preferences
-      main_portal true
-    end
-
-    factory :subscription do
-      amount 49.00
-    end
-
+#    factory :main_portal, :class => Portal do
+#      default_preferences =  HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+#      locale =  I18n.default_locale
+#      sequence(:name) { |n| "foo#{n}" }
+#      language locale.to_s
+#      preferences default_preferences
+#      main_portal true
+#    end
+#
+#    factory :subscription do
+#      amount 49.00
+#    end
+#
     factory :admin_canned_responses, :class => Admin::CannedResponses::Response do
       title "TestingCannedResponse"
       content_html "Test Response content"
       folder_id 1
     end
-
+#
     factory :ca_folders, :class => Admin::CannedResponses::Folder do
       name "TestingCannedResponseFolder"
     end
-
+    
     factory :roles, :class => Role do
       name "TestingRoles"
     end

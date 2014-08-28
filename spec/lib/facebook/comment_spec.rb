@@ -26,7 +26,7 @@ describe Facebook::Core::Comment do
     user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
     post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be true
     
     note = post_comment.postable
     note.notable.should eql ticket
@@ -45,13 +45,14 @@ describe Facebook::Core::Comment do
     
     comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
     
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed, comment)
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(comment)
       
     Facebook::Core::Parser.new(realtime_feed).parse
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     ticket = post.postable
     
     ticket.notes.first.should_not be_nil

@@ -24,6 +24,6 @@ describe Mobile::NotificationsController do
   			}
       Mobile::NotificationsController.any_instance.stubs(:publish_to_channel).returns(1)
 		  post :register_mobile_notification, attributes
-  		json_response["success"].should be_true
+  		json_response["success"].should be true
   	end
 end

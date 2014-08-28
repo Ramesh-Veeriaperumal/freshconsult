@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Integrations::InstalledApplicationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-  integrate_views
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))

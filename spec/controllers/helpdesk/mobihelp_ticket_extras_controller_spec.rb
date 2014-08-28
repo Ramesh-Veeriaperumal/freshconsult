@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::MobihelpTicketExtrasController do
-	# integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -20,6 +19,6 @@ describe Helpdesk::MobihelpTicketExtrasController do
     ticket_attributes = get_sample_mobihelp_ticket_attributes("New Mobihelp extras test ticket", @user_device_id, @user)
     test_ticket = create_mobihelp_ticket(ticket_attributes)
     get :index, :ticket_id => test_ticket.display_id
-    response.should render_template "helpdesk/mobihelp_ticket_extras/index.html.erb"
+    response.should render_template "helpdesk/mobihelp_ticket_extras/index"
   end
 end

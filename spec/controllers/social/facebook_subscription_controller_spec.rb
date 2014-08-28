@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 # describe Social::FacebookSubscriptionController do
-#   # # integrate_views
 #   #Delete these examples and add some real ones
 #   before(:all) do
 #     RSpec.configuration.account = create_test_account

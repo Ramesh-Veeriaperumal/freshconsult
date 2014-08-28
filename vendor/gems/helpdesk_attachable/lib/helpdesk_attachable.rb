@@ -37,11 +37,11 @@ module HelpdeskAttachable
     
     module InstanceMethods
       def validate_attachment_size(args)
-        return unless args
+        return if args.blank?
         unless @total_attachment_size
           @total_attachment_size = (attachments || []).collect{ |a| a.content_file_size }.sum 
         end
-        @total_attachment_size += args[:content].size
+        @total_attachment_size += (args.has_key?(:content) ? args[:content].size : 0  )
         if @total_attachment_size > MAX_ATTACHMENT_SIZE
           raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded!.. We allow only 15MB." 
         end

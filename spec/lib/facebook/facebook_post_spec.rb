@@ -20,17 +20,18 @@ describe Social::FacebookPosts do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_truthy
+    post.is_ticket?.should be true
     
     ticket = post.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
   end
@@ -40,7 +41,9 @@ describe Social::FacebookPosts do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true, 1)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id), sample_facebook_feed((feed_id)))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
+   
     
     comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
@@ -50,17 +53,17 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_truthy
+    post.is_ticket?.should be true
     
     ticket = post.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
 
     
     post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_truthy
+    post_comment.is_note?.should be true
     
     note = post_comment.postable
     note.notable.should eql ticket
@@ -74,16 +77,17 @@ describe Social::FacebookPosts do
     facebook_feed = sample_fql_feed(feed_id, false)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_truthy
+    post.is_ticket?.should be true
     
     ticket = post.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
   end
@@ -95,6 +99,7 @@ describe Social::FacebookPosts do
     facebook_feed = sample_fql_feed(feed_id, false, 1)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
     
     comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
@@ -105,16 +110,16 @@ describe Social::FacebookPosts do
     
     post = Social::FbPost.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_truthy
+    post.is_ticket?.should be true
     
     ticket = post.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
     ticket.description.should eql facebook_feed.first[:message]
     ticket.requester_id.should eql user_id
     
     post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_truthy
+    post_comment.is_note?.should be true
     
     note = post_comment.postable
     note.notable.should eql ticket
@@ -128,13 +133,14 @@ describe Social::FacebookPosts do
     facebook_feed = sample_fql_feed(feed_id, false)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
     
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
@@ -148,6 +154,7 @@ describe Social::FacebookPosts do
     facebook_feed = sample_fql_feed(feed_id, false)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(facebook_feed.first["actor_id"]))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_feed((feed_id)))
     
     comment_feed = sample_fql_comment_feed(feed_id)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feed)
@@ -158,7 +165,7 @@ describe Social::FacebookPosts do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
@@ -171,7 +178,7 @@ describe Social::FacebookPosts do
     fb_posts.get_comment_updates(get_social_id)
     post_comment = @account.facebook_posts.find_by_post_id(comment_id)
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be true
     
   end
   

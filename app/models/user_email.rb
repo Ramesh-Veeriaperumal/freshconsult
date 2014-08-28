@@ -2,10 +2,8 @@
 class UserEmail < ActiveRecord::Base
 
   self.primary_key = :id
-  attr_accessible :email, :primary_role, :verified
   include Users::Activator
-  include Rails.application.routes.url_helpers
-
+  
   EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
 
   belongs_to :user

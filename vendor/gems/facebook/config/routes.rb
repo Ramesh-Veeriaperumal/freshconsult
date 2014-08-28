@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   namespace :social do
-    resources :facebook_pages  do
+    resources :facebook, :controller => 'facebook_pages'  do
       collection do
         post :signin
         post :event_listener

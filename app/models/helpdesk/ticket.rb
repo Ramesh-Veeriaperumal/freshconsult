@@ -5,7 +5,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   self.primary_key = :id
   
-  include Rails.application.routes.url_helpers
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
@@ -44,14 +43,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
 
-  attr_protected :attachments #by Shan - need to check..
+#  attr_protected :attachments #by Shan - need to check..
 
-  attr_protected :account_id,:display_id #to avoid update of these properties via api.
-
-  attr_accessible :email, :requester_id, :subject, :ticket_type, :source, 
-    :status, :priority, :group_id, :responder_id, :ticket_body_attributes, :attachments,
-    :escalation_level, :isescalated, :twitter_id, :product_id, :created_at, :tweet_attributes, :requester, 
-    :fb_post_attributes, :due_by, :updated_at, :import_id
+  attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -483,7 +477,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def liquidize_attachments(attachments)
     attachments.each_with_index.map { |a, i| 
-      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
+      "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
   end
   
@@ -542,7 +536,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     active? and ticket_states.need_attention
   end
 
-  def to_json(options = {}, deep=true)
+  def as_json(options = {}, deep=true)#TODO-RAILS3
     return super(options) unless options[:tailored_json].blank?
     options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails, :product_id] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
@@ -556,8 +550,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     options[:except] = [:account_id,:import_id]
     options[:methods].push(:custom_field)
-    json_str = super options
-    json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
+    json_hash = super options.merge(:root => 'helpdesk_ticket')
+    json_hash
   end
 
 
@@ -625,7 +619,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def support_path
-    support_tickets_path(:host => portal_url)
+    Rails.application.routes.url_helpers.support_tickets_path(:host => portal_url)
   end
    
   def group_name

@@ -75,7 +75,7 @@
     </li>
     <li>
       <%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%= t('.enable_SSL') %> </span>
-      <% content_tag( :div, :class => "info-data extra_tabbed" ) do %>
+      <%= content_tag( :div, :class => "info-data extra_tabbed" ) do %>
         <p>
           <%= t(".enable_SSL_anon") %>
         </p>

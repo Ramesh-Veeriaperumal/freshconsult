@@ -24,8 +24,8 @@ if Rails.env.test?
     end
 
     # TODO-RAILS3
-    # factory :subscription, :class => Helpdesk::Subscription do
-    # end
+     factory :subscription, :class => Helpdesk::Subscription do
+     end
 
     factory :product, :class => Product do
       sequence(:name) { |n| "Product#{n}" }
@@ -65,11 +65,11 @@ if Rails.env.test?
     end
 
     # TODO-RAILS3
-    # factory :nested_ticket_field, :class => Helpdesk::NestedTicketField do
-    # end
+     factory :nested_ticket_field, :class => Helpdesk::NestedTicketField do
+     end
 
-    # factory :picklist_value, :class => Helpdesk::PicklistValue do
-    # end
+     factory :picklist_value, :class => Helpdesk::PicklistValue do
+     end
 
     factory :helpdesk_note, :class => Helpdesk::Note do
       deleted 0
@@ -83,8 +83,8 @@ if Rails.env.test?
     end
 
     # TODO-RAILS3
-    # factory :sla_details, :class => Helpdesk::SlaDetail do
-    # end
+     factory :sla_details, :class => Helpdesk::SlaDetail do
+     end
 
     factory :data_export, :class => DataExport do
       status 4
@@ -105,8 +105,8 @@ if Rails.env.test?
     factory :tag_uses, :class => Helpdesk::TagUse do
     end
 
-    # TODO-RAILS3
-    # factory :agent_group, :class => AgentGroup do
-    # end
+     #TODO-RAILS3
+     factory :agent_group, :class => AgentGroup do
+     end
   end
 end

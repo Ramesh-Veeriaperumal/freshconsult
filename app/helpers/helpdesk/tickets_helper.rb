@@ -1,7 +1,7 @@
 # encoding: utf-8
 module Helpdesk::TicketsHelper
   
-  include Wf::HelperMethods
+  include Wf::HelperMethods# TODO-RAILS3 uninitialized constant Wf::HelperMethods:
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   include Redis::RedisKeys
@@ -46,7 +46,7 @@ module Helpdesk::TicketsHelper
     tabs = [
             ['Pages',     t(".conversation").html_safe, @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet").html_safe,    timesheets_size, 
-                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                helpdesk_ticket_time_sheets_path(@ticket), 
                 feature?(:timesheets) && privilege?(:view_time_entries)
             ]
            ]

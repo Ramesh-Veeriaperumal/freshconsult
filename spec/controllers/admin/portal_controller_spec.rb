@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::PortalController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -17,7 +16,7 @@ describe Admin::PortalController do
 
   it "should update" do
     RSpec.configuration.account.sso_enabled = false
-    RSpec.configuration.account.save(false)
+    RSpec.configuration.account.save(:validate => false)
 
     put :update, { 
       :id => RSpec.configuration.account.id,

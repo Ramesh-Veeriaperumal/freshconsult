@@ -7,9 +7,6 @@ module Social::Ext::AccountMethods
   end
   
   def random_twitter_handle
-    all_handles = twitter_handles
-    return nil if all_handles.empty?
-    count = all_handles.length
-    handle = all_handles[rand(count)]
+    twitter_handles.sample
   end
 end

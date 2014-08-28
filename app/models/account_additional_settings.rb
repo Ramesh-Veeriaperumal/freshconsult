@@ -8,9 +8,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
   serialize :additional_settings, Hash
   validate :validate_bcc_emails
 
-  attr_accessible :bcc_email, :email_cmds_delimeter, :ticket_id_delimiter, :pass_through_enabled, 
-    :supported_languages, :api_limit, :date_format, :additional_settings
-
   def handle_email_notification_outdate
     if supported_languages_changed? 
     	removed = supported_languages_was - supported_languages

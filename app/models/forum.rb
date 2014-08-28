@@ -1,6 +1,5 @@
 class Forum < ActiveRecord::Base
   acts_as_list :scope => :forum_category
-  include Rails.application.routes.url_helpers
 
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -89,25 +88,37 @@ class Forum < ActiveRecord::Base
   has_many :customer_forums , :class_name => 'CustomerForum' , :dependent => :destroy
 
   format_attribute :description
-  attr_protected :forum_category_id , :account_id
+  
+  attr_accessible :name, :description, :topics_count, :posts_count, :description_html, 
+    :forum_type, :import_id, :forum_visibility
+  
   xss_sanitize :only=>[:description_html], :html_sanitize => [:description_html]
 
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums, :backup_forum_changes
   after_commit :update_search_index, on: :update, :if => :forum_visibility_updated?
   after_commit :remove_topics_from_es, on: :destroy
+  
+  after_create :add_activity_new_and_clear_cache
+  after_update :clear_cache_with_condition
+  before_destroy :add_activity
+  after_destroy :clear_cat_cache
 
-  def after_create
+  def add_activity_new_and_clear_cache
     create_activity('new_forum')
     account.clear_forum_categories_from_cache
   end
-
-  def after_destroy
+  
+  
+  def add_activity
     create_activity('delete_forum')
+  end
+
+  def clear_cat_cache
     account.clear_forum_categories_from_cache
   end
 
-  def after_update
+  def clear_cache_with_condition
     account.clear_forum_categories_from_cache unless (self.changes.keys & ['name', 'forum_category_id', 'position']).empty?
   end
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
@@ -235,7 +246,7 @@ class Forum < ActiveRecord::Base
       :account => account,
       :user => User.current,
       :activity_data => {
-                          :path => discussions_forum_path(id),
+                          :path => Rails.application.routes.url_helpers.discussions_forum_path(id),
                           'category_name' => h(forum_category.to_s),
                           :url_params => {
                                            :id => id,

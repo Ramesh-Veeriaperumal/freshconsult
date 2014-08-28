@@ -7,7 +7,6 @@ include Social::Dynamo::Twitter
 include Social::Util
 
 describe Admin::Social::TwitterStreamsController do
-  # integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false

@@ -3,7 +3,6 @@ include Redis::TicketsRedis
 include Redis::RedisKeys
 
 describe Helpdesk::RemindersController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -44,7 +43,7 @@ describe Helpdesk::RemindersController do
                     :_ => "",
                     :ticket_id => @test_ticket.display_id
                   }
-    response.should redirect_to "sessions/new"
+    response.should redirect_to "/sessions/new"
   end
 
   it "should strike off a to-do entry" do

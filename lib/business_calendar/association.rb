@@ -9,9 +9,9 @@ module BusinessCalendar::Association
   end
 
   def business_calendar_default
-    key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
+    key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => ::Account.current.id}
     MemcacheKeys.fetch(key) do
-      Account.current.business_calendar.default.first
+      ::Account.current.business_calendar.default.first
     end
   end
 
@@ -19,10 +19,10 @@ module BusinessCalendar::Association
     def default_business_calendar(caller=nil)
       if caller && caller.account.features?(:multiple_business_hours)
         caller.current_business_calendar
-      elsif Account.current
-        key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
+      elsif ::Account.current
+        key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => ::Account.current.id}
         MemcacheKeys.fetch(key) do
-          Account.current.business_calendar.default.first
+          ::Account.current.business_calendar.default.first
         end
       else
         ::BusinessTime::Config

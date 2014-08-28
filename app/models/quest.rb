@@ -4,7 +4,6 @@ class Quest < ActiveRecord::Base
   include Gamification::Quests::Badges
   include Cache::Memcache::Quest
   
-  attr_accessible :category, :badge_id, :points, :name, :description, :sub_category
   belongs_to_account
 
   has_many :achieved_quests, :dependent => :destroy

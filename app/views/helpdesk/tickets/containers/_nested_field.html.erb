@@ -26,7 +26,7 @@
   end
 %>
 <% unless sub_category.nil? %>
-  <% content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
+  <%= content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
                 :class       => "ff_item level_2", 
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
@@ -39,7 +39,7 @@
         
   <% unless item.nil? %>
       <% item_val = current_options[item[:condition].to_s].to_s %>
-      <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
+      <%= content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
                     :class       => "ff_item level_3", 
                     :condition   => item[:condition],
                     :operator    => item[:operator],

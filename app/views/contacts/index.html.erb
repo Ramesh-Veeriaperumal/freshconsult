@@ -3,7 +3,7 @@
     <div class="sidepanel">
 	  	<% if privilege?(:manage_contacts) %>
     		<h3 class="lead"><%=t('contacts.quick_contact')%></h3>	
-    		<% form_tag :url  => contacts_path, :method => :post do %>
+    		<%= form_tag :url  => contacts_path, :method => :post do %>
     			<%= error_messages_for :user %> 	
     			<div>
     				<div class="control-group">

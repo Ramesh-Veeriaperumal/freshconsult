@@ -20,8 +20,6 @@ class Product < ActiveRecord::Base
 
   accepts_nested_attributes_for :email_configs, :allow_destroy => true 
 
-  attr_accessible :name, :description, :email_configs_attributes, :enable_portal
-
   delegate :portal_url, :to => :portal, :allow_nil => true 
   delegate :name, :to => :portal, :prefix => true, :allow_nil => true 
 

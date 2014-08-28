@@ -2,7 +2,6 @@ require 'spec_helper'
 include MemcacheKeys
 
 describe SsoController do
-	# integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -46,7 +45,7 @@ describe SsoController do
 
   it "should redirect to google auth url" do
     get :google_login
-    response.should redirect_to "http://" + @account.host
+    response.should redirect_to "https://" + @account.host#TODO-RAILS3
   end
 
   it "should create new user session if user hasn't logged in" do

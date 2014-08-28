@@ -156,7 +156,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def to_json(options = {}, deep=true)
+   def as_json(options = {}, deep=true)
     if deep
       self[:ticket_id] = self.workable.display_id
       self[:agent_name] = self.agent_name
@@ -167,8 +167,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
     end
-    json_str = super options
-    json_str
+    json_hash = super options
+    json_hash
   end
 
   def to_xml(options = {})

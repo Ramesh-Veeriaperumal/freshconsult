@@ -2,7 +2,6 @@ require 'spec_helper'
 include MemcacheKeys
 
 describe Integrations::ApplicationsController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -40,7 +39,7 @@ describe Integrations::ApplicationsController do
 
   it "renders the application index template" do
     get 'index'
-    response.should render_template "integrations/applications/index.html.erb"
+    response.should render_template "integrations/applications/index"
   end
 
   it "should install surveymonkey application and redirect to edit(configurable)" do
@@ -48,7 +47,7 @@ describe Integrations::ApplicationsController do
     set_redis_key(provider, surveymonkey_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app = Integrations::InstalledApplication.with_name(provider).first#TODO-RAILS3 check with integrations
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
@@ -72,7 +71,7 @@ describe Integrations::ApplicationsController do
     post 'oauth_install', :id => provider
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
-    response.should render_template "integrations/applications/_salesforce_fields.html.erb"
+    response.should render_template "integrations/applications/_salesforce_fields"
   end
 
   it "should install salesforce application using oauth token from redis" do
@@ -92,12 +91,12 @@ describe Integrations::ApplicationsController do
     post 'oauth_install', :id => provider, :install => true, :contacts => "Account_Id"
     response.should redirect_to "/integrations/applications"
     error_flash = {:error=>"Error in enabling the integration."}
-    response.flash.should eql error_flash
+    request.flash[:error].should eql error_flash[:error]
   end
 
   it "renders the new application template" do
     get 'new'
-    response.should render_template "integrations/applications/new.html.erb"
+    response.should render_template "integrations/applications/new"
   end
 
   it "should create a new application" do
@@ -115,7 +114,7 @@ describe Integrations::ApplicationsController do
 
   it "renders the edit application template" do
     get 'edit', :id => @new_application.id
-    response.should render_template "integrations/applications/edit.html.erb"
+    response.should render_template "integrations/applications/edit"
   end
 
   it "should update a new application" do
@@ -139,6 +138,6 @@ describe Integrations::ApplicationsController do
 
   it "renders custom widget preview partial" do
     get 'custom_widget_preview'
-    response.should render_template("integrations/widgets/_custom_widget_preview.rjs")
+    response.should render_template("integrations/widgets/_custom_widget_preview")
   end
 end

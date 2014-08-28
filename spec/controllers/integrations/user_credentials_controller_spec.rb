@@ -1,6 +1,5 @@
 require 'spec_helper'
 describe Integrations::UserCredentialsController do
-	integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -27,6 +26,6 @@ describe Integrations::UserCredentialsController do
 
 	it "should create user credentials" do
 		post :create, {"app_name" => "google_calendar", "username" => "freshdesk", "password" => "freshdesk"}
-    response.status.should eql "201 Created"
+    response.status.should eql 201
 	end
 end

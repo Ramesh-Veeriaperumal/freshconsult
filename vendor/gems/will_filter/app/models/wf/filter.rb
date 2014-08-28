@@ -24,9 +24,12 @@
 class Wf::Filter < ActiveRecord::Base
   
   JOIN_NAME_INDICATOR = '>'
-
+  
+  after_find :set_err_and_deserialize
+  before_save :set_data_and_type
+  
   self.table_name =  :wf_filters
-  serialize   :data
+  serialize :data
   
   #############################################################################
   # Basics 
@@ -40,12 +43,12 @@ class Wf::Filter < ActiveRecord::Base
     super.tap {|ii| ii.conditions = self.conditions.dup}
   end
   
-  def before_save
+  def set_data_and_type
     self.data = serialize_to_params
     self.type = self.class.name
   end
   
-  def after_find
+  def set_err_and_deserialize
     @errors = {}
     deserialize_from_params(self.data)
   end

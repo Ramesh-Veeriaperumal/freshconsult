@@ -40,10 +40,11 @@ class Solution::Category < ActiveRecord::Base
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   def to_xml(options = {})
+     options[:root] ||= 'solution_category'
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root]) 
   end
   
   def as_json(options={})

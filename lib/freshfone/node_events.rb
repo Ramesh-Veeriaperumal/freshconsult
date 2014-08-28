@@ -14,7 +14,7 @@ module Freshfone::NodeEvents
         :headers => { "X-Freshfone-Session" => freshfone_node_session },
         :timeout => 15
       }
-      HTTParty.post(node_uri, options)  
+      HTTParty.post(node_uri, options)  # TODO-RAILS3 EXCEPTION
     rescue Timeout::Error
       Rails.logger.error "Timeout trying to publish freshfone event for #{node_uri}. \n#{options.inspect}"
       NewRelic::Agent.notice_error(StandardError.new("Error publishing data to Freshfone node. Timed out."))

@@ -2,7 +2,8 @@ module AccountHelper
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
     @acc = Account.first
-    unless @acc.nil?
+    @account = @acc
+    if @acc.present?
       @acc.make_current
       create_dummy_customer
       return @acc
@@ -15,6 +16,7 @@ module AccountHelper
     
     create_new_account
     update_currency
+    @account = @acc
     @acc
   end
 

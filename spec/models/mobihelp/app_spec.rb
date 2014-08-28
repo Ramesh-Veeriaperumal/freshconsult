@@ -6,9 +6,9 @@ describe Mobihelp::App do
   end
 
   it "should have unique app name for each account" do
-    test_app = Factory.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
+    test_app = FactoryGirl.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
     test_app.save
-    dup_test_app = Factory.build(:mobihelp_app, :name =>  test_app.name)
+    dup_test_app = FactoryGirl.build(:mobihelp_app, :name =>  test_app.name)
     
     dup_test_app.should be_valid
   end
@@ -19,7 +19,7 @@ describe Mobihelp::App do
     @mobihelp_app.save
     status = dup_mobihelp_app.save
     
-    status.should be_true
+    status.should be true
 
     Mobihelp::App.find_by_id(dup_mobihelp_app).destroy
     @mobihelp_app.deleted = false
@@ -27,24 +27,24 @@ describe Mobihelp::App do
   end
 
   it "should get updated if the app name is already exist" do
-    test_app = Factory.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
-    test_app1 = Factory.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
+    test_app = FactoryGirl.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
+    test_app1 = FactoryGirl.build(:mobihelp_app, :name => "Fresh#{Time.now}#{Time.now.nsec}")
     test_app.save
     test_app1.save
     test_app1.name = test_app.name;
 
     status = test_app1.save
 
-    status.should be_true
+    status.should be true
   end
 
   it "should require a app name" do
-    test_app = Factory.build(:mobihelp_app, :name => " ")
+    test_app = FactoryGirl.build(:mobihelp_app, :name => " ")
     test_app.should_not be_valid
   end
 
   it "should reject invalid platform" do
-    test_app = Factory.build(:mobihelp_app, :platform => 0)
+    test_app = FactoryGirl.build(:mobihelp_app, :platform => 0)
     test_app.should_not be_valid
   end
 
@@ -55,7 +55,7 @@ describe Mobihelp::App do
     status = @mobihelp_app.save
 
     @account.mobihelp_apps.find_by_id(@mobihelp_app).config[:bread_crumbs].should be_eql(bread_crumbs_count)
-    status.should_not be_true
+    status.should_not be true
   end
 
   it "should have a valid debug log count" do
@@ -65,7 +65,7 @@ describe Mobihelp::App do
     @mobihelp_app.config[:debug_log_count] = invalid_count
     status = @mobihelp_app.save
     @account.mobihelp_apps.find_by_id(@mobihelp_app).config[:debug_log_count].should be_eql(debug_log_count)
-    status.should_not be_true
+    status.should_not be true
 
     @mobihelp_app.config[:debug_log_count] = Mobihelp::App::CONFIGURATIONS[:debug_log_count][0]
   end

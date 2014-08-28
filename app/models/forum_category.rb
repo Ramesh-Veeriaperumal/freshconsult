@@ -2,7 +2,6 @@ class ForumCategory < ActiveRecord::Base
   validates_presence_of :name,:account_id
   validates_uniqueness_of :name, :scope => :account_id
 
-  include Rails.application.routes.url_helpers
 
   def self.company_specific?(user)
     (user && user.has_company?)
@@ -31,18 +30,27 @@ class ForumCategory < ActiveRecord::Base
   belongs_to :account
 
   acts_as_list :scope => :account
-
-  def after_create
+  
+  after_create :set_activity_new_and_clear_cache
+  after_update :clear_cache_with_condition
+  before_destroy :add_activity
+  after_destroy :clear_forum_cat_cache
+  
+  def set_activity_new_and_clear_cache
     create_activity('new_forum_category')
     account.clear_forum_categories_from_cache
   end
-
-  def after_destroy
+  
+  
+  def add_activity
     create_activity('delete_forum_category')
+  end
+
+  def clear_forum_cat_cache
     account.clear_forum_categories_from_cache
   end
 
-  def after_update
+  def clear_cache_with_condition
     account.clear_forum_categories_from_cache if (self.changes.key?("name") or self.changes.key?("position"))
   end
 
@@ -86,7 +94,7 @@ class ForumCategory < ActiveRecord::Base
       :account => account,
       :user => User.current,
       :activity_data => {
-                          :path => discussion_path(id),
+                          :path => Rails.application.routes.url_helpers.discussion_path(id),
                           :url_params => {
                                            :category_id => id,
                                            :path_generator => 'category_path'

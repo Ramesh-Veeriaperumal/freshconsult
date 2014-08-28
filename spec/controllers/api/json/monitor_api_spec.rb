@@ -18,11 +18,11 @@ describe MonitorshipsController do
 
   it "should be able to monitor/follow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "follow", :format => 'json'}, :content_type => 'application/json'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to unmonitor/unfollow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "unfollow",:format => 'json'}, :content_type => 'application/json'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
 
  end

@@ -17,7 +17,8 @@ describe Facebook::Worker::FacebookMessage do
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, [])
     sample_feed = sample_facebook_feed(feed_id)
     sample_feed["type"] = "video"
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id),  sample_feed)  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_feed)  
     
     thread_id = Time.now.utc.to_i
     actor_id = thread_id + 1
@@ -30,7 +31,7 @@ describe Facebook::Worker::FacebookMessage do
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]).id
@@ -39,7 +40,7 @@ describe Facebook::Worker::FacebookMessage do
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
   end
   
 end

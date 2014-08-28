@@ -41,10 +41,10 @@ module EmailHelper
 			if large
 				buffer = ("a" * 1024).freeze
 				file = File.open("spec/fixtures/files/tmp15.doc", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
-				attach["attachment#{i+1}"] = Rack::Test::UploadedFile.new("spec/fixtures/files/tmp15.doc", 'text')
+				attach["attachment#{i+1}"] = fixture_file_upload("files/tmp15.doc", 'text')
 				attachment_in["attachment#{i+1}"] = {:filename => "tmp15.txt", :name => "tmp15.txt", :type => 'text'}
 			else
-				file = Rack::Test::UploadedFile.new('spec/fixtures/files/attachment.txt', 'text/plain')
+				file = fixture_file_upload('files/attachment.txt', 'text/plain')
 				attach["attachment#{i+1}"] = file
 				attachment_in["attachment#{i+1}"] = {:filename => "attachment.txt", :name => "attachment.txt", :type => 'text/plain'}
 			end

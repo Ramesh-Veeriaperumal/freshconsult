@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::EmailConfigsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,7 +9,7 @@ describe Admin::EmailConfigsController do
   end
 
   it "should not delete a primary email config" do
-    email_config = Factory.build(:primary_email_config, :to_email => Faker::Internet.email, 
+    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, 
                                                         :reply_email => Faker::Internet.email)
     email_config.save
     delete :destroy, { :id => email_config.id }
@@ -48,7 +47,7 @@ describe Admin::EmailConfigsController do
                                         }
                                       }
       result = JSON.parse(response.body)
-      result["success"].should be_false
+      result["success"].should be false
       result["msg"].should_not be_eql("")
       Net::IMAP.any_instance.unstub(:login)
     end
@@ -84,7 +83,7 @@ describe Admin::EmailConfigsController do
                                       }
                                     }
     result = JSON.parse(response.body)
-    result["success"].should be_false
+    result["success"].should be false
     result["msg"].should_not be_eql("")
     Net::IMAP.any_instance.unstub(:capability)
   end
@@ -120,7 +119,7 @@ describe Admin::EmailConfigsController do
                                         }
                                       }
       result = JSON.parse(response.body)
-      result["success"].should be_false
+      result["success"].should be false
       result["msg"].should_not be_eql("")
       Net::SMTP.any_instance.unstub(:start)
     end

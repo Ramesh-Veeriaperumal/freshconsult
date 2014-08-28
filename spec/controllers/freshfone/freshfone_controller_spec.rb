@@ -3,7 +3,6 @@ load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
 describe FreshfoneController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -35,36 +34,39 @@ describe FreshfoneController do
     set_twilio_signature('freshfone/voice', incoming_params)
     @account.features.freshfone.destroy
     post :voice, { :format => "html" }
-    response.should render_template "errors/non_covered_feature.html.erb"
+    response.should render_template "errors/non_covered_feature"
+    RSpec.configuration.account.reload
   end
 
   it 'should redirect to login when non-twilio-aware methods are called by not logged in users' do
     get :dashboard_stats
     response.should be_redirect
-    response.should redirect_to('support/login')
+    response.should redirect_to('/support/login')
   end
   #End spec for freshfone base controller. 
   #Change this to contexts
 
 
   #Spec for actual freshfone_controller
-  it 'should render valid twiml on ivr_flow' do  
+  it 'should render valid twiml on ivr_flow' do
+    request.env["HTTP_ACCEPT"] = "application/xml"
     set_twilio_signature('freshfone/ivr_flow?menu_id=0', ivr_flow_params.except("menu_id"))
     post :ivr_flow, ivr_flow_params
     response.body.should_not be_blank
     xml.should have_key(:Response)
   end
 
-  it 'should render valid twiml on voice_fallback' do  
+  it 'should render valid twiml on voice_fallback' do
     set_twilio_signature('freshfone/voice_fallback', fallback_params)
     post :voice_fallback, fallback_params
     xml.should have_key(:Response)
   end
 
   it 'should render valid js on dashboard_stats' do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     log_in(@agent)
     get :dashboard_stats
-    response.should render_template("freshfone/dashboard_stats.rjs")
+    response.should render_template("freshfone/dashboard_stats")
   end
 
   it 'should render valid json on credit_balance' do
@@ -83,6 +85,7 @@ describe FreshfoneController do
   end
 
   it 'should add a call note to an existing ticket' do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     log_in(@agent)
     ticket = create_ticket({:status => 2})
     freshfone_call = create_freshfone_call
@@ -95,6 +98,7 @@ describe FreshfoneController do
   end
 
   it 'should create a new call ticket' do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     log_in(@agent)
     freshfone_call = create_freshfone_call
     build_freshfone_caller
@@ -114,7 +118,7 @@ describe FreshfoneController do
     params = { :id => ticket.id, :ticket => ticket.display_id, :call_log => "Sample freshfone note", 
                :CallSid => freshfone_call.call_sid, :private => false, :call_history => "false" }
     
-    save_note = stub()
+    save_note = double()
     save_note.stubs(:save).returns(false)
     controller.stubs(:build_note).returns(save_note)
 
@@ -123,6 +127,7 @@ describe FreshfoneController do
   end
 
   it 'should not create a new call ticket on failed ticket creation' do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     log_in(@agent)
     freshfone_call = create_freshfone_call
     build_freshfone_caller
@@ -131,7 +136,7 @@ describe FreshfoneController do
     params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
                :custom_requester_id => customer.id, :ticket_subject => "Call with Oberyn", :call_history => "false"}
     
-    save_ticket = stub()
+    save_ticket = double()
     save_ticket.stubs(:save).returns(false)
     controller.stubs(:build_ticket).returns(save_ticket)
 

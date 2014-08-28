@@ -1,4 +1,6 @@
 class Helpdesk::Dropbox < ActiveRecord::Base
+  
+  	self.primary_key = :id
 
 	self.table_name =  "helpdesk_dropboxes"
 

@@ -4,17 +4,16 @@ require 'spec_helper'
 
 
 describe SubscriptionsController do
-  # integrate_views
   self.use_transactional_fixtures = false
   setup :activate_authlogic
 
-  before(:all) do    
+  before(:all) do
     if @billing_account.blank?
       Account.reset_current_account
       User.current = nil
       
       Resque.inline = true
-      @billing_account = create_test_billing_acccount
+      @billing_account = create_test_billing_acccount 
       Resque.inline = false               
     
       RSpec.configuration.account = Account.find(@billing_account.id)
@@ -28,20 +27,17 @@ describe SubscriptionsController do
   end
 
   it "should get subscription amount in trial" do
-    @request.env["HTTP_ACCEPT"] = "application/json"
+#    @request.env["HTTP_ACCEPT"] = "application/json"
     post "calculate_amount", { :currency => "USD", :plan_id => 1, 
       :agent_limit => 1, :billing_cycle => 3 }
-
-    response.should render_template 'subscriptions/_calculate_amount.html.erb'
-    response.should render_template 'subscriptions/_calculate_amount.html.erb'
+    response.should render_template 'subscriptions/_calculate_amount'
   end
 
   it "should get subscription plan amount" do
-    @request.env["HTTP_ACCEPT"] = "application/json"
+#    @request.env["HTTP_ACCEPT"] = "application/json"
     post "calculate_plan_amount", { :currency => "USD", :plan_id => 1, 
       :agent_limit => 1, :billing_cycle => 3 }
-
-    response.should render_template 'subscriptions/_select_plans.html.erb'
+    response.should render_template 'subscriptions/_select_plans'
   end
   
   it "should update plan" do
@@ -104,9 +100,9 @@ describe SubscriptionsController do
   end
 
   it "should update valid card and activate subscription" do      
-    @request.env["HTTP_ACCEPT"] = "application/json"      
+    @request.env["HTTP_ACCEPT"] = "application/json" 
     post "billing", card_info(:valid, false)
-
+    
     RSpec.configuration.account.subscription.reload
     RSpec.configuration.account.subscription.card_number.should be_present
     RSpec.configuration.account.subscription.card_expiration.should be_present
@@ -114,11 +110,11 @@ describe SubscriptionsController do
   end
 
   it "should get subscription amount when active" do
-    @request.env["HTTP_ACCEPT"] = "application/json"
+#    @request.env["HTTP_ACCEPT"] = "application/json"
     post "calculate_amount", { :currency => "USD", :plan_id => 1, 
       :agent_limit => 1, :billing_cycle => 3 }
 
-    response.should render_template 'subscriptions/_calculate_amount.html.erb'
+    response.should render_template 'subscriptions/_calculate_amount'
   end
 
 

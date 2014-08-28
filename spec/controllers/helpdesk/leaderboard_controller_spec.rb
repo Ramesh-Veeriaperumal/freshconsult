@@ -3,7 +3,6 @@ require 'spec_helper'
 include Gamification::Scoreboard::Constants
 
 describe Helpdesk::LeaderboardController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -26,7 +25,7 @@ describe Helpdesk::LeaderboardController do
 		@tkt_quest_2 = create_ticket_quest(@account, quest_data = {:value=>"5", :date=>"4"})
 
 		# create Support_score
-		create_support_score( { :user_id => @agent_1.id, :score_trigger=> SOLUTION_QUEST,:score => 200, 
+		create_support_score( { :user_id => @agent_1.id, :score_trigger=> SOLUTION_QUEST,:score => 200,
 								:scorable_id=>@soln_quest.id,:scorable_type=> "Quest" } )
 		create_support_score( { :user_id => @agent_2.id,:group_id => @group_1.id,:score_trigger=> FIRST_CALL_RESOLUTION,:score => 400,
 								:scorable_id=>@tkt_quest_1.id,:scorable_type=> "Helpdesk::Ticket" } )
@@ -46,7 +45,7 @@ describe Helpdesk::LeaderboardController do
 		response.body.should =~ /#{@agent_1.name}/
 		response.body.should =~ /#{@agent_2.name}/
 		response.should be_success
-	end 
+	end
 
 	it "should display Leaderboard Mini_list" do
 		get :mini_list
@@ -68,11 +67,11 @@ describe Helpdesk::LeaderboardController do
 
 		#check if  Mini_list Leaderboard Speed Racer is empty
 		assigns[:fast_scorecard].should be_empty
-		user_support_score.fast.should be_empty
+		user_support_score.fast.all.should be_empty
 
 		#check if  Mini_list Leaderboard Customer Wow Champion is empty
 		assigns[:customer_champion_scorecard].should be_empty
-		user_support_score.customer_champion.should be_empty
+		user_support_score.customer_champion.all.should be_empty
 		response.should be_success
 	end
 
@@ -89,7 +88,7 @@ describe Helpdesk::LeaderboardController do
 
 		#check if group is a Speed Racer is empty
 		assigns[:fast_scorecard].should be_empty
-		group_support_score.fast.should be_empty
+		group_support_score.fast.all.should be_empty
 
 		#check if Groups Leaderboard Sharpshooter is empty
 		assigns[:first_call_scorecard].first.group_id.should eql @group_1.id
@@ -97,14 +96,14 @@ describe Helpdesk::LeaderboardController do
 
 		#check if Groups Leaderboard Customer Wow Champion is empty
 		assigns[:customer_champion_scorecard].should be_empty
-		group_support_score.customer_champion.should be_empty
+		group_support_score.customer_champion.all.should be_empty
 		response.should be_success
 	end
 
 	it "should display Group Leaderboard with new scores" do
 		create_support_score( { :user_id => @agent_1.id,:group_id => @group_2.id,:score_trigger=> FAST_RESOLUTION,:score => 700,
 								:scorable_id=>@tkt_quest_2.id,:scorable_type=> "Helpdesk::Ticket" } )
-		
+
 		get :groups
 		response.body.should =~ /Group Leaderboard/
 		response.body.should =~ /Speed Racer/
@@ -125,7 +124,7 @@ describe Helpdesk::LeaderboardController do
 
 		#check if Groups Leaderboard Customer Wow Champion is empty
 		assigns[:customer_champion_scorecard].should be_empty
-		group_support_score.customer_champion.should be_empty
+		group_support_score.customer_champion.all.should be_empty
 		response.should be_success
 	end
 
@@ -163,16 +162,16 @@ describe Helpdesk::LeaderboardController do
 	end
 
 	def group_support_score
-		@account.support_scores.by_performance.group_score.created_at_inside(@start_date,@end_date)
+		@account.support_scores.by_performance.group_score.created_at_inside(@start_date, @end_date)
 	end
 
 	def create_support_score params = {}
-		new_ss = Factory.build( :support_score, :user_id => params[:user_id],
+		new_ss = FactoryGirl.build( :support_score, :user_id => params[:user_id],
 												:score_trigger=> params[:score_trigger],
 												:group_id => params[:group_id] || nil,
 												:score => params[:score],
 												:scorable_id=> params[:scorable_id],
 												:scorable_type=> params[:scorable_type])
-		new_ss.save(false)
+		new_ss.save(:validate => false)
 	end
 end

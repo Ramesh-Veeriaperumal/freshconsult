@@ -20,7 +20,6 @@ class Helpdesk::Access < ActiveRecord::Base
   
   ACCESS_TYPES_KEYS_BY_TOKEN = Hash[*ACCESS_TYPES.map { |i| [i[0], i[2]] }.flatten] 
 
-  attr_accessible :access_type
   
   class << self
   

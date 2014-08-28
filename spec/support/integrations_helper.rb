@@ -11,7 +11,7 @@ module IntegrationsHelper
 	
 	def create_user_credentials(options = {})
 		inst_app = create_installed_applications(options)
-		user_credentials = Factory.build(:integration_user_credential, :installed_application_id => inst_app.id,
+		user_credentials = FactoryGirl.build(:integration_user_credential, :installed_application_id => inst_app.id,
 	     								:user_id => options[:user_id], :auth_info => options[:auth_info],
 	                  	:account_id => options[:account_id])
 		user_credentials.save
@@ -19,7 +19,7 @@ module IntegrationsHelper
 	end
 
 	def create_application(options = {})
-		application = Factory.build(:application, :name => options[:name],
+		application = FactoryGirl.build(:application, :name => options[:name],
 	     								:display_name => options[:display_name],:listing_order => options[:listing_order],
 	     								:options => options[:options],:account_id => options[:account_id],
 	     								:application_type => options[:application_type])

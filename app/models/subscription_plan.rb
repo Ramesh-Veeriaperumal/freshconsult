@@ -83,7 +83,7 @@ class SubscriptionPlan < ActiveRecord::Base
   end
   
   def canon_name
-    SUBSCRIPTION_PLANS.index(name)
+    SUBSCRIPTION_PLANS.key(name)
   end
   
   def amount(include_discount = true)

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe GroupsController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -9,8 +8,8 @@ describe GroupsController do
 		@now = (Time.now.to_f*1000).to_i
 		@user_1 = add_test_agent(@account)
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
-		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-		@calendar.save(false)
+		@calendar = FactoryGirl.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(:validate => false)
 	end
 
 	before(:each) do
@@ -45,7 +44,7 @@ describe GroupsController do
 									:assign_time => "1800", :escalate_to => @agent.id
 									}
 		}
-		response.body.should =~ /Name can&#39;t be blank/
+		response.body.should =~ /Name can&#x27;t be blank/
 	end
 
 	it "should edit the Group" do
@@ -92,7 +91,7 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 	end
 
 	it "should remove agents from the group" do
@@ -111,7 +110,7 @@ describe GroupsController do
 		@test_group.escalate_to.should eql(@agent.id)
 		@test_group.ticket_assign_type.should eql 0
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		agents_in_group.include?(@agent.id).should be_false
+		agents_in_group.include?(@agent.id).should be false
 	end
 
 	it "should not update the Group without a name" do

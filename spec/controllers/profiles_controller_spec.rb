@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ProfilesController do
-  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -55,7 +54,7 @@ describe ProfilesController do
     RSpec.configuration.agent.reload
     log_in(@agent)
     get :edit, :id => RSpec.configuration.agent.id
-    response.should render_template "profiles/edit.html.erb"
+    response.should render_template "profiles/edit"
   end
 
   it "should update notification timesstamp" do
