@@ -69,10 +69,7 @@ module Freshfone::TicketActions
 		end
 
 		def update_user_presence
-			unless agent.blank?
-				agent.freshfone_user.reset_presence.save 
-				agent.freshfone_user.set_last_call_at(Time.now)
-			end
+			agent.freshfone_user.reset_presence.save unless agent.blank?
 		end
 		
 		def call_history?
