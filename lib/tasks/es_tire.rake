@@ -50,6 +50,19 @@ namespace :freshdesk_tire do
         $ rake freshdesk_tire:multi_class_import ACCOUNT_ID='Id/Ids' CLASS='Article'
   DESC
 
+  create_alias_and_import_comment = <<-DESC
+    - Create alias and import classes aborted!!!
+
+      * Minimum number of account ids to be specified = 1
+      * Minimum number of classes to be specified = 1
+      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
+        in the ACCOUNT_ID variable
+      * If you want the task to be run for multiple classes specify classes seperated by a ','
+        in the CLASS variable
+      * Set ADD=true if running import for new models only
+        $ rake freshdesk_tire:create_alias_and_import ACCOUNT_ID='Id/Ids' CLASS='Class/Classes'
+  DESC
+
   desc 'Create elasticsearch index and import data to index'
 
   task :create_index  => :environment do
@@ -107,6 +120,35 @@ namespace :freshdesk_tire do
     es_account_ids = ENV['ACCOUNT_ID'].split(',')
     init_partial_reindex(es_account_ids)
   end
+
+  task :create_alias_and_import => :environment do
+    begin
+      klasses = ENV['CLASS']
+      es_account_ids = ENV['ACCOUNT_ID'].split(',')
+      raise "Invalid parameters" if (klasses.blank? or es_account_ids.blank?)
+      new_models = (ENV['ADD'].to_s == 'true')
+
+      begin
+        es_account_ids.each do |account_id|
+          Sharding.select_shard_of(account_id) do
+            account = Account.find_by_id(account_id)
+            next if account.nil?
+            account.make_current
+            ENV['CLASS'] = import_classes(account_id, klasses)
+            ENV['ACCOUNT_ID'] = account_id.to_s
+            Search::EsIndexDefinition.create_aliases(account_id.to_i, new_models)
+            Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
+          end
+        end
+      rescue
+        next
+      ensure
+        Account.reset_current_account
+      end
+    rescue
+      puts '='*100, ' '*45+'USAGE', '='*100, create_alias_and_import_comment, ""
+    end
+  end
 end
 
 def init_es_indexing(es_account_ids)
@@ -157,7 +199,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
@@ -170,6 +212,10 @@ def import_condition(id, item)
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
+    when "Helpdesk::Tag" then
+      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+    when "Freshfone::Caller" then
+      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
   end
   condition
 end

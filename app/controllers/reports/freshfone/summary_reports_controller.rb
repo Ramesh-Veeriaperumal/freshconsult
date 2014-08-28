@@ -41,6 +41,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
         "Total Duration" => :call_handle_time,
         "Average Handle Time" => :avg_handle_time,
         "Unanswered Calls" => :unanswered_calls_count,
+        "Answer %" => :answered_percentage,
         "Total Calls" => :calls_count }
     end
 

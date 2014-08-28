@@ -90,8 +90,8 @@
       var _form = jQuery(this);
       if(_form.valid())
       {
-        cc_emails = _form.find('input[name="cc_emails"]')
-        cc_emails_val = cc_emails.val()
+        var cc_emails = _form.find('input[name="cc_emails"]')
+        var cc_emails_val = cc_emails.val()
         if (cc_emails_val && cc_emails_val.split(",").length >= 20) {
           alert('You can add upto 20 CC emails');
           return false;

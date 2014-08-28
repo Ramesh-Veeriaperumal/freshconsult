@@ -14,13 +14,13 @@ describe Admin::Freshfone::CreditsController do
   it 'redirect to subscription url on successfull credit purchase' do
     recharged_credit = @credit.available_credit.to_f + 500
     Billing::Subscription.any_instance.stubs(:purchase_freshfone_credits).returns(true)
-    post :purchase, {:freshfone_credits => {:credit => 500}}
-    Account.first.freshfone_credit.available_credit.to_f.should be_eql(recharged_credit)
+    post :purchase, {:credit => 500}
+    Account.first.freshfone_credit.available_credit.to_f.should eql(recharged_credit)
     response.should redirect_to subscription_url
   end
 
   it 'should enable auto recharge' do
-    put :enable_auto_recharge, {:freshfone_credits => {:recharge_quantity => 100}}
+    put :enable_auto_recharge, {:recharge_quantity => 100}
     Account.first.freshfone_credit.recharge_quantity.should be_eql(100)
     response.should redirect_to subscription_url
   end
@@ -33,12 +33,12 @@ describe Admin::Freshfone::CreditsController do
 
   it 'should return error message on failed purchase' do
     Freshfone::Credit.any_instance.stubs(:purchase).returns(false)
-    post :purchase, {:freshfone_credits => {:credit => 500}}
+    post :purchase, {:credit => 500}
     flash[:error].should be_eql("Error purchasing Freshfone Credits")
   end
 
   it 'should return error message on invalid recharge amount' do
-    post :purchase, {:freshfone_credits => {:credit => 2.5}}
+    post :purchase, {:credit => 2.5}
     flash[:notice].should be_eql("Enter a valid recharge amount")
   end
 

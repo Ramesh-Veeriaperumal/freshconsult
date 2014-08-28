@@ -110,8 +110,10 @@ class Freshfone::Ivr < ActiveRecord::Base
 		
 		def validate_attachments
 			(attachments || []).each do |a|
-				errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
-					{ :name => a.content_file_name })) unless a.mp3?
+				if a.id.blank? 
+					errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+						{ :name => a.content_file_name })) unless a.mp3?  
+				end
 			end
 		end
 

@@ -262,28 +262,33 @@
 	});
 
 	jQuery(document).ready(function () {
-
-		var disabled_options=<%= disable_options.to_json.html_safe%> || {}
-		jQuery.each(disabled_options,function(key,value){
-			if(key=="custom_field")
-			{
-				jQuery.each(value,function(custom_key,custom_value){
-					if(jQuery("#helpdesk_ticket_custom_field_"+custom_key) && custom_value == "true"){
-						jQuery("#helpdesk_ticket_custom_field_"+custom_key).attr("readonly","readonly");
-					}
-				});
-			}else{
-				if(key == "requester" && value=="true"){
-					jQuery("#helpdesk_ticket_email").attr("readonly","readonly");
-				}
-				else if(key == "name" && value == "true"){
-					jQuery("input[name='helpdesk_ticket[name]']").attr("readonly","readonly");
-				}
-				else if(jQuery("#helpdesk_ticket_"+key) && value == "true"){
-					jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
-				}
+		var disabled_options = [];
+		var disabled_custom_options = [];
+		<% unless disable_options.blank? %>
+			disabled_options = <%= (disable_options.keys - ["custom_field"]).to_json.html_safe%>
+			<% unless disable_options[:custom_field].blank? %>
+				disabled_custom_options = <%= disable_options[:custom_field].keys.to_json.html_safe%>
+			<% end %>
+		<% end %>
+		for(var i = 0; i < disabled_options.length; i++)
+		{
+			var key = disabled_options[i];
+			if(key == "requester"){
+				jQuery("#helpdesk_ticket_email").attr("readonly","readonly");
 			}
-		});
+			else if(key == "name"){
+				jQuery("input[name='helpdesk_ticket[name]']").attr("readonly","readonly");
+			}
+			else if(jQuery("#helpdesk_ticket_"+key)){
+				jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
+			}
+		}
+		for(var i = 0; i < disabled_custom_options.length; i++){
+			var key = disabled_custom_options[i];
+			if(jQuery("#helpdesk_ticket_custom_field_"+key)){
+						jQuery("#helpdesk_ticket_custom_field_"+key).attr("readonly","readonly");
+			}
+		}
 
 		var prepopulate_name = "<%= params[:helpdesk_ticket][:name] if params[:helpdesk_ticket]%>"
 
