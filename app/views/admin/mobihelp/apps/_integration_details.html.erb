@@ -20,8 +20,8 @@
       <% if @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:android] %>
 Mobihelp.init(this,new MobihelpConfig("https://<%= current_account.full_domain %>", "<%= app.app_key %>", "<%= app.app_secret %>"));
       <% elsif @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
-FDMobihelpConfig *config = [[FDMobihelpConfig alloc]initWithDomain:@"<%= current_account.full_domain %>" withAppKey:@"<%= app.app_key %>" andAppSecret:@"<%= app.app_secret %>"];
-[[FDMobihelp sharedInstance]initWithConfig:config];<% end %></textarea>
+MobihelpConfig *config = [[MobihelpConfig alloc]initWithDomain:@"<%= current_account.full_domain %>" withAppKey:@"<%= app.app_key %>" andAppSecret:@"<%= app.app_secret %>"];
+[[Mobihelp sharedInstance]initWithConfig:config];<% end %></textarea>
   </div>
 </div>
 
