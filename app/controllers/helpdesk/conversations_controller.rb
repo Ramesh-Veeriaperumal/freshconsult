@@ -14,12 +14,13 @@ class Helpdesk::ConversationsController < ApplicationController
   include Redis::TicketsRedis
   helper Helpdesk::NotesHelper
   
-  before_filter :build_note_body_attributes, :build_conversation
+  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
-    :fetch_item_attachments, :set_native_mobile
+    :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
   before_filter :set_ticket_status, :except => :forward
+  before_filter :load_item, :only => [:full_text]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -102,6 +103,10 @@ class Helpdesk::ConversationsController < ApplicationController
     else
       create_error
     end
+  end
+
+  def full_text
+    render :text => @item.full_text_html.to_s.html_safe
   end
 
   protected

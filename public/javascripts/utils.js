@@ -991,6 +991,10 @@ function highlight_code() {
     SyntaxHighlighter.all();
 }
 
+function inMobile(){
+  return (/(iPhone|iPod|iPad|BlackBerry|Android)/.test(navigator.userAgent))
+}
+
 function preventDefault(event) {
   if(event.preventDefault())
     event.preventDefault();

@@ -73,16 +73,19 @@ class Integrations::JiraIssue
 
   #need to work on this
   def update(params, retry_flag = true)
-    custom_field_id = customFieldChecker
+    customField_args = customFieldChecker
     res_data = nil
+    custom_field_id = customField_args[:customFieldId]
+    custom_field_data = customField_args[:customFieldName] == "Freshdesk Tickets" ? params[:ticket_data] : params[:ticket_url]
     if(custom_field_id)
       req_data ={
         :update => {
           custom_field_id => [{
-                                :set => params[:ticket_data]
+                                :set => custom_field_data
           }]
         }
       }
+      
       http_parameter = construct_params_for_http(:update,params[:remote_key])
       http_parameter[:body] = req_data.to_json
       res_data = make_rest_call(http_parameter)
@@ -170,13 +173,13 @@ class Integrations::JiraIssue
 
   private
 
-  def getCustomFieldId
+  def getCustomFieldDetails
     fieldData = construct_params_for_http(:custom_field_details)
     customData=make_rest_call(fieldData)
     unless (customData[:exception])
       customData[:json_data].each do |customField|
-        if(customField["name"] == "Freshdesk Tickets")
-          return customField["id"]
+        if(customField["name"] == "Freshdesk Tickets" || customField["name"] == "Freshdesk Public Tickets")
+          return {:customFieldId => customField["id"],:customFieldName => customField["name"]}
         end
       end
     end
@@ -185,7 +188,11 @@ class Integrations::JiraIssue
 
   def customFieldChecker
     if @installed_app.configs_customFieldId
-      return @installed_app.configs_customFieldId
+      customField_args = {
+          :customFieldId => @installed_app.configs_customFieldId,
+          :customFieldName => @installed_app.configs_customFieldName
+      }
+      return customField_args
     else
       return populate_custom_field
     end
@@ -193,15 +200,16 @@ class Integrations::JiraIssue
 
   def populate_custom_field
     begin
-      custom_field_id = getCustomFieldId
+      custom_field_args = getCustomFieldDetails
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    if custom_field_id
-      @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
+    if custom_field_args[:customFieldId]
+      @installed_app[:configs][:inputs]['customFieldId'] = custom_field_args[:customFieldId]
+      @installed_app[:configs][:inputs]['customFieldName'] = custom_field_args[:customFieldName]
       @installed_app.disable_observer = true
       @installed_app.save!
-      return custom_field_id
+      return custom_field_args;
     end
   end
 

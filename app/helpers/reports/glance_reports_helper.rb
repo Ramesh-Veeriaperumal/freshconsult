@@ -21,6 +21,7 @@ module Reports::GlanceReportsHelper
 		:non_billable_hours       => [DOWN_GREEN,UP_RED],
 		:num_of_calls             => [DOWN_GREEN,UP_RED],
 		:missed_calls             => [DOWN_GREEN,UP_RED],
+		:answered_calls           => [DOWN_RED,UP_GREEN]
 	}
 
 	def percentage_change(old_val, new_val, metric_label)

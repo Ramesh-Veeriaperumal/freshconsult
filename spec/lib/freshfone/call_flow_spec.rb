@@ -39,8 +39,9 @@ describe Freshfone::CallFlow do
     twiml = twimlify call_flow.call_users_in_group(group.id)
     twiml[:Response][:Dial].should_not be_blank
     twiml_clients = twiml[:Response][:Dial][:Client]
-    client = twiml_clients.kind_of?(Array) ? twiml_clients.last : twiml_clients
-    client.should be_eql(@agent.id.to_s)
+    # client = twiml_clients.kind_of?(Array) ? twiml_clients.last : twiml_clients
+    # client.should be_eql(@agent.id.to_s)
+    twiml_clients.should include(@agent.id.to_s)
   end
 
   it 'should render twiml for regular incoming' do
@@ -55,7 +56,7 @@ describe Freshfone::CallFlow do
     call_flow = Freshfone::CallFlow.new({}, RSpec.configuration.account, @number, RSpec.configuration.agent)
     
     twiml = twimlify call_flow.call_user_with_id(@agent.id)
-    twiml[:Response][:Dial][:Client].should be_eql(@agent.id.to_s)
+    twiml[:Response][:Dial][:Client].should include(@agent.id.to_s)
   end
 
   xit 'should connect call to a non-busy direct dial number' do#failing in master

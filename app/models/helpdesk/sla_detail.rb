@@ -96,7 +96,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   end
 
   def calculate_frDue_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + response_time.seconds) : business_time(resolution_time, created_time, calendar)
+    override_bhrs ? (created_time + response_time.seconds) : business_time(response_time, created_time, calendar)
   end
 
   def calculate_due_by_time_on_status_change(ticket,calendar)

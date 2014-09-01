@@ -30,10 +30,11 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       hash_file_name = Digest::SHA1.hexdigest(@data_export.id.to_s + Time.now.to_f.to_s)
       @data_export.save_hash!(hash_file_name)
       url = Rails.application.routes.url_helpers.download_file_url(@data_export.source,hash_file_name, 
-                    :host => @current_account.full_domain, 
+                    :host => @current_account.host, 
                     :protocol => 'https')
       DataExportMailer.data_backup({:email => params[:email], 
-                                            :domain => params[:domain], 
+                                            :domain => params[:domain],
+                                            :host => @current_account.host,
                                             :url =>  url})
       delete_zip_file zip_file_path  #cleaning up the directory
       @data_export.completed!

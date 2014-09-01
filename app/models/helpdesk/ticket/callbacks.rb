@@ -371,13 +371,14 @@ private
   def create_requester
     if can_add_requester?
       portal = self.product.portal if self.product
+      language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email]) #Assign languages only for non-email tickets
       requester = account.users.new
       requester.signup!({:user => {
         :user_emails_attributes => { "0" => {:email => self.email, :primary_role => true} }, 
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone }}, 
+        :phone => phone, :language => language }}, 
         portal) # check @requester_name and active
       
       self.requester = requester

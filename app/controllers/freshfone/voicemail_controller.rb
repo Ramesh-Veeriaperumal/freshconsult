@@ -7,8 +7,7 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
   before_filter :add_additional_params
   
   def quit_voicemail
-    update_call
-
+    current_call.update_call(params)
     empty_twiml
   ensure
     Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, { 

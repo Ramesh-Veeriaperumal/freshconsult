@@ -54,7 +54,7 @@
         var checkUniq = function (myArray, obj, type, otherOption) {
             var found = false;
             var otherArrayFound = false;
-            if ((obj.name.toString() === current_user) && (obj.userId.toString() === current_user_id.toString())) {
+            if ((unescapeHtml(obj.name.toString()) === unescapeHtml(current_user)) && (obj.userId.toString() === current_user_id.toString())) {
                 return false;
             }
             for (var i = 0; i < myArray.length; i++) {

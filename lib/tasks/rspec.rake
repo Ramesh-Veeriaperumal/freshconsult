@@ -22,7 +22,8 @@ FacebookTests = [
   "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
   "spec/lib/facebook/status_spec.rb",
-  "spec/controllers/social/facebook_pages_controller_spec.rb"
+  "spec/controllers/social/facebook_pages_controller_spec.rb",
+  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb"
 ]
 
 GnipTests = [
@@ -140,7 +141,14 @@ HelpdeskTests = [
   "spec/lib/contacts_import_worker_spec.rb",
   "spec/controllers/solution_uploaded_images_controller_spec.rb",
   "spec/controllers/contact_import_controller_spec.rb",
-  "spec/models/flexifield_spec.rb"
+  "spec/models/flexifield_spec.rb",
+  "spec/lib/middleware/api_throttler_spec.rb"
+]
+
+MiddlewareSpecs = [
+  "spec/lib/middleware/global_restriction_spec.rb",
+  "spec/lib/middleware/trusted_ip_spec.rb",
+  "spec/lib/spam_watcher_spec.rb"
 ]    
 
 BillingTests = [
@@ -170,8 +178,8 @@ ChatTests = [
 ]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
-              GnipTests, HelpdeskTests, IntegrationTests, MobihelpTests, MobileAppTests, ModelTests, TwitterTests, 
-              XssTests, FreshfoneReportsTests, ChatTests ]
+              GnipTests, HelpdeskTests, IntegrationTests, MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
+              TwitterTests, XssTests, FreshfoneReportsTests, ChatTests ]
 
 UnitTests.flatten!.uniq!
 

@@ -15,6 +15,12 @@ class Helpdesk::TagUse < ActiveRecord::Base
   validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
   validates_numericality_of :tag_id, :taggable_id
 
+  named_scope :tags_to_remove, lambda { |taggable_id,tag_id,taggable_type|
+          { 
+            :conditions => {:taggable_id => taggable_id, :tag_id => tag_id, :taggable_type => taggable_type}
+          }
+        }
+
   private
   	def set_account_id
     	self.account_id = tags.account_id

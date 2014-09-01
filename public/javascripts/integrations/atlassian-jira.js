@@ -279,6 +279,7 @@ JiraWidget.prototype = {
 		projectId = (jiraBundle.projectId) ? jiraBundle.projectId : jQuery('#jira-projects').val();
 		typeId = (jiraBundle.typeId) ? jiraBundle.typeId : jQuery('#jira-issue-types').val();
 		ticketData = "#" + jiraBundle.ticketId + " (" + jiraWidget.getCurrentUrl() + ") - " + jiraBundle.ticketSubject;
+		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		init_reqs = [{
 			source_url: "/integrations/jira_issue/create",
@@ -287,6 +288,7 @@ JiraWidget.prototype = {
 			local_integratable_type: integratable_type,
 			application_id: jiraBundle.application_id,
 			ticket_data: ticketData,
+			ticket_url: ticket_url,
 			method: "post",
 			on_success: jiraWidget.jiraCreateIssueSuccess.bind(this),
 			on_failure: jiraWidget.jiraCreateIssueFailure.bind(this),

@@ -6,7 +6,7 @@ class DataExportMailer < ActionMailer::Base
     headers = {
       :to    => options[:email],
       :from  => AppConfig['from_email'],
-      :subject => "Data Export for #{options[:domain]}",
+      :subject => "Data Export for #{options[:host]}",
       :sent_on => Time.now
     }
     @url = options[:url]

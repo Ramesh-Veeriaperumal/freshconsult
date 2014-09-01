@@ -464,9 +464,9 @@ HTML
 		if portal['facebook_portal']
 			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
 		else
-			output << %(<a href=\"#{portal['topic_reply_url']}\">#{I18n.t('portal.login')}</a>)
-			output << I18n.t('portal.or_signup', :signup =>
-					"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if
+			output << I18n.t('portal.login_or_signup', 
+				:login => "<a href=\"#{portal['topic_reply_url']}\">#{I18n.t('portal.login')}</a>",
+				:signup => "<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if
 						portal['can_signup_feature']
 		end
 		if post_topic
