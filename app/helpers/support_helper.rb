@@ -530,7 +530,7 @@ HTML
 				output << %(<div class="pull-right post-actions">
 								<a 	href="#{post['toggle_answer_url']}"
 									data-method="put"
-									class="tooltip"
+									data-toggle="tooltip"
 									title="#{label}"
 									><i class="icon-#{post.answer? ? 'unmark' : 'mark'}-answer"></i></a>
 							</div>)
@@ -542,7 +542,7 @@ HTML
 			                		data-submit-label="#{label}" data-close-label="#{t('cancel')}"
 			                		data-submit-loading="#{t('ticket.updating')}..."
 			                		data-width="700px"
-			                		class="tooltip"
+			                		data-toggle="tooltip"
 									title="#{label}"
 			                		><i class="icon-mark-answer"></i></a>
 			                </div>)
