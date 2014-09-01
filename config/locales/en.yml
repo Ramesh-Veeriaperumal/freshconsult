@@ -1302,6 +1302,7 @@ en:
         canned-response: Canned Response
         multi-product: Multi-Product
         import: Import data from Zendesk
+        fresh-import: Import data from various other platforms
         agent: Agents
         feedback: Feedback widget
         freshchat: Freshchat
@@ -2761,6 +2762,12 @@ en:
     login_or_signup: "%{login} or %{signup} for an account"
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
+    login_to_submit_ticket: "<a href=%{login_url}>Login</a> to submit a new ticket"
+    login_signup_to_submit_ticket: "<a href=%{login_url}>Login</a> or <a href=%{signup_url}>Signup</a> to submit a new ticket"
+    login_to_post_topic: "1111 <a href='' class='solution_c'>Login</a> to post a topic"
+    login_to_post_comment: "2222 <a href='' class='solution_c'>Login</a> to post a comment"
+    login_signup_to_post_topic: "3333 <a href=%{topic_reply_url}>Login</a> or <a href=%{signup_url}>Signup</a> to post a topic"
+    login_signup_to_post_comment: "4444 <a href=%{topic_reply_url}>Login</a> or <a href=%{signup_url}>Signup</a> to post a comment"
     to_post_topic: " to post a topic"
     preview:
       view_on_helpdesk: "View on Helpdesk"
@@ -5243,6 +5250,7 @@ en:
     top_n_analysis: "Top-N Analysis"
     agent_top_n_analysis: "Agent Top-N Analysis"
     group_top_n_analysis: "Group Top-N Analysis"
+    time_sheet_report: "Time Sheet Report"
     customer_top_n_analysis: "Customer Top-N Analysis"
     select_option_msg: "Please select an option"
     no_data_to_display_msg: "No data to display!"
@@ -5700,8 +5708,14 @@ en:
     name: "Name"
     phone: "Phone Number"
     mail: "Email"
+    textfield: "Textfield"
+    dropdown: "Dropdown"
+    dropdown_choices: "Dropdown Choices"
+    dropdown_info: "Enter each choice in a newline"
+    edit: "Edit"
     cancel: "Cancel"
     save: "Save"
+    done: "Done"
     me: "Me"
     window_position: "Window Position"
     window_offset: "Window Offset"
@@ -5827,7 +5841,7 @@ en:
     connecting_msg: "Waiting for an agent"
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
-    installation: "Installation"
+    installation: "Widget Code"
     intro_title: "Why Freshchat?"
     intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, not only can your agents chat with each other without leaving Freshdesk, but they can also engage with your visitors real-time and provide instant answers. It's another arrow in your quiver, a channel designed especially to bring you closer to your users."
     enable_chat: "Enable Freshchat"

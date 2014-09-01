@@ -68,6 +68,8 @@
 
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
 
+  map.fresh_import '/admin/fresh_import', :controller => 'admin/fresh_import', :action => 'index'
+
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
   
   map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
@@ -170,6 +172,7 @@
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
     admin.resources :quests, :member => { :toggle => :put }
     admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
+    admin.resources :fresh_import
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
@@ -243,7 +246,7 @@
   end
 
   map.resources :reports
-  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post}
+  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post, :generate_pdf => :post}
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
@@ -682,4 +685,8 @@
   map.connect '/all_agents', :controller => 'agents', :action => 'list'
   map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
+  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
+  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+
 end

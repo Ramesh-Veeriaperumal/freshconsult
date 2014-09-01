@@ -5,8 +5,8 @@ class Reports::TimesheetReportsController < ApplicationController
   helper AutocompleteHelper
   
   before_filter :check_permission, :set_selected_tab
-  before_filter :build_item ,  :only => [:index,:export_csv,:report_filter,:time_sheet_list]
-  before_filter :time_sheet_list, :only => [:index,:report_filter]
+  before_filter :build_item ,  :only => [:index,:export_csv,:report_filter,:time_sheet_list, :generate_pdf]
+  before_filter :time_sheet_list, :only => [:index,:report_filter, :generate_pdf]
   before_filter :time_sheet_for_export, :only => [:export_csv]
 
   
@@ -49,6 +49,15 @@ class Reports::TimesheetReportsController < ApplicationController
     set_time_range(true)
     old_time_sheets = filter_with_groupby(@start_time,@end_time)
     @old_time_sheet_data= billable_vs_non_billable(old_time_sheets)
+  end
+
+  def generate_pdf
+    @report_title = t('adv_reports.time_sheet_report')
+    render :pdf => @report_title, 
+      :layout => 'report/timesheets_report_pdf.html', # uses views/layouts/pdf.haml
+      :show_as_html => params[:debug].present?, # renders html version if you set debug=true in URL
+      :template => 'sections/generate_report_pdf.pdf.erb',
+      :page_size => "A3"
   end
   
   def time_sheet_for_export

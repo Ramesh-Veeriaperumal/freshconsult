@@ -348,7 +348,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     seconds = 0 if seconds.nil?
     hh = (seconds/3600).to_i
     mm = ((seconds % 3600) / 60).to_i
-    "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}"
+    ss = (seconds % 60).to_i
+    "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}:#{ss.to_s.rjust(2,'0')}"
   end
 
   def train(category)
@@ -419,6 +420,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Some hackish things for virtual agent rules.
   def tag_names
     tags.collect { |tag| tag.name }
+  end
+
+  def ticket_tags
+    tag_names.join(',')
+  end
+
+  def ticket_survey_results
+     recent_survey = survey_results.last(:order => "id")
+     recent_survey.text if recent_survey
   end
   
   def subject_or_description

@@ -22,6 +22,9 @@ begin
 	# Initializing global variable polling the tweets from sqs
 	$sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
 
+        # Initializing global variable for pusing messages into queue for data import
+        $sqs_fresh_import = AWS::SQS.new.queues.named(SQS[:fresh_import_queue])
+ 
 	# ticket auto refresh sqs queue
 	$sqs_autorefresh = AwsWrapper::Sqs.new(SQS[:auto_refresh_realtime_queue])
 

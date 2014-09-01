@@ -1,53 +1,25 @@
-<% account = current_account %>
-<%if (current_user && chat_active? && !(is_assumed_user?))
-    comm_url = ChatConfig['communication_url'][Rails.env]
-    chat_debug = ChatConfig['chat_debug'][Rails.env]
-    asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
-    @chat = current_account.chat_setting
+<% account = current_account
+comm_url = ChatConfig['communication_url'][Rails.env]
+asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
+chat_debug = ChatConfig['chat_debug'][Rails.env]
 %>
-<div id="freshchat_layout"></div>
-<script language="javascript">
-
+<script>
 var CS_URL = "<%=comm_url%>";
+CS_URL = CS_URL.replace('https://',"").replace('http://',"").replace(':443',"").replace(':80',""); 
 var WEB_ROOT = "//<%=account.full_domain%>";
 var CHAT_DEBUG = "<%=chat_debug%>";
 var CHAT_ENV = "<%= Rails.env -%>";
 var ASSET_URL = JSON.parse('<%=asset%>');
 
-(function($){
-    $(document).ready(function(){
-        var url = ASSET_URL.js;
-        var css_url = ASSET_URL.css;
-        if(window.location && window.location.protocol=='https:'){
-            url = css_url = ASSET_URL.cloudfront;
-        }
-        var fc_CSS=document.createElement('link');
-        fc_CSS.setAttribute('rel','stylesheet');
-        fc_CSS.setAttribute('type','text/css');
-        fc_CSS.setAttribute('href', css_url+'/css/chat.css');
-        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-            $.getScript(url+"/js/chat.js", function(){
-                var path = window.location.pathname.split('/');
-                if(path[path.length - 1] == "chat_setting"){
-                    if(window.behaviour){
-                        behaviour.initialize({setting:<%=freshchat_setting%>,asset:ASSET_URL});
-                    }
-                }
-            });
-        });    
-})(jQuery);
-
-var USER_LIST = [];
 var CURRENT_USER = {
-    'id':'<%=current_user.id%>',
-    'username':'<%=current_user.name%>',
+    'id': '<%=current_user.id%>',
+    'username': '<%=current_user.name%>',
     'isAdmin': <%=current_user.privilege?(:admin_tasks)%>,
-    'email' : '<%=current_user.email%>'
+    'email' : '<%=current_user.email%>',
+    'aid' : '<%=account.id%>',
+    'domain': '<%=account.full_domain%>'
 };
 
-var CHAT_AGENTS = '<%=chat_agents_list%>';
-var SITE_ID = '<%=account.chat_setting.display_id%>';
-var IS_TYPING = '<%=account.chat_setting.typing_message%>';
 var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
 var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             title:'<%= t("freshchat.title") %>',
@@ -177,8 +149,55 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             copied: "<%= t('freshchat.copied') %>",
             loading_new_archives: "<%= t('freshchat.loading_new_archives') %>",
             incoming_chat: "<%= t('freshchat.incoming_chat') %>",
-            text_place: "<%= t('freshchat.text_placeholder') %>"
+            text_place: "<%= t('freshchat.text_placeholder') %>",
+            dropdown_info: "<%= t('freshchat.dropdown_info') %>",
+            dropdown_choices: "<%= t('freshchat.dropdown_choices') %>",
+            done: "<%= t('freshchat.done') %>",
+            edit: "<%= t('freshchat.edit') %>",
+            show: "<%= t('freshchat.show') %>",
+            required: "<%= t('freshchat.required') %>"
+        };
+
+(function($){
+    $(document).ready(function(){
+        var url = ASSET_URL.js;
+        var css_url = ASSET_URL.css;
+        if(window.location && window.location.protocol=='https:'){
+            url = css_url = ASSET_URL.cloudfront;
         }
+
+        var fc_CSS = document.createElement('link');
+        fc_CSS.setAttribute('rel','stylesheet');
+        fc_CSS.setAttribute('type','text/css');
+        fc_CSS.setAttribute('href', css_url+'/css/chat.css');
+        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+
+        var path = window.location.pathname.split('/');
+        if(path[path.length-1] == "chat_setting"){
+            $.getScript(url+ "/js/chat_settings.js", function(){
+                if(window.behaviour){
+                    behaviour.initialize({setting:<%=freshchat_setting%>, asset:ASSET_URL});
+                }
+            });
+        }
+    });
+})(jQuery);
 </script>
-    <!-- Chat related contents ends -->
+<%if (current_user && chat_active? && !(is_assumed_user?))%>
+<div id="freshchat_layout"></div>
+<script language="javascript">
+(function($){
+    $(document).ready(function(){
+        var url = ASSET_URL.js;
+        var css_url = ASSET_URL.css;
+        if(window.location && window.location.protocol=='https:'){
+            url = css_url = ASSET_URL.cloudfront;
+        }
+
+        $.getScript(url+"/js/chat.js");
+    });
+})(jQuery);
+var SITE_ID = '<%=account.chat_setting.display_id%>';
+</script>
+<!-- Chat related contents ends -->
 <%end%>
