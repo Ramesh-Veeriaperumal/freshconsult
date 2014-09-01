@@ -193,7 +193,7 @@ module Admin::HomeHelper
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
-      :"account-settings"       =>    ["account", "billing", "fresh-import", "day_pass"]
+      :"account-settings"       =>    ["account", "billing", "import", "fresh-import", "day_pass"]
     }
 
   ######### keywords Constant ########

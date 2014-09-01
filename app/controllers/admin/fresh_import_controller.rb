@@ -15,12 +15,7 @@ class Admin::FreshImportController < Admin::AdminController
   def select_vendor
     session[:vendor_chosen] = true
     session[:selected_vendor] = @selected_vendor = params[:vendor][:name]
-    if @selected_vendor == "Zendesk" then
-      session[:vendor_chosen] = false
-      redirect_to admin_zen_import_index_url
-    else
-      redirect_to admin_fresh_import_index_url
-    end
+    redirect_to admin_fresh_import_index_url
   end
 
   def export_kayako
