@@ -71,7 +71,18 @@ module ChatHelper
       :debug => ChatConfig["chat_debug"][Rails.env],
       :me => t("freshchat.me"),
       :expiry =>  chat_trial_expiry,
-      :environment => Rails.env
+      :environment => Rails.env,
+      :default_window_offset => 30,
+      :default_maximized_title => t("freshchat.maximized_title"),
+      :default_minimized_title => t("freshchat.minimized_title"),
+      :default_text_place => t("freshchat.text_placeholder"),
+      :default_connecting_msg => t("freshchat.connecting_msg"),
+      :default_welcome_message => t("freshchat.welcome_message"),
+      :default_wait_message => t("freshchat.wait_message"),
+      :default_agent_joined_msg => t("freshchat.agent_joined_msg"),
+      :default_agent_left_msg => t("freshchat.agent_left_msg"),
+      :default_thank_message => t("freshchat.thank_message"),
+      :default_non_availability_message => t("freshchat.non_availability_message")
     }
     return freshchat_setting.to_json.html_safe
   end
