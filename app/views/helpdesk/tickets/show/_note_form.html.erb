@@ -24,7 +24,7 @@
               function addNoteAgents(){
                 if(!jQuery('.add_select2_custom').data('agent_loaded')){
                   jQuery.ajax({
-                    url: '<%=agents_helpdesk_ticket_notes_path(params[:id])%>',
+                    url: '<%=agents_autocomplete_helpdesk_ticket_notes_path(params[:id])%>',
                     method: "GET",
                     success: function(response) {
                       var custom_select2 = jQuery(response);
