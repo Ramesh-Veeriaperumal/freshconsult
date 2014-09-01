@@ -156,7 +156,7 @@ module MailgunHelper
 			["References", "#{generate_references(m_id)}"],
 			["In-Reply-To", "<#{m_id || ""}>"],
 			["Precedence", "#{auto ? "auto_reply" : ""}"],["Content-Type", "multipart/mixed; boundary=bcaec53f3985dc812004ed190a39"]
-		]
+		].to_json
 	end
 
 	def generate_references m_id

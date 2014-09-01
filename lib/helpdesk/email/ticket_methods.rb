@@ -81,7 +81,7 @@ module Helpdesk::Email::TicketMethods
   end
 
   def auto_responder?(headers)
-    headers.present? && check_headers_for_responders(Hash[headers])
+    headers.present? && check_headers_for_responders(Hash[JSON.parse(headers)])
   end
 
   def check_headers_for_responders header_hash
