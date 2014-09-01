@@ -68,8 +68,6 @@
 
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
 
-  map.fresh_import '/admin/fresh_import', :controller => 'admin/fresh_import', :action => 'index'
-
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
   
   map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
@@ -172,7 +170,6 @@
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
     admin.resources :quests, :member => { :toggle => :put }
     admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
-    admin.resources :fresh_import
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }

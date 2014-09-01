@@ -129,10 +129,6 @@ module Admin::HomeHelper
         :url                           =>   "/admin/zen_import",
         :privilege                     =>   privilege?(:manage_account)
       },
-      :"fresh-import"                    =>   {
-        :url                           =>   "/admin/fresh_import",
-        :privilege                     =>   privilege?(:manage_account)
-      },
       :day_pass                        =>   {
         :url                           =>   "/admin/day_passes",
         :privilege                     =>   privilege?(:manage_account)
@@ -193,7 +189,7 @@ module Admin::HomeHelper
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
-      :"account-settings"       =>    ["account", "billing", "import", "fresh-import", "day_pass"]
+      :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
     }
 
   ######### keywords Constant ########
