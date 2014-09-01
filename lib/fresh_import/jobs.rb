@@ -3,7 +3,8 @@ require 'base64'
 
 module FreshImport::Jobs
   class FreshDesk
-    def self.queue(params) 
+    def self.queue(params)
+      queue = Queue.new
       current_account = Account.current
       current_user = User.current
       params[:type] = "freshdesk"
@@ -13,24 +14,26 @@ module FreshImport::Jobs
       params[:single_access_token] = Encrypt.data_string(current_user.single_access_token)
       params.except! :session_select
       puts "Freshdesk import session request has been sent"
-      $sqs_fresh_import.send_message params
+      queue.push params
     end
   end
 
   class Kayako
     def self.queue(params)
+      queue = Queue.new
       params[:type] = "kayako"
       params[:account_id] = Account.current.id
       params[:api_url] = Encrypt.data_string(params[:api_url])
       params[:api_key] = Encrypt.data_string(params[:api_key])
       params[:secret_key] = Encrypt.data_string(params[:secret_key])
       puts "Kayako session request has been sent"
-      $sqs_fresh_import.send_message params
+      queue.push params
     end
   end
 
   class ServiceDesk
     def self.queue(params)
+      queue = Queue.new
       params[:type] = "desk"
       params[:account_id] = Account.current.id
       params[:subdomain] = Encrypt.data_string params[:subdomain]
@@ -40,7 +43,7 @@ module FreshImport::Jobs
       params[:oauth_token_secret] = Encrypt.data_string params[:oauth_token_secret]
       params[:support_email] = Encrypt.data_string params[:support_email] unless params[:support_email].nil?
       params[:desk_pass] = Encrypt.data_string params[:desk_pass] unless params[:desk_pass].nil?
-      $sqs_fresh_import.send_message params
+      queue.push params
     end
   end
 
@@ -49,6 +52,20 @@ module FreshImport::Jobs
       public_key =
         OpenSSL::PKey::RSA.new(File.read('lib/fresh_import/public.pem'))
       Base64.encode64(public_key.public_encrypt(plain_text))
+    end
+  end
+
+  class Queue
+    def initialize
+      @sqs_instance = AWS::SQS.new(
+                                   :access_key_id => 'AKIAJABMV6ZXHCIX2CEA',
+                                   :secret_access_key => '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')
+      #@freshimport_queue = "https://sqs.us-east-1.amazonaws.com/213293927234/freshimport_dev"
+      @freshimport_queue = "https://sqs.us-east-1.amazonaws.com/451608133968/data_import"
+    end
+
+    def push params
+      @sqs_instance.queues[@freshimport_queue].send_message JSON.generate params
     end
   end
 end

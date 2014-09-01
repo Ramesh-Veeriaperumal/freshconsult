@@ -5,15 +5,10 @@ class Admin::FreshImportController < Admin::AdminController
     @vendor_chosen = session[:vendor_chosen]
     @selected_vendor = session[:selected_vendor]
     exporter_url = "http://localhost:3001/"
-    @import_in_progress = false
-    @session_names = []
-    begin
-        response =  JSON.parse((RestClient.get "#{exporter_url}session_running", {:params => {:account_id => current_account.id}}), :symbolize_names => true)
-        @import_in_progress = response[:session_running]
-        response =  JSON.parse((RestClient.get "#{exporter_url}sessions", {:params => {:account_id => current_account.id}}), :symbolize_names => true)
-        @session_names = response[:sessions]
-    rescue StandardError
-    end
+    response =  JSON.parse((RestClient.get "#{exporter_url}session_running", {:params => {:account_id => current_account.id}}), :symbolize_names => true)
+    @import_in_progress = response[:session_running]
+    response =  JSON.parse((RestClient.get "#{exporter_url}sessions", {:params => {:account_id => current_account.id}}), :symbolize_names => true)
+    @session_names = response[:sessions]
     session[:vendor_chosen] = false
   end
 
