@@ -81,7 +81,11 @@ module Helpdesk::Email::TicketMethods
   end
 
   def auto_responder?(headers)
-    headers.present? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
+    headers.present? && check_headers_for_responders(Hash[headers])
+  end
+
+  def check_headers_for_responders header_hash
+    header_hash["Reply-To"].blank? && (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
   end
 
   def check_support_emails_from

@@ -277,6 +277,8 @@ describe Helpdesk::ProcessEmail do
 			email = new_email({:email_config => @account.primary_email_config.to_email, :auto => true})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket_incremented?(@ticket_size)
+			recent_ticket = @account.tickets.last
+			recent_ticket.skip_notification.should eql true
 		end
 
 		it "with cc email" do
