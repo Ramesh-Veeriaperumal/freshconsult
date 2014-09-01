@@ -54,14 +54,15 @@ include FreshfoneHelper
 
   def answered_percentage(call_list)
     sum = call_list.sum(&:count)
-    answered = sum - unanswered_calls_count(call_list)
+    answered = sum - (unanswered_calls_count(call_list) + unanswered_transfers(call_list))
     percentage = ((answered/sum)*100 || 0).to_i
   end
 
   def avg_handle_time(call_list)
     sum = answered = 0
     call_list.each do |calls|
-      answered += (calls.count - (calls.unanswered_call + calls.outbound_failed_call))
+      next if calls.agent_name.blank?
+      answered += (calls.count - (calls.unanswered_call + calls.outbound_failed_call + calls.unanswered_transfers))
       sum += calls.total_duration unless calls.total_duration.blank?
     end
     average = (answered != 0) ? sum/answered : 0

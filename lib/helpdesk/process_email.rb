@@ -28,13 +28,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return if from_email.nil?
       kbase_email = account.kbase_email
       
+      # Workaround for params[:html] containing empty tags
+      sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
+      
       #need to format this code --Suman
-      if params[:html].blank? && !params[:text].blank? 
+      if sanitized_html.blank? && !params[:text].blank? 
        email_cmds_regex = get_email_cmd_regex(account) 
        params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
       end
       
-      params[:text] = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html])
+      params[:text] = params[:text] || sanitized_html
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])

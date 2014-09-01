@@ -1,10 +1,10 @@
 module Freshfone::CallHistory
 
-	# def update_call
-	# 	return if current_call.blank?
-	# 	current_call.update_call_details(params.merge({ :called_agent => called_agent })).save
-	# end
-	
+	def update_call
+		return if current_call.blank?
+		current_call.update_call_details(params.merge({ :called_agent => called_agent })).save
+	end
+
 	def update_call_status
 		current_call.update_status(params).save unless current_call.blank?
 	end
@@ -18,7 +18,13 @@ module Freshfone::CallHistory
 	end
 
 	
-	private		
+	private
+		# Find current_call
+		def called_agent
+			# && params[:DialCallSid]
+			agent_scoper.find_by_id(params[:agent]) if current_call.can_log_agent? && params[:agent].present? 
+		end
+
 		def freshfone_calls_scoper
 			current_account.freshfone_calls
 		end
@@ -33,6 +39,10 @@ module Freshfone::CallHistory
 
 		def current_call_by_parent_call_sid
 			freshfone_calls_scoper.filter_call(params[:ParentCallSid]) if params[:ParentCallSid].present?
+		end
+
+		def agent_scoper
+			current_account.users.technicians.visible
 		end
 
 end

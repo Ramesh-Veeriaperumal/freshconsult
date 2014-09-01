@@ -229,7 +229,7 @@ it:
   confirm: Conferma
   downgrade_dialog_title: Sicuro di voler procedere al downgrade?
   yes_password_reset: Sì
-  no_password_reset: No
+  no_password_reset: "No"
   last: ultimo
   agent_emailnotverified: L'indirizzo e-mail non è stato verificato per questo agente.
   agent_assigned_info: Non ci sono ticket aperti o in sospeso per questo agente
@@ -1758,7 +1758,7 @@ it:
       title: Questa risposta ti è stata d'aiuto?
       up_vote_thank_you_message: Siamo felici di esserti stati d'aiuto. Grazie per il tuo feedback
       upvote: Sì
-      downvote: No
+      downvote: "No"
       down_vote_form_title: Siamo lieti di ricevere i tuoi consigli su come migliorare questo articolo.
   solutions:
     status:
@@ -2719,7 +2719,7 @@ it:
     Personalized_email_replies: Usare il nome dell'agente per le e-mail personalizzate di risposta?
     Personalized_email_replies_info: Se SÌ, nelle risposte il nome dell'agente sarà il nome del mittente (l'indirizzo e-mail resterà quella del supporto tecnico). Ad esempio '%{current_user_name} <%{current_account_domain}>'.
     Personalized_email_replies_yes: Sì
-    Personalized_email_replies_no: No
+    Personalized_email_replies_no: "No"
     config_saved_message: La tua impostazione è stata salvata.
     reply_to_tickets: Utilizza l'indirizzo e-mail "Rispondi a" per creare i contatti del richiedente
     reply_to_tickets_info: "Nota: se disabilitato, il richiedente verrò creato utilizzando l'indirizzo 'Da' dell'e-mail."

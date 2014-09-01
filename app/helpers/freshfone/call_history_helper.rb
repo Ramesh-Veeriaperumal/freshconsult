@@ -15,21 +15,7 @@ module Freshfone::CallHistoryHelper
 		]
 	end
 
-	def freshfone_numbers_options
-		numbers_options = []
-		numbers_options = @all_freshfone_numbers.map{|c|
-			{ :id => c.id, :value => c.number, :deleted => c.deleted }
-		 }.to_json
-	end
-
-	def groups_options
-		groups_list_options = []
-		groups_list_options =  current_account.groups.map { |group|
-			{ :id => group.id, :value => group.name}
-		  }.to_json
-	end
-
-	def filtered_by_time_options
+	def filtered_by_options
 		[
 			[ t('freshfone.call_history.today'), :today ], 
 			[ t('freshfone.call_history.yesterday'), :yesterday ], 
@@ -39,28 +25,6 @@ module Freshfone::CallHistoryHelper
 			[ t('freshfone.call_history.month', {:month => 6}), :six_months ],
 			[ t('freshfone.call_history.all_time'), '' ]
 		]
-	end
-
-	def filtered_by_call_status_options
-		result = [
-			{ :id =>0, :value => t('freshfone.call_history.filter_option_all_calls'), :call_type => '' },
-			{ :id =>1, :value =>t('freshfone.call_history.filter_option_received_calls'), :call_type => 'received' },
-			{ :id =>2, :value =>t('freshfone.call_history.filter_option_outgoing_calls'),:call_type => 'dialed' },
-			{ :id =>3, :value =>t('freshfone.call_history.filter_option_missed_calls'), :call_type => 'missed' },
-			{ :id =>4, :value =>t('freshfone.call_history.filter_option_voicemail'), :call_type => 'voicemail' },
-			{ :id =>5, :value =>t('freshfone.call_history.filter_option_blocked_calls'), :call_type => 'blocked' }
-		]
-		result.to_json
-	end
-
-	def date_picker_labels
-		[
-			{ :today => t('freshfone.call_history.today') ,
-			:yesterday =>t('freshfone.call_history.yesterday') ,
-			:this_week => t('freshfone.call_history.this_week') ,
-			:this_month => t('freshfone.call_history.this_month'),
-			:custom => t('freshfone.call_history.custom') }
-		].to_json
 	end
 
 	def call_status_title(call)

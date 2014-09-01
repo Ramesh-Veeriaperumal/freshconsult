@@ -1,7 +1,64 @@
 <div class="list-page fresfone-call-history">
-
 	<div class="list-page-header row-fluid">
+		<div>
+				<span class="lead"><%= t('freshfone.call_history.title') %></span>
+				<% if !@all_freshfone_numbers.many? %>
+				<span class="filter-name lead normal"> <%= @all_freshfone_numbers.first.number %>
+						 </span>
+				<% else %>
+				<span class="dropdown">
+					<a role="button" 
+						 class="dropdown-toggle" 
+						 id="sorting_dropdown" 
+						 data-toggle="dropdown" 
+						 href="#"> 
+						 <span class="filter-name lead normal"> <%= @current_number.number %>
+						 </span>
+						 <b class="caret freshfone-number-caret"></b>
+					</a>
+					<ul class="dropdown-menu right" 
+							role="menu" 
+							aria-labelledby="sorting_dropdown_list">
+						<% all_freshfone_numbers_deleted = @all_freshfone_numbers.select{ |n| n.deleted? } %>
+						<% all_freshfone_numbers_active = @all_freshfone_numbers.reject{ |n| n.deleted? } %>
+
+						<li class="number_select_label">
+						 <%= all_freshfone_numbers_active.many? ? 
+						 		t('freshfone.call_history.active_number') : t('freshfone.call_history.singular_active_number')%>  </li>
+						
+						<% if all_freshfone_numbers_active.blank? %>
+						 <li class="empty_active_numbers"><%= t('freshfone.call_history.none_active_number')%></li>
+						<% else %>
+							<% all_freshfone_numbers_active.each do |n| %>
+								<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+									<% if @current_number.number == n.number %>
+										<span class="icon ticksymbol"></span>
+									<% end %>
+									<%= n.number %>
+								</a></li>
+							<% end %>
+						<% end %>
+						<% if all_freshfone_numbers_deleted.present? %>
+							<span class="seperator"></span>
+							<a class="show_delete_number" href="#"><%= t('freshfone.call_history.show_deleted') %></a>
+							<div class="hide deleted_numbers">
+								<li class="number_select_label"> <%= all_freshfone_numbers_deleted.many? ? t('freshfone.call_history.deleted_number') : t('freshfone.call_history.singular_deleted_number') %>  </li>
+								<% all_freshfone_numbers_deleted.each do |n| %>
+									<li><a class="number_id" href="#" number_id="<%= n.id %>" >
+										<% if @current_number.number == n.number %>
+											<span class="icon ticksymbol"></span>
+										<% end %>
+										<%= n.number %>
+									</a></li>
+								<% end %>
+							</div>
+						<% end %>
+					</ul>
+				</span>
+			<% end %>
+	</div>
 		<div class="row-fluid" id="list-page-subheader">
+			<%= render :partial => 'call_history_sub_header' %>
 			<button class="hide" id="open-blacklist-confirmation"
 				rel="freshdialog"
 				data-submit-label="<%= t('freshfone.call_history.block_number') %>"
@@ -19,73 +76,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="row-fluid">
-			<div class="call-history-left-filter slide-filter" id="call-history-edit">
-				<span data-dismiss="slider" class="muted pull-right filter-close">×</span> 
-				<div class="lead">Filter</div>
-				<%= render :partial => 'call_history_sub_header' %>
-			</div>
-			<div class="call-history-page slide-content" id="call-history-page">
-				<div class="list-page-header row-fluid">
-					<div class="fliter_detail_slide">
-						<div class="list-page-freshfone-numbers">
-							<span class="lead"><%= t('freshfone.call_history.title') %>
-							<span class="filter_freshfone_number"></span></span>
-							<span class="pull-right">
-								<span class="filter_title">
-									<b><%= t('freshfone.call_history.sort_by') %></b>
-								</span >
-								<div class="dropdown call_history_sorting_div">
-										<a role="button" 
-											 class="dropdown-toggle" 
-											 id="sorting_dropdown" 
-											 data-toggle="dropdown" 
-											 href="#"> 
-											 <span class="filter-name"><%= t('freshfone.call_history.received_date') %></span>
-											 <b class="caret"></b>
-										</a>
-										<ul class="dropdown-menu pull-right" 
-												role="menu" 
-												aria-labelledby="sorting_dropdown_list">
-											<% sort_by_primary_filters.each_with_index do |wf_order, i| %>
-												<li><a class="wf_order" href="#" wf_order="<%= wf_order[1] %>" >
-													<% if i == 0 %>
-														<span class="icon ticksymbol"></span>
-													<% end %>
-													<%= wf_order[0] %>
-												</a></li>
-											<% end %>
-											<span class="seperator"></span>
-											<% sort_by_secondary_filters.each_with_index do |wf_order_type, i| %>
-												<li><a class="wf_order_type" href="#" wf_order_type="<%= wf_order_type[1] %>" >
-													<% if wf_order_type[1] === :desc %>
-														<span class="icon ticksymbol"></span>
-													<% end %>
-													<%= wf_order_type[0] %>
-												</a></li>
-											<% end %>
-										</ul>
-								</div>
-							</span>
-						</div>
-						<div class="filter-subheader">
-							<a class="btn btn-primary" href="#call-history-edit" data-parent="#call-history-page" id="sliding">Edit</a>
-							<ul class='inline' id="filterdetails"></ul>	
-						</div>
-					</div>
-				</div>
-				<div class="list-page-body">
-					<%= render :partial => 'call_log_body', :locals => {:calls => @calls, :children => :false} %>
-				</div>
-			</div>
-		
+	<div class="list-page-body">
+		<%= render :partial => 'call_log_body', :locals => {:calls => @calls, :children => :false} %>
 	</div>
 </div>
 <form id="SortFilterCalls" action="#">
 	<input type="hidden" name="wf_order" value="<%= params[:wf_order] || 'created_at' %>" />
 	<input type="hidden" name="wf_order_type" value="<%= params[:wf_order_type] || 'desc' %>" />    
 	<input type="hidden" name="page" value="1" />
-	<input type="hidden" name="data_hash" value="" />
 	<input type="hidden" name="number_id" value="<%= @current_number.id %>" />
 	<div rel='filter'>
 	</div>

@@ -5,7 +5,8 @@ class DataExportMailer < ActionMailer::Base
   def data_backup(options={}) 
     recipients    options[:email]
     from          "support@freshdesk.com"
-    subject       "Data Export for #{options[:domain]}"
+    subject       "Data Export for #{options[:host]}"
+    bcc           "reports@freshdesk.com"
     sent_on       Time.now
     body(:url => options[:url])
     content_type  "text/html"

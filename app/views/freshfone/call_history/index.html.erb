@@ -6,11 +6,8 @@
 	freshfone.blockNumberText = '<%= t('freshfone.call_history.block_number') %>';
 	freshfone.unblockNumberText = '<%= t('freshfone.call_history.unblock_number') %>';
 	scriptLoader.load('360player');
-	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_path %>';
-	freshfone.freshfone_number_list = JSON.parse('<%= freshfone_numbers_options.html_safe %>');
-	freshfone.call_status_list = JSON.parse('<%= filtered_by_call_status_options.html_safe%>');
-	freshfone.date_picker_labels = JSON.parse('<%= date_picker_labels.html_safe %>');
-	freshfone.group_list = JSON.parse('<%= groups_options.html_safe %>');
-	freshfone.customer_autocomplete_path = '<%= customer_phone_number_freshfone_autocomplete_path %>';
 <% end %>
 
+<%= include_cloudfront_js :freshfone_call_history %>
+
+<%= include_cloudfront_css :freshfone_call_history %>

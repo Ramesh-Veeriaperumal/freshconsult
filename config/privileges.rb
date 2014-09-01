@@ -57,7 +57,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
 
-    resource :"helpdesk/conversation", :only => [:note]
+    resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability, :list]

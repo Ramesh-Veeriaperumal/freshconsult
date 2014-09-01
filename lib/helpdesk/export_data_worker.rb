@@ -34,7 +34,8 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
                     :host => @current_account.host, 
                     :protocol => 'http')
       DataExportMailer.deliver_data_backup({:email => params[:email], 
-                                            :domain => params[:domain], 
+                                            :domain => params[:domain],
+                                            :host => @current_account.host,
                                             :url =>  url})
       delete_zip_file zip_file_path  #cleaning up the directory
       @data_export.completed!
