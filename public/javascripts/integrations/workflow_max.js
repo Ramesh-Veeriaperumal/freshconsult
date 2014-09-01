@@ -7,6 +7,7 @@ WorkflowMaxWidget.prototype = {
 	CREATE_JOB:new Template('<div id="workflowmaxNewJob"><form id="workflow-max-jobentry-form" class="timesheet_form ui-form"><input type="hidden" name="selectedClient" value=#{client_id} id="selectedClient"><dl><dt class="jobName"><label>Job Name</label></dt><dd><input type="text" name="jobName" id="jobName"></dd><dt class="jobDesc"><label>Job Description</label></dt><dd><textarea name="jobDesc" id="jobDesc"></textarea></dd><dt></dt><dd pull-right><input type="button" id="workflow-max-jobentry-submit" value="Submit" onClick="workflowMaxWidget.logNewJob()";return false;" class="btn btn-mini btn-primary"> <input type="button" id="workflow-max-jobentry-cancel" value="Cancel" class="btn btn-mini" onClick="workflowMaxWidget.cancelNewJob()"; return false;"><dd></dl></form></div>'),
 	CREATE_JOBENTRY_REQ:new Template('<Job><Name>#{job_name}</Name><Description>#{job_desc}</Description><StartDate>#{start_date}</StartDate> <DueDate>#{due_date}</DueDate><ClientID>#{client_id}</ClientID></Job>'),
 	ASSIGN_STAFFENTRY_REQ:new Template('<Job><ID>#{job_id}</ID><add id="#{staff_id}"/></Job>'),
+	ASSIGN_TASKENTRY_REQ:new Template('<Task><Job>#{job_id}</Job><TaskID>#{task_id}</TaskID><EstimatedMinutes>#{estimated_minutes}</EstimatedMinutes></Task>'),
 
 	initialize:function(workflowMaxBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
@@ -63,7 +64,6 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	loadWorkflowmaxWidget: function(){
-		console.log("loadWorkflowmaxWidget")
 		this.freshdeskWidget.request({
 			entity_name: "request",
 			accept_type: "application/xml",
@@ -123,6 +123,8 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	jobChanged:function(job_id) {
+		jQuery('#workflow-max-timeentry-tasks').hide();
+		jQuery('#workflow-max-tasks-spinner').show();
 		if(job_id == "newJob")
 		{
 			jQuery('#workflow_max-timeentry-enabled').attr('disabled','true')
@@ -208,34 +210,95 @@ WorkflowMaxWidget.prototype = {
 	createTimeEntry:function(resultCallback) {
 		if(jQuery('.integration_container').css('display') != "none")
 		{
-		if (workflowMaxWidget.validateInput()) {
-			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
-				staff_id: $("workflow-max-timeentry-staff").value,
-				job_id: $("workflow-max-timeentry-jobs").value,
-				task_id: $("workflow-max-timeentry-tasks").value,
-				notes: $("workflow-max-timeentry-notes").value,
-				hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
-				date: this.executed_date.toString("yyyyMMdd")
-			});
+			if (workflowMaxWidget.validateInput()) 
+			{
+				this.freshdeskWidget.request({
+					entity_name: "request",
+					accept_type: "application/xml",
+					method: "get", 
+					rest_url: "/job.api/tasks"+this.auth_keys,
+					on_success: function(evt){
+						isExists = this.validateResponse(evt);
+						if(!isExists)
+						{
+							var body = this.ASSIGN_TASKENTRY_REQ.evaluate({
+								job_id: $("workflow-max-timeentry-jobs").value,
+								task_id: $("workflow-max-timeentry-tasks").value,
+								estimated_minutes: "1400"
+							});
 
-			this.freshdeskWidget.request({
-				body: body,
-				content_type: "application/xml",
-				method: "post",
-				rest_url: "time.api/add"+this.auth_keys,
-				on_success: function(evt){
-					this.handleTimeEntrySuccess(evt);
-					this.add_workflow_max_resource_in_db();
-					if (resultCallback) {
-						this.result_callback = resultCallback;
-						resultCallback(evt);
-					}
-				}.bind(this)
-			});
-			}
+							this.freshdeskWidget.request({
+								body: body,
+								content_type: "application/xml",
+								method: "post",
+								rest_url: "job.api/task"+this.auth_keys,
+
+								on_success: function(evt){
+									created_task_id = this.getTaskId(evt);
+									task_id = created_task_id > 0 ? created_task_id : $("workflow-max-timeentry-tasks").value
+
+									var body = this.CREATE_TIMEENTRY_REQ.evaluate({
+										staff_id: $("workflow-max-timeentry-staff").value,
+										job_id: $("workflow-max-timeentry-jobs").value,
+										task_id: task_id,
+										notes: $("workflow-max-timeentry-notes").value,
+										hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+										date: this.executed_date.toString("yyyyMMdd")
+									});
+
+									this.freshdeskWidget.request({
+										body: body,
+										content_type: "application/xml",
+										method: "post",
+										rest_url: "time.api/add"+this.auth_keys,
+										on_success: function(evt){
+											this.handleTimeEntrySuccess(evt);
+											this.add_workflow_max_resource_in_db();
+											if (resultCallback) {
+
+												this.result_callback = resultCallback;
+												resultCallback(evt);
+											}
+										}.bind(this),
+										on_failure: function(evt){}
+									});
+								}.bind(this),
+								on_failure: function(evt){}
+							}); //job.api/task - post
+						}
+						else
+						{
+							var body = this.CREATE_TIMEENTRY_REQ.evaluate({
+								staff_id: $("workflow-max-timeentry-staff").value,
+								job_id: $("workflow-max-timeentry-jobs").value,
+								task_id: $("workflow-max-timeentry-tasks").value,
+								notes: $("workflow-max-timeentry-notes").value,
+								hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+								date: this.executed_date.toString("yyyyMMdd")
+							});
+
+							this.freshdeskWidget.request({
+								body: body,
+								content_type: "application/xml",
+								method: "post",
+								rest_url: "time.api/add"+this.auth_keys,
+								on_success: function(evt){
+								this.handleTimeEntrySuccess(evt);
+								this.add_workflow_max_resource_in_db();
+							if (resultCallback) {
+								this.result_callback = resultCallback;
+								resultCallback(evt);
+								}
+							}.bind(this),
+							on_failure: function(evt){}
+							});
+						} //else ifexists -true
+					}.bind(this) //jobapi.task success
+				}); //job.api req - Get
+			} //if validateinput ends
 			return false;
-		}
-	},
+		} //if display none ends
+},
 
 	handleTimeEntrySuccess:function(resData) {
 		resXml = resData.responseXML;
@@ -683,38 +746,60 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	loadTaskEntry: function(resData)  {
-		jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
-		this.taskData = resData.responseXML
 		var searchTerm = null;
 		taskData=[];
 		if(resData == "" || resData == null)
 		{
-			jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
 			taskData.push({"ID": "noTask", "Name":"No tasks available"});
+			taskData = {"Task": taskData}
+			this.loadTaskComboBox(taskData,searchTerm);
 		}
 		else 
 		{
-			task_list = XmlUtil.extractEntities(this.taskData, "Task"); 
-
-			if(task_list.length)
+			this.taskDataList = resData.responseXML;
+			tasks_list = XmlUtil.extractEntities(this.taskDataList, "Task"); 
+			if(tasks_list.length)
 			{
-				for(var i=0;i<task_list.length;i++) 
+				taskData = this.constructTasks(tasks_list);
+				this.loadTaskComboBox(taskData,searchTerm);
+			}
+			else
+			{
+				this.freshdeskWidget.request({
+				entity_name: "request",
+				accept_type: "application/xml",
+				method: "get", 
+				rest_url: "/task.api/list"+this.auth_keys,
+				on_success: function(evt){
+						this.allTasks = evt.responseXML;
+						tasks_list = XmlUtil.extractEntities(this.allTasks, "Task"); 
+						if(tasks_list.length)
+						{
+							taskData = this.constructTasks(tasks_list);
+							this.loadTaskComboBox(taskData,searchTerm);
+						}
+					}.bind(this)
+				});
+
+			}
+			
+		}	
+	},
+
+	constructTasks: function(task_list)
+	{
+		taskData=[];
+		for(var i=0;i<task_list.length;i++) 
 				{
 					task_node = task_list[i];
 					task_id = XmlUtil.getNodeValue(task_node, "ID");
 					task_name = XmlUtil.getNodeValue(task_node, "Name");
 					taskData.push({"ID":task_id,"Name":task_name});
 				}
-			}
-			else
-			{
-				jQuery('#workflow-max-timeentry-tasks').addClass('header-spinner')
-				taskData.push({"ID": "noTask", "Name":"No tasks available"});
-			}
-		}
+
 		taskData = {"Task": taskData}
-		this.loadTaskComboBox(taskData,searchTerm);
-		
+		return taskData;
+
 	},
 
 	loadAllTasksData : function(resData) {
@@ -729,7 +814,6 @@ WorkflowMaxWidget.prototype = {
 					tasks_node = tasks_list[i];
 					task_id = XmlUtil.getNodeValue(tasks_node, "ID");
 					task_name = XmlUtil.getNodeValue(tasks_node, "Name");
-					console.log ("task_id " + task_id + " - task name " + task_name);
 					tasksData.push({"ID":task_id,"Name":task_name});
 				}
 				tasksData = {"Task": tasksData}
@@ -739,6 +823,8 @@ WorkflowMaxWidget.prototype = {
 
 
 	loadTaskComboBox :function(taskData,searchTerm) {
+		$('workflow-max-tasks-spinner').hide();
+		$('workflow-max-timeentry-tasks').show();
 		UIUtil.constructDropDown(taskData, 'hash', "workflow-max-timeentry-tasks", "Task", "ID",  ["Name"], null, searchTerm||"", false);
 		UIUtil.sortDropdown("workflow-max-timeentry-tasks");
 		UIUtil.hideLoading('workflow-max','tasks','-timeentry');
@@ -791,7 +877,6 @@ WorkflowMaxWidget.prototype = {
 		resXml = resData.responseText;
 		xmlDoc = jQuery.parseXML(resXml);
 		var node_value = xmlDoc.getElementsByTagName('Job')[0].childNodes[0];
-		console.log(node_value);
 		var newly_created_id = node_value.textContent;
 	
 		var body = this.ASSIGN_STAFFENTRY_REQ.evaluate({
@@ -812,6 +897,46 @@ WorkflowMaxWidget.prototype = {
 						//this.staffChanged($("workflow-max-timeentry-staff").value);
 					}.bind(this)
 				});
+	},
+
+	validateResponse:function(evt)
+	{
+		this.jobs = evt.responseXML;
+		job_list = XmlUtil.extractEntities(this.jobs, "Job"); 
+		if(job_list.length)
+		{
+			for(var i=0;i<job_list.length;i++) 
+			{
+				job_node = job_list[i];
+				job_id = XmlUtil.getNodeValue(job_node, "ID");
+				if(job_id == $("workflow-max-timeentry-jobs").value)
+				{
+					task_list = XmlUtil.extractEntities(job_node, "Task");
+						if(task_list.length)
+						{
+							for(var k=0; k<task_list.length; k++)
+							{
+								task_node = task_list[k];
+								task_id = XmlUtil.getNodeValue(task_node, "ID");
+								if(task_id == $("workflow-max-timeentry-tasks").value)
+								{
+									return true;
+								}
+							}
+						}
+					}		
+				}
+				return false;
+			}
+
+	},
+
+	getTaskId:function(evt)
+	{
+		var task_id = 0;
+		var resEntities = XmlUtil.extractEntities(evt.responseXML,"Response");
+		task_id = XmlUtil.getNodeValueStr(resEntities[0],"ID");
+		return task_id;
 	},
 }
 

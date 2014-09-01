@@ -22,13 +22,13 @@ module APIHelperMethods
   end
 
   #white listed colums.
-  ALLOWED_QUERY_COLUMNS =["email","phone","mobile"]
+  ALLOWED_QUERY_COLUMNS =["email","phone","mobile","customer_id"]
 
   #operator conversion
   OPERATORS = {"is"=>"=","like"=>"like"}
 
   #add the appropriate regex here.
-  COLUMNS_REGEX ={"email"=>User::EMAIL_REGEX,"phone"=>/\d+/,"mobile"=>/\d+/}
+  COLUMNS_REGEX ={"email"=>User::EMAIL_REGEX,"phone"=>/\d+/,"mobile"=>/\d+/,"customer_id"=>/\d+/}
 
 
 end

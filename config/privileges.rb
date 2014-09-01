@@ -64,7 +64,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -338,6 +338,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :account, :only => [:show, :cancel]
     resource :account_configuration
     resource :"admin/data_export"
+    resource :"admin/fresh_import"
     resource :subscription # plans and billing
     resource :"admin/zen_import"
     # new item day passes && getting started
