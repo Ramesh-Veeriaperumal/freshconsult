@@ -77,7 +77,8 @@ module ChatHelper
       :default_agent_joined_msg => t("freshchat.agent_joined_msg"),
       :default_agent_left_msg => t("freshchat.agent_left_msg"),
       :default_thank_message => t("freshchat.thank_message"),
-      :default_non_availability_message => t("freshchat.non_availability_message")
+      :default_non_availability_message => t("freshchat.non_availability_message"),
+      :default_prechat_message => t("freshchat.prechat_message")
     }
     return freshchat_setting.to_json.html_safe
   end
