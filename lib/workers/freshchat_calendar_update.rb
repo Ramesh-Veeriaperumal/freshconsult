@@ -1,13 +1,14 @@
 # Reseque Job to run freshchat background jobs // Command : bundle exec rake resque:work QUEUE=freshchatQueue VERBOSE=1
 # POST /sites/busupdate , siteId :#{siteId}, payload :#{payload}
 
-class Freshchat::BusinessCalUpdate
+class Workers::FreshchatCalendarUpdate
 	extend Resque::AroundPerform
 	require 'httparty'
 	require "openssl"
 	require 'base64'
 	@queue = "freshchatQueue"
-	@url = "http://" + ChatConfig['communication_url'][Rails.env] + ":4000/sites/calendarupdate"
+	@subUrl = (Rails.env == "development") ? ":4000" : ""
+	@url = "http://" + ChatConfig['communication_url'][Rails.env] + @subUrl +"/sites/calendarupdate"
 
 	def self.perform(args)
 		token = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{args[:display_id]}")

@@ -164,7 +164,7 @@ class BusinessCalendar < ActiveRecord::Base
           display_id = current_account.chat_setting['display_id']
           @CalendarData = if (type.eql? "destroy") then nil else self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}) end
 
-          Resque.enqueue(Freshchat::BusinessCalUpdate, {:type => type, :display_id => display_id, :calendarData => @CalendarData})
+          Resque.enqueue(Workers::FreshchatCalendarUpdate, {:type => type, :display_id => display_id, :calendarData => @CalendarData})
         end
       end
 

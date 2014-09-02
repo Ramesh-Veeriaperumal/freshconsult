@@ -4,7 +4,7 @@ class Admin::ChatSettingController < Admin::AdminController
   before_filter { |c| c.requires_feature :chat }
 
   def index
-    unless feature?(:chat) || is_chat_plan?
+    unless feature?(:chat)
       render_404
     end
   end
@@ -26,7 +26,7 @@ class Admin::ChatSettingController < Admin::AdminController
       businessCal_id = params[:chat_setting][:business_calendar_id] 
 
       @CalendarData = (businessCal_id.eql? '0') ? nil : BusinessCalendar.find(businessCal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]})
-      Resque.enqueue(Freshchat::BusinessCalUpdate, {:type => "update", :display_id => params[:siteId], :calendarData => @CalendarData, :proactive_chat => proactive_chat, :proactive_time => proactive_time})
+      Resque.enqueue(Workers::FreshchatCalendarUpdate, {:type => "update", :display_id => params[:siteId], :calendarData => @CalendarData, :proactive_chat => proactive_chat, :proactive_time => proactive_time})
     else
     	@status = "error"
       render_result

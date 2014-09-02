@@ -1,10 +1,5 @@
 module ChatHelper
 
-  def is_chat_plan?
-    freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden] ]
-    freshchat_plans.include?(current_account.subscription.subscription_plan.name)
-  end
-
   def ticket_link_options
     return [  [  "...",  -1],
               [  I18n.t('freshchat.feedback_widget'),  0],
