@@ -737,9 +737,9 @@ WorkflowMaxWidget.prototype = {
 	validateJobInput:function()
 	{
 		var jobName = $("jobName").value;
-		if(jobName == "..")
+		if(!$("jobName").value || !$("jobDesc").value)
 		{
-			alert("Select a job");
+			alert("Provide value for Job name and description");
 			return false;
 		}
 		return true;
@@ -844,6 +844,7 @@ WorkflowMaxWidget.prototype = {
 		var job_desc = $("jobDesc").value;
 
 		if (workflowMaxWidget.validateJobInput()) { 
+			jQuery("#workflow-max-jobentry-submit").attr("disabled","disabled");
 			var body = this.CREATE_JOBENTRY_REQ.evaluate({
 				client_id: $("selectedClient").value,
 				job_name: $("jobName").value,
@@ -878,7 +879,6 @@ WorkflowMaxWidget.prototype = {
 		xmlDoc = jQuery.parseXML(resXml);
 		var node_value = xmlDoc.getElementsByTagName('Job')[0].childNodes[0];
 		var newly_created_id = node_value.textContent;
-	
 		var body = this.ASSIGN_STAFFENTRY_REQ.evaluate({
 				job_id: newly_created_id,
 				staff_id: $("workflow-max-timeentry-staff").value
@@ -890,8 +890,8 @@ WorkflowMaxWidget.prototype = {
 					rest_url: "job.api/assign"+this.auth_keys,
 
 					on_success: function(evt){
+						jQuery('.workflow_max_timetracking_widget').after('<div id="jobsuccessdiv" class="alert sucess">Job added successfully</div>');
 						window.setTimeout(function() {
-							jQuery('.workflow_max_timetracking_widget').after('<div id="jobsuccessdiv" class="alert sucess">Job added successfully</div>');
 				  			widgetInst.cancelNewJob();
 				         }, 2000);
 						//this.staffChanged($("workflow-max-timeentry-staff").value);
