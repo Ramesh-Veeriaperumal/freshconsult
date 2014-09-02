@@ -5772,7 +5772,7 @@ en:
     ignore: "Ignore"
     transfer_msg: "made a chat transfer request"
     unauthorized_attempt_msg: "Unauthorized Attempt - logout"
-    update_success_msg: "Chat settings saved. Please update installation code in your website or app for changes to reflect."
+    update_success_msg: "Chat settings saved."
     update_error_msg: "Error while updating chat settings."
     recent_messages: "Recent Messages"
     agents: "Agents"
