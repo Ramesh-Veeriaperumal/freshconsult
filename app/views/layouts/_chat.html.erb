@@ -1,4 +1,5 @@
-<% account = current_account
+<% account = current_account %>
+<%if (current_user) 
 comm_url = ChatConfig['communication_url'][Rails.env]
 asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
 chat_debug = ChatConfig['chat_debug'][Rails.env]
@@ -183,7 +184,7 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
     });
 })(jQuery);
 </script>
-<%if (current_user && chat_active? && !(is_assumed_user?))%>
+<%if (chat_active? && !(is_assumed_user?))%>
 <div id="freshchat_layout"></div>
 <script language="javascript">
 (function($){
@@ -200,4 +201,5 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
 var SITE_ID = '<%=account.chat_setting.display_id%>';
 </script>
 <!-- Chat related contents ends -->
+<%end%>
 <%end%>
