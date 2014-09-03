@@ -4,6 +4,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Presence
 	include Freshfone::NumberMethods
 	include Freshfone::CallsRedisMethods
+	include Freshfone::TicketActions
 	
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]

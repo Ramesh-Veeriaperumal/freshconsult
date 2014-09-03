@@ -26,8 +26,7 @@ module Freshfone::Call::Branches::BatchHandler
     end
 
     def batch_agents_online
-      asc_desc = current_number.round_robin? ? "ASC" : "DESC" 
-      @available_agents = current_account.freshfone_users.agents_online_ordered(asc_desc).find_all_by_id(batch_agents_ids)
+      @available_agents = current_account.freshfone_users.online_agents.find_all_by_id(batch_agents_ids)
     end
 
 
