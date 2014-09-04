@@ -6,7 +6,7 @@ module Freshfone::Call::Branches::Transfer
       current_call.update_call(params)
       dial_to_source_agent and return empty_twmil_without_render if should_call_back_to_agent?
       add_transfer_cost_job
-      # update_agent_presence(params[:source_agent]) #removed additional user presence update on transfer.
+      update_agent_presence(params[:source_agent])
       unpublish_live_call(params)
       return empty_twmil_without_render
     end
