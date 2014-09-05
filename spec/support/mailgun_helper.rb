@@ -19,7 +19,7 @@ module MailgunHelper
 			"stripped-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
 			"body-plain" => email_body,
 			"stripped-text" => email_body,
-			:headers => get_header(options[:email_config], options[:m_id], options[:auto]),
+			"message-headers" => get_header(options[:email_config], options[:m_id], options[:auto]),
 			"subject" => Faker::Lorem.words(10).join(" "),
 			:sender_ip => random_ip,
 			:recipient => env[:to],
@@ -136,16 +136,27 @@ module MailgunHelper
 	end
 
 	def get_header email_config, m_id, auto
-		%(Received: by mx-005.sjc1.sendgrid.net with SMTP id n7jhL6gJjE Mon, 09 Dec 2013 12:22:01 +0000 (GMT)\n
-			Received: from mail-we0-f175.google.com (mail-we0-f175.google.com [74.125.82.175]) by mx-005.sjc1.sendgrid.net (Postfix) with ESMTPS id 8CA39E83644 for <#{email_config}>;
-			Mon,  9 Dec 2013 12:22:00 +0000 (GMT)\n
-			Received: by mail-we0-f175.google.com with SMTP id t60so3321281wes.20 for <support@green.freshbugs.com>; Mon, 09 Dec 2013 04:21:59 -0800 (PST)\n
-			DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
-			h=mime-version:reply-to:date:message-id:subject:from:to:cc:references:in-reply-to :content-type; bh=S5DmbRJfiZcABAr0IOIjy8i9u+fz1id1uiwiVexrrfA=;
-			b=EoCyUNebROXHJzprUFu1tex220+zQIX/psMO8/kCjAAROvKtuwr9Cw/EyyqvrGLaJl OVaBUPN8r4/payU4idpSYc4UrnIQnyFYMhsQf5yO/iZw0xybA+FrXhvlKO1589OsVe2p pxz9iKF91anM1c+oUgf5+hn+PNQB7AyWM22hUiWG6Ot7DTth2/ekr9tGp2yfLnJsW2a1
-			GL6jYMSMjm5MLDD/QXRFWMA9AJZUrNkSZtzs06pAnHwb7Xg/sQjn+EoRiiKGT93USN/j PQRXrF0g2bb447HbJcvO6Gqllr+EeeQKIsn4M+Dnqvqzwi5YTKbh57fcSI+JW9nC+jvr RVtA==\nMIME-Version: 1.0\nX-Received: by 10.180.20.15 with SMTP id
-			j15mr13980557wie.4.1386591719017; Mon, 09 Dec 2013 04:21:59 -0800 (PST)\nReceived: by 10.217.54.199 with HTTP; Mon, 9 Dec 2013 04:21:58 -0800 (PST)\nReply-To: #{reply_to || random_email}\nDate: #{DateTime.now}\nMessage-ID: #{message_id}\n
-			Subject: New parameter fetch - Lesser\nFrom: #{format_1(from)}\nTo: #{to}\nCc: #{cc}\nReferences: #{generate_references(m_id)}\nIn-Reply-To: <#{m_id || ""}>\nPrecedence: #{auto ? "auto_reply" : ""}\nContent-Type: multipart/mixed; boundary=bcaec53f3985dc812004ed190a39\n)
+		[
+			["Received", "by mx-005.sjc1.sendgrid.net with SMTP id n7jhL6gJjE Mon, 09 Dec 2013 12:22:01 +0000 (GMT)\n"], 
+			["Received", "from mail-we0-f175.google.com (mail-we0-f175.google.com [74.125.82.175]) by mx-005.sjc1.sendgrid.net (Postfix) with ESMTPS id 8CA39E83644 for <#{email_config}>;
+				Mon,  9 Dec 2013 12:22:00 +0000 (GMT)\n"], 
+			["Received", "by mail-we0-f175.google.com with SMTP id t60so3321281wes.20 for <support@green.freshbugs.com>; Mon, 09 Dec 2013 04:21:59 -0800 (PST)\n
+				DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+				h=mime-version:reply-to:date:message-id:subject:from:to:cc:references:in-reply-to :content-type; bh=S5DmbRJfiZcABAr0IOIjy8i9u+fz1id1uiwiVexrrfA=;
+				b=EoCyUNebROXHJzprUFu1tex220+zQIX/psMO8/kCjAAROvKtuwr9Cw/EyyqvrGLaJl OVaBUPN8r4/payU4idpSYc4UrnIQnyFYMhsQf5yO/iZw0xybA+FrXhvlKO1589OsVe2p pxz9iKF91anM1c+oUgf5+hn+PNQB7AyWM22hUiWG6Ot7DTth2/ekr9tGp2yfLnJsW2a1
+				GL6jYMSMjm5MLDD/QXRFWMA9AJZUrNkSZtzs06pAnHwb7Xg/sQjn+EoRiiKGT93USN/j PQRXrF0g2bb447HbJcvO6Gqllr+EeeQKIsn4M+Dnqvqzwi5YTKbh57fcSI+JW9nC+jvr RVtA==\nMIME-Version: 1.0\nX-Received: by 10.180.20.15 with SMTP id
+				j15mr13980557wie.4.1386591719017; Mon, 09 Dec 2013 04:21:59 -0800 (PST)\n"], 
+			["Received", "by 10.217.54.199 with HTTP; Mon, 9 Dec 2013 04:21:58 -0800 (PST)\n"], 
+			["Reply-To", "#{auto ? reply_to : ""}"],
+			["Date", "#{DateTime.now}"],
+			["Message-ID", "#{message_id}"], 
+			["Subject", "New parameter fetch - Lesser"], 
+			["From", "#{format_1(from)}"], 
+			["To", "#{to}"],["Cc", "#{cc}"],
+			["References", "#{generate_references(m_id)}"],
+			["In-Reply-To", "<#{m_id || ""}>"],
+			["Precedence", "#{auto ? "auto_reply" : ""}"],["Content-Type", "multipart/mixed; boundary=bcaec53f3985dc812004ed190a39"]
+		].to_json
 	end
 
 	def generate_references m_id

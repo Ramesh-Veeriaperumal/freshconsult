@@ -10,8 +10,7 @@ module Admin::HomeHelper
       },
       :freshchat                       =>   {
         :url                           =>   "/admin/chat_setting",
-        :privilege                     =>   privilege?(:admin_tasks) && (current_account.subscription.is_chat_plan? || 
-                                                                                    current_account.features?(:chat))
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:chat)
       },
       :freshfone                       =>   {
         :url                           =>   "/admin/freshfone",

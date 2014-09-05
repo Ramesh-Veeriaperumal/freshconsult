@@ -5334,12 +5334,12 @@ es:
     ticket:
       recording: "Reproducir mensaje"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
-      ticket_desc: "Conversación con el %{customer} desde %{location} y <b>%{agent}</b>%{agent_number}<br/ >"
-      voicemail_ticket_desc: "Mensaje de voz de %{customer} desde %{location}"
+      ticket_desc: "Conversación con el %{customer_number} desde %{location} y <b>%{agent}</b>%{agent_number}<br/ >"
+      voicemail_ticket_desc: "Mensaje de voz de %{customer_number} desde %{location}"
       voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "y<b>%{agent}</b>%{agent_number}<br/ >"
       dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
-      dial_a_number: "Conversación con %{customer} desde %{location}. Llamada conectada desde al número IVR: %{direct_dial_number}"
+      dial_a_number: "Conversación con %{customer_number} desde %{location}. Llamada conectada desde al número IVR: %{direct_dial_number}"
       default_subject: "Llamada con %{customer} el %{call_date}"
       voicemail_subject: "Mensaje de voz de %{customer}"
       human_name: ticket

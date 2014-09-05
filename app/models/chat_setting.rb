@@ -10,21 +10,8 @@ class ChatSetting < ActiveRecord::Base
 	belongs_to_account
 	belongs_to :business_calendar
 
-	after_create :set_display_id
+	attr_protected :account_id
+  serialize :preferences
+  serialize :non_availability_message
 
-	serialize :preferences, Hash
-	serialize :non_availability_message, Hash
-
-	attr_protected :account_id, :display_id
-
-	def visitor_session
-	      generated_hash = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{self.display_id}")
-	      generated_hash
-  	end
-
-  	private
-	  	def set_display_id
-		     self.display_id = Digest::MD5.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{self.id}")
-		     self.save
-		end
 end

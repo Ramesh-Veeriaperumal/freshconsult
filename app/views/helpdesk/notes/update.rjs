@@ -3,4 +3,7 @@ page << "jQuery('#note_details_#{@item.id}').html(\"#{escape_javascript(@item.bo
 page << "jQuery('#note_details_#{@item.id}').removeClass('hide')"
 
 page << "trigger_event('note_updated', #{to_event_data(@item)});"
+
+page.replace_html "note_attachments_container_#{@item.id}".to_sym, :partial => '/helpdesk/tickets/show/note_attachments', :locals => { :note => @item}
+
 show_ajax_flash(page)

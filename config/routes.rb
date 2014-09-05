@@ -243,7 +243,7 @@
   end
 
   map.resources :reports
-  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post}
+  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post, :generate_pdf => :post}
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
@@ -682,4 +682,8 @@
   map.connect '/all_agents', :controller => 'agents', :action => 'list'
   map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
+  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
+  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+
 end

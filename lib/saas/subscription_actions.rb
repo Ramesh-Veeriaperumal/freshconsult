@@ -110,12 +110,7 @@ class SAAS::SubscriptionActions
     end
 
     def remove_chat_feature(account)
-      if !account.subscription.is_chat_plan? && account.features?(:chat)
-        account.remove_feature(:chat)
-        if account.features?(:chat_enable)
-          account.remove_feature(:chat_enable)
-        end
-      end
+      account.remove_feature(:chat) if !account.subscription.is_chat_plan? && account.features?(:chat)
     end
  
 end

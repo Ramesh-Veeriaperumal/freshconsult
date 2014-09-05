@@ -68,6 +68,17 @@ include FreshfoneHelper
     average = (answered != 0) ? sum/answered : 0
   end
 
+  def helpdesk_handle_time(call_list)
+    sum = 0
+    answered =  helpdesk_calls_count(call_list) - unanswered_calls_count(call_list)
+    call_list.each do |calls|
+      next if calls.agent_name.blank? || calls.total_duration.blank?
+      sum += calls.total_duration
+    end
+    average = (answered != 0) ? sum/answered : 0
+  end
+
+
   def call_handle_time(call_list)
     call_list.inject(0) { |sum, calls|
       sum + calls.total_duration

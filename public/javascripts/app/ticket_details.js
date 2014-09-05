@@ -695,8 +695,9 @@ var scrollToError = function(){
 
 	$('body').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
 		if ($(ev.target).is('a')) return;
-
-		$(this).toggleClass('minimized');
+		if(($(this).find(".edit_helpdesk_note").length == 0) || ($(this).find(".edit_helpdesk_note").is(":hidden"))){
+			$(this).toggleClass('minimized');
+		}
 	});
 
 	$('body').on('click.ticket_details', '.collision_refresh', function(ev) {
