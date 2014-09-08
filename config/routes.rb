@@ -275,7 +275,8 @@
                 
     social.resources :twitter,
                 :collection => {  :twitter_search => :get, :show_old => :get, :fetch_new => :get, :create_fd_item => :post,
-                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post  }
+                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post,
+                                  :favorite => :post, :unfavorite => :post, :followers => :get, :follow => :post, :unfollow => :post}
   end
 
   #SAAS copy starts here

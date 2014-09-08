@@ -82,7 +82,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
-        :only => [:create_fd_item, :reply, :retweet, :post_tweet]
+        :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
   end
 
   forward_ticket do

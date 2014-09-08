@@ -4198,6 +4198,13 @@ en:
         user_info_blank: Please add a twitter handle to your account to fetch user's information.
         feeds_blank: Please add a twitter handle to your account to fetch your custom stream.
         retweet_success: Retweeted.
+        favorite_success: Favorited.
+        follow_success: Followed
+        unfollow_success: Unfollowed
+        already_followed: Followed Already
+        already_unfollowed: Unfollwed Already
+        already_favorited_tweet: Already Favorited.
+        unfavorite_success: Unfavorited.
         already_retweeted: Tweet has already been retweeted from this account.
         tweeted: Your tweet has been sent.
         already_tweeted: Your tweet is a duplicated.
@@ -4205,8 +4212,13 @@ en:
         rate_limit_reached: Could not perform the operation. Please try after sometime.
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
+        wrong_call: Trying to unfavorite a tweet that has not been favorited
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
+        cannot_favorite: You dont have permission to favorite a tweet.
+        cannot_unfavorite: You dont have permission to unfavorite a tweet.
+        cannot_follow: You dont have permission to follow this user.
+        cannot_unfollow: You dont have permission to unfollow this user.
         cannot_create_fd_item: You dont have permission to convert a tweet to a ticket / note.
         cannot_post: You dont have permission to tweet.
         no_older_results: No more recent posts in this stream.

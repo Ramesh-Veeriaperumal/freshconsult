@@ -78,6 +78,15 @@ module TwitterHelper
     OAuth2::Response.new(faraday_response)
   end
   
+  def sample_follower_ids
+    cursor = Class.new do
+              attr_accessor :attrs
+            end
+    cursor = cursor.new
+    cursor.attrs = {:ids => [@handle.twitter_user_id]}
+    cursor
+  end
+  
   def sample_dynamo_query_params
     {
       :member =>
