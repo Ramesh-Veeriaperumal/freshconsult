@@ -63,10 +63,10 @@ namespace :spam_watcher_redis do
         table_name = queue.split("sw_")[1]
         unless paid_account?(account)
           operation = "blocked"
-          # block_spam_user(user)
+          block_spam_user(user) if RAILS_ENV == "test"
         else
-          operation = "deleted"
-          # delete_user(user)
+          operation = "deleted" 
+          delete_user(user) if RAILS_ENV == "test"
         end
         # deleted_users = account.all_users.find([user.id])
         deleted_users = [user]

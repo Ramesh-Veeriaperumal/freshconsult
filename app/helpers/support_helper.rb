@@ -105,10 +105,18 @@ module SupportHelper
 							</a>
 						</div>)
 		else
-			output << %(<div class="hide-in-mobile"><a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
-			output << %( #{I18n.t('or')} <a href=\"#{portal['signup_url'] }\">
-							#{I18n.t('portal.signup')}</a>) if portal['can_signup_feature']
-			output << %( #{I18n.t('portal.to_submit_ticket')}</div> )
+			if portal['can_signup_feature']
+				output << content_tag(:div, 
+															I18n.t('portal.login_signup_to_submit_ticket', 
+																			:login_url => portal['login_url'], 
+																			:signup_url => portal['signup_url']).html_safe, 
+															:class => "hide-in-mobile")
+			else
+				output << content_tag(:div, 
+															I18n.t('portal.login_to_submit_ticket', 
+																			:login_url => portal['login_url']).html_safe, 
+															:class => "hide-in-mobile")
+			end
 		end
 		output << %(	<div>
 							<a href="#{ portal['tickets_home_url'] }" class="mobile-icon-nav-status check-status ellipsis">
@@ -461,18 +469,15 @@ HTML
 	def post_topic_in_portal portal, post_topic = false
 		output = []
 		output << %(<section class="lead">)
+
 		if portal['facebook_portal']
-			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
-		else
-			output << I18n.t('portal.login_or_signup', 
-				:login => "<a href=\"#{portal['topic_reply_url']}\">#{I18n.t('portal.login')}</a>",
-				:signup => "<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if
-						portal['can_signup_feature']
-		end
-		if post_topic
-			output << I18n.t("portal.to_post_topic")
-		else
-			output << I18n.t("portal.to_post_comment")
+			text_key = post_topic ? 'login_to_post_topic' : 'login_to_post_comment'
+			output << I18n.t("portal.#{text_key}")
+		elsif portal['can_signup_feature']
+			text_key = post_topic ? 'login_signup_to_post_topic' : 'login_signup_to_post_comment'
+			output << I18n.t("portal.#{text_key}", 
+												:topic_reply_url => portal['topic_reply_url'], 
+												:signup_url => portal['signup_url'])
 		end
 
 		output << %(</section>)
@@ -526,7 +531,7 @@ HTML
 				output << %(<div class="pull-right post-actions">
 								<a 	href="#{post['toggle_answer_url']}"
 									data-method="put"
-									class="tooltip"
+									data-toggle="tooltip"
 									title="#{label}"
 									><i class="icon-#{post.answer? ? 'unmark' : 'mark'}-answer"></i></a>
 							</div>)
@@ -538,7 +543,7 @@ HTML
 			                		data-submit-label="#{label}" data-close-label="#{t('cancel')}"
 			                		data-submit-loading="#{t('ticket.updating')}..."
 			                		data-width="700px"
-			                		class="tooltip"
+			                		data-toggle="tooltip"
 									title="#{label}"
 			                		><i class="icon-mark-answer"></i></a>
 			                </div>)

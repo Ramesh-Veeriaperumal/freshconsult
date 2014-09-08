@@ -14,7 +14,17 @@ class BusinessCalendar < ActiveRecord::Base
   #can revisit this data model later...
   belongs_to :account
   before_create :set_default_version, :valid_working_hours?
-  after_commit :clear_cache, on: :update
+  after_commit ->(obj) { 
+      obj.clear_cache
+      chatBusinessCalendarUpdate('update') 
+    }, on: :create
+
+  # ##### Added to mirror db changes in helpkit to freshchat db
+  after_commit ->(obj) { 
+      obj.clear_cache 
+      chatBusinessCalendarUpdate('destroy') 
+    }, on: :destroy
+  ####
   
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validates_presence_of :time_zone, :name
@@ -153,6 +163,19 @@ class BusinessCalendar < ActiveRecord::Base
       Account.current.features?(:multiple_business_hours) &&
        @business_hour_caller && 
        @business_hour_caller.business_calendar
+    end
+
+    def chatBusinessCalendarUpdate(type)
+      current_account = Account.current
+      if current_account.features?(:chat)
+        if current_account.chat_setting['business_calendar_id'] == self['id']
+          display_id = current_account.chat_setting['display_id']
+          @CalendarData = if (type.eql? "destroy") then nil else self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}) end
+
+          Resque.enqueue(Workers::FreshchatCalendarUpdate, {:type => type, :display_id => display_id, :calendarData => @CalendarData})
+        end
+      end
+
     end
 
 end

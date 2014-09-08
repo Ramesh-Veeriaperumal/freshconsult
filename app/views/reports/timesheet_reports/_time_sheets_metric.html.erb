@@ -51,7 +51,7 @@
     <%unless @time_sheet_data[:total_time] == 0%>
       jQuery('#bar_chart_noinfo').hide();
       var singleStakedBar = new single_stacked_bar_chart(
-        {renderTo: 'timesheet_single_stacked_bar_chart',isCustom: true, chartData:<%=@activity_data_hash['barchart_data'].to_json.html_safe%>}
+        {renderTo: 'timesheet_single_stacked_bar_chart',isCustom: true, isPDF: true, chartData:<%=@activity_data_hash['barchart_data'].to_json.html_safe%>}
       );
       if(<%=@activity_data_hash['barchart_data'].to_json.html_safe%>.length > 0) {
         singleStakedBar.single_stacked_bar_chart_Graph();

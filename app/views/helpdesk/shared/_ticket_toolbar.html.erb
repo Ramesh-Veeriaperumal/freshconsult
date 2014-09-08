@@ -6,6 +6,59 @@
 					<input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
 				</th>
 		    <th class="bulk_action_buttons"> 
+         <% if @current_view != "deleted" && @current_view != "spam" %>
+          <input class="btn tooltip" title='<%= t('ticket.pick_up') %>' 
+              onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" 
+              value="<%=t('ticket.pick_up')%>" disabled="disabled" 
+              data-keybinding="<%= shortcut('ticket_list.pickup') %>" data-highlight="true">
+          <% if privilege?(:edit_ticket_properties) %>
+            <button class="btn dialog2" data-url="/helpdesk/tickets/assign_to_agent" 
+                data-width="360" title="<%=t('ticket.assign_to_agent')%>" 
+                disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
+
+            <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>" 
+                onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" 
+                type="button" value="<%=t('close')%>" disabled="disabled">
+          <% end %>
+
+          <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
+            <a href="/helpdesk/tickets/update_multiple_tickets" 
+                data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled" 
+                class="btn" title="<%=t('bulk_actions')%>" 
+                data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..." 
+                data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
+          <% end %>
+
+          <% if privilege?(:merge_or_split_ticket)%>    
+            <a  href="#merge_freshdialog" id="merge_multiple" 
+                class="btn" 
+                data-width="800" 
+                rel="freshdialog"
+                data-title="<%=t('ticket.merge_title')%>" 
+                disabled="disabled" 
+                data-template-footer="false"
+                data-target="#merge_freshdialog"
+                >
+                <%=t('ticket.merge_btn')%>
+            </a>
+          <% end %>
+
+          <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>' 
+              onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" 
+              value="<%=t('ticket.flag_spam')%>" disabled="disabled" 
+              data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
+          
+          <div id="merge_freshdialog" class="hide">
+            <span class="loading-block sloading loading-small">
+            </span>
+          </div>
+          <% if @current_view == "monitored_by" %>
+          <input class="btn tooltip" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');" 
+              type="button" value="<%=t('ticket.unwatch')%>" 
+              disabled="disabled" title="<%= t('ticket.unwatch') %>" 
+              data-keybinding="<%= shortcut('ticket_list.unwatch') %>" data-highlight="true">
+          <% end %>
+        <% end %>
         <% if privilege?(:delete_ticket) %>
 		    	<% if @current_view == "deleted" %>
             <input class="btn tooltip" title="<%=t('undelete')%>" 
@@ -32,57 +85,7 @@
               data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true"> 
   			<% end %>     
 			
-    		<% if @current_view != "deleted" && @current_view != "spam" %>
-          <input class="btn tooltip" title='<%= t('ticket.pick_up') %>' 
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" 
-              value="<%=t('ticket.pick_up')%>" disabled="disabled" 
-              data-keybinding="<%= shortcut('ticket_list.pickup') %>" data-highlight="true">
-
-          <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>' 
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" 
-              value="<%=t('ticket.flag_spam')%>" disabled="disabled" 
-              data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
-
-          <% if privilege?(:edit_ticket_properties) %>
-            <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>" 
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" 
-                type="button" value="<%=t('close')%>" disabled="disabled">
-        
-            <button class="btn dialog2" data-url="/helpdesk/tickets/assign_to_agent" 
-                data-width="360" title="<%=t('ticket.assign_to_agent')%>" 
-                disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
-          <% end %>
-          <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
-            <a href="/helpdesk/tickets/update_multiple_tickets" 
-                data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled" 
-                class="btn" title="<%=t('bulk_actions')%>" 
-                data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..." 
-                data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
-          <% end %>
-          <% if privilege?(:merge_or_split_ticket)%>    
-            <a  href="#merge_freshdialog" id="merge_multiple" 
-                class="btn" 
-                data-width="800" 
-                rel="freshdialog"
-                data-title="<%=t('ticket.merge_title')%>" 
-                disabled="disabled" 
-                data-template-footer="false"
-                data-target="#merge_freshdialog"
-                >
-                <%=t('ticket.merge_btn')%>
-            </a>
-          <% end %>
-          <div id="merge_freshdialog" class="hide">
-            <span class="loading-block sloading loading-small">
-            </span>
-          </div>
-          <% if @current_view == "monitored_by" %>
-          <input class="btn tooltip" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');" 
-              type="button" value="<%=t('ticket.unwatch')%>" 
-              disabled="disabled" title="<%= t('ticket.unwatch') %>" 
-              data-keybinding="<%= shortcut('ticket_list.unwatch') %>" data-highlight="true">
-          <% end %>
-        <% end %> 
+    		 
         </th>
       	<th class="toolbar_right">
           <% if @current_view == "deleted" %>

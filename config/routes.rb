@@ -1474,7 +1474,9 @@ Helpkit::Application.routes.draw do
   match '/chat/create_ticket' => 'chats#create_ticket', :method => :post
   match '/chat/add_note' => 'chats#add_note', :method => :post
   match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
-
+  match '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
+  match '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
+  match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 
 
@@ -1675,4 +1677,5 @@ Helpkit::Application.routes.draw do
   #     billing.resources :billing, :collection => { :trigger => :post }
   #   end
   # end
+
 end

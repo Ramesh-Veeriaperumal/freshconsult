@@ -1,7 +1,10 @@
 module Admin::FreshfoneHelper
 	include Carmen
 	def supported_countries
-		TwilioMaster.account.available_phone_numbers.list.map{|c| [c.country, c.country_code]}.sort
+		numbers = Freshfone::Cost::NUMBERS.inject([]) do |country, number|
+			(country << [ number[1]["name"], number[0] ]) if !number[1]["beta"]
+		end
+		(numbers || []).sort
 	end
 
 	def toll_free_supported_countries

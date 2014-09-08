@@ -10,10 +10,15 @@
 <!--report header-->
 <div class="row-fluid">
 	<div class="span12 report-breadcrum-wrapper">
-		<ul class="breadcrumb">
+		<ul class="breadcrumb span8">
 		  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
 		  <li><%=t('adv_reports.glance.report_view')%></li>
 		</ul>
+		<% unless generate_pdf_action? %>
+			<ul class="nav pull-right">
+	  			<li><a href="#" class="proxy-generate-pdf" ><i class="reports-icon-download"></i><%=t('adv_reports.glance.download')%>					</a></li>
+	  		</ul>
+	  	<% end %>
 	</div>
 </div>
  <!--end report header-->
