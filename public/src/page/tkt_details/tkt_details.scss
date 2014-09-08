@@ -652,8 +652,16 @@ ol, ul, li{
 	padding: 5px 15px;
 	border: solid 1px #ccc;
 	@include border-radius(5px);
+	color:#666;
 }
-
+.fc-agent-info{
+	li{
+		line-height:24px;
+		&:last-child{
+			padding-bottom:none;
+		}
+	}
+}
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);

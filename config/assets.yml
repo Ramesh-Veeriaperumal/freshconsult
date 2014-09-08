@@ -176,6 +176,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/helpdesk/freshdesk_node.js
+    - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
@@ -242,6 +243,7 @@ javascripts:
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
     - public/javascripts/app/product_notifications.js
+    - public/javascripts/freshchat/freshchat.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
