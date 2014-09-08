@@ -1,0 +1,151 @@
+.conversation_wrap{
+  *{
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: normal;
+    @include box-sizing(border-box);
+  }
+  position: relative;
+	@include padding(10px 20px 10px 40px);
+	.conversation-title{
+		@include padding(0 0 8px 16px);
+		font-size: 12px;
+	}
+ 	.rsltmsg{
+		border-top: 1px solid #eee;
+		@include padding(5px 8px 8px 20px);
+		&:last-child{
+			border-bottom: 1px solid #eee;
+		}
+  }
+  &:before {
+    position: absolute;
+    content: "";
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    @include border-left(1px solid #ddd);
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2RkZGRkZCIgc3RvcC1vcGFjaXR5PSIwLjUiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2RkZGRkZCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+    background: -moz-linear-gradient(left,  rgba(221,221,221,0.5) 0%, rgba(221,221,221,0) 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(221,221,221,0.5)), color-stop(100%,rgba(221,221,221,0)));
+    background: -webkit-linear-gradient(left,  rgba(221,221,221,0.5) 0%,rgba(221,221,221,0) 100%);
+    background: -o-linear-gradient(left,  rgba(221,221,221,0.5) 0%,rgba(221,221,221,0) 100%);
+    background: -ms-linear-gradient(left,  rgba(221,221,221,0.5) 0%,rgba(221,221,221,0) 100%);
+    background: linear-gradient(to right,  rgba(221,221,221,0.5) 0%,rgba(221,221,221,0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80dddddd', endColorstr='#00dddddd',GradientType=1 );
+  }
+	&:after{
+    font-family: "glyphs";
+    content: "\f175";
+    position: absolute;
+    top: 7px;
+    font-size: 16px;
+    color: #777;
+    @include left(10px);
+	}
+  .fc_guest_expanded{
+    background-color: #FEFEF5;
+    .rsltset{
+        background-color: transparent;
+    }
+  }
+  .fc_self_expanded{
+    background-color: #F9F9EC;
+    .rsltuser{
+      color: #666;
+    }
+  }
+  .fc_guest_expanded,
+  .fc_self_expanded{
+    .rsltdata{
+        width: 95%;
+        @include padding-left(9px);
+    }
+    .rsltavatar{
+      @include float(left);
+      @include border-radius(4px);
+      width: 40px;
+      @include padding-right(8px);
+      padding-top: 3px;
+      img{
+          @include border-radius(4px);
+          width: 30px;
+          @include float(left);
+          border: 1px solid #eaeaea;
+      }
+      .icon-arrow-left,
+      .icon-arrow-right{
+          background: none;
+          @include float(left);
+          @include margin(0px 10px);
+          position: relative;
+          line-height: 27px;
+          font-size: 10px;
+          color: #ccc;
+      }
+      .icon-arrow-left{
+          color: #999;
+      }
+    }
+    .rslttime{
+        visibility: hidden;
+        @include float(right);
+    }
+    &:hover{
+        .rslttime{
+            visibility: visible;
+        }    
+    }
+  }
+  .rsltmsg{
+    font-size: 13px;
+    .rsltmsg_wrap{
+      @include float(left);
+      position: relative;
+      width: 90%;
+      color: #555;
+      @include padding-left(0);
+    }
+    .rsltuser{
+      font-weight: 500;
+    }
+    .time{
+      font-size: 10px;
+      @include float(right);
+      position: absolute;
+      top: 1px;
+      @include right(-20px);
+      color: #aaa;
+    }
+    .tkt_rsltsum{
+      font-size: 12px;
+      @include clear(both);
+      color: #777;
+      width: 530px;
+      padding-top: 4px;
+      line-height:16px;
+    }
+  }
+}
+
+.user-comment{
+  .conversation_wrap{
+    &:after{
+      content:"";
+      opacity: 0.5;
+      @extend .icon-comments;
+    }
+    .fc_guest_expanded{
+      background: #f7f7f7;
+      .rsltuser{
+        color: #666;
+      }
+    }
+    .fc_self_expanded{
+      background: #fefefe;
+      .rsltuser{
+        color: #333;
+      }
+    }
+  }
+}

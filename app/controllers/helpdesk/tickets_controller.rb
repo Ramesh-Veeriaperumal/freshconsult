@@ -280,7 +280,7 @@ class Helpdesk::TicketsController < ApplicationController
                                                         :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
-        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
+        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true, true)}.to_json[1..-2]},
         #{{:last_forward => bind_last_conv(@ticket, @signature, true)}.to_json[1..-2]},
         #{{:ticket_properties => ticket_props}.to_json[1..-2]}"
         response << ",#{{:default_twitter_body_val => default_twitter_body_val(@ticket)}.to_json[1..-2]}" if @item.is_twitter?
@@ -443,7 +443,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     va_rule = current_account.scn_automations.find(params[:scenario_id])
-    unless va_rule.trigger_actions(@item)
+    unless va_rule.trigger_actions(@item, current_user)
       flash[:notice] = I18n.t("admin.automations.failure")
       respond_to do |format|
         format.html { 

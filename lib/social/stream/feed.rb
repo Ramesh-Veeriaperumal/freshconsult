@@ -4,7 +4,7 @@ class Social::Stream::Feed
   include Social::Twitter::Constants
 
   attr_accessor :stream_id, :feed_id, :posted_time, :is_replied, :user, :body, :dynamo_posted_time,
-    :in_reply_to, :user_in_db, :in_conv, :agent_name, :ticket_id, :source, :parent_feed_id, :user_mentions
+    :in_reply_to, :user_in_db, :in_conv, :agent_name, :ticket_id, :source, :parent_feed_id
 
 
   def hash

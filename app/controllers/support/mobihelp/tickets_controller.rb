@@ -49,6 +49,10 @@ class Support::Mobihelp::TicketsController < SupportController
       "user_id" => current_user && current_user.id,
       "account_id" => current_account && current_account.id
     }.merge(params[:helpdesk_note]))
+    if params[:helpdesk_note][:attachments]
+      attachment_content = params[:helpdesk_note][:attachments]
+      @note.attachments.build(:content => attachment_content[:resource], :description => attachment_content[:description])
+    end
     success = @note.save_note
     respond_to do |format|
       format.json {

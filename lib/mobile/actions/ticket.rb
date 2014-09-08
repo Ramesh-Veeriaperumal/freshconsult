@@ -74,7 +74,7 @@ module Mobile::Actions::Ticket
                     :source_name, :is_closed, :to_emails, :to_cc_emails,:conversation_count, 
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook,
                     :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , 
-                    :ticket_notes, :ticket_sla_status],
+                    :ticket_notes, :ticket_sla_status, :recording_url],
       :include => json_inlcude
     }
     to_json(options,false) 
@@ -125,4 +125,8 @@ module Mobile::Actions::Ticket
     tweet.tweet_type unless tweet.blank?
   end
 
+  def recording_url
+    call = self.freshfone_call
+    recording_url = call.recording_url if call.present?
+  end
 end

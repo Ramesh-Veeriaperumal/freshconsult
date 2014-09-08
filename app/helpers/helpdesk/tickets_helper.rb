@@ -132,13 +132,21 @@ module Helpdesk::TicketsHelper
     o.join
   end
 
-  def bind_last_reply(item, signature, forward = false, quoted = false)
+  def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     # last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
+    draft_message = get_tickets_redis_key(key)
+
+    if(remove_cursor)
+      nokigiri_html = Nokogiri::HTML(draft_message)
+      nokigiri_html.css('[rel="cursor"]').remove
+      draft_message = nokigiri_html.at_css("body").inner_html.to_s
+    end
+
+    return ( draft_message || bind_last_conv(item, signature, false, quoted) )
   end
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
@@ -367,6 +375,10 @@ module Helpdesk::TicketsHelper
 
   def itil_ticket_filters
     ""
+  end
+
+  def default_hidden_fields
+    ["default_source"]
   end
 
   # ITIL Related Methods ends here

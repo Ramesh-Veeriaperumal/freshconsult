@@ -80,7 +80,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def mp3?
-    audio? /^audio\/(mp3)/
+    audio? /^audio\/(mp3|mpeg)/
   end
 
   def attachment_sizes
@@ -98,7 +98,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def attachment_url_for_api
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days).gsub( "#{AwsWrapper::S3::DEFAULT_HOST}/", '' )
+    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days)
   end
 
   def to_json(options = {})

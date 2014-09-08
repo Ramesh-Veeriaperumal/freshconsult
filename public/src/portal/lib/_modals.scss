@@ -36,7 +36,7 @@
   z-index: $zindexModal;
   background-color: $white;
   border-top: solid 1px #808080;
-  background-image: inline-image('portal/dialog/headpattern.png','image/png');
+  background-image: inline-image('portal/dialog/headpattern.png');
   background-repeat: repeat-x;
   width: 710px; 
   @include margin(-250px 0 0 -355px);
