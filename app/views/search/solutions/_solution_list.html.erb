@@ -41,10 +41,10 @@ function insertSuggestions(value)
 		if(element_id != "send-tweet-cnt-reply-body" && element_id != "send-fb-post-cnt-reply-body") {
 	 		var $redactor = $element.data('redactor');
 
-		 	$element.getEditor().focus();
-	 		$redactor.saveSelection();
-	  		$redactor.restoreSelection();
- 			$element.insertHtml(value);
+ 			$element.data('redactor').focusOnCursor();
+		    $element.insertHtml(value); 
+		    jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+			$element.getEditor().focus();
  		} else {
  			var textValue = jQuery("<div />").html(value).text();
 			$element.focus();
