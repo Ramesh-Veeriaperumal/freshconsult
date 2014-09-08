@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.eot");
-  src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.woff") format("woff"),
-       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.ttf") format("truetype"),
-       font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.svg#glyphs") format("svg");
+  src: font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.eot");
+  src: font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.woff") format("woff"),
+       font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.ttf") format("truetype"),
+       font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_f735a0dabb182924ac15ddd8ece1caee.svg#glyphs") format("svg");
+    src: font-url("glyphs_aa92c35ff1e3f814725ad9b8383195e5.svg#glyphs") format("svg");
   }
 }
 
@@ -53,6 +53,7 @@
 .ficon-checkmark-round:before,
 .ficon-checkmark-round-o:before,
 .ficon-comment-multi:before,
+.ficon-comments:before,
 .ficon-conversation:before,
 .ficon-cross:before,
 .ficon-crown:before,
@@ -183,6 +184,7 @@
 .ficon-checkmark-round:before { content: "\f12f"; }
 .ficon-checkmark-round-o:before { content: "\f130"; }
 .ficon-comment-multi:before { content: "\f131"; }
+.ficon-comments:before { content: "\f175"; }
 .ficon-conversation:before { content: "\f10b"; }
 .ficon-cross:before { content: "\f10c"; }
 .ficon-crown:before { content: "\f10d"; }
