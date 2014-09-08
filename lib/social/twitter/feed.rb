@@ -113,26 +113,16 @@ class Social::Twitter::Feed
       retweeted_feeds = retweet_count > 0  ? retweets(twitter, feed_id) : []
       return {:count => retweet_count, :feeds => retweeted_feeds, :status => original_feed }
     end
-
   end
 
-  def self.retweet(handle, feed_id)
-    return if feed_id.blank?
+  def self.twitter_action(handle, param, action)
+    return if param.blank?
     twt_sandbox(handle) do
       twitter = TwitterWrapper.new(handle).get_twitter
-      retweet = twitter.retweet("#{feed_id}")
-      return retweet
+      action_response = twitter.send(action, "#{param}")
+      return action_response
     end
-  end
-  
-  def self.post_tweet(handle, body)
-    return if handle.blank?
-    twt_sandbox(handle) do
-      twitter = TwitterWrapper.new(handle).get_twitter
-      tweet = twitter.update(body)
-      return tweet
-    end
-  end
+  end  
 
   private
   

@@ -1,4 +1,4 @@
-$font-class: "ficon-";
+	$font-class: "ficon-";
 
 // Default font size will be taken from the parents font size
 [class*="#{$font-class}"] {
@@ -140,6 +140,22 @@ i.#{$font-class-name}twitter{
 			border-radius: 10px;
 			border: 1px solid #bf3727;
 			margin: 0 0 0 12px;
+		}
+	}
+}
+.twt-list-item,
+.tweets-conv{
+	.shr-fav-btn{
+		.#{$font-class-name}star{
+			position: relative;
+			color: #FFE23C;
+			&:after{
+				@extend .#{$font-class-name}star-o:before;
+				color: #4E1A00;
+				font-size:16px;
+				left:0;
+				position:absolute;
+			}
 		}
 	}
 }

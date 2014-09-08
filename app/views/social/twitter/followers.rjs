@@ -1,0 +1,8 @@
+page << "j('.twt-follow .dropdown').removeClass('sloading loading-tiny loading-align')"
+
+if @social_error_msg.nil?
+  page.replace_html 'followers', :partial => 'followers_list'
+else
+  page << "j('.twt-follow .dropdown').removeClass('dropdown')"
+  show_ajax_flash page
+end
