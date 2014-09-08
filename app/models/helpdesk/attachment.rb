@@ -80,7 +80,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def mp3?
-    audio? /^audio\/(mp3)/
+    audio? /^audio\/(mp3|mpeg)/
   end
 
   def attachment_sizes
