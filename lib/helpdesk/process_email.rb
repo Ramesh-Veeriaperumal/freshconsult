@@ -9,6 +9,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
+  include Helpdesk::Utils::ManageCcEmails
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
@@ -541,7 +542,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      cc_email_hash_value[:reply_cc] = cc_emails_val
+      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value)
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
