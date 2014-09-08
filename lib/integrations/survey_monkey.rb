@@ -102,7 +102,7 @@ module Integrations::SurveyMonkey
     if group_config #New format - survey/group
       if group_config[group_id_str]
         url = group_config[group_id_str]['survey_link']
-      else group_config["0"]
+      elsif group_config["0"]
         url = group_config["0"]['survey_link']
       end
     else #Old format
