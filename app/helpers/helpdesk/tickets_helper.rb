@@ -369,6 +369,10 @@ module Helpdesk::TicketsHelper
     ""
   end
 
+  def default_hidden_fields
+    ["default_source"]
+  end
+
   # ITIL Related Methods ends here
 
 end
