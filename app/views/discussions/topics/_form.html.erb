@@ -47,7 +47,7 @@
 		</div>
 	<% end %>
 
-	<% if @topic.new_record? or privilege?(:manage_forums) or current_user.moderator_of?(@topic.forum) %>
+	<% if @topic.new_record? or privilege?(:manage_forums) %>
 
 	<div class="control-group">
 		<div class="controls">

@@ -4,5 +4,7 @@
 </a>
 <% if privilege?(:edit_topic, @topic) %>
 	<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic), :class => 'btn' %>
+<% end %>
+<% if privilege?(:manage_forums) %>
 	<%= link_to t('discussions.topics.reopen_topic'), toggle_lock_discussions_topic_path(@topic), :method => :put, :class => 'btn' %>
 <% end %>

@@ -33,7 +33,7 @@
 					:"data-track" => 'Marked as Spam' %>
 <% end %>
 
-<% if privilege?(:edit_topic, @topic) %>
+<% if privilege?(:manage_forums) %>
 	<%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), :method => :put,
 					:class => :btn %>
 <% end %>
