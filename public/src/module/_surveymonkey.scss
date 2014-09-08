@@ -15,17 +15,22 @@
 		padding-bottom:0;
 	}
 }
-#survey-list-wrapper {min-height: 28px;}
-#collector-list-wrapper {min-height: 28px;}
+.collector-list-wrapper {
+position: relative;
+.preview-link {
+position: absolute;
+@include right(0);
+top: -16px;
+}
+}
+.survey-list-wrapper {min-height: 28px;}
+.collector-list-wrapper {min-height: 28px;}
 #survey-fields-container{ margin-top: -6px;}
 #survey-fields-container select{  margin-top: 5px;}
-div#survey-collector-dropdowns { min-height: 62px;}
 div#survey-fields-container > div.survey-text-container{ margin-top: 25px;}
 .black_and_bold{ font-weight: bold; color: black}
 .send_while_container{ margin-top: 20px;}
 .send_while{ margin-bottom: 5px; font-weight: bold; color: black;}
-#s2id_survey_list{ width: 230px;}
-#s2id_collector_list{ width: 130px;}
 #survey_text{ height: 60px;}
 label.checkbox-label span{ position: relative; top: 2px; }
 
