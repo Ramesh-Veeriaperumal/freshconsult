@@ -15,7 +15,7 @@ module DataStoreCallbacks
 
     def generate_methods
       class_name = text_data_store_options[:class]
-      class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
+      class_eval %Q(
         attr_accessor :s3_create, :s3_delete, :s3_update
         after_create "create_#{class_name}_body"
         after_update "update_#{class_name}_body"
@@ -65,15 +65,15 @@ module DataStoreCallbacks
         def created_at_updated_at_on_update
           self.#{class_name}_body_content.updated_at = Time.now.utc
         end
-      RUBY_EVAL
+      )
 
-      class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
+      class_eval do
         def datastore(type)
           send(type+"_in_#{$primary_cluster}")
           send(type+"_in_#{$secondary_cluster}")
           send(type+"_in_#{$backup_cluster}")
         end
-      RUBY_EVAL
+      end
     end
   end
 end

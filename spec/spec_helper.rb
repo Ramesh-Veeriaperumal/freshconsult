@@ -196,6 +196,9 @@ Spork.prefork do
       end
     end
 
+    config.before(:all, &:silence_output)
+    config.after(:all,  &:enable_output)
+
     #
     # You can declare fixtures for each example_group like this:
     #   describe "...." do
@@ -235,6 +238,25 @@ Spork.each_run do
 
 end
 
+public
+
+def silence_output
+  # Store the original stderr and stdout in order to restore them later
+  @original_stderr = $stderr
+  @original_stdout = $stdout
+
+  # Redirect stderr and stdout
+  $stderr = File.new(File.join(File.dirname(__FILE__), '../log', 'test.log'), 'w')
+  $stdout = File.new(File.join(File.dirname(__FILE__), '../log', 'test.log'), 'w')
+end
+
+# Replace stderr and stdout so anything else is output correctly
+def enable_output
+  $stderr = @original_stderr
+  $stdout = @original_stdout
+  @original_stderr = nil
+  @original_stdout = nil
+end
 # --- Instructions ---
 # - Sort through your spec_helper file. Place as much environment loading
 #   code that you don't normally modify during development in the
