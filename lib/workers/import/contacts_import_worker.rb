@@ -25,7 +25,9 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                     :address => (row[fields["7"]] ) ,
                                     :tags => (row[fields["8"]] ) ,
                                     :description => (row[fields["9"]] ) ,
-                                    :client_manager => (row[fields["10"]] ) ,
+                                    :language => (row[fields["10"]] ),
+                                    :time_zone => (row[fields["11"]] ),
+                                    :client_manager => (row[fields["12"]] ) ,
                                 :customer_id => nil
                                  }
                       }
