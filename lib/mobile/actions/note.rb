@@ -14,6 +14,11 @@ module Mobile::Actions::Note
     created_at.strftime(format)
   end
 
+  def recording_url
+    call = self.freshfone_call
+    recording_url = call.recording_url if call.present?
+  end  
+
   def to_mob_json
     json_include = {
       :user => {
@@ -29,7 +34,7 @@ module Mobile::Actions::Note
     }
     options = {
       :include => json_include,
-      :methods => [ :formatted_created_at ]
+      :methods => [ :formatted_created_at, :recording_url ]
     }
     to_json(options)
   end
