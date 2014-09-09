@@ -2807,9 +2807,32 @@ $collision_delay: 1s;
 		top: 7px;
 	 	@include right(7px);
 	}
-
 }
 
+.show-menu-on-hover{
+	.actions-menu{
+		display:none;
+	}
+	&:hover{
+		.actions-menu{
+			display:block;
+		}
+	}
+}
+
+.article-list{
+	.actions-menu-wrapper{
+		position: relative;
+		background: inherit;
+	}
+	.actions-menu{
+		position: absolute;
+		right: -13px;
+		background: inherit;
+		padding: 12px 20px;
+		margin-top: -14px;
+	}
+}
 
 .ticket_show .customer-opinion {
 	border: none;
