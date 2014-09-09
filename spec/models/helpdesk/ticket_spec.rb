@@ -37,7 +37,7 @@ describe Helpdesk::Ticket do
 
     @ticket = create_ticket({:status => 2}, @group)
     @ticket.group_id = @group.id
-    @ticket.save(:validate => false)
+    @ticket.save_ticket
   end
 
   it "should be assigning tickets to agents in round robin" do
@@ -69,7 +69,7 @@ describe Helpdesk::Ticket do
 
   it "should not be assigned to agents if there is no group " do
     @ticket.group = nil
-    @ticket.save!
+    @ticket.save_ticket!
     @ticket.assign_tickets_to_agents.should be_nil
   end
 

@@ -88,7 +88,7 @@ Spork.prefork do
     config.render_views
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.mock_with :rspec
+    config.mock_with :mocha
     config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.include AccountHelper
     config.include AgentHelper
@@ -183,6 +183,7 @@ Spork.prefork do
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
+      RIAK_ENABLED = false
       DatabaseCleaner.clean_with(:truncation,
                                  {:pre_count => true, :reset_ids => false})
       logfile_name = 'log/rspec_file_times.log'

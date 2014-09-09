@@ -33,7 +33,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		if ((!cc_emails.blank? && cc_emails.is_a?(Array) && cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) || 
 				(!bcc_emails.blank? && bcc_emails.is_a?(Array) && bcc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) ||
 				(!to_emails.blank? && to_emails.is_a?(Array) && to_emails.count >= TicketConstants::MAX_EMAIL_COUNT))
-			self.errors.add_to_base("You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} emails")
+			self.errors.add(:base,"You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} emails")
 			return false
 		end
 		return true
