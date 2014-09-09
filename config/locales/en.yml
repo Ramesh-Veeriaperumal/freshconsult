@@ -2941,7 +2941,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    language: Language
+    timezone: Timezone
     sample_data: Sample data
+    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
     can_see_all_tickets_of_the_company: Can view all company tickets ?
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
     can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
