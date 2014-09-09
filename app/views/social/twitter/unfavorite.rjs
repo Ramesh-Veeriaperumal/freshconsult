@@ -1,6 +1,7 @@
 if @social_error_msg.nil? or @social_error_msg == "#{I18n.t('social.streams.twitter.wrong_call')}"
   page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn i').css('opacity','1')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn').addClass('not-shr-fav-btn')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn').removeClass('shr-fav-btn')"
   page << "jQuery('#tweet_div_#{@feed_id} .shr-fav-btn').hide();"
   page << "jQuery('#tweet_div_#{@feed_id} .not-shr-fav-btn').show();"

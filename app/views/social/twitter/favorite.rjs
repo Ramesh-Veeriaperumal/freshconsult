@@ -1,6 +1,7 @@
 if @social_error_msg.nil?
   page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn i').css('opacity','1')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').addClass('shr-fav-btn')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('not-shr-fav-btn')"
   page << "jQuery('#tweet_div_#{@feed_id} .not-shr-fav-btn').hide();"
   page << "jQuery('#tweet_div_#{@feed_id} .shr-fav-btn').show();"
