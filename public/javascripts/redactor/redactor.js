@@ -877,6 +877,9 @@ Redactor.prototype = {
 	},
 	setCursorPosition: function(){
 		if(this.$editor.find("[rel='cursor']").get(0)){
+			if($.browser.mozilla){
+				this.$editor.find("[rel='cursor']").removeAttr( "style" );
+			}
 			this.removeContent();
 		}
 
@@ -997,7 +1000,13 @@ Redactor.prototype = {
     	{
     		this.$editor.click($.proxy(function(e) {
 	    		this.setCursorPosition();
-	    	}, this));	
+	    	}, this));
+
+    		if($.browser.mozilla){
+		    	this.$editor.dblclick($.proxy(function(e) {
+		    		this.$editor.find("[rel='cursor']").css({"display": "none"});
+		    	}, this));	
+		    }
     	}
     },
     bindCustomEvent: function(){
@@ -1312,6 +1321,7 @@ Redactor.prototype = {
 
 	},	
 	isNotEmpty:function(e){
+		this.deleteCursor();
 		var valid_tags = ["img", "iframe", "object", "embed"];
 		for(var i=0; i < valid_tags.length; i++){
 			if(this.$editor.find(valid_tags[i]).length !=0 ){

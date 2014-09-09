@@ -141,9 +141,11 @@ module Helpdesk::TicketsHelper
     draft_message = get_tickets_redis_key(key)
 
     if(remove_cursor)
-      nokigiri_html = Nokogiri::HTML(draft_message)
-      nokigiri_html.css('[rel="cursor"]').remove
-      draft_message = nokigiri_html.at_css("body").inner_html.to_s
+      unless draft_message.blank?
+        nokigiri_html = Nokogiri::HTML(draft_message)
+        nokigiri_html.css('[rel="cursor"]').remove
+        draft_message = nokigiri_html.at_css("body").inner_html.to_s
+      end
     end
 
     return ( draft_message || bind_last_conv(item, signature, false, quoted) )
