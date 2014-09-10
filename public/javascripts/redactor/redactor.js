@@ -4420,8 +4420,9 @@ $.fn.insertExternal = function(html)
 			if(removeCursor == undefined || removeCursor){
 				this.$editor.deleteCursor();	
 			} else {
-				// Add display:none style for cursor's <img> tag
-				if(jQuery.browser.mozilla){
+				// Temp check for bulk action on form submit. Bulk action redactor should be disable when the checkbpx is not selected on Add Bulk reply.
+				if(jQuery.browser.mozilla && this.$editor.$el.attr('id') != "reply-multiple-cnt-reply-multiple-body"){ 
+					// Add display:none style for cursor's <img> tag
 					this.$editor.$el.data('redactor').addNoneStyleForCursor();
 				}
 			}
