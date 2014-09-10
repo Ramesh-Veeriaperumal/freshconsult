@@ -5091,7 +5091,7 @@ en:
     delete_multiple: "The selected canned responses were deleted!!"
     no_delete: "Default folder cannot be deleted!!"
     create_new: "Create New"
-    no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
+    no_response_admin: "No responses in this folder <a href=%{link} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
   merge_contacts:
     header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."

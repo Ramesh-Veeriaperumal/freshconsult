@@ -5,23 +5,25 @@ describe Admin::DayPassesController do
 	self.use_transactional_fixtures = false
 
   before(:all) do
-  	@account = Account.last
+  	# @account = Account.last
 
-  	if @account.full_domain.include?("billing")
-  		# Using the account if created in subscriptions/billing controller.
-	  	@account.make_current	  	
-	  	@user = @account.account_managers.first	  	
-	  else	  	
-      Account.reset_current_account
-      User.current = nil
+  	# if @account.full_domain.include?("billing")
+  	# 	# Using the account if created in subscriptions/billing controller.
+	  # 	@account.make_current	  	
+	  # 	@user = @account.account_managers.first	  	
+	  # else	  	
+    #    Account.reset_current_account
+    #    User.current = nil
       
-      Resque.inline = true
-      @billing_account = create_test_billing_acccount
-      Resque.inline = false               
+    #    Resque.inline = true
+    #    @billing_account = create_test_billing_acccount
+    #    Resque.inline = false               
     
-      @account = Account.find(@billing_account.id)
-      @user = @account.account_managers.first
-	  end
+    #    @account = Account.find(@billing_account.id)
+    #    @user = @account.account_managers.first
+	  # end
+    @account = RSpec.configuration.account
+    @user = @account.account_managers.first
   end
 
 	before(:each) do
@@ -30,7 +32,6 @@ describe Admin::DayPassesController do
 
 	it "should list all daypasses" do
 		get "index"
-				
 		amounts = assigns[:day_pass_amounts]
 		amounts.should be_present		
 	end
@@ -46,7 +47,7 @@ describe Admin::DayPassesController do
 
 	it "should not buy daypasses without card info" do	
 		purchase_quantity = 10
-		post "buy_now", :quantity => purchase_quantity
+		put "buy_now", :quantity => purchase_quantity
 		
 		day_pass_config = assigns[:day_pass_config]
 		day_pass_config.available_passes.should be_present
@@ -59,7 +60,7 @@ describe Admin::DayPassesController do
 		billing.activate_subscription(@account.subscription)
 		
 		purchase_quantity = 10
-		post "buy_now", :quantity => purchase_quantity
+		put "buy_now", :quantity => purchase_quantity
 		
 		day_pass_config = assigns[:day_pass_config]
 		day_pass_config.available_passes.should be_present

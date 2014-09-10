@@ -204,18 +204,18 @@ def import_classes(id, klasses)
 end
 
 def import_condition(id, item)
-  condition = ".scoped(:conditions => ['account_id=? and updated_at<?', #{id}, Time.now.utc])"
+  condition = ".where(['account_id=? and updated_at<?', #{id}, Time.now.utc])"
   case item.strip
     when "Helpdesk::Ticket" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=? and spam=?', #{id}, Time.now.utc, false, false])"
+      condition = ".where(['account_id=? and updated_at<? and deleted=? and spam=?', #{id}, Time.now.utc, false, false])"
     when "User" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
+      condition = ".where(['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
+      condition = ".where(['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
     when "Helpdesk::Tag" then
-      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
     when "Freshfone::Caller" then
-      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
   end
   condition
 end

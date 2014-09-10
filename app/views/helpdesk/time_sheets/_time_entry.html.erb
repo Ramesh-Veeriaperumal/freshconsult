@@ -7,7 +7,7 @@
                             :method => :put },
                       :class => 'toggle_timer') %>
       <%= link_to(t('edit'), 
-                    edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
+                    edit_helpdesk_ticket_time_sheet(@ticket, time_entry), 
                     "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                     "data-width" => 450,
                     "data-submit-label" => t('update'),

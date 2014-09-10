@@ -14,7 +14,7 @@ describe Billing::BillingController do
       @billing_account = create_test_billing_acccount
       Resque.inline = false               
       @billing_account.reload      
-      RSpec.configuration.account = Account.find(@billing_account.id)      
+      @account = Account.find(@billing_account.id)      
     end
   end
 
@@ -73,8 +73,8 @@ describe Billing::BillingController do
     Billing::Subscription.new.cancel_subscription(@account)    
     post "trigger", event_params(@account.id, "subscription_cancelled")
 
-    RSpec.configuration.account.subscription.reload
-      RSpec.configuration.account.subscription.state.should eql "suspended"
+    @account.subscription.reload
+    @account.subscription.state.should eql "suspended"
   end
 
   it "should reactivate subscription" do

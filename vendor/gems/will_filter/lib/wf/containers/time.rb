@@ -15,7 +15,7 @@ module Wf
 
       def time
         begin
-          Time.zone.now.ago(value.to_i.minutes).to_s(:db)
+          ::Time.zone.now.ago(value.to_i.minutes).to_s(:db)
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
           nil
@@ -23,7 +23,7 @@ module Wf
       end
 
       def time_at(ti,type)
-        return (type == "start_date" ? "#{Time.zone.parse(ti).to_s(:db)}" : "#{Time.zone.parse(ti).end_of_day.to_s(:db)}")
+        return (type == "start_date" ? "#{::Time.zone.parse(ti).to_s(:db)}" : "#{::Time.zone.parse(ti).end_of_day.to_s(:db)}")
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
         nil
@@ -32,18 +32,18 @@ module Wf
       def sql_condition
         case value
           when "today" then
-            return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.to_s(:db)}' "]
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.to_s(:db)}' "]
           when "yesterday" then
-            return [%( #{table_name}.created_at > '#{Time.zone.now.yesterday.beginning_of_day.to_s(:db)}' and
-              #{table_name}.created_at < '#{Time.zone.now.beginning_of_day.to_s(:db)}' )]
+            return [%( #{table_name}.created_at > '#{::Time.zone.now.yesterday.beginning_of_day.to_s(:db)}' and
+              #{table_name}.created_at < '#{::Time.zone.now.beginning_of_day.to_s(:db)}' )]
           when "week" then
-            return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_week.to_s(:db)}' "]
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_week.to_s(:db)}' "]
           when "month" then
-            return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_month.to_s(:db)}' "]
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_month.to_s(:db)}' "]
           when "two_months" then
-            return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
           when "six_months" then
-            return [" #{table_name}.created_at > '#{Time.zone.now.beginning_of_day.ago(6.months).to_s(:db)}' "]
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.ago(6.months).to_s(:db)}' "]
           else
             if is_numeric?(value)
               return [" #{table_name}.created_at > ? ", time]

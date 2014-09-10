@@ -18,6 +18,7 @@ describe SubscriptionsController do
     
       RSpec.configuration.account = Account.find(@billing_account.id)
       @user = RSpec.configuration.account.account_managers.first
+      @account = RSpec.configuration.account
       2.times { add_test_agent(@account) }  
     end
   end

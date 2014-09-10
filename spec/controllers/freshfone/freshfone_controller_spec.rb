@@ -118,7 +118,7 @@ describe FreshfoneController do
     params = { :id => ticket.id, :ticket => ticket.display_id, :call_log => "Sample freshfone note", 
                :CallSid => freshfone_call.call_sid, :private => false, :call_history => "false" }
     
-    save_note = double()
+    save_note = mock()
     save_note.stubs(:save).returns(false)
     controller.stubs(:build_note).returns(save_note)
 
@@ -136,7 +136,7 @@ describe FreshfoneController do
     params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
                :custom_requester_id => customer.id, :ticket_subject => "Call with Oberyn", :call_history => "false"}
     
-    save_ticket = double()
+    save_ticket = mock()
     save_ticket.stubs(:save).returns(false)
     controller.stubs(:build_ticket).returns(save_ticket)
 

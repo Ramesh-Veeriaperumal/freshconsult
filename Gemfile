@@ -13,12 +13,13 @@ gem "mysql2", "~> 0.3.0"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
-gem "country_select", github: "stefanpenner/country_select", :tag => 'v1.1.2'
-gem "activemerchant", github: "Shopify/active_merchant", :tag => 'v1.43.1'
+gem "country_select", git: "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
+gem "activemerchant", git: "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
 gem "acts_as_list", "~> 0.4.0"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
-gem "class_inheritable_attributes", github: "burke/class_inheritable_attributes"
+gem "class_inheritable_attributes", git: "git://github.com/burke/class_inheritable_attributes"
+gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 
 gem 'sneaky-save', git: 'git://github.com/partyearth/sneaky-save.git'
 
@@ -142,7 +143,7 @@ gem "routing-filter", "~> 0.3.1"
 gem "paperclip", "~> 2.8.0"
 
 gem "aws-sdk", "~> 1.11.3"
-gem "xml-simple", "1.1.4"
+gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
 
 gem "therubyracer"

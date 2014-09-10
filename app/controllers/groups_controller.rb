@@ -70,8 +70,9 @@ class GroupsController < Admin::AdminController
     
      @group = current_account.groups.find(params[:id])
      @group.business_calendar_id = params[:group][:business_calendar]
+     filtered_params = params[nscname].reject { |k| k == "added_list" || k == "removed_list" }
      respond_to do |format|      
-      if @group.update_attributes(params[nscname])
+      if @group.update_attributes(filtered_params)
         format.html do
           update_agent_list
           redirect_to(groups_url, :notice => 'Group was successfully updated.')

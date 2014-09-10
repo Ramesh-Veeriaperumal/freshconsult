@@ -16,7 +16,7 @@ class Workers::Observer
     rescue Resque::DirtyExit
      Resque.enqueue(Workers::Observer, args)
     rescue Exception => e
-      puts "something is wrong  : #{e.message}"
+      puts "something is wrong  Observer : #{e.message}"
     ensure
       Thread.current[:observer_doer_id] = nil
     end

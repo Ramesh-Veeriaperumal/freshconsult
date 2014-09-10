@@ -82,7 +82,7 @@ describe Freshfone::QueueController do
     controller.set_key(agent_key, {@agent.id => ["CAGENTHUNTEDCALL"]}.to_json)
 
     controller.stubs(:bridge_priority_call)
-    list = double()
+    list = mock()
     list.stubs(:list).returns(["dummy queued member"])
     controller.stubs(:queued_members).returns(list)
     
@@ -102,7 +102,7 @@ describe Freshfone::QueueController do
     controller.set_key(group_key, {group.id => ["CGROUPHUNTEDCALL"]}.to_json)
 
     controller.stubs(:bridge_priority_call)
-    list = double()
+    list = mock()
     list.stubs(:list).returns(["dummy queued member"])
     controller.stubs(:queued_members).returns(list)
     

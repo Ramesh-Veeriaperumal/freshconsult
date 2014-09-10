@@ -205,7 +205,7 @@
 					_parent.find(".db_end_time_data").val( _end_val );
 				});
 						   
-				jQuery("#weekdays").val( days_array.toJSON() );
+				jQuery("#weekdays").val( JSON.stringify(days_array) );
 
 				holidays_array = $A();
 				
@@ -213,7 +213,7 @@
 				
 				  	holidays_array.push([pair.value[0],unescapeHtml(pair.value[1])]);
 				}); 
-				jQuery("#holiday_data").val( holidays_array.toJSON() );
+				jQuery("#holiday_data").val( JSON.stringify(holidays_array) );
 
 				form.submit();
 		    },

@@ -73,7 +73,7 @@
 						<div class="info">
 							<input type="hidden" id="assumed_select_id" class="header-agent-select"
 							data-placeholder = "<%= t("swith_agent_msg") %>" onchange="assume_identity_url()"/>
-							<% javascript_tag do%>
+							<%= javascript_tag do%>
 							  function assume_identity_url() {
 							    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
 							  }

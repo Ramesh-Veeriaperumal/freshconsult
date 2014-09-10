@@ -25,7 +25,7 @@
 	</div>
 <% end %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
 	jQuery('#category-delete-confirmation-submit').live('click',function(){
 		jQuery('#category-delete-confirmation').hide();
 		jQuery('#delete_category').trigger('click');

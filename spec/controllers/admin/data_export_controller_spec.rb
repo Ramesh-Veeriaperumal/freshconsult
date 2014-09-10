@@ -8,18 +8,18 @@ describe Admin::DataExportController do
   before(:all) do
     Account.reset_current_account
     User.current = nil
-    @account = create_new_account("dataexportspec", Faker::Internet.email)
-    @agent = get_admin
+    @account = RSpec.configuration.account
+    # @agent = get_admin
   end
 
   before(:each) do
     @account.make_current
     login_admin
     
-    @request.host = @account.full_domain
-    @request.env['HTTP_REFERER'] = '/sessions/new'
-    @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
-                                          (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+    # @request.host = @account.full_domain
+    # @request.env['HTTP_REFERER'] = '/sessions/new'
+    # @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36
+    #                                       (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
 
     FileUtils.stubs(:remove_dir)
 
@@ -44,7 +44,7 @@ describe Admin::DataExportController do
 
   it 'should export users data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_users_data)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Users.xml"
@@ -54,12 +54,12 @@ describe Admin::DataExportController do
     users = Hash.from_trusted_xml users_xml
     admin = users["users"].find{|u| u["helpdesk_agent"] == true}
     admin.should_not be_blank
-    admin["email"].should eql(@agent.email)
+    admin["email"].should eql(RSpec.configuration.agent.email)
   end
 
   it 'should export forums data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_forums_data)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Forums.xml"
@@ -75,7 +75,7 @@ describe Admin::DataExportController do
 
   it 'should export solutions data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_solutions_data)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Solutions.xml"
@@ -92,7 +92,7 @@ describe Admin::DataExportController do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_customers_data)
     customer_name = Faker::Name.name
     @account.customers.create(:name => customer_name)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Customers.xml"
@@ -106,7 +106,7 @@ describe Admin::DataExportController do
 
   it 'should export tickets data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_tickets_data)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Tickets0.xml"
@@ -121,7 +121,7 @@ describe Admin::DataExportController do
 
   it 'should export groups data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_groups_data)
-    post :export
+    get :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Groups.xml"
@@ -136,7 +136,7 @@ describe Admin::DataExportController do
 
   it 'should download exported data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_groups_data)
-    post :export
+    get :export
 
     @account.reload
     data_export = @account.data_exports.data_backup[0]
@@ -147,7 +147,7 @@ describe Admin::DataExportController do
   it 'should not initiate export when other exports are in progress' do
     DataExport.any_instance.stubs(:completed?).returns(false)
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_groups_data)
-    post :export
+    get :export
     response.should redirect_to "/account"
   end
 

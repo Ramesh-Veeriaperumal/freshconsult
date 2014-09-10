@@ -235,7 +235,7 @@ describe Admin::EmailConfigsController do
                                       }
                   }
     delayed_job = Delayed::Job.last
-    delayed_job.handler.should include("deliver_activation_instructions")
+    delayed_job.handler.should include("activation_instructions")
     delayed_job.handler.should include("AR:EmailConfig:#{email_config.id}")
     EmailConfig.find(email_config.id).update_attributes(:active => true)
     email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)

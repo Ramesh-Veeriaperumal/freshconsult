@@ -196,7 +196,7 @@ describe Discussions::TopicsController do
 
 		get :component, :id => topic.id, :name => 'test'
 
-		response.should render_template "#{Rails.root}/public/404.html"
+		assert_template "#{Rails.root}/public/404.html"
 	end
 
 	it "should lock a topic on put 'update_lock'" do

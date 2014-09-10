@@ -11,8 +11,8 @@ describe Discussions::PostsController do
 	end
 
 	before(:each) do
-        @request.env['HTTP_REFERER'] = '/discussions'
-	    log_in(@agent)
+    @request.env['HTTP_REFERER'] = '/discussions'
+    log_in(@agent)
 	end
 
 	after(:all) do

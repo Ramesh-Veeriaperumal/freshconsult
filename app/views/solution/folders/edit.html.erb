@@ -26,7 +26,7 @@
 
 <% end %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
 	jQuery('#folder-delete-confirmation-submit').live('click',function(){
 		jQuery('#folder-delete-confirmation').hide();
 		jQuery('#delete_folder').trigger('click');

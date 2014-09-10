@@ -50,7 +50,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     Rails.logger.debug "response #{response.inspect}"
     if response.code == "200" || response.code == "201"
       # If create group is successful return the id
-      updated_group_hash = XmlSimple.xml_in(response.body)
+      updated_group_hash = ::XmlSimple.xml_in(response.body)
       goog_grp_id = Integrations::GoogleContactsUtil.parse_id(updated_group_hash['id'])
       return goog_grp_id
     end
@@ -67,7 +67,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
     access_token = prepare_access_token(token, secret)
     updated_groups_xml = access_token.get(goog_groups_url).body
-    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry'] || []
+    updated_groups_hash = ::XmlSimple.xml_in(updated_groups_xml)['entry'] || []
     Rails.logger.debug "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
     google_groups_arr = []
     updated_groups_hash.insert(0, 'id'=>['base/6'], 'content'=>{'content'=>'My Contacts'})
@@ -190,7 +190,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       inc=0
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
-        batch_response_hash = XmlSimple.xml_in(batch_response_xml)
+        batch_response_hash = ::XmlSimple.xml_in(batch_response_xml)
         # puts "stats #{stats}  \n Converted batch_response_hash #{batch_response_hash.inspect}"
         batch_response_hash = batch_response_hash['entry']
         batch_response_hash.each {|response|
@@ -249,7 +249,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         Rails.logger.debug "Adding contact #{db_contact}, response #{response.inspect}"
         if response.code == "200" || response.code == "201"
           # If create contact is successful update the id in the database.
-          updated_contact_hash = XmlSimple.xml_in(response.body)
+          updated_contact_hash = ::XmlSimple.xml_in(response.body)
           goog_id = Integrations::GoogleContactsUtil.parse_id(updated_contact_hash['id'])
           updated = update_google_contact_id(db_contact, goog_id)
           Rails.logger.info "Newly added contacts id #{goog_id}, updated #{updated}"

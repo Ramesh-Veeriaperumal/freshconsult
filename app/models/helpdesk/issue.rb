@@ -101,9 +101,9 @@ class Helpdesk::Issue < ActiveRecord::Base
       f = f.to_sym
 
       if user && f == :monitored_by
-        user.subscribed_tickets.scoped(:conditions => {:deleted => false})
+        user.subscribed_tickets.where({:deleted => false})
       else
-        scope.scoped(:conditions => conditions[f])
+        scope.where(conditions[f])
       end
     end
 
@@ -126,7 +126,7 @@ class Helpdesk::Issue < ActiveRecord::Base
     # Protect us from SQL injection in the 'field' param
     return scope unless conditions
 
-    scope.scoped(:conditions => conditions)
+    scope.where(conditions)
   end
 
   def nickname

@@ -24,7 +24,7 @@ describe Freshfone::CallController do
     setup_caller_data
 
     get :caller_data, { :PhoneNumber => @caller_number, :format => "js" }
-    call_meta = json[:call_meta].reject{|k,v| v.blank?}
+    call_meta = json[:call_meta]
     call_meta.keys.should be_eql([:number, :group])
   end
 

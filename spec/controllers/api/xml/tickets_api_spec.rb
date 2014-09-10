@@ -42,7 +42,7 @@ describe Helpdesk::TicketsController do
   it "should restore a delete ticket" do
     new_ticket = create_ticket({:status => 2})
     delete :destroy, { :id => new_ticket.display_id, :format => 'xml' }
-    put :restore, {:id => new_ticket.display_id }, :format => 'xml'
+    put :restore, {:id => new_ticket.display_id , :format => 'xml'}
     response.status.should eql(200)
   end
 
@@ -57,7 +57,7 @@ describe Helpdesk::TicketsController do
 
   it "agent should be able to pick a ticket " do
     new_ticket = create_ticket({:status => 2})
-    put :pick_tickets, {:id => new_ticket.display_id },:format => 'xml'
+    put :pick_tickets, {:id => new_ticket.display_id ,:format => 'xml' }
     response.status.should eql(200)
   end
 

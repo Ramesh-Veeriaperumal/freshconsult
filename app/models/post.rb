@@ -89,11 +89,7 @@ class Post < ActiveRecord::Base
 
   def monitor_topic
     monitorship = topic.monitorships.find_by_user_id(user.id)
-    unless monitorship
-      @monitorships = topic.monitorships.build(:active => true)
-      @monitorships.user_id = user.id 
-      @monitorships.save!
-    end
+    topic.monitorships.create(:user_id => user.id, :active => true, :portal_id => portal) unless monitorship
   end
 
   def toggle_answer

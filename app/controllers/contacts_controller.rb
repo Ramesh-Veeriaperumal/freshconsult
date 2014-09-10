@@ -73,7 +73,7 @@ class ContactsController < ApplicationController
   
   def create  
     if build_and_save
-      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb',:locals => { :message => t('flash.contacts.create.success') } )
+      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html',:locals => { :message => t('flash.contacts.create.success') } )
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
@@ -185,7 +185,7 @@ class ContactsController < ApplicationController
     params[cname].reject!{ |k| k == "customer" || k == "tags" }
     if @item.update_attributes(params[cname])
       respond_to do |format|
-        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb', :locals => { :message => t('merge_contacts.contact_updated') } )
+        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html', :locals => { :message => t('merge_contacts.contact_updated') } )
         format.html { redirect_to redirection_url }
         format.xml  { head 200}
         format.json { head 200}

@@ -529,7 +529,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def method_missing(method, *args, &block)
     begin
       super
-    rescue NoMethodError => e
+    rescue NoMethodError, NameError => e
       Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)

@@ -162,7 +162,7 @@ private
         connection.execute(sql)
       end
     rescue Exception => e
-      puts "Exception occurred while inserting data into stats table ::: #{e.message}::::#{e.backtrace}"
+      puts "Exception occurred while inserting data into stats table ::: #{e.message}"
       NewRelic::Agent.notice_error(e)
     end
   end

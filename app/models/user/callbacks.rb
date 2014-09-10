@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
 
   def update_user_email
     # for user email delta
-    create_primary_email({:email => self[:email], :primary_role => true, :verified => active}) unless !email_available? or user_emails.present?
+    self.create_primary_email({:email => self[:email], :primary_role => true, :verified => active, :account_id => self.account_id}) unless !email_available? or user_emails.present?
   end
 
   def change_user_email

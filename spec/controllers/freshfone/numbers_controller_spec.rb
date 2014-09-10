@@ -7,7 +7,7 @@ describe Admin::Freshfone::NumbersController do
   before(:each) do
     create_test_freshfone_account
     @request.host = RSpec.configuration.account.full_domain
-    log_in(@agent)
+    log_in(RSpec.configuration.agent)
   end
 
   it 'should return all freshfone numbers on index' do

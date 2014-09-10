@@ -319,7 +319,7 @@ describe ContactsController do
     u.active = true
     u.save(:validate => false)
     get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
-    Delayed::Job.last.handler.should include("deliver_email_activation")
+    Delayed::Job.last.handler.should include("email_activation")
     response.body.should =~ /Activation mail sent/
     @account.features.multiple_user_emails.destroy
   end

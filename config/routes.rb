@@ -86,17 +86,24 @@ Helpkit::Application.routes.draw do
     end
     collection do
       delete :destroy
+      post :quick
     end
     resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
   match '/customers/filter/:state/*letter' => 'customers#index'
+  get '/contacts' => 'contacts#index'
 
   resources :contacts do
     collection do
       get :contact_email
       get :autocomplete
       get :configure_export
+      get :show
+      post :export_csv
+      get :verify_email
+      put :make_agent
+      get :unblock
     end
 
     member do
@@ -107,8 +114,8 @@ Helpkit::Application.routes.draw do
       put :make_agent
       put :make_occasional_agent
       put :verify_email
+      get :unblock
     end
-
     resources :contact_merge do
       collection do
         get :search
@@ -116,12 +123,32 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :contact_merge do
+    collection do
+      get :search
+      post :new
+      post :confirm
+      post :complete
+    end
+  end
+
   match '/contacts/filter/:state/*letter' => 'contacts#index'
   resources :groups
+
+  resources :user_emails do
+    member do
+      get :make_primary
+    end
+    collection do
+      put :send_verification
+    end
+  end
 
   resources :profiles do
     collection do
       post :reset_api_key
+      post :change_password
+      put :notification_read
     end
     member do
       post :change_password
@@ -257,8 +284,9 @@ Helpkit::Application.routes.draw do
     end
       
     resources :ops_notification do    
-      member do
+      collection do
         post :voice_notification
+        post :status
       end
     end
   end
@@ -272,6 +300,9 @@ Helpkit::Application.routes.draw do
       get :credit_balance
       get :ivr_flow
       get :preview_ivr
+      post :voice_fallback
+      post :create_note
+      post :create_ticket
     end
   end
 
@@ -288,7 +319,7 @@ Helpkit::Application.routes.draw do
     end  
   end
 
-  resource :user_session
+  resource :user_session 
 
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
@@ -301,7 +332,11 @@ Helpkit::Application.routes.draw do
   end
 
   resources :home, :only => :index
-  resources :ticket_fields, :only => :index
+  resources :ticket_fields, :only => :index do
+    collection do
+      put :update
+    end
+  end
   resources :email, :only => [:new, :create]
   resources :mailgun, :only => :create
   resources :password_resets, :except => [:index, :show, :destroy]
@@ -328,12 +363,15 @@ Helpkit::Application.routes.draw do
       member do
         post :custom_widget_preview
       end
+      collection do
+        post :oauth_install
+        get :custom_widget_preview
+      end
     end
 
-    resources :integrated_resource do
-    
-      member do
-        put :create
+    resources :integrated_resources do
+      collection do
+        post :create
         delete :delete
       end
     end
@@ -344,6 +382,10 @@ Helpkit::Application.routes.draw do
         delete :delete
         put :update
         put :import_contacts
+      end
+      collection do
+        post :update
+        get :edit
       end
     end
 
@@ -359,6 +401,9 @@ Helpkit::Application.routes.draw do
         put :unlink
         post :notify
         get :register
+        post :fetch_jira_projects_issues
+        post :update
+        post :destroy
       end
     end
 
@@ -370,7 +415,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :user_credentials
+    resources :user_credentials do
+      collection do
+        post :oauth_install
+      end
+    end
+
     resources :logmein do
       collection do
         get :rescue_session
@@ -385,10 +435,21 @@ Helpkit::Application.routes.draw do
     match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
 
+  resources :http_request_proxy do
+    collection do
+      post :fetch
+    end
+  end
+
   namespace :admin do
     resources :home, :only => :index
     resources :day_passes, :only => [:index, :update] do  
       member do
+        put :buy_now
+        put :toggle_auto_recharge
+      end
+      collection do
+        post :update
         put :buy_now
         put :toggle_auto_recharge
       end
@@ -398,6 +459,8 @@ Helpkit::Application.routes.draw do
     resources :chat_setting do
       collection do
         post :toggle
+        post :request_freshchat_feature
+        post :update
       end
     end
 
@@ -450,6 +513,7 @@ Helpkit::Application.routes.draw do
         post :reply_to_email_disable
         post :id_less_tickets_enable
         post :id_less_tickets_disable
+        post :validate_mailbox_details
       end
       member do
         put :make_primary
@@ -471,7 +535,13 @@ Helpkit::Application.routes.draw do
       end
     end
     
-    resources :business_calendars
+    resources :business_calendars do
+      collection do
+        post :create
+        post :holidays_list
+        post :holidays
+      end
+    end
 
     resources :security do
       collection do
@@ -585,6 +655,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :search
         put :toggle_freshfone
+        get :available_numbers
       end
     end
 
@@ -592,6 +663,7 @@ Helpkit::Application.routes.draw do
       resources :numbers do
         collection do
           post :purchase
+          get :edit
         end
       end
       
@@ -841,7 +913,13 @@ Helpkit::Application.routes.draw do
     end
 
 
-    resources :gnip do
+    resources :gnip, :controller => "gnip_twitter_controller" do
+      collection do
+        post :reconnect
+      end
+    end
+
+    resources :gnip_twitter do
       collection do
         post :reconnect
       end
@@ -876,12 +954,27 @@ Helpkit::Application.routes.draw do
         post :post_tweet
       end
     end
+
+    resources :twitter_handles do
+      collection do
+        post :user_following
+        get :index
+        get :feed
+        get :twitter_search
+        get :tweet_exists
+        get :create_twicket
+        post :tweet
+      end
+    end
   end
 
   namespace :widgets do
     resource :feedback_widget do
       member do
         get :loading
+      end
+      collection do
+        get :thanks
       end
     end
   end
@@ -915,8 +1008,8 @@ Helpkit::Application.routes.draw do
     collection do
       get :plans
       get :billing
-      get :plan
-      get :calculate_amount
+      post :plan
+      post :calculate_amount
       put :convert_subscription_to_free
     end
   end
@@ -1021,7 +1114,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :subscriptions do #:as => 'helpdesk_ticket_helpdesk'
+      resources :subscriptions do
         collection do
           post :create_watchers
           get :unsubscribe
@@ -1176,13 +1269,14 @@ Helpkit::Application.routes.draw do
             put :thumbs_up
             put :thumbs_down
             post :delete_tag
+            delete :destroy
           end
           resources :tag_uses
         end
       end
     end
 
-    resources :articles, :only => [:show, :create]#TODO-RAILS3 :: new route
+    resources :articles, :only => [:show, :create, :destroy]
   end
 
   resources :posts, :as => 'all' do
@@ -1246,6 +1340,8 @@ Helpkit::Application.routes.draw do
     match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
   end
 
+  post 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', 
+        :action => 'toggle', :as => :toggle_monitorship
   resources :discussions do
     collection do
       get :your_topics
@@ -1255,10 +1351,17 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :google_signup, :controller => 'google_signup' do
+    collection do
+      get :associate_local_to_google
+      get :associate_google_account
+    end
+  end
+
   
   resources :posts
     
-  resources :categories do
+  resources :categories, :controller => 'forum_categories' do
     collection do
       put :reorder
     end
@@ -1266,6 +1369,13 @@ Helpkit::Application.routes.draw do
     resources :forums do
       collection do
         put :reorder
+        post :create
+        get :index
+      end
+      member do
+        put :update
+        get :show
+        delete :destroy
       end
     
       resources :topics do
@@ -1291,7 +1401,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match 'discussions/:object/:id/subscriptions/:type(.:form)' => 'monitorships#toggle', :as => :toggle_monitorship, :method => :post
+  
   match '/support/theme.:format' => 'theme/support#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
   namespace :support do
@@ -1301,6 +1411,12 @@ Helpkit::Application.routes.draw do
     match '/login' => 'login#new'
     resource :signup, :only => [:new, :create]
     match '/signup' => 'signups#new'
+
+    namespace :mobihelp do
+      resource :tickets do
+        post :add_note
+      end
+    end
 
     resource :profile, :only => [:edit, :update] do
       member do
@@ -1340,6 +1456,7 @@ Helpkit::Application.routes.draw do
       resources :topics, :except => :index do
         collection do
           get :my_topics
+          get :reply
         end
         
         member do
@@ -1361,6 +1478,9 @@ Helpkit::Application.routes.draw do
           member do
             put :toggle_answer
           end
+          collection do
+            get :show
+          end
         end
 
         match '/answer/:id' => 'posts#best_answer', :as => :best_answer
@@ -1374,7 +1494,7 @@ Helpkit::Application.routes.draw do
       match '/folders/:id/page/:page' => 'folders#show'
       resources :folders, :only => :show
       
-      resources :articles, :only => :show do
+      resources :articles, :only => [:show, :destroy] do
         member do
           put :thumbs_up
           put :thumbs_down
@@ -1471,22 +1591,17 @@ Helpkit::Application.routes.draw do
   match '/' => 'home#index'
   # match '/:controller(/:action(/:id))'
   match '/all_agents' => 'agents#list'
-  match '/chat/create_ticket' => 'chats#create_ticket', :method => :post
-  match '/chat/add_note' => 'chats#add_note', :method => :post
   match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
   match '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
   match '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
   match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
-
-
-
-
-
-
-
-
-
+  resources :chats do
+    collection do
+      post :create_ticket
+      post :add_note
+    end
+  end
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
     
@@ -1609,6 +1724,13 @@ Helpkit::Application.routes.draw do
       resources :affiliates do
         collection do
           post :add_affiliate_transaction
+          post :add_reseller
+          post :add_subscriptions_to_reseller
+          get :fetch_affilate_subscriptions
+          get :affiliate_subscription_summary
+          get :fetch_reseller_account_info
+          get :fetch_account_activity
+          post :remove_reseller_subscription
         end
       end
     end
@@ -1623,6 +1745,7 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
   
   # match ':controller(/:action(/:id))', :via => :all
   # match ':controller/:action/(:id).:format', :via => :all

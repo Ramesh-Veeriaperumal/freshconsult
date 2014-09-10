@@ -116,18 +116,17 @@ module TicketsFilter
     to_ret = (scope ||= default_scope)
     
     conditions = load_conditions(user,filter)
-
     if user && filter == :monitored_by
-      to_ret = user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
+      to_ret = user.subscribed_tickets.where({:spam => false, :deleted => false})
     else
-      to_ret = to_ret.scoped(:conditions => conditions[filter]) unless conditions[filter].nil?
+      to_ret = to_ret.where(conditions[filter]) unless conditions[filter].nil?
     end
     
     ADDITIONAL_FILTERS[filter].each do |af|
-      to_ret = to_ret.scoped(:conditions => conditions[af])
+      to_ret = to_ret.where(conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
     join = JOINS[filter]
-    to_ret = to_ret.scoped(:joins => join) if join
+    to_ret = to_ret.all(:joins => join) if join
     to_ret
   end
 
@@ -159,7 +158,7 @@ module TicketsFilter
     # Protect us from SQL injection in the 'field' param
     return scope unless conditions
 
-    scope.scoped(:conditions => conditions)
+    scope.where(conditions)
   end
   
   protected

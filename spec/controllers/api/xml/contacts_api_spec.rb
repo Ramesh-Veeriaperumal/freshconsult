@@ -93,9 +93,9 @@ describe ContactsController do
 	end
 
   it "should fetch contacts filtered by company id" do
-    new_company = Factory.build(:customer, :name => Faker::Name.name)
+    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     new_company.save
-    contact = Factory.build(:user, :account => @account,
+    contact = FactoryGirl.build(:user, :account => @account,
                                     :name => Faker::Name.name, 
                                     :email => Faker::Internet.email,
                                     :mobile => 9876543210,
@@ -103,11 +103,11 @@ describe ContactsController do
                                     :delta => 1, 
                                     :language => "en",
                                     :customer_id => new_company.id)
-    contact.save(false)
+    contact.save(validate: false)
     check_id  = new_company.id
     get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+    expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
 

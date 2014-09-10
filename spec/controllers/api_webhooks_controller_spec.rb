@@ -32,7 +32,7 @@ describe ApiWebhooksController do
 	end
 
 	it "should delete webhooks" do
-		id = VARule.find(:first,:conditions=>["rule_type=13"]).id
+		id = VaRule.find(:first,:conditions=>["rule_type=13"]).id
 		delete :destroy, {"controller"=>"api_webhooks", "action"=>"destroy", "id"=> id, "format"=>"json"}
 		response.status.should eql 200
 	end

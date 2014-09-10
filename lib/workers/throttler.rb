@@ -36,7 +36,7 @@ class Workers::Throttler
     rescue Resque::DirtyExit
       Resque.enqueue(Workers::Throttler, throttler_args)
     rescue Exception => e
-      puts "something is wrong  : #{e.message}"
+      puts "something is wrong  Throttler : #{e.message}"
     end
   end
 
