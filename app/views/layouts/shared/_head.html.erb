@@ -1,7 +1,7 @@
 <head>
 	<% if @debuging%>
 		<script type="text/javascript">
-	    	var t_pagestart=new Date().getTime();
+	    	var t_pagestart = new Date().getTime();
 	  	</script>
   	<%end%>
   	<meta charset="utf-8">
@@ -15,29 +15,31 @@
 	<!-- Adding meta tag for CSRF token -->
 	<%= csrf_meta_tag %>
 	<!-- End meta tag for CSRF token -->
-	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
+	<!-- Mobile viewport optimized: j.mp/bplateviewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= stylesheet_link_tag :app_common %>
-	<%= stylesheet_link_tag :pattern, :media => "screen, print, projection"  %>
+
+	<!-- TODO-RAILS3 Clean up the below module oriented items -->
+	<%= stylesheet_link_tag :common %>
+	<%= stylesheet_link_tag :"pattern/pattern", :media => "screen, print, projection"  %>
 	<%= stylesheet_link_tag :plugins  %>
 	<%= stylesheet_link_tag :sprites  %>
-	<%= stylesheet_link_tag :app %>
-	<%= stylesheet_link_tag :non_pattern %>
+	<%= stylesheet_link_tag :module %>
+	<%= stylesheet_link_tag :"app/application" %>
+	<%= stylesheet_link_tag :"app/app-common" %>
 	<%= stylesheet_link_tag :tour_my_app %>
 	<%= stylesheet_link_tag :ie_hacks %>
-	<%= stylesheet_link_tag :tkt_details, :media => "screen, print, projection"  %>
+	<%= stylesheet_link_tag :"page/tkt_details/tkt_details", :media => "screen, print, projection"  %>
+	<%= stylesheet_link_tag :"page/tkt_details/tkt_details_sprites", :media => "screen, print, projection"  %>
 	<%= stylesheet_link_tag :'360player' %>
 	<%= stylesheet_link_tag :community %>
-
 	<%= stylesheet_link_tag :'freshfone_recording_playback' %>
-	<%#= render :partial => "shared/theme.css"  %>
 
 	<script type="text/javascript">
-	  /*TODo_RAILS3 need to cross check this area*/
+	  /* TODO-RAILS3 need to cross check this area */
 		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
 		SPACER_IMAGE_PATH = '<%= image_path("spacer.gif") %>';
@@ -47,19 +49,15 @@
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 		cloudfront_host_url = "<%= ActionController::Base.asset_host %>";
 	</script>
-	
-	
+		
 	<%= javascript_include_tag :defaults  %>
 	<%= javascript_include_tag :frameworks %>
 	<%= javascript_include_tag :workspace %>
 	<%= javascript_include_tag :redactor %>
 	<%= javascript_include_tag :shortcut if shortcuts_enabled? %>
 	<%= javascript_include_tag :syntaxhighlighter %>
-
-
 	<%= javascript_include_tag :pattern  %>
 	<%= javascript_include_tag :merge  %>
-
 	<%= javascript_include_tag :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||
@@ -67,7 +65,7 @@
 		<%= javascript_include_tag :soundmanager %>
 	<% end %>
 
-	<%#= javascript_include_tag_langs #TODO-RAILS3%>
+	<%#= javascript_include_tag_langs #TODO-RAILS3 %>
 
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
@@ -78,10 +76,10 @@
 		Fjax.Manager.start();
 	</script>
 
-
 	<%= yield :head %>
 
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
+
 	<%= render :partial => 'layouts/shared/app_analytics' if current_user.present? and current_user.agent? and Rails.env.production? %>
 </head>
 
