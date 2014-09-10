@@ -46,8 +46,10 @@
 		<% end %>
 	</div>
   </td>
+  <% style_tooltip = ticket_style == "customer_responded_overdue" ? t("helpdesk.tickets.friendly_status.overdue") : "" %>
+  <% style_class = ticket_style == "customer_responded_overdue" ? 'customer_responded_overdue_hover' : "" %>
   <td class="ralign hideForList">
-		<%= ("<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>").html_safe unless ticket_style.blank? %>
+		<%= ("<span class='#{ticket_style} subject_style tooltip' data-original-title = '#{style_tooltip}' data-placement = 'left'><span class= '#{style_class}' ></span>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>").html_safe unless ticket_style.blank? %>
 	</td>
   <td class="source-icon hideForList">
 	<div class="status-source source-detailed-<%= TicketConstants::SOURCE_TOKEN_BY_KEY[ticket.source].to_s %> hideForList" 

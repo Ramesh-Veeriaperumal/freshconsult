@@ -3877,7 +3877,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
-        customer_responded_overdue: "Overdue"
+        customer_responded_overdue: "Customer Responded"
       tabular_view:
         title: "Title"
         posted: "Posted"
