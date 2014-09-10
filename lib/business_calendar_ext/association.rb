@@ -1,4 +1,4 @@
-module BusinessCalendar::Association
+module BusinessCalendarExt::Association
 
   def self.included(base)
     base.extend(ClassMethods)
