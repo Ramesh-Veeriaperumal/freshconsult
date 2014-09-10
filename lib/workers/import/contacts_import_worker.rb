@@ -32,6 +32,8 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                  }
                       }
           company_name = @params_hash[:user][:company].to_s.strip
+          @params_hash[:user][:language] = current_account.language if @params_hash[:user][:language].nil?
+          @params_hash[:user][:time_zone] = current_account.time_zone if @params_hash[:user][:time_zone].nil?
           @params_hash[:user][:client_manager] = @params_hash[:user][:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
           search_options = {:email => @params_hash[:user][:email], :twitter_id => @params_hash[:user][:twitter_id]}
