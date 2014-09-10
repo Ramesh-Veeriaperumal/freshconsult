@@ -8,7 +8,14 @@ if @social_error_msg.nil?
   page << "j('[data-screen-name=#{@screen_name}] a i.ficon-checkmark').addClass('ficon-plus')"  
   page << "j('[data-screen-name=#{@screen_name}] a i.ficon-checkmark').removeClass('ficon-checkmark')"  
   
-  page << "j('.btn-twt-followers').text(parseInt(j('.btn-twt-followers').text())-1)"
+  page << "var current_count = parseInt(j('.btn-twt-followers').text());
+           var updated_count = current_count-1 
+           var text = updated_count == 1 ? ' Follower' : ' Followers';
+           j('.btn-twt-followers').text(updated_count + text)"
+          
+  page << "if(parseInt(j('.btn-twt-followers').text()) == 0){ j('.btn-twt-followers').addClass('hide')}"
+        
+            
 else
   page << "j('[data-screen-name=#{@screen_name}]').removeClass('sloading loading-tiny loading-align')"
   page << "j('[data-screen-name=#{@screen_name}] a').show()"

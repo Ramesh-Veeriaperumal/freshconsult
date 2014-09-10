@@ -164,7 +164,7 @@ var TwitterActions = Class.create({
     currentInteractionUnfav: function(e) {
         var feed_id = j(e.currentTarget).attr("data-feed-id");
         j("[data-feed-id=" + feed_id + "] .unfav").addClass("sloading loading-tiny loading-align");
-        j("[data-feed-id=" + feed_id + "] .unfav i").hide();
+        j("[data-feed-id=" + feed_id + "] .unfav i").css('opacity','0');
         var element = "#conv_div_";
         var params = {
             feed_id: feed_id,
@@ -187,7 +187,7 @@ var TwitterActions = Class.create({
     currentInteractionFav: function(e) {
         var feed_id = j(e.currentTarget).attr("data-feed-id");
         j("[data-feed-id=" + feed_id + "] .fav").addClass("sloading loading-tiny loading-align");
-        j("[data-feed-id=" + feed_id + "] .fav i").hide();
+        j("[data-feed-id=" + feed_id + "] .fav i").css('opacity','0');
         var element = "#conv_div_";
         var params = {
             feed_id: feed_id,

@@ -12,7 +12,7 @@ if @social_error_msg.nil? or @social_error_msg == "#{I18n.t('social.streams.twit
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').removeClass('shr-fav-btn')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt i').removeClass('ficon-star')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt i').addClass('ficon-star-o')"
-  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt i').show()"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt i').css('opacity','1')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').addClass('fav')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').addClass('fav-twt')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').removeClass('unfav-twt')"

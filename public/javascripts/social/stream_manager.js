@@ -1,7 +1,7 @@
 var j = jQuery.noConflict();
 var StreamManager = Class.create({
     initialize: function() {
-        this.convoElement = "#conv-panel", this.loadingClass = 'sloading loading-block';
+        this.convoElement = "#conv-panel", this.loadingClass = 'sloading loading-block loading-align';
         //for closing conversation wrapper upon clicking outside on body and other than twt-list-item object
         this.mouse_is_in = {
             convo_panel: false,
