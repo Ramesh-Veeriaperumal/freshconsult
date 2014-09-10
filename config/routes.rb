@@ -656,6 +656,7 @@ Helpkit::Application.routes.draw do
         get :search
         put :toggle_freshfone
         get :available_numbers
+        post :request_freshfone_feature
       end
     end
 
@@ -681,7 +682,7 @@ Helpkit::Application.routes.draw do
       resources :streams, :only => :index
       resources :twitter_streams do
         collection do
-          get :preview
+          post :preview
         end
         member do
           post :delete_ticket_rule
@@ -1289,7 +1290,6 @@ Helpkit::Application.routes.draw do
   resources :posts
   resources :monitorship
 
-  resources :discussions
 
   namespace :discussions do
     resources :forums, :except => :index do
@@ -1342,6 +1342,9 @@ Helpkit::Application.routes.draw do
 
   post 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships', 
         :action => 'toggle', :as => :toggle_monitorship
+
+  get 'discussions' => 'discussions#index', as: :discussions
+
   resources :discussions do
     collection do
       get :your_topics

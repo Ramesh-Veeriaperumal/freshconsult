@@ -21,15 +21,15 @@ module ControllerHelper
   end
 
   def clear_email_config
-    unless @account.primary_email_config.to_email == "support@#{@account.full_domain}"
-      @account.email_configs.destroy_all
-      ec = @account.email_configs.build({:to_email => "support@#{@account.full_domain}", 
+    unless RSpec.configuration.account.primary_email_config.to_email == "support@#{@account.full_domain}"
+      RSpec.configuration.account.email_configs.destroy_all
+      ec = RSpec.configuration.account.email_configs.build({:to_email => "support@#{@account.full_domain}", 
                                     :reply_email => "support@#{@account.full_domain}", 
                                     :active => true, 
                                     :primary_role => true, 
                                     :name => "Test Account"})
       ec.save(:validate => false)
-      @account.reload
+      RSpec.configuration.account.reload
     end
   end
 end

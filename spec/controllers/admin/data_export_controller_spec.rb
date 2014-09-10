@@ -54,7 +54,8 @@ describe Admin::DataExportController do
     users = Hash.from_trusted_xml users_xml
     admin = users["users"].find{|u| u["helpdesk_agent"] == true}
     admin.should_not be_blank
-    admin["email"].should eql(RSpec.configuration.agent.email)
+    admin["email"].should eql(@account.agent.email)
+    admin["email"].should eql(@agent.email)
   end
 
   it 'should export forums data' do

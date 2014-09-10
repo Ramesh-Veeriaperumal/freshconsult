@@ -1,4 +1,4 @@
-if Rails.env.test? || Rails.env.development?
+if Rails.env.test?
   gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
   rspec_gem_dir = nil
   Dir["#{Rails.root}/vendor/gems/*"].each do |subdir|
@@ -6,15 +6,15 @@ if Rails.env.test? || Rails.env.development?
   end
   rspec_plugin_dir = File.expand_path(File.dirname(__FILE__) + '/../../vendor/plugins/rspec')
 
-if rspec_gem_dir && (test ?d, rspec_plugin_dir)
-  raise "\n#{'*'*50}\nYou have rspec installed in both vendor/gems and vendor/plugins\nPlease pick one and dispose of the other.\n#{'*'*50}\n\n"
-end
+  if rspec_gem_dir && (test ?d, rspec_plugin_dir)
+    raise "\n#{'*'*50}\nYou have rspec installed in both vendor/gems and vendor/plugins\nPlease pick one and dispose of the other.\n#{'*'*50}\n\n"
+  end
 
-if rspec_gem_dir
-  $LOAD_PATH.unshift("#{rspec_gem_dir}/lib")
-elsif File.exist?(rspec_plugin_dir)
-  $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib")
-end
+  if rspec_gem_dir
+    $LOAD_PATH.unshift("#{rspec_gem_dir}/lib")
+  elsif File.exist?(rspec_plugin_dir)
+    $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib")
+  end
 
 
   FacebookTests = [
@@ -324,47 +324,21 @@ end
         t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.pattern = FileList.new(FacebookTests)
       end
+    end    
 
-      namespace :db do
-        namespace :fixtures do
-          desc "Load fixtures (from spec/fixtures) into the current environment's database.  Load specific fixtures using FIXTURES=x,y. Load from subdirectory in test/fixtures using FIXTURES_DIR=z."
-          task :load => :environment do
-            ActiveRecord::Base.establish_connection(Rails.env)
-            base_dir = File.join(Rails.root, 'spec', 'fixtures')
-            fixtures_dir = ENV['FIXTURES_DIR'] ? File.join(base_dir, ENV['FIXTURES_DIR']) : base_dir
+    namespace :freshfone do
+      desc "Running all Freshfone Testss"
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.pattern = FileList.new(FreshfoneTests)
+      end
+    end    
 
-            require 'active_record/fixtures'
-            (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/).map {|f| File.join(fixtures_dir, f) } : Dir.glob(File.join(fixtures_dir, '*.{yml,csv}'))).each do |fixture_file|
-              Fixtures.create_fixtures(File.dirname(fixture_file), File.basename(fixture_file, '.*'))
-            end
-          end
-        end
-
-        task :reset do
-          require 'faker'
-          require 'simplecov'
-          require 'active_record'
-          load 'Rakefile'
-          config = YAML::load(IO.read(File.join(Rails.root, 'config/database.yml')))
-          ActiveRecord::Base.establish_connection(config["test"])
-          ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
-            t.string   "name"
-            t.decimal  "amount",          :precision => 10, :scale => 2
-            t.datetime "created_at"
-            t.datetime "updated_at"
-            t.integer  "renewal_period",                                 :default => 1
-            t.decimal  "setup_amount",    :precision => 10, :scale => 2
-            t.integer  "trial_period",                                   :default => 1
-            t.integer  "free_agents"
-            t.decimal  "day_pass_amount", :precision => 10, :scale => 2
-            t.boolean  "classic",                                        :default => false
-            t.text     "price"
-          end
-          Rake::Task["db:schema:load".to_sym].invoke
-          Rake::Task["db:create_reporting_tables".to_sym].invoke
-          Rake::Task["db:create_trigger".to_sym].invoke
-          Rake::Task["db:perform_table_partition".to_sym].invoke
-        end
+    namespace :freshchat do
+      desc "Running all FreshChat Tests"
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ChatTests)
       end
     end    
 
@@ -376,28 +350,11 @@ end
       end
     end    
 
-      namespace :freshchat do
-        desc "Running all FreshChat Tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(ChatTests)
-        end
-      end    
-
-      namespace :freshfone do
-        desc "Running all Freshfone Testss"
-        RSpec::Core::RakeTask.new(:all) do |t|
-          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.pattern = FileList.new(FreshfoneTests)
-        end
-      end    
-
-      namespace :freshfone_reports do
-        desc "Running all freshfone summary reports tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-          t.spec_files = FileList.new(FreshfoneReportsTests)
-        end
+    namespace :freshfone_reports do
+      desc "Running all freshfone summary reports tests"
+      RSpec::Core::RakeTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_files = FileList.new(FreshfoneReportsTests)
       end
     end
 
@@ -463,6 +420,5 @@ end
         t.pattern = FileList.new(ModelTests)
       end
     end
-
   end
 end
