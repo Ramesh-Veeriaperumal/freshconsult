@@ -360,7 +360,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
       
       begin
-        ticket.cc_email = ticket_cc_emails_hash(ticket)
+        ticket.cc_email = ticket_cc_emails_hash(ticket, note)
         if (user.agent? && !user.deleted?)
           process_email_commands(ticket, user, ticket.email_config, params, note) if 
             user.privilege?(:edit_ticket_properties)
@@ -537,7 +537,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
 
-    def ticket_cc_emails_hash(ticket)
+    def ticket_cc_emails_hash(ticket, note)
       cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : ticket.cc_email_hash
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
