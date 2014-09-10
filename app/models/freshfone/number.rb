@@ -1,8 +1,8 @@
-require 'business_calendar/association'
+require 'business_calendar_ext/association'
 class Freshfone::Number < ActiveRecord::Base
 	include Mobile::Actions::Freshfone
 	self.table_name =  :freshfone_numbers
-	include BusinessCalendar::Association
+	include BusinessCalendarExt::Association
 
 	require_dependency 'freshfone/number/message'
 
