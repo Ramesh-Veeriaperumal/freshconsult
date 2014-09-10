@@ -1,13 +1,12 @@
 class Freshfone::CallHistoryController < ApplicationController
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
-	before_filter :set_default_filter, :only => [:index]
 	before_filter :set_cookies_for_filter, :only => [:custom_search]
 	before_filter :get_cookies_for_filter, :only => [:index]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
-
+	
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")
 	end
@@ -63,10 +62,6 @@ class Freshfone::CallHistoryController < ApplicationController
 
 		def fetch_blacklist
 			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
-		end
-		
-		def set_default_filter
-			params.merge!({ :wf_c0 => "created_at", :wf_o0 => "is_greater_than", :wf_v0_0 => "today" })
 		end
 
 		def get_cookies_for_filter
