@@ -656,7 +656,8 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  
   map.namespace :mobihelp do |mobihelp|
