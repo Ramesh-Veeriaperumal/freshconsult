@@ -172,7 +172,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :discussion, :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"discussions/forum", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
-    resource :"discussions/topic", :only => [:toggle_lock]
   end
 
   # create_forum_topic

@@ -217,7 +217,7 @@ class Discussions::TopicsController < ApplicationController
 			end
 			@topic.account_id = current_account.id
 			# admins and moderators can sticky and lock topics
-			return unless privilege?(:manage_forums)
+			return unless privilege?(:edit_topic, @topic)
 			@topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked]
 			# only admins can move
 			return unless privilege?(:manage_forums)
