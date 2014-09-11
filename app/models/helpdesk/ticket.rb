@@ -283,6 +283,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def nickname
     subject
   end
+
+  def chat?
+    source == SOURCE_KEYS_BY_TOKEN[:chat]
+  end
   
   def requester_info
     requester.get_info if requester
