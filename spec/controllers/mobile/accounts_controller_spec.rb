@@ -23,7 +23,6 @@ describe AccountsController do
 		post :new_signup_free, signup_params
 		Resque.inline = false
 		Billing::Subscription.any_instance.unstub(:create_subscription)
-		puts json_response.inspect
 		json_response.should include("success", "host", "t", "support_email")
 		json_response["success"].should be_true
 		new_user = User.find_by_email(json_response["support_email"])
