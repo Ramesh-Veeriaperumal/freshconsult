@@ -233,8 +233,8 @@ var TwitterActions = Class.create({
         search_type: j('#social_meta_info #social_search_type').val(),
         stream_id: j("#conv_div_" + feed_id + " #stream_id").val()
       }
-      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny loading-align");
-      j("[data-screen-name=" + screen_name + "] a").hide();
+      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny");
+      j("[data-screen-name=" + screen_name + "] a").css('opacity','0');
        j.ajax({
             type: 'POST',
             url: "/social/twitter/follow",
@@ -254,8 +254,8 @@ var TwitterActions = Class.create({
         search_type: j('#social_meta_info #social_search_type').val(),
         stream_id: j("#conv_div_" + feed_id + " #stream_id").val()
       }
-      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny loading-align");
-      j("[data-screen-name=" + screen_name + "] a").hide();
+      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny");
+      j("[data-screen-name=" + screen_name + "] a").css('opacity','0');
        j.ajax({
             type: 'POST',
             url: "/social/twitter/unfollow",

@@ -1,6 +1,6 @@
 if @social_error_msg.nil?
-  page << "j('[data-screen-name=#{@screen_name}]').removeClass('sloading loading-tiny loading-align')"
-  page << "j('[data-screen-name=#{@screen_name}] a').show()"
+  page << "j('[data-screen-name=#{@screen_name}]').removeClass('sloading loading-tiny')"
+  page << "j('[data-screen-name=#{@screen_name}] a').css('opacity','1')"
   
   page << "j('[data-screen-name=#{@screen_name}]').removeClass('following')"  
   page << "j('[data-screen-name=#{@screen_name}]').addClass('not-following')"
@@ -17,7 +17,7 @@ if @social_error_msg.nil?
         
             
 else
-  page << "j('[data-screen-name=#{@screen_name}]').removeClass('sloading loading-tiny loading-align')"
-  page << "j('[data-screen-name=#{@screen_name}] a').show()"
+  page << "j('[data-screen-name=#{@screen_name}]').removeClass('sloading loading-tiny')"
+  page << "j('[data-screen-name=#{@screen_name}] a').css('opacity','1')"
   show_ajax_flash page
 end

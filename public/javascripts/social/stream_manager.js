@@ -1,7 +1,7 @@
 var j = jQuery.noConflict();
 var StreamManager = Class.create({
     initialize: function() {
-        this.convoElement = "#conv-panel", this.loadingClass = 'sloading loading-block loading-align';
+        this.convoElement = "#conv-panel", this.loadingClass = 'sloading loading-block loading-tiny';
         //for closing conversation wrapper upon clicking outside on body and other than twt-list-item object
         this.mouse_is_in = {
             convo_panel: false,
@@ -158,7 +158,7 @@ var StreamManager = Class.create({
         });
     },
     unifiedStreams: function(e) {
-        j(this.streamBoxElements.stream_template).addClass(this.loadingClass);
+        j(this.streamBoxElements.stream_template).addClass(this.loadingClass + ' loading-align');
         this.applyChanges();
         var stream_ids = "",
             first_feed_id = "",
