@@ -215,11 +215,7 @@ SurveyMonkey.prototype = {
 	},
 
 	load_collector_list: function() {
-		var count = 0,
-			timeout = 0;
 		jQuery('.survey_id').map(function() {
-			count++;
-			timeout = (count%2 == 0) ? 1 : ++timeout;
 			var configured_survey_id = jQuery(this).val();
 			var configured_collector_id = jQuery(this).parent().find(".collector_id").val();
 			var collector_container = jQuery(this).parent().find(".collector-container");
@@ -228,7 +224,7 @@ SurveyMonkey.prototype = {
 				jQuery(collector_container).removeClass("sloading loading-small loading-left");
 			}
 			jQuery(collector_container).find("a[rel='freshdialog']").hide();
-			setTimeout(sm.fetch_survey_weblink_collectors(configured_survey_id, function(collectors) {
+			sm.fetch_survey_weblink_collectors(configured_survey_id, function(collectors) {
 				var ihtml = "<option value=\"\">- Select -</option>";
 				collectors.each(function(collector) {
 					var selected_attrib = (configured_collector_id == collector.id ? 'selected="selected" ' : '');
@@ -243,7 +239,7 @@ SurveyMonkey.prototype = {
 				jQuery(collector_container).find('select.collector_list').select2("val", configured_collector_id);
 				jQuery(collector_container).removeClass("sloading loading-small loading-left");
 				return;
-			}.bind(sm)), timeout);
+			}.bind(sm));
 			sm.validate_the_form();
 		});
 		sm.hide_preview_button_by_collector_value();
