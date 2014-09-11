@@ -613,7 +613,7 @@
         :action => :show
       solution.resources :folders, :only => :show
       solution.resources :articles, :only => :show, :member => { :thumbs_up => :put,
-        :thumbs_down => :put , :create_ticket => :post }
+        :thumbs_down => :put , :create_ticket => :post, :hit => :get }
     end
 
     # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
