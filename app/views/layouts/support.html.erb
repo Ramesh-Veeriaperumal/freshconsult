@@ -40,8 +40,12 @@
 			<%= render :partial => "layouts/shared/chat/chat" %>
 		<% end %>
 				
+	    <%= javascript_include_tag :portal_bottom %>
+		<%= javascript_include_tag :redactor %>
+		<%= javascript_include_tag :freshfone_portal %>	
+		<%= include_cloudfront_js_langs %>
 		<!-- Including default portal based script at the bottom -->
-		<%= render :partial => "layouts/shared/scripts" %> 	
+		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<%= back_to_agent_view %>
 
