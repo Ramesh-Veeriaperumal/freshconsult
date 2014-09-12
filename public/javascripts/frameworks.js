@@ -1,4 +1,5 @@
-//= require jquery-1.7.2.js
+//= require jquery-1.8.3.min.js
+//= require jquery_ujs.js
 //= require jquery.pjax.js
 //= require utils.js
 //= require frameworks/sprintf.js
