@@ -79,10 +79,6 @@ gem "http_accept_language", "~> 2.0.1"
 
 gem "riddle", "1.2.2"
 
-gem "jammit", "0.6.5"
-gem "uglifier", "~> 2.1.2"
-gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
-
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
@@ -189,7 +185,7 @@ gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-o
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 
 
-group :development,:test do
+group :development, :test do
   gem "forgery","0.5.0"
   gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
@@ -214,17 +210,23 @@ group :test do
   gem 'fuubar'
 end
 
-# group :assets do
-  gem "sass",          "3.2.19"
+# group :development, :assets do
+
+  # TODO_RAILS3 Remove the default asset pipeline
+  gem "jammit", "0.6.5"
+  gem "uglifier", "~> 2.1.2"
+  gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
+
   gem "sass-rails"
   gem "compass-rails"
+  gem "compass-blueprint"
 
   # Portal grid system is done using susy grids
   gem "susy"
 
   # To optimize sprite generation
-  gem "oily_png",     "1.1.1"
+  gem "oily_png"
 
   # Building custom font icons inside the application
-  gem "fontcustom",   "1.3.3"
+  gem "fontcustom"
 # end

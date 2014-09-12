@@ -1,17 +1,17 @@
 {
   "checksum": {
-    "previous": "f735a0dabb182924ac15ddd8ece1caee3da01c0d36e6e356b60dabf311b62bfb",
-    "current": "f735a0dabb182924ac15ddd8ece1caee3da01c0d36e6e356b60dabf311b62bfb"
+    "previous": "94856ef593c3f80e307427c5f7320a9eb23056164469b458ab609ed28692ca60",
+    "current": "94856ef593c3f80e307427c5f7320a9eb23056164469b458ab609ed28692ca60"
   },
   "fonts": [
-    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.ttf",
-    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.svg",
-    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.woff",
-    "public/fonts/glyphs_f735a0dabb182924ac15ddd8ece1caee.eot"
+    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.ttf",
+    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.svg",
+    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.woff",
+    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.eot"
   ],
   "glyphs": {
     "account": {
-      "codepoint": 61766,
+      "codepoint": 61814,
       "source": "public/glyphs/vectors/account.svg"
     },
     "agent": {
@@ -489,12 +489,11 @@
     "no_hash": false,
     "output": {
       "css": "public/src/fonts",
-      "fonts": "public/fonts",
-      "preview": "public/fonts"
+      "fonts": "public/generated/fonts",
+      "preview": "public/generated/fonts"
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
@@ -502,6 +501,6 @@
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
-    "public/fonts/index.html"
+    "public/generated/fonts/index.html"
   ]
 }

@@ -167,8 +167,11 @@ module Helpkit
     config.filter_parameters += [:password, :password_confirmation, :creditcard]
 
     config.assets.paths += Dir["#{Rails.root}/public/*"].sort_by { |dir| -dir.size }
+    config.assets.paths << Rails.root.join("public", "generated", "fonts") 
+    config.assets.paths << Rails.root.join("public", "generated", "images") 
 
-
+    # Precompile *all* assets, except those that start with underscore
+    config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
   end
 end
 

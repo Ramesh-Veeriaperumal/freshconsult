@@ -37,6 +37,7 @@ config/elasticsearch.yml
 public/stylesheets/*
 stylesheets/*
 public/images/sprites/
+public/generated/*
 
 # All others
 dump.rdb

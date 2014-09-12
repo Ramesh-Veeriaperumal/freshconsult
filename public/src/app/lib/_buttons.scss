@@ -1,4 +1,4 @@
-@import "compass/css3/pie";
+// @import "compass/css3/pie";
 @import "../../pattern/lib/rtl-mixins";
 
 .ui-datepicker{
@@ -424,7 +424,7 @@ div.action_buttons:hover{
   margin-bottom: -22px;
 }
 .toggle-button{
-  @include pie;
+  // @include pie; /*TODO-RAILS3 deprecated*/
   text-transform:uppercase;    
   font-size:12px;  
   position:relative;
@@ -467,7 +467,7 @@ div.action_buttons:hover{
     @include left(50%);
     span{
       @include inline-block;
-      @include pie;
+      // @include pie; /*TODO-RAILS3 deprecated*/
       border:1px solid rgba(0, 0, 0, 0.2); 
       width:16px;
       height:16px;              
@@ -501,7 +501,7 @@ div.action_buttons:hover{
     @include float(left);
     width:50%;
     height:100%;
-    @include pie;
+    // @include pie; /*TODO-RAILS3 deprecated*/
     @include border-radius(16px);
     line-height:0;
     font-size: inherit;
