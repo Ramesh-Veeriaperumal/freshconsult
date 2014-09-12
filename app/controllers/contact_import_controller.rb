@@ -14,6 +14,8 @@ class ContactImportController < ApplicationController
                       I18n.t("contact_import.address"),
                       I18n.t("contact_import.tags"),                      
                       I18n.t("contact_import.background_info"),
+                      I18n.t("contact_import.language"),
+                      I18n.t("contact_import.timezone"),
                       I18n.t("contact_import.can_see_all_tickets_of_the_company") ]
                       
    map_fields :create, field_labels, 

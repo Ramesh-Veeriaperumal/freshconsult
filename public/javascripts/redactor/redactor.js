@@ -153,6 +153,10 @@ var Redactor = function(element, options)
 	this.textPaste = false;
 	this.undoDisable = false;
 	this.$el = $(element);
+	this.cursorPlacementDelay = null;
+	this.dataURI = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+	this.imgTag = $("<img id='cursor' width='0' height='0' rel='cursor' src='" + this.dataURI + "'/>");
+
 	this.paste_supported_browser = (($.browser.mozilla==true) && (navigator.appVersion.indexOf("Win")!=-1)) || ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
 	
 	this.buildLangSelector();
@@ -263,6 +267,7 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
 		buffer: false,
 		visual: true,
+		cursorTracking: true,
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 
 		// modal windows container
@@ -754,6 +759,11 @@ Redactor.prototype = {
 			}
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
+				if (this.opts.cursorTracking) 
+				{ 
+					this.setCursorPosition();
+				}
+
 				if(!this.specialPaste)
 				{
 			        if(this.paste_supported_browser)
@@ -794,6 +804,11 @@ Redactor.prototype = {
 		this.keyup();	
 		this.keydown();			
 
+		this.bindclick();
+		this.bindCustomEvent();
+
+		$(this).removeCursorImage(this);
+
 		// autosave
 		if (this.opts.autosave !== false)
 		{
@@ -815,7 +830,7 @@ Redactor.prototype = {
 		// focus
 		if (this.opts.focus) 
 		{
-			this.$editor.focus();
+			this.focusOnCursor();
 		}
 
 		// fixed
@@ -859,6 +874,64 @@ Redactor.prototype = {
 		}else{
 			this.hasQuotedText = false;
 		}
+	},
+	setCursorPosition: function(){
+		if(this.$editor.find("[rel='cursor']").get(0)){
+			if($.browser.mozilla){
+				this.$editor.find("[rel='cursor']").removeAttr( "style" );
+			}
+			this.removeContent();
+		}
+
+		if(!$.browser.mozilla){
+			this.imgTag.css({ "display": "none" });
+		}
+
+		if (window.getSelection) { 
+			var selection = window.getSelection();
+
+			if (selection.rangeCount > 0) {
+				var range = selection.getRangeAt(0);
+					newRange = document.createRange();
+					newRange.setStart(selection.focusNode, range.endOffset);
+					newRange.insertNode(this.imgTag[0]);
+			}
+		}
+	},
+	removeContent: function() {
+		var srcObj = this.$editor.find("[rel='cursor']").get(0);
+		if (document.createRange && srcObj) {    
+		    var rangeObj = document.createRange();
+		    rangeObj.selectNode(srcObj);
+		    rangeObj.deleteContents();
+		}
+	},
+	focusOnCursor: function(){
+		var imgfocus = this.$editor.find("[rel='cursor']");
+		if(imgfocus[0]){ 
+			var temp_range = document.createRange();
+			temp_range.selectNode(imgfocus[0]);	
+			this.getSelection().removeAllRanges();
+			this.getSelection().addRange(temp_range);
+			this.getSelection().collapseToEnd();
+			
+			if($.browser.mozilla){
+				this.$editor.focus();
+			}
+		} else {
+			this.$editor.focus();
+		}
+	},
+	deleteCursor: function(){
+		this.removeContent();
+		this.syncCode();
+	},
+	// for mozialla
+	addNoneStyleForCursor: function(){
+		if(this.$editor.find("[rel='cursor']").get(0)){
+			this.$editor.find("[rel='cursor']").css({"display": "none"});
+		}
+		this.syncCode();
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -922,12 +995,47 @@ Redactor.prototype = {
                               self.recursive_find($(this));
                           });
     },
+    bindclick: function(){
+    	if (this.opts.cursorTracking) 
+    	{
+    		this.$editor.click($.proxy(function(e) {
+	    		this.setCursorPosition();
+	    	}, this));
+
+    		if($.browser.mozilla){
+		    	this.$editor.dblclick($.proxy(function(e) {
+		    		this.$editor.find("[rel='cursor']").css({"display": "none"});
+		    	}, this));	
+		    }
+    	}
+    },
+    bindCustomEvent: function(){
+    	if (this.opts.cursorTracking) 
+    	{
+	    	this.$editor.on('textInserted',$.proxy(function(e) {
+	    		this.setCursorPosition();
+	    	}, this));
+	    }
+    },
 	keyup: function()
 	{
 		this.$editor.keyup($.proxy(function(e)
 		{
 			var key = e.keyCode || e.which;
 			
+			if (this.opts.cursorTracking) 
+			{	
+				if (key === 40){
+
+					clearTimeout(this.cursorPlacementDelay);
+					this.cursorPlacementDelay = setTimeout($.proxy(function(){
+						this.setCursorPosition();
+					},this),500);
+
+				} else { 
+					this.setCursorPosition();
+				}
+			}
 			// callback as you type
 			if (typeof this.opts.keyupCallback === 'function')
 			{
@@ -966,6 +1074,10 @@ Redactor.prototype = {
 			if (parent && $(parent).get(0).tagName === 'PRE')
 			{
 				pre = true;
+			}
+
+			if(this.$editor.find("[rel='cursor']").get(0)){
+				this.removeContent();
 			}
 
 			// callback keydown
@@ -1209,6 +1321,7 @@ Redactor.prototype = {
 
 	},	
 	isNotEmpty:function(e){
+		this.deleteCursor();
 		var valid_tags = ["img", "iframe", "object", "embed"];
 		for(var i=0; i < valid_tags.length; i++){
 			if(this.$editor.find(valid_tags[i]).length !=0 ){
@@ -1372,7 +1485,10 @@ Redactor.prototype = {
 				$(s).attr('unselectable', 'on');
 			}
 			
-			this.resizeImage(s);
+			if($(s).attr('id') != "cursor"){
+				this.resizeImage(s);
+			}
+				
 			
 		}, this));
 	
@@ -4276,6 +4392,44 @@ $.fn.insertExternal = function(html)
 };
 
 })(jQuery);
+
+/* Remove cursor position */
+(function($){
+	
+	"use strict";
+	
+	// Initialization	
+	$.fn.removeCursorImage = function(){		
+		return this.each(function() {
+			var object = new RemoveCursorImage(this);
+			object.init();
+		});
+	};
+
+	function RemoveCursorImage(editor){
+		this.$editor 			= editor;
+		this.$form 				= this.$editor.$el.get(0).form;
+	}
+
+	RemoveCursorImage.prototype = {
+		init: function(){
+			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
+		},
+		remove: function(){
+			var removeCursor = this.$editor.$el.data('removeCursor');
+			if(removeCursor == undefined || removeCursor){
+				this.$editor.deleteCursor();	
+			} else {
+				// Temp check for bulk action on form submit. Bulk action redactor should be disable when the checkbpx is not selected on Add Bulk reply.
+				if(jQuery.browser.mozilla && this.$editor.$el.attr('id') != "reply-multiple-cnt-reply-multiple-body"){ 
+					// Add display:none style for cursor's <img> tag
+					this.$editor.$el.data('redactor').addNoneStyleForCursor();
+				}
+			}
+		}
+	}
+
+})(window.jQuery);
  
 /* Plugin Quoted text */ 
 (function($){

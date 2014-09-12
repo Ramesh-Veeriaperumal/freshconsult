@@ -280,7 +280,7 @@ class Helpdesk::TicketsController < ApplicationController
                                                         :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
         #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
         #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
-        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true)}.to_json[1..-2]},
+        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true, true)}.to_json[1..-2]},
         #{{:last_forward => bind_last_conv(@ticket, @signature, true)}.to_json[1..-2]},
         #{{:ticket_properties => ticket_props}.to_json[1..-2]}"
         response << ",#{{:default_twitter_body_val => default_twitter_body_val(@ticket)}.to_json[1..-2]}" if @item.is_twitter?
@@ -443,7 +443,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     va_rule = current_account.scn_automations.find(params[:scenario_id])
-    unless va_rule.trigger_actions(@item)
+    unless va_rule.trigger_actions(@item, current_user)
       flash[:notice] = I18n.t("admin.automations.failure")
       respond_to do |format|
         format.html { 
@@ -651,6 +651,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     build_attachments @item, :helpdesk_ticket
     create_tags(params[:helpdesk][:tags], @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+    persist_states_for_api
     if @item.save_ticket
       post_persist
       notify_cc_people cc_emails unless cc_emails.blank? 
@@ -659,7 +660,49 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
-  def close 
+  ## API to import resolved and closed ticket details
+  def persist_states_for_api
+    if params[:format].eql?('json')
+      @item.ticket_states = Helpdesk::TicketState.new
+      
+      # Overriding created_at in case of ticket import
+      states_created_at  = convert_to_time(params[:helpdesk_ticket][:created_at])
+      @item.ticket_states.created_at = states_created_at if !states_created_at.nil?
+      
+      if params.key?(:resolved_at) or params.key?(:closed_at)
+        resolved_at = convert_to_time(params[:resolved_at])
+        closed_at = convert_to_time(params[:closed_at])
+
+        if @item.status == RESOLVED and !resolved_at.nil?
+          @item.ticket_states.resolved_at = resolved_at
+        elsif @item.status == CLOSED and !closed_at.nil?
+          @item.ticket_states.resolved_at = @item.ticket_states.closed_at = closed_at
+        end
+      end
+      
+    end
+  end
+
+  def convert_to_time(time_string)
+    time = nil
+
+    # Store previous TZ:
+    old_tz = Time.zone
+    Time.zone = "UTC"
+
+    begin
+      # Parse time with default TZ set as UTC:
+      time = time_string.nil? ? nil : Time.parse(time_string)
+    rescue ArgumentError
+      puts "Time format mismatch. Start time and end time should be like #{Time.now.to_formatted_s(:db)}"
+    ensure
+      # Reset to previous TZ:
+      Time.zone = old_tz
+    end
+    time
+  end
+
+  def close
     status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attributes(:status => status_id)

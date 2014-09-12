@@ -2941,7 +2941,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    language: Language
+    timezone: Timezone
     sample_data: Sample data
+    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
     can_see_all_tickets_of_the_company: Can view all company tickets ?
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
     can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
@@ -3050,7 +3053,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
@@ -4198,6 +4201,13 @@ en:
         user_info_blank: Please add a twitter handle to your account to fetch user's information.
         feeds_blank: Please add a twitter handle to your account to fetch your custom stream.
         retweet_success: Retweeted.
+        favorite_success: Favorited.
+        follow_success: Followed
+        unfollow_success: Unfollowed
+        already_followed: Followed Already
+        already_unfollowed: Unfollwed Already
+        already_favorited_tweet: Already Favorited.
+        unfavorite_success: Unfavorited.
         already_retweeted: Tweet has already been retweeted from this account.
         tweeted: Your tweet has been sent.
         already_tweeted: Your tweet is a duplicated.
@@ -4205,8 +4215,13 @@ en:
         rate_limit_reached: Could not perform the operation. Please try after sometime.
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
+        wrong_call: Trying to unfavorite a tweet that has not been favorited
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
+        cannot_favorite: You dont have permission to favorite a tweet.
+        cannot_unfavorite: You dont have permission to unfavorite a tweet.
+        cannot_follow: You dont have permission to follow this user.
+        cannot_unfollow: You dont have permission to unfollow this user.
         cannot_create_fd_item: You dont have permission to convert a tweet to a ticket / note.
         cannot_post: You dont have permission to tweet.
         no_older_results: No more recent posts in this stream.
@@ -5496,12 +5511,12 @@ en:
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
-      ticket_desc: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
+      ticket_desc_with_out_name: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc_with_out_name: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
       voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
-      dial_a_number: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number_with_out_name: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"

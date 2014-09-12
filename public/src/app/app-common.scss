@@ -3638,6 +3638,17 @@ $adm-bdr:#F0F0F0;
 				}
 			}
 		}
+		&.agent-list-page{
+			tr td:nth-child(2){
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 140px;
+			}
+			tr td:nth-child(3){
+				max-width: 300px;
+			}
+		}
 	}
 	.msg{
 		float: inherit;

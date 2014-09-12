@@ -141,10 +141,8 @@ swapEmailNote = function(formid, link){
 		
 		if (link && $(link).data('noteType') === 'fwd') {
 			$('.forward_email input').trigger('focus');
-		} else {
-			$('#'+formid+"-body").getEditor().focus();
-		}
-
+		} 
+		
 		if($.browser.mozilla){
 			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 		}
@@ -201,10 +199,11 @@ insertIntoConversation = function(value,element_id){
 			$element.keyup(); // to update the SendTweetCounter value
 		}
 		else{
+
+			$element.data('redactor').focusOnCursor();
+		    $element.insertHtml(value); 
+		    jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
 			$element.getEditor().focus();
-			$element.data('redactor').saveSelection();
-			$element.data('redactor').restoreSelection();	
-			$element.insertHtml(value);
 		}
 	}    
 	return;
@@ -595,9 +594,37 @@ var scrollToError = function(){
 	});
 
 	$('body.ticket_details [rel=tagger]').livequery(function() {
+		var hash_val = []
+		TICKET_DETAILS_DATA['tag_list'].each(function(item, i){ hash_val.push({ id: item, text: item }); });
+
 		$(this).select2({
-			tags: TICKET_DETAILS_DATA['tag_list'],
-			tokenSeparators: [',']
+			multiple: true,
+			data: hash_val,
+			quietMillis: 500,
+			ajax: { 
+        url: '/search/autocomplete/tags',
+        dataType: 'json',
+        data: function (term) {
+            return { q: term };
+        },
+        results: function (data) {
+          var results = [];
+          jQuery.each(data.results, function(i, item){
+          	var result = escapeHtml(item.value);
+            results.push({ id: result, text: result });
+          });
+          return { results: results }
+
+        }
+	    },
+	    initSelection : function (element, callback) {
+	      callback(hash_val);
+	    },
+		  createSearchChoice:function(term, data) { 
+		  	//Check if not already existing & then return
+        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
+	        return { id: term, text: term };
+	    }
 		});
 	})
 

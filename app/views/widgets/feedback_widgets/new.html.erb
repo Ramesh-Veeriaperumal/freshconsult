@@ -261,6 +261,10 @@
 		}
 	});
 
+	jQuery(".description-label").on("click", function(){
+		jQuery(".redactor_editor").focus();
+	});
+
 	jQuery(document).ready(function () {
 		var disabled_options = [];
 		var disabled_custom_options = [];

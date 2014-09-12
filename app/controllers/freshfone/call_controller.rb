@@ -17,12 +17,11 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Call::BranchDispatcher
 
 	def caller_data
-    call_meta_data = call_meta
     respond_to do |format|
       format.nmobile {
         render :json => {
           :user_name => (@user || {})[:name],
-          :country => call_meta_data.present? ? call_meta_data[:country] : nil
+          :call_meta => call_meta
         }
       }
       format.js {
@@ -31,7 +30,7 @@ class Freshfone::CallController < FreshfoneBaseController
                           :locals => { :user => @user }),
 		      :user_name => (@user || {})[:name],
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta_data
+          :call_meta => call_meta
     		}
       }
 	  end

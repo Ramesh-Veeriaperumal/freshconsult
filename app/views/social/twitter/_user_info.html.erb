@@ -1,6 +1,6 @@
 <div class="conv-wrapper">
     <div class="conversations" style="padding-top:20px;">
-        <div id="tw-profile">
+        <div id="tw-profile" class="tw-profile">
             <div id="user-infobox" class="bb-box">
               <div class="profile-pic image-lazy-load">
                 <% if @klout_score > 0 %>
@@ -23,7 +23,16 @@
                 </h4>
                 <% if @user[:twitter] %>
                   <p class="info-data profile-info"><%=@user[:twitter].description %>, 
-                    <span><%=@user[:twitter].location %></span></p>
+                    <span><%=@user[:twitter].location %></span>
+                  </p>
+                  <% count_class = "hide" if @user[:twitter].followers_count == 0 %>
+                  <span class="btn btn-twt-followers <%=count_class%>"> <%= pluralize(@user[:twitter].followers_count, 'Follower')%></span>
+                <% end %>
+                <% if @user[:show_followers] %>
+                  <div class="btn btn-twt-follow twt-follow">
+                    <span>Follow As...</span>
+                    <ul class="followers" id="followers"> </ul>
+                  </div>
                 <% end %>
               </div>
             </div>

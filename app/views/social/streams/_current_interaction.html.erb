@@ -66,10 +66,24 @@
             <li class="icon-lst">
               <!-- view retweets -->
               <a href="javascript:void(0);" class="show-retweets vot-btn tooltip" data-original-title="View Retweets" data-retweeted-id="<%= feed.feed_id%>" twipsy-content-set="true">
-                <%= font_icon "view-retweets", :size => 18 %>
+                <%= font_icon "view-retweets", :size => 20 %>
               </a>
             </li>
-
+            
+            <% if feed.respond_to?(:favorited) %>
+              <li class="icon-lst">
+                <% if feed.favorited %>
+                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links shr-fav-btn tooltip unfav unfav-twt" data-original-title="Favorited" twipsy-content-set="true">
+                    <%= font_icon "star", :size => 16 %>
+                  </a>
+                <% else %>
+                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links tooltip fav fav-twt" data-original-title="Favorite" twipsy-content-set="true">
+                    <%= font_icon "star-o", :size => 16 %>
+                  </a>
+                <% end %>    
+              </li>  
+            <% end %>
+                   
             
             <li class="icon-lst">
               <!-- convert to tkt -->
@@ -94,8 +108,8 @@
       </div>
     </div>
 
-    <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear" style="display:none;">
-       <% form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
+    <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear">
+      <% form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
           
         <div class="row twt-area">
           <div class="twt-msg">

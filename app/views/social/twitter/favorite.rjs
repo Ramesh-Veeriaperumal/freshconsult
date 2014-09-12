@@ -1,0 +1,23 @@
+if @social_error_msg.nil?
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn i').css('opacity','1')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').addClass('shr-fav-btn')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('not-shr-fav-btn')"
+  page << "jQuery('#tweet_div_#{@feed_id} .not-shr-fav-btn').hide();"
+  page << "jQuery('#tweet_div_#{@feed_id} .shr-fav-btn').show();"
+    
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').removeClass('sloading loading-tiny loading-align')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').removeClass('fav')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').removeClass('ficon-star-o')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').addClass('ficon-star')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').css('opacity','1')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('unfav')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('shr-fav-btn')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('unfav-twt')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').removeClass('fav-twt')"
+else
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
+  page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn i').css('opacity','1')"
+  show_ajax_flash page
+end
+

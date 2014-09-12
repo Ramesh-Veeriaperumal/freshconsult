@@ -191,7 +191,7 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get }
-    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get }
+    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get, :tags => :get }
     search.resources :tickets, :only => :index
     search.resources :solutions, :only => :index
     search.resources :forums, :only => :index
@@ -275,7 +275,8 @@
                 
     social.resources :twitter,
                 :collection => {  :twitter_search => :get, :show_old => :get, :fetch_new => :get, :create_fd_item => :post,
-                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post  }
+                                  :user_info => :get, :retweets => :get, :reply => :post, :retweet => :get, :post_tweet => :post,
+                                  :favorite => :post, :unfavorite => :post, :followers => :get, :follow => :post, :unfollow => :post}
   end
 
   #SAAS copy starts here
@@ -655,7 +656,8 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  
   map.namespace :mobihelp do |mobihelp|

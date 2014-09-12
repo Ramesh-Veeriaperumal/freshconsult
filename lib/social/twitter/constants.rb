@@ -12,6 +12,15 @@ module Social::Twitter::Constants
     :dm => "DM",
     :custom => "Custom"
   }
+  
+  TWITTER_ACTIONS = {
+    :favorite    => "favorite",
+    :unfavorite  => "unfavorite",
+    :follow      => "follow",
+    :unfollow    => "unfollow",
+    :post_tweet  => "update",
+    :retweet     => "retweet"
+  }
 
   # time in sec
   TIME = {
@@ -45,5 +54,7 @@ module Social::Twitter::Constants
   MAX_SEARCH_RESULTS_COUNT = 100
   
   OTHER_INTERACTIONS_COUNT = 10
+  
+  FOLLOWERS_FETCH_COUNT = 2
 
 end
