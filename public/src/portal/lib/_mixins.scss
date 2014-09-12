@@ -385,6 +385,7 @@
 // Text in icon container will be replaced with icon alternative 
 // -------------------------------------------------------------
 
+/* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
 @mixin mobile-icon($class, $bg_color: $white) {
   .mobile-icon-#{$class}{
     &:before{

@@ -48,7 +48,7 @@
 
   &.fade {
     @include transition(#{opacity .3s linear, top .3s ease-out});
-    top: 52%%;
+    top: 52%;
   }
   &.fade.in { top: 50%; }
 }

@@ -191,8 +191,9 @@
                 background-color: transparent;
             }
         }
-        @include mobile-icon(nav-contact, $tab_color);
-        @include mobile-icon(nav-newticket, $tab_color);
-        @include mobile-icon(nav-status, $tab_color);
+        /* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
+        // @include mobile-icon(nav-contact, $tab_color);
+        // @include mobile-icon(nav-newticket, $tab_color);
+        // @include mobile-icon(nav-status, $tab_color);
 	}
 }
