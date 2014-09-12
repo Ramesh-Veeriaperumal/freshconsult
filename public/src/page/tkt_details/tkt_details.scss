@@ -652,8 +652,16 @@ ol, ul, li{
 	padding: 5px 15px;
 	border: solid 1px #ccc;
 	@include border-radius(5px);
+	color:#666;
 }
-
+.fc-agent-info{
+	li{
+		line-height:24px;
+		&:last-child{
+			padding-bottom:none;
+		}
+	}
+}
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);
@@ -2799,9 +2807,32 @@ $collision_delay: 1s;
 		top: 7px;
 	 	@include right(7px);
 	}
-
 }
 
+.show-menu-on-hover{
+	.actions-menu{
+		display:none;
+	}
+	&:hover{
+		.actions-menu{
+			display:block;
+		}
+	}
+}
+
+.article-list{
+	.actions-menu-wrapper{
+		position: relative;
+		background: inherit;
+	}
+	.actions-menu{
+		position: absolute;
+		right: -13px;
+		background: inherit;
+		padding: 12px 20px;
+		margin-top: -14px;
+	}
+}
 
 .ticket_show .customer-opinion {
 	border: none;

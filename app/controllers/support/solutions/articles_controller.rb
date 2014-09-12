@@ -1,8 +1,8 @@
 class Support::Solutions::ArticlesController < SupportController 
   
   include Helpdesk::TicketActions
-  
-  before_filter :load_and_check_permission
+
+  before_filter :load_and_check_permission, :except => :index
 
   before_filter :render_404, :unless => :article_visible?, :only => :show
 
@@ -13,6 +13,7 @@ class Support::Solutions::ArticlesController < SupportController
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
+  before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
 
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
@@ -36,17 +37,15 @@ class Support::Solutions::ArticlesController < SupportController
       format.json { render :json => @article.to_json  }
     end
   end
-   
-  def thumbs_up
-    # Voting up the article
-    @article.increment!(:thumbs_up)
 
+  def thumbs_up
+    update_votes(:thumbs_up, 1)
     render :text => I18n.t('solution.articles.article_useful')
   end
 
   def thumbs_down
     # Voting down the article
-    @article.increment!(:thumbs_down)
+    update_votes(:thumbs_down, 0)
     
     # Getting a new object for submitting the feeback for the article
     @ticket = Helpdesk::Ticket.new
@@ -60,6 +59,11 @@ class Support::Solutions::ArticlesController < SupportController
       
     end
 
+  end
+
+  def hit
+    @article.hit! unless agent?
+    render_tracker
   end
   
   def create_ticket
@@ -104,5 +108,22 @@ class Support::Solutions::ArticlesController < SupportController
         :keywords => @article.article_keywords,
         :canonical => support_article_url(@article)
       }
+    end
+
+    def update_votes(incr, vote)
+      return if agent?
+      @article.increment!(incr) and return unless current_user
+
+      @vote.vote = vote
+      if @vote.new_record?
+        @article.increment!(incr)
+      elsif @vote.vote_changed?
+        @article.send("toggle_#{incr}!")
+      end
+      @vote.save
+    end
+
+    def load_vote
+      @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
     end
 end

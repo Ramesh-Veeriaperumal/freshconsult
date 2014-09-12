@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140821061303) do
+ActiveRecord::Schema.define(:version => 20140909054208) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1890,6 +1890,7 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
     t.text     "seo_data"
+    t.integer  "hits",                               :default => 0
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -2560,7 +2561,7 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
   create_table "votes", :force => true do |t|
     t.boolean  "vote",                        :default => false
     t.datetime "created_at",                                     :null => false
-    t.string   "voteable_type", :limit => 15, :default => "",    :null => false
+    t.string   "voteable_type", :limit => 30
     t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
     t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
     t.integer  "account_id",    :limit => 8

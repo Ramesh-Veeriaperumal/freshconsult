@@ -13,15 +13,53 @@ describe Support::Solutions::ArticlesController do
       :category_id => @test_category.id } )
     @test_folder2 = create_folder( {:name => "folder2 #{Faker::Name.name} visible to agents", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 3,
       :category_id => @test_category.id } )
+
+    @public_folder  = create_folder({
+                                      :name => "Public #{Faker::Name.name} visible to All", 
+                                      :description => "#{Faker::Lorem.sentence(3)}", 
+                                      :visibility => 1,
+                                      :category_id => @test_category.id 
+                                    })
+
     @test_article1 = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
     @test_article2 = create_article( {:title => "article2 #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
       :status => "1", :art_type => "1", :user_id => "#{@agent.id}" } )
     @test_article3 = create_article( {:title => "article3 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder2.id, 
       :status => "2", :art_type => "1", :user_id => "#{@agent.id}" } )
+
+    @public_article1 = create_article({
+      :title => Faker::Name.name,
+      :description => Faker::Lorem.sentence(10),
+      :folder_id => @public_folder.id,
+      :status => 2,
+      :art_type => 1,
+      :user_id => @agent.id
+    })
+
+
+    @public_article2 = create_article({
+      :title => Faker::Name.name,
+      :description => Faker::Lorem.sentence(10),
+      :folder_id => @public_folder.id,
+      :status => 2,
+      :art_type => 1,
+      :user_id => @agent.id
+    })
+
+
+    @public_article3 = create_article({
+      :title => Faker::Name.name,
+      :description => Faker::Lorem.sentence(10),
+      :folder_id => @public_folder.id,
+      :status => 2,
+      :art_type => 1,
+      :user_id => @agent.id
+    })
   end
 
   before(:each) do
+    @account.reload
     @account.features.open_solutions.create
   end
 
@@ -29,23 +67,126 @@ describe Support::Solutions::ArticlesController do
     log_in(@user)
     get :index, :category_id => @test_category.id, :folder_id => @test_folder1.id, :id => @test_article1.id
     response.should redirect_to("#{support_solutions_path}")
-  end  
+  end
 
-  it "should increment thumbs up" do 
-    log_in(@user)
-    put :thumbs_up, :id => @test_article1.id    
-    @test_article1.reload
-    @test_article1.thumbs_up.should eql 1    
+
+  it "should increment thumbs up for non logged in users" do
+    likes = @public_article2.thumbs_up
+    put :thumbs_up, :id => @public_article2.id  
+    @public_article2.reload
+    @public_article2.thumbs_up.should eql(likes + 1)   
     response.code.should be_eql("200")
   end
 
-  it "should increment thumbs down" do 
+  it "should not increment thumbs up for an agent" do
+    log_in(@agent)
+    likes = @public_article2.thumbs_up
+    put :thumbs_up, :id => @public_article2.id
+    @public_article2.reload
+    @public_article2.thumbs_up.should eql(likes)
+    response.code.should be_eql("200")
+  end
+
+  it "should increment thumbs up for logged in user's first vote and store in votes table" do
     log_in(@user)
-    put :thumbs_down, :id => @test_article1.id, :format => "html" 
-    @test_article1.reload
-    @test_article1.thumbs_down.should eql 1
+    likes = @public_article2.thumbs_up
+    put :thumbs_up, :id => @public_article2.id
+    @public_article2.reload
+    @public_article2.thumbs_up.should eql(likes + 1)
+    vote = @public_article2.votes.find_by_user_id(@user.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql @public_article2.id
+    vote.voteable_type.should eql "Solution::Article" 
+    vote.vote.should eql true
+    response.code.should be_eql("200")
+  end
+
+  it "should not increment thumbs up for logged in user's second vote if existing vote is a like" do
+    log_in(@user)
+    put :thumbs_up, :id => @public_article2.id
+    @public_article2.reload
+    likes = @public_article2.thumbs_up
+    put :thumbs_up, :id => @public_article2.id
+    @public_article2.reload
+    @public_article2.thumbs_up.should eql(likes)
+    response.code.should be_eql("200")
+  end
+
+  it "should increment thumbs up and decrement thumbs down for logged in user's second vote if existing vote is a dislike" do
+    log_in(@user)
+    put :thumbs_down, :id => @public_article2.id
+    @public_article2.reload
+    likes = @public_article2.thumbs_up
+    dislikes = @public_article2.thumbs_down
+    put :thumbs_up, :id => @public_article2.id
+    @public_article2.reload
+    vote = @public_article2.votes.find_by_user_id(@user.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql @public_article2.id
+    vote.voteable_type.should eql "Solution::Article" 
+    vote.vote.should eql true
+    @public_article2.thumbs_up.should eql(likes + 1)
+    @public_article2.thumbs_down.should eql(dislikes - 1)
+  end
+
+  it "should increment thumbs down for non logged in users" do
+    dislikes = @public_article3.thumbs_down
+    put :thumbs_down, :id => @public_article3.id, :format => "html" 
+    @public_article3.reload
+    @public_article3.thumbs_down.should eql(dislikes + 1)
     response.body.should =~ /Your email/
     response.code.should be_eql("200")
+  end
+
+  it "should not increment thumbs down for an agent" do
+    log_in(@agent)
+    dislikes = @public_article3.thumbs_down
+    put :thumbs_down, :id => @public_article3.id
+    @public_article3.reload
+    @public_article3.thumbs_down.should eql(dislikes)
+    response.code.should be_eql("200")
+  end
+
+  it "should increment thumbs down for logged in user's first vote and store in votes table" do
+    log_in(@user)
+    dislikes = @public_article3.thumbs_down
+    put :thumbs_down, :id => @public_article3.id
+    @public_article3.reload
+    @public_article3.thumbs_down.should eql(dislikes + 1)
+    vote = @public_article3.votes.find_by_user_id(@user.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql @public_article3.id
+    vote.voteable_type.should eql "Solution::Article" 
+    vote.vote.should eql false
+    response.code.should be_eql("200")
+  end
+
+  it "should not increment thumbs down for logged in user's second vote if existing vote is a dislike" do
+    log_in(@user)
+    put :thumbs_down, :id => @public_article3.id
+    @public_article3.reload
+    dislikes = @public_article3.thumbs_down
+    put :thumbs_down, :id => @public_article3.id
+    @public_article3.reload
+    @public_article3.thumbs_down.should eql(dislikes)
+    response.code.should be_eql("200")
+  end
+
+  it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
+    log_in(@user)
+    put :thumbs_up, :id => @public_article3.id
+    @public_article3.reload
+    likes = @public_article3.thumbs_up
+    dislikes = @public_article3.thumbs_down
+    put :thumbs_down, :id => @public_article3.id
+    @public_article3.reload
+    vote = @public_article3.votes.find_by_user_id(@user.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql @public_article3.id
+    vote.voteable_type.should eql "Solution::Article" 
+    vote.vote.should eql false
+    @public_article3.thumbs_up.should eql(likes - 1)
+    @public_article3.thumbs_down.should eql(dislikes + 1)
   end
 
   it "should redirect to login page if there is no open solutions feature " do
@@ -55,7 +196,7 @@ describe Support::Solutions::ArticlesController do
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
     get 'show', id: article.id
     response.body.should_not =~ /#{name}/
-    response.should redirect_to(login_url)    
+    response.should redirect_to(login_url)
   end
 
   it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do 
@@ -68,7 +209,7 @@ describe Support::Solutions::ArticlesController do
     @account.features.open_solutions.destroy
     get 'show', id: @test_article2
     response.body.should_not =~ /article2 with status as draft/
-    response.should redirect_to(login_url)    
+    response.should redirect_to(login_url)
   end
 
   it "should handle unknown actions" do 
@@ -101,5 +242,12 @@ describe Support::Solutions::ArticlesController do
     get 'show', id: @test_article2
     response.body.should_not =~ /article2 with status as draft/    
     response.code.should be_eql("404")
+  end
+
+  it "should increase hit count on get 'hit'" do
+    hit_count = @public_article1.hits
+    get :hit, :id => @public_article1.id
+    @public_article1.reload
+    @public_article1.hits.should be_eql(hit_count + 1)
   end
 end

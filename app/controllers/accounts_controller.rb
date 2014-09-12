@@ -30,7 +30,8 @@ class AccountsController < ApplicationController
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
-  
+  before_filter :set_native_mobile, :only => [:new_signup_free]
+
   filter_parameter_logging :creditcard,:password
   
   def show
@@ -56,10 +57,20 @@ class AccountsController < ApplicationController
    
    if @signup.save
       add_to_crm
-      render :json => { :success => true, 
-      :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain), 
-      :account_id => @signup.account.id  }, 
-      :callback => params[:callback]
+      respond_to do |format|
+        format.html {
+          render :json => { :success => true,
+                            :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain),
+                            :account_id => @signup.account.id  },
+                            :callback => params[:callback]
+        }
+        format.nmobile {
+          render :json => { :success => true, :host => @signup.account.full_domain,
+                            :t => @signup.account.agents.first.user.single_access_token,
+                            :support_email => @signup.account.agents.first.user.email
+                          }
+        }
+      end
     else
       render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 
     end    

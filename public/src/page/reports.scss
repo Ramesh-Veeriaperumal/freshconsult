@@ -616,19 +616,6 @@ $single_stackbar_chart_height: 120px;
 		}
 	}
 }
-.slide-shadow{
-	&:after{
-		    content: " ";
-		    position: absolute;
-		    @include box-shadow(1px 8px 14px 0 rgba(#000, 0.3), 0 10px 1px rgba(#000,0.5));
-		    @include left(100%);
-		    top:0;
-		    width:3px;
-		    height:97%; 
-		    z-index:999;
-		    display: table-cell !important;
-	}
-}
 
 .left-filter{
 	.lead{

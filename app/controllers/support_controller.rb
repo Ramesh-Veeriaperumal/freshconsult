@@ -196,4 +196,9 @@ class SupportController < ApplicationController
         send_data f.read, :type => "image/gif", :disposition => "inline"
       end
     end
+  private
+
+  def agent?
+    current_user && current_user.agent?
+  end
 end

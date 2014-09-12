@@ -86,7 +86,7 @@
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
-    freshfone.resources :autocomplete, :collection => { :requester_search => :get}
+    freshfone.resources :autocomplete, :collection => { :requester_search => :get, :customer_phone_number => :get }
     freshfone.resources :usage_triggers, :collection => { :notify => :post }
     freshfone.resources :ops_notification, :member => { :voice_notification => :post }
   end
@@ -613,7 +613,7 @@
         :action => :show
       solution.resources :folders, :only => :show
       solution.resources :articles, :only => :show, :member => { :thumbs_up => :put,
-        :thumbs_down => :put , :create_ticket => :post }
+        :thumbs_down => :put , :create_ticket => :post, :hit => :get }
     end
 
     # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
@@ -656,7 +656,8 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  
   map.namespace :mobihelp do |mobihelp|
