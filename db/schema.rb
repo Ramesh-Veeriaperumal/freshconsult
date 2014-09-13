@@ -807,6 +807,8 @@ ActiveRecord::Schema.define(:version => 20140909054208) do
     t.text     "non_business_hours_message"
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
+    t.integer  "hunt_type",                                                               :default => 1
+    t.integer  "rr_timeout",                                                            :default => 10
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -859,8 +861,10 @@ ActiveRecord::Schema.define(:version => 20140909054208) do
     t.datetime "created_at"
     t.datetime "updated_at"
 		t.datetime "mobile_token_refreshed_at"
+    t.datetime "last_call_at"
   end
 
+  add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
 

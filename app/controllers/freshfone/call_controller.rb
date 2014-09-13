@@ -38,7 +38,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 	def status
 		begin
-			call_forwarded? ? handle_forwarded_calls : normal_end_call
+			handle_end_call
 		rescue Exception => e
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml

@@ -159,15 +159,20 @@ class Freshfone::CallFlow
     end
 
     def load_users_from_group(performer_id)
-      self.available_agents = freshfone_users.online_agents_in_group(performer_id)
+      self.available_agents = online_agents.agents_in_group(performer_id)
       self.busy_agents = freshfone_users.busy_agents_in_group(performer_id)
       save_call_meta(performer_id)
       set_hunt_options(:group, performer_id)
     end
 
     def load_all_available_and_busy_agents
-      self.available_agents = freshfone_users.online_agents
+      self.available_agents = online_agents
       self.busy_agents = freshfone_users.busy_agents
+    end
+
+    def online_agents
+      sort_order = current_number.round_robin? ?  "ASC" : "DESC"
+      freshfone_users.agents_by_last_call_at(sort_order)
     end
 
     def cannot_connect_call?
