@@ -19,7 +19,7 @@ module MailgunHelper
 			"stripped-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
 			"body-plain" => email_body,
 			"stripped-text" => email_body,
-			"message-headers" => get_header(options[:email_config], options[:m_id], options[:auto]),
+			"message-headers" => get_m_header(options[:email_config], options[:m_id], options[:auto]),
 			"subject" => Faker::Lorem.words(10).join(" "),
 			:sender_ip => random_ip,
 			:recipient => env[:to],
@@ -135,9 +135,8 @@ module MailgunHelper
 		%(<span style='font-size:0px; font-family:"fdtktid"; min-height:0px; height:0px; opacity:0; max-height:0px; line-height:0px; color:#ffffff'>#{ticket_id}</span>)
 	end
 
-	def get_header email_config, m_id, auto
-		[
-			["Received", "by mx-005.sjc1.sendgrid.net with SMTP id n7jhL6gJjE Mon, 09 Dec 2013 12:22:01 +0000 (GMT)\n"], 
+	def get_m_header email_config, m_id, auto
+		[["Received", "by mx-005.sjc1.sendgrid.net with SMTP id n7jhL6gJjE Mon, 09 Dec 2013 12:22:01 +0000 (GMT)\n"], 
 			["Received", "from mail-we0-f175.google.com (mail-we0-f175.google.com [74.125.82.175]) by mx-005.sjc1.sendgrid.net (Postfix) with ESMTPS id 8CA39E83644 for <#{email_config}>;
 				Mon,  9 Dec 2013 12:22:00 +0000 (GMT)\n"], 
 			["Received", "by mail-we0-f175.google.com with SMTP id t60so3321281wes.20 for <support@green.freshbugs.com>; Mon, 09 Dec 2013 04:21:59 -0800 (PST)\n
@@ -155,8 +154,7 @@ module MailgunHelper
 			["To", "#{to}"],["Cc", "#{cc}"],
 			["References", "#{generate_references(m_id)}"],
 			["In-Reply-To", "<#{m_id || ""}>"],
-			["Precedence", "#{auto ? "auto_reply" : ""}"],["Content-Type", "multipart/mixed; boundary=bcaec53f3985dc812004ed190a39"]
-		].to_json
+			["Precedence", "#{auto ? "auto_reply" : ""}"],["Content-Type", "multipart/mixed; boundary=bcaec53f3985dc812004ed190a39"]].to_json
 	end
 
 	def generate_references m_id
