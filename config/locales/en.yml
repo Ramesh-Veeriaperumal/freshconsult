@@ -2893,6 +2893,7 @@ en:
       new:
         new_folder: Add Folder
       folder_form:
+        category: Category
         visible_to: Visible to
     articles:
       where: Where
