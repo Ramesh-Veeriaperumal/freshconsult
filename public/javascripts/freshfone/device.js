@@ -14,6 +14,7 @@
 		});
 
 		Twilio.Device.error(function (error) {
+			freshfonetimer.resetCallTimer();
 			freshfoneNotification.resetJsonFix();
 			freshfoneNotification.popAllNotification();
 			freshfonecalls.resetRecordingState();
@@ -69,6 +70,13 @@
 			if (freshfonecalls.hasUnfinishedAction()) {
 				return;
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
+				var in_call_time = parseInt($(freshfonetimer.timerElement).data('runningTime') || 0, 10)
+				if ( in_call_time < 3){ // less than 3 seconds is an invalid case.
+					freshfonewidget.handleWidgets('outgoing');
+					freshfoneuser.resetStatusAfterCall();
+					freshfoneuser.updatePresence();					
+					return;
+				}
 				freshfoneendcall.showEndCallForm();
 			} else {
 				freshfonecalls.init();

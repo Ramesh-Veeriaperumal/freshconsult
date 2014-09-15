@@ -25,30 +25,10 @@
 	</article>
 
 	<hr />	
-	
+		{{article | article_attachments}}
 
-	{{article | article_attachments}}
-
-	<p class="article-vote" id="voting-container">
-		{% translate feedback.title %}
-		<span data-href="{{ article.thumbs_up_url }}" class="vote-up a-link" 
-			data-remote="true" data-method="put" data-update="#voting-container" 
-			data-update-with-message="{% translate feedback.up_vote_thank_you_message %}">
-			{% translate feedback.upvote %}
-		</span>
-		<span data-href="{{ article.thumbs_down_url }}" class="vote-down a-link" 
-			data-remote="true" data-method="put" data-update="#vote-feedback-form"
-			data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
-			{% translate feedback.downvote %}
-		</span>
-	</p>
-
-	<div class="hide" id="vote-feedback-container">
-		<div class="lead">{% translate feedback.down_vote_form_title %}</div>
-		<div id="vote-feedback-form">
-			<div class="sloading loading-small loading-block"></div>
-		</div>
-	</div>	
+		{{article | article_voting }}
+		
 </section>
 {% if article.related_articles.size > 0 %}
 <section class="sidebar content rounded-6">	

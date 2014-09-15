@@ -3,6 +3,7 @@ module SupportHelper
 	include Portal::PortalFilters
   include Redis::RedisKeys
   include Redis::PortalRedis
+  include Portal::Helpers::Article
 
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
@@ -325,44 +326,6 @@ module SupportHelper
     	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(link_opts)
 	end
 
-	def article_list folder, limit = 5, reject_article = nil
-		if(folder.present? && folder['articles_count'] > 0)
-			articles = folder['articles']
-			articles.reject!{|a| a['id'] == reject_article['id']} if(reject_article != nil)
- 			output = []
-			output << %(<ul>#{ articles.take(limit).map { |a| article_list_item a.to_liquid } }</ul>)
-			if articles.size > limit
-				output << %(<a href="#{folder['url']}" class="see-more">)
-				output << %(#{ I18n.t('portal.article.see_all_articles', :count => folder['articles_count']) })
-				output << %(</a>)
-			end
-			output.join("")
-		end
-	end
-
-	def related_articles_list article, limit = 5
-		output = []
-		output << %(<ul>#{ article.related_articles.take(limit).map { |a| article_list_item(a.to_liquid) } }</ul>)
-		output.join("")
-	end
-
-	def more_articles_in_folder folder
-		%( <h3 class="list-lead">
-			#{I18n.t('portal.article.more_articles', :article_name => folder['name'])}
-		</h3>)
-	end
-
-	def article_list_item article
-		output = <<HTML
-			<li>
-				<div class="ellipsis">
-					<a href="#{article['url']}">#{h(article['title'])}</a>
-				</div>
-			</li>
-HTML
-		output.html_safe
-	end
-
 	def topic_list forum, limit = 5
 		if(forum['topics_count'] > 0)
 			topics = forum['topics']
@@ -501,11 +464,6 @@ HTML
 	def link_to_see_all_topics forum
 		label = I18n.t('portal.topic.see_all_topics', :count => forum['topics_count'])
 		link_to label, forum['url'], :title => label, :class => "see-more"
-	end
-
-	def link_to_see_all_articles folder
-		label = I18n.t('portal.article.see_all_articles', :count => folder['articles_count'])
-		link_to label, folder['url'], :title => label, :class => "see-more"
 	end
 
 	def post_actions post
@@ -894,22 +852,6 @@ HTML
     _output.join("").html_safe
   end
 
-def article_attachments article
-		output = []
-
-		if(article.attachments.size > 0)
-			output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
-
-			article.attachments.each do |a|
-				output << attachment_item(a.to_liquid)
-			end
-
-			output << %(</div>)
-		end
-
-		output.join('').html_safe
-	end
-
 	def post_attachments post
 		output = []
 
@@ -1030,6 +972,8 @@ def article_attachments article
 		case @current_page_token
 		when "topic_view"
 			"<img src='#{hit_support_discussions_topic_path(@topic)}' />".html_safe
+		when "article_view"
+			"<img src='#{hit_support_solutions_article_path(@article)}' />".html_safe
 		else
 			""
 		end

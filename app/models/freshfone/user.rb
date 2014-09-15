@@ -39,6 +39,10 @@ class Freshfone::User < ActiveRecord::Base
 		}
 	}
 
+	named_scope :agents_by_last_call_at, lambda { |order_type| order_type = "ASC" if order_type.blank?
+		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", 
+		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
+
 	def set_presence(status)
 		self.presence = status
 		save
@@ -93,6 +97,12 @@ class Freshfone::User < ActiveRecord::Base
 													call_agent_on_browser(xml_builder, presence_update_url)
 	end
 	
+
+	def set_last_call_at(last_call_time)
+		self.last_call_at = last_call_time
+		save
+	end
+
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)

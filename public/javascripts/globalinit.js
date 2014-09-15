@@ -106,11 +106,14 @@ window.xhrPool = [];
         if(hoverPopup && !$(ev.relatedTarget).is('[rel=contact-hover]')) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
+        if(!$(ev.relatedTarget).is('[rel=more-agents-hover]')) {
+          hidePopoverTimer = setTimeout(function() {$('.hover-card-agent').parent().remove(); },500);
+        }
       }
     };
 
     hideActivePopovers = function (ev) {
-      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
+      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover],[rel=more-agents-hover]').each(function(){
         if (ev.target != $(this).get(0))
           $(this).popover('hide');
 
@@ -163,7 +166,35 @@ window.xhrPool = [];
           return $("#" + $(this).attr("data-widget-container")).val();
         }
       });
+    $("[rel=more-agents-hover]").livequery(function(){
+      if(typeof agentCollisionData != 'undefined')
+        {
+          $(this).popover({
+            delayOut: 300,
+            trigger: 'manual',
+            offset: 5,
+            html: true,
+            reloadContent: false,
+            template: '<div class="dbl_left arrow"></div><div class="hover_card hover-card-agent inner"><div class="content"><div></div></div></div>',
+            content: function(){
+                var container_id = "agent-info-div";
+                var agentContent = '<ul id='+container_id+' class="fc-agent-info">';
+                var chatIcon ='';
+                var chatIconClose = '';
 
+               if(typeof window.freshchat != 'undefined' && freshchat.chatIcon){
+                  chatIcon ='<span class="active"><i class="ficon-message"></i></span> <a href="javascript:void(0)" class="tooltip"  title="Begin chat" data-placement="right">';
+                  chatIconClose = '</a>';
+                }
+                agentCollisionData.forEach(function(data){
+                    agentContent += '<li class ="agent_name" id="'+data.userId+'"> <strong>'+chatIcon +''+data.name +chatIconClose+'</strong></li>';
+                });
+                return agentContent+'</ul>';
+
+            }
+          });
+        }
+    });
     $("[rel=contact-hover]").livequery(function(){
       $(this).popover({
         delayOut: 300,
@@ -251,6 +282,27 @@ window.xhrPool = [];
           ev.preventDefault();
       });
     })
+
+   $("a[rel=more-agents-hover]").live('mouseenter',function(ev) {
+          ev.preventDefault();
+          var element = $(this);
+          // Introducing a slight delay so that the popover does not show up
+          // when just passing thru this element.
+
+          var timeoutDelayShow = setTimeout(function(){
+            clearTimeout(hidePopoverTimer);
+            hideActivePopovers(ev);
+            widgetPopup = element.popover('show');
+            hoverPopup = true;
+          }, 300);
+          element.data('timeoutDelayShow', timeoutDelayShow);
+
+        }).live('mouseleave',function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              $('.hover-card-agent').parent().remove();
+            },1000);
+      });
 
     $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();

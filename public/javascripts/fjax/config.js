@@ -31,7 +31,8 @@ window.Fjax = window.Fjax || {};
 	"use strict";
 	Fjax.Config = {
 		paths: {
-			"/discussions": 'discussions'
+			"/discussions": 'discussions',
+			"/freshfone/call_history": 'freshfonecallhistory'
 		},
 		LOADING_WAIT: 5
 	};

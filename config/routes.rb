@@ -86,7 +86,7 @@
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
     freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
-    freshfone.resources :autocomplete, :collection => { :requester_search => :get}
+    freshfone.resources :autocomplete, :collection => { :requester_search => :get, :customer_phone_number => :get }
     freshfone.resources :usage_triggers, :collection => { :notify => :post }
     freshfone.resources :ops_notification, :member => { :voice_notification => :post }
   end
@@ -613,7 +613,7 @@
         :action => :show
       solution.resources :folders, :only => :show
       solution.resources :articles, :only => :show, :member => { :thumbs_up => :put,
-        :thumbs_down => :put , :create_ticket => :post }
+        :thumbs_down => :put , :create_ticket => :post, :hit => :get }
     end
 
     # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
