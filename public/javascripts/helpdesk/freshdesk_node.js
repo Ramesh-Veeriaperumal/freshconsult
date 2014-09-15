@@ -28,7 +28,7 @@
                         name:data[0].name,
                         length:data.length,
                         action:action,
-                        chatAvailable:(typeof window.freshchat && window.freshchat.chatIcon)? window.freshchat.chatIcon:false
+                        chatAvailable:(window.freshchat && window.freshchat.chatIcon)? window.freshchat.chatIcon:false
                  };
                 text = JST["agent_collision"](_data);
                 window.agentCollisionData = data;
