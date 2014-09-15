@@ -877,6 +877,9 @@ Redactor.prototype = {
 	},
 	setCursorPosition: function(){
 		if(this.$editor.find("[rel='cursor']").get(0)){
+			if($.browser.mozilla){
+				this.$editor.find("[rel='cursor']").removeAttr( "style" );
+			}
 			this.removeContent();
 		}
 
@@ -997,7 +1000,13 @@ Redactor.prototype = {
     	{
     		this.$editor.click($.proxy(function(e) {
 	    		this.setCursorPosition();
-	    	}, this));	
+	    	}, this));
+
+    		if($.browser.mozilla){
+		    	this.$editor.dblclick($.proxy(function(e) {
+		    		this.$editor.find("[rel='cursor']").css({"display": "none"});
+		    	}, this));	
+		    }
     	}
     },
     bindCustomEvent: function(){
@@ -1312,6 +1321,7 @@ Redactor.prototype = {
 
 	},	
 	isNotEmpty:function(e){
+		this.deleteCursor();
 		var valid_tags = ["img", "iframe", "object", "embed"];
 		for(var i=0; i < valid_tags.length; i++){
 			if(this.$editor.find(valid_tags[i]).length !=0 ){
@@ -4410,8 +4420,9 @@ $.fn.insertExternal = function(html)
 			if(removeCursor == undefined || removeCursor){
 				this.$editor.deleteCursor();	
 			} else {
-				// Add display:none style for cursor's <img> tag
-				if(jQuery.browser.mozilla){
+				// Temp check for bulk action on form submit. Bulk action redactor should be disable when the checkbpx is not selected on Add Bulk reply.
+				if(jQuery.browser.mozilla && this.$editor.$el.attr('id') != "reply-multiple-cnt-reply-multiple-body"){ 
+					// Add display:none style for cursor's <img> tag
 					this.$editor.$el.data('redactor').addNoneStyleForCursor();
 				}
 			}

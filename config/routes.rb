@@ -191,7 +191,7 @@
 
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get }
-    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get }
+    search.resources :autocomplete, :collection => { :requesters => :get , :agents => :get, :companies => :get, :tags => :get }
     search.resources :tickets, :only => :index
     search.resources :solutions, :only => :index
     search.resources :forums, :only => :index

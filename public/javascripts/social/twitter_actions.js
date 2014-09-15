@@ -164,7 +164,7 @@ var TwitterActions = Class.create({
     currentInteractionUnfav: function(e) {
         var feed_id = j(e.currentTarget).attr("data-feed-id");
         j("[data-feed-id=" + feed_id + "] .unfav").addClass("sloading loading-tiny loading-align");
-        j("[data-feed-id=" + feed_id + "] .unfav i").hide();
+        j("[data-feed-id=" + feed_id + "] .unfav i").css('opacity','0');
         var element = "#conv_div_";
         var params = {
             feed_id: feed_id,
@@ -187,7 +187,7 @@ var TwitterActions = Class.create({
     currentInteractionFav: function(e) {
         var feed_id = j(e.currentTarget).attr("data-feed-id");
         j("[data-feed-id=" + feed_id + "] .fav").addClass("sloading loading-tiny loading-align");
-        j("[data-feed-id=" + feed_id + "] .fav i").hide();
+        j("[data-feed-id=" + feed_id + "] .fav i").css('opacity','0');
         var element = "#conv_div_";
         var params = {
             feed_id: feed_id,
@@ -233,8 +233,8 @@ var TwitterActions = Class.create({
         search_type: j('#social_meta_info #social_search_type').val(),
         stream_id: j("#conv_div_" + feed_id + " #stream_id").val()
       }
-      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny loading-align");
-      j("[data-screen-name=" + screen_name + "] a").hide();
+      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny");
+      j("[data-screen-name=" + screen_name + "] a").css('opacity','0');
        j.ajax({
             type: 'POST',
             url: "/social/twitter/follow",
@@ -254,8 +254,8 @@ var TwitterActions = Class.create({
         search_type: j('#social_meta_info #social_search_type').val(),
         stream_id: j("#conv_div_" + feed_id + " #stream_id").val()
       }
-      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny loading-align");
-      j("[data-screen-name=" + screen_name + "] a").hide();
+      j("[data-screen-name=" + screen_name + "]").addClass("sloading loading-tiny");
+      j("[data-screen-name=" + screen_name + "] a").css('opacity','0');
        j.ajax({
             type: 'POST',
             url: "/social/twitter/unfollow",

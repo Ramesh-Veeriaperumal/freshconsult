@@ -106,14 +106,15 @@ window.FactoryUI = {
 		});
 		return jQuery(select);
 	},
-	paragraph: function(_placeholder, _name, _value, _className){
+	paragraph: function(_placeholder, _name, _value, _className, _idName){
 		var className   = _className || "paragraph",
 			placeholder = _placeholder || "",
 			name		= _name || "",
-			value		= _value || "";
+			value		= _value || "",
+			id			= _idName || "";
 			
 		return jQuery("<textarea />")
-					.prop({ "name": name })
+					.prop({ "name": name, "id": id })
 					.addClass(className)
 					.val(value);
 	},

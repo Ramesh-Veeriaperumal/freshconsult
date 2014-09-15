@@ -54,6 +54,23 @@ class Search::AutocompleteController < ApplicationController
     end
 	end
 
+  def tags
+    begin
+      search_results = search_tags
+      tags = { :results => [] }
+      search_results.results.each do |document|
+        tags[:results].push(*[{
+            :value => document.name
+          }])
+      end
+    rescue
+      tags = { :results => tag_results.map { |tag| { :value => tag.name } } }
+    end
+    respond_to do |format|
+      format.json { render :json => tags.to_json }
+    end
+  end
+
   private
 
     def respond_with_kbase(users)
@@ -90,6 +107,19 @@ class Search::AutocompleteController < ApplicationController
            end
          end
          tire_search.sort { by :name, 'asc' }
+      end
+    end
+
+    def search_tags
+      search_name_string = 'name:'+params[:q]+'*'
+      options = { :load => true, :size => 25 }
+      items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Tag], current_account.id),options do |tire_search|
+        tire_search.query do |q|
+          q.boolean do |b|
+            b.should   { string search_name_string  }
+          end
+        end
+        tire_search.sort { by :tag_uses_count, 'desc' }
       end
     end
 
@@ -132,5 +162,11 @@ class Search::AutocompleteController < ApplicationController
     def requester_conditions
       ["name like ? or email like ? or phone like ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
     end	
+
+    def tag_results
+      @results ||= begin 
+        current_account.tags.find(:all, :order => "tag_uses_count desc", :limit => 25)
+      end
+    end
 
 end

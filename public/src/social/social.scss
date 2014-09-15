@@ -684,12 +684,10 @@ $bdr-color:#e1e1e1;
 			&.tw-tkt-link,
 			&.shr-fav-btn{
 				@include opacity(.5);
-				padding: 0;
-				@include margin-left(12px);
 			}
-			&.convert_as_ticket{
+			&.convert_as_ticket,
+      &.ctt-btn{
 				@include margin-left(7px);
-				@include padding-right(0);
 			}
 			&.sloading.loading-align{
 				margin-top: 0px;
@@ -760,6 +758,9 @@ $bdr-color:#e1e1e1;
     &.tw-tkt-link,
     &.shr-fav-btn{
       opacity: .5;
+    }
+    .spinner{
+      top:-5px !important;
     }
   }
   &:hover{

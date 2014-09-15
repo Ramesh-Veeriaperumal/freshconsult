@@ -73,9 +73,9 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
      
     addresses = addresses.collect do |address|
       next if address.blank?
-      address = address.gsub('"','').gsub("'",'')
+      address = address.gsub('"','')
 
-      matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9._&%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}\b)\>\z|\A<!--?((\b[A-Z0-9._&%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,15}\b)-->?\z/i)
+      matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9.'_&%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}\b)\>\z|\A<!--?((\b[A-Z0-9.'_&%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,15}\b)-->?\z/i)
       
       if matches[0] && matches[0][1]
         email = matches[0][1]

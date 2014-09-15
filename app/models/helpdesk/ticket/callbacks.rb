@@ -63,12 +63,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def save_ticket_states
-    self.ticket_states = Helpdesk::TicketState.new
+    self.ticket_states = self.ticket_states || Helpdesk::TicketState.new
     ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
     ticket_states.pending_since=Time.zone.now if (status == PENDING)
-    ticket_states.set_resolved_at_state if (status == RESOLVED)
+    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
     ticket_states.status_updated_at = Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)

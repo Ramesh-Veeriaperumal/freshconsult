@@ -73,11 +73,11 @@
             <% if feed.respond_to?(:favorited) %>
               <li class="icon-lst">
                 <% if feed.favorited %>
-                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links shr-fav-btn tooltip unfav unfav-twt" data-original-title="UnFavourite" twipsy-content-set="true">
+                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links shr-fav-btn tooltip unfav unfav-twt" data-original-title="Favorited" twipsy-content-set="true">
                     <%= font_icon "star", :size => 16 %>
                   </a>
                 <% else %>
-                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links tooltip fav fav-twt" data-original-title="Favourite" twipsy-content-set="true">
+                  <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="more-links tooltip fav fav-twt" data-original-title="Favorite" twipsy-content-set="true">
                     <%= font_icon "star-o", :size => 16 %>
                   </a>
                 <% end %>    
