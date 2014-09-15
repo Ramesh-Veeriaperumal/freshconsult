@@ -5,15 +5,16 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallsRedisMethods
 	include Freshfone::TicketActions
+	include Freshfone::Call::EndCallActions
 	
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :force_termination, :only => [:status]
 	before_filter :clear_client_calls, :only => [:status]
-
+	before_filter :reset_outgoing_count, :only => [:status]
+	
 	include Freshfone::Call::CallCallbacks
-	include Freshfone::Call::EndCallActions
 	include Freshfone::Call::BranchDispatcher
 
 	def caller_data
