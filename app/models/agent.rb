@@ -1,13 +1,12 @@
 class Agent < ActiveRecord::Base
   
-  belongs_to_account
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
 
-  before_destroy :remove_escalation
+  concerned_with :associations, :constants
 
-  belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
+  before_destroy :remove_escalation
 
   accepts_nested_attributes_for :user
   
@@ -15,38 +14,11 @@ class Agent < ActiveRecord::Base
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
   
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
-  
-  has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
-          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
-          :dependent => :delete_all
 
-  has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet' , :through => :user , 
-          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent
-
-  has_many :achieved_quests, :foreign_key =>'user_id', :primary_key => "user_id",
-          :dependent => :delete_all
-
-  has_many :support_scores, :foreign_key =>'user_id', :primary_key => "user_id",
-          :dependent => :delete_all
-
-  has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
-          :primary_key => "user_id", :dependent => :nullify
-
-  belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
-
-  TICKET_PERMISSION = [
-    [ :all_tickets, 1 ], 
-    [ :group_tickets,  2 ], 
-    [ :assigned_tickets, 3 ]
-  ]
- 
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
   named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
-  named_scope :list , lambda {{ :include => :user , :order => :name }}
-  
-  PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
-  PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
+  named_scope :list , lambda {{ :include => :user , :order => :name }}  
   
   def self.technician_list account_id  
     agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
@@ -123,14 +95,14 @@ class Agent < ActiveRecord::Base
     MemcacheKeys.delete_from_cache(ACCOUNT_GROUPS % { :account_id =>self.account_id })
   end
 
-  def as_json(options={})
-    options[:except]=[:account_id,:google_viewer_id]
-    options[:include]={ :user =>{ :only => [:id,:name,:email,:created_at,:updated_at,:job_title,
-                        :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                        :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]}
-                      }
-    json_str = super options
-    return json_str
+  def to_xml(options = {})
+    options.merge!(API_OPTIONS)
+    super(options)
+  end
+
+  def as_json(options = {})
+    options.merge!(API_OPTIONS)
+    super options
   end
 
 end

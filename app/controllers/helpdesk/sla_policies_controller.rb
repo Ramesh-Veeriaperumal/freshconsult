@@ -124,7 +124,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
     def initialize_escalation_level_details
       @sla_policy = scoper.find(params[:id], :include =>:sla_details) 
 
-      @companies = current_account.customers.find(:all, 
+      @companies = current_account.companies.find(:all, 
             :conditions => ["id in (?)", @sla_policy.conditions[:company_id]]).map {|company| 
             [company.name, company.id]} unless (@sla_policy.is_default || 
                                                 @sla_policy.conditions[:company_id].blank?)

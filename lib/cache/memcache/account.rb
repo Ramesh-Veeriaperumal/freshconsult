@@ -65,9 +65,9 @@ module Cache::Memcache::Account
     feature_names.all? { |feature_name| feature_from_cache.send("#{feature_name}?") }
   end
 
-  def customers_from_cache
-    key = customers_memcache_key
-    MemcacheKeys.fetch(key) { self.customers.all }
+  def companies_from_cache
+    key = companies_memcache_key
+    MemcacheKeys.fetch(key) { self.companies.all }
   end
 
   def twitter_handles_from_cache
@@ -166,8 +166,8 @@ module Cache::Memcache::Account
       ACCOUNT_TAGS % { :account_id => self.id }
     end
 
-    def customers_memcache_key
-      ACCOUNT_CUSTOMERS % { :account_id => self.id }
+    def companies_memcache_key
+      ACCOUNT_COMPANIES % { :account_id => self.id }
     end
     
     def handles_memcache_key

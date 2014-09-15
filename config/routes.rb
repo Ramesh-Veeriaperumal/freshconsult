@@ -26,8 +26,13 @@
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
+  
+  map.resources :companies ,:member => {:quick => :post, :sla_policies => :get } do |customer|
+    customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+  end
+  map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_companys_contact => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
@@ -456,7 +461,8 @@
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
-    helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
+    helpdesk.customer_filter       '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
+    helpdesk.company_filter       '/tickets/filter/company/:company_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
     helpdesk.reports_filter        '/tickets/filter/reports/:report_type', :controller => 'tickets', :action => 'index'
 
@@ -480,8 +486,9 @@
     helpdesk.resources :dropboxes
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
- 
-    helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
+
+    helpdesk.resources :autocomplete, :collection => { :requester => :get, :company => :get }
+    
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 

@@ -44,20 +44,22 @@ class AgentsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.js
-      format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
-      format.json  { render :json => @agents.to_json(:include=>:user) } #Adding the attributes from user as that is what is needed
+      format.xml  { render :xml => @agents.to_xml }
+      format.json  { render :json => @agents.to_json }
     end
   end
 
   def show    
     @agent = current_account.all_agents.find(params[:id])
-    @user  = @agent.user
-    @recent_unresolved_tickets = current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
     respond_to do |format|
-      format.html
-      format.xml  { render :xml => @agent.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
-      format.json { render :json => @agent.as_json(:include => :user) }
-      format.nmobile { render :json => @user.to_mob_json }
+      format.html do
+        @user = @agent.user
+        @recent_unresolved_tickets = 
+                            current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
+      end
+      format.xml  { render :xml => @agent.to_xml }
+      format.json { render :json => @agent.as_json }
+      format.nmobile { render :json => @agent.user.to_mob_json }
     end
   end
 

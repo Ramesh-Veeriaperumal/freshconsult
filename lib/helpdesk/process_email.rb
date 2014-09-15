@@ -388,7 +388,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def belong_to_same_company?(ticket,user)
-      user.customer_id and (user.customer_id == ticket.requester.customer_id)
+      user.company_id and (user.company_id == ticket.requester.company_id)
     end
     
     def get_user(account, from_email, email_config)

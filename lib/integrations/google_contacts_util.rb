@@ -97,7 +97,7 @@ module Integrations::GoogleContactsUtil
 #      delete(entry_element, entry_element.get_elements('gd:deleted')) unless user.deleted
 
       #orgName
-      delete(entry_element, entry_element.get_elements('gd:organization')) unless user.customer.blank?
+      delete(entry_element, entry_element.get_elements('gd:organization')) unless user.company.blank?
 
       # group
       entry_element.elements.each("gContact:groupMembershipInfo") {|element|

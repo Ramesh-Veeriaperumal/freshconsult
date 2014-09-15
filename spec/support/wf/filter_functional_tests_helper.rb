@@ -11,7 +11,7 @@ module Wf::FilterFunctionalTestsHelper
   end
 
   def prep_a_ticket
-    @company = @account.customers.create(Factory.attributes_for(:company))
+    @company = @account.companies.create(Factory.attributes_for(:company))
     @group = @account.groups.create(Factory.attributes_for(:group))
     @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @product = @account.products.create(Factory.attributes_for(:product))

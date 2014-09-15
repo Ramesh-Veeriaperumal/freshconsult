@@ -63,15 +63,16 @@ module Search::SearchResultJson
 
 	def customer_json customer
 		return suggest_json(%{#{customer.es_highlight('name')}},
-				customer_path(customer), customer) if @suggest
+				company_path(customer), customer) if @suggest
 		to_ret = {
 			:id => customer.id,
 			:result_type => 'customer',
 			:name => "#{customer.es_highlight('name')}",
-			:path => customer_path(customer),
+			:path => company_path(customer),
 			:domains => h(customer.domains)
 		}
 	end
+	alias_method :company_json, :customer_json
 
 	def user_json user
 		return suggest_json(%{#{user.es_highlight('name')} - #{user.email}},
@@ -84,7 +85,7 @@ module Search::SearchResultJson
 			:name => "#{user.es_highlight('name')}",
 			:email => (user.email unless user.email.blank?),
 			:phone => (user.phone unless user.phone.blank?),
-			:company_name => (h(user.customer.name) unless user.customer.blank?)
+			:company_name => (h(user.company.name) unless user.company.blank?)
 		}
 	end
 
@@ -124,8 +125,9 @@ module Search::SearchResultJson
 	end
 
 	def suggest_json content, path, result
+		class_name = result.is_a?(Company) ? 'customer' : result.class.name.gsub('::', '_').downcase
 		{
-			:result_type => result.class.name.gsub('::', '_').downcase,
+			:result_type => class_name,
 			:content => content,
 			:path => path
 		}

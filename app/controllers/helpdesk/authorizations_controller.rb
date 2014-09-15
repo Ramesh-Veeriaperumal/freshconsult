@@ -45,7 +45,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
   def company_autocomplete
     respond_to do |format|
       format.json { 
-        render :json => current_account.customers.custom_search(params[:name]).map{
+        render :json => current_account.companies.custom_search(params[:name]).map{
                                               |customer| [customer.name, customer.id]}
       }
     end

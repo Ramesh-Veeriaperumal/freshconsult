@@ -21,7 +21,7 @@ describe CustomersController do
   it "should create a new company using the API" do
     fake_a_customer
     post :create, @params.merge!(:format => 'xml')
-    @comp = @account.customers.find_by_name(@company_name)
+    @comp = @account.companies.find_by_name(@company_name)
     response.status.should be_eql '201 Created'
     @company_params.should be_eql(xml SKIPPED_KEYS)
   end
@@ -36,7 +36,7 @@ describe CustomersController do
     id = company.id
     fake_a_customer
     put :update, (@params).merge!({ :id => id, :format => 'xml' })
-    { :customer => company_attributes(@account.customers.find(id), SKIPPED_KEYS) }.
+    { :customer => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
                                                                     should be_eql(@company_params)
   end
 

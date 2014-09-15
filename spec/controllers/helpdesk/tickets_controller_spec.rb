@@ -593,8 +593,8 @@ describe Helpdesk::TicketsController do
       get :index
       response.should render_template "helpdesk/tickets/index.html.erb"
       get :prevnext, :id => ticket_2.display_id
-      assigns(:previous_ticket).to_i.should eql ticket_1.display_id
-      assigns(:next_ticket).to_i.should eql ticket_3.display_id
+      assigns(:previous_ticket).to_i.should eql ticket_3.display_id
+      assigns(:next_ticket).to_i.should eql ticket_1.display_id
     end
 
     it "should load the next ticket of a ticket from the adjacent page" do
@@ -608,7 +608,7 @@ describe Helpdesk::TicketsController do
       response.should render_template "helpdesk/tickets/index.html.erb"
       last_ticket = assigns(:items).last
       get :prevnext, :id => last_ticket.display_id
-      assigns(:next_ticket).to_i.should eql ticket.display_id + 1
+      assigns(:next_ticket).to_i.should eql ticket.display_id
     end
 
     it "should load the next and previous tickets of a ticket with no filters" do
@@ -623,7 +623,7 @@ describe Helpdesk::TicketsController do
                                                           :user_id => @agent.id, 
                                                           :session_id => session.session_id})
       get :prevnext, :id => last_ticket.display_id
-      assigns(:previous_ticket).to_i.should eql last_ticket.display_id - 1
+      assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
     end
 
 
@@ -674,14 +674,14 @@ describe Helpdesk::TicketsController do
       response.body.should =~ /#{tag.name}/
     end
 
-    it "should clear the filter_ticket values and set new values from customer page" do
+    it "should clear the filter_ticket values and set new values from company page" do
       company = create_company
       user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
       user.save(false)
       ticket = create_ticket({ :status => 2, :requester_id => user.id}, @group)
       ticket_1 = create_ticket({ :status => 2}, @group)
-      get :index, :customer_id => company.id
+      get :index, :company_id => company.id
       response.body.should =~ /#{company.name}/
       response.body.should =~ /#{ticket.subject}/
       response.body.should =~ /##{ticket.display_id}/

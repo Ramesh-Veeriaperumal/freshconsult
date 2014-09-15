@@ -36,7 +36,7 @@ module Wf::TestCaseGenerator
   end
 
   def options_for_customers
-    @account.customers.all.map { |company| [company.id, company.name] }
+    @account.companies.all.map { |company| [company.id, company.name] }
   end
 
   def options_for_requester
