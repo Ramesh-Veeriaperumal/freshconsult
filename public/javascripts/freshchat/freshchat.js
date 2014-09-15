@@ -38,13 +38,13 @@ var bindEvent = function(){
         jQuery('.hover-card-agent').parent().remove();
         jQuery('.twipsy.in').hide();
     }) ;  
-}
+};
 
 var unbindEvent = function(){
     jQuery('body').off('click','.hover_card .agent_name');
     jQuery('.list_agents_replying').off('click','.agent_detail');
     window.freshchat.chatIcon = false;
-} 
+}; 
 
 
 
