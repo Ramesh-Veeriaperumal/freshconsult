@@ -48,8 +48,8 @@ class Freshfone::Filters::CallFilter < Wf::Filter
     
     action_hash = []
     custom_condition_hash = []
-    if params[:data_hash].blank?
-      action_hash = default_filter
+    if params[:data_hash].blank? 
+      action_hash = default_filter unless params[:format] == "nmobile"
     else
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
