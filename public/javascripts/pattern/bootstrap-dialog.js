@@ -167,16 +167,28 @@
 
 	    // creating the dialog through the api
 	    if(!$this.data('freshdialog')){
-	    	$(this).data("targetId", ($this.attr('data-target') || 
-	    		(href && href.replace(/.*(?=#[^\s]+$)/, ''))))
-	    	$this.freshdialog()
+	    	var targetId = $this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''));
+	    	$this.data("targetId", targetId);
+	    	$this.freshdialog();
+
+	    	if($this.data("group")){
+	    		var $objGroup = $("[data-group="+$this.data("group")+"]");
+
+	    		$objGroup.data({ "targetId": targetId, 
+	    						 "freshdialog": $this.data('freshdialog') });
+	    	}
 	    }
 
 	    var $target = $($(this).data("targetId"))
 	    var	option = $target.data('modal') ? 'toggle' : $.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data())
 
 	    $target.data("source", $this)
-	    $target.modal(option);	    
+
+	    if(!$target.data('modal')){
+	    	$target.modal(option);
+	    }else{
+	    	$target.modal("toggle");
+	    }
 	})
 
 }(window.jQuery);

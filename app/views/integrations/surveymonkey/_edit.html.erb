@@ -1,40 +1,54 @@
 <%	app = Integrations::Application.find_by_name('surveymonkey') %>
-
 <% if installed_app %>
+<div id="survey-fields-container" class="survey-fields-container row-fluid">
+	<!-- It is hidden and it is used by JS script to do DOM action -->
+	<select class="all_groups_base_reference hide">
+		<!-- 0 is the value for all groups.-->
+		<option value="">- Select -</option>
+		<option value="0">All Groups</option>
+		<% current_account.groups.find(:all, :order =>'name').each do |group| %>
+			<option value = <%=h(group.id)%> > <%=h(group.name)%> </option>
+		<% end %>
+	</select>
 
-	<div id="survey-fields-container">
-		<div id="survey-collector-dropdowns" class="row-fluid">
-			<div class="span6">
-				<span class="title black_and_bold"><%= t('integrations.surveymonkey.edit_form.survey') %><sup>*</sup></span><br>
-				<div id="survey-list-wrapper" class="sloading loading-small loading-left">
-					<select id="survey_list" class="hide required">
-						<option value="">- <%= t('integrations.surveymonkey.edit_form.select') %> -</option>
-					</select>
-				</div>
-			</div>
+	<p class="black_and_bold"><%= t('integrations.surveymonkey.edit_form.survey_link_text.label') %></p>
+	
+	<div class="survey_for_groups m-survey-list">
+		<!-- have to iterate row div based on the number of groups configured in the DB -->
+		<%if installed_app.configs[:inputs]['groups'] %>
+			<% installed_app.configs[:inputs]['groups'].each do |group| %>
+				<%= render :partial => "integrations/surveymonkey/surveymonkeyrow", :locals => { :group => group } %>
+			<%end%>
+		<%else%>
+			<%if installed_app.configs[:inputs]['survey_link'] %>
+				<% group = [] %>
+				<% group[0] = 0 %>
+				<% group[1] = { "survey_link" => installed_app.configs[:inputs]['survey_link'] , "survey_id" => installed_app.configs[:inputs]['survey_id'] , "collector_id" => installed_app.configs[:inputs]['collector_id'] } %>
+				<%= render :partial => "integrations/surveymonkey/surveymonkeyrow", :locals => { :group => group } %>
+			<%else%>
+				<%= render :partial => "integrations/surveymonkey/surveymonkeyrow", :locals => { :group => group = nil } %>
+			<%end%>
+		<%end %>
+	</div>
 
-			<div class="span6 hide" id="collector-container">
-				<span class="title black_and_bold"><%= t('integrations.surveymonkey.edit_form.collector') %><sup>*</sup></span><br>
-				<div id="collector-list-wrapper">
-					<select id="collector_list" name="configs[survey_link]" class="required">
-						<option value="">- <%= t('integrations.surveymonkey.edit_form.select') %> -</option>
-					</select>
-				</div>
-			</div>
-		</div>
+	<div id="load_survey_link" class="hide">
+		<iframe id="load_survey_link_iframe" src="" width="100%"> </iframe>
+	</div>
 
-		<input type="hidden" name="configs[survey_id]" id="configured_survey_id" value="<%=installed_app.configs[:inputs]['survey_id']%>">
-		<input type="hidden" name="configs[collector_id]" id="configured_collector_id" value="<%=installed_app.configs[:inputs]['collector_id']%>">
-		
-		<div class="survey-text-container">
+	<div class = 'm-survey-add'>
+		<div class = 'add-remove-optn add'>+</div>
+		<a class="add_group"> Add another group </a>
+	</div>
+
+	<div class="survey-text-container">
 			<label for="survey_text">
-				<span class="black_and_bold"><%= t('integrations.surveymonkey.edit_form.survey_link_text.label') %><sup>*</sup> </span><br>
+				<span class="black_and_bold"><%= t('integrations.surveymonkey.edit_form.survey_link_text.label') %><sup>*</sup> </span><br/>
 				<%= t('integrations.surveymonkey.edit_form.survey_link_text.description') %>
 			</label>
 			<textarea id="survey_text" class="required" name="configs[survey_text]"><%= installed_app.configs[:inputs]['survey_text'] ||  t('integrations.surveymonkey.edit_form.survey_link_text.default_content') %></textarea>
-		</div>
+	</div>
 
-		<div class="send_while_container">
+	<div class="send_while_container">
 			<div class="send_while">
 				<%=t('integrations.surveymonkey.edit_form.send_while_title').html_safe%> <sup>*</sup>
 			</div>
@@ -57,24 +71,21 @@
 			<label>
 				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::SPECIFIC_EMAIL_RESPONSE}\">".html_safe %>
 				<%=t('admin.surveys.satisfaction_settings.send_while_option4').html_safe%>
-			</label>		
-		</div>
-
-		<script type="text/javascript">
-			jQuery('div.send_while_container input[value="<%=installed_app.configs[:inputs]['send_while'] ||
-				Survey::RESOLVED_NOTIFICATION %>"]').attr("checked", true);
-		</script>
-			
+			</label>
 	</div>
 
+	<script type="text/javascript">
+			jQuery('div.send_while_container input[value="<%=installed_app.configs[:inputs]['send_while'] ||
+				Survey::RESOLVED_NOTIFICATION %>"]').attr("checked", true);
+	</script>
 
-	<input type="hidden" id="configured_survey_url" value="<%=installed_app.configs[:inputs]['survey_link']%>">
+</div>
+
 	<script type="text/javascript">
 	 CustomWidget.include_js('/javascripts/integrations/surveymonkey.js')
 	</script>
 
 <% else %>
-	
 	<span> <%= t('integrations.surveymonkey.enable_integration_text') %> </span>
 	<script type="text/javascript">
 		jQuery("#InstallApplication input[type=\"submit\"]").click(function(e){
@@ -82,6 +93,4 @@
 			window.location.href = "<%=app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})%>";
 		});			
 	</script>
-
 <%end%>
-
