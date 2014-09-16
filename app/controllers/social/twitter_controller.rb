@@ -145,7 +145,7 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       unfavourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
-      update_favorite_in_dynamo(@stream_id, @feed_id, -1) if not_valid_error?(@social_error_msg)
+      update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
       if unfavourite_status.blank? 
         flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
       end

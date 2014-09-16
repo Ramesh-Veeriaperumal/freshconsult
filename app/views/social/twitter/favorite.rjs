@@ -11,6 +11,7 @@ if @social_error_msg.nil?
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').removeClass('ficon-star-o')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').addClass('ficon-star')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt i').css('opacity','1')"
+  page << "jQuery('#conv_div_#{@feed_id}  .icon-lst a.fav-twt').attr('data-original-title','Favorited');"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('unfav')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('shr-fav-btn')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('unfav-twt')"
