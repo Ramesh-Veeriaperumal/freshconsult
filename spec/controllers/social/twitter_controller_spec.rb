@@ -660,7 +660,7 @@ describe Social::TwitterController do
     Twitter::REST::Client.any_instance.stubs(:follow).returns([user_id])
     post :follow, {
       :user => {
-        :screen_name_to_follow => "Testing",
+        :to_follow => "Testing",
         :screen_name => "Test"
       }
     }
@@ -672,7 +672,7 @@ describe Social::TwitterController do
     Twitter::REST::Client.any_instance.stubs(:unfollow).returns([user_id])
     post :unfollow, {
       :user => {
-        :screen_name_to_follow => "Testing",
+        :to_follow => "Testing",
         :screen_name => "Test"
       }
     }
