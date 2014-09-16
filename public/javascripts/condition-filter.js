@@ -377,9 +377,16 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 5, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery(".api_webhook").attr("style"), "display: none;", jQuery('.api_webhook'), jQuery('.user_pass_webhook'));
 				}
-				jQuery('.paragraph-redactor').data('redactor').deleteCursor();
-			  domUtil.get_filter_list('json', this);
-			   // return false;
+						
+				jQuery.each(jQuery('.paragraph-redactor'), function(i, item) { 
+					var $redactor = jQuery(item).data("redactor"); 
+					if($redactor != "undefined") { 
+						$redactor.deleteCursor(); 
+					} 
+				});
+
+				domUtil.get_filter_list('json', this);
+				// return false;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
