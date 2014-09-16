@@ -62,13 +62,16 @@
             </span>
           </div>
 
-          <% if privilege?(:reply_ticket) %>
-            <ul class="sharer">
+          <ul class="sharer">
+            <% convert_ticket_class = feed.ticket_id.blank? ? "" : "hide" %>
+            <% show_ticket_class = !feed.ticket_id.blank? ? "" : "hide" %>
+            <% if privilege?(:reply_ticket) %>
               <li>
                 <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id%>" data-clicked="no" class="more-links sharer_reply_button tooltip" data-original-title="Reply" twipsy-content-set="true" >
                   <%= font_icon "reply", :size => 18 %>
                 </a>
               </li>
+              
               <li>
                 <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id%>" data-clicked="no" class="more-links sharer_retweet_button tooltip" data-original-title="Retweet" twipsy-content-set="true">
                   <%= font_icon "retweet", :size => 18 %>
@@ -94,27 +97,25 @@
                 </li>
               <% end %>
 
-              <li>
-                <% convert_ticket_class = feed.ticket_id.blank? ? "" : "hide" %>
-                <% show_ticket_class = !feed.ticket_id.blank? ? "" : "hide" %>
-                
+              <li> 
                 <span class="sharer_twt_not_ticket <%= convert_ticket_class %>">
                   <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket more-links unified_view_ctt" data-original-title="<%=t('social.streams.tooltip.convert_to_tkt')%>" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
                     <%= font_icon "ticket", :size => 18%>
                   </a>
                 </span>
-                
-                <span class="sharer_twt_ticket <%= show_ticket_class %> ">
+              </li>
+            <% end %>
+            <li>
+              <span class="sharer_twt_ticket <%= show_ticket_class %> ">
                   <% ticket_url = "#{helpdesk_tickets_url}/#{feed.ticket_id}" %>
                   <% ticket_display_id = feed.ticket_id.split("#").first  if feed.ticket_id %>
                   <% ticket_hover = "#{t('social.streams.tooltip.go_to_tkt', :display_id => ticket_display_id)}" %>
                   <a href="<%= ticket_url %>" target="_blank" twipsy-content-set="true" class="ctt-btn  more-links tooltip tw-tkt-link" data-original-title='<%= ticket_hover %>' data-placement="left">
-                     <%= font_icon "ticket", :size => 18 %>
+                       <%= font_icon "ticket", :size => 18 %>
                   </a>
-                </span>
-              </li>
-            </ul>
-          <% end %>
+              </span>
+            </li>  
+          </ul>
         </div>
       </div>
     </div>
