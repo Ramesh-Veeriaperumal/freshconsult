@@ -13,6 +13,7 @@ namespace :db do
     create_es_indices
     
     puts 'Loading data...'
+    ENV["FIXTURE_PATH"] = "db/fixtures/global"
     Rake::Task["db:seed_fu"].invoke
 
     #We do not need savage_beast migration here, all the forums
