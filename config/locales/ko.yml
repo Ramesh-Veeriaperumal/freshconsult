@@ -1274,7 +1274,7 @@ ko:
             verify_credentials: "로그인할 수 없습니다. 인증 정보를 확인하십시오."
             sso: 
                 expected_params: "Expected params are name, email and hash, which are not present "
-                invalid_time_entry: "Inavlid time entry"
+                invalid_time_entry: "Invalid time entry"
             success: "로그인했습니다."
             failed: "로그인하지 못했습니다."
             deleted_user: "죄송합니다. 계정이 삭제되어서 로그인할 수 없습니다. 로그인하려면 계정 관리자에게 문의하십시오."
