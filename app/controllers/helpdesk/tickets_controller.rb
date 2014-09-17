@@ -570,7 +570,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def change_due_by
     due_date = get_due_by_time    
-    @item.update_attributes(:due_by => due_date)
+    @item.update_attributes({:due_by => due_date, :manual_dueby => true})
     render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
   end  
   
