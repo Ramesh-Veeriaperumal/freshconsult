@@ -63,6 +63,10 @@
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
 	<% end %>
+	
+	<% if chat_feature_enabled? %>
+		<%= include_cloudfront_js :freshchat %>
+	<% end %>
 
 	<%= include_cloudfront_js_langs %>
 
