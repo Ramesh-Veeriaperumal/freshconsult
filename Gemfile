@@ -217,16 +217,20 @@ end
   gem "uglifier", "~> 2.1.2"
   gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
-  gem "sass-rails"
-  gem "compass-rails"
-  gem "compass-blueprint"
+  gem "sprockets",            "2.2.2"
+  gem "ejs",                  "1.1.1"
+
+  # SASS and Compass gems
+  gem "sass-rails",           "3.2.6"
+  gem "compass-rails",        "2.0.0"
+  gem "compass-blueprint",    "1.0.0"
 
   # Portal grid system is done using susy grids
-  gem "susy"
+  gem "susy",                 "2.1.3"
 
   # To optimize sprite generation
-  gem "oily_png"
+  gem "oily_png",             "1.1.1"
 
   # Building custom font icons inside the application
-  gem "fontcustom"
+  gem "fontcustom",           "1.3.3"
 # end

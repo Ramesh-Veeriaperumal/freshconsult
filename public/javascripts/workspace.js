@@ -20,7 +20,7 @@
 //= require loader.js
 //= require application.js
 //= require navsearch.js
-//- app/views/shared/spotlight_result.jst
+//= require app/search/templates/spotlight_result
 //= require report/date.js
 //= require freshfone/global.js
 //= require app/metrics.js
