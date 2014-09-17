@@ -55,7 +55,21 @@ class CRM::Salesforce < Resque::Job
         :Email => config.account.admin_email, :Phone => config.account.admin_phone })
   end
 
-  
+  def account_owner(account_id)
+    owner = nil
+
+    search_string = %(SELECT Contact.Account.Owner.Name, Contact.Account.Owner.Email, Reseller__c, 
+      Marketo_Contacted__c FROM Contact WHERE Freshdesk_Account_Id__c = '#{account_id}')
+    response = binding.query(:searchString => search_string).queryResponse
+
+    unless response.nil?
+      result = response.result.records       
+      owner  = result.Account.Owner unless discard_owner?(result)
+    end
+
+    owner
+  end
+
   private 
 
     def binding
@@ -199,6 +213,10 @@ class CRM::Salesforce < Resque::Job
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+    end
+
+    def discard_owner?(owner) # for below condition the salesforce account manager details should not be shown
+      owner.nil? || owner.Reseller__c.to_bool || (owner.Marketo_Contacted__c == "Yes")
     end
 
 end

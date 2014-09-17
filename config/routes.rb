@@ -471,6 +471,7 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
+    helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
     helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
     helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 

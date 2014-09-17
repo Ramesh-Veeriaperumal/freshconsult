@@ -149,6 +149,19 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def sales_manager_from_cache
+    if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
+      key = SALES_MANAGER_3_DAYS % { :account_id => self.id }
+      expiry = 1.day.to_i
+    else
+      key = SALES_MANAGER_1_MONTH % { :account_id => self.id }
+      expiry = 30.days.to_i
+    end
+    MemcacheKeys.fetch(key,expiry) do
+      CRM::Salesforce.new.account_owner(self.id)
+    end
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
