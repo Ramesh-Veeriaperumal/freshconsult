@@ -646,6 +646,7 @@
     support.namespace :mobihelp do |mobihelp|
       mobihelp.resources :tickets
       mobihelp.connect "/tickets/:id/notes.:format", :controller => 'tickets' , :action => 'add_note'
+      mobihelp.connect "/tickets/:id/close.:format", :controller => 'tickets' , :action => 'close'
     end
 
   end
