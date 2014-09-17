@@ -144,6 +144,18 @@ class Portal < ActiveRecord::Base
     "#{APP_CACHE_VERSION}/v#{cache_version}/#{language}/#{self.id}"
   end
 
+  def make_current
+    Thread.current[:portal] = self
+  end
+
+  def self.current
+    Thread.current[:portal]
+  end
+
+  def self.reset_current_portal
+      Thread.current[:portal] = nil
+  end
+
   private
 
     def update_users_language
