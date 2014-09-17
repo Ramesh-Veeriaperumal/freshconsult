@@ -1,11 +1,11 @@
 module Delayed
-  class PerformableMethod < Struct.new(:object, :method, :args, :account)
+  class PerformableMethod < Struct.new(:object, :method, :args, :account, :portal)
     # attr_accessor :account
     
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
 
-    def initialize(object, method, args, account=Account.current)
+    def initialize(object, method, args, account=Account.current, portal= Portal.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
 
       Rails.logger.debug "$$$$$$$$ Method -- #{method.to_sym} ------------- account #{Account.current}" 
@@ -13,6 +13,7 @@ module Delayed
       self.args   = args.map { |a| dump(a) }
       self.method = method.to_sym
       self.account = dump(Account.current) if Account.current
+      self.portal = dump(Portal.current) if Portal.current
     end
     
     def display_name  
@@ -25,6 +26,7 @@ module Delayed
 
     def perform
        Account.reset_current_account
+       Portal.reset_current_portal
 
        account_id = nil
        if account
@@ -33,6 +35,7 @@ module Delayed
        end
        Sharding.select_shard_of(account_id) do
         load(account).send(:make_current) if account
+        load(portal).send(:make_current) if portal
         load(object).send(method, *args.map{|a| load(a)})
       end
       #rescue ActiveRecord::RecordNotFound
