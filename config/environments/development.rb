@@ -28,6 +28,7 @@ config.action_mailer.raise_delivery_errors = true
 config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
 end
+config.middleware.insert_before "ActionController::Session::CookieStore","Rack::SSL"
 
 # require 'ftools'
 # File.copy('config/sphinx_development.yml', 'config/sphinx.yml', true)

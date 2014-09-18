@@ -24,7 +24,7 @@ config.action_controller.allow_forgery_protection    = false
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
-
+config.middleware.insert_before "ActionController::Session::CookieStore","Rack::SSL"
 config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
   r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true ,:per_url => true )
   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
