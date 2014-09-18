@@ -8,7 +8,7 @@
 	<div class="button-container align-left">
 		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "btn",  :confirm => t('forum.confim_msg1') ) %>
 		<div class="pull-right align-right">
-			<%= pjax_link_to(t('cancel'), :back, :class => "btn" ) -%>
+			<%= pjax_link_to(t('cancel'), discussions_forum_path(@forum), :class => "btn" ) -%>
 			<%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
 		</div>
 	</div>

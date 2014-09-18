@@ -1,6 +1,6 @@
 <div class="no-helpdesk unsupported-message">
 	<p> <%= t('unavailable_feature', :feature => feature.to_s.titleize) %> </p>
-	< <%= link_to t('go_back'), :back %>
+	< <%= link_to t('go_back'), admin_home_index_path %>
 	<% if privilege?(:manage_account) %>
 		- <%= link_to t('upgrade_plan'), subscription_url  %>
 	<% end %>>
