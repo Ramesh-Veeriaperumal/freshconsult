@@ -116,9 +116,10 @@ class CRM::Salesforce < Resque::Job
     end
 
     def add_opportunity(crm_ids, payment)
-      response = create_crm_record(RECORD_TYPES[:opportunity], opportunity_details(crm_ids, payment))
-      result = response.createResponse.result
-      (result.success)? (return result[:id]) : (raise Excpetion.new(result.errors.message))  
+      opportunity_id = fetch_opportunity(crm_ids[:account])
+      data = ({:id => opportunity_id}).merge(opportunity_details(crm_ids, payment))
+      binding.update('sObject {"xsi:type" => "Opportunity"}' => data)
+      opportunity_id
     end
 
     def add_opportunity_contact_role(opportunity_id, crm_contact_id)
@@ -219,4 +220,14 @@ class CRM::Salesforce < Resque::Job
       owner.nil? || owner.Reseller__c.to_bool || (owner.Marketo_Contacted__c == "Yes")
     end
 
+    def fetch_opportunity(crm_account_id)
+      begin
+        search_query = %(SELECT Id FROM Opportunity WHERE AccountId = '#{crm_account_id}')
+        response = binding.query(:searchString => search_query).queryResponse
+        record = (response.result.records.is_a?(Array))? response.result.records[0] : response.result.records
+        record[:Id].is_a?(Array)? record[:Id][0] : record[:Id]
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+    end
 end

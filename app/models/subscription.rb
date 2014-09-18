@@ -248,7 +248,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def applicable_addons(addons, plan)
-    addons.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
+    addons.to_a.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
   end
 
   def add_free_freshfone_credit
