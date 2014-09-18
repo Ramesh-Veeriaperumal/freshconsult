@@ -8,7 +8,7 @@ document.addEventListener('chat disConnect', function(){
 }, false);
 var bindEvent = function(){
     window.freshchat.chatIcon = true;
-    jQuery('.list_agents_replying').on('click','.agent_detail',function (){
+    jQuery('body').on('click','.list_agents_replying .agent_detail',function (){
         if(!jQuery('.agent_detail').hasClass('clickDisable')){
             jQuery('.agent_detail').addClass('clickDisable');
             var id = jQuery('.agent_detail').attr('id');
@@ -19,12 +19,12 @@ var bindEvent = function(){
         }
     });
 
-    jQuery('.list_agents_replying').live('hover','.agent_detail',function (){
+    jQuery('body').on('hover','.list_agents_replying .agent_detail',function (){
         jQuery('.agent_detail').css({'cursor':'pointer'});
         jQuery('.more_agents').css({'cursor':'pointer'});
     });
 
-    jQuery('.list_agents_replying').live('mouseleave','.agent_detail a',function(){
+    jQuery('body').on('mouseleave','.list_agents_replying .agent_detail a',function(){
         jQuery('.twipsy.in').hide();
     })
 
@@ -42,7 +42,7 @@ var bindEvent = function(){
 
 var unbindEvent = function(){
     jQuery('body').off('click','.hover_card .agent_name');
-    jQuery('.list_agents_replying').off('click','.agent_detail');
+    jQuery('body').off('click','.list_agents_replying .agent_detail');
     window.freshchat.chatIcon = false;
 }; 
 
