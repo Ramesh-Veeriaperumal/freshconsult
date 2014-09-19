@@ -221,6 +221,8 @@ include Mobile::Actions::Push_Notifier
       redirect_to sso_redirect_url and return
     end
     
+    make_freshfone_user_offline if freshfone_active?
+    
     respond_to do |format|
         format.html  {
           redirect_to root_url
@@ -383,6 +385,16 @@ include Mobile::Actions::Push_Notifier
 
     def mark_agent_unavailable
       current_user.agent.update_attribute(:available,false)
+    end
+
+    def make_freshfone_user_offline
+      current_user.freshfone_user.offline!
+    end
+
+    def freshfone_active?
+      freshfone_user = current_user.freshfone_user
+      current_account.features?(:freshfone) &&  freshfone_user.present? && 
+        !freshfone_user.available_on_phone?
     end
 
     def check_sso_params

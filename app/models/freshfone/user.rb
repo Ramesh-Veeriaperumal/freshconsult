@@ -47,10 +47,24 @@ class Freshfone::User < ActiveRecord::Base
 		self.presence = status
 		save
 	end
+
+	def get_presence
+		self.presence
+	end
 	
 	def reset_presence
 		self.presence = incoming_preference
 		self
+	end
+
+	def offline!
+		self.presence = PRESENCE[:offline]
+		save
+	end
+
+	def online!
+		self.presence = PRESENCE[:online]
+		save
 	end
 	
 	def change_presence_and_preference(status, user_avatar_content, nmobile = false)

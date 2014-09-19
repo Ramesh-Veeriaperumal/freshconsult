@@ -24,6 +24,12 @@ class Freshfone::UsersController < ApplicationController
 		end
 	end
 
+	def get_presence
+		render :json => {
+			:status => @freshfone_user.get_presence
+		}
+	end
+
 	def node_presence
 		#Does not update presence when user is available on phone and disconnect is fired from node
 		render :json => { 

@@ -89,7 +89,7 @@
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                        :children => :get, :recent_calls => :get }
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
-    freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
+    freshfone.resources :users,:collection => { :presence => :post, :get_presence => :get, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
     freshfone.resources :autocomplete, :collection => { :requester_search => :get, :customer_phone_number => :get }
     freshfone.resources :usage_triggers, :collection => { :notify => :post }
