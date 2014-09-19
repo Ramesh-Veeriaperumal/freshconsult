@@ -30,8 +30,9 @@ describe GroupsController do
 		}
 		@account.groups.find_by_name("Spec Testing Grp - xml").should_not be_nil
 		result = parse_xml(response)
+		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
 		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-				 	(compare(result["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+				 	(compare(result["group"]["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
 
@@ -78,8 +79,9 @@ describe GroupsController do
 	it "should go to the Groups index page" do
 		get :index, :format => 'xml'
 		result = parse_xml(response)
+		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
 		expected = (response.status =~ /200 OK/) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-				 	(compare(result["groups"].last["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+				 	(compare(result["groups"].last["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
 
