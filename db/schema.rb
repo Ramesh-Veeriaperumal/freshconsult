@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140821061303) do
+ActiveRecord::Schema.define(:version => 20140909054208) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -807,6 +807,8 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
     t.text     "non_business_hours_message"
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
+    t.integer  "hunt_type",                                                               :default => 1
+    t.integer  "rr_timeout",                                                            :default => 10
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -859,8 +861,10 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
     t.datetime "created_at"
     t.datetime "updated_at"
 		t.datetime "mobile_token_refreshed_at"
+    t.datetime "last_call_at"
   end
 
+  add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
 
@@ -1890,6 +1894,7 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
     t.text     "seo_data"
+    t.integer  "hits",                               :default => 0
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -2560,7 +2565,7 @@ ActiveRecord::Schema.define(:version => 20140821061303) do
   create_table "votes", :force => true do |t|
     t.boolean  "vote",                        :default => false
     t.datetime "created_at",                                     :null => false
-    t.string   "voteable_type", :limit => 15, :default => "",    :null => false
+    t.string   "voteable_type", :limit => 30
     t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
     t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
     t.integer  "account_id",    :limit => 8

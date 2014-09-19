@@ -1,5 +1,9 @@
 <div>
-  Error occured in account <%= @account.id %> :: <%= @account.full_domain %> while calculating the call charge for <%= @call_sid %>.
+  Error occured in account <%= @account.id %> :: <%= @account.full_domain %> while calculating the call charge for <%= @args[:call_sid] %>.
+  <div><br></div>
+  Options received :: <%= @args.inspect %>
+  <div><br></div>
+  And the current call is :: <%= @call.inspect %>
   <div><br></div>
   The exception is <%= @exception.message %> : 
   <div><br></div>

@@ -183,7 +183,7 @@ class Integrations::JiraIssue
         end
       end
     end
-    return false
+    return {}
   end
 
   def customFieldChecker
@@ -204,13 +204,12 @@ class Integrations::JiraIssue
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    if custom_field_args[:customFieldId]
+    if !custom_field_args.empty? and custom_field_args[:customFieldId]
       @installed_app[:configs][:inputs]['customFieldId'] = custom_field_args[:customFieldId]
       @installed_app[:configs][:inputs]['customFieldName'] = custom_field_args[:customFieldName]
       @installed_app.disable_observer = true
       @installed_app.save!
-      return custom_field_args;
     end
+    return custom_field_args;
   end
-
 end

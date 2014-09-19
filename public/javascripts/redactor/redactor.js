@@ -351,7 +351,7 @@ var Redactor = function(element, options)
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
 					'<input type="button" class="btn btn-primary" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
@@ -904,7 +904,9 @@ Redactor.prototype = {
 		    var rangeObj = document.createRange();
 		    rangeObj.selectNode(srcObj);
 		    rangeObj.deleteContents();
+		    return true;
 		}
+		return false;
 	},
 	focusOnCursor: function(){
 		var imgfocus = this.$editor.find("[rel='cursor']");
@@ -923,15 +925,16 @@ Redactor.prototype = {
 		}
 	},
 	deleteCursor: function(){
-		this.removeContent();
-		this.syncCode();
+		if(this.removeContent()){
+			this.syncCode();
+		}
 	},
 	// for mozialla
 	addNoneStyleForCursor: function(){
 		if(this.$editor.find("[rel='cursor']").get(0)){
 			this.$editor.find("[rel='cursor']").css({"display": "none"});
+			this.syncCode();
 		}
-		this.syncCode();
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -4420,8 +4423,7 @@ $.fn.insertExternal = function(html)
 			if(removeCursor == undefined || removeCursor){
 				this.$editor.deleteCursor();	
 			} else {
-				// Temp check for bulk action on form submit. Bulk action redactor should be disable when the checkbpx is not selected on Add Bulk reply.
-				if(jQuery.browser.mozilla && this.$editor.$el.attr('id') != "reply-multiple-cnt-reply-multiple-body"){ 
+				if(jQuery.browser.mozilla){ 
 					// Add display:none style for cursor's <img> tag
 					this.$editor.$el.data('redactor').addNoneStyleForCursor();
 				}

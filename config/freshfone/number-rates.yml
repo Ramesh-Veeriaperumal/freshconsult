@@ -61,7 +61,7 @@ DK:
   local: 1.0
 DO:
   name: Dominican Republic
-  beta: false
+  beta: true
   address_required: false
   local: 7.0
 EE:
@@ -144,7 +144,7 @@ LV:
   local: 1.0
 MT:
   name: Malta
-  beta: false
+  beta: true
   address_required: false
   national: 5.0
   local: 5.0
@@ -166,7 +166,7 @@ NZ:
   local: 3.0
 PE:
   name: Peru
-  beta: false
+  beta: true
   address_required: false
   local: 5.0
 PL:
@@ -204,7 +204,7 @@ SK:
   local: 1.0
 SV:
   name: El Salvador
-  beta: false
+  beta: true
   address_required: false
   local: 10.0
 US:

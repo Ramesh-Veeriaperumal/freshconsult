@@ -21,7 +21,17 @@
 	    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
 	</div>
 	<div class="hide" id="category-delete-confirmation">
-		<p class="margin-bottom lead-desc"><%= t('solution_category.delete') %></br><%= t("solution_category.size",:no_of_folders => @category.folders.size,:no_of_articles => @category.articles.size) %></p>
+		<p class="margin-bottom">
+		<% unless (@category.folders.size == 0) && (@category.articles.size == 0) %>
+			<%= t('solution_category.delete') %>
+			<br />
+			<%= t("solution_category.size", 
+						:no_of_folders => @category.folders.size,
+						:no_of_articles => @category.articles.size) %>
+		<% else %>
+			<%= t('solution_category.info1') %>
+		<% end %>
+		</p>
 	</div>
 <% end %>
 

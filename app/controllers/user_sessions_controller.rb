@@ -370,6 +370,7 @@ include Mobile::Actions::Push_Notifier
     end
 
     def mark_agent_unavailable
+      Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{current_user.email}, Value:: false, Time:: #{Time.zone.now} "
       current_user.agent.update_attribute(:available,false)
     end
 
