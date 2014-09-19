@@ -35,7 +35,7 @@
 	<%= stylesheet_link_tag :ie_hacks %>
 	<%= stylesheet_link_tag :"page/tkt_details/tkt_details", :media => "screen, print, projection"  %>
 	<%= stylesheet_link_tag :"page/tkt_details/tkt_details_sprites", :media => "screen, print, projection"  %>
-	<%= stylesheet_link_tag :'360player' %>
+	<%= stylesheet_link_tag :'plugins/360player' %>
 	<%= stylesheet_link_tag :community %>
 	<%= stylesheet_link_tag :'freshfone_recording_playback' %>
 
@@ -55,7 +55,6 @@
 	<%= javascript_include_tag :frameworks %>
 	<%= javascript_include_tag :workspace %>
 	<%= javascript_include_tag :redactor %>
-	<%= javascript_include_tag :shortcut if shortcuts_enabled? %>
 	<%= javascript_include_tag :syntaxhighlighter %>
 	<%= javascript_include_tag :pattern  %>
 	<%= javascript_include_tag :merge  %>
@@ -70,10 +69,10 @@
 
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
-		var js_assets = JSON.parse('<%= Jammit.configuration[:javascripts].to_json =%>'.replace(/&quot;/g,'"')),
-				css_assets = JSON.parse('<%= Jammit.configuration[:stylesheets].to_json =%>'.replace(/&quot;/g,'"'));
-		window.scriptLoader = new ScriptLoader(js_assets, css_assets);
-		Fjax.Assets.setup(js_assets, css_assets, cloudfront_version, cloudfront_host_url);
+		$LAB.setGlobalDefaults({
+			BasePath: cloudfront_host_url + '/assets/'
+		});
+		Fjax.Assets.setup(<%= AssetLoader.js_assets.to_json.html_safe %>, <%= AssetLoader.css_assets.to_json.html_safe %>, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
 

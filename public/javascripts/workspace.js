@@ -17,7 +17,6 @@
 //= require fjax/config.js
 //= require fjax/assets.js
 //= require fjax/manager.js
-//= require loader.js
 //= require application.js
 //= require navsearch.js
 //- app/views/shared/spotlight_result.jst

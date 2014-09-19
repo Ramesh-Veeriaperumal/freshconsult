@@ -47,7 +47,7 @@
 		attachment_prefix : "admin_freshfone_number[attachments][${type}]"
 	};
 	freshfone.welcome_message_settings_json = <%= (@ivr.welcome_message || {}).to_json.html_safe %>
-	scriptLoader.load('360player');
+	Fjax.Assets.plugin('360player');
 <% end %>
 
 <%= javascript_include_tag :freshfone_settings %>

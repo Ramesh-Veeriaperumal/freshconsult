@@ -41,7 +41,7 @@
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) && current_account.agents_from_cache.count > 1%>
 <%= render :partial => "helpdesk/tickets/freshdesk_node", :locals => {:ticket => @ticket } if current_account.features?(:collision)  && current_account.agents_from_cache.count > 1%>
 <script type="text/javascript">
-	scriptLoader.load('360player');
+	Fjax.Assets.plugin('360player');
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
 });

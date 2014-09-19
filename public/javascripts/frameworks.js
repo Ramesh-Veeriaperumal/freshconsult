@@ -23,6 +23,7 @@
 //= require_tree ./moment
 //= require frameworks/plugins/jquery.blockUI.js
 //= require frameworks/underscore-min.js
+//= require frameworks/lab.min.js
 //= require hackz.js
 //= require lib/nestedtree.js
 //= require helpdesk/multifile.js
@@ -31,7 +32,6 @@
 //= require frameworks/faye.js
 //= require helpdesk/freshdesk_node.js
 //= require ticket_list.js
-//= require AsyncJSLoader.js
 //= require lib/detectmobilebrowsers.js
 //= require frameworks/plugins/jquery.ui.timepicker.addon.js
 //= require app/ticket_details.js

@@ -1,0 +1,66 @@
+class AssetLoader
+	
+	JS = {
+		:app => 'public/javascripts/app',
+		:plugins => 'public/javascripts/plugins'
+	}
+	
+	CSS = {
+		:app => 'public/src/app',
+		:plugins => 'public/src/plugins'
+	}
+	
+	class << self
+		
+	def js_assets
+		{
+			:app => js_app_assets(:app),
+			:plugins => js_app_assets(:plugins)
+		}
+	end
+	
+	def css_assets
+		{
+			:app => css_app_assets(:app),
+			:plugins => css_app_assets(:plugins)
+		}
+	end
+	
+	private
+	
+	def to_hash(array)
+		Hash[*array.map { |i| [i[2], i[1]] }.flatten]
+	end
+	
+	def js_app_assets(scope)
+		Hash[*((asset_list(JS[scope]) || []).map do |asset|
+			[asset.gsub('.js', '').to_s , Rails.application.assets.find_asset("#{scope}/#{asset}").digest_path]
+		end).flatten]
+	end
+	
+	
+	def css_app_assets(scope)
+		puts asset_list(CSS[scope]).inspect
+		Hash[*((asset_list(CSS[scope]) || []).map do |asset|
+			[asset.gsub('.scss', '').to_s , Rails.application.assets.find_asset("#{scope}/#{asset}").digest_path]
+		end).flatten]
+	end
+	
+	def asset_list(path)
+		(Rails.application.assets.entries(path).map do |path|
+			filename = nil
+			path.each_filename { |fn| filename = fn if accept?(fn) }
+			filename
+		end).compact
+	end
+	
+	def accept?(filename)
+		return false if filename.starts_with?('_')
+		return true if filename.ends_with?('js')
+		return true if filename.ends_with?('scss')
+		return true if filename.ends_with?('css')
+		false
+	end
+	
+	end
+end

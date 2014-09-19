@@ -1,0 +1,12 @@
+//= require plugins/codemirror/codemirror.js
+//= require plugins/codemirror/jquery.codemirror.js
+//= require plugins/codemirror/mode-css.js
+//= require plugins/codemirror/mode-htmlmixed.js
+//= require plugins/codemirror/mode-javascript.js
+//= require plugins/codemirror/mode-liquid-mode.js
+//= require plugins/codemirror/mode-xml.js
+//= require plugins/codemirror/util-match-highlighter.js
+//= require plugins/codemirror/util-overlay.js
+//= require plugins/codemirror/util-dialog.js
+//= require plugins/codemirror/util-search.js
+//= require plugins/codemirror/util-searchcursor.js

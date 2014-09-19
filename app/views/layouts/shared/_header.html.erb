@@ -126,6 +126,7 @@
 		</div>
 	</div>
 </div>
+<%  if logged_in? and current_user.agent?  %>
 <script type="text/javascript">
 	jQuery(document).ready(function() {
 	<%
@@ -149,30 +150,28 @@
 		data: [<%=assume_agent.join(",").html_safe%>]
 
 	});
-
-	jQuery('#toggle_shortcut').bind('change', function(){
-		var that = this;
-		jQuery(this)
-			.attr('disabled', 'disabled')
-		jQuery.ajax({
-			type: "PUT",
-			dataType:"json",
-			url: "<%= toggle_shortcuts_agent_path(current_user.agent) if logged_in? and current_user.agent? %>",
-			success: function (response) {
-				jQuery(that)
-					.removeAttr('disabled')
-				if (response.shortcuts_enabled) {
-					if(window.shortcuts !== undefined){
-						jQuery(document).trigger("shortcuts:invoke")
-					} else {
-        				scriptLoader.load('shortcut');
-					}
-				} else {
-					jQuery(document).trigger("shortcuts:destroy")
-				}
-			}
-		});
-	});
+  
+  jQuery('#toggle_shortcut').bind('change', function(){
+    var that = this;
+    jQuery(this).attr('disabled', 'disabled')
+    jQuery.ajax({
+      type: "PUT",
+      dataType:"json",
+      url: "<%= toggle_shortcuts_agent_path(current_user.agent) %>",
+      success: function (response) {
+        jQuery(that).removeAttr('disabled');
+        if (response.shortcuts_enabled) {
+          if(window.shortcuts !== undefined){
+            jQuery(document).trigger("shortcuts:invoke");
+          } else {
+            Fjax.Assets.plugin('shortcut');
+          }
+        } else {
+          jQuery(document).trigger("shortcuts:destroy");
+        }
+      }
+    });
+  });
 
 	jQuery('#shortcuts_info').bind('click', function(ev){
 		ev.preventDefault();
@@ -183,8 +182,6 @@
 
 
 </script>
-
-<% if current_user %>
 	<%= javascript_tag do %>
 	 function toggleAgent() {
 		var user_id = '<%= current_user.id %>'

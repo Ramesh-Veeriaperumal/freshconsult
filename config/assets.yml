@@ -234,7 +234,6 @@ javascripts:
     - public/javascripts/fjax/config.js
     - public/javascripts/fjax/assets.js
     - public/javascripts/fjax/manager.js
-    - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - app/views/shared/spotlight_result.jst
