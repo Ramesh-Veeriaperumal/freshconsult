@@ -845,7 +845,6 @@ the specific language governing permissions and limitations under the Apache Lic
             opts.element.prop("autofocus", false);
             if (this.autofocus) this.focus();
 
-            // debugger;
             // this.search.attr("placeholder", opts.searchInputPlaceholder);
             if (this.getPlaceholder() !== undefined  && this.getVal().length === 0) {
               this.search.attr("placeholder", this.getPlaceholder());
@@ -2898,7 +2897,6 @@ the specific language governing permissions and limitations under the Apache Lic
             var placeholder = this.getPlaceholder(),
                 maxWidth = this.getMaxSearchWidth();
 
-            debugger;
             if (placeholder !== undefined  && this.getVal().length === 0) { //&& this.search.hasClass("select2-focused") === false) {
                 // this.search.val(placeholder).addClass("select2-default");
                 this.search.attr("placeholder", placeholder);
