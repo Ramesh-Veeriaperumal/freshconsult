@@ -20,12 +20,13 @@
 									url: "<%=url%>"+encodeURIComponent(string),
 									dataType: "json",
 									success: function(data){
-										var result_list = jQuery("#page_search_results");
-										var resultHtml = ''
+										var result_list = jQuery("#page_search_results"),
+											templateName = ["app/search/templates/", resultType].join(""),
+											resultHtml = '';
 										if(data.results.length){
 								 			data.results.each(function(result){
 												var resultType = result.result_type
-												if(result) { resultHtml += (JST[resultType](result)); }
+												if(result) { resultHtml += (JST[templateName](result)); }
 											})
 										} else {
 											resultHtml = '<li><%= t("search.no_results_msg") %></li>'

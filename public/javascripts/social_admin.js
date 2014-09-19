@@ -1,1 +1,1 @@
-//TODO-RAILS3 need to see jst related changes
+//= require app/social/templates/social_tweet

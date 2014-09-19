@@ -5,17 +5,17 @@ jQuery(document).ready(function(){
       currentString = "";
       
 	callbackToSearch = function(string, search_url){
-		$J('#SearchBar').addClass('sloading loading-small loading-right');
+		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
   	    				dataType: 'json', 
 						success: function(data){
 							if(string == encodeURIComponent($("header_search").value)) {
-								$J("#SearchResultsBar").css("display", "inline"); 
+								jQuery("#SearchResultsBar").css("display", "inline"); 
 								position   = -1;
 								appendResults(data);
                 			}
-							$J('#SearchBar').removeClass('sloading loading-small loading-right');    
+							jQuery('#SearchBar').removeClass('sloading loading-small loading-right');    
 						}});
     }
 
@@ -30,7 +30,7 @@ jQuery(document).ready(function(){
     		if(result){
     			var result_type = result.result_type
     			resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
-									    	JST["spotlight_result"](result)
+									    	JST["app/search/templates/spotlight_result"](result)
     		}
 		}
     	

@@ -1,4 +1,4 @@
-//= require prototype.js
+//= require prototype-1.6.js
 //= require jquery-1.7.1.min.js
 //= require bootstrap.js
 //= require frameworks/plugins/jquery.livequery.js
