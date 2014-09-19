@@ -240,10 +240,15 @@ JiraWidget.prototype = {
 
 	},
 	selectOnlyRequiredFields:function(resJson){
-		jiraWidget.customFieldData = {}
+		jiraWidget.customFieldData = {};
+		jiraWidget.numericFieldList =[];
 		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
 			if(field_value["required"]&& (field_key != "issuetype" && field_key != "project")){
 				jiraWidget.customFieldData[field_key] = field_value; 
+				if(field_value["schema"]["type"] == "number")
+				{
+					jiraWidget.numericFieldList.push(field_value["schema"]["customId"]);
+				}
 			}
 		});
 		jiraWidget.processJiraFields();
@@ -281,6 +286,16 @@ JiraWidget.prototype = {
 		ticketData = "#" + jiraBundle.ticketId + " (" + jiraWidget.getCurrentUrl() + ") - " + jiraBundle.ticketSubject;
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
+		created_issue = jQuery("#jira-add-form").serializeObject();
+    if(jiraWidget.numericFieldList.length > 0)
+    {
+			for(var i =0 ;i< jiraWidget.numericFieldList.length;i++)
+			{
+				var custom_field = "customfield_" + jiraWidget.numericFieldList[i];
+				created_issue["fields"][custom_field] = parseFloat(created_issue["fields"][custom_field]);
+			}
+		}
+	  issue = JSON.stringify(created_issue);
 		init_reqs = [{
 			source_url: "/integrations/jira_issue/create",
 			content_type: "application/json",
@@ -292,7 +307,7 @@ JiraWidget.prototype = {
 			method: "post",
 			on_success: jiraWidget.jiraCreateIssueSuccess.bind(this),
 			on_failure: jiraWidget.jiraCreateIssueFailure.bind(this),
-			body: Object.toJSON(jQuery("#jira-add-form").serializeObject())
+			body: issue
 		}];
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs
 		jiraWidget.freshdeskWidget.call_init_requests();
@@ -324,6 +339,7 @@ JiraWidget.prototype = {
 			jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 			jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 			jiraWidget.renderDisplayIssueWidget();
+			jQuery('.subtitle').html("View issue");  
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
 			if(jiraException == false) alert("Unknown server error. Please contact support@freshdesk.com.");
@@ -542,6 +558,7 @@ JiraWidget.prototype = {
 		resJ = evt.responseJSON
 		displayIssue = true;
 		if(resJ['error'] == null || resJ['error'] == "") {
+			jQuery('.subtitle').html("View issue");  
 			jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 			jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 			jiraWidget.linkIssue = true;
@@ -596,6 +613,7 @@ JiraWidget.prototype = {
 	unlinkJiraIssueSuccess: function(evt) {
 		resJ = evt.responseJSON
 		if(resJ['error'] == null || resJ['error'] == "") {
+			jQuery('.subtitle').html("Link an issue");
 
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -627,9 +645,11 @@ JiraWidget.prototype = {
 	deleteJiraIssueSuccess: function(evt) {
 		resJ = evt.responseJSON
 		if(resJ['error'] == null || resJ['error'] == "") {
+			jQuery('.subtitle').html("Link an issue");
 			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
 			jiraWidget.displayCreateWidget();
-		} else {
+		} 
+		else {
 			jiraException = self.jiraExceptionFilter(resJ['error']);
 			if(jiraException == false) alert("Unknown server error. Please contact support@freshdesk.com.");
 			jiraWidget.renderDisplayIssueWidget();
@@ -755,10 +775,10 @@ JiraWidget.prototype = {
 			jiraWidget.ProcessJiraFieldArrayStringAllowedValues(fieldKey,fieldData);
 		}
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
-		jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';		
+		jiraWidget.fieldContainer += '<input type="number" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';		
 	},
 	processJiraFieldArray:function(fieldKey,fieldData){
-		if(fieldData["schema"]["items"] == "string"){
+	  if(fieldData["schema"]["items"] == "string"){
 			if(fieldData["allowedValues"])
 				jiraWidget.ProcessJiraFieldArrayStringAllowedValues(fieldKey,fieldData);
 			else
