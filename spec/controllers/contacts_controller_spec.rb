@@ -485,6 +485,7 @@ describe ContactsController do
   it "should not update tag_names of a contact when they are nil in params" do
     tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
     user = add_new_user(@account)
+    user.reload # for user_emails to refresh
     user.update_attributes(:tag_names => tag_names)
     user.reload
     user.tag_names.should eql(tag_names)
@@ -499,6 +500,7 @@ describe ContactsController do
   it "should clear tag_names of a contact when they are '' in params" do
     tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
     user = add_new_user(@account)
+    user.reload # for user_emails to refresh
     user.update_attributes!(:tag_names => tag_names)
     user.reload
     user.tag_names.should eql(tag_names)
@@ -514,6 +516,7 @@ describe ContactsController do
       instead clear tags when tag_names is ' ' in params" do
     tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
     user = add_new_user(@account)
+    user.reload # for user_emails to refresh
     user.update_attributes(:tag_names => tag_names)
     user.reload
     user.tag_names.should eql(tag_names)
