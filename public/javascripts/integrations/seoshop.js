@@ -79,7 +79,7 @@ SEOshopWidget.prototype= {
 								line_items.push({ id:product.id,
 											      title:product.productTitle,
 												  quantityOrdered:product.quantityOrdered,
-												  priceExcl:product.priceExcl});
+												  priceExcl:product.priceIncl});
 							}
 
 							
@@ -91,7 +91,7 @@ SEOshopWidget.prototype= {
 											' at '+
 											order_date.toLocaleTimeString('IST', {hour: '2-digit', minute:'2-digit'}) ,
 								financial_status: order.paymentStatus,
-								amount: order.priceExcl,
+								amount: order.priceIncl,
 								status:order.shipmentStatus,
 								paymentStatus:order.paymentStatus,
 								line_items:line_items,
@@ -130,7 +130,7 @@ SEOshopWidget.prototype= {
 				for (var j=0; j<line_details.length; j++){		
 					line_items_html += "<div class='row-fluid product'> "+ 
 										"<div class='span8'>" + line_details[j].title +" </div>" +
-										"<div class='span4 align-right'>" + line_details[j].priceExcl+"</div>" +
+										"<div class='span4 align-right'>" + line_details[j].priceIncl+"</div>" +
 										"</div>"
 				}
 			}
