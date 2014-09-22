@@ -42,8 +42,8 @@ var FreshfoneSocket;
         'account': freshfone.current_account,
         'account_url': freshfone.account_url });
 
-        if (connectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
-          connectionAttempts = 1;
+        if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
+          reconnectionAttempts = 1;
           reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.socket.reconnect(); }, reconnectFailureDelay);
         }
       });

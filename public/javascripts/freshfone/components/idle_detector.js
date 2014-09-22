@@ -1,4 +1,5 @@
 /**
+ * © Copyright FreshDesk Inc., 2014
  * Idle Detector 
  *
  * Idle Detector's job is to know when a user is inactive for extended period of time
