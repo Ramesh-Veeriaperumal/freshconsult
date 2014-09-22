@@ -4,7 +4,7 @@
 development:
   adapter: mysql2
   encoding: utf8
-  database: helpkit3
+  database: helpkit1
   pool: 5
   host: 127.0.0.1
   username: root
@@ -12,12 +12,9 @@ development:
   shards:
     shard_1:
       host: 127.0.0.1
-      database: helpkit3
+      database: helpkit1
       not_a_shard: false
-    shard_2:
-      host: 127.0.0.1
-      database: helpkit3
-      not_a_shard: false
+
 
 
 # development:
