@@ -1,12 +1,7 @@
 .outgoing {
 	margin: 0;
 	li {
-		padding: 6px 0;
-//		change it
-		@include margin-right(1px);
-		&:last-child{
-			@include margin-right(0);
-		}
+		padding: 7px 0;
 		.icon-headphones {
 			font-size: 22px;
 			padding: 5px 10px;

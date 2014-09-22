@@ -50,7 +50,7 @@ var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
             <%= user_avatar(@source_user) %>
             <a class="item_info"><b><%= h(@source_user.name) %></b></a>
             <div class="info_contact_data">
-              <span><%= h(@source_user.customer.name) unless @source_user.customer.nil?%></span>
+              <span><%= h(@source_user.company.name) unless @source_user.company.nil?%></span>
               <span><%= h(@source_user.email) %></span>
             </div>
           </div>

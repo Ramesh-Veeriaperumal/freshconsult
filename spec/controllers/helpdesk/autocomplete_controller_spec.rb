@@ -20,7 +20,7 @@ describe Helpdesk::AutocompleteController do
 
   it "should return the companies matching the initial text" do
     company = create_company
-    post :customer, :q => company.name
+    post :company, :q => company.name
     result = JSON.parse(response.body)["results"]
     result.should be_an_instance_of(Array)
     result.first["id"].should be_eql(company.id)

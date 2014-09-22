@@ -27,7 +27,11 @@ module Import::Zen::FlexiField
     return unless flexifield.blank?
     return unless (custom_props.field_type = ZENDESK_FIELD_TYPES[custom_props.field_type])
     field_prop = custom_props.to_hash.merge({:position => 100 , :type =>custom_props.field_type ,:field_type => "custom_#{custom_props.field_type}"})
-    field_prop[:choices] = custom_props.choices.collect{|c| [c.name]}
+    if(field_prop[:field_type] == "custom_dropdown")
+      field_prop[:picklist_values_attributes] = custom_props.choices.collect{|c| {:value => c.name}}
+    else
+      field_prop[:choices] = custom_props.choices.collect{|c| [c.name]}
+    end
     create_field field_prop, @current_account   
   end
        

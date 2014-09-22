@@ -13,5 +13,5 @@ jQuery(document).ready(function(){
 </div>
 <div id="cc_emails_sec" class="hide">
 	<label for="ticket_cc_list">Cc:</label>
-	<%= select_tag (:cc_emails, options_for_select(current_user.customer.users.collect{|c|[c.email, c.email]}),{ :multiple => true, :class => "customSelect" , "data-placeholder".to_sym() =>'Select cc emails'}) %>
+	<%= select_tag (:cc_emails, options_for_select(current_user.company.users.collect{|c|[c.email, c.email]}),{ :multiple => true, :class => "customSelect" , "data-placeholder".to_sym() =>'Select cc emails'}) %>
 </div>

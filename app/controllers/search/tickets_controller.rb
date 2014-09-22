@@ -1,5 +1,7 @@
 class Search::TicketsController < Search::SearchController
 
+	include Search::ESDisplayIdWildcardSearch
+
 	TICKET_SEARCH_FIELDS = ["display_id", "subject", "requester"]
 
 	def index
@@ -36,10 +38,11 @@ class Search::TicketsController < Search::SearchController
 				else
 					case params[:search_field]
 					when "display_id"
-						f.filter :script, { 
-						:script => 
-							"doc['display_id'].value.toString() ~= '^#{SearchUtil.es_filter_key(@search_key, false)}[0-9]*$'"
-						}
+						f.filter :bool, :should => wilcard_range_queries
+						# f.filter :script, { 
+						# :script => 
+						# 	"doc['display_id'].value.toString() ~= '^#{SearchUtil.es_filter_key(@search_key, false)}[0-9]*$'"
+						# }
 					when "subject"
 						f.query { |q| q.string SearchUtil.es_filter_key(@search_key), 
 											:fields => [ 'subject' ], :analyzer => "include_stop" }

@@ -5,8 +5,8 @@ class Support::Mobihelp::TicketsController < SupportController
   before_filter :mobihelp_user_login
   before_filter :require_user_login
   before_filter :build_tickets, :only => [:index]
-  before_filter :load_ticket, :only => [:show,:add_note]
-  before_filter :check_ticket_permissions, :only => [:show,:add_note]
+  before_filter :load_ticket, :only => [:show,:add_note,:close]
+  before_filter :check_ticket_permissions, :only => [:show,:add_note,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
 
   def create
@@ -37,6 +37,15 @@ class Support::Mobihelp::TicketsController < SupportController
     respond_to do |format|
       format.json {
         render :json => @tickets
+      }
+    end
+  end
+
+  def close
+    status = @ticket.update_attribute(:status , Helpdesk::Ticketfields::TicketStatus::CLOSED)
+    respond_to do |format|
+      format.json {
+        render :json => { :success => status }
       }
     end
   end

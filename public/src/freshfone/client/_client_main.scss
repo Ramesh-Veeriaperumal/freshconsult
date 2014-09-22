@@ -2,14 +2,12 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	border-top: 1px solid;
+	border-top: 1px solid #fff;
 	height: 39px;
 	min-width: 1140px;
-	background-color: rgba(160, 160, 160, 0.3);
-	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkgAAfIN7CCGOAREAcGPABADAhAlB0iCcdAAAAAElFTkSuQmCC);
-	border-top-color: #bbb;
-	box-shadow: inset 0 0 30px rgba(0,0,0,0.1), inset 0px 1px 0px 0px #fff; 
 	z-index: 1;
+  background-color: rgba(255, 255, 255, 0.8);
+  @include box-shadow(0 0 6px 4px rgba(0, 0, 0, 0.03));
 }
 .freshfone_widget {
 	position: fixed;
@@ -21,21 +19,21 @@
 }
 
 .ff_desktop_notification {
-	position: fixed;
-	right: 350px;
-	bottom: 0;
+	position: absolute;
+	right: 300px;
+	top: 6px;
 	background-color: #7B7B7B;
 	.desktopNotifier {
-		width: 40px;
-		height: 30px;
+		width: 38px;
+		height: 28px;
 		position: relative;
+		line-height: 28px;
 		cursor: pointer;
+		text-align: center;
 	}
 	border-radius: 5px;
 	margin-bottom: 1px;
 	@include box-sizing(border-box);
-	@include box-shadow(inset 0px 1px 0px 0px #333);
-	background-color: #6F6F6F;
 	background-repeat: no-repeat;
 }
 .popupbox-tabs {
@@ -43,20 +41,18 @@
 	li {
 		display: inline-block;
 		vertical-align: top;
-
-		a, &.active a {
-			width: 40px;
-			height: 30px;
+		a,
+		&.active a {
+			width: 38px;
+			height: 26px;
 			display: block;
-
 			@include box-sizing(border-box);
-			@include box-shadow(inset 0px 1px 0px 0px #333);
-
-			background-color: #7B7B7B;
+			background-color: #999;
 			background-repeat: no-repeat;
 		}
-		a.active {
-			background-color: #4B4B4B;
+		a.active,
+		a:hover {
+			background-color: #333;
 		}
 
 	}

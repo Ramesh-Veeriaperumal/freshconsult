@@ -9,7 +9,7 @@
 		 [:divider]
 		]
  
-		filter_list.concat( current_user.customer.users.map{ |x| [x.name, "/support/company_tickets/requester/#{x.id}"] } )
+		filter_list.concat( current_user.company.users.map{ |x| [x.name, "/support/company_tickets/requester/#{x.id}"] } )
 
 		concat dropdown_menu(filter_list)
 	%>

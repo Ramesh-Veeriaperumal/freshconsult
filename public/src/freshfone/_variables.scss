@@ -52,10 +52,10 @@ $dashboard-cells-header: #666;
 // outgoing related components ends
 
 // ongoing related components start
-	$ongoing-border:#808080;
+	$ongoing-border:#ccc;
 	$ongoing-background:#FFF;
-	$ongoing-tabs-background:#e3e3e3;
-	$ongoing-active-tabs-background:#aaa;
+	$ongoing-tabs-background:#f2f2f2;
+	$ongoing-active-tabs-background:#ddd;
 	$ongoing-tabs-shadow:#fff;
 	$ongoing-end-call-background:#9A311F;
 	
@@ -180,3 +180,7 @@ $dashboard-cells-header: #666;
 	$fa-phone-search-border:#CCC;
 	$fa-recharge-now-border:#CCC;
 // admin components end
+
+// Font icon start
+$font-class: "ficon-";
+// Font icon end

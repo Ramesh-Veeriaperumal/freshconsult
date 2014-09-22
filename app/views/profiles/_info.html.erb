@@ -3,11 +3,11 @@
 	<div class="hovercard" >
 		<div><strong><%= @user_info.display_name %></strong></div>
 		<% unless @user_info.job_title.blank? %><div class="smalltext"><%= h @user_info.job_title %>
-			<% if @user_info.job_title.blank? && !@user_info.customer.blank? %>
+			<% if @user_info.job_title.blank? && !@user_info.company.blank? %>
 				<%= t("working") %>
 			<% end %>
-			<% unless @user_info.customer.blank? %>
-				<%= t("at") %> <%= link_to(h(@user_info.customer.name), @user_info.customer)  %>
+			<% unless @user_info.company.blank? %>
+				<%= t("at") %> <%= link_to(h(@user_info.company.name), @user_info.company)  %>
 			<% end %>
 			</div>
 		<% end %>

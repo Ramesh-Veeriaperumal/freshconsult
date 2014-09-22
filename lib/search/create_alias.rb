@@ -19,8 +19,8 @@ class Search::CreateAlias
       account.topics.find_in_batches(:batch_size => 300) do |topics|
         topics.each { |topic| topic.update_es_index }
       end
-      account.customers.find_in_batches(:batch_size => 300) do |customers|
-        customers.each { |customer| customer.update_es_index }
+      account.companies.find_in_batches(:batch_size => 300) do |companies|
+        companies.each { |company| company.update_es_index }
       end
       account.notes.visible.exclude_source('meta').find_in_batches(:batch_size => 300) do |notes|
         notes.each { |note| note.update_es_index }

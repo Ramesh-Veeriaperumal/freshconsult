@@ -40,7 +40,7 @@ module Reports::TimesheetReport
   end
   
   def scoper(start_date,end_date)
-    Account.current.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(@products_id)
+    Account.current.time_sheets.for_companies(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(@products_id)
   end
 
   def filter_with_groupby(start_date,end_date)
@@ -49,7 +49,7 @@ module Reports::TimesheetReport
 
   def filter(start_date,end_date)
        scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}), 
-         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester => [:customer]]])
+         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
 
   end
 

@@ -8,8 +8,10 @@ module AccountHelper
       return @acc
     end
     ENV["SEED"]="002_subscription_plans"
+    ENV["FIXTURE_PATH"] = "db/fixtures/global"
     SeedFu::PopulateSeed.populate
     ENV["SEED"] = nil
+    ENV["FIXTURE_PATH"] = nil
     
     create_new_account
     update_currency

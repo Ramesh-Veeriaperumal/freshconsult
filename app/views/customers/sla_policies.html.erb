@@ -1,6 +1,0 @@
-<% sla = Helpdesk::SlaPolicy.customer_policies(@customer)%>
-<% if privilege?(:view_admin) %>
-	<%= sla.map {|sla_policy| link_to sla_policy.name, edit_helpdesk_sla_policy_path(sla_policy) }.to_sentence.html_safe %>
-<% else %>
-	<%= sla.map {|sla_policy| sla_policy.name }.to_sentence %>
-<% end %>

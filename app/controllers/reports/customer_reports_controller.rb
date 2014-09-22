@@ -42,10 +42,10 @@ class Reports::CustomerReportsController < ApplicationController
   
   def select_customer
     if params[:customer_id].nil?
-      @selected_customer = current_account.customers.first
+      @selected_customer = current_account.companies.first
       params[:customer_id] = @selected_customer.id if @selected_customer
     else
-      @selected_customer = current_account.customers.find(params[:customer_id])
+      @selected_customer = current_account.companies.find(params[:customer_id])
     end
   end
 

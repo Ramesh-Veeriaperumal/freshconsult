@@ -18,6 +18,6 @@ describe Freshfone::CallController do
     setup_caller_data
     get :caller_data, { :PhoneNumber => @caller_number, :format => "json" }
     json_response.should include("user_name","call_meta")
-    json_resp onse["call_meta"].should include("number","group")
+    json_response["call_meta"].should include("number","group")
   end
 end

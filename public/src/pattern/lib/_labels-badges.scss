@@ -52,6 +52,15 @@ a {
 // Inverse (black)
 .label-inverse, .badge-inverse                  { background-color: $grayDark; }
 .label-inverse[href], .badge-inverse[href]      { background-color: darken($grayDark, 10%); }
+// Light background
+.label-light, .badge-light                  { background-color: #eee; }
+.label-light[href], .badge-light[href]      { background-color: darken(#eee, 10%); }
+
+
+.label-light{
+  font-weight: 400;
+  color: #666;
+}
 
 // Quick fix for labels/badges in buttons
 .btn {

@@ -202,7 +202,8 @@ Authority::Authorization::PrivilegeList.build do
 
 	view_contacts do
 	 resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :configure_export, :export_csv]
-	 resource :customer, :only => [:index, :show]
+	  resource :customer, :only => [:index, :show] #should deprecate
+    resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
@@ -210,10 +211,11 @@ Authority::Authorization::PrivilegeList.build do
 
   # add_or_edit_contact
   manage_contacts do
-    resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
+    resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
                :contact_email, :edit, :update, :verify_email]
+    resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies] #should deprecate
+    resource :company,  :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
-    resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :contact_import
     resource :contact_merge
     resource :user_email
@@ -223,7 +225,8 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_contact do
     resource :contact, :only => [:destroy, :restore, :unblock]
-    resource :customer, :only => [:destroy]
+    resource :customer, :only => [:destroy] #should deprecate
+    resource :company, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy]
   end

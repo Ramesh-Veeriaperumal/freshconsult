@@ -16,24 +16,9 @@ class User < ActiveRecord::Base
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
-
-  USER_ROLES = [
-     [ :admin,       "Admin",            1 ],
-     [ :poweruser,   "Power User",       2 ],
-     [ :customer,    "Customer",         3 ],
-     [ :account_admin,"Account admin",   4 ],
-     [ :client_manager,"Client Manager", 5 ],
-     [ :supervisor,    "Supervisor"    , 6 ]
-    ]
-
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
-
-  # For preventing non-agents from updating inaccessible user attibutes
-  PROTECTED_ATTRIBUTES = ["email", "password", "password_confirmation", "primary_email_attributes", 
-                          "user_emails_attributes", "customer_id", "client_manager", 
-                          "helpdesk_agent", "role_ids", "customer_attributes"]
-
-  concerned_with :associations, :callbacks
+  
+  concerned_with :constants, :associations, :callbacks
+  include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -84,9 +69,11 @@ class User < ActiveRecord::Base
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
   
-  attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, :user_emails_attributes, :second_email, :job_title, :phone, :mobile, 
-                  :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
-                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
+  attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
+                  :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
+                  :description, :time_zone, :avatar_attributes, :customer_id, :company_id, 
+                  :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
   class << self # Class Methods
     #Search display
@@ -161,6 +148,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def client_manager
+    customer? ? privilege?(:client_manager) : false
+  end
+
   def chk_email_validation?
     (is_not_deleted?) and (no_multiple_user_emails) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
@@ -188,22 +179,25 @@ class User < ActiveRecord::Base
     self.string_uc04 = p_id.to_s
   end
 
-  def update_tag_names(csv_tag_names)
-    unless csv_tag_names.nil? # Check only nil so that empty string will remove all the tags.
-      updated_tag_names = csv_tag_names.split(",")
+  def tag_names= updated_tag_names
+    unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
+      updated_tag_names.strip! #strip! to avoid empty tag name error
+      updated_tag_names = updated_tag_names.split(",")
+      current_tags = account.tags_from_cache
       new_tags = []
-      updated_tag_names.each { |updated_tag_name|
-        updated_tag_name = updated_tag_name.strip
-        m=false
-        new_tags.each { |fetched_tag|
-          m=true if fetched_tag.name == updated_tag_name
-        }
-        next if m
-        # TODO Below line executes query for every iteration.  Better to use some cached objects.
-        new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
-      }
+      updated_tag_names.each do |updated_tag_name|
+        updated_tag_name.strip!
+        next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
+
+        new_tags.push(current_tags.find{ |current_tag| current_tag.name == updated_tag_name } ||
+                      Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
+      end
       self.tags = new_tags
     end
+  end
+
+  def tag_names
+    tags.collect{|tag| tag.name}.join(', ')
   end
 
   def tagged?(tag_id)
@@ -224,8 +218,18 @@ class User < ActiveRecord::Base
 		phone.blank? ? mobile : phone
 	end
 
+  def update_attributes(params) # Overriding to normalize params at one place
+    normalize_params(params) # hack to facilitate contact_fields & deprecate customer
+    if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended 
+     params.include?(attr)} && params[:tags].is_a?(String)
+      params[:tag_names]||= params[:tags]
+    end
+    super(params)
+  end
 
   def signup!(params , portal=nil)
+    normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
+    params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
     check_feature_and_modify(params) 
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
@@ -233,7 +237,8 @@ class User < ActiveRecord::Base
     self.twitter_id = params[:user][:twitter_id]
     self.external_id = params[:user][:external_id]
     self.description = params[:user][:description]
-    self.customer_id = params[:user][:customer_id]
+    self.company_name = params[:user][:company_name] if params[:user].include?(:company_name)
+    self.company_id = params[:user][:company_id] if params[:user].include?(:company_id)
     self.job_title = params[:user][:job_title]
     self.helpdesk_agent = params[:user][:helpdesk_agent] || false
     self.client_manager = params[:user][:client_manager]
@@ -244,12 +249,13 @@ class User < ActiveRecord::Base
     self.email = params[:user][:email] if no_multiple_user_emails
     self.language = params[:user][:language]
     self.address = params[:user][:address]
-    self.update_tag_names(params[:user][:tags]) # update tags in the user object
+    self.tag_names = params[:user][:tag_names]
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (user_emails.present? && user_emails.first.email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
+    portal.make_current if portal
     if (!deleted and !email.blank?)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
@@ -421,10 +427,6 @@ class User < ActiveRecord::Base
   def to_liquid
     @user_drop ||= UserDrop.new self
   end
-    
-  def has_company?
-    customer? && customer
-  end
 
   def emails
     user_emails.map(&:email)
@@ -473,30 +475,46 @@ class User < ActiveRecord::Base
 
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
-  def has_customer_ticket_permission?(ticket)
+  def has_company_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.customer_id && ticket.requester.customer_id && (ticket.requester.customer_id == self.customer_id) )
+    (is_client_manager? && self.company_id && ticket.requester.company_id && (ticket.requester.company_id == self.company_id) )
   end
   
   def restricted?
     !can_view_all_tickets?
   end
 
-  def to_xml(options = {})
-     options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml,:root=>options[:root], :skip_instruct => true, :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
-                                                              :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
-                                                              :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]) 
+  def to_xml(options=API_OPTIONS)
+    process_api_options options
+    super(options)
   end
-  
-  def company_name
-    customer.name unless customer.nil?
+
+  def as_json(options=API_OPTIONS, do_not_process_options = false)
+    process_api_options options unless do_not_process_options
+    super(options)
+  end
+
+  def to_indexed_json
+    as_json({
+              :root => "user",
+              :tailored_json => true,
+              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
+                         :twitter_id, :fb_profile_id, :account_id, :deleted,
+                         :helpdesk_agent, :created_at, :updated_at ], 
+              :include => { :customer => { :only => [:name] } } }, true
+           ).to_json
   end
 
   def has_company?
-    customer? && customer
+    customer? and customer
+  end
+
+  def company_name= name
+    self.company = name.blank? ? nil : account.companies.find_or_create_by_name(name)
+  end
+  
+  def company_name
+    company.name unless company.nil?
   end
 
   def recent_tickets(limit = 5)
@@ -543,17 +561,6 @@ class User < ActiveRecord::Base
       agent.occasional = !!args[:occasional]
       save
     end
-  end
-
-  def to_indexed_json
-    to_json( 
-              :root => "user",
-              :tailored_json => true,
-              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted,
-                         :helpdesk_agent, :created_at, :updated_at ], 
-              :include => { :customer => { :only => [:name] } } 
-           )
   end
 
   def update_search_index
@@ -637,7 +644,7 @@ class User < ActiveRecord::Base
        @all_changes.has_key?(:email)
     end
     
-    def customer_id_updated?
+    def company_id_updated?
       @all_changes.has_key?(:customer_id)
     end
 
@@ -646,7 +653,7 @@ class User < ActiveRecord::Base
     end
 
     def company_info_updated?
-      customer_id_updated? or privileges_updated?
+      company_id_updated? or privileges_updated?
     end
 
     def clear_redis_for_agent
@@ -692,6 +699,12 @@ class User < ActiveRecord::Base
       else
         user_email = UserEmail.find_by_email(login)
         user_email.user if !user_email.nil? and user_email.verified? and !user_email.user.blocked?
+      end
+    end
+
+    def process_api_options options
+      API_OPTIONS.each do |key, value| 
+        options[key] = options.key?(key) ? options[key] & API_OPTIONS[key] : API_OPTIONS[key]
       end
     end
 

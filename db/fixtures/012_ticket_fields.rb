@@ -18,7 +18,12 @@ def self.ticket_fields_data
       :required_in_portal => true },
        
     { :name => "ticket_type", :label => "Type", :description => "Ticket type",
-      :required => false, :choices => [["Question"],["Incident"],["Problem"],["Feature Request"],["Lead"] ]
+      :required => false, 
+      :picklist_values => [{ :value => "Question"},
+                           { :value => "Incident"},
+                           { :value => "Problem"},
+                           { :value => "Feature Request"},
+                           { :value => "Lead"}]
     },
       
     { :name => "source", :label => "Source", :description => "Ticket source" },
@@ -48,7 +53,7 @@ end
 
 Helpdesk::TicketField.seed_many(:account_id, :name, 
   ticket_fields_data.each_with_index.map do |f, i|
-    {
+    field_hash = {
       :account_id => account.id,
       :name => f[:name],
       :label => f[:label],
@@ -65,5 +70,7 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :field_options => f[:field_options],
       :default => true
     }
+    field_hash.merge!(:picklist_values_attributes => f[:picklist_values]) if f[:name].eql?("ticket_type")
+    field_hash
   end
 )

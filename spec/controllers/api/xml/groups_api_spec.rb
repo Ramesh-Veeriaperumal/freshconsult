@@ -22,13 +22,6 @@ describe GroupsController do
 		@calendar.destroy
 	end
 
-	it "should go to the Groups index page" do
-		get :edit, :id => @test_group.id, :format => 'xml'
-		result = parse_xml(response)
-		result['group']['description'] == "#{@test_group.description}"
-		response.status.should be_eql("200 OK")
-	end
-
 	it "should create a new Group" do
 		post :create, { :group => {:name => "Spec Testing Grp - xml", :description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
 									:agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
@@ -36,6 +29,11 @@ describe GroupsController do
 						:format => 'xml'
 		}
 		@account.groups.find_by_name("Spec Testing Grp - xml").should_not be_nil
+		result = parse_xml(response)
+		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
+		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+				 	(compare(result["group"]["agents"].first.keys,agent_xml_attributes,{}).empty?)
+		expected.should be(true)
 	end
 
 	it "should update the group" do
@@ -76,6 +74,27 @@ describe GroupsController do
 		agent_list = [@user_1.id]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		(agent_list.sort == agents_in_group.sort).should be_true
+	end
+
+	it "should go to the Groups index page" do
+		get :index, :format => 'xml'
+		result = parse_xml(response)
+		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
+		expected = (response.status =~ /200 OK/) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+				 	(compare(result["groups"].last["agents"].first.keys,agent_xml_attributes,{}).empty?)
+		expected.should be(true)
+	end
+
+	it "should edit the Group" do
+		get :edit, :id => @test_group.id, :format => 'xml'
+		result = parse_xml(response)
+		result['group']['description'] == "#{@test_group.description}"
+		response.status.should be_eql("200 OK")
+	end
+
+	it "should show the Group" do
+		get :show, :id => @test_group.id
+		response.body.should =~ /redirected/
 	end
 
 	it "should delete a Group" do
