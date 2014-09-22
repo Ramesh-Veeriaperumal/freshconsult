@@ -7,6 +7,9 @@ module Search::ESDisplayIdWildcardSearch
 		search_key = SearchUtil.es_filter_key(@search_key, false).to_i
 		max_display_id = current_account.get_max_display_id
 
+		#Hack for fetching zero results when search_key is not a number
+		return ([{ :term => { :display_id => 0 }}]) if search_key.zero?
+
 		return [] if (search_key > max_display_id)
 		wildcard_ranges(search_key, max_display_id)
 	end
