@@ -110,7 +110,7 @@ module Social::DynamoHelper
   end
 
 
-  def self.update(table, item, schema)
+  def self.update(table, item, schema, put_items=[])
     #Update the item
     hash_key  = schema[:hash][:attribute_name]
     range_key = schema[:range][:attribute_name]
@@ -132,16 +132,17 @@ module Social::DynamoHelper
     }
 
     item_copy.each do |key, value|
+      action  = put_items.include?(key) ? "PUT" : "ADD"
       update_hash = {
         :value  => value,
-        :action => "ADD"
+        :action => action
       }
       options[:attribute_updates][key] = update_hash
     end
 
     $social_dynamoDb.update_item(options)
   end
-
+  
   # Eventually consistent read
   def self.query(table, hash, range, schema, limit, sort_type)
     hash_key = schema[:hash][:attribute_name]

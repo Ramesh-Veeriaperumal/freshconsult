@@ -24,7 +24,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
+  :stop_timesheet_timers, :fire_update_event
+  after_commit_on_update :regenerate_reports_data, :if => :regenerate_data? 
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
   after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
   after_commit_on_create :publish_new_ticket_properties_to_rabbitmq
@@ -498,10 +499,13 @@ private
   end
 
   def regenerate_reports_data
-    deleted_or_spam = @model_changes.keys & [:deleted, :spam]
-    return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
     set_reports_redis_key(account_id, created_at)
-    return true
+  end
+
+  def regenerate_data?
+    regenerate_fields = [:deleted, :spam]
+    regenerate_fields.push(:responder_id) if account.features?(:report_field_regenerate)
+    (@model_changes.keys & regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
   end
 
   def manual_sla?

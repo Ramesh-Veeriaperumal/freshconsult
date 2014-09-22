@@ -118,7 +118,6 @@
       {
         jQuery("#bulkreplyform").show();
         jQuery("#bulkreplyform textarea").addClass('required_redactor');
-        jQuery("#bulkreplyform textarea").data("removeCursor",true);
         jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus();
       }
     }
@@ -131,7 +130,6 @@
         jQuery("#bulkreplyform").hide();
         jQuery("#bulkreplyform textarea").val("");
         jQuery("#bulkreplyform textarea").removeClass('required_redactor');
-        jQuery("#bulkreplyform textarea").data("removeCursor",false);
       }
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
       }
