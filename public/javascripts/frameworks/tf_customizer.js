@@ -664,9 +664,11 @@
             }else if(_field_type == "default_status"){
               sourceData.set("choices", getAllStatusChoices());
               //console.log(getAllStatusChoices());
-            }else{
+            }else if(_field_type == "default_ticket_type" || _field_type == "custom_dropdown"){
               sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
               sourceData.set("picklist_values_attributes",getAllChoicesAsHash(dialogDOMMap.choices));
+            }else{
+              sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
             }
 
             setAction(sourceData, "edit"); 
