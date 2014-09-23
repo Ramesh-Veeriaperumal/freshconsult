@@ -276,7 +276,7 @@ div.addReminder{
 	position:relative;  // Arrow Up based this
 	.arrow-up{
 		border-bottom-color: #aaa;
-		top: -17px;
+		top: -15px;
 		position: absolute;
 		&:after{
 			content: " ";
@@ -286,7 +286,7 @@ div.addReminder{
 			border-width: 0.6em;
 			border-bottom-color: #FEFED2;
 			border-bottom-width: 0.9em;
-			margin-left: -6px;
+			margin-left: -5px;
 			margin-top: -3px;
 		}
 	}
@@ -305,7 +305,7 @@ div.addReminder{
 		text-align: center;
 	}
 }
-.choose-plan{
+.select-plan{
     width: 48%;
     display: inline-block;
     text-align: right;
@@ -320,7 +320,7 @@ div.addReminder{
     	text-decoration: none;
     }
 }
-.current-plan{
+.current-plan-name{
     width: 50%;
     display: inline-block;
     vertical-align: middle;
