@@ -47,7 +47,7 @@
 			height: 26px;
 			display: block;
 			@include box-sizing(border-box);
-			background-color: #999;
+			background-color: rgba(50,50,50,0.4);
 			background-repeat: no-repeat;
 		}
 		a.active,
