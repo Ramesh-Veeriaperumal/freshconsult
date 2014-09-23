@@ -14,7 +14,6 @@ class Freshfone::UsersController < ApplicationController
 	before_filter :load_or_build_freshfone_user
 	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
-	before_filter :set_last_call_at, :only => [:presence] #need to re-think
 
 	def presence
 		respond_to do |format|
@@ -107,10 +106,6 @@ class Freshfone::UsersController < ApplicationController
 
 		def reset_presence
 			@freshfone_user.reset_presence.save
-		end
-
-		def set_last_call_at 
-			@freshfone_user.set_last_call_at(Time.now)
 		end
 		
 		def current_call_sid
