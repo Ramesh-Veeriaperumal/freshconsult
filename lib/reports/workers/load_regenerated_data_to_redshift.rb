@@ -21,6 +21,8 @@ module Reports
 					return if files_arr.count == 0
 
 					begin
+						execute_redshift_query("set wlm_query_slot_count to 3;")
+						regenerate_benchmark[" wlm_query_slot_count=> "] = execute_redshift_query("show wlm_query_slot_count;").getvalue(0,0)
 						regenerate_benchmark[' table_create_time'] = Benchmark.measure {
 							execute_redshift_query(create_staging_table(staging_table));
 						}
@@ -50,6 +52,7 @@ module Reports
 						report_notification(subject,message)
 						raise e
 					ensure
+						execute_redshift_query("set wlm_query_slot_count to 1;")
 						execute_redshift_query("Drop table #{staging_table}")
 					end
 				end
