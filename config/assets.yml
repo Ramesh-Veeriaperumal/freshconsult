@@ -330,7 +330,6 @@ javascripts:
     - public/javascripts/freshfone/components/user.js
     - public/javascripts/freshfone/components/widget.js
     - public/javascripts/freshfone/components/timer.js
-    - public/javascripts/freshfone/components/idle_detector.js
     - public/javascripts/freshfone/components/socket.js
     - public/javascripts/freshfone/components/end_call_form.js
     - public/javascripts/freshfone/components/components_main.js
