@@ -112,12 +112,12 @@ EMAIL:
     # Email settings for sending mail
     outgoing: 
         defaults: &defaults
-          address: smtp.sendgrid.net
+          address: changingsomething
           port: 25
           domain: freshdesk.com
           authentication: :plain
           user_name: girish@freshdesk.com
-          password: opmanager123
+          password: opmanager123test
           
         development:
           <<: *defaults
