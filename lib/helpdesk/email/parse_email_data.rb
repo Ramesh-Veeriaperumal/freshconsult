@@ -30,8 +30,8 @@ module Helpdesk::Email::ParseEmailData
 			:to_emails => get_email_array(params["To"]), 
 			:text => params["body-plain"],
 			:html => params["body-html"],
-			:stripped_html => params["stripped-html"],
-			:stripped_text => params["stripped-text"],
+			:stripped_html => params["stripped-html"] || params["body-html"],
+			:stripped_text => params["stripped-text"] || params["body-plain"],
 			:headers => params["message-headers"],
 			:message_id => params["Message-Id"],
 			:references => params["References"],
@@ -44,7 +44,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def parse_from_email
-		parse_reply_to_email if reply_to_feature and params["Reply-To"]
+		parse_reply_to_email if reply_to_feature and params["Reply-To"].present?
 
 		#Assigns email of reply_to if feature is present or gets it from params[:from]
 		#Will fail if there is spaces and no key after reply_to or has a garbage string

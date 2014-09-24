@@ -17,13 +17,19 @@
 
 				<p>
 					Hi, How is it going? <br>
-					<% if trial_days < 10 %>
+					<% if trial_days <= 0 %>
+						Your trial has expired and you need to choose a plan to continue using your Freshdesk account. If you need more time to take a look around, let me know and I can get you a trial extension.
+					<% elsif trial_days <= 10 %>
 						I noticed that your Freshdesk trial is about to expire soon. 
-						If you would like some assistance in choosing the right plan.<br>
-						<b><a href="http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp&amp;utm_medium=inapp&amp;utm_campaign=complimentarydemo" onclick="window.open(this.href);return false;" target="_blank">Schedule a call.</a></b>
-					<% elsif trial_days > 10 and trial_days < 20 %>
+						If you'd like some assistance in choosing the right plan, please
+						<b><a href="http://resources.freshdesk.com/help-me-choose-a-plan.html?utm_source=freshdeskapp" 
+							onclick="window.open(this.href);return false;" target="_blank">schedule a call.</a>
+						</b>
+					<% elsif trial_days <= 20 %>
 						How is your Freshdesk trial coming along? If you'd like to take a tour of the product, please 
-						<b><a href="http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp&amp;utm_medium=inapp&amp;utm_campaign=complimentarydemo" onclick="window.open(this.href);return false;" target="_blank">schedule a personalized demo.</a> </b>
+						<b><a href="http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp" 
+							onclick="window.open(this.href);return false;" target="_blank">schedule a personalized demo.</a>
+						</b>
 					<% else %>
 						I will be your account manager helping you with your evaluation. 
 						Please reach out to me if you have any questions.
@@ -45,10 +51,10 @@
 
 			<% if current_user.privilege?(:manage_account) %>
 	    		<div class="plan_and_expiry">
-					<span class="current-plan">
+					<span class="current-plan-name">
 						Current Plan: <b><%= current_account.subscription_plan.name %></b>
 					</span>
-				    <span class="choose-plan">
+				    <span class="select-plan">
 				    	<%= link_to("Choose a Plan >", subscription_url) %>
 				    </span>
 			    </div>

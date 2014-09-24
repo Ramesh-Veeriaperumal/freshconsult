@@ -8,7 +8,8 @@ SEOshopWidget.prototype= {
 	initialize:function(seoshopBundle){
 		var seoshopWidget = this;
 		var init_reqs = []; 
-
+		var reqEmail = seoshopBundle.reqEmail;
+		if(reqEmail){
 		init_reqs.push({
 			rest_url : "customers.json?email="+seoshopBundle.reqEmail,
 			method: "get",
@@ -27,6 +28,9 @@ SEOshopWidget.prototype= {
 			ssl_enabled:true,
 			init_requests: init_reqs
 		});
+		} else {
+			jQuery("#seoshop .content").html(seoshopWidget.SEOSHOP_NO_CONTACT.evaluate({}));
+		}
 	 },
 
 	parse_contact: function(resJson){
@@ -79,7 +83,7 @@ SEOshopWidget.prototype= {
 								line_items.push({ id:product.id,
 											      title:product.productTitle,
 												  quantityOrdered:product.quantityOrdered,
-												  priceExcl:product.priceExcl});
+												  priceExcl:product.priceIncl});
 							}
 
 							
@@ -91,7 +95,7 @@ SEOshopWidget.prototype= {
 											' at '+
 											order_date.toLocaleTimeString('IST', {hour: '2-digit', minute:'2-digit'}) ,
 								financial_status: order.paymentStatus,
-								amount: order.priceExcl,
+								amount: order.priceIncl,
 								status:order.shipmentStatus,
 								paymentStatus:order.paymentStatus,
 								line_items:line_items,
@@ -104,7 +108,10 @@ SEOshopWidget.prototype= {
 							orders.push(view_order);
 
 							if(ordersProcessed == totalOrders ) { 
-								seoshopWidget.renderOrders(orders);
+								sorted_orders = orders.sort(function(obj1, obj2) {
+           							 return obj2.created_at - obj1.created_at;
+        						});
+								seoshopWidget.renderOrders(sorted_orders);
 							}
 
 						}.bind(this),
@@ -130,7 +137,7 @@ SEOshopWidget.prototype= {
 				for (var j=0; j<line_details.length; j++){		
 					line_items_html += "<div class='row-fluid product'> "+ 
 										"<div class='span8'>" + line_details[j].title +" </div>" +
-										"<div class='span4 align-right'>" + line_details[j].priceExcl+"</div>" +
+										"<div class='span4 align-right'>" + line_details[j].priceIncl+"</div>" +
 										"</div>"
 				}
 			}
