@@ -73,7 +73,6 @@ var FreshfoneSocket;
     },
     registerCallbacks: function () {
       var self = this;
-      });
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
 				data = JSON.parse(data) || {};
