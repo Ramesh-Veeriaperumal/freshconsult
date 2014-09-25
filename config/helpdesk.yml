@@ -112,12 +112,12 @@ EMAIL:
     # Email settings for sending mail
     outgoing: 
         defaults: &defaults
-          address: smtp.mailgun.org
+          address: smtp.sendgrid.net
           port: 25
           domain: freshdesk.com
           authentication: :plain
-          user_name: postmaster@freshbugs.com
-          password: a85aa4ffc1148b487a565bf1972de5a3
+          user_name: girish@freshdesk.com
+          password: opmanager123
           
         development:
           <<: *defaults
@@ -126,8 +126,12 @@ EMAIL:
         production:
           <<: *defaults
         staging:
-          <<: *defaults
-          domain: freshpo.com        
+          address: smtp.mailgun.org
+          port: 25
+          domain: freshdesk.com
+          authentication: :plain
+          user_name: postmaster@freshbugs.com
+          password: a85aa4ffc1148b487a565bf1972de5a3        
           
             
 
