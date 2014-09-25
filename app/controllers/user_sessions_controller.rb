@@ -208,6 +208,7 @@ include Mobile::Actions::Push_Notifier
     remove_old_filters if current_user && current_user.agent?
 
     mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
+    make_freshfone_user_offline if freshfone_active?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
@@ -220,8 +221,6 @@ include Mobile::Actions::Push_Notifier
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
-    
-    make_freshfone_user_offline if freshfone_active?
     
     respond_to do |format|
         format.html  {
@@ -389,13 +388,12 @@ include Mobile::Actions::Push_Notifier
     end
 
     def make_freshfone_user_offline
-      current_user.freshfone_user.offline!
+      freshfone_user = current_user.freshfone_user
+      freshfone_user.offline! if freshfone_user.present? && !freshfone_user.available_on_phone?
     end
 
     def freshfone_active?
-      freshfone_user = current_user.freshfone_user
-      current_account.features?(:freshfone) &&  freshfone_user.present? && 
-        !freshfone_user.available_on_phone?
+      current_user && current_account.features?(:freshfone)
     end
 
     def check_sso_params
