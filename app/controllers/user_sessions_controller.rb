@@ -208,7 +208,6 @@ include Mobile::Actions::Push_Notifier
     remove_old_filters if current_user && current_user.agent?
 
     mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
-    make_freshfone_user_offline if freshfone_active?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
@@ -385,15 +384,6 @@ include Mobile::Actions::Push_Notifier
     def mark_agent_unavailable
       Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{current_user.email}, Value:: false, Time:: #{Time.zone.now} "
       current_user.agent.update_attribute(:available,false)
-    end
-
-    def make_freshfone_user_offline
-      freshfone_user = current_user.freshfone_user
-      freshfone_user.offline! if freshfone_user.present? && !freshfone_user.available_on_phone?
-    end
-
-    def freshfone_active?
-      current_user && current_account.features?(:freshfone)
     end
 
     def check_sso_params
