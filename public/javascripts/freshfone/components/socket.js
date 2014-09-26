@@ -217,6 +217,7 @@ var FreshfoneSocket;
 				} else {
 					this.agentList = new List('online-agents-list', options);
 				}
+        this.agentList.sort('available_agents_name', { asc: true });
 				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 				if(freshfonecalls.tConn) { this.bindTransfer();	}
