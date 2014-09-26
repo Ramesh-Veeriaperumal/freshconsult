@@ -30,7 +30,7 @@
 								<i class="icon-close-ticket"></i>
 						</a>
 						<a href="#add-people" rel="freshdialog" 
-							title="{% translate portal.tickets.add_people_title %}" data-width="400" class="btn btn-small" data-submit-label="{% translate portal.tickets.add_people %}" data-toggle="tooltip" title="{% translate portal.tickets.add_people %}">
+							title="{% translate portal.tickets.add_people_title %}" data-width="400" class="btn btn-small" data-submit-label="{% translate portal.tickets.add_people %}" data-toggle="tooltip" data-close-label="{% translate close %}" title="{% translate portal.tickets.add_people %}">
 								<i class="icon-add-people"></i>
 						</a>
 					{% endunless %}

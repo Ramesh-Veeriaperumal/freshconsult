@@ -4186,6 +4186,36 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    fields:
+      ticket_id: "Ticket Id"
+      subject: "Subject"
+      description: "Description"
+      status: "Status"
+      priority: "Priority"
+      source: "Source"
+      type: "Type"
+      company: "Company"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      fb_profile_id: "Facebook Profile Id"
+      agent: "Agent"
+      group: "Group"
+      created_time: "Created Time"
+      due_by_time: "Due by Time"
+      resolved_time: "Resolved Time"
+      closed_time: "Closed Time"
+      updated_time: "Last Updated Time"
+      initial_response_time: "Initial Response Time"
+      time_tracked: "Time Tracked"
+      fr_time: "First Response Time (in Hrs)"
+      resolution_time: "Resolution Time (in Hrs)"
+      agent_interactions: "Agent interactions"
+      customer_interactions: "Customer interactions"
+      resolution_status: "Resolution Status"
+      first_response_status: "First Response Status"
+      tags: "Tags"
+      survey_result: "Survey Result"
+      product: "Product"
   sla:
     minutes: Mins
     hours: Hrs
