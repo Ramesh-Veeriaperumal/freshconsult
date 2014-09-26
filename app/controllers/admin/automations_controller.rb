@@ -93,7 +93,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
 
     def get_event_performer
-      []
+      [[-2, t('admin.observer_rules.event_performer')]]
     end
     
     def load_config

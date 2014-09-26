@@ -3,6 +3,22 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include ExportCsvUtil
   include Rails.application.routes.url_helpers
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
+  
+  # Temporary workaround for '.' in values
+  # Need to check and remove with better fix after Rails 3 migration
+  PRELOAD_ASSOCIATIONS = [
+                          { :flexifield => { 
+                                              :flexifield_def => :flexifield_def_entries 
+                                            }},
+                          { :requester => :user_emails },
+                          { :responder => :user_emails },
+                          { :schema_less_ticket => :product }, 
+                          :tags,
+                          :ticket_old_body,
+                          :ticket_states,
+                          :ticket_status,
+                          :time_sheets
+                        ]
 
   def perform
     begin
@@ -93,7 +109,6 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     {
       :select => select_query,
       :conditions => sql_conditions, 
-      :include => [:ticket_states, :ticket_status, :flexifield, :responder, :requester],
       :joins => joins
     }
   end
@@ -101,6 +116,11 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def add_to_records(headers, items)
     @no_tickets = false
     @records ||= []
+
+    # Temporary workaround for '.' in values
+    # Need to check and remove with better fix after Rails 3 migration
+    Helpdesk::Ticket.send :preload_associations, items, PRELOAD_ASSOCIATIONS
+
     items.each do |item|
       record = []
       headers.each do |val|

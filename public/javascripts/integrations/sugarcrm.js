@@ -91,8 +91,6 @@ SugarWidget.prototype= {
 			if(resJ.result_count == 1){
 				entry_list = resJ.entry_list[0];
 				sugarWidget.renderContact(entry_list);
-				jQuery('#multiple-contacts').hide();
-				jQuery('#search-back').hide();
 			}
 			else if(resJ.result_count > 1){
 				sugarWidget.renderSearchResults();
@@ -145,47 +143,8 @@ SugarWidget.prototype= {
 	},
 
 	renderContact:function(entry_list){
-
-		sugarWidget.renderContactWidget();
-		contactJson = entry_list.name_value_list;
-		title = contactJson.title.value;
-		account = (contactJson.account_name == undefined) ? "" : contactJson.account_name.value;
-		if(account != ""){
-			account_link = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DAccounts%26action%3DDetailView%26record%3D"+contactJson.account_id.value; 
-			account = "<a target='_blank' href='" + account_link +"'>" + account +"</a>"	
-		}
-		
-		desig = (title != "" && account != "" ) ? (title + ", " + account) : (title + account)
-		address = sugarWidget.get_formatted_address(contactJson);
-		phone = contactJson.phone_work.value;
-		mobile = contactJson.phone_mobile.value;
-		department = contactJson.department.value;
-		if(sugarWidget.lead == true){
-			contactLink = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DLeads%26action%3DDetailView%26record%3D"+entry_list.id
-			jQuery('#crm-contact-type').text("Lead");
-			jQuery('#sugarcrm_widget .contact-type').text("Lead").show();
-		}
-		else{
-			contactLink = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DContacts%26action%3DDetailView%26record%3D"+entry_list.id
-			jQuery('#crm-contact-type').text("Contact");
-			jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
-		}
-		fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
-		address = (address != "") ? address : "N/A" ;
-		phone = (phone != "") ? phone : "N/A" ;
-		mobile = (mobile != "") ? mobile : "N/A" ;
-		department = (department != "") ? department : "N/A" ;
-		jQuery('#sugar-contact-widget').show();
-		jQuery('#contact-name').html(fullName);
-		jQuery('#contact-desig').html(desig);
-		jQuery('#contact-address').html(address);
-		jQuery('#contact-phone').text(phone)
-		jQuery('#contact-mobile').text(mobile);
-		jQuery('#contact-dept').text(department);
-
-		
-		jQuery('#crm-view').attr("href",contactLink);
-		jQuery("#sugarcrm_widget").removeClass('loading-fb');
+		this.entry_list = entry_list;
+		sugarWidget.get_sugar_version();
 	},
 
 	contactChanged:function(value){
@@ -273,8 +232,94 @@ SugarWidget.prototype= {
 		});
 	},
 
+	get_sugar_version:function(){
+		var entry_list_body = 'method=get_server_info&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Administrator","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}',
+			$obj = this;
+		sugarWidget.freshdeskWidget.request({
+			rest_url: "service/v4/rest.php",
+			method:"post",	
+			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||""}),
+			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
+			on_failure: sugarWidget.processVersionFailure,
+			on_success: sugarWidget.handleVersionSuccess.bind(this)
+		});
+	},
+
+	handleVersionSuccess:function(evt){
+		responseText = evt.responseText;
+		responseText = sugarWidget.removeRequestKeyword(responseText);
+		resJ = jQuery.parseJSON(responseText);
+		if (resJ.version == undefined){
+			this.freshdeskWidget.alert_failure("Sugar CRM version couldn't be determined. Please try after sometime or contact support.")
+			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+		}
+		else{
+			var version = resJ.version;
+			var version_arr = version.split(".");
+			var sugar_version = parseInt(version_arr[0]);
+
+			sugarWidget.renderContactWidget();
+			// Hide the search-back and multiple-contacts from the template since it is not relevant with single contact.
+			jQuery('#multiple-contacts').hide();
+			jQuery('#search-back').hide();
+			contactJson = this.entry_list.name_value_list;
+			title = contactJson.title.value;
+			account = (contactJson.account_name == undefined) ? "" : contactJson.account_name.value;
+			if(account != ""){
+				account_link = sugarWidget.get_sugar_link("Accounts", sugar_version, contactJson.account_id.value);
+				account = "<a target='_blank' href='" + account_link +"'>" + account +"</a>"	
+			}
+			
+			desig = (title != "" && account != "" ) ? (title + ", " + account) : (title + account)
+			address = sugarWidget.get_formatted_address(contactJson);
+			phone = contactJson.phone_work.value;
+			mobile = contactJson.phone_mobile.value;
+			department = contactJson.department.value;
+			if(sugarWidget.lead == true){
+				contactLink = sugarWidget.get_sugar_link("Leads", sugar_version, this.entry_list.id);
+				jQuery('#crm-contact-type').text("Lead");
+				jQuery('#sugarcrm_widget .contact-type').text("Lead").show();
+			}
+			else{
+				contactLink = sugarWidget.get_sugar_link("Contacts", sugar_version, this.entry_list.id);
+				jQuery('#crm-contact-type').text("Contact");
+				jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
+			}
+			fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
+			address = (address != "") ? address : "N/A" ;
+			phone = (phone != "") ? phone : "N/A" ;
+			mobile = (mobile != "") ? mobile : "N/A" ;
+			department = (department != "") ? department : "N/A" ;
+			jQuery('#sugar-contact-widget').show();
+			jQuery('#contact-name').html(fullName);
+			jQuery('#contact-desig').html(desig);
+			jQuery('#contact-address').html(address);
+			jQuery('#contact-phone').text(phone)
+			jQuery('#contact-mobile').text(mobile);
+			jQuery('#contact-dept').text(department);
+
+			jQuery('#crm-view').attr("href",contactLink);
+			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+
+		}
+	},
+
+	processVersionFailure:function(evt){
+				this.freshdeskWidget.alert_failure("Unable to establish connection with SugarCRM and determine the version. Please contact Support at support@freshdesk.com")
+	},
+
 	removeRequestKeyword:function(responseText){
 		return responseText.replace(/request{/g,"{");	
+	},
+
+	get_sugar_link:function(module_name, sugar_version, id){
+		var	link = "";
+		if(sugar_version < 7) {
+			link = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3D"+module_name+"%26action%3DDetailView%26record%3D"+id; 
+		} else {
+			link = sugarWidget.sugarBundle.domain + "/#" + module_name + "/" + id;
+		}
+		return link;
 	},
 
 	get_json:function(resData){

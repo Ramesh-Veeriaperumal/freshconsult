@@ -87,6 +87,7 @@ class AgentsController < ApplicationController
     @agent = current_account.agents.find_by_user_id(params[:id])
     @agent.available = params[:value]
     @agent.save
+    Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
     render :nothing => true
   end
 

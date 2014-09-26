@@ -20,7 +20,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
-  validates_associated :ticket_statuses
+  validates_associated :ticket_statuses, :if => :status_field?
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true
 
   before_validation :populate_choices
@@ -387,4 +387,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
       remove_form_field(self)
     end
 
+  private
+    def status_field?
+      self.field_type.eql?("default_status")
+    end
 end

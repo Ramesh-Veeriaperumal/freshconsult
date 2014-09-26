@@ -75,7 +75,7 @@ module MobihelpHelper
           :device_make => "Samsung",
           :device_model => "I9031",
           :debug_data => {
-            :resource => fixture_file_upload('mobihelp_extra_complete.json', 'text/plain')
+            :resource => Rack::Test::UploadedFile.new('spec/fixtures/mobihelp_extra_complete.json', 'text/plain')
           }
         }
       }

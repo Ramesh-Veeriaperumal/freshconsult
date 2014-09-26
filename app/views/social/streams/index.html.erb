@@ -50,7 +50,7 @@
       <% end %>
       <!-- /only custom Visible streams -->
 
-      <div id="streamHighlight" class = 'info-highlight center' style="display:none;">
+      <div id="streamHighlight" class='info-highlight center' style="display:none;">
         <a href='#' class="new-tweets"> 0 </a>
       </div>
 
@@ -80,25 +80,25 @@
       </div>
     </div>
 
-    <% if privilege?(:reply_ticket) %>
-      <div class="tw-explorer">
-        <div class="info-highlight fs-notify">
+    <div class="tw-explorer">
+      <div class="info-highlight fs-notify">
           <a href="https://support.freshdesk.com/support/solutions/articles/195543" target="_blank"><b><%= t('social.streams.twitter.flash_card_html')%></b></a>
-        </div>
+      </div>
+      <% if privilege?(:reply_ticket) %>
         <div class="ph-grey">
           <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
           <div class="twt-box clear">
             <%= render :partial => 'social/twitter/post_tweet', :locals => {:handle => @all_handles.first } %>
           </div>
         </div>
-        <div id="query-box" class="bb-box head">
-          <div id="recent_search">
-            <%= render :partial => 'recent_search' %>
-          </div>
+      <% end %>
+      <div id="query-box" class="bb-box head">
+        <div id="recent_search">
+          <%= render :partial => 'recent_search' %>
         </div>
       </div>
-    <% end %>
-
+    </div>
+      
     <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
 
       <div id="conv-floater" style="display:block;">

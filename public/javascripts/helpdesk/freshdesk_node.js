@@ -22,12 +22,16 @@
 
         var humanize_name_list = function (data, action) {
             var text = '';
-            if (data.length == 1) {
-                text = '<strong>' + data[0].name + '</strong> is currently ' + action + '.';
-            } else if (data.length == 2) {
-                text = '<strong>' + data[0].name + '</strong> and <strong>' + data[1].name + '</strong>  are currently ' + action + '.';
-            } else if (data.length > 2) {
-                text = '<strong>' + data[0].name + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently ' + action + '.';
+            if(data.length >0){
+                var _data = {
+                        userId:data[0].userId,
+                        name:data[0].name,
+                        length:data.length,
+                        action:action,
+                        chatAvailable:(window.freshchat && window.freshchat.chatIcon)? window.freshchat.chatIcon:false
+                 };
+                text = JST["agent_collision"](_data);
+                window.agentCollisionData = data;
             }
             return text;
         };

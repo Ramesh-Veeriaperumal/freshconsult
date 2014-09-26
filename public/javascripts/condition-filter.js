@@ -214,7 +214,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	                 	}
                 	}else{
                 		dom = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2', {'minimumResultsForSearch':'10'});
-                  	inner.append(dom);
+                		inner.append(dom);
+                		//invokeRedactor("paragraph-redactor","cnt-fwd","class");
                 	}
 
 					var filterList = [];
@@ -376,8 +377,16 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 5, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery(".api_webhook").attr("style"), "display: none;", jQuery('.api_webhook'), jQuery('.user_pass_webhook'));
 				}
-			  domUtil.get_filter_list('json', this);
-			   // return false;
+						
+				jQuery.each(jQuery('.paragraph-redactor'), function(i, item) { 
+					var $redactor = jQuery(item).data("redactor"); 
+					if($redactor != "undefined") { 
+						$redactor.deleteCursor(); 
+					} 
+				});
+
+				domUtil.get_filter_list('json', this);
+				// return false;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
@@ -434,6 +443,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
                 	var default_value = (hg_item.domtype == "nested_field") ?  {value:'--'} : null
                 	dom = conditional_dom(hg_item, data_id, name, default_value, "value", 'select2', {'minimumResultsForSearch':'10'} );
                   rule_drop.append(dom);
+                  //New Action
+      			  		invokeRedactor("paragraph-redactor","cnt-fwd","class");
                 }
 								postProcessCondition(hg_item, data_id);
 							}
@@ -518,6 +529,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
 						});
 			domUtil.init();
+			invokeRedactor("paragraph-redactor","cnt-fwd","class");
 		}init();
 
 		return pub_Methods;

@@ -13,7 +13,7 @@
 	  	<div class="control-group">
 	  		<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
 	  		<br/>
-			<p class="muted"><%= content_tag(:b, t('note')) %> <%= t('import_note_info') %> <%=t('utf_8_format') %> </p>
+			<p class="muted"><%= content_tag(:b, t('note')) %> <%= t('contact_import.import_data_info', :solution_link => "https://support.freshdesk.com/support/solutions/articles/199329").html_safe %> </p>
 	  	</div>
 	  	<div class="button-container">
 		  	<%= link_to t('cancel'), contacts_path, :class => "btn"  %>

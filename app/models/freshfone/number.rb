@@ -50,6 +50,8 @@ class Freshfone::Number < ActiveRecord::Base
 	VOICEMAIL_STATE = { :on => 1, :off => 0}
 	VOICEMAIL_STATE_BY_VALUE = VOICEMAIL_STATE.invert
 	
+	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
+
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
 	validates_inclusion_of :queue_wait_time,  :in => [ 2, 5, 10, 15 ] #Temp options
@@ -81,6 +83,12 @@ class Freshfone::Number < ActiveRecord::Base
 			number_type == v
 		end
 	end	
+
+	HUNT_TYPE.each do |k, v|
+		define_method("#{k}?") do
+			hunt_type == v
+		end
+	end
 
 	def voice_type
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]

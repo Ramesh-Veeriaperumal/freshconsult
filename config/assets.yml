@@ -114,9 +114,9 @@ stylesheets:
   freshfone:
     - public/stylesheets/freshfone/freshfone.css
     - public/stylesheets/freshfone/jquery.keypad.css
-
-  freshfone_call_history:
     - public/stylesheets/freshfone/call_history.css
+    - public/stylesheets/ui.daterangepicker.css
+
 
   freshfone_ivr:
     - public/stylesheets/freshfone/ivr/main.css
@@ -176,6 +176,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/helpdesk/freshdesk_node.js
+    - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
@@ -241,6 +242,7 @@ javascripts:
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
     - public/javascripts/app/product_notifications.js
+    - public/javascripts/freshchat/freshchat.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -335,7 +337,14 @@ javascripts:
     - public/javascripts/freshfone/components/call_transfer.js
 
   freshfone_call_history:
-    - public/javascripts/freshfone/call_history.js
+    - public/javascripts/report/daterangepicker.jQuery.js
+
+  freshfonecallhistory:
+    - public/javascripts/report/daterangepicker.jQuery.js
+    - public/javascripts/freshfone/call_history/call_history.js
+    - public/javascripts/freshfone/call_history/call_logs.js
+    - public/javascripts/freshfone/call_history/call_block.js
+    - public/javascripts/freshfone/call_history/call_filters.js
 
   freshfone_settings:
     - public/javascripts/freshfone/message_selector.js

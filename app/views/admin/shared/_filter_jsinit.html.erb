@@ -94,9 +94,8 @@
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]).data(
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"],"paragraph-redactor").data(
                   "ignorePlaceholders", 'triggered_event'))
-
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
                 .append(subject)
@@ -270,7 +269,6 @@
       return c_dom;
     }
     var active_email_body = null;
-
    <% end %>
 <% end %>
 

@@ -22,7 +22,7 @@
 			  		<% if current_account.freshfone_active? %>
 							<a href="#" id="freshfone-presence-toggle" class="tooltip"
 								data-placement="below"  
-							 	title="<%= current_user.freshfone_user_online? ? "You are available to take calls" : "You are unavailable to take calls" %>" data-html="true">
+							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
 							 	<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
 			  			</a>
 			  		<% end %>

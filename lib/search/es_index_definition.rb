@@ -11,8 +11,9 @@ class Search::EsIndexDefinition
     [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers]
   end
 
+  # Used for new model migrations
   def additional_models
-    [:helpdesk_tags, :freshfone_callers]
+    []
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)

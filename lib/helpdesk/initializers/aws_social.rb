@@ -1,15 +1,9 @@
-config = YAML::load(ERB.new(File.read("#{Rails.root}/config/s3.yml")).result)
 sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
 sns_config = File.join(Rails.root,"config","sns.yml")
 dynamodb_config = File.join(Rails.root,"config","dynamo_db.yml")
 
-S3_CONFIG = (config[Rails.env] || config).symbolize_keys
 SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 SNS = (YAML::load_file sns_config)[Rails.env]
-
-AWS.config(
-		:access_key_id => S3_CONFIG[:access_key_id],
-		:secret_access_key => S3_CONFIG[:secret_access_key])
 
 begin
 	#Global SNS and SQS clients

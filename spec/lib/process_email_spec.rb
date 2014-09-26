@@ -536,6 +536,25 @@ describe Helpdesk::ProcessEmail do
 			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
 			latest_ticket.cc_email_hash[:reply_cc].should_not include cc_email
 		end
+
+		it "with Ticket cc present in reply cc when he replies" do
+			email_id = Faker::Internet.email
+			cc_email = Faker::Internet.email
+			new_cc_email = Faker::Internet.email
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+			first_reply = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => cc_email})
+			second_reply = new_email({:email_config => @account.primary_email_config.to_email, :reply => cc_email, :include_cc => new_cc_email})
+			Helpdesk::ProcessEmail.new(email).perform
+			ticket = @account.tickets.last
+			first_reply[:subject] = first_reply[:subject]+" [##{ticket.display_id}]"
+			second_reply[:subject] = second_reply[:subject]+" [##{ticket.display_id}]"
+			Helpdesk::ProcessEmail.new(first_reply).perform
+			Helpdesk::ProcessEmail.new(second_reply).perform
+			ticket_incremented?(@ticket_size)
+			latest_ticket = @account.tickets.last
+			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
+			latest_ticket.cc_email_hash[:reply_cc].should include cc_email
+		end
 	end
 
 end

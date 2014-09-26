@@ -549,6 +549,137 @@ describe Social::TwitterController do
     }
     response.should render_template("social/twitter/user_info")
   end
+  
+  it "should favorite the tweet on clicking the favorite icon" do
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+      
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+
+    if GNIP_ENABLED
+      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+    else
+      sample_gnip_feed = sample_gnip_feed(@rule, nil, Time.now.utc.iso8601)
+      sample_gnip_feed["id"] = "tag:search.twitter.com,2005:#{@tweet_id}"
+    end
+    
+    #Pushed tweet should not be a ticket
+    tweet = @account.tweets.find_by_tweet_id(tweet_id)
+    tweet.should be_nil
+        
+    feed_id = tweet_id
+    Twitter::REST::Client.any_instance.stubs(:favorite).returns([feed_id])
+    post :favorite, {
+       :item => {
+        :stream_id => "#{@account.id}_#{@default_stream.id}",
+        :feed_id => feed_id
+       },
+       :search_type => SEARCH_TYPE[:saved]
+    }
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["favorite"][:n].first.should eql("1")
+    end  
+    
+    response.should render_template("social/twitter/favorite.rjs")
+  end
+  
+  it "should unfavorite the tweet on clicking the unfavorite icon" do
+    tweet_id = (Time.now.utc.to_f*100000).to_i
+      
+    #Push a tweet into dynamo that is to be converted to ticket  
+    unless GNIP_ENABLED 
+      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    end
+    
+
+    if GNIP_ENABLED
+      tweet_id, sample_gnip_feed = push_tweet_to_dynamo(tweet_id)
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+    else
+      sample_gnip_feed = sample_gnip_feed(@rule, nil, Time.now.utc.iso8601)
+      sample_gnip_feed["id"] = "tag:search.twitter.com,2005:#{@tweet_id}"
+    end
+    
+    #Pushed tweet should not be a ticket
+    tweet = @account.tweets.find_by_tweet_id(tweet_id)
+    tweet.should be_nil
+        
+    feed_id = tweet_id
+    Twitter::REST::Client.any_instance.stubs(:favorite).returns([feed_id])
+    post :favorite, {
+       :item => {
+        :stream_id => "#{@account.id}_#{@default_stream.id}",
+        :feed_id => feed_id
+       },
+       :search_type => SEARCH_TYPE[:saved]
+    }
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["favorite"][:n].first.should eql("1")
+    end  
+    
+    
+    feed_id = tweet_id
+    Twitter::REST::Client.any_instance.stubs(:unfavorite).returns([feed_id])
+    post :unfavorite, {
+       :item => {
+        :stream_id => "#{@account.id}_#{@default_stream.id}",
+        :feed_id => feed_id
+       },
+       :search_type => SEARCH_TYPE[:saved]
+    }
+    response.should render_template("social/twitter/unfavorite.rjs")
+    
+    if GNIP_ENABLED
+      feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
+      feed_entry["favorite"][:n].first.should eql("0")
+    end  
+    
+  end
+  
+  it "should get all the followers of the given screen name among the handles" do
+    Twitter::REST::Client.any_instance.stubs(:follower_ids).returns(sample_follower_ids)
+    post :followers, {
+       :screen_name => "Testing"
+    }
+    response.template_objects["follow_hash"].should eql({@handle.screen_name => true})
+    response.should render_template("social/twitter/followers.rjs")
+  end
+
+  it "should follow the handle on clicking the follow icon" do
+    user_id = get_social_id
+    Twitter::REST::Client.any_instance.stubs(:follow).returns([user_id])
+    post :follow, {
+      :user => {
+        :to_follow => "Testing",
+        :screen_name => "Test"
+      }
+    }
+    response.should render_template("social/twitter/follow.rjs")
+  end
+  
+  it "should follow the handle on clicking the unfollow icon" do
+    user_id = get_social_id
+    Twitter::REST::Client.any_instance.stubs(:unfollow).returns([user_id])
+    post :unfollow, {
+      :user => {
+        :to_follow => "Testing",
+        :screen_name => "Test"
+      }
+    }
+    response.should render_template("social/twitter/unfollow.rjs")
+  end
 
   after(:all) do
     #Destroy the twitter handle

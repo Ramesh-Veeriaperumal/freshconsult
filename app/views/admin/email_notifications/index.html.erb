@@ -49,7 +49,8 @@
 									</span>
 								</td>
 									<td class="text-right">
-										<% if (item.outdated_agent_content == true ) %>
+									<% if current_account.features?(:dynamic_content) && 
+										 	item.outdated_agent_content? %>
 											<i class="common-icon-outdated"></i>
 											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
 									<%end%>	
@@ -83,7 +84,8 @@
 								</td>
 
 									<td class="text-right">
-										<% if (item.outdated_requester_content == true ) %>
+										<% if current_account.features?(:dynamic_content) && 
+											item.outdated_requester_content? %>
 											<i class="common-icon-outdated"></i>
 											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
 										<%end%>	

@@ -24,15 +24,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :filter_observer_events, on: :update, :if => :user_present?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data, :push_update_notification,
+  :stop_timesheet_timers, :fire_update_event, :push_update_notification,
   :publish_updated_ticket_properties_to_rabbitmq, on: :update 
+  after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :publish_new_ticket_properties, on: :create, :if => :auto_refresh_allowed?
   after_commit :publish_updated_ticket_properties, on: :update, :if => :model_changes?
   after_commit :publish_new_ticket_properties_to_rabbitmq, :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
-
-
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
 
@@ -61,12 +60,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def save_ticket_states
-    self.ticket_states = Helpdesk::TicketState.new
+    self.ticket_states = self.ticket_states || Helpdesk::TicketState.new
     ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
     ticket_states.pending_since=Time.zone.now if (status == PENDING)
-    ticket_states.set_resolved_at_state if (status == RESOLVED)
+    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
     ticket_states.status_updated_at = Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
@@ -495,10 +494,13 @@ private
   end
 
   def regenerate_reports_data
-    deleted_or_spam = @model_changes.keys & [:deleted, :spam]
-    return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
     set_reports_redis_key(account_id, created_at)
-    return true
+  end
+
+  def regenerate_data?
+    regenerate_fields = [:deleted, :spam]
+    regenerate_fields.push(:responder_id) if account.features?(:report_field_regenerate)
+    (@model_changes.keys & regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
   end
 
   def manual_sla?

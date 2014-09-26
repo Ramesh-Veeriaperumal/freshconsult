@@ -21,7 +21,15 @@
 	</div>
 
 	<div class="hide" id="folder-delete-confirmation">
-		<p class="margin-bottom lead-desc"><%= t("folder.delete", :no_of_articles => @folder.articles.size) %></p>
+		<p class="margin-bottom">
+		<% unless @folder.articles.size == 0 %>
+			<%= t('folder.delete') %>
+			<br />
+			<%= t("folder.size", :count => @folder.articles.size) %>
+		<% else %>
+			<%= t('folder.info1') %>
+		<% end %>
+		</p>
 	</div>
 
 <% end %>

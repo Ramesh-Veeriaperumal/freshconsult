@@ -199,4 +199,9 @@ class SupportController < ApplicationController
       end
     end
 
+  private
+
+  def agent?
+    current_user && current_user.agent?
+  end
 end

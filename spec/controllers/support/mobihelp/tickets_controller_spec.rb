@@ -68,4 +68,19 @@ describe Support::Mobihelp::TicketsController do
     post :add_note, note
   end
 
+  it "should add note with attachment" do
+    @request.params['format'] = "json"
+    note = {
+      :helpdesk_note => {
+        :private => "false", 
+        :note_body_attributes => {:body_html => "Add Note with attachment"},
+        :incoming => "true", 
+        :source => "10",
+        :attachments => {:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/mobihelp_attachment.png', 'image/png')}
+        },
+        :id => @test_ticket.display_id
+      }
+
+    post :add_note, note
+  end
 end

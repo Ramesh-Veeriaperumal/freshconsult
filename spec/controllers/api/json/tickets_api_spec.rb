@@ -19,6 +19,34 @@ describe Helpdesk::TicketsController do
     expected.should be(true)
   end
 
+  it "should create a ticket with resolved_at" do
+    ticket_params = {:helpdesk_ticket => {:subject => Faker::Lorem.words(10).join(" "),
+              :description => Faker::Lorem.paragraph,
+              :email => Faker::Internet.email,
+              :status => 4,
+              :created_at => "2012-07-02 17:00:00"},
+              :format => 'json',
+              :resolved_at => "2012-08-02 17:00:00"}
+    post :create, ticket_params,:content_type => 'application/json'
+    result =  parse_json(response)
+    expected = (response.status =~ /200 OK/) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
+    expected.should be(true)
+  end
+
+  it "should create a ticket with closed_at" do
+    ticket_params = {:helpdesk_ticket => {:subject => Faker::Lorem.words(10).join(" "),
+              :description => Faker::Lorem.paragraph,
+              :email => Faker::Internet.email,
+              :status => 5,
+              :created_at => "2012-07-02 17:00:00"},
+              :format => 'json',
+              :closed_at => "2012-08-02 17:00:00"}
+    post :create, ticket_params,:content_type => 'application/json'
+    result =  parse_json(response)
+    expected = (response.status =~ /200 OK/) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
+    expected.should be(true)
+  end
+
   it "should update a ticket" do
     new_ticket = create_ticket({:status => 2})
     put :update, { :helpdesk_ticket => {:status => 3, :priority => 2 },

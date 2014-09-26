@@ -41,7 +41,7 @@ body, .feedback-wrapper{
 		padding: 0;
 	}
 	.modal-header-bg{
-		background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
+		background-image:  inline-image('cdn-ignored/inline-images/dialog/popup-headpattern.png');
 		background-repeat: repeat-x;
 		@include padding(9px 40px 0 15px);
 		@media (min-width: 45em) {

@@ -202,5 +202,20 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 			color: #000;
 			font-weight: bold;
 		}
-
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{
+	border-color: #7B7B7B;
+	background: #7B7B7B;
+	color:#fff;
+}
+.ui-daterangepicker li.ui-state-hover{
+	background:#707070;
+	color:#fff;
+}
+.ui-state-active a,.ui-state-active a:visited, .ui-state-active a:link {
+	color: #fff !important;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover {
+	background:#707070;
+	color:#fff;
 }

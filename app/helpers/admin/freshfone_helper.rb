@@ -1,10 +1,10 @@
 module Admin::FreshfoneHelper
 	include Carmen
-	def supported_countries
-		numbers = Freshfone::Cost::NUMBERS.inject([]) do |country, number|
-			(country << [ number[1]["name"], number[0] ]) if !number[1]["beta"]
+	def supported_countries(countries=[])
+		Freshfone::Cost::NUMBERS.each do |number|
+			(countries << [ number[1]["name"], number[0] ]) unless number[1]["beta"]
 		end
-		(numbers || []).sort
+		(countries || []).sort
 	end
 
 	def toll_free_supported_countries

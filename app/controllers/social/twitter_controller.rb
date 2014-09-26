@@ -4,9 +4,12 @@ class Social::TwitterController < Social::BaseController
   include Social::Twitter::Util
   include Conversations::Twitter
   include Social::Twitter::TicketActions
+  include Social::Twitter::Constants
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
+  before_filter :get_favorite_params, :only => [:favorite, :unfavorite]
+  before_filter :get_follow_params,   :only => [:follow, :unfollow]
 
   def twitter_search
     @recent_search = current_user.agent.recent_social_searches
@@ -60,6 +63,7 @@ class Social::TwitterController < Social::BaseController
       :name => params[:user][:name]
     )
     @klout_score = params[:user][:klout_score].to_i # Currently disabling klout score fetching from api
+    @user[:show_followers] = true unless set_screen_names == [screen_name]
     unless set_screen_names.include?(screen_name)
       @user[:db] = current_account.users.find_by_twitter_id(screen_name,
                                                           :select => "name, customer_id, email, phone, mobile, time_zone")
@@ -108,7 +112,7 @@ class Social::TwitterController < Social::BaseController
     @feed_id   = params[:tweet][:feed_id]
     if has_permissions?(params[:search_type], params[:stream_id])
       twt_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
-      retweet_status, @social_error_msg = Social::Twitter::Feed.retweet(twt_handle, @feed_id)
+      retweet_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:retweet])
       unless retweet_status.blank?
         flash.now[:notice] = t('social.streams.twitter.retweet_success')
       else
@@ -122,11 +126,95 @@ class Social::TwitterController < Social::BaseController
     end
   end
   
+  def favorite
+    if has_permissions?(params[:search_type], @stream_id)
+      twt_handle = @stream.twitter_handle unless @stream.nil?
+      favourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
+      update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
+      flash.now[:notice] = @social_error_msg if @social_error_msg && favourite_status.blank?
+    else
+      flash.now[:notice] = t('social.streams.twitter.cannot_favorite')
+    end
+
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def unfavorite
+    if has_permissions?(params[:search_type], @stream_id)
+      twt_handle = @stream.twitter_handle unless @stream.nil?
+      unfavourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
+      update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
+      if unfavourite_status.blank? 
+        flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
+      end
+    else
+      flash.now[:notice] = t('social.streams.twitter.cannot_unfavorite')
+    end
+
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def followers
+    screen_name = params[:screen_name].gsub("@","")
+    twt_handle  = current_account.random_twitter_handle
+    follower_ids, @social_error_msg = Social::Twitter::User.get_followers(twt_handle, screen_name)
+    if @social_error_msg.blank? and !follower_ids.nil?
+      all_handles  = current_account.twitter_handles.find(:all, :conditions => ["screen_name != ?", screen_name])
+      @follow_hash = Hash[*all_handles.collect { |handle| [ handle.screen_name, following?(follower_ids, handle.twitter_user_id) ] }.flatten]
+    else
+      flash.now[:notice] = @social_error_msg
+    end
+    
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def follow
+    if has_permissions?(params[:search_type], @stream_id)
+      twt_handle = current_account.twitter_handles.find_by_screen_name(@screen_name)
+      follow_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:follow])
+      if follow_status.blank?
+        flash.now[:notice] = @social_error_msg || t('social.streams.twitter.already_followed')         
+      else
+        flash.now[:notice] = t('social.streams.twitter.follow_success') 
+      end
+    else
+      flash.now[:notice] = t('social.streams.twitter.cannot_follow')
+    end
+    
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def unfollow
+    if has_permissions?(params[:search_type], @stream_id)
+      twt_handle = current_account.twitter_handles.find_by_screen_name(@screen_name)
+      unfollow_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:unfollow])
+      if unfollow_status.blank?
+        flash.now[:notice] = @social_error_msg || t('social.streams.twitter.already_unfollowed') 
+      else
+        flash.now[:notice] = t('social.streams.twitter.unfollow_success')        
+      end
+    else
+      flash.now[:notice] = t('social.streams.twitter.cannot_unfollow')
+    end
+    
+    respond_to do |format|
+      format.js
+    end
+  end
+  
   def post_tweet
     if privilege?(:reply_ticket)
       handle_id = params[:twitter_handle_id]
       handle = current_account.twitter_handles.find_by_id(handle_id)
-      @tweet_obj, @social_error_msg = Social::Twitter::Feed.post_tweet(handle, params[:tweet][:body])
+      @tweet_obj, @social_error_msg = Social::Twitter::Feed.twitter_action(handle, params[:tweet][:body], TWITTER_ACTIONS[:post_tweet])
       unless @tweet_obj.blank?
         flash.now[:notice] = t('social.streams.twitter.tweeted')
       else
@@ -141,7 +229,27 @@ class Social::TwitterController < Social::BaseController
   end
 
   private
-
+  
+  def not_valid_error?(social_error_msg)
+    social_error_msg.nil? or social_error_msg == "#{I18n.t('social.streams.twitter.wrong_call')}"
+  end
+  
+  def get_favorite_params
+    @stream_id = params[:item][:stream_id]
+    @feed_id   = params[:item][:feed_id]
+    @stream    = current_account.twitter_streams.find_by_id(@stream_id.split("#{DELIMITER[:tag_elements]}").last)
+  end
+  
+  def get_follow_params
+    @stream_id   = params[:user][:stream_id] 
+    @screen_name_to_follow = params[:user][:to_follow].gsub("@","")
+    @screen_name = params[:user][:screen_name]
+  end
+  
+  def following?(accounts_following, handle_id)
+    accounts_following.include?(handle_id)
+  end
+  
   def fetch_live_feeds
     search_type   = params[:search][:type]
     search_params = params[:search]
