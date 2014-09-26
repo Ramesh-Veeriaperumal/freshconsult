@@ -97,7 +97,7 @@ module Helpkit
     ActiveSupport::JSON.backend = :json_gem
     # Your secret key for verifying cookie session data integrity.
     # If you change this key, all old sessions will become invalid!
-    # Make sure the secret is at least 30 characters and all random, 
+    # Make sure the secret is at least 30 characters and all random,
     # no regular words or you'll be exposed to dictionary attacks.
     config.session_store(:cookie_store, {
         :session_key => '_helpkit_session'
@@ -118,7 +118,7 @@ module Helpkit
 
     # you will be able to access the above providers by the following url
     # /auth/providername for example /auth/twitter /auth/facebook
-    
+
     # TODO-RAILS3 need to cross check
     config.middleware.use  OmniAuth::Strategies::OpenID, :store => OpenID::Store::Filesystem.new('./omnitmp') , :name => "google",  :identifier => "https://www.google.com/accounts/o8/id"
     # you won't be able to access the openid urls like /auth/google
@@ -166,12 +166,18 @@ module Helpkit
 
     config.filter_parameters += [:password, :password_confirmation, :creditcard]
 
-    config.assets.paths += Dir["#{Rails.root}/public/*"].sort_by { |dir| -dir.size }
-    config.assets.paths << Rails.root.join("public", "generated", "fonts") 
-    config.assets.paths << Rails.root.join("public", "generated", "images") 
+    config.assets.paths += (Dir["#{Rails.root}/public/*"] - ["#{Rails.root}/public/assets"]).sort_by { |dir| -dir.size }
 
+    config.assets.paths << Rails.root.join("public", "generated", "fonts")
+    config.assets.paths << Rails.root.join("public", "generated", "images")
+    config.assets.digest = true
     # Precompile *all* assets, except those that start with underscore
     config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
+
+    # prevent Rails from initializing the Rails environment
+    # and looking at database.yml when running rake assets:precompile
+    config.assets.initialize_on_precompile = false
+
   end
 end
 

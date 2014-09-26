@@ -5,6 +5,6 @@
 //= require frameworks/plugins/jquery.form.js
 //= require frameworks/plugins/jquery.validate.js
 //= require hackz.js
-//= require mColorPicker.js
+//= require plugins/colorpicker.js
 //= require security.js
 //= require getting_started.js

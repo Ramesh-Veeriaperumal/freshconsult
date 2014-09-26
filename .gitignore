@@ -48,3 +48,4 @@ spec/fixtures/files/temp/*
 # RVM
 .ruby-gemset
 .ruby-version
+public/assets

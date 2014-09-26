@@ -86,7 +86,7 @@
 	@include text-formatting;
 	big{ font-size: inherit; }
 	table{ 
-		@extend .table; 
+		@extend .table !optional; 
 		table-layout: fixed;
 	}
 }
@@ -110,9 +110,9 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include padding-right(10px);
 }
 .article-list, .topic-list{ margin-bottom: 20px; }
-.article-list li, li.article-item{ &:before{ @extend .icon-article-list; } }
-.topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list; } }
-.ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list; } }
+.article-list li, li.article-item{ &:before{ @extend .icon-article-list !optional; } }
+.topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list !optional; } }
+.ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list !optional; } }
 
 .start-topic{
 	@include float(right);
@@ -130,7 +130,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		content:"";
 		@include inline-block;
 		vertical-align: text-top;
-		@extend .icon-dual-arrow;
+		@extend .icon-dual-arrow !optional;
 		@include margin-right(8px);
 	}
 }
@@ -382,7 +382,7 @@ hr.content-divider{
 	}
 
 /* Topic label styles in forum list view */
-.topic-list .topic-labels .label{ @extend .label-small; }
+.topic-list .topic-labels .label{ @extend .label-small !optional; }
 
 .avatar-span{ margin-bottom: 15px; }
 .attach-wrapper, .attachments-list-form{ margin-top: 5px; }

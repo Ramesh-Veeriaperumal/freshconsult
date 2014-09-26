@@ -230,7 +230,7 @@ end
 
   # To optimize sprite generation
   gem "oily_png",             "1.1.1"
-
+  gem 'asset_sync',           '1.1.0'
   # Building custom font icons inside the application
   gem "fontcustom",           "1.3.3"
 # end
