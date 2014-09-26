@@ -1,19 +1,28 @@
 <% unless article.nil? %>
-<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
-<tr><td>
-	<div class="actions-menu">
-		<%= t('ticket.insert').html_safe %>:
-		<% if article.folder.visible?(current_user) && article.published? %>
-			<%= link_to_function t('ticket.suggested_solutions.link').html_safe, "respondWithSol('url', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
-		<%end%>
-		<% unless @ticket.is_twitter? or @ticket.is_facebook? %>
-			<%= link_to_function t('ticket.suggested_solutions.content').html_safe, "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
-		<% end %>
-	</div>
+	<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
+	<tr class="show-menu-on-hover">
+		<td>
+			<div class='actions-menu-wrapper'>
+				<div class="actions-menu">
+					<%= t('ticket.insert') %>:
+					<% if article.folder.visible?(current_user) && article.published? %>
+						<%= link_to_function t('ticket.suggested_solutions.link'), 
+										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{article.title}')", 
+										:class => "btn btn-mini btn-flat" %>
+					<% end %>
+					<% unless @ticket.is_twitter? or @ticket.is_facebook? %>
+						<%= link_to_function t('ticket.suggested_solutions.content'), 
+										"respondWithSol('content', '#{article.id}', '#{article_url}')", 
+										:class => "btn btn-mini btn-flat" %>
+					<% end %>
+				</div>
+			</div>
 
-	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
-	
-		<%= article.es_highlight('title').html_safe %>
-	<%= link_to "", article_url, :target => "blank", :title => truncate( article.desc_un_html, 100), :class => "open_in_new" %> 
-</td></tr>
+			<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
+			
+			<%= article.title %>
+			<%= link_to "", article_url, :target => "blank", 
+											:title => truncate( article.desc_un_html, 100), :class => "open_in_new" %> 
+		</td>
+	</tr>
 <% end %>

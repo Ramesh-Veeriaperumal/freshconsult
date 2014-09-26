@@ -288,7 +288,10 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "Important: Deleting this folder will delete all %{no_of_articles} article(s) in it."
+    delete: "Important: Deleting a folder will delete all the articles in it."
+    size: 
+      one: "1 article will also be deleted."
+      other: "%{count} articles will also be deleted."
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -1435,6 +1438,10 @@ en:
       announce: Announcement
       problem: Problems
     confim_msg1: Are you sure you want to delete this forum?
+    delete: "Important: Deleting a forum will delete all the topics in it."
+    size: 
+      one: "1 topic will also be deleted."
+      other: "%{count} topics will also be deleted."
     verb:
       questions: Question asked by
       ideas: Idea shared by
@@ -2046,6 +2053,11 @@ en:
       mark_this_problem_as: Mark this problem as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
+    delete: "Important: Deleting a topic will delete all the replies in it."
+    size: 
+      one: "1 reply will also be deleted."
+      other: "%{count} replies will also be deleted."
+    delete_empty: "Are you sure you want to delete this topic?"
   non_covered_feature_error: This feature is currently locked
   unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
   requester_replies: Requester Replies to Ticket
@@ -2117,8 +2129,11 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "Important: Deleting a category will delete all folders and articles in it."
+    delete: "Important: Deleting a category will delete all the folders and articles in it."
     size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+  forum_category:
+    delete: "Important: Deleting a category will delete all the forums and topics in it."
+    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
   billed_monthly: Billed monthly
   users:
     activations:
@@ -2878,6 +2893,7 @@ en:
       new:
         new_folder: Add Folder
       folder_form:
+        category: Category
         visible_to: Visible to
     articles:
       where: Where
@@ -2941,7 +2957,10 @@ en:
     address: Address
     background_info: Background Information
     tags: Tags
+    language: Language
+    timezone: Timezone
     sample_data: Sample data
+    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
     can_see_all_tickets_of_the_company: Can view all company tickets ?
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
     can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
@@ -3050,7 +3069,7 @@ en:
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
-    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
+    default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
@@ -3339,7 +3358,7 @@ en:
     default_note_text : Default Note will be added
     note_saved : Note saved
     edit_note: "<b>Edit Note</b>"
-    thanks: Thank you for submitting a feedback
+    thanks: Thank you for submitting your feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
@@ -3877,7 +3896,7 @@ en:
         new: "New"
         elapsed: "Response Due"
         resolved: "Resolved"
-        customer_responded_overdue: "Overdue"
+        customer_responded_overdue: "Customer Responded"
       tabular_view:
         title: "Title"
         posted: "Posted"
@@ -4198,6 +4217,13 @@ en:
         user_info_blank: Please add a twitter handle to your account to fetch user's information.
         feeds_blank: Please add a twitter handle to your account to fetch your custom stream.
         retweet_success: Retweeted.
+        favorite_success: Favorited.
+        follow_success: Followed
+        unfollow_success: Unfollowed
+        already_followed: Followed Already
+        already_unfollowed: Unfollwed Already
+        already_favorited_tweet: Already Favorited.
+        unfavorite_success: Unfavorited.
         already_retweeted: Tweet has already been retweeted from this account.
         tweeted: Your tweet has been sent.
         already_tweeted: Your tweet is a duplicated.
@@ -4205,8 +4231,13 @@ en:
         rate_limit_reached: Could not perform the operation. Please try after sometime.
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
+        wrong_call: Trying to unfavorite a tweet that has not been favorited
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
+        cannot_favorite: You dont have permission to favorite a tweet.
+        cannot_unfavorite: You dont have permission to unfavorite a tweet.
+        cannot_follow: You dont have permission to follow this user.
+        cannot_unfollow: You dont have permission to unfollow this user.
         cannot_create_fd_item: You dont have permission to convert a tweet to a ticket / note.
         cannot_post: You dont have permission to tweet.
         no_older_results: No more recent posts in this stream.
@@ -4634,7 +4665,7 @@ en:
       include_survey: "Include Survey"
       include_surveymonkey_link: "Include SurveyMonkey link"
       label: "SurveyMonkey"
-      helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
+      helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk based on the group that the ticket belongs to. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes and map it to various ticket groups in Freshdesk. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
       desc: "Integrate Freshdesk with SurveyMonkey and let your agents link any of your customized surveys to their messages when they are replying to tickets."
       form:
         survey_settings: ""
@@ -5423,8 +5454,8 @@ en:
       on_browser: "Available on Browser"
       invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
       no_calls: "No recent calls found"
-      available: "You are available to take calls"
-      unavailable: "You are unavailable to take calls"
+      available: "Accepting calls"
+      unavailable: "Not accepting calls"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."
@@ -5448,7 +5479,7 @@ en:
       desktop_notification: "Turn on desktop notification"
     call_history:
       title: "Call History"
-      sort_by: "Sort by:"
+      sort_by: "Sorted by:"
       singular_active_number: "Active Number"
       none_active_number: "- none -"
       active_number: "Active Numbers"
@@ -5463,9 +5494,9 @@ en:
       filtered_by: "Filtered by:"
       filter_by_time: "Time Period"
       filter_by_agent: "Agent"
-      filter_by_group: "Group"
+      filter_by_group: "Incoming Calls to Group"
       filter_by_call_status: "Call Type"
-      filter_by_caller: "Caller (Requester)"
+      filter_by_caller: "Requester"
       received_date: "Date"
       duration: "Duration"
       cost: "Cost"
@@ -5486,6 +5517,7 @@ en:
       block_number: "Block"
       unblock_number: "Unblock"
       block_number_title: "Block number"
+      filter_option_all_agents: "All Agents"
       filter_option_all_calls: "All Calls"
       filter_option_received_calls: "Incoming"
       filter_option_outgoing_calls: "Outgoing"
@@ -5496,12 +5528,12 @@ en:
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
-      ticket_desc: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
-      voicemail_ticket_desc: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
+      ticket_desc_with_out_name: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
+      voicemail_ticket_desc_with_out_name: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
       voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
-      dial_a_number: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
+      dial_a_number_with_out_name: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
       default_subject: "Call with %{customer} on %{call_date}"
       voicemail_subject: "Voicemail from %{customer}"
       human_name: "ticket"
@@ -5525,6 +5557,9 @@ en:
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
+      number:
+        simultaneous: "Call all agents"
+        round_robin: "Call idle agent first"
       number_settings:
         title: "Managing your call center with Freshfone"
         info: "<b>Assigning phone calls to agents and groups</b><br/>You can use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your Freshfone number</b><br>You could also configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/>"
@@ -5568,6 +5603,8 @@ en:
         anytime: 24/7 Anytime
         name: Name
         name_placeholder: Enter a friendly name for your number
+        hunt_type: "Call Routing"
+        routing_message: "When multiple agents are available online..."
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -5698,7 +5735,7 @@ en:
     copy_to_clipboard: "Copy to Clipboard"
     copied: "Copied!!"
     show: "Show"
-    required: "Required field"
+    required: "Required"
     name: "Name"
     phone: "Phone Number"
     mail: "Email"
@@ -5760,7 +5797,7 @@ en:
     valid_code: "Please enter a valid color value"
     visitor_disconnect_msg: "Visitor has left the chat"
     last_message: "Last Message..."
-    chat_recent_empty_tip: "You didn't chat with anyone recently"
+    chat_recent_empty_tip: "No recent messages"
     add_agent_to_chat: "No other agents logged in"
     url_error_msg: "No such url exists"
     accept: "Accept"
@@ -5855,6 +5892,7 @@ en:
     enter_custom_link: "Enter URL"
     url_error_msg: "Please enter a valid URL"
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
+    no_matching_agents: "No matching agents"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

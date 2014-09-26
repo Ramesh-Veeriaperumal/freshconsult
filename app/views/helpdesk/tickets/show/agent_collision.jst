@@ -1,0 +1,22 @@
+<% if(length == 1) {%>
+	Currently <%= action %> : 
+	<strong id="<%= userId %>" class="agent_detail" > 
+		<%if(chatAvailable) {%> 
+			<span class="active"><i class="ficon-message"></i></span> 
+			<a href="javascript:void(0)"  class="tooltip" title="Begin chat"> <%= name %> </a> 
+		<%} else{%> 
+			<%= name %> 
+		<%}%>
+	</strong>
+<% } else if(length >1) {%>
+	Currently <%= action %> : 
+	<strong id="<%= userId %>" class="agent_detail" > 
+		<%if(chatAvailable) {%>
+			<span class="active"><i class="ficon-message"></i></span> 
+			<a href="javascript:void(0)"  class='tooltip' title="Begin chat"><%= name %></a>
+		<%} else{%>  
+			<%= name %> 
+		<%}%>
+	</strong> and 
+	<a class="more_agents" rel="more-agents-hover" > <%= length-1 %> more </a>
+<% } %>

@@ -123,6 +123,7 @@ class Integrations::GoogleContactsImporter
             if user.exist_in_db?
               if overwrite_existing_user # && user.deleted == false
                 if sync_tag_id.blank? || user.tagged?(sync_tag_id)
+                  next if user.agent? && user.deleted?
                   updated = user.save
                   updated ? (user.deleted ? stats[2] += 1 : stats[1] += 1) : (user.deleted ? err_stats[2] += 1 : err_stats[1] += 1) 
                   GoogleContact.find(:first,:conditions => ["user_id = ? AND google_account_id = ?",user.id,@google_account.id]).destroy if user.deleted

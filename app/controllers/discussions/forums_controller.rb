@@ -48,6 +48,7 @@ class Discussions::ForumsController < ApplicationController
 
 
 	def update
+		@forum.forum_category_id = params[:forum][:forum_category_id] if new_forum_category?
 		if @forum.update_attributes(params[:forum])
 			respond_to do |format|
 				format.html { redirect_to discussions_forum_path(@forum) }
@@ -130,6 +131,10 @@ class Discussions::ForumsController < ApplicationController
 				stamps = params[:filter].delete('-').split(',')
 				@topics = @topics.find(:all,:conditions => [filter_conditions, stamps])
 			end
+		end
+
+		def new_forum_category?
+			params[:forum][:forum_category_id] && current_account.forum_categories.find_by_id(params[:forum][:forum_category_id]).present?
 		end
 
 		def filter_conditions

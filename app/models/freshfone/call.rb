@@ -285,7 +285,7 @@ class Freshfone::Call < ActiveRecord::Base
 				i18n_label = "freshfone.ticket.ticket_desc"
 				i18n_params.merge!({:agent => params[:agent].name,:agent_number => freshfone_number.number})
 			end
-			i18n_label += "_with_name" if valid_customer_name?
+			i18n_label += valid_customer_name? ? "_with_name" : "_with_out_name"
 			desc = I18n.t(i18n_label, i18n_params)
 			desc << "#{params[:call_log]}"
 			desc.html_safe

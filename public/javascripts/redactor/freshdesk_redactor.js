@@ -1,16 +1,18 @@
 // File to make the single point of initialization of redactor editor. Please make sure you add further initializations through the same function.
-    function invokeRedactor(element_id,type){
+    function invokeRedactor(element_id,type,attr){
+    	if(attr == "class") element_id = "."+element_id;
+    	else element_id ="#"+element_id;
     	switch(type){
     		case 'ticket':
-         	jQuery('#'+element_id).redactor({ 
+         	jQuery(element_id).redactor({ 
          		focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", cursorTracking:false,
          		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
          	break;
     		case 'forum':
-    			jQuery('#'+element_id).redactor({autoresize:false,convertDivs: false, cursorTracking:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
+    			jQuery(element_id).redactor({autoresize:false,convertDivs: false, cursorTracking:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;
 	    	case 'cnt-reply':
-	         	jQuery('#'+element_id).redactor({
+	         	jQuery(element_id).redactor({
 					focus: true, convertDivs: false, autoresize:false, observeImages:true, imageUpload:"/tickets_uploaded_images",
 					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat'],
 					execCommandCallback: function(obj, command) { 
@@ -38,19 +40,19 @@
 					} 
 				});
 	    	case 'cnt-fwd':
-	         	jQuery('#'+element_id).redactor({ 
+	         	jQuery(element_id).redactor({ 
 	         		focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
 	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
 	         	break;
 	        case 'cnt-note':
-	         	jQuery('#'+element_id).redactor({ 
+	         	jQuery(element_id).redactor({ 
 	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
 	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
 	         	break;
 	        case 'signature':
-	         	jQuery('#'+element_id).redactor({ focus: false,convertDivs: false,  cursorTracking:false, autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
+	         	jQuery(element_id).redactor({ focus: false,convertDivs: false,  cursorTracking:false, autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:
-	    	 	jQuery('#'+element_id).redactor({ convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+	    	 	jQuery(element_id).redactor({ convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
 	     	}
  	}
 

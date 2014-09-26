@@ -1,0 +1,13 @@
+<% @follow_hash.each do |handle, follows| %>
+  <% follow_clazz = follows ? "following" : "not-following" %>
+  <% following_clazz = follows ? "checkmark" : "plus"  %>
+  <li class = <%= follow_clazz %> data-screen-name = <%= handle %> >
+    <a href="">
+      <span>
+        <%= font_icon "twitter", :size => 16 %>
+        <%= font_icon "#{following_clazz}", :size => 12 %>
+      </span><%= "@#{handle}" %>
+    </a>
+  </li>
+<% end %>
+

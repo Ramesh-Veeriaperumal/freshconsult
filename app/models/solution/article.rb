@@ -1,11 +1,13 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
+  include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include ObserverAfterCommitCallbacks
   self.table_name =  "solution_articles"
   serialize :seo_data, Hash
 
+  acts_as_voteable
   acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'
@@ -13,6 +15,8 @@ class Solution::Article < ActiveRecord::Base
   belongs_to_account
   
   # xss_sanitize :only => [:description],  :html_sanitize => [:description]
+  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
+  
   has_many_attachments
   
   has_many :activities,
@@ -61,6 +65,8 @@ class Solution::Article < ActiveRecord::Base
     }
   }
 
+  VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
   end
@@ -83,6 +89,10 @@ class Solution::Article < ActiveRecord::Base
   
   def to_s
     nickname
+  end
+
+  def hit!
+    self.class.increment_counter :hits, id
   end
 
   
@@ -184,6 +194,14 @@ class Solution::Article < ActiveRecord::Base
 
   def article_changes
     @article_changes ||= self.changes.clone
+  end
+
+  VOTE_TYPES.each do |method|
+    define_method "toggle_#{method}!" do
+      increment(method)
+      decrement((VOTE_TYPES - [method]).first)
+      save!
+    end
   end
 
   def self.article_type_option

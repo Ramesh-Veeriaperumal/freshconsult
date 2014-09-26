@@ -15,14 +15,12 @@
 			<%= form.text_area :description, :rows => 7, :class => "input-xxlarge" %>
 		</div>
 	</div>
-	<% if @forum.new_record? %>
 	<div class="control-group">
 		<%= form.label :forum_category_id, t('forum.category'), :class => "control-label" %>
 		<div class="controls">
 			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
 		</div>
 	</div>
-	<% end %>
 	<% unless @forum.topics_count > 0 %>
 	<div class="control-group">
 		<%= form.label :forum_type, t('forum.type'), :class => "control-label" %>

@@ -156,7 +156,8 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             done: "<%= t('freshchat.done') %>",
             edit: "<%= t('freshchat.edit') %>",
             show: "<%= t('freshchat.show') %>",
-            required: "<%= t('freshchat.required') %>"
+            required: "<%= t('freshchat.required') %>",
+            no_matching_agents: "<%= t('freshchat.no_matching_agents') %>"
         };
 
 (function($){
@@ -184,8 +185,8 @@ var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
     });
 })(jQuery);
 </script>
-<%if (chat_active? && !(is_assumed_user?))%>
-<div id="freshchat_layout"></div>
+<%if (current_user && chat_active? && !(is_assumed_user?))%>
+<div id="freshchat_layout" class="fc-layout"></div>
 <script language="javascript">
 (function($){
     $(document).ready(function(){

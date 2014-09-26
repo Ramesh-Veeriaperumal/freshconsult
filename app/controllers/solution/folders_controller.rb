@@ -7,6 +7,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:show, :edit, :update, :destroy]
+  before_filter :fetch_new_category, :only => :update
   before_filter :set_customer_folder_params, :only => [:create, :update]
   
   def index
@@ -72,12 +73,14 @@ class Solution::FoldersController < ApplicationController
 
   def update
     @folder = @category.folders.find(params[:id])
-    
-    redirect_to_url = solution_category_url(params[:category_id])
+
+    @folder.category_id = @new_category.id
     
     respond_to do |format|     
       if @folder.update_attributes(params[nscname])       
-        format.html { redirect_to redirect_to_url }
+        format.html do 
+          redirect_to solution_category_folder_path(@new_category.id, @folder.id)
+        end
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else
@@ -151,6 +154,13 @@ class Solution::FoldersController < ApplicationController
 
     def load_category
       @category = portal_scoper.find_by_id!(params[:category_id])
+    end
+
+    def fetch_new_category
+      if params[:solution_folder][:category_id]
+        @new_category = portal_scoper.find_by_id(params[:solution_folder][:category_id])
+      end
+      @new_category ||= @category
     end
 
     def set_customer_folder_params

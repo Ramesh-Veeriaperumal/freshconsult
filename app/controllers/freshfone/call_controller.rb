@@ -5,24 +5,24 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallsRedisMethods
 	include Freshfone::TicketActions
+	include Freshfone::Call::EndCallActions
 	
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :force_termination, :only => [:status]
 	before_filter :clear_client_calls, :only => [:status]
-
+	before_filter :reset_outgoing_count, :only => [:status]
+	
 	include Freshfone::Call::CallCallbacks
-	include Freshfone::Call::EndCallActions
 	include Freshfone::Call::BranchDispatcher
 
 	def caller_data
-    call_meta_data = call_meta
     respond_to do |format|
       format.nmobile {
         render :json => {
           :user_name => (@user || {})[:name],
-          :country => call_meta_data.present? ? call_meta_data[:country] : nil
+          :call_meta => call_meta
         }
       }
       format.js {
@@ -31,7 +31,7 @@ class Freshfone::CallController < FreshfoneBaseController
                           :locals => { :user => @user }),
 		      :user_name => (@user || {})[:name],
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta_data
+          :call_meta => call_meta
     		}
       }
 	  end
@@ -39,7 +39,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 	def status
 		begin
-			call_forwarded? ? handle_forwarded_calls : normal_end_call
+			handle_end_call
 		rescue Exception => e
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml

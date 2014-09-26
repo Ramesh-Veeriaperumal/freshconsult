@@ -20,7 +20,7 @@
 			field_value = @ticket.get_ff_value(field.name)
 			field_label = (field.label).html_safe
 		end
-		dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+		dom_type    = default_hidden_fields.include?(field.field_type) ? "dropdown" : field.dom_type
 		if(field.field_type == "nested_field")
 			field_value = {}
 			field.nested_levels.each do |ff|

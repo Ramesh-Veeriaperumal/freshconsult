@@ -3,6 +3,8 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
   include Social::Twitter::Util
   include Social::Dynamo::Twitter
   include Social::Twitter::TicketActions
+  
+  attr_accessor :user_mentions, :favorited
 
   def initialize(feed_obj)
     @stream_id          = feed_obj[:stream_id][:s]
@@ -25,6 +27,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     @body        = data[:body]
     @user_in_db  = true unless feed_obj[:fd_user].nil?
     @in_conv     = feed_obj[:in_conversation][:n].to_i
+    @favorited   = (feed_obj[:favorite].nil? || feed_obj[:favorite][:n].to_i == 0) ? false : true
     @ticket_id   = feed_obj[:fd_link][:ss][0] unless feed_obj[:fd_link].nil?
     @agent_name  = feed_obj[:replied_by][:ss][0] unless feed_obj[:replied_by].nil?
   end

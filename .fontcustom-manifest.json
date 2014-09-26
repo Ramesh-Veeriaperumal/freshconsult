@@ -130,6 +130,10 @@
       "codepoint": 61745,
       "source": "public/glyphs/vectors/comment-multi.svg"
     },
+    "comments": {
+      "codepoint": 61813,
+      "source": "public/glyphs/vectors/comments.svg"
+    },
     "conversation": {
       "codepoint": 61707,
       "source": "public/glyphs/vectors/conversation.svg"
