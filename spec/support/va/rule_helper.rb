@@ -26,7 +26,7 @@ module VA::RuleHelper
 
   def create_required_objects
     @product = @account.products.create(Factory.attributes_for(:product))
-    @company = @account.customers.create(Factory.attributes_for(:company))
+    @company = @account.companies.create(Factory.attributes_for(:company))
     @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @responder = add_test_agent(@account)
     @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))

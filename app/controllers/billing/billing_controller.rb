@@ -18,6 +18,9 @@ class Billing::BillingController < ApplicationController
   # Events to be synced for all sources including API.
   SYNC_EVENTS_ALL_SOURCE = [ "payment_succeeded", "payment_refunded", "subscription_reactivated" ]
 
+  ADDONS_TO_IGNORE = ["bank_charges_monthly", "bank_charges_quarterly", "bank_charges_half_yearly", 
+    "bank_charges_annual"]
+
   INVOICE_TYPES = { 
     :recurring => "0", 
     :non_recurring => "1" 
@@ -218,8 +221,8 @@ class Billing::BillingController < ApplicationController
 
     def update_addons(subscription, billing_subscription)
       addons = billing_subscription.addons.to_a.collect{ |addon| 
-        Subscription::Addon.fetch_addon(addon.id) 
-      }
+        Subscription::Addon.fetch_addon(addon.id) unless ADDONS_TO_IGNORE.include?(addon.id)
+      }.compact
       
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)

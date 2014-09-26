@@ -54,7 +54,7 @@ describe Support::NotesController do
                   :ticket_id => test_ticket.display_id
     Resque.inline = false
     client_manager_note = @account.tickets.find(test_ticket.id).notes.last
-    client_manager_note.user.customer.id.should be_eql(new_company.id)
+    client_manager_note.user.company.id.should be_eql(new_company.id)
     client_manager_note.user_id.should be_eql(new_contacts[1].id)
     flash[:notice].should eql "The note has been added to your ticket."
   end

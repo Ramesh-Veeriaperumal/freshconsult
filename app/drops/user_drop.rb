@@ -57,12 +57,12 @@ class UserDrop < BaseDrop
 
 	# To access User's company details
 	def company
-		@company ||= @source.customer if @source.customer
+		@company ||= @source.company if @source.company
 	end
 
 	# !TODO This may be deprecated on a later release
 	def company_name
-		@company_name ||= @source.customer.name if @source.customer
+		@company_name ||= @source.company.name if @source.company
 	end
 
 

@@ -14,7 +14,7 @@
 		border-bottom:0;
 	}
 	p{
-		line-height:1.5em;
+		line-height:1.6em;
 		@include margin(0 0 14px 0);
 		color:#444;
 	}  
@@ -82,7 +82,9 @@
 //										Free Trial Notification
 // -------------------------------------------------------------------------------------------- 
 .trial_expiry {
-	padding-top:12px;
+	
+	margin:(-$common-padding) (-$common-padding) 0;
+	padding: $common-padding / 2 $common-padding;
 	p{
 		color: #777;
 	}
@@ -250,4 +252,93 @@ div.addReminder{
 	position:absolute;
  	@include right(0);
 	top:$common-padding / 2;
+}
+// -----------------------------------------------------------
+//				Trial Account Salesperson details
+// -----------------------------------------------------------
+.details-container{
+	margin-bottom: -20px;
+}
+.sp-title{
+	background-color:#fefef0;
+	margin:(-$common-padding) (-$common-padding) 0;
+	padding: $common-padding / 2 $common-padding;
+	h3.title{
+		font-weight:bold;
+		line-height: 20px;
+	}
+}
+.sp-details{
+	background-color:#FEFED2;
+	margin: 0 (-$common-padding);
+	padding: $common-padding / 2 $common-padding;
+	border-top: 1px solid #aaa;
+	position:relative;  // Arrow Up based this
+	.arrow-up{
+		border-bottom-color: #aaa;
+		top: -15px;
+		position: absolute;
+		&:after{
+			content: " ";
+			position: absolute;
+			border-style: solid;
+			border-color: transparent;
+			border-width: 0.6em;
+			border-bottom-color: #FEFED2;
+			border-bottom-width: 0.9em;
+			margin-left: -5px;
+			margin-top: -3px;
+		}
+	}
+}
+.sp-details-list{
+	li{padding-bottom:5px;}
+}
+.plan_and_expiry{
+	background-color:#666;
+	margin:0 (-$common-padding);
+	padding: 12px $common-padding;
+	.arrow-right{
+    	border-left-color: #fff;
+	}
+	p{
+		text-align: center;
+	}
+}
+.select-plan{
+    width: 48%;
+    display: inline-block;
+    text-align: right;
+    vertical-align: middle;
+    font-weight: 700;
+    a, a:hover{
+	    color: #fff;
+	    padding: 10px 0px;
+	    text-decoration: underline;
+    }
+    a:hover{
+    	text-decoration: none;
+    }
+}
+.current-plan-name{
+    width: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    color: #fff;
+    word-wrap: break-word;
+}
+.expiry-details{
+	color: #fff;
+	display: block;
+	text-align: center;
+	vertical-align: middle;
+}
+.trial-alert-color{
+	background-color: #444;
+}
+.trial-end-alert-color{
+	background-color: #900;
+	span{
+		font-weight: 700;
+	}
 }

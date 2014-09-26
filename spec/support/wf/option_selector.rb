@@ -34,7 +34,7 @@ module Wf::OptionSelecter
   end
 
   def option_in_ticket_for_customers options
-    @ticket.requester.customer_id
+    @ticket.requester.company_id
   end
 
   def option_in_ticket_for_products options

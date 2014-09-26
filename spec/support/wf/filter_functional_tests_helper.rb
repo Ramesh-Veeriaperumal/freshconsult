@@ -2,7 +2,7 @@ module Wf::FilterFunctionalTestsHelper
 
   NESTED_FIELD  = { :field_type=>"nested_field", :label=>Faker::Name.name, :label_in_portal=>"Dependent1", :description=>"", :position=>111, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :field_options=>nil, :type=>"dropdown", :choices=>[["category 1", "category 1", [["subcategory 1", "subcategory 1", [["item 1", "item 1"], ["item 2", "item 2"]]], ["subcategory 2", "subcategory 2", [["item 1", "item 1"], ["item 2", "item 2"]]], ["subcategory 3", "subcategory 3", []]]], ["category 2", "category 2", [["subcategory 1", "subcategory 1", [["item 1", "item 1"], ["item 2", "item 2"]]]]]], 
                     :levels=>[{"id"=>3, "label"=>Faker::Name.name, "label_in_portal"=>"Dependent2", "description"=>"", "level"=>2, "position"=>112, "type"=>"dropdown"}, {"id"=>4, "label"=>Faker::Name.name, "label_in_portal"=>"Dependent3", "description"=>"", "level"=>3, "position"=>113, "type"=>"dropdown"}] }
-  DROPDOWN  = { :field_type=>"custom_dropdown", :label=>Faker::Name.name, :label_in_portal=>"Dropdown", :description=>"", :position=>115, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :choices=>[["First Choice", "First Choice"], ["Second Choice", "Second Choice"]], :levels=>nil, :field_options=>nil, :type=>"dropdown"  }
+  DROPDOWN  = { :field_type=>"custom_dropdown", :label=>Faker::Name.name, :label_in_portal=>"Dropdown", :description=>"", :position=>115, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :choices=>[["First Choice", "First Choice"], ["Second Choice", "Second Choice"]], :picklist_values_attributes => [{:value => "First Choice"}, {:value => "Second Choice"}], :levels=>nil, :field_options=>nil, :type=>"dropdown"  }
 
   def before_all
     @account = create_test_account
@@ -11,7 +11,7 @@ module Wf::FilterFunctionalTestsHelper
   end
 
   def prep_a_ticket
-    @company = @account.customers.create(Factory.attributes_for(:company))
+    @company = @account.companies.create(Factory.attributes_for(:company))
     @group = @account.groups.create(Factory.attributes_for(:group))
     @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @product = @account.products.create(Factory.attributes_for(:product))

@@ -69,7 +69,7 @@
 			</div>
 		</li>
 		<li class="control-group">
-			<%= label(:user, :phone, "#{t('user.mobile_phone')}.",:class => "control-label" ) %>
+			<%= label(:user, :mobile, "#{t('user.mobile_phone')}.",:class => "control-label" ) %>
 			<div class="controls">
 				<%= text_field(:user, :mobile, :class => "text input-xlarge", :id => "phone_mobile" , :placeholder => t('user.mobile') ) %>
 			</div>
@@ -89,23 +89,15 @@
 
 
 		<li class="control-group">
-			<%
-				company_name = "";
-				role_disabled = true
-				unless @user.customer.nil?
-					company_name =  @user.customer.name
-					role_disabled = false
-				end
-			%>
-			<%= label(:user, :customer, t('user.company'), :class => "control-label") %>
+			<%= label(:user, :company_name, t('user.company'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field(:user, :customer, :class => "text input-xlarge" , :value => company_name, :id => "contact_customer") %>
+				<%= text_field(:user, :company_name, :class => "text input-xlarge" , :id => "contact_customer") %>
 			</div>
 		</li>
 		<li class="control-group">	
 			<label class="control-label"></label>
 			<div class="controls">		
-			<%= check_box(:user, :client_manager, { :disabled => role_disabled, :id =>'contact_role', :checked => @user.privilege?(:client_manager) }, true, false) %>
+			<%= check_box(:user, :client_manager, { :disabled => @user.company_name.nil?, :id =>'contact_role' }, true, false) %>
 			   	<%= t('contacts.role.info') %>
 			</div>
 		</li>
@@ -134,9 +126,9 @@
 			</li>
 		<% end %>
 		<li class="control-group">
-			<%= label(:user, :tags, t('tag.title'), :class => "control-label") %>
+			<%= label(:user, :tag_names, t('tag.title'), :class => "control-label") %>
 			<div class="controls">
-				<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2  input-xxlarge"%>
+				<%= text_field :user, :tag_names, :class => "select2 input-xxlarge"%>
 			</div>
 		</li>
 		<li class="control-group">

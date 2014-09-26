@@ -1,5 +1,5 @@
 # encoding: utf-8
-class CustomersController < ApplicationController
+class CustomersController < ApplicationController # Will be Deprecated. Use CompaniesController
   # GET /customers
   # GET /customers.xml
   
@@ -12,19 +12,14 @@ class CustomersController < ApplicationController
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
     respond_to do |format|
-      format.html  do
-        @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
+      format.html do
+        redirect_to companies_url
       end
-     format.xml  do
-        render :xml => es_scoper(per_page)
+      format.xml  do
+        render :xml => es_scoper(per_page).to_xml( :root => 'customers')
       end
       format.json do
-        render :json => es_scoper(per_page)
-      end
-      
-      format.atom do
-        @customers =current_account.customers.filter(params[:letter],params[:page], per_page)
-        @customers = @customers.newest(20)
+        render :json => es_scoper(per_page).to_json( :root => 'customer')
       end
     end
   end
@@ -33,37 +28,21 @@ class CustomersController < ApplicationController
   # GET /customers/1.xml
   def show
     respond_to do |format|
-      format.html { 
-        @total_customer_tickets = current_account.tickets.permissible(current_user).all_company_tickets(@customer.id).visible
-        @customer_tickets = @total_customer_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
-      }
-      format.xml  { render :xml => @customer }
-      format.json {render :json=> @customer.to_json}
+      format.html { redirect_to company_url(@customer) }
+      format.xml  { render :xml  => @customer.to_xml(  :root => 'customer') }
+      format.json { render :json => @customer.to_json( :root => 'customer') }
     end
   end
 
   # GET /customers/new
   # GET /customers/new.xml
   def new
-    @customer = current_account.customers.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @customer }
-    end
+    redirect_to new_company_url
   end
 
   # GET /customers/1/edit
   def edit
-  end
-  
-  def quick
-   if build_and_save  
-      flash[:notice] = t(:'flash.general.create.success', :human_name => 'company')
-   else
-     flash[:notice] =  activerecord_error_list(@customer.errors)
-   end
-   redirect_to(customers_url)
+    redirect_to edit_company_url(@customer)
   end
 
   # POST /customers
@@ -71,47 +50,70 @@ class CustomersController < ApplicationController
   def create
     respond_to do |format|
       if build_and_save
-        format.html { redirect_to(@customer, :notice => 'Company was successfully created.') }
-        format.xml  { render :xml => @customer, :status => :created, :location => @customer }
-        format.json  { render :json => @customer, :status => :created }
+        format.xml  { render  :xml => @customer.to_xml(:root => 'customer'), 
+                              :status => :created, :location => @customer }
+        format.json  { render :json => @customer.to_json(:root => 'customer'), :status => :created }
       else
-        format.html { render :action => "new" }
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
         format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
       end
     end
-  end
-  
-  def build_and_save
-    @customer = current_account.customers.new((params[:customer]))
-    @customer.save
   end
 
   # PUT /customers/1
   # PUT /customers/1.xml
   def update
-
     respond_to do |format|
       if @customer.update_attributes(params[:customer])
-        format.html { redirect_to(@customer, :notice => 'Company was successfully updated.') }
         format.xml  { head :ok }
         format.json { head :ok }
       else
-        format.html { render :action => "edit" }
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
         format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  def sla_policies
+  def destroy # duplicating the code from helpdesk_controller_methods for maintaining the root node returned
+    @items.each do |item|
+      if item.respond_to?(:deleted)
+        item.update_attribute(:deleted, true)
+        @restorable = true
+      else
+        item.destroy
+      end
+    end
+    
+    options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
+    respond_to do |expects|
+      expects.html do 
+        process_destroy_message  
+        redirect_to after_destroy_url
+      end
+      expects.mobile{
+        render :json => {:success => true}
+      }
+      expects.nmobile{
+        render :json => {:success => true}
+      }
+      expects.json  { render :json => :deleted}
+      expects.js { 
+        process_destroy_message
+        after_destory_js 
+      }
+      #until we impl query based retrieve we show only limited data on deletion.
+      expects.xml{ render :xml => @items.to_xml(options.merge(:root => 'customers'))}
+    end
+  end
+
+  def sla_policies # can i remove this?
     render :layout => false
   end
   
   protected
 
     def scoper
-      current_account.customers
+      current_account.companies
     end
 
     def es_scoper(per_page)
@@ -124,12 +126,17 @@ class CustomersController < ApplicationController
         @selected_tab = :customers
     end
 
+    def build_and_save
+      @customer = current_account.companies.new((params[:customer]))
+      @customer.save
+    end
+
     def get_domain(domains) # Possible dead code
       domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
     end
 
     def after_destroy_url
-      return customers_url
+      return companies_url
     end
   
 end

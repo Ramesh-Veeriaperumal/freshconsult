@@ -98,10 +98,10 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-   if (self.customer_id.nil? && self.email)      
+   if (self.company_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       cust = account.customers.domains_like(email_domain).first
-       self.customer_id = cust.id unless cust.nil?    
+       comp = account.companies.domains_like(email_domain).first
+       self.company_id = comp.id unless comp.nil?    
    end
   end
 

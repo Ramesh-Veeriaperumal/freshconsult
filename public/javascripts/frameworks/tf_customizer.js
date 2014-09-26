@@ -202,7 +202,7 @@
                   });
                 }else{
                   $(dataItem.choices).each(function(ci, choice){
-                    field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+                    field.append("<option " + choice[choice.size()-1] + ">" + choice[0] + "</option>");
                   });
                 }
                field.wrapInner("<select "+fieldAttr+" disabled='true' />");
@@ -360,7 +360,7 @@
          data	= data || [ '', 0 ];
          var inputData = $("<input type='text' />")
                               .val(unescapeHtml(data[0]))
-                              .attr("data_id", data[1])
+                              .attr("data_id", data[data.size()-1])
                               .change(function(){$("#ChoiceListValidation").next("label").hide();});
          var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
@@ -413,15 +413,34 @@
                 temp[0]     = escapeHtml(input_box.val());
                 temp[1]     = input_box.attr("data_id");
                 
-            if($.trim(temp[0]) !== '') choices.push(temp);
+            if($.trim(temp[0]) !== '' && input_box.attr("data-deleted") != "true") choices.push(temp);
          });
+         return choices;
+      }
+
+      function getAllChoicesAsHash(dom){      
+         var choices = $A(),
+             index   = 1;      
+         dom.find('fieldset').each(function(choiceset){
+            var temp        = {},
+                input_box   = $(this).find("span.dropchoice input");
+                
+            temp["value"]     = escapeHtml(input_box.val());
+            if(input_box.attr("data-deleted") != "true") temp["position"]  = index++;
+            if(input_box.attr("data_id") > 0) temp["id"]     = input_box.attr("data_id");
+            if(input_box.attr("data-deleted") == "true") temp["_destroy"] = true;
+                
+            if($.trim(temp["value"]) !== '') choices.push(temp);
+         });
+         console.info(choices)
          return choices;
       }
 
       jQuery("#DropFieldChoices .deleteChoice")
          .live('click', function(){
                           if(jQuery(this).parent().siblings().size() !== 0) {
-                            jQuery(this).parent().remove();
+                            $($(this).siblings()[1]).children().attr("data-deleted",true);
+                            jQuery(this).parent().hide();
                             saveAllChoices();
                           }
                         });
@@ -645,8 +664,11 @@
             }else if(_field_type == "default_status"){
               sourceData.set("choices", getAllStatusChoices());
               //console.log(getAllStatusChoices());
+            }else if(_field_type == "default_ticket_type" || _field_type == "custom_dropdown"){
+              sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
+              sourceData.set("picklist_values_attributes",getAllChoicesAsHash(dialogDOMMap.choices));
             }else{
-              sourceData.set("choices", getAllChoices(dialogDOMMap.choices));  
+              sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
             }
 
             setAction(sourceData, "edit"); 

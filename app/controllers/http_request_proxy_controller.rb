@@ -9,15 +9,14 @@ class HttpRequestProxyController < ApplicationController
   def fetch
     httpRequestProxy = HttpRequestProxy.new
     http_resp = httpRequestProxy.fetch(params, request);
+    
     response.headers.merge!(http_resp.delete('x-headers')) if http_resp['x-headers'].present?
     render http_resp
   end
 
   private
-    def populate_server_password
-
+    def populate_server_password  
       if params[:use_server_password].present?
-
         installed_app = current_account.installed_applications.with_name(params[:app_name]).first
         if params[:app_name] == "icontact"
           config = File.join(Rails.root, 'config', 'integrations_config.yml')
@@ -31,6 +30,9 @@ class HttpRequestProxyController < ApplicationController
           harvest_auth(installed_app)
         elsif params[:app_name] == "pivotal_tracker"
           params[:custom_auth_header] = {"X-Trackertoken" => "#{installed_app.configs[:inputs]['api_key']}" }
+        elsif params[:app_name] == "seoshop"
+          params[:username] = "#{installed_app.configs[:inputs]['api_key']}"
+          params[:password] = "#{installed_app.configs[:inputs]['api_secret']}"
         else
           params[:password] = installed_app.configsdecrypt_password
         end

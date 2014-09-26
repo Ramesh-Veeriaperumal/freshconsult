@@ -43,11 +43,6 @@ def destroy
 end
 
 def update_contact
-    company_name = params[:user][:customer]
-    unless company_name.blank? 
-     company = current_account.customers.find_or_create_by_name(company_name) 
-     @obj.customer_id = company.id
-    end
     if @obj.update_attributes(params[cname])
       flash[:notice] = t(:'flash.profile.update.success')
       redirect_to :back

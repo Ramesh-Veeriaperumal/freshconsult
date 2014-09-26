@@ -57,6 +57,18 @@ var FreshfoneUser,
 		userPresenceDomChanges: function () {
 			this.online ? this.onlineUserPresenceDomChanges() : this.offlineUserPresenceDomChanges();
 		},
+		get_presence: function(callback) {
+			$.ajax({
+        url : '/freshfone/users/get_presence',
+        type: 'GET',
+        success: function(json) {
+        	if (callback) callback(null, json.status);
+        },
+        error: function(e) {
+        	if (callback) callback(e, null);
+        }
+			});
+		},
 		reset_presence_on_reconnect: function () {
 			$.ajax({
 				type: "POST",

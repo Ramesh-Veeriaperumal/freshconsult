@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   around_filter :select_shard
   
-  before_filter :unset_current_account, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :set_default_locale, :set_locale
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
@@ -83,6 +83,10 @@ class ApplicationController < ActionController::Base
   
   def unset_current_account
     Thread.current[:account] = nil
+  end
+
+  def unset_current_portal
+    Thread.current[:portal] = nil
   end
   
   def set_current_account

@@ -3867,7 +3867,7 @@ tr:
       verify_credentials: "Giriş yapamadınız, lütfen bilgileri kontrol ediniz"
       sso:
         expected_params: "İsim, e-posta ve hash gerekiyor, ancak girilmemiş"
-        invalid_time_entry: "Inavlid time entry"
+        invalid_time_entry: "Invalid time entry"
       success: "Giriş başarılı!"
       failed: "Giriş başarılı oldu!"
       deleted_user: "We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access."

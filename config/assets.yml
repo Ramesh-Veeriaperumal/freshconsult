@@ -173,7 +173,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
-    - public/javascripts/frameworks/socket.io.js
+    - public/javascripts/frameworks/socket.io-1.0.6.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
@@ -243,6 +243,8 @@ javascripts:
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
     - public/javascripts/app/product_notifications.js
+
+  freshchat:
     - public/javascripts/freshchat/freshchat.js
 
   pattern:

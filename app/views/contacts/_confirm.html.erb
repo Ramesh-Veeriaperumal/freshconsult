@@ -7,7 +7,7 @@
         <%= user_avatar(@source_user) %>
         <a class="item_info"><b><%= h(@source_user.name) %></b></a>
         <div class="info_contact_data">
-          <span><%= h(@source_user.customer.name) unless @source_user.customer.nil?%></span>
+          <span><%= h(@source_user.company.name) unless @source_user.company.nil?%></span>
           <span><%= h(@source_user.email) %></span>
         </div>
       </div>
@@ -26,7 +26,7 @@
               <a class="item_info"><b><%= h(target.name) %></b></a>
               <%= hidden_field_tag 'target[]', target.id %>
               <div class="info_contact_data">
-                <span><%= h(target.customer.name) unless target.customer.nil?%></span>
+                <span><%= h(target.company.name) unless target.company.nil?%></span>
                 <span><%= h(target.email) %></span>
               </div>
             </div>

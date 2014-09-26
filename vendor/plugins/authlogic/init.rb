@@ -25,8 +25,7 @@ Authlogic::Session::Base.class_eval do
   end
 
   def secure
-    return @secure if defined?(@secure)
-    @secure = self.class.secure
+    return controller.request.protocol == "https://"
   end
 
   # Accepts a boolean as to whether the cookie should be marked as secure.  If true the cookie will only ever be sent over an SSL connection.
@@ -51,8 +50,7 @@ Authlogic::Session::Base.class_eval do
   end
 
   def httponly
-    return @httponly if defined?(@httponly)
-    @httponly = self.class.httponly
+    true
   end
 
   # Accepts a boolean as to whether the cookie should be marked as httponly.  If true, the cookie will not be accessable from javascript

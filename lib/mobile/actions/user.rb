@@ -7,7 +7,7 @@ module Mobile::Actions::User
       :methods => [ :avatar_url, :is_agent, :is_customer,  :is_client_manager, :company_name,:user_time_zone],
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
-    to_json options
+    as_json(options,true).to_json
   end
   
 	def to_mob_json
@@ -19,7 +19,7 @@ module Mobile::Actions::User
                     
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
-    to_json options
+    as_json(options,true).to_json
   end
 
   def original_avatar
