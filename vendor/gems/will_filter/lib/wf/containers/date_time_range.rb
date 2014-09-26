@@ -46,13 +46,13 @@ module Wf
       end
 
       def start_time
-        Time.parse(start_value)
+        ::Time.parse(start_value)
       rescue ArgumentError
         nil
       end
 
       def end_time
-        Time.parse(end_value)
+        ::Time.parse(end_value)
       rescue ArgumentError
         nil
       end

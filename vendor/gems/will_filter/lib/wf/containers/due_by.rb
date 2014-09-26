@@ -47,12 +47,12 @@ module Wf
      end
      
       def get_due_by_con(val)
-        eight_hours = Time.zone.now + 8.hours
+        eight_hours = ::Time.zone.now + 8.hours
         
-       due_by_hash = { TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{Time.zone.now.to_s(:db)}'",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.end_of_day.to_s(:db)}' ",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{Time.zone.now.to_s(:db)}' and due_by <= '#{eight_hours.to_s(:db)}' "}
+       due_by_hash = { TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{::Time.zone.now.to_s(:db)}'",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{::Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{::Time.zone.now.end_of_day.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{::Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{::Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{::Time.zone.now.to_s(:db)}' and due_by <= '#{eight_hours.to_s(:db)}' "}
           
        due_by_hash[val.to_i]
       end
