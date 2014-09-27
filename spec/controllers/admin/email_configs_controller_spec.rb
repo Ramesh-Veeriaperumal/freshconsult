@@ -504,18 +504,6 @@ describe Admin::EmailConfigsController do
     response.session[:flash][:warning].should =~ /#{email_config.reply_email} has been activated already!/
   end
 
-  it "should enable id less tickets" do
-    post :id_less_tickets_enable
-    @account.reload
-    @account.features?(:id_less_tickets).should eql true
-  end
-
-  it "should disable id less tickets" do
-    post :id_less_tickets_disable
-    @account.reload
-    @account.features?(:id_less_tickets).should eql false
-  end
-
   it "should enable reply_to email feature" do
     post :reply_to_email_enable
     @account.reload

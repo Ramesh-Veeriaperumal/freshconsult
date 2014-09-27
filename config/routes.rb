@@ -147,9 +147,8 @@
                      :personalized_email_enable => :post, 
                      :personalized_email_disable => :post, 
                      :reply_to_email_enable => :post, 
-                     :reply_to_email_disable => :post, 
-                     :id_less_tickets_enable => :post, 
-                     :id_less_tickets_disable => :post }
+                     :reply_to_email_disable => :post
+                    }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
