@@ -52,7 +52,7 @@
 			<% if current_user.privilege?(:manage_account) %>
 	    		<div class="plan_and_expiry">
 					<span class="current-plan-name">
-						Current Plan: <b><%= current_account.subscription_plan.name %></b>
+						Current Plan: <b><%= current_account.subscription.subscription_plan.name %></b>
 					</span>
 				    <span class="select-plan">
 				    	<%= link_to("Choose a Plan >", subscription_url) %>
