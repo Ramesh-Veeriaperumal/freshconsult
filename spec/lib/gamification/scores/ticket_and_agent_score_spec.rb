@@ -48,7 +48,7 @@ describe "Ticket and Agent score specs" do
     after(:all) do
       Resque.inline = false
       @ticket.destroy
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
   
@@ -95,7 +95,7 @@ describe "Ticket and Agent score specs" do
     after(:all) do
       Resque.inline = false
       @ticket.destroy
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
   
@@ -128,7 +128,7 @@ describe "Ticket and Agent score specs" do
     
     after(:all) do
       Resque.inline = false
-      @agent.user.destroy
+      # @agent.user.destroy
       @ticket.destroy
     end
   end
@@ -173,7 +173,7 @@ describe "Ticket and Agent score specs" do
     after(:all) do
       Resque.inline = false
       @ticket.destroy
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
   
@@ -213,7 +213,7 @@ describe "Ticket and Agent score specs" do
     after(:all) do
       Resque.inline = false
       @ticket.destroy
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
 end

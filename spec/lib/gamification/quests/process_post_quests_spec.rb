@@ -17,9 +17,9 @@ describe Gamification::Quests::ProcessPostQuests do
 		Resque.inline = false
 	end
 
-	after(:all) do
-		@user.destroy
-	end
+	# after(:all) do
+	# 	@user.destroy
+	# end
 
 	context "For quest achievement with quest_data and and_filters conditions" do
 

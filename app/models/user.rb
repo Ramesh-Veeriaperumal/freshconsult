@@ -2,6 +2,7 @@
 class User < ActiveRecord::Base
   
   belongs_to_account
+  include ArExtensions
   include ActionController::UrlWriter
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
@@ -631,7 +632,7 @@ class User < ActiveRecord::Base
       @parsed_name ||= Namae::Name.parse(self.name)
     end
 
-    def bakcup_user_changes
+    def backup_user_changes
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
     end

@@ -9,7 +9,7 @@ class AccountConfiguration < ActiveRecord::Base
 
   after_update :update_crm, :update_billing, :update_reseller_subscription
 
-  
+
   def admin_first_name
   	contact_info[:first_name]
   end
@@ -19,12 +19,16 @@ class AccountConfiguration < ActiveRecord::Base
   end
 
   def admin_email
-  	contact_info[:email]
+    contact_info[:email]
+  end
+
+  def notification_emails
+    contact_info[:notification_emails] || [admin_email]
   end
 
   def admin_phone
   	contact_info[:phone]
-  end	
+  end
 
   def invoice_emails
   	billing_emails[:invoice_emails]

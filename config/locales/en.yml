@@ -1104,6 +1104,12 @@ en:
         valid_ip_address: Enter valid IP Address
         invalid_ip_range: Invalid IP Range
         current_ip_not_in_range: Your current IP is not in the list of Ranges
+        admin_notifications: Admin Notifications
+        send_notifications: Send notifications to
+        select_admin: "Select an Administrator"
+        notifications: "Notification will be sent when"
+        agent_create_or_delete: "Agent is Added or Deleted"
+        whitelisted_ip_modified: "IP Whitelisting is modified"
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
@@ -2041,10 +2047,11 @@ en:
       restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
+  account_configuration:
+    notification_emails_blank: "Please select an Administrator"
   domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
   long_company_name_error: Company name shouldn't exceed 100 characters.
   short_company_name_error: Company name should be atleast 3 characters
-
   forum_key: Forum
   topics:
     edit_title: Edit
@@ -5999,6 +6006,7 @@ en:
   ticket_creating_agent: "Ticket Creating Agent"
   ticket_cc: "Ticket CC"
   select_watchers: "Select Watchers"
+  admins: Admins
   shortcuts:
     title: "Keyboard shortcuts"
     goto_tab:
