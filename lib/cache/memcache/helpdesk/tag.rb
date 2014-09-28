@@ -5,5 +5,9 @@ module Cache::Memcache::Helpdesk::Tag
 	def clear_cache
 		MemcacheKeys.delete_from_cache(ACCOUNT_TAGS % { :account_id =>self.account_id })
 	end
+
+	def clear_ticket_cache
+		MemcacheKeys.delete_from_cache(ACCOUNT_TICKET_TAGS % { :account_id =>self.account_id })
+	end
   
 end

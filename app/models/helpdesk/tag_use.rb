@@ -1,6 +1,10 @@
 class Helpdesk::TagUse < ActiveRecord::Base
   set_table_name "helpdesk_tag_uses"
 
+  include Cache::Memcache::Helpdesk::Tag
+
+  after_commit :clear_ticket_cache
+
   belongs_to_account
   belongs_to :tags, 
     :class_name => 'Helpdesk::Tag',
