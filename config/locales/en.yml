@@ -2771,6 +2771,7 @@ en:
     reported: reported
     said: said
     solutions_home: "Solution home"
+    print_title: "Print this Article"
     attach_file: "Attach a <b>file</b>"
     header:
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."

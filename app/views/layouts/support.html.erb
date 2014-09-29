@@ -13,6 +13,7 @@
 
 		<!-- Base stylesheet -->
 		<%= include_cloudfront_css :portal_utils %>
+		<%= include_cloudfront_css :portal_print, :media => "print" %>
 		
 		<!-- Theme stylesheet -->
 		<link href="<%= support_theme_url %>" media="screen" rel="stylesheet" type="text/css">
