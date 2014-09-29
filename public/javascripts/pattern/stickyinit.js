@@ -45,6 +45,9 @@
     collapsed: function(ele){
       if (!ele.length) return;
 
+      var $ele_collapsed = ele.find('[data-collapsible]');
+      ele = $ele_collapsed.length ? $ele_collapsed : ele;
+
       $(window).on('resize.freshdesk', function() {
         //Extra buffer 20px
         var width_elements_visible = 20,
