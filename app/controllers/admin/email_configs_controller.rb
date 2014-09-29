@@ -123,16 +123,6 @@ class Admin::EmailConfigsController < Admin::AdminController
     post_process
   end
 
-  def id_less_tickets_enable
-    current_account.features.id_less_tickets.create
-    post_process
-  end
-
-  def id_less_tickets_disable
-    current_account.features.id_less_tickets.destroy
-    post_process
-  end
-
   def destroy
     @email_config = scoper.find(params[:id])
     if @email_config.primary_role

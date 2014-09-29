@@ -91,8 +91,6 @@ SugarWidget.prototype= {
 			if(resJ.result_count == 1){
 				entry_list = resJ.entry_list[0];
 				sugarWidget.renderContact(entry_list);
-				jQuery('#multiple-contacts').hide();
-				jQuery('#search-back').hide();
 			}
 			else if(resJ.result_count > 1){
 				sugarWidget.renderSearchResults();
@@ -261,6 +259,9 @@ SugarWidget.prototype= {
 			var sugar_version = parseInt(version_arr[0]);
 
 			sugarWidget.renderContactWidget();
+			// Hide the search-back and multiple-contacts from the template since it is not relevant with single contact.
+			jQuery('#multiple-contacts').hide();
+			jQuery('#search-back').hide();
 			contactJson = this.entry_list.name_value_list;
 			title = contactJson.title.value;
 			account = (contactJson.account_name == undefined) ? "" : contactJson.account_name.value;

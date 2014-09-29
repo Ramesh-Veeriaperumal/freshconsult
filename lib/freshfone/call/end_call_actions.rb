@@ -3,7 +3,7 @@ module Freshfone::Call::EndCallActions
 
   def handle_end_call
     call_forwarded? ? handle_forwarded_calls : normal_end_call
-    set_last_call_at
+    set_last_call_at if call_answered? 
     empty_twiml
   end
 
@@ -49,6 +49,10 @@ module Freshfone::Call::EndCallActions
 
   def set_last_call_at 
     current_call.agent.freshfone_user.set_last_call_at(Time.now)
+  end
+
+  def call_answered?
+    !["busy","no-answer"].include?(params[:DialCallStatus])
   end
    
 end

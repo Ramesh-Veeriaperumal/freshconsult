@@ -136,15 +136,15 @@ module Search::TicketSearch
     end
 
     if criteria_key == "helpdesk_tags.name"
-      return Account.current.tags_from_cache.collect { |au| [au.name, CGI.escapeHTML(au.name)] }
+      return Account.current.ticket_tags_from_cache.collect{|name| [name, CGI.escapeHTML(name)]}
     end
 
     if criteria_key == "users.customer_id"
       if @current_options && @current_options.has_key?("users.customer_id")
-        customer_id = @current_options["users.customer_id"].split(',')
+        company_id = @current_options["users.customer_id"].split(',')
       end
-      @selected_customers = Account.current.customers_from_cache.select { |c| customer_id.include?(c.id.to_s) } if customer_id
-      return @selected_customers || [[1,""]]
+      @selected_companies = Account.current.companies_from_cache.reject { |c| !company_id.include?(c.id.to_s) } if company_id
+      return @selected_companies || [[1,""]]
     end
 
     if criteria_key == :requester_id

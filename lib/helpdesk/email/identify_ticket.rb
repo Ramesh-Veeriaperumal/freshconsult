@@ -67,7 +67,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def belongs_to_same_company?
-  	user.customer_id and (user.customer_id == ticket.requester.customer_id)
+  	user.company_id and (user.company_id == ticket.requester.company_id)
   end
 
 end

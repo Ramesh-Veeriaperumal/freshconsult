@@ -1,0 +1,101 @@
+.m-survey-list{
+	border:1px solid $common-border-color;
+	@include border-radius(3px 3px 0 0);
+}
+
+.add-remove-optn {
+	width: 10px;
+	height: 12px;
+	position: absolute;
+	@include border-radius(50%);
+	@include padding(2px 3px);
+	line-height: 8px;
+	color: #FFF;
+	font-weight: bolder;
+	border: 1px solid $common-border-color;
+	cursor: pointer;
+	font-size: 17px;
+	&.add {
+		background-color: #76AD20;
+		border-color: #6cA900;
+		@include left(12px);
+		top: 10px;
+	}
+	&.remove {
+		background-color: #FD7c7f;
+		border-color: #FD777a;
+	}
+}
+.m-survey-row{
+	position:relative;
+	vertical-align:middle;
+	display:table;
+	width:100%;
+	.survey-monkey-content {
+		@include float(left);
+		display:table-cell;
+		width: 100%;
+		border-bottom:1px solid $common-border-color;
+	}
+	&:last-child{
+		.survey-monkey-content, .m-survey-remove{
+			border-bottom:0;
+		}
+	}
+	.select2{
+		width:60%;
+		margin-top:0;
+	}
+}
+
+.inner-row {
+	@include padding(10px);
+	width: 96%;
+	@include clearfix;
+	background: #f6f6f6;
+	> p, > select {
+		@include float(left);
+		@include margin-right(10px);
+		margin-top: 5px;
+	}	
+	&:nth-child(2) {
+		display: table;
+		background: #fff;
+		> div {
+			display: table-cell;
+			width: 46%;
+			@include padding-right(4%);
+		}
+		.select2
+		{
+			width: 100%;	
+		}
+		p{
+			margin-bottom: 0px;
+		}
+	}
+}
+
+.m-survey-add {
+	position: relative;
+	margin-bottom: 50px;
+	.add_group{
+		font-weight:bold; 
+		background:#fff;
+		display:block;
+		@include border-radius(0 0 3px 3px);
+		border: 1px solid $common-border-color;
+		border-top: none;
+		@include padding(10px 10px 10px 35px);
+		cursor: pointer;
+	}
+}
+
+.m-survey-remove{
+	width: 16px;
+	display: table-cell;
+	@include padding(10px);
+	background-color: #e2e2e2;
+	border-bottom:1px solid #fff;
+	vertical-align: top;
+}

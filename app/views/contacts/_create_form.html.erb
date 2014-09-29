@@ -63,16 +63,8 @@
 		</li>
 
 		<li>
-			<%
-				company_name = "";
-				role_disabled = true
-				unless @user.customer.nil?
-					company_name =  @user.customer.name
-					role_disabled = false
-				end
-			%>
-			<%= label(:user, :customer, t('user.company')) %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ,:onchange => "enable_role_change()") %>
+			<%= label(:user, :company_name, t('user.company')) %>
+			<%= text_field(:user, :company_name, :class => "text", :id => "contact_customer" ,:onchange => "enable_role_change()") %>
 		</li>
 		<li class="small">	
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	

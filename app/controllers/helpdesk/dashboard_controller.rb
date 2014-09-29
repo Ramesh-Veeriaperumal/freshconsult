@@ -2,6 +2,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::GamificationReport
+  include Cache::Memcache::Account
 
   skip_before_filter :check_account_state
   before_filter :check_account_state, :only => [:index]
@@ -36,6 +37,11 @@ class Helpdesk::DashboardController < ApplicationController
   
   def latest_summary
     render :partial => "summary"
+  end
+
+  def sales_manager 
+    @details = current_account.sales_manager_from_cache if Rails.env.production?
+    render :partial => "sales_manager"
   end
 
   protected

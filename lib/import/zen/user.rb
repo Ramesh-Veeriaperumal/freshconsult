@@ -13,16 +13,16 @@ module Import::Zen::User
    element :phone
    element :roles  , :as => :user_role
    element "time-zone" , :as => :time_zone
-   element "organization-id", :as => :customer_id
+   element "organization-id", :as => :company_id
  end
  
  def save_user user_xml
   user_prop = UserProp.parse(user_xml)
   user_params = { :user => user_prop.to_hash }
-
-  unless user_prop.customer_id.blank?
-    customer =  @current_account.customers.find_by_import_id(user_prop.customer_id)
-    user_params[:user][:customer_id] = customer.id if customer
+  
+  unless user_prop.company_id.blank?
+    company =  @current_account.companies.find_by_import_id(user_prop.company_id) 
+    user_params[:user][:company_id] = company.id if company
   end
   
   # Not a customer

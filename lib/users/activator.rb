@@ -8,7 +8,7 @@ module Users
 
 
     def deliver_password_reset_instructions!(portal)
-      portal ||= account.main_portal
+      portal = Portal.current || account.main_portal
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
       reset_perishable_token!
@@ -37,7 +37,7 @@ module Users
     end
     
     def deliver_activation_instructions!(portal, force_notification, email_config = nil) #Need to refactor this.. Almost similar structure with the above one.
-      portal ||= account.main_portal
+      portal = Portal.current || account.main_portal
       reply_email = email_config ? email_config.friendly_email : 
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 
@@ -88,7 +88,7 @@ module Users
     end
 
     def deliver_contact_activation_email(portal=nil)
-      portal ||= account.main_portal
+      portal = Portal.current || account.main_portal
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
       @user = self.user

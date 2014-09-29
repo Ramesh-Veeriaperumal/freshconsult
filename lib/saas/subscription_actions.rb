@@ -35,7 +35,7 @@ class SAAS::SubscriptionActions
     def drop_customer_slas_data(account)
       #account.sla_policies.destroy_all(:is_default => false) #wasn't working..
       Helpdesk::SlaPolicy.destroy_all(:account_id => account.id, :is_default => false)
-      account.customers.update_all(:sla_policy_id => account.sla_policies.find_by_is_default(true).id)
+      account.companies.update_all(:sla_policy_id => account.sla_policies.find_by_is_default(true).id)
       #account.sla_details.update_all(:override_bhrs => true) #this too didn't work.
       account.sla_policies.find_by_is_default(true).sla_details.update_all(:override_bhrs => true)
     end

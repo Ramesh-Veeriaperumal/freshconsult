@@ -78,10 +78,11 @@ class Account < ActiveRecord::Base
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
-    :id_less_tickets => true, :reply_to_based_tickets => true, :freshfone => false,
+    :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => false, :social_revamp => true,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
-    :hide_portal_forums => false, :reports_regenerate_data => false, :chat_enable => false}
+    :hide_portal_forums => false, :reports_regenerate_data => true, :chat_enable => false,
+    :report_field_regenerate => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 

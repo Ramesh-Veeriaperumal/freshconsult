@@ -35,17 +35,20 @@ function insertLink(url, title){
 	jQuery('#related_solutions').modal('hide');
 
 	if($redactor){
-		var $redactor = $element.data('redactor'),
-				userSelection = $redactor.getSelection(),
+		var userSelection = $redactor.getSelection(),
 				selectedText = userSelection.toString ? userSelection.toString() : userSelection.text;
 		
-		selectedText = selectedText || title;
+		if(selectedText){
+			$element.getEditor().focus();
+		} else {
+			selectedText = title
+			$redactor.focusOnCursor();
+		}
 
-		var link = jQuery('<a/>').attr({
-												href: url,
-												target: '_blank'}).append(selectedText);
-
-		$element.getEditor().focus();
+		var link = jQuery('<a/>').attr(
+								{ href: url,
+								target: '_blank',
+								style: 'font:inherit;'}).text(selectedText);
 
 		$redactor.execCommand('inserthtml', link.get(0).outerHTML);
 

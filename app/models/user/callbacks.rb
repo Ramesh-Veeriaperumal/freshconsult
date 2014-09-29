@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
   
-  before_update :bakcup_user_changes, :clear_redis_for_agent
+  before_update :backup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :company_info_updated?
 
   def set_time_zone
@@ -98,10 +98,10 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-   if (self.customer_id.nil? && self.email)      
+   if (self.company_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       cust = account.customers.domains_like(email_domain).first
-       self.customer_id = cust.id unless cust.nil?    
+       comp = account.companies.domains_like(email_domain).first
+       self.company_id = comp.id unless comp.nil?    
    end
   end
 

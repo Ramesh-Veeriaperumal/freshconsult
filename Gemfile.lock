@@ -117,6 +117,14 @@ GIT
   specs:
     rails-dev-boost (0.1.1)
 
+GIT
+  remote: git://github.com/sumakumardey/rack-ssl
+  revision: b7a3e736f52b29b5c0512d4a7b6206cf332c2e7e
+  branch: ssl
+  specs:
+    rack-ssl (1.4.1)
+      rack
+
 PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:

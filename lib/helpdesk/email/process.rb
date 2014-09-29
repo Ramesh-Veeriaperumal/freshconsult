@@ -121,10 +121,16 @@ class Helpdesk::Email::Process
 	def construct_html_param
     params["body-html"] = body_html_with_formatting(params["body-plain"],get_email_cmd_regex(account)) if html_blank?
     params["body-plain"] = params["body-plain"] || Helpdesk::HTMLSanitizer.plain(params["body-html"])
+    params["stripped-html"] = body_html_with_formatting(params["stripped-text"],get_email_cmd_regex(account)) if stripped_html_blank?
+    params["stripped-text"] = params["stripped-text"] || Helpdesk::HTMLSanitizer.plain(params["stripped-html"])
 	end
-
+  
   def html_blank?
     Helpdesk::HTMLSanitizer.plain(params["body-html"]).blank? && !params["body-plain"].blank?
+  end
+
+  def stripped_html_blank?
+    Helpdesk::HTMLSanitizer.plain(params["stripped-html"]).blank? && !params["stripped-text"].blank?
   end
 
 end

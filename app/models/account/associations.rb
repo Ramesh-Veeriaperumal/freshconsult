@@ -51,7 +51,7 @@ class Account < ActiveRecord::Base
   has_one :account_configuration
 
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
-            :invoice_emails, :to => "account_configuration"
+            :notification_emails, :invoice_emails, :to => "account_configuration"
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
-  has_many :customers
+  has_many :companies
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 

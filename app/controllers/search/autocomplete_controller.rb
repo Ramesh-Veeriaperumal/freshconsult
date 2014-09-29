@@ -1,5 +1,7 @@
 class Search::AutocompleteController < ApplicationController
 
+  USER_ASSOCIATIONS = { User => { :include => [:primary_email, { :account => :features }] }}
+
   def agents
     begin
       search_results = search_users(true)
@@ -44,7 +46,7 @@ class Search::AutocompleteController < ApplicationController
       end
     rescue
 	    companies = {
-        :results => current_account.customers.custom_search(params[:q]).map do |company|
+        :results => current_account.companies.custom_search(params[:q]).map do |company|
           {:id => company.id, :value => company.name}
         end
       } 
@@ -96,7 +98,7 @@ class Search::AutocompleteController < ApplicationController
     end
     
     def search_users(agent=false)
-      options = { :load => true, :size => 100 }
+      options = { :load => USER_ASSOCIATIONS, :size => 100 }
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
          tire_search.query do |q|
            q.filtered do |f|

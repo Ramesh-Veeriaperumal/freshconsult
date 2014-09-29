@@ -106,7 +106,7 @@ module Social::Dynamo::Twitter
     times = [Time.now, Time.now + 7.days]
     times.each do |time|
       table_name = Social::DynamoHelper.select_table(table, time)
-      Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema])
+      Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], ["favorite"])
     end
   end
 

@@ -9,7 +9,7 @@ describe AccountsController do
                             "regionName":"Chennai","countryCode":"IN","timeZone":"+05:30","longitude":"80.2442769","latitude":"12.9698946"},
                             "current_session":{"search":""},"locale":{"lang":"English"}}'
     session_json = JSON.parse(session_json_string)
-		signup_params = { "callback"=>"", "account"=>{"name"=>"RSpec Test", "domain"=>"rspectest"}, 
+		signup_params = { "callback"=>"", "account"=>{"name"=>"RSpec Test", "domain"=>"rspectest2"}, 
       								"utc_offset"=>"5.5", "user"=>{"email"=>admin_email, "name"=>admin_name}, "session_json" => session_json }
     
 

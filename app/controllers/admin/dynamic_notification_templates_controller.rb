@@ -9,23 +9,26 @@ class Admin::DynamicNotificationTemplatesController < Admin::AdminController
   	else
    		flash[:notice] = t(:'flash.email_notifications.update.failure') 	
    	end	
+
+    template_type = ( dynamic_notification.category == DynamicNotificationTemplate::CATEGORIES[:agent]) ? "agent_template" :
+      ( dynamic_notification.email_notification.notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE ?
+        "reply_template" : "requester_template" )
+
     respond_to do |format|
       format.html { 
-        redirect_to redirect_url
+        redirect_to redirect_url(template_type)
       }
       format.js 
     end  
 	end	
 
 private
-  def redirect_url
+  def redirect_url(template_type)
     language = DynamicNotificationTemplate::LANGUAGE_MAP_KEY[params[:dynamic_notification_template][:language].to_i].to_s
 
-    category = params[:dynamic_notification_template][:category]
      url = admin_edit_notification_path(
           :id =>params[:dynamic_notification_template][:email_notification_id], 
-          :type => (category == DynamicNotificationTemplate::CATEGORIES[:agent].to_s) ? 
-            "agent_template" : (params[:dynamic_notification_template][:subject].nil? ? "reply_template" : "requester_template")
+          :type => template_type
           )+"#"+language
   end
 end	

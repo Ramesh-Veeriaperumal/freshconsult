@@ -294,6 +294,24 @@
                       shopifyBundle={domain:"https://{{shopify.shop_name}}", reqEmail:"{{requester.email}}" } ;
                      </script>
   name: shopify_widget
-  id: 18
+  id: 19
   description: integrations.shopify.desc
   application_type: shopify
+
+- options:
+    display_in_pages:
+    - helpdesk_tickets_show_page_side_bar 
+  script: |-
+          <div id="seoshop_widget">
+              <div class="content"><div id="seoshop_loading" class="sloading loading-block loading-small"></div></div>
+              <div class="error"></div>
+          </div>
+          <script type="text/javascript">
+            jQuery("#seoshop").prepend('<h3 class="title">SeoShop</h3>');
+            seoshopBundle={domain:"https://api.webshopapp.com/{{seoshop.language}}", reqEmail:"{{requester.email}}"} ;
+            CustomWidget.include_js("/javascripts/integrations/seoshop.js");
+          </script>
+  name: seoshop_widget
+  id: 20
+  description: integrations.seoshop.desc
+  application_type: seoshop

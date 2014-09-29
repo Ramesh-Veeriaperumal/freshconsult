@@ -26,8 +26,13 @@
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
+  
+  map.resources :companies ,:member => {:quick => :post, :sla_policies => :get } do |customer|
+    customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+  end
+  map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_companys_contact => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
@@ -84,7 +89,7 @@
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                        :children => :get, :recent_calls => :get }
     freshfone.resources :blacklist_number, :collection => { :create => :post, :destroy => :post }
-    freshfone.resources :users,:collection => { :presence => :post, :node_presence => :post, :availability_on_phone => :post,
+    freshfone.resources :users,:collection => { :presence => :post, :get_presence => :get, :node_presence => :post, :availability_on_phone => :post,
                            :refresh_token => :post, :in_call => :post, :reset_presence_on_reconnect => :post }
     freshfone.resources :autocomplete, :collection => { :requester_search => :get, :customer_phone_number => :get }
     freshfone.resources :usage_triggers, :collection => { :notify => :post }
@@ -142,9 +147,8 @@
                      :personalized_email_enable => :post, 
                      :personalized_email_disable => :post, 
                      :reply_to_email_enable => :post, 
-                     :reply_to_email_disable => :post, 
-                     :id_less_tickets_enable => :post, 
-                     :id_less_tickets_disable => :post }
+                     :reply_to_email_disable => :post
+                    }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'
@@ -456,7 +460,8 @@
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
-    helpdesk.customer_filter      '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
+    helpdesk.customer_filter       '/tickets/filter/customer/:customer_id', :controller => 'tickets', :action => 'index'
+    helpdesk.company_filter       '/tickets/filter/company/:company_id', :controller => 'tickets', :action => 'index'
     helpdesk.tag_filter            '/tickets/filter/tags/:tag_id', :controller => 'tickets', :action => 'index'
     helpdesk.reports_filter        '/tickets/filter/reports/:report_type', :controller => 'tickets', :action => 'index'
 
@@ -465,6 +470,7 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
+    helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
     helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
     helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
@@ -480,8 +486,9 @@
     helpdesk.resources :dropboxes
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
- 
-    helpdesk.resources :autocomplete, :collection => { :requester => :get, :customer => :get }
+
+    helpdesk.resources :autocomplete, :collection => { :requester => :get, :company => :get }
+    
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 
@@ -638,6 +645,7 @@
     support.namespace :mobihelp do |mobihelp|
       mobihelp.resources :tickets
       mobihelp.connect "/tickets/:id/notes.:format", :controller => 'tickets' , :action => 'add_note'
+      mobihelp.connect "/tickets/:id/close.:format", :controller => 'tickets' , :action => 'close'
     end
 
   end

@@ -44,7 +44,7 @@ module APIHelper
 
   TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
   
-  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
+  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id"]
 
   FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
 
@@ -64,4 +64,9 @@ module APIHelper
 
   TIME_ENTRY_ATTRIBS = ["agent_email", "agent_name", "billable", "contact_email", "created_at", "customer_name", "executed_at", "id", "note", "start_time", "ticket_id", "timer_running", "timespent", "updated_at", "user_id", "workable_type"]
 
+  GROUP_ATTRIBS = ["assign_time", "business_calendar_id", "created_at", "description", "escalate_to", "id", "name", "ticket_assign_type","updated_at", "agents"]
+   
+  USER_ATTRIBS = ["active", "address", "created_at", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
+  
+  AGENT_ATTRIBS = ["available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
 end

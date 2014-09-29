@@ -39,10 +39,17 @@ include Mobile::Actions::Push_Notifier
 
   # Handles response from SAML provider
   def saml_login
-    saml_response = validate_saml_response(current_account, params[:SAMLResponse]);
+    saml_response = validate_saml_response(current_account, params[:SAMLResponse])
+
+    sso_data = {
+      :name => saml_response.user_name,
+      :email => saml_response.email,
+      :phone => saml_response.phone,
+      :company => saml_response.company
+    }
 
     if saml_response.valid?
-      handle_sso_response(saml_response.email , saml_response.user_name , saml_response.phone)
+      handle_sso_response(sso_data)
     else
       flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
       redirect_to login_normal_url
@@ -59,11 +66,16 @@ include Mobile::Actions::Push_Notifier
       end
       
       if !@current_user
-        @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
+        sso_user_options = {:name => params[:name]}
+        sso_user_options[:phone] = params[:phone] unless params[:phone].blank?
+        sso_user_options[:company] = params[:company] unless params[:company].blank?
+        @current_user = create_user(params[:email],current_account,nil,sso_user_options)
         @current_user.active = true
         saved = @current_user.save
       elsif current_account.sso_enabled?
         @current_user.name =  params[:name]
+        @current_user.phone = params[:phone] unless params[:phone].blank?
+        @current_user.customer_id = current_account.customers.find_or_create_by_name(params[:company]).id unless params[:company].blank?
         @current_user.active = true
         saved = @current_user.save
       end
@@ -135,7 +147,7 @@ include Mobile::Actions::Push_Notifier
      key_options = { :account_id => account.id, :token => generated_hash}
      key_spec = Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options)
      Redis::KeyValueStore.new(key_spec, google_viewer_id, {:group => :integration, :expire => 300}).set_key
-     return generated_hash;
+     return generated_hash
   end
 
   
@@ -370,6 +382,7 @@ include Mobile::Actions::Push_Notifier
     end
 
     def mark_agent_unavailable
+      Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{current_user.email}, Value:: false, Time:: #{Time.zone.now} "
       current_user.agent.update_attribute(:available,false)
     end
 
@@ -378,7 +391,7 @@ include Mobile::Actions::Push_Notifier
       if ![:name, :email, :hash].all? {|s| params.key? s} 
         flash[:notice] = t(:'flash.login.sso.expected_params')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),time_in_utc )
+      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
       end
@@ -415,7 +428,10 @@ include Mobile::Actions::Push_Notifier
 
     def create_user(email, account,identity_url=nil,options={})
       @contact = account.users.new
-      @contact.name = options[:name] unless options[:name].blank? 
+      @contact.name = options[:name] unless options[:name].blank?
+      @contact.phone = options[:phone] unless options[:phone].blank?
+      @contact.customer_id = current_account.customers.find_or_create_by_name(options[:company]).id unless options[:company].blank?
+
       if account.features?(:multiple_user_emails)
         @contact.user_emails.build({:email => email, :primary_role => true})
       else

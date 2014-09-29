@@ -124,8 +124,8 @@ class Support::TicketsController < SupportController
     end
   
     def build_tickets
-      @company = current_user.customer.presence
-      @filter_users = current_user.customer.users if 
+      @company = current_user.company.presence
+      @filter_users = current_user.company.users if 
             @company && privilege?(:client_manager) && @company.users.size > 1 
 
       @requested_by = current_requested_by
@@ -142,15 +142,11 @@ class Support::TicketsController < SupportController
       @tickets ||= []
     end
 
-    def many_employees_in_company?
-      privilege?(:client_manager) && has_company? && customer.user > 1
-    end
-
     # Used for scoping of filters
     def ticket_scope
       if privilege?(:client_manager)
         if @requested_by.to_i == 0
-          current_user.customer.all_tickets || current_user.tickets
+          current_user.company.all_tickets || current_user.tickets
         else
           @requested_item = current_account.users.find_by_id(@requested_by)
           @requested_item.tickets

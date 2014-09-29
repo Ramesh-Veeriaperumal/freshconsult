@@ -14,8 +14,8 @@
 			<% unless contact.job_title.blank? %>
 				<p class="muted mb0"><%= h contact.job_title %></p>
 			<% end %>
-			<% unless contact.customer.blank? %>
-			  	<p class="muted mb0"><%= link_to(h(contact.customer.name), contact.customer) %></p>
+			<% unless contact.company.blank? %>
+			  	<p class="muted mb0"><%= link_to(h(contact.company.name), contact.company) %></p>
 			<% end %> 
 		</div>
 	</td>

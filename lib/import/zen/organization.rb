@@ -8,9 +8,9 @@ module Import::Zen::Organization
 
  def save_organization company_xml
   company_prop = CompanyProp.parse(company_xml)
-  company = @current_account.customers.find(:first, :conditions =>['name=? or import_id=?',company_prop.name,company_prop.import_id])
+  company = @current_account.companies.find(:first, :conditions =>['name=? or import_id=?',company_prop.name,company_prop.import_id])
   unless company
-    company = @current_account.customers.create(company_prop.to_hash)
+    company = @current_account.companies.create(company_prop.to_hash)
   else
     company.update_attribute(:import_id , company_prop.import_id )
   end

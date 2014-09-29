@@ -76,6 +76,38 @@ describe TicketFieldsController do
     parent_aus.sub_picklist_values.find_by_value("Alec Stewart").pickable_type.should eql "Helpdesk::PicklistValue"
   end
 
+  it "should create a custom dropdown field" do
+    # ffs_03 is created here
+    labels = ["Freshproducts"]
+    field_choices = [["Freshdesk","0"], ["Freshservice","0"], ["Freshchat","0"]]
+    pv_attr = [{"value" => "Freshdesk"},
+               {"value" => "Freshservice"},
+               {"value" => "Freshchat"}
+              ]
+    put :update, :jsonData => @default_fields.push({:type => "dropdown", 
+                                                    :field_type => "custom_dropdown", 
+                                                    :label => labels[0], 
+                                                    :label_in_portal => labels[0], 
+                                                    :description => "", 
+                                                    :active => true, 
+                                                    :required => false, 
+                                                    :required_for_closure => false, 
+                                                    :visible_in_portal => true, 
+                                                    :editable_in_portal => true, 
+                                                    :required_in_portal => false, 
+                                                    :id => nil, 
+                                                    :choices => field_choices,
+                                                    :picklist_values_attributes => pv_attr,
+                                                    :levels => nil,
+                                                    :action => "create"}).to_json
+    parent_label = @account.ticket_fields.find_by_label(labels[0])
+    parent_label.should be_an_instance_of(Helpdesk::TicketField)
+    parent_label.picklist_values.size.should be_eql(3)
+    pl_val = parent_label.picklist_values.find_by_value("Freshchat")
+    pl_val.should be_an_instance_of(Helpdesk::PicklistValue)
+    pl_val.pickable_type.should eql "Helpdesk::TicketField"
+  end
+
   it "should edit a custom field" do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
@@ -111,15 +143,95 @@ describe TicketFieldsController do
     custom_field.editable_in_portal.should be_false
   end
 
+  it "should edit a custom dropdown field" do
+    labels = ['Freshmovies']
+    # ffs_04 is created here
+    flexifield_def_entry = Factory.build(:flexifield_def_entry, 
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                         :flexifield_alias => "#{labels[0].downcase}_#{@account.id}",
+                                         :flexifield_name => "ffs_04}",
+                                         :flexifield_order => 5,
+                                         :flexifield_coltype => "dropdown",
+                                         :account_id => @account.id)
+    flexifield_def_entry.save
+
+    parent_custom_field = Factory.build(:ticket_field, :account_id => @account.id,
+                                        :name => "#{labels[0].downcase}_#{@account.id}",
+                                        :label => labels[0],
+                                        :label_in_portal => labels[0],
+                                        :field_type => "custom_dropdown",
+                                        :description => "",
+                                        :flexifield_def_entry_id => flexifield_def_entry.id)
+    parent_custom_field.save
+
+    field_choices = [["Get Smart","0"],
+                     ["Pursuit of Happiness","0"],
+                     ["Armaggedon","0"]
+                    ]
+    pv_attr = [{"value" => "Get Smart"},
+               {"value" => "Pursuit of Happiness"},
+               {"value" => "Armaggedon"}
+              ]
+
+    picklist_vals_l1 = []
+    field_choices.map(&:first).each_with_index do |l1_val, index1|
+      picklist_vals_l1 << Factory.build(:picklist_value, :account_id => @account.id,
+                                        :pickable_type => 'Helpdesk::TicketField',
+                                        :pickable_id => parent_custom_field.id,
+                                        :position => index1+1,
+                                        :value => l1_val)
+      picklist_vals_l1.last.save
+    end
+    edited_plv_id = @account.ticket_fields.find_by_label(labels[0]).picklist_values.find_by_value("Armaggedon").id
+
+    put :update, :jsonData => @default_fields.push({:field_type => "custom_dropdown", 
+                                                    :id => parent_custom_field.id, 
+                                                    :name => "#{labels[0].downcase}_#{@account.id}",
+                                                    :label => labels[0],
+                                                    :label_in_portal => labels[0],
+                                                    :description => "",
+                                                    :position => 5,
+                                                    :active => true,
+                                                    :required => false,
+                                                    :required_for_closure => false,
+                                                    :visible_in_portal => false,
+                                                    :editable_in_portal => false,
+                                                    :required_in_portal => false,
+                                                    :choices => [["Get Smart","1"],
+                                                                 ["Pursuit of Happiness","2"],
+                                                                 ["Cast Away","3"]
+                                                                ],
+                                                    :picklist_values_attributes => [{"value" => "Get Smart", :id => picklist_vals_l1[0].id},
+                                                                                    {"value" => "Pursuit of Happiness", :id => picklist_vals_l1[1].id},
+                                                                                    {"value" => "Cast Away", :id => picklist_vals_l1[2].id }
+                                                                                   ],
+                                                    :levels => nil,
+                                                    :field_options => nil,
+                                                    :type => "dropdown",
+                                                    :action => "edit"}).to_json
+
+    parent_custom_field = @account.ticket_fields.find_by_label(labels[0])
+    parent_custom_field.should be_an_instance_of(Helpdesk::TicketField)
+    parent_custom_field.picklist_values.find_by_value("Cast Away").should be_an_instance_of(Helpdesk::PicklistValue)
+    parent_custom_field.picklist_values.find_by_value("Cast Away").pickable_type.should eql "Helpdesk::TicketField"
+    parent_custom_field.picklist_values.find_by_value("Cast Away").id.should be_eql(edited_plv_id)
+
+    parent = parent_custom_field.picklist_values.find_by_value("Cast Away")
+    parent.should be_an_instance_of(Helpdesk::PicklistValue)
+    parent.pickable_type.should eql "Helpdesk::TicketField"
+    parent_custom_field.picklist_values.find_by_value("Armaggedon").should be_nil
+    parent_custom_field.picklist_values.find_by_value("Cast Away").should be_an_instance_of(Helpdesk::PicklistValue)
+  end
+
   it "should edit a custom dependant field" do
     flexifield_def_entry = []
     labels = ['Nation', 'Memorial']
-    # ffs_04 and ffs_05 are created here
+    # ffs_05 and ffs_06 are created here
     (0..1).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
                                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                            :flexifield_name => "ffs_0#{nested_field_id+4}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+5}",
                                                             :flexifield_order => 5,
                                                             :flexifield_coltype => "dropdown",
                                                             :account_id => @account.id)
@@ -244,12 +356,12 @@ describe TicketFieldsController do
   it "should delete a custom dependant field" do
     flexifield_def_entry = []
     labels = ['Country', 'State', 'City']
-    # ffs_06, ffs_07 and ffs_08 are created here
+    # ffs_07, ffs_08 and ffs_09 are created here
     (0..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
                                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                            :flexifield_name => "ffs_0#{nested_field_id+6}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+7}",
                                                             :flexifield_order => 6,
                                                             :flexifield_coltype => "dropdown",
                                                             :account_id => @account.id)

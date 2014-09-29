@@ -97,13 +97,13 @@ module ApplicationHelper
     if (interval.to_i <= 0)
       "-"
     elsif days > 0
-      "#{days} days  #{hours % 24} hrs"
+      I18n.t('no_of_days', :days => "#{days}" , :hours => "#{hours % 24}" )
     elsif hours > 0
-      "#{hours} hrs  #{mins % 60} mins"
+      I18n.t('no_of_hours', :hours => "#{hours}", :minutes => "#{mins % 60}" )
     elsif mins > 0
-      "#{mins} mins  #{secs % 60} secs"
+      I18n.t('no_of_minutes', :minutes => "#{mins}", :seconds => "#{secs % 60}" )
     elsif secs >= 0
-      "#{secs} secs"
+      I18n.t('no_of_seconds', :seconds => "#{secs}")
     end
 
   end
@@ -733,7 +733,7 @@ module ApplicationHelper
     elsif current_user && current_user.customer? && field.all_cc_in_portal?
       element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
     else
-       element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer)
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.company)
     end
     return element
   end

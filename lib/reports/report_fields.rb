@@ -96,7 +96,7 @@ module Reports::ReportFields
       when :product_id
         current_account.products.collect {|p| [p.id, p.name]}
       when :customer_id
-        return current_account.customers_from_cache.collect { |au| [au.id, au.name] }
+        return current_account.companies_from_cache.collect { |au| [au.id, au.name] }
       else
         return []
     end
