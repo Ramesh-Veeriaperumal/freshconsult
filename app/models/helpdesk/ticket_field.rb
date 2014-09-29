@@ -21,7 +21,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true
   accepts_nested_attributes_for :picklist_values, :allow_destroy => true
 
-  before_validation :populate_choices
+  before_validation :populate_choices, :clear_ticket_type_cache
 
   before_destroy :delete_from_ticket_filter
   # before_update :delete_from_ticket_filter
@@ -372,7 +372,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
       elsif("default_status".eql?(self.field_type))
         @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
       end
-    end    
+    end 
+
+    def clear_ticket_type_cache
+      if(self.field_type.eql?("default_ticket_type"))
+        clear_picklist_cache
+      end
+    end   
 
     def populate_label
       self.label = name.titleize if label.blank?
