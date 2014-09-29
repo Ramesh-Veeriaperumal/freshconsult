@@ -1,0 +1,10 @@
+Hi,
+
+An agent, <%= @model.name %> was deleted in your helpdesk at <%= @time %>. <%= @model.name %> will still exist in your helpdesk as a contact.
+
+You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.
+
+If this change has been made without your authorization, send us a reply.
+
+Thanks,
+Freshdesk Customer Support

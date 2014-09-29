@@ -1,5 +1,6 @@
 class Agent < ActiveRecord::Base
   
+  include ArExtensions
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
