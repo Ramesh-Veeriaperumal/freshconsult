@@ -353,7 +353,7 @@ if Rails.env.test?
     namespace :freshfone_reports do
       desc "Running all freshfone summary reports tests"
       RSpec::Core::RakeTask.new(:all) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(FreshfoneReportsTests)
       end
     end

@@ -5,10 +5,11 @@ class ThemeController < ApplicationController
 	skip_before_filter :set_cache_buster
 	caches_action :index, :cache_path => :cache_key, :if => :render_from_cache?
 
+	
+
 	THEME_COMPASS_SETTINGS 	= { :syntax => :scss, 
 								:always_update => true, 
-								:style => :compressed,
-								:custom => {:resolver => ::Sass::Rails::Resolver.new(CompassRails.context)} }	
+								:style => :compressed}	
 
 	def index
 		respond_to do |format|
@@ -26,7 +27,12 @@ class ThemeController < ApplicationController
 			expires_in 10.years, :public => true
 		end
 
-		def compile_scss(scss = scss_template)
+    def compile_scss(scss = scss_template)
+      environment = orig_environment = ::Rails.application.assets
+      environment = environment.instance_variable_get("@environment") if environment.is_a?(Sprockets::Index)
+      context = environment.context_class.new(environment, '', Pathname.new(''))
+      THEME_COMPASS_SETTINGS[:custom] = {:resolver => ::Sass::Rails::Resolver.new(context)}
+
 			_opts = Compass.configuration.to_sass_engine_options.merge(THEME_COMPASS_SETTINGS)
 
 			# Appending the theme load path as partial scss includes 

@@ -39,7 +39,7 @@ class Freshfone::User < ActiveRecord::Base
 		}
 	}
 
-	named_scope :agents_by_last_call_at, lambda { |order_type| order_type = "ASC" if order_type.blank?
+	scope :agents_by_last_call_at, lambda { |order_type| order_type = "ASC" if order_type.blank?
 		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", 
 		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
 
