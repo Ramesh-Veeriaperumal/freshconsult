@@ -42,8 +42,8 @@ var FreshfoneSocket;
         'account': freshfone.current_account,
         'account_url': freshfone.account_url });
 
-        if (connectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
-          connectionAttempts = 1;
+        if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
+          reconnectionAttempts = 1;
           reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.socket.reconnect(); }, reconnectFailureDelay);
         }
       });
@@ -73,38 +73,11 @@ var FreshfoneSocket;
     },
     registerCallbacks: function () {
       var self = this;
-      this.freshfone_socket_channel.emit('get_create_timeout');
-      this.freshfone_socket_channel.on('timeout_value', function(timeout_values) {
-        if (timeout_values.SLEEP_TIMEOUT >= 0 && timeout_values.IDLE_TIMEOUT >= 0) {
-          this.idleDetector = new IdleDetector({
-              SLEEP_TIMEOUT : timeout_values.SLEEP_TIMEOUT,
-              IDLE_TIMEOUT : timeout_values.IDLE_TIMEOUT
-          });
-        };
-      });
-
-      freshfoneuser.get_presence(function(err, status) {
-        if(!err && self.idleDetector) {
-          switch(status) {
-            // case 0: //offline
-            case 2: // busy
-              self.idleDetector.disable();
-              break;
-            case 0: //offline
-            case 1: //online
-              self.idleDetector.enable();
-              break;
-            default: //control never reaches here!
-              break;
-          }
-        }
-      });
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
 				data = JSON.parse(data) || {};
 				if(data.user.id == freshfone.current_user) {
           self.toggleUserStatus(userStatus.ONLINE);
-          if(self.idleDetector) self.idleDetector.enable();
           return;
         }
 				if (data.user) { self.addToAvailableAgents(data.user); }
@@ -116,12 +89,10 @@ var FreshfoneSocket;
         if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
         if(data.user.id == freshfone.current_user) {
           self.toggleUserStatus(userStatus.OFFLINE);
-          if(self.idleDetector) self.idleDetector.disable();
         }
       });
                 
       this.freshfone_socket_channel.on('agent_busy', function (data) {
-        if(self.idleDetector) self.idleDetector.disable();
         data = JSON.parse(data) || {};
 
         if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
