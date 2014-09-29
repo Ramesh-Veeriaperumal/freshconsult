@@ -5,6 +5,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   after_commit :clear_cache
+  after_commit :clear_ticket_cache
 
   set_table_name "helpdesk_tags"
   

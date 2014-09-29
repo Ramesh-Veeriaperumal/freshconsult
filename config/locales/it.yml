@@ -2300,6 +2300,7 @@ it:
       see_all_articles: Visualizza tutti e %{count} articoli
       more_articles: Altri articoli in <span class='folder-name'> %{article_name} </span>
       modified_on: "Modificato il:"
+      related_articles: "Articoli correlati"
     folder:
       filler_text: Controlla questa pagina per articoli riguardanti %{folder_name}
     topic:
