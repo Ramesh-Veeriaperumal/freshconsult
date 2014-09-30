@@ -5,7 +5,7 @@ class Solution::Folder < ActiveRecord::Base
 
   attr_protected :category_id, :account_id
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :category_id
+  validates_uniqueness_of :name, :scope => :category_id, :case_sensitive => false
   
   belongs_to_account
   belongs_to :category, :class_name => 'Solution::Category'

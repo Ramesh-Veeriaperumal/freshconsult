@@ -1,6 +1,6 @@
 class ForumCategory < ActiveRecord::Base
   validates_presence_of :name,:account_id
-  validates_uniqueness_of :name, :scope => :account_id
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
   include ActionController::UrlWriter
 
