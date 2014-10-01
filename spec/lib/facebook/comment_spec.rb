@@ -1,9 +1,11 @@
 require 'spec_helper'
 
-include FacebookHelper
-include Facebook::Core::Util
+RSpec.configure do |c|
+  c.include FacebookHelper
+  c.include Facebook::Core::Util
+end
 
-describe Facebook::Core::Comment do
+RSpec.describe Facebook::Core::Comment do
   
   before(:all) do
     @account.features.send(:facebook_realtime).create
@@ -44,10 +46,8 @@ describe Facebook::Core::Comment do
     facebook_feed = sample_facebook_feed(feed_id, true)
     
     comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
-    
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(comment)
-      
+     
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_feed, comment)
     Facebook::Core::Parser.new(realtime_feed).parse
     
     post = @account.facebook_posts.find_by_post_id(feed_id)

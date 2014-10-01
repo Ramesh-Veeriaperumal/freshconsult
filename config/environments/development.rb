@@ -38,7 +38,6 @@ Helpkit::Application.configure do
 
   config.middleware.insert_before Rails::Rack::Logger, Middleware::DisableAssetsLogger
 
-  config.action_view.debug_rjs = true 
   config.reload_plugins = true
   config.after_initialize do
     ActiveMerchant::Billing::Base.gateway_mode = :test

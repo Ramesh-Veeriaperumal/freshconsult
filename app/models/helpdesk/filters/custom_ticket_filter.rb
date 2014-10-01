@@ -1,5 +1,4 @@
 class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
-  self.primary_key= :id
   
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus

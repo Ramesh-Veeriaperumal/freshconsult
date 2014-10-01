@@ -2,7 +2,7 @@ require 'spec_helper'
 
 include Gamification::Scoreboard::Constants
 
-describe Helpdesk::LeaderboardController do
+RSpec.describe Helpdesk::LeaderboardController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 

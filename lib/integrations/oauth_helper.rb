@@ -52,7 +52,7 @@ module Integrations::OauthHelper
       if provider.blank?
         key_hash
       else
-        if app_name.present? and key_hash[provider]['app_options'].present?
+        if app_name.present? && key_hash[provider] && key_hash[provider]['app_options'].present?
           key_hash[provider]['options'] ||= {}
           key_hash[provider]['options'].merge!(key_hash[provider]['app_options'][app_name])
           key_hash[provider].delete('app_options')

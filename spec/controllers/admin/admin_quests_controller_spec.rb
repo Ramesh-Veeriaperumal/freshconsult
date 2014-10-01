@@ -2,7 +2,7 @@ require 'spec_helper'
 
 include Gamification::Quests::Constants
 
-describe Admin::QuestsController do
+RSpec.describe Admin::QuestsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

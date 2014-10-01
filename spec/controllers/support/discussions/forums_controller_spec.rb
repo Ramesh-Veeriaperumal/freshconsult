@@ -31,8 +31,9 @@ describe Support::Discussions::ForumsController do
 		forum.destroy
 
 		get :show, :id => forum_id
-
-		response.should render_template "#{Rails.root}/public/404.html"
+    
+		response.should render_template(:file => "#{Rails.root}/public/404.html")
+    response.status.should eql(404)
 	end
 
 

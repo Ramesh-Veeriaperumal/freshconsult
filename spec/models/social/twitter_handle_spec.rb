@@ -1,8 +1,11 @@
 require 'spec_helper'
-include GnipHelper
-include Social::Twitter::Constants
 
-describe Social::TwitterHandle do
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include Social::Twitter::Constants
+end
+
+RSpec.describe Social::TwitterHandle do
 
   self.use_transactional_fixtures = false
 

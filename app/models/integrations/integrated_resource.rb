@@ -7,6 +7,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
 
   def self.createResource(params)
     irParams = params[:integrated_resource]
+    irParams.delete(:error)
     unless irParams.blank?
       irParams[:installed_application] = irParams[:account].installed_applications.find_by_application_id(params['application_id'])
       ir = self.new(irParams)

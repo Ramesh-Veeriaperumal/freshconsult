@@ -91,7 +91,7 @@ describe ContactsController do
     test_email = user.email
     post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
     @account.users.all.size.should eql @user_count
-    response.body.should =~ /Email has already been taken/
+    response.body.should =~ /email has already been taken/
     @account.features.multiple_user_emails.destroy
   end
 

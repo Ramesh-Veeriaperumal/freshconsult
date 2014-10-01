@@ -25,6 +25,7 @@ class Freshfone::Number < ActiveRecord::Base
 	attr_accessor :attachments_hash, :address_required, :skip_in_twilio
 	attr_protected :account_id
   after_find :assign_number_to_message
+  after_create :assign_number_to_message
 
 	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]
 	STATE = { :active => 1, :expired => 2 }
@@ -94,16 +95,20 @@ class Freshfone::Number < ActiveRecord::Base
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]
 	end
 	
-	def as_json
-		MESSAGE_FIELDS.map do |msg_type|
+	def as_json(opts ={})
+    if opts.blank?
+      MESSAGE_FIELDS.map do |msg_type|
 
-			if self[msg_type].blank?
-				{ :type => msg_type }
-			else
-				self[msg_type].parent = self
-				self[msg_type]
-			end
-		end
+        if self[msg_type].blank?
+          { :type => msg_type }
+        else
+          self[msg_type].parent = self
+          self[msg_type].as_json
+        end
+      end
+    else
+      super(opts)
+    end
 	end
 
 	def number_name

@@ -54,7 +54,7 @@ class Freshfone::Menu < Tree::TreeNode
 		instance_variables.reject{|v| [:@menu_options, :@ivr].include? v }
 	end
 		
-	def to_json(options=nil)
+	def as_json(options=nil)
 		{ :message => message,
 			:messageType => message_type,
 			:menuName => menu_name,
@@ -63,9 +63,15 @@ class Freshfone::Menu < Tree::TreeNode
 			:attachmentName => attachment_name,
 			:attachmentUrl => attachment_url,
 			:recordingUrl => recording_url,
-			:options => self.options.to_json
-		}.to_json
+			:options => self.options
+		}
 	end
+  
+  def to_json(options=nil)
+    hash = as_json
+    hash[:options] = as_json(options)[:options].to_json
+    hash.to_json
+  end
 
 	def speak(params={}, options={ :preview_alert => false, :invalid => false })
 		self.params ||= params

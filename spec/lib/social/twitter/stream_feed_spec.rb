@@ -1,8 +1,11 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
 
-describe Social::Gnip::TwitterFeed do
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+end
+
+RSpec.describe Social::Gnip::TwitterFeed do
 
   self.use_transactional_fixtures = false
 

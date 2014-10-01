@@ -39,7 +39,7 @@ describe Discussions::ForumsController do
 																:forum_type => 1,
 																:forum_visibility => 1
 															}
-			response.body.should =~ /Name can&#39;t be blank./
+			response.body.should =~ /Name can&#x27;t be blank/
 		end
 
 		it "should not create a new forum without a forum category" do 
@@ -60,7 +60,7 @@ describe Discussions::ForumsController do
 																:forum_category_id => @forum_category.id, 
 																:forum_visibility => 1
 															}
-			response.body.should =~ /Forum type can&#39;t be blank./
+			response.body.should =~ /Forum type can&#x27;t be blank/
 		end
 
 		it "should not create a new forum without forum visibility" do 

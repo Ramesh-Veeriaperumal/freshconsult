@@ -10,7 +10,7 @@ class Social::WelcomeController < ApplicationController
   def index
     @selected_tab = :social
     additional_settings = current_account.account_additional_settings.additional_settings
-    @twitter_enable = (additional_settings.nil? ||  additional_settings[:enable_social]) 
+    @twitter_enable = (additional_settings.blank? ||  additional_settings[:enable_social]) 
   end
 
   def get_stats
@@ -35,7 +35,7 @@ class Social::WelcomeController < ApplicationController
   def enable_feature
     feature = params[:twitter] == "true" ? true : false
     account_additional_settings = current_account.account_additional_settings
-    unless account_additional_settings.additional_settings.nil?
+    if account_additional_settings.additional_settings.present?
       account_additional_settings.additional_settings[:enable_social] = feature
       account_additional_settings.save
     else
@@ -108,7 +108,7 @@ class Social::WelcomeController < ApplicationController
   
   def additional_settings?
     settings = current_account.account_additional_settings.additional_settings
-    settings.nil? || settings[:enable_social]
+    settings.blank? || settings[:enable_social]
   end
 
   def handles_associated?

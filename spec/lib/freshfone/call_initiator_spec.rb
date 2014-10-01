@@ -1,8 +1,10 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
+RSpec.configure do |c|
+  c.include FreshfoneSpecHelper
+end
 
-describe Freshfone::CallInitiator do
+RSpec.describe Freshfone::CallInitiator do
   self.use_transactional_fixtures = false
   
   before(:all) do

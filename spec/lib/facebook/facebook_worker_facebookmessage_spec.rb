@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Facebook::Worker::FacebookMessage do
+RSpec.describe Facebook::Worker::FacebookMessage do
   self.use_transactional_fixtures = false
   
   before(:all) do

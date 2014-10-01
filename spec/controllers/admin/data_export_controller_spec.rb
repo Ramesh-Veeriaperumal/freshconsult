@@ -1,7 +1,7 @@
 require 'spec_helper'
 load 'spec/support/account_helper.rb'
 
-describe Admin::DataExportController do
+RSpec.describe Admin::DataExportController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -9,7 +9,7 @@ describe Admin::DataExportController do
     Account.reset_current_account
     User.current = nil
     @account = RSpec.configuration.account
-    # @agent = get_admin
+    @agent = get_admin
   end
 
   before(:each) do
@@ -44,17 +44,15 @@ describe Admin::DataExportController do
 
   it 'should export users data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_users_data)
-    get :export
-
+    post :export
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Users.xml"
     Pathname.new(exported_file).exist?.should eql(true)
 
     users_xml = File.read(exported_file)
     users = Hash.from_trusted_xml users_xml
-    admin = users["users"].find{|u| u["helpdesk_agent"] == true}
+    admin = users["users"].find{|u| u["helpdesk_agent"] == true && u['email'] == @agent.email  }
     admin.should_not be_blank
-    admin["email"].should eql(@account.agent.email)
     admin["email"].should eql(@agent.email)
   end
 
@@ -132,7 +130,8 @@ describe Admin::DataExportController do
     groups = Hash.from_trusted_xml groups_xml
     groups.should_not be_blank
     groups["groups"].should_not be_blank
-    groups["groups"].map{|g| g["name"]}.should eql(["Product Management", "QA", "Sales"])
+    g_names = groups["groups"].map{|g| g["name"]}
+    g_names.should include("Product Management", "QA", "Sales")
   end
 
   it 'should download exported data' do

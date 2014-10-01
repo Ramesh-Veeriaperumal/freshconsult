@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "SpamWatcher" do
+RSpec.describe "SpamWatcher" do
   self.use_transactional_fixtures = false
   before(:all) do
     load "tasks/spam_watcher_redis.rake"

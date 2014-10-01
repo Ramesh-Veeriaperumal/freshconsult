@@ -1,7 +1,10 @@
 require 'spec_helper'
-include MailgunHelper
 
-describe MailgunController do
+RSpec.configure do |c|
+  c.include MailgunHelper
+end
+
+RSpec.describe MailgunController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

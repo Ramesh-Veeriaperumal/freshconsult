@@ -1,4 +1,4 @@
-<% unless @survey_handle.portal.preferences.nil? %>
+<% if @survey_handle.portal.preferences.present? %>
  	$background: 	<%= @survey_handle.portal.preferences[:bg_color] %>;
 	$header_color: 	<%= @survey_handle.portal.preferences[:header_color] %>;
 	

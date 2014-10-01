@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Freshfone::CallHistoryController do
+RSpec.describe Freshfone::CallHistoryController do
 	self.use_transactional_fixtures = false
 	before(:each) do
 		create_test_freshfone_account

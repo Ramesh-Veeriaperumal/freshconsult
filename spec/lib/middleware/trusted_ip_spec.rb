@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Middleware::TrustedIp do
+RSpec.describe Middleware::TrustedIp do
   self.use_transactional_fixtures = false
 
   def env_for(url, opts={})
@@ -9,6 +9,7 @@ describe Middleware::TrustedIp do
 
   def create_whitelisted_ips(agent_only = false)
     WhitelistedIp.destroy_all
+    @account.whitelisted_ip.destroy if @account.whitelisted_ip
     wip = @account.build_whitelisted_ip
     wip.load_ip_info("127.0.0.1")
     wip.update_attributes({"enabled"=>true, "applies_only_to_agents"=>agent_only, 

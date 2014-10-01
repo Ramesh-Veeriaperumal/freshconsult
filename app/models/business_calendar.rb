@@ -8,6 +8,7 @@ class BusinessCalendar < ActiveRecord::Base
   serialize :holiday_data
   
   after_find :set_business_time_data
+  after_create :set_business_time_data
   
   #business_time_data has working days and working hours inside.
   #for now, a sporadically structured hash is used.

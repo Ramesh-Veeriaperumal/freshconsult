@@ -1,10 +1,12 @@
 require 'spec_helper'
 
-describe Helpdesk::TicketsController do
+RSpec.configure do |c|
+  c.include Import::CustomField
+end
+
+RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-
-  include Import::CustomField
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))

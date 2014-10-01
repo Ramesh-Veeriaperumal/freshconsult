@@ -13,7 +13,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   acts_as_list
   before_create :set_account_id
 
-  attr_accessible :value
+  attr_accessible :value, :choices
   # scope_condition for acts_as_list
   def scope_condition
     "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 

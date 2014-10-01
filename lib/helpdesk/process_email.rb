@@ -560,7 +560,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     #remove Redcloth from formatting
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
-      body_html = auto_link(body) { |text| truncate(text, 100) }
+      body_html = auto_link(body) { |text| truncate(text, :length => 100) }
       textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
       white_list(textilized.to_html)

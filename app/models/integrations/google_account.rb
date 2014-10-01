@@ -372,7 +372,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         if(!goog_prop_xml.blank? and user.has_attribute?(prop_name))
           prop_value = user.read_attribute(prop_name)
           unless prop_value.blank?
-            prop_value = prop_value.to_s.to_xs
+            prop_value = ::Builder::XChar.encode(prop_value)
             xml_str << goog_prop_xml.gsub("$"+prop_name, prop_value)
           end
         end

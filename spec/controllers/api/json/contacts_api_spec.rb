@@ -1,10 +1,12 @@
 require 'spec_helper'
 
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
 
 #Test cases for json api calls to contacts.
-describe ContactsController do
+RSpec.describe ContactsController do
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:each) do
     request.host = RSpec.configuration.account.full_domain

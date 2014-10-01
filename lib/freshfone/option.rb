@@ -38,13 +38,17 @@ class Freshfone::Option
 		audio.content_file_name unless audio.blank?
 	end
 
-	def to_json(options=nil)
+	def as_json(options=nil)
 		{ :respondToKey => respond_to_key,
 			:performerType => performer,
 			:performerId => performer_id,
 			:performerNumber => performer_number,
 			:optionId => respond_to_key
-		}.to_json
+		}
+	end
+  
+  def to_json(options=nil)
+		as_json(options).to_json
 	end
 	
 	def validate

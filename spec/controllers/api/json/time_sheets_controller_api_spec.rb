@@ -1,9 +1,12 @@
 require 'spec_helper'
 
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
 #Test cases for json api calls to time entries.
-describe Helpdesk::TimeSheetsController do
+RSpec.describe Helpdesk::TimeSheetsController do
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
 
   before(:all) do

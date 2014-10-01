@@ -1,7 +1,9 @@
 require 'spec_helper'
-include TicketFieldsHelper
+RSpec.configure do |c|
+  c.include TicketFieldsHelper
+end
 
-describe TicketFieldsController do
+RSpec.describe TicketFieldsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -21,7 +23,7 @@ describe TicketFieldsController do
     request.env["HTTP_ACCEPT"] = "application/json"
     get 'index', :format => "json"
     data_json = JSON.parse(response.body)
-    (data_json[0]['ticket_field']['label']).should be_eql("Requester")
+    (data_json[0]['ticket_field']['label']).should be_eql(RSpec.configuration.account.ticket_fields.first.label)
   end
 
   it "should create a custom field" do

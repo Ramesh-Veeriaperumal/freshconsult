@@ -23,6 +23,8 @@
 
 class Wf::Filter < ActiveRecord::Base
   
+  self.primary_key = :id
+  
   JOIN_NAME_INDICATOR = '>'
   
   after_find :set_err_and_deserialize

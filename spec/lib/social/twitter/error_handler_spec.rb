@@ -1,7 +1,9 @@
 require 'spec_helper'
-include Social::Twitter::ErrorHandler
+RSpec.configure do |c|
+  c.include Social::Twitter::ErrorHandler
+end
 
-describe "Twitter Error Handler" do
+RSpec.describe "Twitter Error Handler" do
   
   self.use_transactional_fixtures = false
   

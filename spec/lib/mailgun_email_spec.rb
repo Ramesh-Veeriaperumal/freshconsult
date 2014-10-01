@@ -1,7 +1,10 @@
 require 'spec_helper'
-include MailgunHelper
 
-describe Helpdesk::Email::Process do
+RSpec.configure do |c|
+  c.include MailgunHelper
+end
+
+RSpec.describe Helpdesk::Email::Process do
 	before(:all) do
 		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
 		clear_email_config

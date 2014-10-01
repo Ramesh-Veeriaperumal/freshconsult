@@ -195,8 +195,8 @@ describe Discussions::TopicsController do
 		post = create_test_post(topic)
 
 		get :component, :id => topic.id, :name => 'test'
-
-		assert_template "#{Rails.root}/public/404.html"
+		response.should render_template(:file => "#{Rails.root}/public/404.html")
+    expect(response.status).to eql(404)
 	end
 
 	it "should lock a topic on put 'update_lock'" do

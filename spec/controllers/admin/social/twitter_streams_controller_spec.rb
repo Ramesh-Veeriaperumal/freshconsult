@@ -1,12 +1,14 @@
 require 'spec_helper'
 
-include GnipHelper
-include DynamoHelper
-include Social::Twitter::Constants
-include Social::Dynamo::Twitter
-include Social::Util
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+  c.include Social::Twitter::Constants
+  c.include Social::Dynamo::Twitter
+  c.include Social::Util
+end
 
-describe Admin::Social::TwitterStreamsController do
+RSpec.describe Admin::Social::TwitterStreamsController do
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false

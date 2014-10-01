@@ -1,8 +1,11 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Social::FacebookPosts do
+
+RSpec.describe Social::FacebookPosts do
   self.use_transactional_fixtures = false
   
   before(:all) do

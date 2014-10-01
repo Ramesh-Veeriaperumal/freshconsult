@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Facebook::Core::Message do
+RSpec.describe Facebook::Core::Message do
   
   before(:all) do
     @fb_page = create_test_facebook_page(@account)

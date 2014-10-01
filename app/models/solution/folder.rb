@@ -66,8 +66,8 @@ class Solution::Folder < ActiveRecord::Base
 
 
   def self.visiblity_condition(user)
-    condition =   { :visibility => self.get_visibility_array(user) }
-    condition =  Solution::Folder.merge_conditions(condition) + " OR 
+    condition = "solution_folders.visibility IN (#{ self.get_visibility_array(user).join(',') })"
+    condition +=   " OR 
             (solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
               solution_folders.id in (SELECT solution_customer_folders.folder_id 
                                         FROM solution_customer_folders WHERE 
@@ -76,8 +76,7 @@ class Solution::Folder < ActiveRecord::Base
                                          solution_customer_folders.account_id = 
                                          #{user.account_id}))" if (user && user.has_company?)
                 # solution_customer_folders.customer_id = #{ user.customer_id})" if (user && user.has_company?)
-
-    return condition
+    condition
   end
 
   def customer_folders_attributes=(cust_attr)
@@ -112,8 +111,7 @@ class Solution::Folder < ActiveRecord::Base
 
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
-    json_str = super options
-    json_str
+    super options
   end
 
   def to_liquid

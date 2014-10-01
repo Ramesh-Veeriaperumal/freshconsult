@@ -1,8 +1,11 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
 
-describe FreshfoneController do
+RSpec.configure do |c|
+  c.include FreshfoneSpecHelper
+end
+
+RSpec.describe FreshfoneController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   

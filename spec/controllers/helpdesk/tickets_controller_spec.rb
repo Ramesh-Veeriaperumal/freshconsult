@@ -2,7 +2,7 @@ require 'spec_helper'
 include Redis::TicketsRedis
 include Redis::RedisKeys
 
-describe Helpdesk::TicketsController do
+RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -568,7 +568,7 @@ describe Helpdesk::TicketsController do
       last_ticket = assigns(:items).last
       remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => @account.id, 
                                                           :user_id => @agent.id, 
-                                                          :session_id => session['session_id']})
+                                                          :session_id => request.session_options[:id]})
       get :prevnext, :id => last_ticket.display_id
       assigns(:previous_ticket).to_i.should eql last_ticket.display_id - 1
     end

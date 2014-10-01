@@ -42,18 +42,15 @@ class Helpdesk::NotesController < ApplicationController
         format.xml do
          render :xml => @notes.to_xml(options) 
         end
-    format.json do
-      render :json => @notes.to_json(options)
-    end
-    format.nmobile do
-        response = "["
-        sep = ""
-        @notes.each do |note|
-          response << sep + "#{note.to_mob_json}"
-          sep = ","
+        format.json do
+          render :json => @notes.to_json(options)
         end
-        response << "]"
-        render :json => response
+        format.nmobile do
+          array = []
+          @notes.each do |note|
+            array << note.to_mob_json
+          end
+          render :json => array
         end
       end
     end    

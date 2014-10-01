@@ -81,7 +81,7 @@
 	</div>
 
 	<div id="ReplyToTicket" class="request_panel" style="display:none;">
-		<%= form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
+		<%= form_for Helpdesk::Note.new, :url => support_ticket_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
 				<ul class="ui-form">
 			    	<li> 

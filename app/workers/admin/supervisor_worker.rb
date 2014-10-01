@@ -20,7 +20,7 @@ module Admin
           logger.info "conditions::::::: #{conditions.inspect}"
           logger.info "negate_conditions::::#{negate_conditions.inspect}"
           joins  = execute_on_db { rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"]) }
-          tickets = execute_on_db { account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
+          tickets = execute_on_db { account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*") }
           tickets.each do |ticket|
             begin
               rule.trigger_actions ticket

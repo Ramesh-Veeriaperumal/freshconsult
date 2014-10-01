@@ -57,7 +57,7 @@ class Support::LoginController < SupportController
 	    end
 
 	    def remove_old_filters
-	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session['session_id']})
+	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
 	    end
 
       def check_request_referrer

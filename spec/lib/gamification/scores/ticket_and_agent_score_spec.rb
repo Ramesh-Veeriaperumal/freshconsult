@@ -1,8 +1,11 @@
 
 require 'spec_helper'
-include Gamification::Scoreboard::Constants
 
-describe "Ticket and Agent score specs" do
+RSpec.configure do |c|
+  c.include Gamification::Scoreboard::Constants
+end
+
+RSpec.describe "Ticket and Agent score specs" do
   self.use_transactional_fixtures = false
   
   before(:all) do

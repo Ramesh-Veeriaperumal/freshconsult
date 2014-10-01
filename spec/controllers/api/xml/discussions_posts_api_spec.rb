@@ -1,9 +1,12 @@
 require 'spec_helper'
 
-describe Discussions::PostsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe Discussions::PostsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category

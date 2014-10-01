@@ -134,7 +134,7 @@ describe Admin::CannedResponses::ResponsesController do
 	end
 
 	it "should delete multiple Canned Responses" do
-		delete :delete_multiple, :ids => ["#{@test_response_1.id}"]
+		delete :delete_multiple, :ids => ["#{@test_response_1.id}"], :folder_id => @folder_id
 		canned_response = RSpec.configuration.account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.should be_nil
 	end

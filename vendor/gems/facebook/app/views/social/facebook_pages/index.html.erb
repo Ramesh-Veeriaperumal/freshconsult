@@ -52,7 +52,7 @@ if(jQuery('#got_pages').length){
                 <%=content_tag("span","", :class => 'symbols-issue tooltip', :title=> t('facebook_tab.page_tab_info')) if page.page_token_tab && page.page_token_tab.empty? %>
                 <%= link_to(t(".reauthorize").html_safe,  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
                 <%= link_to t("edit"),  edit_social_facebook_path(page), :class => "btn btn-mini" %>
-                <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_page_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
+                <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
               </td>
             </tr>
            

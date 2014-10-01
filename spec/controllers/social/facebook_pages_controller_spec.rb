@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Social::FacebookPagesController do
+RSpec.describe Social::FacebookPagesController do
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false

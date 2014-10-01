@@ -1,8 +1,10 @@
 require 'spec_helper'
-include Redis::TicketsRedis
-include Redis::RedisKeys
+RSpec.configure do |c|
+  c.include Redis::TicketsRedis
+  c.include Redis::RedisKeys
+end
 
-describe Helpdesk::RemindersController do
+RSpec.describe Helpdesk::RemindersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

@@ -1,8 +1,11 @@
 require 'spec_helper'
-include Redis::RedisKeys
-include Redis::IntegrationsRedis
 
-describe Integrations::LogmeinController do
+RSpec.configure do |c|
+  c.include Redis::RedisKeys
+  c.include Redis::IntegrationsRedis
+end
+
+RSpec.describe Integrations::LogmeinController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 

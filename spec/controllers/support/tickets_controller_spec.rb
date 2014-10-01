@@ -203,6 +203,7 @@ describe Support::TicketsController do
   end
 
   it "should check whether user_email is already exists" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get :check_email, :v => Faker::Internet.email
     item = JSON.parse(response.body)
     item["user_exists"].should be false

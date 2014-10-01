@@ -1,10 +1,13 @@
 require 'spec_helper'
-include EmailHelper
-include MailgunHelper
 require "#{Rails.root}/lib/import/custom_field.rb"
-include Import::CustomField
 
-describe EmailCommands do
+RSpec.configure do |c|
+  c.include EmailHelper
+  c.include MailgunHelper
+  c.include Import::CustomField
+end
+
+RSpec.describe EmailCommands do
 	before(:all) do
 		add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
 		clear_email_config

@@ -1,7 +1,9 @@
 require 'spec_helper'
-include UsageTriggersSpecHelper
+RSpec.configure do |c|
+  c.include UsageTriggersSpecHelper
+end
 
-describe Freshfone::UsageTriggersController do
+RSpec.describe Freshfone::UsageTriggersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

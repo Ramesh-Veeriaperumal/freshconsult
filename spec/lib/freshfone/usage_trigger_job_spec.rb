@@ -1,10 +1,13 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/usage_triggers_spec_helper.rb'
-include FreshfoneSpecHelper
-include UsageTriggersSpecHelper
 
-describe 'UsageTrigger' do
+RSpec.configure do |c|
+  c.include FreshfoneSpecHelper
+  c.include UsageTriggersSpecHelper
+end
+
+RSpec.describe 'UsageTrigger' do
   self.use_transactional_fixtures = false
 
   before(:all) do

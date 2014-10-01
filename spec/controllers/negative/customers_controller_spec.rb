@@ -17,7 +17,7 @@ describe CustomersController do
                                   :note => "", 
                                   :domains => ""
                                  }
-    response.body.should =~ /Name can&#39;t be blank/
+    response.body.should =~ /Name can&#x27;t be blank/
   end
 
   it "should not create a new company with the same name" do

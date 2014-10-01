@@ -84,6 +84,7 @@ describe "CreditInfo" do
 					Freshfone::Call.any_instance.stubs(:caller_number).returns("+77213987654")
 					pulse_rate = Freshfone::PulseRate.new(@call, true)
 					pulse_rate.pulse_charge.should eql(0.273)
+          Freshfone::Call.any_instance.unstub(:caller_number)
 				end
 			end
 		end

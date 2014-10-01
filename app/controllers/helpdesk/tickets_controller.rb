@@ -151,16 +151,16 @@ class Helpdesk::TicketsController < ApplicationController
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
-           tickets = Array.new
+           tickets, hash = Array.new, {}
            @items.each do |tic| 
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            tickets <<  JSON.parse(tic.to_mob_json_index[19..-2]).as_json(false)
+            tickets <<  tic.to_mob_json_index['helpdesk_ticket']
            end
-
-          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
-          response << "}"
-          render :json => response
+           hash.merge!({:ticket => tickets })
+           hash.merge!(current_account.as_json(:only=>[:id],:methods=>[:portal_name]))
+           hash.merge!(current_user.as_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]))
+           hash.merge!({:summary => get_summary_count})
+           hash.merge!({:top_view => top_view})
+           render :json => hash
         end
       end
     end
@@ -269,20 +269,19 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-        response = "{
-        #{@item.to_mob_json(false,false)[1..-2]},
-        #{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
-                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets])[1..-2]},
-        #{current_account.to_json(:only=> [:id], :methods=>[:timesheets_feature])[1..-2]},
-        #{{:subscription => !@subscription.nil?}.to_json[1..-2]},
-        #{{:last_reply => bind_last_reply(@ticket, @signature, false, true, true)}.to_json[1..-2]},
-        #{{:last_forward => bind_last_conv(@ticket, @signature, true)}.to_json[1..-2]},
-        #{{:ticket_properties => ticket_props}.to_json[1..-2]}"
-        response << ",#{{:default_twitter_body_val => default_twitter_body_val(@ticket)}.to_json[1..-2]}" if @item.is_twitter?
-        response << ",#{{:twitter_handles_map => twitter_handles_map}.to_json[1..-2]}" if @item.is_twitter?
-        response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
-        response << "}";
-        render :json => response
+        hash = {}
+        hash.merge!(@item.to_mob_json(false,false))
+        hash.merge!(current_user.as_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
+                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]))
+        hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))                            
+        hash.merge!({:subscription => !@subscription.nil?})                                          
+        hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
+        hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
+        hash.merge!({:ticket_properties => ticket_props})
+        hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
+        hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
+        hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
+        render :json => hash
       }
       format.mobile {
 		 render :json => @item.to_mob_json
@@ -890,7 +889,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def redis_key
-      HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session['session_id']}
+      HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]}
     end
 
     def allowed_quick_assign_fields
@@ -940,7 +939,7 @@ class Helpdesk::TicketsController < ApplicationController
       tries = 3
       count = 0
       begin
-        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{request.session_options[:id]}")
         Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
         JSON.parse(filters_str) if filters_str
       rescue Exception => e

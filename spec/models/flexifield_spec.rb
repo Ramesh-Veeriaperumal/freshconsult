@@ -47,7 +47,7 @@ describe FlexifieldDef do
 
 end
 
-describe FlexifieldDefEntry do
+RSpec.describe FlexifieldDefEntry do
 
   before(:each) do
     create_essential_variables

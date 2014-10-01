@@ -1,7 +1,7 @@
 <div class="row">
   <div class="span6">
     <h3>Freshfone Account Actions</h3>
-    <% form_tag({:action => 'process_freshfone_account'}, :class => "well") do %>
+    <%= form_tag({:action => 'process_freshfone_account'}, :class => "well") do %>
       <%= label_tag :account_id %>
       <%= text_field_tag :account_id, "", :class => "required" %>
       <div>

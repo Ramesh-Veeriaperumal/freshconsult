@@ -1,4 +1,4 @@
-<%= form_for [@parent, @item], 
+<%= form_for helpdesk_ticket_note_path([@parent, @item]), 
 			:html => { 
 				:multipart => true,
 				:id => "edit_#{@item.id}",

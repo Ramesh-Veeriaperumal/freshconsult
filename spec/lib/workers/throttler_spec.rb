@@ -17,10 +17,13 @@ TEST_CASES = { # sequence is important, affects the results of the test cases
   :third_webhook => { :test_case => { :worker => WORKER_NAME, :args => {}, :key => SAMPLE_COUNT, :expire_after => THROTTLE_EVERY, :limit => THROTTLE_LIMIT }, :verification_method => :verify_throttler_rescheduling }
 }
 
-describe Workers::Throttler do
+RSpec.configure do |c|
+  c.include Redis::RedisKeys
+  c.include Redis::OthersRedis
+end
 
-  include Redis::RedisKeys
-  include Redis::OthersRedis
+RSpec.describe Workers::Throttler do
+
   before(:all) do
     Resque.inline = false
     remove_others_redis_key SAMPLE_COUNT

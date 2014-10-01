@@ -1,11 +1,14 @@
 require 'spec_helper'
 
-describe ContactsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe ContactsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
-
-
+  
+  
   before(:each) do
     request.host = RSpec.configuration.account.full_domain
     http_login(RSpec.configuration.agent)

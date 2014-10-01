@@ -1,10 +1,13 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
-include Redis::RedisKeys
-include Redis::IntegrationsRedis
 
-describe Freshfone::CallFlow do
+RSpec.configure do |c|
+  c.include FreshfoneSpecHelper
+  c.include Redis::RedisKeys
+  c.include Redis::IntegrationsRedis
+end
+
+RSpec.describe Freshfone::CallFlow do
   self.use_transactional_fixtures = false
   
   before(:all) do
@@ -59,7 +62,7 @@ describe Freshfone::CallFlow do
     twiml[:Response][:Dial][:Client].should include(@agent.id.to_s)
   end
 
-  xit 'should connect call to a non-busy direct dial number' do#failing in master
+  it 'should connect call to a non-busy direct dial number' do
     call = create_freshfone_call
     number = Faker::Base.numerify('(###)###-####')
     call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, RSpec.configuration.account, @number, RSpec.configuration.agent)

@@ -26,7 +26,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         render :xml=>@time_sheets.to_xml({:root=>"time_entries"})
       end
        format.json do
-        render :json=>@time_sheets.to_json()
+        render :json=>@time_sheets
       end
       format.mobile do
         render :json=>@time_sheets.all(:order => "executed_at").to_json()
@@ -34,7 +34,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
       format.nmobile do
         time_entries = Array.new
         @time_sheets.each do |time_entry|
-          time_entries << JSON.parse(time_entry.to_mob_json)
+          time_entries << time_entry.to_mob_json
         end 
         render :json => time_entries
       end

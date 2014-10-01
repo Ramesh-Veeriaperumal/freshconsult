@@ -1,7 +1,10 @@
 require 'spec_helper'
-include Import::CustomField
 
-describe ApiWebhooksController do
+RSpec.configure do |c|
+  c.include Import::CustomField
+end
+
+RSpec.describe ApiWebhooksController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

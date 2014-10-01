@@ -1,7 +1,9 @@
 require 'spec_helper'
-include MemcacheKeys
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
 
-describe Integrations::ApplicationsController do
+RSpec.describe Integrations::ApplicationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -47,7 +49,7 @@ describe Integrations::ApplicationsController do
     set_redis_key(provider, surveymonkey_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-    installed_app = Integrations::InstalledApplication.with_name(provider).first#TODO-RAILS3 check with integrations
+    installed_app = Integrations::InstalledApplication.with_name(provider).first
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end

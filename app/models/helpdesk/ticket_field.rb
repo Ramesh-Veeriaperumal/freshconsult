@@ -1,6 +1,7 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
   serialize :field_options
+  attr_writer :choices
 
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
@@ -11,7 +12,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
     :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, 
     :required_for_closure, :flexifield_def_entry_id, :field_options, :default, 
-    :level, :parent_id, :prefered_ff_col, :import_id
+    :level, :parent_id, :prefered_ff_col, :import_id, :choices
   
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
@@ -37,7 +38,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   #Phase1:- end
 
   # xss_terminate
-  acts_as_list
+  acts_as_list :top_of_list => 0
 
   after_commit :clear_cache
   
@@ -292,8 +293,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     options[:except] = [:account_id]
     options[:methods] = [:choices]
     options[:methods] = [:nested_choices] if field_type == "nested_field"
-    json_str = super options
-    json_str
+    super options
   end
 
   def to_xml_nested_fields(xml, picklist_value)
@@ -308,10 +308,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
         end
       end
     end
-  end
-
-  def choices=(c_attr)
-    @choices = c_attr
   end
 
   def company_cc_in_portal?
@@ -359,7 +355,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
         clear_picklist_cache
         @choices.each do |c| 
           if c.size > 2 && c[2].is_a?(Array)
-            picklist_values.build({:value => c[0], :choices => c[2]})
+            p = picklist_values.build({:value => c[0]})
+            p.choices = c[2]
           else
             picklist_values.build({:value => c[0]})
           end

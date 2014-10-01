@@ -1,10 +1,13 @@
 require 'spec_helper'
 
-include GnipHelper
-include Gnip::Constants
-include Social::Twitter::Constants
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include Gnip::Constants
+  c.include Social::Twitter::Constants
+end
 
-describe Gnip::RuleClient do
+
+RSpec.describe Gnip::RuleClient do
 
   self.use_transactional_fixtures = false
 

@@ -8,9 +8,9 @@ class ForumCategory < ActiveRecord::Base
   end
 
   def self.user_forums_condition
-    condition = ['forum_visibility not in (?) ', [Forum::VISIBILITY_KEYS_BY_TOKEN[:agents] ,  Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]]]
-    condition = ForumCategory.merge_conditions(condition) + ' OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id = #{User.current.customer.id})' if company_specific?(User.current)
-    return condition
+    condition = "forum_categories.forum_visibility not in (#{Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]})"
+    condition += " OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id = #{User.current.customer.id})" if company_specific?(User.current)
+    condition
   end
 
   has_many :forums, :dependent => :destroy, :order => "position"

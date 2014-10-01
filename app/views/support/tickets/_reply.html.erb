@@ -1,5 +1,5 @@
 <% if @ticket.present? %>
-	<%= form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), 
+	<%= form_for Helpdesk::Note.new, :url => support_ticket_notes_path(@ticket), 
 			:html => { :rel => "validate", :multipart => true }  do |f| %>
 		<%= f.error_messages %>  	
 	  	<div class="row-fluid">

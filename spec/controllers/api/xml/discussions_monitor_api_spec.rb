@@ -1,9 +1,12 @@
 require 'spec_helper'
 
-describe Support::DiscussionsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe Support::DiscussionsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category

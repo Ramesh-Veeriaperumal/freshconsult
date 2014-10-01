@@ -4,6 +4,7 @@ class EmailNotification < ActiveRecord::Base
   attr_protected  :account_id
   before_create :set_default_version
   after_find :set_requester_and_agent_template
+  after_create :set_requester_and_agent_template
 
 
   def set_requester_and_agent_template

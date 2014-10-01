@@ -2,7 +2,7 @@ require 'spec_helper'
 include Redis::RedisKeys
 include Redis::OthersRedis
 
-describe Middleware::ApiThrottler do
+RSpec.describe Middleware::ApiThrottler do
   self.use_transactional_fixtures = false
 
   def env_for(url, opts={})

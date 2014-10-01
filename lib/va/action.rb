@@ -67,7 +67,7 @@ class Va::Action
     when 'ticket_type'
       "Changed the ticket type to <b>#{value}</b>"
     else
-      "Set #{action_key.humanize()} as <b>#{value}</b>"
+      "Set #{action_key.to_s.humanize()} as <b>#{value}</b>"
     end
   end
   
@@ -164,7 +164,7 @@ class Va::Action
         unless watcher.present?
           subscription = act_on.subscriptions.create( {:user_id => agent_id} )
           watchers.push subscription.user.name if subscription
-          Helpdesk::WatcherNotifier.send_later(notify_new_watcher, 
+          Helpdesk::WatcherNotifier.send_later(:notify_new_watcher, 
                                                act_on, 
                                                subscription, 
                                                "automations rule")

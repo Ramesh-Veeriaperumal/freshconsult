@@ -6,8 +6,7 @@ module Helpdesk::ReorderUtility
     reorder_scoper.each do |reorder_item|
       new_p = new_pos[reorder_item.id.to_s]
       if reorder_item.position != new_p
-        reorder_item.position = new_p
-        reorder_item.save
+        reorder_item.update_column(:position, new_p)# TODO-RAILS3 check callback
       end
     end
     respond_to do |format|

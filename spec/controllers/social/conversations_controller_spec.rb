@@ -1,10 +1,13 @@
    
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
-include FacebookHelper
 
-describe Helpdesk::ConversationsController do
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+  c.include FacebookHelper
+end
+
+RSpec.describe Helpdesk::ConversationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
       
@@ -63,7 +66,7 @@ describe Helpdesk::ConversationsController do
         post :twitter,  { :helpdesk_note => {
                             :private => false, 
                             :source => 5, 
-                            :note_body_attributes => {:body => twitter_object[:text] }
+                            :note_body_attributes => {:body => twitter_object[:text].dup }
                          },
                         :tweet => true,
                         :tweet_type => "mention",

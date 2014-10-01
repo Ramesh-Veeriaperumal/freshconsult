@@ -1,5 +1,5 @@
 <%= javascript_include_tag :widget_config %>
-<% unless current_account.main_portal.preferences.nil?
+<% if current_account.main_portal.preferences.present?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>
 

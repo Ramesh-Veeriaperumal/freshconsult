@@ -1,8 +1,10 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+end
 
-describe Helpdesk::TicketsController do
+RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

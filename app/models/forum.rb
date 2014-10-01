@@ -51,14 +51,13 @@ class Forum < ActiveRecord::Base
 
 
   def self.visiblity_condition(user)
-    condition =  {:forum_visibility =>self.visibility_array(user) }
-    condition =  Forum.merge_conditions(condition) + " OR
-                  ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
+    condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
+    condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
                     AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
                                       where customer_forums.customer_id = #{user.customer_id} and
                                       customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
                 # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
-    return condition
+    condition
   end
 
   validates_presence_of :name,:forum_category,:forum_type

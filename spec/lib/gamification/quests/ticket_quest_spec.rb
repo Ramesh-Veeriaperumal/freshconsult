@@ -1,7 +1,10 @@
 require 'spec_helper'
-include Gamification::Quests::Constants
 
-describe Gamification::Quests::ProcessTicketQuests do
+RSpec.configure do |c|
+  c.include Gamification::Quests::Constants
+end
+
+RSpec.describe Gamification::Quests::ProcessTicketQuests do
   self.use_transactional_fixtures = false
   
   FAST_RESOLUTION_POINTS = 10
@@ -11,7 +14,6 @@ describe Gamification::Quests::ProcessTicketQuests do
   
   before(:all) do
     @account  = create_test_account
-    @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
   end
   
   # Assuming all the tickets are resolved fast and in first call
@@ -19,6 +21,8 @@ describe Gamification::Quests::ProcessTicketQuests do
   
   context "Ticket quests with filter condition - source as email and time span - any time" do 
     before(:all) do
+      @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
+    
       Resque.inline = false
       quest_filter_data = {
         :and_filters => [{ :name => "source" , :operator => "is", :value => "1"}], # Source "1" is "email"
@@ -106,6 +110,8 @@ describe Gamification::Quests::ProcessTicketQuests do
   
   context "Ticket quests with filter conditions - customer satisfaction rating is happy and time span - 1 day" do
     before(:all) do
+      @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
+    
       Resque.inline = false
       quest_filter_data = {
         :and_filters => [{ :name => "st_survey_rating" , :operator => "is", :value => "1"}], # Survey rating "1" is "happy"

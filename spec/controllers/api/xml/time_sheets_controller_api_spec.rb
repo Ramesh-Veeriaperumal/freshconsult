@@ -1,9 +1,12 @@
 require 'spec_helper'
 
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
 #Test cases for xml api calls to time entries.
-describe Helpdesk::TimeSheetsController do
+RSpec.describe Helpdesk::TimeSheetsController do
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   TIME_ENTRY_XML_ATTRIBS = ["billable", "created_at", "executed_at", "id", "note", 
     "start_time", "timer_running", "updated_at", "user_id", "workable_type", "ticket_id",

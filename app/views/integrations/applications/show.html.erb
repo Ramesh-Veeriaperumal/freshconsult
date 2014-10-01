@@ -7,7 +7,9 @@
 	http_method = install_action[:method]
 	html[:method] = http_method unless http_method.blank?
   end
-  form_for @installing_application, :url => url, :html => html do |f| %>
+%>
+
+<%=  form_for @installing_application, :url => url, :html => html do |f| %>
   <ul class="ui-form">  
 		<li class="inline-field">
 			<label class="caption">

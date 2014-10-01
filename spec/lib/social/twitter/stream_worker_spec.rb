@@ -1,10 +1,13 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
-include Social::Util
+
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+  c.include Social::Util
+end
 
 
-describe "Social::Stream::Workers::Twitter" do 
+RSpec.describe "Social::Stream::Workers::Twitter" do 
   self.use_transactional_fixtures = false
   before(:all) do
     Resque.inline = true

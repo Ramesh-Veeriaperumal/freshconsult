@@ -1,9 +1,11 @@
 require 'spec_helper'
 
-include FacebookHelper
-include Facebook::Core::Util
+RSpec.configure do |c|
+  c.include FacebookHelper
+  c.include Facebook::Core::Util
+end
 
-describe Facebook::Core::Post do
+RSpec.describe Facebook::Core::Post do
   
   before(:all) do
     @account.features.send(:facebook_realtime).create

@@ -1,9 +1,12 @@
 require 'spec_helper'
 
-describe Helpdesk::SurveysController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe Helpdesk::SurveysController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:each) do
     request.host = @account.full_domain

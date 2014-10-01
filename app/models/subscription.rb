@@ -334,7 +334,12 @@ class Subscription < ActiveRecord::Base
       Time.at(billing_subscription.trial_end).to_datetime.utc
     end
   end
-
+  
+  def set_billing_info(card)
+    self.card_number = card.masked_number
+    self.card_expiration = "%02d-%d" % [card.expiry_month, card.expiry_year]
+    self.update_billing_address(card)
+  end
 
   protected
   
@@ -397,12 +402,6 @@ class Subscription < ActiveRecord::Base
       SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
 
-
-    def set_billing_info(card)
-      self.card_number = card.masked_number
-      self.card_expiration = "%02d-%d" % [card.expiry_month, card.expiry_year]
-      self.update_billing_address(card)
-    end
 
     def update_billing_address(card)
       billing_address = self.billing_address

@@ -1,9 +1,12 @@
 require 'spec_helper'
 
-describe Helpdesk::TicketsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe Helpdesk::TicketsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:each) do
     request.host = RSpec.configuration.account.full_domain
@@ -11,12 +14,11 @@ describe Helpdesk::TicketsController do
   end
 
   it "should create a ticket" do
-#    request.env["HTTP_USER_AGENT"] = 'Android'
     request.env["HTTP_ACCEPT"] = "application/json"
   	post :create, {:helpdesk_ticket => {:subject => Faker::Lorem.words(10).join(" "),
           :description => Faker::Lorem.paragraph,
           :email => Faker::Internet.email,
-          :priority => "Lower" },:format => 'json'}, :content_type => 'application/json', :format => 'mobile'
+          :priority => "Lower" },:format => 'json'}, :content_type => 'application/json'
     response.status.should eql(406)
   end
 

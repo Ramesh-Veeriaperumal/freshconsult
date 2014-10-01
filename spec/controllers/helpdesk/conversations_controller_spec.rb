@@ -1,9 +1,12 @@
 require 'spec_helper'
 
-describe Helpdesk::ConversationsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe Helpdesk::ConversationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   context "For Web requests" do
     before(:all) do

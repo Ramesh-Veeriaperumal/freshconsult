@@ -1,7 +1,10 @@
 require 'spec_helper'
-include MemcacheKeys
 
-describe SsoController do
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
+
+RSpec.describe SsoController do
   self.use_transactional_fixtures = false
 
   before(:all) do

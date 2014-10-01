@@ -20,7 +20,8 @@ class Freshfone::Ivr < ActiveRecord::Base
 
 	attr_protected :account_id
 	attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
-    after_find :assign_ivr_to_welcome_message
+  after_find :assign_ivr_to_welcome_message
+  after_create :assign_ivr_to_welcome_message
   
 	# Format: [symbol, twilio_type, display_name, value_for_select_tag]
 

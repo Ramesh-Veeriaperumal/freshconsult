@@ -1,7 +1,9 @@
 require 'spec_helper'
-include Social::Twitter::Constants
+RSpec.configure do |c|
+  c.include Social::Twitter::Constants
+end
 
-describe Social::GnipTwitterController do
+RSpec.describe Social::GnipTwitterController do
   self.use_transactional_fixtures = false
 
   describe "POST #reconnect" do

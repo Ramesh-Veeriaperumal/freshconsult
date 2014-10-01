@@ -22,7 +22,7 @@
 			
 			<%= article.title %>
 			<%= link_to "", article_url, :target => "blank", 
-											:title => truncate( article.desc_un_html, 100), :class => "open_in_new" %> 
+											:title => truncate(article.desc_un_html, :length => 100), :class => "open_in_new" %> 
 		</td>
 	</tr>
 <% end %>

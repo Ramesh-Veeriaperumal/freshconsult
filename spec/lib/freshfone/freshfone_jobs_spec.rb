@@ -1,8 +1,11 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
 
-describe 'CallRecordingAttachment' do
+RSpec.configure do |c|
+  c.include FreshfoneSpecHelper
+end
+
+RSpec.describe 'CallRecordingAttachment' do
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -38,7 +41,7 @@ describe 'CallRecordingAttachment' do
   end
 end
 
-describe 'CallQueueWait' do
+RSpec.describe 'CallQueueWait' do
   self.use_transactional_fixtures = false
 
   before(:all) do

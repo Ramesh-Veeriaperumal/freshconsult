@@ -17,7 +17,7 @@ class Freshfone::Number::Message
 		end
 	end
 
-	def to_json(options=nil)
+	def as_json(options=nil)
 		{ :message => message,
 			:messageType => message_type,
 			:attachmentId => attachment_id,
@@ -26,7 +26,11 @@ class Freshfone::Number::Message
 			:recordingUrl => recording_url,
 			:type => type,
 			:group_id => group_id
-		}.to_json
+		}
+	end
+  
+  def to_json(options=nil)
+		as_json(options).to_json
 	end
 	
 	def validate

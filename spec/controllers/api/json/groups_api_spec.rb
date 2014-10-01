@@ -1,8 +1,11 @@
 require 'spec_helper'
 
-describe GroupsController do
+RSpec.configure do |c|
+  c.include APIAuthHelper
+end
+
+RSpec.describe GroupsController do
 	self.use_transactional_fixtures = false
-	include APIAuthHelper
 
 	before(:all) do
 		@now = (Time.now.to_f*1000).to_i

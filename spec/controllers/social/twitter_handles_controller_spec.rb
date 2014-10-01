@@ -17,9 +17,10 @@ describe Social::TwitterHandlesController do
     context "without api exception" do
       it "should be successful" do
         get :index
-        response.should render_template("social/twitter_handles/index")
-        session["request_token"].present?.should be_truthy
-        session["request_secret"].present?.should be_truthy
+
+        response.should redirect_to "/admin/social/streams"
+        # session["request_token"].present?.should be_true
+        # session["request_secret"].present?.should be_true
       end
     end
 
@@ -27,7 +28,7 @@ describe Social::TwitterHandlesController do
       it "should redirect if exception arises" do
         TwitterWrapper.any_instance.stubs(:request_tokens).raises(Timeout::Error)
         get :index
-        response.should redirect_to '/admin/home'
+        response.should redirect_to "/admin/social/streams"
       end
     end
   end

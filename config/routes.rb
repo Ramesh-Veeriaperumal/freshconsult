@@ -693,12 +693,6 @@ Helpkit::Application.routes.draw do
         collection do
           get :authdone
         end
-      end
-
-      resources :twitter_handles do
-        collection do
-          get :authdone
-        end
         member do
           delete :destroy
         end
@@ -1012,6 +1006,7 @@ Helpkit::Application.routes.draw do
       post :plan
       post :calculate_amount
       put :convert_subscription_to_free
+      post :calculate_plan_amount
     end
   end
 

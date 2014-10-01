@@ -24,11 +24,14 @@
 
 class Wf::Filter < ActiveRecord::Base
   
+  self.primary_key = :id
+  
   JOIN_NAME_INDICATOR = '>'
 
   self.table_name =  :wf_filters
   serialize   :data
   after_find :set_error
+  after_create :set_error
   before_save :set_data_and_type
   
   belongs_to :user

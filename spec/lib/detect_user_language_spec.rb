@@ -8,7 +8,7 @@ TEST_LANGUAGES = {
   :'ta-IN' => "இனிய புத்தாண்டு நல் வாழ்த்துக்கள்!"
 }
 
-describe Helpdesk::DetectUserLanguage do
+RSpec.describe Helpdesk::DetectUserLanguage do
 
   before(:all) do
     @new_user = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email))

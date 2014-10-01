@@ -1,8 +1,10 @@
 require 'spec_helper'
 load 'spec/support/freshfone_transfer_spec_helper.rb'
-include FreshfoneTransferSpecHelper
+RSpec.configure do |c|
+  c.include FreshfoneTransferSpecHelper
+end
 
-describe Freshfone::CallTransferController do
+RSpec.describe Freshfone::CallTransferController do
   self.use_transactional_fixtures = false
 
   before(:each) do

@@ -1,7 +1,10 @@
 require 'spec_helper'
-include EmailHelper
 
-describe EmailController do
+RSpec.configure do |c|
+  c.include EmailHelper
+end
+
+RSpec.describe EmailController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

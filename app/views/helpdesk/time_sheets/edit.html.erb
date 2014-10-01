@@ -1,4 +1,4 @@
-<% form_remote_for :time_entry, @time_entry, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
+<%= form_remote_for :time_entry, @time_entry, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
   <%= render :partial => "form", :object => f, :locals => {:edit => @time_entry, :type =>"edit"} %>
 <% end %>
 

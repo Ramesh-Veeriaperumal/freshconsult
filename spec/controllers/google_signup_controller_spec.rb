@@ -1,7 +1,10 @@
 require 'spec_helper'
-include MemcacheKeys
 
-describe GoogleSignupController do
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
+
+RSpec.describe GoogleSignupController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

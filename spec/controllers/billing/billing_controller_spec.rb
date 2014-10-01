@@ -51,20 +51,20 @@ describe Billing::BillingController do
   end
 
 	it "should activate free subscription" do
-    @account.subscription.addons = []    
-    Billing::Subscription.new.update_subscription(@account.subscription, true, @account.subscription.addons)
+    RSpec.configuration.account.subscription.addons = []    
+    Billing::Subscription.new.update_subscription(RSpec.configuration.account.subscription, true, RSpec.configuration.account.subscription.addons)
 
     plan = SubscriptionPlan.find_by_name("Sprout")
     RSpec.configuration.account.subscription.subscription_plan = plan
     RSpec.configuration.account.subscription.convert_to_free
-    Billing::Subscription.new.activate_subscription(@account.subscription)
+    Billing::Subscription.new.activate_subscription(RSpec.configuration.account.subscription)
     RSpec.configuration.account.subscription.save!
     RSpec.configuration.account.subscription.reload
   
-    billing_result = build_test_billing_result(@account.id)
-    post "trigger", event_params(@account.id, "subscription_activated")
+    billing_result = build_test_billing_result(RSpec.configuration.account.id)
+    post "trigger", event_params(RSpec.configuration.account.id, "subscription_activated")
     
-  	@account.subscription.agent_limit.should eql 3
+  	RSpec.configuration.account.subscription.agent_limit.should eql 3
     RSpec.configuration.account.subscription.subscription_plan.should eql plan
     RSpec.configuration.account.subscription.free_agents.should eql plan.free_agents
 	end
@@ -78,9 +78,9 @@ describe Billing::BillingController do
   end
 
   it "should reactivate subscription" do
-    Billing::Subscription.new.reactivate_subscription(@account.subscription) 
-    billing_result = build_test_billing_result(@account.id)    
-    post "trigger", event_params(@account.id, "subscription_reactivated")
+    Billing::Subscription.new.reactivate_subscription(RSpec.configuration.account.subscription) 
+    billing_result = build_test_billing_result(RSpec.configuration.account.id)    
+    post "trigger", event_params(RSpec.configuration.account.id, "subscription_reactivated")
 
     RSpec.configuration.account.subscription.reload
     RSpec.configuration.account.subscription.state.should_not eql "suspended"

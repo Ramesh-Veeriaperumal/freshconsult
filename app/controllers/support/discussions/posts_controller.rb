@@ -57,6 +57,10 @@ class Support::Discussions::PostsController < SupportController
 	      	@post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
 	    end
 	end
+  
+  def show
+    
+  end
 
 	def edit
 		render :partial => "/support/discussions/topics/edit_post"

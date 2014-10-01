@@ -1,8 +1,11 @@
 require 'spec_helper'
-include Redis::TicketsRedis
-include Redis::RedisKeys
 
-describe Helpdesk::TimeSheetsController do
+RSpec.configure do |c|
+  c.include Redis::TicketsRedis
+  c.include Redis::RedisKeys
+end
+
+RSpec.describe Helpdesk::TimeSheetsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

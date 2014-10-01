@@ -3,9 +3,9 @@ require 'spec_helper'
 #include ContactImportHelper
 
 
-describe Workers::Import::ContactsImportWorker do 
+RSpec.describe Workers::Import::ContactsImportWorker do 
 
-	before(:all) do	
+	before(:all) do
 		@sample_contact = FactoryGirl.build(:user, :account => RSpec.configuration.account, :phone => "23423423434", :email => "samara@example.net", :user_role => 3)
 		@sample_contact.save(:validate => false)
 		@contact_import_params = YAML.load(File.read("spec/fixtures/contacts_import/contact_import.yml"))

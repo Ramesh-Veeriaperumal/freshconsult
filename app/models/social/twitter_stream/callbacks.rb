@@ -53,9 +53,9 @@ class Social::TwitterStream < Social::Stream
       self.data[:gnip_rule_state] ||= GNIP_RULE_STATES_KEYS_BY_TOKEN[:none]
       self.data[:rule_value]      ||= nil
       self.data[:rule_tag]        ||= nil
-      self.includes = [] if includes.nil? or includes.empty?
-      self.excludes = [] if excludes.nil? or excludes.empty?
-      self.filter   = {:exclude_twitter_handles => []} if filter.nil? or filter.empty?
+      self.includes = [] if includes.blank?
+      self.excludes = [] if excludes.blank?
+      self.filter   = {:exclude_twitter_handles => []} if filter.blank?
     end
 
     def persist_previous_changes
