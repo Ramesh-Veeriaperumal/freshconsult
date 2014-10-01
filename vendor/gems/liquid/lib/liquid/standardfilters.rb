@@ -30,7 +30,7 @@ module Liquid
     end
 
     def escape_once(input)
-      ActionView::Helpers::TagHelper.escape_once(input)
+      ActionController::Base.helpers.escape_once(input)
     rescue NameError
       input
     end

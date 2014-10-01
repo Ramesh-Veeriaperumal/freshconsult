@@ -555,8 +555,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails, :product_id] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
-      json_str = super options
-      return json_str
+      json_hsh = super options
+      return json_hsh
     end
     if deep
       self[:notes] = self.notes

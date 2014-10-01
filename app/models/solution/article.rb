@@ -167,8 +167,7 @@ class Solution::Article < ActiveRecord::Base
                                      :include => { :customer_folders => { :only => [:customer_id] } }
                                    }
                         }
-    json_str=super options
-    return json_str
+    super options
   end
 
   # Added for portal customisation drop

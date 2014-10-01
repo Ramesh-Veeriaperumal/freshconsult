@@ -49,8 +49,7 @@ class Solution::Category < ActiveRecord::Base
   
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
-    json_str = super options
-    json_str
+    super options
   end
 
   def self.folder_names(account)

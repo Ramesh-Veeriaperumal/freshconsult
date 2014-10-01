@@ -131,8 +131,7 @@ class Agent < ActiveRecord::Base
                         :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                         :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]}
                       }
-    json_str = super options
-    return json_str
+    super options
   end
 
 end

@@ -75,8 +75,7 @@ class ForumCategory < ActiveRecord::Base
 
   def as_json (options = {})
     options[:except]=[:account_id,:import_id]
-    json_str=super options
-    return json_str
+    super options
   end
 
   def to_liquid
