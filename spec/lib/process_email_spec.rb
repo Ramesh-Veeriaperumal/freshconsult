@@ -289,6 +289,12 @@ describe Helpdesk::ProcessEmail do
 			recent_ticket = @account.tickets.last
 			recent_ticket.cc_email_hash[:reply_cc].should eql recent_ticket.cc_email_hash[:cc_emails]
 		end
+
+		it "from email_config to kbase" do
+			email = new_email({:email_config => @account.kbase_email, :reply => @account.primary_email_config.reply_email, :include_cc => @account.kbase_email})
+			Helpdesk::ProcessEmail.new(email).perform
+			solutions_incremented?(@article_size)
+		end
 	end
 
 	describe "Create article" do

@@ -2319,6 +2319,15 @@ en:
     visible_in: Visible in
   activerecord:
     errors:
+      models:
+        solution/folder:
+          attributes:
+            name:
+              taken: "already exists in the selected category."
+        forum:
+          attributes:
+            name:
+              taken: "already exists in the selected category"
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
