@@ -35,10 +35,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     sub_picklist_values.collect { |c| [c.value, c.value]}
   end
 
-  def self.with_exclusive_scope(method_scoping = {}, &block)
-    with_scope(method_scoping, :overwrite, &block)
-  end
-
   private
     def set_account_id
       self.account_id = pickable.account_id

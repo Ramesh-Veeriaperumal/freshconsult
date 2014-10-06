@@ -31,12 +31,12 @@ class SubscriptionAnnouncement < ActiveRecord::Base
     	:limit => NOTIFICATION_LIMIT, 
     	:order => 'updated_at DESC'
 
-	def self.current_announcements(hide_time)
- 		with_scope :find => { :conditions => [ "starts_at <= UTC_TIMESTAMP() AND ends_at >= UTC_TIMESTAMP() 
- 			and notification_type = ? ", NOTIFICATION_TYPE_BY_TOKEN[:maintenance] ] } do hide_time.nil? ? last 
- 			: last( :conditions => ["updated_at > ? OR starts_at > ?", hide_time, hide_time] )
-  		end
-	end
+  def self.current_announcements(hide_time)
+    where([ "starts_at <= UTC_TIMESTAMP() AND ends_at >= UTC_TIMESTAMP() 
+ 			and notification_type = ? ", NOTIFICATION_TYPE_BY_TOKEN[:maintenance] ]).scoping do
+      hide_time.nil? ? last : where(["updated_at > ? OR starts_at > ?", hide_time, hide_time]).last
+    end
+  end
 
 	private
 	def clear_notifications_content
