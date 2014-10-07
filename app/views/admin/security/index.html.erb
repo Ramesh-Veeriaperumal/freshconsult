@@ -199,9 +199,11 @@
             <li>
               <%= t('.agent_create_or_delete') %>
             </li>
-            <li>
-              <%= t('.whitelisted_ip_modified') %>
-            </li>
+            <% if current_account.features_included?(:whitelisted_ips) %>
+              <li>
+                <%= t('.whitelisted_ip_modified') %>
+              </li>
+            <% end %>
           </ul>
         </div>
       </div>
