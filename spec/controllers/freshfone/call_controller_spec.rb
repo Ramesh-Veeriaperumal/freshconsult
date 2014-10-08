@@ -17,7 +17,7 @@ describe Freshfone::CallController do
 
   after(:each) do
     @account.freshfone_users.find(@freshfone_user).destroy
-    @account.freshfone_calls.delete_all
+    @account.freshfone_calls.destroy_all
   end
 
   it 'should retrieve caller data for the phone number' do

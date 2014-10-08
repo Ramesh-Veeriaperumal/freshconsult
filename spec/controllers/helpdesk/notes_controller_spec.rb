@@ -45,7 +45,7 @@ describe Helpdesk::NotesController do
   end
 
   it "should create a note with RabbitMQ enabled" do
-    RabbitMq::Keys::NOTE_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RabbitMq::Keys::NOTE_SUBSCRIBERS = ["auto_refresh"]
     RABBIT_MQ_ENABLED = true
     Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
     Array.any_instance.stubs(:publish).returns(true)

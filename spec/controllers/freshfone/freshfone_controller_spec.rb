@@ -8,7 +8,7 @@ describe FreshfoneController do
   self.use_transactional_fixtures = false
   
   before(:all) do
-    @account.freshfone_calls.delete_all
+    @account.freshfone_calls.destroy_all
   end
 
   before(:each) do
