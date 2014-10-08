@@ -13,7 +13,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
-  
+  xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled
 
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
