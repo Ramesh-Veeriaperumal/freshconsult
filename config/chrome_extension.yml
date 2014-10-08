@@ -1,0 +1,18 @@
+defaults: &defaults
+  key: "Chromehelpkit"
+  iv: "1234567890123456"
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

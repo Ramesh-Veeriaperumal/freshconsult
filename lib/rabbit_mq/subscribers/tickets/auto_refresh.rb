@@ -1,6 +1,6 @@
 module RabbitMq::Subscribers::Tickets::AutoRefresh
 
-  def mq_auto_refresh_ticket_properties
+  def mq_auto_refresh_ticket_properties(action)
     user_id = User.current ? User.current.id : ""
     ticket_responder_id = responder_id ? responder_id : -1
     properties = {

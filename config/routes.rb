@@ -102,7 +102,7 @@
                                 }
 
   map.resources :users, :member => { :delete_avatar => :delete,
-          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
+          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get, :me => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.register_new_email 'register_new_email/:activation_code', :controller => 'activations', :action => 'new_email'
