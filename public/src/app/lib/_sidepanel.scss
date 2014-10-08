@@ -252,6 +252,13 @@ div.addReminder{
 	position:absolute;
  	@include right(0);
 	top:$common-padding / 2;
+	@if $rtl{
+		-moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
 }
 // -----------------------------------------------------------
 //				Trial Account Salesperson details
@@ -286,7 +293,7 @@ div.addReminder{
 			border-width: 0.6em;
 			border-bottom-color: #FEFED2;
 			border-bottom-width: 0.9em;
-			margin-left: -5px;
+			@include margin-left(-5px);
 			margin-top: -3px;
 		}
 	}
@@ -299,7 +306,7 @@ div.addReminder{
 	margin:0 (-$common-padding);
 	padding: 12px $common-padding;
 	.arrow-right{
-    	border-left-color: #fff;
+    	@include border-left-color(#fff);
 	}
 	p{
 		text-align: center;
@@ -308,7 +315,7 @@ div.addReminder{
 .select-plan{
     width: 48%;
     display: inline-block;
-    text-align: right;
+    @include text-align(right);
     vertical-align: middle;
     font-weight: 700;
     a, a:hover{

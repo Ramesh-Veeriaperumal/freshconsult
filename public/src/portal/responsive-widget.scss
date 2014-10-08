@@ -67,6 +67,7 @@ $animation-type: ease-in;
 	}
 	.wicon-mobile-search{
 		position: absolute;
+		@if $rtl { position: fixed; }
 		top: 12px;
 		@include left(12px);
 		cursor: pointer;

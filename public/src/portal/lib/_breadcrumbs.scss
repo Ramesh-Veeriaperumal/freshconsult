@@ -27,7 +27,7 @@
   span{ color:#888; }
 }
 
-@if $rtl == true{
+@if $rtl{
   .breadcrumb {
     @include float(none);
     @extend .clearfix;

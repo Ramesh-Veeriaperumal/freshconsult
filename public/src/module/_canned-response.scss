@@ -8,7 +8,6 @@
 	width: 40%;
 	@include float(left);
 }
-
 .newclass
 {
 	width: 60%;
@@ -601,6 +600,11 @@ p.imp{
 	@include float(left);
 	width: 667px;
 	@include margin-right(32px);
+	@include margin-left(0);
+	@include transition(.3s);
+	&.bulk-tickets-animation{
+		@include margin-left(-688px);
+	}
 }
 
 #bulkfull{

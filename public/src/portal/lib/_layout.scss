@@ -24,7 +24,12 @@
 .span10{ @include span-columns(10); }
 .span11{ @include span-columns(11); }
 .span12{ @include span-columns(12); }
-.omega{ @include omega; }
+.omega{ 
+  @include omega; 
+  @if $rtl {
+    float: left;
+  }
+}
 
 @if $nonResponsive == false {
   @include at-breakpoint($media-mobile-tablet){

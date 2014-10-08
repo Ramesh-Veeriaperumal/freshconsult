@@ -9,6 +9,7 @@ module ApplicationHelper
   include ChatHelper
 
   include AttachmentHelper
+  include RtlHelper
   include MemcacheKeys
   include Integrations::Util
   require "twitter"
@@ -22,13 +23,13 @@ module ApplicationHelper
                         ["IE 9", "ie9"],
                         ["IE 10", "ie10"],
                         ["(gt IE 10)|!(IE)", "", true]]
-    language = current_portal.language
+    language = I18n.locale.to_s
     language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
     date_format = (DATEFORMATS[current_account.account_additional_settings.date_format] if current_account.account_additional_settings) || :non_us
     html_conditions.map { |h|
       %(
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
-          language }" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
+          language }" dir="#{current_direction?}" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
     }.to_s.html_safe
   end
 
@@ -55,8 +56,9 @@ module ApplicationHelper
   end
 
   def support_theme_url
+    stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
-    "/support/theme.css?v=#{query_string}"
+    "/support/#{stylesheet_name}?v=#{query_string}"
   end
 
   def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
@@ -527,7 +529,6 @@ module ApplicationHelper
       default_opts = { :class => "username",
                        :rel => "contact-hover",
                        "data-contact-id" => user.id,
-                       "data-placement" => "topRight",
                        "data-contact-url" => hover_card_contact_path(user)  }
 
       link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))

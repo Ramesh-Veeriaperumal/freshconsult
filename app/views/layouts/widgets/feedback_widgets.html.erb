@@ -7,8 +7,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
-		<%= include_cloudfront_css :widget %>
-		<%= include_cloudfront_css :ie_hacks %>		
+		<%= include_cloudfront_rtl_css :widget %>
+		<%= include_cloudfront_rtl_css :ie_hacks %>		
 
 		<%= include_cloudfront_js :fdwidget %>
 		<%= include_cloudfront_js :pattern %>

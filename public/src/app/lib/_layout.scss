@@ -151,7 +151,7 @@ label.overlabel{
 	background:$header_color;
 }
 .header-wrapper{
-	float: right;
+	@include float(right);
 	margin: 10px ($common-padding);
 }
 .header-link-wrapper *{ vertical-align: middle; }

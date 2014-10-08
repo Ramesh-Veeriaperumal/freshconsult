@@ -875,7 +875,8 @@ ol, ul, li{
 
     		.clear_emails {
     			@include float(right);
-    			width: 30px;
+    			width: 60px;
+    			@include text-align(right);
     			margin-top: 5px;
     			position: relative;
     			z-index: 2;
@@ -2220,7 +2221,7 @@ ol, ul, li{
 .modal-body .timesheet_form {
 
 	dd, dt {
-		float:left;
+		@include float(left);
 		width: 30%;
 		margin-bottom: 10px;
 	}
@@ -2232,7 +2233,7 @@ ol, ul, li{
 	dd {
 		display: inline-block;
 		width: 68%;
-		margin-left:2%;
+		@include margin-left(2%);
 	}
 
 	label {

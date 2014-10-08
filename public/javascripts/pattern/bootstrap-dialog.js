@@ -11,7 +11,6 @@
 
 	var Freshdialog = function (element, options, title) {	
 		var data = {};
-
 		if (element !== null) {
 			this.$element = element;
 			data = this.$element.data();
@@ -25,13 +24,18 @@
 		// Getting static content id and dom if it is present in the document
 		this.$content = $(this.options.targetId)
 		// Building the base wrapper for the modal dialog
+
+		//RTL
+		var direction = ($("html").attr("dir") == "rtl") ? 'marginRight' :'marginLeft';
+		this.$placement = {
+			"width": this.options.width
+		};
+		this.$placement[direction] = -(parseInt(this.options.width)/2);
+		
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
 									.attr('id', this.$dialogid)
 									.addClass(this.options.classes) // Adding classes if send via options
-									.css({ 
-											"width": this.options.width
-										,	"marginLeft": -(parseInt(this.options.width)/2)
-									})
+									.css(this.$placement)
 									.appendTo('body') // Appending to the end of the body														
         
         if(this.options.templateHeader != ""){

@@ -1,5 +1,12 @@
 @import "blueprint";
+@import "../pattern/lib/rtl-mixins";
 
+@if $rtl {
+	html,body{
+		text-align: right;
+		direction:rtl !important;
+	}
+}
 // Generate the blueprint print styles:
 @include blueprint-print;
  
@@ -15,12 +22,12 @@ h2, h3{ page-break-after: avoid;}
 p{ 
 	font-size:1.0em; 
    margin: 0 0 0;
-   text-align: left;
+   @include text-align(left);
 }
 
 body{
-    background: none repeat scroll 0 0 white;
-    font-size: 80%;
+  background: none repeat scroll 0 0 white;
+  font-size: 80%;
 	font-family:Verdana,sans-serif;
 	line-height: 1.8em;
 	min-width: 900px; 
@@ -34,7 +41,7 @@ body{
  		li {
  			list-style:none;
  			display: inline;
- 			float:left;
+ 			@include float(left);
  			h4 {
  				margin: 10px 0;
  			}

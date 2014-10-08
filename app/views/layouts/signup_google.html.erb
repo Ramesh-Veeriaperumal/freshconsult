@@ -17,10 +17,10 @@
 			<link rel="canonical" href="<%= page_canonical %>" />
 		<% end %>
 		<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-		<%= include_cloudfront_css :common %>
-		<%= include_cloudfront_css :ie_hacks %>
-		<%= include_cloudfront_css :google_signup %>
-		<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
+		<%= include_cloudfront_rtl_css :common %>
+		<%= include_cloudfront_rtl_css :ie_hacks %>
+		<%= include_cloudfront_rtl_css :google_signup %>
+		<%= include_cloudfront_rtl_css :pattern, :media => "screen, print, projection"  %>
 		<%= render :partial => "shared/theme.css"  %>
 
 		<script type="text/javascript">

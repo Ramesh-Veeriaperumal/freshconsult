@@ -9,6 +9,9 @@ input[type="color"], .uneditable-input{
     @include padding-right(0);
 
 }
+input[type="file"]{
+  line-height: 20px;
+}
 
 .lead-desc{
   margin-top:-14px;
@@ -349,5 +352,8 @@ ul.inline > li, ol.inline > li {
 @if $rtl { 
   .btn-group > .btn + .dropdown-toggle{
     float:left;
+  }
+  .btn-group > .btn:first-child {
+    float:right;
   }
 }
