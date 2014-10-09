@@ -3,7 +3,7 @@ class FreshfoneBaseController < ApplicationController
 	
 	before_filter :check_privilege, :if => :restricted_method?
 	before_filter :check_freshfone_feature
-	before_filter :validate_twilio_request, :if => :public_method?
+  before_filter :validate_twilio_request, :if => :public_method?
 	before_filter :reject_call, :if => :call_initiation_method?
 
   protected
@@ -26,13 +26,19 @@ class FreshfoneBaseController < ApplicationController
 		end
 
     def freshfone_account
-      current_account.freshfone_account
+      current_account.freshfone_account 
     end
 
   private
-
+    
     def check_freshfone_feature
-      requires_feature :freshfone
+      unless current_account.freshfone_enabled?
+        Rails.logger.debug "Freshfone enabled validation failed ::: Account :: #{current_account.id}, account_sid :: #{params[:AccountSid]}, call_sid :: #{params[:CallSid]}"
+        render :xml => Twilio::TwiML::Response.new { |r|
+          r.comment! "freshfone enabled validation failed"
+          r.Reject 
+        }.text
+      end 
     end
   
   	def public_method?
