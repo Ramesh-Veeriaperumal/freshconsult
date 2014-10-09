@@ -1,11 +1,9 @@
 module RabbitMq::Properties
   
   def get_properties(ticket)
-    user_id = User.current ? User.current.id : ""
     properties = {
       "ticket_id"         => ticket.display_id,
       "account_id"        => ticket.account_id,
-      "user_id"           => user_id,
       "responder_name"    => ticket.responder.nil? ? "No Agent" : ticket.responder.name,
       "group_id"          => ticket.group_id,
       "status"            => ticket.status,

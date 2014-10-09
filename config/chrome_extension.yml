@@ -1,6 +1,6 @@
 defaults: &defaults
   key: "Chromehelpkit"
-  iv: "1234567890123456"
+  iv: "1324659871023654"
 
 development:
   <<: *defaults

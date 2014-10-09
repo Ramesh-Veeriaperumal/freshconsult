@@ -50,7 +50,7 @@ module RabbitMq::Subscribers::Tickets::ChromeExtension
       properties["actions"].push(ACTION[:user_assign])
     end
     # unasigned tickets? should we send a notification 
-    if ((assigned_ticket && @model_changes.key?(:group_id)) || @model_changes.key?(:status))
+    if (assigned_ticket && (@model_changes.key?(:group_id) || @model_changes.key?(:status)))
       if group_id then
         begin
           user_ids.push(*self.account.groups.find(group_id).agent_groups.map(&:user_id))
