@@ -18,8 +18,8 @@
 
 <script type="text/javascript">
 	<% unless default_currency? %>
-    jQuery("#freshfone_credits_credit").live("change", function(ev){
-    	jQuery("#fone-credit-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
+    jQuery("#credit").live("change", function(ev){
+      jQuery("#fone-credit-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
     });
    <% end %>
 </script>
