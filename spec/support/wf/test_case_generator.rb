@@ -36,7 +36,7 @@ module Wf::TestCaseGenerator
   end
 
   def options_for_customers
-    RSpec.configuration.account.customers.all.map { |company| [company.id, company.name] }
+    RSpec.configuration.account.companies.all.map { |company| [company.id, company.name] }
   end
 
   def options_for_requester

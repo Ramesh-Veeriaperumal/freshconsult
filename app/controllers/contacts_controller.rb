@@ -35,9 +35,7 @@ class ContactsController < ApplicationController
       end
 
       format.json  do
-        render :json => @contacts.to_json({:except=>[:account_id] , :only=>[:id,:name,:email,:verified, :primary_role, :created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+        render :json => @contacts.as_json
       end
       format.atom do
         @contacts = @contacts.newest(20) #throws error
@@ -59,20 +57,18 @@ class ContactsController < ApplicationController
     initialize_new_user
   end
   
-  def quick_customer
-    params[:user][:customer_id] = params[:customer_id]
-    if build_and_save
+  def quick_contact_with_company
+    if initialize_and_signup!
         flash[:notice] = t(:'flash.contacts.create.success')
     else  
         check_email_exist
         flash[:notice] =  activerecord_error_list(@user.errors)      
     end
-    customer = current_account.customers.find(params[:customer_id])
-    redirect_to(customer_url(customer))
+    redirect_to(company_url(@user.company))
   end
   
-  def create  
-    if build_and_save
+  def create   
+    if initialize_and_signup!
       flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html',:locals => { :message => t('flash.contacts.create.success') } )
       respond_to do |format|
         format.html { redirect_to contacts_url }
@@ -81,8 +77,7 @@ class ContactsController < ApplicationController
             render :json => { :requester_id  => @user.id , :success => true , :success_message => t("flash.contacts.create.success") 
                                         }.to_json }
         format.json {
-            render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-            :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+            render :json => @user.as_json
         }
         format.widget { render :action => :show, :layout => "widgets/contacts"}
         format.js
@@ -140,15 +135,6 @@ class ContactsController < ApplicationController
     export_contact_data csv_hash
   end
   
-  def build_and_save 
-    @user = current_account.users.new #by Shan need to check later
-    company_name = params[:user][:customer]  
-    unless company_name.blank?      
-     params[:user][:customer_id] = current_account.customers.find_or_create_by_name(company_name).id 
-    end   
-    @user.signup!(params)
-  end
-  
   def show
     email = params[:email]
     @user = nil # reset the user object.
@@ -162,10 +148,7 @@ class ContactsController < ApplicationController
         @user_tickets = @total_user_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester]) 
       }
       format.xml  { render :xml => @user.to_xml} # bad request
-      format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
-                    :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
-                  }
+      format.json { render :json => @user.as_json }
       format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
     end
   end
@@ -183,7 +166,7 @@ class ContactsController < ApplicationController
     end
     @item.update_tag_names(params[:user][:tags]) # update tags in the user object
     params[cname].reject!{ |k| k == "customer" || k == "tags" }
-    if @item.update_attributes(params[cname])
+    if @item.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html', :locals => { :message => t('merge_contacts.contact_updated') } )
         format.html { redirect_to redirection_url }
@@ -194,8 +177,8 @@ class ContactsController < ApplicationController
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
-        format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} #Bad request
+        format.json { render :json => @user.errors, :status => :unprocessable_entity}
       end
     end
   end
@@ -237,7 +220,7 @@ class ContactsController < ApplicationController
   end
 
   def autocomplete   
-    items = current_account.customers.find(:all, 
+    items = current_account.companies.find(:all, 
                                             :conditions => ["name like ? ", "%#{params[:v]}%"], 
                                             :limit => 30)
 
@@ -342,6 +325,11 @@ protected
   end
 
   private
+
+    def initialize_and_signup!
+      @user = current_account.users.new #by Shan need to check later  
+      @user.signup!(params)
+    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

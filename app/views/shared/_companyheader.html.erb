@@ -60,8 +60,8 @@
 				&middot;  
   		 	<%= link_to(t('import'), csv_contact_import_index_path, :title => t("contacts.import_csv"), :class => " margin-right", :id => "contacts_import") %>
   			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_index_path, :class => "uiButton grey") %></div>
-  			<%= link_to t('company.new'), new_customer_path, :class => "btn" %>			
-  			<%= link_to(t('contacts.new'), new_contact_path, :class => "btn") %>
+  			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
+  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>
 			<% end %>      
         </div>
 	</div>

@@ -7,44 +7,9 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	background-position:sprite-position($freshfone-sprite, #{$sprite-name}, $offset-x, $offset-y);
 }
 
-.ongoing{
-	.end_call { @include freshfone-sprite(oncall-endcall); }
-	.mute {
-		@include freshfone-sprite(oncall-mute);
-		&.active {
-			@include freshfone-sprite(oncall-muted);
-		}
-	}
-	.transfer_call {
-		@include freshfone-sprite(oncall-transfer);
-		&.active { @include freshfone-sprite(oncall-transfering); }
-	}
-	.add_notes {
-		@include freshfone-sprite(oncall-note);
-		&.active { @include freshfone-sprite(oncall-noting); }
-	}
-	.ongoingDialpad {
-		@include freshfone-sprite(oncall-dial);
-		&.active { @include freshfone-sprite(oncall-dialing); }
-	}
-}
-
-.outgoing {
-	.availabilityOnPhone {
-		@include freshfone-sprite(call-via-web);
-		&.active { 
-			@include freshfone-sprite(call-via-mobile);
-		}
-	}
-	.showDialpad { @include freshfone-sprite(call-dailer-pad); }
-	.recentCalls { @include freshfone-sprite(call-dailer); }
-}
 .notifier-container-slimmer {
 	.accept { @include freshfone-sprite(accept-call); }
 	.ignore { @include freshfone-sprite(ignore-call); }
-}
-.ff_desktop_notification {
-	.desktopNotifier { @include freshfone-sprite(desktop-notifier); }
 }
 
 .recent_calls_call_user .can-make-calls,
@@ -97,3 +62,48 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 .transfer_agent_pointer { @include freshfone-sprite(callhistory-transferred); }
 .callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
 .callhistory-payment-loader { background-image:url('/images/animated/payment-loader.gif') }
+
+
+// font icon styles
+.freshfone_widget{
+	.popupbox-tabs{
+		&.outgoing{
+			[class*="#{$font-class}"]{
+				color: #fff;
+			}
+		}
+		li{
+			text-align: center;
+		}
+		[class*="#{$font-class}"]{
+			line-height: 27px;
+		}
+		.availabilityOnPhone{
+			.#{$font-class}ff-on-call{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}ff-on-call{
+					display:block;
+				}
+				.#{$font-class}ff-on-browser{
+					display:none;
+				}
+			}
+		}
+		.mute{
+			.#{$font-class}ff-mute{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}ff-mute{
+					display:block;
+				}
+				.#{$font-class}ff-mic{
+					display:none;
+				}
+			}
+	
+		}
+	}
+}

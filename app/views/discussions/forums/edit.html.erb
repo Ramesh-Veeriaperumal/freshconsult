@@ -18,7 +18,7 @@
 			 		<%= t('delete')%></i>
 			</button>
 		<div class="pull-right align-right">
-			<%= pjax_link_to(t('cancel'), :back, :class => "btn" ) -%>
+			<%= pjax_link_to(t('cancel'), discussions_forum_path(@forum), :class => "btn" ) -%>
 			<%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
 		</div>
 	</div>

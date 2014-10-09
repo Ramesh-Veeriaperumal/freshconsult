@@ -130,12 +130,12 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     !(conditions.blank? || is_default)
   end
 
-  def self.customer_policies(customer)
-    sla = customer.account.sla_policies.rule_based.active.select do |policy| 
+  def self.company_policies(company)
+    sla = company.account.sla_policies.rule_based.active.select do |policy| 
       policy.conditions["company_id"].present? and 
-        policy.conditions["company_id"].include?(customer.id)
+        policy.conditions["company_id"].include?(company.id)
     end
-    sla.empty? ? customer.account.sla_policies.default : sla 
+    sla.empty? ? company.account.sla_policies.default : sla 
   end
 
   private

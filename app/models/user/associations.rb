@@ -1,7 +1,8 @@
 class User < ActiveRecord::Base
 
-  belongs_to :customer
+  belongs_to :company, :foreign_key => 'customer_id'
   belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
+
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
@@ -84,7 +85,7 @@ class User < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
   
   #accepts_nested_attributes_for :agent
-  accepts_nested_attributes_for :customer, :google_contacts  # Added to save the customer while importing user from google contacts.
+  accepts_nested_attributes_for :google_contacts  # Added to save the company while importing user from google contacts.
 
   delegate :available?, :in_round_robin?, :to => :agent, :allow_nil => true
 

@@ -12,11 +12,11 @@ class Helpdesk::AutocompleteController < ApplicationController
 		end
 	end
 
-  def customer
-    customers = {:results => results.map { |i| {:id => i.id, :value => i.name}}} 
+  def company
+    companies = {:results => results.map { |i| {:id => i.id, :value => i.name}}} 
 
     respond_to do |format|
-      format.json { render :json => customers.to_json }
+      format.json { render :json => companies.to_json }
     end
   end
 
@@ -39,7 +39,7 @@ class Helpdesk::AutocompleteController < ApplicationController
 
     def current_action
       @current_action ||= begin
-        allowed_actions = ['requester','customer']
+        allowed_actions = ['requester','company']
         allowed_actions.include?(params[:action]) ? params[:action] : allowed_actions.first  
       end
     end
@@ -48,15 +48,15 @@ class Helpdesk::AutocompleteController < ApplicationController
   		current_account.users
   	end
 
-  	def customer_scope
-  		current_account.customers
+  	def company_scope
+  		current_account.companies
   	end
 
   	def requester_conditions
   		["name like ? or email like ? or phone like ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
   	end
 
-  	def customer_conditions
+  	def company_conditions
   		["name like ?", "%#{params[:q]}%"]
   	end
 

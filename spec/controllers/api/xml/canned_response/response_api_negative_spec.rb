@@ -14,7 +14,7 @@ describe Admin::CannedResponses::ResponsesController do
 
 	before(:each) do
 		@request.env['HTTP_REFERER'] = '/admin/canned_responses/folders'
-		log_in(@agent)
+		http_login(@agent)
 	end
 
 	after(:all) do

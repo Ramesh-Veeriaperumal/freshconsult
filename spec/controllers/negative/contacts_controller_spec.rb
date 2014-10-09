@@ -37,14 +37,14 @@ describe ContactsController do
   it "should not create a contact within a company" do
     new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     new_company.save
-    post :quick_customer, { :customer_id => new_company.id, 
-                            :user => { :name => Faker::Name.name, 
-                                       :email => @sample_contact.email, 
-                                       :phone => "" }, 
-                            :id => new_company.id
-                            }
+    post :quick_contact_with_company, { :company_name => new_company.id, 
+                                        :user => { :name => Faker::Name.name, 
+                                                   :email => @sample_contact.email, 
+                                                   :phone => "" }, 
+                                        :id => new_company.id
+                                        }
     @account.users.all.size.should eql @user_count
-    response.should redirect_to(customer_url(new_company.id))
+    response.should redirect_to(company_url(new_company.id))
   end
 
   it "should not edit a contact" do
@@ -107,6 +107,7 @@ describe ContactsController do
     Resque.inline = true
 #    User.any_instance.stubs(:update_without_callbacks).raises(StandardError)
     get :unblock, :id => contact.id
+    User.any_instance.unstub(:update_without_callbacks)
     Resque.inline = false
     Account.any_instance.unstub(:users)
     contact.reload

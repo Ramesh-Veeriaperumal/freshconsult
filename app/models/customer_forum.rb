@@ -5,7 +5,7 @@ class CustomerForum < ActiveRecord::Base
 	before_validation :set_account_id
 	
 	belongs_to :forum
-	belongs_to :customer
+	belongs_to :customer, :class_name => 'Company', :foreign_key => 'customer_id'
 	belongs_to :account
 
 	attr_protected :account_id , :forum_id 

@@ -50,8 +50,14 @@ module Import::CustomField
         :description => record.elements["description"].text
       }
 
-      field_prop[:choices] = record.elements.collect("custom-field-options/custom-field-option") do |op|
-        [op.elements["name"].text]
+      if(field_prop[:field_type] == "custom_dropdown")
+        field_prop[:picklist_values_attributes] = record.elements.collect("custom-field-options/custom-field-option") do |op|
+          {:value => op.elements["name"].text}
+        end
+      else
+        field_prop[:choices] = record.elements.collect("custom-field-options/custom-field-option") do |op|
+          [op.elements["name"].text]
+        end
       end
 
       create_field field_prop, account

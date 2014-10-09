@@ -25,19 +25,16 @@ RSpec.describe GroupsController do
 		@calendar.destroy
 	end
 
-	it "should go to the Groups index page" do
-		get :index, :format => 'json'
-		json = parse_json(response)
-		json.first['group']['description'] == 'Product Management group'
-		response.status.should be_eql(200)
-	end
-
 	it "should create a new Group" do
 		post :create, { :group => { :name => "Spec Testing Grp - json", :description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
         :agent_list => "#{@agent.id}", :ticket_assign_type=> 1, :assign_time => "1800", :escalate_to => @user_1.id
       },
       :format => 'json'
 		}
+		result = parse_json(response)
+		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+					(compare(result["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+		expected.should be(true)
 		@account.groups.find_by_name("Spec Testing Grp - json").should_not be_nil
 	end
 
@@ -79,6 +76,14 @@ RSpec.describe GroupsController do
 		agent_list = [@user_1.id]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		(agent_list.sort == agents_in_group.sort).should be true
+	end
+
+	it "should go to the Groups index page" do
+		get :index, :format => 'json'
+		result = parse_json(response)
+		expected = (response.status == "200 OK") && (compare(result.first["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+					(compare(result.last["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+		expected.should be(true)
 	end
 
 	it "should delete a Group" do

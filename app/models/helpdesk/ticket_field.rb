@@ -23,8 +23,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   validates_associated :ticket_statuses, :if => :status_field?
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true
+  accepts_nested_attributes_for :picklist_values, :allow_destroy => true
 
-  before_validation :populate_choices
+  before_validation :populate_choices, :clear_ticket_type_cache
 
   before_destroy :delete_from_ticket_filter
   # before_update :delete_from_ticket_filter
@@ -124,10 +125,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
-  def choices(ticket = nil)
+  def choices(ticket = nil, admin_pg = false)
      case field_type
        when "custom_dropdown" then
-         picklist_values.collect { |c| [c.value, c.value] }
+          if(admin_pg)
+            picklist_values.collect { |c| [c.value, c.value, c.id] }
+          else
+            picklist_values.collect { |c| [c.value, c.value] }
+          end
        when "default_priority" then
          TicketConstants.priority_names
        when "default_source" then
@@ -135,7 +140,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_status" then
          Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then
-         account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
+          if(admin_pg)
+            account.ticket_types_from_cache.collect { |c| [c.value, c.value, c.id] }
+          else
+            account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
+          end
        when "default_agent" then
         return group_agents(ticket)
        when "default_group" then
@@ -350,7 +359,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def populate_choices
       return unless @choices
-      if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
+      if(["nested_field"].include?(self.field_type))
         picklist_values.clear
         clear_picklist_cache
         @choices.each do |c| 
@@ -364,7 +373,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
       elsif("default_status".eql?(self.field_type))
         @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
       end
-    end    
+    end 
+
+    def clear_ticket_type_cache
+      if(self.field_type.eql?("default_ticket_type"))
+        clear_picklist_cache
+      end
+    end   
 
     def populate_label
       self.label = name.titleize if label.blank?

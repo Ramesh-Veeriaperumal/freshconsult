@@ -19,7 +19,8 @@ module Integrations::Constants
     :zohocrm => "zohocrm",
     :google_calendar => "google_calendar",
     :surveymonkey => "surveymonkey",
-    :shopify => "shopify"
+    :shopify => "shopify",
+    :seoshop => "seoshop"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

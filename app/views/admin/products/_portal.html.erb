@@ -117,7 +117,7 @@
             <%= link_to t('.customize_portal'), admin_portal_template_path(@product.portal.id), 
               :class => "btn btn-bold", :rel => "customize-portal" %> 
           <% else %>  
-            <%= submit_tag t('.save_and_customize'), :rel => "customize-portal", :class => "btn btn-bold" %> 
+            <%= submit_tag t('.save_and_customize').html_safe, :rel => "customize-portal", :class => "btn btn-bold" %> 
           <% end %>
           <% if @product.portal.template.present? %>
             <p class="info-data">            
@@ -144,7 +144,7 @@
     if(form.data('formChanged') && form.valid()){
       <% if @product.portal.template.present? %>
         ev.preventDefault()
-        if(confirm("<%= t('.save_and_customize') %>")){
+        if(confirm("<%= t('.save_and_customize').html_safe %>")){
           setPostParam(form, "customize_portal", true)
           form.submit()
         }
