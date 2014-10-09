@@ -2822,16 +2822,31 @@ $collision_delay: 1s;
 }
 
 .article-list{
+	.table-striped tbody tr:nth-child(even) td {
+		background-color: white;
+	}
 	.actions-menu-wrapper{
 		position: relative;
 		background: inherit;
 	}
 	.actions-menu{
 		position: absolute;
-		right: -13px;
+		@include right(-13px);
 		background: inherit;
 		padding: 12px 20px;
 		margin-top: -14px;
+	}
+	.search-solution-content {
+		@include float(left);
+		line-height: 1.5;
+	}
+	.draft-label {
+			background-color: #F8BF23; 
+			color: white;
+			border-radius: 4px;
+			font-weight: bold;
+			padding: 2px 6px;
+			@include margin-right(5px);
 	}
 }
 
