@@ -20,8 +20,8 @@
 		</span> 
 	</h2>
 	<div class="help-text">
-		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.updated_at) %> 
-		
+		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.modified_at) %>
+
 		<%= content_tag(:span, t('private'), :class => "label tooltip", 
 					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
 		<span class="label"><%= t(@article.type_name) %></span>

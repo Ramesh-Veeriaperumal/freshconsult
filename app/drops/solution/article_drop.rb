@@ -17,7 +17,7 @@ class Solution::ArticleDrop < BaseDrop
   end
 
   def modified_on
-    source.updated_at
+    source.modified_at
   end
   
   def created_on
