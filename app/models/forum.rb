@@ -198,8 +198,8 @@ class Forum < ActiveRecord::Base
     return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) &&
-      user.customer  && customer_forums.map(&:customer_id).include?(user.customer.id))
+    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
+      user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
   end
 
   # def set_topic_delta_flag

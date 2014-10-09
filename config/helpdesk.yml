@@ -126,8 +126,12 @@ EMAIL:
         production:
           <<: *defaults
         staging:
-          <<: *defaults
-          domain: freshpo.com        
+          address: smtp.mailgun.org
+          port: 25
+          domain: freshdesk.com
+          authentication: :plain
+          user_name: postmaster@freshbugs.com
+          password: a85aa4ffc1148b487a565bf1972de5a3        
           
             
 

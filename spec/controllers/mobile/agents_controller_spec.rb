@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe AgentsController do
-
-	let(:params) { {:format => "json"} }
+  self.use_transactional_fixtures = false
+	
+  let(:params) { {:format => "json"} }
 	
  	before(:each) do
     api_login

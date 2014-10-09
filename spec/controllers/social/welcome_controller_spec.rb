@@ -13,7 +13,6 @@ describe Social::WelcomeController do
       Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
     end
     Social::TwitterHandle.destroy_all
-    RSpec.configuration.account.features.send(:social_revamp).create unless RSpec.configuration.account.features?(:social_revamp)
     RSpec.configuration.account.account_additional_settings.update_attributes(:additional_settings => nil)
     Resque.inline = false
   end

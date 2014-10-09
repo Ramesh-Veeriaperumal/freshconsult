@@ -12,6 +12,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::ToggleEmailNotification
   include ApplicationHelper
   include Mobile::Controllers::Ticket
+  include CustomerDeprecationMethods::NormalizeParams
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
   include Helpdesk::TagMethods
@@ -23,6 +24,7 @@ class Helpdesk::TicketsController < ApplicationController
   around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
+  before_filter :normalize_params, :only => :index
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -562,7 +564,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def change_due_by
     due_date = get_due_by_time    
-    @item.update_attributes(:due_by => due_date)
+    @item.update_attributes({:due_by => due_date, :manual_dueby => true})
     render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
   end  
   
@@ -922,7 +924,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
       company_name = params[:company_name]
       unless company_name.blank?
-        company = current_account.customers.find_by_name(company_name)
+        company = current_account.companies.find_by_name(company_name)
         unless(company.nil?)
           params[:company_id] = company.id
         else
@@ -1005,7 +1007,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def is_custom_filter_ticket?
-      params[:requester_id].blank? and params[:tag_id].blank? and params[:customer_id].blank?
+      params[:requester_id].blank? and params[:tag_id].blank? and params[:company_id].blank?
     end
 
     def load_ticket_filter

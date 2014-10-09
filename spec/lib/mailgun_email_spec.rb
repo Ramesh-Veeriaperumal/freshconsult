@@ -59,6 +59,15 @@ RSpec.describe Helpdesk::Email::Process do
 			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
   	end
 
+  	it "with blank reply_to" do
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			email["Reply-To"] = ""
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			ticket_incremented?(@ticket_size)
+			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
+  	end
+
   	it "with multiple reply_to emails" do
 			a = []
 			5.times do
@@ -406,6 +415,21 @@ RSpec.describe Helpdesk::Email::Process do
 			another = new_mailgun_email({:email_config => RSpec.configuration.account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = RSpec.configuration.account.tickets.last
+			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
+			Helpdesk::Email::Process.new(another).perform
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
+			ticket.notes.size.should eql 1
+		end
+
+		it "from cc with blank stripped-html" do
+			email_id = Faker::Internet.email
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => email_id})
+			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+			another.delete("stripped-html")
+			another["stripped-text"] = ""
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
 			another["body-html"] = another["body-html"]+" #{span_gen(ticket.display_id)} "+another["body-html"]
 			Helpdesk::Email::Process.new(another).perform
 			ticket_incremented?(@ticket_size)

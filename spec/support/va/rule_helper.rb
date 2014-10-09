@@ -25,13 +25,13 @@ module VA::RuleHelper
   end
 
   def create_required_objects
-    @product = RSpec.configuration.account.products.create(FactoryGirl.attributes_for(:product))
-    @company = RSpec.configuration.account.customers.create(FactoryGirl.attributes_for(:company))
-    @requester = RSpec.configuration.account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
+    @product = RSpec.configuration.account.products.create(Factory.attributes_for(:product))
+    @company = RSpec.configuration.account.companies.create(Factory.attributes_for(:company))
+    @requester = RSpec.configuration.account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @responder = add_test_agent(RSpec.configuration.account)
-    @ticket = RSpec.configuration.account.tickets.create(FactoryGirl.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
-    @agent_note =@ticket.notes.create(FactoryGirl.attributes_for(:note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
-    @user_note = @ticket.notes.create(FactoryGirl.attributes_for(:note, :notable_id => @ticket.id, :user_id => @requester.id))
+    @ticket = RSpec.configuration.account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
+    @agent_note =@ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
+    @user_note = @ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => @requester.id))
     @time_sheet = @ticket.time_sheets.create
     @survey_result = @ticket.survey_results.create(:rating => 1)
     ###Need to define custom fields

@@ -6,7 +6,6 @@ describe Social::TwitterHandlesController do
 
   before(:all) do
     @agent_role = RSpec.configuration.account.roles.find_by_name("Agent")
-    RSpec.configuration.account.features.send(:social_revamp).destroy if RSpec.configuration.account.features?(:social_revamp)
   end
 
   before(:each) do
@@ -315,8 +314,4 @@ describe Social::TwitterHandlesController do
                             :req_twt_id => "TestingTwitter", 
                           }
   end 
-  
-  after(:all) do
-    RSpec.configuration.account.features.send(:social_revamp).create
-  end
 end

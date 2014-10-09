@@ -65,9 +65,9 @@ module Cache::Memcache::Account
     feature_names.all? { |feature_name| feature_from_cache.send("#{feature_name}?") }
   end
 
-  def customers_from_cache
-    key = customers_memcache_key
-    MemcacheKeys.fetch(key) { self.customers.all }
+  def companies_from_cache
+    key = companies_memcache_key
+    MemcacheKeys.fetch(key) { self.companies.all }
   end
 
   def twitter_handles_from_cache
@@ -149,6 +149,19 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def sales_manager_from_cache
+    if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
+      key = SALES_MANAGER_3_DAYS % { :account_id => self.id }
+      expiry = 1.day.to_i
+    else
+      key = SALES_MANAGER_1_MONTH % { :account_id => self.id }
+      expiry = 30.days.to_i
+    end
+    MemcacheKeys.fetch(key,expiry) do
+      CRM::Salesforce.new.account_owner(self.id)
+    end
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
@@ -166,8 +179,8 @@ module Cache::Memcache::Account
       ACCOUNT_TAGS % { :account_id => self.id }
     end
 
-    def customers_memcache_key
-      ACCOUNT_CUSTOMERS % { :account_id => self.id }
+    def companies_memcache_key
+      ACCOUNT_COMPANIES % { :account_id => self.id }
     end
     
     def handles_memcache_key

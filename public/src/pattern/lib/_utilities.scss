@@ -194,3 +194,9 @@ ul.disc{
   @include border-right-color(#666);
   @include right(0.35em);
 }
+
+
+.word-wrap{
+  word-break: normal; 
+  word-wrap: break-word;  
+}

@@ -6,7 +6,7 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_TICKET_TYPES = "v2/ACCOUNT_TICKET_TYPES:%{account_id}"
+  ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
   ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
 
@@ -16,7 +16,7 @@ module MemcacheKeys
 
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 
-  ACCOUNT_CUSTOMERS = "v1/ACCOUNT_CUSTOMERS:%{account_id}"
+  ACCOUNT_COMPANIES = "v2/ACCOUNT_COMPANIES:%{account_id}"
 
   ACCOUNT_ONHOLD_CLOSED_STATUSES = "v1/ACCOUNT_ONHOLD_CLOSED_STATUSES:%{account_id}"
 
@@ -79,6 +79,10 @@ module MemcacheKeys
   API_LIMIT = "v1/API_LIMIT:%{account_id}"
 
   ACCOUNT_API_WEBHOOKS_RULES = "v1/ACCOUNT_API_WEBHOOKS_RULES:%{account_id}"
+
+  SALES_MANAGER_3_DAYS = "v1/SALES_MANAGER_3_DAYS:%{account_id}"
+
+  SALES_MANAGER_1_MONTH = "v1/SALES_MANAGER_1_MONTH:%{account_id}"
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 

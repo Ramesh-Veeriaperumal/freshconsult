@@ -1,4 +1,3 @@
-<% trial_days = current_account.subscription.trial_days %>
 <div class="sidepanel trial_expiry <%= trial_days > 10 ? 'more_than_ten' : 'less_than_ten' %>">  
   <i class="<%= trial_days > 10 ? '' : 'symbols-trial-red-alert' %>"></i>
   <h3 class="title">

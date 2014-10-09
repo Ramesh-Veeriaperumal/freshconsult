@@ -205,6 +205,7 @@
 				if(localStorage["vote_" + $("#voting-container").data('article-id') + "_" + $("#voting-container").data('user-id') ]){
 					$("#voting-container").hide();
 				}
+				highlight_code();
 				break;
 			case 'topic_view':
 				highlight_code();

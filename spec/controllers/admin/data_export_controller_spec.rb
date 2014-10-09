@@ -8,7 +8,7 @@ RSpec.describe Admin::DataExportController do
   before(:all) do
     Account.reset_current_account
     User.current = nil
-    @account = RSpec.configuration.account
+    @account = create_new_account(Faker::Internet.domain_name, Faker::Internet.email)
     @agent = get_admin
   end
 
@@ -26,7 +26,7 @@ RSpec.describe Admin::DataExportController do
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_forums_data)
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_solutions_data)
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_users_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_customers_data)
+    Helpdesk::ExportDataWorker.any_instance.stubs(:export_companies_data)
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_tickets_data)
     Helpdesk::ExportDataWorker.any_instance.stubs(:export_groups_data)
     
@@ -87,20 +87,20 @@ RSpec.describe Admin::DataExportController do
     solutions["solution_categories"].map{|s| s["name"]}.should eql(["Default Category", "General"])
   end
 
-  it 'should export customers data' do
-    Helpdesk::ExportDataWorker.any_instance.unstub(:export_customers_data)
-    customer_name = Faker::Name.name
-    @account.customers.create(:name => customer_name)
-    get :export
+  it 'should export companies data' do
+    Helpdesk::ExportDataWorker.any_instance.unstub(:export_companies_data)
+    company_name = Faker::Name.name
+    @account.companies.create(:name => company_name)
+    post :export
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
-    exported_file = "#{out_dir}/Customers.xml"
-    Pathname.new(exported_file).exist?.should eql(true)
-     
-    customers_xml = File.read(exported_file)
-    customers = Hash.from_trusted_xml customers_xml
-    customers["customers"].should_not be_blank
-    customers["customers"].first["name"].should eql(customer_name)
+    exported_file = "#{out_dir}/Companies.xml"
+    expect { Pathname.new(exported_file).exist? }.to be_true
+
+    companies_xml = File.read(exported_file)
+    companies = Hash.from_trusted_xml companies_xml
+    companies["companies"].should_not be_blank
+    companies["companies"].first["name"].should eql(company_name)
   end
 
   it 'should export tickets data' do
@@ -139,7 +139,7 @@ RSpec.describe Admin::DataExportController do
     get :export
 
     @account.reload
-    data_export = @account.data_exports.data_backup[0]
+    data_export = @account.data_exports.data_backup.first
     get :download, { :source => data_export.source, :token => data_export.token }
     response.should redirect_to "/helpdesk/attachments/#{data_export.attachment.id}"
   end

@@ -52,7 +52,7 @@ function ContactFormInitializer(confirm_text, tags_options) {
       }
   });
 
-	jQuery("#user_tags").select2({
+	jQuery("input[name='user[tag_names]']").select2({
 	  	tags: tags_options.split(","),
 	  	tokenSeparators: [',']
 	});

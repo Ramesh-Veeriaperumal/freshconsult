@@ -6,8 +6,10 @@ module Helpdesk::DashboardHelper
 
 	def sidebar_content
 		sidebar_content = ""
-		if current_account.subscription.trial? && current_account.subscription.trial_days < AppConfig['show_trail_notifier_in_days']
-			sidebar_content.concat(render('/subscriptions/state/trial_expiry_notifier'))
+
+		if current_account.subscription.trial?
+			sidebar_content.concat(content_tag :div, "", :rel => "remote", :class => "sidepanel hide", :id => "sales-manager-container",
+	               "data-remote-url" => '/helpdesk/sales_manager' )
 		end
 		sidebar_content.concat(content_tag(:div,
 			content_tag(:h3,t(".todo_title").html_safe, :class => "title").concat(render('/helpdesk/reminders/reminders',

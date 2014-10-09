@@ -385,7 +385,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         }
       end
       # Overwrite other data in DB.
-      xml_str << " <gd:organization rel='http://schemas.google.com/g/2005#other'><gd:orgName>#{user.customer.name}</gd:orgName></gd:organization>" unless user.customer.blank?
+      xml_str << " <gd:organization rel='http://schemas.google.com/g/2005#other'><gd:orgName>#{user.company.name}</gd:orgName></gd:organization>" unless user.company.blank?
       unless self.sync_group_id.blank?
         group_uri = google_group_uri(self.email, self.sync_group_id) 
         xml_str << " <gContact:groupMembershipInfo deleted='false' href='#{group_uri}'/>"
@@ -430,19 +430,19 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
 
-      # orgName would be considered as customer name.  If the name is removed then the customer will not be associated
+      # orgName would be considered as company name.  If the name is removed then the company will not be associated
       orgName = goog_contact_detail[:orgName]
       if orgName.blank?
-        user.customer = nil
+        user.company = nil
       else
-        customer = new_company_list[orgName]
-        customer = account.customers.find_by_name(orgName) if customer.blank?
-        if customer.blank?
-          customer = account.customers.new
-          customer.name = orgName
-          new_company_list[orgName] = customer
+        company = new_company_list[orgName]
+        company = account.companies.find_by_name(orgName) if company.blank?
+        if company.blank?
+          company = account.companies.new
+          company.name = orgName
+          new_company_list[orgName] = company
         end
-        user.customer = customer
+        user.company = company
       end
 
       user.add_tag self.sync_tag # Tag the user with the sync_tag
@@ -455,7 +455,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       }
 
       user.account = account if user.account.blank?
-      user.customer.account = account unless user.customer.blank? || !user.customer.account.blank?
+      user.company.account = account unless user.company.blank? || !user.company.account.blank?
 #      puts "Converted user.  User id #{user.id}.  Delete flag #{user.deleted}."
       return user
     end

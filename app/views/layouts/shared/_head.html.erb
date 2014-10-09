@@ -64,6 +64,10 @@
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= javascript_include_tag :soundmanager %>
 	<% end %>
+	
+	<% if chat_feature_enabled? %>
+		<%= javascript_include_tag :freshchat %>
+	<% end %>
 
 	<%#= javascript_include_tag_langs #TODO-RAILS3 %>
 

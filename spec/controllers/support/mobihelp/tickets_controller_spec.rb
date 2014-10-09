@@ -83,4 +83,17 @@ describe Support::Mobihelp::TicketsController do
 
     post :add_note, note
   end
+
+  it "should close a mobihelp ticket" do
+    @request.params['format'] = "json"
+    ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket", @user_device_id, @user)
+    ticket_to_close = create_mobihelp_ticket(ticket_attributes);
+
+    post :close, :id => ticket_to_close.display_id
+
+    ticket_to_close.reload
+
+    @account.tickets.find_by_display_id(ticket_to_close.display_id).status.should be_eql(5)
+  end
+
 end

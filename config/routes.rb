@@ -91,7 +91,20 @@ Helpkit::Application.routes.draw do
     resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
+  resources :companies do
+    member do
+      post :quick
+      get :sla_policies
+    end
+    collection do
+      delete :destroy
+      post :quick
+    end
+    resources :time_sheets, :controller=>'helpdesk/time_sheets'
+  end
+
   match '/customers/filter/:state/*letter' => 'customers#index'
+  match '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
   get '/contacts' => 'contacts#index'
 
   resources :contacts do
@@ -111,6 +124,7 @@ Helpkit::Application.routes.draw do
       get :hover_card_in_new_tab
       put :restore
       post :quick_customer
+      post :quick_contact_with_company
       put :make_agent
       put :make_occasional_agent
       put :verify_email

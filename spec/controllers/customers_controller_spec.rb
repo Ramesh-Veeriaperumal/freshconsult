@@ -4,77 +4,75 @@ describe CustomersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id ]
+  before(:all) do
+    @account.companies.each &:destroy
+  end
 
   before(:each) do
     login_admin
   end
 
-  it "should create a new company" do
+  SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
+                    :delta, :import_id ]
+
+  it "should redirect if new action is invoked" do
+    get :new
+    response.status.should eql("302 Found")
+    response.should redirect_to "http://localhost.freshpo.com/companies/new"
+  end
+
+  it "should redirect if edit action is invoked" do
+    company = create_company
+    get :edit, :id => company.id
+    response.status.should eql("302 Found")
+    response.should redirect_to "http://localhost.freshpo.com/companies/#{company.id}/edit"
+  end
+
+  it "should redirect if index action is invoked" do
+    get :index
+    response.should redirect_to companies_url
+  end
+
+  it "should redirect if show action is invoked" do
+    company = create_company
+    get :show, :id => company.id
+    response.should redirect_to company_url(company)
+  end
+
+  it "should create a new company(works because the API support is not deprecated yet)" do
     company = fake_a_customer
     post :create, company
-    created_company = RSpec.configuration.account.customers.find_by_name(@company_name)
-    created_company.should be_an_instance_of(Customer)
+    created_company = @account.companies.find_by_name(@company_name)
+    created_company.should be_an_instance_of(Company)
     company_attributes(created_company, SKIPPED_KEYS).should be_eql(company[:customer])
   end
 
-  it "should quick-create a company" do
-    quick_company_name = Faker::Company.name
-    post :quick, :customer => { :name => quick_company_name }
-    flash[:notice].should =~ /The company has been created/
-    created_company = RSpec.configuration.account.customers.find_by_name(quick_company_name)
-    created_company.should be_an_instance_of(Customer)
-    created_company.name.should be_eql(quick_company_name)
-  end
-
-  it "should update a company" do
+  it "should update a company(works because the API support is not deprecated yet)" do
     company = create_company
     another_company = fake_a_customer
     put :update, another_company.merge(:id => company.id)
-    updated_company = RSpec.configuration.account.customers.find_by_name(@company_name)
-    updated_company.should be_an_instance_of(Customer)
+
+    updated_company = @account.companies.find_by_name(@company_name)
+    updated_company.should be_an_instance_of(Company)
     company_attributes(updated_company, SKIPPED_KEYS).should be_eql(another_company[:customer])
   end
 
-  it "should list all the created companies on the index page" do
-    company = RSpec.configuration.account.customers.find(:all, :order=>'name').first
-    get :index
-    response.should render_template 'customers/index'
-    response.body.should =~ /#{company.name}/
+  it "should destroy a company(works because the API support is not deprecated yet)" do
+    delete :destroy, { :id => company.id }
+    expect{ Company.find(@company.id) }.to raise_error(ActiveRecord::RecordNotFound)
+    response.status.should eql("302 Found")
+    response.should redirect_to "http://localhost.freshpo.com/companies"
+    @company = nil
   end
 
-  it "should display the company information on the show page" do
-    company = create_company
-    get :show, :id => company.id
-    response.should render_template 'customers/show'
-    response.body.should =~ /Recent tickets from #{company.name}/
+  it "should destroy a list of companies(works because the API support is not deprecated yet)" do
+    company1 = create_company
+    company2 = create_company
+    delete :destroy, { :ids => [company1.id, company2.id] }
+    response.status.should eql("302 Found")
+    response.should redirect_to "http://localhost.freshpo.com/companies"
+    expect{ Company.find(company1.id) }.to raise_error(ActiveRecord::RecordNotFound)
+    expect{ Company.find(company2.id) }.to raise_error(ActiveRecord::RecordNotFound)
   end
-
-  it "should respond to new" do
-    get :new
-    response.status.should eql(200)
-    response.should render_template 'customers/new'
-  end
-
-  it "should respond to edit" do
-    company = create_company
-    get :edit, :id => company.id
-    response.status.should eql(200)
-    response.should render_template 'customers/edit'
-    company_attributes(company, SKIPPED_KEYS).each do |attribute, value|
-      response.body.should =~ /#{value}/
-    end
-  end
-
-  it "should display the company information on the show page with sla_policy" do
-    company = create_company
-    agent = add_test_agent(@account)
-    sla_policy = create_sla_policy(agent)
-    sla_policy.conditions["company_id"] = [company.id]
-    sla_policy.save
-    get :sla_policies, :id => company.id
-    response.body.should =~ /#{sla_policy.name}/
-    response.should be_success
-  end
+  
 end
