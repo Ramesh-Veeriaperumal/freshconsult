@@ -774,8 +774,8 @@ $.fn.position = function( options ) {
 		targetWidth = targetHeight = 0;
 		basePosition = { top: options.of.pageY, left: options.of.pageX };
 	} else {
-		targetWidth = target.outerWidth();
-		targetHeight = target.outerHeight();
+		targetWidth = target.outerWidth(true);
+		targetHeight = target.outerHeight(true);
 		basePosition = target.offset();
 	}
 
@@ -824,8 +824,8 @@ $.fn.position = function( options ) {
 
 	return this.each(function() {
 		var elem = $( this ),
-			elemWidth = elem.outerWidth(),
-			elemHeight = elem.outerHeight(),
+			elemWidth = elem.outerWidth(true),
+			elemHeight = elem.outerHeight(true),
 			marginLeft = parseInt( $.curCSS( this, "marginLeft", true ) ) || 0,
 			marginTop = parseInt( $.curCSS( this, "marginTop", true ) ) || 0,
 			collisionWidth = elemWidth + marginLeft +
@@ -1303,8 +1303,8 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	_cacheHelperProportions: function() {
 		this.helperProportions = {
-			width: this.helper.outerWidth(),
-			height: this.helper.outerHeight()
+			width: this.helper.outerWidth(true),
+			height: this.helper.outerHeight(true)
 		};
 	},
 
@@ -1683,7 +1683,7 @@ $.ui.plugin.add("draggable", "snap", {
 			var $t = $(this); var $o = $t.offset();
 			if(this != i.element[0]) i.snapElements.push({
 				item: this,
-				width: $t.outerWidth(), height: $t.outerHeight(),
+				width: $t.outerWidth(true), height: $t.outerHeight(true),
 				top: $o.top, left: $o.left
 			});
 		});
@@ -2120,8 +2120,8 @@ $.widget("ui.resizable", $.ui.mouse, {
 			this.element.wrap(
 				$('<div class="ui-wrapper" style="overflow: hidden;"></div>').css({
 					position: this.element.css('position'),
-					width: this.element.outerWidth(),
-					height: this.element.outerHeight(),
+					width: this.element.outerWidth(true),
+					height: this.element.outerHeight(true),
 					top: this.element.css('top'),
 					left: this.element.css('left')
 				})
@@ -2195,7 +2195,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 					var axis = $(this.handles[i], this.element), padWrapper = 0;
 
 					//Checking the correct pad and border
-					padWrapper = /sw|ne|nw|se|n|s/.test(i) ? axis.outerHeight() : axis.outerWidth();
+					padWrapper = /sw|ne|nw|se|n|s/.test(i) ? axis.outerHeight(true) : axis.outerWidth(true);
 
 					//The padding type i have to apply...
 					var padPos = [ 'padding',
@@ -2270,8 +2270,8 @@ $.widget("ui.resizable", $.ui.mouse, {
 			wrapper.after(
 				this.originalElement.css({
 					position: wrapper.css('position'),
-					width: wrapper.outerWidth(),
-					height: wrapper.outerHeight(),
+					width: wrapper.outerWidth(true),
+					height: wrapper.outerHeight(true),
 					top: wrapper.css('top'),
 					left: wrapper.css('left')
 				})
@@ -2323,10 +2323,10 @@ $.widget("ui.resizable", $.ui.mouse, {
 		//Store needed variables
 		this.offset = this.helper.offset();
 		this.position = { left: curleft, top: curtop };
-		this.size = this._helper ? { width: el.outerWidth(), height: el.outerHeight() } : { width: el.width(), height: el.height() };
-		this.originalSize = this._helper ? { width: el.outerWidth(), height: el.outerHeight() } : { width: el.width(), height: el.height() };
+		this.size = this._helper ? { width: el.outerWidth(true), height: el.outerHeight(true) } : { width: el.width(), height: el.height() };
+		this.originalSize = this._helper ? { width: el.outerWidth(true), height: el.outerHeight(true) } : { width: el.width(), height: el.height() };
 		this.originalPosition = { left: curleft, top: curtop };
-		this.sizeDiff = { width: el.outerWidth() - el.width(), height: el.outerHeight() - el.height() };
+		this.sizeDiff = { width: el.outerWidth(true) - el.width(), height: el.outerHeight(true) - el.height() };
 		this.originalMousePosition = { left: event.pageX, top: event.pageY };
 
 		//Aspect Ratio
