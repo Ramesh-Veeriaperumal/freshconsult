@@ -4,7 +4,4 @@ A new <%= @model.agent.occasional ? "Occasional" : "Full-time" %> agent, <%= @mo
 <br><br>
 You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.<br><br>
 
-If this change has been made without your authorization, send us a reply.<br><br>
-
-Thanks,<br>
-Freshdesk Customer Support.
+<%= render :partial => "footer" %>
