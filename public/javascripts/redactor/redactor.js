@@ -3960,7 +3960,7 @@ Redactor.prototype = {
 		}
 		
 		// setup
-		var height = $('#redactor_modal').outerHeight();
+		var height = $('#redactor_modal').outerHeight(true);
 
 		if (this.isMobile() === false)
 		{		

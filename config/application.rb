@@ -172,7 +172,7 @@ module Helpkit
 
     config.assets.paths << Rails.root.join("public", "generated", "fonts")
     config.assets.paths << Rails.root.join("public", "generated", "images")
-    config.assets.digest = true
+    # config.assets.digest = true
     # Precompile *all* assets, except those that start with underscore
     config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
 

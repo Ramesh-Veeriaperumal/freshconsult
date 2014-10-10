@@ -56,21 +56,6 @@ jQuery.noConflict()
         $(_o_data.hideDom||"").hide()
       }
     })
-
-    // Data api for rails button submit with method passing
-    $("a[data-method], button[data-method]").live("click", function(ev){
-      ev.preventDefault()
-      if($(this).data("remote")) return
-
-      if($(this).data("confirm") && !confirm($(this).data("confirm"))) return
-
-      var _form = $("<form class='hide' method='post' />")
-              .attr("action", this.href)
-              .append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />");
-              add_csrf_token(_form);
-              _form.get(0).submit();      
-    })
-
     // Data api for onclick showing dom elements
     $("a[data-show-dom], button[data-show-dom]").live("click", function(ev){
       ev.preventDefault()

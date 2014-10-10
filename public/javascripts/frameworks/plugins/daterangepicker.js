@@ -463,8 +463,8 @@
             
             if (this.opens == 'left') {
                 this.container.css({
-                    top: this.element.offset().top + this.element.outerHeight() - parentOffset.top,
-                    right: $(window).width() - this.element.offset().left - this.element.outerWidth() - parentOffset.left,
+                    top: this.element.offset().top + this.element.outerHeight(true) - parentOffset.top,
+                    right: $(window).width() - this.element.offset().left - this.element.outerWidth(true) - parentOffset.left,
                     left: 'auto'
                 });
                 if (this.container.offset().left < 0) {
@@ -475,11 +475,11 @@
                 }
             } else {
                 this.container.css({
-                    top: this.element.offset().top + this.element.outerHeight() - parentOffset.top,
+                    top: this.element.offset().top + this.element.outerHeight(true) - parentOffset.top,
                     left: this.element.offset().left - parentOffset.left,
                     right: 'auto'
                 });
-                if (this.container.offset().left + this.container.outerWidth() > $(window).width()) {
+                if (this.container.offset().left + this.container.outerWidth(true) > $(window).width()) {
                     this.container.css({
                         left: 'auto',
                         right: 0

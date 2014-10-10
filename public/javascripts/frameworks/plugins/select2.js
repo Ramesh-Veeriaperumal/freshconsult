@@ -846,7 +846,7 @@ the specific language governing permissions and limitations under the Apache Lic
             if (this.autofocus) this.focus();
 
             // this.search.attr("placeholder", opts.searchInputPlaceholder);
-            if (this.getPlaceholder() !== undefined  && this.getVal().length === 0) {
+            if (this.getPlaceholder() !== undefined  && this.getPlaceholder().length === 0) {
               this.search.attr("placeholder", this.getPlaceholder());
             }
         },

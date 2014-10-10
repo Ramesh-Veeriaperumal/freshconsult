@@ -1055,7 +1055,7 @@ Helpkit::Application.routes.draw do
         delete :delete_forever
         get :user_ticket
         get :search_tweets
-        get :custom_search
+        post :custom_search
         post :export_csv
         post :latest_ticket_count
         post :add_requester
