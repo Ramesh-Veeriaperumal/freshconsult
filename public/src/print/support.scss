@@ -1,0 +1,110 @@
+@import "blueprint";
+@import "../pattern/lib/rtl-mixins";
+
+// Generate the blueprint print styles:
+@include blueprint-print;
+
+$info_color: lightgrey;
+a, a:visited { color: #444; text-decoration: underline; }
+abbr:after { content: " (" attr(title) ")"; }
+.ir a:after { content: ""; }  
+pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+thead { display: table-header-group; }  
+tr, img { page-break-inside: avoid; }
+p, h2, h3 { orphans: 3; widows: 3; }
+h2, h3{ page-break-after: avoid;} 
+p{ 
+   font-size:1.0em; 
+   margin: 0 0 0;
+   @include text-align(left);
+   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   text-rendering: optimizelegibility;
+}
+
+header, nav, footer {
+	display: none;
+}
+
+.copyright, .help-center, .breadcrumb, .attachments, .gutter {
+	display: none;
+}
+
+h2 {
+	font-family: inherit;
+	font-weight: 400;
+	line-height: normal;
+	color: inherit;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table td {
+	border: 1px solid $info_color;
+}
+
+.syntaxhighlighter td {
+	border: none;
+	border-left: 1px dotted $info_color;
+	padding-left: 10px;
+}
+
+img {
+	max-width: 100%;
+}
+
+@page {
+	margin: 0.5cm;
+}
+
+@page :left {
+	margin: 1cm;
+}
+
+@page :right {
+	margin: 1cm;
+}
+
+a {
+	color: inherit;
+}
+
+/* showing only external links */
+a[href^="http://"], a[href^="https://"] {
+	&:after {
+		content: " (" attr(href) ")";
+		font-size: 90%;
+		text-decoration: none;
+		color: $info_color;
+	}
+}
+
+/* for solutions and forums */
+.article-vote, #vote-feedback-container, .helpdesk_view,
+#topic-toolbar, #reply-to-post, .start-topic, .lead,
+.alert-assume-agent, #reply-to-ticket, #add-people, .sidebar
+{
+	display: none;
+}
+
+.user-info, .user-pic-thumb, .user-details {
+	display: inline-block;
+	margin-right: 15px;
+}
+.user-details{
+	padding-bottom: 10px;
+}
+.user-details .p-info {
+	margin-top: -15px;
+	color: $info_color;
+}
+.user-details h4{
+	margin-top: 15px;
+}
+.user-comment{
+	border-top:1px solid $info_color;
+	padding-top: 10px;
+	padding-bottom: 20px;
+}

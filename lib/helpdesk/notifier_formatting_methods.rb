@@ -1,11 +1,28 @@
 module Helpdesk::NotifierFormattingMethods
 
+  REPLY_PREFIX = "Re:"
+  FWD_PREFIX  = "Fwd:"
+
+  def default_reply_subject(ticket)
+    "#{encoded_ticket_id(ticket)} #{ticket.subject}"
+  end
+
   def formatted_subject(ticket)
-    "Re: #{encoded_ticket_id(ticket)} #{ticket.subject}"
+    subject = reply_subject(true, ticket)
+    "#{REPLY_PREFIX} #{subject}"
   end
 
   def fwd_formatted_subject(ticket)
-    "Fwd: #{encoded_ticket_id(ticket)} #{ticket.subject}"
+    subject = reply_subject(false, ticket)
+    "#{FWD_PREFIX} #{subject}"
+  end
+
+  def reply_subject(reply, ticket)
+    template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE)
+    subject_template = reply ? template.get_requester_template(ticket.requester).first : template.requester_subject_template
+    subject = Liquid::Template.parse(subject_template).render('ticket' => ticket,
+                'helpdesk_name' => ticket.account.portal_name ).html_safe
+    subject.blank? ? default_reply_subject(ticket) : subject
   end
 
   def generate_body_html(html, inline_attachments, account)

@@ -2884,7 +2884,6 @@ $collision_delay: 1s;
 		@include margin(32px 0 0 -7px);
 	}
 
-	.show_on_collapse { display: none; }
 
 }
 
@@ -2892,11 +2891,6 @@ $collision_delay: 1s;
 	.status_info {
 		visibility: visible;
 	}
-}
-
-.tkt-details-sticky.collapsed {
-	.show_on_collapse { display: block; }
-	.hide_on_collapse { display: none; }
 }
 
 .conversation_thread .ui-form li.file_size_alert{

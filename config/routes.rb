@@ -102,7 +102,7 @@
                                 }
 
   map.resources :users, :member => { :delete_avatar => :delete,
-          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
+          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get, :me => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.register_new_email 'register_new_email/:activation_code', :controller => 'activations', :action => 'new_email'
@@ -147,9 +147,8 @@
                      :personalized_email_enable => :post, 
                      :personalized_email_disable => :post, 
                      :reply_to_email_enable => :post, 
-                     :reply_to_email_disable => :post, 
-                     :id_less_tickets_enable => :post, 
-                     :id_less_tickets_disable => :post }
+                     :reply_to_email_disable => :post
+                    }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.edit_notification '/email_notifications/:type/:id/edit', :controller => 'email_notifications', :action => 'edit'

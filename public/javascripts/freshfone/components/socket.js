@@ -188,6 +188,7 @@ var FreshfoneSocket;
 				} else {
 					this.agentList = new List('online-agents-list', options);
 				}
+        this.agentList.sort('available_agents_name', { asc: true });
 				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 				if(freshfonecalls.tConn) { this.bindTransfer();	}
@@ -200,7 +201,8 @@ var FreshfoneSocket;
 		addToAvailableAgents: function (user) {
 			if (user.id === freshfone.current_user || this.agentList === undefined) { return false; }
 			if (!this.agentList.get("id", user.id)) {
-				this.agentList.add(user);
+				this.agentList.add(this.formatListItem(user));
+				this.agentList.sort('available_agents_name', { asc: true });
 				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 			}
@@ -277,6 +279,9 @@ var FreshfoneSocket;
 
 		successTransferCall: function (transfer_success) {
 			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
+		},
+		formatListItem: function (user) {
+			return {"id":user.id, "available_agents_name" : user.name, "available_agents_avatar": user.avatar }
 		}
 	};
 }(jQuery));

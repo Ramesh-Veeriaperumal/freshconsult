@@ -100,7 +100,7 @@ describe Gamification::Quests::ProcessTicketQuests do
       Resque.inline = false
       all_tickets = @account.tickets.find_all_by_responder_id(@agent.user_id)
       all_tickets.each { |tkt| tkt.destroy }
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
   
@@ -184,7 +184,7 @@ describe Gamification::Quests::ProcessTicketQuests do
       Resque.inline = false
       all_tickets = @account.tickets.find_all_by_responder_id(@agent.user_id)
       all_tickets.each { |tkt| tkt.destroy }
-      @agent.user.destroy
+      # @agent.user.destroy
     end
   end
 end

@@ -1104,6 +1104,12 @@ en:
         valid_ip_address: Enter valid IP Address
         invalid_ip_range: Invalid IP Range
         current_ip_not_in_range: Your current IP is not in the list of Ranges
+        admin_notifications: Admin Notifications
+        send_notifications: Send notifications to
+        select_admin: "Select an Administrator"
+        notifications: "Notification will be sent when"
+        agent_create_or_delete: "Agent is Added or Deleted"
+        whitelisted_ip_modified: "IP Whitelisting is modified"
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
@@ -2041,10 +2047,11 @@ en:
       restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
+  account_configuration:
+    notification_emails_blank: "Please select an Administrator"
   domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
   long_company_name_error: Company name shouldn't exceed 100 characters.
   short_company_name_error: Company name should be atleast 3 characters
-
   forum_key: Forum
   topics:
     edit_title: Edit
@@ -2312,6 +2319,15 @@ en:
     visible_in: Visible in
   activerecord:
     errors:
+      models:
+        solution/folder:
+          attributes:
+            name:
+              taken: "already exists in the selected category."
+        forum:
+          attributes:
+            name:
+              taken: "already exists in the selected category"
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -2762,6 +2778,7 @@ en:
     reported: reported
     said: said
     solutions_home: "Solution home"
+    print_title: "Print this Article"
     attach_file: "Attach a <b>file</b>"
     header:
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
@@ -3254,8 +3271,6 @@ en:
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
-    id_less_tickets: Include Ticket ID in requester email subject line?
-    id_less_tickets_info: "If YES then the Ticket ID will be included in subject line for all agent replies.<br/>To manually include Ticket ID, <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/191769'>read more</a>."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -4186,6 +4201,36 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    fields:
+      ticket_id: "Ticket Id"
+      subject: "Subject"
+      description: "Description"
+      status: "Status"
+      priority: "Priority"
+      source: "Source"
+      type: "Type"
+      company: "Company"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      fb_profile_id: "Facebook Profile Id"
+      agent: "Agent"
+      group: "Group"
+      created_time: "Created Time"
+      due_by_time: "Due by Time"
+      resolved_time: "Resolved Time"
+      closed_time: "Closed Time"
+      updated_time: "Last Updated Time"
+      initial_response_time: "Initial Response Time"
+      time_tracked: "Time Tracked"
+      fr_time: "First Response Time (in Hrs)"
+      resolution_time: "Resolution Time (in Hrs)"
+      agent_interactions: "Agent interactions"
+      customer_interactions: "Customer interactions"
+      resolution_status: "Resolution Status"
+      first_response_status: "First Response Status"
+      tags: "Tags"
+      survey_result: "Survey Result"
+      product: "Product"
   sla:
     minutes: Mins
     hours: Hrs
@@ -5059,6 +5104,10 @@ en:
   for: "for"
   since_time: "Since %{time_words}"
   since_last_time: "since last %{time_words}"
+  no_of_days: "%{days} days %{hours} hours"
+  no_of_hours: "%{hours} hours %{minutes} minutes"
+  no_of_minutes: "%{minutes} minutes %{seconds} seconds"
+  no_of_seconds: "%{seconds} seconds"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
@@ -5965,6 +6014,7 @@ en:
   ticket_creating_agent: "Ticket Creating Agent"
   ticket_cc: "Ticket CC"
   select_watchers: "Select Watchers"
+  admins: Admins
   shortcuts:
     title: "Keyboard shortcuts"
     goto_tab:

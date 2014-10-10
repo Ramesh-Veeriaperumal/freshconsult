@@ -7,7 +7,7 @@ describe ProfilesController do
 
   before(:each) do
     log_in(@agent)
-    # Delayed::Job.destroy_all
+    Delayed::Job.destroy_all
   end
 
   it "should update mobile and phone number" do
@@ -26,7 +26,7 @@ describe ProfilesController do
     @agent.reload
     @agent.phone.should be_eql(new_phone)
     @agent.mobile.should be_eql(new_mobile)
-    # Delayed::Job.last.handler.should include("Your Phone number and Mobile number in #{@account.name} has been updated")
+    Delayed::Job.last.handler.should include("Your Phone number and Mobile number in #{@account.name} has been updated")
   end
 
   it "should change api_key" do
@@ -35,7 +35,7 @@ describe ProfilesController do
     user = User.find_by_id(@agent.id)
     api_after_change = user.single_access_token
     api_after_change.should_not be_eql(api_before_change)
-    # Delayed::Job.last.handler.should include("Your API key in #{@account.name} has been updated")
+    Delayed::Job.last.handler.should include("Your API key in #{@account.name} has been updated")
   end
 
   it "should change password" do
@@ -48,7 +48,7 @@ describe ProfilesController do
     user = User.find_by_id(@agent.id)
     password_after_update = user.crypted_password
     password_before_update.should_not be_eql(password_after_update)
-    # Delayed::Job.last.handler.should include("Your Password in #{@account.name} has been updated")
+    Delayed::Job.last.handler.should include("Your Password in #{@account.name} has been updated")
   end
 
   it "should go to the edit page" do

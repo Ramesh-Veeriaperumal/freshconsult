@@ -51,7 +51,7 @@ class Account < ActiveRecord::Base
   has_one :account_configuration
 
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
-            :invoice_emails, :to => "account_configuration"
+            :notification_emails, :invoice_emails, :to => "account_configuration"
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',

@@ -7,7 +7,8 @@
   else
     sso_type = :none
   end%>
-<% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
+<% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, 
+  :id => "sso_form", :rel => 'validate'  } do |f| %>
   <%= generate_breadcrumbs(params, f, :force_admin => true, :submit_text => "save", :redirect_to_admin => true) %>
   <%= f.error_messages %>
   <ul class="security-form">
@@ -104,7 +105,7 @@
                 </label>
                 <div class="span10">
                   <span class="span9">
-                  <%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required" } %></span>
+                  <%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required ignore_on_hidden" } %></span>
                   <span class="span3"><%= link_to_function t(".submit_request"), :class => "btn submit_request", "data-loading-text" => "Submitting..." %></span>
                 </div>
               </div>
@@ -182,6 +183,31 @@
       </div>
     </li>
     <% end %>
+    <li>
+      <div class="ml10">
+        <h3 class="rebrand-head-text top-space-none"><%= t('.admin_notifications') %></h3>
+        <div class="pull-left">
+          <div class="btn-bold pb5"><%= t('.send_notifications') %></div>
+          <%= select_tag "account[account_configuration_attributes][]",
+            options_for_select( @account.account_managers.collect{|i| [i.name, i.email]},
+            selected = @account.account_configuration.contact_info[:notification_emails] ),
+            { :class => "select2 required input-xlarge", :multiple => :multiple, :placeholder => t('.select_admin') } %>  
+        </div>
+        <div class="pull-left notify-divider" style="">
+          <div class="btn-bold pb5"><%= t('.notifications') %></div>
+          <ul>
+            <li>
+              <%= t('.agent_create_or_delete') %>
+            </li>
+            <% if current_account.features_included?(:whitelisted_ips) %>
+              <li>
+                <%= t('.whitelisted_ip_modified') %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </li>
   </ul>
 
 	<script id="security-ip-range-template" type="text/x-jquery-tmpl">
@@ -195,7 +221,7 @@
 		</div>
 	</script>
 
-  <div class="button-container itil-hide">
+  <div class="button-container itil-hide pt20">
     <%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
     <%= f.submit t('save'), :class => "btn btn-primary" %>
   </div>
@@ -254,7 +280,7 @@
     });
 
     $(".submit_request").click(function(){
-      if(jQuery("#sso_form").valid()){
+      if($("#sso_form").valid()){
         $(".submit_request").button('loading');
         var domain_name = $(".domain_field").val();
         $.ajax({
