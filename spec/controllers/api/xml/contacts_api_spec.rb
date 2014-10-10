@@ -14,7 +14,7 @@ RSpec.describe ContactsController do
 	end
 
 	before(:all) do
-		@new_company = Factory.build(:company)
+		@new_company = FactoryGirl.build(:company)
 		@new_company.save
 	end
 
@@ -44,7 +44,7 @@ RSpec.describe ContactsController do
 
 	it "should create a contact" do # To check normalize_params prioritization
 		test_email = Faker::Internet.email
-		company = Factory.build(:company)
+		company = FactoryGirl.build(:company)
 		company.save
 		post :create, :user => {:name => Faker::Name.name, 
 								:email => test_email , 
@@ -118,14 +118,14 @@ RSpec.describe ContactsController do
 		# US numbers format is not searched 812.123.1232 or (802)-123-1232
 		# Hence not using Faker for phonenumber generation.
 		# This needs to be addressed. change filter expresssion in api_helper_methods
-		contact = Factory.build( :user, :account => @account,
+		contact = FactoryGirl.build( :user, :account => @account,
 										:name => Faker::Name.name, 
 										:email => Faker::Internet.email,
 										:phone => 42345678,
 										:time_zone => "Chennai", 
 										:delta => 1, 
 										:language => "en")
-		contact.save(false)
+		contact.save(:validate => false)
 		check_phone  = contact.phone
 		get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'xml'}
 		result = parse_xml(response)
@@ -135,14 +135,14 @@ RSpec.describe ContactsController do
 
 	it "should fetch contacts filtered by mobile" do
 		# This needs to be addressed. change filter expresssion in api_helper_methods
-		contact = Factory.build( :user, :account => @account,
+		contact = FactoryGirl.build( :user, :account => @account,
 										:name => Faker::Name.name, 
 										:email => Faker::Internet.email,
 										:mobile => 9876543210,
 										:time_zone => "Chennai", 
 										:delta => 1, 
 										:language => "en")
-		contact.save(false)
+		contact.save(:validate => false)
 		check_mobile  = contact.mobile
 		get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'xml'}
 		result = parse_xml(response)

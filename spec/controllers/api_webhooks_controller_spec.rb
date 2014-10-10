@@ -41,39 +41,39 @@ RSpec.describe ApiWebhooksController do
 	end
 
 	it "should create webhooks for ticket" do
-		post :create, {"url"=>"http://testticketurl","name"=>"ticket_create","description"=>"testing",
+		post :create, {"url"=>"http://testticketurl.com","name"=>"ticket_create","description"=>"testing",
 									 "event_data"=>[{"name"=>"ticket_action","value"=>"create"}]}
 		response.status.should eql 200
 	end
 
 	it "should create webhooks for note" do
-		post :create, {"url"=> "http://testnoteurl","name"=>"note_create","description"=>"testing",
+		post :create, {"url"=> "http://testnoteurl.com","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
 		response.status.should eql 200
 	end
 
 	it "should create webhooks for note with username" do
-		post :create, {"url"=> "http://testnotesurl","username" => "sathish@freshdesk.com", 
+		post :create, {"url"=> "http://testnotesurl.com","username" => "sathish@freshdesk.com", 
 			"password" => "test","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
 		response.status.should eql 200
 	end
 
 	it "should create webhooks for note with api key" do
-		post :create, {"url"=> "http://testnotesapi","api_key" => "BfPY67HoIscsgEbkSv","name"=>"note_create","description"=>"testing",
+		post :create, {"url"=> "http://testnotesapi.com","api_key" => "BfPY67HoIscsgEbkSv","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"note_action","value"=>"create"}]}
 		response.status.should eql 200
 	end
 
 	it "should create webhooks for ticket update" do
-		post :create, {"url"=> "http://ticketupdate","name"=>"ticket_update","description"=>"testing",
+		post :create, {"url"=> "http://ticketupdate.com","name"=>"ticket_update","description"=>"testing",
 			"event_data"=>[{"name"=>"ticket_action","value"=>"update"}]}
 		response.status.should eql 200
 	end
 
 	it "should create webhooks for user update" do
 		Resque.inline = true 
-		post :create, {"url"=> "http://testnotesapi","api_key" => "BfPY67HoIscsgEbkSv","name"=>"note_create","description"=>"testing",
+		post :create, {"url"=> "http://testnotesapi.com","api_key" => "BfPY67HoIscsgEbkSv","name"=>"note_create","description"=>"testing",
 			"event_data"=>[{"name"=>"user_action","value"=>"update"}]}
 		@ticket = create_ticket({:status => 2})
 		@ticket.status=3

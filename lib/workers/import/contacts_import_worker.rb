@@ -38,10 +38,8 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
           @params_hash[:user][:company_id]= current_account.companies.find_or_create_by_name(company_name).id unless company_name.nil?
           search_options = {:email => @params_hash[:user][:email], :twitter_id => @params_hash[:user][:twitter_id]}
           user = current_account.users.find_by_an_unique_id(search_options) 
-          @params_hash[:user].reject!{ |k| k == :company }
           unless user.nil?
             @params_hash[:user][:deleted] = false #To make already deleted user active
-            user.update_tag_names(@params_hash[:user].delete(:tags))# TODO-RAILS3
             updated+=1 if user.update_attributes(@params_hash[:user])
           else
             user = current_account.users.new

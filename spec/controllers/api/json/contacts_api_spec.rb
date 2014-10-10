@@ -15,7 +15,7 @@ RSpec.describe ContactsController do
 	end
 
 	before(:all) do
-		@new_company = Factory.build(:company)
+		@new_company = FactoryGirl.build(:company)
 		@new_company.save
 	end
 
@@ -32,7 +32,7 @@ RSpec.describe ContactsController do
 		#api impl gives out 200 status, change this when its fixed to return '201 created'
 	 	#also add helpdesk_agent attrib to json response to be in sync with xml
 	 	#&& compare(result["user"],APIHelper::CONTACT_ATTRIBS,{})
-		response.status.should be_eql("200 OK")
+		response.status.should be_eql(200)
 		@account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
 	end
 
@@ -102,14 +102,14 @@ RSpec.describe ContactsController do
 		# US numbers format is not searched 812.123.1232 or (802)-123-1232
 		# Hence not using Faker for phonenumber generation.
 		# This needs to be addressed. change filter expresssion in api_helper_methods
-		contact = Factory.build(:user, :account => @account,
+		contact = FactoryGirl.build(:user, :account => @account,
 										:name => Faker::Name.name, 
 										:email => Faker::Internet.email,
 										:phone => 42345678,
 										:time_zone => "Chennai", 
 										:delta => 1, 
 										:language => "en")
-		contact.save(false)
+		contact.save(:validate => false)
 		check_phone  = contact.phone
 		get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'json'}
 		result = parse_json(response)
@@ -119,14 +119,14 @@ RSpec.describe ContactsController do
 
 	it "should fetch contacts filtered by mobile" do
 		# This needs to be addressed. change filter expresssion in api_helper_methods
-		contact = Factory.build(:user, :account => @account,
+		contact = FactoryGirl.build(:user, :account => @account,
 										:name => Faker::Name.name, 
 										:email => Faker::Internet.email,
 										:mobile => 9876543210,
 										:time_zone => "Chennai", 
 										:delta => 1, 
 										:language => "en")
-		contact.save(false)
+		contact.save(:validate => false)
 		check_mobile  = contact.mobile
 		get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'json'}
 		result = parse_json(response)

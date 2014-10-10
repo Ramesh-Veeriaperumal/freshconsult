@@ -655,7 +655,7 @@ RSpec.describe Social::TwitterController do
     post :followers, {
        :screen_name => "Testing"
     }
-    response.template_objects["follow_hash"].should eql({@handle.screen_name => true})
+    assigns['follow_hash'].should eql({@handle.screen_name => true})
     response.should render_template("social/twitter/followers.rjs")
   end
 

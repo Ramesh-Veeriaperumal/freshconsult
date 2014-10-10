@@ -1,9 +1,6 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-
-RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
-end
+include FreshfoneSpecHelper
 
 RSpec.describe FreshfoneController do
 	self.use_transactional_fixtures = false

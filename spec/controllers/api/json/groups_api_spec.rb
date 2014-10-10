@@ -32,7 +32,7 @@ RSpec.describe GroupsController do
       :format => 'json'
 		}
 		result = parse_json(response)
-		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		expected = (response.status == 201) && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 					(compare(result["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 		expected.should be(true)
 		@account.groups.find_by_name("Spec Testing Grp - json").should_not be_nil
@@ -81,7 +81,7 @@ RSpec.describe GroupsController do
 	it "should go to the Groups index page" do
 		get :index, :format => 'json'
 		result = parse_json(response)
-		expected = (response.status == "200 OK") && (compare(result.first["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		expected = (response.status == 200) && (compare(result.first["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 					(compare(result.last["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 		expected.should be(true)
 	end

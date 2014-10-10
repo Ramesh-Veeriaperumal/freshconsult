@@ -30,7 +30,7 @@ describe CompaniesController do
     fake_a_company
     post :create, @params.merge!(:format => 'json')
     @comp = @account.companies.find_by_name(@company_name)
-    response.status.should be_eql '201 Created'
+    response.status.should eql 201
     @company_params.should be_eql(json SKIPPED_KEYS)
   end
 
@@ -50,14 +50,14 @@ describe CompaniesController do
 
   it "should delete a company using the API" do
     delete :destroy, { :id => company.id, :format => 'json' }
-    response.status.should be_eql("200 OK")
+    response.status.should eql(200)
     @company = nil
   end
 
   it "should delete multiple companies using the API" do
     another_company = create_company
     delete :destroy, { :ids => [company.id, another_company.id], :format => 'json' }
-    response.status.should be_eql("200 OK")
+    response.status.should eql(200)
     @company = nil
   end
 

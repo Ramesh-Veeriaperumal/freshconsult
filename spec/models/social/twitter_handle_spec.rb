@@ -1,8 +1,7 @@
 require 'spec_helper'
-
+include Social::Twitter::Constants
 RSpec.configure do |c|
   c.include GnipHelper
-  c.include Social::Twitter::Constants
 end
 
 RSpec.describe Social::TwitterHandle do

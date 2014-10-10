@@ -1,13 +1,11 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
-  c.include Freshfone::TicketActions
-end
+include FreshfoneSpecHelper
 
 RSpec.describe Freshfone::TicketActions do
   self.use_transactional_fixtures = false
   
+  include Freshfone::TicketActions
   before(:all) do
     RSpec.configuration.agent = get_admin
   end

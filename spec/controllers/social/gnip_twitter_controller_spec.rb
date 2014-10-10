@@ -1,7 +1,5 @@
 require 'spec_helper'
-RSpec.configure do |c|
-  c.include Social::Twitter::Constants
-end
+include Social::Twitter::Constants
 
 RSpec.describe Social::GnipTwitterController do
   self.use_transactional_fixtures = false

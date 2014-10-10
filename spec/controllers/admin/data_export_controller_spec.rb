@@ -8,8 +8,8 @@ RSpec.describe Admin::DataExportController do
   before(:all) do
     Account.reset_current_account
     User.current = nil
-    @account = create_new_account(Faker::Internet.domain_name, Faker::Internet.email)
-    @agent = get_admin
+    @account = RSpec.configuration.account 
+    @agent = RSpec.configuration.agent
   end
 
   before(:each) do
@@ -95,8 +95,8 @@ RSpec.describe Admin::DataExportController do
 
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Companies.xml"
-    expect { Pathname.new(exported_file).exist? }.to be_true
-
+    Pathname.new(exported_file).exist?.should eql(true)
+    
     companies_xml = File.read(exported_file)
     companies = Hash.from_trusted_xml companies_xml
     companies["companies"].should_not be_blank

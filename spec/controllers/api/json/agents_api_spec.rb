@@ -27,7 +27,7 @@ describe AgentsController do
                                   :privileges => @agent_role.privileges })
     get :index, :format => 'json'
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result.first["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
     response.body.should =~ /#{user.email}/
@@ -36,7 +36,7 @@ describe AgentsController do
   it "should show all the agent details on the show page" do
     get :show, :id => @agent.agent.id, :format => 'json'
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
                 (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end

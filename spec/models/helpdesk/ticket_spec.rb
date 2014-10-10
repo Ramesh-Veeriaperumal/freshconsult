@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Helpdesk::Ticket do
+RSpec.describe Helpdesk::Ticket do
 
   before(:all) do
     setup_data

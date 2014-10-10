@@ -30,7 +30,7 @@ describe CompaniesController do
     fake_a_company
     post :create, @params.merge!(:format => 'xml')
     @comp = @account.companies.find_by_name(@company_name)
-    response.status.should be_eql '201 Created'
+    response.status.should be_eql 201
     response.location.should be_eql "http://localhost.freshpo.com/companies/#{@comp.id}"
     @company_params.should be_eql(xml SKIPPED_KEYS)
   end

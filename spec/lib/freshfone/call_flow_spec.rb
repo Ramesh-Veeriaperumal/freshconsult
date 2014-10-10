@@ -1,9 +1,9 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
+include Redis::RedisKeys
 
 RSpec.configure do |c|
   c.include FreshfoneSpecHelper
-  c.include Redis::RedisKeys
   c.include Redis::IntegrationsRedis
 end
 

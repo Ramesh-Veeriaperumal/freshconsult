@@ -32,7 +32,7 @@ RSpec.describe Helpdesk::TicketsController do
               :resolved_at => "2012-08-02 17:00:00"}
     post :create, ticket_params,:content_type => 'application/json'
     result =  parse_json(response)
-    expected = (response.status =~ /200 OK/) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
+    expected = (response.status == 200) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
@@ -46,7 +46,7 @@ RSpec.describe Helpdesk::TicketsController do
               :closed_at => "2012-08-02 17:00:00"}
     post :create, ticket_params,:content_type => 'application/json'
     result =  parse_json(response)
-    expected = (response.status =~ /200 OK/) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
+    expected = (response.status == 200) && compare(result['helpdesk_ticket'].keys,APIHelper::TICKET_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
