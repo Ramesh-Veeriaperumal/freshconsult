@@ -209,6 +209,7 @@
 				break;
 			case 'topic_view':
 				highlight_code();
+				$('.p-desc *').css('position', '');
 			break;
 	    }
 
