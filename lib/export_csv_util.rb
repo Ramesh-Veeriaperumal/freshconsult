@@ -6,7 +6,7 @@ EXPORT_CONTACT_FIELDS = [
       {:label => "Name", :value => "name", :selected => true},
       {:label => "Email",   :value => "email",    :selected => true},
       {:label => "Job Title", :value => "job_title", :selected => false},
-      {:label => "Company", :value => "customer_id", :selected => false},
+      {:label => "Company", :value => "company_name", :selected => false},
       {:label => "Phone", :value => "phone", :selected => false},
       {:label => "Twitter ID", :value => "twitter_id", :selected => false}
     ]
@@ -50,19 +50,15 @@ EXPORT_CONTACT_FIELDS = [
       csv_string = CSVBridge.generate do |csv|
         headers = delete_invisible_contact_fields(csv_hash)
         csv << headers
-        if headers.size == 1 and csv_hash[headers.first] == "customer_id"
-          current_account.customers.each do |customers|
-            csv << customers.name
+        if headers.size == 1 and csv_hash[headers.first] == "company_name"
+          current_account.companies.each do |company|
+            csv << company.name
           end
         else
           items.each do |record|
             csv_data = []
             headers.each do |val|
-              if csv_hash[val] == "customer_id"
-                (record.customer.blank?) ? csv_data << nil : csv_data << record.customer.name
-              else
-                csv_data << record.send(csv_hash[val])
-              end
+              csv_data << record.send(csv_hash[val])
             end
             csv << csv_data if csv_data.any?
           end

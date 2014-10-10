@@ -44,7 +44,7 @@ class Search::AutocompleteController < ApplicationController
       end
     rescue
 	    companies = {
-        :results => current_account.customers.custom_search(params[:q]).map do |company|
+        :results => current_account.companies.custom_search(params[:q]).map do |company|
           {:id => company.id, :value => company.name}
         end
       } 

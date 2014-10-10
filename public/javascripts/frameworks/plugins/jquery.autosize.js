@@ -75,7 +75,7 @@
 			}
 
 			if ($ta.css('box-sizing') === borderBox || $ta.css('-moz-box-sizing') === borderBox || $ta.css('-webkit-box-sizing') === borderBox){
-				boxOffset = $ta.outerHeight() - $ta.height();
+				boxOffset = $ta.outerHeight(true) - $ta.height();
 			}
 
 			minHeight = Math.max(parseInt($ta.css('minHeight'), 10) - boxOffset, $ta.height());

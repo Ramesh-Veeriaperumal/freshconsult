@@ -43,7 +43,7 @@ class Solution::Folder < ActiveRecord::Base
     return true if (user and user.privilege?(:manage_tickets) )
     return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-    return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.customer  && customer_folders.map(&:customer_id).include?(user.customer.id))
+    return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
   end
   
   def self.get_visibility_array(user)   
@@ -72,11 +72,12 @@ class Solution::Folder < ActiveRecord::Base
               solution_folders.id in (SELECT solution_customer_folders.folder_id 
                                         FROM solution_customer_folders WHERE 
                                         solution_customer_folders.customer_id =
-                                         #{user.customer_id} AND 
+                                         #{user.company_id} AND 
                                          solution_customer_folders.account_id = 
                                          #{user.account_id}))" if (user && user.has_company?)
-                # solution_customer_folders.customer_id = #{ user.customer_id})" if (user && user.has_company?)
-    condition
+                # solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
+
+    return condition
   end
 
   def customer_folders_attributes=(cust_attr)

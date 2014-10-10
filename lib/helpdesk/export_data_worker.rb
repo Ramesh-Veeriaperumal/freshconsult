@@ -83,10 +83,10 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
      write_to_file("Users.xml",xml_output)
   end
   
-  def export_customers_data
-     customers = @current_account.customers.all  
-     xml_output = customers.to_xml
-     write_to_file("Customers.xml",xml_output)
+  def export_companies_data
+     companies = @current_account.companies.all  
+     xml_output = companies.to_xml
+     write_to_file("Companies.xml",xml_output)
   end
   
   def export_tickets_data
@@ -113,7 +113,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       export_forums_data  #Forums data
       export_solutions_data #Solutions data
       export_users_data #Users data
-      export_customers_data #Companies data
+      export_companies_data #Companies data
       export_tickets_data #Tickets data
       export_groups_data #Groups data
   end

@@ -23,6 +23,12 @@ class Freshfone::UsersController < ApplicationController
 		end
 	end
 
+	def get_presence
+		render :json => {
+			:status => @freshfone_user.get_presence
+		}
+	end
+
 	def node_presence
 		#Does not update presence when user is available on phone and disconnect is fired from node
 		render :json => { 
@@ -101,7 +107,6 @@ class Freshfone::UsersController < ApplicationController
 		def reset_presence
 			@freshfone_user.reset_presence.save
 		end
-
 		
 		def current_call_sid
 			(current_user.freshfone_calls.call_in_progress || {})[:call_sid]

@@ -47,9 +47,9 @@
 				<% end %>
 			<% end %>
 			<br />
-			<% if @profile.customer.present? %>
+			<% if @profile.company.present? %>
 				<h4><%= t("user.company") %></h4>
-				<div><%= @profile.customer %></div>
+				<div><%= @profile.company %></div>
 			<% end %>
 		</fieldset>
  		<fieldset class="span8 omega">
@@ -114,6 +114,6 @@
 	<% end %>	
 	<div class="form-actions">
    		<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-		<%= link_to t('cancel'), :back, :class => "btn" %>
+		<%= link_to t('cancel'), support_home_path, :class => "btn" %>
 	</div>
 <%end%>

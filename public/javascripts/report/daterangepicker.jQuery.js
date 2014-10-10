@@ -201,13 +201,13 @@ jQuery.fn.daterangepicker = function(settings){
 		var riOffset = relEl.offset(),
 			side = 'left',
 			val = riOffset.left,
-			offRight = jQuery(window).width() - val - relEl.outerWidth();
+			offRight = jQuery(window).width() - val - relEl.outerWidth(true);
 
 		if(val > offRight){
 			side = 'right', val =  offRight;
 		}
 		
-		rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight());
+		rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight(true));
 	}
 	
 	

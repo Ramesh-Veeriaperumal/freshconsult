@@ -28,14 +28,14 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                     :language => (row[fields["10"]] ),
                                     :time_zone => (row[fields["11"]] ),
                                     :client_manager => (row[fields["12"]] ) ,
-                                :customer_id => nil
+                                    :company_id => nil
                                  }
                       }
           company_name = @params_hash[:user][:company].to_s.strip
           @params_hash[:user][:language] = current_account.language if @params_hash[:user][:language].nil?
           @params_hash[:user][:time_zone] = current_account.time_zone if @params_hash[:user][:time_zone].nil?
           @params_hash[:user][:client_manager] = @params_hash[:user][:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
-          @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
+          @params_hash[:user][:company_id]= current_account.companies.find_or_create_by_name(company_name).id unless company_name.nil?
           search_options = {:email => @params_hash[:user][:email], :twitter_id => @params_hash[:user][:twitter_id]}
           user = current_account.users.find_by_an_unique_id(search_options) 
           @params_hash[:user].reject!{ |k| k == :company }

@@ -45,9 +45,9 @@ class Mobile::TicketsController < ApplicationController
     }
 
     CUSTOMER_FILTER_NAMES.each { |view_name|
-      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.customer.tickets).size
+      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.company.tickets).size
       view_list.push(
-        :company => current_user.customer.name, 
+        :company => current_user.company.name, 
         :id => view_name.to_s+' ', 
         :name => t("helpdesk.tickets.views.#{view_name}"), 
         :type => :filter, 

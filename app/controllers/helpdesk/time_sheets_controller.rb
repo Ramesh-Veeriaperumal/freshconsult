@@ -1,6 +1,8 @@
 # encoding: utf-8
 class Helpdesk::TimeSheetsController < ApplicationController
 
+  include CustomerDeprecationMethods::NormalizeParams
+
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
@@ -224,6 +226,7 @@ private
 
   #API Method
   def get_time_sheets
+    normalize_params
     # start date is set to the zero if nothing is specified similarly End date is set to current time.
     start_date = (params[:start_date].blank?) ? 0: Time.zone.parse(params[:start_date])
     end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : Time.zone.parse(params[:end_date])
@@ -237,11 +240,11 @@ private
         Rails.logger.debug "Timesheets API::get_time_sheets:  params[:email] is a agent =>" + (requester.agent?).to_s
       end
     end
-    customer_id = params[:customer_id] || [] 
-    unless params[:customer_name].blank?
-      customer = current_account.customers.find_by_name(params[:customer_name])
-      # raise ActiveRecord::RecordNotFound if(customer.blank?)#indication customer not found
-      customer_id = customer.id unless customer.nil?
+    company_id = params[:company_id] || [] 
+    unless params[:company_name].blank?
+      company = current_account.companies.find_by_name(params[:company_name])
+      # raise ActiveRecord::RecordNotFound if(company.blank?)#indication company not found
+      company_id = company.id unless company.nil?
     end
     agent_id = params[:agent_id] || []
 
@@ -249,13 +252,13 @@ private
     #search by contact
     contact_email = params[:contact_email]
 
-    #customer_id and agent_id if passed null will return all data.  
+    #company_id and agent_id if passed null will return all data.  
     unless contact_email.blank?
       Rails.logger.debug "Timesheets API::get_time_sheets: contact_email=> "+contact_email +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
       @time_sheets = current_account.time_sheets.for_contacts(contact_email).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
     else
-      Rails.logger.debug "Timesheets API::get_time_sheets: customer_id=> "+customer_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
-      @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+      Rails.logger.debug "Timesheets API::get_time_sheets: company_id=> "+company_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_companies(company_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
     end
 
   end

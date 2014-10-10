@@ -25,8 +25,8 @@ RSpec.describe Workers::Import::ContactsImportWorker do
 	end
 
 	it "should add company on importing" do
-		@sample_contact.customer.should be_nil
-		@account.users.find_by_email("samara@example.net").customer.should_not be_nil
+		@sample_contact.company.should be_nil
+		@account.users.find_by_email("samara@example.net").company.should_not be_nil
 	end
 
 	it "should add job title on importing" do

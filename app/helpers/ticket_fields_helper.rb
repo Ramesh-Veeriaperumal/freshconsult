@@ -35,7 +35,7 @@ module TicketFieldsHelper
         when "default_status" then
           Helpdesk::TicketStatus.statuses_list(account)
         else
-          field.choices
+          field.choices(nil, true)
       end
     end
 end

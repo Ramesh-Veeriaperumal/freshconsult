@@ -34,7 +34,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		setSidebarHeight: function (height) {
 			$("#community-sidebar").height(height);
-			$("#cm-sb-list").height(height - ($(".cm-sb-title").outerHeight() + 10));
+			$("#cm-sb-list").height(height - ($(".cm-sb-title").outerHeight(true) + 10));
 		},
 
 		setCurrentPage: function () {

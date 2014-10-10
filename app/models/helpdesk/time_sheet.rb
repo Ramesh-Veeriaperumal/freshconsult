@@ -43,13 +43,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
 
-  scope :for_customers, lambda{ |customers|
+
+  scope :for_companies, lambda{ |company_ids|
     {
       :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
       :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
                 "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
-      :conditions => {:users => {:customer_id => customers}}
-    } unless customers.blank?
+      :conditions => {:users => {:customer_id => company_ids}}
+    } unless company_ids.blank?
   }
       
   scope :for_contacts, lambda{|contact_email|
@@ -135,7 +136,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def customer_name
-    workable.requester.customer ? workable.requester.customer.name : workable.requester.name
+    workable.requester.company ? workable.requester.company.name : workable.requester.name
   end
 
   def priority_name

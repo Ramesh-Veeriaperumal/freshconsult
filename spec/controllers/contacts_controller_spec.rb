@@ -17,6 +17,8 @@ describe ContactsController do
     @active_contact = FactoryGirl.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
     @active_contact.save(:validate => false)
+    @new_company = Factory.build(:company)
+    @new_company.save
   end
 
   after(:each) do
@@ -32,12 +34,23 @@ describe ContactsController do
     @account.users.all.size.should eql @user_count+1
   end
 
-  it "should create a new contact with new company" do
+  it "should create a new contact with new company" do # with old company parameters(customer deprecation)
     test_email = Faker::Internet.email
-    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :customer => "helloworld" }
+    company_name = Faker::Name.name
+    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :customer => company_name }
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    @account.customers.find_by_name("helloworld").should be_an_instance_of(Customer)
+    @account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
+  end
+
+   it "should create a new contact with new company" do # with new company parameters(customer deprecation)
+    test_email = Faker::Internet.email
+    company_name = Faker::Name.name
+    post :create, :user => {:name => Faker::Name.name, :job_title=>"Developer",:email => test_email , :time_zone => "Chennai", 
+                            :language => "en", :company_name => company_name }
+    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+    @account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
   end
 
   it "should create a new contact - nmobile format" do
@@ -222,8 +235,8 @@ describe ContactsController do
   end
 
   it "should export csv" do
-    post :export_csv, "data_hash"=>"", "export_fields"=>{"Name"=>"name", "Email"=>"email", "Job Title"=>"job_title", "Company"=>"customer_id", "Phone"=>"phone"}
-    response.header["Content-Type"].should eql 'text/csv; charset=utf-8; header=present'
+    post :export_csv, "data_hash"=>"", "export_fields"=>{"Name"=>"name", "Email"=>"email", "Job Title"=>"job_title", "Company"=>"company_name", "Phone"=>"phone"}
+    response.header["Content-type"].should eql 'text/csv; charset=utf-8; header=present'
     response.body.should include "Name,Email,Job Title,Company,Phone"
   end
 
@@ -233,22 +246,18 @@ describe ContactsController do
     @account.contacts.find_by_phone(test_phone_no).should be_an_instance_of(User)
   end
 
-  it "should create a contact within a company" do
-    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
-    new_company.save
+
+  it "should create a quick contact within a company" do # with new company parameters(customer deprecation)
     test_email = Faker::Internet.email
-    post :quick_customer, { :customer_id => new_company.id, 
-                            :user => { :name => Faker::Name.name, 
-                                       :email => test_email, 
-                                       :phone => "" }, 
-                            :id => new_company.id
-                            }
+    post :quick_contact_with_company, { :user => { :name => Faker::Name.name, 
+                                                   :email => test_email, 
+                                                   :phone => "",
+                                                   :company_name => @new_company.name }, 
+                                      }
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
-    new_contact.customer_id.should be_eql(new_company.id)
+    new_contact.company_id.should be_eql(@new_company.id)
   end
-
-
 
   it "should edit an existing contact" do
     contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
@@ -263,13 +272,32 @@ describe ContactsController do
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone, 
                                                 :language => contact.language }
+
     edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
   end
 
-  it "should edit an existing contact and create new company" do
-    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+  it "should update an existing contact" do # with new company parameters(customer deprecation)
+    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    contact.save(false)
+    test_email = Faker::Internet.email
+    test_phone_no = Faker::PhoneNumber.phone_number
+    put :update, :id => contact.id, :user => { :email => test_email, 
+                                                :job_title => "Developer",
+                                                :phone => test_phone_no,
+                                                :time_zone => contact.time_zone,
+                                                :company_name => @new_company.name, 
+                                                :language => contact.language }
+    edited_contact = @account.user_emails.user_for_email(test_email)
+    edited_contact.should be_an_instance_of(User)
+    edited_contact.phone.should be_eql(test_phone_no)
+    edited_contact.company_id.should eql @new_company.id
+  end
+
+  it "should edit an existing contact and create new company" do # with old company parameters(customer deprecation)
+    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     contact.save(:validate => false)
     get :edit, :id => contact.id
@@ -285,7 +313,7 @@ describe ContactsController do
     edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
-    @account.customers.find_by_name("testcompany").should be_an_instance_of(Customer)
+    @account.companies.find_by_name("testcompany").should be_an_instance_of(Customer)
   end
 
   it "should make a customer a full-time agent" do
@@ -378,6 +406,126 @@ describe ContactsController do
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
     @account.features.multiple_user_emails.destroy
+  end
+
+  #### Company revamp specs - User Tags Revamp Specs
+
+  it "should create a contact given the names of the tags as :tag_names in params" do #newway
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    fake_a_contact
+    @params[:user].merge!(:tag_names => tag_names)
+    post :create, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    contact.tag_names.should eql(tag_names)
+  end
+
+  it "should create a contact given the names of the tags as :tags in params" do #oldway
+    tags = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    fake_a_contact
+    @params[:user].merge!(:tags => tags)
+    post :create, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    contact.tag_names.should eql(tags)
+  end
+
+  it "should update a contact given the names of the tags as :tag_names in params" do #newway
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user      = add_new_user(@account)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tag_names => tag_names)
+    put :update, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    tag_names.split(',').all? do |tag_name|
+      contact.tag_names.should include(tag_name)
+    end
+  end
+
+  it "should update a contact given the names of the tags as :tags in params" do #oldway
+    tags = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user = add_new_user(@account)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tags => tags)
+    put :update, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    tags.split(',').all? do |tag|
+      contact.tag_names.should include(tag)
+    end
+  end
+
+  it "should create a contact with :tag_names given both :tags and :tag_names in params" do #newway
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    tags = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    fake_a_contact
+    @params[:user].merge!(:tag_names => tag_names, :tags => tags)
+    post :create, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    contact.tag_names.should eql(tag_names)
+    contact.tag_names.should_not eql(tags)
+  end
+
+  it "should update a contact with :tag_names given both :tags and :tag_names in params" do #oldway
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    tags = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user = add_new_user(@account)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tag_names => tag_names, :tags => tags)
+    put :update, @params
+    contact = @account.contacts.find_by_name(@params[:user][:name])
+    tag_names.split(',').all? do |tag_name|
+      contact.tag_names.should include(tag_name)
+    end
+    tags.split(',').all? do |tag|
+      contact.tag_names.should_not include(tag)
+    end
+  end
+  
+  it "should not update tag_names of a contact when they are nil in params" do
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user = add_new_user(@account)
+    user.reload # for user_emails to refresh
+    user.update_attributes(:tag_names => tag_names)
+    user.reload
+    user.tag_names.should eql(tag_names)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tag_names => nil)
+    put :update, @params
+    user.reload
+    user.tag_names.should eql(tag_names)
+  end
+
+  it "should clear tag_names of a contact when they are '' in params" do
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user = add_new_user(@account)
+    user.reload # for user_emails to refresh
+    user.update_attributes!(:tag_names => tag_names)
+    user.reload
+    user.tag_names.should eql(tag_names)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tag_names => '')
+    put :update, @params
+    user.reload
+    user.tag_names.should eql('')
+  end
+
+  it "should not raise Name can't be blank error for tags,
+      instead clear tags when tag_names is ' ' in params" do
+    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    user = add_new_user(@account)
+    user.reload # for user_emails to refresh
+    user.update_attributes(:tag_names => tag_names)
+    user.reload
+    user.tag_names.should eql(tag_names)
+    fake_a_contact
+    @params.merge!(:id => user.id)
+    @params[:user].merge!(:tag_names => ' ')
+    put :update, @params
+    user.reload
+    user.tag_names.should eql('')
   end
 
 end

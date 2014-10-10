@@ -3148,3 +3148,36 @@ $collision_delay: 1s;
 		@include margin-left(-20px);
 	}
 }
+
+
+// SEO shop integration css
+// -----------------------------
+
+.order-wrapper{
+	border-bottom: 1px solid #bebebe;
+	padding-bottom:10px;
+	.order-id-link{
+		font-weight: bold;
+	}
+	.order-status, .order-details{
+		margin-top: 10px;
+	}
+}
+
+.order-status .label{
+	display:inline-block;
+}
+
+.product-list .product,
+.product-list .shipping-address{
+	color:#666;
+}
+
+.product-list .product{	
+	border-bottom: 1px solid #f1f1f1;
+	min-height: 20px;
+	margin-bottom: 5px;
+	& [class*="span"]{
+		min-height: 0;
+	}
+}

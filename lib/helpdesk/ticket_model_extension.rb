@@ -9,7 +9,7 @@ module Helpdesk::TicketModelExtension
       {:label => "Priority", :value => "priority_name", :selected => false},
       {:label => "Source", :value => "source_name", :selected => false},
       {:label => "Type", :value => "ticket_type", :selected => false},
-      {:label => "Customer", :value => "customer_name", :selected => false},
+      {:label => "Company", :value => "company_name", :selected => false},
       {:label => "Requester Name", :value => "requester_name", :selected => false},
       {:label => "Requester Email", :value => "requester_info", :selected => true},
       {:label => "Facebook Profile Id", :value => "requester_fb_profile_id", :selected => false},

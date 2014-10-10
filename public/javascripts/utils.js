@@ -910,6 +910,10 @@ Number.prototype.toTime = function(format) {
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
+
+String.prototype.humanize = function() {
+    return this.replace(/_/, " ");
+}
 Date.prototype.toISOStringCustom = function() {
         function pad(n) { return n < 10 ? '0' + n : n }
         return this.getFullYear() + '-'
@@ -936,7 +940,7 @@ function unescapeHtml(escapedStr) {
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,
-    offset: jQuery('#sticky_header').outerHeight()
+    offset: jQuery('#sticky_header').outerHeight(true)
   };
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);

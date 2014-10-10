@@ -1,8 +1,9 @@
 <% @page_title = "Dashboard" %>
 <% content_for :sidebar do %>
   <%= sidebar_content %>
-    
+
   <% if gamification_feature?(current_account) %>
+
   	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_index_path() %>
 
@@ -20,6 +21,12 @@
 </div>
 <% content_for :onload_script do %>
 setTimeout(function() {
-  jQuery('#quests-section-container, #mini-leaderboard, #Activity').trigger('afterShow');
+  jQuery('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container').trigger('afterShow');
 },50);
+
+jQuery('#sales-manager-container').on('remoteLoaded', function(e){
+  if(jQuery('#sales-manager-container').children().hasClass('details-container')){
+    jQuery(this).slideDown();
+  }
+})
 <% end %>

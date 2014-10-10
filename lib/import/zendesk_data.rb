@@ -112,13 +112,13 @@ def handle_customer_import base_dir
      org.elements.each("id") { |imp_id| import_id = imp_id.text }    
 
      params = {:name =>cust_name , :description =>cust_detail , :import_id =>import_id}
-     @customer = @current_account.customers.find_by_import_id(import_id.to_i())
+     @customer = @current_account.companies.find_by_import_id(import_id.to_i())
      unless @customer.blank?
         if @customer.update_attributes(params)
              updated+=1
         end      
      else
-        @customer = @current_account.customers.new(params)
+        @customer = @current_account.companies.new(params)
         if @customer.save
             created+=1
             puts "Customer has been saved with name:: #{cust_name}"
@@ -199,7 +199,7 @@ def handle_user_import base_dir
      usr_role = ZENDESK_ROLE_MAP[role_id]
           
      cust_id = user.elements["organization-id"].text 
-     customer = @current_account.customers.find_by_import_id(cust_id) 
+     customer = @current_account.companies.find_by_import_id(cust_id) 
      org_id = customer.id unless customer.blank?
    
      

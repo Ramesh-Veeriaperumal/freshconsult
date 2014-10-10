@@ -20,9 +20,9 @@ describe CustomersController do
   it "should create a new company using the API" do
     fake_a_customer
     post :create, @params.merge!(:format => 'json')
-    @comp = RSpec.configuration.account.customers.find_by_name(@company_name)
+    @comp = @account.companies.find_by_name(@company_name)
     response.status.should be_eql 201
-    @company_params.should eql(json SKIPPED_KEYS)
+    @company_params.should be_eql(json SKIPPED_KEYS)
   end
 
   it "should fetch a company using the API" do
@@ -35,7 +35,7 @@ describe CustomersController do
     id = company.id
     fake_a_customer
     put :update, (@params).merge!({ :id => id, :format => 'json' })
-    { :customer => company_attributes(RSpec.configuration.account.customers.find(id), SKIPPED_KEYS) }.
+    { :customer => company_attributes(RSpec.configuration.account.companies.find(id), SKIPPED_KEYS) }.
                                                                     should be_eql(@company_params)
   end
 

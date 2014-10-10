@@ -111,14 +111,8 @@ jQuery('.email').live('keyup', function(){
 				<%= text_field(:user, :twitter_id, :class => "text" ) %>
 			</li>
 			<li>
-				<%
-					company_name = "";
-					unless user.customer.nil?
-						company_name =  user.customer.name
-					end
-				%>
-				<%= label(:user, :customer, "Company") %>
-				<%= text_field(:user, :customer, :class => "text disabled", :value => company_name, :id => "contact_customer", :disabled =>true ) %>
+				<%= label(:user, :company_name, "Company") %>
+				<%= text_field(:user, :company_name, :class => "text disabled", :id => "contact_customer", :disabled =>true ) %>
 			</li>
 		<%end%>
 		

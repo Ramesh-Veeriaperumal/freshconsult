@@ -1,0 +1,14 @@
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title"><%=t('company.edit')%> <span class="info_data">"<%=h(@company.name)%>"</span></h3>
+<%= form_for(@company) do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+	<div class="button-container">
+	   <div class="floatl">
+    <% if privilege?(:delete_contact) %>
+			<%= link_to(t('delete'), @company, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "uiButton red" ) %>
+    <% end %>
+	   </div>
+	   <%= f.submit t('save'), {:class => "uiButton"} %> 
+	   <%= link_to t('cancel'), company_path(@company), :class => "uiButton grey" %>
+	</div>
+<% end %>

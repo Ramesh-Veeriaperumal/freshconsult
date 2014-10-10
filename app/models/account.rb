@@ -16,6 +16,7 @@ class Account < ActiveRecord::Base
   serialize :sso_options, Hash
   
   concerned_with :associations, :constants, :validations, :callbacks
+  include CustomerDeprecationMethods
   
   xss_sanitize  :only => [:name,:helpdesk_name]
   

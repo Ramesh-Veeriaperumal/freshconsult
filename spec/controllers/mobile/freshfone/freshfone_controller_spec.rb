@@ -2,7 +2,7 @@ require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 
 RSpec.configure do |c|
-  c.include HelperFreshfoneSpecHelpers
+  c.include FreshfoneSpecHelper
 end
 
 RSpec.describe FreshfoneController do
