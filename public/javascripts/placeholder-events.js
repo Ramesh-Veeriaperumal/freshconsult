@@ -112,13 +112,9 @@ jQuery(document).ready(function(){
       	if(active_email_body){
 	        var placeHolderText = jQuery(this).data("placeholder"); 
 	        if(active_email_body.hasClass("desc_info") || active_email_body.hasClass("ca_content_body")){
-	        	active_email_body.getEditor().focus();
-				active_email_body.insertHtml(placeHolderText);
-
+	        	active_email_body.data('redactor').insertOnCursorPosition('inserthtml',placeHolderText);
 	        } else if(active_email_body.hasClass("paragraph-redactor")){
-		        	active_email_body.data('redactor').focusOnCursor();	
-					active_email_body.insertHtml(placeHolderText); 
-					jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+		        active_email_body.data('redactor').insertOnCursorPosition('inserthtml',placeHolderText);
 	        }
 	        else{
 	          insertTextAtCursor(active_email_body.get(0), placeHolderText);

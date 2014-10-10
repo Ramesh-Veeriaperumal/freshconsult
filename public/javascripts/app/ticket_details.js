@@ -199,10 +199,7 @@ insertIntoConversation = function(value,element_id){
 			$element.keyup(); // to update the SendTweetCounter value
 		}
 		else{
-
-			$element.data('redactor').focusOnCursor();
-		    $element.insertHtml(value); 
-		    jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+			$element.data('redactor').insertOnCursorPosition('inserthtml',value);
 			$element.getEditor().focus();
 		}
 	}    

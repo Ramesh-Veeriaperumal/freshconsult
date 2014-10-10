@@ -82,9 +82,7 @@ function insertSolutionContent(value)
 
 	if($element){
 		//restoreCaretPosition(element_id);//method in ticket show page.
-		$element.data('redactor').focusOnCursor();
-		$element.insertHtml(value); 
-		jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+		$element.data('redactor').insertOnCursorPosition('inserthtml',value);
 		$element.getEditor().focus();
  	}
 }
