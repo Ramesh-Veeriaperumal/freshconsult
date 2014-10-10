@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule", :placeholders => ticket_placeholders+event_placeholders } %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>
 <div class="form-horizontal">
 	<input type="hidden" name="id"   value="" />
@@ -65,6 +65,6 @@
 	</div>
 </div>
 <% content_for :pagefixed do %>
-	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders+survey_placeholders+event_placeholders }  %>
+	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders.merge(event_placeholders) }  %>
 <% end %>
 

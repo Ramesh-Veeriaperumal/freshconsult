@@ -389,12 +389,13 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				// return false;
 			});
 
-			jQuery('.l_placeholder').live("click", function(ev){
-				ev.preventDefault()
+			jQuery('.l_placeholder').die('click').live("click", function(ev){
+				ev.preventDefault();
 				// active_email_body = jQuery(this).prev();
 
-				jQuery('#place-dialog').slideDown();
-
+				jQuery('#place-dialog').slideDown('fast', function(){
+					jQuery(this).groupPlaceholders({'truncateItems': false});
+				});
 			});
 
 			// Binding Events to Containers
