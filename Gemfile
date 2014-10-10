@@ -209,6 +209,7 @@ group :test do
   gem "simplecov-csv"
   gem "database_cleaner"
   gem 'fuubar'
+  gem "test_after_commit"
 end
 
 # group :development, :assets do

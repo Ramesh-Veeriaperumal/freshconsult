@@ -2,15 +2,15 @@ module Mobile::Actions::User
 
 	include Mobile::Actions::Push_Notifier
 
-	def to_mob_json_search
+	def to_mob_json_search(opts={})
     options = { 
       :methods => [ :avatar_url, :is_agent, :is_customer,  :is_client_manager, :company_name,:user_time_zone],
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
-    }
+    }.merge(opts)
     as_json(options,true).to_json
   end
   
-	def to_mob_json
+	def to_mob_json(opts={})
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, 
       							:is_customer, :recent_tickets, :is_client_manager, :company_name,
@@ -18,7 +18,7 @@ module Mobile::Actions::User
                     :can_view_time_entries, :can_edit_time_entries, :agent_signature ],
                     
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
-    }
+    }.merge(opts)
     as_json(options,true).to_json
   end
 
