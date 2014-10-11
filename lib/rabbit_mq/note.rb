@@ -7,7 +7,7 @@ module RabbitMq::Note
   include RabbitMq::Subscribers::Notes::ChromeExtension
 
   def publish_new_note_properties_to_rabbitmq
-    action = user.agent? ? ACTION[:agent_reply] : ACTION[:customer_reply]
+    action = (user and user.agent?) ? ACTION[:agent_reply] : ACTION[:customer_reply]
     publish_to_rabbitmq("note", action)
   end
 end
