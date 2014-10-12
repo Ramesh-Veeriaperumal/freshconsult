@@ -26,10 +26,10 @@ module Helpdesk::TagMethods
   end
 
   def remove_ticket_tags(tags_to_be_removed,item)
-    tags = current_account.tags.find_all_by_name(tags_to_be_removed)
+    tags = item.tags.find_all_by_name(tags_to_be_removed)
     unless tags.blank?
         tag_uses = item.tag_uses.tags_to_remove(item.id, tags.map{ |tag| tag.id }, "Helpdesk::Ticket")
-        current_account.tag_uses.destroy tag_uses
+        item.tag_uses.destroy tag_uses
     end
   end
 
