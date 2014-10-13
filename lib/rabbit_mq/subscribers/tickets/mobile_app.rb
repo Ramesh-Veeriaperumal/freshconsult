@@ -1,6 +1,6 @@
 module RabbitMq::Subscribers::Tickets::MobileApp
 
-  def mq_mobile_app_ticket_properties
+  def mq_mobile_app_ticket_properties(action)
     {
       "ticket_id"         => display_id,
       "group"             => group_name,

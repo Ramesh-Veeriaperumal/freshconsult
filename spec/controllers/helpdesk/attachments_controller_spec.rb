@@ -131,7 +131,8 @@ describe Helpdesk::AttachmentsController do
     shared_attachment = canned_response.shared_attachments.first
     note = @test_ticket.notes.build(:body => Faker::Lorem.characters(10), 
                               :private => false, 
-                              :account_id => @test_ticket.account_id)
+                              :account_id => @test_ticket.account_id,
+                              :user_id => @agent.id)
     note.shared_attachments.build(:account_id => canned_response.account_id, 
                                   :attachment => shared_attachment.attachment)
     note.save

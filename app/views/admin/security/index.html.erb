@@ -8,7 +8,7 @@
     sso_type = :none
   end%>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, 
-  :id => "sso_form"  } do |f| %>
+  :id => "sso_form", :rel => 'validate'  } do |f| %>
   <%= generate_breadcrumbs(params, f, :force_admin => true, :submit_text => "save", :redirect_to_admin => true) %>
   <%= f.error_messages %>
   <ul class="security-form">
@@ -105,7 +105,7 @@
                 </label>
                 <div class="span10">
                   <span class="span9">
-                  <%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required" } %></span>
+                  <%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required ignore_on_hidden" } %></span>
                   <span class="span3"><%= link_to_function t(".submit_request"), :class => "btn submit_request", "data-loading-text" => "Submitting..." %></span>
                 </div>
               </div>
@@ -199,9 +199,11 @@
             <li>
               <%= t('.agent_create_or_delete') %>
             </li>
-            <li>
-              <%= t('.whitelisted_ip_modified') %>
-            </li>
+            <% if current_account.features_included?(:whitelisted_ips) %>
+              <li>
+                <%= t('.whitelisted_ip_modified') %>
+              </li>
+            <% end %>
           </ul>
         </div>
       </div>
@@ -278,7 +280,7 @@
     });
 
     $(".submit_request").click(function(){
-      if(jQuery("#sso_form").valid()){
+      if($("#sso_form").valid()){
         $(".submit_request").button('loading');
         var domain_name = $(".domain_field").val();
         $.ajax({

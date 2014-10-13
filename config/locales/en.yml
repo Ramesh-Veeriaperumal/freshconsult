@@ -2326,6 +2326,15 @@ en:
     visible_in: Visible in
   activerecord:
     errors:
+      models:
+        solution/folder:
+          attributes:
+            name:
+              taken: "already exists in the selected category."
+        forum:
+          attributes:
+            name:
+              taken: "already exists in the selected category"
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -2510,10 +2519,8 @@ en:
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
-    day_passes_available: 
-      zero: "No day pass available"
-      one: "1 Day pass available"
-      other: "%{count} Day passes available"
+    day_pass_available: "%{count} Day pass available"
+    no_day_pass: No day pass available
     assign_role: Associate Roles
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     assign: Assign

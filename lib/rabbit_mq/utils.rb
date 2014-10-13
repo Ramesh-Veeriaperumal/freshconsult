@@ -45,7 +45,7 @@ module RabbitMq::Utils
   def construct_message_for_subscriber(s, message, model, action)
     valid = send("mq_#{s}_valid")
     if valid
-      message["#{model}_properties"].merge!(send("mq_#{s}_#{model}_properties"))
+      message["#{model}_properties"].merge!(send("mq_#{s}_#{model}_properties",action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties") })
     end
     valid

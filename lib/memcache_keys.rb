@@ -6,7 +6,7 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_TICKET_TYPES = "v2/ACCOUNT_TICKET_TYPES:%{account_id}"
+  ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
   ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
 
@@ -17,8 +17,6 @@ module MemcacheKeys
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 
   ACCOUNT_COMPANIES = "v2/ACCOUNT_COMPANIES:%{account_id}"
-
-  ACCOUNT_TICKET_TAGS = "v1/ACCOUNT_TICKET_TAGS:%{account_id}"
 
   ACCOUNT_ONHOLD_CLOSED_STATUSES = "v1/ACCOUNT_ONHOLD_CLOSED_STATUSES:%{account_id}"
 

@@ -58,7 +58,7 @@ module APIHelper
 
   SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "name", "position", "updated_at", "visibility"]
 
-  SOLUTION_ARTICLE_ATTRIBS = ["art_type", "created_at", "delta", "desc_un_html", "description", "folder_id", "id", "position", "seo_data", "status", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
+  SOLUTION_ARTICLE_ATTRIBS = ["art_type", "created_at", "delta", "desc_un_html", "description", "folder_id", "hits", "id", "position", "seo_data", "status", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
 
   SURVEY_ATTRIBS = ["agent_id", "created_at", "customer_id", "group_id", "id", "rating", "response_note_id", "survey_id", "surveyable_id", "surveyable_type", "updated_at"]
 

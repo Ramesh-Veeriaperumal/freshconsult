@@ -719,7 +719,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value},
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal, required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -756,7 +756,7 @@ module ApplicationHelper
 
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
-  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
     _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
@@ -765,10 +765,16 @@ module ApplicationHelper
     }.merge!(_opt)
     _field.nested_levels.each do |l|
       _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-      _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required))) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
     (_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
 
+  end
+
+  def nested_field_label(label, required)
+    field_label = label.html_safe
+    field_label += '<span class="required_star">*</span>'.html_safe if required
+    return field_label
   end
 
   def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")

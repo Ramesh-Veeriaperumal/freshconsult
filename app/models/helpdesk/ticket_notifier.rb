@@ -242,12 +242,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body  render_message("notify_comment.text.plain.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+        plain.body  render_message("notify_comment.text.plain.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol))
       end
       alt.part "text/html" do |html|
         html.body  render_message("notify_comment.text.html.erb", :ticket => ticket, :note => note, 
                                       :body_html => generate_body_html(note.body_html, inline_attachments, note.account), 
-                                      :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+                                      :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol))
       end
     end
 
