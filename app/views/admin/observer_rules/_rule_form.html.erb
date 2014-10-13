@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
 <%= include_cloudfront_js :observer_event %>
-<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders+event_placeholders } %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
 <input type="hidden" name="type" value="virtual_agents" />
@@ -96,6 +96,6 @@
 
 <% content_for :pagefixed do %>	
 	<%= render :partial => "/shared/placeholder_help", 
-				:locals => { :placeholders => ticket_placeholders+survey_placeholders+event_placeholders } %>
+				:locals => { :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <% end %>
 

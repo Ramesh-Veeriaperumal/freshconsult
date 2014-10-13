@@ -81,9 +81,9 @@
     $.fn.twipsy.initWith.call(this, options, Popover, 'popover')
     return this
   }
-
+  var $placement = ($("html").attr("dir") == "rtl") ? 'left' :'right';
   $.fn.popover.defaults = $.extend({} , $.fn.twipsy.defaults, {
-    placement: 'right'
+    placement: $placement
   , content: 'data-content'
   , reloadContent : true
   , template: '<div class="arrow"></div><div class="inner"><h3 class="title"></h3><div class="content"><p></p></div></div>'

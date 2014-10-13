@@ -49,6 +49,9 @@ button,
 select,
 textarea {
   font-family: $baseFontFamily; // And only set font-family here for those that need it (note the missing label element)
+  @if $rtl {
+      text-align : right
+  }
 }
 
 // Identify controls by their labels
@@ -192,6 +195,9 @@ input[type="checkbox"]:focus {
 .checkbox {
   min-height: 18px; // clear the floating input if there is no label text
   @include padding-left(20px);
+  @if $rtl {
+      text-align : right
+  }
 }
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {

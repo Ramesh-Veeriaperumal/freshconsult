@@ -48,7 +48,7 @@ class Solution::Article < ActiveRecord::Base
   validates_numericality_of :user_id
  
   named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
-  named_scope :newest, lambda {|num| {:limit => num, :order => 'updated_at DESC'}}
+  named_scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}
  
   named_scope :by_user, lambda { |user|
       { :conditions => ["user_id = ?", user.id ] }
@@ -77,7 +77,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
-    id ? "#{id}-#{title[0..100].rpartition(" ").first.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
+    id ? "#{id}-#{title[0..100].downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
   end
 
   def nickname

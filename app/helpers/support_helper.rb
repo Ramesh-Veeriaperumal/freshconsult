@@ -597,10 +597,10 @@ HTML
 	      when "dropdown" then
           	select(object_name, field_name,
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
-          			{ :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+          			{ :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
 	        select(object_name, field_name, field.html_unescaped_choices,
-	        		{ :include_blank => "...", :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
 	        	{:include_blank => "...", :selected => field_value},

@@ -562,6 +562,7 @@
 
   # Theme for the support portal
   map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
+  map.connect "/support/theme_rtl.:format", :controller => 'theme/support_rtl', :action => :index  
   map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
 
   # Support Portal routes

@@ -49,6 +49,7 @@
 			var dontUpdateCallCount = previewMode() || recordingMode();
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
 			freshfonesocket.bindTransfer();
+			freshfonecalls.onCallStopSound();
 		});
 
 		/* Log a message when a call disconnects. */
@@ -99,7 +100,7 @@
 			freshfoneNotification.anyAvailableConnections(conn);
 			var freshfoneConnection = new FreshfoneConnection(conn);
 			freshfoneConnection.incomingAlert();
-		});
+        });
 
 		Twilio.Device.presence(function (pres) {
 		});

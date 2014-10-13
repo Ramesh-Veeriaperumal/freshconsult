@@ -21,19 +21,15 @@
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_css :common %>
-	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_css :plugins  %>
-	<%= include_cloudfront_css :sprites  %>
-	<%= include_cloudfront_css :app %>
-	<%= include_cloudfront_css :non_pattern %>
-	<%= include_cloudfront_css :tour_my_app %>
-	<%= include_cloudfront_css :ie_hacks %>
-	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_css :'360player' %>
-	<%= include_cloudfront_css :community %>
+	<%= include_cloudfront_rtl_css :common %>
+	<%= include_cloudfront_rtl_css :pattern, :media => "screen, print, projection"  %>
+	<%= include_cloudfront_rtl_css :plugins, :sprites, :app, :non_pattern, :tour_my_app %>
+	<%= include_cloudfront_rtl_css :ie_hacks %>
+	<%= include_cloudfront_rtl_css :tkt_details, :media => "screen, print, projection"  %>
+	<%= include_cloudfront_rtl_css :'player360' %>
+	<%= include_cloudfront_rtl_css :community %>
 
-	<%= include_cloudfront_css :'freshfone_recording_playback' %>
+	<%= include_cloudfront_rtl_css :'freshfone_recording_playback' %>
 	<%#= render :partial => "shared/theme.css"  %>
 
 	<script type="text/javascript">

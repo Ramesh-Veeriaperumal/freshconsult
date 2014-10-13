@@ -73,6 +73,7 @@
         , tp
         
       if (this.hasContent() && this.enabled) {
+        
         $tip = this.tip()
                 
         this.setContent()
@@ -115,6 +116,9 @@
             break
           case 'belowLeft':
             tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width - actualWidth  + this.options.offset}
+            break
+          case 'belowRight':
+            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width + this.options.offset}
             break
         }
 
@@ -327,6 +331,29 @@
 
     while (i--) {
       delete data[rejects[i]]
+    }
+    //RTL 
+    if ($("html").attr("dir") == "rtl"){
+      switch(data['placement']){
+        case 'right':
+          data['placement'] = "left"
+          break
+        case 'topRight':
+          data['placement'] = "topLeft"
+          break
+        case 'belowRight':
+          data['placement'] = "belowLeft"
+          break
+        case 'left':
+          data['placement'] = "right"
+          break
+        case 'topLeft':
+          data['placement'] = "topRight"
+          break
+        case 'belowLeft':
+          data['placement'] = "belowRight"
+          break
+      }
     }
 
     return $.extend({}, options, data)

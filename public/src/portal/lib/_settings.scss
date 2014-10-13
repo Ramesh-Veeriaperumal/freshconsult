@@ -3,7 +3,7 @@
 
 // RTL for portal styles
 //---------------------------------------------------
-$rtl: false;
+$rtl: false !default;
 @import "rtl-mixins";
 
 // GLOBAL VALUES
@@ -65,7 +65,7 @@ $page-form-background: 		rgba(#f4f4f4, 0.9) !default;
 
 // GRID SYSTEM FOR SUSY
 // --------------------------------------------------
-@if $rtl == true{
+@if $rtl {
 	$from-direction: right;
 }
 $total-columns: 12;

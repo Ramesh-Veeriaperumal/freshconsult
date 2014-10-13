@@ -339,9 +339,12 @@ div.action_buttons:hover{
 
 .toolbar_pagination{
    @include float(right);        
+   @if $rtl{ 
+      left: 60px;
+    }
    .prev_page, .next_page{
       @include float(left); font-size:1px; width:7px; height:9px;   
-      @include right(0px); 
+      right: 0px; // No Need RTL support 
       height:14px;
       position:absolute;    
   		width:11px;
@@ -350,15 +353,15 @@ div.action_buttons:hover{
          position:absolute; width:22px; height:22px;  
       }
    }      
-   .prev_page{ 
-      @include border-radius(3px 0 0 3px); 
-      @include margin-right(0px); 
-      @include right(30px);      
+   .prev_page{  // No Need RTL support in this class
+      border-radius: 3px 0 0 3px; 
+      margin-right: 0px; 
+      right:30px;      
    }
-   .next_page{ 
-      @include border-radius(0 3px 3px 0); 
-      @include margin-left(0px);  
-      @include border-left(0);       
+   .next_page{   // No Need RTL support in this class
+      border-radius: 0 3px 3px 0; 
+      margin-left: 0px;  
+      border-left: 0;       
    }   
 }
 

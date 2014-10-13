@@ -21,7 +21,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	.banner-nav{ 
 		@include span-columns(3 omega);
 		margin-top: 5px;
-        @if $rtl == true{
+        @if $rtl {
             @include float(left);
         }
 		.welcome{ display: block; }
@@ -92,7 +92,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 }
 
 .footer-links{
-    a{ @include opacity(0.6); @if $rtl == true{@include float(right);}}
+    a{ @include opacity(0.6); @if $rtl {@include float(right);}}
     a:hover{ @include opacity(1); }
 	a:before{ 
 		content: "-";
@@ -171,7 +171,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
         }
 
         .page-tabs{
-            padding: 5px 10px;             
+            padding: 0;             
             @include text-align(right);
             cursor: pointer;
             position:relative; // fix for bottom box shadow
@@ -222,7 +222,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
                 @include border-radius(20px);
                 background: $footer_text_color;                
                 @include padding-left(10px);
-                @include padding(10px);
+                @include padding(0 10px);
                 @include margin-right(4px);
                 @include margin-left(4px);
                 line-height: 24px;

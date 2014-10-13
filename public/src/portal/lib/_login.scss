@@ -6,7 +6,7 @@
 	@include float(right);
 	@include border-left(1px solid #dadada);
 	@include min-height(230px);	
-	@if $rtl == true { @include box-shadow(#fff 1px 0 0); }
+	@if $rtl { @include box-shadow(#fff 1px 0 0); }
 	@else { @include box-shadow(#fff -1px 0 0); }
 	.btn{
 		@include text-align(left);
@@ -29,7 +29,8 @@
 	display: inline-block;
 	@include ie7-restore-right-whitespace();
 	vertical-align: text-top;
-	@include margin(-2px 5px 0 -8px);
+	@if $rtl{ margin: -2px 5px 0 8px; }
+	@else{ margin: -2px 5px 0 -8px; }
 }
 
 .btn-google:before{ @extend .icon-sign-in-google; }

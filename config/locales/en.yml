@@ -1435,6 +1435,13 @@ en:
         trusted_ip_meta: Private Helpdesk
         custom_mailbox: Custom Mail Server
         custom_mailbox_meta: Custom Mailboxes
+    placeholders:
+      tickets: Tickets
+      ticket_fields: Ticket Fields
+      requester: Requester
+      helpdesk: Helpdesk
+      events: Events
+      survey: Survey
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -2110,10 +2117,10 @@ en:
     title: Scenario Automations
     tour: Help me automate a common scenario
     helptext: Scenario Automations let you carry out a bunch of updates to the ticket with a single click. They help you quickly handle recurring scenarios. For example, you could create a scenario to “Mark a Ticket as a Bug”, “Assign to the QA team” and send an email to the product manager so you can process customer reported bugs with a single click.
-    available_placeholders: Placeholders
+    available_placeholders: Insert Placeholders
     info2: For example before assigning a ticket to QA you may want to set the ticket type as Bug, assign it to the QA group and email the QA manager about the new bug.
     info3: Scenario Automation allows you to automate these actions in a single click
-    info4: Select the below Placeholders to append to the email content and they will get converted into the appropriate data
+    info4: Click to insert Placeholders in the content which will dynamically get resolved into the appropriate data
     info5: Assign QA
     reorder: Reorder
     info6: Mark the Ticket as a Bug and assign to QA

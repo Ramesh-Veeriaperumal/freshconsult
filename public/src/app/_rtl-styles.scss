@@ -1,4 +1,4 @@
-@if $rtl == true {
+@if $rtl {
 	.redactor_editor{
 		direction:rtl !important;
 	}

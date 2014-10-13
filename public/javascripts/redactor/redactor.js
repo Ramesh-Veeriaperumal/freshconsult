@@ -157,6 +157,7 @@ var Redactor = function(element, options)
 	this.cursorPlacementDelay = null;
 	this.dataURI = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 	this.imgTag = $("<img id='cursor' width='0' height='0' rel='cursor' src='" + this.dataURI + "'/>");
+	this.storedRange = "";
 
 	this.paste_supported_browser = (($.browser.mozilla==true) && (navigator.appVersion.indexOf("Win")!=-1)) || ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
 	
@@ -268,7 +269,6 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
 		buffer: false,
 		visual: true,
-		cursorTracking: true,
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 
 		// modal windows container
@@ -760,10 +760,7 @@ Redactor.prototype = {
 			}
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
-				if (this.opts.cursorTracking) 
-				{ 
 					this.setCursorPosition();
-				}
 
 				if(!this.specialPaste)
 				{
@@ -862,6 +859,9 @@ Redactor.prototype = {
 		});
 		this.$editor.on('blur', function() { 
 			_redactor.syncCode();
+			if(_redactor.$el.is(":hidden")){ 
+				_redactor.insertCaretImage();
+			}
 			$(this).parent().removeClass("redactor_focus");
 		});
 
@@ -892,10 +892,10 @@ Redactor.prototype = {
 			var selection = window.getSelection();
 
 			if (selection.rangeCount > 0) {
-				var range = selection.getRangeAt(0);
+				var range = selection.getRangeAt(0),
 					newRange = document.createRange();
 					newRange.setStart(selection.focusNode, range.endOffset);
-					newRange.insertNode(this.imgTag[0]);
+					this.storedRange = newRange;
 			}
 		}
 	},
@@ -936,6 +936,33 @@ Redactor.prototype = {
 			this.$editor.find("[rel='cursor']").css({"display": "none"});
 			this.syncCode();
 		}
+	},
+	insertCaretImage: function(){
+		if(this.storedRange){
+			this.storedRange.insertNode(this.imgTag[0]);
+		}
+	},
+	removeTagOnLiquid: function(){
+		var content = this.$editor.html();
+
+		var r_content = content.replace(/\{.*?\{|\}.*?\}/g, this.replaceLiquidHtml)
+	       .replace(/\{.*?%|%.*?\}/g, this.replaceLiquidHtml)
+	       .replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) 
+
+		this.$el.val(r_content);
+	},
+	replaceLiquidHtml: function(_match){
+		return _match.replace(/(<([^>]+)>)/ig, "");
+	},
+	insertOnCursorPosition:function(cmd,value){
+		var userSelection = this.getSelection(),
+				selectedText = userSelection.toString ? userSelection.toString() : userSelection.text;
+		
+		if(selectedText == ""){
+			this.focusOnCursor();
+		}
+		this.execCommand(cmd, value);
+	    $.event.trigger({ type:"textInserted", message:"success", time:new Date() });
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -1000,8 +1027,6 @@ Redactor.prototype = {
                           });
     },
     bindclick: function(){
-    	if (this.opts.cursorTracking) 
-    	{
     		this.$editor.click($.proxy(function(e) {
 	    		this.setCursorPosition();
 	    	}, this));
@@ -1011,15 +1036,11 @@ Redactor.prototype = {
 		    		this.$editor.find("[rel='cursor']").css({"display": "none"});
 		    	}, this));	
 		    }
-    	}
     },
     bindCustomEvent: function(){
-    	if (this.opts.cursorTracking) 
-    	{
 	    	this.$editor.on('textInserted',$.proxy(function(e) {
 	    		this.setCursorPosition();
 	    	}, this));
-	    }
     },
 	keyup: function()
 	{
@@ -1027,19 +1048,17 @@ Redactor.prototype = {
 		{
 			var key = e.keyCode || e.which;
 			
-			if (this.opts.cursorTracking) 
-			{	
-				if (key === 40){
+			if (key === 40){
 
-					clearTimeout(this.cursorPlacementDelay);
-					this.cursorPlacementDelay = setTimeout($.proxy(function(){
-						this.setCursorPosition();
-					},this),500);
-
-				} else { 
+				clearTimeout(this.cursorPlacementDelay);
+				this.cursorPlacementDelay = setTimeout($.proxy(function(){
 					this.setCursorPosition();
-				}
+				},this),500);
+
+			} else { 
+				this.setCursorPosition();
 			}
+
 			// callback as you type
 			if (typeof this.opts.keyupCallback === 'function')
 			{
@@ -2290,6 +2309,7 @@ Redactor.prototype = {
 		
 		if (this.opts.visual)
 		{
+			this.deleteCursor();
 			this.$editor.hide();
 			
 			html = this.$editor.html();
@@ -2444,18 +2464,18 @@ Redactor.prototype = {
 		
 		if (typeof s.func === 'undefined')
 		{
-			button.click($.proxy(function() { 
-				if(!$.browser.opera)
-					this.$editor.focus();
-				this.execCommand(s.exec, key); 
+			button.click($.proxy(function(e) { 
+				this.insertOnCursorPosition(s.exec, key);
 			}, this));
 		}
 		else if (s.func !== 'show')
 		{
 			button.click($.proxy(function(e) {
-				
-				if(!$.browser.opera)
+				if(e.currentTarget.className != 'redactor_btn_removeFormat' && e.currentTarget.className != 'redactor_btn_fontsize' && e.currentTarget.className != 'redactor_btn_fontname'){
+					this.focusOnCursor();
+				} else {
 					this.$editor.focus();
+				}
 				this[s.func](e); 
 				
 			}, this));
@@ -2463,8 +2483,7 @@ Redactor.prototype = {
 		if (typeof s.callback !== 'undefined') 
 		{
 			button.click($.proxy(function(e) {  
-				if(!$.browser.opera)
-					this.$editor.focus();
+				this.focusOnCursor();
 				s.callback(this, e, key); 
 			}, this));
 		}
@@ -3809,7 +3828,7 @@ Redactor.prototype = {
 			}
 			else
 			{
-				this.execCommand('inserthtml', a);
+				this.insertOnCursorPosition('inserthtml',a)
 			}
 		}
 		
@@ -4143,6 +4162,7 @@ Redactor.prototype = {
 		this.$editor.focus();
 		this.restoreSelection();
 		this.uniqueKey = new Date().getTime();
+		this.focusOnCursor();
 		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'" style="cursor:default;">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 		if (typeof this.opts.imageLoadingCallback === 'function'){
@@ -4420,13 +4440,17 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
 		},
 		remove: function(){
-			var removeCursor = this.$editor.$el.data('removeCursor');
-			if(removeCursor == undefined || removeCursor){
-				this.$editor.deleteCursor();	
-			} else {
-				if(jQuery.browser.mozilla){ 
-					// Add display:none style for cursor's <img> tag
-					this.$editor.$el.data('redactor').addNoneStyleForCursor();
+			//check HTML view in redactor
+			if(this.$editor.$el.is(":hidden")){ 
+				var removeCursor = this.$editor.$el.data('removeCursor');
+				this.$editor.removeTagOnLiquid();
+				if(removeCursor == undefined || removeCursor){
+					this.$editor.deleteCursor();	
+				} else {
+					if(jQuery.browser.mozilla){ 
+						// Add display:none style for cursor's <img> tag
+						this.$editor.$el.data('redactor').addNoneStyleForCursor();
+					}
 				}
 			}
 		}

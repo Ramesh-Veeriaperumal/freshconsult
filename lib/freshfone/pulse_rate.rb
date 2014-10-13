@@ -86,13 +86,12 @@ class Freshfone::PulseRate
 			number_type == Freshfone::Number::TYPE_HASH[:toll_free]
 		end
 
-		def strip_plus_sign(number)
-			#removing additional '+' if exists to do matching	
-			number.start_with?('+') ? number[1..-1] : number
+		def ignore_format(number)
+			number.gsub(/\D/, '')#returns just the number. hyphens, blank space, leading plus everthing is removed.
 		end
 
 		def get_matching_country_cost(call_type)
-			formatted_number = strip_plus_sign(number)
+			formatted_number = ignore_format(number)
 			max_length = FRESHFONE_CHARGES[country][:max_digits]
 			max_length.times do |index|
 				shortened_number = formatted_number[0..(max_length - index - 1)]

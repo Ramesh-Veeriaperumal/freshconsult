@@ -2,14 +2,14 @@
 // This import applies a global reset to any page that imports this stylesheet.
 // ----------------------------------------------------------------------------
 @import "../settings/settings";
+@if $rtl{
+  html,body,.redactor_editor{
+    direction:rtl;
+  }
+}
 body { 
 	min-width:1140px; 
 	-webkit-font-smoothing: antialiased;
-}
-@if $rtl == true {
-  html,body{
-    direction:rtl;
-  }
 }
 .margin-bottom{ margin-bottom:10px; }
 .margin-right,.mrt{ @include margin-right(10px)}
@@ -75,7 +75,7 @@ ul.summary{
 			}
 			span, h4{
 				display:block;
-				padding-left:15px;
+				@include padding-left(15px);
 				color:$default_txt_color; 
 			}
 			h4{			 
@@ -673,55 +673,6 @@ ul.user_list{
 .padding6{
 	padding:6px;
 }
-
-.placeholder-info{ 
-	position:fixed;
-	@include text-align(left); 
-	width:600px;
-	top:2%;
- @include right(40px);
-	@include box-shadow(#888888 0 0 2px);
-	@include border-radius(6px);
-	margin:0 0;
-	padding:10px 15px;
-	background:#f8f8f8; 
-	border:2px solid #dfdfdf;
-	
-	z-index:99;
-	
-	h2{
-		padding:0;
-		margin:0;	
-		font-size:1.6em;
-	}
-	p{
-		@include margin(0 0 8px 0);
-		font-size:10px;
-		a{
-			font-size:11px;
-		}
-	}
-	
-}
-
-.placeholder-list{
-		dl{
-			padding:0;margin:0;
-			
-			dd{
-				@include padding(0 0 8px 0);margin:0;
-			}
-			dt{	
-				@include float(left);
-				a.uiButton{
-					width:170px; 
-					@include text-align(left);
-				} 
-			}
-		}
-	}
-
-* html .placeholder-info {position:absolute;}
 
 
 // ------------------------------------------------------------------------------------------------------------
@@ -1570,15 +1521,6 @@ p.info-text{
 		border-bottom: 5px solid transparent; 
 		@include border-right(5px solid blue);
 	}
-}
-.placeholder-info a.close{
-   position: absolute;
-   @include right(5px);
-   top: 5px;
-   width: 28px;
-   height: 28px;
-   background: url(/images/close_delete.png) no-repeat center;
-   z-index: 999;
 }
 .list_with_icon{
 	padding-top:3px;	

@@ -500,11 +500,16 @@ private
 
   def regenerate_reports_data
     set_reports_redis_key(account_id, created_at)
+    set_reports_redis_key(account_id, self.ticket_states.resolved_at) if is_resolved_or_closed? 
+  end
+
+  def is_resolved_or_closed?
+    [RESOLVED,CLOSED].include?(self.status) && self.ticket_states.resolved_at
   end
 
   def regenerate_data?
     regenerate_fields = [:deleted, :spam]
-    regenerate_fields.push(:responder_id) if account.features?(:report_field_regenerate)
+    regenerate_fields.push(:responder_id,:group_id,:priority,:ticket_type,:source) if account.features?(:report_field_regenerate)
     (@model_changes.keys & regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
   end
 

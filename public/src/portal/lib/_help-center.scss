@@ -139,7 +139,11 @@
             .hc-search-button{ 
                 width: 30px;
                 position: absolute;
-                @include right(3px);
+                @if $rtl {
+                    left: 13px;
+                }@else{
+                    right:3px;
+                }
                 top: 0;
                 height: 35px;
             } 

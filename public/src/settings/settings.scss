@@ -7,12 +7,7 @@
 @import "default";
 @import "freshdesk-variable";
 
-// Initialize
-// @if custom_color(main) == "true"{
-$rtl: false;
-// }@else{
-// 	$rtl: false;
-// }
 
+$rtl: false !default;
 @import "../pattern/lib/custom_mixin.scss";
 @import "../pattern/lib/rtl-mixins";
