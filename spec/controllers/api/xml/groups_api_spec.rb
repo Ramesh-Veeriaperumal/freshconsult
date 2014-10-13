@@ -34,7 +34,7 @@ RSpec.describe GroupsController do
 		@account.groups.find_by_name("Spec Testing Grp - xml").should_not be_nil
 		result = parse_xml(response)
 		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
-		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		expected = (response.status == 201) && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 				 	(compare(result["group"]["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
@@ -83,7 +83,7 @@ RSpec.describe GroupsController do
 		get :index, :format => 'xml'
 		result = parse_xml(response)
 		agent_xml_attributes = ['type'] + APIHelper::CONTACT_ATTRIBS # agents displayed within a group has a type attribute
-		expected = (response.status =~ /200 OK/) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		expected = (response.status == 200) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 				 	(compare(result["groups"].last["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
@@ -92,7 +92,7 @@ RSpec.describe GroupsController do
 		get :edit, :id => @test_group.id, :format => 'xml'
 		result = parse_xml(response)
 		result['group']['description'] == "#{@test_group.description}"
-		response.status.should be_eql("200 OK")
+		response.status.should eql(200)
 	end
 
 	it "should show the Group" do

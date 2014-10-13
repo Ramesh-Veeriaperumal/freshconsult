@@ -105,7 +105,7 @@ class Company < ActiveRecord::Base
   
   def to_xml(options = {})
       options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       options[:skip_instruct] ||= true
       options[:except]        ||= [:account_id,:import_id,:delta]

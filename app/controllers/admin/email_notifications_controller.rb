@@ -16,12 +16,12 @@ class Admin::EmailNotificationsController < Admin::AdminController
     if params[:outdated] 
       if params[:requester]
         params[:email_notification][:outdated_requester_content] = true
-        DynamicNotificationTemplate.scoped(
-          :conditions => "email_notification_id = #{email_notification.id} and category = #{DynamicNotificationTemplate::CATEGORIES[:requester]} ").update_all({:outdated => true})            
+        DynamicNotificationTemplate.where(
+          "email_notification_id = #{email_notification.id} and category = #{DynamicNotificationTemplate::CATEGORIES[:requester]} ").update_all({:outdated => true})            
       elsif params[:agent]
         params[:email_notification][:outdated_agent_content] = true
-        DynamicNotificationTemplate.scoped(
-        :conditions => "email_notification_id = #{email_notification.id} and category = #{DynamicNotificationTemplate::CATEGORIES[:agent]} ").update_all({:outdated => true})
+        DynamicNotificationTemplate.where(
+        "email_notification_id = #{email_notification.id} and category = #{DynamicNotificationTemplate::CATEGORIES[:agent]} ").update_all({:outdated => true})
       end   
     end
     if email_notification.update_attributes(params[:email_notification])

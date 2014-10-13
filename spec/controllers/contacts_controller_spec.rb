@@ -17,7 +17,7 @@ describe ContactsController do
     @active_contact = FactoryGirl.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
     @active_contact.save(:validate => false)
-    @new_company = Factory.build(:company)
+    @new_company = FactoryGirl.build(:company)
     @new_company.save
   end
 
@@ -248,11 +248,15 @@ describe ContactsController do
 
 
   it "should create a quick contact within a company" do # with new company parameters(customer deprecation)
+    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+    contact.save(:validate => false)
     test_email = Faker::Internet.email
     post :quick_contact_with_company, { :user => { :name => Faker::Name.name, 
                                                    :email => test_email, 
                                                    :phone => "",
                                                    :company_name => @new_company.name }, 
+                                        :id =>  contact.id
                                       }
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
@@ -279,9 +283,9 @@ describe ContactsController do
   end
 
   it "should update an existing contact" do # with new company parameters(customer deprecation)
-    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save(false)
+    contact.save(:validate => false)
     test_email = Faker::Internet.email
     test_phone_no = Faker::PhoneNumber.phone_number
     put :update, :id => contact.id, :user => { :email => test_email, 
@@ -297,7 +301,7 @@ describe ContactsController do
   end
 
   it "should edit an existing contact and create new company" do # with old company parameters(customer deprecation)
-    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     contact.save(:validate => false)
     get :edit, :id => contact.id

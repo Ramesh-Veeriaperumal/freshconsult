@@ -148,7 +148,7 @@ RSpec.describe TicketFieldsController do
   it "should edit a custom dropdown field" do
     labels = ['Freshmovies']
     # ffs_04 is created here
-    flexifield_def_entry = Factory.build(:flexifield_def_entry, 
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                          :flexifield_alias => "#{labels[0].downcase}_#{@account.id}",
                                          :flexifield_name => "ffs_04}",
@@ -157,7 +157,7 @@ RSpec.describe TicketFieldsController do
                                          :account_id => @account.id)
     flexifield_def_entry.save
 
-    parent_custom_field = Factory.build(:ticket_field, :account_id => @account.id,
+    parent_custom_field = FactoryGirl.build(:ticket_field, :account_id => @account.id,
                                         :name => "#{labels[0].downcase}_#{@account.id}",
                                         :label => labels[0],
                                         :label_in_portal => labels[0],
@@ -177,7 +177,7 @@ RSpec.describe TicketFieldsController do
 
     picklist_vals_l1 = []
     field_choices.map(&:first).each_with_index do |l1_val, index1|
-      picklist_vals_l1 << Factory.build(:picklist_value, :account_id => @account.id,
+      picklist_vals_l1 << FactoryGirl.build(:picklist_value, :account_id => @account.id,
                                         :pickable_type => 'Helpdesk::TicketField',
                                         :pickable_id => parent_custom_field.id,
                                         :position => index1+1,

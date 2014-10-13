@@ -329,7 +329,7 @@ if Rails.env.test?
           require 'faker'
           require 'simplecov'
           require 'active_record'
-          load 'Rakefile'
+          # load 'Rakefile'
           config = YAML::load(IO.read(File.join(Rails.root, 'config/database.yml')))
           ActiveRecord::Base.establish_connection(config["test"])
           ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
@@ -384,16 +384,16 @@ if Rails.env.test?
       namespace :freshchat do
         desc "Running all FreshChat Tests"
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(ChatTests)
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(ChatTests)
         end
       end      
 
       namespace :freshfone_reports do
         desc "Running all freshfone summary reports tests"
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(FreshfoneReportsTests)
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(FreshfoneReportsTests)
         end
       end
 
@@ -401,8 +401,8 @@ if Rails.env.test?
         desc "Running all integration tests"
         Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(UnitTests).uniq
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(UnitTests).uniq
         end
       end
 
@@ -434,8 +434,8 @@ if Rails.env.test?
       namespace :mobile do
         desc "Running all Mobile app tests"
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(MobileAppTests)
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(MobileAppTests)
         end
       end
       

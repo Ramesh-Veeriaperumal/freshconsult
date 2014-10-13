@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
   def activerecord_error_list(errors)
     error_list = '<ul class="error_list">'
     error_list << errors.collect do |e, m|
-      "<li>#{e.to_s.humanize unless e == "base"} #{m}</li>"
+      "<li>#{e.to_s.humanize unless e.to_s == "base"} #{m}</li>"
     end.to_s << '</ul>'
     error_list.html_safe
   end

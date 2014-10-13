@@ -17,14 +17,14 @@ describe CustomersController do
 
   it "should redirect if new action is invoked" do
     get :new
-    response.status.should eql("302 Found")
+    response.status.should eql(302)
     response.should redirect_to "http://localhost.freshpo.com/companies/new"
   end
 
   it "should redirect if edit action is invoked" do
     company = create_company
     get :edit, :id => company.id
-    response.status.should eql("302 Found")
+    response.status.should eql(302)
     response.should redirect_to "http://localhost.freshpo.com/companies/#{company.id}/edit"
   end
 
@@ -60,7 +60,7 @@ describe CustomersController do
   it "should destroy a company(works because the API support is not deprecated yet)" do
     delete :destroy, { :id => company.id }
     expect{ Company.find(@company.id) }.to raise_error(ActiveRecord::RecordNotFound)
-    response.status.should eql("302 Found")
+    response.status.should eql(302)
     response.should redirect_to "http://localhost.freshpo.com/companies"
     @company = nil
   end
@@ -69,7 +69,7 @@ describe CustomersController do
     company1 = create_company
     company2 = create_company
     delete :destroy, { :ids => [company1.id, company2.id] }
-    response.status.should eql("302 Found")
+    response.status.should eql(302)
     response.should redirect_to "http://localhost.freshpo.com/companies"
     expect{ Company.find(company1.id) }.to raise_error(ActiveRecord::RecordNotFound)
     expect{ Company.find(company2.id) }.to raise_error(ActiveRecord::RecordNotFound)

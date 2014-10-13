@@ -119,7 +119,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
 
     # Temporary workaround for '.' in values
     # Need to check and remove with better fix after Rails 3 migration
-    Helpdesk::Ticket.send :preload_associations, items, PRELOAD_ASSOCIATIONS
+    ActiveRecord::Associations::Preloader.new(items, PRELOAD_ASSOCIATIONS).run
 
     items.each do |item|
       record = []

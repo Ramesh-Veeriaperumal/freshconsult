@@ -1,9 +1,9 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/freshfone_call_spec_helper.rb'
+include FreshfoneCallSpecHelper
 
 RSpec.configure do |c|
-  c.include FreshfoneCallSpecHelper
   c.include APIHelper
 end
 

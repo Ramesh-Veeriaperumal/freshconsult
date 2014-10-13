@@ -7,6 +7,7 @@ helpdesk:
     - akismet_config
     - aws_s3
     - aws_social
+    - belongs_to_account
     - chat_config
     - compass
     - concerns
@@ -30,11 +31,14 @@ helpdesk:
     - portal_init
     - query_trace
     - rabbit_mq
+    - rails3_patches
     - redis
     - redshift
     - resque
     - riak
     - ruby193_monkey_patches
+    - secret_token
+    - session_store
     - sidekiq
     - site_cloudfront_asset_host
     - site_keys
@@ -44,5 +48,7 @@ helpdesk:
     - time_formats
     - twitter_config
     - virtual_agent
+    - white_list_formatted_content
     - will_paginate
+    - wrap_parameters
 

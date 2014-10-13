@@ -1,10 +1,8 @@
 require 'spec_helper'
 
-RSpec.configure do |c|
-  c.include GnipHelper
-  c.include Gnip::Constants
-  c.include Social::Twitter::Constants
-end
+include GnipHelper
+include Gnip::Constants
+include Social::Twitter::Constants
 
 
 RSpec.describe Gnip::RuleClient do

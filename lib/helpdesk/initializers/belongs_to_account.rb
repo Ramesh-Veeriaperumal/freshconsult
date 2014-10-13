@@ -1,5 +1,5 @@
 # TODO-RAILS3 Its too bad need to check some other way for belongs_to_account
-require File.dirname(__FILE__) + "/../../lib/plugins/belongs_to_account/belongs_to_account"
+require File.dirname(__FILE__) + "/../../plugins/belongs_to_account/belongs_to_account"
 
 ActiveRecord::Base.send :include, BelongsToAccount
 

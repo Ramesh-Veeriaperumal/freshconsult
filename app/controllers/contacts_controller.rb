@@ -160,13 +160,8 @@ class ContactsController < ApplicationController
     render :text => "success"
   end
   
-  def update    
-    if params[:user].key? :customer 
-      @item.customer_id = current_account.customers.find_or_create_by_name(params[:user][:customer]).id
-    end
-    @item.update_tag_names(params[:user][:tags]) # update tags in the user object
-    params[cname].reject!{ |k| k == "customer" || k == "tags" }
-    if @item.update_attributes(params[:user])
+  def update
+    if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html', :locals => { :message => t('merge_contacts.contact_updated') } )
         format.html { redirect_to redirection_url }

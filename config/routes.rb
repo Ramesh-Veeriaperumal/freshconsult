@@ -961,6 +961,11 @@ Helpkit::Application.routes.draw do
         post :reply
         get :retweet
         post :post_tweet
+        post :favorite
+        post :unfavorite
+        post :followers
+        post :follow
+        post :unfollow
       end
     end
 
@@ -1246,7 +1251,7 @@ Helpkit::Application.routes.draw do
     resources :autocomplete do
       collection do
         get :requester
-        get :customer
+        post :company
       end
     end
 
@@ -1427,6 +1432,7 @@ Helpkit::Application.routes.draw do
     namespace :mobihelp do
       resource :tickets do
         post :add_note
+        post :close
       end
     end
 
@@ -1511,15 +1517,8 @@ Helpkit::Application.routes.draw do
           put :thumbs_up
           put :thumbs_down
           post :create_ticket
+          get :hit
         end
-      end
-    end
-
-    resources :articles do
-      member do
-        put :thumbs_up
-        put :thumbs_down
-        post :create_ticket
       end
     end
 

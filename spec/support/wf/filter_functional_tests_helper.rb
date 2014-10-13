@@ -11,11 +11,11 @@ module Wf::FilterFunctionalTestsHelper
   end
 
   def prep_a_ticket
-    @company = @account.companies.create(Factory.attributes_for(:company))
-    @group = @account.groups.create(Factory.attributes_for(:group))
-    @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
-    @product = @account.products.create(Factory.attributes_for(:product))
-    @tag = @account.tags.create(Factory.attributes_for(:tag))
+    @company = @account.companies.create(FactoryGirl.attributes_for(:company))
+    @group = @account.groups.create(FactoryGirl.attributes_for(:group))
+    @requester = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
+    @product = @account.products.create(FactoryGirl.attributes_for(:product))
+    @tag = @account.tags.create(FactoryGirl.attributes_for(:tag))
     @test_agent = add_test_agent(@account)
     @ticket = @account.tickets.create(FactoryGirl.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @test_agent.id, :group_id => @group.id, :product_id => @product.id, :created_at => 4.days.from_now))
     @ticket.tags = [@tag]
