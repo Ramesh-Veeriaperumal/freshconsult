@@ -32,6 +32,7 @@ stylesheets:
   :reports  => [ "page/reports"],
   :print  => [ "print/print"],
   :report_print  => [ "print/report-print"],
+  :portal_print  => [ "print/support"],
   :getting_started  => [ "page/getting_started"],
   :subscription  => [ "subscription/subscription","plugins"],
   :portal_utils  => [ "portal/portal_utils","freshfone/record_playback","freshfone/360player"],

@@ -47,8 +47,8 @@ table td {
 
 .syntaxhighlighter td {
 	border: none;
-	border-left: 1px dotted $info_color;
-	padding-left: 10px;
+	@include border-left(1px dotted $info_color);
+	@include padding-left(10px);
 }
 
 img {
@@ -91,7 +91,7 @@ a[href^="http://"], a[href^="https://"] {
 
 .user-info, .user-pic-thumb, .user-details {
 	display: inline-block;
-	margin-right: 15px;
+	@include margin-right(15px);
 }
 .user-details{
 	padding-bottom: 10px;
