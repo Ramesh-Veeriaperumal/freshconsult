@@ -4303,6 +4303,7 @@ en:
         no_retweets: No retweets
         contact_details: Contact Details
         flash_card_html: What's New in Social?
+        flash_card_text: Understanding your Social tab
     welcome:
       title: Social Support
       turn_off: Turn OFF Social

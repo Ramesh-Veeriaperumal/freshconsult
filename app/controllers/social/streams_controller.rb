@@ -8,12 +8,13 @@ class Social::StreamsController < Social::BaseController
   skip_before_filter :check_account_state
   before_filter :check_account_state
   before_filter :check_if_handles_exist, :only => [:index]
+  before_filter :load_visible_handles, :only => [:index]
+  before_filter :load_reply_handles, :only => [:index, :stream_feeds, :show_old, :fetch_new, :interactions]
 
   def index
     @selected_tab = :social
-    all_streams     = current_user.visible_social_streams
-    @streams        = all_streams.select { |stream| stream.default_stream? }
-    @custom_streams = all_streams.select { |stream| stream.custom_stream? }
+    @streams        = all_visible_streams.select { |stream| stream.default_stream? }
+    @custom_streams = all_visible_streams.select { |stream| stream.custom_stream? }
     @all_handles      = current_account.twitter_handles_from_cache
     @thumb_avatar_urls = twitter_avatar_urls("thumb") # reorg the avatar urls - make as a function
     @medium_avatar_urls = twitter_avatar_urls("medium")
