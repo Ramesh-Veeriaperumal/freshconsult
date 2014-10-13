@@ -509,7 +509,7 @@ private
 
   def regenerate_data?
     regenerate_fields = [:deleted, :spam]
-    regenerate_fields.push(:responder_id,:group_id,:priority,:ticket_type,:source) if account.features?(:report_field_regenerate)
+    regenerate_fields.push(:responder_id) if account.features?(:report_field_regenerate)
     (@model_changes.keys & regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
   end
 

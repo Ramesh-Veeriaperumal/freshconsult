@@ -9,7 +9,7 @@ module DiscussionsHelper
 				_output << h(@forum_category.name)
 			when :forum
 				_output << category_link(@forum, page)
-				_output << truncate(h(@forum.name), :length => 40)
+				_output << truncate(h(@forum.name), :length => 60)
 			when :topic
 				_output << category_link(@forum, page)
 				_output << forum_link(@forum)
@@ -19,12 +19,12 @@ module DiscussionsHelper
 	end
 
 	def forum_link forum
-		options = { :title => forum.name } if forum.name.length > 40
-		pjax_link_to(truncate(forum.name, :length => 40), discussions_forum_path(forum.id), (options || {}))
+		options = { :title => forum.name } if forum.name.length > 60
+		pjax_link_to(truncate(forum.name, :length => 60), discussions_forum_path(forum.id), (options || {}))
 	end
 
 	def category_link(forum, page)
-		truncate_length = ( (page == :forum) ? 75 : 40 )
+		truncate_length = ( (page == :forum) ? 85 : 60 )
 		forum_category_name = forum.forum_category.name 
 		options = { :title => forum_category_name } if forum_category_name.length > truncate_length
 		pjax_link_to(truncate(forum.forum_category.name, :length => truncate_length), 

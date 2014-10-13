@@ -6,6 +6,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     recipients    options[:email]
     from          "support@freshdesk.com"
     subject       "Data Import for #{options[:domain]}"
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     body          (options)
     content_type  "text/html"
@@ -15,6 +16,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     recipients    options[:user][:email]
     from          "support@freshdesk.com"
     subject       "Data Import for #{options[:domain]}"
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     body          :user => options[:user][:name]
     content_type  "text/html"
@@ -24,6 +26,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     recipients    options[:user][:email]
     from          "support@freshdesk.com"
     subject       "Data Import for #{options[:domain]}"
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     body          :user => options[:user][:name]
     content_type  "text/html"
@@ -33,6 +36,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     recipients    options[:user][:email]
     from          "support@freshdesk.com"
     subject       "Import from Zendesk successful"
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     body          :user => options[:user][:name]
     content_type  "text/html"
@@ -53,6 +57,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     def set_default_mail_options(to_email, subject)
       from          "support@freshdesk.com"
       recipients    to_email
+      headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       subject       subject
       sent_on       Time.now
       content_type  "text/html"    

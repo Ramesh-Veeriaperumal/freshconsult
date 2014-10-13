@@ -29,7 +29,7 @@ var GettingStarted = {
 var Validate = {	
 	email:function(emails){
 	   var emailArray = emails.split(",");
-	   var filter = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/;
+	   var filter = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/;
 	   for(var e=0;e < emailArray.length;e++)
 	   {
 		

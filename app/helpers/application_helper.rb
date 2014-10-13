@@ -419,48 +419,54 @@ module ApplicationHelper
 
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
-    place_holders = [
-      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.',        'ticket_id'],
-      ['{{ticket.subject}}',          'Subject',          'Ticket subject.',        'ticket_subject'],
-      ['{{ticket.description}}',      'Description',        'Ticket description.',         'ticket_description'],
-      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
-      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
-      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
-      ['{{ticket.status}}',         'Status' ,          'Ticket status.',         'ticket_status'],
-      ['{{ticket.priority}}',         'Priority',         'Ticket priority.',        'ticket_priority'],
-      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.',        'ticket_source'],
-      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.',         'ticket_type'],
-      ['{{ticket.tags}}',           'Tags',           'Ticket tags.',         'ticket_tags'],
-      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.',          'ticket_due_by_time'],
-      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.',         'ticket_requester_name'],
-      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket',          'ticket_requester_firstname'],
-      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket',           'ticket_requester_lastname'],
-      ['{{ticket.from_email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
-      requester_company,
-      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number.",       'ticket_requester_phone'],
-      ['{{ticket.requester.address}}', 'Requester address',   "Requester's Address.",       'ticket_requester_address'],
-      ['{{ticket.group.name}}',       'Group name',       'Ticket group.',          'ticket_group_name'],
-      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.',        'ticket_agent_name'],
-      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email.",         'ticket_agent_email'],
-      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.',         'ticket_latest_public_comment'],
-      ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.',         'helpdesk_name'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
-      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description'],
-      ['{{ticket.requester.email}}', 'Contact Primary email', "Contact's primary email", 'contact_primary_email'],
-    ]
+    place_holders = {
+      :tickets => [
+                      ['{{ticket.id}}',           'Ticket ID' ,       '',        'ticket_id'],
+                      ['{{ticket.subject}}',          'Subject',          '',        'ticket_subject'],
+                      ['{{ticket.description}}',      'Description',        '',         'ticket_description'],
+                      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
+                      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
+                      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
+                      ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
+                      ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
+                      ['{{ticket.latest_public_comment}}',  'Last public comment',  '',         'ticket_latest_public_comment'],
+                      ['{{ticket.group.name}}',       'Group name',       '',          'ticket_group_name'],
+                      ['{{ticket.agent.name}}',       'Agent name',       '',        'ticket_agent_name'],
+                      ['{{ticket.agent.email}}',      'Agent email',        "",         'ticket_agent_email']
+                    ],
+      :ticket_fields => [
+                      ['{{ticket.status}}',         'Status' ,          '',         'ticket_status'],
+                      ['{{ticket.priority}}',         'Priority',         '',        'ticket_priority'],
+                      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.',        'ticket_source'],
+                      ['{{ticket.ticket_type}}',      'Ticket type',        '',         'ticket_type']
+                    ],
+      :requester => [
+                      ['{{ticket.requester.name}}',     'Requester name',       '',         'ticket_requester_name'],
+                      ['{{ticket.requester.firstname}}' , 'Requester first name', '',          'ticket_requester_firstname'],
+                      ['{{ticket.requester.lastname}}' , 'Requester last name', '',           'ticket_requester_lastname'],
+                      ['{{ticket.from_email}}',    'Requester email',      "",         'ticket_requester_email'],
+                      requester_company,
+                      ['{{ticket.requester.phone}}', 'Requester phone number',   "",       'ticket_requester_phone'],
+                      # ['{{ticket.requester.email}}', 'Contact Primary email', "", 'contact_primary_email'],
+                      ['{{ticket.requester.address}}', 'Requester address',   "",       'ticket_requester_address']
+                    ],
+      :helpdesk => [
+                      ['{{helpdesk_name}}', 'Helpdesk name', '',         'helpdesk_name'],
+                      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
+                      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
+                    ]
+    }
+    # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
-      place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)", "ticket_#{name}"] unless name == "type"
+      place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}"] unless name == "type"
     }
-    place_holders
-  end
 
-  def survey_placeholders
-    place_holders = []
-    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
+    # Survey Placeholders
+    place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
                       ] if current_account.features?(:surveys, :survey_links)
-    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+    place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     place_holders
@@ -713,7 +719,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value},
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal, required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -750,7 +756,7 @@ module ApplicationHelper
 
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
-  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
     _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
@@ -759,10 +765,16 @@ module ApplicationHelper
     }.merge!(_opt)
     _field.nested_levels.each do |l|
       _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-      _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required))) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
     (_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
 
+  end
+
+  def nested_field_label(label, required)
+    field_label = label.html_safe
+    field_label += '<span class="required_star">*</span>'.html_safe if required
+    return field_label
   end
 
   def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
@@ -1050,7 +1062,7 @@ module ApplicationHelper
   end
 
   def requester_company
-    ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name.",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
+    ['{{ticket.requester.company_name}}', 'Requester company name',   "",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
   end
 
   # ITIL Related Methods ends here

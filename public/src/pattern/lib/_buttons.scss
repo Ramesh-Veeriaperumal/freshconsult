@@ -275,3 +275,12 @@ input[type="submit"].btn {
     color:$grayLight;
   }
 }
+
+.btn-flat {
+  background: #F9F9F9;
+  color: #333;
+  border: 1px solid #d4d4d4;
+  @include box-shadow(none);
+  @include text-shadow(none);
+  -webkit-font-smoothing: antialiased;
+}

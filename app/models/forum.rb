@@ -66,7 +66,7 @@ class Forum < ActiveRecord::Base
   validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   validates_inclusion_of :forum_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
 
-  validates_uniqueness_of :name, :scope => :forum_category_id
+  validates_uniqueness_of :name, :scope => :forum_category_id, :case_sensitive => false
 
   belongs_to :forum_category
 

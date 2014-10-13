@@ -597,14 +597,14 @@ HTML
 	      when "dropdown" then
           	select(object_name, field_name,
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
-          			{ :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+          			{ :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
 	        select(object_name, field_name, field.html_unescaped_choices,
-	        		{ :include_blank => "...", :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
 	        	{:include_blank => "...", :selected => field_value},
-	        	{:class => element_class}, field_value, true)
+	        	{:class => element_class}, field_value, true, required)
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
@@ -625,7 +625,7 @@ HTML
 
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
-	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)
+	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
 		_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 		_javascript_opts = {
 		  :data_tree => _field.nested_choices,
@@ -635,7 +635,7 @@ HTML
 
 		_field.nested_levels.each do |l|
 		  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
 		end
 
 		_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")

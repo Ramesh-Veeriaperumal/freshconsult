@@ -136,7 +136,7 @@ module Search::TicketSearch
     end
 
     if criteria_key == "helpdesk_tags.name"
-      return Account.current.ticket_tags_from_cache.collect{|name| [name, CGI.escapeHTML(name)]}
+      return Account.current.tags_from_cache.collect { |au| [au.name, CGI.escapeHTML(au.name)] }
     end
 
     if criteria_key == "users.customer_id"

@@ -1,6 +1,13 @@
 <%= content_tag(:label, t('mailbox.email_system'), :class => "control-label") %>
 <div class="controls row-fluid">
-  <%= select_tag("email[system]", serverProfileoptions.to_s.html_safe, :class => "select2 input-xlarge") %>
+  <% email_system = ""%>
+  <% if (@email_config.smtp_mailbox && @email_config.smtp_mailbox.server_name.split(".")[1])%>
+  <% email_system = @email_config.smtp_mailbox.server_name.split(".")[1]%>
+    <% unless (email_system == "aol" || email_system == "gmail")%>
+      <% email_system = "other" %>
+    <% end %>
+  <% end %>
+  <%= select_tag("email[system]", options_for_select(serverProfileoptions.to_s.html_safe, "other"), :class => "select2 input-xlarge") %>
 </div>
 
 <label class="control-label mt20" ><%=t('mailbox.use_mail_server_for').html_safe%></label>

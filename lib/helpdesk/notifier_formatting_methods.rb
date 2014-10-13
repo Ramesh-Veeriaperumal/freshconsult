@@ -20,9 +20,9 @@ module Helpdesk::NotifierFormattingMethods
   def reply_subject(reply, ticket)
     template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE)
     subject_template = reply ? template.get_requester_template(ticket.requester).first : template.requester_subject_template
-    Liquid::Template.parse(subject_template).render('ticket' => ticket,
-      'helpdesk_name' => ticket.account.portal_name ).html_safe
-    subject = subject.blank? ? default_reply_subject(ticket) : subject
+    subject = Liquid::Template.parse(subject_template).render('ticket' => ticket,
+                'helpdesk_name' => ticket.account.portal_name ).html_safe
+    subject.blank? ? default_reply_subject(ticket) : subject
   end
 
   def generate_body_html(html, inline_attachments, account)

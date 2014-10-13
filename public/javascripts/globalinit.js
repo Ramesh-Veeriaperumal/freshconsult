@@ -444,7 +444,7 @@ window.xhrPool = [];
         onkeyup: false,
         focusCleanup: false,
         focusInvalid: true,
-        ignore:"select.nested_field:empty, .portal_url:not(:visible)"
+        ignore:"select.nested_field:empty, .portal_url:not(:visible), .ignore_on_hidden:not(:visible)"
       });
 
       $(".image-lazy-load img").livequery(function(ev){

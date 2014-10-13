@@ -16,7 +16,7 @@ describe Helpdesk::MergeTicketsController do
     login_admin
     @source_ticket1 = create_ticket({ :status => 2 }, @group)
     @source_ticket2 = create_ticket({ :status => 2 }, @group)
-    stub_s3_writes
+    #stub_s3_writes
   end
 
   after(:each) do

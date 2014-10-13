@@ -77,7 +77,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
-    id ? "#{id}-#{title[0..100].rpartition(" ").first.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
+    id ? "#{id}-#{title[0..100].downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
   end
 
   def nickname

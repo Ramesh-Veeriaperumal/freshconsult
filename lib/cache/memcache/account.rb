@@ -56,11 +56,6 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.tags.all }
   end
 
-  def ticket_tags_from_cache
-    key = ticket_tags_memcache_key
-    MemcacheKeys.fetch(key) { self.tags.find( :all, :joins => :tag_uses, :conditions => {'helpdesk_tag_uses.taggable_type' => "Helpdesk::Ticket"}).map(&:name).uniq }
-  end
-
   def feature_from_cache
     key = FEATURES_LIST % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.features }
@@ -186,10 +181,6 @@ module Cache::Memcache::Account
 
     def companies_memcache_key
       ACCOUNT_COMPANIES % { :account_id => self.id }
-    end
-
-    def ticket_tags_memcache_key
-      ACCOUNT_TICKET_TAGS % { :account_id => self.id }
     end
     
     def handles_memcache_key

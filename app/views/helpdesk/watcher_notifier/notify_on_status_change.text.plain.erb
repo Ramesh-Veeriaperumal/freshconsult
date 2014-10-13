@@ -6,7 +6,7 @@
 
 <%=t('helpdesk.tickets.add_watcher.mail.ticket') %> 
 
-<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host)%>#<%=@ticket.display_id%> 
+<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host, :protocol => @ticket.url_protocol)%>#<%=@ticket.display_id%> 
 
 <%=@ticket.subject%> 
 
@@ -15,6 +15,6 @@
             
 <%=@ticket.requester.name%> <%=@ticket.requester.email unless @ticket.requester.email.blank? %>
 
-<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,:host => @ticket.account.host)%>
+<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,:host => @ticket.account.host,:protocol => @ticket.url_protocol)%>
     
 <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>

@@ -2841,11 +2841,12 @@ $collision_delay: 1s;
 		line-height: 1.5;
 	}
 	.draft-label {
-			background-color: #F8BF23; 
+			background-color: #ccc; 
 			color: white;
 			border-radius: 4px;
 			font-weight: bold;
 			padding: 2px 6px;
+			font-size:11px;
 			@include margin-right(5px);
 	}
 }
@@ -2900,7 +2901,6 @@ $collision_delay: 1s;
 		@include margin(32px 0 0 -7px);
 	}
 
-	.show_on_collapse { display: none; }
 
 }
 
@@ -2908,11 +2908,6 @@ $collision_delay: 1s;
 	.status_info {
 		visibility: visible;
 	}
-}
-
-.tkt-details-sticky.collapsed {
-	.show_on_collapse { display: block; }
-	.hide_on_collapse { display: none; }
 }
 
 .conversation_thread .ui-form li.file_size_alert{
