@@ -16,12 +16,12 @@ describe Freshfone::IvrsController do
     response.should redirect_to("/admin/freshfone/numbers/#{@number.id}/edit")
   end
 
-  xit 'should return all ivrs for the account' do#TODO-RAILS3
+  it 'should return all ivrs for the account' do#TODO-RAILS3
     get :index
     assigns[:ivrs].map(&:freshfone_number_id).should include @number.id
   end
 
-  xit 'should return ivr object for edit and redirect to edit template' do#TODO-RAILS3 possible dead code
+  it 'should return ivr object for edit and redirect to edit template' do#TODO-RAILS3 possible dead code
     get :edit, {:id => @number.ivr.id}
     assigns[:ivr].freshfone_number_id.should be_eql(@number.id)
     response.should render_template("freshfone/ivrs/edit")
@@ -65,7 +65,7 @@ describe Freshfone::IvrsController do
     json.should have_key(:error_message)
   end
 
-  xit 'should not update the welcome message on update failure with html format' do
+  it 'should not update the welcome message on update failure with html format' do
     message = Faker::Company.catch_phrase
     Freshfone::Ivr.any_instance.stubs(:update_attributes).returns(false)
     params = {"freshfone_ivr"=>{"relations"=>"{\"0\":[]}", "message_type"=>"1", "ivr_data"=>{"0"=>{"menu_name"=>"Welcome/Start Menu", "menu_id"=>"0", "message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>message, "options"=>{"0"=>{"respond_to_key"=>"1", "performer"=>"User", "performer_id"=>"1", "performer_number"=>""}}}}, "attachments"=>{"0"=>{"content"=>"#<File:/var/folders/66/tpd2l9td1fb5tqggls39r59w0000gn/T/RackMultipart20140527-28095-1kivk1a>"}}}, "preview"=>"true", "id"=>@number.ivr.id}
@@ -75,7 +75,7 @@ describe Freshfone::IvrsController do
     response.should render_template("admin/freshfone/numbers/edit")
   end
 
-  xit 'should enable ivr on successful activate action' do#TODO-RAILS3 possible dead code
+  it 'should enable ivr on successful activate action' do
     ivr = @number.ivr
     ivr.update_attributes(:active => false)
     post :activate, {:id => @number.ivr.id, :active => true}
@@ -90,7 +90,7 @@ describe Freshfone::IvrsController do
     RSpec.configuration.account.ivrs.find(ivr.id).should_not be_active
   end
 
-  xit 'should disable ivr on successful deactivate action' do#TODO-RAILS3 possible dead code
+  it 'should disable ivr on successful deactivate action' do
     ivr = @number.ivr
     ivr.update_attributes(:active => true)
     post :deactivate, {:id => @number.ivr.id, :active => false}

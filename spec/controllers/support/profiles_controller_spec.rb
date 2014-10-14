@@ -28,7 +28,7 @@ describe Support::ProfilesController do
     edited_customer.language.should be_eql("fr")
   end
 
-  xit "should delete user avatar" do#profiles_controller_spec.rb
+  it "should delete user avatar" do#profiles_controller_spec.rb
     get :edit, :id => @user.id
     put :update, :id => @user.id, :user => {:avatar_attributes => {:content => fixture_file_upload('files/image33kb.jpg', 'image/jpg', :binary )},
                                             :name => @user.name,

@@ -226,7 +226,8 @@ class User < ActiveRecord::Base
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended 
      params.include?(attr)} && params[:tags].is_a?(String)
-      params[:tag_names]||= params[:tags]
+      tags = params.delete(:tags)
+      params[:tag_names]||= tags
     end
     super(params)
   end

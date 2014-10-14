@@ -139,7 +139,7 @@ describe Helpdesk::MergeTicketsController do
     last_source2_note.private.should be false
   end
 
-  xit "should merge tickets with attachments" do# TODO-RAILS3 failing in master
+  it "should merge tickets with attachments" do# TODO-RAILS3 failing in master
     # Creating a ticket with attachment
     target_ticket = create_ticket({ :status => 2}, @group)
     source_ticket2 = create_ticket({:status => 2,

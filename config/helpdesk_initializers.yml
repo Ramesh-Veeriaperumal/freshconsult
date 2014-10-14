@@ -1,5 +1,6 @@
 helpdesk:
   initializers:
+    - rails3_patches
     - action_mailer_callbacks
     - action_mailer_no_tmail
     - activerecord_log
@@ -31,7 +32,6 @@ helpdesk:
     - portal_init
     - query_trace
     - rabbit_mq
-    - rails3_patches
     - redis
     - redshift
     - resque

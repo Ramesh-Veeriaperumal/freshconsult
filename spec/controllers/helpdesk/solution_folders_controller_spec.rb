@@ -31,7 +31,7 @@ describe Solution::FoldersController do
     response.should render_template("solution/folders/show")
   end
 
-  xit "should redirect user with no privilege to login" do#TODO-RAILS3 failing in master
+  it "should redirect user with no privilege to login" do#TODO-RAILS3 failing in master
     session = UserSession.find
     session.destroy
     log_in(@user)
@@ -107,7 +107,7 @@ describe Solution::FoldersController do
     response.should render_template("solution/folders/new")    
   end
 
-  it "should edit a solution folder" do
+  it "should edit a solution folder" do# failing in master
     get :edit, :id => @test_folder.id, :category_id => @test_category.id
     response.body.should =~ /Edit Folder/
     name = Faker::Name.name

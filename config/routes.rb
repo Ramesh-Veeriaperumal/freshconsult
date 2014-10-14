@@ -289,6 +289,7 @@ Helpkit::Application.routes.draw do
     resources :autocomplete do
       collection do
         get :requester_search
+        get :customer_phone_number
       end
     end
     resources :usage_triggers do

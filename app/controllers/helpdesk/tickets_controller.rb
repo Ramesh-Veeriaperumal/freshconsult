@@ -159,7 +159,7 @@ class Helpdesk::TicketsController < ApplicationController
            end
            hash.merge!({:ticket => tickets })
            hash.merge!(current_account.as_json(:only=>[:id],:methods=>[:portal_name]))
-           hash.merge!(current_user.as_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]))
+           hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]}, true))
            hash.merge!({:summary => get_summary_count})
            hash.merge!({:top_view => top_view})
            render :json => hash
@@ -273,8 +273,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.nmobile {
         hash = {}
         hash.merge!(@item.to_mob_json(false,false))
-        hash.merge!(current_user.as_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
-                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]))
+        hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
+                                                        :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]}, true))
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))                            
         hash.merge!({:subscription => !@subscription.nil?})                                          
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})

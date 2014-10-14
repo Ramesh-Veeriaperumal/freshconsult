@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContactsController do
+RSpec.describe ContactsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

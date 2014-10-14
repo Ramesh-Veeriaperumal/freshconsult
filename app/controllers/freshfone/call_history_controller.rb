@@ -8,7 +8,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 	
 	def index
-		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")
+		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
 	
 	def custom_search
@@ -61,7 +61,7 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def fetch_blacklist
-			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
+			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.pluck(:number)
 		end
 
 		def get_cookies_for_filter

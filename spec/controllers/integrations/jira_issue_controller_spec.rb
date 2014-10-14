@@ -40,7 +40,7 @@ RSpec.describe Integrations::JiraIssueController do
     response.body.should eql '{"status":"success"}'
   end
 
-  xit "should insert into integrated resources (update)" do# failing in master
+  it "should insert into integrated resources (update)" do# failing in master
     post :create, create_params
     integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
     post :unlink, unlink_params(integrated_resource)
@@ -76,7 +76,7 @@ RSpec.describe Integrations::JiraIssueController do
   #   get_integ_redis_key(redis_key).should be_nil
   # end
 
-  xit "remove notification redis key" do# failing in master
+  it "remove notification redis key" do# failing in master
     post :create, create_params
     integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
     redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => RSpec.configuration.account.id, 
@@ -89,35 +89,35 @@ RSpec.describe Integrations::JiraIssueController do
     get_integ_redis_key(redis_key).should be_nil
   end
 
-  xit "should throw exception on create" do# failing in master
+  it "should throw exception on create" do# failing in master
     @installed_application.destroy
     post :create
     expected_response = '{"errorMessages":["Error exporting ticket to jira issue"]}'
     response.body.should eql expected_response
   end
 
-  xit "should throw exception on update" do# failing in master
+  it "should throw exception on update" do# failing in master
     @installed_application.destroy
     post :update# where is id
     expected_response = '{"errorMessages":["Error linking the ticket to the jira issue"]}'
     response.body.should eql expected_response
   end
 
-  xit "should throw exception on unlink" do# failing in master
+  it "should throw exception on unlink" do# failing in master
     @installed_application.destroy
     post :unlink
     expected_response = '{"errorMessages":["Error unlinking the ticket from the jira issue"]}'
     response.body.should eql expected_response
   end
 
-  xit "should throw exception on destroy" do# failing in master
+  it "should throw exception on destroy" do# failing in master
     @installed_application.destroy
     post :destroy# where is id
     expected_response = '{"errorMessages":["Error unlinking the ticket from the jira issue"]}'
     response.body.should eql expected_response
   end
 
-  xit "should throw exception on fetch_jira_projects_issues" do# failing in master
+  it "should throw exception on fetch_jira_projects_issues" do# failing in master
     @installed_application.destroy
     post :fetch_jira_projects_issues
     expected_response = '{"errorMessages":["Unable to fetch Projects and issues"]}'

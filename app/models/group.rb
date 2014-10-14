@@ -118,7 +118,7 @@ class Group < ActiveRecord::Base
     super(options)
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options.merge!(API_OPTIONS)
     super options
   end

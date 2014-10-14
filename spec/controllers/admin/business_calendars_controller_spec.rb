@@ -20,7 +20,7 @@ describe Admin::BusinessCalendarsController do
     response.body.should =~ /Business Hours/
   end
 
-  xit "should go to new business hours page" do#failing in master
+  it "should go to new business hours page" do#failing in master
     get 'new'
     response.should render_template "admin/business_calendars/new"
     response.body.should =~ /Business Hours/
@@ -47,7 +47,7 @@ describe Admin::BusinessCalendarsController do
 
   end
 
-  xit "should go to edit page of business hours" do# failing in master
+  it "should go to edit page of business hours" do# failing in master
     get 'edit', :id=>@test_business_hours.id
     response.should render_template "admin/business_calendars/edit"
     response.body.should =~ /Business Hours/

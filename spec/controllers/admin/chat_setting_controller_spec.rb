@@ -13,13 +13,13 @@ describe Admin::ChatSettingController do
 		@account.subscription.update_attributes(plan_info(plan))
 	end
 
-	xit "should render request page when chat feature is turned off" do# failing in master
+	it "should render request page when chat feature is turned off" do# failing in master
 		@account.features.send(:chat).destroy
 		get :index
 		response.should render_template("admin/chat_setting/request_page")
 	end
 
-	xit "should render 404 Error when current subscription plan does not support chat " do# failing in master
+	it "should render 404 Error when current subscription plan does not support chat " do# failing in master
 		plan = SubscriptionPlan.find(2)
 		@account.subscription.update_attributes(plan_info(plan))
 		get :index
@@ -38,14 +38,14 @@ describe Admin::ChatSettingController do
 		response.should render_template("admin/chat_setting/index")
 	end
 
-	xit "should send mail to request chat feature" do# ACTION NOT FOUND
+	it "should send mail to request chat feature" do# ACTION NOT FOUND
 		post :request_freshchat_feature
 		temp = JSON.parse(response.body)
 		temp["status"].should eql "success"
 
 	end
 
-	xit "should toggle the chat enable feature" do# ACTION NOT FOUND
+	it "should toggle the chat enable feature" do# ACTION NOT FOUND
     request.env["HTTP_ACCEPT"] = "application/javascript"
 		firstState=@account.features? :chat_enable
 		post :toggle
@@ -65,7 +65,7 @@ describe Admin::ChatSettingController do
 
 	end
 
-	xit "should update the chat feature" do# failing in master
+	it "should update the chat feature" do# failing in master
     request.env["HTTP_ACCEPT"] = "application/json"
 		@account.features.send(:chat_enable).create
 		@account.reload
@@ -105,7 +105,7 @@ describe Admin::ChatSettingController do
 		temp["status"].should eql "success"
 	end
 
-	xit "should not update the chat feature when there are empty parameters" do# failing in master
+	it "should not update the chat feature when there are empty parameters" do# failing in master
 		@account.features.send(:chat_enable).create
 		@account.reload
 		chat_setting = {
