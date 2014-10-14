@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
+
+  include ArExtensions
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
@@ -77,7 +79,7 @@ class User < ActiveRecord::Base
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
                   :description, :time_zone, :avatar_attributes, :customer_id, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
-                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :tags
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
   class << self # Class Methods
     #Search display
@@ -637,7 +639,7 @@ class User < ActiveRecord::Base
       @parsed_name ||= Namae::Name.parse(self.name)
     end
 
-    def bakcup_user_changes
+    def backup_user_changes
       @all_changes = self.changes.clone
     end
 

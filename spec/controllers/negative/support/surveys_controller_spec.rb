@@ -6,15 +6,16 @@ describe Support::SurveysController do
 
   before(:all) do
     @group = create_group(@account, {:name => "survey"})
+    @user = create_dummy_customer
   end
 
   before(:each) do
-    login_admin
+    log_in(@user)
   end
 
   it "should not allow to rate a surveyed link" do
     ticket = create_ticket({ :status => 2 }, @group)
-    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+    note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}, :user_id => @user.id})
     note.save_note
     send_while = rand(1..4)
     s_handle = create_survey_handle(ticket, send_while, note)

@@ -25,7 +25,7 @@ class SsoController < ApplicationController
           facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
           if user_session.save
             if is_native_mobile?
-              cookies["mobile_access_token"] = { :value => curr_user.single_access_token, :http_only => true } 
+              cookies["mobile_access_token"] = { :value => curr_user.helpdesk_agent ? curr_user.single_access_token : 'customer', :http_only => true } 
               cookies["fd_mobile_email"] = { :value => curr_user.email, :http_only => true } 
             end
             redirect_back_or_default(facebook_redirect || '/')
@@ -70,7 +70,7 @@ class SsoController < ApplicationController
       if @user_session.save
         return unless grant_day_pass
         if is_native_mobile?
-          cookies["mobile_access_token"] = { :value => @current_user.single_access_token, :http_only => true } 
+          cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
         end
         session[:return_to] = protocol+"://"+portal_url + session[:return_to].to_s

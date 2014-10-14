@@ -3,13 +3,17 @@ class Helpdesk::KbaseArticles
   def self.create_article_from_email(article_params)  
     account = Account.find(article_params[:account])
     user = account.users.find(article_params[:user])
-    
-    if user.agent?
-      article = add_knowledge_base_article(account, user, article_params[:title], article_params[:description])        
+
+    if user.agent? or from_support_email?(user, account)
+      article = add_knowledge_base_article(account, user, article_params[:title], article_params[:description])    
       create_article_attachments(article_params, article, account)
     end
   end
       
+  def self.from_support_email?(user, account)
+    account.email_configs.select{ |x| x.reply_email == user.email }.present?
+  end
+
   def self.create_article_attachments(article_params, article, account)
     
     temp_body_html = String.new(article.description)

@@ -11,7 +11,7 @@ describe Admin::SecurityController do
   before(:each) do
     @request.env['CLIENT_IP'] = "127.0.0.1"
     login_admin
-    # Delayed::Job.destroy_all
+    Delayed::Job.destroy_all
   end
 
   it "should load index page" do
@@ -27,8 +27,8 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "1", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", 
-                                                      "end_ip"=>"127.0.0.1"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                                      "end_ip"=>"127.0.0.1"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
     RSpec.configuration.account.reload
     RSpec.configuration.account.sso_enabled.should_not eql(1)
@@ -47,12 +47,12 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "1", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", 
-                                                      "end_ip"=>"127.0.0.1"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                                      "end_ip"=>"127.0.0.1"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.1"}])
-    # Delayed::Job.last.handler.should include("New IP restrictions have been added in your helpdesk")
+    @account.reload
+    @account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.1"}])
+    Delayed::Job.last.handler.should include("#{@account.name}: New IP restrictions have been added in your helpdesk")
   end
 
   it "should update trusted ips" do
@@ -65,8 +65,8 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "1", 
                                       :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
-                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
     RSpec.configuration.account.reload
     RSpec.configuration.account.sso_enabled.should eql(true)
@@ -74,8 +74,8 @@ describe Admin::SecurityController do
     RSpec.configuration.account.sso_options.should eql({ "login_url" => login_url, 
                                     "logout_url" => logout_url, 
                                     "sso_type"=>"simple" })
-    RSpec.configuration.account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
-    # Delayed::Job.last.handler.should include("The IP restrictions in your helpdesk has been modified")
+    @account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
+    Delayed::Job.last.handler.should include("#{@account.name}: The IP restrictions in your helpdesk has been modified")
   end
 
   it "should disable trusted ips" do
@@ -88,8 +88,8 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "0", 
                                       :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
-                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
     RSpec.configuration.account.reload
     RSpec.configuration.account.sso_enabled.should eql(true)
@@ -97,8 +97,8 @@ describe Admin::SecurityController do
     RSpec.configuration.account.sso_options.should eql({ "login_url" => login_url, 
                                      "logout_url" => logout_url, 
                                      "sso_type"=>"simple" })
-    RSpec.configuration.account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
-    # Delayed::Job.last.handler.should include("The IP restrictions in your helpdesk has been modified")
+    @account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
+    Delayed::Job.last.handler.should include("#{@account.name}: The IP restrictions in your helpdesk has been modified")
   end
 
   # Keep the below two test cases at the last
@@ -112,8 +112,8 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "1", 
                                       :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
-                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
     RSpec.configuration.account.reload
     RSpec.configuration.account.main_portal.ssl_enabled.should eql(false)
@@ -128,8 +128,8 @@ describe Admin::SecurityController do
       :whitelisted_ip_attributes => { :enabled => "1", 
                                       :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
-                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]}
-      # :account_configuration_attributes => [Faker::Internet.email]
+                                      :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
+      :account_configuration_attributes => [Faker::Internet.email]
     }
     RSpec.configuration.account.reload
     RSpec.configuration.account.main_portal.ssl_enabled.should eql(true)

@@ -75,7 +75,7 @@ RSpec.describe Helpdesk::TicketsController do
   it "should show the survey remark of a ticket" do
     Survey::CUSTOMER_RATINGS.each do |rating_type, value|
       ticket = create_ticket({ :status => 2 }, @group)
-      note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}})
+      note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}, :user_id => @agent.id})
       note.save_note
       send_while = rand(1..4)
       s_handle = create_survey_handle(ticket, send_while, note)
@@ -112,7 +112,7 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should create a new ticket with RabbitMQ enabled" do
-    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh"]
     RABBIT_MQ_ENABLED = true
     Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
     Array.any_instance.stubs(:publish).returns(true)
@@ -135,7 +135,7 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should create a new ticket with RabbitMQ enabled and with RabbitMq publish error" do
-    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh", "mobile_app"]
+    RabbitMq::Keys::TICKET_SUBSCRIBERS = ["auto_refresh"]
     RABBIT_MQ_ENABLED = true
     Account.any_instance.stubs(:rabbit_mq_exchange).returns([])
     Array.any_instance.stubs(:publish).raises(StandardError)

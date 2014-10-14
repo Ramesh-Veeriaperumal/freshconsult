@@ -1,7 +1,7 @@
 <div id="ticket-toolbar">
   <div class="dropdown" id="ticket-filters">  
   	<a href="#" class="list-lead dropdown-toggle" data-toggle="dropdown">
-  	<%= @page_title %> <i class="caret"></i>
+  	<%= t("helpdesk.tickets.views.#{@current_filter}") %> <i class="caret"></i>
   	</a>
     <%= filter_list %>
   </div>

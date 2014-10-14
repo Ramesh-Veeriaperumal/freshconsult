@@ -35,7 +35,6 @@ gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "~> 3.4.2"
-gem 'scrypt'
 gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
 gem "omniauth-oauth"

@@ -289,6 +289,12 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include margin-right(10px);
 }
 
+/* Print button in Solutions Page */
+.solution-print-icon {
+	float:right;
+	margin-top:10px;
+}
+
 /* User voted list in topic details page */
 .user-list{
 	margin-top: -10px;

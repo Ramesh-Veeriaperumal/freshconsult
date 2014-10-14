@@ -15,6 +15,7 @@ SimpleCov.start do
   add_filter 'app/controllers/subscription_admin'
   add_filter 'reports'
   add_filter 'search'
+  add_filter 'vendor/ruby'
   add_filter SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash. 
 
   #add_filter '/vendor/'

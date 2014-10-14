@@ -24,6 +24,25 @@ class UsersController < ApplicationController
   def edit
     redirect_to edit_contact_url
   end
+
+  def me
+    headers['Access-Control-Allow-Origin']   = '*'
+    headers['Access-Control-Allow-Methods']  = 'GET'
+    headers['Access-Control-Request-Method'] = 'GET'
+    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = Digest::SHA256.digest(ChromeExtensionConfig["key"]) 
+    aes.iv  = ChromeExtensionConfig["iv"]
+
+    account_data = {
+      :account_id => current_user.account_id, 
+      :user_id    => current_user.id
+    }.to_json
+    encoded_data = Base64.encode64(aes.update(account_data)+ aes.final)
+    render :json => {:data => encoded_data}.to_json
+  end
   
   def create    
     @user = current_account.users.new #by Shan need to check later       

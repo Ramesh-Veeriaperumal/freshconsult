@@ -13,7 +13,7 @@ describe AgentsController do
   before(:each) do
     log_in(RSpec.configuration.agent)
     stub_s3_writes
-    # Delayed::Job.destroy_all
+    Delayed::Job.destroy_all
   end
 
   it "should render new agent template" do
@@ -46,7 +46,7 @@ describe AgentsController do
     created_user = RSpec.configuration.account.user_emails.user_for_email(test_email)
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
-    # Delayed::Job.last.handler.should include("A new agent was added in your helpdesk")
+    Delayed::Job.last.handler.should include("#{@account.name}: A new agent was added in your helpdesk")
   end
 
   it "should not create a new agent more than the subscriped agent limit" do
@@ -266,7 +266,7 @@ describe AgentsController do
     edited_user = RSpec.configuration.account.users.find_by_email(user.email)
     edited_user.should be_an_instance_of(User)
     edited_user.agent.occasional.should be_eql(true)
-    # Delayed::Job.last.handler.should include("#{edited_user.name} was converted to an occasional agent")
+    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to an occasional agent")
   end
 
   it "should convert an occasional to full time agent" do
@@ -288,16 +288,16 @@ describe AgentsController do
     edited_user = RSpec.configuration.account.users.find_by_email(user.email)
     edited_user.should be_an_instance_of(User)
     edited_user.agent.occasional.should be_eql(false)
-    # Delayed::Job.last.handler.should include("#{edited_user.name} was converted to a full time agent")
+    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to a full time agent")
   end
 
   it "should convert a full time agent to a customer" do
     new_user = add_test_agent(RSpec.configuration.account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => new_user.agent.id
-    RSpec.configuration.account.users.find(new_user.id).helpdesk_agent.should be_falsey
-    RSpec.configuration.account.agents.find_by_user_id(new_user.id).should be_nil
-    # Delayed::Job.last.handler.should include("#{new_user.name} was deleted")
+    @account.users.find(new_user.id).helpdesk_agent.should be_false
+    @account.agents.find_by_user_id(new_user.id).should be_nil
+    Delayed::Job.last.handler.should include("#{@account.name}: #{new_user.name} was deleted")
   end
 
   it "should restrict_current_user to convert a full time agent to a customer" do

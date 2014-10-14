@@ -3810,7 +3810,7 @@ fr:
         tickets: 
             to: "À : "
             no_email_found: "Aucun utilisateur ayant pour adresse e-mail %{email} n'est présent dans le système."
-            overlay_reply_time: " réponse emvoyée, il y a %{time_in_words}"
+            overlay_reply_time: " réponse envoyés, il y a %{time_in_words}"
             overlay_fwd_time: " transféré, il y a %{time_in_words}"
             overlay_note_time: " note ajoutée, il y a %{time_in_words}"
             friendly_status: 

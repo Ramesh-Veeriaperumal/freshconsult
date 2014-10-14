@@ -32,7 +32,7 @@ class CRM::Salesforce < Resque::Job
 
       return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
       opportunity_id = add_opportunity(crm_ids, payment)
-      add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
+      # add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
     #}
     #FreshdeskErrorsMailer.error_in_crm!(payment) if returned_value == 0
   end
@@ -199,12 +199,12 @@ class CRM::Salesforce < Resque::Job
     end
 
     def business_type(payment)
-      return BUSINESS_TYPES[:day_pass] if DayPassPurchase.find_by_payment_id(payment.id)
+      # return BUSINESS_TYPES[:day_pass] if DayPassPurchase.find_by_payment_id(payment.id)
 
-      return BUSINESS_TYPES[:misc] if payment.misc?
+      # return BUSINESS_TYPES[:misc] if payment.misc?
       
-      (payment.account.subscription_payments.length > 1) ? BUSINESS_TYPES[:existing] : 
-        BUSINESS_TYPES[:new] 
+      payments = payment.account.subscription_payments.collect{ |p| p unless p.misc }.compact
+      (payments.length > 1) ? BUSINESS_TYPES[:existing] : BUSINESS_TYPES[:new] 
     end
 
     def opportunity_owner(crm_ids)

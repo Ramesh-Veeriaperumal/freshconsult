@@ -2292,6 +2292,7 @@ pl:
     community_forums: Fora społeczności
     knowledge_base: Baza wiedzy
     showing_recent_updates: Pokazuje ostatnie aktualizacje
+    login_to_submit_ticket: "<a href=%{login_url}>Zaloguj</a> się aby dodać nowe zgłoszenie"
     no_articles_info_1: Przepraszamy, w tej sekcji nie opublikowaliśmy żadnych artykułów. 
     no_articles_info_2: Zajrzyj ponownie za jakiś czas. 
     no_forums_info_1: Brak wątków na forum
@@ -2300,6 +2301,7 @@ pl:
       see_all_articles: Zobacz wszystkie artykuły (%{count})
       more_articles: Więcej artykułów w <span class='folder-name'>%{article_name}</span>
       modified_on: "Zmodyfikowano dnia:"
+      related_articles: "Zobacz również"
     folder:
       filler_text: Obserwuj tę stronę pod kątem artykułów dotyczących %{folder_name}
     topic:

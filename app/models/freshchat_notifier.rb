@@ -7,7 +7,10 @@ class FreshchatNotifier < ActionMailer::Base
                 :recipients   =>  params[:recipients],
                 :from         =>  params[:from],
                 :sent_on      =>  Time.now,
-                :content_type =>  "text/html"
+                :content_type =>  "text/html",
+                "Reply-to" => "",
+                "Auto-Submitted" => "auto-generated", 
+                "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
               }
     headers[:cc] = params[:cc] if params[:cc].present?
     @account = account

@@ -1,5 +1,6 @@
 class WhitelistedIp < ActiveRecord::Base
 
+	include ArExtensions
 	include Cache::Memcache::WhitelistedIp
 
 	belongs_to_account

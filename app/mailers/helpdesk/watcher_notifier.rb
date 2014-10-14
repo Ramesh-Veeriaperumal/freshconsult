@@ -5,7 +5,10 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
       :subject   => new_watcher_subject(ticket, agent_name),
       :to        => subscription.user.email,
       :from      => ticket.friendly_reply_email,
-      :sent_on   => Time.now
+      :sent_on   => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @ticket = ticket
     @subscription = subscription
@@ -21,7 +24,10 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
       :subject => ticket_monitor_subject(ticket),
       :to      => subscription.user.email,
       :from    => ticket.friendly_reply_email,
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @ticket = ticket 
     @subscription = subscription 

@@ -26,8 +26,9 @@ class User < ActiveRecord::Base
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
   
-  before_update :bakcup_user_changes, :clear_redis_for_agent
+  before_update :backup_user_changes, :clear_redis_for_agent
   after_commit :update_search_index, on: :update, :if => :company_info_updated?
+
 
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp

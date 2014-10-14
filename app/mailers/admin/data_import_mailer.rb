@@ -7,7 +7,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :to      => options[:email],
       :from    => AppConfig['from_email'],
       :subject => "Data Import for #{options[:domain]}",
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     mail(headers) do |part|
       part.html { render "import_email.html" }
@@ -19,7 +22,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :to      => options[:user][:email],
       :from    => AppConfig['from_email'],
       :subject => "Data Import for #{options[:domain]}",
-      :sent_on => Time.now 
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user][:name]
     mail(headers) do |part|
@@ -32,7 +38,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :to        => options[:user][:email],
       :from      => AppConfig['from_email'],
       :subject   => "Data Import for #{options[:domain]}",
-      :sent_on   => Time.now
+      :sent_on   => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user][:name]
     mail(headers) do |part|
@@ -45,7 +54,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :to        => options[:user][:email],
       :from      => AppConfig['from_email'],
       :subject   => "Import from Zendesk successful",
-      :sent_on   => Time.now
+      :sent_on   => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user][:name]
     mail(headers) do |part|
@@ -58,7 +70,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :from    => AppConfig['from_email'],
       :to      => options[:email],
       :subject => "Successfully imported Google contacts for #{options[:domain]}",
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @last_stats = options[:status]
     mail(headers) do |part|
@@ -71,7 +86,10 @@ class Admin::DataImportMailer < ActionMailer::Base
       :from    => AppConfig['from_email'],
       :to      => options[:email],
       :subject => "Error in importing Google contacts for #{options[:domain]}",
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     mail(headers) do |part|
       part.html { render "google_contacts_import_error_email.html" }

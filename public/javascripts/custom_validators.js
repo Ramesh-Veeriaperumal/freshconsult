@@ -103,14 +103,19 @@
 
     var _returnCondition = jQuery(element).data("requesterCheck"),
         _partial_list = jQuery(element).data("partialRequesterList") || []
-        _user = jQuery(element).data("currentUser") //for not editing add new requester
-
+        _user = jQuery(element).data("currentUser"), //for not editing add new requester
+        _requester = jQuery(element).data("initialRequester"),
+        _requesterId = jQuery(element).data("initialRequesterid")
+;
     if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/.test(value)){
         _returnCondition = true
         jQuery('#helpdesk_ticket_requester_id').val('') 
     }
     
     if (value == _user) 
+      _returnCondition = true
+
+    if(value == _requester && jQuery("#helpdesk_ticket_requester_id") && jQuery("#helpdesk_ticket_requester_id").val() == _requesterId)
       _returnCondition = true
 
     _partial_list.each(function(item){  //check for item['choice']
