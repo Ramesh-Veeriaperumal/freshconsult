@@ -4443,7 +4443,6 @@ $.fn.insertExternal = function(html)
 			//check HTML view in redactor
 			if(this.$editor.$el.is(":hidden")){ 
 				var removeCursor = this.$editor.$el.data('removeCursor');
-				this.$editor.removeTagOnLiquid();
 				if(removeCursor == undefined || removeCursor){
 					this.$editor.deleteCursor();	
 				} else {
@@ -4452,6 +4451,7 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
+				this.$editor.removeTagOnLiquid();
 			}
 		}
 	}
