@@ -1,7 +1,7 @@
 <%= content_tag(:label, t('mailbox.email_system'), :class => "control-label") %>
 <div class="controls row-fluid">
   <% email_system = ""%>
-  <% if (@email_config.smtp_mailbox && @email_config.smtp_mailbox.server_name.split(".")[1])%>
+  <% if (@email_config.smtp_mailbox && !@email_config.smtp_mailbox.new_record? && @email_config.smtp_mailbox.server_name.split(".")[1])%>
   <% email_system = @email_config.smtp_mailbox.server_name.split(".")[1]%>
     <% unless (email_system == "aol" || email_system == "gmail")%>
       <% email_system = "other" %>
