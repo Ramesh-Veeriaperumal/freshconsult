@@ -157,16 +157,18 @@ en:
   mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Working
+  attach: Attach
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_failed_message: One or more attachments discarded since the 15MB limit was exceeded.
   attach_file_local: Attach a file from your computer
-  attach_file: Attach file
+  attach_file: Attach a file
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
   dropbox_plaintext: Dropbox Attachments
+  cloudfile_plaintext: Attachments on Cloud
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time

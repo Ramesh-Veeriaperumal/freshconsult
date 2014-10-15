@@ -1004,6 +1004,8 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.datetime "updated_at"
     t.integer  "droppable_id",   :limit => 8
     t.string   "droppable_type"
+    t.integer  "application_id", :limit => 8
+    t.string   "filename"
   end
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"

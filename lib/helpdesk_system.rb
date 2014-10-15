@@ -42,29 +42,28 @@ module HelpdeskSystem
 
  protected
   
-  #Method to check permission for dropbox destroy. [todo attachments]
+  #Method to check permission for cloud_file destroy. [todo attachments]
   def check_destroy_permission
     can_destroy = false
       
-    @items.each do |dropbox|
-      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? dropbox.droppable_type
-        ticket = dropbox.droppable.respond_to?(:notable) ? dropbox.droppable.notable : dropbox.droppable
+    @items.each do |cloud_file|
+      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? cloud_file.droppable_type
+        ticket = cloud_file.droppable.respond_to?(:notable) ? cloud_file.droppable.notable : cloud_file.droppable
         can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-      elsif ['Solution::Article'].include?  dropbox.droppable_type
-        can_destroy = true if privilege?(:publish_solution) or (current_user && dropbox.droppable.user_id == current_user.id)
-      elsif ['Account'].include?  dropbox.droppable_type
+      elsif ['Solution::Article'].include?  cloud_file.droppable_type
+        can_destroy = true if privilege?(:publish_solution) or (current_user && cloud_file.droppable.user_id == current_user.id)
+      elsif ['Account'].include?  cloud_file.droppable_type
         can_destroy = true if privilege?(:manage_account)
-      elsif ['Post'].include?  dropbox.droppable_type
-        can_destroy = true if privilege?(:edit_topic) or (current_user && dropbox.droppable.user_id == current_user.id)
-      elsif ['User'].include?  dropbox.droppabe_type
-        can_destroy = true if privilege?(:manage_users) or (current_user && dropbox.droppable.id == current_user.id)
+      elsif ['Post'].include?  cloud_file.droppable_type
+        can_destroy = true if privilege?(:edit_topic) or (current_user && cloud_file.droppable.user_id == current_user.id)
+      elsif ['User'].include?  cloud_file.droppabe_type
+        can_destroy = true if privilege?(:manage_users) or (current_user && cloud_file.droppable.id == current_user.id)
+      end
+      unless can_destroy
+         flash[:notice] = t(:'flash.general.access_denied')
+         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
       end
     end
-    
-    unless can_destroy
-       flash[:notice] = t(:'flash.general.access_denied')
-       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
-    end
   end
-    
+  
 end

@@ -147,7 +147,7 @@ window.xhrPool = [];
         html: true,
         reloadContent: false,
         placement: 'belowLeft',
-        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
+        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content ' + $("#" + $(this).attr("data-widget-container")).data('container-class') + '"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).html();
         }
@@ -210,8 +210,24 @@ window.xhrPool = [];
       });
     });
 
-    $("[rel=hover-popover]").livequery(function(){
-       $(this).popover({
+
+    $("a[rel=hover-popover-below-left]").livequery(function(){
+      $(this).popover({ 
+        delayOut: 300,
+        offset: 5,
+        trigger: 'manual',
+        html: true,
+        reloadContent: false,
+        placement: 'belowLeft',
+        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content ' + $("#" + $(this).attr("data-widget-container")).data('container-class') + '"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).val();
+        }
+      });
+    });
+
+    $("[rel=hover-popover]").livequery(function(){ 
+       $(this).popover({ 
          delayOut: 300,
          trigger: 'manual',
          offset: 5,

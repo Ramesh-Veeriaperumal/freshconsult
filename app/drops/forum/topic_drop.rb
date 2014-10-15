@@ -104,6 +104,10 @@ class Forum::TopicDrop < BaseDrop
     toggle_solution_support_discussions_topic_path(source)
   end
 
+  def cloud_files
+    source.posts.first.cloud_files
+  end
+
   # To check if this is a new topic page of edit page
   def exits?
     source.new_record?

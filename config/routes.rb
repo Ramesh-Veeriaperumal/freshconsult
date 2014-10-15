@@ -483,7 +483,8 @@
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
 
-    helpdesk.resources :dropboxes
+    helpdesk.resources :cloud_files
+
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
 

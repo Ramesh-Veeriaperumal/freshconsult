@@ -55,7 +55,15 @@
 	 <div class="solutions_text clearfix">
 		<%= @article.description.html_safe %>
 	 </div>
-	 <%= attachment_container(@article.attachments, privilege?(:publish_solution),"article") %>
+		<ul class="attachment_list">
+		    <% @article.attachments.each do |attached| %> 
+		    	<%= attachment_list(attached, privilege?(:publish_solution), "article",nil) %>
+		    <% end %>
+		    <% @article.cloud_files.each do |cloud_file| %> 
+				<%= attachment_list(cloud_file, privilege?(:publish_solution), "cloud_file",nil) %>
+			<% end %>
+		</ul>
+		
 	 <span class="seperator"></span> 
 	 <div id="article_voting">
 		<%= render :partial => "voting", :object => @article %>

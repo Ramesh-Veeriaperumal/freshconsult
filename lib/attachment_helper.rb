@@ -25,8 +25,8 @@
       if show_delete
         if (page == "article")
           output << attachment_delete_link(helpdesk_attachment_path(attached))
-        elsif (page == "dropbox")
-          output << attachment_delete_link(helpdesk_dropbox_path(attached))
+        elsif (page == "cloud_file")
+          output << attachment_delete_link(helpdesk_cloud_file_path(attached))
         elsif (page == "ticket")
           output << attachment_delete_link(attachment_unlink_path(attached, note_id))
         else
@@ -40,10 +40,10 @@
 
       output << %(<div class="attach_content">)
 
-      if(page == "dropbox")
-        filename = attached.url.split('/')[-1]
-        output << link_to( h(truncate(filename,15)), attached.url , :popup => true, :title => h(filename))
-        output << %(<span class="file-size">( #{h("dropbox link")} )</span>)
+      if(page == "cloud_file")
+        filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
+        output << link_to( h(truncate(filename, 15)), attached.url , :popup => true, :title => h(filename))
+        output << %(<span class="file-size cloud-file"></span>)
       else
         size = number_to_human_size attached.content_file_size
         output << content_tag( :div,link_to(truncate(h(attached.content_file_name), { :length => 23 }), attached, :popup => true),:class => "ellipsis")
@@ -59,8 +59,8 @@
 
   def attached_icon(attached, page)
     output = ""
-      if (page == "dropbox")
-          output << content_tag(:div, '', :class => "file-types-dropbox")
+      if (page == "cloud_file")
+          output << content_tag(:div, '', :class => "file-types-#{attached.provider}")
       else
         if attached.image?
           output << image_tag(attached.expiring_url(:thumb), :class => "image",
@@ -94,5 +94,6 @@
             helpdesk_attachment_path(attachment) :
             unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
   end
+
 
 end

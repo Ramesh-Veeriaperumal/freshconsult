@@ -1,4 +1,6 @@
 class Support::Discussions::PostsController < SupportController
+
+	include CloudFilesHelper
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
  	before_filter { |c| c.check_portal_scope :open_forums }
@@ -51,12 +53,17 @@ class Support::Discussions::PostsController < SupportController
 		end
 	end
 
-	def create_attachments
-	   	return unless @post.respond_to?(:attachments)
-	    (params[:post][:attachments] || []).each do |a|
-	      	@post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+  def create_attachments
+  	if @post.respond_to?(:cloud_files)
+	    (params[:cloud_file_attachments] || []).each do |attachment_json|
+	      @post.cloud_files.create(build_cloud_files(attachment_json))
 	    end
-	end
+	  end
+   	return unless @post.respond_to?(:attachments)
+    (params[:post][:attachments] || []).each do |a|
+      	@post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+    end
+  end
 
 	def edit
 		render :partial => "/support/discussions/topics/edit_post"

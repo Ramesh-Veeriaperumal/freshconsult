@@ -1,4 +1,6 @@
 class TopicsController < ApplicationController
+
+	include CloudFilesHelper
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -186,12 +188,8 @@ class TopicsController < ApplicationController
 
 
 	def build_attachments
-	 return unless @post.respond_to?(:attachments)
-		unless params[:post].nil?
-			(params[:post][:attachments] || []).each do |a|
-				@post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
-			end
-		end
+		post_attachments = params[:post].nil? ? [] : params[:post][:attachments]
+		attachment_builder(@post, post_attachments, params[:cloud_file_attachments] )
 	end
 
 	protected

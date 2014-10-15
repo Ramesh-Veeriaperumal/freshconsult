@@ -1,4 +1,4 @@
-class Helpdesk::DropboxesController < ApplicationController  
+class Helpdesk::CloudFilesController < ApplicationController  
 
   include HelpdeskControllerMethods
   
@@ -6,9 +6,9 @@ class Helpdesk::DropboxesController < ApplicationController
   before_filter :check_destroy_permission, :only => [:destroy]
 
   protected
-  	
-  	def scoper
-    	current_account.dropboxes
-  	end 
+
+    def scoper
+      current_account.cloud_files
+    end 
 
 end
