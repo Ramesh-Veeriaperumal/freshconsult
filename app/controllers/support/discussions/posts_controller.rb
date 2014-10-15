@@ -7,6 +7,8 @@ class Support::Discussions::PostsController < SupportController
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
+ 	before_filter :verify_user, :only => [:update, :edit]
+ 	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
 		params[:post].merge!(post_request_params)
@@ -140,5 +142,13 @@ private
 				:user_agent => request.env['HTTP_USER_AGENT']
 			}
 		}
+	end
+
+	def verify_user
+		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.user == current_user
+	end
+
+	def verify_topic_user
+		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless (current_user.agent? || @topic.user == current_user)
 	end
 end
