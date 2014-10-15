@@ -64,7 +64,7 @@ class ContactsController < ApplicationController
         check_email_exist
         flash[:notice] =  activerecord_error_list(@user.errors)      
     end
-    redirect_to(company_url(@user.company))
+    redirect_to(company_url(@user.company || params[:id]))
   end
   
   def create   

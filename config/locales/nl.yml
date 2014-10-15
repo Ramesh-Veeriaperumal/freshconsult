@@ -2241,7 +2241,7 @@ nl:
         filtered_by: "Weergave"
         all: "Alles"
         showing_topics: 
-            one: "{0} onderwerp wordt weergegeven"
+            one: "%{count} onderwerp wordt weergegeven"
             other: "%{count} onderwerpen worden weergegeven"
         matching_topics: "%{count} overeenkomend van %{total} onderwerpen"
         details: "door %{user_path}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
@@ -2295,7 +2295,7 @@ nl:
                 format: "%{attribute} %{message}"
             template: 
                 body: "Er zijn problemen opgetreden in de volgende velden:"
-                one: "Door 1 fout kan {0} niet worden opgeslagen."
+                one: "Door 1 fout kan %{count} niet worden opgeslagen."
                 other: "%{count} fouten hebben ervoor gezorgd dat %{model} niet kan worden opgeslagen."
     top: "Boven"
     company_name: "Bedrijfsnaam"
@@ -5880,17 +5880,21 @@ nl:
                     other: "%{count} weergaven"
                 vote_info: 
                     ideas: 
-                        one: "{0} persoon vindt dit idee leuk"
+                        one: "%{count} persoon vindt dit idee leuk"
                         other: "%{count} personen vinden dit idee leuk"
+                        zero: "Geen"
                     announce: 
-                        one: "{0} persoon vindt deze aankondiging leuk"
+                        one: "%{count} persoon vindt deze aankondiging leuk"
                         other: "%{count} personen vinden deze aankondiging leuk"
+                        zero: "Geen"
                     problem: 
-                        one: "{0} persoon heeft dit probleem"
+                        one: "%{count} persoon heeft dit probleem"
                         other: "%{count} personen hebben dit probleem"
+                        zero: "Geen"
                     howto: 
-                        one: "{0} persoon heeft deze vraag"
+                        one: "%{count} persoon heeft deze vraag"
                         other: "%{count} personen hebben deze vraag"
+                        zero: "Geen"
         forums: 
             helpnote: 
                 title: "Forums gebruiken om de toon te zetten"

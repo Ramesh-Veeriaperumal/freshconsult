@@ -26,7 +26,7 @@ module WillPaginate::Liquidized
     end
   end
 
-  class LinkRenderer < WillPaginate::ViewHelpers::LinkRenderer
+  class LinkRenderer < WillPaginate::ViewHelpers::LinkRenderer# do we need to change superclass to WillPaginate::ActionView::LinkRenderer?
     
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper 

@@ -48,6 +48,8 @@ class CustomFieldsController < Admin::AdminController
     field_details.delete(:dom_type)
     custom_field = scoper.find(field_details.delete(:id))
     nested_fields = field_details.delete(:levels)
+    custom_field.update_column(:position, field_details.delete(:position)) if field_details[:position] && 
+                       (field_details[:position] != custom_field.position )
     unless custom_field.update_attributes(field_details)
       @invalid_fields.push(custom_field)
     end

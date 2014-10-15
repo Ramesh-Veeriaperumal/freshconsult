@@ -264,7 +264,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       "References"                    => generate_email_references(ticket)
     }
 
-    @note = note , @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host)
+    @note = note , @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol)
     @body_html = generate_body_html(note.body_html, inline_attachments, note.account, attachments)
     @ticket = ticket
     

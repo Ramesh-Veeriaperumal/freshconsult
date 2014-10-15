@@ -12,7 +12,7 @@ class Middleware::GlobalRestriction
     env['CLIENT_IP'] = req.ip()
     if ip && ip.include?(env['CLIENT_IP'])
   		@status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
-                                      'Your IPAddress is bocked by the administrator']
+                                      'Your IPAddress is blocked by the administrator']
       return [@status, @headers, @response]
     end
   	@status, @headers, @response = @app.call(env)

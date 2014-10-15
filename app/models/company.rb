@@ -115,8 +115,7 @@ class Company < ActiveRecord::Base
   def to_json(options = {}) # Any change in to_json or as_json needs a change in elasticsearch as well
     return super(options) unless options[:tailored_json].blank?
     options[:except] = [:account_id,:import_id,:delta]
-    json_str = super options
-    json_str
+    super options
   end
 
   # Elasticsearch related methods starts

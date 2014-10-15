@@ -6,7 +6,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject       => "Your Freshfone account will expire in #{trial_days}",
       :to            => account.admin_email,
       :from          => AppConfig['billing_email'],
-      :sent_on       => Time.now
+      :sent_on       => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @trial_days = trial_days
     @account = account
@@ -20,7 +23,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject     => "Renewal failed for your Freshfone Number #{number}",
       :to          => account.admin_email,
       :from        => AppConfig['billing_email'],
-      :sent_on     => Time.now
+      :sent_on     => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account = account
     @number  = number
@@ -34,7 +40,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Your Freshfone account is temporarily suspended",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @body = { :account => account }
     @account = account
@@ -48,7 +57,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Freshfone: Certify your address",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @freshfone_number = number
     mail(headers) do |part|
@@ -61,7 +73,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Your Freshfone credit has been recharged!",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
-      :sent_on  => Time.now
+      :sent_on  => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @recharge_amount = recharge_amount
     @balance         = balance
@@ -76,7 +91,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Your Freshfone credit is running low!",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account = account
     @balance = balance
@@ -90,7 +108,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Your Freshfone number #{number} will expire in #{trial_days}",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account  = account
     @number   = number
@@ -100,15 +121,19 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end 
  
-  def billing_failure(account, call_sid, exception)
+  def billing_failure(account, args, current_call, exception)
     headers = {
-      :subject => "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{call_sid}",
+      :subject => "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{args[:call_sid]}",
       :to      => FreshfoneConfig['billing_error_email'],
       :from    => AppConfig['billing_email'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account = account
-    @call_sid = call_sid
+    @args = args
+    @call = current_call
     @exception = exception
     mail(headers) do |part|
       part.html { render "billing_failure" }
@@ -120,7 +145,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => "Alert #{notification} for account #{account.id}",
       :to      => FreshfoneConfig['ops_alert']['mail']['to'],
       :from    => FreshfoneConfig['ops_alert']['mail']['from'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account = account
     @message = message
@@ -134,7 +162,10 @@ class FreshfoneNotifier < ActionMailer::Base
       :subject => params[:subject],
       :to      => params[:recipients],
       :from    => params[:from],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     headers[:cc] = params[:cc] if params[:cc].present?
     @account = account
@@ -144,12 +175,35 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def freshfone_request_template(account, user, params)
+    headers = {
+      :subject => params[:subject],
+      :to      => FreshfoneConfig['freshfone_request']['to'],
+      :from    => params[:from],
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+    headers[:cc] = params[:cc] if params[:cc].present?
+    @account = account
+    @user = user
+    @message = params[:message]
+    mail(headers) do |part|
+      part.html { render "freshfone_request_template.html" }
+    end.deliver
+  end
+
+
   def freshfone_account_closure(account)
     headers = {
       :subject => "Process Account closure for account #{account.id}",
       :to      => FreshfoneConfig['ops_alert']['mail']['to'],
       :from    => FreshfoneConfig['ops_alert']['mail']['from'],
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @account = account
     mail(headers) do |part|

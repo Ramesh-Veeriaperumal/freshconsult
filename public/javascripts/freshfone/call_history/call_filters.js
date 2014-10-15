@@ -237,8 +237,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         presetRanges: [
           {text: datePickerLabels['today'], dateStart: 'Today', dateEnd: 'Today' },
           {text: datePickerLabels['yesterday'], dateStart: 'Yesterday', dateEnd: 'Yesterday' },
-          {text: datePickerLabels['this_week'], dateStart: 'Today-7', dateEnd: 'Today-1' },
-          {text: datePickerLabels['this_month'], dateStart: 'Today-30', dateEnd: 'Today-1'}
+          {text: datePickerLabels['this_week'], dateStart: 'Today-7', dateEnd: 'Today' },
+          {text: datePickerLabels['this_month'], dateStart: 'Today-29', dateEnd: 'Today'}
         ],
         presets: {
           dateRange: datePickerLabels['custom']

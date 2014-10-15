@@ -114,7 +114,7 @@ describe Integrations::GoogleAccountsController do
     response.should render_template "integrations/google_accounts/edit"
   end
 
-  xit "should not redirect to edit page" do# failing in master
+  it "should not redirect to edit page" do# failing in master
     invalid_google_account_id = ((Integrations::GoogleAccount.last.id if Integrations::GoogleAccount.last) || 0) + 1
     get :edit, :id => invalid_google_account_id
   end

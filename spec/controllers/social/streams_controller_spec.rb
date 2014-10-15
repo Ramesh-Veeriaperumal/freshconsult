@@ -65,7 +65,7 @@ RSpec.describe Social::StreamsController do
       response.should render_template("social/streams/fetch_new")
     end
   
-    xit "should fetch the top tweets from all the handles with latest first from dynamo when" do# failing in master
+    it "should fetch the top tweets from all the handles with latest first from dynamo when" do# failing in master
       first_handle = create_test_twitter_handle(@account)
       first_default_stream = first_handle.default_stream
       first_data = first_default_stream.data
@@ -231,7 +231,7 @@ RSpec.describe Social::StreamsController do
       assigns[:custom_streams].should eql(custom_streams)
     end
     
-    xit "should fetch all the streams that are visible to the user belonging to marketing" do# failing in master
+    it "should fetch all the streams that are visible to the user belonging to marketing" do# failing in master
       AgentGroup.create(:user_id =>@agent.id, :group_id => 1)
       all_streams = @agent.visible_social_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }

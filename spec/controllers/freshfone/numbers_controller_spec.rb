@@ -67,7 +67,7 @@ describe Admin::Freshfone::NumbersController do
     RSpec.configuration.account.freshfone_numbers.find(@number).name.should be_eql(name)
   end
 
-  xit 'should not update number for invalid queue length' do#TODO-RAILS3 possible dead code
+  it 'should not update number for invalid queue length' do#TODO-RAILS3 possible dead code
     name = Faker::Name.name
     params = {"admin_freshfone_number"=>{"name"=>name, "record"=>"true", "voice"=>"0", 
       "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 

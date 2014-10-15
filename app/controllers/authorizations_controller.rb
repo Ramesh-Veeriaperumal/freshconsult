@@ -252,6 +252,7 @@ class AuthorizationsController < ApplicationController
     end
     user.helpdesk_agent = false
     user.active = true
+    user.language = account.language
     user.save 
     user.reset_persistence_token! 
     Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => account.id)

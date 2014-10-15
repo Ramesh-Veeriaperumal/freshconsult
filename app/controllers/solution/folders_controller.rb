@@ -6,8 +6,8 @@ class Solution::FoldersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:show, :edit, :update, :destroy]
-  before_filter :fetch_new_category, :only => :update
+  before_filter :load_category, :only => [:show, :edit, :update, :destroy, :create]
+  before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :only => [:create, :update]
   
   def index
@@ -51,10 +51,10 @@ class Solution::FoldersController < ApplicationController
   def create 
     current_category = current_account.solution_categories.find(params[:category_id])    
     @folder = current_category.folders.new(params[nscname]) 
-    @folder.category_id = params[:category_id]
+    @folder.category_id = @new_category.id
 
-    redirect_to_url = solution_category_url(params[:category_id])
-    redirect_to_url = new_solution_category_folder_path(params[:category_id]) unless
+    redirect_to_url = solution_category_path(@new_category.id)
+    redirect_to_url = new_solution_category_folder_path(@new_category.id) unless
       params[:save_and_create].nil?
    
     #@folder = current_account.solution_folders.new(params[nscname]) 

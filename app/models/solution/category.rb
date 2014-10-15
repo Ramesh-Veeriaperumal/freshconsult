@@ -11,7 +11,7 @@ class Solution::Category < ActiveRecord::Base
   self.table_name =  "solution_categories"
   
   validates_presence_of :name,:account
-  validates_uniqueness_of :name, :scope => :account_id
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
   
   belongs_to_account
 

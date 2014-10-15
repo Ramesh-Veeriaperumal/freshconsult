@@ -85,7 +85,7 @@ module Helpdesk::Email::TicketMethods
   end
 
   def check_headers_for_responders header_hash
-    header_hash["Reply-To"].blank? && (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
+    (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
   end
 
   def check_support_emails_from

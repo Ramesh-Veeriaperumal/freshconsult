@@ -20,7 +20,7 @@ class Middleware::TrustedIp
         if trusted_ips_enabled?
           unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'])
             @status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
-                                        'Your IPAddress is bocked by the administrator']
+                                        'Your IPAddress is blocked by the administrator']
             return [@status, @headers, @response]
           end
         end
@@ -41,6 +41,7 @@ class Middleware::TrustedIp
   end
 
   def valid_ip(current_ip, current_user_id)
+    return true
     unless applies_to_agent?(current_user_id)
       @current_account.whitelisted_ip_from_cache.ip_ranges.each do |ip|
         return true if ip_is_in_range?(IPAddress(ip[:start_ip]),IPAddress(ip[:end_ip]),IPAddress(current_ip))

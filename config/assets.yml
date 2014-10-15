@@ -90,6 +90,9 @@ stylesheets:
     - public/stylesheets/freshfone/record_playback.css
     - public/stylesheets/freshfone/360player.css
 
+  portal_print:
+    - public/stylesheets/print/support.css
+
   preview:
     - public/stylesheets/portal/preview.css
 
@@ -457,6 +460,7 @@ javascripts:
     - public/javascripts/syntaxhighlighter/shBrushSql.js
     - public/javascripts/syntaxhighlighter/shBrushXml.js
     - public/javascripts/syntaxhighlighter/shBrushCpp.js
+    - public/javascripts/syntaxhighlighter/shBrushObjC.js
     - public/javascripts/syntaxhighlighter/shBrushCSharp.js
     - public/javascripts/syntaxhighlighter/shBrushPerl.js
     - public/javascripts/syntaxhighlighter/shBrushPlain.js

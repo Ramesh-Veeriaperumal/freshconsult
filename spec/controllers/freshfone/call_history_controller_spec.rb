@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Freshfone::CallHistoryController do
+RSpec.describe Freshfone::CallHistoryController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -26,7 +26,7 @@ describe Freshfone::CallHistoryController do
     response.should render_template("freshfone/call_history/index")
   end
 
-  it 'should return no results in search for calls made yesterday' do
+  it 'should return no results in search for calls made yesterday' do# failing in master
     get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
                           "page"=>"1", "number_id"=>@number.id, "wf_c0"=>"created_at", 
                           "wf_o0"=>"is_greater_than", "wf_v0_0"=>"yesterday" }

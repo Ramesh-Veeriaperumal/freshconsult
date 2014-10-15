@@ -7,7 +7,10 @@ class DataExportMailer < ActionMailer::Base
       :to    => options[:email],
       :from  => AppConfig['from_email'],
       :subject => "Data Export for #{options[:host]}",
-      :sent_on => Time.now
+      :sent_on => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @url = options[:url]
     mail(headers) do | part|
@@ -21,7 +24,10 @@ class DataExportMailer < ActionMailer::Base
       :to        => options[:user].email,
       :from      => AppConfig['from_email'],
       :bcc       => "reports@freshdesk.com",
-      :sent_on   => Time.now
+      :sent_on   => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user]
     @url  = options[:url]
@@ -36,7 +42,10 @@ class DataExportMailer < ActionMailer::Base
       :to       => options[:user][:email],
       :from     => AppConfig['from_email'],
       :bcc      => "reports@freshdesk.com",
-      :sent_on  => Time.now
+      :sent_on  => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user]
     mail(headers) do |part|

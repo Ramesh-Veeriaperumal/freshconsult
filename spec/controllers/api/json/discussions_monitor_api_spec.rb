@@ -21,7 +21,7 @@ RSpec.describe Support::DiscussionsController do
     http_login(@agent)
   end
 
-  xit "should be able to fetch user monitored topics." do#TODO-RAILS3 failing in master
+  it "should be able to fetch user monitored topics." do#TODO-RAILS3 failing in master
     get :user_monitored, { :user_id => @user.id, :format => 'json' }, :content_type => 'application/json'
     result = parse_json(response)
     expected = (response.status === 200) && (compare(result.first["topic"].keys, APIHelper::TOPIC_ATTRIBS, {}).empty?)

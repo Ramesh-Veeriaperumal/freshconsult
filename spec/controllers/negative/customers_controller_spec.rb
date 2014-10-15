@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CustomersController do
+RSpec.describe CustomersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -9,6 +9,7 @@ describe CustomersController do
   end
 
   before(:each) do
+    request.env["HTTP_ACCEPT"] = "application/xml"
     login_admin
   end
 
@@ -21,7 +22,7 @@ describe CustomersController do
                                   :note => "", 
                                   :domains => ""
                                  }
-    response.body.should =~ /Name can&#x27;t be blank/
+    response.body.should =~ /Name can't be blank/
   end
 
   it "should not create two companies with the same name(works because the API support is not deprecated yet)" do

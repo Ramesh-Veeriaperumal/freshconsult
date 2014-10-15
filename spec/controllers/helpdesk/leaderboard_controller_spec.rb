@@ -42,8 +42,8 @@ RSpec.describe Helpdesk::LeaderboardController do
 		response.body.should =~ /Agent Leaderboard/
 		response.body.should =~ /Most Valuable Player/
 		response.body.should =~ /Sharpshooter/
-		response.body.should =~ /#{@agent_1.name}/
-		response.body.should =~ /#{@agent_2.name}/
+		response.body.should =~ /#{ERB::Util.html_escape(@agent_1.name)}/
+		response.body.should =~ /#{ERB::Util.html_escape(@agent_2.name)}/
 		response.should be_success
 	end
 
@@ -52,8 +52,8 @@ RSpec.describe Helpdesk::LeaderboardController do
 		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Most Valuable Player/
 		response.body.should =~ /Sharpshooter/
-		response.body.should =~ /#{@agent_2.name}/
-		response.body.should_not =~ /#{@agent_1.name}/
+		response.body.should =~ /#{ERB::Util.html_escape(@agent_2.name)}/
+		response.body.should_not =~ /#{ERB::Util.html_escape(@agent_1.name)}/
 		response.body.should_not =~ /Speed Racer/
 		response.body.should_not =~ /Customer Wow Champion/
 

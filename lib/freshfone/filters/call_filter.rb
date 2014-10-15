@@ -133,7 +133,7 @@ class Freshfone::Filters::CallFilter < Wf::Filter
   end
 
   def default_filter
-    date_range = "#{(Time.now.utc.ago 7.days).strftime("%d %B %Y")} - #{(Time.now.utc.ago 1.days).strftime("%d %B %Y")}"
+    date_range = "#{(Time.now.utc.ago 7.days).strftime("%d %B %Y")} - #{(Date.today).strftime("%d %B %Y")}"
     return [{ "condition" => "created_at", "operator" => "is_in_the_range", "value" => date_range } ]    
   end
 

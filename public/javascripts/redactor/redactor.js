@@ -24,6 +24,7 @@ var codeEditor_lang = {
 	java : 'Java',
 	csharp :'C#',
 	cpp  : 'C++',
+	objc : 'Obj C',
 	perl : 'Perl',
 	python :'Python',
 	vbnet: 'VB',

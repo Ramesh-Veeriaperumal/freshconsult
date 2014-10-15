@@ -236,7 +236,7 @@ describe ContactsController do
 
   it "should export csv" do
     post :export_csv, "data_hash"=>"", "export_fields"=>{"Name"=>"name", "Email"=>"email", "Job Title"=>"job_title", "Company"=>"company_name", "Phone"=>"phone"}
-    response.header["Content-type"].should eql 'text/csv; charset=utf-8; header=present'
+    response.header["Content-Type"].should eql 'text/csv; charset=utf-8; header=present'
     response.body.should include "Name,Email,Job Title,Company,Phone"
   end
 

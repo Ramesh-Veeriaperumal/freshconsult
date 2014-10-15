@@ -39,10 +39,8 @@ class Helpdesk::DashboardController < ApplicationController
     render :partial => "summary"
   end
 
-  def sales_manager
-    unless Rails.env.development?
-      @details = current_account.sales_manager_from_cache
-    end
+  def sales_manager 
+    @details = current_account.sales_manager_from_cache if Rails.env.production?
     render :partial => "sales_manager"
   end
 
