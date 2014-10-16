@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140917120832) do
+ActiveRecord::Schema.define(:version => 20141010062714) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -224,33 +224,29 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id",      :limit => 8
-    t.text     "display_id"
-    t.text     "preferences"
-    t.string   "minimized_title"
-    t.string   "maximized_title"
-    t.string   "welcome_message"
-    t.string   "thank_message"
-    t.string   "wait_message"
-    t.string   "typing_message"
-    t.integer  "prechat_form"
-    t.string   "prechat_message"
-    t.integer  "prechat_phone"
-    t.integer  "prechat_mail"
-    t.integer  "proactive_chat"
-    t.integer  "proactive_time"
+    t.string   "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_on_portal",                     :default => true
-    t.boolean  "portal_login_required",              :default => false
-    t.integer  "business_calendar_id", :limit => 8
-    t.text     "non_availability_message"
-    t.string   "prechat_form_name"
-    t.string   "prechat_form_mail"
-    t.string   "prechat_form_phoneno"
     t.boolean  "active",                                :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
+
+  create_table "chat_widgets", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "product_id",            :limit => 8
+    t.string   "widget_id"
+    t.boolean  "show_on_portal"
+    t.boolean  "portal_login_required"
+    t.integer  "business_calendar_id",  :limit => 8
+    t.integer  "chat_setting_id",       :limit => 8
+    t.boolean  "active",                             :default => false
+    t.boolean  "main_widget"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8

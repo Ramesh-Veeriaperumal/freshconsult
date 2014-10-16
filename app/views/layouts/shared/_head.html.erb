@@ -60,7 +60,7 @@
 		<%= include_cloudfront_js :soundmanager %>
 	<% end %>
 	
-	<% if chat_feature_enabled? %>
+	<% if chat_activated? %>
 		<%= include_cloudfront_js :freshchat %>
 	<% end %>
 
