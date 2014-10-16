@@ -11,9 +11,12 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
   end
 
 	def new
+    puts "Got it"
 		@ca_response = scoper.new
+    @ca_response.folder_id = @folder.id
 		@ca_response.accessible = current_account.user_accesses.new
 		@ca_response.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    puts "Just before show"
 		respond_to do |format|
 		  format.html
 		  format.xml  { render :xml => @ca_response }

@@ -111,7 +111,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :contact_email
       get :autocomplete
-      get :configure_export
+      post :configure_export
       get :show
       post :export_csv
       get :verify_email
@@ -1072,6 +1072,7 @@ Helpkit::Application.routes.draw do
         get :configure_export
         get :custom_view_save
         post :assign_to_agent#TODO-RAILS3 new route
+        put :quick_assign #TODO-RAILS3 new route
       end
 
       member do
@@ -1098,7 +1099,6 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
-        put :quick_assign #TODO-RAILS3 new route
       end
 
       resources :surveys do
@@ -1171,7 +1171,7 @@ Helpkit::Application.routes.draw do
     resources :merge_tickets do
       collection do
         post :complete_merge
-        put :merge
+        post :merge
         post :bulk_merge
       end
     end
@@ -1262,6 +1262,9 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  match '/helpdesk/tickets/quick_assign/:id' => "Helpdesk::tickets#quick_assign", :as => :quick_assign_helpdesk_tickets,
+        :method => :put
 
   resources :api_webhooks
 

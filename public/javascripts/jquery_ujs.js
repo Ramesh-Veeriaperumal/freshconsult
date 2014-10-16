@@ -129,6 +129,7 @@
           type: method || 'GET', data: data, dataType: dataType,
           // stopping the "ajax:beforeSend" event will cancel the ajax request
           beforeSend: function(xhr, settings) {
+            rails.setLoading(element, data, status, xhr);
             if (settings.dataType === undefined) {
               xhr.setRequestHeader('accept', '*/*;q=0.5, ' + settings.accepts.script);
             }
@@ -140,6 +141,7 @@
           },
           success: function(data, status, xhr) {
             element.trigger('ajax:success', [data, status, xhr]);
+            rails.successUpdate(element, data, status, xhr);
           },
           complete: function(xhr, status) {
             element.trigger('ajax:complete', [xhr, status]);
@@ -165,6 +167,27 @@
       } else {
         return false;
       }
+    },
+
+    //Custom function to handle 'update' on remote link_to success
+    successUpdate: function (element, data, status, xhr) {
+      var data_update = element.data('update');
+      if (typeof data_update !== typeof undefined && data_update !== false) {
+        $('#'+data_update).html(data);
+      }
+    },
+
+    //Custom function to handle loading on remote link_to success
+    setLoading: function(element, data, status, xhr) {
+      var loading = element.data('loading');
+      if (typeof loading === "undefined") {
+        return;
+      }
+
+      var loading_classes = element.data('loading-classes') || 'sloading loading-block',
+          loading_element = loading ? $('#' + loading) : element;
+    
+      loading_element.addClass(loading_classes);
     },
 
     // Handles "data-method" on links such as:

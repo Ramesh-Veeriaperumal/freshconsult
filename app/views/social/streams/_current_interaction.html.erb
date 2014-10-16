@@ -109,7 +109,8 @@
     </div>
 
     <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear" style="display:none;">
-       <%= form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
+       <%= form_tag url_for(:controller => "social/twitter", :action => "reply"), :class => "uniForm", 
+        :id => "reply_form_#{feed.feed_id}", :remote => true do %>
           
         <div class="row twt-area">
           <div class="twt-msg">
@@ -152,7 +153,8 @@
     </div>
 
     <div id="rt_box_<%= feed.feed_id%>" class="rtwt-box twt-box clear" style="display:none;">
-      <%= form_remote_tag :url => { :controller => "social/twitter", :action => "retweet" },  :html => { :class => "uniForm", :id => "retweet_form_#{feed.feed_id}" } do %>
+      <%= form_tag url_for(:controller => "social/twitter", :action => "retweet"), 
+       :class => "uniForm", :id => "retweet_form_#{feed.feed_id}", :remote => true do %>
 
          <div class="row twt-area">
           <div class="twt-msg">

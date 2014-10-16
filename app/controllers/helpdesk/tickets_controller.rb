@@ -496,7 +496,7 @@ class Helpdesk::TicketsController < ApplicationController
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
                     
-    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url => block_user_path(:ids => req_list), :method => :put ) %>" ,
+    link = render_to_string( :inline => "<%= link_to t('user_block'), block_user_path(:ids => req_list), :method => :put, :remote => true  %>" ,
       :locals => { :req_list => req_list.uniq } )
       
     notice_msg =  msg1

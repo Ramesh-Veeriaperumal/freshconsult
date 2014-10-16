@@ -91,7 +91,7 @@ module Helpdesk::MergeTicketActions
 		end
 
 		def update_header_info source_header
-			source_header[:message_ids].each do |source|
+			(source_header[:message_ids] || []).each do |source|
 				@header[:message_ids] = [] unless @header.key?(:message_ids)
 				unless @header[:message_ids].include? source
 					@header[:message_ids] << source
