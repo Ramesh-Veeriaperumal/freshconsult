@@ -1,0 +1,35 @@
+<%= render :partial => "helpnote" %>
+<div class="chat-settings">
+  <div id="chat_header" class="chat-header">
+    <h3 class = "lead"> 
+      <%= pjax_link_to(h(t('chatwidget_title')), admin_chat_widgets_path, :class =>"") %>
+      /&nbsp;<%= (@widget.product ? @widget.product.name : @widget.account.name) %>
+    </h3>
+  </div>
+	<%= render :partial => "setting" %>
+</div>
+
+<% javascript_tag do %>
+    (function($){
+      $(document).one('ready pjax:success' ,function(){
+        var url = ASSET_URL.js;
+        if(window.location && window.location.protocol=='https:'){
+          url = ASSET_URL.cloudfront;
+        }
+        var tabSelected = window.location.hash;
+        var tab = $(tabSelected);
+        if(tabSelected && !tab.hasClass('active') ){
+          $('a[href^='+tabSelected+']').trigger('click')
+        }
+        if(window.chatSetting){
+          chatSetting.edit(<%= freshchat_setting @widget%>);
+        }else{
+          $.getScript(url+ "/js/chat_settings.js", function(){
+            if(window.chatSetting){
+              chatSetting.edit(<%= freshchat_setting @widget%>);
+            }
+          });
+        }
+      });
+    })(jQuery);
+  <%end%>

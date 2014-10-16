@@ -1,29 +1,14 @@
-<% @page_title = t('chatwidget_title') %>
-<% content_for :helpcard do -%>
-<%= render :partial => "helpnote" %>
-<%- end %>
-<div class="chat-settings">
-	<div id="chat_header" class="chat-header" style="display:none">
-		<h3 class = "lead"> <%=t('chatwidget_title')%>
-			<div class="pull-right">
-				<%= check_box_tag :chat_enable, 0, false, :class => 'filter_item', 
-					"data-checked-label" => "enabled", 
-					"data-unchecked-label" => "disabled",
-					:id => 'chat_enable' %>
-			</div>
-		</h3>
-	</div>
-	<div id="chat_loading" class="sloading loading-small loading-block loading-left"></div>
+<div id="chat_loading" class="sloading loading-small"></div>
 	<div id="chat_setting" class="tabbable" style="display:none">
 		<ul class="nav nav-tabs">
-			<li class="active"><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
+			<li class = 'active'><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
 			<li><a href="#visitor-form" data-toggle="tab">Visitor Form</a></li>
 			<li><a href="#preferences" data-toggle="tab">Preferences</a></li>
 			<li><a href="#install" data-toggle="tab"><%=t('freshchat.installation')%></a></li>
 		</ul>
-
+ 
 		<div class="alert notice" id="chat_settings_notice" style="display:none"><a class="close" href="#"></a></div>
-
+ 
 		<div class="tab-content" id="chat_settings_tab">
 			<div class="tab-pane active" id="widget">
 				<div class="chat-window-left ui-form clearfix">
@@ -93,35 +78,35 @@
 								<input type="text" class="text" size="18" name="minimized_title" id="minimized_title" value=""placeholder="<%=t('freshchat.minimized_title')%>">
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.maximize_chat_title')%></label>
 							<div class="fields">
 								<input type="text" class="text" size="18" id="maximized_title" name="maximized_title" value=""placeholder="<%=t('freshchat.maximized_title')%>">
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.welcome')%></label>
 							<div class="fields">
 								<input type="text" class="text" id="welcome_message" name="welcome_message" size="18" value="" placeholder="<%=t('freshchat.welcome_message')%>">
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.msgbox_placeholder_title')%></label>
 							<div class="fields">
 								<input type="text" class="text" id="text_place" name="text_place" size="18" value="" placeholder="<%=t('freshchat.text_placeholder')%>">
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.msg_waiting_agent_title')%></label>
 							<div class="fields">
 								<input type="text" class="text" id="connecting_msg" name="connecting_msg" size="18" value="" placeholder="<%=t('freshchat.connecting_msg')%>">
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.wait_title')%></label>
 							<div class="fields">
@@ -129,7 +114,7 @@
 								<div class="info-data"><%=t('freshchat.help_text_wait_onhold_msg')%></div>
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.msg_joining_agent_title')%></label>
 							<div class="fields">
@@ -137,7 +122,7 @@
 								<div class="info-data"><%=t('freshchat.help_text_agent_msg')%></div>
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.msg_leaving_agent_title')%></label>
 							<div class="fields">
@@ -145,14 +130,14 @@
 								<div class="info-data"><%=t('freshchat.help_text_agent_msg')%></div>
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.thank_title')%></label>
 							<div class="fields">
 								<input type="text" class="text" id="thank_message" name="thank_message" size="18" value="" placeholder="<%=t('freshchat.thank_message')%>" >
 							</div>
 						</li>
-
+ 
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.non_availability_msg_header')%></label>
 							<div class="fields">
@@ -198,7 +183,7 @@
 							<input type="text" class="text" size="18" id="prechat_message" name="prechat_message" value="" placeholder="<%=t('freshchat.prechat_message')%>">
 						</div>
 					</li>
-
+ 
 					<li class="inline-field prechat_form form_divider">
 						<label class="caption"><%=t('freshchat.form_details')%></label>
 						<div class="fields clearfix">
@@ -225,7 +210,7 @@
 							</div>
 						</div>
 					</li>
-
+ 
 					<li class="inline-field chat_business_options_wrap">
 						<label class="caption form_divider"><%= t('freshchat.show_chat_hours') %></label>
 						<div class="fields">
@@ -236,7 +221,7 @@
 										<span><%=t('freshchat.anytime')%></span>
 									</label>
 								</li>
-
+ 
 								<li class="inline-field">
 									<label class="item"> 
 										<input type="radio" id="chat_business_hours" name="show_chat_hours" value="<%=default_business_hour%>">
@@ -245,7 +230,7 @@
 											<% if multiple_business_hours? %>
 											<span id="chat_business_options" class="chat_business_options">
 												<%= select_tag :business_calendar_id,
-												options_from_collection_for_select(current_account.business_calendar,:id, :name,current_account.chat_setting.business_calendar_id),
+												options_from_collection_for_select(current_account.business_calendar,:id, :name,current_chat_widget.business_calendar_id),
 												:class => 'select2 business_calendar_select2'%>
 											</span>
 											<% end %>
@@ -255,7 +240,7 @@
 							</ul>
 						</div>
 					</li>
-
+ 
 					<li class="inline-field">
 						<h3 class="title space_top"><%=t('freshchat.support_portal')%><span class='show_on_portal_checkbox'><%= check_box_tag :show_on_portal, 1, :class => 'filter_item' %></span></h3> 
 						<div class="fields marginleftnone">
@@ -266,7 +251,7 @@
 							</div>
 						</div>
 					</li>
-
+ 
 					<li class="inline-field chat_portal_enable_form">
 						<label class="caption form_divider"><%=t('freshchat.portal_option_info')%></label>
 						<div class="fields">
@@ -318,7 +303,7 @@
 						<%= content_tag(:h3, t('freshchat.integrate_freshchat_title'), :class => "title" ) %>
 						<div class="intro"><%=t('freshchat.integrate_msg')%> 
 					</li>
-
+ 
 					<li class="code-view">
 						<div class="chat_code_copy tooltip" twipsy-content-set="true" data-original-title="<%= t('freshchat.copy_to_clipboard') %>"><span class="ficon icon-copy"></span></div>  
 						<textarea id="EmbedCode" readonly></textarea>
@@ -328,7 +313,3 @@
 			</div>
 		</div>
 	</div>
-	<div id="chat_intro" class="chat-intro" style="display:none">
-		<%= render :partial => "intro" %>
-	</div>
-</div>
