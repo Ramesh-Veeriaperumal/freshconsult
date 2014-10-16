@@ -1,8 +1,8 @@
 class ChatsController < ApplicationController
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:site_toggle, :widget_toggle, :activate]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle]
   before_filter  :load_ticket, :only => [:add_note]
-  before_filter :verify_chat_token , :only => [:site_toggle, :widget_activate, :widget_toggle, :activate]
+  before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle]
   
   def create_ticket
 
@@ -60,16 +60,16 @@ class ChatsController < ApplicationController
     end
     if chat_widget
       if chat_widget.update_attributes({:active => params[:status], :widget_id => params[:widget_id]})
-        portal = chat_widget.product.portal
-        if portal
-           Resque.enqueue(Workers::Freshchat, {
-                          :worker_method => "update_widget", 
-                          :widget_id     => chat_widget.widget_id, 
-                          :siteId        => current_account.chat_setting.display_id, 
-                          :attributes    => { 
-                                            :site_url => portal.portal_url
-                                          }
-                          })
+        if chat_widget.product && chat_widget.product.portal
+          portal = chat_widget.product.portal
+          Resque.enqueue(Workers::Freshchat, {
+            :worker_method => "update_widget", 
+            :widget_id     => chat_widget.widget_id, 
+            :siteId        => current_account.chat_setting.display_id, 
+            :attributes    => { 
+                              :site_url => portal.portal_url
+                            }
+            })
         end
         render :json => {:status => "success"}
       else
