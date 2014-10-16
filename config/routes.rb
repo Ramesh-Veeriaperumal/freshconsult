@@ -135,7 +135,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :chat_setting, :collection => { :toggle => :post }
+    admin.resources :chat_widgets
     admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
@@ -690,11 +690,16 @@
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
-  map.connect '/all_agents', :controller => 'agents', :action => 'list'
-  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
-  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
-  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+  map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+
+  map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
+
+  map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
+
+  map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
+  map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
+
+  map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 end

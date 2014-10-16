@@ -8,10 +8,8 @@ class ChatSetting < ActiveRecord::Base
     CHAT_CONSTANTS_BY_KEY = Hash[*CHAT_CONSTANTS.map { |i| [i[0], i[1]] }.flatten]
 
 	belongs_to_account
-	belongs_to :business_calendar
-
+  has_many :chat_widgets
+  has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
 	attr_protected :account_id
-  serialize :preferences
-  serialize :non_availability_message
 
 end
