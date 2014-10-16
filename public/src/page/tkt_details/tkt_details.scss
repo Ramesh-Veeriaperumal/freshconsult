@@ -2136,6 +2136,7 @@ ol, ul, li{
 			height: 16px;
 			margin-top: 5px;
 			@include opacity(0.1);
+			text-indent: -99999px;
 		}
 
 		&:hover {

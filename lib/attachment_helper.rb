@@ -83,10 +83,11 @@
   end
 
   def attachment_delete_link path_url
-    link_to_remote("", :url => path_url,
-                  :method => 'delete',
-                  :html => { :class =>"delete mr10" },
-                  :confirm => t('attachment_delete'))
+    link_to "", path_url,
+            :method => 'delete',
+            :class =>"delete mr10",
+            :confirm => t('attachment_delete'),
+            :remote => true
   end
 
   def attachment_unlink_path(attachment, note_id = nil)

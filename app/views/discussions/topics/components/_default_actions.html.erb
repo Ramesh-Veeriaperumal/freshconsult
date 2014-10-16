@@ -1,17 +1,15 @@
 <% unless @topic.locked? %>
 <div class="btn" id="monitorship_link">
 <%=
-		link_to_remote "",
-		:url => toggle_monitorship_path("topic", @topic, (@monitorship.zero? ? "follow" : "unfollow")),
+		link_to_if @topic.published?, "",
+		toggle_monitorship_path("topic", @topic, (@monitorship.zero? ? "follow" : "unfollow")),
 		:method => :post,
-		:before => "jQuery('#toggle_monitorship_status').hide();jQuery('#monitorship_link').addClass('sloading loading-small');",
-		:html => {
-							:class => "tooltip forum_follow_icon #{@monitorship.zero? ? '': ' active'}",
-							"data-placement" => 'below',
-							:id => "toggle_monitorship_status",
-							:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
-							:"data-keybinding" => "#{shortcut("community_actions.monitor_topic")}"
-							} if @topic.published?
+	    :class => "tooltip forum_follow_icon #{@monitorship.zero? ? '': ' active'}",
+		:"data-placement" => 'below',
+		:id => "toggle_monitorship_status",
+		:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
+		:"data-keybinding" => "#{shortcut("community_actions.monitor_topic")}",
+		:remote => true
 %>
 </div>
 
@@ -54,4 +52,14 @@
 
 	  </ul>
 	</div>
+<% end %>
+
+<%-# TODO-RAILS3 - Move to js files (Added ids above, to make it bind to multiple elements) -%>
+<%= javascript_tag do %>
+(function($) {
+  jQuery("#toggle_monitorship_status').bind("ajax:before", function(et, e){
+	jQuery(this).hide();
+	jQuery('#monitorship_link').addClass('sloading loading-small');
+  });
+})(jQuery)
 <% end %>

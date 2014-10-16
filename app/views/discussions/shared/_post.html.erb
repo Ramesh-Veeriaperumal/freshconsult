@@ -31,40 +31,50 @@ entry_delete_path << "/posts/#{post.id}" if post_type=='reply'
 	</div>
 	<div class="post-action-bar">
 			<div class="action-icon">
-				<%= link_to_remote '', :url => approve_discussions_moderation_path(post),
-						:method => :put,
-						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-						:html => {
-								:class => font_class("checkmark-round", 28, "tooltip post-approve"),
-								:title => t('.approve_tooltip'),
-								:"data-track" => 'Action on Unpublished post',
-								:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json
-							} %>
+				<%= link_to '', approve_discussions_moderation_path(post),
+					:method => :put,
+					:class => font_class("checkmark-round", 28, "tooltip post-approve"),
+					:id => 'approve-post',
+					:title => t('.approve_tooltip'),
+					:"data-track" => 'Action on Unpublished post',
+					:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json,
+					:remote => true
+			    %>
 			</div>
 		<% unless post.spam? %>
 			<div class="action-icon">
-				<%= link_to_remote('', :url => entry_delete_path,
-						:method => :delete,
-						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-						:html => {
-							:class => font_class("trash", 28, "tooltip post-delete delete_action"),
-							:title => t('delete'),
-							:"data-track" => 'Action on Unpublished post',
-							:"data-event-data" => {:action => 'Delete', :spam => false }.to_json
-						}) %>
+				<%= link_to '', entry_delete_path,
+					:method => :delete,
+					:class => font_class("trash", 28, "tooltip post-delete delete_action"),
+					:id => 'delete-post',
+					:title => t('delete'),
+					:"data-track" => 'Action on Unpublished post',
+					:"data-event-data" => {:action => 'Delete', :spam => false }.to_json,
+					:remote => true
+				%>
 			</div>
 			<div class="action-icon">
-				<%= link_to_remote("", :url => ban_discussions_moderation_path(post),
-						:method => :put,
-						:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-						:html => {
-							:class => font_class("notice", 28, "tooltip post-ban-user"),
-							:title => t('.ban_tooltip'),
-							:"data-placement" => "left",
-							:"data-track" => 'Action on Unpublished post',
-							:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json
-						}) if privilege?(:delete_contact) %>
+				<%= link_to_if privilege?(:delete_contact), "", ban_discussions_moderation_path(post),
+					:method => :put,
+					:class => font_class("notice", 28, "tooltip post-ban-user"),
+					:id => 'delete-contact',
+					:title => t('.ban_tooltip'),
+					:"data-placement" => "left",
+					:"data-track" => 'Action on Unpublished post',
+					:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json,
+					:remote => true
+				%>
 			</div>
 		<% end %>
 	</div>
 </div>
+
+<%-# TODO-RAILS3 - Move to js files (Added ids above, to make it bind to multiple elements) -%>
+<%= javascript_tag do %>
+(function($) {
+  jQuery("#delete-contact, #delete-post, #approve-post').bind("ajax:before", function(et, e){
+	$(this).hide(); 
+	$(this).parent().addClass('sloading loading-small')
+  });
+})(jQuery)
+<% end %>
