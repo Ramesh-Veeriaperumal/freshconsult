@@ -71,6 +71,29 @@
 		margin-right:-1;
 		margin-left:0 !important;
 	}
+	.search_results_list .rsltname, .search_results_list .rsltagent, .search_results_list .rsltdate, #search_filter, .search_results_list, #search_results_expand, .rsltname_expanded i,.rsltname_expanded p,
+	.search_results_list .rsltmsg .rsltavatar, .search_results_list .rsltname{
+		float:right !important;
+	}
+	.rsltname_expanded p{
+		padding-right: 17px;
+	}
+	.search_results_list .rsltname{
+		padding-right:10px;
+	}
+	.fc_convertTicket, .fc_ticketLink,.fc_convert_aside,.chat_info .refresh_wrap .ficon{
+		float:left !important;
+	}
+	.fc_convertTicket, .fc_ticketLink{
+		border-right: 1px #ccc solid !important;
+		padding-right:10px !important;
+		border-left:0 !important;
+		padding-left:0 !important;
+	}
+	.borderleftnull{
+		border-right:1px transparent solid !important;
+	}
+
 }
 // ----------------------------------------------------------------------------
 // 							  Temp Hack for CHAT end
