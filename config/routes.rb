@@ -111,7 +111,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :contact_email
       get :autocomplete
-      get :configure_export
+      post :configure_export
       get :show
       post :export_csv
       get :verify_email

@@ -8,7 +8,7 @@
 		  <% current_account.scn_automations.each do |scenario| %>
 		  <tr><td>
 				<div class="actions">
-				<%  form_remote_tag(
+				<%=  form_remote_tag(
 					:url => execute_scenario_helpdesk_ticket_path(ticket), 
 					:method => :post,
 					:after => "
