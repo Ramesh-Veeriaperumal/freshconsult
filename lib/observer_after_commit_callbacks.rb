@@ -8,12 +8,12 @@ module ObserverAfterCommitCallbacks
     end
  
     base.send(:attr_accessor, :newly_created)
-    base.send(:before_validation, ObserverAfterCommitCallbacks::Handlers)
+    base.send(:before_save, ObserverAfterCommitCallbacks::Handlers)
     base.send(:after_commit, ObserverAfterCommitCallbacks::Handlers)
   end
  
   module Handlers
-    def self.before_validation(record)
+    def self.before_save(record)
       record.newly_created = record.new_record?
  
       true
