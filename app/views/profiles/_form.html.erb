@@ -82,9 +82,9 @@ jQuery('.email').live('keyup', function(){
 				<%= radio_button_tag :primary, ue.object.id, ue.object.primary_role %>
 				<%= ue.object.primary_role? ? content_tag(:p, "<b>#{t('merge_contacts.default_email')}</b>") : content_tag(:p, "#{t('merge_contacts.default_email')}")%><br/>
 			<% else %>
-				<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to_remote t('merge_contacts.verify'), 
-				:url => send_verification_profile_user_email_path(params[:id], :email_id => ue.object.id.to_s),
-				:method => :put, :complete => "jQuery('#verify_email').text('Verification sent');", :html => {:id => "verify_email"}}") %>
+				<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to t('merge_contacts.verify'), 
+				send_verification_profile_user_email_path(params[:id], :email_id => ue.object.id.to_s),
+				:method => :put, :id => "verify_email", :remote => true}") %>
 			<% end %>
 			<% end %>
 		</span>

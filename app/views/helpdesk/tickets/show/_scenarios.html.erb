@@ -8,16 +8,8 @@
 		  <% current_account.scn_automations.each do |scenario| %>
 		  <tr><td>
 				<div class="actions">
-				<%=  form_remote_tag(
-					:url => execute_scenario_helpdesk_ticket_path(ticket), 
-					:method => :post,
-					:after => "
-						jQuery('#execute_scenario .dialog-well').hide();
-						jQuery('#execute_scenario .modal-body .sloading').remove();
-						jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
-
-						") do %>
-
+					<%= form_tag execute_scenario_helpdesk_ticket_path(ticket), :method => :post, 
+						 :remote => true, :class => "execute_scenario_form" do %>
 					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
 					<input type="submit" class="btn" value="Execute"  placement = "below" title="Execute"/>
 				<% end %>
@@ -35,6 +27,12 @@
 		jQuery('#execute_scenario').on('shown', function() {
         	jQuery('.dialog-well').focus();
     	})
+    	jQuery('.execute_scenario_form').on('ajax:send', function(xhr, status, success) {
+		  	console.log('test');
+		  	jQuery('#execute_scenario .dialog-well').hide();
+			jQuery('#execute_scenario .modal-body .sloading').remove();
+			jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
+		});
 	});
 
 	jQuery('.scenario-search').hide();

@@ -12,14 +12,14 @@ unpublished =  !original && !post.published
 	<div class="spam_info">
 		<p><%= t("topic.spam_info.#{post.spam? ? 'spam' : 'waiting'}") %>
 		<% if privilege?(:delete_topic) %>  -
-			<%= link_to_remote t('topic.spam_action'),
-					:url => approve_discussions_moderation_path(post),
+			<%= link_to t('topic.spam_action'),
+					approve_discussions_moderation_path(post),
 					:method => :put,
-					:html => {
-							:class => 'spam_action',
-							:"data-track" => 'Action on Unpublished post',
-							:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json
-						} %>
+					:class => 'spam_action',
+					:"data-track" => 'Action on Unpublished post',
+					:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json,
+					:remote => true
+			%>
 		<% end %>
 		</p>
 	</div>
@@ -32,13 +32,13 @@ unpublished =  !original && !post.published
 			<% unless original %>
 				<div class="actions">
 					<% if privilege?(:edit_topic, post) %>
-						<%= link_to_remote("",
-											:url =>"/discussions/topics/#{@topic.id}/posts/#{post.id}",
-											:method => :delete, :confirm => t(".delete_confirm"),
-											:html => {
-												:title => t('delete'),
-												:class => font_class("trash-o", 21, "tooltip delete_action")
-											}) %>
+						<%= link_to "",
+							"/discussions/topics/#{@topic.id}/posts/#{post.id}",
+							:method => :delete, :confirm => t(".delete_confirm"),
+							:remote => true,
+							:title => t('delete'),
+							:class => font_class("trash-o", 21, "tooltip delete_action")
+						%>
 						<a href class="<%= font_class("edit", 21, "tooltip") %>" title="<%= t('edit') %>" rel="post-edit"></a>
 					<% end %>
 
@@ -58,14 +58,14 @@ unpublished =  !original && !post.published
 						<% end %>
 					<% end %>
 					<% if privilege?(:delete_topic) && post.user.customer? && post.published %>
-						<%= link_to_remote("",
-										:url => mark_as_spam_discussions_moderation_path(post),
-										:method => :put,
-										:html => {
-											:class => font_class("notice-o", 21, "tooltip"),
-											:title => t('topic.mark_as_spam'),
-											:"data-track" => 'Marked as Spam',
-											 }) %>
+						<%= link_to "",
+							mark_as_spam_discussions_moderation_path(post),
+							:method => :put,
+							:class => font_class("notice-o", 21, "tooltip"),
+							:title => t('topic.mark_as_spam'),
+							:"data-track" => 'Marked as Spam',
+							:remote => true
+						%>
 					<% end %>
 				</div>
 			<% end %>

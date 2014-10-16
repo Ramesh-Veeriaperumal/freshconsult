@@ -70,11 +70,14 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 						<li>
 							<%= content_tag(:p, "<b>#{h(mail.email)}  </b><b><span class='def_text'>#{t('merge_contacts.show_primary')}</span></b>".html_safe).html_safe if mail.primary_role %>
 							<%= content_tag(:p, "#{h(mail.email)}".html_safe) if !mail.primary_role %>
-							<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to_remote t('merge_contacts.verify'), 
-							:url => {:controller => "contacts", :id => params[:id], :action => "verify_email", :email_id => mail.id.to_s},
+							<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to t('merge_contacts.verify'), 
+							{:controller => "contacts", :id => params[:id], :action => "verify_email", :email_id => mail.id.to_s}, :remote => true,
 							:method => :put, :complete => "jQuery('[data-verify-id=#{mail.id}]').text('Verification sent');", :html => {:id => "verify_email", 'data-verify-id' => mail.id}}".html_safe, :class => "helper") if !mail.verified and !mail.primary_role %>
 
-							<p class="helper"><%= link_to_remote t('merge_contacts.make_primary'), :url => make_primary_profile_user_email_path(params[:id], :email_id => mail.id.to_s), :method => :get, :html => {:id => "primary_maker"} if !mail.primary_role and mail.verified %></p>
+							<p class="helper"><%= link_to_if (!mail.primary_role and mail.verified), t('merge_contacts.make_primary'), 
+														  make_primary_profile_user_email_path(params[:id], :email_id => mail.id.to_s), 
+														  :method => :get, :id => "primary_maker", :remote => true
+														  %></p>
 						</li>
 						<% end %>
 					</ul>
@@ -169,4 +172,13 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
       jQuery('div.info-highlight').show();
     }
 });
+<% end %>
+
+<%-# TODO-RAILS3 - Move to js files -%>
+<%= javascript_tag do %>
+(function($) {
+  $("#verify_email").bind("ajax:complete", function(et, e){
+	$('[data-verify-id=#{mail.id}]').text('Verification sent');
+  });
+})(jQuery)
 <% end %>
